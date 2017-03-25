@@ -1,0 +1,8 @@
+Top Level Part Categories:
+
+{% for category in categories %}
+
+<br>
+<a href="./{{ category.pk }}">{{ category.name }}<a/>
+
+{% endfor %}

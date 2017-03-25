@@ -16,10 +16,10 @@ class PartCategory(models.Model):
     # Return the parent path of this category
     @property
     def path(self):
-        parent_path = []
-        
         if self.parent:
-            parent_path = self.parent.path + [self.parent]
+            return self.parent.path + [self.parent]
+        else:
+            return []
         
         return parent_path
         

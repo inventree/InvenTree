@@ -13,6 +13,13 @@ def partdetail(request, part_id):
     return render(request, 'part/detail.html',
                   {'part': part})
 
+def categorylist(request):
+    categories = PartCategory.objects.filter(parent = None)
+    
+    return render(request, 'part/categorylist.html',
+                  {'categories': categories
+                  })
+
 def category(request, category_id):
     
     # Find the category
