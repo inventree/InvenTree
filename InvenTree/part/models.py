@@ -9,9 +9,19 @@ class PartCategory(models.Model):
     
     def __str__(self):
         if self.parent:
-            return str(self.parent) + "/" + self.name
+            return "/".join([p.name for p in self.path]) + "/" + self.name
         else:
             return self.name
+        
+    # Return the parent path of this category
+    @property
+    def path(self):
+        parent_path = []
+        
+        if self.parent:
+            parent_path = self.parent.path + [self.parent]
+        
+        return parent_path
         
 class Part(models.Model):
     name = models.CharField(max_length=100)
@@ -26,3 +36,6 @@ class Part(models.Model):
                 name = self.name)
         else:
             return self.name
+        
+
+        
