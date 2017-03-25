@@ -4,6 +4,10 @@
 {% endfor %}
 
 {{ category.name }}
+
+<br><br>Children:<br>
+{% for child in children %}
+<a href="/part/category/{{ child.pk }}">{{ child.name }}</a><br>
 {% endfor %}
 
 <br>

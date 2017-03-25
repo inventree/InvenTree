@@ -18,5 +18,10 @@ def category(request, category_id):
     # Find the category
     cat = get_object_or_404(PartCategory, pk=category_id)
     
+    # Child categories
+    childs = PartCategory.objects.filter(parent = cat.pk)
+    
     return render(request, 'part/category.html',
-                  {'category': cat})
+                  {'category': cat,
+                   'children': childs
+                  })
