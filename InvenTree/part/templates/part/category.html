@@ -1,17 +1,16 @@
-<h1>Category: {{ category.name }}</h1>
-
-<h2>Path: {{ category }}</h2>
-
-<br>
-Path<br>
-
 {# Construct the category path #}
 {% for path_item in category.path %}
-<a href="../{{path_item.pk}}">{{path_item.name}}</a>/
+<a href="../{{ path_item.pk }}">{{ path_item.name }}</a>/
 {% endfor %}
 
-<br>Parts:<br>
+{{ category.name }}
+{% endfor %}
+
+<br>
+<br>
+Parts:
+<br>
 
 {% for part in category.part_set.all %}
-<a href="/part/{{part.pk}}">{{part.name}}</a><br>
+<a href="/part/{{ part.pk }}">{{ part.name }}</a><br>
 {% endfor %}
