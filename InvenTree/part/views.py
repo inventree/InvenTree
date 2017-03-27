@@ -6,14 +6,14 @@ from .models import PartCategory, Part
 def index(request):
     return HttpResponse("Hello world. This is the parts page")
 
-def partdetail(request, part_id):
+def partDetail(request, part_id):
     
     part = get_object_or_404(Part, pk=part_id)
     
     return render(request, 'part/detail.html',
                   {'part': part})
 
-def categorylist(request):
+def categoryList(request):
     categories = PartCategory.objects.filter(parent = None)
     
     return render(request, 'part/categorylist.html',
