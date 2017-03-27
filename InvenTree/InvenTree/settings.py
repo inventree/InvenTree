@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     
     'part.apps.PartConfig',
     'stock.apps.StockConfig',
-    'supplier.apps.SupplierConfig'
+    'supplier.apps.SupplierConfig',
+    'track.apps.TrackConfig'
 ]
 
 MIDDLEWARE = [
