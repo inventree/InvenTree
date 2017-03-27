@@ -6,17 +6,16 @@ from django.core.exceptions import ObjectDoesNotExist
 from InvenTree.models import InvenTreeTree
 
 class PartCategory(InvenTreeTree):    
-    def __str__(self):
-        if self.parent:
-            return "/".join([p.name for p in self.path]) + "/" + self.name
-        else:
-            return self.name
-        
+    """ PartCategory provides hierarchical organization of Part objects.
+    """
+    
     class Meta:
         verbose_name = "Part Category"
         verbose_name_plural = "Part Categories"
         
 class Part(models.Model):
+    """ Represents a """
+    
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=250, blank=True)
     IPN = models.CharField(max_length=100, blank=True)
