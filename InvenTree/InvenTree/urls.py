@@ -24,5 +24,6 @@ urlpatterns = [
     url(r'^part/', include('part.urls')),
     url(r'^supplier/', include('supplier.urls')),
     url(r'^track/', include('track.urls')),
+    url(r'^project/', include('project.urls')),
     url(r'^admin/', admin.site.urls),
 ]
