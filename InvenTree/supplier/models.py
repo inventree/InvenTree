@@ -5,6 +5,9 @@ from django.db import models
 from part.models import Part
 
 class Supplier(models.Model):
+    """ Represents a manufacturer or supplier
+    """
+    
     name = models.CharField(max_length=100)
     URL = models.URLField(blank=True)
     address = models.CharField(max_length=200,
@@ -21,6 +24,12 @@ class Supplier(models.Model):
         return self.name
     
 class SupplierPart(models.Model):
+    """ Represents a unique part as provided by a Supplier
+    Each SupplierPart is identified by a MPN (Manufacturer Part Number)
+    Each SupplierPart is also linked to a Part object
+    - A Part may be available from multiple suppliers
+    """
+    
     supplier = models.ForeignKey(Supplier,
                                  on_delete=models.CASCADE)
     part = models.ForeignKey(Part,
@@ -38,6 +47,11 @@ class SupplierPart(models.Model):
     
     
 class SupplierPriceBreak(models.Model):
+    """ Represents a quantity price break for a SupplierPart
+    - Suppliers can offer discounts at larger quantities
+    - SupplierPart(s) may have zero-or-more associated SupplierPriceBreak(s)
+    """
+    
     part = models.ForeignKey(SupplierPart,
                              on_delete=models.CASCADE)
     quantity = models.IntegerField()
