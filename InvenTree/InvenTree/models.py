@@ -74,7 +74,6 @@ class InvenTreeTree(models.Model):
             else:
                 kids = self.getUniqueChildren()
                 if val in kids:
-                    print("ALREADY A CHILD")
                     return
                 
         super(InvenTreeTree, self).__setattr__(attrname, val)
