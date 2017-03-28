@@ -43,7 +43,6 @@ class InvenTreeTree(models.Model):
                                on_delete=models.CASCADE,
                                blank=True,
                                null=True)
-                               #limit_choices_to={id: getAcceptableParents})
     
     def getUniqueChildren(self, unique=None):
         """ Return a flat set of all child items that exist under this node.
@@ -76,7 +75,7 @@ class InvenTreeTree(models.Model):
         
         available = contents.get_all_objects_for_this_type()
         
-        # List of child IDs 
+        # List of child IDs
         childs = getUniqueChildren()
         
         acceptable = [None]
@@ -101,7 +100,7 @@ class InvenTreeTree(models.Model):
         else:
             return []
     
-    @property 
+    @property
     def path(self):
         if self.parent:
             return "/".join([p.name for p in self.parentpath]) + "/" + self.name
@@ -132,7 +131,7 @@ class InvenTreeTree(models.Model):
             # Null parent is OK
             elif val is None:
                 pass
-            # Ensure that the new parent is not already a child 
+            # Ensure that the new parent is not already a child
             else:
                 kids = self.getUniqueChildren()
                 if val in kids:

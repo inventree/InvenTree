@@ -88,7 +88,7 @@ class PartRevision(models.Model):
     
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=500)
-    revision_date = models.DateField(auto_now_add = True)
+    revision_date = models.DateField(auto_now_add=True)
     
     def __str__(self):
         return self.name

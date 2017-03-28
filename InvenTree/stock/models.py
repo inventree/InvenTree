@@ -25,10 +25,10 @@ class StockItem(models.Model):
     
     status = models.IntegerField(default=ITEM_IN_PROGRESS,
                                  choices=[
-                                 (ITEM_IN_PROGRESS, "In progress"),
-                                 (ITEM_DAMAGED, "Damaged"),
-                                 (ITEM_ATTENTION, "Requires attention"),
-                                 (ITEM_COMPLETE, "Complete")
+                                     (ITEM_IN_PROGRESS, "In progress"),
+                                     (ITEM_DAMAGED, "Damaged"),
+                                     (ITEM_ATTENTION, "Requires attention"),
+                                     (ITEM_COMPLETE, "Complete")
                                  ])
     
     def __str__(self):

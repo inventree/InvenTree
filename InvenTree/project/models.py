@@ -5,6 +5,7 @@ from django.db import models
 from InvenTree.models import InvenTreeTree
 from part.models import Part
 
+
 class ProjectCategory(InvenTreeTree):
     """ ProjectCategory provides hierarchical organization of Project objects.
     Each ProjectCategory can contain zero-or-more child categories,
@@ -14,6 +15,7 @@ class ProjectCategory(InvenTreeTree):
     class Meta:
         verbose_name = "Project Category"
         verbose_name_plural = "Project Categories"
+
 
 class Project(models.Model):
     """ A Project takes multiple Part objects.
@@ -32,6 +34,7 @@ class Project(models.Model):
         """ Return a list of all project parts associated with this project
         """
         return self.projectpart_set.all()
+
 
 class ProjectPart(models.Model):
     """ A project part associates a single part with a project
@@ -56,5 +59,5 @@ class ProjectPart(models.Model):
     
     def __str__(self):
         return "{quan} x {name}".format(
-            name = self.part.name,
-            quan = self.quantity)
+            name=self.part.name,
+            quan=self.quantity)

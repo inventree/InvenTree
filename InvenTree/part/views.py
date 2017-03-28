@@ -6,6 +6,7 @@ from rest_framework import generics
 from .models import PartCategory, Part
 from .serializers import PartSerializer, PartCategorySerializer
 
+
 def index(request):
     return HttpResponse("Hello world. This is the parts page")
 
