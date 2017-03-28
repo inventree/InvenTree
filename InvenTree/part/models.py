@@ -45,7 +45,7 @@ class Part(models.Model):
         return self.stockitem_set.all()
         
     @property
-    def quantity(self):
+    def stock(self):
         """ Return the total stock quantity for this part.
         Part may be stored in multiple locations
         """
