@@ -9,21 +9,25 @@ from .serializers import PartSerializer, PartCategorySerializer
 def index(request):
     return HttpResponse("Hello world. This is the parts page")
 
+
 class PartDetail(generics.RetrieveAPIView):
 
     queryset = Part.objects.all()
     serializer_class = PartSerializer
+
 
 class PartList(generics.ListAPIView):
 
     queryset = Part.objects.all()
     serializer_class = PartSerializer
 
+
 class PartCategoryDetail(generics.RetrieveAPIView):
     
     queryset = PartCategory.objects.all()
     serializer_class = PartCategorySerializer
-    
+
+
 class PartCategoryList(generics.ListAPIView):
 
     queryset = PartCategory.objects.all()
