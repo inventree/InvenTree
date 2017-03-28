@@ -26,7 +26,12 @@ class Project(models.Model):
     
     def __str__(self):
         return self.name
-    
+        
+    @property
+    def projectParts(self):
+        """ Return a list of all project parts associated with this project
+        """
+        return self.projectpart_set.all()
 
 class ProjectPart(models.Model):
     """ A project part associates a single part with a project
@@ -40,9 +45,10 @@ class ProjectPart(models.Model):
     
     part = models.ForeignKey(Part, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    overage = models.FloatField()
+    quantity = models.IntegerField(default=1)
+    overage = models.FloatField(default=0)
     overage_type = models.IntegerField(
+        default=1,
         choices=[
         (OVERAGE_PERCENT, "Percent"),
         (OVERAGE_ABSOLUTE, "Absolute")

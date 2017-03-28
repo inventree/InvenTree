@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db.models import Sum
 from django.core.exceptions import ObjectDoesNotExist
 
 from InvenTree.models import InvenTreeTree
@@ -35,6 +36,43 @@ class Part(models.Model):
     class Meta:
         verbose_name = "Part"
         verbose_name_plural = "Parts"
+        
+    @property
+    def stock_list(self):
+        """ Return a list of all stock objects associated with this part
+        """
+        
+        return self.stockitem_set.all()
+        
+    @property
+    def quantity(self):
+        """ Return the total stock quantity for this part.
+        Part may be stored in multiple locations
+        """
+        
+        stocks = self.stock_list
+        if len(stocks) == 0:
+            return 0
+            
+        result = stocks.aggregate(total=Sum('quantity'))
+        return result['total']
+        
+    @property
+    def projects(self):
+        """ Return a list of unique projects that this part is associated with
+        """
+        
+        project_ids = set()
+        project_parts = self.projectpart_set.all()
+        
+        projects = []
+        
+        for pp in project_parts:
+            if pp.project.id not in project_ids:
+                project_ids.add(pp.project.id)
+                projects.append(pp.project)
+                
+        return projects
 
 class PartRevision(models.Model):
     """ A PartRevision represents a change-notification to a Part

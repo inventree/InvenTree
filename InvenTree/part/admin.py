@@ -4,7 +4,7 @@ from .models import PartCategory, Part
 
 class PartAdmin(admin.ModelAdmin):
     
-    list_display = ('name', 'IPN', 'category')
+    list_display = ('name', 'IPN', 'quantity', 'category')
 
 # Custom form for PartCategory
 class PartCategoryAdmin(admin.ModelAdmin):
