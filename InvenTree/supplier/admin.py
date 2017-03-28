@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Supplier, SupplierPart, Customer
+from .models import Supplier, SupplierPart, Customer, Manufacturer
 
 
 class CompanyAdmin(admin.ModelAdmin):
