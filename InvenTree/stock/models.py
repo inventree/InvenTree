@@ -15,6 +15,20 @@ class StockItem(models.Model):
     quantity = models.IntegerField()
     updated = models.DateField(auto_now=True)
     
+    # Stock status types
+    ITEM_IN_PROGRESS = 0
+    ITEM_DAMAGED = 10
+    ITEM_ATTENTION = 20
+    ITEM_COMPLETE = 50
+    
+    status = models.IntegerField(default=ITEM_IN_PROGRESS,
+                                 choices=[
+                                 (ITEM_IN_PROGRESS, "In progress"),
+                                 (ITEM_DAMAGED, "Damaged"),
+                                 (ITEM_ATTENTION, "Requires attention"),
+                                 (ITEM_COMPLETE, "Complete")
+                                 ])
+    
     def __str__(self):
         return "{n} x {part} @ {loc}".format(
             n = self.quantity,

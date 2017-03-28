@@ -9,7 +9,7 @@ class PartSerializer(serializers.ModelSerializer):
                   'IPN',
                   'description',
                   'category',
-                  'quantity')
+                  'stock')
         
 class PartCategorySerializer(serializers.ModelSerializer):
     class Meta:
