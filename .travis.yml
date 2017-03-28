@@ -4,7 +4,10 @@ python:
 
 before_install:
     - pip install pep8
+    - pip install django
+    
+before_script:
+    - "pep8 --exclude=migrations --ignore=E402,W293,E502 InvenTree"
     
 script:
-    # TODO - Only perform PEP8 checks on files that have been changed in this push / PR
     - find . -name \*.py -exec pep8 --ignore=E402,W293,E501 {} +
