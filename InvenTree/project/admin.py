@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import ProjectCategory, Project, ProjectPart
 
 class ProjectCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name','path')
+    list_display = ('name', 'path', 'description')
     
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'category')
