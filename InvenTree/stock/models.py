@@ -9,7 +9,8 @@ class Warehouse(InvenTreeTree):
     pass
     
 class StockItem(models.Model):
-    part = models.ForeignKey(Part, on_delete=models.CASCADE)
+    part = models.ForeignKey(Part,
+                             on_delete=models.CASCADE)
     location = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     updated = models.DateField(auto_now=True)
