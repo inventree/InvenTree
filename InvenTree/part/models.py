@@ -6,13 +6,15 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from InvenTree.models import InvenTreeTree
 
-class PartCategory(InvenTreeTree):    
+
+class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
     """
     
     class Meta:
         verbose_name = "Part Category"
         verbose_name_plural = "Part Categories"
+        
         
 class Part(models.Model):
     """ Represents a """
@@ -28,8 +30,8 @@ class Part(models.Model):
     def __str__(self):
         if self.IPN:
             return "{name} ({ipn})".format(
-                ipn = self.IPN,
-                name = self.name)
+                ipn=self.IPN,
+                name=self.name)
         else:
             return self.name
         
@@ -74,6 +76,7 @@ class Part(models.Model):
                 
         return projects
 
+
 class PartRevision(models.Model):
     """ A PartRevision represents a change-notification to a Part
     A Part may go through several revisions in its lifetime,
@@ -85,7 +88,7 @@ class PartRevision(models.Model):
     
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=500)
-    revision_date = models.DateField(auto_now_add = True)
+    revision_date = models.DateField(auto_now_add=True)
     
     def __str__(self):
         return self.name

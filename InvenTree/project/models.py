@@ -5,6 +5,7 @@ from django.db import models
 from InvenTree.models import InvenTreeTree
 from part.models import Part
 
+
 class ProjectCategory(InvenTreeTree):
     """ ProjectCategory provides hierarchical organization of Project objects.
     Each ProjectCategory can contain zero-or-more child categories,
@@ -14,6 +15,7 @@ class ProjectCategory(InvenTreeTree):
     class Meta:
         verbose_name = "Project Category"
         verbose_name_plural = "Project Categories"
+
 
 class Project(models.Model):
     """ A Project takes multiple Part objects.
@@ -33,11 +35,12 @@ class Project(models.Model):
         """
         return self.projectpart_set.all()
 
+
 class ProjectPart(models.Model):
     """ A project part associates a single part with a project
     The quantity of parts required for a single-run of that project is stored.
     The overage is the number of extra parts that are generally used for a single run.
-    """    
+    """
     
     # Overage types
     OVERAGE_PERCENT = 0
@@ -50,11 +53,11 @@ class ProjectPart(models.Model):
     overage_type = models.IntegerField(
         default=1,
         choices=[
-        (OVERAGE_PERCENT, "Percent"),
-        (OVERAGE_ABSOLUTE, "Absolute")
+            (OVERAGE_PERCENT, "Percent"),
+            (OVERAGE_ABSOLUTE, "Absolute")
         ])
     
     def __str__(self):
         return "{quan} x {name}".format(
-            name = self.part.name,
-            quan = self.quantity)
+            name=self.part.name,
+            quan=self.quantity)

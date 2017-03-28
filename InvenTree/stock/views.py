@@ -3,10 +3,9 @@ from django.http import HttpResponse
 
 from .models import Warehouse, StockItem
 
+
 def index(request):
     
-    warehouses = Warehouse.objects.filter(parent = None)
+    warehouses = Warehouse.objects.filter(parent=None)
     
-    return render(request, 'stock/index.html',
-                  {'warehouses': warehouses
-                  })
+    return render(request, 'stock/index.html', {'warehouses': warehouses})

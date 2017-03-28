@@ -5,9 +5,11 @@ from django.db import models
 from part.models import Part
 from InvenTree.models import InvenTreeTree
 
+
 class Warehouse(InvenTreeTree):
     pass
     
+
 class StockItem(models.Model):
     part = models.ForeignKey(Part,
                              on_delete=models.CASCADE)
@@ -23,14 +25,14 @@ class StockItem(models.Model):
     
     status = models.IntegerField(default=ITEM_IN_PROGRESS,
                                  choices=[
-                                 (ITEM_IN_PROGRESS, "In progress"),
-                                 (ITEM_DAMAGED, "Damaged"),
-                                 (ITEM_ATTENTION, "Requires attention"),
-                                 (ITEM_COMPLETE, "Complete")
+                                     (ITEM_IN_PROGRESS, "In progress"),
+                                     (ITEM_DAMAGED, "Damaged"),
+                                     (ITEM_ATTENTION, "Requires attention"),
+                                     (ITEM_COMPLETE, "Complete")
                                  ])
     
     def __str__(self):
         return "{n} x {part} @ {loc}".format(
-            n = self.quantity,
-            part = self.part.name,
-            loc = self.location.name)
+            n=self.quantity,
+            part=self.part.name,
+            loc=self.location.name)

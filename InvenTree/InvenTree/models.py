@@ -4,6 +4,7 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 
+
 class Company(models.Model):
     """ Abstract model representing an external company
     """
@@ -22,9 +23,10 @@ class Company(models.Model):
                                blank=True)
     notes = models.CharField(max_length=500,
                              blank=True)
-                             
+
     def __str__(self):
         return self.name
+
 
 class InvenTreeTree(models.Model):
     """ Provides an abstracted self-referencing tree model for data categories.
@@ -41,7 +43,6 @@ class InvenTreeTree(models.Model):
                                on_delete=models.CASCADE,
                                blank=True,
                                null=True)
-                               #limit_choices_to={id: getAcceptableParents})
     
     def getUniqueChildren(self, unique=None):
         """ Return a flat set of all child items that exist under this node.
@@ -58,7 +59,7 @@ class InvenTreeTree(models.Model):
             
         # Some magic to get around the limitations of abstract models
         contents = ContentType.objects.get_for_model(type(self))
-        children = contents.get_all_objects_for_this_type(parent = self.id)
+        children = contents.get_all_objects_for_this_type(parent=self.id)
         
         for child in children:
             child.getUniqueChildren(unique)
@@ -74,7 +75,7 @@ class InvenTreeTree(models.Model):
         
         available = contents.get_all_objects_for_this_type()
         
-        # List of child IDs 
+        # List of child IDs
         childs = getUniqueChildren()
         
         acceptable = [None]
@@ -99,7 +100,7 @@ class InvenTreeTree(models.Model):
         else:
             return []
     
-    @property 
+    @property
     def path(self):
         if self.parent:
             return "/".join([p.name for p in self.parentpath]) + "/" + self.name
@@ -120,7 +121,8 @@ class InvenTreeTree(models.Model):
         """
         
         if attrname == 'parent_id':
-            # If current ID is None, continue (as this object is just being created)
+            # If current ID is None, continue
+            # - This object is just being created
             if self.id is None:
                 pass
             # Parent cannot be set to same ID (this would cause looping)
@@ -129,18 +131,18 @@ class InvenTreeTree(models.Model):
             # Null parent is OK
             elif val is None:
                 pass
-            # Ensure that the new parent is not already a child 
+            # Ensure that the new parent is not already a child
             else:
                 kids = self.getUniqueChildren()
                 if val in kids:
                     return
-                
+
         # Prohibit certain characters from tree node names
         elif attrname == 'name':
             val = val.translate({ord(c): None for c in "!@#$%^&*'\"\\/[]{}<>,|+=~`"})
                 
         super(InvenTreeTree, self).__setattr__(attrname, val)
-        
+
     def __str__(self):
         """ String representation of a category is the full path to that category
         
