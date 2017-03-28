@@ -22,6 +22,7 @@ class Part(models.Model):
     category = models.ForeignKey(PartCategory, on_delete=models.CASCADE)
     minimum_stock = models.IntegerField(default=0)
     units = models.CharField(max_length=20, default="pcs", blank=True)
+    trackable = models.BooleanField(default=False)
     
     def __str__(self):
         if self.IPN:
@@ -35,4 +36,18 @@ class Part(models.Model):
         verbose_name = "Part"
         verbose_name_plural = "Parts"
 
-        
+class PartRevision(models.Model):
+    """ A PartRevision represents a change-notification to a Part
+    A Part may go through several revisions in its lifetime,
+    which should be tracked.
+    UniqueParts can have a single associated PartRevision
+    """
+    
+    part = models.ForeignKey(Part, on_delete=models.CASCADE)
+    
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=500)
+    revision_date = models.DateField(auto_now_add = True)
+    
+    def __str__(self):
+        return self.name
