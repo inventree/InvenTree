@@ -10,4 +10,4 @@ before_script:
     - "pep8 --exclude=migrations --ignore=E402,W293,E501 InvenTree"
     
 script:
-    
+    - python manage.py syncdb --noinput
