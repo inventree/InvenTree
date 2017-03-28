@@ -2,16 +2,16 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-from InvenTree.models import ExternalEntity
+from InvenTree.models import Company
 from part.models import Part
 
-class Supplier(ExternalEntity):
+class Supplier(Company):
     """ Represents a manufacturer or supplier
     """
     
     pass
     
-class Customer(ExternalEntity):
+class Customer(Company):
     pass
     
 class SupplierPart(models.Model):

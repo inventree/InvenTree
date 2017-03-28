@@ -4,8 +4,8 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 
-class ExternalEntity(models.Model):
-    """ Abstract model representing an external person / supplier / etc
+class Company(models.Model):
+    """ Abstract model representing an external company
     """
     
     class Meta:
