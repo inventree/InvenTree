@@ -40,7 +40,7 @@ class ProjectPart(models.Model):
     """ A project part associates a single part with a project
     The quantity of parts required for a single-run of that project is stored.
     The overage is the number of extra parts that are generally used for a single run.
-    """    
+    """
     
     # Overage types
     OVERAGE_PERCENT = 0
