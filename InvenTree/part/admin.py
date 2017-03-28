@@ -2,12 +2,15 @@ from django.contrib import admin
 
 from .models import PartCategory, Part
 
-admin.site.register(Part)
+class PartAdmin(admin.ModelAdmin):
+    
+    list_display = ('name', 'IPN', 'category')
 
 # Custom form for PartCategory
 class PartCategoryAdmin(admin.ModelAdmin):
-    # TODO - Only let valid parents be displayed
-    pass
+
+    list_display = ('name', 'path', 'description')
 
     
+admin.site.register(Part, PartAdmin)
 admin.site.register(PartCategory, PartCategoryAdmin)

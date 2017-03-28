@@ -2,5 +2,11 @@ from django.contrib import admin
 
 from .models import Warehouse, StockItem
 
-admin.site.register(Warehouse)
-admin.site.register(StockItem)
+class WarehouseAdmin(admin.ModelAdmin):
+    list_display = ('name', 'path', 'description')
+    
+class StockItemAdmin(admin.ModelAdmin):
+    list_display = ('part', 'quantity', 'location', 'updated')
+
+admin.site.register(Warehouse, WarehouseAdmin)
+admin.site.register(StockItem, StockItemAdmin)

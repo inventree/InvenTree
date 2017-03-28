@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 
-from part.models import Part
+from part.models import Part, PartRevision
 
 class UniquePart(models.Model):
     """ A unique instance of a Part object.
@@ -12,11 +12,20 @@ class UniquePart(models.Model):
     """
     
     part = models.ForeignKey(Part, on_delete=models.CASCADE)
-    created = models.DateField(auto_now_add=True,
+    
+    revision = models.ForeignKey(PartRevision,
+                                 on_delete=models.CASCADE,
+                                 blank=True,
+                                 null=True)
+    
+    creation_date = models.DateField(auto_now_add=True,
                                editable=False)
     serial = models.IntegerField()
     
     createdBy = models.ForeignKey(User)
+
+    def __str__(self):
+        return self.part.name
     
 class PartTrackingInfo(models.Model):
     """ Single data-point in the life of a UniquePart
