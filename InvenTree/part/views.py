@@ -1,34 +1,30 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
+
+from rest_framework import generics
 
 from .models import PartCategory, Part
+from .serializers import PartSerializer, PartCategorySerializer
 
 def index(request):
     return HttpResponse("Hello world. This is the parts page")
 
-def partDetail(request, part_id):
-    
-    part = get_object_or_404(Part, pk=part_id)
-    
-    return render(request, 'part/detail.html',
-                  {'part': part})
+class PartDetail(generics.RetrieveAPIView):
 
-def categoryList(request):
-    categories = PartCategory.objects.filter(parent = None)
-    
-    return render(request, 'part/categorylist.html',
-                  {'categories': categories
-                  })
+    queryset = Part.objects.all()
+    serializer_class = PartSerializer
 
-def category(request, category_id):
+class PartList(generics.ListAPIView):
+
+    queryset = Part.objects.all()
+    serializer_class = PartSerializer
+
+class PartCategoryDetail(generics.RetrieveAPIView):
     
-    # Find the category
-    cat = get_object_or_404(PartCategory, pk=category_id)
+    queryset = PartCategory.objects.all()
+    serializer_class = PartCategorySerializer
     
-    # Child categories
-    childs = PartCategory.objects.filter(parent = cat.pk)
-    
-    return render(request, 'part/category.html',
-                  {'category': cat,
-                   'children': childs
-                  })
+class PartCategoryList(generics.ListAPIView):
+
+    queryset = PartCategory.objects.all()
+    serializer_class = PartCategorySerializer

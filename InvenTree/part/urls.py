@@ -4,12 +4,14 @@ from . import views
 
 urlpatterns = [
     # Display part detail
-    url(r'^(?P<part_id>[0-9]+)/$', views.partDetail, name='detail'),
-    
-    # Display a list of top-level categories
-    url(r'^category/$', views.categoryList, name='categorylist'),
+    url(r'^(?P<pk>[0-9]+)/$', views.PartDetail.as_view()),
     
     # Display a single part category
-    url(r'^category/(?P<category_id>[0-9]+)/$', views.category, name='category'),
-    url(r'^$', views.index, name='index')
+    url(r'^category/(?P<pk>[0-9]+)/$', views.PartCategoryDetail.as_view()),
+    
+    # Display a list of top-level categories
+    url(r'^category/$', views.PartCategoryList.as_view()),
+    
+    # Display list of parts
+    url(r'^$', views.PartList.as_view())
 ]
