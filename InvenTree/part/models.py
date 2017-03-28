@@ -40,19 +40,12 @@ class Part(models.Model):
         verbose_name_plural = "Parts"
         
     @property
-    def stock_list(self):
-        """ Return a list of all stock objects associated with this part
-        """
-        
-        return self.stockitem_set.all()
-        
-    @property
     def stock(self):
         """ Return the total stock quantity for this part.
         Part may be stored in multiple locations
         """
         
-        stocks = self.stock_list
+        stocks = self.locations.all()
         if len(stocks) == 0:
             return 0
             
@@ -132,8 +125,7 @@ class PartParameter(models.Model):
     """ PartParameter is associated with a single part
     """
     
-    part = models.ForeignKey(Part, on_delete=models.CASCADE)
-    
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters')
     template = models.ForeignKey(PartParameterTemplate)
     
     # Value data
@@ -145,10 +137,10 @@ class PartParameter(models.Model):
     # from being added to the same part
     def save(self, *args, **kwargs):
         params = PartParameter.objects.filter(part=self.part, template=self.template)
-        if len(params) > 0:
-            raise ValidationError("Parameter '{param}' already exists for {part}".format(
-                param=self.template.name,
-                part=self.part.name))
+        if len(params) > 1:
+            return
+        if len(params) == 1 and params[0].id != self.id:
+            return
             
         super(PartParameter, self).save(*args, **kwargs)
     
@@ -157,6 +149,14 @@ class PartParameter(models.Model):
             name=self.template.name,
             val=self.value,
             units=self.template.units)
+            
+    @property
+    def units(self):
+        return self.template.units
+        
+    @property
+    def name(self):
+        return self.template.name
             
     class Meta:
         verbose_name = "Part Parameter"

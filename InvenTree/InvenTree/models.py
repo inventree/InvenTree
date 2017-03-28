@@ -38,7 +38,7 @@ class InvenTreeTree(models.Model):
         abstract = True
     
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=250)
+    description = models.CharField(max_length=250, blank=True)
     parent = models.ForeignKey('self',
                                on_delete=models.CASCADE,
                                blank=True,
@@ -83,7 +83,7 @@ class InvenTreeTree(models.Model):
         for a in available:
             if a.id not in childs:
                 acceptable.append(a)
-                
+                 
         return acceptable
     
     @property
