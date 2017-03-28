@@ -5,9 +5,11 @@ from django.db import models
 from part.models import Part
 from InvenTree.models import InvenTreeTree
 
+
 class Warehouse(InvenTreeTree):
     pass
     
+
 class StockItem(models.Model):
     part = models.ForeignKey(Part,
                              on_delete=models.CASCADE)
@@ -31,6 +33,6 @@ class StockItem(models.Model):
     
     def __str__(self):
         return "{n} x {part} @ {loc}".format(
-            n = self.quantity,
-            part = self.part.name,
-            loc = self.location.name)
+            n=self.quantity,
+            part=self.part.name,
+            loc=self.location.name)

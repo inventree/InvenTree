@@ -14,6 +14,8 @@ class Supplier(Company):
 
 
 class Customer(Company):
+    """ Represents a customer
+    """
     pass
 
 
@@ -31,14 +33,12 @@ class SupplierPart(models.Model):
 
     MPN = models.CharField(max_length=100)
     URL = models.URLField(blank=True)
-    description = models.CharField(max_length=250,
-                                   blank=True)
-
+    description = models.CharField(max_length=250, blank=True)
 
     def __str__(self):
         return "{mpn} - {supplier}".format(
-            mpn = self.MPN,
-            supplier = self.supplier.name)
+            mpn=self.MPN,
+            supplier=self.supplier.name)
 
 
 class SupplierPriceBreak(models.Model):
