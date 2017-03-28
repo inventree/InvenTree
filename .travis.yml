@@ -1,6 +1,6 @@
 language: python
 python:
-    - 3.5
+    - 3.3
 
 before_install:
     - pip install pep8
