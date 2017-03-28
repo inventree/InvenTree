@@ -11,6 +11,12 @@ class Supplier(Company):
     """
     
     pass
+    
+
+class Manufacturer(Company):
+    """ Represents a manfufacturer
+    """
+    pass
 
 
 class Customer(Company):
@@ -26,12 +32,15 @@ class SupplierPart(models.Model):
     - A Part may be available from multiple suppliers
     """
 
-    supplier = models.ForeignKey(Supplier,
-                                 on_delete=models.CASCADE)
     part = models.ForeignKey(Part,
                              on_delete=models.CASCADE)
-
-    MPN = models.CharField(max_length=100)
+    supplier = models.ForeignKey(Supplier,
+                                 on_delete=models.CASCADE)
+    SKU = models.CharField(max_length=100)
+    
+    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True, on_delete=models.CASCADE)
+    MPN = models.CharField(max_length=100, blank=True)
+    
     URL = models.URLField(blank=True)
     description = models.CharField(max_length=250, blank=True)
 
