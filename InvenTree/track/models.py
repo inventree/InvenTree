@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 
+from supplier.models import Customer
 from part.models import Part, PartRevision
 
 class UniquePart(models.Model):
@@ -23,6 +24,26 @@ class UniquePart(models.Model):
     serial = models.IntegerField()
     
     createdBy = models.ForeignKey(User)
+    
+    customer = models.ForeignKey(Customer, blank=True, null=True)
+    
+    # Part status types
+    PART_IN_PROGRESS = 0
+    PART_IN_STOCK = 10
+    PART_SHIPPED = 20
+    PART_RETURNED = 30
+    PART_DAMAGED = 40
+    PART_DESTROYED = 50
+    
+    status = models.IntegerField(default=PART_IN_PROGRESS,
+                                 choices=[
+                                 (PART_IN_PROGRESS, "In progress"),
+                                 (PART_IN_STOCK, "In stock"),
+                                 (PART_SHIPPED, "Shipped"),
+                                 (PART_RETURNED, "Returned"),
+                                 (PART_DAMAGED, "Damaged"),
+                                 (PART_DESTROYED, "Destroyed"),
+                                 ])
 
     def __str__(self):
         return self.part.name

@@ -4,11 +4,36 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 
+class ExternalEntity(models.Model):
+    """ Abstract model representing an external person / supplier / etc
+    """
+    
+    class Meta:
+        abstract = True
+        
+    name = models.CharField(max_length=100)
+    URL = models.URLField(blank=True)
+    address = models.CharField(max_length=200,
+                               blank=True)
+    phone = models.CharField(max_length=50,
+                             blank=True)
+    email = models.EmailField(blank=True)
+    contact = models.CharField(max_length=100,
+                               blank=True)
+    notes = models.CharField(max_length=500,
+                             blank=True)
+                             
+    def __str__(self):
+        return self.name
+
 class InvenTreeTree(models.Model):
     """ Provides an abstracted self-referencing tree model for data categories.
     - Each Category has one parent Category, which can be blank (for a top-level Category).
     - Each Category can have zero-or-more child Categor(y/ies)
     """
+    
+    class Meta:
+        abstract = True
     
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=250)
@@ -124,7 +149,3 @@ class InvenTreeTree(models.Model):
         """
         
         return self.path
-            
-    
-    class Meta:
-        abstract = True

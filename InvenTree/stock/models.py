@@ -18,14 +18,14 @@ class StockItem(models.Model):
     # Stock status types
     ITEM_IN_PROGRESS = 0
     ITEM_DAMAGED = 10
-    ITEM_RETURNED = 20
+    ITEM_ATTENTION = 20
     ITEM_COMPLETE = 50
     
     status = models.IntegerField(default=ITEM_IN_PROGRESS,
                                  choices=[
                                  (ITEM_IN_PROGRESS, "In progress"),
                                  (ITEM_DAMAGED, "Damaged"),
-                                 (ITEM_RETURNED, "Returned"),
+                                 (ITEM_ATTENTION, "Requires attention"),
                                  (ITEM_COMPLETE, "Complete")
                                  ])
     

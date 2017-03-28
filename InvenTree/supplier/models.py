@@ -2,26 +2,17 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+from InvenTree.models import ExternalEntity
 from part.models import Part
 
-class Supplier(models.Model):
+class Supplier(ExternalEntity):
     """ Represents a manufacturer or supplier
     """
     
-    name = models.CharField(max_length=100)
-    URL = models.URLField(blank=True)
-    address = models.CharField(max_length=200,
-                               blank=True)
-    phone = models.CharField(max_length=50,
-                             blank=True)
-    email = models.EmailField(blank=True)
-    contact = models.CharField(max_length=100,
-                               blank=True)
-    notes = models.CharField(max_length=500,
-                             blank=True)
+    pass
     
-    def __str__(self):
-        return self.name
+class Customer(ExternalEntity):
+    pass
     
 class SupplierPart(models.Model):
     """ Represents a unique part as provided by a Supplier
