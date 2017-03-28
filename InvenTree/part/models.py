@@ -20,6 +20,8 @@ class Part(models.Model):
     description = models.CharField(max_length=250, blank=True)
     IPN = models.CharField(max_length=100, blank=True)
     category = models.ForeignKey(PartCategory, on_delete=models.CASCADE)
+    minimum_stock = models.IntegerField(default=0)
+    units = models.CharField(max_length=20, default="pcs", blank=True)
     
     def __str__(self):
         if self.IPN:

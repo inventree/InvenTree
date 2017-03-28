@@ -61,7 +61,7 @@ class InvenTreeTree(models.Model):
         return acceptable
     
     @property
-    def path(self):
+    def parentpath(self):
         """ Return the parent path of this category
         
         Todo:
@@ -70,11 +70,16 @@ class InvenTreeTree(models.Model):
         """
         
         if self.parent:
-            return self.parent.path + [self.parent]
+            return self.parent.parentpath + [self.parent]
         else:
             return []
-        
-        return parent_path
+    
+    @property 
+    def path(self):
+        if self.parent:
+            return "/".join([p.name for p in self.parentpath]) + "/" + self.name
+        else:
+            return self.name
     
     def __setattr__(self, attrname, val):
         """ Custom Attribute Setting function
@@ -118,10 +123,7 @@ class InvenTreeTree(models.Model):
             This is recursive - Make it not so.
         """
         
-        if self.parent:
-            return "/".join([p.name for p in self.path]) + "/" + self.name
-        else:
-            return self.name
+        return self.path
             
     
     class Meta:
