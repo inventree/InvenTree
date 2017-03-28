@@ -8,7 +8,4 @@ def index(request):
     
     warehouses = Warehouse.objects.filter(parent=None)
     
-    return render(request, 'stock/index.html',
-                  {
-                    'warehouses': warehouses
-                  })
+    return render(request, 'stock/index.html', {'warehouses': warehouses})
