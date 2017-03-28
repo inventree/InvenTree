@@ -5,7 +5,9 @@ python:
 before_install:
     - pip install pep8
     - pip install django
+    - pip install djangorestframework
     
 script:
     - "pep8 --exclude=migrations --ignore=E402,W293,E501 InvenTree"
     - python InvenTree/manage.py check
+    - python InvenTree/manage.py test --noinput
