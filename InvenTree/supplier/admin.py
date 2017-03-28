@@ -8,4 +8,5 @@ class CompanyAdmin(admin.ModelAdmin):
 
 admin.site.register(Customer, CompanyAdmin)
 admin.site.register(Supplier, CompanyAdmin)
+admin.site.register(Manufacturer, CompanyAdmin)
 admin.site.register(SupplierPart)
