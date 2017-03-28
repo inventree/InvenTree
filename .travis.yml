@@ -8,4 +8,4 @@ before_install:
     
 script:
     - "pep8 --exclude=migrations --ignore=E402,W293,E501 InvenTree"
-    - python InvenTree/manage.py syncdb --noinput
+    - python InvenTree/manage.py check
