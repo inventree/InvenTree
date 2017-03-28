@@ -9,7 +9,7 @@ class PartAdmin(admin.ModelAdmin):
 # Custom form for PartCategory
 class PartCategoryAdmin(admin.ModelAdmin):
 
-    list_display = ('name', 'path')
+    list_display = ('name', 'path', 'description')
 
     
 admin.site.register(Part, PartAdmin)
