@@ -53,8 +53,8 @@ class ProjectPart(models.Model):
     overage_type = models.IntegerField(
         default=1,
         choices=[
-        (OVERAGE_PERCENT, "Percent"),
-        (OVERAGE_ABSOLUTE, "Absolute")
+            (OVERAGE_PERCENT, "Percent"),
+            (OVERAGE_ABSOLUTE, "Absolute")
         ])
     
     def __str__(self):

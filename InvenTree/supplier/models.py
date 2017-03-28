@@ -54,7 +54,6 @@ class SupplierPriceBreak(models.Model):
     currency = models.CharField(max_length=10,
                                 blank=True)
 
-
     def __str__(self):
         return "{mpn} - {cost}{currency} @ {quan}".format(
             mpn=part.MPN,

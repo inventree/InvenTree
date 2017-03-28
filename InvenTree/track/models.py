@@ -38,12 +38,12 @@ class UniquePart(models.Model):
 
     status = models.IntegerField(default=PART_IN_PROGRESS,
                                  choices=[
-                                 (PART_IN_PROGRESS, "In progress"),
-                                 (PART_IN_STOCK, "In stock"),
-                                 (PART_SHIPPED, "Shipped"),
-                                 (PART_RETURNED, "Returned"),
-                                 (PART_DAMAGED, "Damaged"),
-                                 (PART_DESTROYED, "Destroyed"),
+                                     (PART_IN_PROGRESS, "In progress"),
+                                     (PART_IN_STOCK, "In stock"),
+                                     (PART_SHIPPED, "Shipped"),
+                                     (PART_RETURNED, "Returned"),
+                                     (PART_DAMAGED, "Damaged"),
+                                     (PART_DESTROYED, "Destroyed"),
                                  ])
 
     def __str__(self):

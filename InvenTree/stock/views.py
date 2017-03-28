@@ -10,5 +10,4 @@ def index(request):
     
     return render(request, 'stock/index.html',
                   {'warehouses': warehouses
-                  }
-                 )
+                  })
