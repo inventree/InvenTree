@@ -7,7 +7,7 @@ before_install:
     - pip install django
     
 before_script:
-    - "pep8 --exclude=migrations --ignore=E402,W293,E502 InvenTree"
+    - "pep8 --exclude=migrations --ignore=E402,W293,E501 InvenTree"
     
 script:
-    - find . -name \*.py -exec pep8 --ignore=E402,W293,E501 {} +
+    
