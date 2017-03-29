@@ -51,6 +51,9 @@ class SupplierPart(models.Model):
     # packaging that the part is supplied in, e.g. "Reel"
     packaging = models.CharField(max_length=50, blank=True)
 
+    # lead time for parts that cannot be delivered immediately
+    lead_time = models.DurationField(blank=True, null=True)
+
     def __str__(self):
         return "{mpn} - {supplier}".format(
             mpn=self.MPN,
