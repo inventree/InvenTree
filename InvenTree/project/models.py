@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from django.utils.translation import ugettext as _
 
 from django.db import models
 
@@ -46,16 +47,18 @@ class ProjectPart(models.Model):
     OVERAGE_PERCENT = 0
     OVERAGE_ABSOLUTE = 1
 
+    OVARAGE_CODES = {
+        OVERAGE_PERCENT: _("Percent"),
+        OVERAGE_ABSOLUTE: _("Absolute")
+    }
+
     part = models.ForeignKey(Part, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     overage = models.FloatField(default=0)
     overage_type = models.PositiveIntegerField(
         default=1,
-        choices=[
-            (OVERAGE_PERCENT, "Percent"),
-            (OVERAGE_ABSOLUTE, "Absolute")
-        ])
+        choices=OVARAGE_CODES.items())
 
     def __str__(self):
         return "{quan} x {name}".format(

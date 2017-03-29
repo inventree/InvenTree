@@ -32,7 +32,7 @@ class SupplierPart(models.Model):
     - A Part may be available from multiple suppliers
     """
 
-    part = models.ForeignKey(Part,
+    part = models.ForeignKey(Part,null=True,blank=True,
                              on_delete=models.CASCADE)
     supplier = models.ForeignKey(Supplier,
                                  on_delete=models.CASCADE)
@@ -55,8 +55,8 @@ class SupplierPart(models.Model):
     lead_time = models.DurationField(blank=True, null=True)
 
     def __str__(self):
-        return "{mpn} - {supplier}".format(
-            mpn=self.MPN,
+        return "{sku} - {supplier}".format(
+            sku=self.SKU,
             supplier=self.supplier.name)
 
 
