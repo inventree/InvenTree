@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import PartCategory, Part, PartParameter, PartParameterTemplate
+from .models import PartCategory, Part, PartParameter, PartParameterTemplate, CategoryParameterLink
 
 
 class PartAdmin(admin.ModelAdmin):
@@ -14,7 +14,7 @@ class PartCategoryAdmin(admin.ModelAdmin):
     
 
 class ParameterTemplateAdmin(admin.ModelAdmin):
-    list_display = ('name', 'units', 'category')
+    list_display = ('name', 'units', 'format')
 
 
 class ParameterAdmin(admin.ModelAdmin):
@@ -26,3 +26,4 @@ admin.site.register(PartCategory, PartCategoryAdmin)
 
 admin.site.register(PartParameter, ParameterAdmin)
 admin.site.register(PartParameterTemplate, ParameterTemplateAdmin)
+admin.site.register(CategoryParameterLink)
