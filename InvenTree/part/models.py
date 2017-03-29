@@ -75,7 +75,8 @@ class Part(models.Model):
                 projects.append(pp.project)
                 
         return projects
-    
+
+
 class PartParameterTemplate(models.Model):
     """ A PartParameterTemplate pre-defines a parameter field,
     ready to be copied for use with a given Part.
