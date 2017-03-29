@@ -82,9 +82,6 @@ class PartParameterTemplate(models.Model):
     ready to be copied for use with a given Part.
     A PartParameterTemplate can be optionally associated with a PartCategory
     """
-    
-    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE, blank=True, null=True)
-    
     name = models.CharField(max_length=20)
     description = models.CharField(max_length=100, blank=True)
     units = models.CharField(max_length=10, blank=True)
@@ -92,6 +89,18 @@ class PartParameterTemplate(models.Model):
     default_value = models.CharField(max_length=50, blank=True)
     default_min = models.CharField(max_length=50, blank=True)
     default_max = models.CharField(max_length=50, blank=True)
+    
+    # Parameter format
+    PARAM_NUMERIC = 10
+    PARAM_TEXT = 20
+    PARAM_BOOL = 30
+    
+    format = models.IntegerField(
+        default=PARAM_NUMERIC,
+        choices=[
+            (PARAM_NUMERIC, "Numeric"),
+            (PARAM_TEXT, "Text"),
+            (PARAM_BOOL, "Boolean")])
     
     def __str__(self):
         return "{name} ({units})".format(
@@ -101,7 +110,23 @@ class PartParameterTemplate(models.Model):
     class Meta:
         verbose_name = "Parameter Template"
         verbose_name_plural = "Parameter Templates"
+
+
+class CategoryParameterLink(models.Model):
+    """ Links a PartParameterTemplate to a PartCategory
+    """
+    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE)
+    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE)
     
+    def __str__(self):
+        return "{name} - {cat}".format(
+            name=self.template.name,
+            cat=self.category)
+
+    class Meta:
+        verbose_name = "Category Parameter"
+        verbose_name_plural = "Category Parameters"
+            
 
 class PartParameter(models.Model):
     """ PartParameter is associated with a single part
