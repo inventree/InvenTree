@@ -8,6 +8,6 @@ before_install:
     - pip install djangorestframework
     
 script:
-    - "pep8 --exclude=migrations --ignore=E402,W293,E501 InvenTree"
+    - python pep_check.py
     - python InvenTree/manage.py check
     - python InvenTree/manage.py test --noinput
