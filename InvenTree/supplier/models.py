@@ -44,7 +44,9 @@ class SupplierPart(models.Model):
     URL = models.URLField(blank=True)
     description = models.CharField(max_length=250, blank=True)
 
-    single_price = models.DecimalField(max_digits=10, decimal_places=3)
+    single_price = models.DecimalField(max_digits=10,
+                                       decimal_places=3,
+                                       default=0)
 
     # packaging that the part is supplied in, e.g. "Reel"
     packaging = models.CharField(max_length=50, blank=True)
