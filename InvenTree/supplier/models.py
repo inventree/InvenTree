@@ -31,7 +31,7 @@ class SupplierPart(models.Model):
     - A Part may be available from multiple suppliers
     """
 
-    part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.CASCADE, related_name='supplier_parts')
+    part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.CASCADE)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     SKU = models.CharField(max_length=100)
 
@@ -41,15 +41,20 @@ class SupplierPart(models.Model):
     URL = models.URLField(blank=True)
     description = models.CharField(max_length=250, blank=True)
 
-    single_price = models.DecimalField(max_digits=10,
-                                       decimal_places=3,
-                                       default=0)
+    # Default price for a single unit
+    single_price = models.DecimalField(max_digits=10, decimal_places=3, default=0)
+
+    # Base charge added to order independent of quantity e.g. "Reeling Fee"
+    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0)
 
     # packaging that the part is supplied in, e.g. "Reel"
     packaging = models.CharField(max_length=50, blank=True)
 
     # multiple that the part is provided in
     multiple = models.PositiveIntegerField(default=1)
+
+    # Mimumum number required to order
+    minimum = models.PositiveIntegerField(default=1)
 
     # lead time for parts that cannot be delivered immediately
     lead_time = models.DurationField(blank=True, null=True)
