@@ -62,6 +62,7 @@ class ProjectPart(models.Model):
             name=self.part.name,
             quan=self.quantity)
 
+
 class ProjectRun(models.Model):
     """ A single run of a particular project.
     Tracks the number of 'units' made in the project.
