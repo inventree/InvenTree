@@ -9,7 +9,6 @@ from part.models import Part
 class Supplier(Company):
     """ Represents a manufacturer or supplier
     """
-
     pass
 
 
@@ -32,7 +31,7 @@ class SupplierPart(models.Model):
     - A Part may be available from multiple suppliers
     """
 
-    part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.CASCADE)
+    part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.CASCADE, related_name='supplier_parts')
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     SKU = models.CharField(max_length=100)
 
@@ -49,6 +48,9 @@ class SupplierPart(models.Model):
     # packaging that the part is supplied in, e.g. "Reel"
     packaging = models.CharField(max_length=50, blank=True)
 
+    # multiple that the part is provided in
+    multiple = models.PositiveIntegerField(default=1)
+
     # lead time for parts that cannot be delivered immediately
     lead_time = models.DurationField(blank=True, null=True)
 
@@ -64,12 +66,9 @@ class SupplierPriceBreak(models.Model):
     - SupplierPart(s) may have zero-or-more associated SupplierPriceBreak(s)
     """
 
-    part = models.ForeignKey(SupplierPart,
-                             on_delete=models.CASCADE)
+    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='price_breaks')
     quantity = models.PositiveIntegerField()
     cost = models.DecimalField(max_digits=10, decimal_places=3)
-    currency = models.CharField(max_length=10,
-                                blank=True)
 
     def __str__(self):
         return "{mpn} - {cost}{currency} @ {quan}".format(
