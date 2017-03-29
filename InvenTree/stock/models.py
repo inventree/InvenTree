@@ -18,6 +18,11 @@ class StockItem(models.Model):
     quantity = models.PositiveIntegerField()
     updated = models.DateField(auto_now=True)
 
+    # last time the stock was checked / counted
+    last_checked = models.DateField(blank=True, null=True)
+
+    review_needed = models.BooleanField(default=False)
+
     # Stock status types
     ITEM_IN_STOCK = 10
     ITEM_INCOMING = 15
