@@ -32,10 +32,8 @@ class SupplierPart(models.Model):
     - A Part may be available from multiple suppliers
     """
 
-    part = models.ForeignKey(Part,null=True,blank=True,
-                             on_delete=models.CASCADE)
-    supplier = models.ForeignKey(Supplier,
-                                 on_delete=models.CASCADE)
+    part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.CASCADE)
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     SKU = models.CharField(max_length=100)
 
     manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True, on_delete=models.CASCADE)
