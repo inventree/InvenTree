@@ -42,7 +42,23 @@ class InvenTreeTree(models.Model):
     parent = models.ForeignKey('self',
                                on_delete=models.CASCADE,
                                blank=True,
-                               null=True)
+                               null=True,
+                               related_name='children')
+                               
+    def getUniqueParents(self, unique=None):
+        """ Return a flat set of all parent items that exist above this node.
+        If any parents are repeated (which would be very bad!), the process is halted
+        """
+        
+        if unique is None:
+            unique = set()
+        else:
+            unique.add(self.id)
+        
+        if self.parent and self.parent.id not in unique:
+            self.parent.getUniqueParents(unique)
+            
+        return unique
     
     def getUniqueChildren(self, unique=None):
         """ Return a flat set of all child items that exist under this node.
@@ -60,9 +76,6 @@ class InvenTreeTree(models.Model):
         # Some magic to get around the limitations of abstract models
         contents = ContentType.objects.get_for_model(type(self))
         children = contents.get_all_objects_for_this_type(parent=self.id)
-        
-        for child in children:
-            child.getUniqueChildren(unique)
             
         return unique
     
