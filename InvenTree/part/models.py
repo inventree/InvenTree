@@ -19,12 +19,27 @@ class PartCategory(InvenTreeTree):
 class Part(models.Model):
     """ Represents a """
 
+    # Short name of the part
     name = models.CharField(max_length=100)
+
+    # Longer description of the part (optional)
     description = models.CharField(max_length=250, blank=True)
+
+    # Internal Part Number (optional)
     IPN = models.CharField(max_length=100, blank=True)
+
+    # Part category - all parts must be assigned to a category
     category = models.ForeignKey(PartCategory, on_delete=models.CASCADE)
-    minimum_stock = models.IntegerField(default=0)
+
+    # Minimum "allowed" stock level
+    minimum_stock = models.PositiveIntegerField(default=0)
+
+    # Units of quantity for this part. Default is "pcs"
     units = models.CharField(max_length=20, default="pcs", blank=True)
+
+    # Is this part "trackable"?
+    # Trackable parts can have unique instances which are assigned serial numbers
+    # and can have their movements tracked
     trackable = models.BooleanField(default=False)
 
     def __str__(self):
@@ -54,7 +69,8 @@ class Part(models.Model):
 
     @property
     def projects(self):
-        """ Return a list of unique projects that this part is associated with
+        """ Return a list of unique projects that this part is associated with.
+        A part may be used in zero or more projects.
         """
 
         project_ids = set()
