@@ -16,3 +16,6 @@ To create an initial user account, run the command `python InvenTree/manage.py c
 
 ## Documentation
 For project code documentation, refer to the online [documentation](http://inventree.readthedocs.io/en/latest/) (auto-generated)
+
+## Coding Style
+All python code should conform to the [PEP 8](https://www.python.org/dev/peps/pep-0008/) style guide. Run the *pep_check.py* script which will compare all source (.py) files against the PEP 8 style.
