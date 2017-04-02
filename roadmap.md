@@ -20,3 +20,9 @@ The goals for the initial release should be limited to the following:
 1. Allow users to view all parts in a given category
 1. "" edit parts
 1. "" add new parts
+
+### TODO
+
+Research needed!
+
+django-restful in combination with angular seems the way to go. Extra tools provided via https://github.com/jrief/django-angular
