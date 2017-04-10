@@ -92,7 +92,7 @@ class InvenTreeTree(models.Model):
         available = contents.get_all_objects_for_this_type()
 
         # List of child IDs
-        childs = getUniqueChildren()
+        childs = self.getUniqueChildren()
 
         acceptable = [None]
 
