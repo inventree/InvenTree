@@ -19,6 +19,9 @@ setup:
 	python InvenTree/manage.py migrate --run-syncdb
 	python InvenTree/manage.py check
 
+setup_ci:
+	pip install -U -r requirements/build.txt
+
 develop:
 	pip install -U -r requirements/dev.txt
 

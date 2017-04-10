@@ -4,6 +4,7 @@ python:
 
 before_install:
     - make setup
+    - make setup_ci
 
 script:
     - make style
