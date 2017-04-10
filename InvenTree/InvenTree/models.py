@@ -72,9 +72,13 @@ class InvenTreeTree(models.Model):
 
         unique.add(self.id)
 
+        # commenting this out as it throws errors.
+        # obviously there's some code missing here?
+        """
         # Some magic to get around the limitations of abstract models
         contents = ContentType.objects.get_for_model(type(self))
         children = contents.get_all_objects_for_this_type(parent=self.id)
+        """
 
         return unique
 
