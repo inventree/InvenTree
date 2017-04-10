@@ -1,7 +1,6 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.shortcuts import render
 
-from .models import Warehouse, StockItem
+from .models import Warehouse
 
 
 def index(request):
