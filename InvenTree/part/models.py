@@ -15,6 +15,12 @@ class PartCategory(InvenTreeTree):
         verbose_name = "Part Category"
         verbose_name_plural = "Part Categories"
 
+    @property
+    def parts(self):
+        parts_list = self.part_set.all()
+        print(parts_list)
+        return parts_list
+
 
 class Part(models.Model):
     """ Represents a """
