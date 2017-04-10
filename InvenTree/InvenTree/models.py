@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -73,21 +72,18 @@ class InvenTreeTree(models.Model):
 
         unique.add(self.id)
 
+        # commenting this out as it throws errors.
+        # obviously there's some code missing here?
+        """
         # Some magic to get around the limitations of abstract models
         contents = ContentType.objects.get_for_model(type(self))
         children = contents.get_all_objects_for_this_type(parent=self.id)
+        """
 
         for child in children:
             child.getUniqueChildren(unique)
 
         return unique
-
-    @property
-    def children(self):
-        contents = ContentType.objects.get_for_model(type(self))
-        children = contents.get_all_objects_for_this_type(parent=self.id)
-
-        return children
 
     def getAcceptableParents(self):
         """ Returns a list of acceptable parent items within this model
@@ -99,7 +95,7 @@ class InvenTreeTree(models.Model):
         available = contents.get_all_objects_for_this_type()
 
         # List of child IDs
-        childs = getUniqueChildren()
+        childs = self.getUniqueChildren()
 
         acceptable = [None]
 

@@ -10,6 +10,6 @@ def index(request):
 
 def supplierDetail(request, supplier_id):
     supplier = get_object_or_404(Supplier, pk=supplier_id)
-    
+
     return render(request, 'supplier/detail.html',
                   {'supplier': supplier})

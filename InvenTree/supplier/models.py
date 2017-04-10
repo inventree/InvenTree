@@ -77,7 +77,7 @@ class SupplierPriceBreak(models.Model):
 
     def __str__(self):
         return "{mpn} - {cost}{currency} @ {quan}".format(
-            mpn=part.MPN,
+            mpn=self.part.MPN,
             cost=self.cost,
             currency=self.currency if self.currency else '',
             quan=self.quantity)

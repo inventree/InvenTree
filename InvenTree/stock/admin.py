@@ -10,5 +10,6 @@ class WarehouseAdmin(admin.ModelAdmin):
 class StockItemAdmin(admin.ModelAdmin):
     list_display = ('part', 'quantity', 'location', 'status', 'updated')
 
+
 admin.site.register(Warehouse, WarehouseAdmin)
 admin.site.register(StockItem, StockItemAdmin)
