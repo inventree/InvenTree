@@ -12,7 +12,6 @@ class ParameterSerializer(serializers.ModelSerializer):
 
 
 class PartSerializer(serializers.ModelSerializer):
-
     params = ParameterSerializer(source='parameters', many=True)
 
     class Meta:
