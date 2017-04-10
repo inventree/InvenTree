@@ -20,6 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# TODO: remove this
 SECRET_KEY = 'oc2z%5)lu#jsxi#wpg)700z@v48)2aa_yn(a(3qg!z!fw&tr9f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -40,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     # InvenTree apps
     'part.apps.PartConfig',
     'project.apps.ProjectConfig',
