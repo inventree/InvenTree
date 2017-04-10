@@ -3,11 +3,8 @@ python:
     - 3.4
 
 before_install:
-    - pip install pep8
-    - pip install django
-    - pip install djangorestframework
-    
+    - make setup
+
 script:
-    - python pep_check.py
-    - python InvenTree/manage.py check
-    - python InvenTree/manage.py test --noinput
+    - make style
+    - make test
