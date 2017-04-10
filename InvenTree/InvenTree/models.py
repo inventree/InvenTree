@@ -77,6 +77,9 @@ class InvenTreeTree(models.Model):
         contents = ContentType.objects.get_for_model(type(self))
         children = contents.get_all_objects_for_this_type(parent=self.id)
 
+        for child in children:
+            child.getUniqueChildren(unique)
+
         return unique
 
     @property
