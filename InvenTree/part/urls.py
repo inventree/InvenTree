@@ -3,9 +3,15 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    # part landing page
-    url(r'^$', views.part_index),
+    # Display part detail
+    url(r'^(?P<pk>[0-9]+)/$', views.PartDetail.as_view()),
 
-    # part category landing page
-    url(r'^category/$', views.category_index)
+    # Display a single part category
+    url(r'^category/(?P<pk>[0-9]+)/$', views.PartCategoryDetail.as_view()),
+
+    # Display a list of top-level categories
+    url(r'^category/$', views.PartCategoryList.as_view()),
+
+    # Display list of all parts
+    url(r'^$', views.PartList.as_view())
 ]
