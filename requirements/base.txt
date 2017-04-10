@@ -1,5 +1,2 @@
 Django==1.11
 djangorestframework==3.6.2
-pep8==1.7.0
-pkg-resources==0.0.0
-pytz==2017.2
