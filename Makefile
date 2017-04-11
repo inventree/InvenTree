@@ -13,15 +13,16 @@ style:
 test:
 	python InvenTree/manage.py test --noinput
 
-setup:
-	# TODO: replace this with a proper setup.py
-	pip install -U -r requirements/base.txt
-	migrate
-
 migrate:
 	python InvenTree/manage.py makemigrations
 	python InvenTree/manage.py migrate --run-syncdb
 	python InvenTree/manage.py check
+
+install:
+	# TODO: replace this with a proper setup.py
+	pip install -U -r requirements/base.txt
+	
+setup: install migrate
 
 setup_ci:
 	pip install -U -r requirements/build.txt
