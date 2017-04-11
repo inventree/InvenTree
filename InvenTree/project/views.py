@@ -2,8 +2,9 @@ from rest_framework import generics
 
 from .models import ProjectCategory, Project, ProjectPart
 from .serializers import ProjectBriefSerializer, ProjectDetailSerializer
-from .serializers import ProjectCategoryBriefSerializer, ProjectCategoryDetailSerializer
+from .serializers import ProjectCategoryDetailSerializer
 from .serializers import ProjectPartSerializer
+
 
 class ProjectDetail(generics.RetrieveAPIView):
 
@@ -15,7 +16,6 @@ class ProjectList(generics.ListAPIView):
 
     queryset = Project.objects.all()
     serializer_class = ProjectBriefSerializer
-
 
 
 class ProjectCategoryDetail(generics.RetrieveAPIView):

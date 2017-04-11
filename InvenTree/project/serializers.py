@@ -2,8 +2,6 @@ from rest_framework import serializers
 
 from .models import ProjectCategory, Project, ProjectPart
 
-from part.serializers import PartBriefSerializer
-
 
 class ProjectPartSerializer(serializers.ModelSerializer):
 
@@ -20,7 +18,6 @@ class ProjectPartSerializer(serializers.ModelSerializer):
 class ProjectBriefSerializer(serializers.ModelSerializer):
     """ Serializer for displaying brief overview of a project
     """
-
 
     class Meta:
         model = Project
@@ -46,7 +43,7 @@ class ProjectCategoryBriefSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProjectCategory
-        fields = ('pk','name','description')
+        fields = ('pk', 'name', 'description')
 
 
 class ProjectCategoryDetailSerializer(serializers.ModelSerializer):
