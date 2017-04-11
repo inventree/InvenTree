@@ -16,8 +16,7 @@ class PartCategory(InvenTreeTree):
 
     @property
     def parts(self):
-        parts_list = self.part_set.all()
-        return parts_list
+        return self.part_set.all()
 
 
 class Part(models.Model):
