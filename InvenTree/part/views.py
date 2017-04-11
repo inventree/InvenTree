@@ -1,6 +1,4 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, Http404
-
+from django.http import HttpResponse
 from rest_framework import generics
 
 from .models import PartCategory, Part
@@ -11,8 +9,10 @@ from .serializers import PartCategoryBriefSerializer, PartCategoryDetailSerializ
 def part_index(request):
     return HttpResponse("Hello world. This is the parts page")
 
+
 def category_index(request):
     return HttpResponse("This is the category page")
+
 
 class PartDetail(generics.RetrieveAPIView):
 

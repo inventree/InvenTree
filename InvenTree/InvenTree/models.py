@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -99,7 +98,7 @@ class InvenTreeTree(models.Model):
         available = contents.get_all_objects_for_this_type()
 
         # List of child IDs
-        childs = getUniqueChildren()
+        childs = self.getUniqueChildren()
 
         acceptable = [None]
 

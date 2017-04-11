@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.db.models import Sum
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from InvenTree.models import InvenTreeTree
 
@@ -116,7 +115,7 @@ class PartParameterTemplate(models.Model):
         PARAM_BOOL: _("Bool")
     }
 
-    format = models.IntegerField(
+    format = models.PositiveIntegerField(
         default=PARAM_NUMERIC,
         choices=PARAM_TYPE_CODES.items())
 

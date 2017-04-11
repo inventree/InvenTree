@@ -16,6 +16,10 @@ test:
 setup:
 	# TODO: replace this with a proper setup.py
 	pip install -U -r requirements/base.txt
+	migrate
+
+migrate:
+	python InvenTree/manage.py makemigrations
 	python InvenTree/manage.py migrate --run-syncdb
 	python InvenTree/manage.py check
 
