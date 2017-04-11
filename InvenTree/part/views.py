@@ -2,7 +2,7 @@ from rest_framework import generics
 
 from .models import PartCategory, Part, PartParameter
 from .serializers import PartSerializer
-from .serializers import PartCategoryBriefSerializer, PartCategoryDetailSerializer
+from .serializers import PartCategoryDetailSerializer
 from .serializers import PartParameterSerializer
 
 
