@@ -17,7 +17,6 @@ class PartCategory(InvenTreeTree):
     @property
     def parts(self):
         parts_list = self.part_set.all()
-        print(parts_list)
         return parts_list
 
 
