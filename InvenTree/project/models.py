@@ -17,6 +17,10 @@ class ProjectCategory(InvenTreeTree):
         verbose_name = "Project Category"
         verbose_name_plural = "Project Categories"
 
+    @property
+    def projects(self):
+        return self.project_set.all()
+
 
 class Project(models.Model):
     """ A Project takes multiple Part objects.
@@ -57,7 +61,7 @@ class ProjectPart(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     overage = models.FloatField(default=0)
     overage_type = models.PositiveIntegerField(
-        default=1,
+        default=OVERAGE_ABSOLUTE,
         choices=OVARAGE_CODES.items())
 
     def __str__(self):
