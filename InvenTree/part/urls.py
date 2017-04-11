@@ -6,6 +6,9 @@ urlpatterns = [
     # Single part detail
     url(r'^(?P<pk>[0-9]+)/$', views.PartDetail.as_view()),
 
+    # Part parameters list
+    url(r'^(?P<pk>[0-9]+)/parameters/$', views.PartParameters.as_view()),
+
     # Part category detail
     url(r'^category/(?P<pk>[0-9]+)/$', views.PartCategoryDetail.as_view()),
 

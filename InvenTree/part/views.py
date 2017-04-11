@@ -1,20 +1,30 @@
 from rest_framework import generics
 
-from .models import PartCategory, Part
-from .serializers import PartBriefSerializer, PartDetailSerializer
+from .models import PartCategory, Part, PartParameter
+from .serializers import PartSerializer
 from .serializers import PartCategoryBriefSerializer, PartCategoryDetailSerializer
+from .serializers import PartParameterSerializer
 
 
 class PartDetail(generics.RetrieveAPIView):
 
     queryset = Part.objects.all()
-    serializer_class = PartDetailSerializer
+    serializer_class = PartSerializer
+
+
+class PartParameters(generics.ListAPIView):
+
+    def get_queryset(self):
+        part_id = self.kwargs['pk']
+        return PartParameter.objects.filter(part=part_id)
+
+    serializer_class = PartParameterSerializer
 
 
 class PartList(generics.ListAPIView):
 
     queryset = Part.objects.all()
-    serializer_class = PartBriefSerializer
+    serializer_class = PartSerializer
 
 
 class PartCategoryDetail(generics.RetrieveAPIView):
