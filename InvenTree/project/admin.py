@@ -12,7 +12,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class ProjectPartAdmin(admin.ModelAdmin):
-    list_display = ('part', 'project', 'quantity')
+    list_display = ('part', 'project', 'quantity', 'output')
 
 
 class ProjectRunAdmin(admin.ModelAdmin):

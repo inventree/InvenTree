@@ -12,7 +12,8 @@ class ProjectPartSerializer(serializers.ModelSerializer):
                   'project',
                   'quantity',
                   'overage',
-                  'overage_type')
+                  'overage_type',
+                  'output')
 
 
 class ProjectBriefSerializer(serializers.ModelSerializer):
