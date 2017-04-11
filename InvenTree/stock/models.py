@@ -6,15 +6,21 @@ from part.models import Part
 from InvenTree.models import InvenTreeTree
 
 
-class Warehouse(InvenTreeTree):
-    pass
+class StockLocation(InvenTreeTree):
+    """ Organization tree for StockItem objects
+    """
+
+    @property
+    def items(self):
+        stock_list = self.stockitem_set.all()
+        return stock_list
 
 
 class StockItem(models.Model):
     part = models.ForeignKey(Part,
                              on_delete=models.CASCADE,
                              related_name='locations')
-    location = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
+    location = models.ForeignKey(StockLocation, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     updated = models.DateField(auto_now=True)
 
