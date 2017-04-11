@@ -39,4 +39,4 @@ class PartCategoryList(generics.ListAPIView):
     Categories are considered "top-level" if they do not have a parent
     """
     queryset = PartCategory.objects.filter(parent=None)
-    serializer_class = PartCategoryBriefSerializer
+    serializer_class = PartCategoryDetailSerializer
