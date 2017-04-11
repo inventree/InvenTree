@@ -1,7 +1,7 @@
-# InvenTree
-Open Source Inventory Management System
-
 [![Build Status](https://travis-ci.org/inventree/InvenTree.svg?branch=master)](https://travis-ci.org/inventree/InvenTree)
+
+# InvenTree 
+InvenTree is an open-source Inventory Management System which provides powerful low-level stock control and part tracking. The core of the InvenTree system is a Python/Django database backend which provides an admin interface (web-based) and a JSON API for interaction with external interfaces and applications.
 
 ## Installation
 It is recommended to set up a clean Python 3.4+ virtual environment first:
