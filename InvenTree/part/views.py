@@ -1,17 +1,8 @@
-from django.http import HttpResponse
 from rest_framework import generics
 
 from .models import PartCategory, Part
 from .serializers import PartBriefSerializer, PartDetailSerializer
 from .serializers import PartCategoryBriefSerializer, PartCategoryDetailSerializer
-
-
-def part_index(request):
-    return HttpResponse("Hello world. This is the parts page")
-
-
-def category_index(request):
-    return HttpResponse("This is the category page")
 
 
 class PartDetail(generics.RetrieveAPIView):
