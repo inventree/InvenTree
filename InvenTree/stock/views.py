@@ -1,11 +1,33 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from rest_framework import generics
 
-from .models import Warehouse, StockItem
+from .models import StockLocation, StockItem
+
+from .serializers import StockItemSerializer, LocationDetailSerializer
 
 
-def index(request):
-    
-    warehouses = Warehouse.objects.filter(parent=None)
-    
-    return render(request, 'stock/index.html', {'warehouses': warehouses})
+class PartStockDetail(generics.ListAPIView):
+    """ Return a list of all stockitems for a given part
+    """
+
+    serializer_class = StockItemSerializer
+
+    def get_queryset(self):
+        part_id = self.kwargs['part']
+        return StockItem.objects.filter(part=part_id)
+
+
+class LocationDetail(generics.RetrieveAPIView):
+    """ Return information on a specific stock location
+    """
+
+    queryset = StockLocation.objects.all()
+    serializer_class = LocationDetailSerializer
+
+
+class LocationList(generics.ListAPIView):
+    """ Return a list of top-level locations
+    Locations are considered "top-level" if they do not have a parent
+    """
+
+    queryset = StockLocation.objects.filter(parent=None)
+    serializer_class = LocationDetailSerializer

@@ -1,20 +1,24 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, Http404
-
 from rest_framework import generics
 
-from .models import PartCategory, Part
-from .serializers import PartSerializer, PartCategorySerializer
-
-
-def index(request):
-    return HttpResponse("Hello world. This is the parts page")
+from .models import PartCategory, Part, PartParameter
+from .serializers import PartSerializer
+from .serializers import PartCategoryDetailSerializer
+from .serializers import PartParameterSerializer
 
 
 class PartDetail(generics.RetrieveAPIView):
 
     queryset = Part.objects.all()
     serializer_class = PartSerializer
+
+
+class PartParameters(generics.ListAPIView):
+
+    def get_queryset(self):
+        part_id = self.kwargs['pk']
+        return PartParameter.objects.filter(part=part_id)
+
+    serializer_class = PartParameterSerializer
 
 
 class PartList(generics.ListAPIView):
@@ -24,12 +28,15 @@ class PartList(generics.ListAPIView):
 
 
 class PartCategoryDetail(generics.RetrieveAPIView):
-    
+    """ Return information on a single PartCategory
+    """
     queryset = PartCategory.objects.all()
-    serializer_class = PartCategorySerializer
+    serializer_class = PartCategoryDetailSerializer
 
 
 class PartCategoryList(generics.ListAPIView):
-
-    queryset = PartCategory.objects.all()
-    serializer_class = PartCategorySerializer
+    """ Return a list of all top-level part categories.
+    Categories are considered "top-level" if they do not have a parent
+    """
+    queryset = PartCategory.objects.filter(parent=None)
+    serializer_class = PartCategoryDetailSerializer

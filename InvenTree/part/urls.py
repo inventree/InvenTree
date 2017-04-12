@@ -3,15 +3,18 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    # Display part detail
+    # Single part detail
     url(r'^(?P<pk>[0-9]+)/$', views.PartDetail.as_view()),
-    
-    # Display a single part category
+
+    # Part parameters list
+    url(r'^(?P<pk>[0-9]+)/parameters/$', views.PartParameters.as_view()),
+
+    # Part category detail
     url(r'^category/(?P<pk>[0-9]+)/$', views.PartCategoryDetail.as_view()),
-    
-    # Display a list of top-level categories
+
+    # List of top-level categories
     url(r'^category/$', views.PartCategoryList.as_view()),
-    
-    # Display list of parts
+
+    # List of all parts
     url(r'^$', views.PartList.as_view())
 ]

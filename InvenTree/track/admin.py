@@ -4,6 +4,7 @@ from .models import UniquePart
 
 
 class UniquePartAdmin(admin.ModelAdmin):
-    list_display = ('part', 'revision', 'serial', 'creation_date')
+    list_display = ('part', 'revision', 'serial', 'status', 'creation_date')
+
 
 admin.site.register(UniquePart, UniquePartAdmin)

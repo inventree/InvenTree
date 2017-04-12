@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-
+from django.utils.translation import ugettext as _
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -36,15 +36,16 @@ class UniquePart(models.Model):
     PART_DAMAGED = 40
     PART_DESTROYED = 50
 
-    status = models.IntegerField(default=PART_IN_PROGRESS,
-                                 choices=[
-                                     (PART_IN_PROGRESS, "In progress"),
-                                     (PART_IN_STOCK, "In stock"),
-                                     (PART_SHIPPED, "Shipped"),
-                                     (PART_RETURNED, "Returned"),
-                                     (PART_DAMAGED, "Damaged"),
-                                     (PART_DESTROYED, "Destroyed"),
-                                 ])
+    PART_STATUS_CODES = {
+        PART_IN_PROGRESS: _("In progress"),
+        PART_IN_STOCK: _("In stock"),
+        PART_SHIPPED: _("Shipped"),
+        PART_RETURNED: _("Returned"),
+        PART_DAMAGED: _("Damaged"),
+        PART_DESTROYED: _("Destroyed")
+    }
+
+    status = models.IntegerField(default=PART_IN_PROGRESS, choices=PART_STATUS_CODES.items())
 
     def __str__(self):
         return self.part.name
