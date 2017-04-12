@@ -36,10 +36,10 @@ class LocationDetailSerializer(serializers.ModelSerializer):
     """
 
     # List of all stock items in this location
-    items = StockItemSerializer(many=True)
+    items = StockItemSerializer(many=True, read_only=True)
 
     # List of all child locations under this one
-    children = LocationBriefSerializer(many=True)
+    children = LocationBriefSerializer(many=True, read_only=True)
 
     class Meta:
         model = StockLocation
