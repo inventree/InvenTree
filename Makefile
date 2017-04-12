@@ -11,6 +11,7 @@ style:
 	flake8
 
 test:
+	python InvenTree/manage.py check
 	python InvenTree/manage.py test --noinput
 
 migrate:
@@ -21,7 +22,7 @@ migrate:
 install:
 	# TODO: replace this with a proper setup.py
 	pip install -U -r requirements/base.txt
-	
+
 setup: install migrate
 
 setup_ci:
