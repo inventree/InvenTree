@@ -11,25 +11,11 @@ class ProjectPartSerializer(serializers.ModelSerializer):
                   'part',
                   'project',
                   'quantity',
-                  'overage',
-                  'overage_type',
                   'output')
 
 
-class ProjectBriefSerializer(serializers.ModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     """ Serializer for displaying brief overview of a project
-    """
-
-    class Meta:
-        model = Project
-        fields = ('pk',
-                  'name',
-                  'description',
-                  'category')
-
-
-class ProjectDetailSerializer(serializers.ModelSerializer):
-    """ Serializer for detailed project information
     """
 
     class Meta:
@@ -49,9 +35,9 @@ class ProjectCategoryBriefSerializer(serializers.ModelSerializer):
 
 class ProjectCategoryDetailSerializer(serializers.ModelSerializer):
 
-    projects = ProjectBriefSerializer(many=True)
+    projects = ProjectSerializer(many=True, read_only=True)
 
-    children = ProjectCategoryBriefSerializer(many=True)
+    children = ProjectCategoryBriefSerializer(many=True, read_only=True)
 
     class Meta:
         model = ProjectCategory
