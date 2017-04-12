@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^track/', include('track.urls')),
     url(r'^project/', include('project.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
