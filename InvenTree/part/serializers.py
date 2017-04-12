@@ -44,10 +44,10 @@ class PartCategoryBriefSerializer(serializers.ModelSerializer):
 class PartCategoryDetailSerializer(serializers.ModelSerializer):
 
     # List of parts in this category
-    parts = PartSerializer(many=True)
+    parts = PartSerializer(many=True, read_only=True)
 
     # List of child categories under this one
-    children = PartCategoryBriefSerializer(many=True)
+    children = PartCategoryBriefSerializer(many=True, read_only=True)
 
     class Meta:
         model = PartCategory
