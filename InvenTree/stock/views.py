@@ -5,7 +5,7 @@ from .models import StockLocation, StockItem
 from .serializers import StockItemSerializer, LocationDetailSerializer
 
 
-class PartStockDetail(generics.ListAPIView):
+class PartStockDetail(generics.ListCreateAPIView):
     """ Return a list of all stockitems for a given part
     """
 
