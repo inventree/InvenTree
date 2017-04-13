@@ -6,7 +6,7 @@ from .serializers import ProjectCategoryDetailSerializer
 from .serializers import ProjectPartSerializer
 
 
-class ProjectDetail(generics.RetrieveUpdateAPIView):
+class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     """ Project details
     """
 
@@ -27,7 +27,7 @@ class NewProjectCategory(generics.CreateAPIView):
     """
     serializer_class = ProjectCategoryDetailSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    
+
 
 class ProjectCategoryDetail(generics.RetrieveUpdateAPIView):
 
