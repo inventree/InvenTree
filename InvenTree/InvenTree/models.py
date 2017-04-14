@@ -173,3 +173,19 @@ class InvenTreeTree(models.Model):
         """
 
         return self.path
+
+
+def FilterChildren(queryset, parent):
+    """ Filter a queryset, limit to only objects that are a child of the given parent
+    """
+
+    if not parent:
+        return queryset
+    elif isinstance(parent,str) and parent.lower() in ['none', 'false', 'null', 'top', '0']:
+        return queryset.filter(parent=None)
+    else:
+        try:
+            parent_id = int(parent)
+            return queryset.filter(parent=parent_id)
+        except:
+            return queryset

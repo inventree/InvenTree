@@ -10,10 +10,10 @@ from . import views
 categorypatterns = [
 
     # Part category detail
-    url(r'^category/(?P<pk>[0-9]+)/$', views.PartCategoryDetail.as_view()),
+    url(r'^(?P<pk>[0-9]+)/?$', views.PartCategoryDetail.as_view()),
 
     # List of top-level categories
-    url(r'^$', views.PartCategoryList.as_view())
+    url(r'^\?*[^/]*/?$', views.PartCategoryList.as_view())
 ]
 
 partparampatterns = [
@@ -47,13 +47,13 @@ urlpatterns = [
     url(r'^(?P<pk>[0-9]+)/$', views.PartDetail.as_view()),
 
     # Part categories
-    url(r'^category/', views.PartCategoryList.as_view()),
+    url(r'^category/?', include(categorypatterns)),
 
     # Part parameters
-    url(r'^parameters/', include(partparampatterns)),
+    url(r'^parameters/?', include(partparampatterns)),
 
     # Part templates
-    url(r'^templates/', include(parttemplatepatterns)),
+    url(r'^templates/?', include(parttemplatepatterns)),
 
     # List parts with optional filters
     url(r'^\?*[^/]*/?$', views.PartList.as_view()),

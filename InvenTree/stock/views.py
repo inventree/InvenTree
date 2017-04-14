@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions
 import django_filters
 
+from InvenTree.models import FilterChildren
 from .models import StockLocation, StockItem
 from .serializers import StockItemSerializer, LocationDetailSerializer
 
@@ -70,16 +71,7 @@ class LocationList(generics.ListCreateAPIView):
 
         locations = StockLocation.objects.all()
 
-        parent_id = params.get('parent', None)
-
-        if parent_id and parent_id.lower() in ['none', 'false', 'null', 'top']:
-            locations = locations.filter(parent=None)
-        else:
-            try:
-                parent_id_num = int(parent_id)
-                locations = locations.filter(parent=parent_id_num)
-            except:
-                pass
+        locations = FilterChildren(locations, params.get('parent', None))
 
         return locations
 

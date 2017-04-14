@@ -43,21 +43,13 @@ class PartCategoryBriefSerializer(serializers.ModelSerializer):
 
 class PartCategoryDetailSerializer(serializers.ModelSerializer):
 
-    # List of parts in this category
-    parts = PartSerializer(many=True, read_only=True)
-
-    # List of child categories under this one
-    children = PartCategoryBriefSerializer(many=True, read_only=True)
-
     class Meta:
         model = PartCategory
         fields = ('pk',
                   'name',
                   'description',
                   'parent',
-                  'path',
-                  'children',
-                  'parts')
+                  'path')
 
 
 class PartTemplateSerializer(serializers.ModelSerializer):
