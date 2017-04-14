@@ -41,11 +41,37 @@ class Project(models.Model):
         return self.projectpart_set.all()
 
 
+class ProjectPartManager(models.Manager):
+    """ Manager for handling ProjectParts
+    """
+
+    def create(self, *args, **kwargs):
+        """ Test for validity of new ProjectPart before actually creating it.
+        If a ProjectPart already exists that references the same:
+        a) Part
+        b) Project
+        then return THAT project instead.
+        """
+
+        project_id = kwargs['project']
+        part_id = kwargs['part']
+
+        try:
+            project_parts = self.filter(project=project_id, part=part_id)
+            return project_parts[0]
+        except:
+            pass
+
+        return super(ProjectPartManager, self).create(*args, **kwargs)
+
+
 class ProjectPart(models.Model):
     """ A project part associates a single part with a project
     The quantity of parts required for a single-run of that project is stored.
     The overage is the number of extra parts that are generally used for a single run.
     """
+
+    objects = ProjectPartManager()
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
