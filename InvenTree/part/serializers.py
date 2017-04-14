@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Part, PartCategory, PartParameter
+from .models import Part, PartCategory, PartParameter, PartParameterTemplate
 
 
 class PartParameterSerializer(serializers.ModelSerializer):
@@ -58,3 +58,13 @@ class PartCategoryDetailSerializer(serializers.ModelSerializer):
                   'path',
                   'children',
                   'parts')
+
+
+class PartTemplateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartParameterTemplate
+        fields = ('pk',
+                  'name',
+                  'units',
+                  'format')

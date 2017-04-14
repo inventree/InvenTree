@@ -1,9 +1,10 @@
 from rest_framework import generics, permissions
 
-from .models import PartCategory, Part, PartParameter
+from .models import PartCategory, Part, PartParameter, PartParameterTemplate
 from .serializers import PartSerializer
 from .serializers import PartCategoryDetailSerializer
 from .serializers import PartParameterSerializer
+from .serializers import PartTemplateSerializer
 
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -14,13 +15,33 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class PartParameters(generics.ListCreateAPIView):
+class PartParamList(generics.ListCreateAPIView):
     """ Return all parameters associated with a particular part
     """
     def get_queryset(self):
-        part_id = self.kwargs['pk']
-        return PartParameter.objects.filter(part=part_id)
+        part_id = self.request.query_params.get('part', None)
 
+        if part_id:
+            return PartParameter.objects.filter(part=part_id)
+        else:
+            return PartParameter.objects.all()
+
+    serializer_class = PartParameterSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def create(self, request, *args, **kwargs):
+        # Ensure part link is set correctly
+        part_id = self.request.query_params.get('part', None)
+        if part_id:
+            request.data['part'] = part_id
+        return super(PartParamList, self).create(request, *args, **kwargs)
+
+
+class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ Detail view of a single PartParameter
+    """
+
+    queryset = PartParameter.objects.all()
     serializer_class = PartParameterSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
@@ -32,7 +53,7 @@ class PartList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class PartCategoryDetail(generics.RetrieveUpdateAPIView):
+class PartCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """ Return information on a single PartCategory
     """
     queryset = PartCategory.objects.all()
@@ -46,4 +67,18 @@ class PartCategoryList(generics.ListCreateAPIView):
     """
     queryset = PartCategory.objects.filter(parent=None)
     serializer_class = PartCategoryDetailSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class PartTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = PartParameterTemplate.objects.all()
+    serializer_class = PartTemplateSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class PartTemplateList(generics.ListCreateAPIView):
+
+    queryset = PartParameterTemplate.objects.all()
+    serializer_class = PartTemplateSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
