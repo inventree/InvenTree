@@ -7,12 +7,14 @@ from rest_framework.decorators import api_view
 
 admin.site.site_header = "InvenTree Admin"
 
+
 @api_view()
 def Inventree404(self):
     """ Supplied URL is invalid
     """
     content = {'detail': 'Malformed API URL'}
     return Response(content, status=status.HTTP_404_NOT_FOUND)
+
 
 urlpatterns = [
     url(r'^stock/', include('stock.urls')),
