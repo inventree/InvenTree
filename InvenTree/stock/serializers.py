@@ -20,18 +20,7 @@ class StockItemSerializer(serializers.ModelSerializer):
                   'expected_arrival')
 
 
-class LocationBriefSerializer(serializers.ModelSerializer):
-    """ Brief information about a stock location
-    """
-
-    class Meta:
-        model = StockLocation
-        fields = ('pk',
-                  'name',
-                  'description')
-
-
-class LocationDetailSerializer(serializers.ModelSerializer):
+class LocationSerializer(serializers.ModelSerializer):
     """ Detailed information about a stock location
     """
 

@@ -3,7 +3,7 @@ import django_filters
 
 from InvenTree.models import FilterChildren
 from .models import StockLocation, StockItem
-from .serializers import StockItemSerializer, LocationDetailSerializer
+from .serializers import StockItemSerializer, LocationSerializer
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -51,7 +51,7 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     """
 
     queryset = StockLocation.objects.all()
-    serializer_class = LocationDetailSerializer
+    serializer_class = LocationSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
@@ -69,5 +69,5 @@ class LocationList(generics.ListCreateAPIView):
 
         return locations
 
-    serializer_class = LocationDetailSerializer
+    serializer_class = LocationSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
