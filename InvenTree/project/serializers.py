@@ -26,20 +26,10 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
 
 class ProjectCategorySerializer(serializers.HyperlinkedModelSerializer):
 
-    children = serializers.HyperlinkedRelatedField(many=True,
-                                                   read_only=True,
-                                                   view_name='projectcategory-detail')
-
-    projects = serializers.HyperlinkedRelatedField(many=True,
-                                                   read_only=True,
-                                                   view_name='project-detail')
-
     class Meta:
         model = ProjectCategory
         fields = ('url',
                   'name',
                   'description',
                   'parent',
-                  'path',
-                  'children',
-                  'projects')
+                  'path')
