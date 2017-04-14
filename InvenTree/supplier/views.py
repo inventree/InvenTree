@@ -1,15 +1,74 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from rest_framework import generics, permissions
 
-from .models import Supplier
-
-
-def index(request):
-    return HttpResponse("This is the suppliers page")
+from .models import Supplier, SupplierPart, SupplierPriceBreak
+from .serializers import SupplierSerializer
+from .serializers import SupplierPartSerializer
+from .serializers import SupplierPriceBreakSerializer
 
 
-def supplierDetail(request, supplier_id):
-    supplier = get_object_or_404(Supplier, pk=supplier_id)
-    
-    return render(request, 'supplier/detail.html',
-                  {'supplier': supplier})
+class SupplierDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class SupplierList(generics.ListCreateAPIView):
+
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = SupplierPart.objects.all()
+    serializer_class = SupplierPartSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class SupplierPartList(generics.ListCreateAPIView):
+
+    serializer_class = SupplierPartSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        parts = SupplierPart.objects.all()
+        params = self.request.query_params
+
+        supplier_id = params.get('supplier', None)
+        if supplier_id:
+            parts = parts.filter(supplier=supplier_id)
+
+        part_id = params.get('part', None)
+        if part_id:
+            parts = parts.filter(part=part_id)
+
+        manu_id = params.get('manufacturer', None)
+        if manu_id:
+            parts = parts.filter(manufacturer=manu_id)
+
+        return parts
+
+
+class SupplierPriceBreakDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = SupplierPriceBreak.objects.all()
+    serializer_class = SupplierPriceBreakSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class SupplierPriceBreakList(generics.ListCreateAPIView):
+
+    def get_queryset(self):
+        prices = SupplierPriceBreak.objects.all()
+        params = self.request.query_params
+
+        part_id = params.get('part', None)
+        if part_id:
+            prices = prices.filter(part=part_id)
+
+        return prices
+
+    serializer_class = SupplierPriceBreakSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
