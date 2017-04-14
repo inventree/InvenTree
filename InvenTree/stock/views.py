@@ -9,6 +9,7 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = StockItem.objects.all()
     serializer_class = StockItemSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class StockFilter(django_filters.rest_framework.FilterSet):
@@ -49,12 +50,14 @@ class StockList(generics.ListCreateAPIView):
             request.data['part'] = part_id
         return super(StockList, self).create(request, *args, **kwargs)
 
+
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     """ Return information on a specific stock location
     """
 
     queryset = StockLocation.objects.all()
     serializer_class = LocationDetailSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class LocationList(generics.ListCreateAPIView):
@@ -81,3 +84,4 @@ class LocationList(generics.ListCreateAPIView):
         return locations
 
     serializer_class = LocationDetailSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
