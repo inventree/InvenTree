@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Supplier, SupplierPart, SupplierPriceBreak
 
 
-class SupplierSerializer(serializers.ModelSerializer):
+class SupplierSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Supplier
@@ -12,11 +12,13 @@ class SupplierSerializer(serializers.ModelSerializer):
 
 class SupplierPartSerializer(serializers.ModelSerializer):
 
-    price_breaks = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    price_breaks = serializers.HyperlinkedRelatedField(many=True,
+                                                       read_only=True,
+                                                       view_name='price_break-detail')
 
     class Meta:
         model = SupplierPart
-        fields = ['pk',
+        fields = ['url',
                   'part',
                   'supplier',
                   'SKU',
@@ -32,11 +34,11 @@ class SupplierPartSerializer(serializers.ModelSerializer):
                   'lead_time']
 
 
-class SupplierPriceBreakSerializer(serializers.ModelSerializer):
+class SupplierPriceBreakSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = SupplierPriceBreak
-        fields = ['pk',
+        fields = ['url',
                   'part',
                   'quantity',
                   'cost']

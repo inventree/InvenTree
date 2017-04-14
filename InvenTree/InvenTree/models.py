@@ -12,7 +12,7 @@ class Company(models.Model):
         abstract = True
 
     name = models.CharField(max_length=100)
-    URL = models.URLField(blank=True)
+    website = models.URLField(blank=True)
     address = models.CharField(max_length=200,
                                blank=True)
     phone = models.CharField(max_length=50,

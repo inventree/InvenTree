@@ -4,7 +4,7 @@ from .models import Supplier, SupplierPart, Customer, Manufacturer
 
 
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'URL', 'contact')
+    list_display = ('name', 'website', 'contact')
 
 
 admin.site.register(Customer, CompanyAdmin)
