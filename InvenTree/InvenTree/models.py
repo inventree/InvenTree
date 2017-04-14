@@ -184,7 +184,7 @@ def FilterChildren(queryset, parent):
 
     if not parent:
         return queryset
-    elif isinstance(parent, str) and parent.lower() in ['none', 'false', 'null', 'top', '0']:
+    elif str(parent).lower() in ['none', 'false', 'null', 'top', '0']:
         return queryset.filter(parent=None)
     else:
         try:
