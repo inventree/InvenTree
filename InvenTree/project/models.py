@@ -29,16 +29,10 @@ class Project(models.Model):
 
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=500, blank=True)
-    category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE, related_name='projects')
 
     def __str__(self):
         return self.name
-
-    @property
-    def projectParts(self):
-        """ Return a list of all project parts associated with this project
-        """
-        return self.projectpart_set.all()
 
 
 class ProjectPartManager(models.Manager):
