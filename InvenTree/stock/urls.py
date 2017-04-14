@@ -1,15 +1,20 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 from . import views
 
+locpatterns = [
+    url(r'^(?P<pk>[0-9]+)/?$', views.LocationDetail.as_view()),
+
+    url(r'^\?*[^/]*/?$', views.LocationList.as_view())
+]
+
 urlpatterns = [
-    # List all stock quantities for a given part
-    url(r'^part/(?P<part>[0-9]+)$', views.PartStockDetail.as_view()),
+    # Stock location urls
+    url(r'^location/?', include(locpatterns)),
 
-    # List all stock items in a given location
-    url(r'^location/(?P<pk>[0-9]+)$', views.LocationDetail.as_view()),
+    # Detail for a single stock item
+    url(r'^(?P<pk>[0-9]+)$', views.StockDetail.as_view()),
 
-    # List all top-level locations
-    url(r'^location/$', views.LocationList.as_view()),
-    url(r'^$', views.LocationList.as_view())
+    # List all stock items, with optional filters
+    url(r'^\?*[^/]*/?$', views.StockList.as_view()),
 ]
