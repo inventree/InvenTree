@@ -45,7 +45,6 @@ class SupplierPartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SupplierPart
-        #extra_kwargs = {'url': {'view_name': 'supplier-part-detail'}}
         fields = ['url',
                   'part',
                   'supplier',
