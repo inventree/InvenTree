@@ -9,9 +9,14 @@ from . import views
 projectdetailpatterns = [
     # Single project detail
     url(r'^$', views.ProjectDetail.as_view()),
+]
 
-    # Parts associated with a project
-    url(r'^parts/$', views.ProjectPartsList.as_view()),
+projectpartpatterns = [
+    # Detail of a single project part
+    url(r'^(?P<pk>[0-9]+)/$', views.ProjectPartDetail.as_view()),
+
+    # List project parts, with optional filters
+    url(r'^\?*[^/]*/?$', views.ProjectPartsList.as_view()),
 ]
 
 projectcategorypatterns = [
@@ -23,7 +28,6 @@ projectcategorypatterns = [
 
     # Create a new category
     url(r'^new/$', views.NewProjectCategory.as_view())
-
 ]
 
 urlpatterns = [
@@ -33,6 +37,9 @@ urlpatterns = [
 
     # List of all projects
     url(r'^$', views.ProjectList.as_view()),
+
+    # Project parts
+    url(r'^parts/', include(projectpartpatterns)),
 
     # Project categories
     url(r'^category/', include(projectcategorypatterns)),

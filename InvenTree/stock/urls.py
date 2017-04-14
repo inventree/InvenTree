@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^location/(?P<pk>[0-9]+)$', views.LocationDetail.as_view()),
 
     # List all top-level locations
-    url(r'^location/$', views.LocationList.as_view())
+    url(r'^location/$', views.LocationList.as_view()),
+    url(r'^$', views.LocationList.as_view())
 ]

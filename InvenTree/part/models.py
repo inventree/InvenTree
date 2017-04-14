@@ -95,12 +95,7 @@ class PartParameterTemplate(models.Model):
     A PartParameterTemplate can be optionally associated with a PartCategory
     """
     name = models.CharField(max_length=20)
-    description = models.CharField(max_length=100, blank=True)
     units = models.CharField(max_length=10, blank=True)
-
-    default_value = models.CharField(max_length=50, blank=True)
-    default_min = models.CharField(max_length=50, blank=True)
-    default_max = models.CharField(max_length=50, blank=True)
 
     # Parameter format
     PARAM_NUMERIC = 10
@@ -143,9 +138,31 @@ class CategoryParameterLink(models.Model):
         verbose_name_plural = "Category Parameters"
 
 
+class PartParameterManager(models.Manager):
+    """ Manager for handling PartParameter objects
+    """
+
+    def create(self, *args, **kwargs):
+        """ Prevent creation of duplicate PartParameter
+        """
+
+        part_id = kwargs['part']
+        template_id = kwargs['template']
+
+        try:
+            params = self.filter(part=part_id, template=template_id)
+            return params[0]
+        except:
+            pass
+
+        return super(PartParameterManager, self).create(*args, **kwargs)
+
+
 class PartParameter(models.Model):
     """ PartParameter is associated with a single part
     """
+
+    objects = PartParameterManager()
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters')
     template = models.ForeignKey(PartParameterTemplate)
@@ -154,17 +171,6 @@ class PartParameter(models.Model):
     value = models.CharField(max_length=50, blank=True)
     min_value = models.CharField(max_length=50, blank=True)
     max_value = models.CharField(max_length=50, blank=True)
-
-    # Prevent multiple parameters of the same template
-    # from being added to the same part
-    def save(self, *args, **kwargs):
-        params = PartParameter.objects.filter(part=self.part, template=self.template)
-        if len(params) > 1:
-            return
-        if len(params) == 1 and params[0].id != self.id:
-            return
-
-        super(PartParameter, self).save(*args, **kwargs)
 
     def __str__(self):
         return "{name} : {val}{units}".format(
