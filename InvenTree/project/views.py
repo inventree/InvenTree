@@ -1,5 +1,6 @@
 from rest_framework import generics, permissions
 
+from InvenTree.models import FilterChildren
 from .models import ProjectCategory, Project, ProjectPart
 from .serializers import ProjectSerializer
 from .serializers import ProjectCategoryDetailSerializer
@@ -16,18 +17,21 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ProjectList(generics.ListCreateAPIView):
-    """ List all projects
+    """ List projects
     """
 
-    queryset = Project.objects.all()
+    def get_queryset(self):
+        projects = Project.objects.all()
+        params = self.request.query_params
+
+        cat_id = params.get('category', None)
+
+        if cat_id:
+            projects = projects.filter(category=cat_id)
+
+        return projects
+
     serializer_class = ProjectSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-
-class NewProjectCategory(generics.CreateAPIView):
-    """ Create a new Project Category
-    """
-    serializer_class = ProjectCategoryDetailSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
@@ -41,29 +45,42 @@ class ProjectCategoryDetail(generics.RetrieveUpdateAPIView):
 
 
 class ProjectCategoryList(generics.ListCreateAPIView):
-    """ Top-level project categories.
-    Projects are considered top-level if they do not have a parent
+    """ List project categories
     """
 
-    queryset = ProjectCategory.objects.filter(parent=None)
+    def get_queryset(self):
+        params = self.request.query_params
+
+        categories = ProjectCategory.objects.all()
+
+        categories = FilterChildren(categories, params.get('parent', None))
+
+        return categories
+
     serializer_class = ProjectCategoryDetailSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class ProjectPartsList(generics.ListCreateAPIView):
-    """ List all parts associated with a particular project
+    """ List project parts
     """
 
     serializer_class = ProjectPartSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        project_id = self.request.query_params.get('project', None)
+        parts = ProjectPart.objects.all()
+        params = self.request.query_params
 
+        project_id = params.get('project', None)
         if project_id:
-            return ProjectPart.objects.filter(project=project_id)
-        else:
-            return ProjectPart.objects.all()
+            parts = parts.filter(project=project_id)
+
+        part_id = params.get('part', None)
+        if part_id:
+            parts = parts.filter(part=part_id)
+
+        return parts
 
     def create(self, request, *args, **kwargs):
         # Ensure project link is set correctly

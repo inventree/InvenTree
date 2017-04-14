@@ -2,6 +2,7 @@
 
 from rest_framework import generics, permissions
 
+from InvenTree.models import FilterChildren
 from .models import PartCategory, Part, PartParameter, PartParameterTemplate
 from .serializers import PartSerializer
 from .serializers import PartCategoryDetailSerializer
@@ -68,8 +69,10 @@ class PartList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         parts = Part.objects.all()
+        params = self.request.query_params
 
-        cat_id = self.request.query_params.get('category', None)
+        cat_id = params.get('category', None)
+
         if cat_id:
             parts = parts.filter(category=cat_id)
 
@@ -91,6 +94,16 @@ class PartCategoryList(generics.ListCreateAPIView):
     """ Return a list of all top-level part categories.
     Categories are considered "top-level" if they do not have a parent
     """
+
+    def get_queryset(self):
+        params = self.request.query_params
+
+        categories = PartCategory.objects.all()
+
+        categories = FilterChildren(categories, params.get('parent', None))
+
+        return categories
+
     queryset = PartCategory.objects.filter(parent=None)
     serializer_class = PartCategoryDetailSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
