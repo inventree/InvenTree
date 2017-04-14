@@ -21,6 +21,7 @@ class StockFilter(django_filters.rest_framework.FilterSet):
         model = StockItem
         fields = ['quantity']
 
+
 class StockList(generics.ListCreateAPIView):
 
     serializer_class = StockItemSerializer

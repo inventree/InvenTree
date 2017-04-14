@@ -29,7 +29,7 @@ projectcategorypatterns = [
 
 urlpatterns = [
     # Individual project URL
-    url(r'^(?P<pk>[0-9]+)/?$', include(projectdetailpatterns)),
+    url(r'^(?P<pk>[0-9]+)/?', include(projectdetailpatterns)),
 
     # List of all projects
     url(r'^$', views.ProjectList.as_view()),
