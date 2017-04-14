@@ -35,6 +35,7 @@ class InvenTreeTree(models.Model):
 
     class Meta:
         abstract = True
+        unique_together = ('name', 'parent')
 
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=250, blank=True)

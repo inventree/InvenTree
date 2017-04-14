@@ -3,13 +3,13 @@ from rest_framework import serializers
 from .models import StockItem, StockLocation
 
 
-class StockItemSerializer(serializers.ModelSerializer):
+class StockItemSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a StockItem
     """
 
     class Meta:
         model = StockItem
-        fields = ('pk',
+        fields = ('url',
                   'part',
                   'location',
                   'quantity',
@@ -20,13 +20,13 @@ class StockItemSerializer(serializers.ModelSerializer):
                   'expected_arrival')
 
 
-class LocationSerializer(serializers.ModelSerializer):
+class LocationSerializer(serializers.HyperlinkedModelSerializer):
     """ Detailed information about a stock location
     """
 
     class Meta:
         model = StockLocation
-        fields = ('pk',
+        fields = ('url',
                   'name',
                   'description',
                   'parent',
