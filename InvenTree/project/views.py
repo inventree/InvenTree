@@ -58,10 +58,23 @@ class ProjectPartsList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        project_id = self.kwargs['pk']
-        return ProjectPart.objects.filter(project=project_id)
+        project_id = self.request.query_params.get('project', None)
+
+        if project_id:
+            return ProjectPart.objects.filter(project=project_id)
+        else:
+            return ProjectPart.objects.all()
 
     def create(self, request, *args, **kwargs):
         # Ensure project link is set correctly
-        request.data['project'] = self.kwargs['pk']
+        request.data['project'] = self.request.query_params.get('project', None)
         return super(ProjectPartsList, self).create(request, *args, **kwargs)
+
+
+class ProjectPartDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ Detail for a single project part
+    """
+
+    queryset = ProjectPart.objects.all()
+    serializer_class = ProjectPartSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
