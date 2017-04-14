@@ -69,8 +69,10 @@ class PartList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         parts = Part.objects.all()
+        params = self.request.query_params
 
-        cat_id = self.request.query_params.get('category', None)
+        cat_id = params.get('category', None)
+
         if cat_id:
             parts = parts.filter(category=cat_id)
 

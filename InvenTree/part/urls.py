@@ -18,22 +18,18 @@ categorypatterns = [
 
 partparampatterns = [
     # Detail of a single part parameter
-    url(r'^(?P<pk>[0-9]+)/$', views.PartParamDetail.as_view()),
+    url(r'^(?P<pk>[0-9]+)/?$', views.PartParamDetail.as_view()),
 
     # Parameters associated with a particular part
-    url(r'^\?[^/]*/$', views.PartParamList.as_view()),
-
-    # All part parameters
-    url(r'^$', views.PartParamList.as_view()),
+    url(r'^\?*[^/]*/?$', views.PartParamList.as_view()),
 ]
 
 parttemplatepatterns = [
     # Detail of a single part field template
-    url(r'^(?P<pk>[0-9]+)/$', views.PartTemplateDetail.as_view()),
+    url(r'^(?P<pk>[0-9]+)/?$', views.PartTemplateDetail.as_view()),
 
     # List all part field templates
     url(r'^$', views.PartTemplateList.as_view())
-
 ]
 
 """ Top-level URL patterns for the Part app:
@@ -44,7 +40,7 @@ parttemplatepatterns = [
 """
 urlpatterns = [
     # Individual part
-    url(r'^(?P<pk>[0-9]+)/$', views.PartDetail.as_view()),
+    url(r'^(?P<pk>[0-9]+)/?$', views.PartDetail.as_view()),
 
     # Part categories
     url(r'^category/?', include(categorypatterns)),
