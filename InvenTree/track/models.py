@@ -57,7 +57,6 @@ class PartTrackingInfo(models.Model):
     a new PartTrackingInfo object should be created.
     """
 
-    part = models.ForeignKey(UniquePart, on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True,
-                            editable=False)
+    part = models.ForeignKey(UniquePart, on_delete=models.CASCADE, related_name='tracking_info')
+    date = models.DateField(auto_now_add=True, editable=False)
     notes = models.CharField(max_length=500)
