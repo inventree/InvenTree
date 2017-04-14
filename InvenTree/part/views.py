@@ -61,10 +61,7 @@ class PartFilter(django_filters.rest_framework.FilterSet):
 
 
 class PartList(generics.ListCreateAPIView):
-    """ Display a list of parts, with optional filters
-    Filters are specified in the url, e.g.
-    /part/?category=127
-    /part/?min_stock=100
+    """ List of parts, with optional filters
     """
 
     def get_queryset(self):
