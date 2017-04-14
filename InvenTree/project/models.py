@@ -29,16 +29,10 @@ class Project(models.Model):
 
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=500, blank=True)
-    category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE, related_name='projects')
 
     def __str__(self):
         return self.name
-
-    @property
-    def projectParts(self):
-        """ Return a list of all project parts associated with this project
-        """
-        return self.projectpart_set.all()
 
 
 class ProjectPartManager(models.Manager):
@@ -56,11 +50,9 @@ class ProjectPartManager(models.Manager):
         project_id = kwargs['project']
         part_id = kwargs['part']
 
-        try:
-            project_parts = self.filter(project=project_id, part=part_id)
+        project_parts = self.filter(project=project_id, part=part_id)
+        if len(project_parts) > 0:
             return project_parts[0]
-        except:
-            pass
 
         return super(ProjectPartManager, self).create(*args, **kwargs)
 

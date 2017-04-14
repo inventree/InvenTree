@@ -3,7 +3,7 @@ from rest_framework import generics, permissions
 from InvenTree.models import FilterChildren
 from .models import ProjectCategory, Project, ProjectPart
 from .serializers import ProjectSerializer
-from .serializers import ProjectCategoryDetailSerializer
+from .serializers import ProjectCategorySerializer
 from .serializers import ProjectPartSerializer
 
 
@@ -40,7 +40,7 @@ class ProjectCategoryDetail(generics.RetrieveUpdateAPIView):
     """
 
     queryset = ProjectCategory.objects.all()
-    serializer_class = ProjectCategoryDetailSerializer
+    serializer_class = ProjectCategorySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
@@ -57,7 +57,7 @@ class ProjectCategoryList(generics.ListCreateAPIView):
 
         return categories
 
-    serializer_class = ProjectCategoryDetailSerializer
+    serializer_class = ProjectCategorySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
@@ -81,13 +81,6 @@ class ProjectPartsList(generics.ListCreateAPIView):
             parts = parts.filter(part=part_id)
 
         return parts
-
-    def create(self, request, *args, **kwargs):
-        # Ensure project link is set correctly
-        prj_id = self.request.query_params.get('project', None)
-        if prj_id:
-            request.data['project'] = prj_id
-        return super(ProjectPartsList, self).create(request, *args, **kwargs)
 
 
 class ProjectPartDetail(generics.RetrieveUpdateDestroyAPIView):

@@ -26,14 +26,11 @@ class ProjectSerializer(serializers.ModelSerializer):
                   'category')
 
 
-class ProjectCategoryBriefSerializer(serializers.ModelSerializer):
+class ProjectCategorySerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = ProjectCategory
-        fields = ('pk', 'name', 'description')
+    children = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
-
-class ProjectCategoryDetailSerializer(serializers.ModelSerializer):
+    projects = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = ProjectCategory
@@ -41,4 +38,6 @@ class ProjectCategoryDetailSerializer(serializers.ModelSerializer):
                   'name',
                   'description',
                   'parent',
-                  'path')
+                  'path',
+                  'children',
+                  'projects')

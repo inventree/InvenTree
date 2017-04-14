@@ -45,13 +45,6 @@ class StockList(generics.ListCreateAPIView):
 
         return items
 
-    def create(self, request, *args, **kwargs):
-        # If the PART parameter is passed in the URL, use that
-        part_id = self.request.query_params.get('part', None)
-        if part_id:
-            request.data['part'] = part_id
-        return super(StockList, self).create(request, *args, **kwargs)
-
 
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     """ Return information on a specific stock location

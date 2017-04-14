@@ -5,7 +5,7 @@ from rest_framework import generics, permissions
 from InvenTree.models import FilterChildren
 from .models import PartCategory, Part, PartParameter, PartParameterTemplate
 from .serializers import PartSerializer
-from .serializers import PartCategoryDetailSerializer
+from .serializers import PartCategorySerializer
 from .serializers import PartParameterSerializer
 from .serializers import PartTemplateSerializer
 
@@ -31,13 +31,6 @@ class PartParamList(generics.ListCreateAPIView):
 
     serializer_class = PartParameterSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-    def create(self, request, *args, **kwargs):
-        # Ensure part link is set correctly
-        part_id = self.request.query_params.get('part', None)
-        if part_id:
-            request.data['part'] = part_id
-        return super(PartParamList, self).create(request, *args, **kwargs)
 
 
 class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -83,7 +76,7 @@ class PartCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """ Return information on a single PartCategory
     """
     queryset = PartCategory.objects.all()
-    serializer_class = PartCategoryDetailSerializer
+    serializer_class = PartCategorySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
@@ -102,7 +95,7 @@ class PartCategoryList(generics.ListCreateAPIView):
         return categories
 
     queryset = PartCategory.objects.filter(parent=None)
-    serializer_class = PartCategoryDetailSerializer
+    serializer_class = PartCategorySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 

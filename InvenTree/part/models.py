@@ -149,11 +149,9 @@ class PartParameterManager(models.Manager):
         part_id = kwargs['part']
         template_id = kwargs['template']
 
-        try:
-            params = self.filter(part=part_id, template=template_id)
+        params = self.filter(part=part_id, template=template_id)
+        if len(params) > 0:
             return params[0]
-        except:
-            pass
 
         return super(PartParameterManager, self).create(*args, **kwargs)
 

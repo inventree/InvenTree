@@ -32,16 +32,11 @@ class PartSerializer(serializers.ModelSerializer):
                   'stock')
 
 
-class PartCategoryBriefSerializer(serializers.ModelSerializer):
+class PartCategorySerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = PartCategory
-        fields = ('pk',
-                  'name',
-                  'description')
+    children = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
-
-class PartCategoryDetailSerializer(serializers.ModelSerializer):
+    parts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = PartCategory
@@ -49,7 +44,9 @@ class PartCategoryDetailSerializer(serializers.ModelSerializer):
                   'name',
                   'description',
                   'parent',
-                  'path')
+                  'path',
+                  'children',
+                  'parts')
 
 
 class PartTemplateSerializer(serializers.ModelSerializer):
