@@ -67,7 +67,9 @@ class ProjectPartsList(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         # Ensure project link is set correctly
-        request.data['project'] = self.request.query_params.get('project', None)
+        prj_id = self.request.query_params.get('project', None)
+        if prj_id:
+            request.data['project'] = prj_id
         return super(ProjectPartsList, self).create(request, *args, **kwargs)
 
 
