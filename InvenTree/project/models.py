@@ -50,11 +50,9 @@ class ProjectPartManager(models.Manager):
         project_id = kwargs['project']
         part_id = kwargs['part']
 
-        try:
-            project_parts = self.filter(project=project_id, part=part_id)
+        project_parts = self.filter(project=project_id, part=part_id)
+        if len(project_parts) > 0:
             return project_parts[0]
-        except:
-            pass
 
         return super(ProjectPartManager, self).create(*args, **kwargs)
 
