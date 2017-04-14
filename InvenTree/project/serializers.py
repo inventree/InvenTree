@@ -3,38 +3,40 @@ from rest_framework import serializers
 from .models import ProjectCategory, Project, ProjectPart
 
 
-class ProjectPartSerializer(serializers.ModelSerializer):
+class ProjectPartSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ProjectPart
-        fields = ('pk',
+        fields = ('url',
                   'part',
                   'project',
                   'quantity',
                   'output')
 
 
-class ProjectSerializer(serializers.ModelSerializer):
-    """ Serializer for displaying brief overview of a project
-    """
+class ProjectSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('pk',
+        fields = ('url',
                   'name',
                   'description',
                   'category')
 
 
-class ProjectCategorySerializer(serializers.ModelSerializer):
+class ProjectCategorySerializer(serializers.HyperlinkedModelSerializer):
 
-    children = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    children = serializers.HyperlinkedRelatedField(many=True,
+                                                   read_only=True,
+                                                   view_name='projectcategory-detail')
 
-    projects = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    projects = serializers.HyperlinkedRelatedField(many=True,
+                                                   read_only=True,
+                                                   view_name='project-detail')
 
     class Meta:
         model = ProjectCategory
-        fields = ('pk',
+        fields = ('url',
                   'name',
                   'description',
                   'parent',

@@ -4,20 +4,20 @@ from . import views
 
 projectpartpatterns = [
     # Detail of a single project part
-    url(r'^(?P<pk>[0-9]+)/?$', views.ProjectPartDetail.as_view(), name='project-part-detail'),
+    url(r'^(?P<pk>[0-9]+)/?$', views.ProjectPartDetail.as_view(), name='projectpart-detail'),
 
     # List project parts, with optional filters
-    url(r'^\?.*/?$', views.ProjectPartsList.as_view(), name='project-part-list'),
-    url(r'^$', views.ProjectPartsList.as_view(), name='project-part-list'),
+    url(r'^\?.*/?$', views.ProjectPartsList.as_view()),
+    url(r'^$', views.ProjectPartsList.as_view()),
 ]
 
 projectcategorypatterns = [
     # Detail of a single project category
-    url(r'^(?P<pk>[0-9]+)/?$', views.ProjectCategoryDetail.as_view(), name='project-category-detail'),
+    url(r'^(?P<pk>[0-9]+)/?$', views.ProjectCategoryDetail.as_view(), name='projectcategory-detail'),
 
     # List of project categories, with filters
-    url(r'^\?.*/?$', views.ProjectCategoryList.as_view(), name='project-category-list'),
-    url(r'^$', views.ProjectCategoryList.as_view(), name='project-category-list'),
+    url(r'^\?.*/?$', views.ProjectCategoryList.as_view()),
+    url(r'^$', views.ProjectCategoryList.as_view()),
 ]
 
 urlpatterns = [
@@ -25,8 +25,8 @@ urlpatterns = [
     url(r'^(?P<pk>[0-9]+)/?$', views.ProjectDetail.as_view(), name='project-detail'),
 
     # List of all projects
-    url(r'^\?.*/?$', views.ProjectList.as_view(), name='project-list'),
-    url(r'^$', views.ProjectList.as_view(), name='project-list'),
+    url(r'^\?.*/?$', views.ProjectList.as_view()),
+    url(r'^$', views.ProjectList.as_view()),
 
     # Project parts
     url(r'^parts/', include(projectpartpatterns)),
