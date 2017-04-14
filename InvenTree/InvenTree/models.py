@@ -177,6 +177,9 @@ class InvenTreeTree(models.Model):
 
 def FilterChildren(queryset, parent):
     """ Filter a queryset, limit to only objects that are a child of the given parent
+    Filter is passed in the URL string, e.g. '/?parent=123'
+    To accommodate for items without a parent, top-level items can be specified as:
+    none / false / null / top / 0
     """
 
     if not parent:
@@ -186,6 +189,9 @@ def FilterChildren(queryset, parent):
     else:
         try:
             parent_id = int(parent)
-            return queryset.filter(parent=parent_id)
+            if parent_id == 0:
+                return queryset.filter(parent=None)
+            else:
+                return queryset.filter(parent=parent_id)
         except:
             return queryset
