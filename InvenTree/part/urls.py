@@ -55,6 +55,6 @@ urlpatterns = [
     # Part templates
     url(r'^templates/', include(parttemplatepatterns)),
 
-    # List of all parts
-    url(r'^$', views.PartList.as_view())
+    # List parts with optional filters
+    url(r'^\?*[^/]*/?$', views.PartList.as_view()),
 ]

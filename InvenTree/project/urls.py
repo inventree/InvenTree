@@ -15,11 +15,8 @@ projectpartpatterns = [
     # Detail of a single project part
     url(r'^(?P<pk>[0-9]+)/$', views.ProjectPartDetail.as_view()),
 
-    # Parts associated with a project
-    url(r'^\?[^/]*/$', views.ProjectPartsList.as_view()),
-
-    # All project parts
-    url(r'^$', views.ProjectPartsList.as_view()),
+    # List project parts, with optional filters
+    url(r'^\?*[^/]*/?$', views.ProjectPartsList.as_view()),
 ]
 
 projectcategorypatterns = [

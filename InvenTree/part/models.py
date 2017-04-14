@@ -157,6 +157,7 @@ class PartParameterManager(models.Manager):
 
         return super(PartParameterManager, self).create(*args, **kwargs)
 
+
 class PartParameter(models.Model):
     """ PartParameter is associated with a single part
     """
