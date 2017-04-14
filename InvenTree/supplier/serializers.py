@@ -1,6 +1,10 @@
 from rest_framework import serializers
 
+from part.models import Part
+
 from .models import Supplier, SupplierPart, SupplierPriceBreak
+from .models import Manufacturer
+from .models import Customer
 
 
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
@@ -10,14 +14,38 @@ class SupplierSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
+class ManufacturerSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Manufacturer
+        fields = '__all__'
+
+
+class CustomerSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Customer
+        fields = '__all__'
+
+
 class SupplierPartSerializer(serializers.ModelSerializer):
 
     price_breaks = serializers.HyperlinkedRelatedField(many=True,
                                                        read_only=True,
-                                                       view_name='price_break-detail')
+                                                       view_name='supplierpricebreak-detail')
+
+    part = serializers.HyperlinkedRelatedField(view_name='part-detail',
+                                               queryset = Part.objects.all())
+
+    supplier = serializers.HyperlinkedRelatedField(view_name='supplier-detail',
+                                                   queryset = Supplier.objects.all())
+
+    manufacturer = serializers.HyperlinkedRelatedField(view_name='manufacturer-detail',
+                                                       queryset = Manufacturer.objects.all())
 
     class Meta:
         model = SupplierPart
+        #extra_kwargs = {'url': {'view_name': 'supplier-part-detail'}}
         fields = ['url',
                   'part',
                   'supplier',

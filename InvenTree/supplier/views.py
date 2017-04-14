@@ -1,9 +1,40 @@
 from rest_framework import generics, permissions
 
 from .models import Supplier, SupplierPart, SupplierPriceBreak
+from .models import Manufacturer, Customer
 from .serializers import SupplierSerializer
 from .serializers import SupplierPartSerializer
 from .serializers import SupplierPriceBreakSerializer
+from .serializers import ManufacturerSerializer
+from .serializers import CustomerSerializer
+
+
+class ManufacturerDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = Manufacturer.objects.all()
+    serializer_class = ManufacturerSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class ManufacturerList(generics.ListCreateAPIView):
+
+    queryset = Manufacturer.objects.all()
+    serializer_class = ManufacturerSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class CustomerDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class CustomerList(generics.ListCreateAPIView):
+
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class SupplierDetail(generics.RetrieveUpdateDestroyAPIView):
