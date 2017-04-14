@@ -16,6 +16,8 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ProjectList(generics.ListCreateAPIView):
+    """ List all projects
+    """
 
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -30,6 +32,8 @@ class NewProjectCategory(generics.CreateAPIView):
 
 
 class ProjectCategoryDetail(generics.RetrieveUpdateAPIView):
+    """ Project details
+    """
 
     queryset = ProjectCategory.objects.all()
     serializer_class = ProjectCategoryDetailSerializer
@@ -37,6 +41,9 @@ class ProjectCategoryDetail(generics.RetrieveUpdateAPIView):
 
 
 class ProjectCategoryList(generics.ListCreateAPIView):
+    """ Top-level project categories.
+    Projects are considered top-level if they do not have a parent
+    """
 
     queryset = ProjectCategory.objects.filter(parent=None)
     serializer_class = ProjectCategoryDetailSerializer
@@ -44,6 +51,8 @@ class ProjectCategoryList(generics.ListCreateAPIView):
 
 
 class ProjectPartsList(generics.ListCreateAPIView):
+    """ List all parts associated with a particular project
+    """
 
     serializer_class = ProjectPartSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
@@ -51,3 +60,8 @@ class ProjectPartsList(generics.ListCreateAPIView):
     def get_queryset(self):
         project_id = self.kwargs['pk']
         return ProjectPart.objects.filter(project=project_id)
+
+    def create(self, request, *args, **kwargs):
+        # Ensure project link is set correctly
+        request.data['project'] = self.kwargs['pk']
+        return super(ProjectPartsList, self).create(request, *args, **kwargs)
