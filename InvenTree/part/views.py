@@ -32,13 +32,6 @@ class PartParamList(generics.ListCreateAPIView):
     serializer_class = PartParameterSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    def create(self, request, *args, **kwargs):
-        # Ensure part link is set correctly
-        part_id = self.request.query_params.get('part', None)
-        if part_id:
-            request.data['part'] = part_id
-        return super(PartParamList, self).create(request, *args, **kwargs)
-
 
 class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
     """ Detail view of a single PartParameter

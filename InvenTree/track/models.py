@@ -80,7 +80,7 @@ class UniquePart(models.Model):
 
         # Disallow saving a serial number that already exists
         matches = UniquePart.objects.filter(serial=self.serial, part=self.part)
-        matches = matches.filter(~models.Q(id = self.id))
+        matches = matches.filter(~models.Q(id=self.id))
 
         if len(matches) > 0:
             raise ValidationError(_("Matching serial number already exists"))

@@ -82,13 +82,6 @@ class ProjectPartsList(generics.ListCreateAPIView):
 
         return parts
 
-    def create(self, request, *args, **kwargs):
-        # Ensure project link is set correctly
-        prj_id = self.request.query_params.get('project', None)
-        if prj_id:
-            request.data['project'] = prj_id
-        return super(ProjectPartsList, self).create(request, *args, **kwargs)
-
 
 class ProjectPartDetail(generics.RetrieveUpdateDestroyAPIView):
     """ Detail for a single project part

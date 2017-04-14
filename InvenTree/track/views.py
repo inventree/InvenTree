@@ -20,7 +20,8 @@ class UniquePartFilter(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = UniquePart
-        fields = ['serial',]
+        fields = ['serial', ]
+
 
 class UniquePartList(generics.ListCreateAPIView):
 
