@@ -17,14 +17,14 @@ class PartParameterSerializer(serializers.ModelSerializer):
                   'units')
 
 
-class PartSerializer(serializers.ModelSerializer):
+class PartSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for complete detail information of a part.
     Used when displaying all details of a single component.
     """
 
     class Meta:
         model = Part
-        fields = ('pk',
+        fields = ('url',
                   'name',
                   'IPN',
                   'description',
@@ -32,21 +32,15 @@ class PartSerializer(serializers.ModelSerializer):
                   'stock')
 
 
-class PartCategorySerializer(serializers.ModelSerializer):
-
-    children = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
-    parts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+class PartCategorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = PartCategory
-        fields = ('pk',
+        fields = ('url',
                   'name',
                   'description',
                   'parent',
-                  'path',
-                  'children',
-                  'parts')
+                  'path')
 
 
 class PartTemplateSerializer(serializers.ModelSerializer):

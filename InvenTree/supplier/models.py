@@ -31,6 +31,9 @@ class SupplierPart(models.Model):
     - A Part may be available from multiple suppliers
     """
 
+    class Meta:
+        unique_together = ('part', 'supplier', 'SKU')
+
     part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.CASCADE)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     SKU = models.CharField(max_length=100)

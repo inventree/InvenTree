@@ -12,7 +12,7 @@ class Company(models.Model):
         abstract = True
 
     name = models.CharField(max_length=100)
-    URL = models.URLField(blank=True)
+    website = models.URLField(blank=True)
     address = models.CharField(max_length=200,
                                blank=True)
     phone = models.CharField(max_length=50,
@@ -35,6 +35,7 @@ class InvenTreeTree(models.Model):
 
     class Meta:
         abstract = True
+        unique_together = ('name', 'parent')
 
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=250, blank=True)
@@ -184,7 +185,7 @@ def FilterChildren(queryset, parent):
 
     if not parent:
         return queryset
-    elif isinstance(parent, str) and parent.lower() in ['none', 'false', 'null', 'top', '0']:
+    elif str(parent).lower() in ['none', 'false', 'null', 'top', '0']:
         return queryset.filter(parent=None)
     else:
         try:

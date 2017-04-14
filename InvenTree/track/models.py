@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 
 from supplier.models import Customer
 from part.models import Part, PartRevision
@@ -37,6 +37,10 @@ class UniquePart(models.Model):
     and tracking all events in the life of a part
     """
 
+    class Meta:
+        # Cannot have multiple parts with same serial number
+        unique_together = ('part', 'serial')
+
     objects = UniquePartManager()
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE)
@@ -50,7 +54,7 @@ class UniquePart(models.Model):
                                      editable=False)
     serial = models.IntegerField()
 
-    createdBy = models.ForeignKey(User)
+    # createdBy = models.ForeignKey(User)
 
     customer = models.ForeignKey(Customer, blank=True, null=True)
 
@@ -75,17 +79,6 @@ class UniquePart(models.Model):
 
     def __str__(self):
         return self.part.name
-
-    def save(self, *args, **kwargs):
-
-        # Disallow saving a serial number that already exists
-        matches = UniquePart.objects.filter(serial=self.serial, part=self.part)
-        matches = matches.filter(~models.Q(id=self.id))
-
-        if len(matches) > 0:
-            raise ValidationError(_("Matching serial number already exists"))
-
-        super(UniquePart, self).save(*args, **kwargs)
 
 
 class PartTrackingInfo(models.Model):
