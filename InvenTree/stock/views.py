@@ -1,7 +1,10 @@
-from rest_framework import generics, permissions
 import django_filters
+from django_filters.rest_framework import FilterSet, DjangoFilterBackend
+from django_filters import NumberFilter
 
-from InvenTree.models import FilterChildren
+from rest_framework import generics, permissions
+
+# from InvenTree.models import FilterChildren
 from .models import StockLocation, StockItem
 from .serializers import StockItemSerializer, LocationSerializer
 
@@ -14,36 +17,23 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class StockFilter(django_filters.rest_framework.FilterSet):
-    min_stock = django_filters.NumberFilter(name='quantity', lookup_expr='gte')
-    max_stock = django_filters.NumberFilter(name='quantity', lookup_expr='lte')
+    min_stock = NumberFilter(name='quantity', lookup_expr='gte')
+    max_stock = NumberFilter(name='quantity', lookup_expr='lte')
+    part = NumberFilter(name='part', lookup_expr='exact')
+    location = NumberFilter(name='location', lookup_expr='exact')
 
     class Meta:
         model = StockItem
-        fields = ['quantity']
+        fields = ['quantity', 'part', 'location']
 
 
 class StockList(generics.ListCreateAPIView):
 
+    queryset = StockItem.objects.all()
     serializer_class = StockItemSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filter_class = StockFilter
-
-    def get_queryset(self):
-        items = StockItem.objects.all()
-
-        # Specify a particular part
-        part_id = self.request.query_params.get('part', None)
-        if part_id:
-            items = items.filter(part=part_id)
-
-        # Specify a particular location
-        loc_id = self.request.query_params.get('location', None)
-
-        if loc_id:
-            items = items.filter(location=loc_id)
-
-        return items
 
 
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -55,19 +45,22 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
+class StockLocationFilter(FilterSet):
+
+    parent = NumberFilter(name='parent', lookup_expr='exact')
+
+    class Meta:
+        model = StockLocation
+        fields = ['parent']
+
+
 class LocationList(generics.ListCreateAPIView):
     """ Return a list of top-level locations
     Locations are considered "top-level" if they do not have a parent
     """
 
-    def get_queryset(self):
-        params = self.request.query_params
-
-        locations = StockLocation.objects.all()
-
-        locations = FilterChildren(locations, params.get('parent', None))
-
-        return locations
-
+    queryset = StockLocation.objects.all()
     serializer_class = LocationSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = StockLocationFilter

@@ -35,13 +35,13 @@ class SupplierPartSerializer(serializers.ModelSerializer):
                                                        view_name='supplierpricebreak-detail')
 
     part = serializers.HyperlinkedRelatedField(view_name='part-detail',
-                                               queryset = Part.objects.all())
+                                               queryset=Part.objects.all())
 
     supplier = serializers.HyperlinkedRelatedField(view_name='supplier-detail',
-                                                   queryset = Supplier.objects.all())
+                                                   queryset=Supplier.objects.all())
 
     manufacturer = serializers.HyperlinkedRelatedField(view_name='manufacturer-detail',
-                                                       queryset = Manufacturer.objects.all())
+                                                       queryset=Manufacturer.objects.all())
 
     class Meta:
         model = SupplierPart

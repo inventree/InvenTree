@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 
 from supplier.models import Customer
 from part.models import Part, PartRevision
