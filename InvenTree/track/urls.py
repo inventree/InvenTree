@@ -2,15 +2,14 @@ from django.conf.urls import url, include
 
 from . import views
 
-infopatterns = [
+part_track_urls = [
     url(r'^(?P<pk>[0-9]+)/?$', views.PartTrackingDetail.as_view(), name='parttrackinginfo-detail'),
 
     url(r'^\?.*/?$', views.PartTrackingList.as_view()),
     url(r'^$', views.PartTrackingList.as_view())
 ]
 
-urlpatterns = [
-    url(r'info/', include(infopatterns)),
+unique_urls = [
 
     # Detail for a single unique part
     url(r'^(?P<pk>[0-9]+)/?$', views.UniquePartDetail.as_view(), name='uniquepart-detail'),

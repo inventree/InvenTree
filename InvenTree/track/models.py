@@ -8,29 +8,6 @@ from supplier.models import Customer
 from part.models import Part, PartRevision
 
 
-class UniquePartManager(models.Manager):
-    """ Ensures UniqueParts are correctly handled
-    """
-
-    def create(self, *args, **kwargs):
-
-        part_id = kwargs['part']
-        sn = kwargs.get('serial', None)
-
-        if not sn:
-            raise ValidationError(_("Serial number must be supplied"))
-
-        if not isinstance(sn, int):
-            raise ValidationError(_("Serial number must be integer"))
-
-        # Does a part already exists with this serial number?
-        parts = self.filter(part=part_id, serial=sn)
-        if len(parts) > 0:
-            raise ValidationError(_("Matching part and serial number found!"))
-
-        return super(UniquePartManager, self).create(*args, **kwargs)
-
-
 class UniquePart(models.Model):
     """ A unique instance of a Part object.
     Used for tracking parts based on serial numbers,
@@ -41,14 +18,7 @@ class UniquePart(models.Model):
         # Cannot have multiple parts with same serial number
         unique_together = ('part', 'serial')
 
-    objects = UniquePartManager()
-
     part = models.ForeignKey(Part, on_delete=models.CASCADE)
-
-    revision = models.ForeignKey(PartRevision,
-                                 on_delete=models.CASCADE,
-                                 blank=True,
-                                 null=True)
 
     creation_date = models.DateField(auto_now_add=True,
                                      editable=False)

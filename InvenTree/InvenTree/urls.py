@@ -7,7 +7,7 @@ from part.urls import part_urls, part_cat_urls, part_param_urls, part_param_temp
 from stock.urls import stock_urls, stock_loc_urls
 from project.urls import prj_urls, prj_part_urls, prj_cat_urls
 from supplier.urls import cust_urls, manu_urls, supplier_part_urls, price_break_urls, supplier_urls
-import supplier
+from track.urls import unique_urls, part_track_urls
 
 admin.site.site_header = "InvenTree Admin"
 
@@ -31,7 +31,8 @@ apipatterns = [
     url(r'^customer/', include(cust_urls)),
 
     # Tracking URLs
-    url(r'^track/', include('track.urls')),
+    url(r'^track/', include(part_track_urls)),
+    url(r'^unique-part/', include(unique_urls)),
 
     # Project URLs
     url(r'^project/', include(prj_urls)),
