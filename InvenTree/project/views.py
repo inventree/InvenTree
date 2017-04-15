@@ -8,7 +8,17 @@ from .serializers import ProjectPartSerializer
 
 
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ Project details
+    """
+
+    get:
+    Return a single Project object
+
+    post:
+    Update a Project
+
+    delete:
+    Remove a Project
+
     """
 
     queryset = Project.objects.all()
@@ -17,7 +27,15 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ProjectList(generics.ListCreateAPIView):
-    """ List projects
+    """
+
+    get:
+    Return a list of all Project objects
+    (with optional query filters)
+
+    post:
+    Create a new Project
+
     """
 
     def get_queryset(self):
@@ -36,7 +54,17 @@ class ProjectList(generics.ListCreateAPIView):
 
 
 class ProjectCategoryDetail(generics.RetrieveUpdateAPIView):
-    """ Project details
+    """
+
+    get:
+    Return a single ProjectCategory object
+
+    post:
+    Update a ProjectCategory
+
+    delete:
+    Remove a ProjectCategory
+
     """
 
     queryset = ProjectCategory.objects.all()
@@ -45,7 +73,14 @@ class ProjectCategoryDetail(generics.RetrieveUpdateAPIView):
 
 
 class ProjectCategoryList(generics.ListCreateAPIView):
-    """ List project categories
+    """
+
+    get:
+    Return a list of all ProjectCategory objects
+
+    post:
+    Create a new ProjectCategory
+
     """
 
     def get_queryset(self):
@@ -62,7 +97,14 @@ class ProjectCategoryList(generics.ListCreateAPIView):
 
 
 class ProjectPartsList(generics.ListCreateAPIView):
-    """ List project parts
+    """
+
+    get:
+    Return a list of all ProjectPart objects
+
+    post:
+    Create a new ProjectPart
+
     """
 
     serializer_class = ProjectPartSerializer
@@ -84,7 +126,17 @@ class ProjectPartsList(generics.ListCreateAPIView):
 
 
 class ProjectPartDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ Detail for a single project part
+    """
+
+    get:
+    Return a single ProjectPart object
+
+    post:
+    Update a ProjectPart
+
+    delete:
+    Remove a ProjectPart
+    
     """
 
     queryset = ProjectPart.objects.all()
