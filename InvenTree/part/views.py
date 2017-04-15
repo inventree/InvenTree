@@ -1,4 +1,6 @@
-# import django_filters
+import django_filters
+from django_filters.rest_framework import FilterSet, DjangoFilterBackend
+from django_filters import NumberFilter
 
 from rest_framework import generics, permissions
 
@@ -28,6 +30,15 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
+class PartParamFilter(FilterSet):
+
+    part = NumberFilter(name='part', lookup_expr='exact')
+
+    class Meta:
+        model = PartParameter
+        fields = ['part']
+
+
 class PartParamList(generics.ListCreateAPIView):
     """
 
@@ -37,16 +48,12 @@ class PartParamList(generics.ListCreateAPIView):
     post:
     Create a new part parameter
     """
-    def get_queryset(self):
-        part_id = self.request.query_params.get('part', None)
 
-        if part_id:
-            return PartParameter.objects.filter(part=part_id)
-        else:
-            return PartParameter.objects.all()
-
+    queryset = PartParameter.objects.all()
     serializer_class = PartParameterSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = PartParamFilter
 
 
 class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -68,15 +75,12 @@ class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-"""
-class PartFilter(django_filters.rest_framework.FilterSet):
-    min_stock = django_filters.NumberFilter(name="stock", lookup_expr="gte")
-    max_stock = django_filters.NumberFilter(name="stock", lookup_expr="lte")
+class PartFilter(FilterSet):
+    category = NumberFilter(name='category', lookup_expr='exact')
 
     class Meta:
         model = Part
-        fields = ['stock']
-"""
+        fields = ['category']
 
 
 class PartList(generics.ListCreateAPIView):
@@ -89,19 +93,11 @@ class PartList(generics.ListCreateAPIView):
     Create a new Part
     """
 
-    def get_queryset(self):
-        parts = Part.objects.all()
-        params = self.request.query_params
-
-        cat_id = params.get('category', None)
-
-        if cat_id:
-            parts = parts.filter(category=cat_id)
-
-        return parts
-
+    queryset = Part.objects.all()
     serializer_class = PartSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = PartFilter
 
 
 class PartCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
