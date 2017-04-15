@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-from django.core.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.db import models
 # from django.contrib.auth.models import User
@@ -8,11 +8,27 @@ from supplier.models import Customer
 from part.models import Part, PartRevision
 
 
+class UniquePartManager(models.Manager):
+
+    def create(self, *args, **kwargs):
+
+        print(kwargs)
+
+        part = kwargs.get('part', None)
+
+        if not part.trackable:
+            raise ValidationError("Unique part cannot be created for a non-trackable part")
+
+        return super(UniquePartManager, self).create(*args, **kwargs)
+
+
 class UniquePart(models.Model):
     """ A unique instance of a Part object.
     Used for tracking parts based on serial numbers,
     and tracking all events in the life of a part
     """
+
+    objects = UniquePartManager()
 
     class Meta:
         # Cannot have multiple parts with same serial number
