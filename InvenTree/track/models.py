@@ -5,7 +5,7 @@ from django.db import models
 # from django.contrib.auth.models import User
 
 from supplier.models import Customer
-from part.models import Part, PartRevision
+from part.models import Part
 
 
 class UniquePartManager(models.Manager):
