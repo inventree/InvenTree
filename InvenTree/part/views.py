@@ -11,7 +11,17 @@ from .serializers import PartTemplateSerializer
 
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ Return information on a single part
+    """
+
+    get:
+    Return detail on a single Part
+
+    post:
+    Update data for a single Part
+
+    delete:
+    Remove a part from the database
+
     """
     queryset = Part.objects.all()
     serializer_class = PartSerializer
@@ -19,7 +29,13 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartParamList(generics.ListCreateAPIView):
-    """ Return all parameters associated with a particular part
+    """
+
+    get:
+    Return a list of all part parameters (with optional filters)
+
+    post:
+    Create a new part parameter
     """
     def get_queryset(self):
         part_id = self.request.query_params.get('part', None)
@@ -34,7 +50,17 @@ class PartParamList(generics.ListCreateAPIView):
 
 
 class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ Detail view of a single PartParameter
+    """
+
+    get:
+    Detail view of a single PartParameter
+
+    post:
+    Update data for a PartParameter
+
+    delete:
+    Remove a PartParameter from the database
+
     """
 
     queryset = PartParameter.objects.all()
@@ -54,7 +80,13 @@ class PartFilter(django_filters.rest_framework.FilterSet):
 
 
 class PartList(generics.ListCreateAPIView):
-    """ List of parts, with optional filters
+    """
+
+    get:
+    List of Parts, with optional filters
+
+    post:
+    Create a new Part
     """
 
     def get_queryset(self):
@@ -73,7 +105,17 @@ class PartList(generics.ListCreateAPIView):
 
 
 class PartCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ Return information on a single PartCategory
+    """
+
+    get:
+    Return information on a single PartCategory
+
+    post:
+    Update a PartCategory
+
+    delete:
+    Remove a PartCategory
+
     """
     queryset = PartCategory.objects.all()
     serializer_class = PartCategorySerializer
@@ -81,8 +123,14 @@ class PartCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartCategoryList(generics.ListCreateAPIView):
-    """ Return a list of all top-level part categories.
-    Categories are considered "top-level" if they do not have a parent
+    """
+
+    get:
+    Return a list of all categories
+    (with optional filters)
+
+    post:
+    Create a new PartCategory
     """
 
     def get_queryset(self):
@@ -100,6 +148,18 @@ class PartCategoryList(generics.ListCreateAPIView):
 
 
 class PartTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+
+    get:
+    Return detail on a single PartParameterTemplate object
+
+    post:
+    Update a PartParameterTemplate object
+
+    delete:
+    Remove a PartParameterTemplate object
+
+    """
 
     queryset = PartParameterTemplate.objects.all()
     serializer_class = PartTemplateSerializer
@@ -107,6 +167,16 @@ class PartTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartTemplateList(generics.ListCreateAPIView):
+    """
+
+    get:
+    Return a list of all PartParameterTemplate objects
+    (with optional query filters)
+
+    post:
+    Create a new PartParameterTemplate object
+
+    """
 
     queryset = PartParameterTemplate.objects.all()
     serializer_class = PartTemplateSerializer

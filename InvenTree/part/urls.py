@@ -2,12 +2,7 @@ from django.conf.urls import url, include
 
 from . import views
 
-""" URL patterns associated with part categories:
-/category       -> List all top-level categories
-/category/<pk>  -> Detail view of given category
-/category/new   -> Create a new category
-"""
-categorypatterns = [
+part_cat_urls = [
 
     # Part category detail
     url(r'^(?P<pk>[0-9]+)/?$', views.PartCategoryDetail.as_view(), name='partcategory-detail'),
@@ -17,7 +12,7 @@ categorypatterns = [
     url(r'^$', views.PartCategoryList.as_view())
 ]
 
-partparampatterns = [
+part_param_urls = [
     # Detail of a single part parameter
     url(r'^(?P<pk>[0-9]+)/?$', views.PartParamDetail.as_view(), name='partparameter-detail'),
 
@@ -26,7 +21,7 @@ partparampatterns = [
     url(r'^$', views.PartParamList.as_view()),
 ]
 
-parttemplatepatterns = [
+part_param_template_urls = [
     # Detail of a single part field template
     url(r'^(?P<pk>[0-9]+)/?$', views.PartTemplateDetail.as_view(), name='partparametertemplate-detail'),
 
@@ -35,21 +30,7 @@ parttemplatepatterns = [
     url(r'^$', views.PartTemplateList.as_view())
 ]
 
-""" Top-level URL patterns for the Part app:
-/part/          -> List all parts
-/part/new       -> Create a new part
-/part/<pk>      -> (refer to partdetailpatterns)
-/part/category  -> (refer to categorypatterns)
-"""
-urlpatterns = [
-    # Part categories
-    url(r'^category/', include(categorypatterns)),
-
-    # Part parameters
-    url(r'^parameter/', include(partparampatterns)),
-
-    # Part templates
-    url(r'^template/', include(parttemplatepatterns)),
+part_urls = [
 
     # Individual part
     url(r'^(?P<pk>[0-9]+)/?$', views.PartDetail.as_view(), name='part-detail'),

@@ -3,12 +3,23 @@ from django.contrib import admin
 
 from rest_framework.documentation import include_docs_urls
 
+from part.urls import part_urls, part_cat_urls, part_param_urls, part_param_template_urls
+
 admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
+
+    # Stock URLs
     url(r'^stock/', include('stock.urls')),
     url(r'^stock-location/', include('stock.location_urls')),
-    url(r'^part/', include('part.urls')),
+
+    # Part URLs
+    url(r'^part/', include(part_urls)),
+    url(r'^part-category/', include(part_cat_urls)),
+    url(r'^part-param/', include(part_param_urls)),
+    url(r'^part-param-template/', include(part_param_template_urls)),
+
+    # Supplier URLs
     url(r'^supplier/', include('supplier.urls')),
     url(r'^supplier-part/', include('supplier.part_urls')),
     url(r'^price-break/', include('supplier.price_urls')),
