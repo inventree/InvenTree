@@ -4,14 +4,15 @@ from django.contrib import admin
 from rest_framework.documentation import include_docs_urls
 
 from part.urls import part_urls, part_cat_urls, part_param_urls, part_param_template_urls
+from stock.urls import stock_urls, stock_loc_urls
 
 admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
 
     # Stock URLs
-    url(r'^stock/', include('stock.urls')),
-    url(r'^stock-location/', include('stock.location_urls')),
+    url(r'^stock/', include(stock_urls)),
+    url(r'^stock-location/', include(stock_loc_urls)),
 
     # Part URLs
     url(r'^part/', include(part_urls)),
