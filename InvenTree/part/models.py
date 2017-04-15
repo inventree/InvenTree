@@ -187,3 +187,4 @@ class PartParameter(models.Model):
     class Meta:
         verbose_name = "Part Parameter"
         verbose_name_plural = "Part Parameters"
+        unique_together = ('part', 'template')

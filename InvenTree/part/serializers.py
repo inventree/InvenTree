@@ -3,13 +3,13 @@ from rest_framework import serializers
 from .models import Part, PartCategory, PartParameter, PartParameterTemplate
 
 
-class PartParameterSerializer(serializers.ModelSerializer):
+class PartParameterSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a PartParameter
     """
 
     class Meta:
         model = PartParameter
-        fields = ('pk',
+        fields = ('url',
                   'part',
                   'template',
                   'name',
@@ -45,11 +45,11 @@ class PartCategorySerializer(serializers.HyperlinkedModelSerializer):
                   'path')
 
 
-class PartTemplateSerializer(serializers.ModelSerializer):
+class PartTemplateSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = PartParameterTemplate
-        fields = ('pk',
+        fields = ('url',
                   'name',
                   'units',
                   'format')
