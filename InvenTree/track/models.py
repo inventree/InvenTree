@@ -1,32 +1,23 @@
 from __future__ import unicode_literals
-from django.core.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.db import models
 # from django.contrib.auth.models import User
 
 from supplier.models import Customer
-from part.models import Part, PartRevision
+from part.models import Part
 
 
 class UniquePartManager(models.Manager):
-    """ Ensures UniqueParts are correctly handled
-    """
 
     def create(self, *args, **kwargs):
 
-        part_id = kwargs['part']
-        sn = kwargs.get('serial', None)
+        print(kwargs)
 
-        if not sn:
-            raise ValidationError(_("Serial number must be supplied"))
+        part = kwargs.get('part', None)
 
-        if not isinstance(sn, int):
-            raise ValidationError(_("Serial number must be integer"))
-
-        # Does a part already exists with this serial number?
-        parts = self.filter(part=part_id, serial=sn)
-        if len(parts) > 0:
-            raise ValidationError(_("Matching part and serial number found!"))
+        if not part.trackable:
+            raise ValidationError("Unique part cannot be created for a non-trackable part")
 
         return super(UniquePartManager, self).create(*args, **kwargs)
 
@@ -37,18 +28,13 @@ class UniquePart(models.Model):
     and tracking all events in the life of a part
     """
 
+    objects = UniquePartManager()
+
     class Meta:
         # Cannot have multiple parts with same serial number
         unique_together = ('part', 'serial')
 
-    objects = UniquePartManager()
-
     part = models.ForeignKey(Part, on_delete=models.CASCADE)
-
-    revision = models.ForeignKey(PartRevision,
-                                 on_delete=models.CASCADE,
-                                 blank=True,
-                                 null=True)
 
     creation_date = models.DateField(auto_now_add=True,
                                      editable=False)

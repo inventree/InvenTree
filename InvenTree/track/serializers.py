@@ -11,7 +11,6 @@ class UniquePartSerializer(serializers.HyperlinkedModelSerializer):
         model = UniquePart
         fields = ['url',
                   'part',
-                  'revision',
                   'creation_date',
                   'serial',
                   # 'createdBy',

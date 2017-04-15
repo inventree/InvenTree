@@ -29,7 +29,9 @@ class PartSerializer(serializers.HyperlinkedModelSerializer):
                   'IPN',
                   'description',
                   'category',
-                  'stock')
+                  'stock',
+                  'units',
+                  'trackable')
 
 
 class PartCategorySerializer(serializers.HyperlinkedModelSerializer):

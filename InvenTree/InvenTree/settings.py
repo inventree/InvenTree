@@ -79,6 +79,10 @@ TEMPLATES = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'InvenTree.utils.api_exception_handler'
+}
+
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
 

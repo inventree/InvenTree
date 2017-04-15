@@ -1,4 +1,3 @@
-import django_filters
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
@@ -10,13 +9,24 @@ from .serializers import StockItemSerializer, LocationSerializer
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+
+    get:
+    Return a single StockItem object
+
+    post:
+    Update a StockItem
+
+    delete:
+    Remove a StockItem
+    """
 
     queryset = StockItem.objects.all()
     serializer_class = StockItemSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class StockFilter(django_filters.rest_framework.FilterSet):
+class StockFilter(FilterSet):
     min_stock = NumberFilter(name='quantity', lookup_expr='gte')
     max_stock = NumberFilter(name='quantity', lookup_expr='lte')
     part = NumberFilter(name='part', lookup_expr='exact')
@@ -28,6 +38,15 @@ class StockFilter(django_filters.rest_framework.FilterSet):
 
 
 class StockList(generics.ListCreateAPIView):
+    """
+
+    get:
+    Return a list of all StockItem objects
+    (with optional query filters)
+
+    post:
+    Create a new StockItem
+    """
 
     queryset = StockItem.objects.all()
     serializer_class = StockItemSerializer
@@ -37,7 +56,17 @@ class StockList(generics.ListCreateAPIView):
 
 
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ Return information on a specific stock location
+    """
+
+    get:
+    Return a single StockLocation object
+
+    post:
+    Update a StockLocation object
+
+    delete:
+    Remove a StockLocation object
+
     """
 
     queryset = StockLocation.objects.all()
@@ -55,8 +84,15 @@ class StockLocationFilter(FilterSet):
 
 
 class LocationList(generics.ListCreateAPIView):
-    """ Return a list of top-level locations
-    Locations are considered "top-level" if they do not have a parent
+    """
+
+    get:
+    Return a list of all StockLocation objects
+    (with optional query filter)
+
+    post:
+    Create a new StockLocation
+
     """
 
     queryset = StockLocation.objects.all()

@@ -1,4 +1,5 @@
-import django_filters
+from django_filters.rest_framework import FilterSet, DjangoFilterBackend
+from django_filters import NumberFilter
 
 from rest_framework import generics, permissions
 
@@ -7,69 +8,95 @@ from .serializers import UniquePartSerializer, PartTrackingInfoSerializer
 
 
 class UniquePartDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+
+    get:
+    Return a single UniquePart
+
+    post:
+    Update a UniquePart
+
+    delete:
+    Remove a UniquePart
+
+    """
 
     queryset = UniquePart.objects.all()
     serializer_class = UniquePartSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class UniquePartFilter(django_filters.rest_framework.FilterSet):
+class UniquePartFilter(FilterSet):
     # Filter based on serial number
-    min_sn = django_filters.NumberFilter(name='serial', lookup_expr='gte')
-    max_sn = django_filters.NumberFilter(name='serial', lookup_expr='lte')
+    min_sn = NumberFilter(name='serial', lookup_expr='gte')
+    max_sn = NumberFilter(name='serial', lookup_expr='lte')
+
+    sn = NumberFilter(name='serial', lookup_expr='exact')
+    part = NumberFilter(name='part', lookup_expr='exact')
+    customer = NumberFilter(name='customer', lookup_expr='exact')
 
     class Meta:
         model = UniquePart
-        fields = ['serial', ]
+        fields = ['serial', 'part', 'customer']
 
 
 class UniquePartList(generics.ListCreateAPIView):
+    """
 
+    get:
+    Return a list of all UniqueParts
+    (with optional query filter)
+
+    post:
+    Create a new UniquePart
+    """
+
+    queryset = UniquePart.objects.all()
     serializer_class = UniquePartSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filter_class = UniquePartFilter
-
-    def get_queryset(self):
-        parts = UniquePart.objects.all()
-        query = self.request.query_params
-
-        # Filter by associated part
-        part_id = query.get('part', None)
-        if part_id:
-            parts = parts.filter(part=part_id)
-
-        # Filter by serial number
-        sn = query.get('sn', None)
-        if sn:
-            parts = parts.filter(serial=sn)
-
-        # Filter by customer
-        customer = query.get('customer', None)
-        if customer:
-            parts = parts.filter(customer=customer)
-
-        return parts
 
 
 class PartTrackingDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+
+    get:
+    Return a single PartTrackingInfo object
+
+    post:
+    Update a PartTrackingInfo object
+
+    delete:
+    Remove a PartTrackingInfo object
+    """
 
     queryset = PartTrackingInfo.objects.all()
     serializer_class = PartTrackingInfoSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class PartTrackingList(generics.ListCreateAPIView):
+class PartTrackingFilter(FilterSet):
+    part = NumberFilter(name='part', lookup_expr='exact')
 
+    class Meta:
+        model = PartTrackingInfo
+        fields = ['part']
+
+
+class PartTrackingList(generics.ListCreateAPIView):
+    """
+
+    get:
+    Return a list of all PartTrackingInfo objects
+    (with optional query filter)
+
+    post:
+    Create a new PartTrackingInfo object
+    """
+
+    queryset = PartTrackingInfo.objects.all()
     serializer_class = PartTrackingInfoSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-    def get_queryset(self):
-        tracking = PartTrackingInfo.objects.all()
-        query = self.request.query_params
-
-        part_id = query.get('part', None)
-        if part_id:
-            tracking = tracking.filter(part=part_id)
-
-        return tracking
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = PartTrackingFilter

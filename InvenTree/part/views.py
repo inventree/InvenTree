@@ -1,4 +1,5 @@
-# import django_filters
+from django_filters.rest_framework import FilterSet, DjangoFilterBackend
+from django_filters import NumberFilter
 
 from rest_framework import generics, permissions
 
@@ -11,30 +12,61 @@ from .serializers import PartTemplateSerializer
 
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ Return information on a single part
+    """
+
+    get:
+    Return detail on a single Part
+
+    post:
+    Update data for a single Part
+
+    delete:
+    Remove a part from the database
+
     """
     queryset = Part.objects.all()
     serializer_class = PartSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
+class PartParamFilter(FilterSet):
+
+    part = NumberFilter(name='part', lookup_expr='exact')
+
+    class Meta:
+        model = PartParameter
+        fields = ['part']
+
+
 class PartParamList(generics.ListCreateAPIView):
-    """ Return all parameters associated with a particular part
     """
-    def get_queryset(self):
-        part_id = self.request.query_params.get('part', None)
 
-        if part_id:
-            return PartParameter.objects.filter(part=part_id)
-        else:
-            return PartParameter.objects.all()
+    get:
+    Return a list of all part parameters (with optional filters)
 
+    post:
+    Create a new part parameter
+    """
+
+    queryset = PartParameter.objects.all()
     serializer_class = PartParameterSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = PartParamFilter
 
 
 class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ Detail view of a single PartParameter
+    """
+
+    get:
+    Detail view of a single PartParameter
+
+    post:
+    Update data for a PartParameter
+
+    delete:
+    Remove a PartParameter from the database
+
     """
 
     queryset = PartParameter.objects.all()
@@ -42,38 +74,43 @@ class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-"""
-class PartFilter(django_filters.rest_framework.FilterSet):
-    min_stock = django_filters.NumberFilter(name="stock", lookup_expr="gte")
-    max_stock = django_filters.NumberFilter(name="stock", lookup_expr="lte")
+class PartFilter(FilterSet):
+    category = NumberFilter(name='category', lookup_expr='exact')
 
     class Meta:
         model = Part
-        fields = ['stock']
-"""
+        fields = ['category']
 
 
 class PartList(generics.ListCreateAPIView):
-    """ List of parts, with optional filters
     """
 
-    def get_queryset(self):
-        parts = Part.objects.all()
-        params = self.request.query_params
+    get:
+    List of Parts, with optional filters
 
-        cat_id = params.get('category', None)
+    post:
+    Create a new Part
+    """
 
-        if cat_id:
-            parts = parts.filter(category=cat_id)
-
-        return parts
-
+    queryset = Part.objects.all()
     serializer_class = PartSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = PartFilter
 
 
 class PartCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ Return information on a single PartCategory
+    """
+
+    get:
+    Return information on a single PartCategory
+
+    post:
+    Update a PartCategory
+
+    delete:
+    Remove a PartCategory
+
     """
     queryset = PartCategory.objects.all()
     serializer_class = PartCategorySerializer
@@ -81,8 +118,14 @@ class PartCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartCategoryList(generics.ListCreateAPIView):
-    """ Return a list of all top-level part categories.
-    Categories are considered "top-level" if they do not have a parent
+    """
+
+    get:
+    Return a list of all categories
+    (with optional filters)
+
+    post:
+    Create a new PartCategory
     """
 
     def get_queryset(self):
@@ -100,6 +143,18 @@ class PartCategoryList(generics.ListCreateAPIView):
 
 
 class PartTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+
+    get:
+    Return detail on a single PartParameterTemplate object
+
+    post:
+    Update a PartParameterTemplate object
+
+    delete:
+    Remove a PartParameterTemplate object
+
+    """
 
     queryset = PartParameterTemplate.objects.all()
     serializer_class = PartTemplateSerializer
@@ -107,6 +162,16 @@ class PartTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartTemplateList(generics.ListCreateAPIView):
+    """
+
+    get:
+    Return a list of all PartParameterTemplate objects
+    (with optional query filters)
+
+    post:
+    Create a new PartParameterTemplate object
+
+    """
 
     queryset = PartParameterTemplate.objects.all()
     serializer_class = PartTemplateSerializer

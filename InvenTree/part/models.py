@@ -187,20 +187,3 @@ class PartParameter(models.Model):
     class Meta:
         verbose_name = "Part Parameter"
         verbose_name_plural = "Part Parameters"
-
-
-class PartRevision(models.Model):
-    """ A PartRevision represents a change-notification to a Part
-    A Part may go through several revisions in its lifetime,
-    which should be tracked.
-    UniqueParts can have a single associated PartRevision
-    """
-
-    part = models.ForeignKey(Part, on_delete=models.CASCADE)
-
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=500)
-    revision_date = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name

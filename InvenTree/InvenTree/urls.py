@@ -3,19 +3,41 @@ from django.contrib import admin
 
 from rest_framework.documentation import include_docs_urls
 
+from part.urls import part_urls, part_cat_urls, part_param_urls, part_param_template_urls
+from stock.urls import stock_urls, stock_loc_urls
+from project.urls import prj_urls, prj_part_urls, prj_cat_urls
+from supplier.urls import cust_urls, manu_urls, supplier_part_urls, price_break_urls, supplier_urls
+from track.urls import unique_urls, part_track_urls
+
 admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
-    url(r'^stock/', include('stock.urls')),
-    url(r'^stock-location/', include('stock.location_urls')),
-    url(r'^part/', include('part.urls')),
-    url(r'^supplier/', include('supplier.urls')),
-    url(r'^supplier-part/', include('supplier.part_urls')),
-    url(r'^price-break/', include('supplier.price_urls')),
-    url(r'^manufacturer/', include('supplier.manufacturer_urls')),
-    url(r'^customer/', include('supplier.customer_urls')),
-    url(r'^track/', include('track.urls')),
-    url(r'^project/', include('project.urls')),
+
+    # Stock URLs
+    url(r'^stock/', include(stock_urls)),
+    url(r'^stock-location/', include(stock_loc_urls)),
+
+    # Part URLs
+    url(r'^part/', include(part_urls)),
+    url(r'^part-category/', include(part_cat_urls)),
+    url(r'^part-param/', include(part_param_urls)),
+    url(r'^part-param-template/', include(part_param_template_urls)),
+
+    # Supplier URLs
+    url(r'^supplier/', include(supplier_urls)),
+    url(r'^supplier-part/', include(supplier_part_urls)),
+    url(r'^price-break/', include(price_break_urls)),
+    url(r'^manufacturer/', include(manu_urls)),
+    url(r'^customer/', include(cust_urls)),
+
+    # Tracking URLs
+    url(r'^track/', include(part_track_urls)),
+    url(r'^unique-part/', include(unique_urls)),
+
+    # Project URLs
+    url(r'^project/', include(prj_urls)),
+    url(r'^project-category/', include(prj_cat_urls)),
+    url(r'^project-part/', include(prj_part_urls)),
 ]
 
 urlpatterns = [
