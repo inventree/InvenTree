@@ -11,7 +11,7 @@ class Company(models.Model):
     class Meta:
         abstract = True
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     website = models.URLField(blank=True)
     address = models.CharField(max_length=200,
                                blank=True)

@@ -6,6 +6,8 @@ from rest_framework.documentation import include_docs_urls
 from part.urls import part_urls, part_cat_urls, part_param_urls, part_param_template_urls
 from stock.urls import stock_urls, stock_loc_urls
 from project.urls import prj_urls, prj_part_urls, prj_cat_urls
+from supplier.urls import cust_urls, manu_urls, supplier_part_urls, price_break_urls, supplier_urls
+import supplier
 
 admin.site.site_header = "InvenTree Admin"
 
@@ -22,11 +24,13 @@ apipatterns = [
     url(r'^part-param-template/', include(part_param_template_urls)),
 
     # Supplier URLs
-    url(r'^supplier/', include('supplier.urls')),
-    url(r'^supplier-part/', include('supplier.part_urls')),
-    url(r'^price-break/', include('supplier.price_urls')),
-    url(r'^manufacturer/', include('supplier.manufacturer_urls')),
-    url(r'^customer/', include('supplier.customer_urls')),
+    url(r'^supplier/', include(supplier_urls)),
+    url(r'^supplier-part/', include(supplier_part_urls)),
+    url(r'^price-break/', include(price_break_urls)),
+    url(r'^manufacturer/', include(manu_urls)),
+    url(r'^customer/', include(cust_urls)),
+
+    # Tracking URLs
     url(r'^track/', include('track.urls')),
 
     # Project URLs
