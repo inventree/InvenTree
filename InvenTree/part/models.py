@@ -56,6 +56,8 @@ class Part(models.Model):
     class Meta:
         verbose_name = "Part"
         verbose_name_plural = "Parts"
+        unique_together = (("name", "category"),
+                           ("IPN", "category"))
 
     @property
     def stock(self):
@@ -94,7 +96,7 @@ class PartParameterTemplate(models.Model):
     ready to be copied for use with a given Part.
     A PartParameterTemplate can be optionally associated with a PartCategory
     """
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20, unique=True)
     units = models.CharField(max_length=10, blank=True)
 
     # Parameter format
@@ -136,31 +138,12 @@ class CategoryParameterLink(models.Model):
     class Meta:
         verbose_name = "Category Parameter"
         verbose_name_plural = "Category Parameters"
-
-
-class PartParameterManager(models.Manager):
-    """ Manager for handling PartParameter objects
-    """
-
-    def create(self, *args, **kwargs):
-        """ Prevent creation of duplicate PartParameter
-        """
-
-        part_id = kwargs['part']
-        template_id = kwargs['template']
-
-        params = self.filter(part=part_id, template=template_id)
-        if len(params) > 0:
-            return params[0]
-
-        return super(PartParameterManager, self).create(*args, **kwargs)
+        unique_together = ('category', 'template')
 
 
 class PartParameter(models.Model):
     """ PartParameter is associated with a single part
     """
-
-    objects = PartParameterManager()
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters')
     template = models.ForeignKey(PartParameterTemplate)
@@ -187,3 +170,4 @@ class PartParameter(models.Model):
     class Meta:
         verbose_name = "Part Parameter"
         verbose_name_plural = "Part Parameters"
+        unique_together = ('part', 'template')

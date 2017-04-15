@@ -12,8 +12,6 @@ class UniquePartManager(models.Manager):
 
     def create(self, *args, **kwargs):
 
-        print(kwargs)
-
         part = kwargs.get('part', None)
 
         if not part.trackable:

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import StockItem, StockLocation
+from .models import StockItem, StockLocation, StockTracking
 
 
 class StockItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -14,6 +14,7 @@ class StockItemSerializer(serializers.HyperlinkedModelSerializer):
                   'location',
                   'quantity',
                   'status',
+                  'notes',
                   'updated',
                   'last_checked',
                   'review_needed',
@@ -31,3 +32,14 @@ class LocationSerializer(serializers.HyperlinkedModelSerializer):
                   'description',
                   'parent',
                   'path')
+
+
+class StockTrackingSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = StockTracking
+        fields = ('url',
+                  'item',
+                  'quantity',
+                  'pending',
+                  'when')

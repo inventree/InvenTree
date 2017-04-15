@@ -78,6 +78,9 @@ class SupplierPriceBreak(models.Model):
     quantity = models.PositiveIntegerField()
     cost = models.DecimalField(max_digits=10, decimal_places=3)
 
+    class Meta:
+        unique_together = ("part", "quantity")
+
     def __str__(self):
         return "{mpn} - {cost}{currency} @ {quan}".format(
             mpn=self.part.MPN,
