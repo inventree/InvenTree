@@ -17,9 +17,7 @@ class StockLocation(InvenTreeTree):
 
 
 class StockItem(models.Model):
-    part = models.ForeignKey(Part,
-                             on_delete=models.CASCADE,
-                             related_name='locations')
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='locations')
     location = models.ForeignKey(StockLocation, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     updated = models.DateField(auto_now=True)

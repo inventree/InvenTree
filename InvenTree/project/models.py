@@ -31,30 +31,11 @@ class Project(models.Model):
     description = models.CharField(max_length=500, blank=True)
     category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE, related_name='projects')
 
+    class Meta:
+        unique_together = ('name', 'category')
+
     def __str__(self):
         return self.name
-
-
-class ProjectPartManager(models.Manager):
-    """ Manager for handling ProjectParts
-    """
-
-    def create(self, *args, **kwargs):
-        """ Test for validity of new ProjectPart before actually creating it.
-        If a ProjectPart already exists that references the same:
-        a) Part
-        b) Project
-        then return THAT project instead.
-        """
-
-        project_id = kwargs['project']
-        part_id = kwargs['part']
-
-        project_parts = self.filter(project=project_id, part=part_id)
-        if len(project_parts) > 0:
-            return project_parts[0]
-
-        return super(ProjectPartManager, self).create(*args, **kwargs)
 
 
 class ProjectPart(models.Model):
@@ -63,11 +44,12 @@ class ProjectPart(models.Model):
     The overage is the number of extra parts that are generally used for a single run.
     """
 
-    objects = ProjectPartManager()
-
     part = models.ForeignKey(Part, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        unique_together = ('part', 'project')
 
     """
     # TODO - Add overage model fields
