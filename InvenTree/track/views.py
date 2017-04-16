@@ -31,10 +31,6 @@ class UniquePartFilter(FilterSet):
     min_sn = NumberFilter(name='serial', lookup_expr='gte')
     max_sn = NumberFilter(name='serial', lookup_expr='lte')
 
-    sn = NumberFilter(name='serial', lookup_expr='exact')
-    part = NumberFilter(name='part', lookup_expr='exact')
-    customer = NumberFilter(name='customer', lookup_expr='exact')
-
     class Meta:
         model = UniquePart
         fields = ['serial', 'part', 'customer']
@@ -77,7 +73,6 @@ class PartTrackingDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartTrackingFilter(FilterSet):
-    part = NumberFilter(name='part', lookup_expr='exact')
 
     class Meta:
         model = PartTrackingInfo

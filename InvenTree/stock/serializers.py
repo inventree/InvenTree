@@ -11,6 +11,7 @@ class StockItemSerializer(serializers.HyperlinkedModelSerializer):
         model = StockItem
         fields = ('url',
                   'part',
+                  'supplier_part',
                   'location',
                   'quantity',
                   'status',
@@ -41,5 +42,4 @@ class StockTrackingSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url',
                   'item',
                   'quantity',
-                  'pending',
                   'when')

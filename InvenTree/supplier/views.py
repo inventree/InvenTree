@@ -1,5 +1,4 @@
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
-from django_filters import NumberFilter
 
 from rest_framework import generics, permissions
 
@@ -138,12 +137,6 @@ class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class SupplierPartFilter(FilterSet):
 
-    supplier = NumberFilter(name='supplier', lookup_expr='exact')
-
-    part = NumberFilter(name='part', lookup_expr='exact')
-
-    manufacturer = NumberFilter(name='manufacturer', lookup_expr='exact')
-
     class Meta:
         model = SupplierPart
         fields = ['supplier', 'part', 'manufacturer']
@@ -189,8 +182,6 @@ class SupplierPriceBreakDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PriceBreakFilter(FilterSet):
-
-    part = NumberFilter(name='part', lookup_expr='exact')
 
     class Meta:
         model = SupplierPriceBreak

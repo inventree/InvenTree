@@ -1,5 +1,4 @@
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
-from django_filters import NumberFilter
 
 from rest_framework import generics, permissions
 
@@ -30,8 +29,6 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartParamFilter(FilterSet):
-
-    part = NumberFilter(name='part', lookup_expr='exact')
 
     class Meta:
         model = PartParameter
@@ -75,7 +72,6 @@ class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartFilter(FilterSet):
-    category = NumberFilter(name='category', lookup_expr='exact')
 
     class Meta:
         model = Part

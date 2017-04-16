@@ -5,8 +5,6 @@ from .models import UniquePart, PartTrackingInfo
 
 class UniquePartSerializer(serializers.HyperlinkedModelSerializer):
 
-    tracking_info = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
     class Meta:
         model = UniquePart
         fields = ['url',
@@ -15,8 +13,7 @@ class UniquePartSerializer(serializers.HyperlinkedModelSerializer):
                   'serial',
                   # 'createdBy',
                   'customer',
-                  'status',
-                  'tracking_info']
+                  'status']
 
 
 class PartTrackingInfoSerializer(serializers.HyperlinkedModelSerializer):

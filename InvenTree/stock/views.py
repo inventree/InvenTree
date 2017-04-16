@@ -29,8 +29,6 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 class StockFilter(FilterSet):
     min_stock = NumberFilter(name='quantity', lookup_expr='gte')
     max_stock = NumberFilter(name='quantity', lookup_expr='lte')
-    part = NumberFilter(name='part', lookup_expr='exact')
-    location = NumberFilter(name='location', lookup_expr='exact')
 
     class Meta:
         model = StockItem
@@ -76,8 +74,6 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class StockLocationFilter(FilterSet):
 
-    parent = NumberFilter(name='parent', lookup_expr='exact')
-
     class Meta:
         model = StockLocation
         fields = ['parent']
@@ -122,8 +118,6 @@ class StockTrackingDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class StockTrackingFilter(FilterSet):
-
-    item = NumberFilter(name='item', lookup_expr='exact')
 
     class Meta:
         model = StockTracking
