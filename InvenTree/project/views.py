@@ -1,5 +1,6 @@
-from rest_framework import generics, permissions
+from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 
+from rest_framework import generics, permissions
 from InvenTree.models import FilterChildren
 from .models import ProjectCategory, Project, ProjectPart
 from .serializers import ProjectSerializer
@@ -26,6 +27,13 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
+class ProjectFilter(FilterSet):
+
+    class Meta:
+        model = Project
+        fields = ['category']
+
+
 class ProjectList(generics.ListCreateAPIView):
     """
 
@@ -38,19 +46,11 @@ class ProjectList(generics.ListCreateAPIView):
 
     """
 
-    def get_queryset(self):
-        projects = Project.objects.all()
-        params = self.request.query_params
-
-        cat_id = params.get('category', None)
-
-        if cat_id:
-            projects = projects.filter(category=cat_id)
-
-        return projects
-
+    queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = ProjectFilter
 
 
 class ProjectCategoryDetail(generics.RetrieveUpdateAPIView):
@@ -136,7 +136,7 @@ class ProjectPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     delete:
     Remove a ProjectPart
-    
+
     """
 
     queryset = ProjectPart.objects.all()

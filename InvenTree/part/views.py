@@ -31,8 +31,6 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class PartParamFilter(FilterSet):
 
-    part = NumberFilter(name='part', lookup_expr='exact')
-
     class Meta:
         model = PartParameter
         fields = ['part']
@@ -75,7 +73,6 @@ class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartFilter(FilterSet):
-    category = NumberFilter(name='category', lookup_expr='exact')
 
     class Meta:
         model = Part
