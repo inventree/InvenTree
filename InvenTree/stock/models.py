@@ -73,5 +73,4 @@ class StockTracking(models.Model):
 
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE, related_name='tracking')
     quantity = models.IntegerField()
-    pending = models.BooleanField(default=False)
     when = models.DateTimeField(auto_now=True)

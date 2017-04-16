@@ -41,5 +41,4 @@ class StockTrackingSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url',
                   'item',
                   'quantity',
-                  'pending',
                   'when')
