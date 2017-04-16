@@ -28,3 +28,12 @@ prj_urls = [
     url(r'^\?.*/?$', views.ProjectList.as_view()),
     url(r'^$', views.ProjectList.as_view())
 ]
+
+prj_run_urls = [
+    # Individual project URL
+    url(r'^(?P<pk>[0-9]+)/?$', views.ProjectRunDetail.as_view(), name='projectrun-detail'),
+
+    # List of all projects
+    url(r'^\?.*/?$', views.ProjectRunList.as_view()),
+    url(r'^$', views.ProjectRunList.as_view())
+]

@@ -5,7 +5,7 @@ from rest_framework.documentation import include_docs_urls
 
 from part.urls import part_urls, part_cat_urls, part_param_urls, part_param_template_urls
 from stock.urls import stock_urls, stock_loc_urls, stock_track_urls
-from project.urls import prj_urls, prj_part_urls, prj_cat_urls
+from project.urls import prj_urls, prj_part_urls, prj_cat_urls, prj_run_urls
 from supplier.urls import cust_urls, manu_urls, supplier_part_urls, price_break_urls, supplier_urls
 from track.urls import unique_urls, part_track_urls
 
@@ -39,6 +39,7 @@ apipatterns = [
     url(r'^project/', include(prj_urls)),
     url(r'^project-category/', include(prj_cat_urls)),
     url(r'^project-part/', include(prj_part_urls)),
+    url(r'^project-run/', include(prj_run_urls)),
 ]
 
 urlpatterns = [
