@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 from django.db import models
+from django.core.validators import MinValueValidator
 
 from supplier.models import SupplierPart
 from part.models import Part
@@ -21,7 +22,7 @@ class StockItem(models.Model):
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='locations')
     supplier_part = models.ForeignKey(SupplierPart, blank=True, null=True, on_delete=models.SET_NULL)
     location = models.ForeignKey(StockLocation, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)])
     updated = models.DateField(auto_now=True)
 
     # last time the stock was checked / counted
@@ -50,7 +51,8 @@ class StockItem(models.Model):
 
     status = models.PositiveIntegerField(
         default=ITEM_IN_STOCK,
-        choices=ITEM_STATUS_CODES.items())
+        choices=ITEM_STATUS_CODES.items(),
+        validators=[MinValueValidator(0)])
 
     notes = models.CharField(max_length=100, blank=True)
 

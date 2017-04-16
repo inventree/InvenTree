@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.db.models import Sum
+from django.core.validators import MinValueValidator
 
 from InvenTree.models import InvenTreeTree
 
@@ -35,7 +36,7 @@ class Part(models.Model):
     category = models.ForeignKey(PartCategory, on_delete=models.CASCADE)
 
     # Minimum "allowed" stock level
-    minimum_stock = models.PositiveIntegerField(default=0)
+    minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
 
     # Units of quantity for this part. Default is "pcs"
     units = models.CharField(max_length=20, default="pcs", blank=True)
@@ -112,7 +113,8 @@ class PartParameterTemplate(models.Model):
 
     format = models.PositiveIntegerField(
         default=PARAM_NUMERIC,
-        choices=PARAM_TYPE_CODES.items())
+        choices=PARAM_TYPE_CODES.items(),
+        validators=[MinValueValidator(0)])
 
     def __str__(self):
         return "{name} ({units})".format(

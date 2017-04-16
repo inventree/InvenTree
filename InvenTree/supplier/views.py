@@ -1,5 +1,4 @@
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
-from django_filters import NumberFilter
 
 from rest_framework import generics, permissions
 
