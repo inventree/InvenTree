@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.contrib.auth.models import User
 
 from supplier.models import SupplierPart
 from part.models import Part
@@ -29,6 +30,7 @@ class StockItem(models.Model):
 
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)
+    stocktake_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     review_needed = models.BooleanField(default=False)
 
@@ -63,7 +65,7 @@ class StockItem(models.Model):
 
     infinite = models.BooleanField(default=False)
 
-    def stocktake(self, count):
+    def stocktake(self, count, user):
         """ Perform item stocktake.
         When the quantity of an item is counted,
         record the date of stocktake
@@ -76,6 +78,7 @@ class StockItem(models.Model):
 
         self.quantity = count
         self.stocktake_date = datetime.now().date()
+        self.stocktake_user = user
         self.save()
 
     def add_stock(self, amount):

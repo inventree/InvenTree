@@ -62,7 +62,7 @@ class StockStocktakeEndpoint(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         object = self.get_object()
-        object.stocktake(request.data['quantity'])
+        object.stocktake(request.data['quantity'], request.user)
 
         serializer = self.get_serializer(object)
 

@@ -18,6 +18,7 @@ class StockItemSerializer(serializers.HyperlinkedModelSerializer):
                   'notes',
                   'updated',
                   'stocktake_date',
+                  'stocktake_user',
                   'review_needed',
                   'expected_arrival')
 
