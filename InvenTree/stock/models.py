@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.contrib.auth.models import User
 
 from supplier.models import SupplierPart
 from part.models import Part
@@ -29,6 +30,7 @@ class StockItem(models.Model):
 
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)
+    stocktake_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     review_needed = models.BooleanField(default=False)
 
@@ -63,7 +65,7 @@ class StockItem(models.Model):
 
     infinite = models.BooleanField(default=False)
 
-    def stocktake(self, count):
+    def stocktake(self, count, user):
         """ Perform item stocktake.
         When the quantity of an item is counted,
         record the date of stocktake
@@ -76,27 +78,7 @@ class StockItem(models.Model):
 
         self.quantity = count
         self.stocktake_date = datetime.now().date()
-        self.save()
-
-    def take_stock(self, amount):
-        """ Take items from stock
-        This function can be called by initiating a ProjectRun,
-        or by manually taking the items from the stock location
-        """
-
-        if self.infinite:
-            return
-
-        amount = int(amount)
-        if amount < 0:
-            raise ValueError("Stock amount must be positive")
-
-        q = self.quantity - amount
-
-        if q < 0:
-            q = 0
-
-        self.quantity = q
+        self.stocktake_user = user
         self.save()
 
     def add_stock(self, amount):
@@ -118,6 +100,9 @@ class StockItem(models.Model):
 
         self.quantity = q
         self.save()
+
+    def take_stock(self, amount):
+        self.add_stock(-amount)
 
     def __str__(self):
         return "{n} x {part} @ {loc}".format(

@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from rest_framework.exceptions import ValidationError
 
 
 class Company(models.Model):
@@ -150,7 +151,7 @@ class InvenTreeTree(models.Model):
                 pass
             # Parent cannot be set to same ID (this would cause looping)
             elif val == self.id:
-                return
+                raise ValidationError("Category cannot set itself as parent")
             # Null parent is OK
             elif val is None:
                 pass
@@ -158,7 +159,7 @@ class InvenTreeTree(models.Model):
             else:
                 kids = self.getUniqueChildren()
                 if val in kids:
-                    return
+                    raise ValidationError("Category cannot set a child as parent")
 
         # Prohibit certain characters from tree node names
         elif attrname == 'name':
