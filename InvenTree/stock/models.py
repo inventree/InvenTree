@@ -7,6 +7,8 @@ from supplier.models import SupplierPart
 from part.models import Part
 from InvenTree.models import InvenTreeTree
 
+from datetime import datetime
+
 
 class StockLocation(InvenTreeTree):
     """ Organization tree for StockItem objects
@@ -26,7 +28,7 @@ class StockItem(models.Model):
     updated = models.DateField(auto_now=True)
 
     # last time the stock was checked / counted
-    last_checked = models.DateField(blank=True, null=True)
+    stocktake_date = models.DateField(blank=True, null=True)
 
     review_needed = models.BooleanField(default=False)
 
@@ -58,6 +60,65 @@ class StockItem(models.Model):
 
     # If stock item is incoming, an (optional) ETA field
     expected_arrival = models.DateField(null=True, blank=True)
+
+    infinite = models.BooleanField(default=False)
+
+    def stocktake(self, count):
+        """ Perform item stocktake.
+        When the quantity of an item is counted,
+        record the date of stocktake
+        """
+
+        count = int(count)
+
+        if count < 0 or self.infinite:
+            return
+
+        self.quantity = count
+        self.stocktake_date = datetime.now().date()
+        self.save()
+
+    def take_stock(self, amount):
+        """ Take items from stock
+        This function can be called by initiating a ProjectRun,
+        or by manually taking the items from the stock location
+        """
+
+        if self.infinite:
+            return
+
+        amount = int(amount)
+        if amount < 0:
+            raise ValueError("Stock amount must be positive")
+
+        q = self.quantity - amount
+
+        if q < 0:
+            q = 0
+
+        self.quantity = q
+        self.save()
+
+    def add_stock(self, amount):
+        """ Add items to stock
+        This function can be called by initiating a ProjectRun,
+        or by manually adding the items to the stock location
+        """
+
+        amount = int(amount)
+
+        if self.infinite or amount == 0:
+            return
+
+        amount = int(amount)
+
+        q = self.quantity + amount
+        if q < 0:
+            q = 0
+            
+        self.quantity = q
+        self.save()
+
 
     def __str__(self):
         return "{n} x {part} @ {loc}".format(

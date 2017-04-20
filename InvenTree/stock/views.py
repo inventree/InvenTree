@@ -1,11 +1,12 @@
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, response
 
 # from InvenTree.models import FilterChildren
 from .models import StockLocation, StockItem, StockTracking
-from .serializers import StockItemSerializer, LocationSerializer, StockTrackingSerializer
+from .serializers import StockItemSerializer, StockQuantitySerializer
+from .serializers import LocationSerializer, StockTrackingSerializer
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -51,6 +52,36 @@ class StockList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filter_class = StockFilter
+
+
+class StockStocktakeEndpoint(generics.UpdateAPIView):
+
+    queryset = StockItem.objects.all()
+    serializer_class = StockQuantitySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def update(self, request, *args, **kwargs):
+        object = self.get_object()
+        object.stocktake(request.data['quantity'])
+
+        serializer = self.get_serializer(object)
+
+        return response.Response(serializer.data)
+
+
+class AddStockEndpoint(generics.UpdateAPIView):
+
+    queryset = StockItem.objects.all()
+    serializer_class = StockQuantitySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def update(self, request, *args, **kwargs):
+        object = self.get_object()
+        object.add_stock(request.data['quantity'])
+
+        serializer = self.get_serializer(object)
+
+        return response.Response(serializer.data)
 
 
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
