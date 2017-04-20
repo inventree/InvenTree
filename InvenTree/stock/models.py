@@ -78,27 +78,6 @@ class StockItem(models.Model):
         self.stocktake_date = datetime.now().date()
         self.save()
 
-    def take_stock(self, amount):
-        """ Take items from stock
-        This function can be called by initiating a ProjectRun,
-        or by manually taking the items from the stock location
-        """
-
-        if self.infinite:
-            return
-
-        amount = int(amount)
-        if amount < 0:
-            raise ValueError("Stock amount must be positive")
-
-        q = self.quantity - amount
-
-        if q < 0:
-            q = 0
-
-        self.quantity = q
-        self.save()
-
     def add_stock(self, amount):
         """ Add items to stock
         This function can be called by initiating a ProjectRun,
@@ -118,6 +97,9 @@ class StockItem(models.Model):
 
         self.quantity = q
         self.save()
+
+    def take_stock(self, amount):
+        self.add_stock(-amount)
 
     def __str__(self):
         return "{n} x {part} @ {loc}".format(
