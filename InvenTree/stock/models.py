@@ -115,10 +115,9 @@ class StockItem(models.Model):
         q = self.quantity + amount
         if q < 0:
             q = 0
-            
+
         self.quantity = q
         self.save()
-
 
     def __str__(self):
         return "{n} x {part} @ {loc}".format(
