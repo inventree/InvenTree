@@ -12,8 +12,6 @@ from users.urls import user_urls
 
 admin.site.site_header = "InvenTree Admin"
 
-
-
 apipatterns = [
 
     # Stock URLs
