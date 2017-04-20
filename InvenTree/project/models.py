@@ -93,4 +93,4 @@ class ProjectRun(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])
 
-    run_date = models.DateField(auto_now_add=True)
+    run_date = models.DateField(blank=True, null=True)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import ProjectCategory, Project, ProjectPart
+from .models import ProjectCategory, Project, ProjectPart, ProjectRun
 
 
 class ProjectPartSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,3 +33,15 @@ class ProjectCategorySerializer(serializers.HyperlinkedModelSerializer):
                   'description',
                   'parent',
                   'path')
+
+
+class ProjectRunSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = ProjectRun
+        fields = ('url',
+                  'project',
+                  'quantity',
+                  'run_date')
+
+        read_only_fields = ('run_date',)

@@ -17,9 +17,21 @@ class StockItemSerializer(serializers.HyperlinkedModelSerializer):
                   'status',
                   'notes',
                   'updated',
-                  'last_checked',
+                  'stocktake_date',
                   'review_needed',
                   'expected_arrival')
+
+        """ These fields are read-only in this context.
+        They can be updated by accessing the appropriate API endpoints
+        """
+        read_only_fields = ('stocktake_date', 'quantity',)
+
+
+class StockQuantitySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = StockItem
+        fields = ('quantity',)
 
 
 class LocationSerializer(serializers.HyperlinkedModelSerializer):

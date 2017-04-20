@@ -2,10 +2,11 @@ from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 
 from rest_framework import generics, permissions
 from InvenTree.models import FilterChildren
-from .models import ProjectCategory, Project, ProjectPart
+from .models import ProjectCategory, Project, ProjectPart, ProjectRun
 from .serializers import ProjectSerializer
 from .serializers import ProjectCategorySerializer
 from .serializers import ProjectPartSerializer
+from .serializers import ProjectRunSerializer
 
 
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -96,6 +97,13 @@ class ProjectCategoryList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
+class ProjectPartFilter(FilterSet):
+
+    class Meta:
+        model = ProjectPart
+        fields = ['project', 'part']
+
+
 class ProjectPartsList(generics.ListCreateAPIView):
     """
 
@@ -109,20 +117,9 @@ class ProjectPartsList(generics.ListCreateAPIView):
 
     serializer_class = ProjectPartSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-    def get_queryset(self):
-        parts = ProjectPart.objects.all()
-        params = self.request.query_params
-
-        project_id = params.get('project', None)
-        if project_id:
-            parts = parts.filter(project=project_id)
-
-        part_id = params.get('part', None)
-        if part_id:
-            parts = parts.filter(part=part_id)
-
-        return parts
+    queryset = ProjectPart.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = ProjectPartFilter
 
 
 class ProjectPartDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -142,3 +139,45 @@ class ProjectPartDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ProjectPart.objects.all()
     serializer_class = ProjectPartSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class ProjectRunDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+
+    get:
+    Return a single ProjectRun
+
+    post:
+    Update a ProjectRun
+
+    delete:
+    Remove a ProjectRun
+    """
+
+    queryset = ProjectRun.objects.all()
+    serializer_class = ProjectRunSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class ProjectRunFilter(FilterSet):
+
+    class Meta:
+        model = ProjectRun
+        fields = ['project']
+
+
+class ProjectRunList(generics.ListCreateAPIView):
+    """
+
+    get:
+    Return a list of all ProjectRun objects
+
+    post:
+    Create a new ProjectRun object
+    """
+
+    queryset = ProjectRun.objects.all()
+    serializer_class = ProjectRunSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = ProjectRunFilter
