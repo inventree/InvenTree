@@ -4,9 +4,9 @@ from django_filters import NumberFilter
 from rest_framework import generics, permissions, response
 
 # from InvenTree.models import FilterChildren
-from .models import StockLocation, StockItem, StockTracking
+from .models import StockLocation, StockItem
 from .serializers import StockItemSerializer, StockQuantitySerializer
-from .serializers import LocationSerializer, StockTrackingSerializer
+from .serializers import LocationSerializer
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -127,47 +127,3 @@ class LocationList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filter_class = StockLocationFilter
-
-
-class StockTrackingDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-
-    get:
-    Return a single StockTracking object
-
-    post:
-    Update a StockTracking object
-
-    delete:
-    Remove a StockTracking object
-
-    """
-
-    queryset = StockTracking.objects.all()
-    serializer_class = StockTrackingSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-
-class StockTrackingFilter(FilterSet):
-
-    class Meta:
-        model = StockTracking
-        fields = ['item']
-
-
-class StockTrackingList(generics.ListCreateAPIView):
-    """
-
-    get:
-    Return a list of all StockTracking items
-
-    post:
-    Create a new StockTracking item
-
-    """
-
-    queryset = StockTracking.objects.all()
-    serializer_class = StockTrackingSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
-    filter_class = StockTrackingFilter

@@ -26,11 +26,3 @@ stock_loc_urls = [
 
     url(r'^$', views.LocationList.as_view())
 ]
-
-stock_track_urls = [
-    url(r'^(?P<pk>[0-9]+)/?$', views.StockTrackingDetail.as_view(), name='stocktracking-detail'),
-
-    url(r'^\?.*/?$', views.StockTrackingList.as_view()),
-
-    url(r'^$', views.StockTrackingList.as_view())
-]

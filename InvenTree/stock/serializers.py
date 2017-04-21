@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import StockItem, StockLocation, StockTracking
+from .models import StockItem, StockLocation
 
 
 class StockItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -25,7 +25,10 @@ class StockItemSerializer(serializers.HyperlinkedModelSerializer):
         """ These fields are read-only in this context.
         They can be updated by accessing the appropriate API endpoints
         """
-        read_only_fields = ('stocktake_date', 'quantity',)
+        read_only_fields = ('stocktake_date',
+                            'stocktake_user',
+                            'updated',
+                            'quantity',)
 
 
 class StockQuantitySerializer(serializers.ModelSerializer):
@@ -46,13 +49,3 @@ class LocationSerializer(serializers.HyperlinkedModelSerializer):
                   'description',
                   'parent',
                   'path')
-
-
-class StockTrackingSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = StockTracking
-        fields = ('url',
-                  'item',
-                  'quantity',
-                  'when')
