@@ -1,8 +1,9 @@
 from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
-from django.db import models
+from django.db import models, transaction
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
+from simple_history.models import HistoricalRecords
 
 from supplier.models import SupplierPart
 from part.models import Part
@@ -65,6 +66,10 @@ class StockItem(models.Model):
 
     infinite = models.BooleanField(default=False)
 
+    # History of this item
+    history = HistoricalRecords()
+
+    @transaction.atomic
     def stocktake(self, count, user):
         """ Perform item stocktake.
         When the quantity of an item is counted,
@@ -81,6 +86,7 @@ class StockItem(models.Model):
         self.stocktake_user = user
         self.save()
 
+    @transaction.atomic
     def add_stock(self, amount):
         """ Add items to stock
         This function can be called by initiating a ProjectRun,
@@ -101,6 +107,7 @@ class StockItem(models.Model):
         self.quantity = q
         self.save()
 
+    @transaction.atomic
     def take_stock(self, amount):
         self.add_stock(-amount)
 
@@ -109,15 +116,3 @@ class StockItem(models.Model):
             n=self.quantity,
             part=self.part.name,
             loc=self.location.name)
-
-
-class StockTracking(models.Model):
-    """ Tracks a single movement of stock
-    - Used to track stock being taken from a location
-    - Used to track stock being added to a location
-    - "Pending" flag shows that stock WILL be taken / added
-    """
-
-    item = models.ForeignKey(StockItem, on_delete=models.CASCADE, related_name='tracking')
-    quantity = models.IntegerField()
-    when = models.DateTimeField(auto_now=True)

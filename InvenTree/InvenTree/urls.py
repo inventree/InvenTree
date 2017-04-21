@@ -4,7 +4,7 @@ from django.contrib import admin
 from rest_framework.documentation import include_docs_urls
 
 from part.urls import part_urls, part_cat_urls, part_param_urls, part_param_template_urls
-from stock.urls import stock_urls, stock_loc_urls, stock_track_urls
+from stock.urls import stock_urls, stock_loc_urls
 from project.urls import prj_urls, prj_part_urls, prj_cat_urls, prj_run_urls
 from supplier.urls import cust_urls, manu_urls, supplier_part_urls, price_break_urls, supplier_urls
 from track.urls import unique_urls, part_track_urls
@@ -17,7 +17,6 @@ apipatterns = [
     # Stock URLs
     url(r'^stock/', include(stock_urls)),
     url(r'^stock-location/', include(stock_loc_urls)),
-    url(r'^stock-track/', include(stock_track_urls)),
 
     # Part URLs
     url(r'^part/', include(part_urls)),
