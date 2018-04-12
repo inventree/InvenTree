@@ -60,8 +60,7 @@ class Part(models.Model):
     class Meta:
         verbose_name = "Part"
         verbose_name_plural = "Parts"
-        unique_together = (("name", "category"),
-                           ("IPN", "category"))
+        unique_together = (("name", "category"),)
 
     @property
     def stock(self):
