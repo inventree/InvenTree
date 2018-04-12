@@ -14,6 +14,8 @@ from datetime import datetime
 
 class StockLocation(InvenTreeTree):
     """ Organization tree for StockItem objects
+    A "StockLocation" can be considered a warehouse, or storage location
+    Stock locations can be heirarchical as required
     """
 
     @property
@@ -36,33 +38,27 @@ class StockItem(models.Model):
     review_needed = models.BooleanField(default=False)
 
     # Stock status types
-    ITEM_IN_STOCK = 10
-    ITEM_INCOMING = 15
-    ITEM_IN_PROGRESS = 20
-    ITEM_COMPLETE = 25
+    ITEM_OK = 10
     ITEM_ATTENTION = 50
     ITEM_DAMAGED = 55
     ITEM_DESTROYED = 60
 
     ITEM_STATUS_CODES = {
-        ITEM_IN_STOCK: _("In stock"),
-        ITEM_INCOMING: _("Incoming"),
-        ITEM_IN_PROGRESS: _("In progress"),
-        ITEM_COMPLETE: _("Complete"),
+        ITEM_OK: _("OK"),
         ITEM_ATTENTION: _("Attention needed"),
         ITEM_DAMAGED: _("Damaged"),
         ITEM_DESTROYED: _("Destroyed")
     }
 
     status = models.PositiveIntegerField(
-        default=ITEM_IN_STOCK,
+        default=ITEM_OK,
         choices=ITEM_STATUS_CODES.items(),
         validators=[MinValueValidator(0)])
 
     notes = models.CharField(max_length=100, blank=True)
 
     # If stock item is incoming, an (optional) ETA field
-    expected_arrival = models.DateField(null=True, blank=True)
+    # expected_arrival = models.DateField(null=True, blank=True)
 
     infinite = models.BooleanField(default=False)
 

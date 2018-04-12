@@ -12,6 +12,17 @@ part_cat_urls = [
     url(r'^$', views.PartCategoryList.as_view())
 ]
 
+part_urls = [
+
+    # Individual part
+    url(r'^(?P<pk>[0-9]+)/?$', views.PartDetail.as_view(), name='part-detail'),
+
+    # List parts with optional filters
+    url(r'^\?.*/?$', views.PartList.as_view()),
+    url(r'^$', views.PartList.as_view()),
+]
+
+"""
 part_param_urls = [
     # Detail of a single part parameter
     url(r'^(?P<pk>[0-9]+)/?$', views.PartParamDetail.as_view(), name='partparameter-detail'),
@@ -29,13 +40,6 @@ part_param_template_urls = [
     url(r'^\?.*/?$', views.PartTemplateList.as_view()),
     url(r'^$', views.PartTemplateList.as_view())
 ]
+"""
 
-part_urls = [
 
-    # Individual part
-    url(r'^(?P<pk>[0-9]+)/?$', views.PartDetail.as_view(), name='part-detail'),
-
-    # List parts with optional filters
-    url(r'^\?.*/?$', views.PartList.as_view()),
-    url(r'^$', views.PartList.as_view()),
-]

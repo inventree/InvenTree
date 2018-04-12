@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
-from .models import Part, PartCategory, PartParameter, PartParameterTemplate
+from .models import Part, PartCategory
 
-
+"""
 class PartParameterSerializer(serializers.HyperlinkedModelSerializer):
-    """ Serializer for a PartParameter
-    """
+    " Serializer for a PartParameter
+    "
 
     class Meta:
         model = PartParameter
@@ -15,7 +15,7 @@ class PartParameterSerializer(serializers.HyperlinkedModelSerializer):
                   'name',
                   'value',
                   'units')
-
+"""
 
 class PartSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for complete detail information of a part.
@@ -44,7 +44,7 @@ class PartCategorySerializer(serializers.HyperlinkedModelSerializer):
                   'parent',
                   'path')
 
-
+"""
 class PartTemplateSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
@@ -53,3 +53,4 @@ class PartTemplateSerializer(serializers.HyperlinkedModelSerializer):
                   'name',
                   'units',
                   'format')
+"""

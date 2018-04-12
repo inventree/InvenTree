@@ -3,11 +3,12 @@ from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from rest_framework import generics, permissions
 
 from InvenTree.models import FilterChildren
-from .models import PartCategory, Part, PartParameter, PartParameterTemplate
+from .models import PartCategory, Part
+
 from .serializers import PartSerializer
 from .serializers import PartCategorySerializer
-from .serializers import PartParameterSerializer
-from .serializers import PartTemplateSerializer
+#from .serializers import PartParameterSerializer
+#from .serializers import PartTemplateSerializer
 
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -28,22 +29,22 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
+"""
 class PartParamFilter(FilterSet):
 
     class Meta:
         model = PartParameter
         fields = ['part']
 
-
 class PartParamList(generics.ListCreateAPIView):
-    """
+    "
 
     get:
     Return a list of all part parameters (with optional filters)
 
     post:
     Create a new part parameter
-    """
+    ""
 
     queryset = PartParameter.objects.all()
     serializer_class = PartParameterSerializer
@@ -53,7 +54,7 @@ class PartParamList(generics.ListCreateAPIView):
 
 
 class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
+    ""
 
     get:
     Detail view of a single PartParameter
@@ -64,12 +65,12 @@ class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
     delete:
     Remove a PartParameter from the database
 
-    """
+    "
 
     queryset = PartParameter.objects.all()
     serializer_class = PartParameterSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
+"""
 
 class PartFilter(FilterSet):
 
@@ -138,8 +139,9 @@ class PartCategoryList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
+"""
 class PartTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
+    ""
 
     get:
     Return detail on a single PartParameterTemplate object
@@ -150,7 +152,7 @@ class PartTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
     delete:
     Remove a PartParameterTemplate object
 
-    """
+    ""
 
     queryset = PartParameterTemplate.objects.all()
     serializer_class = PartTemplateSerializer
@@ -158,7 +160,7 @@ class PartTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartTemplateList(generics.ListCreateAPIView):
-    """
+    ""
 
     get:
     Return a list of all PartParameterTemplate objects
@@ -167,8 +169,10 @@ class PartTemplateList(generics.ListCreateAPIView):
     post:
     Create a new PartParameterTemplate object
 
-    """
+    ""
 
     queryset = PartParameterTemplate.objects.all()
     serializer_class = PartTemplateSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+"""

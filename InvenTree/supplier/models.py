@@ -35,7 +35,11 @@ class SupplierPart(models.Model):
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')
 
-    part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.CASCADE)
+    # Link to an actual part
+# The part will have a field 'supplier_parts' which links to the supplier part options
+    part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.CASCADE,
+                             related_name='supplier_parts')
+
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     SKU = models.CharField(max_length=100)
 
