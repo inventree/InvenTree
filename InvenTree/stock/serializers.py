@@ -48,4 +48,4 @@ class LocationSerializer(serializers.HyperlinkedModelSerializer):
                   'name',
                   'description',
                   'parent',
-                  'path')
+                  'pathstring')

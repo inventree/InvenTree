@@ -1,14 +1,71 @@
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 
+# Template stuff (WIP)
+from django.http import HttpResponse
+from django.template import loader
+
 from rest_framework import generics, permissions
 
 from InvenTree.models import FilterChildren
 from .models import PartCategory, Part
 
+from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.views import generic
+
 from .serializers import PartSerializer
 from .serializers import PartCategorySerializer
 #from .serializers import PartParameterSerializer
 #from .serializers import PartTemplateSerializer
+
+"""
+class IndexView(generic.ListView):
+    template_name = 'index.html'
+    context_object_name = 'parts'
+
+    def get_queryset(self):
+        "Return the last five published questions."
+        return Part.objects.all()
+
+"""
+
+def index(request):
+    template = loader.get_template('index.html')
+
+    parts = Part.objects.all()
+
+    cat = None
+
+    if 'category' in request.GET:
+        cat_id = request.GET['category']
+
+        cat = get_object_or_404(PartCategory, pk=cat_id)
+        #cat = PartCategory.objects.get(pk=cat_id)
+        parts = parts.filter(category = cat_id)
+
+    context = {
+        'parts' : parts.order_by('category__name'),
+    }
+
+    if cat:
+        context['category'] = cat
+
+    return HttpResponse(template.render(context, request))
+
+
+def detail(request, pk):
+    #template = loader.get_template('detail.html')
+
+    part = get_object_or_404(Part, pk=pk)
+
+    return render(request, 'detail.html', {'part' : part})
+
+    #return HttpResponse("You're looking at part %s." % pk)
+
+#def results(request, question_id):
+#    response = "You're looking at the results of question %s."
+#    return HttpResponse(response % question_id)
 
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):

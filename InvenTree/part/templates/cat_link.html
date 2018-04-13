@@ -1,0 +1,7 @@
+<div id="category-path" background="#99F">
+<a href="/part/list/">All</a> >
+{% for path_item in category.parentpath %}
+<a href="/part/list/?category={{ path_item.id }}">{{ path_item.name }}</a> >
+{% endfor %}
+<a href="/part/list/?category={{ category.id }}">{{ category.name }}</a>
+</div>

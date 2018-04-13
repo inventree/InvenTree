@@ -38,7 +38,7 @@ class InvenTreeTree(models.Model):
         abstract = True
         unique_together = ('name', 'parent')
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=250, blank=True)
     parent = models.ForeignKey('self',
                                on_delete=models.CASCADE,
@@ -126,10 +126,11 @@ class InvenTreeTree(models.Model):
 
     @property
     def path(self):
-        if self.parent:
-            return "/".join([p.name for p in self.parentpath]) + "/" + self.name
-        else:
-            return self.name
+        return self.parentpath + [self]
+
+    @property
+    def pathstring(self):
+        return '/'.join([item.name for item in self.path])
 
     def __setattr__(self, attrname, val):
         """ Custom Attribute Setting function
@@ -174,7 +175,7 @@ class InvenTreeTree(models.Model):
             This is recursive - Make it not so.
         """
 
-        return self.path
+        return self.pathstring
 
 
 def FilterChildren(queryset, parent):

@@ -36,7 +36,7 @@ class Part(models.Model):
     IPN = models.CharField(max_length=100, blank=True)
 
     # Part category - all parts must be assigned to a category
-    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE, related_name='parts')
 
     # Minimum "allowed" stock level
     minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
@@ -76,10 +76,20 @@ class Part(models.Model):
         return result['total']
 
     @property
+    def bomItemCount(self):
+        return self.bom_items.all().count()
+
+
+    @property
+    def usedInCount(self):
+        return self.used_in.all().count()
+
+    """
+    @property
     def projects(self):
-        """ Return a list of unique projects that this part is associated with.
+        " Return a list of unique projects that this part is associated with.
         A part may be used in zero or more projects.
-        """
+        "
 
         project_ids = set()
         project_parts = self.projectpart_set.all()
@@ -92,6 +102,6 @@ class Part(models.Model):
                 projects.append(pp.project)
 
         return projects
-
+    """
 
 

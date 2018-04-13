@@ -32,7 +32,7 @@ class ProjectCategorySerializer(serializers.HyperlinkedModelSerializer):
                   'name',
                   'description',
                   'parent',
-                  'path')
+                  'pathstring')
 
 
 class ProjectRunSerializer(serializers.HyperlinkedModelSerializer):

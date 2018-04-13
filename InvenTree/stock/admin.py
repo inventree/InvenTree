@@ -5,7 +5,7 @@ from .models import StockLocation, StockItem
 
 
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'path', 'description')
+    list_display = ('name', 'pathstring', 'description')
 
 
 class StockItemAdmin(SimpleHistoryAdmin):

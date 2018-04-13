@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import BomItem
 
 
-class BomItemSerializer(serializers.HyperlinkedModelSerializer):
+class BomItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BomItem

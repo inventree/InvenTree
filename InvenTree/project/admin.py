@@ -4,7 +4,7 @@ from .models import ProjectCategory, Project, ProjectPart, ProjectRun
 
 
 class ProjectCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'path', 'description')
+    list_display = ('name', 'pathstring', 'description')
 
 
 class ProjectAdmin(admin.ModelAdmin):

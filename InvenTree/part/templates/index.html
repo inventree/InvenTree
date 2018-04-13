@@ -1,0 +1,27 @@
+<h1>Parts page!</h1>
+
+{% if category %}
+{% include "cat_link.html" with category=category %}
+<h3>Child categories</h3>
+<ul>
+{% for child in category.children.all %}
+<li><a href="/part/list?category={{ child.id }}">{{ child.name }}</a></li>
+{% endfor %}
+</ul>
+{% else %}
+No category!
+{% endif %}
+
+<b>Here is a list of all the parts:</b>
+
+
+
+<table>
+{% for part in parts %}
+<tr>
+    <td><a href="{% url 'detail' part.id %}">{{ part.name }}</a></td>
+    <td>{{ part.description }}</td>
+</tr>
+{% endfor %}
+</table>
+

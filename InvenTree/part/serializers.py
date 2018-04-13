@@ -17,7 +17,8 @@ class PartParameterSerializer(serializers.HyperlinkedModelSerializer):
                   'units')
 """
 
-class PartSerializer(serializers.HyperlinkedModelSerializer):
+#class PartSerializer(serializers.HyperlinkedModelSerializer):
+class PartSerializer(serializers.ModelSerializer):
     """ Serializer for complete detail information of a part.
     Used when displaying all details of a single component.
     """
@@ -31,7 +32,8 @@ class PartSerializer(serializers.HyperlinkedModelSerializer):
                   'category',
                   'stock',
                   'units',
-                  'trackable')
+                  'trackable',
+                  )
 
 
 class PartCategorySerializer(serializers.HyperlinkedModelSerializer):
@@ -42,7 +44,7 @@ class PartCategorySerializer(serializers.HyperlinkedModelSerializer):
                   'name',
                   'description',
                   'parent',
-                  'path')
+                  'pathstring')
 
 """
 class PartTemplateSerializer(serializers.HyperlinkedModelSerializer):

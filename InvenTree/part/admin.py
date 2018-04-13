@@ -4,12 +4,12 @@ from .models import PartCategory, Part
 
 class PartAdmin(admin.ModelAdmin):
 
-    list_display = ('name', 'IPN', 'stock', 'category')
+    list_display = ('name', 'IPN', 'description', 'stock', 'category')
 
 
 class PartCategoryAdmin(admin.ModelAdmin):
 
-    list_display = ('name', 'path', 'description')
+    list_display = ('name', 'pathstring', 'description')
 
 """
 class ParameterTemplateAdmin(admin.ModelAdmin):
