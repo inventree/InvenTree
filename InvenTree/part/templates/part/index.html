@@ -1,7 +1,11 @@
+{% extends "part/base.html" %}
+
+{% block content %}
+
 <h1>Parts page!</h1>
 
 {% if category %}
-{% include "cat_link.html" with category=category %}
+{% include "part/cat_link.html" with category=category %}
 <h3>Child categories</h3>
 <ul>
 {% for child in category.children.all %}
@@ -24,4 +28,6 @@ No category!
 </tr>
 {% endfor %}
 </table>
+
+{% endblock %}
 

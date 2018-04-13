@@ -31,7 +31,7 @@ class IndexView(generic.ListView):
 """
 
 def index(request):
-    template = loader.get_template('index.html')
+    template = loader.get_template('part/index.html')
 
     parts = Part.objects.all()
 
@@ -59,9 +59,21 @@ def detail(request, pk):
 
     part = get_object_or_404(Part, pk=pk)
 
-    return render(request, 'detail.html', {'part' : part})
+    return render(request, 'part/detail.html', {'part' : part})
 
     #return HttpResponse("You're looking at part %s." % pk)
+
+
+def bom(request, pk):
+    part = get_object_or_404(Part, pk=pk)
+
+    return render(request, 'part/bom.html', {'part': part})
+
+def stock(request, pk):
+    part = get_object_or_404(Part, pk=pk)
+
+    return render(request, 'part/stock.html', {'part': part})
+
 
 #def results(request, question_id):
 #    response = "You're looking at the results of question %s."

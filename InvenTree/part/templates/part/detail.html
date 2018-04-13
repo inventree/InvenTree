@@ -1,0 +1,12 @@
+{% extends "part/part_base.html" %}
+
+{% block details  %}
+
+<br>
+<a href="{% url 'bom' part.id %}">There are <b>{{ part.bomItemCount }}</b> BOM items for this part.</a>
+<br>
+Used in {{ part.usedInCount }} other parts.<br>
+
+<a href="{% url 'stock' part.id %}">There are {{ part.stock }} units in stock.</a>
+
+{% endblock %}

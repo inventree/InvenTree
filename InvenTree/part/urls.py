@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.views.generic.base import RedirectView
 
 from . import views
@@ -28,11 +28,18 @@ part_api_urls = [
     url(r'^$', views.PartList.as_view()),
 ]
 
+part_detail_urls = [
+
+    url(r'^bom/?', views.bom, name='bom'),
+    url(r'^stock/?', views.stock, name='stock'),
+    url('', views.detail, name='detail'),
+]
+
 # URL list for part web interface
 part_urls = [
     # Individual
-    url(r'^(?P<pk>\d+)/$', views.detail, name='detail'),
-    # ex: /part/
+    url(r'^(?P<pk>\d+)/', include(part_detail_urls)),
+
     url('list', views.index, name='index'),
     # ex: /part/5/
 

@@ -1,0 +1,32 @@
+{% extends "part/part_base.html" %}
+
+{% block details %}
+
+<br>
+Total in stock: {{ part.stock }}
+<br>
+
+<table>
+<tr>
+    <th>Quantity</th>
+    <th>Location</th>
+    <th>Supplier part</th>
+    <th>Stocktake</th>
+    <th>Notes</th>
+</tr>
+{% for stock in part.locations.all %}
+<tr>
+    <td>{{ stock.quantity }}</td>
+    <td>{{ stock.location.name }}</td>
+    <td>
+        {% if stock.supplier_part %}
+        {{ stock.supplier_part.supplier.name }} | {{ stock.supplier_part.SKU }}
+        {% endif %}
+    </td>
+    <td>{% if stock.stocktake_date %}{{ stock.stocktake_date }}{% endif %}</td>
+    <td>{{ stock.notes }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

@@ -9,6 +9,9 @@ from bom.urls import bom_urls
 from stock.urls import stock_urls, stock_loc_urls
 from supplier.urls import cust_urls, manu_urls, supplier_part_urls, price_break_urls, supplier_urls
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 #from project.urls import prj_urls, prj_part_urls, prj_cat_urls, prj_run_urls
 #from track.urls import unique_urls, part_track_urls
 
@@ -65,4 +68,4 @@ urlpatterns = [
 
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,0 +1,21 @@
+{% extends "part/base.html" %}
+
+{% block content %}
+
+{% include "part/cat_link.html" with category=part.category %}
+
+<a href="{% url 'detail' part.id %}">{{ part.name }}</a>
+
+<br>
+{{ part.description }}
+<br>
+IPN: {% if part.IPN %}{{ part.IPN }}{% else %}N/A{% endif %}
+<br>
+
+{% block details %}
+
+<!-- Specific part details go here... -->
+
+{% endblock %}
+
+{% endblock %}

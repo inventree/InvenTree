@@ -1,0 +1,22 @@
+{% extends "part/part_base.html" %}
+
+{% block details %}
+
+<table>
+<tr>
+    <th>Part</th>
+    <th>Description</th>
+    <th>Quantity</th>
+</tr>
+{% for bom_item in part.bom_items.all %}
+{% with sub_part=bom_item.sub_part %}
+<tr>
+    <td><a href="{% url 'detail' sub_part.id %}">{{ sub_part.name }}</a></td>
+    <td>{{ sub_part.description }}</td>
+    <td>{{ bom_item.quantity }}</td>
+</tr>
+{% endwith %}
+{% endfor %}
+</table>
+
+{% endblock %}
