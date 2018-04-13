@@ -49,8 +49,8 @@ INSTALLED_APPS = [
     'bom.apps.BomConfig',
     'supplier.apps.SupplierConfig',
     'stock.apps.StockConfig',
+    'track.apps.TrackConfig',
     #'project.apps.ProjectConfig',
-    #'track.apps.TrackConfig',
 ]
 
 MIDDLEWARE = [

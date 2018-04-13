@@ -9,4 +9,10 @@ Used in {{ part.usedInCount }} other parts.<br>
 
 <a href="{% url 'stock' part.id %}">There are {{ part.stock }} units in stock.</a>
 
+<br><br>
+{% if part.trackable %}
+<a href="{% url 'track' part.id %}">Part tracking</a>
+{% else %}
+{{ part.name }} does not have part tracking enabled
+{% endif %}
 {% endblock %}

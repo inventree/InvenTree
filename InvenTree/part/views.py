@@ -74,6 +74,11 @@ def stock(request, pk):
 
     return render(request, 'part/stock.html', {'part': part})
 
+def track(request, pk):
+    part = get_object_or_404(Part, pk=pk)
+
+    return render(request, 'part/track.html', {'part': part})
+
 
 #def results(request, question_id):
 #    response = "You're looking at the results of question %s."

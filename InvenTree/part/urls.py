@@ -29,7 +29,7 @@ part_api_urls = [
 ]
 
 part_detail_urls = [
-
+    url(r'^track/?', views.track, name='track'),
     url(r'^bom/?', views.bom, name='bom'),
     url(r'^stock/?', views.stock, name='stock'),
     url('', views.detail, name='detail'),

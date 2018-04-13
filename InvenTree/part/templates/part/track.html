@@ -1,0 +1,20 @@
+{% extends "part/part_base.html" %}
+
+{% block details %}
+
+Part tracking for {{ part.name }}
+
+<table>
+<tr>
+    <th>Serial</th>
+    <th>Status</th>
+</tr>
+{% for track in part.serials.all %}
+<tr>
+    <td>{{ track.serial }}</td>
+    <td>{{ track.status }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

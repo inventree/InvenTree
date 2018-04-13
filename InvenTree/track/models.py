@@ -32,11 +32,12 @@ class UniquePart(models.Model):
         # Cannot have multiple parts with same serial number
         unique_together = ('part', 'serial')
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE)
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='serials')
 
     creation_date = models.DateField(auto_now_add=True,
                                      editable=False)
-    serial = models.IntegerField()
+
+    serial = models.PositiveIntegerField()
 
     # createdBy = models.ForeignKey(User)
 
