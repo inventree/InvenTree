@@ -1,35 +1,32 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 
 {% include "part/cat_link.html" with category=category %}
 
 {% if children|length > 0 %}
-<table>
-    <tr>
-        <th>Subcategory</th>
-        <th>Description</th>
-    </tr>
+Subcategories:
+<ul class="list-group">
 {% for child in children %}
-<tr>
-    <td><a href="/part/list/?category={{ child.id }}">{{ child.name }}</a></td>
-    <td>{{ child.description }}</td>
+<li class="list-group-item">
+    <a href="/part/list/?category={{ child.id }}">{{ child.name }}</a> - {{ child.description }}
+    <span class='badge'>{{ child.partcount }}</span>
+</li>
 {% endfor %}
-</table>
+</ul>
 {% endif %}
 
 {% if parts|length > 0 %}
-<h3>Parts</h3>
-<table>
+Parts:
+<ul class="list-group">
 {% for part in parts %}
-<tr>
-    <td><a href="{% url 'part-detail' part.id %}">{{ part.name }}</a></td>
-    <td>{{ part.description }}</td>
+<li class="list-group-item">
+    <a href="{% url 'part-detail' part.id %}">{{ part.name }}</a> - {{ part.description }}
+</li>
 </tr>
 {% endfor %}
-</table>
-{% else %}
-There are no parts in this category.
+</ul>
 {% endif %}
 
 {% endblock %}

@@ -1,10 +1,17 @@
 table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 th, td {
-    padding: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 th {
@@ -16,6 +23,13 @@ table tr:nth-child(even) {
 }
 table tr:nth-child(odd) {
     background-color: #fff;
+}
+
+.badge {
+    float: right;
+    background-color: #777;
+    color: #fff;
+    border-radius: 5px;
 }
 
 .part-thumb {

@@ -20,6 +20,20 @@ class PartCategory(InvenTreeTree):
         verbose_name = "Part Category"
         verbose_name_plural = "Part Categories"
 
+
+    @property
+    def partcount(self):
+        """ Return the total part count under this category
+        (including children of child categories)
+        """
+
+        count = self.parts.count()
+
+        for child in self.children.all():
+            count += child.partcount
+
+        return count
+
     """
     @property
     def parts(self):

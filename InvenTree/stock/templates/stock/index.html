@@ -5,17 +5,16 @@
 {% include "stock/loc_link.html" with location=location %}
 
 {% if children|length > 0 %}
-<table>
-    <tr><th>Sublocations</th></tr>
+Storage locations:
+<ul class="list-group">
 {% for child in children %}
-<tr>
-    <td><a href="/stock/list/?location={{ child.id }}">{{ child.name }}</a></td>
-</tr>
+<li class="list-group-item"><a href="/stock/list/?location={{ child.id }}">{{ child.name }}</a></li>
 {% endfor %}
-</table>
+</ul>
 {% endif %}
 
 {% if items|length > 0 %}
+Stock items:
 <table>
     <tr>
         <th>Item</th>
