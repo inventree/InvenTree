@@ -1,0 +1,43 @@
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+}
+
+th {
+    text-align: left;
+}
+
+table tr:nth-child(even) {
+    background-color: #eee;
+}
+table tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+.part-thumb {
+    width: 250px;
+    height: 250px;
+    border: 1px black solid;
+    margin: 5px;
+    padding: 5px;
+    object-fit: contain;
+}
+
+.media-body {
+    padding-top: 10px;
+}
+
+.navigation {
+    padding: 5px;
+    padding-left: 15px;
+    background-color: #EEE;
+}
+
+.inventree-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}

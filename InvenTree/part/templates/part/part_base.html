@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block content %}
 
 {% include "part/cat_link.html" with category=part.category %}
 
 <div class="media">
-    <img class="mr-3"
+    <img class="mr-3 part-thumb"
     {% if part.image %}
     src="{{ part.image.url }}"
     {% else %}
-    src="/media/part_images/missing.png"
+    src="{% static 'img/blank_image.png' %}"
     {% endif %}/>
 <div class="media-body">
     <h5>{{ part.name }}</h5>

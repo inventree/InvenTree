@@ -10,7 +10,7 @@
 
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-<link rel="stylesheet" href="{% static 'css/part.css' %}">
+<link rel="stylesheet" href="{% static 'css/inventree.css' %}">
 
 <title>
 {% block title %}
@@ -20,11 +20,14 @@ InvenTree
 </head>
 
 <body>
+
 {% include "navbar.html" %}
 
+<div class="inventree-content">
 {% block content %}
 <!-- Each view fills in here.. -->
 {% endblock %}
+</div>
 
 </body>
 </html>
