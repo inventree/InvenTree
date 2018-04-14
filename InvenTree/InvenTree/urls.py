@@ -17,6 +17,8 @@ from supplier.urls import supplier_urls
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.views.generic.base import RedirectView
+
 #from project.urls import prj_urls, prj_part_urls, prj_cat_urls, prj_run_urls
 #from track.urls import unique_urls, part_track_urls
 
@@ -84,3 +86,6 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if settings.DEBUG:
     # Media file access
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Send any unknown URLs to the parts page
+urlpatterns += [url(r'^.*$', RedirectView.as_view(url='part/', permanent=False), name='part-index')]

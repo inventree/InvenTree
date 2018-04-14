@@ -7,11 +7,13 @@
 {% if children|length > 0 %}
 <table>
     <tr>
-        <th>Subcategories</th>
+        <th>Subcategory</th>
+        <th>Description</th>
     </tr>
 {% for child in children %}
 <tr>
     <td><a href="/part/list/?category={{ child.id }}">{{ child.name }}</a></td>
+    <td>{{ child.description }}</td>
 {% endfor %}
 </table>
 {% endif %}

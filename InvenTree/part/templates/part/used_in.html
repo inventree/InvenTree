@@ -1,0 +1,22 @@
+{% extends "part/part_base.html" %}
+
+{% block details %}
+
+{% include 'part/tabs.html' with tab='used' %}
+
+This part is used to make the following parts:
+
+<table>
+<tr>
+    <th>Part</th>
+    <th>Description</th>
+</tr>
+{% for item in part.used_in.all %}
+<tr>
+    <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.name }}</a></td>
+    <td>{{ item.part.description }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

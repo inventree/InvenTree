@@ -54,6 +54,11 @@ def bom(request, pk):
 
     return render(request, 'part/bom.html', {'part': part})
 
+def used(request, pk):
+    part = get_object_or_404(Part, pk=pk)
+
+    return render(request, 'part/used_in.html', {'part': part})
+
 def stock(request, pk):
     part = get_object_or_404(Part, pk=pk)
 

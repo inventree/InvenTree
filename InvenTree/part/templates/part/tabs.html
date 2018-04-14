@@ -1,0 +1,12 @@
+<ul class="nav nav-tabs">
+    <li{% ifequal tab 'detail' %} class="active"{% endifequal %}><a href="{% url 'part-detail' part.id %}">Details</a></li>
+    <li{% ifequal tab 'bom' %} class="active"{% endifequal %}><a href="{% url 'part-bom' part.id %}">BOM ({{ part.bomItemCount }})</a></li>
+    {% if part.usedInCount > 0 %}
+    <li{% ifequal tab 'used' %} class="active"{% endifequal %}><a href="{% url 'part-used-in' part.id %}">Used In ({{ part.usedInCount }})</a></li>
+    {% endif %}
+    <li{% ifequal tab 'stock' %} class="active"{% endifequal %}><a href="{% url 'part-stock' part.id %}">Stock ({{ part.stock }})</a></li>
+    <li{% ifequal tab 'suppliers' %} class="active"{% endifequal %}><a href="{% url 'part-suppliers' part.id %}">Suppliers ({{ part.supplier_parts.all|length }})</a></li>
+    {% if part.trackable %}
+    <li{% ifequal tab 'track' %} class="active"{% endifequal %}><a href="{% url 'part-track' part.id %}">Tracking</a></li>
+    {% endif %}
+</ul>

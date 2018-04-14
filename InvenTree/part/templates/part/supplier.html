@@ -2,6 +2,8 @@
 
 {% block details %}
 
+{% include 'part/tabs.html' with tab='suppliers' %}
+
 {% if part.supplier_parts.all|length > 0 %}
 <table>
 <tr>
