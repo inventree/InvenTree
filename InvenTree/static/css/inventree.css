@@ -50,9 +50,7 @@ table tr:nth-child(odd) {
 }
 
 .navigation {
-    padding: 5px;
     padding-left: 15px;
-    background-color: #EEE;
 }
 
 .inventree-content {

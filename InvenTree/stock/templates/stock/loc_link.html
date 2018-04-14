@@ -1,9 +1,13 @@
 <div class="navigation">
-<a href="/stock/list/">Stock</a> >
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item{% if location is None %} active" aria-current="page{% endif %}"><a href="/stock/list/">Parts</a></li>
 {% if location %}
 {% for path_item in location.parentpath %}
-<a href="/stock/list/?location={{ path_item.id }}">{{ path_item.name }}</a> >
+    <li class='breadcrumb-item'><a href="/stock/list/?location={{ path_item.id }}">{{ path_item.name }}</a></li>
 {% endfor %}
-<a href="/stock/list/?location={{ location.id }}">{{ location.name }}</a>
+    <li class='breadcrumb-item active' aria-current='page'><a href="/stock/list/?location={{ location.id }}">{{ location.name }}</a></li>
 {% endif %}
+  </ol>
+ </nav>
 </div>
