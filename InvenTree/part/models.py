@@ -6,6 +6,8 @@ from django.core.validators import MinValueValidator
 
 from InvenTree.models import InvenTreeTree
 
+#from django.db.models.signals.pre_delete
+#from django.dispatch import receiver
 
 class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
@@ -19,6 +21,15 @@ class PartCategory(InvenTreeTree):
     def parts(self):
         return self.part_set.all()
 
+"""
+@receiver(pre_delete, sender=PartCategory)
+def reset_tag(sender, **kwargs):
+    cat = kwargs['instance']
+
+    for book in books.filter(tag=tag):
+        book.tag = book.author.tags.first()
+        book.save()
+"""
 
 class Part(models.Model):
     """ Represents an abstract part
@@ -36,7 +47,9 @@ class Part(models.Model):
     IPN = models.CharField(max_length=100, blank=True)
 
     # Part category - all parts must be assigned to a category
-    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE, related_name='parts')
+    category = models.ForeignKey(PartCategory, related_name='parts',
+                                 null=True, blank=True,
+                                 on_delete=models.SET_NULL)
 
     # Minimum "allowed" stock level
     minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])

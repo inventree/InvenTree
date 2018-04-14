@@ -2,6 +2,7 @@ from django.conf.urls import url, include
 from django.views.generic.base import RedirectView
 
 from . import views
+from . import api
 
 app_nam='part'
 
@@ -9,11 +10,11 @@ app_nam='part'
 part_cat_api_urls = [
 
     # Part category detail
-    url(r'^(?P<pk>[0-9]+)/?$', views.PartCategoryDetail.as_view(), name='partcategory-detail'),
+    url(r'^(?P<pk>[0-9]+)/?$', api.PartCategoryDetail.as_view(), name='partcategory-detail'),
 
     # List of top-level categories
-    url(r'^\?*.*/?$', views.PartCategoryList.as_view()),
-    url(r'^$', views.PartCategoryList.as_view())
+    url(r'^\?*.*/?$', api.PartCategoryList.as_view()),
+    url(r'^$', api.PartCategoryList.as_view())
 ]
 
 
@@ -21,11 +22,11 @@ part_cat_api_urls = [
 part_api_urls = [
 
     # Individual part
-    url(r'^(?P<pk>[0-9]+)/?$', views.PartDetail.as_view(), name='part-detail'),
+    url(r'^(?P<pk>[0-9]+)/?$', api.PartDetail.as_view(), name='part-detail'),
 
     # List parts with optional filters
-    url(r'^\?.*/?$', views.PartList.as_view()),
-    url(r'^$', views.PartList.as_view()),
+    url(r'^\?.*/?$', api.PartList.as_view()),
+    url(r'^$', api.PartList.as_view()),
 ]
 
 part_detail_urls = [
