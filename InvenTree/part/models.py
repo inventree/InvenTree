@@ -133,6 +133,29 @@ class Part(models.Model):
         return projects
     """
 
+def attach_file(instance, filename):
+
+    base='part_files'
+
+    # TODO - For a new PartAttachment object, PK is NULL!!
+
+    # Prefix the attachment ID to the filename
+    fn = "{id}_{fn}".format(id=instance.pk, fn=filename)
+
+    return os.path.join(base, fn)
+
+class PartAttachment(models.Model):
+    """ A PartAttachment links a file to a part
+    Parts can have multiple files such as datasheets, etc
+    """
+
+
+    part = models.ForeignKey(Part, on_delete=models.CASCADE,
+                             related_name='attachments')
+
+    attachment = models.FileField(upload_to=attach_file, null=True, blank=True)
+
+
 
 class BomItem(models.Model):
     """ A BomItem links a part to its component items.
