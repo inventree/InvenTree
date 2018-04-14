@@ -8,8 +8,9 @@ from InvenTree.models import InvenTreeTree
 
 import os
 
-#from django.db.models.signals.pre_delete
-#from django.dispatch import receiver
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+
 
 class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
@@ -19,9 +20,19 @@ class PartCategory(InvenTreeTree):
         verbose_name = "Part Category"
         verbose_name_plural = "Part Categories"
 
+    """
     @property
     def parts(self):
         return self.part_set.all()
+    """
+
+@receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
+def before_delete_part_category(sender, instance, using, **kwargs):
+
+    # Update each part in this category to point to the parent category
+    for part in instance.parts.all():
+        part.category = instance.parent
+        part.save()
 
 
 # Function to automatically rename a part image on upload
@@ -63,7 +74,7 @@ class Part(models.Model):
     # Part category - all parts must be assigned to a category
     category = models.ForeignKey(PartCategory, related_name='parts',
                                  null=True, blank=True,
-                                 on_delete=models.SET_NULL)
+                                 on_delete=models.DO_NOTHING)
 
     image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
 

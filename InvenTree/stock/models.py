@@ -11,6 +11,8 @@ from InvenTree.models import InvenTreeTree
 
 from datetime import datetime
 
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 class StockLocation(InvenTreeTree):
     """ Organization tree for StockItem objects
@@ -24,12 +26,21 @@ class StockLocation(InvenTreeTree):
         return stock_list
 
 
+@receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')
+def before_delete_stock_location(sender, instance, using, **kwargs):
+
+    # Update each part in the stock location
+    for item in instance.items.all():
+        item.location = instance.parent
+        item.save()
+
 class StockItem(models.Model):
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='locations')
 
     supplier_part = models.ForeignKey(SupplierPart, blank=True, null=True, on_delete=models.SET_NULL)
 
-    location = models.ForeignKey(StockLocation, on_delete=models.CASCADE)
+    location = models.ForeignKey(StockLocation, on_delete=models.DO_NOTHING,
+                                 related_name='items', blank=True, null=True)
 
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)])
 
