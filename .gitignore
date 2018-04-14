@@ -26,7 +26,6 @@ var/
 *.log
 local_settings.py
 *.sqlite3
-**/migrations/*
 
 # Local media storage (only when running in development mode)
 InvenTree/media
