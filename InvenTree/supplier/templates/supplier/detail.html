@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<ul>
+<li>Name: {{ supplier.name }}</li>
+<li>Description: {{ supplier.description }}</li>
+<li>Website: {{ supplier.website }}</li>
+<li>Contact: {{ supplier.contact }}</li>
+</li>
+
+{% if supplier.parts.all|length > 0 %}
+<table>
+<tr>
+    <th>Part</th>
+    <th>SKU</th>
+    <th>Manufacturer</th>
+    <th>MPN</th>
+    <th>URL</th>
+</tr>
+{% for part in supplier.parts.all %}
+<tr>
+    <td><a href="{% url 'part-detail' part.part.id %}">{{ part.part.name }}</a></td>
+    <td>{{ part.SKU }}</td>
+    <td>Manufacturer name goes here</td>
+    <td>MPN goes here</td>
+    <td>{{ part.URL }}</td>
+{% endfor %}
+</table>
+{% else %}
+There are currently no parts sourced from this supplier.
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<ul>
+    <li>Part: <a href="{% url 'part-detail' part.part.id %}">{{ part.part.name }}</a></li>
+    <li>Supplier: <a href="{% url 'supplier-detail' part.supplier.id %}">{{ part.supplier.name }}</a></li>
+    <li>SKU: {{ part.SKU }}</li>
+    <li>Manufacturer name goes here</li>
+    <li>MPN goes here</li>
+    <li>URL: {{ part.URL }}</li>
+</ul>
+
+{% endblock %}

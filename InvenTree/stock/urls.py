@@ -38,7 +38,7 @@ stock_urls = [
     # Individual stock items
     url(r'^(?P<pk>\d+)/', include(stock_detail_urls)),
 
-    url('list', views.index, name='stock=index'),
+    url('list', views.index, name='stock-index'),
 
     # Redirect any other patterns
     url(r'^.*$', RedirectView.as_view(url='list', permanent=False), name='stock-index'),

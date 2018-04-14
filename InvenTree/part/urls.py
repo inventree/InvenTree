@@ -42,6 +42,7 @@ part_detail_urls = [
     url(r'^track/?', views.track, name='part-track'),
     url(r'^bom/?', views.bom, name='part-bom'),
     url(r'^stock/?', views.stock, name='part-stock'),
+    url(r'^suppliers/?', views.suppliers, name='part-suppliers'),
     url('', views.detail, name='part-detail'),
 ]
 

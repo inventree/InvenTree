@@ -64,3 +64,8 @@ def track(request, pk):
 
     return render(request, 'part/track.html', {'part': part})
 
+
+def suppliers(request, pk):
+    part = get_object_or_404(Part, pk=pk)
+
+    return render(request, 'part/supplier.html', {'part' : part})

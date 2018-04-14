@@ -1,0 +1,24 @@
+{% extends "part/part_base.html" %}
+
+{% block details %}
+
+{% if part.supplier_parts.all|length > 0 %}
+<table>
+<tr>
+    <th>Supplier</th>
+    <th>SKU</th>
+    <th>URL</th>
+</tr>
+{% for spart in part.supplier_parts.all %}
+<tr>
+    <td><a href="{% url 'supplier-detail' spart.supplier.id %}">{{ spart.supplier.name }}</a></td>
+    <td><a href="{% url 'supplier-part-detail' spart.id %}">{{ spart.SKU }}</a></td>
+    <td>{{ spart.URL }}</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+There are no suppliers defined for this part, sorry!
+{% endif %}
+
+{% endblock %}

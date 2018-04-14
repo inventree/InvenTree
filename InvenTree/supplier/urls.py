@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.views.generic.base import RedirectView
 
 from . import views
 from . import api
@@ -21,7 +22,7 @@ manu_urls = [
     url(r'^$', api.ManufacturerList.as_view())
 ]
 
-supplier_part_urls = [
+supplier_api_part_urls = [
     url(r'^(?P<pk>[0-9]+)/?$', api.SupplierPartDetail.as_view(), name='supplierpart-detail'),
 
     url(r'^\?.*/?$', api.SupplierPartList.as_view()),
@@ -35,7 +36,7 @@ price_break_urls = [
     url(r'^$', api.SupplierPriceBreakList.as_view())
 ]
 
-supplier_urls = [
+supplier_api_urls = [
 
     # Display details of a supplier
     url(r'^(?P<pk>[0-9]+)/$', api.SupplierDetail.as_view(), name='supplier-detail'),
@@ -43,4 +44,13 @@ supplier_urls = [
     # List suppliers
     url(r'^\?.*/?$', api.SupplierList.as_view()),
     url(r'^$', api.SupplierList.as_view())
+]
+
+supplier_urls = [
+    url(r'^(?P<pk>\d+)/', views.detail, name='supplier-detail'),
+    url(r'^part/(?P<pk>\d+)/', views.partDetail, name='supplier-part-detail'),
+    url(r'', views.index, name='supplier-index'),
+
+    # Redirect any other patterns
+    url(r'^.*$', RedirectView.as_view(url='', permanent=False), name='supplier-index'),
 ]

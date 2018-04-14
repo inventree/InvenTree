@@ -7,7 +7,7 @@
 <ul>
 <li>Part: <a href="{% url 'part-detail' item.part.id %}">{{ item.part.name }}</a></li>
 {% if item.supplier_part %}
-<li>Supplier Part: {{ item.supplier_part.supplier.name }} | {{ item.supplier_part.SKU }}</li>
+<li>Supplier Part: <a href="{% url 'supplier-part-detail' item.supplier_part.id %}">{{ item.supplier_part.supplier.name }} | {{ item.supplier_part.SKU }}</a></li>
 {% endif %}
 <li>Quantity: {{ item.quantity }}</li>
 {% if item.stocktake_date %}

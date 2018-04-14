@@ -20,7 +20,9 @@ Total in stock: {{ part.stock }}
     <td><a href="/stock/list/?location={{ stock.location.id }}">{{ stock.location.name }}</a></td>
     <td>
         {% if stock.supplier_part %}
+    <a href="{% url 'supplier-part-detail' stock.supplier_part.id %}">
         {{ stock.supplier_part.supplier.name }} | {{ stock.supplier_part.SKU }}
+    </a>
         {% endif %}
     </td>
     <td>{% if stock.stocktake_date %}{{ stock.stocktake_date }}{% endif %}</td>

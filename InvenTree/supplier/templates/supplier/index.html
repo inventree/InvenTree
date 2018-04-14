@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table>
+    <tr>
+        <th>Supplier</th>
+        <th>Description</th>
+        <th>URL</th>
+    </tr>
+{% for supplier in suppliers %}
+<tr>
+    <td><a href="{% url 'supplier-detail' supplier.id %}">{{ supplier.name }}</a></td>
+    <td>{{ supplier.description }}</td>
+    <td>{{ supplier.website }}</td>
+</tr>
+{% endfor %}
+
+{% endblock %}
