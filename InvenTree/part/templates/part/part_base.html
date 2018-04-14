@@ -7,12 +7,14 @@
 {% include "part/cat_link.html" with category=part.category %}
 
 <div class="media">
-    <img class="mr-3 part-thumb"
+  <div class="media-left">
+    <img class="part-thumb"
     {% if part.image %}
     src="{{ part.image.url }}"
     {% else %}
     src="{% static 'img/blank_image.png' %}"
     {% endif %}/>
+  </div>
 <div class="media-body">
     <h5>{{ part.name }}</h5>
     {% if part.description %}
