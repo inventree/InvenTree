@@ -6,7 +6,11 @@ from rest_framework.documentation import include_docs_urls
 from part.urls import part_api_urls, part_cat_api_urls
 from part.urls import bom_api_urls
 from part.urls import part_urls
-from stock.urls import stock_urls, stock_loc_urls
+
+
+from stock.urls import stock_api_urls, stock_api_loc_urls
+from stock.urls import stock_urls
+
 from supplier.urls import cust_urls, manu_urls, supplier_part_urls, price_break_urls, supplier_urls
 
 from django.conf import settings
@@ -24,8 +28,8 @@ admin.site.site_header = "InvenTree Admin"
 apipatterns = [
 
     # Stock URLs
-    url(r'^stock/', include(stock_urls)),
-    url(r'^stock-location/', include(stock_loc_urls)),
+    url(r'^stock/', include(stock_api_urls)),
+    url(r'^stock-location/', include(stock_api_loc_urls)),
 
     # Part URLs
     url(r'^part/', include(part_api_urls)),
@@ -63,6 +67,7 @@ urlpatterns = [
     url(r'^api/', include(apipatterns)),
 
     url(r'^part/', include(part_urls)),
+    url(r'^stock/', include(stock_urls)),
 
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 

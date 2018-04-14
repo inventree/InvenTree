@@ -4,7 +4,7 @@
 
 {% include "part/cat_link.html" with category=part.category %}
 
-<a href="{% url 'detail' part.id %}">{{ part.name }}</a>
+<a href="{% url 'part-detail' part.id %}">{{ part.name }}</a>
 
 <br>
 {{ part.description }}

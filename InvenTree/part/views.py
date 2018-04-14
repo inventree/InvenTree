@@ -22,15 +22,19 @@ def index(request):
         cat_id = request.GET['category']
 
         cat = get_object_or_404(PartCategory, pk=cat_id)
-        #cat = PartCategory.objects.get(pk=cat_id)
+
         parts = parts.filter(category = cat_id)
+        children = PartCategory.objects.filter(parent = cat_id)
+
+    else:
+        parts = parts.filter(category__isnull=True)
+        children = PartCategory.objects.filter(parent__isnull=True)
 
     context = {
         'parts' : parts.order_by('category__name'),
+        'category' : cat,
+        'children' : children,
     }
-
-    if cat:
-        context['category'] = cat
 
     return HttpResponse(template.render(context, request))
 

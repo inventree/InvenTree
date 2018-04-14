@@ -17,7 +17,7 @@ Total in stock: {{ part.stock }}
 {% for stock in part.locations.all %}
 <tr>
     <td>{{ stock.quantity }}</td>
-    <td>{{ stock.location.name }}</td>
+    <td><a href="/stock/list/?location={{ stock.location.id }}">{{ stock.location.name }}</a></td>
     <td>
         {% if stock.supplier_part %}
         {{ stock.supplier_part.supplier.name }} | {{ stock.supplier_part.SKU }}

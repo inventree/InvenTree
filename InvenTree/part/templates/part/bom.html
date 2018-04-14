@@ -11,7 +11,7 @@
 {% for bom_item in part.bom_items.all %}
 {% with sub_part=bom_item.sub_part %}
 <tr>
-    <td><a href="{% url 'detail' sub_part.id %}">{{ sub_part.name }}</a></td>
+    <td><a href="{% url 'part-detail' sub_part.id %}">{{ sub_part.name }}</a></td>
     <td>{{ sub_part.description }}</td>
     <td>{{ bom_item.quantity }}</td>
 </tr>

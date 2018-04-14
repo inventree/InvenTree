@@ -3,15 +3,15 @@
 {% block details  %}
 
 <br>
-<a href="{% url 'bom' part.id %}">There are <b>{{ part.bomItemCount }}</b> BOM items for this part.</a>
+<a href="{% url 'part-bom' part.id %}">There are <b>{{ part.bomItemCount }}</b> BOM items for this part.</a>
 <br>
 Used in {{ part.usedInCount }} other parts.<br>
 
-<a href="{% url 'stock' part.id %}">There are {{ part.stock }} units in stock.</a>
+<a href="{% url 'part-stock' part.id %}">There are {{ part.stock }} units in stock.</a>
 
 <br><br>
 {% if part.trackable %}
-<a href="{% url 'track' part.id %}">Part tracking</a>
+<a href="{% url 'part-track' part.id %}">Part tracking</a>
 {% else %}
 {{ part.name }} does not have part tracking enabled
 {% endif %}

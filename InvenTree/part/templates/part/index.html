@@ -2,32 +2,33 @@
 
 {% block content %}
 
-<h1>Parts page!</h1>
-
-{% if category %}
 {% include "part/cat_link.html" with category=category %}
-<h3>Child categories</h3>
-<ul>
-{% for child in category.children.all %}
-<li><a href="/part/list?category={{ child.id }}">{{ child.name }}</a></li>
+
+{% if children|length > 0 %}
+<table>
+    <tr>
+        <th>Subcategories</th>
+    </tr>
+{% for child in children %}
+<tr>
+    <td><a href="/part/list/?category={{ child.id }}">{{ child.name }}</a></td>
 {% endfor %}
-</ul>
-{% else %}
-No category!
+</table>
 {% endif %}
 
-<b>Here is a list of all the parts:</b>
-
-
-
+{% if parts|length > 0 %}
+<h3>Parts</h3>
 <table>
 {% for part in parts %}
 <tr>
-    <td><a href="{% url 'detail' part.id %}">{{ part.name }}</a></td>
+    <td><a href="{% url 'part-detail' part.id %}">{{ part.name }}</a></td>
     <td>{{ part.description }}</td>
 </tr>
 {% endfor %}
 </table>
+{% else %}
+There are no parts in this category.
+{% endif %}
 
 {% endblock %}
 

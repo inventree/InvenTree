@@ -39,10 +39,10 @@ bom_api_urls = [
 ]
 
 part_detail_urls = [
-    url(r'^track/?', views.track, name='track'),
-    url(r'^bom/?', views.bom, name='bom'),
-    url(r'^stock/?', views.stock, name='stock'),
-    url('', views.detail, name='detail'),
+    url(r'^track/?', views.track, name='part-track'),
+    url(r'^bom/?', views.bom, name='part-bom'),
+    url(r'^stock/?', views.stock, name='part-stock'),
+    url('', views.detail, name='part-detail'),
 ]
 
 # URL list for part web interface
@@ -50,10 +50,10 @@ part_urls = [
     # Individual
     url(r'^(?P<pk>\d+)/', include(part_detail_urls)),
 
-    url('list', views.index, name='index'),
+    url('list', views.index, name='part-index'),
     # ex: /part/5/
 
-     url(r'^.*$', RedirectView.as_view(url='list', permanent=False), name='index'),
+     url(r'^.*$', RedirectView.as_view(url='list', permanent=False), name='part-index'),
 ]
 
 

@@ -1,0 +1,9 @@
+<div class="container">
+<a href="/stock/list/">Stock</a> >
+{% if location %}
+{% for path_item in location.parentpath %}
+<a href="/stock/list/?location={{ path_item.id }}">{{ path_item.name }}</a> >
+{% endfor %}
+<a href="/stock/list/?location={{ location.id }}">{{ location.name }}</a>
+{% endif %}
+</div>
