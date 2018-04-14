@@ -77,12 +77,14 @@ class Part(models.Model):
         return '/part/{id}/'.format(id=self.id)
 
     # Short name of the part
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     # Longer description of the part (optional)
     description = models.CharField(max_length=250, blank=True)
 
     # Internal Part Number (optional)
+    # Potentially multiple parts map to the same internal IPN (variants?)
+    # So this does not have to be unique
     IPN = models.CharField(max_length=100, blank=True)
 
     # Provide a URL for an external link
@@ -117,7 +119,7 @@ class Part(models.Model):
     class Meta:
         verbose_name = "Part"
         verbose_name_plural = "Parts"
-        unique_together = (("name", "category"),)
+        #unique_together = (("name", "category"),)
 
     @property
     def stock(self):

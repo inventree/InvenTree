@@ -118,3 +118,17 @@ table tr:nth-child(odd) {
   border-bottom-color: transparent;
   cursor: default;
 }
+
+.panel-danger {
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    border-color: #ebccd1;
+}
+
+.panel-danger>.panel-heading {
+    background-color: #ebccd1;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+

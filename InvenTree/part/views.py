@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from django.views.generic import DetailView, ListView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
 from .forms import EditPartForm
 
@@ -46,5 +46,15 @@ class PartEdit(UpdateView):
     template_name = 'part/edit.html'
 
 
-def delete(request, pk):
-    return HttpResponseRedirect('/part/{pk}/'.format(pk=pk))
+class PartDelete(DeleteView):
+    model = Part
+    template_name = 'part/delete.html'
+
+    success_url = '/part/'
+
+    def post(self, request, *args, **kwargs):
+        if 'confirm' in request.POST:
+            return super(PartDelete, self).post(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect(self.get_object().get_absolute_url())
+

@@ -40,7 +40,7 @@ bom_api_urls = [
 
 part_detail_urls = [
     url(r'^edit/?', views.PartEdit.as_view(), name='part-edit'),
-    url(r'^delete/?', views.delete, name='part-delete'),
+    url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^bom/?', views.PartDetail.as_view(template_name='part/bom.html'), name='part-bom'),
     url(r'^stock/?', views.PartDetail.as_view(template_name='part/stock.html'), name='part-stock'),
