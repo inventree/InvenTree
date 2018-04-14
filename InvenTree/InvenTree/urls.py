@@ -76,4 +76,11 @@ urlpatterns = [
 
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+
+# Static file access
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.DEBUG:
+    # Media file access
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

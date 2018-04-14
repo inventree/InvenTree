@@ -6,6 +6,8 @@ from django.core.validators import MinValueValidator
 
 from InvenTree.models import InvenTreeTree
 
+import os
+
 #from django.db.models.signals.pre_delete
 #from django.dispatch import receiver
 
@@ -21,15 +23,24 @@ class PartCategory(InvenTreeTree):
     def parts(self):
         return self.part_set.all()
 
-"""
-@receiver(pre_delete, sender=PartCategory)
-def reset_tag(sender, **kwargs):
-    cat = kwargs['instance']
 
-    for book in books.filter(tag=tag):
-        book.tag = book.author.tags.first()
-        book.save()
-"""
+# Function to automatically rename a part image on upload
+# Format: part_pk.<img>
+def rename_part_image(instance, filename):
+    base = 'part_images'
+
+    if filename.count('.') > 0:
+        ext = filename.split('.')[-1]
+    else:
+        ext = ''
+
+    fn = 'part_{pk}_img'.format(pk=instance.pk)
+
+    if ext:
+        fn += '.' + ext
+
+    return os.path.join(base, fn)
+
 
 class Part(models.Model):
     """ Represents an abstract part
@@ -53,6 +64,8 @@ class Part(models.Model):
     category = models.ForeignKey(PartCategory, related_name='parts',
                                  null=True, blank=True,
                                  on_delete=models.SET_NULL)
+
+    image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
 
     # Minimum "allowed" stock level
     minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
