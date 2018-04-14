@@ -29,6 +29,15 @@ part_api_urls = [
     url(r'^$', api.PartList.as_view()),
 ]
 
+bom_api_urls = [
+    # Bom Item detail
+    url(r'^(?P<pk>[0-9]+)/?$', api.BomItemDetail.as_view(), name='bomitem-detail'),
+
+    # List of top-level categories
+    url(r'^\?*.*/?$', api.BomItemList.as_view()),
+    url(r'^$', api.BomItemList.as_view())
+]
+
 part_detail_urls = [
     url(r'^track/?', views.track, name='track'),
     url(r'^bom/?', views.bom, name='bom'),
@@ -46,6 +55,8 @@ part_urls = [
 
      url(r'^.*$', RedirectView.as_view(url='list', permanent=False), name='index'),
 ]
+
+
 
 """
 part_param_urls = [

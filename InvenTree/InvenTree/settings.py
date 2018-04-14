@@ -46,11 +46,9 @@ INSTALLED_APPS = [
 
     # InvenTree apps
     'part.apps.PartConfig',
-    'bom.apps.BomConfig',
     'supplier.apps.SupplierConfig',
     'stock.apps.StockConfig',
     'track.apps.TrackConfig',
-    #'project.apps.ProjectConfig',
 ]
 
 MIDDLEWARE = [

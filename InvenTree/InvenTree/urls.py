@@ -4,8 +4,8 @@ from django.contrib import admin
 from rest_framework.documentation import include_docs_urls
 
 from part.urls import part_api_urls, part_cat_api_urls
+from part.urls import bom_api_urls
 from part.urls import part_urls
-from bom.urls import bom_urls
 from stock.urls import stock_urls, stock_loc_urls
 from supplier.urls import cust_urls, manu_urls, supplier_part_urls, price_break_urls, supplier_urls
 
@@ -34,7 +34,7 @@ apipatterns = [
     #url(r'^part-param-template/', include(part_param_template_urls)),
 
     # Part BOM URLs
-    url(r'^bom/', include(bom_urls)),
+    url(r'^bom/', include(bom_api_urls)),
 
     # Supplier URLs
     url(r'^supplier/', include(supplier_urls)),

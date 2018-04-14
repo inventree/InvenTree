@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import PartCategory, Part
+from .models import BomItem
 
 class PartAdmin(admin.ModelAdmin):
 
@@ -10,6 +11,9 @@ class PartAdmin(admin.ModelAdmin):
 class PartCategoryAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'pathstring', 'description')
+
+class BomItemAdmin(admin.ModelAdmin):
+    list_display=('part', 'sub_part', 'quantity')
 
 """
 class ParameterTemplateAdmin(admin.ModelAdmin):
@@ -22,6 +26,7 @@ class ParameterAdmin(admin.ModelAdmin):
 
 admin.site.register(Part, PartAdmin)
 admin.site.register(PartCategory, PartCategoryAdmin)
+admin.site.register(BomItem, BomItemAdmin)
 
 #admin.site.register(PartParameter, ParameterAdmin)
 #admin.site.register(PartParameterTemplate, ParameterTemplateAdmin)
