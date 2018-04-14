@@ -38,6 +38,6 @@ def index(request):
 
 def detail(request, pk):
 
-    item = get_object_or_404(Stock, pk=pk)
+    stock = get_object_or_404(StockItem, pk=pk)
 
-    return render(request, 'stock/detail.html', {'item' : item})
+    return render(request, 'stock/detail.html', {'item' : stock})

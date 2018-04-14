@@ -26,13 +26,18 @@ class StockLocation(InvenTreeTree):
 
 class StockItem(models.Model):
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='locations')
+
     supplier_part = models.ForeignKey(SupplierPart, blank=True, null=True, on_delete=models.SET_NULL)
+
     location = models.ForeignKey(StockLocation, on_delete=models.CASCADE)
+
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)])
+
     updated = models.DateField(auto_now=True)
 
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)
+
     stocktake_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     review_needed = models.BooleanField(default=False)

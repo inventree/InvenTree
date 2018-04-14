@@ -18,6 +18,7 @@
 {% if items|length > 0 %}
 <table>
     <tr>
+        <th>Item</th>
         <th>Part</th>
         <th>Stock</th>
         <th>Stocktake</th>
@@ -25,6 +26,7 @@
     </tr>
 {% for item in items %}
 <tr>
+    <td><a href="{% url 'stock-detail' item.id %}">Click here</a></td>
     <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.name }}</a></td>
     <td>{{ item.quantity }}</td>
     <td>{{ item.stocktake_date }}</td>
