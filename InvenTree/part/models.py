@@ -46,6 +46,9 @@ class Part(models.Model):
     # Internal Part Number (optional)
     IPN = models.CharField(max_length=100, blank=True)
 
+    # Provide a URL for an external link
+    URL = models.URLField(blank=True)
+
     # Part category - all parts must be assigned to a category
     category = models.ForeignKey(PartCategory, related_name='parts',
                                  null=True, blank=True,

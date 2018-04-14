@@ -21,7 +21,7 @@
 {% for part in supplier.parts.all %}
 <tr>
     <td><a href="{% url 'part-detail' part.part.id %}">{{ part.part.name }}</a></td>
-    <td>{{ part.SKU }}</td>
+    <td><a href="{% url 'supplier-part-detail' part.id %}">{{ part.SKU }}</a></td>
     <td>Manufacturer name goes here</td>
     <td>MPN goes here</td>
     <td>{{ part.URL }}</td>
