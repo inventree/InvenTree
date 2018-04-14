@@ -4,3 +4,4 @@ django_filter==1.0.2
 django-simple-history==1.8.2
 coreapi==2.3.0
 pygments==2.2.0
+django-crispy-forms==1.7.2

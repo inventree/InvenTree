@@ -73,6 +73,9 @@ class Part(models.Model):
     and can be combined to form other parts
     """
 
+    def get_absolute_url(self):
+        return '/part/{id}/'.format(id=self.id)
+
     # Short name of the part
     name = models.CharField(max_length=100)
 

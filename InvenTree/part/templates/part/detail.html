@@ -6,5 +6,10 @@
 
 
 Part details go here...
+<br>
+
+<a href="{% url 'part-edit' part.id %}"><button class="btn btn-info">Edit Part</button></a>
+
+<a href="{% url 'part-delete' part.id %}"><button class="btn btn-danger">Delete Part</button></a>
 
 {% endblock %}

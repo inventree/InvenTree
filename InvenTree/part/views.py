@@ -1,76 +1,50 @@
-
-# Template stuff (WIP)
-from django.http import HttpResponse
-from django.template import loader
-
 from InvenTree.models import FilterChildren
 from .models import PartCategory, Part
 
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.views import generic
 
-def index(request):
-    template = loader.get_template('part/index.html')
+from django.views.generic import DetailView, ListView
+from django.views.generic.edit import UpdateView
 
-    parts = Part.objects.all()
+from .forms import EditPartForm
 
-    cat = None
+class PartIndex(ListView):
+    model = Part
+    template_name = 'part/index.html'
+    context_object_name = 'parts'
 
-    if 'category' in request.GET:
-        cat_id = request.GET['category']
+    def get_queryset(self):
+        self.category = self.request.GET.get('category', None)
 
-        cat = get_object_or_404(PartCategory, pk=cat_id)
+        return Part.objects.filter(category=self.category)
 
-        parts = parts.filter(category = cat_id)
-        children = PartCategory.objects.filter(parent = cat_id)
+    def get_context_data(self, **kwargs):
 
-    else:
-        parts = parts.filter(category__isnull=True)
-        children = PartCategory.objects.filter(parent__isnull=True)
+        context = super(PartIndex, self).get_context_data(**kwargs)
 
-    context = {
-        'parts' : parts.order_by('category__name'),
-        'category' : cat,
-        'children' : children,
-    }
+        children = PartCategory.objects.filter(parent=self.category)
 
-    return HttpResponse(template.render(context, request))
+        context['children'] = children
 
+        if self.category:
+            context['category'] = get_object_or_404(PartCategory, pk=self.category)
 
-def detail(request, pk):
-    #template = loader.get_template('detail.html')
-
-    part = get_object_or_404(Part, pk=pk)
-
-    return render(request, 'part/detail.html', {'part' : part})
-
-    #return HttpResponse("You're looking at part %s." % pk)
+        return context
 
 
-def bom(request, pk):
-    part = get_object_or_404(Part, pk=pk)
-
-    return render(request, 'part/bom.html', {'part': part})
-
-def used(request, pk):
-    part = get_object_or_404(Part, pk=pk)
-
-    return render(request, 'part/used_in.html', {'part': part})
-
-def stock(request, pk):
-    part = get_object_or_404(Part, pk=pk)
-
-    return render(request, 'part/stock.html', {'part': part})
-
-def track(request, pk):
-    part = get_object_or_404(Part, pk=pk)
-
-    return render(request, 'part/track.html', {'part': part})
+class PartDetail(DetailView):
+    context_object_name = 'part'
+    queryset = Part.objects.all()
+    template_name = 'part/detail.html'
 
 
-def suppliers(request, pk):
-    part = get_object_or_404(Part, pk=pk)
+class PartEdit(UpdateView):
+    model = Part
+    form_class = EditPartForm
+    template_name = 'part/edit.html'
 
-    return render(request, 'part/supplier.html', {'part' : part})
+
+def delete(request, pk):
+    return HttpResponseRedirect('/part/{pk}/'.format(pk=pk))

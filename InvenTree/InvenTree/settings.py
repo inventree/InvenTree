@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'simple_history',
+    'crispy_forms',
 
     # Core django modules
     'django.contrib.admin',
@@ -144,3 +145,4 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+CRISPY_TEMPLATE_PACK = 'bootstrap'
