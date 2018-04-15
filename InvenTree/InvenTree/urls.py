@@ -26,8 +26,6 @@ from track.urls import tracking_urls
 
 from users.urls import user_urls
 
-from . import views
-
 admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
