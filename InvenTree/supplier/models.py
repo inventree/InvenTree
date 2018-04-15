@@ -10,7 +10,9 @@ from part.models import Part
 class Supplier(Company):
     """ Represents a manufacturer or supplier
     """
-    pass
+
+    def get_absolute_url(self):
+        return "/supplier/{id}/".format(id=self.id)
 
 
 class Manufacturer(Company):
@@ -32,12 +34,15 @@ class SupplierPart(models.Model):
     - A Part may be available from multiple suppliers
     """
 
+    def get_absolute_url(self):
+        return "/supplier/part/{id}/".format(id=self.id)
+
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')
 
     # Link to an actual part
 # The part will have a field 'supplier_parts' which links to the supplier part options
-    part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.CASCADE,
+    part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.SET_NULL,
                              related_name='supplier_parts')
 
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,
@@ -46,7 +51,7 @@ class SupplierPart(models.Model):
 
     SKU = models.CharField(max_length=100)
 
-    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True, on_delete=models.CASCADE)
+    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True, on_delete=models.SET_NULL)
     MPN = models.CharField(max_length=100, blank=True)
 
     URL = models.URLField(blank=True)

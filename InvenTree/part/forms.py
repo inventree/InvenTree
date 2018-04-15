@@ -12,7 +12,7 @@ class EditPartForm(forms.ModelForm):
         self.helper = FormHelper()
 
         self.helper.form_id = 'id-edit-part-form'
-        self.helper.form_class = 'blueForms'
+        #self.helper.form_class = 'blueForms'
         self.helper.form_method = 'post'
         #self.helper.form_action = 'submit'
 
@@ -38,7 +38,7 @@ class EditCategoryForm(forms.ModelForm):
         self.helper = FormHelper()
 
         self.helper.form_id = 'id-edit-part-form'
-        self.helper.form_class = 'blueForms'
+        #self.helper.form_class = 'blueForms'
         self.helper.form_method = 'post'
         #self.helper.form_action = 'submit'
 

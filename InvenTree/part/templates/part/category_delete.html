@@ -1,12 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'delete_obj.html' %}
 
-{% block content %}
+{% block del_title %}
+Are you sure you want to delete category '{{ category.name }}'?
+{% endblock %}
 
-<div class="panel panel-danger">
-    <div class="panel-heading">Are you sure you want to delete category '{{ category.name }}'?</div>
-    <div class='panel-body'>
-
-    <p><b>Deleting this category is a permanent action and cannot be undone.</b></p>
+{% block del_body %}
 
     {% if category.children.all|length > 0 %}
     <p>This category contains {{ category.children.all|length }} child categories.<br>
@@ -39,12 +37,5 @@
     {% endfor %}
     </ul>
     {% endif %}
-
-    <form action="" method="post">{% csrf_token %}
-      <input type="submit" name='confirm' value="Confirm" />
-      <input type="submit" name="cancel" value="Cancel" />
-    </form>
-    </div>
-</div>
 
 {% endblock %}

@@ -17,10 +17,10 @@
 
 <div class='container-fluid'>
 <a href="{% url 'category-create' %}?category={{ category.id }}">
-    <button class="btn btn-default">New Category</button>
+    <button class="btn btn-success">New Category</button>
 </a>
 <a href="{% url 'part-create' %}?category={{ category.id }}">
-    <button class="btn btn-default">New Part</button>
+    <button class="btn btn-success">New Part</button>
 </a>
 
 <a href="{% url 'category-edit' category.id %}">

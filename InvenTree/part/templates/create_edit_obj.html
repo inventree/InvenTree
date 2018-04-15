@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<div class='panel panel-primary'>
+    <div class='panel-heading'>
+{% block obj_title %}
+    Object title goes here
+{% endblock %}
+    </div>
+    <div class='panel-body'>
+{% load crispy_forms_tags %}
+{% crispy form %}
+    </div>
+</div>
+
+{% endblock %}

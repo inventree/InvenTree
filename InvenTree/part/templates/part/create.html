@@ -1,18 +1,5 @@
-{% extends "base.html" %}
+{% extends "create_edit_obj.html" %}
 
-{% load static %}
-
-{% block content %}
-
-{% include "part/cat_link.html" with category=category %}
-
-<div class='panel panel-primary'>
-    <div class='panel-heading'>Create a new part{% if category %} in category '{{ category.name }}'{% endif %}</div>
-    <div class='panel-body'>
-
-{% load crispy_forms_tags %}
-{% crispy form %}
-
-</div>
-
+{% block obj_title %}
+Create a new part{% if category %} in category '{{ category.name }}'{% endif %}
 {% endblock %}

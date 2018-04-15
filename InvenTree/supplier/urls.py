@@ -49,14 +49,25 @@ supplier_api_urls = [
 """
 
 supplier_detail_urls = [
-    #url(r'edit/?', views.SupplierEdit.as_view(), name='supplier-edit'),
-    #url(r'delete/?', views.SupplierDelete.as_view(), name='supplier-delete'),
+    url(r'edit/?', views.SupplierEdit.as_view(), name='supplier-edit'),
+    url(r'delete/?', views.SupplierDelete.as_view(), name='supplier-delete'),
 
     url(r'^.*$', views.SupplierDetail.as_view(), name='supplier-detail'),
 ]
 
+supplier_part_detail_urls = [
+    url(r'edit/?', views.SupplierPartEdit.as_view(), name='supplier-part-edit'),
+    url(r'delete/?', views.SupplierPartDelete.as_view(), name='supplier-part-delete'),
+
+    url('^.*$', views.SupplierPartDetail.as_view(), name='supplier-part-detail'),
+]
+
 supplier_urls = [
-    url(r'^part/(?P<pk>\d+)/', views.partDetail, name='supplier-part-detail'),
+    url(r'part/(?P<pk>\d+)/', include(supplier_part_detail_urls)),
+
+    url(r'part/new/?', views.SupplierPartCreate.as_view(), name='supplier-part-create'),
+
+    url(r'new/?', views.SupplierCreate.as_view(), name='supplier-create'),
 
     url(r'^(?P<pk>\d+)/', include(supplier_detail_urls)),
 

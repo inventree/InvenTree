@@ -1,12 +1,11 @@
-{% extends 'part/part_base.html' %}
+{% extends "delete_obj.html" %}
 
-{% block details %}
 
-<div class="panel panel-danger">
-    <div class="panel-heading">Are you sure you want to delete part '{{ part.name }}'?</div>
-    <div class="panel-body">
+{% block del_title %}
+    Are you sure you want to delete part '{{ part.name }}'?
+{% endblock %}
 
-    <p><b>Deleting this part is a permanent action and cannot be undone.</b></p>
+{% block del_body %}
 
     {% if part.usedInCount > 0 %}
     <p>This part is used in BOMs for {{ part.usedInCount }} other parts. If you delete this part, the BOMs for the following parts will be updated:
@@ -41,11 +40,4 @@
     <p>There are {{ part.serials.all|length }} unique parts tracked for '{{ part.name }}'. Deleting this part will permanently remove this tracking information.</p>
     {% endif %}
 
-  <form action="" method="post">{% csrf_token %}
-    <input type="submit" name='confirm' value="Confirm" />
-    <input type="submit" name="cancel" value="Cancel" />
-  </form>
-
- </div>
-</div>
 {% endblock %}

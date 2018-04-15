@@ -4,8 +4,6 @@ from django.views.generic.base import RedirectView
 from . import views
 from . import api
 
-app_nam='part'
-
 # URL list for part category API
 part_cat_api_urls = [
 
@@ -63,7 +61,7 @@ part_category_urls = [
 part_urls = [
 
     # Create a new category
-    url(r'^new_category/?', views.CategoryCreate.as_view(), name='category-create'),
+    url(r'^category/new/?', views.CategoryCreate.as_view(), name='category-create'),
 
     # Create a new part
     url(r'^new/?', views.PartCreate.as_view(), name='part-create'),
