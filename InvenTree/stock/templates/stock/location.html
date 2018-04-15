@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include "stock/loc_link.html" with location=location %}
+
+<p>
+    <b>{{ location.name }}</b><br>
+    <i>{{ location.description }}</i>
+</p>
+
+
+{% include "stock/location_list.html" with locations=location.children %}
+
+{% include "stock/stock_table.html" with items=location.items %}
+
+{% endblock %}

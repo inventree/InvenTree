@@ -2,38 +2,14 @@
 
 {% block content %}
 
-{% include "stock/loc_link.html" with location=location %}
+{% include "stock/loc_link.html" with location=None %}
 
-{% if children|length > 0 %}
-Storage locations:
-<ul class="list-group">
-{% for child in children %}
-<li class="list-group-item"><a href="/stock/list/?location={{ child.id }}">{{ child.name }}</a></li>
-{% endfor %}
-</ul>
+{% if locations.all|length > 0 %}
+{% include "stock/location_list.html" with locations=locations %}
 {% endif %}
 
 {% if items|length > 0 %}
-Stock items:
-<table>
-    <tr>
-        <th>Item</th>
-        <th>Part</th>
-        <th>Stock</th>
-        <th>Stocktake</th>
-        <th>Notes</th>
-    </tr>
-{% for item in items %}
-<tr>
-    <td><a href="{% url 'stock-detail' item.id %}">Click here</a></td>
-    <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.name }}</a></td>
-    <td>{{ item.quantity }}</td>
-    <td>{{ item.stocktake_date }}</td>
-    <td>{{ item.notes }}</td>
-</tr>
-{% endfor %}
-</table>
-{% else %}
-There are no parts in this location.
+{% include "stock/stock_table.html" with items=items %}
 {% endif %}
+
 {% endblock %}

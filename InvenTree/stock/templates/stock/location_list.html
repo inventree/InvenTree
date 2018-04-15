@@ -1,0 +1,6 @@
+Storage locations:
+<ul class="list-group">
+{% for child in locations.all %}
+<li class="list-group-item"><a href="{% url 'stock-location-detail' child.id %}">{{ child.name }}</a></li>
+{% endfor %}
+</ul>
