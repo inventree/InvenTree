@@ -1,6 +1,5 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
@@ -10,6 +9,7 @@ from .models import StockItem, StockLocation
 
 from .forms import EditStockLocationForm
 from .forms import EditStockItemForm
+
 
 class StockIndex(ListView):
     model = StockItem
@@ -28,6 +28,7 @@ class StockIndex(ListView):
         context['locations'] = locations
 
         return context
+
 
 class StockLocationDetail(DetailView):
     context_object_name = 'location'

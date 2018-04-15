@@ -3,9 +3,6 @@ from django_filters import NumberFilter
 
 from rest_framework import generics, permissions, response
 
-
-
-
 # from InvenTree.models import FilterChildren
 from .models import StockLocation, StockItem
 from .serializers import StockItemSerializer, StockQuantitySerializer

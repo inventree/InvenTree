@@ -1,15 +1,13 @@
-from InvenTree.models import FilterChildren
 
-from .models import PartCategory, Part, BomItem
-
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
 from .forms import EditPartForm, EditCategoryForm, EditBomItemForm
+from .models import PartCategory, Part, BomItem
+
 
 class PartIndex(ListView):
     model = Part
@@ -114,7 +112,7 @@ class CategoryDelete(DeleteView):
     model = PartCategory
     template_name = 'part/category_delete.html'
     context_object_name = 'category'
-    success_url ='/part/'
+    success_url = '/part/'
 
     def post(self, request, *args, **kwargs):
         if 'confirm' in request.POST:
@@ -150,7 +148,7 @@ class CategoryCreate(CreateView):
 
 
 class BomItemDetail(DetailView):
-    context_object_name ='item'
+    context_object_name = 'item'
     queryset = BomItem.objects.all()
     template_name = 'part/bom-detail.html'
 

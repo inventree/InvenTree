@@ -1,14 +1,14 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
 from part.models import Part
-from .models import UniquePart, PartTrackingInfo
+from .models import UniquePart
 
 from .forms import EditTrackedPartForm
+
 
 class TrackIndex(ListView):
     model = UniquePart
@@ -23,7 +23,7 @@ class TrackIndex(ListView):
 class TrackDetail(DetailView):
     queryset = UniquePart.objects.all()
     template_name = 'track/detail.html'
-    context_object_name='part'
+    context_object_name = 'part'
 
 
 class TrackCreate(CreateView):

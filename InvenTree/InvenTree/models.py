@@ -7,6 +7,7 @@ from rest_framework.exceptions import ValidationError
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+
 class Company(models.Model):
     """ Abstract model representing an external company
     """
@@ -185,7 +186,7 @@ class InvenTreeTree(models.Model):
 
 
 @receiver(pre_delete, sender=InvenTreeTree, dispatch_uid='tree_pre_delete_log')
-def before_delete_tree_item(sender, intance, using, **kwargs):
+def before_delete_tree_item(sender, instance, using, **kwargs):
 
     # Update each tree item below this one
     for child in instance.children.all():

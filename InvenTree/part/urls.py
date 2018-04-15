@@ -46,7 +46,6 @@ part_detail_urls = [
     url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
 
     # Any other URLs go to the part detail page
-    #url(r'^.*$', views.detail, name='part-detail'),
     url(r'^.*$', views.PartDetail.as_view(), name='part-detail'),
 ]
 
@@ -87,10 +86,8 @@ part_urls = [
     # Top level part list (display top level parts and categories)
     url('', views.PartIndex.as_view(), name='part-index'),
 
-     url(r'^.*$', RedirectView.as_view(url='', permanent=False), name='part-index'),
+    url(r'^.*$', RedirectView.as_view(url='', permanent=False), name='part-index'),
 ]
-
-
 
 """
 part_param_urls = [
@@ -111,5 +108,3 @@ part_param_template_urls = [
     url(r'^$', views.PartTemplateList.as_view())
 ]
 """
-
-

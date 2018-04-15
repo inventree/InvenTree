@@ -46,8 +46,7 @@ class SupplierPart(models.Model):
                              related_name='supplier_parts')
 
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,
-                                 related_name = 'parts')
-
+                                 related_name='parts')
 
     SKU = models.CharField(max_length=100)
 

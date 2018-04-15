@@ -7,7 +7,6 @@ class UniquePartAdmin(admin.ModelAdmin):
     list_display = ('part', 'serial', 'status', 'creation_date')
 
 
-
 class PartTrackingAdmin(admin.ModelAdmin):
     list_display = ('part', 'date', 'title')
 

@@ -14,7 +14,6 @@ class EditSupplierForm(forms.ModelForm):
         self.helper.form_id = 'id-edit-part-form'
         self.helper.form_class = 'blueForms'
         self.helper.form_method = 'post'
-        #self.helper.form_action = 'submit'
 
         self.helper.add_input(Submit('submit', 'Submit'))
 
@@ -40,7 +39,6 @@ class EditSupplierPartForm(forms.ModelForm):
             self.helper.form_id = 'id-edit-part-form'
             self.helper.form_class = 'blueForms'
             self.helper.form_method = 'post'
-            #self.helper.form_action = 'submit'
 
             self.helper.add_input(Submit('submit', 'Submit'))
 

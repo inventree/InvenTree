@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from django.utils.translation import ugettext as _
 from django.db import models
 from django.db.models import Sum
 from django.core.validators import MinValueValidator
@@ -41,6 +40,7 @@ class PartCategory(InvenTreeTree):
     def parts(self):
         return self.part_set.all()
     """
+
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
 def before_delete_part_category(sender, instance, using, **kwargs):
@@ -129,7 +129,6 @@ class Part(models.Model):
     class Meta:
         verbose_name = "Part"
         verbose_name_plural = "Parts"
-        #unique_together = (("name", "category"),)
 
     @property
     def tracked_parts(self):
@@ -151,7 +150,6 @@ class Part(models.Model):
     @property
     def bomItemCount(self):
         return self.bom_items.all().count()
-
 
     @property
     def usedInCount(self):
@@ -177,9 +175,10 @@ class Part(models.Model):
         return projects
     """
 
+
 def attach_file(instance, filename):
 
-    base='part_files'
+    base = 'part_files'
 
     # TODO - For a new PartAttachment object, PK is NULL!!
 
@@ -188,17 +187,16 @@ def attach_file(instance, filename):
 
     return os.path.join(base, fn)
 
+
 class PartAttachment(models.Model):
     """ A PartAttachment links a file to a part
     Parts can have multiple files such as datasheets, etc
     """
 
-
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='attachments')
 
     attachment = models.FileField(upload_to=attach_file, null=True, blank=True)
-
 
 
 class BomItem(models.Model):
@@ -220,7 +218,6 @@ class BomItem(models.Model):
 
     # Quantity required
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])
-
 
     class Meta:
         verbose_name = "BOM Item"

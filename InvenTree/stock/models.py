@@ -14,6 +14,7 @@ from datetime import datetime
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+
 class StockLocation(InvenTreeTree):
     """ Organization tree for StockItem objects
     A "StockLocation" can be considered a warehouse, or storage location
@@ -46,6 +47,7 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
     for child in instance.children.all():
         child.parent = instance.parent
         child.save()
+
 
 class StockItem(models.Model):
 

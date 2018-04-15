@@ -1,6 +1,5 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
@@ -10,6 +9,7 @@ from .models import Supplier, SupplierPart
 
 from .forms import EditSupplierForm
 from .forms import EditSupplierPartForm
+
 
 class SupplierIndex(ListView):
     model = Supplier

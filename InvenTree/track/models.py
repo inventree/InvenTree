@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from rest_framework.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.db import models
 
@@ -55,8 +54,8 @@ class UniquePart(models.Model):
     status = models.IntegerField(default=PART_IN_PROGRESS, choices=PART_STATUS_CODES.items())
 
     def __str__(self):
-        return "{pn} - # {sn}".format(pn = self.part.name,
-                                      sn = self.serial)
+        return "{pn} - # {sn}".format(pn=self.part.name,
+                                      sn=self.serial)
 
 
 class PartTrackingInfo(models.Model):
