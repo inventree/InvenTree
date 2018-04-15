@@ -16,3 +16,10 @@ class TrackIndex(ListView):
 
     def get_queryset(self):
         return UniquePart.objects.order_by('part__name', 'serial')
+
+
+class TrackDetail(DetailView):
+    queryset = UniquePart.objects.all()
+    template_name = 'track/detail.html'
+    context_object_name='part'
+

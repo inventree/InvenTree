@@ -52,7 +52,8 @@ class UniquePart(models.Model):
     status = models.IntegerField(default=PART_IN_PROGRESS, choices=PART_STATUS_CODES.items())
 
     def __str__(self):
-        return self.part.name
+        return "{pn} - # {sn}".format(pn = self.part.name,
+                                      sn = self.serial)
 
 
 class PartTrackingInfo(models.Model):

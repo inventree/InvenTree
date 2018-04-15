@@ -1,4 +1,4 @@
-{% include "base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 
@@ -7,7 +7,9 @@
 <ul class='list-group'>
 {% for part in parts.all %}
 <li class='list-group-item'>
+<a href="{% url 'track-detail' part.id %}">
     {{ part.part.name }} - SN {{ part.serial }}
+</a>
 </li>
 {% endfor %}
 </ul>

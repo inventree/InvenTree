@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+Part: <a href="{% url 'part-detail' part.part.id %}">{{ part.part.name }}</a><br>
+Serial number: {{ part.serial }}
+
+{% if part.tracking_info.all|length > 0 %}
+<p>Tracking information:</p>
+<ul class='list-group'>
+{% for info in part.tracking_info.all %}
+<li class='list-group-item'>
+  <div class='panel panel-default'>
+    <div class='panel-heading'>
+        {{ info.title }}<span class="badge">{{ info.date }}</span>
+    </div>
+    {% if info.notes %}
+    <div class='panel-body'>{{ info.notes }}</div>
+    {% endif %}
+  </div>
+  </li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% endblock %}

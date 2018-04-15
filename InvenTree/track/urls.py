@@ -23,7 +23,13 @@ unique_api_urls = [
 ]
 """
 
+track_detail_urls = [
+    url('^.*$', views.TrackDetail.as_view(), name='track-detail'),
+]
+
 tracking_urls = [
+    # Detail view
+    url(r'^(?P<pk>\d+)/', include(track_detail_urls)),
 
     # List ALL tracked items
     url('', views.TrackIndex.as_view(), name='track-index'),
