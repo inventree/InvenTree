@@ -16,6 +16,9 @@ class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
     """
 
+    def get_absolute_url(self):
+        return '/part/category/{id}/'.format(id=self.id)
+
     class Meta:
         verbose_name = "Part Category"
         verbose_name_plural = "Part Categories"
@@ -47,6 +50,11 @@ def before_delete_part_category(sender, instance, using, **kwargs):
     for part in instance.parts.all():
         part.category = instance.parent
         part.save()
+
+    # Update each child category
+    for child in instance.children.all():
+        child.parent = instance.parent
+        child.save()
 
 
 # Function to automatically rename a part image on upload

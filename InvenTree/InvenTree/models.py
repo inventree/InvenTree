@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.exceptions import ValidationError
 
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 class Company(models.Model):
     """ Abstract model representing an external company
@@ -40,9 +42,12 @@ class InvenTreeTree(models.Model):
         unique_together = ('name', 'parent')
 
     name = models.CharField(max_length=100, unique=True)
+
     description = models.CharField(max_length=250, blank=True)
+
+    # When a category is deleted, graft the children onto its parent
     parent = models.ForeignKey('self',
-                               on_delete=models.CASCADE,
+                               on_delete=models.DO_NOTHING,
                                blank=True,
                                null=True,
                                related_name='children')
@@ -177,6 +182,15 @@ class InvenTreeTree(models.Model):
         """
 
         return self.pathstring
+
+
+@receiver(pre_delete, sender=InvenTreeTree, dispatch_uid='tree_pre_delete_log')
+def before_delete_tree_item(sender, intance, using, **kwargs):
+
+    # Update each tree item below this one
+    for child in instance.children.all():
+        child.parent = instance.parent
+        child.save()
 
 
 def FilterChildren(queryset, parent):
