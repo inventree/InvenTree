@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'simple_history',
     'crispy_forms',
+    'import_export',
 
     # Core django modules
     'django.contrib.admin',
@@ -147,4 +148,8 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# crispy forms use the bootstrap templates
 CRISPY_TEMPLATE_PACK = 'bootstrap'
+
+# Use database transactions when importing / exporting data
+IMPORT_EXPORT_USE_TRANSACTIONS = True

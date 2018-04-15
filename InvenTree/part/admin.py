@@ -1,10 +1,12 @@
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
 
 from .models import PartCategory, Part
 from .models import BomItem
 from .models import PartAttachment
 
-class PartAdmin(admin.ModelAdmin):
+#class PartAdmin(admin.ModelAdmin):
+class PartAdmin(ImportExportModelAdmin):
 
     list_display = ('name', 'IPN', 'description', 'stock', 'category')
 
@@ -13,7 +15,8 @@ class PartCategoryAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'pathstring', 'description')
 
-class BomItemAdmin(admin.ModelAdmin):
+#class BomItemAdmin(admin.ModelAdmin):
+class BomItemAdmin(ImportExportModelAdmin):
     list_display=('part', 'sub_part', 'quantity')
 
 class PartAttachmentAdmin(admin.ModelAdmin):
