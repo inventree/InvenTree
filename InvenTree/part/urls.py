@@ -54,6 +54,9 @@ part_detail_urls = [
 
 # URL list for part web interface
 part_urls = [
+    # Create a new part
+    url(r'^create/?', views.PartCreate.as_view(), name='part-create'),
+
     # Individual
     url(r'^(?P<pk>\d+)/', include(part_detail_urls)),
 

@@ -34,6 +34,40 @@ class PartIndex(ListView):
         return context
 
 
+class PartCreate(CreateView):
+    """ Create a new part
+    - Optionally provide a category object as initial data
+    """
+    model = Part
+    form_class = EditPartForm
+    template_name = 'part/create.html'
+
+    def get_category_id(self):
+        return self.request.GET.get('category', None)
+
+    # If a category is provided in the URL, pass that to the page context
+    def get_context_data(self, **kwargs):
+        context = super(PartCreate, self).get_context_data(**kwargs)
+
+        # Add category information to the page
+        cat_id = self.get_category_id()
+
+        if cat_id:
+            context['category'] = get_object_or_404(PartCategory, pk=cat_id)
+
+        return context
+
+    # Pre-fill the category field if a valid category is provided
+    def get_initial(self):
+
+        initials = super(PartCreate, self).get_initial().copy()
+
+        if self.get_category_id():
+            initials['category'] = get_object_or_404(PartCategory, pk=self.get_category_id())
+
+        return initials
+
+
 class PartDetail(DetailView):
     context_object_name = 'part'
     queryset = Part.objects.all()

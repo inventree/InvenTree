@@ -28,5 +28,8 @@ Parts:
 </ul>
 {% endif %}
 
+<a href="/part/create/{% if category %}?category={{ category.id }}{% endif %}">
+    <button class="btn btn-default">New Part</button>
+</a>
 {% endblock %}
 
