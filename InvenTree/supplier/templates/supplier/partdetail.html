@@ -22,8 +22,8 @@
     <tr><td>Description</td><td>{{ part.description }}</td></tr>
 {% endif %}
 {% if part.manufacturer %}
-    <tr><td>Manufacturer</td><td>TODO</td></tr>
-    <tr><td>MPN</td><td>TODO</td></tr>
+    <tr><td>Manufacturer</td><td>{% if part.manufacturer %}{{ part.manufacturer.name }}{% endif %}</td></tr>
+    <tr><td>MPN</td><td>{{ part.MPN }}</td></tr>
 {% endif %}
 </table>
 

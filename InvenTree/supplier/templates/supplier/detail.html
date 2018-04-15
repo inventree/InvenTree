@@ -6,12 +6,7 @@
     <div class="col-sm-6">
         <h3>{{ supplier.name }}</h3>
         <p>{{ supplier.description }}</p>
-        <a href="{% url 'supplier-edit' supplier.id %}">
-            <button class="btn btn-info">Edit supplier details</button>
-        </a>
-        <a href="{% url 'supplier-delete' supplier.id %}">
-            <button class="btn btn-danger">Delete supplier</button>
-        </a>
+        <p>{{ supplier.notes }}</p>
     </div>
     <div class="col-sm-6">
         <table class="table">
@@ -48,21 +43,24 @@
 <table class="table table-striped">
 <tr>
     <th>SKU</th>
+    <th>Description</th>
     <th>Part</th>
-    <th>Manufacturer</th>
     <th>MPN</th>
     <th>URL</th>
 </tr>
 {% for part in supplier.parts.all %}
 <tr>
     <td><a href="{% url 'supplier-part-detail' part.id %}">{{ part.SKU }}</a></td>
+    <td>{{ part.description }}</td>
     <td>
         {% if part.part %}
         <a href="{% url 'part-detail' part.part.id %}">{{ part.part.name }}</a>
         {% endif %}
     </td>
-    <td>Manufacturer name goes here</td>
-    <td>MPN goes here</td>
+    <td>
+    {% if part.manufacturer %}{{ part.manufacturer.name }}{% endif %}
+    {% if part.MPN %} | {{ part.MPN }}{% endif %}
+    </td>
     <td>{{ part.URL }}</td>
 {% endfor %}
 </table>
@@ -70,6 +68,12 @@
 <div class='container-fluid'>
 <a href="{% url 'supplier-part-create' %}?supplier={{ supplier.id }}">
     <button class="btn btn-success">New Supplier Part</button>
+</a>
+<a href="{% url 'supplier-edit' supplier.id %}">
+    <button class="btn btn-info">Edit supplier details</button>
+</a>
+<a href="{% url 'supplier-delete' supplier.id %}">
+    <button class="btn btn-danger">Delete supplier</button>
 </a>
 </div>
 

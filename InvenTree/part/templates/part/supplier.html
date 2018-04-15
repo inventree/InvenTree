@@ -8,12 +8,17 @@
 <tr>
     <th>SKU</th>
     <th>Supplier</th>
+    <th>MPN</th>
     <th>URL</th>
 </tr>
 {% for spart in part.supplier_parts.all %}
 <tr>
     <td><a href="{% url 'supplier-part-detail' spart.id %}">{{ spart.SKU }}</a></td>
     <td><a href="{% url 'supplier-detail' spart.supplier.id %}">{{ spart.supplier.name }}</a></td>
+    <td>
+        {% if spart.manufacturer %}{{ spart.manufacturer.name }}{% endif %}
+        {% if spart.MPN %} | {{ spart.MPN }}{% endif %}
+    </td>
     <td>
         {% if spart.URL %}
         <a href="{{ spart.URL }}">{{ spart.URL }}</a>
