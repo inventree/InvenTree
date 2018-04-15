@@ -2,22 +2,11 @@ from __future__ import unicode_literals
 from rest_framework.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.db import models
-# from django.contrib.auth.models import User
+
+from django.contrib.auth.models import User
 
 from supplier.models import Customer
 from part.models import Part
-
-
-class UniquePartManager(models.Manager):
-
-    def create(self, *args, **kwargs):
-
-        part = kwargs.get('part', None)
-
-        if not part.trackable:
-            raise ValidationError("Unique part cannot be created for a non-trackable part")
-
-        return super(UniquePartManager, self).create(*args, **kwargs)
 
 
 class UniquePart(models.Model):
@@ -25,8 +14,6 @@ class UniquePart(models.Model):
     Used for tracking parts based on serial numbers,
     and tracking all events in the life of a part
     """
-
-    objects = UniquePartManager()
 
     class Meta:
         # Cannot have multiple parts with same serial number
@@ -48,6 +35,7 @@ class UniquePart(models.Model):
     PART_IN_STOCK = 10
     PART_SHIPPED = 20
     PART_RETURNED = 30
+    PART_REPAIRED = 35
     PART_DAMAGED = 40
     PART_DESTROYED = 50
 
@@ -56,6 +44,7 @@ class UniquePart(models.Model):
         PART_IN_STOCK: _("In stock"),
         PART_SHIPPED: _("Shipped"),
         PART_RETURNED: _("Returned"),
+        PART_REPAIRED: _("Repaired"),
         PART_DAMAGED: _("Damaged"),
         PART_DESTROYED: _("Destroyed")
     }
@@ -73,5 +62,11 @@ class PartTrackingInfo(models.Model):
     """
 
     part = models.ForeignKey(UniquePart, on_delete=models.CASCADE, related_name='tracking_info')
+
     date = models.DateField(auto_now_add=True, editable=False)
-    notes = models.CharField(max_length=500)
+
+    title = models.CharField(max_length=250)
+
+    notes = models.CharField(max_length=1024, blank=True)
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)

@@ -77,7 +77,7 @@ part_urls = [
     # Top level part list (display top level parts and categories)
     url('', views.PartIndex.as_view(), name='part-index'),
 
-     url(r'^.*$', RedirectView.as_view(url='list', permanent=False), name='part-index'),
+     url(r'^.*$', RedirectView.as_view(url='', permanent=False), name='part-index'),
 ]
 
 
