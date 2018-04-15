@@ -17,6 +17,12 @@
         <td>Creation Date</td>
         <td>{{ part.creation_date }}</td>
     </tr>
+    {% if part.URL %}
+    <tr>
+        <td>URL</td>
+        <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
+    </tr>
+    {% endif %}
     {% if part.customer %}
     <tr>
         <td>Customer</td>
@@ -34,14 +40,8 @@
 <ul class='list-group'>
 {% for info in part.tracking_info.all %}
 <li class='list-group-item'>
-  <div class='panel panel-default'>
-    <div class='panel-heading'>
-        {{ info.title }}<span class="badge">{{ info.date }}</span>
-    </div>
-    {% if info.notes %}
-    <div class='panel-body'>{{ info.notes }}</div>
-    {% endif %}
-  </div>
+        {{ info.title }}
+        {% if info.note %}<br><i>{{ info.notes }}</i>{% endif %}<span class="badge">{{ info.date }}</span>
   </li>
 {% endfor %}
 </ul>

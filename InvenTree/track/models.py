@@ -28,6 +28,9 @@ class UniquePart(models.Model):
 
     serial = models.PositiveIntegerField()
 
+    # Provide a URL for an external link
+    URL = models.URLField(blank=True)
+
     # createdBy = models.ForeignKey(User)
 
     customer = models.ForeignKey(Customer, blank=True, null=True)

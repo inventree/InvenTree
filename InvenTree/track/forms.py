@@ -22,6 +22,7 @@ class EditTrackedPartForm(forms.ModelForm):
         fields = [
             'part',
             'serial',
+            'URL',
             'customer',
             'status'
         ]
