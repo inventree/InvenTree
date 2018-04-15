@@ -7,14 +7,14 @@
 {% if part.supplier_parts.all|length > 0 %}
 <table class="table table-striped">
 <tr>
-    <th>Supplier</th>
     <th>SKU</th>
+    <th>Supplier</th>
     <th>URL</th>
 </tr>
 {% for spart in part.supplier_parts.all %}
 <tr>
-    <td><a href="{% url 'supplier-detail' spart.supplier.id %}">{{ spart.supplier.name }}</a></td>
     <td><a href="{% url 'supplier-part-detail' spart.id %}">{{ spart.SKU }}</a></td>
+    <td><a href="{% url 'supplier-detail' spart.supplier.id %}">{{ spart.supplier.name }}</a></td>
     <td>
         {% if spart.URL %}
         <a href="{{ spart.URL }}">{{ spart.URL }}</a>

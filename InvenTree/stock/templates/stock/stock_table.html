@@ -8,7 +8,7 @@
 </tr>
 {% for item in items.all %}
 <tr>
-    <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.name }}</a></td>
+    <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</a></td>
     <td>{{ item.quantity }}</td>
     <td>{{ item.status }}</td>
     <td>{{ item.stocktake_date }}</td>

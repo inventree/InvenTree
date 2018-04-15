@@ -20,6 +20,9 @@ class StockLocation(InvenTreeTree):
     Stock locations can be heirarchical as required
     """
 
+    def get_absolute_url(self):
+        return '/stock/location/{id}/'.format(id=self.id)
+
     @property
     def items(self):
         stock_list = self.stockitem_set.all()
@@ -34,7 +37,16 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
         item.location = instance.parent
         item.save()
 
+    # Update each child category
+    for child in instance.children.all():
+        child.parent = instance.parent
+        child.save()
+
 class StockItem(models.Model):
+
+    def get_absolute_url(self):
+        return '/stock/item/{id}/'.format(id=self.id)
+
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='locations')
 
     supplier_part = models.ForeignKey(SupplierPart, blank=True, null=True, on_delete=models.SET_NULL)

@@ -10,6 +10,7 @@ Total in stock: {{ part.stock }}
 
 <table class="table table-striped">
 <tr>
+    <th>Link</th>
     <th>Quantity</th>
     <th>Location</th>
     <th>Supplier part</th>
@@ -18,8 +19,9 @@ Total in stock: {{ part.stock }}
 </tr>
 {% for stock in part.locations.all %}
 <tr>
+    <td><a href="{% url 'stock-item-detail' stock.id %}">Click</a></td>
     <td>{{ stock.quantity }}</td>
-    <td><a href="/stock/list/?location={{ stock.location.id }}">{{ stock.location.name }}</a></td>
+    <td><a href="{% url 'stock-location-detail' stock.location.id %}">{{ stock.location.name }}</a></td>
     <td>
         {% if stock.supplier_part %}
     <a href="{% url 'supplier-part-detail' stock.supplier_part.id %}">
@@ -31,6 +33,12 @@ Total in stock: {{ part.stock }}
     <td>{{ stock.notes }}</td>
 </tr>
 {% endfor %}
-</table>
+</table
+
+<div class='container-fluid'>
+<a href="{% url 'stock-item-create' %}?part={{ part.id }}">
+    <button class='btn btn-success'>Add new Stock Item</button>
+</a>
+</div>
 
 {% endblock %}

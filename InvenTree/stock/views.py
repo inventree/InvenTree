@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
-
+from part.models import Part
 from .models import StockItem, StockLocation
 
 from .forms import EditStockLocationForm
@@ -46,35 +46,60 @@ class StockItemDetail(DetailView):
 class StockLocationEdit(UpdateView):
     model = StockLocation
     form_class = EditStockLocationForm
-    template_name = '/stock/location-edit.html'
+    template_name = 'stock/location_edit.html'
     context_object_name = 'location'
 
 
 class StockItemEdit(UpdateView):
     model = StockItem
     form_class = EditStockItemForm
-    template_name = '/stock/item-edit.html'
+    template_name = 'stock/item_edit.html'
     context_object_name = 'item'
 
 
 class StockLocationCreate(CreateView):
     model = StockLocation
     form_class = EditStockLocationForm
-    template_name = '/stock/location-create.html'
+    template_name = 'stock/location_create.html'
     context_object_name = 'location'
+
+    def get_initial(self):
+        initials = super(StockLocationCreate, self).get_initial().copy()
+
+        loc_id = self.request.GET.get('location', None)
+
+        if loc_id:
+            initials['parent'] = get_object_or_404(StockLocation, pk=loc_id)
+
+        return initials
 
 
 class StockItemCreate(CreateView):
     model = StockItem
     form_class = EditStockItemForm
-    template_name = '/stock/item-create.html'
+    template_name = 'stock/item_create.html'
     context_object_name = 'item'
+
+    def get_initial(self):
+        initials = super(StockItemCreate, self).get_initial().copy()
+
+        part_id = self.request.GET.get('part', None)
+        loc_id = self.request.GET.get('location', None)
+
+        if part_id:
+            initials['part'] = get_object_or_404(Part, pk=part_id)
+
+        if loc_id:
+            initials['location'] = get_object_or_404(StockLocation, pk=loc_id)
+
+        return initials
 
 
 class StockLocationDelete(DeleteView):
     model = StockLocation
-    success_url = '/stock/'
-    template_name = '/stock/location-delete.html'
+    success_url = '/stock'
+    template_name = 'stock/location_delete.html'
+    context_object_name = 'location'
 
     def post(self, request, *args, **kwargs):
         if 'confirm' in request.POST:
@@ -84,9 +109,10 @@ class StockLocationDelete(DeleteView):
 
 
 class StockItemDelete(DeleteView):
-    model = StockLocation
+    model = StockItem
     success_url = '/stock/'
-    template_name = '/stock/item-delete.html'
+    template_name = 'stock/item_delete.html'
+    context_object_name = 'item'
 
     def post(self, request, *args, **kwargs):
         if 'confirm' in request.POST:

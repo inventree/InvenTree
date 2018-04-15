@@ -14,4 +14,22 @@
 
 {% include "stock/stock_table.html" with items=location.items %}
 
+<div class='container-fluid'>
+<a href="{% url 'stock-location-create' %}?location={{ location.id }}">
+    <button class='btn btn-success'>New Stock Location</button>
+</a>
+<a href="{% url 'stock-item-create' %}?location={{ location.id }}">
+    <button class='btn btn-success'>New Stock Item</button>
+</a>
+
+<a href="{% url 'stock-location-edit' location.id %}">
+    <button class="btn btn-info">Edit Location</button>
+</a>
+
+<a href="{% url 'stock-location-delete' location.id %}">
+    <button class="btn btn-danger">Delete Location</button>
+</a>
+
+</div>
+
 {% endblock %}

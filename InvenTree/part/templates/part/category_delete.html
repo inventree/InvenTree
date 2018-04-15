@@ -18,7 +18,7 @@ Are you sure you want to delete category '{{ category.name }}'?
 
     <ul class='list-group'>
     {% for cat in category.children.all %}
-        <li class='list-group-item'>{{ cat.name }} - {{ cat.description }}</li>
+        <li class='list-group-item'><b>{{ cat.name }}</b> - <i>{{ cat.description }}</i></li>
     {% endfor %}
     </ul>
     {% endif %}
@@ -33,7 +33,7 @@ Are you sure you want to delete category '{{ category.name }}'?
     </p>
     <ul class='list-group'>
     {% for part in category.parts.all %}
-        <li class='list-group-item'>{{ part.name }} - {{ part.description }}</li>
+        <li class='list-group-item'><b>{{ part.name }}</b> - <i>{{ part.description }}</i></li>
     {% endfor %}
     </ul>
     {% endif %}
