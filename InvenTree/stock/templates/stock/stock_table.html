@@ -1,0 +1,18 @@
+<table class="table table-striped">
+<tr>
+    <th>Part</th>
+    <th>Stock</th>
+    <th>Status</th>
+    <th>Stocktake</th>
+    <th></th>
+</tr>
+{% for item in items.all %}
+<tr>
+    <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.name }}</a></td>
+    <td>{{ item.quantity }}</td>
+    <td>{{ item.status }}</td>
+    <td>{{ item.stocktake_date }}</td>
+    <td><a href="{% url 'stock-item-detail' item.id %}">Click</a></td>
+</tr>
+{% endfor %}
+</table>

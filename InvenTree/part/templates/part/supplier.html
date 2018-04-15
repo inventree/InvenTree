@@ -5,7 +5,7 @@
 {% include 'part/tabs.html' with tab='suppliers' %}
 
 {% if part.supplier_parts.all|length > 0 %}
-<table>
+<table class="table table-striped">
 <tr>
     <th>Supplier</th>
     <th>SKU</th>
@@ -15,7 +15,11 @@
 <tr>
     <td><a href="{% url 'supplier-detail' spart.supplier.id %}">{{ spart.supplier.name }}</a></td>
     <td><a href="{% url 'supplier-part-detail' spart.id %}">{{ spart.SKU }}</a></td>
-    <td>{{ spart.URL }}</td>
+    <td>
+        {% if spart.URL %}
+        <a href="{{ spart.URL }}">{{ spart.URL }}</a>
+        {% endif %}
+    </td>
 </tr>
 {% endfor %}
 </table>

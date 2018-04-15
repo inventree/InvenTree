@@ -20,7 +20,7 @@ class PartIndex(ListView):
 
     def get_context_data(self, **kwargs):
 
-        context = super(PartIndex, self).get_context_data(**kwargs)
+        context = super(PartIndex, self).get_context_data(**kwargs).copy()
 
         # View top-level categories
         children = PartCategory.objects.filter(parent=None)

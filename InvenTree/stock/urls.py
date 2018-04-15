@@ -31,15 +31,31 @@ stock_api_loc_urls = [
 
 
 # URL list for web interface
-stock_detail_urls = [
-    url('', views.detail, name='stock-detail'),
+stock_location_detail_urls = [
+    url(r'^edit/?', views.StockLocationEdit.as_view(), name='stock-location-edit'),
+    url(r'^delete/?', views.StockLocationDelete.as_view(), name='stock-location-delete'),
+
+    # Anything else
+    url('^.*$', views.StockLocationDetail.as_view(), name='stock-location-detail'),
 ]
+
+stock_item_detail_urls = [
+    url(r'^edit/?', views.StockItemEdit.as_view(), name='stock-item-edit'),
+    url(r'^delete/?', views.StockItemDelete.as_view(), name='stock-item-delete'),
+
+    url('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
+]
+
 stock_urls = [
+    # Stock location
+    url(r'^location/(?P<pk>\d+)/', include(stock_location_detail_urls)),
+
+    url(r'^location/new/', views.StockLocationCreate.as_view(), name='stock-location-create'),
+
     # Individual stock items
-    url(r'^(?P<pk>\d+)/', include(stock_detail_urls)),
+    url(r'^item/(?P<pk>\d+)/', include(stock_item_detail_urls)),
 
-    url('list', views.index, name='stock-index'),
+    url(r'^item/new/', views.StockItemCreate.as_view(), name='stock-item-create'),
 
-    # Redirect any other patterns
-    url(r'^.*$', RedirectView.as_view(url='list', permanent=False), name='stock-index'),
+    url(r'^.*$', views.StockIndex.as_view(), name='stock-index'),
 ]
