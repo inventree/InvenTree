@@ -57,6 +57,13 @@ part_category_urls = [
     url('^.*$', views.CategoryDetail.as_view(), name='category-detail'),
 ]
 
+part_bom_urls = [
+    url(r'^edit/?', views.BomItemEdit.as_view(), name='bom-item-edit'),
+    url('^delete/?', views.BomItemDelete.as_view(), name='bom-item-delete'),
+
+    url(r'^.*$', views.BomItemDetail.as_view(), name='bom-item-detail'),
+]
+
 # URL list for part web interface
 part_urls = [
 
@@ -66,11 +73,16 @@ part_urls = [
     # Create a new part
     url(r'^new/?', views.PartCreate.as_view(), name='part-create'),
 
-    # Individual
+    # Create a new BOM item
+    url(r'^bom/new/?', views.BomItemCreate.as_view(), name='bom-item-create'),
+
+    # Individual part
     url(r'^(?P<pk>\d+)/', include(part_detail_urls)),
 
     # Part category
     url(r'^category/(?P<pk>\d+)/', include(part_category_urls)),
+
+    url(r'^bom/(?P<pk>\d+)/', include(part_bom_urls)),
 
     # Top level part list (display top level parts and categories)
     url('', views.PartIndex.as_view(), name='part-index'),

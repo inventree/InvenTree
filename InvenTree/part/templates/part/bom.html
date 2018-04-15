@@ -21,4 +21,10 @@
 {% endfor %}
 </table>
 
+<div class='container-fluid'>
+<a href="{% url 'bom-item-create' %}?parent={{ part.id }}">
+    <button class='btn btn-success'>Add BOM Item</button>
+</a>
+</div>
+
 {% endblock %}

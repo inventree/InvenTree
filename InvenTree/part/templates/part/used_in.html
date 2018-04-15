@@ -13,7 +13,7 @@ This part is used to make the following parts:
 </tr>
 {% for item in part.used_in.all %}
 <tr>
-    <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.name }}</a></td>
+    <td><a href="{% url 'part-bom' item.part.id %}">{{ item.part.name }}</a></td>
     <td>{{ item.part.description }}</td>
 </tr>
 {% endfor %}

@@ -1,5 +1,6 @@
 from InvenTree.models import FilterChildren
-from .models import PartCategory, Part
+
+from .models import PartCategory, Part, BomItem
 
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect
@@ -8,7 +9,7 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
-from .forms import EditPartForm, EditCategoryForm
+from .forms import EditPartForm, EditCategoryForm, EditBomItemForm
 
 class PartIndex(ListView):
     model = Part
@@ -146,3 +147,47 @@ class CategoryCreate(CreateView):
             initials['parent'] = get_object_or_404(PartCategory, pk=parent_id)
 
         return initials
+
+
+class BomItemDetail(DetailView):
+    context_object_name ='item'
+    queryset = BomItem.objects.all()
+    template_name = 'part/bom-detail.html'
+
+
+class BomItemCreate(CreateView):
+    model = BomItem
+    form_class = EditBomItemForm
+    template_name = 'part/bom-create.html'
+
+    def get_initial(self):
+        # Look for initial values
+        initials = super(BomItemCreate, self).get_initial().copy()
+
+        # Parent part for this item?
+        parent_id = self.request.GET.get('parent', None)
+
+        if parent_id:
+            initials['part'] = get_object_or_404(Part, pk=parent_id)
+
+        return initials
+
+
+class BomItemEdit(UpdateView):
+    model = BomItem
+    form_class = EditBomItemForm
+    template_name = 'part/bom-edit.html'
+
+
+class BomItemDelete(DeleteView):
+    model = BomItem
+    template_name = 'part/bom-delete.html'
+    context_object_name = 'item'
+
+    success_url = '/part'
+
+    def post(self, request, *args, **kwargs):
+        if 'confirm' in request.POST:
+            return super(BomItemDelete, self).post(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect(self.get_object().get_absolute_url())
