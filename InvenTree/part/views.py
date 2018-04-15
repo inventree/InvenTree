@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
-from .forms import EditPartForm
+from .forms import EditPartForm, EditCategoryForm
 
 class PartIndex(ListView):
     model = Part
@@ -16,20 +16,16 @@ class PartIndex(ListView):
     context_object_name = 'parts'
 
     def get_queryset(self):
-        self.category = self.request.GET.get('category', None)
-
-        return Part.objects.filter(category=self.category)
+        return Part.objects.filter(category=None)
 
     def get_context_data(self, **kwargs):
 
         context = super(PartIndex, self).get_context_data(**kwargs)
 
-        children = PartCategory.objects.filter(parent=self.category)
+        # View top-level categories
+        children = PartCategory.objects.filter(parent=None)
 
         context['children'] = children
-
-        if self.category:
-            context['category'] = get_object_or_404(PartCategory, pk=self.category)
 
         return context
 
@@ -92,3 +88,61 @@ class PartDelete(DeleteView):
         else:
             return HttpResponseRedirect(self.get_object().get_absolute_url())
 
+
+class CategoryDetail(DetailView):
+    model = PartCategory
+    context_object_name = 'category'
+    queryset = PartCategory.objects.all()
+    template_name = 'part/category_detail.html'
+
+
+class CategoryEdit(UpdateView):
+    model = PartCategory
+    template_name = 'part/category_edit.html'
+    form_class = EditCategoryForm
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryEdit, self).get_context_data(**kwargs).copy()
+
+        context['category'] = get_object_or_404(PartCategory, pk=self.kwargs['pk'])
+
+        return context
+
+
+class CategoryDelete(DeleteView):
+    model = PartCategory
+    template_name = 'part/category_delete.html'
+    context_object_name = 'category'
+    success_url ='/part/'
+
+    def post(self, request, *args, **kwargs):
+        if 'confirm' in request.POST:
+            return super(CategoryDelete, self).post(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect(self.get_object().get_absolute_url())
+
+
+class CategoryCreate(CreateView):
+    model = PartCategory
+    template_name = 'part/category_new.html'
+    form_class = EditCategoryForm
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryCreate, self).get_context_data(**kwargs).copy()
+
+        parent_id = self.request.GET.get('category', None)
+
+        if parent_id:
+            context['category'] = get_object_or_404(PartCategory, pk=parent_id)
+
+        return context
+
+    def get_initial(self):
+        initials = super(CategoryCreate, self).get_initial().copy()
+
+        parent_id = self.request.GET.get('category', None)
+
+        if parent_id:
+            initials['parent'] = get_object_or_404(PartCategory, pk=parent_id)
+
+        return initials

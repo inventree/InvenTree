@@ -1,0 +1,11 @@
+{% if children|length > 0 %}
+Subcategories:
+<ul class="list-group">
+{% for child in children %}
+<li class="list-group-item">
+    <a href="{% url 'category-detail' child.id %}">{{ child.name }}</a> - {{ child.description }}
+    <span class='badge'>{{ child.partcount }}</span>
+</li>
+{% endfor %}
+</ul>
+{% endif %}

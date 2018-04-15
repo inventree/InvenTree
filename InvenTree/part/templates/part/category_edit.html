@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include "part/cat_link.html" with category=category %}
+
+<div class='panel panel-primary'>
+    <div class='panel-heading'>Edit details for category '{{ category.name }}'</div>
+    <div class='panel-body'>
+{% load crispy_forms_tags %}
+
+{% crispy form %}
+    </div>
+</div>
+
+{% endblock %}

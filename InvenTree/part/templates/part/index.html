@@ -5,31 +5,17 @@
 
 {% include "part/cat_link.html" with category=category %}
 
-{% if children|length > 0 %}
-Subcategories:
-<ul class="list-group">
-{% for child in children %}
-<li class="list-group-item">
-    <a href="/part/list/?category={{ child.id }}">{{ child.name }}</a> - {{ child.description }}
-    <span class='badge'>{{ child.partcount }}</span>
-</li>
-{% endfor %}
-</ul>
-{% endif %}
+{% include "part/category_subcategories.html" with children=children %}
 
-{% if parts|length > 0 %}
-Parts:
-<ul class="list-group">
-{% for part in parts %}
-<li class="list-group-item">
-    <a href="{% url 'part-detail' part.id %}">{{ part.name }}</a> - {{ part.description }}
-</li>
-{% endfor %}
-</ul>
-{% endif %}
+{% include "part/category_parts.html" with parts=parts %}
 
-<a href="/part/create/{% if category %}?category={{ category.id }}{% endif %}">
+<div class='container-fluid'>
+<a href="{% url 'category-create' %}">
+    <button class="btn btn-default">New Category</button>
+</a>
+<a href="{% url 'part-create' %}">
     <button class="btn btn-default">New Part</button>
 </a>
+</div>
 {% endblock %}
 

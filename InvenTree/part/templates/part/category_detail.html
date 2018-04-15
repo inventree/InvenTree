@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+{% include "part/cat_link.html" with category=category %}
+
+{% include "part/category_subcategories.html" with children=category.children.all %}
+
+{% include "part/category_parts.html" with parts=category.parts.all %}
+
+<div class='container-fluid'>
+<a href="{% url 'category-create' %}?category={{ category.id }}">
+    <button class="btn btn-default">New Category</button>
+</a>
+<a href="{% url 'part-create' %}?category={{ category.id }}">
+    <button class="btn btn-default">New Part</button>
+</a>
+
+<a href="{% url 'category-edit' category.id %}">
+    <button class="btn btn-info">Edit Category</button>
+</a>
+
+<a href="{% url 'category-delete' category.id %}">
+    <button class="button btn-danger">Delete Category</button>
+</a>
+
+</div>
+
+{% endblock %}

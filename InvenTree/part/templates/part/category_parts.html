@@ -1,0 +1,10 @@
+{% if parts|length > 0 %}
+Parts:
+<ul class="list-group">
+{% for part in parts %}
+<li class="list-group-item">
+    <a href="{% url 'part-detail' part.id %}">{{ part.name }}</a> - {{ part.description }}
+</li>
+{% endfor %}
+</ul>
+{% endif %}

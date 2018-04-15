@@ -52,16 +52,30 @@ part_detail_urls = [
     url(r'^.*$', views.PartDetail.as_view(), name='part-detail'),
 ]
 
+part_category_urls = [
+    url(r'^edit/?', views.CategoryEdit.as_view(), name='category-edit'),
+    url(r'^delete/?', views.CategoryDelete.as_view(), name='category-delete'),
+
+    url('^.*$', views.CategoryDetail.as_view(), name='category-detail'),
+]
+
 # URL list for part web interface
 part_urls = [
+
+    # Create a new category
+    url(r'^new_category/?', views.CategoryCreate.as_view(), name='category-create'),
+
     # Create a new part
-    url(r'^create/?', views.PartCreate.as_view(), name='part-create'),
+    url(r'^new/?', views.PartCreate.as_view(), name='part-create'),
 
     # Individual
     url(r'^(?P<pk>\d+)/', include(part_detail_urls)),
 
-    url('list', views.PartIndex.as_view(), name='part-index'),
-    # ex: /part/5/
+    # Part category
+    url(r'^category/(?P<pk>\d+)/', include(part_category_urls)),
+
+    # Top level part list (display top level parts and categories)
+    url('', views.PartIndex.as_view(), name='part-index'),
 
      url(r'^.*$', RedirectView.as_view(url='list', permanent=False), name='part-index'),
 ]
