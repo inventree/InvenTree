@@ -15,7 +15,7 @@ class Company(models.Model):
         abstract = True
 
     name = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=500, blank=True)
+    description = models.CharField(max_length=500)
     website = models.URLField(blank=True)
     address = models.CharField(max_length=200,
                                blank=True)
@@ -43,7 +43,7 @@ class InvenTreeTree(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
 
-    description = models.CharField(max_length=250, blank=True)
+    description = models.CharField(max_length=250)
 
     # When a category is deleted, graft the children onto its parent
     parent = models.ForeignKey('self',

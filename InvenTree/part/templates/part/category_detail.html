@@ -6,6 +6,11 @@
 
 {% include "part/cat_link.html" with category=category %}
 
+<p>
+    <b>{{ category.name }}</b><br>
+    <i>{{ category.description }}</i>
+</p>
+
 {% include "part/category_subcategories.html" with children=category.children.all %}
 
 {% include "part/category_parts.html" with parts=category.parts.all %}

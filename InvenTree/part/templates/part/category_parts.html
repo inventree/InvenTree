@@ -1,10 +1,15 @@
 {% if parts|length > 0 %}
 Parts:
-<ul class="list-group">
+<table class="table table-striped">
+    <tr>
+        <th>Part</th>
+        <th>Description</th>
+    </tr>
 {% for part in parts %}
-<li class="list-group-item">
-    <a href="{% url 'part-detail' part.id %}">{{ part.name }}</a> - {{ part.description }}
-</li>
+<tr>
+    <td><a href="{% url 'part-detail' part.id %}">{{ part.name }}</a></td>
+    <td>{{ part.description }}</td>
+</tr>
 {% endfor %}
-</ul>
+</table>
 {% endif %}

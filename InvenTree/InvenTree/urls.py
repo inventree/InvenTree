@@ -11,7 +11,7 @@ from part.urls import part_urls
 from stock.urls import stock_api_urls, stock_api_loc_urls
 from stock.urls import stock_urls
 
-from supplier.urls import supplier_api_urls, supplier_api_part_urls
+#from supplier.urls import supplier_api_urls, supplier_api_part_urls
 from supplier.urls import supplier_urls
 
 from django.conf import settings
@@ -46,8 +46,8 @@ apipatterns = [
     url(r'^bom/', include(bom_api_urls)),
 
     # Supplier URLs
-    url(r'^supplier/', include(supplier_api_urls)),
-    url(r'^supplier-part/', include(supplier_api_part_urls)),
+    #url(r'^supplier/', include(supplier_api_urls)),
+    #url(r'^supplier-part/', include(supplier_api_part_urls)),
     #url(r'^price-break/', include(price_break_urls)),
     #url(r'^manufacturer/', include(manu_urls)),
     #url(r'^customer/', include(cust_urls)),
@@ -69,14 +69,13 @@ apipatterns = [
 urlpatterns = [
 
     # API URL
-    url(r'^api/', include(apipatterns)),
+    #url(r'^api/', include(apipatterns)),
+    #url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     url(r'^part/', include(part_urls)),
     url(r'^stock/', include(stock_urls)),
     url(r'^supplier/', include(supplier_urls)),
     url(r'^track/', include(tracking_urls)),
-
-    url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),

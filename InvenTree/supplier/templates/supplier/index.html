@@ -2,18 +2,21 @@
 
 {% block content %}
 
-<table>
-    <tr>
-        <th>Supplier</th>
-        <th>Description</th>
-        <th>URL</th>
-    </tr>
+<h3>Suppliers</h3>
+<ul class='list-group'>
 {% for supplier in suppliers %}
-<tr>
-    <td><a href="{% url 'supplier-detail' supplier.id %}">{{ supplier.name }}</a></td>
-    <td>{{ supplier.description }}</td>
-    <td>{{ supplier.website }}</td>
-</tr>
+<li class='list-group-item'>
+    <b><a href="{% url 'supplier-detail' supplier.id %}">{{ supplier.name }}</a></b>
+    <br>
+    {{ supplier.description }}
+    {% if supplier.website %}
+    <a href="{{ supplier.website }}">- {{ supplier.website }}</a>
+    {% endif %}
+    <span class="badge">
+        {{ supplier.parts.all|length }}
+    </span>
+</li>
 {% endfor %}
+</ul>
 
 {% endblock %}

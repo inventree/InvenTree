@@ -2,26 +2,55 @@
 
 {% block content %}
 
-<ul>
-<li>Name: {{ supplier.name }}</li>
-<li>Description: {{ supplier.description }}</li>
-<li>Website: {{ supplier.website }}</li>
-<li>Contact: {{ supplier.contact }}</li>
-</li>
+<div class="row">
+    <div class="col-sm-6">
+        <h3>{{ supplier.name }}</h3>
+        <p>{{ supplier.description }}</p>
+    </div>
+    <div class="col-sm-6">
+        <table class="table">
+        {% if supplier.website %}
+        <tr>
+            <td>Website</td><td><a href="{{ supplier.website }}">{{ supplier.website }}</a></td>
+        </tr>
+        {% endif %}
+        {% if supplier.address %}
+        <tr>
+            <td>Address</td><td>{{ supplier.address }}</td>
+        </tr>
+        {% endif %}
+        {% if supplier.phone %}
+        <tr>
+            <td>Phone</td><td>{{ supplier.phone }}</td>
+        </tr>
+        {% endif %}
+        {% if supplier.email %}
+        <tr>
+            <td>Email</td><td>{{ supplier.email }}</td>
+        </tr>
+        {% endif %}
+        {% if supplier.contact %}
+        <tr>
+            <td>Contact</td><td>{{ supplier.contact }}</td>
+        </tr>
+        {% endif %}
+        </table>
+    </div>
+</div>
 
 {% if supplier.parts.all|length > 0 %}
-<table>
+<table class="table table-striped">
 <tr>
-    <th>Part</th>
     <th>SKU</th>
+    <th>Part</th>
     <th>Manufacturer</th>
     <th>MPN</th>
     <th>URL</th>
 </tr>
 {% for part in supplier.parts.all %}
 <tr>
-    <td><a href="{% url 'part-detail' part.part.id %}">{{ part.part.name }}</a></td>
     <td><a href="{% url 'supplier-part-detail' part.id %}">{{ part.SKU }}</a></td>
+    <td><a href="{% url 'part-detail' part.part.id %}">{{ part.part.name }}</a></td>
     <td>Manufacturer name goes here</td>
     <td>MPN goes here</td>
     <td>{{ part.URL }}</td>

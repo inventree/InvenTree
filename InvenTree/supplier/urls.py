@@ -1,9 +1,10 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.views.generic.base import RedirectView
 
 from . import views
 from . import api
 
+"""
 cust_urls = [
     # Customer detail
     url(r'^(?P<pk>[0-9]+)/?$', api.CustomerDetail.as_view(), name='customer-detail'),
@@ -45,11 +46,21 @@ supplier_api_urls = [
     url(r'^\?.*/?$', api.SupplierList.as_view()),
     url(r'^$', api.SupplierList.as_view())
 ]
+"""
+
+supplier_detail_urls = [
+    #url(r'edit/?', views.SupplierEdit.as_view(), name='supplier-edit'),
+    #url(r'delete/?', views.SupplierDelete.as_view(), name='supplier-delete'),
+
+    url(r'^.*$', views.SupplierDetail.as_view(), name='supplier-detail'),
+]
 
 supplier_urls = [
-    url(r'^(?P<pk>\d+)/', views.detail, name='supplier-detail'),
     url(r'^part/(?P<pk>\d+)/', views.partDetail, name='supplier-part-detail'),
-    url(r'', views.index, name='supplier-index'),
+
+    url(r'^(?P<pk>\d+)/', include(supplier_detail_urls)),
+
+    url(r'', views.SupplierIndex.as_view(), name='supplier-index'),
 
     # Redirect any other patterns
     url(r'^.*$', RedirectView.as_view(url='', permanent=False), name='supplier-index'),

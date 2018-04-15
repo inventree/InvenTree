@@ -1,27 +1,26 @@
-from django.http import HttpResponse
-from django.template import loader
-
 from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
+from django.views.generic import DetailView, ListView
+from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
 from .models import Supplier, SupplierPart
 
-def index(request):
-    """ The supplier index page simply displays all the suppliers
-    """
+class SupplierIndex(ListView):
+    model = Supplier
+    template_name = 'supplier/index.html'
+    context_object_name = 'suppliers'
+    paginate_by = 50
 
-    suppliers = Supplier.objects.order_by('name')
+    def get_queryset(self):
+        return Supplier.objects.order_by('name')
 
-    return render(request, 'supplier/index.html', {'suppliers' : suppliers})
 
-
-def detail(request, pk):
-    """ The supplier detail page shown detailed information
-    on a particular supplier
-    """
-
-    supplier = get_object_or_404(Supplier, pk=pk)
-
-    return render(request, 'supplier/detail.html', {'supplier' : supplier})
+class SupplierDetail(DetailView):
+    context_obect = 'supplier'
+    template_name = 'supplier/detail.html'
+    queryset = Supplier.objects.all()
 
 
 def partDetail(request, pk):

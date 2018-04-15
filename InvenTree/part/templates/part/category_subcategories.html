@@ -3,7 +3,10 @@ Subcategories:
 <ul class="list-group">
 {% for child in children %}
 <li class="list-group-item">
-    <a href="{% url 'category-detail' child.id %}">{{ child.name }}</a> - {{ child.description }}
+    <b><a href="{% url 'category-detail' child.id %}">{{ child.name }}</a></b>
+    {% if child.description %}
+    <i> - {{ child.description }}</i>
+    {% endif %}
     <span class='badge'>{{ child.partcount }}</span>
 </li>
 {% endfor %}
