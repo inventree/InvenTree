@@ -12,4 +12,10 @@
 {% include "stock/stock_table.html" with items=items %}
 {% endif %}
 
+<div class='container-fluid'>
+<a href="{% url 'stock-location-create' %}">
+    <button class="btn btn-success">New Stock Location</button>
+</a>
+</div>
+
 {% endblock %}

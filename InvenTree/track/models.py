@@ -15,6 +15,9 @@ class UniquePart(models.Model):
     and tracking all events in the life of a part
     """
 
+    def get_absolute_url(self):
+        return "/track/{id}/".format(id=self.id)
+
     class Meta:
         # Cannot have multiple parts with same serial number
         unique_together = ('part', 'serial')

@@ -24,6 +24,9 @@ unique_api_urls = [
 """
 
 track_detail_urls = [
+    url(r'^edit/?', views.TrackEdit.as_view(), name='track-edit'),
+    url(r'^delete/?', views.TrackDelete.as_view(), name='track-delete'),
+
     url('^.*$', views.TrackDetail.as_view(), name='track-detail'),
 ]
 
@@ -31,8 +34,9 @@ tracking_urls = [
     # Detail view
     url(r'^(?P<pk>\d+)/', include(track_detail_urls)),
 
-    # List ALL tracked items
-    url('', views.TrackIndex.as_view(), name='track-index'),
+    # Create a new tracking item
+    url(r'^new/?', views.TrackCreate.as_view(), name='track-create'),
 
-    url(r'^.*$', RedirectView.as_view(url='', permanent=False), name='track-index'),
+    # List ALL tracked items
+    url(r'^.*$', views.TrackIndex.as_view(), name='track-index'),
 ]

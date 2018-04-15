@@ -1,0 +1,11 @@
+{% extends "delete_obj.html" %}
+
+{% block del_title %}
+Are you sure you want to delete tracking info for this part?
+{% endblock %}
+
+{% block del_body %}
+
+All tracking information for part <b>{{ track.part.name }} SN-{{ track.serial }}</b> will be deleted.
+
+{% endblock %}

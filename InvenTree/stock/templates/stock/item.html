@@ -37,7 +37,7 @@
 {% endif %}
 <tr>
     <td>Status</td>
-    <td>{{ item.status }}</td>
+    <td>{{ item.get_status_display }}</td>
 </tr>
 {% if item.notes %}
 <tr>

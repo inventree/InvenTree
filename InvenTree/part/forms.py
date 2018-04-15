@@ -28,6 +28,7 @@ class EditPartForm(forms.ModelForm):
             'URL',
             'minimum_stock',
             'trackable',
+            'purchaseable',
         ]
 
 

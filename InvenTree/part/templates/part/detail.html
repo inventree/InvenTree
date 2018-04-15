@@ -4,12 +4,40 @@
 
 {% include 'part/tabs.html' with tab='detail' %}
 
+<table class='table table-striped'>
+<tr>
+    <td>Name</td>
+    <td>{{ part.name }}</td>
+</tr>
+<tr>
+    <td>Description</td>
+    <td>{{ part.decription }}</td>
+</tr>
+<tr>
+    <td>Category</td>
+    <td>
+    {% if part.category %}
+        <a href="{% url 'category-detail' part.category.id %}">{{ part.category.name }}</a>
+    {% endif %}
+    </td>
+</tr>
+<tr>
+    <td>Units</td>
+    <td>{{ part.units }}</td>
+</tr>
+<tr>
+    <td>Trackable</td>
+    <td>{{ part.trackable }}</td>
+</tr>
+<tr>
+    <td>Purchaseable</td>
+    <td>{{ part.purchaseable }}</td>
+</tr>
+</table>
 
-Part details go here...
-<br>
-
+<div class='container-fluid'>
 <a href="{% url 'part-edit' part.id %}"><button class="btn btn-info">Edit Part</button></a>
-
 <a href="{% url 'part-delete' part.id %}"><button class="btn btn-danger">Delete Part</button></a>
+</div>
 
 {% endblock %}

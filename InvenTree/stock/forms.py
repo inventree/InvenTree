@@ -48,4 +48,5 @@ class EditStockItemForm(forms.ModelForm):
             'supplier_part',
             'location',
             'quantity',
+            'status'
         ]

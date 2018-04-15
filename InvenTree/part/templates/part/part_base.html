@@ -6,33 +6,54 @@
 
 {% include "part/cat_link.html" with category=part.category %}
 
-<div class="media">
-  <div class="media-left">
-    <img class="part-thumb"
-    {% if part.image %}
-    src="{{ part.image.url }}"
-    {% else %}
-    src="{% static 'img/blank_image.png' %}"
-    {% endif %}/>
-  </div>
-<div class="media-body">
-    <h4>{{ part.name }}</h4>
-    {% if part.description %}
-    <p><i>{{ part.description }}</i></p>
-    {% endif %}
-    {% if part.IPN %}
-    <p><b>IPN:</b> {{ part.IPN }}</p>
-    {% endif %}
-    {% if part.URL %}
-    <p>{% include 'url.html' with url=part.URL %}</p>
-    {% endif %}
+<div class="row">
+<div class="col-sm-6">
+    <div class="media">
+      <div class="media-left">
+        <img class="part-thumb"
+        {% if part.image %}
+        src="{{ part.image.url }}"
+        {% else %}
+        src="{% static 'img/blank_image.png' %}"
+        {% endif %}/>
+      </div>
+    <div class="media-body">
+        <h4>{{ part.name }}</h4>
+        {% if part.description %}
+        <p><i>{{ part.description }}</i></p>
+        {% endif %}
+    </div>
+    </div>
+</div>
+<div class="col-sm-6">
+    <table class="table table-striped">
+        {% if part.IPN %}
+        <tr>
+            <td>IPN</td>
+            <td>{{ part.IPN }}</td>
+        </tr>
+        {% endif %}
+        {% if part.URL %}
+        <tr>
+            <td>URL</td>
+            <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Stock</td>
+            <td>{{ part.stock }}</td>
+        </tr>
+    </table>
 </div>
 </div>
 
+<hr>
+<div class='container-fluid'>
 {% block details %}
 
 <!-- Specific part details go here... -->
 
 {% endblock %}
+</div>
 
 {% endblock %}

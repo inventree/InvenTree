@@ -115,6 +115,9 @@ class Part(models.Model):
     # and can have their movements tracked
     trackable = models.BooleanField(default=False)
 
+    # Is this part "purchaseable"?
+    purchaseable = models.BooleanField(default=True)
+
     def __str__(self):
         if self.IPN:
             return "{name} ({ipn})".format(
@@ -127,6 +130,10 @@ class Part(models.Model):
         verbose_name = "Part"
         verbose_name_plural = "Parts"
         #unique_together = (("name", "category"),)
+
+    @property
+    def tracked_parts(self):
+        return self.serials.order_by('serial')
 
     @property
     def stock(self):

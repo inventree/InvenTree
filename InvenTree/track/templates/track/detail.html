@@ -2,8 +2,32 @@
 
 {% block content %}
 
-Part: <a href="{% url 'part-detail' part.part.id %}">{{ part.part.name }}</a><br>
-Serial number: {{ part.serial }}
+<h3>Part tracking information</h3>
+
+<table class="table table-striped">
+    <tr>
+        <td>Part</td>
+        <td><a href="{% url 'part-track' part.part.id %}">{{ part.part.name }}</a></td>
+    </tr>
+    <tr>
+        <td>Serial Number</td>
+        <td>{{ part.serial }}</td>
+    </tr>
+    <tr>
+        <td>Creation Date</td>
+        <td>{{ part.creation_date }}</td>
+    </tr>
+    {% if part.customer %}
+    <tr>
+        <td>Customer</td>
+        <td>{{ part.customer }}</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td>Status</td>
+        <td>{{ part.get_status_display }}</td>
+    </tr>
+</table>
 
 {% if part.tracking_info.all|length > 0 %}
 <p>Tracking information:</p>
@@ -22,5 +46,14 @@ Serial number: {{ part.serial }}
 {% endfor %}
 </ul>
 {% endif %}
+
+<div class='container-fluid'>
+<a href="{% url 'track-edit' part.id %}">
+    <button class="btn btn-info">Edit</button>
+</a>
+<a href="{% url 'track-delete' part.id %}">
+    <button class="btn btn-danger">Delete</button>
+</a>
+</div>
 
 {% endblock %}

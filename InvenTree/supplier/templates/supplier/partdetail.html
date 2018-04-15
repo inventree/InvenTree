@@ -29,12 +29,14 @@
 
 <br>
 
-<p><a href="{% url 'supplier-part-edit' part.id %}">
+<div class='container-fluid'>
+<a href="{% url 'supplier-part-edit' part.id %}">
     <button class="btn btn-info">Edit supplier details</button>
-</a></p>
-<p><a href="{% url 'supplier-part-delete' part.id %}">
+</a>
+<a href="{% url 'supplier-part-delete' part.id %}">
     <button class="btn btn-danger">Delete supplier part</button>
-</a></p>
+</a>
+</div>
 
 
 {% endblock %}

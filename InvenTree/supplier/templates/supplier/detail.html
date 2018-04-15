@@ -6,12 +6,12 @@
     <div class="col-sm-6">
         <h3>{{ supplier.name }}</h3>
         <p>{{ supplier.description }}</p>
-        <p><a href="{% url 'supplier-edit' supplier.id %}">
+        <a href="{% url 'supplier-edit' supplier.id %}">
             <button class="btn btn-info">Edit supplier details</button>
-        </a></p>
-        <p><a href="{% url 'supplier-delete' supplier.id %}">
+        </a>
+        <a href="{% url 'supplier-delete' supplier.id %}">
             <button class="btn btn-danger">Delete supplier</button>
-        </a></p>
+        </a>
     </div>
     <div class="col-sm-6">
         <table class="table">
@@ -71,5 +71,6 @@
 <a href="{% url 'supplier-part-create' %}?supplier={{ supplier.id }}">
     <button class="btn btn-success">New Supplier Part</button>
 </a>
+</div>
 
 {% endblock %}

@@ -4,7 +4,6 @@
 
 {% include 'part/tabs.html' with tab='suppliers' %}
 
-{% if part.supplier_parts.all|length > 0 %}
 <table class="table table-striped">
 <tr>
     <th>SKU</th>
@@ -23,8 +22,11 @@
 </tr>
 {% endfor %}
 </table>
-{% else %}
-There are no suppliers defined for this part, sorry!
-{% endif %}
+
+<div class='container-fluid'>
+<a href="{% url 'supplier-part-create' %}?part={{ part.id }}">
+    <button class="btn btn-success">New Supplier Part</button>
+</a>
+</div>
 
 {% endblock %}
