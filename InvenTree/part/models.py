@@ -84,43 +84,44 @@ class Part(models.Model):
         return '/part/{id}/'.format(id=self.id)
 
     # Short name of the part
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True, help_text='Part name (must be unique)')
 
     # Longer description of the part (optional)
-    description = models.CharField(max_length=250)
+    description = models.CharField(max_length=250, help_text='Part description')
 
     # Internal Part Number (optional)
     # Potentially multiple parts map to the same internal IPN (variants?)
     # So this does not have to be unique
-    IPN = models.CharField(max_length=100, blank=True)
+    IPN = models.CharField(max_length=100, blank=True, help_text='Internal Part Number')
 
     # Provide a URL for an external link
-    URL = models.URLField(blank=True)
+    URL = models.URLField(blank=True, help_text='Link to extenal URL')
 
     # Part category - all parts must be assigned to a category
     category = models.ForeignKey(PartCategory, related_name='parts',
                                  null=True, blank=True,
-                                 on_delete=models.DO_NOTHING)
+                                 on_delete=models.DO_NOTHING,
+                                 help_text='Part category')
 
     image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
 
     # Minimum "allowed" stock level
-    minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
+    minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text='Minimum allowed stock level')
 
     # Units of quantity for this part. Default is "pcs"
     units = models.CharField(max_length=20, default="pcs", blank=True)
 
     # Can this part be built?
-    buildable = models.BooleanField(default=False)
+    buildable = models.BooleanField(default=False, help_text='Can this part be built from other parts?')
 
     # Is this part "trackable"?
     # Trackable parts can have unique instances
     # which are assigned serial numbers (or batch numbers)
     # and can have their movements tracked
-    trackable = models.BooleanField(default=False)
+    trackable = models.BooleanField(default=False, help_text='Does this part have tracking for unique items?')
 
     # Is this part "purchaseable"?
-    purchaseable = models.BooleanField(default=True)
+    purchaseable = models.BooleanField(default=True, help_text='Can this part be purchased from external suppliers?')
 
     def __str__(self):
         if self.IPN:

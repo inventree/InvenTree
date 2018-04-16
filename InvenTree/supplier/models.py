@@ -42,18 +42,20 @@ class SupplierPart(models.Model):
 
     # Link to an actual part
 # The part will have a field 'supplier_parts' which links to the supplier part options
-    part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.SET_NULL,
+    part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='supplier_parts')
 
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,
                                  related_name='parts')
 
-    SKU = models.CharField(max_length=100)
+    SKU = models.CharField(max_length=100, help_text='Supplier stock keeping unit')
 
-    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True, on_delete=models.SET_NULL)
-    MPN = models.CharField(max_length=100, blank=True)
+    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True, on_delete=models.SET_NULL, help_text='Manufacturer')
+
+    MPN = models.CharField(max_length=100, blank=True, help_text='Manufacturer part number')
 
     URL = models.URLField(blank=True)
+
     description = models.CharField(max_length=250, blank=True)
 
     # Default price for a single unit

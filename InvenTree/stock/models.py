@@ -60,6 +60,12 @@ class StockItem(models.Model):
     def get_absolute_url(self):
         return '/stock/item/{id}/'.format(id=self.id)
 
+
+    class Meta:
+        unique_together = [
+            ('part', 'serial'),
+        ]
+
     # The 'master' copy of the part of which this stock item is an instance
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='locations')
 
@@ -68,23 +74,29 @@ class StockItem(models.Model):
 
     # Where the part is stored. If the part has been used to build another stock item, the location may not make sense
     location = models.ForeignKey(StockLocation, on_delete=models.DO_NOTHING,
-                                 related_name='items', blank=True, null=True)
+                                 related_name='items', blank=True, null=True,
+                                 help_text='Where is this stock item located?')
 
     # If this StockItem belongs to another StockItem (e.g. as part of a sub-assembly)
     belongs_to = models.ForeignKey('self', on_delete=models.DO_NOTHING,
-                                   related_name='owned_parts', blank=True, null=True)
+                                   related_name='owned_parts', blank=True, null=True,
+                                   help_text='Is this item installed in another item?')
 
     # The StockItem may be assigned to a particular customer
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, related_name='stockitems', blank=True, null=True)
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL,
+                                 related_name='stockitems', blank=True, null=True,
+                                 help_text='Item assigned to customer?')
 
     # Optional serial number
-    serial = models.PositiveIntegerField(blank=True, null=True)
+    serial = models.PositiveIntegerField(blank=True, null=True,
+                                         help_text='Serial number for this item')
 
     # Optional URL to link to external resource
     URL = models.URLField(max_length=125, blank=True)
 
     # Optional batch information
-    batch = models.CharField(max_length=100, blank=True)
+    batch = models.CharField(max_length=100, blank=True,
+                             help_text='Batch code for this stock item')
 
     # Quantity of this stock item. Value may be overridden by other settings
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)])

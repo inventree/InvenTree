@@ -4,9 +4,11 @@
 
 {% include 'part/tabs.html' with tab='detail' %}
 
+<h3>Part Details</h3>
+
 <table class='table table-striped'>
 <tr>
-    <td>Name</td>
+    <td>Part name</td>
     <td>{{ part.name }}</td>
 </tr>
 <tr>
@@ -37,6 +39,12 @@
     <td>Purchaseable</td>
     <td>{{ part.purchaseable }}</td>
 </tr>
+{% if part.minimum_stock > 0 %}
+<tr>
+    <td>Minimum Stock</td>
+    <td>{{ part.minimum_stock }}</td>
+</tr>
+{% endif %}
 </table>
 
 <div class='container-fluid'>
