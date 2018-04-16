@@ -85,9 +85,7 @@ part_urls = [
     url(r'^bom/(?P<pk>\d+)/', include(part_bom_urls)),
 
     # Top level part list (display top level parts and categories)
-    url('', views.PartIndex.as_view(), name='part-index'),
-
-    url(r'^.*$', RedirectView.as_view(url='', permanent=False), name='part-index'),
+    url(r'^.*$', views.PartIndex.as_view(), name='part-index'),
 ]
 
 """

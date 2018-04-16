@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'part.apps.PartConfig',
     'stock.apps.StockConfig',
     'supplier.apps.SupplierConfig',
+    'build.apps.BuildConfig',
 ]
 
 MIDDLEWARE = [

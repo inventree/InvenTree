@@ -3,16 +3,16 @@ from django.utils.translation import ugettext as _
 from django.db import models, transaction
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+
+from datetime import datetime
 
 from supplier.models import SupplierPart
 from supplier.models import Customer
 from part.models import Part
 from InvenTree.models import InvenTreeTree
-
-from datetime import datetime
-
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
+from build.models import Build
 
 
 class StockLocation(InvenTreeTree):
@@ -95,6 +95,9 @@ class StockItem(models.Model):
     batch = models.CharField(max_length=100, blank=True,
                              help_text='Batch code for this stock item')
 
+    # If this part was produced by a build, point to that build here
+    build = models.ForeignKey(Build, on_delete=models.SET_NULL, blank=True, null=True)
+
     # Quantity of this stock item. Value may be overridden by other settings
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)])
 
@@ -108,7 +111,6 @@ class StockItem(models.Model):
 
     review_needed = models.BooleanField(default=False)
 
-    # Stock status types
     ITEM_OK = 10
     ITEM_ATTENTION = 50
     ITEM_DAMAGED = 55
