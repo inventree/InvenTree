@@ -38,13 +38,8 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
 
     # Update each part in the stock location
     for item in instance.items.all():
-        # If this location has a parent, move the child stock items to the parent
-        if instance.parent:
-            item.location = instance.parent
-            item.save()
-        # No parent location? Delete the stock items
-        else:
-            item.delete()
+        item.location = instance.parent
+        item.save()
 
     # Update each child category
     for child in instance.children.all():
