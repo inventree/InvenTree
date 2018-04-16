@@ -1,0 +1,15 @@
+{% extends "delete_obj.html" %}
+
+{% block del_title %}
+    Are you sure you want to delete this BOM item?
+{% endblock %}
+
+{% block del_body %}
+    Deleting this entry will remove the BOM row from the following part:
+
+    <ul class='list-group'>
+        <li class='list-group-item'>
+            <b>{{ item.part.name }}</b> - <i>{{ item.part.description }}</i>
+        </li>
+    </ul>
+{% endblock %}

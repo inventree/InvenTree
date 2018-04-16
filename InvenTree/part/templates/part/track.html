@@ -11,12 +11,18 @@ Part tracking for {{ part.name }}
     <th>Serial</th>
     <th>Status</th>
 </tr>
-{% for track in part.serials.all %}
+{% for track in part.tracked_parts.all %}
 <tr>
-    <td>{{ track.serial }}</td>
-    <td>{{ track.status }}</td>
+    <td><a href="{% url 'track-detail' track.id %}">{{ track.serial }}</a></td>
+    <td>{{ track.get_status_display }}</td>
 </tr>
 {% endfor %}
 </table>
+
+<div class='container-fluid'>
+<a href="{% url 'track-create' %}?part={{ part.id }}">
+    <button class="btn btn-success">New Tracked Part</button>
+</a>
+</div>
 
 {% endblock %}

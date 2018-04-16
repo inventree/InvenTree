@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import Part, PartCategory
 from .models import BomItem
 
+
 class BomItemSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -11,6 +12,7 @@ class BomItemSerializer(serializers.ModelSerializer):
                   'part',
                   'sub_part',
                   'quantity')
+
 
 """
 class PartParameterSerializer(serializers.HyperlinkedModelSerializer):
@@ -27,7 +29,7 @@ class PartParameterSerializer(serializers.HyperlinkedModelSerializer):
                   'units')
 """
 
-#class PartSerializer(serializers.HyperlinkedModelSerializer):
+
 class PartSerializer(serializers.ModelSerializer):
     """ Serializer for complete detail information of a part.
     Used when displaying all details of a single component.
@@ -55,6 +57,7 @@ class PartCategorySerializer(serializers.HyperlinkedModelSerializer):
                   'description',
                   'parent',
                   'pathstring')
+
 
 """
 class PartTemplateSerializer(serializers.HyperlinkedModelSerializer):

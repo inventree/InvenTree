@@ -5,11 +5,18 @@
 {% include "stock/loc_link.html" with location=None %}
 
 {% if locations.all|length > 0 %}
+<h4>Storage Locations</h4>
 {% include "stock/location_list.html" with locations=locations %}
 {% endif %}
 
 {% if items|length > 0 %}
 {% include "stock/stock_table.html" with items=items %}
 {% endif %}
+
+<div class='container-fluid'>
+<a href="{% url 'stock-location-create' %}">
+    <button class="btn btn-success">New Stock Location</button>
+</a>
+</div>
 
 {% endblock %}

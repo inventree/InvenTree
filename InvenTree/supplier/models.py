@@ -14,6 +14,14 @@ class Supplier(Company):
     def get_absolute_url(self):
         return "/supplier/{id}/".format(id=self.id)
 
+    @property
+    def part_count(self):
+        return self.parts.count()
+
+    @property
+    def has_parts(self):
+        return self.part_count > 0
+
 
 class Manufacturer(Company):
     """ Represents a manfufacturer
@@ -42,19 +50,20 @@ class SupplierPart(models.Model):
 
     # Link to an actual part
 # The part will have a field 'supplier_parts' which links to the supplier part options
-    part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.SET_NULL,
+    part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='supplier_parts')
 
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,
-                                 related_name = 'parts')
+                                 related_name='parts')
 
+    SKU = models.CharField(max_length=100, help_text='Supplier stock keeping unit')
 
-    SKU = models.CharField(max_length=100)
+    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True, on_delete=models.SET_NULL, help_text='Manufacturer')
 
-    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True, on_delete=models.SET_NULL)
-    MPN = models.CharField(max_length=100, blank=True)
+    MPN = models.CharField(max_length=100, blank=True, help_text='Manufacturer part number')
 
     URL = models.URLField(blank=True)
+
     description = models.CharField(max_length=250, blank=True)
 
     # Default price for a single unit

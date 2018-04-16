@@ -4,21 +4,31 @@
 
 {% include 'part/tabs.html' with tab='bom' %}
 
+<h3>Bill of Materials</h3>
+
 <table class="table table-striped">
 <tr>
     <th>Part</th>
     <th>Description</th>
     <th>Quantity</th>
+    <th>Edit</th>
 </tr>
 {% for bom_item in part.bom_items.all %}
 {% with sub_part=bom_item.sub_part %}
 <tr>
     <td><a href="{% url 'part-detail' sub_part.id %}">{{ sub_part.name }}</a></td>
     <td>{{ sub_part.description }}</td>
-    <td>{{ bom_item.quantity }}</td>
+    <td>{{ bom_item.quantity }}</span></td>
+    <td><a href="{% url 'bom-item-detail' bom_item.id %}">Edit</a></td>
 </tr>
 {% endwith %}
 {% endfor %}
 </table>
+
+<div class='container-fluid'>
+<a href="{% url 'bom-item-create' %}?parent={{ part.id }}">
+    <button class='btn btn-success'>Add BOM Item</button>
+</a>
+</div>
 
 {% endblock %}

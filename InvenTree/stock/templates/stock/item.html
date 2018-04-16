@@ -4,19 +4,52 @@
 
 {% include "stock/loc_link.html" with location=item.location %}
 
+<h3>Stock entry details</h3>
+
 <table class="table table-striped">
 <tr>
     <td>Part</td>
-    <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.name }}</td>
+    <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</td>
 </tr>
+{% if item.belongs_to %}
+<tr>
+    <td>Belongs To</td>
+    <td><a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a></td>
+</tr>
+{% elif item.location %}
 <tr>
     <td>Location</td>
     <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
 </tr>
+{% endif %}
+{% if item.serial %}
+<tr>
+    <td>Serial</td>
+    <td>{{ item.serial }}</td>
+</tr>
+{% endif %}
+{% if item.batch %}
+<tr>
+    <td>Batch</td>
+    <td>{{ item.batch }}</td>
+</tr>
+{% endif %}
+{% if item.customer %}
+<tr>
+    <td>Customer</td>
+    <td>{{ item.customer.name }}</td>
+</tr>
+{% endif %}
 <tr>
     <td>Quantity</td>
     <td>{{ item.quantity }}</td>
 </tr>
+{% if item.URL %}
+<tr>
+    <td>URL</td>
+    <td><a href="{{ item.URL }}">{{ item.URL }}</a></td>
+</tr>
+{% endif %}
 {% if item.supplier_part %}
 <tr>
     <td>Supplier Part</td>
@@ -35,7 +68,7 @@
 {% endif %}
 <tr>
     <td>Status</td>
-    <td>{{ item.status }}</td>
+    <td>{{ item.get_status_display }}</td>
 </tr>
 {% if item.notes %}
 <tr>
@@ -44,5 +77,29 @@
 </tr>
 {% endif %}
 </table>
+
+{% if item.has_tracking_info %}
+<h3>Stock Tracking</h3>
+<ul class='list-group'>
+{% for track in item.tracking_info.all %}
+<li class='list-group-item'>
+    <b>{{ track.title }}</b>
+    {% if track.description %}
+    <br><br>{{ track.description }}</i>
+    {% endif %}
+    <span class='badge'>{{ track.date }}</span>
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<div class='container-fluid'>
+<a href="{% url 'stock-item-edit' item.id %}">
+    <button class='btn btn-info'>Edit Stock Item</button>
+</a>
+<a href="{% url 'stock-item-delete' item.id %}">
+    <button class='btn btn-danger'>Delete Stock Item</button>
+</a>
+</div>
 
 {% endblock %}

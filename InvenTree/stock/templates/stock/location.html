@@ -4,14 +4,35 @@
 
 {% include "stock/loc_link.html" with location=location %}
 
-<p>
-    <b>{{ location.name }}</b><br>
-    <i>{{ location.description }}</i>
-</p>
+<h3>{{ location.name }}</h3>
+<p>{{ location.description }}</p>
 
-
+{% if location.has_children %}
+<h4>Sub Locations</h4>
 {% include "stock/location_list.html" with locations=location.children %}
+{% endif %}
 
+{% if location.has_items %}
+<h4>Stock Items</h4>
 {% include "stock/stock_table.html" with items=location.items %}
+{% endif %}
+
+<div class='container-fluid'>
+<a href="{% url 'stock-location-create' %}?location={{ location.id }}">
+    <button class='btn btn-success'>New Stock Location</button>
+</a>
+<a href="{% url 'stock-item-create' %}?location={{ location.id }}">
+    <button class='btn btn-success'>New Stock Item</button>
+</a>
+
+<a href="{% url 'stock-location-edit' location.id %}">
+    <button class="btn btn-info">Edit Location</button>
+</a>
+
+<a href="{% url 'stock-location-delete' location.id %}">
+    <button class="btn btn-danger">Delete Location</button>
+</a>
+
+</div>
 
 {% endblock %}

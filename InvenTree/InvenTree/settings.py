@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'simple_history',
     'crispy_forms',
+    'import_export',
 
     # Core django modules
     'django.contrib.admin',
@@ -47,9 +48,8 @@ INSTALLED_APPS = [
 
     # InvenTree apps
     'part.apps.PartConfig',
-    'supplier.apps.SupplierConfig',
     'stock.apps.StockConfig',
-    'track.apps.TrackConfig',
+    'supplier.apps.SupplierConfig',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +68,7 @@ ROOT_URLCONF = 'InvenTree.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,6 +80,8 @@ TEMPLATES = [
         },
     },
 ]
+
+print(os.path.join(BASE_DIR, 'templates'))
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.utils.api_exception_handler'
@@ -145,4 +147,8 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# crispy forms use the bootstrap templates
 CRISPY_TEMPLATE_PACK = 'bootstrap'
+
+# Use database transactions when importing / exporting data
+IMPORT_EXPORT_USE_TRANSACTIONS = True

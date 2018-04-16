@@ -1,14 +1,15 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
+from part.models import Part
 from .models import Supplier, SupplierPart
 
 from .forms import EditSupplierForm
 from .forms import EditSupplierPartForm
+
 
 class SupplierIndex(ListView):
     model = Supplier
@@ -76,9 +77,16 @@ class SupplierPartCreate(CreateView):
         initials = super(SupplierPartCreate, self).get_initial().copy()
 
         supplier_id = self.request.GET.get('supplier', None)
+        part_id = self.request.GET.get('part', None)
 
         if supplier_id:
             initials['supplier'] = get_object_or_404(Supplier, pk=supplier_id)
+            # TODO
+            # self.fields['supplier'].disabled = True
+        if part_id:
+            initials['part'] = get_object_or_404(Part, pk=part_id)
+            # TODO
+            # self.fields['part'].disabled = True
 
         return initials
 

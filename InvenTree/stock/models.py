@@ -3,9 +3,9 @@ from django.utils.translation import ugettext as _
 from django.db import models, transaction
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
-from simple_history.models import HistoricalRecords
 
 from supplier.models import SupplierPart
+from supplier.models import Customer
 from part.models import Part
 from InvenTree.models import InvenTreeTree
 
@@ -14,16 +14,23 @@ from datetime import datetime
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+
 class StockLocation(InvenTreeTree):
     """ Organization tree for StockItem objects
     A "StockLocation" can be considered a warehouse, or storage location
     Stock locations can be heirarchical as required
     """
 
+    def get_absolute_url(self):
+        return '/stock/location/{id}/'.format(id=self.id)
+
     @property
     def items(self):
-        stock_list = self.stockitem_set.all()
-        return stock_list
+        return self.stockitem_set.all()
+
+    @property
+    def has_items(self):
+        return self.items.count() > 0
 
 
 @receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')
@@ -31,19 +38,72 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
 
     # Update each part in the stock location
     for item in instance.items.all():
-        item.location = instance.parent
-        item.save()
+        # If this location has a parent, move the child stock items to the parent
+        if instance.parent:
+            item.location = instance.parent
+            item.save()
+        # No parent location? Delete the stock items
+        else:
+            item.delete()
+
+    # Update each child category
+    for child in instance.children.all():
+        child.parent = instance.parent
+        child.save()
+
 
 class StockItem(models.Model):
+    """
+    A 'StockItem' instance represents a quantity of physical instances of a part.
+    It may exist in a StockLocation, or as part of a sub-assembly installed into another StockItem
+    StockItems may be tracked using batch or serial numbers.
+    If a serial number is assigned, then StockItem cannot have a quantity other than 1
+    """
+
+    def get_absolute_url(self):
+        return '/stock/item/{id}/'.format(id=self.id)
+
+    class Meta:
+        unique_together = [
+            ('part', 'serial'),
+        ]
+
+    # The 'master' copy of the part of which this stock item is an instance
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='locations')
 
+    # The 'supplier part' used in this instance. May be null if no supplier parts are defined the master part
     supplier_part = models.ForeignKey(SupplierPart, blank=True, null=True, on_delete=models.SET_NULL)
 
+    # Where the part is stored. If the part has been used to build another stock item, the location may not make sense
     location = models.ForeignKey(StockLocation, on_delete=models.DO_NOTHING,
-                                 related_name='items', blank=True, null=True)
+                                 related_name='items', blank=True, null=True,
+                                 help_text='Where is this stock item located?')
 
+    # If this StockItem belongs to another StockItem (e.g. as part of a sub-assembly)
+    belongs_to = models.ForeignKey('self', on_delete=models.DO_NOTHING,
+                                   related_name='owned_parts', blank=True, null=True,
+                                   help_text='Is this item installed in another item?')
+
+    # The StockItem may be assigned to a particular customer
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL,
+                                 related_name='stockitems', blank=True, null=True,
+                                 help_text='Item assigned to customer?')
+
+    # Optional serial number
+    serial = models.PositiveIntegerField(blank=True, null=True,
+                                         help_text='Serial number for this item')
+
+    # Optional URL to link to external resource
+    URL = models.URLField(max_length=125, blank=True)
+
+    # Optional batch information
+    batch = models.CharField(max_length=100, blank=True,
+                             help_text='Batch code for this stock item')
+
+    # Quantity of this stock item. Value may be overridden by other settings
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)])
 
+    # Last time this item was updated (set automagically)
     updated = models.DateField(auto_now=True)
 
     # last time the stock was checked / counted
@@ -78,8 +138,9 @@ class StockItem(models.Model):
 
     infinite = models.BooleanField(default=False)
 
-    # History of this item
-    history = HistoricalRecords()
+    @property
+    def has_tracking_info(self):
+        return self.tracking_info.count() > 0
 
     @transaction.atomic
     def stocktake(self, count, user):
@@ -128,3 +189,34 @@ class StockItem(models.Model):
             n=self.quantity,
             part=self.part.name,
             loc=self.location.name)
+
+    @property
+    def is_trackable(self):
+        return self.part.trackable
+
+
+class StockItemTracking(models.Model):
+    """ Stock tracking entry
+    """
+
+    # Stock item
+    item = models.ForeignKey(StockItem, on_delete=models.CASCADE,
+                             related_name='tracking_info')
+
+    # Date this entry was created (cannot be edited)
+    date = models.DateField(auto_now_add=True, editable=False)
+
+    # Short-form title for this tracking entry
+    title = models.CharField(max_length=250)
+
+    # Optional longer description
+    description = models.CharField(max_length=1024, blank=True)
+
+    # Which user created this tracking entry?
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+
+    # TODO
+    # image = models.ImageField(upload_to=func, max_length=255, null=True, blank=True)
+
+    # TODO
+    # file = models.FileField()

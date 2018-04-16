@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from django.utils.translation import ugettext as _
 from django.db import models
 from django.db.models import Sum
 from django.core.validators import MinValueValidator
@@ -23,7 +22,6 @@ class PartCategory(InvenTreeTree):
         verbose_name = "Part Category"
         verbose_name_plural = "Part Categories"
 
-
     @property
     def partcount(self):
         """ Return the total part count under this category
@@ -37,11 +35,10 @@ class PartCategory(InvenTreeTree):
 
         return count
 
-    """
     @property
-    def parts(self):
-        return self.part_set.all()
-    """
+    def has_parts(self):
+        return self.parts.count() > 0
+
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
 def before_delete_part_category(sender, instance, using, **kwargs):
@@ -85,36 +82,44 @@ class Part(models.Model):
         return '/part/{id}/'.format(id=self.id)
 
     # Short name of the part
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True, help_text='Part name (must be unique)')
 
     # Longer description of the part (optional)
-    description = models.CharField(max_length=250)
+    description = models.CharField(max_length=250, help_text='Part description')
 
     # Internal Part Number (optional)
     # Potentially multiple parts map to the same internal IPN (variants?)
     # So this does not have to be unique
-    IPN = models.CharField(max_length=100, blank=True)
+    IPN = models.CharField(max_length=100, blank=True, help_text='Internal Part Number')
 
     # Provide a URL for an external link
-    URL = models.URLField(blank=True)
+    URL = models.URLField(blank=True, help_text='Link to extenal URL')
 
     # Part category - all parts must be assigned to a category
     category = models.ForeignKey(PartCategory, related_name='parts',
                                  null=True, blank=True,
-                                 on_delete=models.DO_NOTHING)
+                                 on_delete=models.DO_NOTHING,
+                                 help_text='Part category')
 
     image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
 
     # Minimum "allowed" stock level
-    minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
+    minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text='Minimum allowed stock level')
 
     # Units of quantity for this part. Default is "pcs"
     units = models.CharField(max_length=20, default="pcs", blank=True)
 
+    # Can this part be built?
+    buildable = models.BooleanField(default=False, help_text='Can this part be built from other parts?')
+
     # Is this part "trackable"?
-    # Trackable parts can have unique instances which are assigned serial numbers
+    # Trackable parts can have unique instances
+    # which are assigned serial numbers (or batch numbers)
     # and can have their movements tracked
-    trackable = models.BooleanField(default=False)
+    trackable = models.BooleanField(default=False, help_text='Does this part have tracking for unique items?')
+
+    # Is this part "purchaseable"?
+    purchaseable = models.BooleanField(default=True, help_text='Can this part be purchased from external suppliers?')
 
     def __str__(self):
         if self.IPN:
@@ -127,10 +132,41 @@ class Part(models.Model):
     class Meta:
         verbose_name = "Part"
         verbose_name_plural = "Parts"
-        #unique_together = (("name", "category"),)
 
     @property
-    def stock(self):
+    def available_stock(self):
+        """
+        Return the total available stock.
+        This subtracts stock which is already allocated
+        """
+
+        # TODO - For now, just return total stock count
+        # TODO - In future must take account of allocated stock
+        return self.total_stock
+
+    @property
+    def can_build(self):
+        """ Return the number of units that can be build with available stock
+        """
+
+        # If this part does NOT have a BOM, result is simply the currently available stock
+        if not self.has_bom:
+            return self.available_stock
+
+        total = None
+
+        # Calculate the minimum number of parts that can be built using each sub-part
+        for item in self.bom_items.all():
+            stock = item.sub_part.available_stock
+            n = int(1.0 * stock / item.quantity)
+
+            if total is None or n < total:
+                total = n
+
+        return total
+
+    @property
+    def total_stock(self):
         """ Return the total stock quantity for this part.
         Part may be stored in multiple locations
         """
@@ -143,13 +179,21 @@ class Part(models.Model):
         return result['total']
 
     @property
-    def bomItemCount(self):
-        return self.bom_items.all().count()
-
+    def has_bom(self):
+        return self.bom_count > 0
 
     @property
-    def usedInCount(self):
-        return self.used_in.all().count()
+    def bom_count(self):
+        return self.bom_items.count()
+
+    @property
+    def used_in_count(self):
+        return self.used_in.count()
+
+    @property
+    def supplier_count(self):
+        # Return the number of supplier parts available for this part
+        return self.supplier_parts.count()
 
     """
     @property
@@ -171,9 +215,10 @@ class Part(models.Model):
         return projects
     """
 
+
 def attach_file(instance, filename):
 
-    base='part_files'
+    base = 'part_files'
 
     # TODO - For a new PartAttachment object, PK is NULL!!
 
@@ -182,11 +227,11 @@ def attach_file(instance, filename):
 
     return os.path.join(base, fn)
 
+
 class PartAttachment(models.Model):
     """ A PartAttachment links a file to a part
     Parts can have multiple files such as datasheets, etc
     """
-
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='attachments')
@@ -194,12 +239,14 @@ class PartAttachment(models.Model):
     attachment = models.FileField(upload_to=attach_file, null=True, blank=True)
 
 
-
 class BomItem(models.Model):
     """ A BomItem links a part to its component items.
     A part can have a BOM (bill of materials) which defines
     which parts are required (and in what quatity) to make it
     """
+
+    def get_absolute_url(self):
+        return '/part/bom/{id}/'.format(id=self.id)
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
@@ -211,7 +258,6 @@ class BomItem(models.Model):
 
     # Quantity required
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])
-
 
     class Meta:
         verbose_name = "BOM Item"

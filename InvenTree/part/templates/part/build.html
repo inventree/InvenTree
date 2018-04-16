@@ -1,0 +1,13 @@
+{% extends "part/part_base.html" %}
+
+{% block details %}
+
+{% include 'part/tabs.html' with tab='build' %}
+
+<h3>Build Part</h3>
+
+TODO
+<br><br>
+You can build {{ part.can_build }} of this part with current stock.
+
+{% endblock %}

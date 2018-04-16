@@ -4,12 +4,52 @@
 
 {% include 'part/tabs.html' with tab='detail' %}
 
+<h3>Part Details</h3>
 
-Part details go here...
-<br>
+<table class='table table-striped'>
+<tr>
+    <td>Part name</td>
+    <td>{{ part.name }}</td>
+</tr>
+<tr>
+    <td>Description</td>
+    <td>{{ part.decription }}</td>
+</tr>
+<tr>
+    <td>Category</td>
+    <td>
+    {% if part.category %}
+        <a href="{% url 'category-detail' part.category.id %}">{{ part.category.name }}</a>
+    {% endif %}
+    </td>
+</tr>
+<tr>
+    <td>Units</td>
+    <td>{{ part.units }}</td>
+</tr>
+<tr>
+    <td>Buildable</td>
+    <td>{{ part.buildable }}</td>
+</tr>
+<tr>
+    <td>Trackable</td>
+    <td>{{ part.trackable }}</td>
+</tr>
+<tr>
+    <td>Purchaseable</td>
+    <td>{{ part.purchaseable }}</td>
+</tr>
+{% if part.minimum_stock > 0 %}
+<tr>
+    <td>Minimum Stock</td>
+    <td>{{ part.minimum_stock }}</td>
+</tr>
+{% endif %}
+</table>
 
+<div class='container-fluid'>
 <a href="{% url 'part-edit' part.id %}"><button class="btn btn-info">Edit Part</button></a>
-
 <a href="{% url 'part-delete' part.id %}"><button class="btn btn-danger">Delete Part</button></a>
+</div>
 
 {% endblock %}

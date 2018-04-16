@@ -8,6 +8,9 @@ from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 
 from .models import PartCategory, Part, BomItem
 
+from InvenTree.models import FilterChildren
+
+
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     """
 
@@ -68,6 +71,7 @@ class PartParamDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PartParameterSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 """
+
 
 class PartFilter(FilterSet):
 
@@ -174,6 +178,7 @@ class PartTemplateList(generics.ListCreateAPIView):
 
 """
 
+
 class BomItemDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = BomItem.objects.all()
@@ -189,9 +194,6 @@ class BomItemFilter(FilterSet):
 
 
 class BomItemList(generics.ListCreateAPIView):
-
-    #def get_queryset(self):
-    #    params = self.request.
 
     queryset = BomItem.objects.all()
     serializer_class = BomItemSerializer
