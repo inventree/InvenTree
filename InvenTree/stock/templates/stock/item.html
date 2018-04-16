@@ -11,10 +11,35 @@
     <td>Part</td>
     <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</td>
 </tr>
+{% if item.belongs_to %}
+<tr>
+    <td>Belongs To</td>
+    <td><a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a></td>
+</tr>
+{% elif item.location %}
 <tr>
     <td>Location</td>
     <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
 </tr>
+{% endif %}
+{% if item.serial %}
+<tr>
+    <td>Serial</td>
+    <td>{{ item.serial }}</td>
+</tr>
+{% endif %}
+{% if item.batch %}
+<tr>
+    <td>Batch</td>
+    <td>{{ item.batch }}</td>
+</tr>
+{% endif %}
+{% if item.customer %}
+<tr>
+    <td>Customer</td>
+    <td>{{ item.customer.name }}</td>
+</tr>
+{% endif %}
 <tr>
     <td>Quantity</td>
     <td>{{ item.quantity }}</td>
@@ -46,6 +71,21 @@
 </tr>
 {% endif %}
 </table>
+
+{% if item.has_tracking_info %}
+<h3>Stock Tracking</h3>
+<ul class='list-group'>
+{% for track in item.tracking_info.all %}
+<li class='list-group-item'>
+    <b>{{ track.title }}</b>
+    {% if track.description %}
+    <br><br>{{ track.description }}</i>
+    {% endif %}
+    <span class='badge'>{{ track.date }}</span>
+</li>
+{% endfor %}
+</ul>
+{% endif %}
 
 <div class='container-fluid'>
 <a href="{% url 'stock-item-edit' item.id %}">

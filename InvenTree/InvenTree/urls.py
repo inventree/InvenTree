@@ -16,8 +16,6 @@ from django.conf.urls.static import static
 
 from django.views.generic.base import RedirectView
 
-from track.urls import tracking_urls
-
 # from project.urls import prj_urls, prj_part_urls, prj_cat_urls, prj_run_urls
 # from track.urls import unique_urls, part_track_urls
 
@@ -70,7 +68,6 @@ urlpatterns = [
     url(r'^part/', include(part_urls)),
     url(r'^stock/', include(stock_urls)),
     url(r'^supplier/', include(supplier_urls)),
-    url(r'^track/', include(tracking_urls)),
 
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
@@ -84,4 +81,4 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Send any unknown URLs to the parts page
-urlpatterns += [url(r'^.*$', RedirectView.as_view(url='part/', permanent=False), name='part-index')]
+urlpatterns += [url(r'^.*$', RedirectView.as_view(url='/part/', permanent=False), name='part-index')]
