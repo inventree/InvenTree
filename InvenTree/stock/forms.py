@@ -44,6 +44,10 @@ class EditStockItemForm(forms.ModelForm):
             'part',
             'supplier_part',
             'location',
+            'belongs_to',
+            'serial',
+            'batch',
             'quantity',
-            'status'
+            'status',
+            'customer'
         ]

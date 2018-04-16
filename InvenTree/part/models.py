@@ -111,7 +111,8 @@ class Part(models.Model):
     units = models.CharField(max_length=20, default="pcs", blank=True)
 
     # Is this part "trackable"?
-    # Trackable parts can have unique instances which are assigned serial numbers
+    # Trackable parts can have unique instances
+    # which are assigned serial numbers (or batch numbers)
     # and can have their movements tracked
     trackable = models.BooleanField(default=False)
 
