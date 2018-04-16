@@ -4,6 +4,7 @@ from simple_history.admin import SimpleHistoryAdmin
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
 
+
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('name', 'pathstring', 'description')
 
@@ -14,6 +15,7 @@ class StockItemAdmin(SimpleHistoryAdmin):
 
 class StockTrackingAdmin(admin.ModelAdmin):
     list_display = ('item', 'date', 'title')
+
 
 admin.site.register(StockLocation, LocationAdmin)
 admin.site.register(StockItem, StockItemAdmin)
