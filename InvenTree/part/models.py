@@ -132,8 +132,34 @@ class Part(models.Model):
         verbose_name_plural = "Parts"
 
     @property
-    def tracked_parts(self):
-        return self.serials.order_by('serial')
+    def available_stock(self):
+        """
+        Return the total available stock.
+        This subtracts stock which is already allocated
+        """
+
+        # TODO - For now, just return total stock count
+        return self.stock
+
+    @property
+    def can_build(self):
+        """ Return the number of units that can be build with available stock
+        """
+
+        # If this part does NOT have a BOM, result is simply the currently available stock
+        if not self.has_bom:
+            return self.available_stock
+
+        total = None
+
+        for item in self.bom_items.all():
+            stock = item.sub_part.available_stock
+            n = int(1.0 * stock / item.quantity)
+
+            if total is None or n < total:
+                total = n
+
+        return total
 
     @property
     def stock(self):
@@ -149,11 +175,15 @@ class Part(models.Model):
         return result['total']
 
     @property
-    def bomItemCount(self):
+    def has_bom(self):
+        return self.bom_item_count > 0
+
+    @property
+    def bom_item_count(self):
         return self.bom_items.all().count()
 
     @property
-    def usedInCount(self):
+    def used_in_count(self):
         return self.used_in.all().count()
 
     """

@@ -15,7 +15,7 @@
 <tr>
     <td><a href="{% url 'part-detail' sub_part.id %}">{{ sub_part.name }}</a></td>
     <td>{{ sub_part.description }}</td>
-    <td>{{ bom_item.quantity }}</td>
+    <td>{{ bom_item.quantity }}<span class='badge'>{{ bom_item.sub_part.available_stock }}</span></td>
 </tr>
 {% endwith %}
 {% endfor %}

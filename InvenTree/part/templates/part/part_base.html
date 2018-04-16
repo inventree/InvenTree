@@ -40,9 +40,15 @@
         </tr>
         {% endif %}
         <tr>
-            <td>Stock</td>
-            <td>{{ part.stock }}</td>
+            <td>Available Stock</td>
+            <td>{{ part.available_stock }}</td>
         </tr>
+        {% if part.has_bom %}
+        <tr>
+            <td>Can Build</td>
+            <td>{{ part.can_build }}</td>
+        </tr>
+        {% endif %}
     </table>
 </div>
 </div>

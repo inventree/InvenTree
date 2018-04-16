@@ -7,8 +7,8 @@
 
 {% block del_body %}
 
-    {% if part.usedInCount > 0 %}
-    <p>This part is used in BOMs for {{ part.usedInCount }} other parts. If you delete this part, the BOMs for the following parts will be updated:
+    {% if part.used_in_count %}
+    <p>This part is used in BOMs for {{ part.used_in_count }} other parts. If you delete this part, the BOMs for the following parts will be updated:
     <ul class="list-group">
         {% for child in part.used_in.all %}
         <li class='list-group-item'>{{ child.part.name }} - {{ child.part.description }}</li>
