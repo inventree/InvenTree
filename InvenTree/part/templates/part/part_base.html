@@ -42,8 +42,10 @@
         <tr>
             <td>Available Stock</td>
             <td>
-                {% if part.available_stock == 0 or part.available_stock < part.minimum_stock %}
+                {% if part.available_stock == 0 %}
                 <span class='label label-danger'>{{ part.available_stock }}</span>
+                {% elif part.available_stock < part.minimum_stock %}
+                <span class='label label-warning'>{{ part.available_stock }}</span>
                 {% else %}
                 {{ part.available_stock }}
                 {% endif %}

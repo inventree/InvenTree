@@ -176,6 +176,10 @@ class StockItem(models.Model):
             part=self.part.name,
             loc=self.location.name)
 
+    @property
+    def is_trackable(self):
+        return self.part.trackable
+
 
 class StockItemTracking(models.Model):
     """ Stock tracking entry
