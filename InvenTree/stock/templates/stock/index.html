@@ -5,6 +5,7 @@
 {% include "stock/loc_link.html" with location=None %}
 
 {% if locations.all|length > 0 %}
+<h4>Storage Locations</h4>
 {% include "stock/location_list.html" with locations=locations %}
 {% endif %}
 

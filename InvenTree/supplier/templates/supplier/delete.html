@@ -5,12 +5,12 @@ Are you sure you want to delete supplier '{{ supplier.name }}'?
 {% endblock %}
 
 {% block del_body %}
-{% if supplier.parts.all|length > 0 %}
-<p>There are {{ supplier.parts.all|length }} parts sourced from this supplier.<br>
-If this supplier is deleted, these child categories will also be deleted.</p>
+{% if supplier.part_count > 0 %}
+<p>There are {{ supplier.part_count }} parts sourced from this supplier.<br>
+If this supplier is deleted, these supplier part entries will also be deleted.</p>
 <ul class='list-group'>
 {% for part in supplier.parts.all %}
-<li class='list-group-item'><b>{{ part.SKU }}</b><i>Part - {{ part.part.name }}</i></li>
+<li class='list-group-item'><b>{{ part.SKU }}</b><br><i>Part - {{ part.part.name }}</i></li>
 {% endfor %}
 </ul>
 {% endif %}

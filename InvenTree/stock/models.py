@@ -26,8 +26,11 @@ class StockLocation(InvenTreeTree):
 
     @property
     def items(self):
-        stock_list = self.stockitem_set.all()
-        return stock_list
+        return self.stockitem_set.all()
+
+    @property
+    def has_items(self):
+        return self.items.count() > 0
 
 
 @receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')
@@ -59,7 +62,6 @@ class StockItem(models.Model):
 
     def get_absolute_url(self):
         return '/stock/item/{id}/'.format(id=self.id)
-
 
     class Meta:
         unique_together = [
@@ -138,7 +140,7 @@ class StockItem(models.Model):
 
     @property
     def has_tracking_info(self):
-        return self.tracking_info.all().count() > 0
+        return self.tracking_info.count() > 0
 
     @transaction.atomic
     def stocktake(self, count, user):

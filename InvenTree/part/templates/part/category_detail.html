@@ -11,9 +11,15 @@
     <i>{{ category.description }}</i>
 </p>
 
+{% if category.has_children %}
+<h4>Subcategories</h4>
 {% include "part/category_subcategories.html" with children=category.children.all %}
+{% endif %}
 
+{% if category.has_parts %}
+<h4>Parts</h4>
 {% include "part/category_parts.html" with parts=category.parts.all %}
+{% endif %}
 
 <div class='container-fluid'>
 <a href="{% url 'category-create' %}?category={{ category.id }}">

@@ -14,6 +14,14 @@ class Supplier(Company):
     def get_absolute_url(self):
         return "/supplier/{id}/".format(id=self.id)
 
+    @property
+    def part_count(self):
+        return self.parts.count()
+
+    @property
+    def has_parts(self):
+        return self.part_count > 0
+
 
 class Manufacturer(Company):
     """ Represents a manfufacturer

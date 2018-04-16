@@ -35,11 +35,9 @@ class PartCategory(InvenTreeTree):
 
         return count
 
-    """
     @property
-    def parts(self):
-        return self.part_set.all()
-    """
+    def has_parts(self):
+        return self.parts.count() > 0
 
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
@@ -186,16 +184,16 @@ class Part(models.Model):
 
     @property
     def bom_count(self):
-        return self.bom_items.all().count()
+        return self.bom_items.count()
 
     @property
     def used_in_count(self):
-        return self.used_in.all().count()
+        return self.used_in.count()
 
     @property
     def supplier_count(self):
         # Return the number of supplier parts available for this part
-        return self.supplier_parts.all().count()
+        return self.supplier_parts.count()
 
     """
     @property

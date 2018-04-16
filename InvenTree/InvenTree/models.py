@@ -91,6 +91,10 @@ class InvenTreeTree(models.Model):
         return unique
 
     @property
+    def has_children(self):
+        return self.children.count() > 0
+
+    @property
     def children(self):
         contents = ContentType.objects.get_for_model(type(self))
         children = contents.get_all_objects_for_this_type(parent=self.id)
