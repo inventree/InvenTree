@@ -1,18 +1,16 @@
 <ul class="nav nav-tabs">
     <li{% ifequal tab 'detail' %} class="active"{% endifequal %}><a href="{% url 'part-detail' part.id %}">Details</a></li>
-    <li{% ifequal tab 'bom' %} class="active"{% endifequal %}><a href="{% url 'part-bom' part.id %}">BOM{% if part.has_bom > 0 %}<span class="badge">{{ part.bom_item_cout }}</span>{% endif %}</a></li>
-    {% if part.has_bom %}
-    <li{% ifequal tab 'build' %} class "active"{% endifequal %}><a href="#">Build</a></li>
+    {% if part.buildable %}
+    <li{% ifequal tab 'bom' %} class="active"{% endifequal %}><a href="{% url 'part-bom' part.id %}">BOM<span class="badge">{{ part.bom_count }}</span></a></li>
+    <li{% ifequal tab 'build' %} class "active"{% endifequal %}><a href="#">Build<span class='badge'>{{ part.can_build }}</span></a></li>
     {% endif %}
     {% if part.used_in_count > 0 %}
     <li{% ifequal tab 'used' %} class="active"{% endifequal %}><a href="{% url 'part-used-in' part.id %}">Used In{% if part.used_in_count > 0 %}<span class="badge">{{ part.used_in_count }}</span>{% endif %}</a></li>
     {% endif %}
-    <li{% ifequal tab 'stock' %} class="active"{% endifequal %}><a href="{% url 'part-stock' part.id %}">Stock <span class="badge">{{ part.stock }}</span></a></li>
+    <li{% ifequal tab 'stock' %} class="active"{% endifequal %}><a href="{% url 'part-stock' part.id %}">Stock <span class="badge">{{ part.available_stock }}</span></a></li>
     {% if part.purchaseable %}
     <li{% ifequal tab 'suppliers' %} class="active"{% endifequal %}><a href="{% url 'part-suppliers' part.id %}">Suppliers
-        {% if part.supplier_parts.all|length > 0 %}
-            <span class="badge">{{ part.supplier_parts.all|length }}<span>
-        {% endif %}
+            <span class="badge">{{ part.supplier_count }}<span>
         </a></li>
     {% endif %}
     {% if part.trackable %}

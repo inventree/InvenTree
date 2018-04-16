@@ -8,7 +8,7 @@ from .models import PartAttachment
 
 class PartAdmin(ImportExportModelAdmin):
 
-    list_display = ('name', 'IPN', 'description', 'stock', 'category')
+    list_display = ('name', 'IPN', 'description', 'total_stock', 'category')
 
 
 class PartCategoryAdmin(admin.ModelAdmin):

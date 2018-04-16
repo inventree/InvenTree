@@ -25,6 +25,7 @@ class EditPartForm(forms.ModelForm):
             'IPN',
             'URL',
             'minimum_stock',
+            'buildable',
             'trackable',
             'purchaseable',
         ]
@@ -58,7 +59,7 @@ class EditBomItemForm(forms.ModelForm):
 
         self.helper.form_id = 'id-edit-part-form'
         self.helper.form_method = 'post'
-        
+
         self.helper.add_input(Submit('submit', 'Submit'))
 
     class Meta:

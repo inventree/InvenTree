@@ -110,6 +110,9 @@ class Part(models.Model):
     # Units of quantity for this part. Default is "pcs"
     units = models.CharField(max_length=20, default="pcs", blank=True)
 
+    # Can this part be built?
+    buildable = models.BooleanField(default=False)
+
     # Is this part "trackable"?
     # Trackable parts can have unique instances
     # which are assigned serial numbers (or batch numbers)
@@ -139,7 +142,8 @@ class Part(models.Model):
         """
 
         # TODO - For now, just return total stock count
-        return self.stock
+        # TODO - In future must take account of allocated stock
+        return self.total_stock
 
     @property
     def can_build(self):
@@ -152,6 +156,7 @@ class Part(models.Model):
 
         total = None
 
+        # Calculate the minimum number of parts that can be built using each sub-part
         for item in self.bom_items.all():
             stock = item.sub_part.available_stock
             n = int(1.0 * stock / item.quantity)
@@ -162,7 +167,7 @@ class Part(models.Model):
         return total
 
     @property
-    def stock(self):
+    def total_stock(self):
         """ Return the total stock quantity for this part.
         Part may be stored in multiple locations
         """
@@ -176,15 +181,20 @@ class Part(models.Model):
 
     @property
     def has_bom(self):
-        return self.bom_item_count > 0
+        return self.bom_count > 0
 
     @property
-    def bom_item_count(self):
+    def bom_count(self):
         return self.bom_items.all().count()
 
     @property
     def used_in_count(self):
         return self.used_in.all().count()
+
+    @property
+    def supplier_count(self):
+        # Return the number of supplier parts available for this part
+        return self.supplier_parts.all().count()
 
     """
     @property

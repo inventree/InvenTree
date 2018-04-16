@@ -41,12 +41,24 @@
         {% endif %}
         <tr>
             <td>Available Stock</td>
-            <td>{{ part.available_stock }}</td>
+            <td>
+                {% if part.available_stock == 0 or part.available_stock < part.minimum_stock %}
+                <span class='label label-danger'>{{ part.available_stock }}</span>
+                {% else %}
+                {{ part.available_stock }}
+                {% endif %}
+            </td>
         </tr>
-        {% if part.has_bom %}
+        {% if part.buildable %}
         <tr>
             <td>Can Build</td>
-            <td>{{ part.can_build }}</td>
+            <td>
+                {% if part.can_build == 0 %}
+                <span class='label label-danger'>0</span>
+                {% else %}
+                {{ part.can_build }}
+                {% endif %}
+            </td>
         </tr>
         {% endif %}
     </table>
