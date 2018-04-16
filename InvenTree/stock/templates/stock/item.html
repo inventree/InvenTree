@@ -44,6 +44,12 @@
     <td>Quantity</td>
     <td>{{ item.quantity }}</td>
 </tr>
+{% if item.URL %}
+<tr>
+    <td>URL</td>
+    <td><a href="{{ item.URL }}">{{ item.URL }}</a></td>
+</tr>
+{% endif %}
 {% if item.supplier_part %}
 <tr>
     <td>Supplier Part</td>

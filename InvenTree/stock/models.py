@@ -80,6 +80,9 @@ class StockItem(models.Model):
     # Optional serial number
     serial = models.PositiveIntegerField(blank=True, null=True)
 
+    # Optional URL to link to external resource
+    URL = models.URLField(max_length=125, blank=True)
+
     # Optional batch information
     batch = models.CharField(max_length=100, blank=True)
 

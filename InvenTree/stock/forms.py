@@ -49,5 +49,6 @@ class EditStockItemForm(forms.ModelForm):
             'batch',
             'quantity',
             'status',
-            'customer'
+            'customer',
+            'URL',
         ]
