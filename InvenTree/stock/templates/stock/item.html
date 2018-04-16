@@ -72,6 +72,21 @@
 {% endif %}
 </table>
 
+{% if item.has_tracking_info %}
+<h3>Stock Tracking</h3>
+<ul class='list-group'>
+{% for track in item.tracking_info.all %}
+<li class='list-group-item'>
+    <b>{{ track.title }}</b>
+    {% if track.description %}
+    <br><br>{{ track.description }}</i>
+    {% endif %}
+    <span class='badge'>{{ track.date }}</span>
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+
 <div class='container-fluid'>
 <a href="{% url 'stock-item-edit' item.id %}">
     <button class='btn btn-info'>Edit Stock Item</button>

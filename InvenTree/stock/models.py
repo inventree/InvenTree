@@ -121,6 +121,10 @@ class StockItem(models.Model):
 
     infinite = models.BooleanField(default=False)
 
+    @property
+    def has_tracking_info(self):
+        return self.tracking_info.all().count() > 0
+
     @transaction.atomic
     def stocktake(self, count, user):
         """ Perform item stocktake.
