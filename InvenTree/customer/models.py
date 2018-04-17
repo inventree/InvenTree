@@ -57,7 +57,8 @@ class CustomerOrderLine(models.Model):
         ]
 
     # Point to a specific customer order
-    customer_order = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE, help_text="Order this line belongs to")
+    customer_order = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE, help_text="Order this line belongs to",
+                                       related_name='lines')
 
     line_number = models.PositiveIntegerField(default=0, help_text="Line number")
 

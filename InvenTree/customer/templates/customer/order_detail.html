@@ -2,4 +2,9 @@
 
 {% block content %}
 
+<h4>Order Summary</h4>
+{{ order.internal_ref }}
+<h4>Order Detail</h4>
+{% include "customer/order_lines_table.html" with order_lines=order.lines.all %}
+
 {% endblock %}
