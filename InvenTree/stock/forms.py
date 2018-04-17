@@ -7,6 +7,7 @@ from crispy_forms.layout import Submit
 
 from .models import StockLocation, StockItem
 
+
 class EditStockLocationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):

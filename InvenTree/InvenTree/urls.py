@@ -13,7 +13,7 @@ from supplier.urls import supplier_urls
 
 from build.urls import build_urls
 
-from customer.urls import customer_orders_urls
+from customer.urls import customer_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -73,7 +73,7 @@ urlpatterns = [
     url(r'^stock/', include(stock_urls)),
     url(r'^supplier/', include(supplier_urls)),
     url(r'^build/', include(build_urls)),
-    url(r'^customer-orders/', include(customer_orders_urls)),
+    url(r'^customer/', include(customer_urls)),
 
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
