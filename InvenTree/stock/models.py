@@ -131,7 +131,7 @@ class StockItem(models.Model):
         choices=ITEM_STATUS_CODES.items(),
         validators=[MinValueValidator(0)])
 
-    notes = models.CharField(max_length=100, blank=True)
+    notes = models.TextField(blank=True)
 
     # If stock item is incoming, an (optional) ETA field
     # expected_arrival = models.DateField(null=True, blank=True)

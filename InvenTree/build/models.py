@@ -60,7 +60,7 @@ class Build(models.Model):
                                            help_text='Number of parts to build')
 
     # Notes can be attached to each build output
-    notes = models.CharField(max_length=500, blank=True)
+    notes = models.TextField(blank=True)
 
     @property
     def is_active(self):
