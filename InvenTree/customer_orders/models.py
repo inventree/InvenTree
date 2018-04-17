@@ -1,9 +1,15 @@
 from django.db import models
 
-from supplier.models import Customer
+from InvenTree.models import Company
 from part.models import Part
 
 import datetime
+
+
+class Customer(Company):
+    """ Represents a customer
+    """
+    pass
 
 
 class CustomerOrder(models.Model):
