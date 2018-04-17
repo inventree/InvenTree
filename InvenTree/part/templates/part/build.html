@@ -4,10 +4,31 @@
 
 {% include 'part/tabs.html' with tab='build' %}
 
-<h3>Build Part</h3>
+<h3>Part Builds</h3>
 
-TODO
-<br><br>
-You can build {{ part.can_build }} of this part with current stock.
+<table class='table table-striped'>
+
+<tr>
+    <th>Title</th>
+    <th>Quantity</th>
+    <th>Status</th>
+    <th>Completion Date</th>
+</tr>
+{% if part.active_builds|length > 0 %}
+<tr>
+    <td colspan="4"><b>Active Builds</b></td>
+</tr>
+{% include "part/build_list.html" with builds=part.active_builds %}
+{% endif %}
+
+{% if part.inactive_builds|length > 0 %}
+<tr><td colspan="4"></td></tr>
+<tr>
+    <td colspan="4"><b>Inactive Builds</b></td>
+</tr>
+{% include "part/build_list.html" with builds=part.inactive_builds %}
+{% endif %}
+
+</table>
 
 {% endblock %}

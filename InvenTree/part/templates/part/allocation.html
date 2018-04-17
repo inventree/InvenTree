@@ -1,0 +1,29 @@
+{% extends "part/part_base.html" %}
+
+{% block details %}
+
+{% include "part/tabs.html" with tab="allocation" %}
+
+<h3>Part Allocation</h3>
+
+{% if part.allocated_build_count > 0 %}
+<h4>Allocated to Part Builds</h4>
+<table class='table table-striped'>
+<tr>
+    <th>Build</th>
+    <th>Making</th>
+    <th>Allocted</th>
+    <th>Status</th>
+</tr>
+{% for build in part.allocated_builds %}
+<tr>
+    <td><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></td>
+    <td><a href="{% url 'part-detail' build.part.id %}">{{ build.part.name }}</a></td>
+    <td>Quantity</td>
+    <td>{% include "part/build_status.html" with build=build %}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% endblock %}
