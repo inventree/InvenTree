@@ -10,13 +10,15 @@ from .models import Customer, CustomerOrder
 class CustomerIndex(ListView):
     model = Customer
     template_name = 'customer/index.html'
-    context_obect_name = 'customers'
+    context_object_name = 'customers'
 
+    def get_queryset(self):
+        return Customer.objects.order_by('name')
 
 class CustomerOrderIndex(ListView):
     model = CustomerOrder
     template_name = 'customer/order_index.html'
-    context_object_name = 'customer_orders'
+    context_object_name = 'orders'
 
 
 class CustomerDetail(DetailView):

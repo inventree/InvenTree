@@ -139,6 +139,8 @@ class Part(models.Model):
     # Can this part be sold to customers?
     salable = models.BooleanField(default=False, help_text="Can this part be sold to customers?")
 
+    notes = models.TextField(blank=True)
+
     def __str__(self):
         if self.IPN:
             return "{name} ({ipn})".format(

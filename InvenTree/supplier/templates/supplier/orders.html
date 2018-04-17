@@ -23,4 +23,9 @@
 {% endfor %}
 </table>
 
+<div class='container-fluid'>
+<a href="{% url 'supplier-order-create' %}?supplier={{ supplier.id }}">
+    <button class="btn btn-success">New Order</button>
+</a>
+
 {% endblock %}

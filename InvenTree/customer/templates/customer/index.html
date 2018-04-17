@@ -3,9 +3,16 @@
 
 {% block content %}
 
-{% if customer_orders.all|length > 0 %}
-    <h4>Customer Orders</h4>
-    {% include "customer_orders/customer_orders_list.html" with customer_orders=customer_orders %}
-{% endif %}
+<h3>Customers</h3>
+
+<ul class='list-group'>
+{% for customer in customers %}
+<li class='list-group-item'>
+    <b><a href="{% url 'customer-detail' customer.id %}">{{ customer.name }}</a></b>
+    <br>
+    {{ customer.description }}
+</li>
+{% endfor %}
+</ul>
 
 {% endblock %}

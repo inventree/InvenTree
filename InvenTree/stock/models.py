@@ -210,7 +210,7 @@ class StockItemTracking(models.Model):
     title = models.CharField(max_length=250)
 
     # Optional longer description
-    description = models.CharField(max_length=1024, blank=True)
+    notes = models.TextField(blank=True)
 
     # Which user created this tracking entry?
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)

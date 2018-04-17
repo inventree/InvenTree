@@ -25,6 +25,16 @@ class SupplierOrderCreate(CreateView):
     context_object_name = 'supplier'
     template_name = 'supplier/order_create.html'
 
+    def get_initial(self):
+        initials = super(SupplierOrderCreate, self).get_initial().copy()
+
+        s_id = self.request.GET.get('supplier', None)
+
+        if s_id:
+            initials['supplier'] = get_object_or_404(Supplier, pk=s_id)
+
+        return initials
+
 
 class SupplierIndex(ListView):
     model = Supplier

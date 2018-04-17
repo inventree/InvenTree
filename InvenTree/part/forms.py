@@ -31,6 +31,7 @@ class EditPartForm(forms.ModelForm):
             'trackable',
             'purchaseable',
             'salable',
+            'notes',
         ]
 
 

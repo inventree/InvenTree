@@ -63,6 +63,13 @@
 {% endif %}
 </table>
 
+{% if part.notes %}
+<div class="panel panel-default">
+  <div class="panel-heading"><b>Notes</b></div>
+  <div class="panel-body">{{ part.notes }}</div>
+</div>
+{% endif %}
+
 <div class='container-fluid'>
 <a href="{% url 'part-edit' part.id %}"><button class="btn btn-info">Edit Part</button></a>
 <a href="{% url 'part-delete' part.id %}"><button class="btn btn-danger">Delete Part</button></a>

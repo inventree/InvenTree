@@ -25,6 +25,14 @@ class Supplier(Company):
     def has_parts(self):
         return self.part_count > 0
 
+    @property
+    def order_count(self):
+        return self.orders.count()
+
+    @property
+    def has_orders(self):
+        return self.order_count > 0
+
 
 class Manufacturer(Company):
     """ Represents a manfufacturer
@@ -176,4 +184,4 @@ class SupplierOrderLineItem(models.Model):
 
     notes = models.TextField(blank=True)
 
-    received = models.BooleanField(default=False) 
+    received = models.BooleanField(default=False)
