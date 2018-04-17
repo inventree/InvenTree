@@ -175,3 +175,5 @@ class SupplierOrderLineItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     notes = models.TextField(blank=True)
+
+    received = models.BooleanField(default=False) 
