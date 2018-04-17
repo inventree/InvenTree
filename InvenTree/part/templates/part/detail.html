@@ -29,15 +29,19 @@
 </tr>
 <tr>
     <td>Buildable</td>
-    <td>{{ part.buildable }}</td>
+    <td>{% include "yesnolabel.html" with value=part.buildable %}</td>
 </tr>
 <tr>
     <td>Trackable</td>
-    <td>{{ part.trackable }}</td>
+    <td>{% include "yesnolabel.html" with value=part.trackable %}</td>
 </tr>
 <tr>
     <td>Purchaseable</td>
-    <td>{{ part.purchaseable }}</td>
+    <td>{% include "yesnolabel.html" with value=part.purchaseable %}</td>
+</tr>
+<tr>
+    <td>Salable</td>
+    <td>{% include "yesnolabel.html" with value=part.salable %}</td>
 </tr>
 {% if part.minimum_stock > 0 %}
 <tr>

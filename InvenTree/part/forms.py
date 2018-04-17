@@ -28,6 +28,7 @@ class EditPartForm(forms.ModelForm):
             'buildable',
             'trackable',
             'purchaseable',
+            'salable',
         ]
 
 

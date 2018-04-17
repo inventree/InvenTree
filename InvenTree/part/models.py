@@ -1,14 +1,17 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import os
+
 from django.db import models
 from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
-from InvenTree.models import InvenTreeTree
-
-import os
-
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+
+from InvenTree.models import InvenTreeTree
+# from stock.models import StockLocation
 
 
 class PartCategory(InvenTreeTree):
@@ -120,6 +123,9 @@ class Part(models.Model):
 
     # Is this part "purchaseable"?
     purchaseable = models.BooleanField(default=True, help_text='Can this part be purchased from external suppliers?')
+
+    # Can this part be sold to customers?
+    salable = models.BooleanField(default=False, help_text="Can this part be sold to customers?")
 
     def __str__(self):
         if self.IPN:
