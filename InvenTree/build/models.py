@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext as _
+
 from django.db import models
 from django.core.validators import MinValueValidator
-
-from InvenTree.helpers import ChoiceEnum
 
 from part.models import Part
 
@@ -14,22 +14,34 @@ class Build(models.Model):
     Parts are then taken from stock
     """
 
-    class BUILD_STATUS(ChoiceEnum):
-        # The build is 'pending' - no action taken yet
-        Pending = 10
+    # Build status codes
+    PENDING = 10
+    ALLOCATED = 20
+    HOLDING = 30
+    CANCELLED = 40
+    COMPLETE = 50
 
-        # The parts required for this build have been allocated
-        Allocated = 20
-
-        # The build has been cancelled (parts unallocated)
-        Cancelled = 30
-
-        # The build is complete!
-        Complete = 40
+    BUILD_STATUS_CODES = {
+       PENDING : _("Pending"),
+       ALLOCATED : _("Allocated"),
+       HOLDING : _("Holding"),
+       CANCELLED : _("Cancelled"),
+       COMPLETE : _("Complete"),
+    }
 
     # Status of the build
-    status = models.PositiveIntegerField(default=BUILD_STATUS.Pending.value,
-                                         choices=BUILD_STATUS.choices())
+    status = models.PositiveIntegerField(default=PENDING,
+                                         choices=BUILD_STATUS_CODES.items(),
+                                         validators=[MinValueValidator(0)])
+
+
+class BuildOutput(models.Model):
+    """
+    A build output represents a single build part/quantity combination
+    """
+
+    build = models.ForeignKey(Build, on_delete=models.CASCADE,
+                              related_name='outputs')
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='builds')

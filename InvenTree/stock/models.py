@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.utils.translation import ugettext as _
+
 from django.db import models, transaction
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
