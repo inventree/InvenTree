@@ -15,18 +15,25 @@ class Company(models.Model):
     class Meta:
         abstract = True
 
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True,
+                            help_text='Company naem')
+
     description = models.CharField(max_length=500)
-    website = models.URLField(blank=True)
+
+    website = models.URLField(blank=True, help_text='Company website URL')
+
     address = models.CharField(max_length=200,
-                               blank=True)
+                               blank=True, help_text='Company address')
+
     phone = models.CharField(max_length=50,
                              blank=True)
+
     email = models.EmailField(blank=True)
+
     contact = models.CharField(max_length=100,
                                blank=True)
-    notes = models.CharField(max_length=500,
-                             blank=True)
+
+    notes = models.TextField(blank=True)
 
     def __str__(self):
         return self.name

@@ -116,7 +116,8 @@ class SupplierOrder(models.Model):
     # Interal reference for this order
     internal_ref = models.CharField(max_length=25, unique=True)
 
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,
+                                 related_name='orders')
 
     created_date = models.DateField(auto_now_add=True, editable=False)
 

@@ -51,6 +51,8 @@ supplier_detail_urls = [
     url(r'edit/?', views.SupplierEdit.as_view(), name='supplier-edit'),
     url(r'delete/?', views.SupplierDelete.as_view(), name='supplier-delete'),
 
+    url(r'orders/?', views.SupplierDetail.as_view(template_name='supplier/orders.html'), name='supplier-detail-orders'),
+
     url(r'^.*$', views.SupplierDetail.as_view(), name='supplier-detail'),
 ]
 

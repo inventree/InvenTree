@@ -1,0 +1,24 @@
+{% extends "supplier/supplier_base.html" %}
+
+{% block details %}
+
+{% include "supplier/tabs.html" with tab='order' %}
+
+<h3>Supplier Orders</h3>
+
+<table class="table table-striped">
+<tr>
+    <th>Reference</th>
+    <th>Issued</th>
+    <th>Status</th>
+</tr>
+{% for order in supplier.orders.all %}
+<tr>
+    <td><a href="{% url 'supplier-order-detail' order.id %}">{{ order.internal_ref }}</a></td>
+    <td>{% if order.issued_date %}{{ order.issued_date }}{% endif %}</td>
+    <td>Status</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

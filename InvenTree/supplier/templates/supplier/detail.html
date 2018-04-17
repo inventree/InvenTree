@@ -1,45 +1,10 @@
-{% extends "base.html" %}
+{% extends "supplier/supplier_base.html" %}
 
-{% block content %}
+{% block details %}
 
-<div class="row">
-    <div class="col-sm-6">
-        <h3>{{ supplier.name }}</h3>
-        <p>{{ supplier.description }}</p>
-        <p>{{ supplier.notes }}</p>
-    </div>
-    <div class="col-sm-6">
-        <table class="table">
-        {% if supplier.website %}
-        <tr>
-            <td>Website</td><td><a href="{{ supplier.website }}">{{ supplier.website }}</a></td>
-        </tr>
-        {% endif %}
-        {% if supplier.address %}
-        <tr>
-            <td>Address</td><td>{{ supplier.address }}</td>
-        </tr>
-        {% endif %}
-        {% if supplier.phone %}
-        <tr>
-            <td>Phone</td><td>{{ supplier.phone }}</td>
-        </tr>
-        {% endif %}
-        {% if supplier.email %}
-        <tr>
-            <td>Email</td><td>{{ supplier.email }}</td>
-        </tr>
-        {% endif %}
-        {% if supplier.contact %}
-        <tr>
-            <td>Contact</td><td>{{ supplier.contact }}</td>
-        </tr>
-        {% endif %}
-        </table>
-    </div>
-</div>
+{% include "supplier/tabs.html" with tab='parts' %}
 
-<h4>Supplier Parts</h3>
+<h3>Supplier Parts</h3>
 <table class="table table-striped">
 <tr>
     <th>SKU</th>
@@ -76,5 +41,6 @@
     <button class="btn btn-danger">Delete supplier</button>
 </a>
 </div>
+
 
 {% endblock %}
