@@ -30,8 +30,7 @@ class CustomerOrder(models.Model):
     # TODO: Should the customer and customer_ref together be unique?
 
     # Date the order was entered into system
-    created_date = models.DateField(auto_now_add=True, blank=True, help_text="Date order entered "
-                                                                                                 "in system")
+    created_date = models.DateField(auto_now_add=True, blank=True, help_text="Date order entered in system")
 
     # Date the order was issued on the paperwork, if provided
     issued_date = models.DateField(blank=True, help_text="Date order issued by customer")
