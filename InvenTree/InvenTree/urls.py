@@ -13,7 +13,7 @@ from supplier.urls import supplier_urls
 
 from build.urls import build_urls
 
-from customer_orders.urls import customer_orders_urls
+from customer.urls import customer_orders_urls
 
 from django.conf import settings
 from django.conf.urls.static import static

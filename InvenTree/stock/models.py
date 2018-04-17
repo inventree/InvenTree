@@ -12,7 +12,7 @@ from django.dispatch import receiver
 from datetime import datetime
 
 from supplier.models import SupplierPart
-from supplier.models import Customer
+from customer.models import Customer
 from part.models import Part
 from InvenTree.models import InvenTreeTree
 from build.models import Build

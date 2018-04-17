@@ -60,7 +60,10 @@ class CustomerOrderLine(models.Model):
     line_number = models.PositiveIntegerField(default=0, help_text="Line number")
 
     # TODO: for now, each line corresponds to some quantity of some part, but in future we might want more flexibility
-    part = models.ForeignKey(Part, blank=True, help_text="Part")
+    # Only 'salable' items should be allowed in a CSO
+    part = models.ForeignKey(Part, blank=True, help_text="Part",
+                             limit_choices_to={'salable' : True}
+                             )
 
     # TODO: should quantity field here somehow related to quantity field of related part? Views will handle this, right?
     quantity = models.PositiveIntegerField(blank=True, help_text="Quantity of part")

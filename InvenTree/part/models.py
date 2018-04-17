@@ -330,7 +330,8 @@ class BomItem(models.Model):
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='bom_items')
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='bom_items',
+                             limit_choices_to={'buildable': True})
 
     # A link to the child item (sub-part)
     # Each part will get a reverse lookup field 'used_in'
