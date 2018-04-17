@@ -160,14 +160,17 @@ class SupplierOrderLineItem(models.Model):
     class Meta:
         unique_together = [
             ('order', 'line_number'),
-            ('order', 'part'),
+            ('order', 'supplier_part'),
+            ('order', 'internal_part'),
         ]
 
     order = models.ForeignKey(SupplierOrder, on_delete=models.CASCADE)
 
     line_number = models.PositiveIntegerField(default=1)
 
-    part = models.ForeignKey(SupplierPart, null=True, blank=True, on_delete=models.SET_NULL)
+    internal_part = models.ForeignKey(Part, null=True, blank=True, on_delete=models.SET_NULL)
+
+    supplier_part = models.ForeignKey(SupplierPart, null=True, blank=True, on_delete=models.SET_NULL)
 
     quantity = models.PositiveIntegerField(default=1)
 
