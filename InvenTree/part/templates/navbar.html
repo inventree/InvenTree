@@ -6,9 +6,10 @@
       <a class="navbar-brand" href="/"><img src="{% static 'img/inventree.png' %}" width="40" height="40"/></a>
     </div>
     <ul class="nav navbar-nav">
-      <li><a href="/part/">Parts</a></li>
-      <li><a href="/stock/">Stock</a></li>
-      <li><a href="/supplier/">Suppliers</a></li>
+      <li><a href="{% url 'part-index' %}">Parts</a></li>
+      <li><a href="{% url 'stock-index' %}">Stock</a></li>
+      <li><a href="{% url 'build-index' %}">Build</a></li>
+      <li><a href="{% url 'supplier-index' %}">Suppliers</a></li>
     </ul>
   </div>
 </nav>

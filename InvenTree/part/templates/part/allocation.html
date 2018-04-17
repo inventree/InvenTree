@@ -20,7 +20,7 @@
     <td><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></td>
     <td><a href="{% url 'part-detail' build.part.id %}">{{ build.part.name }}</a></td>
     <td>Quantity</td>
-    <td>{% include "part/build_status.html" with build=build %}</td>
+    <td>{% include "build_status.html" with build=build %}</td>
 </tr>
 {% endfor %}
 </table>

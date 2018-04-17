@@ -2,6 +2,33 @@
 
 {% block content %}
 
-<h3>Builds</h3>
+<h3>Part Builds</h3>
+
+<table class='table table-striped'>
+<tr>
+    <th></th>
+    <th>Part</th>
+    <th>Quantity</th>
+    <th>Status</th>
+</tr>
+
+{% if active|length > 0 %}
+<tr><td colspan="4"><b>Active Builds</b></td></tr>
+{% include "build/build_list.html" with builds=active %}
+{% endif %}
+
+{% if complete|length > 0 %}
+<tr></tr>
+<tr><td colspan="4"><b>Completed Builds</b></td></tr>
+{% include "build/build_list.html" with builds=complete %}
+{% endif %}
+
+{% if cancelled|length > 0 %}
+<tr></tr>
+<tr><td colspan="4"><b>Cancelled Builds</b></td></tr>
+{% include "build/build_list.html" with builds=cancelled.all %}
+{% endif %}
+
+</table>
 
 {% endblock %}

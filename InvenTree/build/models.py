@@ -14,6 +14,9 @@ class Build(models.Model):
     Parts are then taken from stock
     """
 
+    def get_absolute_url(self):
+        return '/build/{pk}/'.format(pk=self.id)
+
     # Build status codes
     PENDING = 10  # Build is pending / active
     HOLDING = 20 # Build is currently being held

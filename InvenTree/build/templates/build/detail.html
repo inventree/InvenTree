@@ -1,3 +1,41 @@
 {% include "base.html" %}
 
-Build detail for Build No. {{ build.id }}.
+{% block content %}
+<h3>Build Details</h3>
+<table class='table table-striped'>
+<tr>
+    <td>Title</td><td>{{ build.title }}</td>
+</tr>
+<tr>
+    <td>Part</td><td><a href="{% url 'part-build' build.part.id %}">{{ build.part.name }}</a></td>
+</tr>
+<tr>
+    <td>Quantity</td><td>{{ build.quantity }}</td>
+</tr>
+{% if build.batch %}
+<tr>
+    <td>Batch</td><td>{{ build.batch }}</td>
+</tr>
+{% endif %}
+<tr>
+    <td>Status</td><td>{% include "build_status.html" with build=build %}</td>
+</tr>
+<tr>
+    <td>Created</td><td>{{ build.creation_date }}</td>
+</tr>
+{% if batch.completion_date %}
+<tr>
+    <td>Completed</td><td>{{ build.creation_date }}</td>
+</tr>
+{% endif %}
+{% if build.notes %}
+<tr>
+    <td>Notes</td><td>{{ build.notes }}</td>
+</tr>
+{% endif %}
+</table>
+
+<div class='container-fluid'>
+<a href="{% url 'build-edit' build.id %}"><button class="btn btn-info">Edit Build</button></a>
+
+{% endblock %}
