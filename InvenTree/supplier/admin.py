@@ -17,7 +17,7 @@ class SupplierPartAdmin(ImportExportModelAdmin):
 
 
 class SupplierOrderAdmin(admin.ModelAdmin):
-    list_display = ('internal_ref', 'supplier', 'issued_date')
+    list_display = ('internal_ref', 'supplier', 'issued_date', 'delivery_date', 'status')
 
 
 admin.site.register(Supplier, SupplierAdmin)

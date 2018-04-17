@@ -10,13 +10,15 @@
 <tr>
     <th>Reference</th>
     <th>Issued</th>
+    <th>Delivery</th>
     <th>Status</th>
 </tr>
 {% for order in supplier.orders.all %}
 <tr>
     <td><a href="{% url 'supplier-order-detail' order.id %}">{{ order.internal_ref }}</a></td>
     <td>{% if order.issued_date %}{{ order.issued_date }}{% endif %}</td>
-    <td>Status</td>
+    <td>{% if order.delivery_date %}{{ order.delivery_date }}{% endif %}</td>
+    <td>{{ order.get_status_display }}</td>
 </tr>
 {% endfor %}
 </table>

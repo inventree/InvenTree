@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from django.utils.translation import ugettext as _
 
 from django.db import models
 from django.core.validators import MinValueValidator
@@ -126,7 +129,27 @@ class SupplierOrder(models.Model):
     notes = models.TextField(blank=True, help_text="Order notes")
 
     def __str__(self):
-        return "PO {ref}".format(ref=self.internal_ref)
+        return "PO {ref} ({status})".format(ref=self.internal_ref,
+                                            status=self.get_status_display)
+
+    PENDING = 10  # Order is pending (not yet placed)
+    PLACED = 20  # Order has been placed
+    RECEIVED = 30  # Order has been received
+    CANCELLED = 40  # Order was cancelled
+    LOST = 50  # Order was lost
+
+    ORDER_STATUS_CODES = {PENDING: _("Pending"),
+                          PLACED: _("Placed"),
+                          CANCELLED: _("Cancelled"),
+                          RECEIVED: _("Received"),
+                          LOST: _("Lost")
+                         }
+
+    status = models.PositiveIntegerField(default=PENDING,
+                                         choices=ORDER_STATUS_CODES.items())
+
+    delivery_date = models.DateField(blank=True, null=True)
+
 
 
 class SupplierOrderLineItem(models.Model):
