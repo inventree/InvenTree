@@ -57,7 +57,7 @@ class CustomerOrderLine(models.Model):
     part = models.ForeignKey(Part, blank=True, help_text="Part")
 
     # TODO: should quantity field here somehow related to quantity field of related part? Views will handle this, right?
-    quantity = models.IntegerField(blank=True, help_text="Quantity of part")
+    quantity = models.PositiveIntegerField(blank=True, help_text="Quantity of part")
 
     # Line notes
     notes = models.TextField(blank=True, help_text="Line notes")
