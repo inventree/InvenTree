@@ -18,7 +18,7 @@
     <td><a href="{% url 'supplier-order-detail' order.id %}">{{ order.internal_ref }}</a></td>
     <td>{% if order.issued_date %}{{ order.issued_date }}{% endif %}</td>
     <td>{% if order.delivery_date %}{{ order.delivery_date }}{% endif %}</td>
-    <td>{{ order.get_status_display }}</td>
+    <td>{% include "supplier/order_status.html" with order=order %}</td>
 </tr>
 {% endfor %}
 </table>
