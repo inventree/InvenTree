@@ -158,9 +158,11 @@ class Part(models.Model):
         This subtracts stock which is already allocated
         """
 
-        # TODO - For now, just return total stock count
-        # TODO - In future must take account of allocated stock
-        return self.total_stock
+        total = self.total_stock
+
+        total -= self.allocation_count
+
+        return max(total, 0)
 
     @property
     def can_build(self):
@@ -181,7 +183,7 @@ class Part(models.Model):
             if total is None or n < total:
                 total = n
 
-        return total
+        return max(total, 0)
 
     @property
     def active_builds(self):
@@ -204,6 +206,44 @@ class Part(models.Model):
         """
 
         return sum([b.quantity for b in self.active_builds])
+
+    @property
+    def allocated_builds(self):
+        """ Return list of builds to which this part is allocated
+        """
+
+        builds = []
+
+        for item in self.used_in.all():
+            for build in item.part.active_builds:
+                builds.append(build)
+
+        return builds
+
+    @property
+    def allocated_build_count(self):
+        """ Return the total number of this that are allocated for builds
+        """
+
+        total = 0
+
+        for item in self.used_in.all():
+            for build in item.part.active_builds:
+                n = build.quantity * item.quantity
+                total += n
+
+        return total
+
+    @property
+    def allocation_count(self):
+        """ Return true if any of this part is allocated
+        - To another build
+        - To a customer order
+        """
+
+        return sum([
+            self.allocated_build_count,
+        ])
 
     @property
     def total_stock(self):
