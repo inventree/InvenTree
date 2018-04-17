@@ -11,7 +11,7 @@ If this location is deleted, these child locations will be moved to
 {% if location.parent %}
 the '{{ location.parent.name }}' location.
 {% else %}
-the top level 'Stock' category.
+the top level 'Stock' location.
 {% endif %}
 </p>
 
@@ -27,7 +27,7 @@ the top level 'Stock' category.
 {% if location.parent %}
 If this location is deleted, these items will be moved to the '{{ location.parent.name }}' location.
 {% else %}
-If this location is deleted, these items will be deleted!
+If this location is deleted, these items will be moved to the top level 'Stock' location.
 {% endif %}
 </p>
 

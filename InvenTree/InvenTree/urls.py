@@ -11,6 +11,8 @@ from stock.urls import stock_urls
 # from supplier.urls import supplier_api_urls, supplier_api_part_urls
 from supplier.urls import supplier_urls
 
+from build.urls import build_urls
+
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -68,6 +70,7 @@ urlpatterns = [
     url(r'^part/', include(part_urls)),
     url(r'^stock/', include(stock_urls)),
     url(r'^supplier/', include(supplier_urls)),
+    url(r'^build/', include(build_urls)),
 
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
