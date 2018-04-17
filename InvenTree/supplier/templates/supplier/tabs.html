@@ -1,0 +1,6 @@
+<ul class='nav nav-tabs'>
+<li{% if tab == 'parts' %} class='active'{% endif %}>
+    <a href="{% url 'supplier-detail' supplier.id %}">Parts</a></li>
+<li{% if tab == 'order' %} class='active'{% endif %}>
+    <a href="{% url 'supplier-detail-orders' supplier.id %}">Orders</a></li>
+</ul>

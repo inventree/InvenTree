@@ -6,9 +6,24 @@ from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
 from part.models import Part
 from .models import Supplier, SupplierPart
+from .models import SupplierOrder
 
 from .forms import EditSupplierForm
 from .forms import EditSupplierPartForm
+from .forms import EditSupplierOrderForm
+
+class SupplierOrderDetail(DetailView):
+    context_object_name = 'order'
+    model = SupplierOrder
+    template_name = 'supplier/order_detail.html'
+    queryset = SupplierOrder.objects.all()
+
+
+class SupplierOrderCreate(CreateView):
+    model = SupplierOrder
+    form_class = EditSupplierOrderForm
+    context_object_name = 'supplier'
+    template_name = 'supplier/order_create.html'
 
 
 class SupplierIndex(ListView):

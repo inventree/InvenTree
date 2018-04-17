@@ -51,6 +51,8 @@ supplier_detail_urls = [
     url(r'edit/?', views.SupplierEdit.as_view(), name='supplier-edit'),
     url(r'delete/?', views.SupplierDelete.as_view(), name='supplier-delete'),
 
+    url(r'orders/?', views.SupplierDetail.as_view(template_name='supplier/orders.html'), name='supplier-detail-orders'),
+
     url(r'^.*$', views.SupplierDetail.as_view(), name='supplier-detail'),
 ]
 
@@ -61,10 +63,30 @@ supplier_part_detail_urls = [
     url('^.*$', views.SupplierPartDetail.as_view(), name='supplier-part-detail'),
 ]
 
-supplier_urls = [
-    url(r'part/(?P<pk>\d+)/', include(supplier_part_detail_urls)),
+supplier_part_urls = [
+    url(r'^new/?', views.SupplierPartCreate.as_view(), name='supplier-part-create'),
 
-    url(r'part/new/?', views.SupplierPartCreate.as_view(), name='supplier-part-create'),
+    url(r'^(?P<pk>\d+)/', include(supplier_part_detail_urls)),
+]
+
+supplier_order_detail_urls = [
+
+
+    url('^.*$', views.SupplierOrderDetail.as_view(), name='supplier-order-detail'),
+]
+
+supplier_order_urls = [
+    url(r'^new/?', views.SupplierOrderCreate.as_view(), name='supplier-order-create'),
+
+    url(r'^(?P<pk>\d+)/', include(supplier_order_detail_urls)),
+]
+
+supplier_urls = [
+
+
+    url(r'part/', include(supplier_part_urls)),
+
+    url(r'order/', include(supplier_order_urls)),
 
     url(r'new/?', views.SupplierCreate.as_view(), name='supplier-create'),
 
