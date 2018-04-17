@@ -103,3 +103,48 @@ class SupplierPriceBreak(models.Model):
             cost=self.cost,
             currency=self.currency if self.currency else '',
             quan=self.quantity)
+
+
+class SupplierOrder(models.Model):
+    """
+    An order of parts from a supplier, made up of multiple line items
+    """
+
+    def get_absolute_url(self):
+        return "/supplier/order/{id}/".format(id=self.id)
+
+    # Interal reference for this order
+    internal_ref = models.CharField(max_length=25, unique=True)
+
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+
+    created_date = models.DateField(auto_now_add=True, editable=False)
+
+    issued_date = models.DateField(blank=True, null=True, help_text="Date the purchase order was issued")
+
+    notes = models.TextField(blank=True, help_text="Order notes")
+
+    def __str__(self):
+        return "PO {ref}".format(ref=self.internal_ref)
+
+
+class SupplierOrderLineItem(models.Model):
+    """
+    A line item in a supplier order, corresponding to some quantity of part
+    """
+
+    class Meta:
+        unique_together = [
+            ('order', 'line_number'),
+            ('order', 'part'),
+        ]
+
+    order = models.ForeignKey(SupplierOrder, on_delete=models.CASCADE)
+
+    line_number = models.PositiveIntegerField(default=1)
+
+    part = models.ForeignKey(SupplierPart, null=True, blank=True, on_delete=models.SET_NULL)
+
+    quantity = models.PositiveIntegerField(default=1)
+
+    notes = models.TextField(blank=True)
