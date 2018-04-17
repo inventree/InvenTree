@@ -29,12 +29,6 @@ class Manufacturer(Company):
     pass
 
 
-class Customer(Company):
-    """ Represents a customer
-    """
-    pass
-
-
 class SupplierPart(models.Model):
     """ Represents a unique part as provided by a Supplier
     Each SupplierPart is identified by a MPN (Manufacturer Part Number)
