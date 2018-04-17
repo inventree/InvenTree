@@ -88,7 +88,11 @@ class StockItemCreate(CreateView):
         loc_id = self.request.GET.get('location', None)
 
         if part_id:
-            initials['part'] = get_object_or_404(Part, pk=part_id)
+            part = get_object_or_404(Part, pk=part_id)
+            if part:
+                initials['part'] = get_object_or_404(Part, pk=part_id)
+                initials['location'] = part.default_location
+                initials['supplier_part'] = part.default_supplier
 
         if loc_id:
             initials['location'] = get_object_or_404(StockLocation, pk=loc_id)

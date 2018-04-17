@@ -106,6 +106,18 @@ class Part(models.Model):
 
     image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
 
+    default_location = models.ForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
+                                         blank=True, null=True,
+                                         help_text='Where is this item normally stored?',
+                                         related_name='default_parts')
+
+    # Default supplier part
+    default_supplier = models.ForeignKey('supplier.SupplierPart',
+                                         on_delete=models.SET_NULL,
+                                         blank=True, null=True,
+                                         help_text='Default supplier part',
+                                         related_name='default_parts')
+
     # Minimum "allowed" stock level
     minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text='Minimum allowed stock level')
 
