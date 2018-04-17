@@ -15,19 +15,20 @@ class Build(models.Model):
     """
 
     # Build status codes
-    PENDING = 10
-    ALLOCATED = 20
-    HOLDING = 30
-    CANCELLED = 40
-    COMPLETE = 50
+    PENDING = 10  # Build is pending / active
+    HOLDING = 20 # Build is currently being held
+    CANCELLED = 30 # Build was cancelled
+    COMPLETE = 40 # Build is complete
 
     BUILD_STATUS_CODES = {
        PENDING : _("Pending"),
-       ALLOCATED : _("Allocated"),
        HOLDING : _("Holding"),
        CANCELLED : _("Cancelled"),
        COMPLETE : _("Complete"),
     }
+
+    batch = models.CharField(max_length=100, blank=True, null=True,
+    help_text='Batch code for this build output')
 
     # Status of the build
     status = models.PositiveIntegerField(default=PENDING,
@@ -35,24 +36,43 @@ class Build(models.Model):
                                          validators=[MinValueValidator(0)])
 
 
-class BuildOutput(models.Model):
-    """
-    A build output represents a single build part/quantity combination
-    """
+    # Date the build model was 'created'
+    creation_date = models.DateField(auto_now=True, editable=False)
 
-    batch = models.CharField(max_length=100, blank=True,
-                             help_text='Batch code for this build output')
+    # Date the build was 'completed'
+    completion_date = models.DateField(null=True, blank=True)
 
-    # Reference to the build object of which this output is a part
-    # A build can have multiple outputs
-    build = models.ForeignKey(Build, on_delete=models.CASCADE,
-                              related_name='outputs')
+    # Brief build title
+    title = models.CharField(max_length=100, help_text='Brief description of the build')
 
     # A reference to the part being built
+    # Only 'buildable' parts can be selected
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
-                             related_name='builds')
+                             related_name='builds',
+                             limit_choices_to={'buildable': True},
+                             )
 
     # How many parts to build?
     quantity = models.PositiveIntegerField(default=1,
                                            validators=[MinValueValidator(1)],
                                            help_text='Number of parts to build')
+
+    # Notes can be attached to each build output
+    notes = models.CharField(max_length=500, blank=True)
+
+    @property
+    def is_active(self):
+        """ Is this build active?
+        An active build is either:
+        - Pending
+        - Holding
+        """
+
+        return self.status in [
+            self.PENDING,
+            self.HOLDING
+        ]
+
+    @property
+    def is_complete(self):
+        return self.status == self.COMPLETE

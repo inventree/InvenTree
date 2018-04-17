@@ -184,6 +184,28 @@ class Part(models.Model):
         return total
 
     @property
+    def active_builds(self):
+        """ Return a list of outstanding builds.
+        Builds marked as 'complete' or 'cancelled' are ignored
+        """
+
+        return [b for b in self.builds.all() if b.is_active]
+
+    @property
+    def inactive_builds(self):
+        """ Return a list of inactive builds
+        """
+
+        return [b for b in self.builds.all() if not b.is_active]
+
+    @property
+    def quantity_being_built(self):
+        """ Return the current number of parts currently being built
+        """
+
+        return sum([b.quantity for b in self.active_builds])
+
+    @property
     def total_stock(self):
         """ Return the total stock quantity for this part.
         Part may be stored in multiple locations

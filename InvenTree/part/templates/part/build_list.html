@@ -1,0 +1,20 @@
+{% for build in builds %}
+<tr>
+    <td><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></td>
+    <td>{{ build.quantity }}</td>
+    <td>
+        {% if build.status == build.PENDING %}
+        <span class='label label-info'>
+        {% elif build.status == build.HOLDING %}
+        <span class='label label-warning'>
+        {% elif build.status == build.CANCELLED %}
+        <span class='label label-danger'>
+        {% elif build.status == build.COMPLETE %}
+        <span class='label label-success'>
+        {% endif %}
+        {{ build.get_status_display }}
+        </span>
+    </td>
+    <td>{{ build.completion_date }}</td>
+</tr>
+{% endfor %}
