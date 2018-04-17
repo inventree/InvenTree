@@ -18,4 +18,5 @@ class BuildAdmin(admin.ModelAdmin):
                     'notes',
                     )
 
+
 admin.site.register(Build, BuildAdmin)
