@@ -40,12 +40,19 @@ class BuildOutput(models.Model):
     A build output represents a single build part/quantity combination
     """
 
+    batch = models.CharField(max_length=100, blank=True,
+                             help_text='Batch code for this build output')
+
+    # Reference to the build object of which this output is a part
+    # A build can have multiple outputs
     build = models.ForeignKey(Build, on_delete=models.CASCADE,
                               related_name='outputs')
 
+    # A reference to the part being built
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='builds')
 
+    # How many parts to build?
     quantity = models.PositiveIntegerField(default=1,
                                            validators=[MinValueValidator(1)],
                                            help_text='Number of parts to build')
