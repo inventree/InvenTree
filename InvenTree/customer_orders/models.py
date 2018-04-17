@@ -33,6 +33,9 @@ class CustomerOrder(models.Model):
     # Order notes
     notes = models.TextField(blank=True, default="", help_text="Order notes")
 
+    def __str__(self):
+        return "OrderRef {internal_ref}".format(internal_ref=self.internal_ref)
+
 
 class CustomerOrderLine(models.Model):
     """
