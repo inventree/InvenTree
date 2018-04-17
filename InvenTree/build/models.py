@@ -8,6 +8,7 @@ from django.core.validators import MinValueValidator
 
 from part.models import Part
 
+
 class Build(models.Model):
     """ A Build object organises the creation of new parts from the component parts
     It uses the part BOM to generate new parts.
@@ -19,25 +20,23 @@ class Build(models.Model):
 
     # Build status codes
     PENDING = 10  # Build is pending / active
-    HOLDING = 20 # Build is currently being held
-    CANCELLED = 30 # Build was cancelled
-    COMPLETE = 40 # Build is complete
+    HOLDING = 20  # Build is currently being held
+    CANCELLED = 30  # Build was cancelled
+    COMPLETE = 40  # Build is complete
 
-    BUILD_STATUS_CODES = {
-       PENDING : _("Pending"),
-       HOLDING : _("Holding"),
-       CANCELLED : _("Cancelled"),
-       COMPLETE : _("Complete"),
-    }
+    BUILD_STATUS_CODES = {PENDING: _("Pending"),
+                          HOLDING: _("Holding"),
+                          CANCELLED: _("Cancelled"),
+                          COMPLETE: _("Complete"),
+                          }
 
     batch = models.CharField(max_length=100, blank=True, null=True,
-    help_text='Batch code for this build output')
+                             help_text='Batch code for this build output')
 
     # Status of the build
     status = models.PositiveIntegerField(default=PENDING,
                                          choices=BUILD_STATUS_CODES.items(),
                                          validators=[MinValueValidator(0)])
-
 
     # Date the build model was 'created'
     creation_date = models.DateField(auto_now=True, editable=False)

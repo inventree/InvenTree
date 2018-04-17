@@ -64,7 +64,7 @@ class CustomerOrderLine(models.Model):
     # TODO: for now, each line corresponds to some quantity of some part, but in future we might want more flexibility
     # Only 'salable' items should be allowed in a CSO
     part = models.ForeignKey(Part, blank=True, help_text="Part",
-                             limit_choices_to={'salable' : True}
+                             limit_choices_to={'salable': True}
                              )
 
     # TODO: should quantity field here somehow related to quantity field of related part? Views will handle this, right?
@@ -72,4 +72,3 @@ class CustomerOrderLine(models.Model):
 
     # Line notes
     notes = models.TextField(blank=True, help_text="Line notes")
-

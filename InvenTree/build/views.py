@@ -12,6 +12,7 @@ from .models import Build
 
 from .forms import EditBuildForm
 
+
 class BuildIndex(ListView):
     model = Build
     template_name = 'build/index.html'
