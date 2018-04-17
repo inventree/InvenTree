@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+{% if customer_orders.all|length > 0 %}
+    <h4>Customer Orders</h4>
+    {% include "customer_orders/customer_orders_list.html" with customer_orders=customer_orders %}
+{% endif %}
+
+{% endblock %}
