@@ -22,11 +22,6 @@
         {% if part.description %}
         <p><i>{{ part.description }}</i></p>
         {% endif %}
-    </div>
-    </div>
-</div>
-<div class="col-sm-6">
-    <table class="table table-striped">
         {% if part.IPN %}
         <tr>
             <td>IPN</td>
@@ -39,15 +34,22 @@
             <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
         </tr>
         {% endif %}
+
+    </div>
+    </div>
+</div>
+<div class="col-sm-6">
+    <h4>Stock Status - {{ part.available_stock }} available</h4>
+    <table class="table table-striped">
         <tr>
-            <td>Available Stock</td>
+            <td>In Stock</td>
             <td>
-                {% if part.available_stock == 0 %}
-                <span class='label label-danger'>{{ part.available_stock }}</span>
-                {% elif part.available_stock < part.minimum_stock %}
-                <span class='label label-warning'>{{ part.available_stock }}</span>
+                {% if part.stock == 0 %}
+                <span class='label label-danger'>{{ part.total_stock }}</span>
+                {% elif part.stock < part.minimum_stock %}
+                <span class='label label-warning'>{{ part.total_stock }}</span>
                 {% else %}
-                {{ part.available_stock }}
+                {{ part.total_stock }}
                 {% endif %}
             </td>
         </tr>
@@ -60,6 +62,23 @@
                 {% else %}
                 {{ part.can_build }}
                 {% endif %}
+            </td>
+        </tr>
+        {% if part.quantity_being_built > 0 %}
+        <tr>
+            <td>Underway</td>
+            <td>{{ part.quantity_being_built }}</td>
+        </tr>
+        {% endif %}
+        {% endif %}
+        {% if part.allocation_count > 0 %}
+        <tr>
+            <td>Allocated</td>
+            {% if part.allocation_count > part.total_stock %}
+            <td><span class='label label-danger'>{{ part.allocation_count }}</span>
+            {% else %}
+            {{ part.allocation_count }} {{ part.total_stock }}
+            {% endif %}
             </td>
         </tr>
         {% endif %}

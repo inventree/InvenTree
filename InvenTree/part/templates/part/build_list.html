@@ -1,0 +1,10 @@
+{% for build in builds %}
+<tr>
+    <td><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></td>
+    <td>{{ build.quantity }}</td>
+    <td>
+        {% include "part/build_status.html" with build=build %}
+    </td>
+    <td>{% if build.completion_date %}{{ build.completion_date }}{% endif %}</td>
+</tr>
+{% endfor %}

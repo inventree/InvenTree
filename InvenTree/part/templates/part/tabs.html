@@ -7,7 +7,10 @@
     {% if part.used_in_count > 0 %}
     <li{% ifequal tab 'used' %} class="active"{% endifequal %}><a href="{% url 'part-used-in' part.id %}">Used In{% if part.used_in_count > 0 %}<span class="badge">{{ part.used_in_count }}</span>{% endif %}</a></li>
     {% endif %}
-    <li{% ifequal tab 'stock' %} class="active"{% endifequal %}><a href="{% url 'part-stock' part.id %}">Stock <span class="badge">{{ part.available_stock }}</span></a></li>
+    <li{% ifequal tab 'stock' %} class="active"{% endifequal %}><a href="{% url 'part-stock' part.id %}">Stock <span class="badge">{{ part.total_stock }}</span></a></li>
+    {% if part.allocation_count > 0 %}
+    <li{% ifequal tab 'allocation' %} class="active"{% endifequal %}><a href="{% url 'part-allocation' part.id %}">Allocated <span class="badge">{{ part.allocation_count }}</span></a></li>
+    {% endif %}
     {% if part.purchaseable %}
     <li{% ifequal tab 'suppliers' %} class="active"{% endifequal %}><a href="{% url 'part-suppliers' part.id %}">Suppliers
             <span class="badge">{{ part.supplier_count }}<span>

@@ -1,14 +1,17 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import os
+
 from django.db import models
 from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
-from InvenTree.models import InvenTreeTree
-
-import os
-
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+
+from InvenTree.models import InvenTreeTree
+# from stock.models import StockLocation
 
 
 class PartCategory(InvenTreeTree):
@@ -103,6 +106,18 @@ class Part(models.Model):
 
     image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
 
+    default_location = models.ForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
+                                         blank=True, null=True,
+                                         help_text='Where is this item normally stored?',
+                                         related_name='default_parts')
+
+    # Default supplier part
+    default_supplier = models.ForeignKey('supplier.SupplierPart',
+                                         on_delete=models.SET_NULL,
+                                         blank=True, null=True,
+                                         help_text='Default supplier part',
+                                         related_name='default_parts')
+
     # Minimum "allowed" stock level
     minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text='Minimum allowed stock level')
 
@@ -120,6 +135,9 @@ class Part(models.Model):
 
     # Is this part "purchaseable"?
     purchaseable = models.BooleanField(default=True, help_text='Can this part be purchased from external suppliers?')
+
+    # Can this part be sold to customers?
+    salable = models.BooleanField(default=False, help_text="Can this part be sold to customers?")
 
     def __str__(self):
         if self.IPN:
@@ -140,9 +158,11 @@ class Part(models.Model):
         This subtracts stock which is already allocated
         """
 
-        # TODO - For now, just return total stock count
-        # TODO - In future must take account of allocated stock
-        return self.total_stock
+        total = self.total_stock
+
+        total -= self.allocation_count
+
+        return max(total, 0)
 
     @property
     def can_build(self):
@@ -163,7 +183,67 @@ class Part(models.Model):
             if total is None or n < total:
                 total = n
 
+        return max(total, 0)
+
+    @property
+    def active_builds(self):
+        """ Return a list of outstanding builds.
+        Builds marked as 'complete' or 'cancelled' are ignored
+        """
+
+        return [b for b in self.builds.all() if b.is_active]
+
+    @property
+    def inactive_builds(self):
+        """ Return a list of inactive builds
+        """
+
+        return [b for b in self.builds.all() if not b.is_active]
+
+    @property
+    def quantity_being_built(self):
+        """ Return the current number of parts currently being built
+        """
+
+        return sum([b.quantity for b in self.active_builds])
+
+    @property
+    def allocated_builds(self):
+        """ Return list of builds to which this part is allocated
+        """
+
+        builds = []
+
+        for item in self.used_in.all():
+            for build in item.part.active_builds:
+                builds.append(build)
+
+        return builds
+
+    @property
+    def allocated_build_count(self):
+        """ Return the total number of this that are allocated for builds
+        """
+
+        total = 0
+
+        for item in self.used_in.all():
+            for build in item.part.active_builds:
+                n = build.quantity * item.quantity
+                total += n
+
         return total
+
+    @property
+    def allocation_count(self):
+        """ Return true if any of this part is allocated
+        - To another build
+        - To a customer order
+        """
+
+        return sum([
+            self.allocated_build_count,
+        ])
 
     @property
     def total_stock(self):

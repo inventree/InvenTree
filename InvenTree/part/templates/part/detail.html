@@ -23,21 +23,37 @@
     {% endif %}
     </td>
 </tr>
+{% if part.default_location %}
+<tr>
+    <td>Default Location</td>
+    <td>{{ part.default_location.pathstring }}</td>
+</tr>
+{% endif %}
+{% if part.default_supplier %}
+<tr>
+    <td>Default Supplier</td>
+    <td>{{ part.default_supplier.supplier.name }} | {{ part.default_supplier.SKU }}</td>
+</tr>
+{% endif %}
 <tr>
     <td>Units</td>
     <td>{{ part.units }}</td>
 </tr>
 <tr>
     <td>Buildable</td>
-    <td>{{ part.buildable }}</td>
+    <td>{% include "yesnolabel.html" with value=part.buildable %}</td>
 </tr>
 <tr>
     <td>Trackable</td>
-    <td>{{ part.trackable }}</td>
+    <td>{% include "yesnolabel.html" with value=part.trackable %}</td>
 </tr>
 <tr>
     <td>Purchaseable</td>
-    <td>{{ part.purchaseable }}</td>
+    <td>{% include "yesnolabel.html" with value=part.purchaseable %}</td>
+</tr>
+<tr>
+    <td>Salable</td>
+    <td>{% include "yesnolabel.html" with value=part.salable %}</td>
 </tr>
 {% if part.minimum_stock > 0 %}
 <tr>

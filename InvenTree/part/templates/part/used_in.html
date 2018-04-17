@@ -9,11 +9,13 @@
 <table class="table table-striped">
 <tr>
     <th>Part</th>
+    <th>Uses</th>
     <th>Description</th>
 </tr>
 {% for item in part.used_in.all %}
 <tr>
     <td><a href="{% url 'part-bom' item.part.id %}">{{ item.part.name }}</a></td>
+    <td>{{ item.quantity }}</td>
     <td>{{ item.part.description }}</td>
 </tr>
 {% endfor %}

@@ -24,10 +24,13 @@ class EditPartForm(forms.ModelForm):
             'description',
             'IPN',
             'URL',
+            'default_location',
+            'default_supplier',
             'minimum_stock',
             'buildable',
             'trackable',
             'purchaseable',
+            'salable',
         ]
 
 
