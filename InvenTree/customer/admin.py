@@ -9,11 +9,11 @@ class CustomerAdmin(ImportExportModelAdmin):
 
 
 class CustomerOrderAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('internal_ref',)
 
 
 class CustomerOrderLineAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('customer_order', 'line_number')
 
 
 admin.site.register(Customer, CustomerAdmin)

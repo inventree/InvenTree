@@ -30,14 +30,16 @@ class CustomerOrder(models.Model):
     # TODO: Should the customer and customer_ref together be unique?
 
     # Date the order was entered into system
-    created_date = models.DateField(auto_now_add=True, blank=True, help_text="Date order entered "
-                                                                                                 "in system")
+    created_date = models.DateField(auto_now_add=True, blank=True, help_text="Date order entered in system")
 
     # Date the order was issued on the paperwork, if provided
     issued_date = models.DateField(blank=True, help_text="Date order issued by customer")
 
     # Order notes
     notes = models.TextField(blank=True, default="", help_text="Order notes")
+
+    def __str__(self):
+        return "OrderRef {internal_ref}".format(internal_ref=self.internal_ref)
 
 
 class CustomerOrderLine(models.Model):
