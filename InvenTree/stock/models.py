@@ -83,9 +83,9 @@ class StockItem(models.Model):
 
     # TODO - Point to a Company object instead
     # The StockItem may be assigned to a particular customer
-    #customer = models.ForeignKey(Customer, on_delete=models.SET_NULL,
-    #                             related_name='stockitems', blank=True, null=True,
-    #                             help_text='Item assigned to customer?')
+    customer = models.ForeignKey('supplier.Supplier', on_delete=models.SET_NULL,
+                                 related_name='stockitems', blank=True, null=True,
+                                 help_text='Item assigned to customer?')
 
     # Optional serial number
     serial = models.PositiveIntegerField(blank=True, null=True,

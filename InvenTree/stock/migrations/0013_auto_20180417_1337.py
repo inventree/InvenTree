@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='stockitem',
             name='customer',
-            field=models.ForeignKey(blank=True, help_text='Item assigned to customer?', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='stockitems', to='customer.Customer'),
+            field=models.ForeignKey(blank=True, help_text='Item assigned to customer?', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='stockitems', to='supplier.Supplier'),
         ),
     ]
