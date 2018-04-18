@@ -13,8 +13,6 @@ from supplier.urls import supplier_urls
 
 from build.urls import build_urls
 
-from customer.urls import customer_urls
-
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -47,7 +45,6 @@ apipatterns = [
     # url(r'^supplier-part/', include(supplier_api_part_urls)),
     # url(r'^price-break/', include(price_break_urls)),
     # url(r'^manufacturer/', include(manu_urls)),
-    # url(r'^customer/', include(cust_urls)),
 
     # Tracking URLs
     # url(r'^track/', include(part_track_urls)),
@@ -73,7 +70,6 @@ urlpatterns = [
     url(r'^stock/', include(stock_urls)),
     url(r'^supplier/', include(supplier_urls)),
     url(r'^build/', include(build_urls)),
-    url(r'^customer/', include(customer_urls)),
 
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
