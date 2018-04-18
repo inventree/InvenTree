@@ -2,7 +2,7 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
-from .models import Supplier, SupplierPart
+from .models import Company, SupplierPart
 from .models import SupplierOrder
 
 
@@ -28,10 +28,10 @@ class EditSupplierOrderForm(forms.ModelForm):
         ]
 
 
-class EditSupplierForm(forms.ModelForm):
+class EditCompanyForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(EditSupplierForm, self).__init__(*args, **kwargs)
+        super(EditCompanyForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
         self.helper.form_id = 'id-edit-part-form'
@@ -41,7 +41,7 @@ class EditSupplierForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Submit'))
 
     class Meta:
-        model = Supplier
+        model = Company
         fields = [
             'name',
             'description',

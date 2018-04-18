@@ -17,7 +17,7 @@ test:
 migrate:
 	python InvenTree/manage.py makemigrations part
 	python InvenTree/manage.py makemigrations stock
-	python InvenTree/manage.py makemigrations supplier
+	python InvenTree/manage.py makemigrations company
 	python InvenTree/manage.py makemigrations build
 	python InvenTree/manage.py migrate --run-syncdb
 	python InvenTree/manage.py check

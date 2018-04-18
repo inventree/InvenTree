@@ -47,13 +47,13 @@ supplier_api_urls = [
 ]
 """
 
-supplier_detail_urls = [
-    url(r'edit/?', views.SupplierEdit.as_view(), name='supplier-edit'),
-    url(r'delete/?', views.SupplierDelete.as_view(), name='supplier-delete'),
+company_detail_urls = [
+    url(r'edit/?', views.CompanyEdit.as_view(), name='company-edit'),
+    url(r'delete/?', views.CompanyDelete.as_view(), name='company-delete'),
 
-    url(r'orders/?', views.SupplierDetail.as_view(template_name='supplier/orders.html'), name='supplier-detail-orders'),
+    url(r'orders/?', views.CompanyDetail.as_view(template_name='supplier/orders.html'), name='company-detail-orders'),
 
-    url(r'^.*$', views.SupplierDetail.as_view(), name='supplier-detail'),
+    url(r'^.*$', views.CompanyDetail.as_view(), name='company-detail'),
 ]
 
 supplier_part_detail_urls = [
@@ -69,6 +69,7 @@ supplier_part_urls = [
     url(r'^(?P<pk>\d+)/', include(supplier_part_detail_urls)),
 ]
 
+"""
 supplier_order_detail_urls = [
 
 
@@ -80,20 +81,21 @@ supplier_order_urls = [
 
     url(r'^(?P<pk>\d+)/', include(supplier_order_detail_urls)),
 ]
+"""
 
-supplier_urls = [
+company_urls = [
 
 
-    url(r'part/', include(supplier_part_urls)),
+    url(r'supplier_part/', include(supplier_part_urls)),
 
-    url(r'order/', include(supplier_order_urls)),
+    #url(r'order/', include(supplier_order_urls)),
 
-    url(r'new/?', views.SupplierCreate.as_view(), name='supplier-create'),
+    #url(r'new/?', views.SupplierCreate.as_view(), name='supplier-create'),
 
-    url(r'^(?P<pk>\d+)/', include(supplier_detail_urls)),
+    url(r'^(?P<pk>\d+)/', include(company_detail_urls)),
 
-    url(r'', views.SupplierIndex.as_view(), name='supplier-index'),
+    url(r'', views.CompanyIndex.as_view(), name='company-index'),
 
     # Redirect any other patterns
-    url(r'^.*$', RedirectView.as_view(url='', permanent=False), name='supplier-index'),
+    url(r'^.*$', RedirectView.as_view(url='', permanent=False), name='company-index'),
 ]

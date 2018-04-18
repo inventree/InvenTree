@@ -6,16 +6,37 @@ from django.utils.translation import ugettext as _
 from django.db import models
 from django.core.validators import MinValueValidator
 
-from InvenTree.models import Company
 from part.models import Part
 
-
-class Supplier(Company):
-    """ Represents a manufacturer or supplier
+class Company(models.Model):
+    """ Abstract model representing an external company
     """
 
+    name = models.CharField(max_length=100, unique=True,
+                            help_text='Company naem')
+
+    description = models.CharField(max_length=500)
+
+    website = models.URLField(blank=True, help_text='Company website URL')
+
+    address = models.CharField(max_length=200,
+                               blank=True, help_text='Company address')
+
+    phone = models.CharField(max_length=50,
+                             blank=True)
+
+    email = models.EmailField(blank=True)
+
+    contact = models.CharField(max_length=100,
+                               blank=True)
+
+    notes = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
     def get_absolute_url(self):
-        return "/supplier/{id}/".format(id=self.id)
+        return "/company/{id}/".format(id=self.id)
 
     @property
     def part_count(self):
@@ -32,12 +53,6 @@ class Supplier(Company):
     @property
     def has_orders(self):
         return self.order_count > 0
-
-
-class Manufacturer(Company):
-    """ Represents a manfufacturer
-    """
-    pass
 
 
 class SupplierPart(models.Model):
@@ -58,12 +73,12 @@ class SupplierPart(models.Model):
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='supplier_parts')
 
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,
+    supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
                                  related_name='parts')
 
     SKU = models.CharField(max_length=100, help_text='Supplier stock keeping unit')
 
-    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True, on_delete=models.SET_NULL, help_text='Manufacturer')
+    manufacturer = models.CharField(max_length=100, blank=True, help_text='Manufacturer')
 
     MPN = models.CharField(max_length=100, blank=True, help_text='Manufacturer part number')
 
@@ -127,7 +142,7 @@ class SupplierOrder(models.Model):
     # Interal reference for this order
     internal_ref = models.CharField(max_length=25, unique=True)
 
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,
+    supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
                                  related_name='orders')
 
     created_date = models.DateField(auto_now_add=True, editable=False)

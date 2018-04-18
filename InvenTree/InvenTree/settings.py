@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     # InvenTree apps
     'part.apps.PartConfig',
     'stock.apps.StockConfig',
-    'supplier.apps.SupplierConfig',
+    'company.apps.CompanyConfig',
     'build.apps.BuildConfig',
 ]
 

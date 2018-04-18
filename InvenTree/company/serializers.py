@@ -2,29 +2,13 @@ from rest_framework import serializers
 
 from part.models import Part
 
-from .models import Supplier, SupplierPart, SupplierPriceBreak
-from .models import Manufacturer
-from .models import Customer
+from .models import Company, SupplierPart, SupplierPriceBreak
 
 
-class SupplierSerializer(serializers.HyperlinkedModelSerializer):
+class CompanySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
-        model = Supplier
-        fields = '__all__'
-
-
-class ManufacturerSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Manufacturer
-        fields = '__all__'
-
-
-class CustomerSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Customer
+        model = Company
         fields = '__all__'
 
 

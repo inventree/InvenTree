@@ -11,7 +11,7 @@ from django.dispatch import receiver
 
 from datetime import datetime
 
-from supplier.models import SupplierPart
+from company.models import SupplierPart
 from part.models import Part
 from InvenTree.models import InvenTreeTree
 from build.models import Build
@@ -81,9 +81,8 @@ class StockItem(models.Model):
                                    related_name='owned_parts', blank=True, null=True,
                                    help_text='Is this item installed in another item?')
 
-    # TODO - Point to a Company object instead
     # The StockItem may be assigned to a particular customer
-    customer = models.ForeignKey('supplier.Supplier', on_delete=models.SET_NULL,
+    customer = models.ForeignKey('company.Company', on_delete=models.SET_NULL,
                                  related_name='stockitems', blank=True, null=True,
                                  help_text='Item assigned to customer?')
 

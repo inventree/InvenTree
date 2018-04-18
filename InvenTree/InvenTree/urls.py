@@ -9,7 +9,7 @@ from stock.urls import stock_api_urls, stock_api_loc_urls
 from stock.urls import stock_urls
 
 # from supplier.urls import supplier_api_urls, supplier_api_part_urls
-from supplier.urls import supplier_urls
+from company.urls import company_urls
 
 from build.urls import build_urls
 
@@ -68,7 +68,7 @@ urlpatterns = [
 
     url(r'^part/', include(part_urls)),
     url(r'^stock/', include(stock_urls)),
-    url(r'^supplier/', include(supplier_urls)),
+    url(r'^company/', include(company_urls)),
     url(r'^build/', include(build_urls)),
 
     url(r'^admin/', admin.site.urls),

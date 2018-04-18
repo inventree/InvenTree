@@ -8,37 +8,6 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 
-class Company(models.Model):
-    """ Abstract model representing an external company
-    """
-
-    class Meta:
-        abstract = True
-
-    name = models.CharField(max_length=100, unique=True,
-                            help_text='Company naem')
-
-    description = models.CharField(max_length=500)
-
-    website = models.URLField(blank=True, help_text='Company website URL')
-
-    address = models.CharField(max_length=200,
-                               blank=True, help_text='Company address')
-
-    phone = models.CharField(max_length=50,
-                             blank=True)
-
-    email = models.EmailField(blank=True)
-
-    contact = models.CharField(max_length=100,
-                               blank=True)
-
-    notes = models.TextField(blank=True)
-
-    def __str__(self):
-        return self.name
-
-
 class InvenTreeTree(models.Model):
     """ Provides an abstracted self-referencing tree model for data categories.
     - Each Category has one parent Category, which can be blank (for a top-level Category).

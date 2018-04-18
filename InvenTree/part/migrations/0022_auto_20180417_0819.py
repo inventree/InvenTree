@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('supplier', '0007_auto_20180416_1253'),
+        ('company', '0007_auto_20180416_1253'),
         ('part', '0021_part_default_location'),
     ]
 
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='part',
             name='default_supplier',
-            field=models.ForeignKey(blank=True, help_text='Default supplier part', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='default_parts', to='supplier.SupplierPart'),
+            field=models.ForeignKey(blank=True, help_text='Default supplier part', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='default_parts', to='company.SupplierPart'),
         ),
         migrations.AlterField(
             model_name='part',

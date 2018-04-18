@@ -11,7 +11,6 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from InvenTree.models import InvenTreeTree
-# from stock.models import StockLocation
 
 
 class PartCategory(InvenTreeTree):
@@ -112,7 +111,7 @@ class Part(models.Model):
                                          related_name='default_parts')
 
     # Default supplier part
-    default_supplier = models.ForeignKey('supplier.SupplierPart',
+    default_supplier = models.ForeignKey('company.SupplierPart',
                                          on_delete=models.SET_NULL,
                                          blank=True, null=True,
                                          help_text='Default supplier part',
