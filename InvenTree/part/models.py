@@ -403,6 +403,18 @@ class SupplierPart(models.Model):
     # lead time for parts that cannot be delivered immediately
     lead_time = models.DurationField(blank=True, null=True)
 
+    @property
+    def manufacturer_string(self):
+
+        items = []
+
+        if self.manufacturer:
+            items.append(self.manufacturer)
+        if self.MPN:
+            items.append(self.MPN)
+
+        return ' | '.join(items)
+
     def __str__(self):
         return "{sku} - {supplier}".format(
             sku=self.SKU,

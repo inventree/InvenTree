@@ -6,7 +6,7 @@
 
 <table class="table">
     <tr><td>SKU</td><td>{{ part.SKU }}</tr></tr>
-    <tr><td>Supplier</td><td><a href="{% url 'company-detail' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
+    <tr><td>Supplier</td><td><a href="{% url 'company-detail-parts' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
     <tr>
         <td>Parent Part</td>
         <td>
@@ -22,7 +22,7 @@
     <tr><td>Description</td><td>{{ part.description }}</td></tr>
 {% endif %}
 {% if part.manufacturer %}
-    <tr><td>Manufacturer</td><td>{% if part.manufacturer %}{{ part.manufacturer.name }}{% endif %}</td></tr>
+    <tr><td>Manufacturer</td><td>{{ part.manufacturer }}</td></tr>
     <tr><td>MPN</td><td>{{ part.MPN }}</td></tr>
 {% endif %}
 </table>

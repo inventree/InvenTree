@@ -1,0 +1,36 @@
+{% extends "company/company_base.html" %}
+
+{% block details %}
+
+{% include 'company/tabs.html' with tab='parts' %}
+
+<h3>Company Parts</h3>
+
+<table class='table table-striped'>
+<tr>
+    <th>SKU</th>
+    <th>Part</th>
+    <th>MPN</th>
+    <th>URL</th>
+</tr>
+{% for part in company.parts.all %}
+<tr>
+    <td><a href="{% url 'supplier-part-detail' part.id %}">{{ part.SKU }}</a></td>
+    <td>
+        {% if part.part %}
+        <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.name }}</a>
+        {% endif %}
+    </td>
+    <td>{{ part.manufacturer_string }}</td>
+    <td>{{ part.URL }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<div class='container-fluid'>
+<a href="{% url 'supplier-part-create' %}?supplier={{ company.id }}">
+    <button class="btn btn-success">New Supplier Part</button>
+</a>
+</div>
+
+{% endblock %}

@@ -10,6 +10,9 @@ company_detail_urls = [
 
     # url(r'orders/?', views.CompanyDetail.as_view(template_name='company/orders.html'), name='company-detail-orders'),
 
+    url(r'parts/?', views.CompanyDetail.as_view(template_name='company/detail_part.html'), name='company-detail-parts'),
+
+    # Any other URL
     url(r'^.*$', views.CompanyDetail.as_view(), name='company-detail'),
 ]
 

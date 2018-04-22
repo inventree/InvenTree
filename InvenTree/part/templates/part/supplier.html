@@ -17,10 +17,7 @@
 <tr>
     <td><a href="{% url 'supplier-part-detail' spart.id %}">{{ spart.SKU }}</a></td>
     <td><a href="{% url 'company-detail' spart.supplier.id %}">{{ spart.supplier.name }}</a></td>
-    <td>
-        {% if spart.manufacturer %}{{ spart.manufacturer.name }}{% endif %}
-        {% if spart.MPN %} | {{ spart.MPN }}{% endif %}
-    </td>
+    <td>{{ spart.manufacturer_string }}</td>
     <td>
         {% if spart.URL %}
         <a href="{{ spart.URL }}">{{ spart.URL }}</a>

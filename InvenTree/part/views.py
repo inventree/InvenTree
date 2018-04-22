@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
+from company.models import Company
 from .models import PartCategory, Part, BomItem
 from .models import SupplierPart
 
@@ -226,7 +227,7 @@ class SupplierPartCreate(CreateView):
         part_id = self.request.GET.get('part', None)
 
         if supplier_id:
-            initials['supplier'] = get_object_or_404(Supplier, pk=supplier_id)
+            initials['supplier'] = get_object_or_404(Company, pk=supplier_id)
             # TODO
             # self.fields['supplier'].disabled = True
         if part_id:
