@@ -4,4 +4,29 @@
 
 {% include 'company/tabs.html' with tab='details' %}
 
+<h3>Company Details</h3>
+
+<table class='table table-striped'>
+<tr>
+    <td>Customer</td>
+    <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
+</tr>
+<tr>
+    <td>Supplier</td>
+    <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
+</tr>
+</table>
+
+{% if company.notes %}
+<div class="panel panel-default">
+    <div class="panel-heading"><b>Notes</b></div>
+  <div class="panel-body">{{ company.notes }}</div>
+</div>
+{% endif %}
+
+<div class='container-fluid'>
+<a href="{% url 'company-edit' company.id %}"><button class="btn btn-info">Edit Company</button></a>
+<a href="{% url 'company-delete' company.id %}"><button class="btn btn-danger">Delete Company</button></a>
+</div>
+
 {% endblock %}
