@@ -67,11 +67,3 @@ class Company(models.Model):
     def has_parts(self):
         return self.part_count > 0
 
-    @property
-    def order_count(self):
-        return self.orders.count()
-
-    @property
-    def has_orders(self):
-        return self.order_count > 0
-

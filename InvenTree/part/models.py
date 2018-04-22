@@ -353,6 +353,7 @@ class BomItem(models.Model):
             child=self.sub_part.name,
             n=self.quantity)
 
+
 class SupplierPart(models.Model):
     """ Represents a unique part as provided by a Supplier
     Each SupplierPart is identified by a MPN (Manufacturer Part Number)

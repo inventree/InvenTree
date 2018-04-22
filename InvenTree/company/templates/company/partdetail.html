@@ -6,7 +6,7 @@
 
 <table class="table">
     <tr><td>SKU</td><td>{{ part.SKU }}</tr></tr>
-    <tr><td>Supplier</td><td><a href="{% url 'supplier-detail' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
+    <tr><td>Supplier</td><td><a href="{% url 'company-detail' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
     <tr>
         <td>Parent Part</td>
         <td>
