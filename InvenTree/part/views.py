@@ -7,8 +7,14 @@ from django.http import HttpResponseRedirect
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
-from .forms import EditPartForm, EditCategoryForm, EditBomItemForm
 from .models import PartCategory, Part, BomItem
+from .models import SupplierPart
+
+from .forms import EditPartForm
+from .forms import EditCategoryForm
+from .forms import EditBomItemForm
+
+from .forms import EditSupplierPartForm
 
 
 class PartIndex(ListView):
@@ -189,5 +195,55 @@ class BomItemDelete(DeleteView):
     def post(self, request, *args, **kwargs):
         if 'confirm' in request.POST:
             return super(BomItemDelete, self).post(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect(self.get_object().get_absolute_url())
+
+
+class SupplierPartDetail(DetailView):
+    model = SupplierPart
+    template_name = 'company/partdetail.html'
+    context_object_name = 'part'
+    queryset = SupplierPart.objects.all()
+
+
+class SupplierPartEdit(UpdateView):
+    model = SupplierPart
+    template_name = 'company/partedit.html'
+    context_object_name = 'part'
+    form_class = EditSupplierPartForm
+
+
+class SupplierPartCreate(CreateView):
+    model = SupplierPart
+    form_class = EditSupplierPartForm
+    template_name = 'company/partcreate.html'
+    context_object_name = 'part'
+
+    def get_initial(self):
+        initials = super(SupplierPartCreate, self).get_initial().copy()
+
+        supplier_id = self.request.GET.get('supplier', None)
+        part_id = self.request.GET.get('part', None)
+
+        if supplier_id:
+            initials['supplier'] = get_object_or_404(Supplier, pk=supplier_id)
+            # TODO
+            # self.fields['supplier'].disabled = True
+        if part_id:
+            initials['part'] = get_object_or_404(Part, pk=part_id)
+            # TODO
+            # self.fields['part'].disabled = True
+
+        return initials
+
+
+class SupplierPartDelete(DeleteView):
+    model = SupplierPart
+    success_url = '/supplier/'
+    template_name = 'company/partdelete.html'
+
+    def post(self, request, *args, **kwargs):
+        if 'confirm' in request.POST:
+            return super(SupplierPartDelete, self).post(request, *args, **kwargs)
         else:
             return HttpResponseRedirect(self.get_object().get_absolute_url())

@@ -4,6 +4,7 @@ from django.contrib import admin
 from part.urls import part_api_urls, part_cat_api_urls
 from part.urls import bom_api_urls
 from part.urls import part_urls
+from part.urls import supplier_part_urls
 
 from stock.urls import stock_api_urls, stock_api_loc_urls
 from stock.urls import stock_urls
@@ -69,6 +70,7 @@ urlpatterns = [
     url(r'^part/', include(part_urls)),
     url(r'^stock/', include(stock_urls)),
     url(r'^company/', include(company_urls)),
+    url(r'^supplier-part/', include(supplier_part_urls)),
     url(r'^build/', include(build_urls)),
 
     url(r'^admin/', admin.site.urls),

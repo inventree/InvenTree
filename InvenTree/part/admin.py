@@ -2,6 +2,7 @@ from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 
 from .models import PartCategory, Part
+from .models import SupplierPart
 from .models import BomItem
 from .models import PartAttachment
 
@@ -20,8 +21,11 @@ class BomItemAdmin(ImportExportModelAdmin):
     list_display = ('part', 'sub_part', 'quantity')
 
 
-class PartAttachmentAdmin(admin.ModelAdmin):
-    list_display = ('part', 'attachment')
+#class PartAttachmentAdmin(admin.ModelAdmin):
+#    list_display = ('part', 'attachment')
+
+class SupplierPartAdmin(ImportExportModelAdmin):
+    list_display = ('part', 'supplier', 'SKU')
 
 
 """
@@ -36,8 +40,4 @@ class ParameterAdmin(admin.ModelAdmin):
 admin.site.register(Part, PartAdmin)
 admin.site.register(PartCategory, PartCategoryAdmin)
 admin.site.register(BomItem, BomItemAdmin)
-admin.site.register(PartAttachment, PartAttachmentAdmin)
-
-# admin.site.register(PartParameter, ParameterAdmin)
-# admin.site.register(PartParameterTemplate, ParameterTemplateAdmin)
-# admin.site.register(CategoryParameterLink)
+admin.site.register(SupplierPart, SupplierPartAdmin)

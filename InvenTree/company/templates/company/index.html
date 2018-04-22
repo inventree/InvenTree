@@ -2,26 +2,26 @@
 
 {% block content %}
 
-<h3>Suppliers</h3>
+<h3>Companies</h3>
 <ul class='list-group'>
-{% for supplier in suppliers %}
+{% for company in companies %}
 <li class='list-group-item'>
-    <b><a href="{% url 'supplier-detail' supplier.id %}">{{ supplier.name }}</a></b>
+    <b><a href="{% url 'company-detail' company.id %}">{{ supplier.name }}</a></b>
     <br>
-    {{ supplier.description }}
-    {% if supplier.website %}
-    <a href="{{ supplier.website }}">- {{ supplier.website }}</a>
+    {{ company.description }}
+    {% if company.website %}
+    <a href="{{ company.website }}">- {{ company.website }}</a>
     {% endif %}
     <span class="badge">
-        {{ supplier.parts.all|length }}
+        {{ company.parts.all|length }}
     </span>
 </li>
 {% endfor %}
 </ul>
 
 <div class='container-fluid'>
-<a href="{% url 'supplier-create' %}">
-    <button class="btn btn-success">New Supplier</button>
+<a href="{% url 'company-create' %}">
+    <button class="btn btn-success">New Company</button>
 </a>
 </div>
 

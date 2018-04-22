@@ -6,7 +6,7 @@ from django.utils.translation import ugettext as _
 from django.db import models
 from django.core.validators import MinValueValidator
 
-from part.models import Part
+#from part.models import Part
 
 
 class Build(models.Model):
@@ -49,7 +49,7 @@ class Build(models.Model):
 
     # A reference to the part being built
     # Only 'buildable' parts can be selected
-    part = models.ForeignKey(Part, on_delete=models.CASCADE,
+    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='builds',
                              limit_choices_to={'buildable': True},
                              )

@@ -11,10 +11,11 @@ from django.dispatch import receiver
 
 from datetime import datetime
 
-from company.models import SupplierPart
-from part.models import Part
+#from company.models import Company
+#from part.models import Part
+#from part.models import SupplierPart
 from InvenTree.models import InvenTreeTree
-from build.models import Build
+#from build.models import Build
 
 
 class StockLocation(InvenTreeTree):
@@ -66,10 +67,10 @@ class StockItem(models.Model):
         ]
 
     # The 'master' copy of the part of which this stock item is an instance
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='locations')
+    part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='locations')
 
     # The 'supplier part' used in this instance. May be null if no supplier parts are defined the master part
-    supplier_part = models.ForeignKey(SupplierPart, blank=True, null=True, on_delete=models.SET_NULL)
+    supplier_part = models.ForeignKey('part.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL)
 
     # Where the part is stored. If the part has been used to build another stock item, the location may not make sense
     location = models.ForeignKey(StockLocation, on_delete=models.DO_NOTHING,
@@ -98,7 +99,7 @@ class StockItem(models.Model):
                              help_text='Batch code for this stock item')
 
     # If this part was produced by a build, point to that build here
-    build = models.ForeignKey(Build, on_delete=models.SET_NULL, blank=True, null=True)
+    # build = models.ForeignKey('build.Build', on_delete=models.SET_NULL, blank=True, null=True)
 
     # Quantity of this stock item. Value may be overridden by other settings
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)])
