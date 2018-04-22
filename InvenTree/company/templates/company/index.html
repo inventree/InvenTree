@@ -3,6 +3,11 @@
 {% block content %}
 
 <h3>Companies</h3>
+
+<hr>
+<b>TODO - Filtering! (customer / supplier / search)</b>
+<hr>
+
 <ul class='list-group'>
 {% for company in companies %}
 <li class='list-group-item'>
@@ -12,9 +17,6 @@
     {% if company.website %}
     <a href="{{ company.website }}">- {{ company.website }}</a>
     {% endif %}
-    <span class="badge">
-        {{ company.parts.all|length }}
-    </span>
 </li>
 {% endfor %}
 </ul>
