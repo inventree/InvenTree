@@ -49,6 +49,10 @@ class Company(models.Model):
 
     notes = models.TextField(blank=True)
 
+    is_customer = models.BooleanField(default=False)
+
+    is_supplier = models.BooleanField(default=False)
+
     def __str__(self):
         return self.name
 

@@ -68,12 +68,16 @@ urlpatterns = [
     # url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     url(r'^part/', include(part_urls)),
-    url(r'^stock/', include(stock_urls)),
-    url(r'^company/', include(company_urls)),
     url(r'^supplier-part/', include(supplier_part_urls)),
+
+    url(r'^stock/', include(stock_urls)),
+
+    url(r'^company/', include(company_urls)),
+
     url(r'^build/', include(build_urls)),
 
     url(r'^admin/', admin.site.urls),
+
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 

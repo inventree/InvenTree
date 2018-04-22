@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="media">
+          <div class="media-left">
+            <img class="part-thumb"
+            {% if company.image %}
+            src="{{ company.image.url }}"
+            {% else %}
+            src="{% static 'img/blank_image.png' %}"
+            {% endif %}/>
+          </div>
+          <div class='media-body'>
+              <h4>{{ company.name }}</h4>
+              <p>{{ company.description }}</p>
+          </div>
+          <div class='container-fluid'>
+          <a href="{% url 'company-edit' company.id %}"><button class="btn btn-info">Edit Company Details</button></a>
+          </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+        <table class="table">
+        {% if company.website %}
+        <tr>
+            <td>Website</td><td><a href="{{ company.website }}">{{ company.website }}</a></td>
+        </tr>
+        {% endif %}
+        {% if company.address %}
+        <tr>
+            <td>Address</td><td>{{ company.address }}</td>
+        </tr>
+        {% endif %}
+        {% if company.phone %}
+        <tr>
+            <td>Phone</td><td>{{ company.phone }}</td>
+        </tr>
+        {% endif %}
+        {% if company.email %}
+        <tr>
+            <td>Email</td><td>{{ company.email }}</td>
+        </tr>
+        {% endif %}
+        {% if company.contact %}
+        <tr>
+            <td>Contact</td><td>{{ company.contact }}</td>
+        </tr>
+        {% endif %}
+        </table>
+    </div>
+</div>
+
+{% block details %}
+
+{% endblock %}
+
+{% endblock %}

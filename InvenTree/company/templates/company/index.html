@@ -6,7 +6,7 @@
 <ul class='list-group'>
 {% for company in companies %}
 <li class='list-group-item'>
-    <b><a href="{% url 'company-detail' company.id %}">{{ supplier.name }}</a></b>
+    <b><a href="{% url 'company-detail' company.id %}">{{ company.name }}</a></b>
     <br>
     {{ company.description }}
     {% if company.website %}

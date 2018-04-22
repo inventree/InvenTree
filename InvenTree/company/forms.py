@@ -51,5 +51,7 @@ class EditCompanyForm(forms.ModelForm):
             'email',
             'contact',
             'image',
+            'is_customer',
+            'is_supplier',
             'notes'
         ]

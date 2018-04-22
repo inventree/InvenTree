@@ -36,7 +36,6 @@ class SupplierOrderCreate(CreateView):
         return initials
 """
 
-
 class CompanyIndex(ListView):
     model = Company
     template_name = 'company/index.html'
@@ -44,7 +43,16 @@ class CompanyIndex(ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        return Company.objects.order_by('name')
+        queryset = Company.objects.all().order_by('name')
+
+        if self.request.GET.get('supplier', None):
+            queryset = queryset.filter(is_supplier=True)
+
+        if self.request.GET.get('customer', None):
+            queryset = queryset.filter(is_customer=True)
+
+        return queryset
+
 
 
 class CompanyDetail(DetailView):
