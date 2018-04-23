@@ -11,11 +11,7 @@ from django.dispatch import receiver
 
 from datetime import datetime
 
-#from company.models import Company
-#from part.models import Part
-#from part.models import SupplierPart
 from InvenTree.models import InvenTreeTree
-#from build.models import Build
 
 
 class StockLocation(InvenTreeTree):

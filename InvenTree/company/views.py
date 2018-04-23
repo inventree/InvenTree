@@ -1,40 +1,15 @@
-from django.shortcuts import get_object_or_404
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from django.http import HttpResponseRedirect
 
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
-from part.models import Part
 from .models import Company
-#from .models import SupplierOrder
 
 from .forms import EditCompanyForm
-#from .forms import EditSupplierOrderForm
 
-"""
-class SupplierOrderDetail(DetailView):
-    context_object_name = 'order'
-    model = SupplierOrder
-    template_name = 'company/order_detail.html'
-    queryset = SupplierOrder.objects.all()
-
-
-class SupplierOrderCreate(CreateView):
-    model = SupplierOrder
-    form_class = EditSupplierOrderForm
-    context_object_name = 'supplier'
-    template_name = 'company/order_create.html'
-
-    def get_initial(self):
-        initials = super(SupplierOrderCreate, self).get_initial().copy()
-
-        s_id = self.request.GET.get('supplier', None)
-
-        if s_id:
-            initials['supplier'] = get_object_or_404(Supplier, pk=s_id)
-
-        return initials
-"""
 
 class CompanyIndex(ListView):
     model = Company
@@ -52,7 +27,6 @@ class CompanyIndex(ListView):
             queryset = queryset.filter(is_customer=True)
 
         return queryset
-
 
 
 class CompanyDetail(DetailView):
@@ -86,5 +60,3 @@ class CompanyDelete(DeleteView):
             return super(CompanyDelete, self).post(request, *args, **kwargs)
         else:
             return HttpResponseRedirect(self.get_object().get_absolute_url())
-
-

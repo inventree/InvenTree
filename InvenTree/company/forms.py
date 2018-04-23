@@ -28,6 +28,7 @@ class EditSupplierOrderForm(forms.ModelForm):
         ]
 """
 
+
 class EditCompanyForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):

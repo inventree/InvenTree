@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django_filters.rest_framework import FilterSet, DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework import generics, permissions
 
@@ -27,7 +27,7 @@ class PartList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-
+        'category',
     ]
 
     ordering_fields = [
@@ -35,6 +35,12 @@ class PartList(generics.ListCreateAPIView):
     ]
 
     ordering = 'name'
+
+    search_fields = [
+        'name',
+        'description',
+    ]
+
 
 part_api_urls = [
 

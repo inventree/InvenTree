@@ -6,8 +6,6 @@ from django.utils.translation import ugettext as _
 from django.db import models
 from django.core.validators import MinValueValidator
 
-#from part.models import Part
-
 
 class Build(models.Model):
     """ A Build object organises the creation of new parts from the component parts

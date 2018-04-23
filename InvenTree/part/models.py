@@ -13,6 +13,7 @@ from django.dispatch import receiver
 from InvenTree.models import InvenTreeTree
 from company.models import Company
 
+
 class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
     """

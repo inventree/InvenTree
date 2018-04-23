@@ -3,10 +3,7 @@ from __future__ import unicode_literals
 
 import os
 
-from django.utils.translation import ugettext as _
-
 from django.db import models
-from django.core.validators import MinValueValidator
 
 
 def rename_company_image(instance, filename):
@@ -22,7 +19,7 @@ def rename_company_image(instance, filename):
     if ext:
         fn += '.' + ext
 
-    return os.path.join(base,fn)
+    return os.path.join(base, fn)
 
 
 class Company(models.Model):
@@ -51,7 +48,7 @@ class Company(models.Model):
 
     is_customer = models.BooleanField(default=False)
 
-    is_supplier = models.BooleanField(default=False)
+    is_supplier = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -66,4 +63,3 @@ class Company(models.Model):
     @property
     def has_parts(self):
         return self.part_count > 0
-

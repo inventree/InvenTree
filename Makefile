@@ -8,7 +8,7 @@ clean:
 	rm -f .coverage
 
 style:
-	flake8
+	flake8 InvenTree
 
 test:
 	python InvenTree/manage.py check
