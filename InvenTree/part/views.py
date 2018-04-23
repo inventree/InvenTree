@@ -24,7 +24,7 @@ class PartIndex(ListView):
     context_object_name = 'parts'
 
     def get_queryset(self):
-        return Part.objects.filter(category=None)
+        return Part.objects.all()  # filter(category=None)
 
     def get_context_data(self, **kwargs):
 

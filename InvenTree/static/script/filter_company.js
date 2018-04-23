@@ -1,12 +1,3 @@
-var keyDelay = 0;
-
-var delay = (function(){
-    return function(callback, ms){
-        clearTimeout(keyDelay);
-        keyDelay = setTimeout(callback, ms);
-    };
-})();
-
 
 function add_company(company){
 
@@ -47,8 +38,8 @@ $(document).ready(function(){
   $("#company-filter").keyup(function(e) {
 
       if (e.keyCode == 27){ // Escape key
-          clearTimeout(keyDelay);
           $("#company-filter").val('');
+          cancelTimer();
           filter('');
       }
       else {
