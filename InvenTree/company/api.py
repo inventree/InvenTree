@@ -21,6 +21,7 @@ class CompanyList(generics.ListCreateAPIView):
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
+        filters.OrderingFilter,
     ]
 
     filter_fields = [

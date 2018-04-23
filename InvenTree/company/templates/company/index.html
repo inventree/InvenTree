@@ -1,30 +1,31 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block content %}
 
 <h3>Companies</h3>
 
+<div class="container">
+<div class='input-group'>
+    <input class="form-control" id="company-filter" type="text" placeholder="Search...">
+    <span class='input-group-btn'>
+    <button type='button' class='btn' id='clear-filter'>Clear</button>
+    </span>
+</div>
 <hr>
-<b>TODO - Filtering! (customer / supplier / search)</b>
-<hr>
-
-<ul class='list-group'>
-{% for company in companies %}
-<li class='list-group-item'>
-    <b><a href="{% url 'company-detail' company.id %}">{{ company.name }}</a></b>
-    <br>
-    {{ company.description }}
-    {% if company.website %}
-    <a href="{{ company.website }}">- {{ company.website }}</a>
-    {% endif %}
-</li>
-{% endfor %}
+<ul class='list-group' id="company-list">
 </ul>
+
+</div>
 
 <div class='container-fluid'>
 <a href="{% url 'company-create' %}">
     <button class="btn btn-success">New Company</button>
 </a>
 </div>
+
+<script type="text/javascript" src="{% static 'script/filter_company.js' %}">
+</script>
 
 {% endblock %}
