@@ -2,7 +2,6 @@ from django.conf.urls import url, include
 from django.views.generic.base import RedirectView
 
 from . import views
-from . import api
 
 supplier_part_detail_urls = [
     url(r'edit/?', views.SupplierPartEdit.as_view(), name='supplier-part-edit'),
@@ -15,38 +14,6 @@ supplier_part_urls = [
     url(r'^new/?', views.SupplierPartCreate.as_view(), name='supplier-part-create'),
 
     url(r'^(?P<pk>\d+)/', include(supplier_part_detail_urls)),
-]
-
-# URL list for part category API
-part_cat_api_urls = [
-
-    # Part category detail
-    url(r'^(?P<pk>[0-9]+)/?$', api.PartCategoryDetail.as_view(), name='partcategory-detail'),
-
-    # List of top-level categories
-    url(r'^\?*.*/?$', api.PartCategoryList.as_view()),
-    url(r'^$', api.PartCategoryList.as_view())
-]
-
-
-# URL list for part API
-part_api_urls = [
-
-    # Individual part
-    url(r'^(?P<pk>[0-9]+)/?$', api.PartDetail.as_view(), name='part-detail'),
-
-    # List parts with optional filters
-    url(r'^\?.*/?$', api.PartList.as_view()),
-    url(r'^$', api.PartList.as_view()),
-]
-
-bom_api_urls = [
-    # Bom Item detail
-    url(r'^(?P<pk>[0-9]+)/?$', api.BomItemDetail.as_view(), name='bomitem-detail'),
-
-    # List of top-level categories
-    url(r'^\?*.*/?$', api.BomItemList.as_view()),
-    url(r'^$', api.BomItemList.as_view())
 ]
 
 part_detail_urls = [

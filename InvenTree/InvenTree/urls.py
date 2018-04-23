@@ -1,19 +1,17 @@
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from part.urls import part_api_urls, part_cat_api_urls
-from part.urls import bom_api_urls
+from company.urls import company_urls
+
 from part.urls import part_urls
 from part.urls import supplier_part_urls
 
-from stock.urls import stock_api_urls, stock_api_loc_urls
 from stock.urls import stock_urls
 
-# from supplier.urls import supplier_api_urls, supplier_api_part_urls
-from company.urls import company_urls
-from company.api import company_api_urls
-
 from build.urls import build_urls
+
+from part.api import part_api_urls
+from company.api import company_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -28,6 +26,7 @@ from users.urls import user_urls
 admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
+    url(r'^part/', include(part_api_urls)),
     url(r'^company/', include(company_api_urls)),
 
 
