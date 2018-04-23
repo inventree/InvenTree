@@ -28,7 +28,7 @@ def rename_company_image(instance, filename):
 class Company(models.Model):
 
     name = models.CharField(max_length=100, unique=True,
-                            help_text='Company naem')
+                            help_text='Company name')
 
     description = models.CharField(max_length=500)
 
