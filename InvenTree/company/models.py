@@ -42,6 +42,8 @@ class Company(models.Model):
     contact = models.CharField(max_length=100,
                                blank=True)
 
+    URL = models.URLField(blank=True, help_text='Link to external company information')
+
     image = models.ImageField(upload_to=rename_company_image, max_length=255, null=True, blank=True)
 
     notes = models.TextField(blank=True)
