@@ -10,10 +10,8 @@
 {% include "part/category_subcategories.html" with children=children %}
 {% endif %}
 
-{% if parts.all|length > 0%}
-<h4>Top Level Parts</h4>
+<h4>Parts</h4>
 {% include "part/category_parts.html" with parts=parts %}
-{% endif %}
 
 <div class='container-fluid'>
 <a href="{% url 'category-create' %}">

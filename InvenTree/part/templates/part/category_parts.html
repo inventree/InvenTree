@@ -33,7 +33,9 @@ function add_part(part) {
 
     // TODO - Work out how to add in category name + link...
     if (part.category){
-        text += "category: " + part.category;
+        text += '<a href="/part/category/' + part.category + '/">';
+        text += part.category_path;
+        text += '</a>';
     }
 
     text += "</td>";

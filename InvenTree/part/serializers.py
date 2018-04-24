@@ -17,6 +17,7 @@ class PartSerializer(serializers.ModelSerializer):
             'URL',  # Link to an external URL (optional)
             'description',
             'category',
+            'category_path',
             'total_stock',
             'available_stock',
             'units',

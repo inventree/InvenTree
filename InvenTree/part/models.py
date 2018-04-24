@@ -154,6 +154,12 @@ class Part(models.Model):
         verbose_name_plural = "Parts"
 
     @property
+    def category_path(self):
+        if self.category:
+            return self.category.pathstring
+        return ''
+
+    @property
     def available_stock(self):
         """
         Return the total available stock.
