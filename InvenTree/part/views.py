@@ -132,7 +132,7 @@ class CategoryDelete(DeleteView):
 
 class CategoryCreate(CreateView):
     model = PartCategory
-    template_name = 'part/category_new.html'
+    template_name = 'part/partial_category_new.html'
     form_class = EditCategoryForm
 
     def get_context_data(self, **kwargs):

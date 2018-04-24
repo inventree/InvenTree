@@ -5,6 +5,18 @@
 
 {% include "part/cat_link.html" with category=category %}
 
+<div class='modal fade' id='modal-cat'>
+    <div class='modal-dialog'>
+        <div class='modal-content'>
+        </div>
+    </div>
+</div>
+
+<button type='button' class='btn btn-primary js-create-cat'>
+    <span class='glyphicon glyphicon-plus'></span>
+    New Category
+</button>
+
 {% if children.all|length > 0 %}
 <h4>Part Categories</h4>
 {% include "part/category_subcategories.html" with children=children %}
@@ -23,3 +35,25 @@
 </div>
 {% endblock %}
 
+{% block javascript %}
+
+<script type="text/javascript">
+$(function () {
+    $(".js-create-cat").click(function () {
+        $.ajax({
+            url: '/part/category/new/',
+            type: 'get',
+            //dataType: 'json',
+            beforeSend: function () {
+                $("#modal-cat").modal("show");
+            },
+            success: function (data) {
+                $("#modal-cat .modal-content").html(data);
+                //alert(data);
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}
