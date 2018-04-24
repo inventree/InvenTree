@@ -75,11 +75,10 @@
         <tr>
             <td>Allocated</td>
             {% if part.allocation_count > part.total_stock %}
-            <td><span class='label label-danger'>{{ part.allocation_count }}</span>
+            <td><span class='label label-danger'>{{ part.allocation_count }}</span></td>
             {% else %}
-            {{ part.allocation_count }}
+            <td>{{ part.allocation_count }}</td>
             {% endif %}
-            </td>
         </tr>
         {% endif %}
     </table>
