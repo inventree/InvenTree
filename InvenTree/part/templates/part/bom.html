@@ -19,7 +19,9 @@
     <td><a href="{% url 'part-detail' sub_part.id %}">{{ sub_part.name }}</a></td>
     <td>{{ sub_part.description }}</td>
     <td>{{ bom_item.quantity }}</span></td>
-    <td><a href="{% url 'bom-item-detail' bom_item.id %}">Edit</a></td>
+    <td>
+        <button type='button' class='btn btn-success'>Edit</button>
+    </td>
 </tr>
 {% endwith %}
 {% endfor %}
@@ -30,5 +32,11 @@
     <button class='btn btn-success'>Add BOM Item</button>
 </a>
 </div>
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 
 {% endblock %}

@@ -37,7 +37,11 @@
 <script type="text/javascript">
 $(document).ready(function () {
 
-    bindModalForm('#modal-cat', '.js-create-cat', "{% url 'category-create' %}");
+    $(".js-create-cat").click(function() {
+        launchModalForm("#modal-cat", "{% url 'category-create' %}");
+    });
+
+    //bindModalForm('#modal-cat', '.js-create-cat', "{% url 'category-create' %}");
 });
 </script>
 

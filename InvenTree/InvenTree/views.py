@@ -39,7 +39,7 @@ class AjaxView(object):
 
 class AjaxCreateView(AjaxView, CreateView):
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
 
         if request.is_ajax():
             form = self.form_class(request.POST)
@@ -55,9 +55,39 @@ class AjaxCreateView(AjaxView, CreateView):
             return self.renderJsonResponse(request, form, data)
 
         else:
-            return super(CreateView, self).post(request)
+            return super(CreateView, self).post(request, *args, **kwargs)
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
+
+        response = super(CreateView, self).get(request, *args, **kwargs)
+
+        if request.is_ajax():
+            form = self.form_class(initial=self.get_initial())
+
+            return self.renderJsonResponse(request, form)
+
+        else:
+            return response
+
+
+class AjaxUpdateView(AjaxView, UpdateView):
+
+    def post(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+            form = self.form_class(request.POST)
+
+            data = {'form_valid': form.is_valid()}
+
+            if form.is_valid():
+                obj = form.save()
+
+            return self.renderJsonResponse(request, form, data)
+
+        else:
+            return super(UpdateView, self).post(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
 
         response = super(CreateView, self).get(request)
 
@@ -67,4 +97,4 @@ class AjaxCreateView(AjaxView, CreateView):
             return self.renderJsonResponse(request, form)
 
         else:
-            return response
+            return super(UpdateView, self).get(request, *args, **kwargss)
