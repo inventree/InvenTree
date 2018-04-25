@@ -20,15 +20,13 @@ class AjaxView(object):
             return self.template_name
 
 
-    def renderJsonResponse(self, request, form):
+    def renderJsonResponse(self, request, form, data={}):
 
         context = {'form': form,
                    'form_action': self.ajax_form_action,
                    'form_title': self.ajax_form_title,
                    'submit_text': self.ajax_submit_text,
                   }
-
-        data = {'form_valid': form.is_valid()}
 
         data['html_form'] = render_to_string(
             self.getAjaxTemplate(),
@@ -46,20 +44,27 @@ class AjaxCreateView(AjaxView, CreateView):
         if request.is_ajax():
             form = self.form_class(request.POST)
 
-            if form.is_valid():
-                form.save()
+            data = {'form_valid': form.is_valid()}
 
-            return self.renderJsonResponse(request, form)
+            if form.is_valid():
+                obj = form.save()
+
+                # Return the PK of the newly-created object
+                data['pk']  = obj.pk
+
+            return self.renderJsonResponse(request, form, data)
 
         else:
             return super(CreateView, self).post(request)
 
     def get(self, request):
 
+        response = super(CreateView, self).get(request)
+
         if request.is_ajax():
-            form = self.form_class()
+            form = self.form_class(initial=self.get_initial())
 
             return self.renderJsonResponse(request, form)
 
         else:
-            return super(CreateView, self).post(request)
+            return response
