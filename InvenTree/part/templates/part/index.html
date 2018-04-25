@@ -32,56 +32,12 @@
 
 {% block javascript %}
 
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
 <script type="text/javascript">
 $(document).ready(function () {
 
-    $(".js-create-cat").click(function () {
-        $.ajax({
-            url: '/part/category/new/',
-            type: 'get',
-            dataType: 'json',
-            beforeSend: function () {
-                $("#modal-cat").modal("show");
-            },
-            success: function (data) {
-                if (data.html_form) {
-                    $("#modal-cat .modal-content").html(data.html_form);
-                }
-                else {
-                    alert('JSON response missing form data');
-                    $("#modal-cat").modal("hide");
-                }
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                alert("Error requesting form data:\n" + thrownError);
-                $("#modal-cat").modal("hide");
-            }
-        });
-    });
-
-    $("#modal-cat").on("submit", ".js-modal-form", function () {
-      var form = $(this);
-
-      $.ajax({
-          url: form.attr('action'),
-          data: form.serialize(),
-          type: form.attr('method'),
-          dataType: 'json',
-          success: function (data) {
-              if (data.html_form) {
-                  $("#modal-cat .modal-content").html(data.html_form);
-              }
-              else {
-                  alert('No form data!');
-              }
-          },
-          error: function (xhr, ajaxOptions, thrownError) {
-              alert("Error submitting form data:\n" + thrownError);
-          }
-      });
-
-      return false;
-    });
+    bindModalForm('#modal-cat', '.js-create-cat', "{% url 'category-create' %}", {category: 1});
 });
 </script>
 
