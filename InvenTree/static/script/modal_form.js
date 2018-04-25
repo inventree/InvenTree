@@ -26,7 +26,7 @@ function launchModalForm(modal, url, data) {
         var form = $(this);
 
         $.ajax({
-            url: form.attr('action'),
+            url: url,
             data: form.serialize(),
             type: form.attr('method'),
             dataType: 'json',

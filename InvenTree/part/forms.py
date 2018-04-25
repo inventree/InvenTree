@@ -63,10 +63,11 @@ class EditBomItemForm(forms.ModelForm):
         super(EditBomItemForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
-        self.helper.form_id = 'id-edit-part-form'
+        #self.helper.form_id = 'id-edit-part-form'
         self.helper.form_method = 'post'
 
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.form_tag = False
+        #self.helper.add_input(Submit('submit', 'Submit'))
 
     class Meta:
         model = BomItem

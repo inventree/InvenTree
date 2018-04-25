@@ -54,10 +54,12 @@
 
 <script type='text/javascript'>
 
-    bindModalForm('#modal-cat',
-                  '.js-create-cat',
-                  "{% url 'category-create' %}",
-                  {category: {{ category.id }} });
+    $(".js-create-cat").click(function() {
+        launchModalForm("#modal-cat",
+                        "{% url 'category-create' %}",
+                        {category: {{ category.id }} });
+    });
+
 
 </script>
 

@@ -19,7 +19,7 @@ from .forms import EditBomItemForm
 
 from .forms import EditSupplierPartForm
 
-from InvenTree.views import AjaxCreateView
+from InvenTree.views import AjaxCreateView, AjaxUpdateView
 
 class PartIndex(ListView):
     model = Part
@@ -168,10 +168,12 @@ class BomItemDetail(DetailView):
     template_name = 'part/bom-detail.html'
 
 
-class BomItemCreate(CreateView):
+class BomItemCreate(AjaxCreateView):
     model = BomItem
     form_class = EditBomItemForm
     template_name = 'part/bom-create.html'
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Create BOM item'
 
     def get_initial(self):
         # Look for initial values
@@ -186,10 +188,12 @@ class BomItemCreate(CreateView):
         return initials
 
 
-class BomItemEdit(UpdateView):
+class BomItemEdit(AjaxUpdateView):
     model = BomItem
     form_class = EditBomItemForm
     template_name = 'part/bom-edit.html'
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Edit BOM item'
 
 
 class BomItemDelete(DeleteView):

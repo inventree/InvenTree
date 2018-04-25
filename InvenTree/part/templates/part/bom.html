@@ -1,8 +1,15 @@
 {% extends "part/part_base.html" %}
-
+{% load static %}
 {% block details %}
 
 {% include 'part/tabs.html' with tab='bom' %}
+
+<div class='modal fade' id='modal-form'>
+    <div class='modal-dialog'>
+        <div class='modal-content'>
+        </div>
+    </div>
+</div>
 
 <h3>Bill of Materials</h3>
 
@@ -18,9 +25,9 @@
 <tr>
     <td><a href="{% url 'part-detail' sub_part.id %}">{{ sub_part.name }}</a></td>
     <td>{{ sub_part.description }}</td>
-    <td>{{ bom_item.quantity }}</span></td>
+    <td>{{ bom_item.quantity }}</td>
     <td>
-        <button type='button' class='btn btn-success'>Edit</button>
+        <button type='button' url="{% url 'bom-item-edit' bom_item.id %}" class='btn btn-success edit-row-button'>Edit</button>
     </td>
 </tr>
 {% endwith %}
@@ -28,9 +35,7 @@
 </table>
 
 <div class='container-fluid'>
-<a href="{% url 'bom-item-create' %}?parent={{ part.id }}">
-    <button class='btn btn-success'>Add BOM Item</button>
-</a>
+    <button type='button' class='btn btn-success' id='new-bom-item'>Add BOM Item</button>
 </div>
 
 {% endblock %}
@@ -38,5 +43,20 @@
 {% block javascript %}
 
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type='text/javascript'>
+    $(".edit-row-button").click(function () {
+        var button = $(this);
+
+        launchModalForm("#modal-form",
+                        button.attr('url'));
+
+    });
+
+    $("#new-bom-item").click(function () {
+        launchModalForm("#modal-form",
+                        "{% url 'bom-item-create' %}/?parent={{ part.id }}");
+    });
+</script>
 
 {% endblock %}
