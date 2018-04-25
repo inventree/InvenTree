@@ -22,9 +22,9 @@
 {% endif %}
 
 <div class='container-fluid'>
-<a href="{% url 'category-create' %}?category={{ category.id }}">
-    <button class="btn btn-success">New Category</button>
-</a>
+    <button type='button' class='btn btn-primary js-create-cat'>
+        New Category
+    </button>
 <a href="{% url 'part-create' %}?category={{ category.id }}">
     <button class="btn btn-success">New Part</button>
 </a>
@@ -38,5 +38,27 @@
 </a>
 
 </div>
+
+<div class='modal fade' id='modal-cat'>
+    <div class='modal-dialog'>
+        <div class='modal-content'>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type='text/javascript'>
+
+    bindModalForm('#modal-cat',
+                  '.js-create-cat',
+                  "{% url 'category-create' %}",
+                  {category: {{ category.id }} });
+
+</script>
 
 {% endblock %}
