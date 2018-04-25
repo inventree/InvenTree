@@ -48,7 +48,7 @@ part_bom_urls = [
 part_urls = [
 
     # Create a new category
-    url(r'^category/new/?', views.CategoryCreate.as_view(), name='category-create'),
+    url(r'^category/new/?', views.CategoryCreateJson.as_view(), name='category-create'),
 
     # Create a new part
     url(r'^new/?', views.PartCreate.as_view(), name='part-create'),

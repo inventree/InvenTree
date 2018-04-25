@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.template.loader import render_to_string
+
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
@@ -128,6 +131,42 @@ class CategoryDelete(DeleteView):
             return super(CategoryDelete, self).post(request, *args, **kwargs)
         else:
             return HttpResponseRedirect(self.get_object().get_absolute_url())
+
+
+class CategoryCreateJson(CreateView):
+    model = PartCategory
+    template_name = 'part/partial_category_new.html'
+    form_class = EditCategoryForm
+
+    def renderJsonResponse(self, request, form, data):
+
+        context = {'form': form}
+
+        data['html_form'] = render_to_string(self.template_name,
+                         context,
+                         request=request)
+
+        return JsonResponse(data)
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+
+        data = {}
+
+        if form.is_valid():
+            form.save()
+            data['form_valid'] = True
+        else:
+            data['form_valid'] = False
+
+        return self.renderJsonResponse(request, form, data)
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+
+        data = {}
+
+        return self.renderJsonResponse(request, form, data)
 
 
 class CategoryCreate(CreateView):
