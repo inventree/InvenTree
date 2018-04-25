@@ -12,11 +12,6 @@
     </div>
 </div>
 
-<button type='button' class='btn btn-primary js-create-cat'>
-    <span class='glyphicon glyphicon-plus'></span>
-    New Category
-</button>
-
 {% if children.all|length > 0 %}
 <h4>Part Categories</h4>
 {% include "part/category_subcategories.html" with children=children %}
@@ -26,9 +21,9 @@
 {% include "part/category_parts.html" with parts=parts %}
 
 <div class='container-fluid'>
-<a href="{% url 'category-create' %}">
-    <button class="btn btn-success">New Category</button>
-</a>
+<button type='button' class='btn btn-primary js-create-cat'>
+    New Category
+</button>
 <a href="{% url 'part-create' %}">
     <button class="btn btn-success">New Part</button>
 </a>
@@ -49,7 +44,17 @@ $(document).ready(function () {
                 $("#modal-cat").modal("show");
             },
             success: function (data) {
-                $("#modal-cat .modal-content").html(data.html_form);
+                if (data.html_form) {
+                    $("#modal-cat .modal-content").html(data.html_form);
+                }
+                else {
+                    alert('JSON response missing form data');
+                    $("#modal-cat").modal("hide");
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert("Error requesting form data:\n" + thrownError);
+                $("#modal-cat").modal("hide");
             }
         });
     });
@@ -63,12 +68,15 @@ $(document).ready(function () {
           type: form.attr('method'),
           dataType: 'json',
           success: function (data) {
-              if (data.form_valid) {
-                  alert("Success!");
-              }
-              else {
+              if (data.html_form) {
                   $("#modal-cat .modal-content").html(data.html_form);
               }
+              else {
+                  alert('No form data!');
+              }
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+              alert("Error submitting form data:\n" + thrownError);
           }
       });
 

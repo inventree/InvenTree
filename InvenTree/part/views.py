@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.template.loader import render_to_string
-
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
-from django.http import JsonResponse
+
+from django.urls import reverse_lazy
 
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
@@ -20,6 +19,7 @@ from .forms import EditBomItemForm
 
 from .forms import EditSupplierPartForm
 
+from InvenTree.views import AjaxCreateView
 
 class PartIndex(ListView):
     model = Part
@@ -133,45 +133,12 @@ class CategoryDelete(DeleteView):
             return HttpResponseRedirect(self.get_object().get_absolute_url())
 
 
-class CategoryCreateJson(CreateView):
+class CategoryCreate(AjaxCreateView):
     model = PartCategory
-    template_name = 'part/partial_category_new.html'
-    form_class = EditCategoryForm
-
-    def renderJsonResponse(self, request, form, data):
-
-        context = {'form': form}
-
-        data['html_form'] = render_to_string(self.template_name,
-                         context,
-                         request=request)
-
-        return JsonResponse(data)
-
-    def post(self, request):
-        form = self.form_class(request.POST)
-
-        data = {}
-
-        if form.is_valid():
-            form.save()
-            data['form_valid'] = True
-        else:
-            data['form_valid'] = False
-
-        return self.renderJsonResponse(request, form, data)
-
-    def get(self, request, *args, **kwargs):
-        form = self.form_class()
-
-        data = {}
-
-        return self.renderJsonResponse(request, form, data)
-
-
-class CategoryCreate(CreateView):
-    model = PartCategory
-    template_name = 'part/partial_category_new.html'
+    ajax_form_action = reverse_lazy('category-create')
+    ajax_form_title = 'Create new part category'
+    ajax_template_name = 'modal_form.html'
+    template_name = 'part/category_new.html'
     form_class = EditCategoryForm
 
     def get_context_data(self, **kwargs):
