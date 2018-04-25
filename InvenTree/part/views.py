@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 
+from django.urls import reverse_lazy
+
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
@@ -17,6 +19,7 @@ from .forms import EditBomItemForm
 
 from .forms import EditSupplierPartForm
 
+from InvenTree.views import AjaxCreateView, AjaxUpdateView
 
 class PartIndex(ListView):
     model = Part
@@ -130,8 +133,11 @@ class CategoryDelete(DeleteView):
             return HttpResponseRedirect(self.get_object().get_absolute_url())
 
 
-class CategoryCreate(CreateView):
+class CategoryCreate(AjaxCreateView):
     model = PartCategory
+    ajax_form_action = reverse_lazy('category-create')
+    ajax_form_title = 'Create new part category'
+    ajax_template_name = 'modal_form.html'
     template_name = 'part/category_new.html'
     form_class = EditCategoryForm
 
@@ -162,10 +168,12 @@ class BomItemDetail(DetailView):
     template_name = 'part/bom-detail.html'
 
 
-class BomItemCreate(CreateView):
+class BomItemCreate(AjaxCreateView):
     model = BomItem
     form_class = EditBomItemForm
     template_name = 'part/bom-create.html'
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Create BOM item'
 
     def get_initial(self):
         # Look for initial values
@@ -180,10 +188,12 @@ class BomItemCreate(CreateView):
         return initials
 
 
-class BomItemEdit(UpdateView):
+class BomItemEdit(AjaxUpdateView):
     model = BomItem
     form_class = EditBomItemForm
     template_name = 'part/bom-edit.html'
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Edit BOM item'
 
 
 class BomItemDelete(DeleteView):
