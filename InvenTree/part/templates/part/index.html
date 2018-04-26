@@ -5,12 +5,7 @@
 
 {% include "part/cat_link.html" with category=category %}
 
-<div class='modal fade' id='modal-cat'>
-    <div class='modal-dialog'>
-        <div class='modal-content'>
-        </div>
-    </div>
-</div>
+{% include 'modal.html' %}
 
 {% if children.all|length > 0 %}
 <h4>Part Categories</h4>
@@ -21,12 +16,10 @@
 {% include "part/category_parts.html" with parts=parts %}
 
 <div class='container-fluid'>
-<button type='button' class='btn btn-primary js-create-cat'>
+<button type='button' class='btn btn-primary' id='create-cat'>
     New Category
 </button>
-<a href="{% url 'part-create' %}">
-    <button class="btn btn-success">New Part</button>
-</a>
+<button class="btn btn-success" id='create-part'>New Part</button>
 </div>
 {% endblock %}
 
@@ -37,8 +30,12 @@
 <script type="text/javascript">
 $(document).ready(function () {
 
-    $(".js-create-cat").click(function() {
-        launchModalForm("#modal-cat", "{% url 'category-create' %}");
+    $("#create-cat").click(function() {
+        launchModalForm("#modal-form", "{% url 'category-create' %}");
+    });
+
+    $("#create-part").click(function() {
+        launchModalForm("#modal-form", "{% url 'part-create' %}");
     });
 });
 </script>

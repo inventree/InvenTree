@@ -41,13 +41,16 @@ class PartIndex(ListView):
         return context
 
 
-class PartCreate(CreateView):
+class PartCreate(AjaxCreateView):
     """ Create a new part
     - Optionally provide a category object as initial data
     """
     model = Part
     form_class = EditPartForm
     template_name = 'part/create.html'
+
+    ajax_form_title = 'Create new part'
+    ajax_template_name = 'modal_form.html'
 
     def get_category_id(self):
         return self.request.GET.get('category', None)
