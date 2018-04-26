@@ -84,10 +84,12 @@ class PartDetail(DetailView):
     template_name = 'part/detail.html'
 
 
-class PartEdit(UpdateView):
+class PartEdit(AjaxUpdateView):
     model = Part
     form_class = EditPartForm
     template_name = 'part/edit.html'
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Edit Part Properties'
 
 
 class PartDelete(DeleteView):

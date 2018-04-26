@@ -1,10 +1,13 @@
 {% extends "part/part_base.html" %}
-
+{% load static %}
 {% block details  %}
 
 {% include 'part/tabs.html' with tab='detail' %}
 
 <h3>Part Details</h3>
+
+{% include 'modal.html' %}
+{% include 'modal_delete.html' %}
 
 <table class='table table-striped'>
 <tr>
@@ -15,6 +18,12 @@
     <td>Description</td>
     <td>{{ part.decription }}</td>
 </tr>
+{% if part.IPN %}
+<tr>
+    <td>IPN</td>
+    <td>{{ part.IPN }}</td>
+</tr>
+{% endif %}
 <tr>
     <td>Category</td>
     <td>
@@ -73,8 +82,22 @@
 {% endif %}
 
 <div class='container-fluid'>
-<a href="{% url 'part-edit' part.id %}"><button class="btn btn-info">Edit Part</button></a>
-<a href="{% url 'part-delete' part.id %}"><button class="btn btn-danger">Delete Part</button></a>
+<button class="btn btn-info" id='edit-part'>Edit Part</button>
+<button class="btn btn-danger" id='delete-part'>Delete Part</button>
 </div>
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+    $("#edit-part").click(function() {
+        launchModalForm("#modal-form", "{% url 'part-edit' part.id %}");
+    });
+});
+</script>
 
 {% endblock %}
