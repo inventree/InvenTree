@@ -42,10 +42,12 @@
 {% endblock %}
 
 {% block javascript %}
-
+<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>``
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 
 <script type='text/javascript'>
+$(document).ready(function (){
+    $('#part-list').footable();
 
     $("#create-cat").click(function() {
         launchModalForm("#modal-form",
@@ -60,8 +62,7 @@
                         {data: {category: {{ category.id }}
                     }});
     });
-
-
+});
 </script>
 
 {% endblock %}

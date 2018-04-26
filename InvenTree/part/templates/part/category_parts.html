@@ -1,90 +1,24 @@
-<div class='container'>
-    <div class='input-group'>
-        <input class='form-control' id='part-filter' type='text' placeholder='Search...'>
-        <span class='input-group-btn'>
-            <button type='button' class='btn' id='clear-filter'>Clear</button>
-        </span>
-    </div>
-
-<table class="table table-striped" id="part-list">
+<table class="table table-striped" data-sorting='true' id="part-list">
+<thead>
     <tr>
         <th>Part</th>
         <th>Description</th>
         <th>Category</th>
+        <th data-type='number'>Stock</th>
     </tr>
+</thead>
+<tbody>
+{% for part in parts %}
+<tr>
+    <td><a href="{% url 'part-detail' part.id %}">{{ part.name }}</a></td>
+    <td>{{ part.description }}</td>
+    <td>
+        {% if part.category %}
+        <a href="{% url 'category-detail' part.category.id %}">{{ part.category_path }}</a>
+        {% endif %}
+    </td>
+    <td>{{ part.total_stock }}</td>
+</tr>
+{% endfor %}
+</tbody>
 </table>
-
-</div>
-
-{% load static %}
-
-<script type="text/javascript" src="{% static 'script/delay.js' %}">
-</script>
-
-<script type="text/javascript">
-
-function add_part(part) {
-    var text = "<tr>";
-
-    text += "<td><a href='" + part.url + "'>" + part.name + "</a></td>";
-    text += "<td>" + part.description + "</td>";
-
-    text += "<td>";
-
-    // TODO - Work out how to add in category name + link...
-    if (part.category){
-        text += '<a href="/part/category/' + part.category + '/">';
-        text += part.category_path;
-        text += '</a>';
-    }
-
-    text += "</td>";
-
-    text += "</tr>";
-
-    $("#part-list").append(text);
-}
-
-function filter_parts(text) {
-    $.ajax({
-        url: "{% url 'api-part-list' %}",
-        data: {
-            {% if category %}
-            'category': {{ category.id }},
-            {% endif %}
-            'search': text
-        },
-        success: function(result) {
-            $("#part-list").find("tr:gt(0)").remove();
-            $.each(result.results, function(i, part) {
-                add_part(part);
-            })
-        }
-    });
-}
-
-$(document).ready(function() {
-    $("#part-filter").keyup(function(e) {
-        if (e.keyCode == 27){ // Escape key
-            cancelTimer();
-            $("#part-filter").val('');
-        }
-        else {
-            var value = $(this).val().toLowerCase();
-
-            delay(function() {
-                filter_parts(value);
-            }, 500);
-        }
-    });
-
-    $("#clear-filter").click(function(){
-        clearTimeout(keyDelay);
-        $("#company-filter").val('');
-        filter_parts('');
-    });
-
-    filter_parts('');
-});
-
-</script>

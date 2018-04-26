@@ -12,6 +12,7 @@
 {% include 'part/tabs.html' with tab='bom' %}
 
 {% include 'modal.html' %}
+{% include 'modal_delete.html' %}
 
 <h3>Bill of Materials</h3>
 
@@ -21,7 +22,7 @@
         <th>Part</th>
         <th>Description</th>
         <th data-type='number'>Quantity</th>
-        <th data-sortable='false'>Edit</th>
+        <th data-sortable='false'></th>
     </tr>
 </thead>
 <tbody>
@@ -33,6 +34,7 @@
     <td>{{ bom_item.quantity }}</td>
     <td>
         <button type='button' url="{% url 'bom-item-edit' bom_item.id %}" class='btn btn-success edit-row-button'>Edit</button>
+        <button type='button' url="{% url 'bom-item-delete' bom_item.id %}" class='btn btn-danger delete-row-button'>Delete</button>
     </td>
 </tr>
 {% endwith %}
@@ -54,6 +56,13 @@
 <script type='text/javascript'>
 $(document).ready(function(){
     $('#bom-table').footable();
+
+    $('#bom-table').on('click', '.delete-row-button', function () {
+        var button = $(this);
+
+        launchDeleteForm("#modal-delete",
+                         button.attr('url'));
+    });
 
     $('#bom-table').on('click', '.edit-row-button', function () {
         var button = $(this);

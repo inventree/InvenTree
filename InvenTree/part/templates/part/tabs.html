@@ -20,7 +20,7 @@
     {% if part.purchaseable %}
     <li{% ifequal tab 'suppliers' %} class="active"{% endifequal %}>
         <a href="{% url 'part-suppliers' part.id %}">Suppliers
-            <span class="badge">{{ part.supplier_count }}<span>
+            <span class="badge">{{ part.supplier_count }}</span>
         </a></li>
     {% endif %}
     {% if part.trackable %}

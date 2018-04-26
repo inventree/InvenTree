@@ -8,7 +8,8 @@ function attachSelect(modal) {
     });
 }
 
-function launchDeleteForm(modal, url, options) {
+function launchDeleteForm(modal, url, options = {}) {
+
     $(modal).on('shown.bs.modal', function() {
         $(modal + ' .modal-form-content').scrollTop(0);
     });
@@ -62,7 +63,7 @@ function launchDeleteForm(modal, url, options) {
     });
 }
 
-function launchModalForm(modal, url, options) {
+function launchModalForm(modal, url, options = {}) {
 
     $(modal).on('shown.bs.modal', function () {
         $(modal + ' .modal-form-content').scrollTop(0);
@@ -119,8 +120,17 @@ function launchModalForm(modal, url, options) {
             dataType: 'json',
             success: function (response) {
                 if (response.form_valid) {
-                    alert("Success!");
+
                     $(modal).modal('hide');
+
+                    if (options.redirect) {
+                        window.location.href = options.redirect;
+                    }
+
+                    if (options.success) {
+                        options.success();
+                    }
+
                 }
                 else if (response.html_form) {
                     var target = modal + ' .modal-form-content';

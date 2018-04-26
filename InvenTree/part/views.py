@@ -205,19 +205,21 @@ class BomItemEdit(AjaxUpdateView):
     ajax_form_title = 'Edit BOM item'
 
 
-class BomItemDelete(DeleteView):
+class BomItemDelete(AjaxDeleteView):
     model = BomItem
     template_name = 'part/bom-delete.html'
     context_object_name = 'item'
+    ajax_form_title = 'Confim BOM item deletion'
 
-    success_url = '/part'
+    #success_url = '/part'
 
+    """
     def post(self, request, *args, **kwargs):
         if 'confirm' in request.POST:
             return super(BomItemDelete, self).post(request, *args, **kwargs)
         else:
             return HttpResponseRedirect(self.get_object().get_absolute_url())
-
+    """
 
 class SupplierPartDetail(DetailView):
     model = SupplierPart
