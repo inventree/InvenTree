@@ -11,6 +11,13 @@ function launchModalForm(modal, url, data) {
             if (response.html_form) {
                 var target = modal + ' .modal-content';
                 $(target).html(response.html_form);
+
+                var select = modal + ' .select';
+                $(select).select2({
+                    dropdownParent: $(modal),
+                    dropdownAutoWidth: true
+                });
+
             } else {
                 alert('JSON response missing form data');
                 $(modal).modal('hide');
@@ -38,6 +45,12 @@ function launchModalForm(modal, url, data) {
                 else if (response.html_form) {
                     var target = modal + ' .modal-content';
                     $(target).html(response.html_form);
+
+                    var select = modal + ' .select';
+                    $(select).select2({
+                        dropdownParent: $(modal),
+                        dropdownAutoWidth: true
+                    });
                 }
                 else {
                     alert('JSON response missing form data');
