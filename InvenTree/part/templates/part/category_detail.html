@@ -50,15 +50,15 @@
     $("#create-cat").click(function() {
         launchModalForm("#modal-form",
                         "{% url 'category-create' %}",
-                        {category: {{ category.id }}
-                    });
+                        {data: {category: {{ category.id }}
+                    }});
     });
 
     $("#create-part").click( function() {
         launchModalForm("#modal-form",
                         "{% url 'part-create' %}",
-                        {category: {{ category.id }}
-                    });
+                        {data: {category: {{ category.id }}
+                    }});
     });
 
 

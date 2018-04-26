@@ -62,18 +62,17 @@ function launchDeleteForm(modal, url, options) {
     });
 }
 
-function launchModalForm(modal, url, data, options) {
+function launchModalForm(modal, url, options) {
 
     $(modal).on('shown.bs.modal', function () {
         $(modal + ' .modal-form-content').scrollTop(0);
     });
 
-    $.ajax({
-        url: url,       // Where to request the data from
-        type: 'get',    // GET request
-        data: data,     // Any additional context data (e.g. initial values)
+    ajax_data = {
+        url: url,
+        type: 'get',
         dataType: 'json',
-        beforeSend: function() {
+        beforeSend: function () {
             $(modal).modal('show');
         },
         success: function(response) {
@@ -98,7 +97,15 @@ function launchModalForm(modal, url, data, options) {
             alert('Error requesting form data:\n' + thrownError);
             $(modal).modal('hide');
         }
-    });
+    };
+
+    // Add in extra request data if provided
+    if (options.data) {
+        ajax_data.data = options.data;
+    }
+
+    // Send the AJAX request
+    $.ajax(ajax_data);
 
     $(modal).on('click', '#modal-form-submit', function() {
 
