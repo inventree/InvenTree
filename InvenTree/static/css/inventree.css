@@ -19,6 +19,15 @@
     object-fit: contain;
 }
 
+.checkbox {
+    margin-left: 20px;
+}
+
+.checkboxinput {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
 .media {
     padding-top: 15px;
 }
