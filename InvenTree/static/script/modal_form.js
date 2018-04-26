@@ -1,4 +1,9 @@
 function launchModalForm(modal, url, data) {
+
+    $(modal).on('shown.bs.modal', function () {
+        $(modal + ' .modal-content').scrollTop(0); // animate({ scrollTop: 0 }, 'fast');
+    });
+
     $.ajax({
         url: url,       // Where to request the data from
         type: 'get',    // GET request
