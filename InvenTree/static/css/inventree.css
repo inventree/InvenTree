@@ -40,7 +40,12 @@
   overflow: hidden;
 }
 
-.modal-content {
+.modal-content h3 {
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.modal-form-content {
   border-radius: 0;
   position:relative;
   height: auto !important;

@@ -23,11 +23,12 @@ class AjaxView(object):
 
     def renderJsonResponse(self, request, form, data={}):
 
-        context = {'form': form,
-                   'form_action': self.ajax_form_action,
-                   'form_title': self.ajax_form_title,
-                   'submit_text': self.ajax_submit_text,
+        context = {'form': form
                   }
+
+        data['title'] = self.ajax_form_title
+
+        data['submit_text'] = self.ajax_submit_text
 
         data['html_form'] = render_to_string(
             self.getAjaxTemplate(),

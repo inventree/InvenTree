@@ -1,7 +1,17 @@
+function attachSelect(modal) {
+
+    // Attach to any 'select' inputs on the modal
+    // Provide search filtering of dropdown items
+    $(modal + ' .select').select2({
+        dropdownParent: $(modal),
+        dropdownAutoWidth: true,
+    });
+}
+
 function launchModalForm(modal, url, data) {
 
     $(modal).on('shown.bs.modal', function () {
-        $(modal + ' .modal-content').scrollTop(0); // animate({ scrollTop: 0 }, 'fast');
+        $(modal + ' .modal-form-content').scrollTop(0);
     });
 
     $.ajax({
@@ -13,15 +23,17 @@ function launchModalForm(modal, url, data) {
             $(modal).modal('show');
         },
         success: function(response) {
+            if (response.title) {
+                $(modal + ' #modal-title').html(response.title);
+            }
+            if (response.submit_text) {
+                $(modal + ' #modal-form-submit').html(response.submit_text);
+            }
             if (response.html_form) {
-                var target = modal + ' .modal-content';
+                var target = modal + ' .modal-form-content';
                 $(target).html(response.html_form);
 
-                var select = modal + ' .select';
-                $(select).select2({
-                    dropdownParent: $(modal),
-                    dropdownAutoWidth: true
-                });
+                attachSelect(modal);
 
             } else {
                 alert('JSON response missing form data');
@@ -34,8 +46,10 @@ function launchModalForm(modal, url, data) {
         }
     });
 
-    $(modal).on('submit', '.js-modal-form', function() {
-        var form = $(this);
+    $(modal).on('click', '#modal-form-submit', function() {
+
+        // Extract the form from the modal dialog
+        var form = $(modal).find(".js-modal-form");
 
         $.ajax({
             url: url,
@@ -48,14 +62,10 @@ function launchModalForm(modal, url, data) {
                     $(modal).modal('hide');
                 }
                 else if (response.html_form) {
-                    var target = modal + ' .modal-content';
+                    var target = modal + ' .modal-form-content';
                     $(target).html(response.html_form);
 
-                    var select = modal + ' .select';
-                    $(select).select2({
-                        dropdownParent: $(modal),
-                        dropdownAutoWidth: true
-                    });
+                    attachSelect(modal);
                 }
                 else {
                     alert('JSON response missing form data');
