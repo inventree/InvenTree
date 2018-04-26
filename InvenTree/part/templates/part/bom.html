@@ -1,25 +1,30 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+
+{% block css %}
+
+<link rel='stylesheet' href="{% static 'css/footable.bootstrap.css' %}">
+
+{% endblock %}
+
 {% block details %}
 
 {% include 'part/tabs.html' with tab='bom' %}
 
-<div class='modal fade' id='modal-form'>
-    <div class='modal-dialog'>
-        <div class='modal-content'>
-        </div>
-    </div>
-</div>
+{% include 'modal.html' %}
 
 <h3>Bill of Materials</h3>
 
-<table class="table table-striped">
-<tr>
-    <th>Part</th>
-    <th>Description</th>
-    <th>Quantity</th>
-    <th>Edit</th>
-</tr>
+<table class="table table-striped" id='bom-table' data-sorting='true'>
+<thead>
+    <tr>
+        <th>Part</th>
+        <th>Description</th>
+        <th data-type='number'>Quantity</th>
+        <th data-sortable='false'>Edit</th>
+    </tr>
+</thead>
+<tbody>
 {% for bom_item in part.bom_items.all %}
 {% with sub_part=bom_item.sub_part %}
 <tr>
@@ -32,6 +37,7 @@
 </tr>
 {% endwith %}
 {% endfor %}
+</tbody>
 </table>
 
 <div class='container-fluid'>
@@ -42,10 +48,14 @@
 
 {% block javascript %}
 
+<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 
 <script type='text/javascript'>
-    $(".edit-row-button").click(function () {
+$(document).ready(function(){
+    $('#bom-table').footable();
+
+    $('#bom-table').on('click', '.edit-row-button', function () {
         var button = $(this);
 
         launchModalForm("#modal-form",
@@ -57,6 +67,7 @@
         launchModalForm("#modal-form",
                         "{% url 'bom-item-create' %}/?parent={{ part.id }}");
     });
+});
 </script>
 
 {% endblock %}
