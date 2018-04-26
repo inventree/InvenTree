@@ -101,3 +101,40 @@ class AjaxUpdateView(AjaxView, UpdateView):
 
         else:
             return response
+
+
+class AjaxDeleteView(AjaxView, DeleteView):
+
+    def post(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+            obj = self.get_object()
+            pk = obj.id
+            obj.delete()
+
+            data = {'id': pk,
+                    'delete': True}
+
+            return JsonResponse(data)
+
+        else:
+            return super(DeleteView, self).post(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        response = super(DeleteView, self).get(request, *args, **kwargs)
+
+        if request.is_ajax():
+
+            data = {'id': self.get_object().id,
+                    'title': self.ajax_form_title,
+                    'delete': False,
+                    'html_data': render_to_string(self.getAjaxTemplate(),
+                                                  self.get_context_data(),
+                                                  request=request)
+                   }
+
+            return JsonResponse(data)
+
+        else:
+            return response

@@ -88,6 +88,7 @@
 
 {% endblock %}
 
+
 {% block javascript %}
 
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
@@ -96,6 +97,13 @@
 $(document).ready(function () {
     $("#edit-part").click(function() {
         launchModalForm("#modal-form", "{% url 'part-edit' part.id %}");
+    });
+
+    $('#delete-part').click(function() {
+        launchDeleteForm("#modal-delete",
+                         "{% url 'part-delete' part.id %}",
+                         {redirect: "{% url 'part-index' %}"}
+        );
     });
 });
 </script>

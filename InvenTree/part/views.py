@@ -19,7 +19,7 @@ from .forms import EditBomItemForm
 
 from .forms import EditSupplierPartForm
 
-from InvenTree.views import AjaxCreateView, AjaxUpdateView
+from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 
 class PartIndex(ListView):
     model = Part
@@ -92,17 +92,21 @@ class PartEdit(AjaxUpdateView):
     ajax_form_title = 'Edit Part Properties'
 
 
-class PartDelete(DeleteView):
+class PartDelete(AjaxDeleteView):
     model = Part
     template_name = 'part/delete.html'
+    ajax_template_name = 'part/partial_delete.html'
+    ajax_form_title = 'Confirm Part Deletion'
 
     success_url = '/part/'
 
+    """
     def post(self, request, *args, **kwargs):
         if 'confirm' in request.POST:
             return super(PartDelete, self).post(request, *args, **kwargs)
         else:
             return HttpResponseRedirect(self.get_object().get_absolute_url())
+    """
 
 
 class CategoryDetail(DetailView):

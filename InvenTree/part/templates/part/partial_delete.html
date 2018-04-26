@@ -1,0 +1,32 @@
+{% if part.used_in_count %}
+<p>This part is used in BOMs for {{ part.used_in_count }} other parts. If you delete this part, the BOMs for the following parts will be updated:
+<ul class="list-group">
+    {% for child in part.used_in.all %}
+    <li class='list-group-item'>{{ child.part.name }} - {{ child.part.description }}</li>
+    {% endfor %}
+</p>
+{% endif %}
+
+{% if part.locations.all|length > 0 %}
+<p>There are {{ part.locations.all|length }} stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:
+    <ul class='list-group'>
+        {% for stock in part.locations.all %}
+        <li class='list-group-item'>{{ stock.location.name }} - {{ stock.quantity }} items</li>
+        {% endfor %}
+    </ul>
+</p>
+{% endif %}
+
+{% if part.supplier_parts.all|length > 0 %}
+<p>There are {{ part.supplier_parts.all|length }} suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted.
+    <ul class='list-group'>
+        {% for spart in part.supplier_parts.all %}
+        <li class='list-group-item'>{{ spart.supplier.name }} - {{ spart.SKU }}</li>
+        {% endfor %}
+    </ul>
+</p>
+{% endif %}
+
+{% if part.serials.all|length > 0 %}
+<p>There are {{ part.serials.all|length }} unique parts tracked for '{{ part.name }}'. Deleting this part will permanently remove this tracking information.</p>
+{% endif %}

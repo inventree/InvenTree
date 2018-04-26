@@ -8,7 +8,61 @@ function attachSelect(modal) {
     });
 }
 
-function launchModalForm(modal, url, data) {
+function launchDeleteForm(modal, url, options) {
+    $(modal).on('shown.bs.modal', function() {
+        $(modal + ' .modal-form-content').scrollTop(0);
+    });
+
+    $.ajax({
+        url: url,
+        type: 'get',
+        dataType: 'json',
+        beforeSend: function() {
+            $(modal).modal('show');
+        },
+        success: function (response) {
+            if (response.title) {
+                $(modal + ' #modal-title').html(response.title);
+            }
+            if (response.html_data) {
+                $(modal + ' .modal-form-content').html(response.html_data);
+            }
+            else {
+                alert('JSON response missing HTML data');
+                $(modal).modal('hide');
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            alert('Error requesting JSON data:\n' + thrownError);
+            $(modal).modal('hide');
+        }
+    });
+
+    $(modal).on('click', '#modal-form-delete', function() {
+
+        var form = $(modal).find('#delete-form');
+
+        $.ajax({
+            url: url,
+            data: form.serialize(),
+            type: 'post',
+            dataType: 'json',
+            success: function (response) {
+                $(modal).modal('hide');
+
+                if (options.redirect) {
+                    window.location.href = options.redirect;
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert('Error deleting item:\n' + thrownError);
+                $(modal).modal('hide');
+            }
+        });
+    });
+}
+
+function launchModalForm(modal, url, data, options) {
 
     $(modal).on('shown.bs.modal', function () {
         $(modal + ' .modal-form-content').scrollTop(0);
