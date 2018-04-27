@@ -6,6 +6,8 @@ from django.http import HttpResponseRedirect
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
+from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+
 from .models import Company
 
 from .forms import EditCompanyForm
@@ -43,11 +45,13 @@ class CompanyEdit(UpdateView):
     context_object_name = 'company'
 
 
-class CompanyCreate(CreateView):
+class CompanyCreate(AjaxCreateView):
     model = Company
     context_object_name = 'company'
     form_class = EditCompanyForm
     template_name = "company/create.html"
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = "Create new Company"
 
 
 class CompanyDelete(DeleteView):

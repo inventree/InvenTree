@@ -129,12 +129,19 @@ function launchModalForm(modal, url, options = {}) {
 
                     $(modal).modal('hide');
 
+                    // Form success callback
                     if (options.success) {
                         options.success();
                     }
+                    // Follow the URL returned by the JSON response
+                    else if (options.follow && response.url) {
+                        window.location.href = response.url;
+                    }
+                    // Redirect to a specific URL
                     else if (options.redirect) {
                         window.location.href = options.redirect;
                     }
+                    // Reload the current page
                     else if (options.reload) {
                         location.reload();
                     }

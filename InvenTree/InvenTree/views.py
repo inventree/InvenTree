@@ -54,6 +54,8 @@ class AjaxCreateView(AjaxView, CreateView):
                 # Return the PK of the newly-created object
                 data['pk']  = obj.pk
 
+                data['url'] = obj.get_absolute_url()
+
             return self.renderJsonResponse(request, form, data)
 
         else:
@@ -83,6 +85,9 @@ class AjaxUpdateView(AjaxView, UpdateView):
 
             if form.is_valid():
                 obj = form.save()
+
+                data['pk'] = obj.id
+                data['url'] = obj.get_absolute_url()
 
             return self.renderJsonResponse(request, form, data)
 

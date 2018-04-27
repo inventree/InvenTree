@@ -6,23 +6,30 @@
 
 <h3>Companies</h3>
 
-<div class="container">
-<div class='input-group'>
-    <input class="form-control" id="company-filter" type="text" placeholder="Search...">
-    <span class='input-group-btn'>
-    <button type='button' class='btn' id='clear-filter'>Clear</button>
-    </span>
-</div>
-<hr>
-<ul class='list-group' id="company-list">
-</ul>
 
-</div>
+<table class='table table-striped' id='company-table' data-sorting='true' data-filtering='true'>
+<thead>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    {% for company in companies %}
+    <tr>
+        <td>
+            <a href="{% url 'company-detail' company.id %}">
+                {{ company.name }}
+            </a>
+        </td>
+        <td>{{ company.description }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
 
 <div class='container-fluid'>
-<a href="{% url 'company-create' %}">
-    <button class="btn btn-success">New Company</button>
-</a>
+<button class="btn btn-success" id='new-company'>New Company</button>
 </div>
 
 {% include 'modals.html' %}
@@ -31,8 +38,19 @@
 
 {% block javascript %}
 
-<script type="text/javascript" src="{% static 'script/delay.js' %}"></script>
-<script type="text/javascript" src="{% static 'script/filter_company.js' %}">
+<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type='text/javascript'>
+    $('#company-table').footable();
+
+    $('#new-company').click(function () {
+        launchModalForm('#modal-form',
+                        "{% url 'company-create' %}",
+                        {
+                            follow: true
+                        });
+    });
 </script>
 
 {% endblock %}
