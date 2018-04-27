@@ -17,7 +17,7 @@
         <a href="{% url 'category-detail' part.category.id %}">{{ part.category_path }}</a>
         {% endif %}
     </td>
-    <td>{{ part.total_stock }}</td>
+    <td><a href="{% url 'part-stock' part.id %}">{{ part.total_stock }}</a></td>
 </tr>
 {% endfor %}
 </tbody>
