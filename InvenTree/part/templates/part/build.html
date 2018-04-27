@@ -1,5 +1,5 @@
 {% extends "part/part_base.html" %}
-
+{% load static %}
 {% block details %}
 
 {% include 'part/tabs.html' with tab='build' %}
@@ -32,6 +32,30 @@
 </table>
 
 <div class='container-fluid'>
-<a href="{% url 'build-create' %}?part={{ part.id }}"><button class="btn btn-success">Start New Build</button></a>
+<button class="btn btn-success" id='start-build'>Start New Build</button>
+</div>
+
+{% include 'modals.html' %}
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type='text/javascript'>
+$(document).ready(function() {
+    $("#start-build").click(function() {
+        launchModalForm("#modal-form",
+                        "{% url 'build-create' %}",
+                        {
+                            follow: true,
+                            data: {
+                                part: {{ part.id }}
+                            }
+                        });
+    });
+});
+</script>
 
 {% endblock %}

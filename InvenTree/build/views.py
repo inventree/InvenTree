@@ -11,6 +11,7 @@ from .models import Build
 
 from .forms import EditBuildForm
 
+from InvenTree.views import AjaxUpdateView, AjaxCreateView
 
 class BuildIndex(ListView):
     model = Build
@@ -38,11 +39,13 @@ class BuildDetail(DetailView):
     context_object_name = 'build'
 
 
-class BuildCreate(CreateView):
+class BuildCreate(AjaxCreateView):
     model = Build
     template_name = 'build/create.html'
     context_object_name = 'build'
     form_class = EditBuildForm
+    ajax_form_title = 'Start new Build'
+    ajax_template_name = 'modal_form.html'
 
     def get_initial(self):
         initials = super(BuildCreate, self).get_initial().copy()
@@ -55,8 +58,10 @@ class BuildCreate(CreateView):
         return initials
 
 
-class BuildUpdate(UpdateView):
+class BuildUpdate(AjaxUpdateView):
     model = Build
     form_class = EditBuildForm
     context_object_name = 'build'
     template_name = 'build/update.html'
+    ajax_form_title = 'Edit Build Details'
+    ajax_template_name = 'modal_form.html'

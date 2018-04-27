@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <h3>Build Details</h3>
@@ -35,7 +36,53 @@
 {% endif %}
 </table>
 
+<h3>Required Parts</h3>
+<table class='table table-striped' id='build-list' data-sorting='true'>
+<thead>
+<tr>
+    <th>Part</th>
+    <th>Required</th>
+    <th>Available</th>
+</tr>
+</thead>
+<tbody>
+    {% for item in build.part.bom_items.all %}
+    <tr>
+        <td><a href="{% url 'part-detail' item.sub_part.id %}">{{ item.sub_part.name }}</a></td>
+        <td>{{ build.quantity }} &times {{ item.quantity }}</td>
+        <td>{{ item.sub_part.available_stock }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
 <div class='container-fluid'>
-<a href="{% url 'build-edit' build.id %}"><button class="btn btn-info">Edit Build</button></a>
+<button class="btn btn-info" id='edit-build'>Edit Build</button>
+</div>
+
+{% include 'modals.html' %}
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type='text/javascript'>
+
+$(document).ready(function () {
+    $("#build-list").footable();
+
+    $("#edit-build").click(function () {
+        launchModalForm("#modal-form",
+                        "{% url 'build-edit' build.id %}",
+                        {
+                            reload: true
+                        });
+    });
+});
+
+</script>
 
 {% endblock %}
