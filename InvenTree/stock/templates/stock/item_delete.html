@@ -1,9 +1,5 @@
-{% extends "delete_obj.html" %}
-
-{% block del_title %}
 Are you sure you want to delete this stock item?
-{% endblock %}
 
-{% block del_body %}
-This will remove <b>{{ item.quantity }}</b> units of <b>'{{ item.part.name }}'</b> from stock.
-{% endblock %}
+<br>
+
+This will remove <b>{{ item.quantity }}</b> units of <b>{{ item.part.name }}</b> from stock.

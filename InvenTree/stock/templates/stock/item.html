@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 
 {% include "stock/loc_link.html" with location=item.location %}
@@ -94,12 +94,38 @@
 {% endif %}
 
 <div class='container-fluid'>
-<a href="{% url 'stock-item-edit' item.id %}">
-    <button class='btn btn-info'>Edit Stock Item</button>
-</a>
-<a href="{% url 'stock-item-delete' item.id %}">
-    <button class='btn btn-danger'>Delete Stock Item</button>
-</a>
+<button class='btn btn-info' id='edit-item'>Edit Stock Item</button>
+<button class='btn btn-danger' id='delete-item'>Delete Stock Item</button>
 </div>
+
+{% include 'modals.html' %}
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+    $("#edit-item").click(function () {
+        launchModalForm("#modal-form",
+                        "{% url 'stock-item-edit' item.id %}",
+                        {
+                            reload: true
+                        });
+    });
+
+    $("#delete-item").click(function () {
+        launchDeleteForm("#modal-delete",
+                         "{% url 'stock-item-delete' item.id %}",
+                         {
+                             redirect: "{% url 'part-stock' item.part.id %}"
+                         });
+    });
+});
+
+</script>
 
 {% endblock %}

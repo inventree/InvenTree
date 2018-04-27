@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 
 {% include "stock/loc_link.html" with location=location %}
@@ -12,27 +12,70 @@
 {% include "stock/location_list.html" with locations=location.children %}
 {% endif %}
 
-{% if location.has_items %}
 <h4>Stock Items</h4>
 {% include "stock/stock_table.html" with items=location.items %}
-{% endif %}
 
 <div class='container-fluid'>
-<a href="{% url 'stock-location-create' %}?location={{ location.id }}">
-    <button class='btn btn-success'>New Stock Location</button>
-</a>
-<a href="{% url 'stock-item-create' %}?location={{ location.id }}">
-    <button class='btn btn-success'>New Stock Item</button>
-</a>
-
-<a href="{% url 'stock-location-edit' location.id %}">
-    <button class="btn btn-info">Edit Location</button>
-</a>
-
-<a href="{% url 'stock-location-delete' location.id %}">
-    <button class="btn btn-danger">Delete Location</button>
-</a>
+<button class='btn btn-success' id='location-create'>New Stock Location</button>
+<button class='btn btn-success' id='new-item'>New Stock Item</button>
+<button class="btn btn-info" id='location-edit'>Edit Location</button>
+<button class="btn btn-danger" id='location-delete'>Delete Location</button>
 
 </div>
+
+{% include 'modals.html' %}
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+    $('#stock-table').footable();
+
+    $('#location-create').click(function () {
+        launchModalForm("#modal-form",
+                        "{% url 'stock-location-create' %}",
+                        {
+                            data: {
+                                location: {{ location.id }}
+                            },
+                            follow: true
+                        });
+    });
+
+    $('#location-edit').click(function() {
+        launchModalForm("#modal-form",
+                        "{% url 'stock-location-edit' location.id %}",
+                        {
+                            reload: true
+                        });
+    });
+
+    $('#location-delete').click(function() {
+        launchDeleteForm("#modal-delete",
+                         "{% url 'stock-location-delete' location.id %}",
+                         {
+                             redirect: "{% url 'stock-index' %}"
+                         });
+    })
+
+    $('#new-item').click(function () {
+        launchModalForm("#modal-form",
+                        "{% url 'stock-item-create' %}",
+                        {
+                            reload: true,
+                            data: {
+                                location: {{ location.id }}
+                            }
+                        });
+    });
+
+});
+</script>
 
 {% endblock %}

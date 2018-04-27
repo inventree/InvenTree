@@ -1,25 +1,32 @@
 {% extends "part/part_base.html" %}
-
+{% load static %}
 {% block details %}
 
 {% include 'part/tabs.html' with tab='stock' %}
 
 <h3>Part Stock</h3>
 
-<table class="table table-striped">
+<table class="table table-striped" id='stock-table' data-sorting='true'>
+<thead>
 <tr>
-    <th>Link</th>
+    <th data-sortable='false'>Link</th>
     <th>Quantity</th>
     <th>Location</th>
     <th>Supplier part</th>
     <th>Stocktake</th>
     <th>Notes</th>
 </tr>
+</thead>
+<tbody>
 {% for stock in part.locations.all %}
 <tr>
     <td><a href="{% url 'stock-item-detail' stock.id %}">Click</a></td>
     <td>{{ stock.quantity }}</td>
-    <td><a href="{% url 'stock-location-detail' stock.location.id %}">{{ stock.location.name }}</a></td>
+    <td>
+        {% if stock.location %}
+        <a href="{% url 'stock-location-detail' stock.location.id %}">{{ stock.location.name }}</a>
+        {% endif %}
+    </td>
     <td>
         {% if stock.supplier_part %}
     <a href="{% url 'supplier-part-detail' stock.supplier_part.id %}">
@@ -31,12 +38,38 @@
     <td>{{ stock.notes }}</td>
 </tr>
 {% endfor %}
+</tbody>
 </table
 
 <div class='container-fluid'>
-<a href="{% url 'stock-item-create' %}?part={{ part.id }}">
-    <button class='btn btn-success'>Add new Stock Item</button>
-</a>
+<button class='btn btn-success' id='add-stock-item'>Add new Stock Item</button>
 </div>
+
+{% include 'modals.html' %}
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+    $('#stock-table').footable();
+
+    $('#add-stock-item').click(function () {
+        launchModalForm("#modal-form",
+                        "{% url 'stock-item-create' %}",
+                        {
+                            reload: true,
+                            data: {
+                                part: {{ part.id }}
+                            }
+                        });
+    });
+});
+</script>
 
 {% endblock %}

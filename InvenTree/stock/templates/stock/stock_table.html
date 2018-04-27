@@ -1,11 +1,14 @@
-<table class="table table-striped">
+<table class="table table-striped" id='stock-table' data-sorting='true'>
+<thead>
 <tr>
     <th>Part</th>
     <th>Stock</th>
     <th>Status</th>
     <th>Stocktake</th>
-    <th></th>
+    <th data-sortable='false'></th>
 </tr>
+</thead>
+<tbody>
 {% for item in items.all %}
 <tr>
     <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</a></td>
@@ -15,4 +18,5 @@
     <td><a href="{% url 'stock-item-detail' item.id %}">Click</a></td>
 </tr>
 {% endfor %}
+</tbody>
 </table>

@@ -33,7 +33,11 @@ $(document).ready(function () {
     $('#part-list').footable();
 
     $("#create-cat").click(function() {
-        launchModalForm("#modal-form", "{% url 'category-create' %}");
+        launchModalForm("#modal-form",
+                        "{% url 'category-create' %}",
+                        {
+                            follow: true
+                        });
     });
 
     $("#create-part").click(function() {

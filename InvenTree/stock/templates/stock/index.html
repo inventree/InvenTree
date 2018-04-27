@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 
 {% include "stock/loc_link.html" with location=None %}
@@ -9,14 +9,65 @@
 {% include "stock/location_list.html" with locations=locations %}
 {% endif %}
 
-{% if items|length > 0 %}
-{% include "stock/stock_table.html" with items=items %}
-{% endif %}
+<table class="table table-striped" id='stock-table' data-sorting='true'>
+<thead>
+<tr>
+    <th>Part</th>
+    <th>Location</th>
+    <th>Stock</th>
+    <th>Status</th>
+    <th>Stocktake</th>
+    <th data-sortable='false'></th>
+</tr>
+</thead>
+<tbody>
+{% for item in items.all %}
+<tr>
+    <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</a></td>
+    <td>
+        {% if item.location %}
+        <a href="{% url 'stock-location-detail' item.location.id %}">
+            {{ item.location.pathstring }}
+        </a>
+        {% endif %}
+    </td>
+    <td>{{ item.quantity }}</td>
+    <td>{{ item.status }}</td>
+    <td>{{ item.stocktake_date }}</td>
+    <td><a href="{% url 'stock-item-detail' item.id %}">Click</a></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
 
 <div class='container-fluid'>
-<a href="{% url 'stock-location-create' %}">
-    <button class="btn btn-success">New Stock Location</button>
-</a>
+<button class="btn btn-success" id='location-create'>New Stock Location</button>
 </div>
+
+{% include 'modals.html' %}
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+    $('#stock-table').footable();
+
+    $('#location-create').click(function () {
+        launchModalForm("#modal-form",
+                        "{% url 'stock-location-create' %}",
+                        {
+                            follow: true
+                        });
+    });
+
+});
+
+</script>
 
 {% endblock %}

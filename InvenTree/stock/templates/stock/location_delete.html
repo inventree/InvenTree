@@ -1,10 +1,7 @@
-{% extends 'delete_obj.html' %}
-
-{% block del_title %}
 Are you sure you want to delete stock location '{{ location.name }}'?
-{% endblock %}
 
-{% block del_body %}
+<br>
+
 {% if location.children.all|length > 0 %}
 <p>This location contains {{ location.children.all|length }} child locations.<br>
 If this location is deleted, these child locations will be moved to
@@ -37,5 +34,3 @@ If this location is deleted, these items will be moved to the top level 'Stock' 
     {% endfor %}
 </ul>
 {% endif %}
-
-{% endblock %}
