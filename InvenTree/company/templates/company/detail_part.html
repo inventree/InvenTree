@@ -1,18 +1,21 @@
 {% extends "company/company_base.html" %}
-
+{% load static %}
 {% block details %}
 
 {% include 'company/tabs.html' with tab='parts' %}
 
 <h3>Company Parts</h3>
 
-<table class='table table-striped'>
+<table class='table table-striped' id='part-list' data-sorting='true' data-filtering='true'>
+<thead>
 <tr>
     <th>SKU</th>
     <th>Part</th>
     <th>MPN</th>
     <th>URL</th>
 </tr>
+</thead>
+<tbody>
 {% for part in company.parts.all %}
 <tr>
     <td><a href="{% url 'supplier-part-detail' part.id %}">{{ part.SKU }}</a></td>
@@ -25,12 +28,40 @@
     <td>{{ part.URL }}</td>
 </tr>
 {% endfor %}
+</tbody>
 </table>
 
 <div class='container-fluid'>
-<a href="{% url 'supplier-part-create' %}?supplier={{ company.id }}">
-    <button class="btn btn-success">New Supplier Part</button>
-</a>
+<button class="btn btn-success" id='part-create'>New Supplier Part</button>
 </div>
+
+{% include 'modals.html' %}
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function () {
+
+    $("#part-list").footable();
+
+    $("#part-create").click(function () {
+        launchModalForm("#modal-form",
+                        "{% url 'supplier-part-create' %}",
+                        {
+                            data: {
+                                supplier: {{ company.id }}
+                            },
+                            reload: true,
+                        });
+    });
+});
+
+</script>
 
 {% endblock %}
