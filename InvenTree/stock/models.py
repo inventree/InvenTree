@@ -181,10 +181,14 @@ class StockItem(models.Model):
         self.add_stock(-amount)
 
     def __str__(self):
-        return "{n} x {part} @ {loc}".format(
-            n=self.quantity,
-            part=self.part.name,
-            loc=self.location.name)
+        s = '{n} x {part}'.format(
+	    n=self.quantity,
+            part=self.part.name)
+
+        if self.location:
+            s += ' @ {loc}'.format(loc=self.location.name)
+
+        return s
 
     @property
     def is_trackable(self):
