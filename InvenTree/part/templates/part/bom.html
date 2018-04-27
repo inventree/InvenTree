@@ -60,7 +60,10 @@ $(document).ready(function(){
         var button = $(this);
 
         launchDeleteForm("#modal-delete",
-                         button.attr('url'));
+                         button.attr('url'),
+                         {
+                             reload: true
+                         });
     });
 
     $('#bom-table').on('click', '.edit-row-button', function () {

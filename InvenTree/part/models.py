@@ -353,9 +353,13 @@ class BomItem(models.Model):
 
     def clean(self):
 
+        # A part cannot refer to itself in its BOM
         if self.part == self.sub_part:
             raise ValidationError(_('A part cannot contain itself as a BOM item'))
 
+        for item in self.sub_part.bom_items.all():
+            if self.part == item.sub_part:
+                raise ValidationError(_("Part '{p1}' is  used in BOM for '{p2}' (recursive)".format(p1=str(self.part), p2=str(self.sub_part))))
 
     class Meta:
         verbose_name = "BOM Item"
