@@ -3,6 +3,9 @@ from __future__ import unicode_literals
 
 import os
 
+from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
+
 from django.db import models
 from django.db.models import Sum
 from django.core.validators import MinValueValidator
@@ -347,6 +350,12 @@ class BomItem(models.Model):
 
     # Quantity required
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])
+
+    def clean(self):
+
+        if self.part == self.sub_part:
+            raise ValidationError(_('A part cannot contain itself as a BOM item'))
+
 
     class Meta:
         verbose_name = "BOM Item"
