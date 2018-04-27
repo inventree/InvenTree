@@ -224,17 +224,21 @@ class SupplierPartDetail(DetailView):
     queryset = SupplierPart.objects.all()
 
 
-class SupplierPartEdit(UpdateView):
+class SupplierPartEdit(AjaxUpdateView):
     model = SupplierPart
     template_name = 'company/partedit.html'
     context_object_name = 'part'
     form_class = EditSupplierPartForm
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Edit Supplier Part'
 
 
-class SupplierPartCreate(CreateView):
+class SupplierPartCreate(AjaxCreateView):
     model = SupplierPart
     form_class = EditSupplierPartForm
-    template_name = 'company/partcreate.html'
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Create new Supplier Part'
+    #template_name = 'company/partcreate.html'
     context_object_name = 'part'
 
     def get_initial(self):
@@ -255,13 +259,7 @@ class SupplierPartCreate(CreateView):
         return initials
 
 
-class SupplierPartDelete(DeleteView):
+class SupplierPartDelete(AjaxDeleteView):
     model = SupplierPart
     success_url = '/supplier/'
     template_name = 'company/partdelete.html'
-
-    def post(self, request, *args, **kwargs):
-        if 'confirm' in request.POST:
-            return super(SupplierPartDelete, self).post(request, *args, **kwargs)
-        else:
-            return HttpResponseRedirect(self.get_object().get_absolute_url())

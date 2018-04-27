@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 
 <h3>Supplier part information</h3>
@@ -30,13 +30,40 @@
 <br>
 
 <div class='container-fluid'>
-<a href="{% url 'supplier-part-edit' part.id %}">
-    <button class="btn btn-info">Edit supplier part</button>
-</a>
-<a href="{% url 'supplier-part-delete' part.id %}">
-    <button class="btn btn-danger">Delete supplier part</button>
-</a>
+<button class="btn btn-info" id='part-edit'>Edit supplier part</button>
+<button class="btn btn-danger" id='part-delete'>Delete supplier part</button>
 </div>
 
+{% include 'modal.html' %}
+{% include 'modal_delete.html' %}
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type='text/javascript'>
+$(document).ready(function () {
+
+    $('#part-edit').click(function () {
+        launchModalForm("#modal-form",
+                        "{% url 'supplier-part-edit' part.id %}",
+                        {
+                            reload: true
+                        }
+        );
+    });
+
+    $('#part-delete').click(function() {
+        launchDeleteForm("#modal-delete",
+                         "{% url 'supplier-part-delete' part.id %}",
+                         {
+                             redirect: "{% url 'company-index' %}"
+                         }
+        );
+    });
+});
+</script>
 
 {% endblock %}

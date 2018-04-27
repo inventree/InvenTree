@@ -74,7 +74,8 @@ $(document).ready(function(){
 
     $("#new-bom-item").click(function () {
         launchModalForm("#modal-form",
-                        "{% url 'bom-item-create' %}/?parent={{ part.id }}");
+                        "{% url 'bom-item-create' %}",
+                        {data: {parent: {{ part.id }} }});
     });
 });
 </script>
