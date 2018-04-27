@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from django.db import models, transaction
 from django.core.validators import MinValueValidator
@@ -12,6 +13,8 @@ from django.dispatch import receiver
 from datetime import datetime
 
 from InvenTree.models import InvenTreeTree
+
+from part.models import Part
 
 
 class StockLocation(InvenTreeTree):
@@ -53,6 +56,26 @@ class StockItem(models.Model):
     StockItems may be tracked using batch or serial numbers.
     If a serial number is assigned, then StockItem cannot have a quantity other than 1
     """
+
+    def clean(self):
+
+
+        # The 'supplier_part' field must point to the same part!
+        try:
+            if self.supplier_part is not None:
+                if not self.supplier_part.part == self.part:
+                    raise ValidationError({
+                        'supplier_part': _(
+                            "Part type ('{pf}') must be {pe}").format(
+                                pf=str(self.supplier_part.part),
+                                pe=str(self.part)
+                            )
+                    })
+        except Part.DoesNotExist:
+            # This gets thrown if self.supplier_part is null
+            # TODO - Find a test than can be perfomed...
+            pass
+
 
     def get_absolute_url(self):
         return '/stock/item/{id}/'.format(id=self.id)
