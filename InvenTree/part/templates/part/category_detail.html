@@ -25,19 +25,14 @@
     <button type='button' class='btn btn-primary' id='create-cat'>
         New Category
     </button>
-<button class="btn btn-success" id='create-part'>New Part</button>
-
-<a href="{% url 'category-edit' category.id %}">
-    <button class="btn btn-info">Edit Category</button>
-</a>
-
-<a href="{% url 'category-delete' category.id %}">
-    <button class="btn btn-danger">Delete Category</button>
-</a>
+    <button class="btn btn-info" id='edit-category'>Edit Category</button>
+    <button class="btn btn-success" id='create-part'>New Part</button>
+    <button class="btn btn-danger" id='delete-category'>Delete Category</button>
 
 </div>
 
 {% include 'modal.html' %}
+{% include 'modal_delete.html' %}
 
 {% endblock %}
 
@@ -48,6 +43,19 @@
 <script type='text/javascript'>
 $(document).ready(function (){
     $('#part-list').footable();
+
+    $("#edit-category").click(function () {
+        launchModalForm("#modal-form",
+                        "{% url 'category-edit' category.id %}",
+                        {reload: true},
+                       );
+    });
+
+    $("#delete-category").click(function() {
+        launchDeleteForm("#modal-delete",
+                         "{% url 'category-delete' category.id %}",
+                         {redirect: "{% url 'part-index' %}"});
+    });
 
     $("#create-cat").click(function() {
         launchModalForm("#modal-form",

@@ -51,8 +51,14 @@ function launchDeleteForm(modal, url, options = {}) {
             success: function (response) {
                 $(modal).modal('hide');
 
-                if (options.redirect) {
+                if (options.success) {
+                    options.success();
+                }
+                else if (options.redirect) {
                     window.location.href = options.redirect;
+                }
+                else if (options.reload) {
+                    location.reload();
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -123,14 +129,15 @@ function launchModalForm(modal, url, options = {}) {
 
                     $(modal).modal('hide');
 
-                    if (options.redirect) {
-                        window.location.href = options.redirect;
-                    }
-
                     if (options.success) {
                         options.success();
                     }
-
+                    else if (options.redirect) {
+                        window.location.href = options.redirect;
+                    }
+                    else if (options.reload) {
+                        location.reload();
+                    }
                 }
                 else if (response.html_form) {
                     var target = modal + ' .modal-form-content';

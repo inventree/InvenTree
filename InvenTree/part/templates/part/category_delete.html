@@ -1,41 +1,33 @@
-{% extends 'delete_obj.html' %}
-
-{% block del_title %}
 Are you sure you want to delete category '{{ category.name }}'?
-{% endblock %}
 
-{% block del_body %}
+{% if category.children.all|length > 0 %}
+<p>This category contains {{ category.children.all|length }} child categories.<br>
+If this category is deleted, these child categories will be moved to
+{% if category.parent %}
+the '{{ category.parent.name }}' category.
+{% else %}
+the top level 'Parts' category.
+{% endif %}
+</p>
 
-    {% if category.children.all|length > 0 %}
-    <p>This category contains {{ category.children.all|length }} child categories.<br>
-    If this category is deleted, these child categories will be moved to
+<ul class='list-group'>
+{% for cat in category.children.all %}
+    <li class='list-group-item'><b>{{ cat.name }}</b> - <i>{{ cat.description }}</i></li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if category.parts.all|length > 0 %}
+<p>This category contains {{ category.parts.all|length }} parts.<br>
     {% if category.parent %}
-    the '{{ category.parent.name }}' category.
+    If this category is deleted, these parts will be moved to the parent category '{{ category.parent.pathstring }}'
     {% else %}
-    the top level 'Parts' category.
+    If this category is deleted, these parts will be moved to the top-level category 'Parts'
     {% endif %}
-    </p>
-
-    <ul class='list-group'>
-    {% for cat in category.children.all %}
-        <li class='list-group-item'><b>{{ cat.name }}</b> - <i>{{ cat.description }}</i></li>
-    {% endfor %}
-    </ul>
-    {% endif %}
-
-    {% if category.parts.all|length > 0 %}
-    <p>This category contains {{ category.parts.all|length }} parts.<br>
-        {% if category.parent %}
-        If this category is deleted, these parts will be moved to the parent category '{{ category.parent.pathstring }}'
-        {% else %}
-        If this category is deleted, these parts will be moved to the top-level category 'Parts'
-        {% endif %}
-    </p>
-    <ul class='list-group'>
-    {% for part in category.parts.all %}
-        <li class='list-group-item'><b>{{ part.name }}</b> - <i>{{ part.description }}</i></li>
-    {% endfor %}
-    </ul>
-    {% endif %}
-
-{% endblock %}
+</p>
+<ul class='list-group'>
+{% for part in category.parts.all %}
+    <li class='list-group-item'><b>{{ part.name }}</b> - <i>{{ part.description }}</i></li>
+{% endfor %}
+</ul>
+{% endif %}

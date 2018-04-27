@@ -116,10 +116,12 @@ class CategoryDetail(DetailView):
     template_name = 'part/category_detail.html'
 
 
-class CategoryEdit(UpdateView):
+class CategoryEdit(AjaxUpdateView):
     model = PartCategory
     template_name = 'part/category_edit.html'
     form_class = EditCategoryForm
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Edit Part Category'
 
     def get_context_data(self, **kwargs):
         context = super(CategoryEdit, self).get_context_data(**kwargs).copy()
@@ -129,17 +131,11 @@ class CategoryEdit(UpdateView):
         return context
 
 
-class CategoryDelete(DeleteView):
+class CategoryDelete(AjaxDeleteView):
     model = PartCategory
     template_name = 'part/category_delete.html'
     context_object_name = 'category'
     success_url = '/part/'
-
-    def post(self, request, *args, **kwargs):
-        if 'confirm' in request.POST:
-            return super(CategoryDelete, self).post(request, *args, **kwargs)
-        else:
-            return HttpResponseRedirect(self.get_object().get_absolute_url())
 
 
 class CategoryCreate(AjaxCreateView):
