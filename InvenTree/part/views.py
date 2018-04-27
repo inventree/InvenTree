@@ -2,12 +2,10 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
 
 from django.urls import reverse_lazy
 
 from django.views.generic import DetailView, ListView
-from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
 from company.models import Company
 from .models import PartCategory, Part, BomItem
@@ -20,6 +18,7 @@ from .forms import EditBomItemForm
 from .forms import EditSupplierPartForm
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+
 
 class PartIndex(ListView):
     model = Part
@@ -207,15 +206,6 @@ class BomItemDelete(AjaxDeleteView):
     context_object_name = 'item'
     ajax_form_title = 'Confim BOM item deletion'
 
-    #success_url = '/part'
-
-    """
-    def post(self, request, *args, **kwargs):
-        if 'confirm' in request.POST:
-            return super(BomItemDelete, self).post(request, *args, **kwargs)
-        else:
-            return HttpResponseRedirect(self.get_object().get_absolute_url())
-    """
 
 class SupplierPartDetail(DetailView):
     model = SupplierPart
@@ -238,7 +228,7 @@ class SupplierPartCreate(AjaxCreateView):
     form_class = EditSupplierPartForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create new Supplier Part'
-    #template_name = 'company/partcreate.html'
+    template_name = 'company/partcreate.html'
     context_object_name = 'part'
 
     def get_initial(self):

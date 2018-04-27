@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.http import HttpResponseRedirect
-
 from django.views.generic import DetailView, ListView
-from django.views.generic.edit import UpdateView, DeleteView, CreateView
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 

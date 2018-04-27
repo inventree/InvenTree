@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.template.loader import render_to_string
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 
 from django.views.generic import UpdateView, CreateView, DeleteView
 
@@ -20,11 +19,10 @@ class AjaxView(object):
         else:
             return self.template_name
 
-
     def renderJsonResponse(self, request, form, data={}):
 
         context = {'form': form
-                  }
+                   }
 
         data['title'] = self.ajax_form_title
 
@@ -52,7 +50,7 @@ class AjaxCreateView(AjaxView, CreateView):
                 obj = form.save()
 
                 # Return the PK of the newly-created object
-                data['pk']  = obj.pk
+                data['pk'] = obj.pk
 
                 data['url'] = obj.get_absolute_url()
 
@@ -100,7 +98,7 @@ class AjaxUpdateView(AjaxView, UpdateView):
         response = super(UpdateView, self).get(request, *args, **kwargs)
 
         if request.is_ajax():
-            form = self.form_class(instance = self.get_object())
+            form = self.form_class(instance=self.get_object())
 
             return self.renderJsonResponse(request, form)
 
@@ -137,7 +135,7 @@ class AjaxDeleteView(AjaxView, DeleteView):
                     'html_data': render_to_string(self.getAjaxTemplate(),
                                                   self.get_context_data(),
                                                   request=request)
-                   }
+                    }
 
             return JsonResponse(data)
 

@@ -59,23 +59,19 @@ class StockItem(models.Model):
 
     def clean(self):
 
-
         # The 'supplier_part' field must point to the same part!
         try:
             if self.supplier_part is not None:
                 if not self.supplier_part.part == self.part:
-                    raise ValidationError({
-                        'supplier_part': _(
-                            "Part type ('{pf}') must be {pe}").format(
-                                pf=str(self.supplier_part.part),
-                                pe=str(self.part)
-                            )
-                    })
+                    raise ValidationError({'supplier_part': _("Part type ('{pf}') must be {pe}").format(
+                                           pf=str(self.supplier_part.part),
+                                           pe=str(self.part))
+                                           })
+
         except Part.DoesNotExist:
             # This gets thrown if self.supplier_part is null
             # TODO - Find a test than can be perfomed...
             pass
-
 
     def get_absolute_url(self):
         return '/stock/item/{id}/'.format(id=self.id)
@@ -205,7 +201,7 @@ class StockItem(models.Model):
 
     def __str__(self):
         s = '{n} x {part}'.format(
-	    n=self.quantity,
+            n=self.quantity,
             part=self.part.name)
 
         if self.location:

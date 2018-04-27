@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 
 from django.views.generic import DetailView, ListView
-from django.views.generic.edit import UpdateView, CreateView
 
 from part.models import Part
 from .models import Build
@@ -12,6 +11,7 @@ from .models import Build
 from .forms import EditBuildForm
 
 from InvenTree.views import AjaxUpdateView, AjaxCreateView
+
 
 class BuildIndex(ListView):
     model = Build

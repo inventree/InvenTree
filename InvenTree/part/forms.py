@@ -1,6 +1,5 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 
 from .models import Part, PartCategory, BomItem
 from .models import SupplierPart
@@ -39,11 +38,7 @@ class EditCategoryForm(forms.ModelForm):
         super(EditCategoryForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
-        #self.helper.form_id = 'id-edit-part-form'
-        #self.helper.form_method = 'post'
-
         self.helper.form_tag = False
-        #self.helper.add_input(Submit('submit', 'Submit'))
 
     class Meta:
         model = PartCategory
@@ -60,11 +55,9 @@ class EditBomItemForm(forms.ModelForm):
         super(EditBomItemForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
-        #self.helper.form_id = 'id-edit-part-form'
         self.helper.form_method = 'post'
 
         self.helper.form_tag = False
-        #self.helper.add_input(Submit('submit', 'Submit'))
 
     class Meta:
         model = BomItem
