@@ -1,5 +1,5 @@
 {% extends "company/company_base.html" %}
-
+{% load static %}
 {% block details %}
 
 {% include 'company/tabs.html' with tab='details' %}
@@ -25,8 +25,36 @@
 {% endif %}
 
 <div class='container-fluid'>
-<a href="{% url 'company-edit' company.id %}"><button class="btn btn-info">Edit Company</button></a>
-<a href="{% url 'company-delete' company.id %}"><button class="btn btn-danger">Delete Company</button></a>
+<button class="btn btn-info" id='edit-company'>Edit Company</button>
+<button class="btn btn-danger" id='delete-company'>Delete Company</button>
 </div>
+
+{% include 'modals.html' %}
+
+{% endblock %}
+
+{% block javascript %}
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type='text/javascript'>
+$(document).ready(function() {
+    $('#edit-company').click(function() {
+        launchModalForm("#modal-form",
+                        "{% url 'company-edit' company.id %}",
+                        {
+                            reload: true
+                        });
+    });
+
+    $('#delete-company').click(function() {
+        launchDeleteForm("#modal-delete",
+                         "{% url 'company-delete' company.id %}",
+                         {
+                             redirect: "{% url 'company-index' %}"
+                         });
+    })
+});
+</script>
+
 
 {% endblock %}

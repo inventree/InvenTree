@@ -1,17 +1,13 @@
-{% extends "delete_obj.html" %}
-
-{% block del_title %}
 Are you sure you want to delete company '{{ company.name }}'?
-{% endblock %}
 
-{% block del_body %}
+<br>
+
 {% if company.part_count > 0 %}
 <p>There are {{ company.part_count }} parts sourced from this company.<br>
 If this supplier is deleted, these supplier part entries will also be deleted.</p>
 <ul class='list-group'>
 {% for part in company.parts.all %}
-<li class='list-group-item'><b>{{ part.SKU }}</b><br><i>Part - {{ part.part.name }}</i></li>
+<li class='list-group-item'><b>{{ part.SKU }}</b> - <i>{{ part.part.name }}</i></li>
 {% endfor %}
 </ul>
 {% endif %}
-{% endblock %}

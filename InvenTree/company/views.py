@@ -38,11 +38,13 @@ class CompanyDetail(DetailView):
     model = Company
 
 
-class CompanyEdit(UpdateView):
+class CompanyEdit(AjaxUpdateView):
     model = Company
     form_class = EditCompanyForm
     template_name = 'company/edit.html'
     context_object_name = 'company'
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Edit Company'
 
 
 class CompanyCreate(AjaxCreateView):
@@ -54,13 +56,8 @@ class CompanyCreate(AjaxCreateView):
     ajax_form_title = "Create new Company"
 
 
-class CompanyDelete(DeleteView):
+class CompanyDelete(AjaxDeleteView):
     model = Company
     success_url = '/company/'
     template_name = 'company/delete.html'
-
-    def post(self, request, *args, **kwargs):
-        if 'confirm' in request.POST:
-            return super(CompanyDelete, self).post(request, *args, **kwargs)
-        else:
-            return HttpResponseRedirect(self.get_object().get_absolute_url())
+    ajax_form_title = 'Delete Company'
