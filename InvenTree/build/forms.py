@@ -15,6 +15,12 @@ class EditBuildForm(forms.ModelForm):
 
         self.helper.form_tag = False
 
+        initial = kwargs.get('initial', {})
+
+        for field in ['part']:
+            if field in initial:
+                self.fields['field'].disabled = True
+
     class Meta:
         model = Build
         fields = [

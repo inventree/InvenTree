@@ -98,11 +98,18 @@ $(document).ready(function () {
         launchModalForm("#modal-form", "{% url 'part-edit' part.id %}");
     });
 
+    {% if part.category %}
+    var partRedirect = "{% url 'category-detail' part.category.id %}";
+    {% else %}
+    var partRedirect = "{% url 'part-index' %}";
+    {% endif %}
+
     $('#delete-part').click(function() {
         launchDeleteForm("#modal-delete",
                          "{% url 'part-delete' part.id %}",
-                         {redirect: "{% url 'part-index' %}"}
-        );
+                         {
+                             redirect: partRedirect
+                         });
     });
 });
 </script>
