@@ -33,11 +33,10 @@
 
 {% endblock %}
 
-{% block javascript %}
+{% block js_load %}
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
-
-<script type='text/javascript'>
-$(document).ready(function() {
+{% endblock %}
+{% block js_ready %}
     $('#edit-company').click(function() {
         launchModalForm("#modal-form",
                         "{% url 'company-edit' company.id %}",
@@ -52,9 +51,5 @@ $(document).ready(function() {
                          {
                              redirect: "{% url 'company-index' %}"
                          });
-    })
-});
-</script>
-
-
+    });
 {% endblock %}

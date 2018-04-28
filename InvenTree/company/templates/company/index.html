@@ -36,13 +36,11 @@
 
 {% endblock %}
 
-{% block javascript %}
-
+{% block js_load %}
 <script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
-
-<script type='text/javascript'>
-$(document).ready(function() {
+{% endblock %}
+{% block js_ready %}
     $('#company-table').footable();
 
     $('#new-company').click(function () {
@@ -52,7 +50,4 @@ $(document).ready(function() {
                             follow: true
                         });
     });
-});
-</script>
-
 {% endblock %}

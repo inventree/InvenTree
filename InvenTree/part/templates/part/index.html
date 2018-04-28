@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block css %}
+<link rel='stylesheet' href="{% static 'css/bootstrap-treeview.css' %}">
+{% endblock %}
+
 {% block content %}
 
 {% include "part/cat_link.html" with category=category %}
@@ -23,13 +27,13 @@
 </div>
 {% endblock %}
 
-{% block javascript %}
+{% block js_load %}
 
 <script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
-
-<script type="text/javascript">
-$(document).ready(function () {
+<script type='text/javascript' src="{% static 'script/bootstrap-treeview.js' %}"></script>
+{% endblock %}
+{% block js_ready %}
     $('#part-list').footable();
 
     $("#create-cat").click(function() {
@@ -43,7 +47,4 @@ $(document).ready(function () {
     $("#create-part").click(function() {
         launchModalForm("#modal-form", "{% url 'part-create' %}");
     });
-});
-</script>
-
 {% endblock %}

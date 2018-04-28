@@ -88,12 +88,12 @@
 {% endblock %}
 
 
-{% block javascript %}
+{% block js_load %}
 
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+{% endblock %}
+{% block js_ready %}
 
-<script type="text/javascript">
-$(document).ready(function () {
     $("#edit-part").click(function() {
         launchModalForm("#modal-form", "{% url 'part-edit' part.id %}");
     });
@@ -104,7 +104,4 @@ $(document).ready(function () {
                          {redirect: "{% url 'part-index' %}"}
         );
     });
-});
-</script>
-
 {% endblock %}

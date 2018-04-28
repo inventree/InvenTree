@@ -102,13 +102,12 @@
 
 {% endblock %}
 
-{% block javascript %}
+{% block js_load %}
 
 <script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
-
-<script type="text/javascript">
-$(document).ready(function () {
+{% endblock %}
+{% block js_ready %}
     $("#edit-item").click(function () {
         launchModalForm("#modal-form",
                         "{% url 'stock-item-edit' item.id %}",
@@ -124,8 +123,4 @@ $(document).ready(function () {
                              redirect: "{% url 'part-stock' item.part.id %}"
                          });
     });
-});
-
-</script>
-
 {% endblock %}

@@ -39,12 +39,10 @@
 
 {% endblock %}
 
-{% block javascript %}
-
+{% block js_load %}
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
-
-<script type='text/javascript'>
-$(document).ready(function() {
+{% endblock %}
+{% block js_ready %}
     $("#start-build").click(function() {
         launchModalForm("#modal-form",
                         "{% url 'build-create' %}",
@@ -55,7 +53,4 @@ $(document).ready(function() {
                             }
                         });
     });
-});
-</script>
-
 {% endblock %}

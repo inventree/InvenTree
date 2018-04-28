@@ -41,9 +41,20 @@ InvenTree
 <script type="text/javascript" src="{% static 'script/jquery_3.3.1_jquery.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'script/bootstrap.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'script/select2/select2.js' %}"></script>
+{% block js_load %}
+{% endblock %}
 
-{% block javascript %}
+<script type='text/javascript'>
+$(document).ready(function () {
 
+{% block js_ready %}
+
+{% endblock %}
+
+});
+</script>
+
+{% block js %}
 {% endblock %}
 
 </body>

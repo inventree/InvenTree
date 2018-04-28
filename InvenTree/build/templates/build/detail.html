@@ -64,14 +64,12 @@
 
 {% endblock %}
 
-{% block javascript %}
-
+{% block js_load %}
 <script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+{% endblock %}
 
-<script type='text/javascript'>
-
-$(document).ready(function () {
+{% block js_ready %}
     $("#build-list").footable();
 
     $("#edit-build").click(function () {
@@ -81,8 +79,4 @@ $(document).ready(function () {
                             reload: true
                         });
     });
-});
-
-</script>
-
 {% endblock %}
