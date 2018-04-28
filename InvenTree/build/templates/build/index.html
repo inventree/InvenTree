@@ -1,34 +1,36 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 
 <h3>Part Builds</h3>
 
-<table class='table table-striped'>
+<table class='table table-striped' id='build-list' data-sorting='true' data-filtering='true'>
+<thead>
 <tr>
-    <th></th>
+    <th>Build</th>
     <th>Part</th>
     <th>Quantity</th>
     <th>Status</th>
 </tr>
+</thead>
+<tbody>
 
-{% if active|length > 0 %}
-<tr><td colspan="4"><b>Active Builds</b></td></tr>
-{% include "build/build_list.html" with builds=active %}
-{% endif %}
+{% include "build/build_list.html" with builds=builds %}
 
-{% if complete|length > 0 %}
-<tr></tr>
-<tr><td colspan="4"><b>Completed Builds</b></td></tr>
-{% include "build/build_list.html" with builds=complete %}
-{% endif %}
-
-{% if cancelled|length > 0 %}
-<tr></tr>
-<tr><td colspan="4"><b>Cancelled Builds</b></td></tr>
-{% include "build/build_list.html" with builds=cancelled.all %}
-{% endif %}
-
+</tbody>
 </table>
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+    $('#build-list').footable();
+});
+</script>
 
 {% endblock %}

@@ -54,6 +54,10 @@ function launchDeleteForm(modal, url, options = {}) {
                 if (options.success) {
                     options.success();
                 }
+                // Follow the URL returned by the JSON response
+                else if (options.follow && response.url) {
+                    window.location.href = response.url;
+                }
                 else if (options.redirect) {
                     window.location.href = options.redirect;
                 }

@@ -50,24 +50,40 @@ $(document).ready(function (){
                        );
     });
 
+    {% if category.parent %}
+    var categoryRedirect = "{% url 'category-detail' category.parent.id %}";
+    {% else %}
+    var categoryRedirect = "{% url 'part-index' %}";
+    {% endif %}
+
     $("#delete-category").click(function() {
         launchDeleteForm("#modal-delete",
                          "{% url 'category-delete' category.id %}",
-                         {redirect: "{% url 'part-index' %}"});
+                         {
+                             redirect: categoryRedirect
+                         });
     });
 
     $("#create-cat").click(function() {
         launchModalForm("#modal-form",
                         "{% url 'category-create' %}",
-                        {data: {category: {{ category.id }}
-                    }});
+                        {
+                            follow: true,
+                            data: {
+                                category: {{ category.id }}
+                            }
+                        });
     });
 
     $("#create-part").click( function() {
         launchModalForm("#modal-form",
                         "{% url 'part-create' %}",
-                        {data: {category: {{ category.id }}
-                    }});
+                        {
+                            data: {
+                                category: {{ category.id }}
+                            },
+                            reload: true
+                        });
     });
 });
 </script>

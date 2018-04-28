@@ -25,10 +25,12 @@ class BuildIndex(ListView):
 
         context = super(BuildIndex, self).get_context_data(**kwargs).copy()
 
+        """
         context['active'] = self.get_queryset().filter(status__in=[Build.PENDING, Build.HOLDING])
 
         context['complete'] = self.get_queryset().filter(status=Build.COMPLETE)
         context['cancelled'] = self.get_queryset().filter(status=Build.CANCELLED)
+        """
 
         return context
 
