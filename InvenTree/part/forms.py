@@ -13,11 +13,6 @@ class EditPartForm(forms.ModelForm):
 
         self.helper.form_tag = False
 
-        initial = kwargs.get('initial', {})
-
-        if 'category' in initial:
-            self.fields['category'].disabled = True
-
     class Meta:
         model = Part
         fields = [
@@ -45,11 +40,6 @@ class EditCategoryForm(forms.ModelForm):
 
         self.helper.form_tag = False
 
-        initial = kwargs.get('initial', {})
-
-        if 'category' in initial:
-            self.fields['parent'].disabled = True
-
     class Meta:
         model = PartCategory
         fields = [
@@ -69,12 +59,6 @@ class EditBomItemForm(forms.ModelForm):
 
         self.helper.form_tag = False
 
-        initial = kwargs.get('initial', {})
-
-        for field in ['part', 'sub_part']:
-            if field in initial:
-                self.fields[field].disabled = True
-
     class Meta:
         model = BomItem
         fields = [
@@ -90,12 +74,6 @@ class EditSupplierPartForm(forms.ModelForm):
             self.helper = FormHelper()
 
             self.helper.form_tag = False
-
-            initial = kwargs.get('initial', {})
-
-            for field in ['supplier', 'part']:
-                if field in initial:
-                    self.fields[field].disabled = True
 
         class Meta:
             model = SupplierPart

@@ -239,8 +239,12 @@ class SupplierPartCreate(AjaxCreateView):
 
         if supplier_id:
             initials['supplier'] = get_object_or_404(Company, pk=supplier_id)
+            # TODO
+            # self.fields['supplier'].disabled = True
         if part_id:
             initials['part'] = get_object_or_404(Part, pk=part_id)
+            # TODO
+            # self.fields['part'].disabled = True
 
         return initials
 

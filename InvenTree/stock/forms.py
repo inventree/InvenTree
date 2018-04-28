@@ -15,11 +15,6 @@ class EditStockLocationForm(forms.ModelForm):
 
         self.helper.form_tag = False
 
-        initial = kwargs.get('initial', {})
-
-        if 'location' in initial:
-            self.fields['parent'].disabled = True
-
     class Meta:
         model = StockLocation
         fields = [
@@ -36,12 +31,6 @@ class EditStockItemForm(forms.ModelForm):
         self.helper = FormHelper()
 
         self.helper.form_tag = False
-
-        initial = kwargs.get('initial', {})
-
-        for field in ['part', 'location']:
-            if field in initial:
-                self.fields[field].disabled = True
 
     class Meta:
         model = StockItem
