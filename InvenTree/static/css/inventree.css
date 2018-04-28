@@ -41,8 +41,17 @@
 }
 
 .inventree-content {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 15px;
+    margin-right: 50px;
+    margin-left: 50px;
+    width: 100%;
+    transition: 0.5s;
+}
+
+.body {
+    padding-top: 70px;
 }
 
 .modal {
@@ -61,4 +70,19 @@
   max-height: calc(100vh - 200px) !important;
   overflow-y: scroll;
   padding: 10px;
+}
+
+/* The side navigation menu */
+.sidenav {
+    height: 100%; /* 100% Full-height */
+    width: 0px; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    background-color: #fff; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+.wrapper {
+    align-items: stretch;
+    display: flex;
 }

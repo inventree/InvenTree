@@ -7,8 +7,16 @@ from rest_framework import generics, permissions
 
 from django.conf.urls import url
 
-from .models import Part
+from .models import Part, PartCategory
 from .serializers import PartSerializer
+
+from InvenTree.views import TreeSerializer
+
+
+class PartCategoryTree(TreeSerializer):
+
+    title = "Parts"
+    model = PartCategory
 
 
 class PartList(generics.ListCreateAPIView):
@@ -43,6 +51,8 @@ class PartList(generics.ListCreateAPIView):
 
 
 part_api_urls = [
+
+    url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]

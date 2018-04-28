@@ -5,6 +5,48 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 
 from django.views.generic import UpdateView, CreateView, DeleteView
+from rest_framework import views
+from django.http import JsonResponse
+
+
+class TreeSerializer(views.APIView):
+
+    def itemToJson(self, item):
+
+        data = {
+            'text': item.name,
+            'href': item.get_absolute_url(),
+        }
+
+        if item.has_children:
+            nodes = []
+
+            for child in item.children.all().order_by('name'):
+                nodes.append(self.itemToJson(child))
+
+            data['nodes'] = nodes
+
+        return data
+
+    def get(self, request, *args, **kwargs):
+
+        top_items = self.model.objects.filter(parent=None).order_by('name')
+
+        nodes = []
+
+        for item in top_items:
+            nodes.append(self.itemToJson(item))
+
+        top = {
+            'text': self.title,
+            'nodes': nodes,
+        }
+
+        response = {
+            'tree': [top]
+        }
+
+        return JsonResponse(response, safe=False)
 
 
 class AjaxView(object):

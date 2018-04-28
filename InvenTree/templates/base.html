@@ -15,9 +15,7 @@
 
 {% block css %}
 {% endblock %}
-
 {% block head %}
-
 {% endblock %}
 
 <title>
@@ -31,21 +29,41 @@ InvenTree
 
 {% include "navbar.html" %}
 
-<div class="container container-fluid inventree-content">
+<div class='main body wrapper'>
+
+{% include "sidebar.html" %}
+
+<div class="container container-fluid inventree-content" id='inventree-content'>
 {% block content %}
 <!-- Each view fills in here.. -->
 {% endblock %}
+</div>
+
 </div>
 
 <!-- Scripts -->
 <script type="text/javascript" src="{% static 'script/jquery_3.3.1_jquery.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'script/bootstrap.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'script/select2/select2.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/bootstrap-treeview.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/trees.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/sidenav.js' %}"></script>
+
 {% block js_load %}
 {% endblock %}
 
 <script type='text/javascript'>
 $(document).ready(function () {
+
+    loadTree("{% url 'api-part-tree' %}",
+             "#part-tree");
+
+    loadTree("{% url 'api-stock-tree' %}",
+             "#stock-tree");
+
+    $('#logo').click(function() {
+        openSideNav();
+    });
 
 {% block js_ready %}
 

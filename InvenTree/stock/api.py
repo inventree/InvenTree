@@ -3,10 +3,19 @@ from django_filters import NumberFilter
 
 from rest_framework import generics, permissions, response
 
+from django.conf.urls import url
+
 # from InvenTree.models import FilterChildren
 from .models import StockLocation, StockItem
 from .serializers import StockItemSerializer, StockQuantitySerializer
 from .serializers import LocationSerializer
+
+from InvenTree.views import TreeSerializer
+
+
+class StockCategoryTree(TreeSerializer):
+    title = 'Stock'
+    model = StockLocation
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -127,3 +136,8 @@ class LocationList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filter_class = StockLocationFilter
+
+
+stock_api_urls = [
+    url(r'^tree/?', StockCategoryTree.as_view(), name='api-stock-tree'),
+]

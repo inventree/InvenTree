@@ -31,7 +31,6 @@
 
 <script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/bootstrap-treeview.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
     $('#part-list').footable();
@@ -44,7 +43,36 @@
                         });
     });
 
+    function loadTree() {
+        var requestData = {};
+
+        {% if category %}
+        requestData.category = {{ category.id }};
+        {% endif %}
+
+        $.ajax({
+            url: "{% url 'api-part-tree' %}",
+            type: 'get',
+            dataType: 'json',
+            data: requestData,
+            success: function (response) {
+                if (response.tree) {
+                    $("#part-tree").treeview({
+                        data: response.tree,
+                        enableLinks: true
+                    });
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert('Error retrieving part tree:\n' + thrownError);
+            }
+        });
+    }
+
     $("#create-part").click(function() {
         launchModalForm("#modal-form", "{% url 'part-create' %}");
     });
+
+    loadTree();
+
 {% endblock %}
