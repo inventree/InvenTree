@@ -94,15 +94,17 @@
 
 .notification-area {
     position: fixed;
-    z-index: 999999;
     top: 0px;
     margin-top: 20px;
     width: 100%;
     padding: 20px;
+    z-index: 999999;
+    pointer-events: none; // Prevent this div from blocking links underneath
 }
 
 .alert {
     display: none;
     border-radius: 5px;
     opacity: 0.9;
+    pointer-events: all;
 }
