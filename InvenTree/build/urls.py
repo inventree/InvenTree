@@ -4,6 +4,8 @@ from . import views
 
 build_detail_urls = [
     url(r'^edit/?', views.BuildUpdate.as_view(), name='build-edit'),
+    url(r'^allocate/?', views.BuildAllocate.as_view(), name='build-allocate'),
+    url(r'^cancel/?', views.BuildCancel.as_view(), name='build-cancel'),
 
     url(r'^.*$', views.BuildDetail.as_view(), name='build-detail'),
 ]

@@ -10,7 +10,8 @@ from .models import Build
 
 from .forms import EditBuildForm
 
-from InvenTree.views import AjaxUpdateView, AjaxCreateView
+from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView
+from django.http import JsonResponse
 
 
 class BuildIndex(ListView):
@@ -35,10 +36,39 @@ class BuildIndex(ListView):
         return context
 
 
+class BuildCancel(AjaxView):
+    model = Build
+    template_name = 'build/cancel.html'
+    ajax_form_title = 'Cancel Build'
+    ajax_submit_text = 'Cancel'
+    context_object_name = 'build'
+    fields = []
+
+    def post(self, request, *args, **kwargs):
+
+        build = get_object_or_404(Build, pk=self.kwargs['pk'])
+
+        build.status = Build.CANCELLED
+        build.save()
+
+        return self.renderJsonResponse(request, None)
+
+    def get_data(self):
+        return {
+            'info': 'Build was cancelled'
+        }
+
+
 class BuildDetail(DetailView):
     model = Build
     template_name = 'build/detail.html'
     context_object_name = 'build'
+
+
+class BuildAllocate(DetailView):
+    model = Build
+    context_object_name = 'build'
+    template_name = 'build/allocate.html'
 
 
 class BuildCreate(AjaxCreateView):
@@ -59,6 +89,11 @@ class BuildCreate(AjaxCreateView):
 
         return initials
 
+    def get_data(self):
+        return {
+            'success': 'Created new build',
+        }
+
 
 class BuildUpdate(AjaxUpdateView):
     model = Build
@@ -67,3 +102,8 @@ class BuildUpdate(AjaxUpdateView):
     template_name = 'build/update.html'
     ajax_form_title = 'Edit Build Details'
     ajax_template_name = 'modal_form.html'
+
+    def get_data(self):
+        return {
+            'info': 'Edited build',
+        }

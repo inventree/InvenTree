@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<h3>Allocate Parts for Build</h3>
+
+<h4><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></h4>
+
+<hr>
+
+<table class='table table-striped' id='part-table'>
+
+</table>
+
+{% endblock %}

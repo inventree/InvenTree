@@ -19,10 +19,10 @@ class EditBuildForm(forms.ModelForm):
         model = Build
         fields = [
             'title',
-            'notes',
             'part',
-            'batch',
             'quantity',
-            'status',
-            'completion_date',
+            'batch',
+            'notes',
+#            'status',
+#            'completion_date',
         ]

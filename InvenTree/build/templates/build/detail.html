@@ -58,6 +58,10 @@
 
 <div class='container-fluid'>
 <button class="btn btn-info" id='edit-build'>Edit Build</button>
+{% if build.is_active %}
+<a href="{% url 'build-allocate' build.id %}"><button class='btn btn-primary' id='allocate-build'>Allocate Parts</button></a>
+<button class='btn btn-warning' id='cancel-build'>Cancel Build</button>
+{% endif %}
 </div>
 
 {% include 'modals.html' %}
@@ -70,11 +74,20 @@
 {% endblock %}
 
 {% block js_ready %}
+
     $("#build-list").footable();
 
     $("#edit-build").click(function () {
         launchModalForm("#modal-form",
                         "{% url 'build-edit' build.id %}",
+                        {
+                            reload: true
+                        });
+    });
+
+    $("#cancel-build").click(function() {
+        launchModalForm("#modal-form",
+                        "{% url 'build-cancel' build.id %}",
                         {
                             reload: true
                         });
