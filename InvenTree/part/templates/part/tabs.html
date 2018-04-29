@@ -5,7 +5,7 @@
     <li{% ifequal tab 'bom' %} class="active"{% endifequal %}>
         <a href="{% url 'part-bom' part.id %}">BOM<span class="badge">{{ part.bom_count }}</span></a></li>
     <li{% ifequal tab 'build' %} class="active"{% endifequal %}>
-        <a href="{% url 'part-build' part.id %}">Build<span class='badge'>{{ part.can_build }}</span></a></li>
+        <a href="{% url 'part-build' part.id %}">Build<span class='badge'>{{ part.active_builds|length }}</span></a></li>
     {% endif %}
     {% if part.used_in_count > 0 %}
     <li{% ifequal tab 'used' %} class="active"{% endifequal %}>
