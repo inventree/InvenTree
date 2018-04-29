@@ -11,8 +11,9 @@ from part.models import Part
 from .models import StockItem, StockLocation
 
 from .forms import EditStockLocationForm
+from .forms import CreateStockItemForm
 from .forms import EditStockItemForm
-
+from .forms import MoveStockItemForm
 
 class StockIndex(ListView):
     model = StockItem
@@ -84,7 +85,7 @@ class StockLocationCreate(AjaxCreateView):
 
 class StockItemCreate(AjaxCreateView):
     model = StockItem
-    form_class = EditStockItemForm
+    form_class = CreateStockItemForm
     template_name = 'stock/item_create.html'
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
@@ -123,3 +124,14 @@ class StockItemDelete(AjaxDeleteView):
     template_name = 'stock/item_delete.html'
     context_object_name = 'item'
     ajax_form_title = 'Delete Stock Item'
+
+
+class StockItemMove(AjaxUpdateView):
+    model = StockItem
+    template_name = 'modal_form.html'
+    context_object_name = 'item'
+    ajax_form_title = 'Move Stock Item'
+    ajax_submit_text = 'Move'
+    form_class = MoveStockItemForm
+
+

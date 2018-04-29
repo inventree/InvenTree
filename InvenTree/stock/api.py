@@ -75,6 +75,7 @@ class StockList(generics.ListCreateAPIView):
         'location',
         'supplier_part',
         'customer',
+        'belongs_to',
         'status',
     ]
 

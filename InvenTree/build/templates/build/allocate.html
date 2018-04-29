@@ -10,7 +10,25 @@
 <hr>
 
 <table class='table table-striped' id='part-table'>
-
+<thead>
+<tr>
+    <th>Part</th>
+    <th>Source</th>
+    <th>Quantity</th>
+</tr>
+</thead>
+<tbody>
+{% for item in build.part.bom_items.all %}
+<tr>
+    <td colspan='3'><b><i>{{ item.sub_part.name }}</b></i></td>
+</tr>
+<tr>
+    <td></td>
+    <td><i>Select...</i></td>
+    <td></td>
+</tr>
+{% endfor %}
+</tbody>
 </table>
 
 {% endblock %}

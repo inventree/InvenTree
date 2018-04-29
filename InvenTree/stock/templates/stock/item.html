@@ -95,6 +95,9 @@
 
 <div class='container-fluid'>
 <button class='btn btn-info' id='edit-item'>Edit Stock Item</button>
+{% if item.in_stock %}
+<button class='btn btn-primary' id='move-item'>Move Stock Item</button>
+{% endif %}
 <button class='btn btn-danger' id='delete-item'>Delete Stock Item</button>
 </div>
 
@@ -115,6 +118,16 @@
                             reload: true
                         });
     });
+
+    {% if item.in_stock %}
+    $("#move-item").click(function() {
+        launchModalForm("#modal-form",
+                        "{% url 'stock-item-move' item.id %}",
+                        {
+                            reload: true,
+                        });
+        });
+    {% endif %}
 
     $("#delete-item").click(function () {
         launchDeleteForm("#modal-delete",
