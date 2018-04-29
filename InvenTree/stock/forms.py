@@ -2,18 +2,12 @@
 from __future__ import unicode_literals
 
 from django import forms
-from crispy_forms.helper import FormHelper
+from InvenTree.forms import HelperForm
 
 from .models import StockLocation, StockItem
 
 
-class EditStockLocationForm(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super(EditStockLocationForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-
-        self.helper.form_tag = False
+class EditStockLocationForm(HelperForm):
 
     class Meta:
         model = StockLocation
@@ -24,13 +18,7 @@ class EditStockLocationForm(forms.ModelForm):
         ]
 
 
-class EditStockItemForm(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super(EditStockItemForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-
-        self.helper.form_tag = False
+class CreateStockItemForm(HelperForm):
 
     class Meta:
         model = StockItem
@@ -45,4 +33,26 @@ class EditStockItemForm(forms.ModelForm):
             'status',
             # 'customer',
             'URL',
+        ]
+
+
+class MoveStockItemForm(forms.ModelForm):
+
+    class Meta:
+        model = StockItem
+
+        fields = [
+            'location',
+        ]
+
+
+class EditStockItemForm(HelperForm):
+
+    class Meta:
+        model = StockItem
+
+        fields = [
+            'quantity',
+            'batch',
+            'status',
         ]

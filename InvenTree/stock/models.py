@@ -167,6 +167,16 @@ class StockItem(models.Model):
     infinite = models.BooleanField(default=False)
 
     @property
+    def in_stock(self):
+        if self.quantity == 0:
+            return False
+
+        if self.belongs_to or self.customer:
+            return False
+
+        return True
+
+    @property
     def has_tracking_info(self):
         return self.tracking_info.count() > 0
 
