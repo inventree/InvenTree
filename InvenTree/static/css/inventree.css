@@ -86,3 +86,7 @@
     align-items: stretch;
     display: flex;
 }
+
+.help-inline {
+    color: #A11;
+}

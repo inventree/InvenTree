@@ -73,6 +73,13 @@ class StockItem(models.Model):
             # TODO - Find a test than can be perfomed...
             pass
 
+        # Serial number cannot be set for items with quantity greater than 1
+        if not self.quantity == 1 and self.serial:
+            raise ValidationError({
+                'quantity': _("Quantity must be set to 1 for item with a serial number"),
+                'serial': _("Serial number cannot be set if quantity > 1")
+            })
+
     def get_absolute_url(self):
         return '/stock/item/{id}/'.format(id=self.id)
 

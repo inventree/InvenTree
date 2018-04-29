@@ -82,7 +82,7 @@ class Part(models.Model):
     """ Represents an abstract part
     Parts can be "stocked" in multiple warehouses,
     and can be combined to form other parts
-    """
+    """        
 
     def get_absolute_url(self):
         return '/part/{id}/'.format(id=self.id)
