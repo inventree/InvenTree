@@ -62,7 +62,12 @@ $(document).ready(function () {
              "#stock-tree");
 
     $('#logo').click(function() {
-        openSideNav();
+        if ($("#sidenav").width() == 0) {
+            openSideNav();
+        }
+        else {
+            closeSideNav();
+        }
     });
 
 {% block js_ready %}
