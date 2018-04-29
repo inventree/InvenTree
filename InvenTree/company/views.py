@@ -43,6 +43,11 @@ class CompanyEdit(AjaxUpdateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Company'
 
+    def get_data(self):
+        return {
+            'info': 'Edited company information',
+        }
+
 
 class CompanyCreate(AjaxCreateView):
     model = Company
@@ -52,9 +57,19 @@ class CompanyCreate(AjaxCreateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = "Create new Company"
 
+    def get_data(self):
+        return {
+            'success': "Created new company",
+        }
+
 
 class CompanyDelete(AjaxDeleteView):
     model = Company
     success_url = '/company/'
     template_name = 'company/delete.html'
     ajax_form_title = 'Delete Company'
+
+    def get_data(self):
+        return {
+            'danger': 'Company was deleted',
+        }

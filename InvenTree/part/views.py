@@ -52,6 +52,11 @@ class PartCreate(AjaxCreateView):
     ajax_form_title = 'Create new part'
     ajax_template_name = 'modal_form.html'
 
+    def get_data(self):
+        return {
+            'success': "Created new part",
+        }
+
     def get_category_id(self):
         return self.request.GET.get('category', None)
 
@@ -108,13 +113,10 @@ class PartDelete(AjaxDeleteView):
 
     success_url = '/part/'
 
-    """
-    def post(self, request, *args, **kwargs):
-        if 'confirm' in request.POST:
-            return super(PartDelete, self).post(request, *args, **kwargs)
-        else:
-            return HttpResponseRedirect(self.get_object().get_absolute_url())
-    """
+    def get_data(self):
+        return {
+            'danger': 'Part was deleted',
+        }
 
 
 class CategoryDetail(DetailView):
@@ -144,6 +146,11 @@ class CategoryDelete(AjaxDeleteView):
     template_name = 'part/category_delete.html'
     context_object_name = 'category'
     success_url = '/part/'
+
+    def get_data(self):
+        return {
+            'danger': 'Part category was deleted',
+        }
 
 
 class CategoryCreate(AjaxCreateView):

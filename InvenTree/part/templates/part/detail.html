@@ -99,7 +99,8 @@
     $('#delete-part').click(function() {
         launchDeleteForm("#modal-delete",
                          "{% url 'part-delete' part.id %}",
-                         {redirect: "{% url 'part-index' %}"}
-        );
+                         {
+                             redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"}{% endif %}
+                         });
     });
 {% endblock %}
