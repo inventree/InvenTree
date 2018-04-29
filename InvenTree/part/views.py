@@ -11,6 +11,7 @@ from company.models import Company
 from .models import PartCategory, Part, BomItem
 from .models import SupplierPart
 
+from .forms import PartImageForm
 from .forms import EditPartForm
 from .forms import EditCategoryForm
 from .forms import EditBomItemForm
@@ -81,6 +82,14 @@ class PartDetail(DetailView):
     context_object_name = 'part'
     queryset = Part.objects.all()
     template_name = 'part/detail.html'
+
+
+class PartImage(AjaxUpdateView):
+
+    model = Part
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Upload Part Image'
+    form_class = PartImageForm
 
 
 class PartEdit(AjaxUpdateView):

@@ -45,16 +45,14 @@
 <button class='btn btn-success' id='add-stock-item'>Add new Stock Item</button>
 </div>
 
-{% include 'modals.html' %}
-
 {% endblock %}
 
 {% block js_load %}
-
+{{ block.super }}
 <script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
+{{ block.super }}
     $('#stock-table').footable();
 
     $('#add-stock-item').click(function () {

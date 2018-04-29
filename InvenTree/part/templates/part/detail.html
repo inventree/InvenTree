@@ -6,8 +6,6 @@
 
 <h3>Part Details</h3>
 
-{% include 'modals.html' %}
-
 <table class='table table-striped'>
 <tr>
     <td>Part name</td>
@@ -88,14 +86,14 @@
 {% endblock %}
 
 
-{% block js_load %}
-
-<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
-{% endblock %}
 {% block js_ready %}
-
+    {{ block.super }}
     $("#edit-part").click(function() {
-        launchModalForm("#modal-form", "{% url 'part-edit' part.id %}");
+        launchModalForm("#modal-form",
+                        "{% url 'part-edit' part.id %}",
+                        {
+                            reload: true
+                        });
     });
 
     $('#delete-part').click(function() {

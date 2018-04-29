@@ -20,6 +20,12 @@
 </tbody>
 </table>
 
+<div class='container-fluid'>
+<button class="btn btn-success" id='new-build'>Start New Build</button>
+</div>
+
+{% include 'modals.html' %}
+
 {% endblock %}
 
 {% block js_load %}
@@ -28,4 +34,13 @@
 {% endblock %}
 {% block js_ready %}
     $('#build-list').footable();
+
+    $("#new-build").click(function() {
+        launchModalForm("#modal-form",
+                        "{% url 'build-create' %}",
+                        {
+                            follow: true
+                        });
+    });
+
 {% endblock %}

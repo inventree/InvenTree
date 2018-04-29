@@ -10,7 +10,7 @@
 <div class="col-sm-6">
     <div class="media">
       <div class="media-left">
-        <img class="part-thumb"
+        <img class="part-thumb" id="part-thumb"
         {% if part.image %}
         src="{{ part.image.url }}"
         {% else %}
@@ -94,4 +94,19 @@
 {% endblock %}
 </div>
 
+{% include 'modals.html' %}
+
+{% endblock %}
+
+{% block js_load %}
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
+{% endblock %}
+
+{% block js_ready %}
+
+    $("#part-thumb").click(function() {
+        launchModalForm("#modal-form",
+                        "{% url 'part-image' part.id %}",
+                        );
+    });
 {% endblock %}

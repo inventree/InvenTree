@@ -5,6 +5,22 @@ from .models import Part, PartCategory, BomItem
 from .models import SupplierPart
 
 
+class PartImageForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+
+        super(PartImageForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+    class Meta:
+        model = Part
+        fields = [
+            'image',
+        ]
+
+
 class EditPartForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):

@@ -35,14 +35,10 @@
 <button class="btn btn-success" id='start-build'>Start New Build</button>
 </div>
 
-{% include 'modals.html' %}
-
 {% endblock %}
 
-{% block js_load %}
-<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
-{% endblock %}
 {% block js_ready %}
+{{ block.super }}
     $("#start-build").click(function() {
         launchModalForm("#modal-form",
                         "{% url 'build-create' %}",

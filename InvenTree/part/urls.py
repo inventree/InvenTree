@@ -26,6 +26,8 @@ part_detail_urls = [
     url(r'^allocation/?', views.PartDetail.as_view(template_name='part/allocation.html'), name='part-allocation'),
     url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
 
+    url(r'^thumbnail/?', views.PartImage.as_view(), name='part-image'),
+
     # Any other URLs go to the part detail page
     url(r'^.*$', views.PartDetail.as_view(), name='part-detail'),
 ]

@@ -35,16 +35,14 @@
 <button class="btn btn-success" id='supplier-create'>New Supplier Part</button>
 </div>
 
-{% include 'modals.html' %}
-
 {% endblock %}
 
 {% block js_load %}
-
+{{ block.super }}
 <script type='text/javascript' src="{% static 'script/footable.js' %}"></script>``
-<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
+    {{ block.super }}
     $('#supplier-table').footable();
 
     $('#supplier-create').click(function () {
