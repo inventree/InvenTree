@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 
+from django.views import View
 from django.views.generic import UpdateView, CreateView, DeleteView
 from rest_framework import views
 from django.http import JsonResponse
@@ -49,11 +50,14 @@ class TreeSerializer(views.APIView):
         return JsonResponse(response, safe=False)
 
 
-class AjaxView(object):
+class AjaxMixin(object):
 
     ajax_form_action = ''
     ajax_form_title = ''
     ajax_submit_text = 'Submit'
+
+    def get_data(self):
+        return {}
 
     def getAjaxTemplate(self):
         if hasattr(self, 'ajax_template_name'):
@@ -63,8 +67,10 @@ class AjaxView(object):
 
     def renderJsonResponse(self, request, form, data={}):
 
-        context = {'form': form
-                   }
+        context = {}
+
+        if form:
+            context['form'] = form
 
         data['title'] = self.ajax_form_title
 
@@ -76,10 +82,27 @@ class AjaxView(object):
             request=request
         )
 
-        return JsonResponse(data)
+        # Custom feedback`data
+        fb = self.get_data()
+
+        for key in fb.keys():
+            data[key] = fb[key]
+
+        return JsonResponse(data, safe=False)
 
 
-class AjaxCreateView(AjaxView, CreateView):
+class AjaxView(AjaxMixin, View):
+    """ Bare-bones AjaxView """
+
+    def post(self, request, *args, **kwargs):
+        return JsonResponse('', safe=False)
+
+    def get(self, request, *args, **kwargs):
+
+        return self.renderJsonResponse(request, None)
+
+
+class AjaxCreateView(AjaxMixin, CreateView):
 
     def post(self, request, *args, **kwargs):
 
@@ -114,7 +137,7 @@ class AjaxCreateView(AjaxView, CreateView):
             return response
 
 
-class AjaxUpdateView(AjaxView, UpdateView):
+class AjaxUpdateView(AjaxMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
 
@@ -148,7 +171,7 @@ class AjaxUpdateView(AjaxView, UpdateView):
             return response
 
 
-class AjaxDeleteView(AjaxView, DeleteView):
+class AjaxDeleteView(AjaxMixin, DeleteView):
 
     def post(self, request, *args, **kwargs):
 
@@ -160,7 +183,7 @@ class AjaxDeleteView(AjaxView, DeleteView):
             data = {'id': pk,
                     'delete': True}
 
-            return JsonResponse(data)
+            return self.renderJsonResponse(request, None, data)
 
         else:
             return super(DeleteView, self).post(request, *args, **kwargs)
