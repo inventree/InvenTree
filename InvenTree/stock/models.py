@@ -68,6 +68,12 @@ class StockItem(models.Model):
                                            pe=str(self.part))
                                            })
 
+            if self.part is not None:
+                if self.part.trackable and not self.serial:
+                    raise ValidationError({
+                        'serial': _('Serial number must be set for trackable items')
+                    })
+
         except Part.DoesNotExist:
             # This gets thrown if self.supplier_part is null
             # TODO - Find a test than can be perfomed...
