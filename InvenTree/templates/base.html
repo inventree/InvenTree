@@ -39,6 +39,7 @@ InvenTree
 {% endblock %}
 </div>
 
+{% include 'notification.html' %}
 </div>
 
 <!-- Scripts -->
@@ -48,6 +49,7 @@ InvenTree
 <script type='text/javascript' src="{% static 'script/bootstrap-treeview.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/trees.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/sidenav.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/notification.js' %}"></script>
 
 {% block js_load %}
 {% endblock %}
