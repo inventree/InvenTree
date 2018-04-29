@@ -43,26 +43,12 @@
     <table class="table table-striped">
         <tr>
             <td>In Stock</td>
-            <td>
-                {% if part.stock == 0 %}
-                <span class='label label-danger'>{{ part.total_stock }}</span>
-                {% elif part.stock < part.minimum_stock %}
-                <span class='label label-warning'>{{ part.total_stock }}</span>
-                {% else %}
-                {{ part.total_stock }}
-                {% endif %}
-            </td>
+            <td>{{ part.total_stock }}</td>
         </tr>
         {% if part.buildable %}
         <tr>
             <td>Can Build</td>
-            <td>
-                {% if part.can_build == 0 %}
-                <span class='label label-danger'>0</span>
-                {% else %}
-                {{ part.can_build }}
-                {% endif %}
-            </td>
+            <td>{{ part.can_build }}</td>
         </tr>
         {% if part.quantity_being_built > 0 %}
         <tr>
@@ -74,11 +60,7 @@
         {% if part.allocation_count > 0 %}
         <tr>
             <td>Allocated</td>
-            {% if part.allocation_count > part.total_stock %}
-            <td><span class='label label-danger'>{{ part.allocation_count }}</span></td>
-            {% else %}
             <td>{{ part.allocation_count }}</td>
-            {% endif %}
         </tr>
         {% endif %}
     </table>
