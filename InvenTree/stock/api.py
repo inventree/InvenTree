@@ -1,9 +1,9 @@
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
-from rest_framework import generics, permissions, response
+from rest_framework import generics, permissions, response, filters
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 # from InvenTree.models import FilterChildren
 from .models import StockLocation, StockItem
@@ -57,10 +57,26 @@ class StockList(generics.ListCreateAPIView):
     """
 
     queryset = StockItem.objects.all()
+
     serializer_class = StockItemSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
-    filter_class = StockFilter
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+        'part',
+        'location',
+        'supplier_part',
+        'customer',
+        'status',
+    ]
 
 
 class StockStocktakeEndpoint(generics.UpdateAPIView):
@@ -138,6 +154,22 @@ class LocationList(generics.ListCreateAPIView):
     filter_class = StockLocationFilter
 
 
+stock_endpoints = [
+    url(r'^$', StockDetail.as_view(), name='stockitem-detail'),
+]
+
+location_endpoints = [
+    url(r'^$', LocationDetail.as_view(), name='stocklocation-detail'),
+]
+
+
 stock_api_urls = [
+    # Detail for a single stock item
+    url(r'^(?P<pk>[0-9]+)/', include(stock_endpoints)),
+
+    url(r'location/(?P<pk>\d+)/', include(location_endpoints)),
+
     url(r'^tree/?', StockCategoryTree.as_view(), name='api-stock-tree'),
+
+    url(r'^.*$', StockList.as_view(), name='api-stock-list'),
 ]
