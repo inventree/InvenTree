@@ -10,7 +10,11 @@
 <thead>
 <tr>
     <th data-sortable='false'>Link</th>
+    {% if part.trackable %}
+    <th>Serial Number</th>
+    {% else %}
     <th>Quantity</th>
+    {% endif %}
     <th>Location</th>
     <th>Supplier part</th>
     <th>Stocktake</th>
@@ -21,7 +25,13 @@
 {% for stock in part.locations.all %}
 <tr>
     <td><a href="{% url 'stock-item-detail' stock.id %}">Click</a></td>
-    <td>{{ stock.quantity }}</td>
+    <td>
+        {% if part.trackable %}
+        {{ stock.serial }}
+        {% else %}
+        {{ stock.quantity }}
+        {% endif %}
+    </td>
     <td>
         {% if stock.location %}
         <a href="{% url 'stock-location-detail' stock.location.id %}">{{ stock.location.name }}</a>
