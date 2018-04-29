@@ -56,6 +56,7 @@
 
 .modal {
   overflow: hidden;
+  z-index: 99999999;
 }
 
 .modal-content h3 {
@@ -89,4 +90,19 @@
 
 .help-inline {
     color: #A11;
+}
+
+.notification-area {
+    position: fixed;
+    z-index: 999999;
+    top: 0px;
+    margin-top: 20px;
+    width: 100%;
+    padding: 20px;
+}
+
+.alert {
+    display: none;
+    border-radius: 5px;
+    opacity: 0.9;
 }
