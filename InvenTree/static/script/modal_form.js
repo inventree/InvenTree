@@ -8,6 +8,43 @@ function attachSelect(modal) {
     });
 }
 
+function afterForm(response, options) {
+
+    // Should we show alerts immediately or cache them?
+    var cache = (options.follow && response.url) ||
+                options.redirect ||
+                options.reload;
+
+    // Display any messages
+    if (response.success) {
+        showAlertOrCache("alert-success", response.success, cache);
+    }
+    if (response.info) {
+        showAlertOrCache("alert-info", response.info, cache);
+    }
+    if (response.warning) {
+        showAlertOrCache("alert-warning", response.warning, cache);
+    }
+    if (response.danger) {
+        showAlertOrCache("alert-danger", response.danger, cache);
+    }
+
+    // Was a callback provided?
+    if (options.success) {
+        options.success();
+    }
+    else if (options.follow && response.url) {
+        window.location.href = response.url;
+    }
+    else if (options.redirect) {
+        window.location.href = options.redirect;
+    }
+    else if (options.reload) {
+        location.reload();
+    }
+
+}
+
 function launchDeleteForm(modal, url, options = {}) {
 
     $(modal).on('shown.bs.modal', function() {
@@ -50,20 +87,7 @@ function launchDeleteForm(modal, url, options = {}) {
             dataType: 'json',
             success: function (response) {
                 $(modal).modal('hide');
-
-                if (options.success) {
-                    options.success();
-                }
-                // Follow the URL returned by the JSON response
-                else if (options.follow && response.url) {
-                    window.location.href = response.url;
-                }
-                else if (options.redirect) {
-                    window.location.href = options.redirect;
-                }
-                else if (options.reload) {
-                    location.reload();
-                }
+                afterForm(response, options);
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert('Error deleting item:\n' + thrownError);
@@ -129,36 +153,27 @@ function launchModalForm(modal, url, options = {}) {
             type: form.attr('method'),
             dataType: 'json',
             success: function (response) {
-                if (response.form_valid) {
 
-                    $(modal).modal('hide');
-
-                    // Form success callback
-                    if (options.success) {
-                        options.success();
+                // Form validation was performed
+                if ('form_valid' in response) {
+                    if (response.form_valid) {
+                        $(modal).modal('hide');
+                        afterForm(response, options);
                     }
-                    // Follow the URL returned by the JSON response
-                    else if (options.follow && response.url) {
-                        window.location.href = response.url;
+                    // Form was invalid - try again!
+                    else {
+                        if (response.html_form) {
+                            $(modal + ' .modal-form-content').html(response.html_form);
+                            attachSelect(modal);
+                        }
+                        else {
+                            alert('HTML form data missing from AJAX response');
+                        }
                     }
-                    // Redirect to a specific URL
-                    else if (options.redirect) {
-                        window.location.href = options.redirect;
-                    }
-                    // Reload the current page
-                    else if (options.reload) {
-                        location.reload();
-                    }
-                }
-                else if (response.html_form) {
-                    var target = modal + ' .modal-form-content';
-                    $(target).html(response.html_form);
-
-                    attachSelect(modal);
                 }
                 else {
-                    alert('JSON response missing form data');
                     $(modal).modal('hide');
+                    afterForm(response, options);
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {

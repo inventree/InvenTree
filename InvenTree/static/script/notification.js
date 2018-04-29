@@ -7,6 +7,15 @@ function showAlert(target, message, timeout=5000) {
     });
 }
 
+function showAlertOrCache(alertType, message, cache, timeout=5000) {
+    if (cache) {
+        sessionStorage.setItem(alertType, message);
+    }
+    else {
+        showAlert('#' + alertType, message, timeout);
+    }
+}
+
 function showCachedAlerts() {
 
     // Success Message
@@ -32,6 +41,4 @@ function showCachedAlerts() {
         showAlert("#alert-danger", sessionStorage.getItem("alert-danger"));
         sessionStorage.removeItem("alert-danger");
     }
-
-    sessionStorage.setItem("alert-danger", 'test');
 }
