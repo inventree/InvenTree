@@ -180,6 +180,18 @@ class StockItem(models.Model):
     def has_tracking_info(self):
         return self.tracking_info.count() > 0
 
+    def add_transaction_note(self, title, user, notes='', system=True):
+        track = StockItemTracking.objects.create(
+            item=self,
+            title=title,
+            user=user,
+            date=datetime.now().date(),
+            notes=notes,
+            system=system
+        )
+
+        track.save()
+
     @transaction.atomic
     def stocktake(self, count, user):
         """ Perform item stocktake.
@@ -196,6 +208,11 @@ class StockItem(models.Model):
         self.stocktake_date = datetime.now().date()
         self.stocktake_user = user
         self.save()
+
+        self.add_transaction_note('Stocktake',
+                                  user,
+                                  notes='Counted {n} items'.format(n=count),
+                                  system=True)
 
     @transaction.atomic
     def add_stock(self, amount):

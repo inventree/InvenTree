@@ -137,6 +137,28 @@ class StockItemMove(AjaxUpdateView):
     ajax_submit_text = 'Move'
     form_class = MoveStockItemForm
 
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, instance=self.get_object())
+
+        if form.is_valid():
+            obj = form.save()
+
+            try:
+                loc = StockLocation.objects.get(pk=form['location'].value())
+                loc_path = loc.pathstring
+            except StockLocation.DoesNotExist:
+                loc_path = ''
+
+            obj.add_transaction_note("Moved item to '{where}'".format(where=loc_path),
+                                     request.user,
+                                     system=True)
+
+        data = {
+            'form_valid': form.is_valid(),
+        }
+
+        return self.renderJsonResponse(request, form, data)
+
 
 class StockItemStocktake(AjaxUpdateView):
     model = StockItem
@@ -150,12 +172,10 @@ class StockItemStocktake(AjaxUpdateView):
         form = self.form_class(request.POST, instance=self.get_object())
 
         if form.is_valid():
-            obj = form.save()
 
-            obj.stocktake_date = datetime.datetime.now()
-            obj.stocktake_user = request.user
+            obj = self.get_object()
 
-            obj.save()
+            obj.stocktake(form.data['quantity'], request.user)
 
         data = {
             'form_valid': form.is_valid()
