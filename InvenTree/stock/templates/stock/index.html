@@ -9,14 +9,14 @@
 {% include "stock/location_list.html" with locations=locations %}
 {% endif %}
 
-<table class="table table-striped" id='stock-table' data-sorting='true'>
+<table class="table table-striped" id='stock-table' data-filtering='true' data-sorting='true'>
 <thead>
 <tr>
     <th>Part</th>
     <th>Location</th>
-    <th>Stock</th>
+    <th data-type='number'>Stock</th>
     <th>Status</th>
-    <th>Stocktake</th>
+    <th data-type='date'>Stocktake</th>
     <th data-sortable='false'></th>
 </tr>
 </thead>
@@ -32,7 +32,7 @@
         {% endif %}
     </td>
     <td>{{ item.quantity }}</td>
-    <td>{{ item.status }}</td>
+    <td>{{ item.get_status_display }}</td>
     <td>{{ item.stocktake_date }}</td>
     <td><a href="{% url 'stock-item-detail' item.id %}">Click</a></td>
 </tr>

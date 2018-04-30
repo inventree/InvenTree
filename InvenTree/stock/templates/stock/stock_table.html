@@ -1,8 +1,8 @@
-<table class="table table-striped" id='stock-table' data-sorting='true'>
+<table class="table table-striped" id='stock-table' data-filtering='true' data-sorting='true'>
 <thead>
 <tr>
     <th>Part</th>
-    <th>Stock</th>
+    <th data-type='number'>Stock</th>
     <th>Status</th>
     <th>Stocktake</th>
     <th data-sortable='false'></th>
@@ -13,7 +13,7 @@
 <tr>
     <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</a></td>
     <td>{{ item.quantity }}</td>
-    <td>{{ item.status }}</td>
+    <td>{{ item.get_status_display }}</td>
     <td>{{ item.stocktake_date }}</td>
     <td><a href="{% url 'stock-item-detail' item.id %}">Click</a></td>
 </tr>
