@@ -10,10 +10,13 @@ from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from part.models import Part
 from .models import StockItem, StockLocation
 
+import datetime
+
 from .forms import EditStockLocationForm
 from .forms import CreateStockItemForm
 from .forms import EditStockItemForm
 from .forms import MoveStockItemForm
+from .forms import StocktakeForm
 
 class StockIndex(ListView):
     model = StockItem
@@ -133,5 +136,31 @@ class StockItemMove(AjaxUpdateView):
     ajax_form_title = 'Move Stock Item'
     ajax_submit_text = 'Move'
     form_class = MoveStockItemForm
+
+
+class StockItemStocktake(AjaxUpdateView):
+    model = StockItem
+    template_name = 'modal_form.html'
+    context_object_name = 'item'
+    ajax_form_title = 'Item stocktake'
+    form_class = StocktakeForm
+
+    def post(self, request, *args, **kwargs):
+
+        form = self.form_class(request.POST, instance=self.get_object())
+
+        if form.is_valid():
+            obj = form.save()
+
+            obj.stocktake_date = datetime.datetime.now()
+            obj.stocktake_user = request.user
+
+            obj.save()
+
+        data = {
+            'form_valid': form.is_valid()
+        }
+
+        return self.renderJsonResponse(request, form, data)
 
 

@@ -46,6 +46,16 @@ class MoveStockItemForm(forms.ModelForm):
         ]
 
 
+class StocktakeForm(forms.ModelForm):
+
+    class Meta:
+        model = StockItem
+
+        fields = [
+            'quantity',
+        ]
+
+
 class EditStockItemForm(HelperForm):
 
     class Meta:

@@ -97,6 +97,7 @@
 <button class='btn btn-info' id='edit-item'>Edit Stock Item</button>
 {% if item.in_stock %}
 <button class='btn btn-primary' id='move-item'>Move Stock Item</button>
+<button class='btn btn-primary' id='stocktake'>Stocktake</button>
 {% endif %}
 <button class='btn btn-danger' id='delete-item'>Delete Stock Item</button>
 </div>
@@ -127,6 +128,15 @@
                             reload: true,
                         });
         });
+
+    $("#stocktake").click(function() {
+        launchModalForm("#modal-form",
+                        "{% url 'stock-item-stocktake' item.id %}",
+                        {
+                            reload: true
+                        });
+    });
+
     {% endif %}
 
     $("#delete-item").click(function () {

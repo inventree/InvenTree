@@ -15,6 +15,7 @@ class StockItemSerializer(serializers.ModelSerializer):
             'part',
             'supplier_part',
             'location',
+            'in_stock',
             'belongs_to',
             'customer',
             'quantity',
