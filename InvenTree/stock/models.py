@@ -130,7 +130,7 @@ class StockItem(models.Model):
     # build = models.ForeignKey('build.Build', on_delete=models.SET_NULL, blank=True, null=True)
 
     # Quantity of this stock item. Value may be overridden by other settings
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)])
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1)
 
     # Last time this item was updated (set automagically)
     updated = models.DateField(auto_now=True)

@@ -22,7 +22,7 @@
 </tr>
 </thead>
 <tbody>
-{% for stock in part.locations.all %}
+{% for stock in part.stock_entries %}
 <tr>
     <td><a href="{% url 'stock-item-detail' stock.id %}">Click</a></td>
     <td>

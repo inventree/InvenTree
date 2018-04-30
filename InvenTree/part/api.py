@@ -12,7 +12,6 @@ from .serializers import PartSerializer
 
 from InvenTree.views import TreeSerializer
 
-
 class PartCategoryTree(TreeSerializer):
 
     title = "Parts"

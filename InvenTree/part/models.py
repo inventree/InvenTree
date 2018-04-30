@@ -82,7 +82,7 @@ class Part(models.Model):
     """ Represents an abstract part
     Parts can be "stocked" in multiple warehouses,
     and can be combined to form other parts
-    """        
+    """
 
     def get_absolute_url(self):
         return '/part/{id}/'.format(id=self.id)
@@ -256,18 +256,19 @@ class Part(models.Model):
             self.allocated_build_count,
         ])
 
+
+    @property
+    def stock_entries(self):
+        return [loc for loc in self.locations.all() if loc.in_stock]
+
     @property
     def total_stock(self):
         """ Return the total stock quantity for this part.
         Part may be stored in multiple locations
         """
 
-        stocks = self.locations.all()
-        if len(stocks) == 0:
-            return 0
+        return sum([loc.quantity for loc in self.stock_entries])
 
-        result = stocks.aggregate(total=Sum('quantity'))
-        return result['total']
 
     @property
     def has_bom(self):
