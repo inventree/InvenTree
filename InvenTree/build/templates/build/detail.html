@@ -46,11 +46,11 @@
 </tr>
 </thead>
 <tbody>
-    {% for item in build.part.bom_items.all %}
+    {% for item in build.required_parts %}
     <tr>
-        <td><a href="{% url 'part-detail' item.sub_part.id %}">{{ item.sub_part.name }}</a></td>
-        <td>{{ build.quantity }} &times {{ item.quantity }}</td>
-        <td>{{ item.sub_part.total_stock }}</td>
+        <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.name }}</a></td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.part.total_stock }}</td>
     </tr>
     {% endfor %}
 </tbody>

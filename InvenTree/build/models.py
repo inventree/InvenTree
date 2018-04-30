@@ -61,6 +61,20 @@ class Build(models.Model):
     notes = models.TextField(blank=True)
 
     @property
+    def required_parts(self):
+        parts = []
+
+        for item in self.part.bom_items.all():
+            part = {'part': item.sub_part,
+                    'per_build': item.quantity,
+                    'quantity': item.quantity * self.quantity
+                    }
+
+            parts.append(part)
+
+        return parts
+
+    @property
     def is_active(self):
         """ Is this build active?
         An active build is either:
