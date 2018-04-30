@@ -65,3 +65,17 @@ class Company(models.Model):
     @property
     def has_parts(self):
         return self.part_count > 0
+
+
+class Contact(models.Model):
+
+    name = models.CharField(max_length=100)
+
+    phone = models.CharField(max_length=100, blank=True)
+
+    email = models.EmailField(blank=True)
+
+    role = models.CharField(max_length=100, blank=True)
+
+    company = models.ForeignKey(Company, related_name='contacts',
+                                on_delete = models.CASCADE)
