@@ -27,6 +27,11 @@
     <td>Serial</td>
     <td>{{ item.serial }}</td>
 </tr>
+{% else %}
+<tr>
+    <td>Quantity</td>
+    <td>{{ item.quantity }}</td>
+</tr>
 {% endif %}
 {% if item.batch %}
 <tr>
@@ -40,10 +45,6 @@
     <td>{{ item.customer.name }}</td>
 </tr>
 {% endif %}
-<tr>
-    <td>Quantity</td>
-    <td>{{ item.quantity }}</td>
-</tr>
 {% if item.URL %}
 <tr>
     <td>URL</td>
@@ -79,19 +80,25 @@
 </table>
 
 {% if item.has_tracking_info %}
-<h3>Stock Tracking</h3>
+<div class='panel panel-default'>
+    <div data-toggle='collapse' data-target='#tracking-info' class='panel panel-heading'><h4>Tracking History</h4></div>
+    <div class='panel panel-body' id='tracking_info'>
 <ul class='list-group'>
 {% for track in item.tracking_info.all %}
 <li class='list-group-item'>
     <b>{{ track.title }}</b>
     {% if track.notes %}
-    <br><br>{{ track.notes }}</i>
+    <br>{{ track.notes }}
     {% endif %}
-    <span class='badge'>{{ track.date }}</span>
+    <span class='badge'>{{ track.date }} - {{ track.user }}</span>
 </li>
 {% endfor %}
 </ul>
+</div>
+</div>
+
 {% endif %}
+
 
 <div class='container-fluid'>
 <button class='btn btn-info' id='edit-item'>Edit Stock Item</button>

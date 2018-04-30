@@ -1,5 +1,5 @@
 <ul class="list-group">
 {% for child in locations.all %}
-<li class="list-group-item"><a href="{% url 'stock-location-detail' child.id %}">{{ child.name }}</a> - <i>{{ child.description }}</li>
+<li class="list-group-item"><a href="{% url 'stock-location-detail' child.id %}">{{ child.name }}</a> - <i>{{ child.description }}</i></li>
 {% endfor %}
 </ul>
