@@ -24,6 +24,18 @@
 <tr>
     <td>Created</td><td>{{ build.creation_date }}</td>
 </tr>
+{% if build.is_active %}
+<tr>
+    <td>Enough Parts?</td>
+    <td>
+        {% if build.can_build %}
+        Yes
+        {% else %}
+        No
+        {% endif %}
+    </td>
+</tr>
+{% endif %}
 {% if batch.completion_date %}
 <tr>
     <td>Completed</td><td>{{ build.creation_date }}</td>

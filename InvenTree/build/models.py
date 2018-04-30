@@ -75,6 +75,17 @@ class Build(models.Model):
         return parts
 
     @property
+    def can_build(self):
+        """ Return true if there are enough parts to supply build
+        """
+
+        for item in self.required_parts:
+            if item['part'].total_stock < item['quantity']:
+                return False
+
+        return True
+
+    @property
     def is_active(self):
         """ Is this build active?
         An active build is either:
