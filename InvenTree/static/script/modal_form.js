@@ -103,6 +103,17 @@ function launchModalForm(modal, url, options = {}) {
         $(modal + ' .modal-form-content').scrollTop(0);
     });
 
+    // Prevent 'enter' key from submitting the form using the normal method
+    $(modal).on('keydown', '.js-modal-form', function(event) {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+
+            $(modal).find("#modal-form-submit").click();
+
+            return false;
+        }
+    });
+
     ajax_data = {
         url: url,
         type: 'get',
