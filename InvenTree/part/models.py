@@ -219,15 +219,21 @@ class Part(models.Model):
         return sum([b.quantity for b in self.active_builds])
 
     @property
-    def allocated_builds(self):
+    def build_allocation(self):
         """ Return list of builds to which this part is allocated
         """
 
         builds = []
 
         for item in self.used_in.all():
+
             for build in item.part.active_builds:
-                builds.append(build)
+                b = {}
+
+                b['build'] = build
+                b['quantity'] = item.quantity * build.quantity
+
+                builds.append(b)
 
         return builds
 
@@ -236,14 +242,7 @@ class Part(models.Model):
         """ Return the total number of this that are allocated for builds
         """
 
-        total = 0
-
-        for item in self.used_in.all():
-            for build in item.part.active_builds:
-                n = build.quantity * item.quantity
-                total += n
-
-        return total
+        return sum([a['quantity'] for a in self.build_allocation])
 
     @property
     def allocation_count(self):

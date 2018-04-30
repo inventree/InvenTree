@@ -1,5 +1,5 @@
 {% extends "part/part_base.html" %}
-
+{% load maths %}
 {% block details %}
 
 {% include "part/tabs.html" with tab="allocation" %}
@@ -12,15 +12,15 @@
 <tr>
     <th>Build</th>
     <th>Making</th>
-    <th>Allocted</th>
+    <th>Allocated</th>
     <th>Status</th>
 </tr>
-{% for build in part.allocated_builds %}
+{% for allocation in part.build_allocation %}
 <tr>
-    <td><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></td>
-    <td><a href="{% url 'part-detail' build.part.id %}">{{ build.part.name }}</a></td>
-    <td>Quantity</td>
-    <td>{% include "build_status.html" with build=build %}</td>
+    <td><a href="{% url 'build-detail' allocation.build.id %}">{{ allocation.build.title }}</a></td>
+    <td>{{ allocation.build.quantity }} &times <a href="{% url 'part-detail' allocation.build.part.id %}">{{ allocation.build.part.name }}</a></td>
+    <td>{{ allocation.quantity }}</td>
+    <td>{% include "build_status.html" with build=allocation.build %}</td>
 </tr>
 {% endfor %}
 </table>
