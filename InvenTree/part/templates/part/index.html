@@ -16,8 +16,7 @@
 {% include "part/category_subcategories.html" with children=children %}
 {% endif %}
 
-<h4>Parts</h4>
-{% include "part/category_parts.html" with parts=parts %}
+<table class='table table-striped table-condensed' id='part-table'>
 
 <div class='container-fluid'>
 <button type='button' class='btn btn-primary' id='create-cat'>
@@ -72,6 +71,8 @@
     $("#create-part").click(function() {
         launchModalForm("#modal-form", "{% url 'part-create' %}");
     });
+
+    {% include "part/category_parts.html" %}
 
     loadTree();
 

@@ -17,8 +17,8 @@
 {% endif %}
 
 {% if category.has_parts %}
-<h4>Parts</h4>
-{% include "part/category_parts.html" with parts=category.parts.all %}
+<table class='table table-striped table-condensed' id='part-table'>
+</table>
 {% endif %}
 
 <div class='container-fluid'>
@@ -29,6 +29,7 @@
     <button class="btn btn-success" id='create-part'>New Part</button>
     <button class="btn btn-danger" id='delete-category'>Delete Category</button>
 
+    <button class='btn btn-primary' id='get-rows'>Do thing</button>
 </div>
 
 {% include 'modals.html' %}
@@ -40,7 +41,6 @@
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
-    $('#part-list').footable();
 
     $("#edit-category").click(function () {
         launchModalForm("#modal-form",
@@ -84,4 +84,11 @@
                             follow: true
                         });
     });
+
+    {% include "part/category_parts.html" with category=category %}
+
+    $("#get-rows").click( function() {
+        alert($("#part-table").bootstrapTable('getSelections'));
+    });
+
 {% endblock %}
