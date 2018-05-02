@@ -25,13 +25,17 @@
 {% endblock %}
 {% block js_ready %}
 
+    function reloadBom() {
+        $("#bom-table").bootstrapTable('refresh');
+    }
+
     $('#bom-table').on('click', '.delete-button', function () {
         var button = $(this);
 
         launchDeleteForm("#modal-delete",
                          button.attr('url'),
                          {
-                             reload: true
+                             success: reloadBom
                          });
     });
 
@@ -41,7 +45,7 @@
         launchModalForm("#modal-form",
                         button.attr('url'),
                         {
-                            reload: true
+                            success: reloadBom
                         });
 
     });
