@@ -6,19 +6,58 @@
 
 <h3>Used In</h3>
 
-<table class="table table-striped">
-<tr>
-    <th>Part</th>
-    <th>Uses</th>
-    <th>Description</th>
-</tr>
-{% for item in part.used_in.all %}
-<tr>
-    <td><a href="{% url 'part-bom' item.part.id %}">{{ item.part.name }}</a></td>
-    <td>{{ item.quantity }}</td>
-    <td>{{ item.part.description }}</td>
-</tr>
-{% endfor %}
+{% if part.used_in_count > 0 %}
+
+<p>
+    <b>{{ part.name }}</b> is used to make {{ part.used_in_count }} other parts.
+</p>
+
+<table class="table table-striped table-condensed" id='used-table'>
 </table>
+
+{% else %}
+<p>
+    {{ part.name }} is not used to make any other parts.
+</p>
+{% endif %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+    $("#used-table").bootstrapTable({
+        sortable: true,
+        search: true,
+        queryParams: function(p) {
+            return {
+                sub_part: {{ part.id }}
+            }
+        },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                field: 'part',
+                title: 'Part',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value.name, value.url);
+                }
+            },
+            {
+                field: 'part.description',
+                title: 'Description',
+            },
+            {
+                field: 'quantity',
+                title: 'Uses',
+            }
+
+        ],
+        url: "{% url 'api-bom-list' %}"
+    })
 
 {% endblock %}
