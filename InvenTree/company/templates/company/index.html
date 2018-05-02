@@ -6,26 +6,7 @@
 
 <h3>Companies</h3>
 
-
-<table class='table table-striped' id='company-table' data-sorting='true' data-filtering='true'>
-<thead>
-    <tr>
-        <th>Name</th>
-        <th>Description</th>
-    </tr>
-</thead>
-<tbody>
-    {% for company in companies %}
-    <tr>
-        <td>
-            <a href="{% url 'company-detail' company.id %}">
-                {{ company.name }}
-            </a>
-        </td>
-        <td>{{ company.description }}</td>
-    </tr>
-    {% endfor %}
-</tbody>
+<table class='table table-striped' id='company-table'>
 </table>
 
 <div class='container-fluid'>
@@ -37,11 +18,9 @@
 {% endblock %}
 
 {% block js_load %}
-<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
-    $('#company-table').footable();
 
     $('#new-company').click(function () {
         launchModalForm('#modal-form',
@@ -50,4 +29,40 @@
                             follow: true
                         });
     });
+
+    $("#company-table").bootstrapTable({
+        sortable: true,
+        search: true,
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                field: 'name',
+                title: 'Company',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, row.url);
+                }
+            },
+            {
+                field: 'description',
+                title: 'Description',
+            },
+            {
+                field: 'website',
+                title: 'Website',
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value, value);
+                    }
+                    return '';
+                }
+            }
+        ],
+        url: "{% url 'api-company-list' %}"
+    });
+
 {% endblock %}

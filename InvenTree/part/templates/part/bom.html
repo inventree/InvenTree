@@ -3,8 +3,6 @@
 
 {% block css %}
 
-<link rel='stylesheet' href="{% static 'css/footable.bootstrap.css' %}">
-
 {% endblock %}
 
 {% block details %}
@@ -13,30 +11,7 @@
 
 <h3>Bill of Materials</h3>
 
-<table class="table table-striped" id='bom-table' data-filtering='true' data-sorting='true'>
-<thead>
-    <tr>
-        <th>Part</th>
-        <th>Description</th>
-        <th data-type='number'>Quantity</th>
-        <th data-sortable='false'></th>
-    </tr>
-</thead>
-<tbody>
-{% for bom_item in part.bom_items.all %}
-{% with sub_part=bom_item.sub_part %}
-<tr>
-    <td><a href="{% url 'part-detail' sub_part.id %}">{{ sub_part.name }}</a></td>
-    <td>{{ sub_part.description }}</td>
-    <td>{{ bom_item.quantity }}</td>
-    <td>
-        <button type='button' url="{% url 'bom-item-edit' bom_item.id %}" class='btn btn-success edit-row-button'>Edit</button>
-        <button type='button' url="{% url 'bom-item-delete' bom_item.id %}" class='btn btn-danger delete-row-button'>Delete</button>
-    </td>
-</tr>
-{% endwith %}
-{% endfor %}
-</tbody>
+<table class='table table-striped table-condensed' id='bom-table'>
 </table>
 
 <div class='container-fluid'>
@@ -46,27 +21,32 @@
 {% endblock %}
 
 {% block js_load %}
-<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
-    $('#bom-table').footable();
 
-    $('#bom-table').on('click', '.delete-row-button', function () {
+    function reloadBom() {
+        $("#bom-table").bootstrapTable('refresh');
+    }
+
+    $('#bom-table').on('click', '.delete-button', function () {
         var button = $(this);
 
         launchDeleteForm("#modal-delete",
                          button.attr('url'),
                          {
-                             reload: true
+                             success: reloadBom
                          });
     });
 
-    $('#bom-table').on('click', '.edit-row-button', function () {
+    $("#bom-table").on('click', '.edit-button', function () {
         var button = $(this);
 
         launchModalForm("#modal-form",
-                        button.attr('url'));
+                        button.attr('url'),
+                        {
+                            success: reloadBom
+                        });
 
     });
 
@@ -79,5 +59,46 @@
                                 parent: {{ part.id }}
                             }
                         });
+    });
+
+    $("#bom-table").bootstrapTable({
+        sortable: true,
+        search: true,
+        queryParams: function(p) {
+            return {
+                part: {{ part.id }}
+            }
+        },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                field: 'sub_part',
+                title: 'Part',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return renderLink(value.name, value.url);
+                }
+            },
+            {
+                field: 'sub_part.description',
+                title: 'Description',
+            },
+            {
+                field: 'quantity',
+                title: 'Quantity',
+                searchable: false,
+                sortable: true
+            },
+            {
+                formatter: function(value, row, index, field) {
+                    return editButton(row.url + 'edit') + ' ' + deleteButton(row.url + 'delete');
+                }
+            }
+        ],
+        url: "{% url 'api-bom-list' %}"
     });
 {% endblock %}

@@ -9,35 +9,7 @@
 {% include "stock/location_list.html" with locations=locations %}
 {% endif %}
 
-<table class="table table-striped" id='stock-table' data-filtering='true' data-sorting='true'>
-<thead>
-<tr>
-    <th>Part</th>
-    <th>Location</th>
-    <th data-type='number'>Stock</th>
-    <th>Status</th>
-    <th data-type='date'>Stocktake</th>
-    <th data-sortable='false'></th>
-</tr>
-</thead>
-<tbody>
-{% for item in items.all %}
-<tr>
-    <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</a></td>
-    <td>
-        {% if item.location %}
-        <a href="{% url 'stock-location-detail' item.location.id %}">
-            {{ item.location.pathstring }}
-        </a>
-        {% endif %}
-    </td>
-    <td>{{ item.quantity }}</td>
-    <td>{{ item.get_status_display }}</td>
-    <td>{{ item.stocktake_date }}</td>
-    <td><a href="{% url 'stock-item-detail' item.id %}">Click</a></td>
-</tr>
-{% endfor %}
-</tbody>
+<table class="table table-striped" id='stock-table'>
 </table>
 
 <div class='container-fluid'>
@@ -49,12 +21,9 @@
 {% endblock %}
 
 {% block js_load %}
-
-<script type='text/javascript' src="{% static 'script/footable.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
-    $('#stock-table').footable();
 
     $('#location-create').click(function () {
         launchModalForm("#modal-form",
@@ -63,4 +32,7 @@
                             follow: true
                         });
     });
+
+    {% include "stock/stock_table.html" %}
+
 {% endblock %}

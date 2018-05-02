@@ -34,8 +34,6 @@ apipatterns = [
 
 urlpatterns = [
 
-    # API URL
-    url(r'^api/', include(apipatterns)),
     # url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     url(r'^part/', include(part_urls)),
@@ -50,6 +48,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    url(r'^api/', include(apipatterns)),
 ]
 
 # Static file access

@@ -1,6 +1,37 @@
 from rest_framework import serializers
 
-from .models import Part
+from .models import Part, PartCategory, BomItem
+from .models import SupplierPart
+
+from company.serializers import CompanyBriefSerializer
+
+class CategoryBriefSerializer(serializers.ModelSerializer):
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    class Meta:
+        model = PartCategory
+        fields = [
+            'pk',
+            'name',
+            'description',
+            'pathstring',
+            'url',
+        ]
+
+
+class PartBriefSerializer(serializers.ModelSerializer):
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    class Meta:
+        model = Part
+        fields = [
+            'pk',
+            'url',
+            'name',
+            'description',
+        ]
 
 
 class PartSerializer(serializers.ModelSerializer):
@@ -8,16 +39,19 @@ class PartSerializer(serializers.ModelSerializer):
     Used when displaying all details of a single component.
     """
 
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    category = CategoryBriefSerializer(many=False, read_only=True)
+
     class Meta:
         model = Part
         fields = [
+            'pk',
             'url',  # Link to the part detail page
             'name',
             'IPN',
             'URL',  # Link to an external URL (optional)
             'description',
             'category',
-            'category_path',
             'total_stock',
             'available_stock',
             'units',
@@ -25,4 +59,42 @@ class PartSerializer(serializers.ModelSerializer):
             'buildable',
             'trackable',
             'salable',
+        ]
+
+
+class BomItemSerializer(serializers.ModelSerializer):
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    part = PartBriefSerializer(many=False, read_only=True)
+    sub_part = PartBriefSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = BomItem
+        fields = [
+            'pk',
+            'url',
+            'part',
+            'sub_part',
+            'quantity'
+        ]
+
+
+class SupplierPartSerializer(serializers.ModelSerializer):
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    part = PartBriefSerializer(many=False, read_only=True)
+    supplier = CompanyBriefSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = SupplierPart
+        fields = [
+            'pk',
+            'url',
+            'part',
+            'supplier',
+            'SKU',
+            'manufacturer',
+            'MPN',
         ]
