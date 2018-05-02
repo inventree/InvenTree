@@ -1,6 +1,33 @@
 from rest_framework import serializers
 
-from .models import Part
+from .models import Part, PartCategory
+
+
+class CategoryBriefSerializer(serializers.ModelSerializer):
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    class Meta:
+        model = PartCategory
+        fields = [
+            'pk',
+            'name',
+            'pathstring',
+            'url',
+        ]
+
+
+class PartBriefSerializer(serializers.ModelSerializer):
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    class Meta:
+        model = Part
+        fields = [
+            'pk',
+            'url',
+            'name',
+        ]
 
 
 class PartSerializer(serializers.ModelSerializer):
@@ -8,18 +35,7 @@ class PartSerializer(serializers.ModelSerializer):
     Used when displaying all details of a single component.
     """
 
-    def _category_name(self, part):
-        if part.category:
-            return part.category.name
-        return ''
-
-    def _category_url(self, part):
-        if part.category:
-            return part.category.get_absolute_url()
-        return ''
-
-    category_name = serializers.SerializerMethodField('_category_name')
-    category_url = serializers.SerializerMethodField('_category_url')
+    category = CategoryBriefSerializer(many=False, read_only=True)
 
     class Meta:
         model = Part
@@ -31,8 +47,6 @@ class PartSerializer(serializers.ModelSerializer):
             'URL',  # Link to an external URL (optional)
             'description',
             'category',
-            'category_name',
-            'category_url',
             'total_stock',
             'available_stock',
             'units',

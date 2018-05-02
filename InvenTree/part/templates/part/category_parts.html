@@ -40,10 +40,15 @@
             {% if category == None %}
             {
                 sortable: true,
-                field: 'category_name',
+                field: 'category',
                 title: 'Category',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, row.category_url)
+                    if (row.category) {
+                        return renderLink(row.category.name, row.category.url);
+                    }
+                    else {
+                        return '';
+                    }
                 }
             },
             {% endif %}
