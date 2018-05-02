@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Part, PartCategory
+from .models import Part, PartCategory, BomItem
 
 
 class CategoryBriefSerializer(serializers.ModelSerializer):
@@ -12,6 +12,7 @@ class CategoryBriefSerializer(serializers.ModelSerializer):
         fields = [
             'pk',
             'name',
+            'description',
             'pathstring',
             'url',
         ]
@@ -27,6 +28,7 @@ class PartBriefSerializer(serializers.ModelSerializer):
             'pk',
             'url',
             'name',
+            'description',
         ]
 
 
@@ -35,6 +37,7 @@ class PartSerializer(serializers.ModelSerializer):
     Used when displaying all details of a single component.
     """
 
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
     category = CategoryBriefSerializer(many=False, read_only=True)
 
     class Meta:
@@ -54,4 +57,22 @@ class PartSerializer(serializers.ModelSerializer):
             'buildable',
             'trackable',
             'salable',
+        ]
+
+
+class BomItemSerializer(serializers.ModelSerializer):
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    part = PartBriefSerializer(many=False, read_only=True)
+    sub_part = PartBriefSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = BomItem
+        fields = [
+            'pk',
+            'url',
+            'part',
+            'sub_part',
+            'quantity'
         ]
