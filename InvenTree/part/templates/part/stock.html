@@ -6,50 +6,8 @@
 
 <h3>Part Stock</h3>
 
-<table class="table table-striped" id='stock-table' data-sorting='true'>
-<thead>
-<tr>
-    <th data-sortable='false'>Link</th>
-    {% if part.trackable %}
-    <th>Serial Number</th>
-    {% else %}
-    <th>Quantity</th>
-    {% endif %}
-    <th>Location</th>
-    <th>Supplier part</th>
-    <th>Stocktake</th>
-    <th>Notes</th>
-</tr>
-</thead>
-<tbody>
-{% for stock in part.stock_entries %}
-<tr>
-    <td><a href="{% url 'stock-item-detail' stock.id %}">Click</a></td>
-    <td>
-        {% if part.trackable %}
-        {{ stock.serial }}
-        {% else %}
-        {{ stock.quantity }}
-        {% endif %}
-    </td>
-    <td>
-        {% if stock.location %}
-        <a href="{% url 'stock-location-detail' stock.location.id %}">{{ stock.location.name }}</a>
-        {% endif %}
-    </td>
-    <td>
-        {% if stock.supplier_part %}
-    <a href="{% url 'supplier-part-detail' stock.supplier_part.id %}">
-        {{ stock.supplier_part.supplier.name }} | {{ stock.supplier_part.SKU }}
-    </a>
-        {% endif %}
-    </td>
-    <td>{% if stock.stocktake_date %}{{ stock.stocktake_date }}{% endif %}</td>
-    <td>{{ stock.notes }}</td>
-</tr>
-{% endfor %}
-</tbody>
-</table
+<table class='table table-striped table-condensed' id='stock-table'>
+</table>
 
 <div class='container-fluid'>
 <button class='btn btn-success' id='add-stock-item'>Add new Stock Item</button>
@@ -62,7 +20,7 @@
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
-    
+
     $('#add-stock-item').click(function () {
         launchModalForm("#modal-form",
                         "{% url 'stock-item-create' %}",
@@ -73,4 +31,41 @@
                             }
                         });
     });
+
+    $("#stock-table").bootstrapTable({
+        sortable: true,
+        search: true,
+        queryParams: function(p) {
+            return {
+                part: {{ part.id }},
+                in_stock: true,
+            }
+        },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                checkbox: true,
+            },
+            {
+                field: 'location',
+                title: 'Location',
+                sortable: true,
+                formatter: function(value, row, index, field){
+                    return renderLink(value.pathstring, value.url);
+                }
+            },
+            {
+                field: 'quantity',
+                title: 'Stock',
+                searchable: false,
+                sortable: true,
+            }
+        ],
+        url: "{% url 'api-stock-list' %}"
+    });
+
 {% endblock %}
