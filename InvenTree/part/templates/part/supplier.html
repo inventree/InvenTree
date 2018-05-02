@@ -6,30 +6,14 @@
 
 <h3>Part Suppliers</h3>
 
-<table class="table table-striped" id='supplier-table' data-sorting='true'>
-<thead>
-<tr>
-    <th>SKU</th>
-    <th>Supplier</th>
-    <th>MPN</th>
-    <th>URL</th>
-</tr>
-</thead>
-<tbody>
-{% for spart in part.supplier_parts.all %}
-<tr>
-    <td><a href="{% url 'supplier-part-detail' spart.id %}">{{ spart.SKU }}</a></td>
-    <td><a href="{% url 'company-detail' spart.supplier.id %}">{{ spart.supplier.name }}</a></td>
-    <td>{{ spart.manufacturer_string }}</td>
-    <td>
-        {% if spart.URL %}
-        <a href="{{ spart.URL }}">{{ spart.URL }}</a>
-        {% endif %}
-    </td>
-</tr>
-{% endfor %}
-</tbody>
+{% if part.supplier_count > 0 %}
+<p><b>{{ part.name }}</b> is available from {{ part.supplier_count }} suppliers.</p>
+
+<table class="table table-striped table-condensed" id='supplier-table'>
 </table>
+{% else %}
+<p><b>{{ part.name }}</b> is not available from any suppliers.</p>
+{% endif %}
 
 <div class='container-fluid'>
 <button class="btn btn-success" id='supplier-create'>New Supplier Part</button>
@@ -51,4 +35,39 @@
                             data: {part: {{ part.id }} }
                         });
     });
+
+    $("#supplier-table").bootstrapTable({
+        sortable: true,
+        search: true,
+        queryParams: function(p) {
+            return {
+                part: {{ part.id }}
+            }
+        },
+        columns: [
+            {
+                sortable: true,
+                field: 'supplier',
+                title: 'Supplier',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value.name, value.url);
+                }
+            },
+            {
+                sortable: true,
+                field: 'SKU',
+                title: 'SKU',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, row.url);
+                }
+            },
+            {
+                sortable: true,
+                field: 'manufacturer',
+                title: 'Manufacturer',
+            }
+        ],
+        url: "{% url 'api-part-supplier-list' %}"
+    });
+
 {% endblock %}

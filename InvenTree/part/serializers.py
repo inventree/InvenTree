@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
 from .models import Part, PartCategory, BomItem
+from .models import SupplierPart
 
+from company.serializers import CompanyBriefSerializer
 
 class CategoryBriefSerializer(serializers.ModelSerializer):
 
@@ -75,4 +77,24 @@ class BomItemSerializer(serializers.ModelSerializer):
             'part',
             'sub_part',
             'quantity'
+        ]
+
+
+class SupplierPartSerializer(serializers.ModelSerializer):
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    part = PartBriefSerializer(many=False, read_only=True)
+    supplier = CompanyBriefSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = SupplierPart
+        fields = [
+            'pk',
+            'url',
+            'part',
+            'supplier',
+            'SKU',
+            'manufacturer',
+            'MPN',
         ]
