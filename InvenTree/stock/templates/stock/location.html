@@ -18,7 +18,7 @@
           <li><a href="#" id='location-edit' title='Edit stock location'>Edit</a></li>
           <li><a href="#" id='location-delete' title='Delete stock location'>Delete</a></li>
         </ul>
-      </div>
+    </div>
 </div>
 </div>
 
@@ -33,7 +33,16 @@
 {% endif %}
 
 <div class='container-fluid'>
-<button class="btn btn-success" id='item-create'>Add <span class="glyphicon glyphicon-plus"></span></button>
+    <div class="dropdown" style='float: right;'>
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Selected
+        <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+            <li><a href="#" id='multi-item-stocktake' title='Stocktake selected stock items'>Stocktake</a></li>
+          <li><a href='#' id='multi-item-move' title='Move selected stock items'>Move</a></li>
+          <li><a href="#" id='multi-item-delete' title='Delete selected stock items'>Delete</a></li>
+        </ul>
+    </div>
+    <button class="btn btn-success" id='item-create'>New Stock Item</span></button>
 </div>
 
 {% include 'modals.html' %}
@@ -79,11 +88,45 @@
         launchModalForm("#modal-form",
                         "{% url 'stock-item-create' %}",
                         {
-                            reload: true,
+                            success: function() {
+                                $("#stock-table").bootstrapTable('refresh');
+                            },
                             data: {
                                 location: {{ location.id }}
                             }
                         });
+
+        return false;
+    });
+
+    function selectedStock() {
+        return $("stock-table").bootstrapTable('getSelections');
+    }
+
+    $("#multi-item-move").click(function() {
+
+        var items = selectedStock();
+
+        alert('Moving ' + items.length + ' items');
+
+        return false;
+    });
+
+    $("#multi-item-delete").click(function() {
+
+        var items = selectedStock();
+
+        alert('Deleting ' + items.length + ' items');
+
+        return false;
+    });
+
+    $("#multi-item-stocktake").click(function() {
+        var items = selectedStock();
+
+        alert('Stocktake on ' + items.length + ' items');
+
+        return false;
     });
 
     {% include 'stock/stock_table.html' with location=location %}
