@@ -4,17 +4,26 @@
 
 {% include "stock/loc_link.html" with location=None %}
 
-{% if locations.all|length > 0 %}
-<h4>Storage Locations</h4>
-{% include "stock/location_list.html" with locations=locations %}
-{% endif %}
+<div class='row'>
+    <div class='col-sm-6'>
+        <h3>Storage Locations</h3>
+    </div>
+    <div class='col-sm-6'>
+        <h3>
+            <button style='float: right;' class='btn btn-success' id='location-create'>New Stock Location</button>
+        </h3>
+    </div>
+</div>
 
+<hr>
+
+{% if locations|length > 0 %}
+{% include "stock/location_list.html" with locations=locations %}
+<hr>
+{% endif %}
+<h3>Stock Items</h3>
 <table class="table table-striped" id='stock-table'>
 </table>
-
-<div class='container-fluid'>
-<button class="btn btn-success" id='location-create'>New Stock Location</button>
-</div>
 
 {% include 'modals.html' %}
 

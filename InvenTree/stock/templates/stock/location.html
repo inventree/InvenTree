@@ -10,20 +10,24 @@
     <p>{{ location.description }}</p>
 </div>
 <div class='col-sm-6'>
+    <h3>
+    <div style='float: right;'>
+    <button class='btn btn-success' id='location-create'>New Stock Location</button>
     <div class="dropdown" style="float: right;">
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Stock Location
         <span class="caret"></span></button>
         <ul class="dropdown-menu">
-          <li><a href='#' id='location-create' title='Create new stock location'>New</a></li>
           <li><a href="#" id='location-edit' title='Edit stock location'>Edit</a></li>
           <li><a href="#" id='location-delete' title='Delete stock location'>Delete</a></li>
         </ul>
     </div>
+    </div>
+    </h3>
 </div>
 </div>
 
 {% if location.has_children %}
-<h4>Sub Locations</h4>
+<h3>Sub Locations</h3>
 {% include "stock/location_list.html" with locations=location.children %}
 {% endif %}
 
@@ -32,7 +36,8 @@
 </table>
 {% endif %}
 
-<div class='container-fluid'>
+<div class='container-fluid' style='float: right;'>
+    <button class="btn btn-success" id='item-create'>New Stock Item</span></button>
     <div class="dropdown" style='float: right;'>
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Selected
         <span class="caret"></span></button>
@@ -42,7 +47,6 @@
           <li><a href="#" id='multi-item-delete' title='Delete selected stock items'>Delete</a></li>
         </ul>
     </div>
-    <button class="btn btn-success" id='item-create'>New Stock Item</span></button>
 </div>
 
 {% include 'modals.html' %}

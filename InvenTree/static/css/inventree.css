@@ -116,3 +116,8 @@
     opacity: 0.9;
     pointer-events: all;
 }
+
+.btn {
+    margin-left: 2px;
+    margin-right: 2px;
+}

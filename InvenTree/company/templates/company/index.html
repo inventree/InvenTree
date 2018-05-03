@@ -4,14 +4,15 @@
 
 {% block content %}
 
+<div class='container-fluid'>
+<h3><button style='float: right;' class="btn btn-success" id='new-company'>New Company</button></h3>
 <h3>Companies</h3>
+</div>
 
 <table class='table table-striped' id='company-table'>
 </table>
 
-<div class='container-fluid'>
-<button class="btn btn-success" id='new-company'>New Company</button>
-</div>
+
 
 {% include 'modals.html' %}
 
