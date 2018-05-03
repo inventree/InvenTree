@@ -23,3 +23,12 @@ class EditCompanyForm(HelperForm):
             'is_supplier',
             'notes'
         ]
+
+
+class CompanyImageForm(HelperForm):
+
+    class Meta:
+        model = Company
+        fields = [
+            'image'
+        ]

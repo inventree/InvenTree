@@ -12,6 +12,8 @@ company_detail_urls = [
 
     url(r'parts/?', views.CompanyDetail.as_view(template_name='company/detail_part.html'), name='company-detail-parts'),
 
+    url(r'thumbnail/?', views.CompanyImage.as_view(), name='company-image'),
+
     # Any other URL
     url(r'^.*$', views.CompanyDetail.as_view(), name='company-detail'),
 ]

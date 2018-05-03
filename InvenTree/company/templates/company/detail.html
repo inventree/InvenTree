@@ -29,14 +29,13 @@
 <button class="btn btn-danger" id='delete-company'>Delete Company</button>
 </div>
 
-{% include 'modals.html' %}
-
 {% endblock %}
 
 {% block js_load %}
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
+{{ block.super }}
     $('#edit-company').click(function() {
         launchModalForm("#modal-form",
                         "{% url 'company-edit' company.id %}",

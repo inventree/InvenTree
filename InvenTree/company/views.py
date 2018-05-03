@@ -8,6 +8,7 @@ from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from .models import Company
 
 from .forms import EditCompanyForm
+from .forms import CompanyImageForm
 
 
 class CompanyIndex(ListView):
@@ -33,6 +34,18 @@ class CompanyDetail(DetailView):
     template_name = 'company/detail.html'
     queryset = Company.objects.all()
     model = Company
+
+
+class CompanyImage(AjaxUpdateView):
+    model = Company
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Update Company Image'
+    form_class = CompanyImageForm
+
+    def get_data(self):
+        return {
+            'success': 'Updated company image',
+        }
 
 
 class CompanyEdit(AjaxUpdateView):
