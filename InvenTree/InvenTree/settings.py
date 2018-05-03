@@ -39,11 +39,6 @@ if DEBUG:
 # Application definition
 
 INSTALLED_APPS = [
-    'django_filters',
-    'rest_framework',
-    'simple_history',
-    'crispy_forms',
-    'import_export',
 
     # Core django modules
     'django.contrib.admin',
@@ -58,6 +53,13 @@ INSTALLED_APPS = [
     'stock.apps.StockConfig',
     'company.apps.CompanyConfig',
     'build.apps.BuildConfig',
+
+    'django_filters',
+    'rest_framework',
+    'simple_history',
+    'crispy_forms',
+    'import_export',
+    'django_cleanup',
 ]
 
 MIDDLEWARE = [
