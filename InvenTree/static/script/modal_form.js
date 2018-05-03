@@ -155,6 +155,9 @@ function handleModalForm(modal, url, options) {
             error: function(xhr, ajaxOptions, thrownError) {
                 alert('Error posting form data:\n' + thrownError);
                 $(modal).modal('hide');
+            },
+            complete: function(xhr) {
+                //TODO
             }
         });
     });
