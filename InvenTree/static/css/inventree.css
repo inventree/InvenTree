@@ -73,6 +73,14 @@
   padding: 10px;
 }
 
+.modal input {
+    width: 100%;
+}
+
+.modal textarea {
+    width: 100%;
+}
+
 /* The side navigation menu */
 .sidenav {
     height: 100%; /* 100% Full-height */
