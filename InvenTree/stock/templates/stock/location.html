@@ -4,8 +4,23 @@
 
 {% include "stock/loc_link.html" with location=location %}
 
-<h3>{{ location.name }}</h3>
-<p>{{ location.description }}</p>
+<div class='row'>
+<div class='col-sm-6'>
+    <h3>{{ location.name }}</h3>
+    <p>{{ location.description }}</p>
+</div>
+<div class='col-sm-6'>
+    <div class="dropdown" style="float: right;">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Stock Location
+        <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+          <li><a href='#' id='location-create' title='Create new stock location'>New</a></li>
+          <li><a href="#" id='location-edit' title='Edit stock location'>Edit</a></li>
+          <li><a href="#" id='location-delete' title='Delete stock location'>Delete</a></li>
+        </ul>
+      </div>
+</div>
+</div>
 
 {% if location.has_children %}
 <h4>Sub Locations</h4>
@@ -18,11 +33,7 @@
 {% endif %}
 
 <div class='container-fluid'>
-<button class='btn btn-success' id='location-create'>New Stock Location</button>
-<button class='btn btn-success' id='new-item'>New Stock Item</button>
-<button class="btn btn-info" id='location-edit'>Edit Location</button>
-<button class="btn btn-danger" id='location-delete'>Delete Location</button>
-
+<button class="btn btn-success" id='item-create'>Add <span class="glyphicon glyphicon-plus"></span></button>
 </div>
 
 {% include 'modals.html' %}
@@ -43,6 +54,7 @@
                             },
                             follow: true
                         });
+        return false;
     });
 
     $('#location-edit').click(function() {
@@ -51,6 +63,7 @@
                         {
                             reload: true
                         });
+        return false;
     });
 
     $('#location-delete').click(function() {
@@ -59,9 +72,10 @@
                          {
                              redirect: "{% url 'stock-index' %}"
                          });
+        return false;
     })
 
-    $('#new-item').click(function () {
+    $('#item-create').click(function () {
         launchModalForm("#modal-form",
                         "{% url 'stock-item-create' %}",
                         {
