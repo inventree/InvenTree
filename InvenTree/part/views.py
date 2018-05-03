@@ -96,6 +96,11 @@ class PartImage(AjaxUpdateView):
     ajax_form_title = 'Upload Part Image'
     form_class = PartImageForm
 
+    def get_data(self):
+        return {
+            'success': 'Updated part image',
+        }
+
 
 class PartEdit(AjaxUpdateView):
     model = Part

@@ -105,9 +105,9 @@ class AjaxView(AjaxMixin, View):
 class AjaxCreateView(AjaxMixin, CreateView):
 
     def post(self, request, *args, **kwargs):
+        form = self.form_class(data=request.POST, files=request.FILES)
 
         if request.is_ajax():
-            form = self.form_class(request.POST)
 
             data = {'form_valid': form.is_valid()}
 
@@ -141,8 +141,9 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
 
+        form = self.form_class(instance=self.get_object(), data=request.POST, files=request.FILES)
+
         if request.is_ajax():
-            form = self.form_class(request.POST, instance=self.get_object())
 
             data = {'form_valid': form.is_valid()}
 
@@ -152,10 +153,10 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
                 data['pk'] = obj.id
                 data['url'] = obj.get_absolute_url()
 
-            return self.renderJsonResponse(request, form, data)
+            response = self.renderJsonResponse(request, form, data)
+            return response
 
         else:
-            response = super(UpdateView, self).post(request, *args, **kwargs)
             return response
 
     def get(self, request, *args, **kwargs):
@@ -168,7 +169,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             return self.renderJsonResponse(request, form)
 
         else:
-            return response
+            return super(UpdateView, self).post(request, *args, **kwargs)
 
 
 class AjaxDeleteView(AjaxMixin, DeleteView):

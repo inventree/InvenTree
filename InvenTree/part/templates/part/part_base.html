@@ -89,6 +89,9 @@
     $("#part-thumb").click(function() {
         launchModalForm("#modal-form",
                         "{% url 'part-image' part.id %}",
+                        {
+                            reload: true
+                        }
                         );
     });
 {% endblock %}
