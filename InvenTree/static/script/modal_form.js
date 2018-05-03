@@ -97,8 +97,77 @@ function launchDeleteForm(modal, url, options = {}) {
     });
 }
 
+function injectModalForm(modal, form_html) {
+    // Inject the form data into the modal window
+    $(modal).find('.modal-form-content').html(form_html);
+
+    // Attach to any 'select' inputs on the modal
+    // Provide search filtering of dropdown items
+    $(modal + ' .select').select2({
+        dropdownParent: $(modal),
+        dropdownAutoWidth: true,
+    });
+}
+
+function handleModalForm(modal, url, options) {
+
+    var form = $(modal).find('.js-modal-form');
+
+    var _form = $(modal).find(".js-modal-form");
+
+    form.ajaxForm({
+        url: url,
+        dataType: 'json',
+        type: 'post'
+    });
+
+    form.submit(function() {
+        alert('form submit');
+        return false;
+    });
+
+    $(modal).on('click', '#modal-form-submit', function() {
+        $(modal).find('.js-modal-form').ajaxSubmit({
+            url: url,
+            // POST was successful
+            success: function(response, status, xhr, f) {
+                if ('form_valid' in response) {
+                    // Form data was validated correctly
+                    if (response.form_valid) {
+                        $(modal).modal('hide');
+                        afterForm(response, options);
+                    }
+                    // Form was returned, invalid!
+                    else {
+                        if (response.html_form) {
+                            injectModalForm(modal, response.html_form);
+                        }
+                        else {
+                            alert('HTML form data missing from server response');
+                        }
+                    }
+                }
+                else {
+                    $(modal).modal('hide');
+                    afterForm(response, options);
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert('Error posting form data:\n' + thrownError);
+                $(modal).modal('hide');
+            }
+        });
+    });
+}
+
+/*
+ * launchModalForm
+ * Opens a model window and fills it with a requested form
+ * If the form is loaded successfully, calls handleModalForm
+ */
 function launchModalForm(modal, url, options = {}) {
 
+    // Ensure the modal view scrolls to the top of the loaded form
     $(modal).on('shown.bs.modal', function () {
         $(modal + ' .modal-form-content').scrollTop(0);
     });
@@ -108,12 +177,14 @@ function launchModalForm(modal, url, options = {}) {
         if (event.keyCode == 13) {
             event.preventDefault();
 
+            // Simulate a click on the 'Submit' button
             $(modal).find("#modal-form-submit").click();
 
             return false;
         }
     });
 
+    // Form the ajax request to retrieve the django form data
     ajax_data = {
         url: url,
         type: 'get',
@@ -125,14 +196,14 @@ function launchModalForm(modal, url, options = {}) {
             if (response.title) {
                 $(modal + ' #modal-title').html(response.title);
             }
+
             if (response.submit_text) {
                 $(modal + ' #modal-form-submit').html(response.submit_text);
             }
-            if (response.html_form) {
-                var target = modal + ' .modal-form-content';
-                $(target).html(response.html_form);
 
-                attachSelect(modal);
+            if (response.html_form) {
+                injectModalForm(modal, response.html_form);
+                handleModalForm(modal, url, options);
 
             } else {
                 alert('JSON response missing form data');
@@ -152,48 +223,4 @@ function launchModalForm(modal, url, options = {}) {
 
     // Send the AJAX request
     $.ajax(ajax_data);
-
-    $(modal).on('click', '#modal-form-submit', function() {
-
-        // Extract the form from the modal dialog
-        var form = $(modal).find(".js-modal-form");
-
-        $.ajax({
-            url: url,
-            data: form.serialize(),
-            type: form.attr('method'),
-            dataType: 'json',
-            success: function (response) {
-
-                // Form validation was performed
-                if ('form_valid' in response) {
-                    if (response.form_valid) {
-                        $(modal).modal('hide');
-                        afterForm(response, options);
-                    }
-                    // Form was invalid - try again!
-                    else {
-                        if (response.html_form) {
-                            $(modal + ' .modal-form-content').html(response.html_form);
-                            attachSelect(modal);
-                        }
-                        else {
-                            alert('HTML form data missing from AJAX response');
-                        }
-                    }
-                }
-                else {
-                    $(modal).modal('hide');
-                    afterForm(response, options);
-                }
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                alert("Error posting form data:\n" + thrownError);
-                $(modal).modal('hide');
-            }
-        });
-
-        // Override the default form submit functionality
-        return false;
-    });
 }
