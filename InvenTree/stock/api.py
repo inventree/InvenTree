@@ -45,6 +45,27 @@ class StockFilter(FilterSet):
         fields = ['quantity', 'part', 'location']
 
 
+class StockLocationList(generics.ListCreateAPIView):
+
+    queryset = StockLocation.objects.all()
+
+    serializer_class = LocationSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+        'parent',
+    ]
+
+
 class StockList(generics.ListCreateAPIView):
     """
 
@@ -129,32 +150,6 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class StockLocationFilter(FilterSet):
-
-    class Meta:
-        model = StockLocation
-        fields = ['parent']
-
-
-class LocationList(generics.ListCreateAPIView):
-    """
-
-    get:
-    Return a list of all StockLocation objects
-    (with optional query filter)
-
-    post:
-    Create a new StockLocation
-
-    """
-
-    queryset = StockLocation.objects.all()
-    serializer_class = LocationSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
-    filter_class = StockLocationFilter
-
-
 stock_endpoints = [
     url(r'^$', StockDetail.as_view(), name='stockitem-detail'),
 ]
@@ -167,6 +162,8 @@ location_endpoints = [
 stock_api_urls = [
     # Detail for a single stock item
     url(r'^(?P<pk>[0-9]+)/', include(stock_endpoints)),
+
+    url(r'location/?', StockLocationList.as_view(), name='api-location-list'),
 
     url(r'location/(?P<pk>\d+)/', include(location_endpoints)),
 

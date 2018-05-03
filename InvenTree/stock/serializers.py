@@ -67,14 +67,19 @@ class StockQuantitySerializer(serializers.ModelSerializer):
         fields = ('quantity',)
 
 
-class LocationSerializer(serializers.HyperlinkedModelSerializer):
+class LocationSerializer(serializers.ModelSerializer):
     """ Detailed information about a stock location
     """
 
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
     class Meta:
         model = StockLocation
-        fields = ('url',
+        fields = [
+                  'pk',
+                  'url',
                   'name',
                   'description',
                   'parent',
-                  'pathstring')
+                  'pathstring'
+                ]
