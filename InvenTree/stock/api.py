@@ -11,14 +11,14 @@ from .serializers import StockItemSerializer, StockQuantitySerializer
 from .serializers import LocationSerializer
 
 from InvenTree.views import TreeSerializer
-
+from InvenTree.serializers import DraftRUDView
 
 class StockCategoryTree(TreeSerializer):
     title = 'Stock'
     model = StockLocation
 
 
-class StockDetail(generics.RetrieveUpdateDestroyAPIView):
+class StockDetail(DraftRUDView):
     """
 
     get:

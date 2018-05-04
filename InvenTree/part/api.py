@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, mixins
 
 from django.conf.urls import url, include
 
@@ -15,6 +15,7 @@ from .serializers import SupplierPartSerializer
 from .serializers import CategorySerializer
 
 from InvenTree.views import TreeSerializer
+from InvenTree.serializers import DraftRUDView
 
 class PartCategoryTree(TreeSerializer):
 
@@ -51,6 +52,14 @@ class CategoryList(generics.ListCreateAPIView):
         'description',
     ]
 
+
+class PartDetail(DraftRUDView):
+    queryset = Part.objects.all()
+    serializer_class = PartSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
 
 class PartList(generics.ListCreateAPIView):
 
@@ -137,5 +146,8 @@ part_api_urls = [
 
     url(r'^supplier/?', SupplierPartList.as_view(), name='api-part-supplier-list'),
     url(r'^bom/?', BomList.as_view(), name='api-bom-list'),
+
+    url(r'^(?P<pk>\d+)/', PartDetail.as_view(), name='api-part-detail'),
+
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]
