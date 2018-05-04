@@ -4,14 +4,18 @@
  <div class="panel panel-default">
    <div class="panel-heading">
      <h4 class="panel-title">
-       <a data-toggle="collapse" href="#collapse1">Sub-Locations</a><span class='badge'>{{ children|length }}</span>
+       <a data-toggle="collapse" href="#collapse1">Child Categories</a><span class='badge'>{{ children|length }}</span>
      </h4>
    </div>
    <div id="collapse1" class="panel-collapse collapse">
      <div class="panel-body">
          <ul class="list-group">
          {% for child in children %}
-        <li class="list-group-item"><a href="{% url 'stock-location-detail' child.id %}">{{ child.name }}</a> - <i>{{ child.description }}</i></li>
+         <li class="list-group-item">
+             <b><a href="{% url 'category-detail' child.id %}">{{ child.name }}</a></b>
+             {% if child.description %}
+             <i> - {{ child.description }}</i>
+             {% endif %}
              <span class='badge'>{{ child.partcount }}</span>
          </li>
          {% endfor %}
