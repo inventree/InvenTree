@@ -86,3 +86,11 @@ function getStockLocations(filters={}) {
 function getCompanies(filters={}) {
     return inventreeGet('/api/company/', filters);
 }
+
+function updateStockItem(pk, data, final=false) {
+    return inventreeUpdate('/api/stock/' + pk + '/', data, final);
+}
+
+function updatePart(pk, data, final=false) {
+    return inventreeUpdate('/api/part/' + pk + '/', data, final);
+}
