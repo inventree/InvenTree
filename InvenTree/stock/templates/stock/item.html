@@ -1,8 +1,6 @@
-{% extends "base.html" %}
+{% extends "stock/stock_app_base.html" %}
 {% load static %}
 {% block content %}
-
-{% include "stock/loc_link.html" with location=item.location %}
 
 <h3>Stock entry details</h3>
 
@@ -108,8 +106,6 @@
 {% endif %}
 <button class='btn btn-danger' id='delete-item'>Delete Stock Item</button>
 </div>
-
-{% include 'modals.html' %}
 
 {% endblock %}
 

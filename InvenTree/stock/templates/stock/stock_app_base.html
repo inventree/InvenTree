@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block sidenav %}
+<div id='stock-tree'></div>
+{% endblock %}
+
+{% block pre_content %}
+{% if item %}
+{% include 'stock/loc_link.html' with location=item.location %}
+{% else %}
+{% include 'stock/loc_link.html' with location=location %}
+{% endif %}
+{% endblock %}
+
+{% block js_ready %}
+    initSideNav();
+{{ block.super }}
+    loadTree("{% url 'api-stock-tree' %}",
+             "#stock-tree");
+
+    $("#toggle-stock-tree").click(function() {
+        toggleSideNav("#sidenav");
+        return false;
+    })
+
+{% endblock %}

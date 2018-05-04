@@ -20,7 +20,7 @@ from .forms import StocktakeForm
 
 class StockIndex(ListView):
     model = StockItem
-    template_name = 'stock/index.html'
+    template_name = 'stock/location.html'
     context_obect_name = 'locations'
 
     def get_context_data(self, **kwargs):
