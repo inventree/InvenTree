@@ -5,7 +5,7 @@ from .models import SupplierPart
 
 from company.serializers import CompanyBriefSerializer
 
-class CategoryBriefSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -17,6 +17,7 @@ class CategoryBriefSerializer(serializers.ModelSerializer):
             'description',
             'pathstring',
             'url',
+            'parent',
         ]
 
 
@@ -40,7 +41,7 @@ class PartSerializer(serializers.ModelSerializer):
     """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
-    category = CategoryBriefSerializer(many=False, read_only=True)
+    category = CategorySerializer(many=False, read_only=True)
 
     class Meta:
         model = Part

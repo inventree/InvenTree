@@ -56,7 +56,7 @@ class StockItemSerializer(serializers.ModelSerializer):
             'stocktake_date',
             'stocktake_user',
             'updated',
-            'quantity',
+            #'quantity',
         ]
 
 
