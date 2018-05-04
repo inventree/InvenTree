@@ -16,6 +16,12 @@ function inventreeGet(url, filters={}) {
     })
 }
 
+// Return list of parts with optional filters
 function getParts(filters={}) {
     return inventreeGet('/api/part/', filters);
+}
+
+// Return list of part categories with optional filters
+function getPartCategories(filters={}) {
+    return inventreeGet('/api/part/category/', filters);
 }
