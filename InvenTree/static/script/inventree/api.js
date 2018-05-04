@@ -11,7 +11,7 @@ function inventreeGet(url, filters={}) {
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on GET at ' + url);
             console.error(thrownError);
-            return {};
+            return {error: thrownError};
         }
     })
 }
@@ -24,4 +24,16 @@ function getParts(filters={}) {
 // Return list of part categories with optional filters
 function getPartCategories(filters={}) {
     return inventreeGet('/api/part/category/', filters);
+}
+
+function getStock(filters={}) {
+    return inventreeGet('/api/stock/', filters);
+}
+
+function getStockLocations(filters={}) {
+    return inventreeGet('/api/stock/location/', filters)
+}
+
+function getCompanies(filters={}) {
+    return inventreeGet('/api/company/', filters);
 }
