@@ -47,7 +47,7 @@
     margin-right: 50px;
     margin-left: 50px;
     width: 100%;
-    transition: 0.5s;
+    transition: 0.1s;
 }
 
 .body {
@@ -88,7 +88,7 @@
     position: fixed; /* Stay in place */
     background-color: #fff; /* Black*/
     overflow-x: hidden; /* Disable horizontal scroll */
-    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+    transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
 }
 
 .wrapper {

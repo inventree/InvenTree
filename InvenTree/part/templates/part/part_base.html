@@ -4,8 +4,6 @@
 
 {% block content %}
 
-{% include "part/cat_link.html" with category=part.category %}
-
 <div class="row">
 <div class="col-sm-6">
     <div class="media">
@@ -85,7 +83,7 @@
 {% endblock %}
 
 {% block js_ready %}
-
+{{ block.super }}
     $("#part-thumb").click(function() {
         launchModalForm("#modal-form",
                         "{% url 'part-image' part.id %}",

@@ -23,7 +23,7 @@ from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 
 class PartIndex(ListView):
     model = Part
-    template_name = 'part/index.html'
+    template_name = 'part/category.html'
     context_object_name = 'parts'
 
     def get_queryset(self):
@@ -128,7 +128,7 @@ class CategoryDetail(DetailView):
     model = PartCategory
     context_object_name = 'category'
     queryset = PartCategory.objects.all()
-    template_name = 'part/category_detail.html'
+    template_name = 'part/category.html'
 
 
 class CategoryEdit(AjaxUpdateView):

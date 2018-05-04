@@ -38,11 +38,16 @@ InvenTree
 </div>
 
 <div class="container container-fluid inventree-content" id='inventree-content'>
+{% block pre_content %}
+{% endblock %}
 {% block content %}
 <!-- Each view fills in here.. -->
 {% endblock %}
+{% block post_content %}
+{% endblock %}
 </div>
 
+{% include 'modals.html' %}
 {% include 'notification.html' %}
 </div>
 
@@ -57,38 +62,18 @@ InvenTree
 <script type='text/javascript' src="{% static 'script/bootstrap-table-en-US.min.js' %}"></script>
 
 <script type='text/javascript' src="{% static 'script/tables.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/trees.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/sidenav.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/jquery.form.min.js' %}"></script>
-
+<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 {% block js_load %}
 {% endblock %}
 
 <script type='text/javascript'>
 $(document).ready(function () {
-
-    loadTree("{% url 'api-part-tree' %}",
-             "#part-tree");
-
-    loadTree("{% url 'api-stock-tree' %}",
-             "#stock-tree");
-
-    $('#logo').click(function() {
-        if ($("#sidenav").width() == 0) {
-            openSideNav();
-        }
-        else {
-            closeSideNav();
-        }
-    });
-
 {% block js_ready %}
-
 {% endblock %}
-
     showCachedAlerts();
-
 });
 </script>
 
