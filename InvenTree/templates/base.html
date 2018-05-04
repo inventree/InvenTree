@@ -32,7 +32,10 @@ InvenTree
 
 <div class='main body wrapper'>
 
-{% include "sidebar.html" %}
+<div class='sidenav' id='sidenav'>
+{% block sidenav %}
+{% endblock %}
+</div>
 
 <div class="container container-fluid inventree-content" id='inventree-content'>
 {% block content %}
