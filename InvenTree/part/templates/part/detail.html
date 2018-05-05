@@ -100,7 +100,7 @@
         launchDeleteForm("#modal-delete",
                          "{% url 'part-delete' part.id %}",
                          {
-                             redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"}{% endif %}
+                             redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %}
                          });
     });
 {% endblock %}
