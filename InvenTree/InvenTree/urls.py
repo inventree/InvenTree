@@ -18,6 +18,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from django.views.generic.base import RedirectView
+from rest_framework.documentation import include_docs_urls
 
 from users.urls import user_urls
 
@@ -34,7 +35,7 @@ apipatterns = [
 
 urlpatterns = [
 
-    # url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
+    url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
     url(r'^part/', include(part_urls)),
     url(r'^supplier-part/', include(supplier_part_urls)),
