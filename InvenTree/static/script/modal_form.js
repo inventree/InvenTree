@@ -45,6 +45,40 @@ function afterForm(response, options) {
 
 }
 
+function modalSetTitle(modal, title='') {
+    $(modal + ' #modal-title').html(title);
+}
+
+function modalSetContent(modal, content='') {
+    $(modal + ' .modal-form-content').html(content);
+}
+
+
+function openModal(modal, title='', content='') {
+
+    $(modal).on('shown.bs.modal', function() {
+        $(modal + ' .modal-form-content').scrollTop(0);
+    });
+
+    // Prevent 'enter' key from submitting the form using the normal method
+    $(modal).on('keydown', '.js-modal-form', function(event) {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+
+            // Simulate a click on the 'Submit' button
+            $(modal).find("#modal-form-submit").click();
+
+            return false;
+        }
+    });
+
+    modalSetTitle(modal, title);
+    modalSetContent(modal, content);
+
+    $(modal).modal('show');
+}
+
+
 function launchDeleteForm(modal, url, options = {}) {
 
     $(modal).on('shown.bs.modal', function() {
@@ -56,14 +90,14 @@ function launchDeleteForm(modal, url, options = {}) {
         type: 'get',
         dataType: 'json',
         beforeSend: function() {
-            $(modal).modal('show');
+            openModal(modal);
         },
         success: function (response) {
             if (response.title) {
-                $(modal + ' #modal-title').html(response.title);
+                modalSetTitle(modal, response.title);
             }
             if (response.html_data) {
-                $(modal + ' .modal-form-content').html(response.html_data);
+                modalSetContent(modal, response.html_data);
             }
             else {
                 alert('JSON response missing HTML data');
@@ -170,34 +204,17 @@ function handleModalForm(modal, url, options) {
  */
 function launchModalForm(modal, url, options = {}) {
 
-    // Ensure the modal view scrolls to the top of the loaded form
-    $(modal).on('shown.bs.modal', function () {
-        $(modal + ' .modal-form-content').scrollTop(0);
-    });
-
-    // Prevent 'enter' key from submitting the form using the normal method
-    $(modal).on('keydown', '.js-modal-form', function(event) {
-        if (event.keyCode == 13) {
-            event.preventDefault();
-
-            // Simulate a click on the 'Submit' button
-            $(modal).find("#modal-form-submit").click();
-
-            return false;
-        }
-    });
-
     // Form the ajax request to retrieve the django form data
     ajax_data = {
         url: url,
         type: 'get',
         dataType: 'json',
         beforeSend: function () {
-            $(modal).modal('show');
+            openModal(modal);
         },
         success: function(response) {
             if (response.title) {
-                $(modal + ' #modal-title').html(response.title);
+                modalSetTitle(modal, response.title);
             }
 
             if (response.submit_text) {
