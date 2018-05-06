@@ -1,3 +1,7 @@
+function makeOption(id, title) {
+    return "<option value='" + id + "'>" + title + "</option>";
+}
+
 function attachSelect(modal) {
 
     // Attach to any 'select' inputs on the modal
@@ -51,6 +55,10 @@ function modalSetTitle(modal, title='') {
 
 function modalSetContent(modal, content='') {
     $(modal).find('.modal-form-content').html(content);
+}
+
+function modalSetButtonText(modal, text) {
+    $(modal).find("#modal-form-submit").html(text);
 }
 
 
@@ -212,7 +220,7 @@ function launchModalForm(modal, url, options = {}) {
             }
 
             if (response.submit_text) {
-                $(modal + ' #modal-form-submit').html(response.submit_text);
+                modalSetButtonText(response.submit_text);
             }
 
             if (response.html_form) {
