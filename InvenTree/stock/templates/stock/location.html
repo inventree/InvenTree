@@ -126,19 +126,21 @@
 
         var items = selectedStock();
 
-        moveStock(items,
+        moveStockItems(items,
                   {
                       success: function() {
                           $("#stock-table").bootstrapTable('refresh');
                       }
                   });
+
+        return false;
     });
 
     $("#multi-item-delete").click(function() {
 
         var items = selectedStock();
 
-        alert('Deleting ' + items.length + ' items');
+        deleteStockItems(items, {});
 
         return false;
     });

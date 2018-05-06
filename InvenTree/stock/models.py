@@ -166,6 +166,10 @@ class StockItem(models.Model):
 
     infinite = models.BooleanField(default=False)
 
+    def can_delete(self):
+        # TODO - Return FALSE if this item cannot be deleted!
+        return True
+
     @property
     def in_stock(self):
         if self.quantity == 0:
