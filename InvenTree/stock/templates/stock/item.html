@@ -2,7 +2,30 @@
 {% load static %}
 {% block content %}
 
-<h3>Stock entry details</h3>
+<div class='row'>
+<div class='col-sm-6'>
+    <h3>Stock Details</h3>
+    <p><i>{{ item.quantity }} &times {{ item.part.name }}</i></p>
+</div>
+<div class='col-sm-6'>
+    <h3>
+    <div style='float: right;'>
+    <div class="dropdown" style="float: right;">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
+        <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+          <li><a href="#" id='stock-edit' title='Edit stock item'>Edit</a></li>
+          {% if item.in_stock %}
+          <li><a href="#" id='stock-move' title='Move stock item'>Move</a></li>
+          <li><a href='#' id='stock-stocktake' title='Stocktake'>Stocktake</a></li>
+          {% endif %}
+          <li><a href="#" id='stock-delete' title='Delete stock item'>Delete</a></li>
+        </ul>
+    </div>
+    </div>
+    </h3>
+</div>
+</div>
 
 <table class="table table-striped">
 <tr>
@@ -78,42 +101,39 @@
 </table>
 
 {% if item.has_tracking_info %}
-<div class='panel panel-default'>
-    <div data-toggle='collapse' data-target='#tracking-info' class='panel panel-heading'><h4>Tracking History</h4></div>
-    <div class='panel panel-body' id='tracking_info'>
-<ul class='list-group'>
-{% for track in item.tracking_info.all %}
-<li class='list-group-item'>
-    <b>{{ track.title }}</b>
-    {% if track.notes %}
-    <br>{{ track.notes }}
-    {% endif %}
-    <span class='badge'>{{ track.date }} - {{ track.user }}</span>
-</li>
-{% endfor %}
-</ul>
+<hr>
+<div class="panel-group">
+ <div class="panel panel-default">
+   <div class="panel-heading">
+     <h4 class="panel-title">
+       <a data-toggle="collapse" href="#collapse1">Stock Tracking</a><span class='badge'>{{ item.tracking_info.all|length }}</span>
+     </h4>
+   </div>
+   <div id="collapse1" class="panel-collapse collapse">
+     <div class="panel-body">
+         <ul class="list-group">
+         {% for track in item.tracking_info.all %}
+             <li class='list-group-item'>
+             <b>{{ track.title }}</b>
+             {% if track.notes %}
+             <br>{{ track.notes }}
+             {% endif %}
+             <span class='badge'>{{ track.date }} - {{ track.user }}</span>
+            </li>
+         {% endfor %}
+         </ul>
+     </div>
+   </div>
+ </div>
 </div>
-</div>
-
 {% endif %}
-
-
-<div class='container-fluid'>
-<button class='btn btn-info' id='edit-item'>Edit Stock Item</button>
-{% if item.in_stock %}
-<button class='btn btn-primary' id='move-item'>Move Stock Item</button>
-<button class='btn btn-primary' id='stocktake'>Stocktake</button>
-{% endif %}
-<button class='btn btn-danger' id='delete-item'>Delete Stock Item</button>
-</div>
-
 {% endblock %}
 
 {% block js_load %}
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
-    $("#edit-item").click(function () {
+    $("#stock-edit").click(function () {
         launchModalForm("#modal-form",
                         "{% url 'stock-item-edit' item.id %}",
                         {
@@ -122,7 +142,7 @@
     });
 
     {% if item.in_stock %}
-    $("#move-item").click(function() {
+    $("#stock-move").click(function() {
         launchModalForm("#modal-form",
                         "{% url 'stock-item-move' item.id %}",
                         {
@@ -130,7 +150,7 @@
                         });
         });
 
-    $("#stocktake").click(function() {
+    $("#stock-stocktake").click(function() {
         launchModalForm("#modal-form",
                         "{% url 'stock-item-stocktake' item.id %}",
                         {
@@ -140,7 +160,7 @@
 
     {% endif %}
 
-    $("#delete-item").click(function () {
+    $("#stock-delete").click(function () {
         launchDeleteForm("#modal-delete",
                          "{% url 'stock-item-delete' item.id %}",
                          {

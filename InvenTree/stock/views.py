@@ -141,6 +141,7 @@ class StockItemMove(AjaxUpdateView):
         form = self.form_class(request.POST, instance=self.get_object())
 
         if form.is_valid():
+
             obj = form.save()
 
             try:
