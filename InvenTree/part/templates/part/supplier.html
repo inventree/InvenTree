@@ -4,20 +4,21 @@
 
 {% include 'part/tabs.html' with tab='suppliers' %}
 
-<h3>Part Suppliers</h3>
+<div class='row'>
+    <div class='col-sm-6'>
+        <h3>Part Suppliers</h3>
+    </div>
+    <div class='col-sm-6'>
+        <h3>
+            <button class="btn btn-success float-right" id='supplier-create'>New Supplier Part</button>
+        </h3>
+    </div>
+</div>
 
-{% if part.supplier_count > 0 %}
-<p><b>{{ part.name }}</b> is available from {{ part.supplier_count }} suppliers.</p>
+<hr>
 
 <table class="table table-striped table-condensed" id='supplier-table'>
 </table>
-{% else %}
-<p><b>{{ part.name }}</b> is not available from any suppliers.</p>
-{% endif %}
-
-<div class='container-fluid'>
-<button class="btn btn-success" id='supplier-create'>New Supplier Part</button>
-</div>
 
 {% endblock %}
 
