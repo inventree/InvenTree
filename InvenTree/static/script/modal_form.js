@@ -61,6 +61,9 @@ function modalSetButtonText(modal, text) {
     $(modal).find("#modal-form-submit").html(text);
 }
 
+function closeModal(modal='#modal-form') {
+    $(modal).modal('hide');
+}
 
 function openModal(modal, title='', content='') {
 

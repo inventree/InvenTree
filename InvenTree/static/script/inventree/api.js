@@ -46,6 +46,12 @@ function inventreeUpdate(url, data={}, options={}) {
         data["_is_final"] = true;
     }
 
+    var method = 'put';
+
+    if ('method' in options) {
+        method = options.method;
+    }
+
     // Middleware token required for data update
     //var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
     var csrftoken = getCookie('csrftoken');
@@ -55,7 +61,7 @@ function inventreeUpdate(url, data={}, options={}) {
             xhr.setRequestHeader('X-CSRFToken', csrftoken);
         },
         url: url,
-        type: 'put',
+        type: method,
         data: data,
         dataType: 'json',
         success: function(response, status) {

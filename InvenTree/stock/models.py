@@ -193,6 +193,23 @@ class StockItem(models.Model):
         track.save()
 
     @transaction.atomic
+    def move(self, location, user):
+
+        if location == self.location:
+            return
+
+        note = "Moved to {loc}".format(loc=location.name)
+
+        self.location = location
+        self.save()
+
+        self.add_transaction_note('Transfer',
+                                  user,
+                                  notes=note,
+                                  system=True)
+
+
+    @transaction.atomic
     def stocktake(self, count, user):
         """ Perform item stocktake.
         When the quantity of an item is counted,

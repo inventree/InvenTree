@@ -61,6 +61,7 @@
 {% block js_load %}
 {{ block.super }}
 <script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/inventree/stock.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
@@ -125,9 +126,12 @@
 
         var items = selectedStock();
 
-        alert('Moving ' + items.length + ' items');
-
-        return false;
+        moveStock(items,
+                  {
+                      success: function() {
+                          $("#stock-table").bootstrapTable('refresh');
+                      }
+                  });
     });
 
     $("#multi-item-delete").click(function() {

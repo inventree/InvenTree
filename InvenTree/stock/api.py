@@ -13,6 +13,12 @@ from .serializers import LocationSerializer
 from InvenTree.views import TreeSerializer
 from InvenTree.serializers import DraftRUDView
 
+from rest_framework.serializers import ValidationError
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+from django.contrib.auth.models import User
+
 class StockCategoryTree(TreeSerializer):
     title = 'Stock'
     model = StockLocation
@@ -43,6 +49,54 @@ class StockFilter(FilterSet):
     class Meta:
         model = StockItem
         fields = ['quantity', 'part', 'location']
+
+
+class StockMove(APIView):
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    def post(self, request, *args, **kwargs):
+
+        data = request.data
+
+        if not u'location' in data:
+            raise ValidationError({'location': 'Destination must be specified'})
+
+        loc_id = data.get(u'location')
+
+        try:
+            location = StockLocation.objects.get(pk=loc_id)
+        except StockLocation.DoesNotExist:
+            raise ValidationError({'location': 'Location does not exist'})
+
+        if not u'parts[]' in data:
+            raise ValidationError({'parts[]': 'Parts list must be specified'})
+
+        part_list = data.getlist(u'parts[]')
+
+        parts = []
+
+        errors = []
+
+        for pid in part_list:
+            try:
+                part = StockItem.objects.get(pk=pid)
+                parts.append(part)
+            except StockItem.DoesNotExist:
+                errors.append({'part': 'Part {id} does not exist'.format(id=part_id)})
+
+        if len(errors) > 0:
+            raise ValidationError(errors)
+
+        for part in parts:
+            part.move(location, request.user)
+
+        return Response({'success': 'Moved {n} parts to {loc}'.format(
+            n=len(parts),
+            loc=location.name
+        )})
 
 
 class StockLocationList(generics.ListCreateAPIView):
@@ -166,6 +220,8 @@ stock_api_urls = [
     url(r'location/?', StockLocationList.as_view(), name='api-location-list'),
 
     url(r'location/(?P<pk>\d+)/', include(location_endpoints)),
+
+    url(r'move/?', StockMove.as_view(), name='api-stock-move'),
 
     url(r'^tree/?', StockCategoryTree.as_view(), name='api-stock-tree'),
 
