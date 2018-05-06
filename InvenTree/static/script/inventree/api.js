@@ -17,7 +17,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function inventreeGet(url, filters={}, callback=null) {
+function inventreeGet(url, filters={}, options={}) {
     $.ajax({
         url: url,
         type: 'GET',
@@ -25,15 +25,15 @@ function inventreeGet(url, filters={}, callback=null) {
         dataType: 'json',
         success: function(response) {
             console.log('Success GET data at ' + url);
-            if (callback) {
-                callback(response);
+            if (options.success) {
+                options.success(response);
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on GET at ' + url);
             console.error(thrownError);
-            if (callback) {
-                callback({
+            if (options.error) {
+                options.error({
                     error: thrownError
                 });
             }
@@ -41,8 +41,8 @@ function inventreeGet(url, filters={}, callback=null) {
     })
 }
 
-function inventreeUpdate(url, data, callback=null, final=false) {
-    if (final) {
+function inventreeUpdate(url, data={}, options={}) {
+    if ('final' in options && options.final) {
         data["_is_final"] = true;
     }
 
@@ -61,15 +61,15 @@ function inventreeUpdate(url, data, callback=null, final=false) {
         success: function(response, status) {
             response['_status_code'] = status;
             console.log('UPDATE object to ' + url + ' - result = ' + status);
-            if (callback) {
-                callback(response);
+            if (options.success) {
+                options.success(response);
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on UPDATE to ' + url);
             console.error(thrownError);
-            if (callback) {
-                callback({
+            if (options.error) {
+                options.error({
                     error: thrownError
                 });
             }
@@ -78,25 +78,25 @@ function inventreeUpdate(url, data, callback=null, final=false) {
 }
 
 // Return list of parts with optional filters
-function getParts(filters={}) {
-    return inventreeGet('/api/part/', filters);
+function getParts(filters={}, options={}) {
+    return inventreeGet('/api/part/', filters, options);
 }
 
 // Return list of part categories with optional filters
-function getPartCategories(filters={}) {
-    return inventreeGet('/api/part/category/', filters);
+function getPartCategories(filters={}, options={}) {
+    return inventreeGet('/api/part/category/', filters, options);
 }
 
-function getStock(filters={}) {
-    return inventreeGet('/api/stock/', filters);
+function getStock(filters={}, options={}) {
+    return inventreeGet('/api/stock/', filters, options);
 }
 
-function getStockLocations(filters={}) {
-    return inventreeGet('/api/stock/location/', filters)
+function getStockLocations(filters={}, options={}) {
+    return inventreeGet('/api/stock/location/', filters, options)
 }
 
-function getCompanies(filters={}) {
-    return inventreeGet('/api/company/', filters);
+function getCompanies(filters={}, options={}) {
+    return inventreeGet('/api/company/', filters, options);
 }
 
 function updateStockItem(pk, data, final=false) {

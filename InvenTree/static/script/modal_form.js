@@ -50,7 +50,7 @@ function modalSetTitle(modal, title='') {
 }
 
 function modalSetContent(modal, content='') {
-    $(modal + ' .modal-form-content').html(content);
+    $(modal).find('.modal-form-content').html(content);
 }
 
 
@@ -134,13 +134,7 @@ function launchDeleteForm(modal, url, options = {}) {
 function injectModalForm(modal, form_html) {
     // Inject the form data into the modal window
     $(modal).find('.modal-form-content').html(form_html);
-
-    // Attach to any 'select' inputs on the modal
-    // Provide search filtering of dropdown items
-    $(modal + ' .select').select2({
-        dropdownParent: $(modal),
-        dropdownAutoWidth: true,
-    });
+    attachSelect(modal);
 }
 
 function handleModalForm(modal, url, options) {
