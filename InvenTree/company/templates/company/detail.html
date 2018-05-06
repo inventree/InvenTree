@@ -4,7 +4,25 @@
 
 {% include 'company/tabs.html' with tab='details' %}
 
-<h3>Company Details</h3>
+<div class='row'>
+    <div class='col-sm-6'>
+        <h3>Company Details</h3>
+    </div>
+    <div class='col-sm-6'>
+        <h3>
+            <div class="dropdown" style="float: right;">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
+                <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                  <li><a href="#" id='edit-company' title='Edit company'>Edit</a></li>
+                  <li><a href="#" id='delete-company' title='Delete company'>Delete</a></li>
+                </ul>
+            </div>
+        </h3>
+    </div>
+</div>
+
+<hr>
 
 <table class='table table-striped'>
 <tr>
@@ -24,10 +42,6 @@
 </div>
 {% endif %}
 
-<div class='container-fluid'>
-<button class="btn btn-info" id='edit-company'>Edit Company</button>
-<button class="btn btn-danger" id='delete-company'>Delete Company</button>
-</div>
 
 {% endblock %}
 
