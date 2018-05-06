@@ -17,7 +17,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function inventreeGet(url, filters={}) {
+function inventreeGet(url, filters={}, callback=null) {
     $.ajax({
         url: url,
         type: 'GET',
@@ -25,17 +25,23 @@ function inventreeGet(url, filters={}) {
         dataType: 'json',
         success: function(response) {
             console.log('Success GET data at ' + url);
-            return response;
+            if (callback) {
+                callback(response);
+            }
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on GET at ' + url);
             console.error(thrownError);
-            return {error: thrownError};
+            if (callback) {
+                return {
+                    error: thrownError;
+                }
+            }
         }
     })
 }
 
-function inventreeUpdate(url, data, final=false) {
+function inventreeUpdate(url, data, callback=null, final=false) {
     if (final) {
         data["_is_final"] = true;
     }
@@ -55,12 +61,18 @@ function inventreeUpdate(url, data, final=false) {
         success: function(response, status) {
             response['_status_code'] = status;
             console.log('UPDATE object to ' + url + ' - result = ' + status);
-            return response;
+            if (callback) {
+                callback(response);
+            }
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on UPDATE to ' + url);
             console.error(thrownError);
-            return {error: thrownError};
+            if (callback) {
+                callback({
+                    error: thrownError;
+                })
+            }
         }
     })
 }
