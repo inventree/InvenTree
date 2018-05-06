@@ -33,9 +33,9 @@ function inventreeGet(url, filters={}, callback=null) {
             console.error('Error on GET at ' + url);
             console.error(thrownError);
             if (callback) {
-                return {
-                    error: thrownError;
-                }
+                callback({
+                    error: thrownError
+                });
             }
         }
     })
@@ -70,8 +70,8 @@ function inventreeUpdate(url, data, callback=null, final=false) {
             console.error(thrownError);
             if (callback) {
                 callback({
-                    error: thrownError;
-                })
+                    error: thrownError
+                });
             }
         }
     })
