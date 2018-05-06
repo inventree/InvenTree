@@ -43,6 +43,10 @@
 <table class='table table-striped table-condensed' id='part-table'>
 </table>
 
+<div>
+<button style='float: right;' class='btn btn-success' id='part-create'>New Part</button>
+</div>
+
 {% endblock %}
 
 {% block js_ready %}
@@ -60,6 +64,19 @@
                             {% endif %}
                         });
     })
+
+    $("#part-create").click(function() {
+        launchModalForm("#modal-form",
+                        "{% url 'part-create' %}",
+                        {
+                            follow: true,
+                            data: {
+                            {% if category %}
+                                category: {{ category.id }}
+                            {% endif %}
+                            }
+                        });
+    });
 
     {% if category %}
     $("#cat-edit").click(function () {
