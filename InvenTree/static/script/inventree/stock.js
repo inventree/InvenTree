@@ -42,21 +42,35 @@ function moveStock(rows, options) {
                 // Extact part row info
                 var parts = [];
 
-                for (i = 0; i < rows.length; i++) {
-                    parts.push(rows[i].pk);
-                }
+                var html = "Select new location:<br>\n";
 
-                var form = "<select class='select' id='stock-location'>";
+                html += "<select class='select' id='stock-location'>";
 
                 for (i = 0; i < response.length; i++) {
                     var loc = response[i];
 
-                    form += makeOption(loc.pk, loc.name + ' - <i>' + loc.description + '</i>');
+                    html += makeOption(loc.pk, loc.name + ' - <i>' + loc.description + '</i>');
                 }
 
-                form += "</select">
+                html += "</select><br><hr>";
 
-                modalSetContent(modal, form);
+                html += "The following stock items will be moved:<br><ul class='list-group'>\n";
+
+                for (i = 0; i < rows.length; i++) {
+                    parts.push(rows[i].pk);
+
+                    html += "<li class='list-group-item'>" + rows[i].quantity + " &times " + rows[i].part.name;
+
+                    if (rows[i].location) {
+                        html += " (" + rows[i].location.name + ")";
+                    }
+
+                    html += "</li>\n";
+                }
+
+                html += "</ul>\n";
+
+                modalSetContent(modal, html);
                 attachSelect(modal);
 
                 $(modal).on('click', '#modal-form-submit', function() {
