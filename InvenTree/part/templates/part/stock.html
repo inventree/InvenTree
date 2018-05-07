@@ -4,18 +4,29 @@
 
 {% include 'part/tabs.html' with tab='stock' %}
 
-<h3>Part Stock</h3>
-
 <div class='row'>
     <div class='col-sm-6'>
         <h3>Part Stock</h3>
     </div>
-    <div class='col-sm-6'>
+    <div class='col-sm-6 float-right'>
         <h3>
-            <button style='float: right;' class='btn btn-success' id='add-stock-item'>Add new Stock Item</button>
+            <div class='float-right'>
+            <button class='btn btn-success' id='add-stock-item'>New Stock Item</button>
+            <div id='opt-dropdown' class="dropdown" style='float: right;'>
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" id='multi-item-stocktake' title='Stocktake selected stock items'>Stocktake</a></li>
+                        <li><a href='#' id='multi-item-move' title='Move selected stock items'>Move</a></li>
+                        <li><a href="#" id='multi-item-delete' title='Delete selected stock items'>Delete</a></li>
+                    </ul>
+            </div>
+            </div>
         </h3>
     </div>
 </div>
+
+<hr>
 
 <table class='table table-striped table-condensed' id='stock-table'>
 </table>
@@ -25,6 +36,8 @@
 
 {% block js_load %}
 {{ block.super }}
+<script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/inventree/stock.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
@@ -43,6 +56,7 @@
     $("#stock-table").bootstrapTable({
         sortable: true,
         search: true,
+        pagination: true,
         queryParams: function(p) {
             return {
                 part: {{ part.id }},
@@ -77,6 +91,41 @@
             }
         ],
         url: "{% url 'api-stock-list' %}"
+    });
+
+    function selectedStock() {
+        return $("#stock-table").bootstrapTable('getSelections');
+    }
+
+    $("#multi-item-move").click(function() {
+
+        var items = selectedStock();
+
+        moveStockItems(items,
+                  {
+                      success: function() {
+                          $("#stock-table").bootstrapTable('refresh');
+                      }
+                  });
+
+        return false;
+    });
+
+    $("#multi-item-delete").click(function() {
+
+        var items = selectedStock();
+
+        deleteStockItems(items, {});
+
+        return false;
+    });
+
+    $("#multi-item-stocktake").click(function() {
+        var items = selectedStock();
+
+        countStockItems(items, {});
+
+        return false;
     });
 
 {% endblock %}

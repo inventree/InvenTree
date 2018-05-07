@@ -148,7 +148,7 @@
     $("#multi-item-stocktake").click(function() {
         var items = selectedStock();
 
-        alert('Stocktake on ' + items.length + ' items');
+        countStockItems(items, {});
 
         return false;
     });

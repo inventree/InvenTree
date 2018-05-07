@@ -85,6 +85,22 @@ function moveStockItems(items, options) {
     });
 }
 
+function countStockItems(items, options) {
+    var modal = '#modal-form';
+
+    if ('modal' in options) {
+        modal = options.modal;
+    }
+
+    if (items.length == 0) {
+        alert('No stock items selected');
+        return;
+    }
+
+    openModal(modal);
+    modalSetTitle(modal, 'Stocktake');
+}
+
 function deleteStockItems(items, options) {
 
     var modal = '#modal-delete';
