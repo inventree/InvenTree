@@ -79,6 +79,11 @@ class StockItem(models.Model):
             # TODO - Find a test than can be perfomed...
             pass
 
+        if self.belongs_to and self.belongs_to.pk == self.pk:
+            raise ValidationError({
+                'belongs_to': _('Item cannot belong to itself')
+            })
+
         # Serial number cannot be set for items with quantity greater than 1
         if not self.quantity == 1 and self.serial:
             raise ValidationError({
