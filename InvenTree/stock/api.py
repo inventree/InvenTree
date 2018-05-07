@@ -51,6 +51,43 @@ class StockFilter(FilterSet):
         fields = ['quantity', 'part', 'location']
 
 
+class StockStocktake(APIView):
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    def post(self, request, *args, **kwargs):
+
+        data = request.data
+
+        items = []
+
+        # Ensure each entry is valid
+        for entry in data:
+            if not 'pk' in entry:
+                raise ValidationError({'pk': 'Each entry must contain pk field'})
+            if not 'quantity' in entry:
+                raise ValidationError({'quantity': 'Each entry must contain quantity field'})
+
+            item = {}
+            try:
+                item['item'] = StockItem.objects.get(pk=entry['pk'])
+            except StockItem.DoesNotExist:
+                raise ValidationError({'pk': 'No matching StockItem found for pk={pk}'.format(pk=entry['pk'])})
+            try:
+                item['quantity'] = int(entry['quantity'])
+            except ValueError:
+                raise ValidationError({'quantity': 'Quantity must be an integer'})
+
+            items.append(item)
+
+        for item in items:
+            item['item'].stocktake(item['quantity'], request.user)
+
+        return Response({'success': 'success'})
+
+
 class StockMove(APIView):
 
     permission_classes = [
@@ -220,6 +257,8 @@ stock_api_urls = [
     url(r'location/?', StockLocationList.as_view(), name='api-location-list'),
 
     url(r'location/(?P<pk>\d+)/', include(location_endpoints)),
+
+    url(r'stocktake/?', StockStocktake.as_view(), name='api-stock-stocktake'),
 
     url(r'move/?', StockMove.as_view(), name='api-stock-move'),
 
