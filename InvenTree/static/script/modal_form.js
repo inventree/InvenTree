@@ -125,6 +125,9 @@ function launchDeleteForm(modal, url, options = {}) {
         }
     });
 
+    // Un-bind any attached click listeners
+    $(modal).off('click', '#modal-form-delete');
+
     $(modal).on('click', '#modal-form-delete', function() {
 
         var form = $(modal).find('#delete-form');
@@ -168,6 +171,9 @@ function handleModalForm(modal, url, options) {
         alert('form submit');
         return false;
     });
+
+    // Un-bind any attached click listeners
+    $(modal).off('click', '#modal-form-submit');
 
     $(modal).on('click', '#modal-form-submit', function() {
         $(modal).find('.js-modal-form').ajaxSubmit({
