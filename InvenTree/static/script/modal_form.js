@@ -86,6 +86,10 @@ function openModal(modal, title='', content='') {
     modalSetTitle(modal, title);
     modalSetContent(modal, content);
 
+    $(modal).modal({
+        backdrop: 'static',
+        keyboard: false,
+    });
     $(modal).modal('show');
 }
 
