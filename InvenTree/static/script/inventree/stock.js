@@ -125,6 +125,8 @@ function countStockItems(items, options) {
         ]
     });
 
+    $(modal).find('#stocktake-table').bootstrapTable('checkAll');
+
     $(modal).on('click', '#modal-form-submit', function() {
         var selections = $(modal).find('#stocktake-table').bootstrapTable('getSelections');
 

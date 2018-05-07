@@ -18,7 +18,6 @@
                     <ul class="dropdown-menu">
                         <li><a href="#" id='multi-item-stocktake' title='Stocktake selected stock items'>Stocktake</a></li>
                         <li><a href='#' id='multi-item-move' title='Move selected stock items'>Move</a></li>
-                        <li><a href="#" id='multi-item-delete' title='Delete selected stock items'>Delete</a></li>
                     </ul>
             </div>
             </div>
@@ -111,19 +110,14 @@
         return false;
     });
 
-    $("#multi-item-delete").click(function() {
-
-        var items = selectedStock();
-
-        deleteStockItems(items, {});
-
-        return false;
-    });
-
     $("#multi-item-stocktake").click(function() {
         var items = selectedStock();
 
-        countStockItems(items, {});
+        countStockItems(items, {
+            success: function() {
+                $("#stock-table").bootstrapTable('refresh');
+            }
+        });
 
         return false;
     });

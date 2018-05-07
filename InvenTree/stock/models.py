@@ -57,6 +57,23 @@ class StockItem(models.Model):
     If a serial number is assigned, then StockItem cannot have a quantity other than 1
     """
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            add_note = True
+        else:
+            add_note = False
+
+        super(StockItem, self).save(*args, **kwargs)
+
+        if add_note:
+            # This StockItem is being saved for the first time
+            self.add_transaction_note(
+            'Created stock item',
+            None,
+            system=True
+            )
+
+
     def clean(self):
 
         # The 'supplier_part' field must point to the same part!

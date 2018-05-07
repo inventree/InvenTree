@@ -118,7 +118,7 @@
              {% if track.notes %}
              <br>{{ track.notes }}
              {% endif %}
-             <span class='badge'>{{ track.date }} - {{ track.user }}</span>
+             <span class='badge'>{{ track.date }}{% if track.user %} - {{ track.user }}{% endif %}</span>
             </li>
          {% endfor %}
          </ul>
