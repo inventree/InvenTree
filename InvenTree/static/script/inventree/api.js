@@ -23,6 +23,7 @@ function inventreeGet(url, filters={}, options={}) {
         type: 'GET',
         data: filters,
         dataType: 'json',
+        contentType: 'application/json',
         success: function(response) {
             console.log('Success GET data at ' + url);
             if (options.success) {
@@ -62,8 +63,9 @@ function inventreeUpdate(url, data={}, options={}) {
         },
         url: url,
         type: method,
-        data: data,
+        data: JSON.stringify(data),
         dataType: 'json',
+        contentType: 'application/json',
         success: function(response, status) {
             response['_status_code'] = status;
             console.log('UPDATE object to ' + url + ' - result = ' + status);

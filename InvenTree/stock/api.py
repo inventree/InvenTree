@@ -59,12 +59,13 @@ class StockStocktake(APIView):
 
     def post(self, request, *args, **kwargs):
 
-        data = request.data
+        if not 'items[]' in request.data:
+            raise ValidationError({'items[]:' 'Request must contain list of items'})
 
         items = []
 
         # Ensure each entry is valid
-        for entry in data:
+        for entry in request.data['items[]']:
             if not 'pk' in entry:
                 raise ValidationError({'pk': 'Each entry must contain pk field'})
             if not 'quantity' in entry:
@@ -79,6 +80,9 @@ class StockStocktake(APIView):
                 item['quantity'] = int(entry['quantity'])
             except ValueError:
                 raise ValidationError({'quantity': 'Quantity must be an integer'})
+
+            if item['quantity'] < 0:
+                raise ValidationError({'quantity': 'Quantity must be >= 0'})
 
             items.append(item)
 
@@ -111,7 +115,7 @@ class StockMove(APIView):
         if not u'parts[]' in data:
             raise ValidationError({'parts[]': 'Parts list must be specified'})
 
-        part_list = data.getlist(u'parts[]')
+        part_list = data.get(u'parts[]')
 
         parts = []
 

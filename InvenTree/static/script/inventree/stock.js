@@ -16,7 +16,7 @@ function moveStockItems(items, options) {
         inventreeUpdate("/api/stock/move/",
                         {
                             location: location,
-                            parts: parts
+                            'parts[]': parts
                         },
                         {
                             success: function(response) {
@@ -97,8 +97,67 @@ function countStockItems(items, options) {
         return;
     }
 
+    var tbl = "<table class='table table-striped table-condensed' id='stocktake-table'></table>";
+
     openModal(modal);
-    modalSetTitle(modal, 'Stocktake');
+    modalSetTitle(modal, 'Stocktake ' + items.length + ' items');
+
+    $(modal).find('.modal-form-content').html(tbl);
+
+    $(modal).find('#stocktake-table').bootstrapTable({
+        data: items,
+        columns: [
+            {
+                checkbox: true,
+            },
+            {
+                field: 'part.name',
+                title: 'Part',
+            },
+            {
+                field: 'location.name',
+                title: 'Location',
+            },
+            {
+                field: 'quantity',
+                title: 'Quantity',
+            }
+        ]
+    });
+
+    $(modal).on('click', '#modal-form-submit', function() {
+        var selections = $(modal).find('#stocktake-table').bootstrapTable('getSelections');
+
+        var stocktake = [];
+
+        console.log('Performing stocktake on ' + selections.length + ' items');
+
+        for (i = 0; i<selections.length; i++) {
+            var item = {
+                pk: selections[i].pk,
+                quantity: selections[i].quantity,
+            };
+
+            stocktake.push(item);
+        }
+
+        inventreeUpdate("/api/stock/stocktake/",
+                        {
+                            'items[]': stocktake,
+                        },
+                        {
+                            success: function(response) {
+                                closeModal(modal);
+                                if (options.success) {
+                                    options.success();
+                                }
+                            },
+                            error: function(error) {
+                                alert(error);
+                            },
+                            method: 'post',
+                        });
+    });
 }
 
 function deleteStockItems(items, options) {
