@@ -106,8 +106,13 @@ WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'inventree_db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'inventree',
+        'USER': 'inventreeuser',
+        'PASSWORD': 'inventree',
+        'HOST': 'localhost',
+        'PORT': '',
+        #'NAME': os.path.join(BASE_DIR, 'inventree_db.sqlite3'),
     }
 }
 
