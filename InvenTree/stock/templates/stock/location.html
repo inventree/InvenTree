@@ -65,8 +65,7 @@
 {% block js_ready %}
 {{ block.super }}
     $('#location-create').click(function () {
-        launchModalForm("#modal-form",
-                        "{% url 'stock-location-create' %}",
+        launchModalForm("{% url 'stock-location-create' %}",
                         {
                             data: {
                                 {% if location %}
@@ -80,8 +79,7 @@
 
     {% if location %}
     $('#location-edit').click(function() {
-        launchModalForm("#modal-form",
-                        "{% url 'stock-location-edit' location.id %}",
+        launchModalForm("{% url 'stock-location-edit' location.id %}",
                         {
                             reload: true
                         });
@@ -89,8 +87,7 @@
     });
 
     $('#location-delete').click(function() {
-        launchDeleteForm("#modal-delete",
-                         "{% url 'stock-location-delete' location.id %}",
+        launchDeleteForm("{% url 'stock-location-delete' location.id %}",
                          {
                              redirect: "{% url 'stock-index' %}"
                          });
@@ -100,8 +97,7 @@
     {% endif %}
 
     $('#item-create').click(function () {
-        launchModalForm("#modal-form",
-                        "{% url 'stock-item-create' %}",
+        launchModalForm("{% url 'stock-item-create' %}",
                         {
                             success: function() {
                                 $("#stock-table").bootstrapTable('refresh');

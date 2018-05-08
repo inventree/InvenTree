@@ -46,7 +46,7 @@
 {% block js_ready %}
 {{ block.super }}
     $('#edit-company').click(function() {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'company-edit' company.id %}",
                         {
                             reload: true
@@ -54,7 +54,7 @@
     });
 
     $('#delete-company').click(function() {
-        launchDeleteForm("#modal-delete",
+        launchDeleteForm(
                          "{% url 'company-delete' company.id %}",
                          {
                              redirect: "{% url 'company-index' %}"

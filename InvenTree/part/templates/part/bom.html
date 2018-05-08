@@ -28,7 +28,7 @@
     $('#bom-table').on('click', '.delete-button', function () {
         var button = $(this);
 
-        launchDeleteForm("#modal-delete",
+        launchDeleteForm(
                          button.attr('url'),
                          {
                              success: reloadBom
@@ -38,7 +38,7 @@
     $("#bom-table").on('click', '.edit-button', function () {
         var button = $(this);
 
-        launchModalForm("#modal-form",
+        launchModalForm(
                         button.attr('url'),
                         {
                             success: reloadBom
@@ -47,7 +47,7 @@
     });
 
     $("#new-bom-item").click(function () {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'bom-item-create' %}",
                         {
                             reload: true,

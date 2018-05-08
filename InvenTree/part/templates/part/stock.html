@@ -42,7 +42,7 @@
 {{ block.super }}
 
     $('#add-stock-item').click(function () {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'stock-item-create' %}",
                         {
                             reload: true,

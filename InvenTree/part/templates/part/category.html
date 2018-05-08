@@ -53,7 +53,7 @@
 {{ block.super }}
 
     $("#cat-create").click(function() {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'category-create' %}",
                         {
                             follow: true,
@@ -66,7 +66,7 @@
     })
 
     $("#part-create").click(function() {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'part-create' %}",
                         {
                             follow: true,
@@ -80,7 +80,7 @@
 
     {% if category %}
     $("#cat-edit").click(function () {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'category-edit' category.id %}",
                         {
                             reload: true
@@ -96,8 +96,7 @@
     {% endif %}
 
     $('#cat-delete').click(function() {
-        launchDeleteForm('#modal-delete',
-                         "{% url 'category-delete' category.id %}",
+        launchDeleteForm("{% url 'category-delete' category.id %}",
                          {
                              redirect: redirect
                          });

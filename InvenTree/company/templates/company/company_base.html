@@ -69,7 +69,7 @@
 {% block js_ready %}
 
     $("#company-thumb").click(function() {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'company-image' company.id %}",
                         {
                             reload: true

@@ -29,7 +29,7 @@
     {{ block.super }}
 
     $('#supplier-create').click(function () {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'supplier-part-create' %}",
                         {
                             reload: true,

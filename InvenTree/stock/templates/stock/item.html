@@ -132,7 +132,7 @@
 {% block js_ready %}
 {{ block.super }}
     $("#stock-edit").click(function () {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'stock-item-edit' item.id %}",
                         {
                             reload: true
@@ -141,7 +141,7 @@
 
     {% if item.in_stock %}
     $("#stock-move").click(function() {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'stock-item-move' item.id %}",
                         {
                             reload: true,
@@ -149,7 +149,7 @@
         });
 
     $("#stock-stocktake").click(function() {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'stock-item-stocktake' item.id %}",
                         {
                             reload: true
@@ -159,7 +159,7 @@
     {% endif %}
 
     $("#stock-delete").click(function () {
-        launchDeleteForm("#modal-delete",
+        launchDeleteForm(
                          "{% url 'stock-item-delete' item.id %}",
                          {
                              redirect: "{% url 'part-stock' item.part.id %}"

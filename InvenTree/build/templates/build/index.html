@@ -31,7 +31,7 @@
 {% block js_ready %}
 {{ block.super }}
     $("#new-build").click(function() {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'build-create' %}",
                         {
                             follow: true

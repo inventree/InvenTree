@@ -94,12 +94,22 @@ function openModal(modal, title='', content='') {
 }
 
 
-function launchDeleteForm(modal, url, options = {}) {
+function launchDeleteForm(url, options = {}) {
+
+    var modal = '#modal-delete';
+
+    if (options.modal) {
+        modal = options.modal;
+    }
 
     $(modal).on('shown.bs.modal', function() {
         $(modal + ' .modal-form-content').scrollTop(0);
     });
 
+    // Un-bind any attached click listeners
+    $(modal).off('click', '#modal-form-delete');
+
+    // Request delete form data
     $.ajax({
         url: url,
         type: 'get',
@@ -124,9 +134,6 @@ function launchDeleteForm(modal, url, options = {}) {
             $(modal).modal('hide');
         }
     });
-
-    // Un-bind any attached click listeners
-    $(modal).off('click', '#modal-form-delete');
 
     $(modal).on('click', '#modal-form-delete', function() {
 
@@ -155,7 +162,13 @@ function injectModalForm(modal, form_html) {
     attachSelect(modal);
 }
 
-function handleModalForm(modal, url, options) {
+function handleModalForm(url, options) {
+
+    var modal = '#modal-form';
+
+    if (options.modal) {
+        modal = options.modal;
+    }
 
     var form = $(modal).find('.js-modal-form');
 
@@ -217,7 +230,13 @@ function handleModalForm(modal, url, options) {
  * Opens a model window and fills it with a requested form
  * If the form is loaded successfully, calls handleModalForm
  */
-function launchModalForm(modal, url, options = {}) {
+function launchModalForm(url, options = {}) {
+
+    var modal = '#modal-form';
+
+    if (options.modal) {
+        modal = options.modal;
+    }
 
     // Form the ajax request to retrieve the django form data
     ajax_data = {

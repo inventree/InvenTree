@@ -102,7 +102,7 @@
 {% block js_ready %}
     {{ block.super }}
     $("#edit-part").click(function() {
-        launchModalForm("#modal-form",
+        launchModalForm(
                         "{% url 'part-edit' part.id %}",
                         {
                             reload: true,
@@ -110,7 +110,7 @@
     });
 
     $('#delete-part').click(function() {
-        launchDeleteForm("#modal-delete",
+        launchDeleteForm(
                          "{% url 'part-delete' part.id %}",
                          {
                              redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %}

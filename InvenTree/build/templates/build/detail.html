@@ -83,16 +83,14 @@
 {% block js_ready %}
 {{ block.super }}
     $("#edit-build").click(function () {
-        launchModalForm("#modal-form",
-                        "{% url 'build-edit' build.id %}",
+        launchModalForm("{% url 'build-edit' build.id %}",
                         {
                             reload: true
                         });
     });
 
     $("#cancel-build").click(function() {
-        launchModalForm("#modal-form",
-                        "{% url 'build-cancel' build.id %}",
+        launchModalForm("{% url 'build-cancel' build.id %}",
                         {
                             reload: true
                         });
