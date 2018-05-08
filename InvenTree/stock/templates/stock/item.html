@@ -113,17 +113,8 @@
    </div>
    <div id="collapse1" class="panel-collapse collapse">
      <div class="panel-body">
-         <ul class="list-group">
-         {% for track in item.tracking_info.all %}
-             <li class='list-group-item'>
-             <b>{{ track.title }}</b>
-             {% if track.notes %}
-             <br>{{ track.notes }}
-             {% endif %}
-             <span class='badge'>{{ track.date }}{% if track.user %} - {{ track.user }}{% endif %}</span>
-            </li>
-         {% endfor %}
-         </ul>
+         <table class='table table-condensed table-striped' id='track-table'>
+         </table>
      </div>
    </div>
  </div>
@@ -185,4 +176,38 @@
                              redirect: "{% url 'part-stock' item.part.id %}"
                          });
     });
+
+    $('#track-table').bootstrapTable({
+        sortable: true,
+        search: true,
+        method: 'get',
+        columns: [
+            {
+                field: 'date',
+                title: 'Date',
+                sortable: true,
+            },
+            {
+                field: 'title',
+                title: 'Description',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    var html = "<b>" + value + "</b>";
+
+                    if (row.notes) {
+                        html += "<br><i>" + row.notes + "</i>";
+                    }
+
+                    return html;
+                }
+            },
+            {
+                sortable: true,
+                field: 'user',
+                title: 'User',
+            }
+        ],
+        url: "{% url 'api-stock-track' %}",
+    })
+
 {% endblock %}

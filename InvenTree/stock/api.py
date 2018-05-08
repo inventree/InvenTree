@@ -7,8 +7,11 @@ from django.conf.urls import url, include
 
 # from InvenTree.models import FilterChildren
 from .models import StockLocation, StockItem
+from .models import StockItemTracking
+
 from .serializers import StockItemSerializer, StockQuantitySerializer
 from .serializers import LocationSerializer
+from .serializers import StockTrackingSerializer
 
 from InvenTree.views import TreeSerializer
 from InvenTree.serializers import DraftRUDView
@@ -242,19 +245,34 @@ class StockStocktakeEndpoint(generics.UpdateAPIView):
         return response.Response(serializer.data)
 
 
-class AddStockEndpoint(generics.UpdateAPIView):
+class StockTrackingList(generics.ListCreateAPIView):
 
-    queryset = StockItem.objects.all()
-    serializer_class = StockQuantitySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    queryset = StockItemTracking.objects.all()
+    serializer_class = StockTrackingSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,]
 
-    def update(self, request, *args, **kwargs):
-        object = self.get_object()
-        object.add_stock(request.data['quantity'])
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
 
-        serializer = self.get_serializer(object)
+    filter_fields = [
+        'item',
+        'user',
+    ]
 
-        return response.Response(serializer.data)
+    ordering = '-date'
+
+    ordering_fields = [
+        'date',
+    ]
+
+    search_fields = [
+        'title',
+        'notes',
+    ]
+
 
 
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -296,6 +314,8 @@ stock_api_urls = [
     url(r'stocktake/?', StockStocktake.as_view(), name='api-stock-stocktake'),
 
     url(r'move/?', StockMove.as_view(), name='api-stock-move'),
+
+    url(r'track/?', StockTrackingList.as_view(), name='api-stock-track'),
 
     url(r'^tree/?', StockCategoryTree.as_view(), name='api-stock-tree'),
 

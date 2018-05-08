@@ -320,6 +320,9 @@ class StockItemTracking(models.Model):
     """ Stock tracking entry
     """
 
+    def get_absolute_url(self):
+        return '/stock/track/{id}/'.format(id=self.id)
+
     # Stock item
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE,
                              related_name='tracking_info')

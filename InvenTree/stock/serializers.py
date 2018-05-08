@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import StockItem, StockLocation
+from .models import StockItemTracking
 
 from part.serializers import PartBriefSerializer
 
@@ -16,6 +17,30 @@ class LocationBriefSerializer(serializers.ModelSerializer):
             'name',
             'pathstring',
             'url',
+        ]
+
+
+class StockTrackingSerializer(serializers.ModelSerializer):
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    class Meta:
+        model = StockItemTracking
+        fields = [
+            'pk',
+            'url',
+            'item',
+            'date',
+            'title',
+            'notes',
+            'user',
+            'system',
+        ]
+
+        read_only_fields = [
+            'date',
+            'user',
+            'system',
         ]
 
 
