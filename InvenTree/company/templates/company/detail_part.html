@@ -14,12 +14,7 @@
 </div>
 
 {% endblock %}
-
-{% block js_load %}
-<script type='text/javascript' src="{% static 'script/modal_form.js' %}"></script>
-{% endblock %}
 {% block js_ready %}
-
 {{ block.super }}
 
     $("#part-create").click(function () {
