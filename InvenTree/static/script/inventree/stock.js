@@ -102,7 +102,7 @@ function updateStock(items, options={}) {
         content: html
     });
 
-    $(modal).on('click', '#modal-form-submit', function() {
+    modalSubmit(modal, function() {
 
         var stocktake = [];
 
@@ -244,7 +244,7 @@ function moveStockItems(items, options) {
             modalSetContent(modal, html);
             attachSelect(modal);
 
-            $(modal).on('click', '#modal-form-submit', function() {
+            modalSubmit(modal, function() {
                 var locId = $(modal).find("#stock-location").val();
 
                 doMove(locId, parts);

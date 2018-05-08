@@ -65,6 +65,15 @@ function closeModal(modal='#modal-form') {
     $(modal).modal('hide');
 }
 
+function modalSubmit(modal, callback) {
+    $(modal).off('click', '#modal-form-submit');
+
+    $(modal).on('click', '#modal-form-submit', function() {
+        callback();
+    });
+}
+
+
 function openModal(options) {
 
     var modal = options.modal || '#modal-form';
@@ -188,10 +197,7 @@ function handleModalForm(url, options) {
         return false;
     });
 
-    // Un-bind any attached click listeners
-    $(modal).off('click', '#modal-form-submit');
-
-    $(modal).on('click', '#modal-form-submit', function() {
+    modalSubmit(modal, function() {
         $(modal).find('.js-modal-form').ajaxSubmit({
             url: url,
             // POST was successful
