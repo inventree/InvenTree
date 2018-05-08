@@ -95,14 +95,6 @@ function getPartCategories(filters={}, options={}) {
     return inventreeGet('/api/part/category/', filters, options);
 }
 
-function getStock(filters={}, options={}) {
-    return inventreeGet('/api/stock/', filters, options);
-}
-
-function getStockLocations(filters={}, options={}) {
-    return inventreeGet('/api/stock/location/', filters, options)
-}
-
 function getCompanies(filters={}, options={}) {
     return inventreeGet('/api/company/', filters, options);
 }

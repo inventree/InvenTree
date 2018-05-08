@@ -236,7 +236,7 @@ class StockItem(models.Model):
 
 
     @transaction.atomic
-    def stocktake(self, count, user):
+    def stocktake(self, count, user, notes=''):
         """ Perform item stocktake.
         When the quantity of an item is counted,
         record the date of stocktake
@@ -252,35 +252,54 @@ class StockItem(models.Model):
         self.stocktake_user = user
         self.save()
 
-        self.add_transaction_note('Stocktake',
+        self.add_transaction_note('Stocktake - counted {n} items'.format(n=count),
                                   user,
-                                  notes='Counted {n} items'.format(n=count),
+                                  notes=notes,
                                   system=True)
 
     @transaction.atomic
-    def add_stock(self, amount):
+    def add_stock(self, quantity, user, notes=''):
         """ Add items to stock
         This function can be called by initiating a ProjectRun,
         or by manually adding the items to the stock location
         """
 
-        amount = int(amount)
+        quantity = int(quantity)
 
-        if self.infinite or amount == 0:
+        # Ignore amounts that do not make sense
+        if quantity <= 0 or self.infinite:
             return
 
-        amount = int(amount)
+        self.quantity += quantity
 
-        q = self.quantity + amount
-        if q < 0:
-            q = 0
-
-        self.quantity = q
         self.save()
 
+        self.add_transaction_note('Added {n} items to stock'.format(n=quantity),
+                                  user,
+                                  notes=notes,
+                                  system=True)
+
     @transaction.atomic
-    def take_stock(self, amount):
-        self.add_stock(-amount)
+    def take_stock(self, quantity, user, notes=''):
+        """ Remove items from stock
+        """
+
+        quantity = int(quantity)
+
+        if quantity <= 0 or self.infinite:
+            return
+
+        self.quantity -= quantity
+
+        if self.quantity < 0:
+            self.quantity = 0
+
+        self.save()
+
+        self.add_transaction_note('Removed {n} items from stock'.format(n=quantity),
+                                  user,
+                                  notes=notes,
+                                  system=True)
 
     def __str__(self):
         s = '{n} x {part}'.format(

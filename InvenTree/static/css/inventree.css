@@ -125,3 +125,7 @@
 .float-right {
     float: right;
 }
+
+.warning-msg {
+    color: #e00;
+}

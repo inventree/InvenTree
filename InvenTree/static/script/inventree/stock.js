@@ -1,11 +1,180 @@
+/* Stock API functions
+ * Requires api.js to be loaded first
+ */
+
+function getStockList(filters={}, options={}) {
+    return inventreeGet('/api/stock/', filters, options);
+}
+
+function getStockDetail(pk, options={}) {
+    return inventreeGet('/api/stock/' + pk + '/', {}, options)
+}
+
+function getStockLocations(filters={}, options={}) {
+    return inventreeGet('/api/stock/location/', filters, options)
+}
+
+
+/* Present user with a dialog to update multiple stock items
+ * Possible actions:
+ * - Stocktake
+ * - Take stock
+ * - Add stock
+ */
+function updateStock(items, options={}) {
+
+    if (!options.action) {
+        alert('No action supplied to stock update');
+        return false;
+    }
+
+    var modal = options.modal || '#modal-form';
+
+    if (items.length == 0) {
+        alert('No items selected');
+        return;
+    }
+
+    var html = '';
+
+    html += "<table class='table table-striped table-condensed' id='stocktake-table'>\n";
+
+    html += '<thead><tr>';
+    html += '<th>Item</th>';
+    html += '<th>Location</th>';
+    html += '<th>Quantity</th>';
+
+    html += '</thead><tbody>';
+
+    for (idx=0; idx<items.length; idx++) {
+        var item = items[idx];
+
+        var vMin = 0;
+        var vMax = item.quantity;
+        var vCur = item.quantity;
+
+        if (options.action == 'remove') {
+            vCur = 0;
+        }
+        else if (options.action == 'add') {
+            vCur = 0;
+            vMax = 0;
+        }
+
+        html += '<tr>';
+
+        html += '<td>' + item.part.name + '</td>';
+        html += '<td>' + item.location.name + '</td>';
+        html += "<td><input class='form-control' ";
+        html += "value='" + vCur + "' ";
+        html += "min='" + vMin + "' ";
+
+        if (vMax > 0) {
+            html += "max='" + vMax + "' ";
+        }
+
+        html += "type='number' id='q-" + item.pk + "'/></td>";
+
+        html += '</tr>';
+    }
+
+    html += '</tbody></table>';
+
+    html += "<hr><input type='text' id='stocktake-notes' placeholder='Notes'/>";
+
+    html += "<p class='warning-msg'>Note field must be filled</p>";
+
+    var title = '';
+
+    if (options.action == 'stocktake') {
+        title = 'Stocktake';
+    }
+    else if (options.action == 'remove') {
+        title = 'Remove stock items';
+    }
+    else if (options.action == 'add') {
+        title = 'Add stock items';
+    }
+
+    openModal({
+        modal: modal,
+        title: title,
+        content: html
+    });
+
+    $(modal).on('click', '#modal-form-submit', function() {
+
+        var stocktake = [];
+
+        var valid = true;
+
+        // Form stocktake data
+        for (idx = 0; idx < items.length; idx++) {
+            var item = items[idx];
+
+            var q = $(modal).find("#q-" + item.pk).val();
+
+            stocktake.push({
+                pk: item.pk,
+                quantity: q
+            });
+        };
+
+        if (!valid) {
+            alert('Invalid data');
+            return false;
+        }
+
+        inventreeUpdate("/api/stock/stocktake/",
+                        {
+                            'action': options.action,
+                            'items[]': stocktake,
+                            'notes': $(modal).find('#stocktake-notes').val()
+                        },
+                        {
+                            success: function(response) {
+                                closeModal(modal);
+                                if (options.success) {
+                                    options.success();
+                                }
+                            },
+                            error: function(error) {
+                                alert(error);
+                            },
+                            method: 'post'
+                        }
+                        );
+    });
+}
+
+function adjustStock(options) {
+    if (options.items) {
+        updateStock(options.items, options);
+    }
+    else {
+        // Lookup of individual item
+        if (options.query.pk) {
+            getStockDetail(options.query.pk,
+                           {
+                               success: function(response) {
+                                   updateStock([response], options);
+                               }
+                           });
+        }
+        else {
+            getStockList(options.query,
+                 {
+                     success: function(response) {
+                         updateStock(response, options);
+                     }
+                 });
+         }
+    }
+}
 
 function moveStockItems(items, options) {
 
-    var modal = '#modal-form';
-
-    if ('modal' in options) {
-        modal = options.modal;
-    }
+    var modal = options.modal || '#modal-form';
 
     if (items.length == 0) {
         alert('No stock items selected');
@@ -35,9 +204,11 @@ function moveStockItems(items, options) {
     getStockLocations({},
     {
         success: function(response) {
-            openModal(modal);
-            modalSetTitle(modal, "Move " + items.length + " stock items");
-            modalSetButtonText(modal, "Move");
+            openModal({
+                modal: modal,
+                title: "Move " + items.length + " stock items",
+                buttonText: "Move"
+            });
 
             // Extact part row info
             var parts = [];
@@ -85,83 +256,6 @@ function moveStockItems(items, options) {
     });
 }
 
-function countStockItems(items, options) {
-    var modal = '#modal-form';
-
-    if ('modal' in options) {
-        modal = options.modal;
-    }
-
-    if (items.length == 0) {
-        alert('No stock items selected');
-        return;
-    }
-
-    var tbl = "<table class='table table-striped table-condensed' id='stocktake-table'></table>";
-
-    openModal(modal);
-    modalSetTitle(modal, 'Stocktake ' + items.length + ' items');
-
-    $(modal).find('.modal-form-content').html(tbl);
-
-    $(modal).find('#stocktake-table').bootstrapTable({
-        data: items,
-        columns: [
-            {
-                checkbox: true,
-            },
-            {
-                field: 'part.name',
-                title: 'Part',
-            },
-            {
-                field: 'location.name',
-                title: 'Location',
-            },
-            {
-                field: 'quantity',
-                title: 'Quantity',
-            }
-        ]
-    });
-
-    $(modal).find('#stocktake-table').bootstrapTable('checkAll');
-
-    $(modal).on('click', '#modal-form-submit', function() {
-        var selections = $(modal).find('#stocktake-table').bootstrapTable('getSelections');
-
-        var stocktake = [];
-
-        console.log('Performing stocktake on ' + selections.length + ' items');
-
-        for (i = 0; i<selections.length; i++) {
-            var item = {
-                pk: selections[i].pk,
-                quantity: selections[i].quantity,
-            };
-
-            stocktake.push(item);
-        }
-
-        inventreeUpdate("/api/stock/stocktake/",
-                        {
-                            'items[]': stocktake,
-                        },
-                        {
-                            success: function(response) {
-                                closeModal(modal);
-                                if (options.success) {
-                                    options.success();
-                                }
-                            },
-                            error: function(error) {
-                                alert(error);
-                            },
-                            method: 'post',
-                        });
-    });
-}
-
 function deleteStockItems(items, options) {
 
     var modal = '#modal-delete';
@@ -179,6 +273,8 @@ function deleteStockItems(items, options) {
         //TODO
     }
 
-    openModal(modal);
-    modalSetTitle(modal, 'Delete ' + items.length + ' stock items');
+    openModal({
+        modal: modal,
+        title: 'Delete ' + items.length + ' stock items'
+    });
 }

@@ -52,12 +52,29 @@ class StockFilter(FilterSet):
 
 
 class StockStocktake(APIView):
+    """
+    Stocktake API endpoint provides stock update of multiple items simultaneously
+    The 'action' field tells the type of stock action to perform:
+        * 'stocktake' - Count the stock item(s)
+        * 'remove' - Remove the quantity provided from stock
+        * 'add' - Add the quantity provided from stock
+    """
 
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
     ]
 
     def post(self, request, *args, **kwargs):
+
+        if not 'action' in request.data:
+            raise ValidationError({'action': 'Stocktake action must be provided'})
+
+        action = request.data['action']
+
+        ACTIONS = ['stocktake', 'remove', 'add']
+
+        if not action in ACTIONS:
+            raise ValidationError({'action': 'Action must be one of ' + ','.join(ACTIONS)})
 
         if not 'items[]' in request.data:
             raise ValidationError({'items[]:' 'Request must contain list of items'})
@@ -86,8 +103,22 @@ class StockStocktake(APIView):
 
             items.append(item)
 
+        # Stocktake notes
+        notes = ''
+
+        if 'notes' in request.data:
+            notes = request.data['notes']
+
+
         for item in items:
-            item['item'].stocktake(item['quantity'], request.user)
+            quantity = int(item['quantity'])
+
+            if action == u'stocktake':
+                item['item'].stocktake(quantity, request.user, notes=notes)
+            elif action == u'remove':
+                item['item'].take_stock(quantity, request.user, notes=notes)
+            elif action == u'add':
+                item['item'].add_stock(quantity, request.user, notes=notes)
 
         return Response({'success': 'success'})
 
