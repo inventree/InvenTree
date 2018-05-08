@@ -1,5 +1,6 @@
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 
 from company.urls import company_urls
 
@@ -34,9 +35,6 @@ apipatterns = [
 ]
 
 urlpatterns = [
-
-    url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
-
     url(r'^part/', include(part_urls)),
     url(r'^supplier-part/', include(supplier_part_urls)),
 
@@ -46,11 +44,14 @@ urlpatterns = [
 
     url(r'^build/', include(build_urls)),
 
-    url(r'^admin/', admin.site.urls),
-
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
 
+    url(r'^login/', auth_views.login, name='login'),
+    url(r'^logout/', auth_views.logout, {'template_name': 'registration/logout.html'}, name='logout'),
+    url(r'^admin/', admin.site.urls, name='inventree-admin'),
+
     url(r'^api/', include(apipatterns)),
+    url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 ]
 
 # Static file access
