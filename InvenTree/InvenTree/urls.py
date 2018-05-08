@@ -21,6 +21,8 @@ from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
 
+from .views import IndexView, SearchView
+
 from users.urls import user_urls
 
 admin.site.site_header = "InvenTree Admin"
@@ -50,6 +52,9 @@ urlpatterns = [
     url(r'^logout/', auth_views.logout, {'template_name': 'registration/logout.html'}, name='logout'),
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
 
+    url(r'^index/', IndexView.as_view(), name='index'),
+    url(r'^search/', SearchView.as_view(), name='search'),
+
     url(r'^api/', include(apipatterns)),
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 ]
@@ -62,4 +67,4 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Send any unknown URLs to the parts page
-urlpatterns += [url(r'^.*$', RedirectView.as_view(url='/part/', permanent=False), name='part-index')]
+urlpatterns += [url(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]

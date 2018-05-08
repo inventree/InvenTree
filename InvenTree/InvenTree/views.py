@@ -6,6 +6,8 @@ from django.http import JsonResponse
 
 from django.views import View
 from django.views.generic import UpdateView, CreateView, DeleteView
+from django.views.generic.base import TemplateView
+
 from rest_framework import views
 from django.http import JsonResponse
 
@@ -207,3 +209,19 @@ class AjaxDeleteView(AjaxMixin, DeleteView):
 
         else:
             return response
+
+
+class IndexView(TemplateView):
+
+    template_name = 'InvenTree/index.html'
+
+
+class SearchView(TemplateView):
+
+    template_name = 'InvenTree/search.html'
+
+    def post(self, request, *args, **kwargs):
+
+        context = self.get_context_data()
+
+        return super(TemplateView, self).render_to_response(context)
