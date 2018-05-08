@@ -16,8 +16,10 @@
                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu">
+                        <li><a href='#' id='multi-item-take' title='Take items from stock'>Take items</a></li>
+                        <li><a href='#' id='multi-item-give' title='Give items to stock'>Add items</a></li>
                         <li><a href="#" id='multi-item-stocktake' title='Stocktake selected stock items'>Stocktake</a></li>
-                        <li><a href='#' id='multi-item-move' title='Move selected stock items'>Move</a></li>
+                        <li><a href='#' id='multi-item-move' title='Move selected stock items'>Move items</a></li>
                     </ul>
             </div>
             </div>
@@ -110,16 +112,29 @@
         return false;
     });
 
-    $("#multi-item-stocktake").click(function() {
-        var items = selectedStock();
-
-        countStockItems(items, {
+    function _stock(action) {
+        adjustStock({
+            action: action,
+            items: selectedStock(),
             success: function() {
-                $("#stock-table").bootstrapTable('refresh');
+                $('#stock-table').bootstrapTable('refresh');
             }
         });
+    }
 
+    $("#multi-item-stocktake").click(function() {
+        _stock('stocktake');
         return false;
     });
+
+    $("#multi-item-take").click(function() {
+        _stock('remove');
+        return false;
+    });
+
+    $("#multi-item-give").click(function() {
+        _stock('add');
+        return false;
+    })
 
 {% endblock %}
