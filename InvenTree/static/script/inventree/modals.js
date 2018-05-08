@@ -65,7 +65,9 @@ function closeModal(modal='#modal-form') {
     $(modal).modal('hide');
 }
 
-function openModal(modal, title='', content='') {
+function openModal(options) {
+
+    var modal = options.modal || '#modal-form';
 
     $(modal).on('shown.bs.modal', function() {
         $(modal + ' .modal-form-content').scrollTop(0);
@@ -83,8 +85,17 @@ function openModal(modal, title='', content='') {
         }
     });
 
-    modalSetTitle(modal, title);
-    modalSetContent(modal, content);
+    if (options.title) {
+        modalSetTitle(modal, options.title);
+    }
+
+    if (options.content) {
+        modalSetContent(modal, options.content);
+    }
+
+    if (options.buttonText) {
+        modalSetButtonText(modal, options.buttonText);
+    }
 
     $(modal).modal({
         backdrop: 'static',
@@ -111,7 +122,7 @@ function launchDeleteForm(url, options = {}) {
         type: 'get',
         dataType: 'json',
         beforeSend: function() {
-            openModal(modal);
+            openModal({modal: modal});
         },
         success: function (response) {
             if (response.title) {
@@ -232,7 +243,7 @@ function launchModalForm(url, options = {}) {
         type: 'get',
         dataType: 'json',
         beforeSend: function () {
-            openModal(modal);
+            openModal({modal: modal});
         },
         success: function(response) {
             if (response.title) {
@@ -245,7 +256,7 @@ function launchModalForm(url, options = {}) {
 
             if (response.html_form) {
                 injectModalForm(modal, response.html_form);
-                handleModalForm(modal, url, options);
+                handleModalForm(url, options);
 
             } else {
                 alert('JSON response missing form data');
