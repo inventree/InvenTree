@@ -11,5 +11,17 @@
       <li><a href="{% url 'build-index' %}">Build</a></li>
       <li><a href="{% url 'company-index' %}">Companies</a></li>
     </ul>
+    <ul class="nav navbar-nav navbar-right">
+    {% if user.is_authenticated %}
+      <li class='dropdown'>
+          <a class='dropdown-toggle' data-toggle='dropdown' href="#"><span class="glyphicon glyphicon-user"></span>{{ user.get_username }}</a>
+          <ul class='dropdown-menu'>
+              <li><a href="{% url 'logout' %}">Logout</a></li>
+          </ul>
+      </li>
+    {% else %}
+      <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+    {% endif %}
+    </ul>
   </div>
 </nav>

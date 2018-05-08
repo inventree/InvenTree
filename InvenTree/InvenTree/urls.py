@@ -47,7 +47,7 @@ urlpatterns = [
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     url(r'^login/', auth_views.login, name='login'),
-    url(r'^logout/', auth_views.logout, name='logout'),
+    url(r'^logout/', auth_views.logout, {'template_name': 'registration/logout.html'}, name='logout'),
     url(r'^admin/', admin.site.urls),
 
     url(r'^api/', include(apipatterns)),
