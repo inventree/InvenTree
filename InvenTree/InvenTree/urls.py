@@ -48,7 +48,7 @@ urlpatterns = [
 
     url(r'^login/', auth_views.login, name='login'),
     url(r'^logout/', auth_views.logout, {'template_name': 'registration/logout.html'}, name='logout'),
-    url(r'^admin/', admin.site.urls),
+    url(r'^admin/', admin.site.urls, name='inventree-admin'),
 
     url(r'^api/', include(apipatterns)),
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
