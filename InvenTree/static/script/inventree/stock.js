@@ -82,7 +82,7 @@ function updateStock(items, options={}) {
 
     html += "<hr><input type='text' id='stocktake-notes' placeholder='Notes'/>";
 
-    html += "<p class='warning-msg'>Note field must be filled</p>";
+    html += "<p class='warning-msg' id='note-warning'><i>Note field must be filled</i></p>";
 
     var title = '';
 
@@ -102,9 +102,17 @@ function updateStock(items, options={}) {
         content: html
     });
 
+    $(modal).find('#note-warning').hide();
+
     modalSubmit(modal, function() {
 
         var stocktake = [];
+        var notes = $(modal).find('#stocktake-notes').val();
+
+        if (!notes) {
+            $(modal).find('#note-warning').show();
+            return false;
+        }
 
         var valid = true;
 
