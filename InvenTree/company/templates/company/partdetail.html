@@ -5,7 +5,7 @@
 <div class='row'>
     <div class='col-sm-6'>
         <h3>Supplier Part</h3>
-        <p>{{ part.SKU }} - <a href="{% url 'company-detail' part.supplier.id %}">{{ part.supplier.name }}</a></p>
+        <p>{{ part.SKU }} - <a href="{% url 'company-detail-parts' part.supplier.id %}">{{ part.supplier.name }}</a></p>
     </div>
     <div class='col-sm-6'>
         <h3>

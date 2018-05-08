@@ -53,7 +53,7 @@ class Company(models.Model):
     is_supplier = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.name
+        return "{n} - {d}".format(n=self.name, d=self.description)
 
     def get_absolute_url(self):
         return "/company/{id}/".format(id=self.id)

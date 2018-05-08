@@ -145,12 +145,7 @@ class Part(models.Model):
     notes = models.TextField(blank=True)
 
     def __str__(self):
-        if self.IPN:
-            return "{name} ({ipn})".format(
-                ipn=self.IPN,
-                name=self.name)
-        else:
-            return self.name
+        return "{n} - {d}".format(n=self.name, d=self.description)
 
     class Meta:
         verbose_name = "Part"
