@@ -96,11 +96,7 @@ function openModal(modal, title='', content='') {
 
 function launchDeleteForm(url, options = {}) {
 
-    var modal = '#modal-delete';
-
-    if (options.modal) {
-        modal = options.modal;
-    }
+    var modal = options.modal || '#modal-delete';
 
     $(modal).on('shown.bs.modal', function() {
         $(modal + ' .modal-form-content').scrollTop(0);
@@ -164,11 +160,7 @@ function injectModalForm(modal, form_html) {
 
 function handleModalForm(url, options) {
 
-    var modal = '#modal-form';
-
-    if (options.modal) {
-        modal = options.modal;
-    }
+    var modal = options.modal || '#modal-form';
 
     var form = $(modal).find('.js-modal-form');
 
@@ -232,11 +224,7 @@ function handleModalForm(url, options) {
  */
 function launchModalForm(url, options = {}) {
 
-    var modal = '#modal-form';
-
-    if (options.modal) {
-        modal = options.modal;
-    }
+    var modal = options.modal || '#modal-form';
 
     // Form the ajax request to retrieve the django form data
     ajax_data = {
