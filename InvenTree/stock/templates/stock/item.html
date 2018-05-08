@@ -14,12 +14,14 @@
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
         <span class="caret"></span></button>
         <ul class="dropdown-menu">
-          <li><a href="#" id='stock-edit' title='Edit stock item'>Edit</a></li>
           {% if item.in_stock %}
-          <li><a href="#" id='stock-move' title='Move stock item'>Move</a></li>
-          <li><a href='#' id='stock-stocktake' title='Stocktake'>Stocktake</a></li>
+          <li><a href='#' id='stock-stocktake' title='Count stock'>Stocktake</a></li>
+          <li><a href='#' id='stock-add' title='Add stock'>Add to stock</a></li>
+          <li><a href='#' id='stock-remove' title='Remove stock'>Remove from stock</a></li>
+          <li><a href="#" id='stock-edit' title='Edit stock item'>Edit stock item</a></li>
+          <li><a href="#" id='stock-move' title='Move stock item'>Move stock item</a></li>
           {% endif %}
-          <li><a href="#" id='stock-delete' title='Delete stock item'>Delete</a></li>
+          <li><a href="#" id='stock-delete' title='Delete stock item'>Delete stock item</a></li>
         </ul>
     </div>
     </div>
@@ -128,7 +130,6 @@
 </div>
 {% endif %}
 {% endblock %}
-
 {% block js_ready %}
 {{ block.super }}
     $("#stock-edit").click(function () {
@@ -148,12 +149,31 @@
                         });
         });
 
+    function itemAdjust(action) {
+        adjustStock({
+            query: {
+                pk: {{ item.id }},
+            },
+            action: action,
+            success: function() {
+                location.reload();
+            }
+        });
+    }
+
     $("#stock-stocktake").click(function() {
-        launchModalForm(
-                        "{% url 'stock-item-stocktake' item.id %}",
-                        {
-                            reload: true
-                        });
+        itemAdjust('stocktake');
+        return false;
+    });
+
+    $('#stock-remove').click(function() {
+        itemAdjust('remove');
+        return false;
+    });
+
+    $('#stock-add').click(function() {
+        itemAdjust('add');
+        return false;
     });
 
     {% endif %}

@@ -48,7 +48,10 @@
 </div>
 
 {% endblock %}
-
+{% block js_load %}
+{{ block.super }}
+<script type='text/javacript' src="{% static script/inventree/stock.js' %}"></script>
+{% endblock %}
 {% block js_ready %}
 {{ block.super }}
 
@@ -165,6 +168,14 @@
                 title: 'Stock',
                 searchable: false,
                 sortable: true,
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value, row.url + 'stock/');
+                    }
+                    else {
+                        return '';
+                    }
+                }
             }
         ],
         url: "{% url 'api-part-list' %}",
