@@ -7,15 +7,11 @@ function deleteButton(url, text='Delete') {
 }
 
 function renderLink(text, url) {
-    if (text && url) {
-        return '<a href="' + url + '">' + text + '</a>';
-    }
-    else if (text) {
+    if (text === '' || url === '') {
         return text;
     }
-    else {
-        return '';
-    }
+
+    return '<a href="' + url + '">' + text + '</a>';
 }
 
 

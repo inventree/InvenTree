@@ -194,8 +194,6 @@ class StockItem(models.Model):
 
     @property
     def in_stock(self):
-        if self.quantity == 0:
-            return False
 
         if self.belongs_to or self.customer:
             return False
@@ -283,6 +281,9 @@ class StockItem(models.Model):
     def take_stock(self, quantity, user, notes=''):
         """ Remove items from stock
         """
+
+        if self.quantity == 0:
+            return
 
         quantity = int(quantity)
 
