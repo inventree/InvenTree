@@ -50,11 +50,12 @@ function updateStock(items, options={}) {
         var item = items[idx];
 
         var vMin = 0;
-        var vMax = item.quantity;
+        var vMax = 0;
         var vCur = item.quantity;
 
         if (options.action == 'remove') {
             vCur = 0;
+            vMax = item.quantity;
         }
         else if (options.action == 'add') {
             vCur = 0;
@@ -140,18 +141,15 @@ function updateStock(items, options={}) {
                             'notes': $(modal).find('#stocktake-notes').val()
                         },
                         {
-                            success: function(response) {
-                                closeModal(modal);
-                                if (options.success) {
-                                    options.success();
-                                }
-                            },
-                            error: function(error) {
-                                alert(error);
-                            },
-                            method: 'post'
-                        }
-                        );
+                            method: 'post',
+                        }).then(function(response) {
+                            closeModal(modal);
+                            if (options.success) {
+                                options.success();
+                            }
+                        }).fail(function(xhr, status, error) {
+                            alert(error);
+                        });
     });
 }
 
@@ -162,20 +160,14 @@ function adjustStock(options) {
     else {
         // Lookup of individual item
         if (options.query.pk) {
-            getStockDetail(options.query.pk,
-                           {
-                               success: function(response) {
-                                   updateStock([response], options);
-                               }
-                           });
+            getStockDetail(options.query.pk).then(function(response) {
+                updateStock([response], options);
+            });
         }
         else {
-            getStockList(options.query,
-                 {
-                     success: function(response) {
-                         updateStock(response, options);
-                     }
-                 });
+            getStockList(options.query).then(function(response) {
+                updateStock(response, options);
+            });
          }
     }
 }

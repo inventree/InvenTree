@@ -18,7 +18,7 @@ function getCookie(name) {
 }
 
 function inventreeGet(url, filters={}, options={}) {
-    $.ajax({
+    return $.ajax({
         url: url,
         type: 'GET',
         data: filters,
@@ -39,7 +39,7 @@ function inventreeGet(url, filters={}, options={}) {
                 });
             }
         }
-    })
+    });
 }
 
 function inventreeUpdate(url, data={}, options={}) {
@@ -57,7 +57,7 @@ function inventreeUpdate(url, data={}, options={}) {
     //var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
     var csrftoken = getCookie('csrftoken');
 
-    $.ajax({
+    return $.ajax({
         beforeSend: function(xhr, settings) {
             xhr.setRequestHeader('X-CSRFToken', csrftoken);
         },
@@ -69,20 +69,12 @@ function inventreeUpdate(url, data={}, options={}) {
         success: function(response, status) {
             response['_status_code'] = status;
             console.log('UPDATE object to ' + url + ' - result = ' + status);
-            if (options.success) {
-                options.success(response);
-            }
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on UPDATE to ' + url);
             console.error(thrownError);
-            if (options.error) {
-                options.error({
-                    error: thrownError
-                });
             }
-        }
-    })
+        });
 }
 
 // Return list of parts with optional filters
