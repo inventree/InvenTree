@@ -1,10 +1,49 @@
-{% extends "base.html" %}
+{% load static %}
 
-{% block content %}
-  <h2>Login</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- CSS -->
+<link rel="stylesheet" href="{% static 'css/bootstrap_3.3.7_css_bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/select2.css' %}">
+<link rel="stylesheet" href="{% static 'css/bootstrap-table.css' %}">
+<link rel="stylesheet" href="{% static 'css/inventree.css' %}">
+
+<title>
+    InvenTree
+</title>
+</head>
+
+<body>
+
+<div class='main body-wrapper'>
+
+
+    <div class='login'>
+    <div class="row">
+        <div class="col-md-2 col-md-offset-5">
+            <div class='clearfix content-heading'>
+            <img class="pull-left" src="{% static 'img/inventree.png' %}" width="60" height="60"/> <h3>InvenTree</h3>
+        </div>
+            <hr>
+
+            <div class='container-fluid'>
+              <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class='pull-right btn btn-primary' type="submit">Login</button>
+              </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</div>
+
+</body>
+</html>

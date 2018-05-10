@@ -129,3 +129,10 @@
 .warning-msg {
     color: #e00;
 }
+
+.login {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
