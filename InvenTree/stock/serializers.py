@@ -4,7 +4,7 @@ from .models import StockItem, StockLocation
 from .models import StockItemTracking
 
 from part.serializers import PartBriefSerializer
-
+from InvenTree.serializers import UserSerializer, UserSerializerBrief
 
 class LocationBriefSerializer(serializers.ModelSerializer):
 
@@ -23,6 +23,8 @@ class LocationBriefSerializer(serializers.ModelSerializer):
 class StockTrackingSerializer(serializers.ModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    user = UserSerializerBrief(many=False, read_only=True)
 
     class Meta:
         model = StockItemTracking

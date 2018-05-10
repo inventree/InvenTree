@@ -214,6 +214,9 @@
                 sortable: true,
                 field: 'user',
                 title: 'User',
+                formatter: function(value, row, index, field) {
+                    return value.username;
+                }
             }
         ],
         url: "{% url 'api-stock-track' %}",

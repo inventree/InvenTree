@@ -5,6 +5,25 @@ from rest_framework import serializers
 from rest_framework import generics
 from rest_framework import mixins
 
+from django.contrib.auth.models import User
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = 'all'
+
+
+class UserSerializerBrief(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'pk',
+            'username',
+        ]
+
+
 class DraftRUDView(generics.RetrieveAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
 
     def perform_update(self, serializer):
