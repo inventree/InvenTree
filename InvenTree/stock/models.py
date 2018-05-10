@@ -329,7 +329,7 @@ class StockItemTracking(models.Model):
                              related_name='tracking_info')
 
     # Date this entry was created (cannot be edited)
-    date = models.DateField(auto_now_add=True, editable=False)
+    date = models.DateTimeField(auto_now_add=True, editable=False)
 
     # Short-form title for this tracking entry
     title = models.CharField(max_length=250)
