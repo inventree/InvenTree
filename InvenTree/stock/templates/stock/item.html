@@ -181,6 +181,11 @@
         sortable: true,
         search: true,
         method: 'get',
+        queryParams: function(p) {
+            return {
+                item: {{ item.pk }},
+            }
+        },
         columns: [
             {
                 field: 'date',
