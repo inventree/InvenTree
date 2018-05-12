@@ -14,6 +14,12 @@
 
 {% endblock %}
 
+{% block js_load %}
+{{ block.super }}
+<script src="{% static 'script/inventree/api.js' %}"></script>
+<script src="{% static 'script/inventree/part.js' %}"></script>
+{% endblock %}
+
 {% block js_ready %}
 {{ block.super }}
 
@@ -21,15 +27,21 @@
         sortable: true,
         columns: [
             {
+                field: 'sub_part.name',
                 title: 'Part',
             },
             {
                 title: 'Source',
             },
             {
+                field: 'quantity',
                 title: 'Quantity',
             }
-        ]
+        ],
+    });
+
+    getBomList({part: {{ build.part.id }}}).then(function(response) {
+        $("#build-table").bootstrapTable('load', response);
     });
 
 {% endblock %}
