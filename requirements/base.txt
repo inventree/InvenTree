@@ -1,4 +1,4 @@
-Django>=1.11
+Django==2.2
 pillow>=5.0.0
 djangorestframework>=3.6.2
 django_filter>=1.0.2

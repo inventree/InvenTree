@@ -58,7 +58,7 @@
                 field: 'part',
                 title: 'Part',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value.name, value.url);
+                    return renderLink(value.name, value.url + 'suppliers/');
                 }
             },
             {
@@ -73,6 +73,11 @@
                 sortable: true,
                 field: 'manufacturer',
                 title: 'Manufacturer',
+            },
+            {
+                sortable: true,
+                field: 'MPN',
+                title: 'MPN',
             }
         ],
         url: "{% url 'api-part-supplier-list' %}"
