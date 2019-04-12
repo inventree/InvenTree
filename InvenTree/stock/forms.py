@@ -38,7 +38,7 @@ class CreateStockItemForm(HelperForm):
 
 class MoveStockItemForm(forms.ModelForm):
 
-    note = forms.CharField(label='Notes', required=True)
+    note = forms.CharField(label='Notes', required=True, help_text='Add note (required)')
 
     class Meta:
         model = StockItem

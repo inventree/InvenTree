@@ -54,12 +54,14 @@ INSTALLED_APPS = [
     'company.apps.CompanyConfig',
     'build.apps.BuildConfig',
 
+    # Third part add-ons
     'django_filters',
     'rest_framework',
     'simple_history',
     'crispy_forms',
     'import_export',
     'django_cleanup',
+    'qr_code',
 ]
 
 MIDDLEWARE = [

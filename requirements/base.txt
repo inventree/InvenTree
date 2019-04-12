@@ -8,3 +8,4 @@ pygments>=2.2.0
 django-crispy-forms>=1.7.2
 django-import-export>=1.0.0
 django-cleanup>=2.1.0
+django-qr-code==1.0.0

@@ -11,6 +11,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from datetime import datetime
+import uuid
 
 from InvenTree.models import InvenTreeTree
 
@@ -115,6 +116,9 @@ class StockItem(models.Model):
         unique_together = [
             ('part', 'serial'),
         ]
+
+    # UUID for generating QR codes
+    uuid = models.UUIDField(default=uuid.uuid4, blank=True, editable=False)
 
     # The 'master' copy of the part of which this stock item is an instance
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='locations')
