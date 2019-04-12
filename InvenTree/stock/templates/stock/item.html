@@ -2,6 +2,8 @@
 {% load static %}
 {% block content %}
 
+{% load qr_code %}
+
 <div class='row'>
 <div class='col-sm-6'>
     <h3>Stock Item Details</h3>
@@ -29,10 +31,16 @@
 </div>
 </div>
 
+{% qr_from_text item.uuid size="s" image_format="png" error_correction="L" %}
+
 <table class="table table-striped">
 <tr>
     <td>Part</td>
     <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</td>
+</tr>
+<tr>
+    <td>UUID</td>
+    <td>{{ item.uuid }}</td>
 </tr>
 {% if item.belongs_to %}
 <tr>
