@@ -14,7 +14,7 @@ class AuthRequiredMiddleware(object):
 
         response = self.get_response(request)
 
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             print(request.path_info)
 
             if not request.path_info == reverse_lazy('login'):
