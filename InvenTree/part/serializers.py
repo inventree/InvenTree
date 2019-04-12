@@ -32,6 +32,7 @@ class PartBriefSerializer(serializers.ModelSerializer):
             'url',
             'name',
             'description',
+            'available_stock',
         ]
 
 
