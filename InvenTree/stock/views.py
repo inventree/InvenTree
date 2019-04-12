@@ -142,20 +142,26 @@ class StockItemMove(AjaxUpdateView):
 
         if form.is_valid():
 
-            obj = form.save()
+            obj = self.get_object()
 
             try:
-                loc = StockLocation.objects.get(pk=form['location'].value())
-                loc_path = loc.pathstring
+                loc_id = form['location'].value()
+
+                if loc_id:
+                    loc = StockLocation.objects.get(pk=form['location'].value())
+                    if str(loc.pk) == str(obj.pk):
+                        form.errors['location'] = ['Item is already in this location']
+                    else:
+                        obj.move(loc, form['note'].value(), request.user)
+                else:
+                    form.errors['location'] = ['Cannot move to an empty location']
+
             except StockLocation.DoesNotExist:
                 loc_path = ''
-
-            obj.add_transaction_note("Moved item to '{where}'".format(where=loc_path),
-                                     request.user,
-                                     system=True)
+                form.errors['location'] = ['Location does not exist']
 
         data = {
-            'form_valid': form.is_valid(),
+            'form_valid': form.is_valid() and len(form.errors) == 0,
         }
 
         return self.renderJsonResponse(request, form, data)

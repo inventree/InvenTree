@@ -38,6 +38,8 @@ class CreateStockItemForm(HelperForm):
 
 class MoveStockItemForm(forms.ModelForm):
 
+    note = forms.CharField(label='Notes', required=True)
+
     class Meta:
         model = StockItem
 
@@ -62,7 +64,7 @@ class EditStockItemForm(HelperForm):
         model = StockItem
 
         fields = [
-            'quantity',
             'batch',
             'status',
+            'notes'
         ]

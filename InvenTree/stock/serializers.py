@@ -35,6 +35,7 @@ class StockTrackingSerializer(serializers.ModelSerializer):
             'date',
             'title',
             'notes',
+            'quantity',
             'user',
             'system',
         ]
@@ -43,6 +44,7 @@ class StockTrackingSerializer(serializers.ModelSerializer):
             'date',
             'user',
             'system',
+            'quantity',
         ]
 
 
