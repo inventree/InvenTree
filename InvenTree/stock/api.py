@@ -226,7 +226,7 @@ class StockList(generics.ListCreateAPIView):
         'supplier_part',
         'customer',
         'belongs_to',
-        'status',
+        #'status',
     ]
 
 
@@ -304,8 +304,6 @@ location_endpoints = [
 
 
 stock_api_urls = [
-    # Detail for a single stock item
-    url(r'^(?P<pk>[0-9]+)/', include(stock_endpoints)),
 
     url(r'location/?', StockLocationList.as_view(), name='api-location-list'),
 
@@ -318,6 +316,9 @@ stock_api_urls = [
     url(r'track/?', StockTrackingList.as_view(), name='api-stock-track'),
 
     url(r'^tree/?', StockCategoryTree.as_view(), name='api-stock-tree'),
+
+    # Detail for a single stock item
+    url(r'^(?P<pk>\d+)/', include(stock_endpoints)),
 
     url(r'^.*$', StockList.as_view(), name='api-stock-list'),
 ]
