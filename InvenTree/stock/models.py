@@ -217,20 +217,23 @@ class StockItem(models.Model):
         track.save()
 
     @transaction.atomic
-    def move(self, location, user):
+    def move(self, location, notes, user):
 
-        if location == self.location:
-            return
+        if location.pk == self.location.pk:
+            return False  # raise forms.ValidationError("Cannot move item to its current location")
 
-        note = "Moved to {loc}".format(loc=location.name)
+        msg = "Moved to {loc} (from {src})".format(loc=location.name,
+                                                    src=self.location.name)
 
         self.location = location
         self.save()
 
-        self.add_transaction_note('Transfer',
+        self.add_transaction_note(msg,
                                   user,
-                                  notes=note,
+                                  notes=notes,
                                   system=True)
+
+        return True
 
 
     @transaction.atomic
