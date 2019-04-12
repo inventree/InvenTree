@@ -20,7 +20,7 @@
 {% block js_ready %}
 {{ block.super }}
     $('#new-company').click(function () {
-        launchModalForm('#modal-form',
+        launchModalForm(
                         "{% url 'company-create' %}",
                         {
                             follow: true
