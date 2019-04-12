@@ -60,6 +60,7 @@ class StockItemSerializer(serializers.ModelSerializer):
         model = StockItem
         fields = [
             'pk',
+            'uuid',
             'url',
             'part',
             'supplier_part',
