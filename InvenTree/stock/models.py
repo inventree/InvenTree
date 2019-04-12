@@ -27,19 +27,19 @@ class StockLocation(InvenTreeTree):
         return '/stock/location/{id}/'.format(id=self.id)
 
     @property
-    def items(self):
+    def stock_items(self):
         return self.stockitem_set.all()
 
     @property
     def has_items(self):
-        return self.items.count() > 0
+        return self.stock_items.count() > 0
 
 
 @receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')
 def before_delete_stock_location(sender, instance, using, **kwargs):
 
     # Update each part in the stock location
-    for item in instance.items.all():
+    for item in instance.stock_items.all():
         item.location = instance.parent
         item.save()
 

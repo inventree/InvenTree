@@ -19,8 +19,8 @@ the top level 'Stock' location.
 </ul>
 {% endif %}
 
-{% if location.items.all|length > 0 %}
-<p>This location contains {{ location.items.all|length }} stock items.<br>
+{% if location.stock_items.all|length > 0 %}
+<p>This location contains {{ location.stock_items.all|length }} stock items.<br>
 {% if location.parent %}
 If this location is deleted, these items will be moved to the '{{ location.parent.name }}' location.
 {% else %}
@@ -29,7 +29,7 @@ If this location is deleted, these items will be moved to the top level 'Stock' 
 </p>
 
 <ul class='list-group'>
-    {% for item in location.items.all %}
+    {% for item in location.stock_items.all %}
     <li class='list-group-item'><b>{{ item.part.name }}</b> - <i>{{ item.part.description }}</i><span class='badge'>{{ item.quantity }}</span></li>
     {% endfor %}
 </ul>
