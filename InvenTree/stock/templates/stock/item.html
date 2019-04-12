@@ -220,7 +220,14 @@
                 field: 'user',
                 title: 'User',
                 formatter: function(value, row, index, field) {
-                    return value.username;
+                    if (value)
+                    {
+                        return value.username;
+                    }
+                    else
+                    {
+                        return "No user information";
+                    }
                 }
             }
         ],
