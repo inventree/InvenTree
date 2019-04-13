@@ -9,7 +9,6 @@ from django.views.generic import UpdateView, CreateView, DeleteView
 from django.views.generic.base import TemplateView
 
 from rest_framework import views
-from django.http import JsonResponse
 
 
 class TreeSerializer(views.APIView):
@@ -159,9 +158,6 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             return response
 
     def get(self, request, *args, **kwargs):
-
-        response = super(UpdateView, self).get(request, *args, **kwargs)
-
         if request.is_ajax():
             form = self.form_class(instance=self.get_object())
 
