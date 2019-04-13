@@ -41,7 +41,7 @@ class StockLocationDetail(DetailView):
     """
     Detailed view of a single StockLocation object
     """
-    
+
     context_object_name = 'location'
     template_name = 'stock/location.html'
     queryset = StockLocation.objects.all()

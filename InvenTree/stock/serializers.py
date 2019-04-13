@@ -58,7 +58,7 @@ class StockItemSerializer(serializers.ModelSerializer):
     - Includes serialization for the linked part
     - Includes serialization for the item location
     """
-    
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     part = PartBriefSerializer(many=False, read_only=True)
