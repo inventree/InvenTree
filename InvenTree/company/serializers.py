@@ -15,6 +15,7 @@ class CompanyBriefSerializer(serializers.ModelSerializer):
             'name'
         ]
 
+
 class CompanySerializer(serializers.ModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)

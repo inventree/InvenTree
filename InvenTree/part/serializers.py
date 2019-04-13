@@ -5,6 +5,7 @@ from .models import SupplierPart
 
 from company.serializers import CompanyBriefSerializer
 
+
 class CategorySerializer(serializers.ModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)

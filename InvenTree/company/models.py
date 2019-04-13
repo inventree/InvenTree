@@ -78,4 +78,4 @@ class Contact(models.Model):
     role = models.CharField(max_length=100, blank=True)
 
     company = models.ForeignKey(Company, related_name='contacts',
-                                on_delete = models.CASCADE)
+                                on_delete=models.CASCADE)

@@ -1,11 +1,18 @@
+dist: xenial
+
 language: python
 python:
     - 3.5
+    - 3.6
+
+addons:
+    apt-packages:
+        -sqlite3
 
 before_install:
     - make setup
     - make setup_ci
 
 script:
-    # - make style
     - make test
+    - make style

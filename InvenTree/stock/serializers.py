@@ -4,9 +4,13 @@ from .models import StockItem, StockLocation
 from .models import StockItemTracking
 
 from part.serializers import PartBriefSerializer
-from InvenTree.serializers import UserSerializer, UserSerializerBrief
+from InvenTree.serializers import UserSerializerBrief
+
 
 class LocationBriefSerializer(serializers.ModelSerializer):
+    """
+    Provides a brief serializer for a StockLocation object
+    """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -49,8 +53,12 @@ class StockTrackingSerializer(serializers.ModelSerializer):
 
 
 class StockItemSerializer(serializers.ModelSerializer):
-    """ Serializer for a StockItem
     """
+    Serializer for a StockItem
+    - Includes serialization for the linked part
+    - Includes serialization for the item location
+    """
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     part = PartBriefSerializer(many=False, read_only=True)
@@ -66,17 +74,11 @@ class StockItemSerializer(serializers.ModelSerializer):
             'supplier_part',
             'location',
             'in_stock',
-            #'belongs_to',
-            #'customer',
             'quantity',
             'serial',
             'batch',
             'status',
             'notes',
-            #'updated',
-            #'stocktake_date',
-            #'stocktake_user',
-            #'review_needed',
         ]
 
         """ These fields are read-only in this context.
@@ -86,7 +88,8 @@ class StockItemSerializer(serializers.ModelSerializer):
             'stocktake_date',
             'stocktake_user',
             'updated',
-            #'quantity',
+            'quantity',
+            'in_stock'
         ]
 
 
@@ -106,10 +109,10 @@ class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = StockLocation
         fields = [
-                  'pk',
-                  'url',
-                  'name',
-                  'description',
-                  'parent',
-                  'pathstring'
-                ]
+            'pk',
+            'url',
+            'name',
+            'description',
+            'parent',
+            'pathstring'
+        ]

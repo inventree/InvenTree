@@ -1,11 +1,8 @@
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
-from rest_framework import generics, permissions, response, filters
-
 from django.conf.urls import url, include
 
-# from InvenTree.models import FilterChildren
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
 
@@ -19,8 +16,8 @@ from InvenTree.serializers import DraftRUDView
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import authentication, permissions
-from django.contrib.auth.models import User
+from rest_framework import generics, response, filters, permissions
+
 
 class StockCategoryTree(TreeSerializer):
     title = 'Stock'
@@ -69,26 +66,26 @@ class StockStocktake(APIView):
 
     def post(self, request, *args, **kwargs):
 
-        if not 'action' in request.data:
+        if 'action' not in request.data:
             raise ValidationError({'action': 'Stocktake action must be provided'})
 
         action = request.data['action']
 
         ACTIONS = ['stocktake', 'remove', 'add']
 
-        if not action in ACTIONS:
+        if action not in ACTIONS:
             raise ValidationError({'action': 'Action must be one of ' + ','.join(ACTIONS)})
 
-        if not 'items[]' in request.data:
+        elif 'items[]' not in request.data:
             raise ValidationError({'items[]:' 'Request must contain list of items'})
 
         items = []
 
         # Ensure each entry is valid
         for entry in request.data['items[]']:
-            if not 'pk' in entry:
+            if 'pk' not in entry:
                 raise ValidationError({'pk': 'Each entry must contain pk field'})
-            if not 'quantity' in entry:
+            elif 'quantity' not in entry:
                 raise ValidationError({'quantity': 'Each entry must contain quantity field'})
 
             item = {}
@@ -111,7 +108,6 @@ class StockStocktake(APIView):
 
         if 'notes' in request.data:
             notes = request.data['notes']
-
 
         for item in items:
             quantity = int(item['quantity'])
@@ -136,7 +132,7 @@ class StockMove(APIView):
 
         data = request.data
 
-        if not u'location' in data:
+        if u'location' not in data:
             raise ValidationError({'location': 'Destination must be specified'})
 
         loc_id = data.get(u'location')
@@ -146,7 +142,7 @@ class StockMove(APIView):
         except StockLocation.DoesNotExist:
             raise ValidationError({'location': 'Location does not exist'})
 
-        if not u'parts[]' in data:
+        if u'parts[]' not in data:
             raise ValidationError({'parts[]': 'Parts list must be specified'})
 
         part_list = data.get(u'parts[]')
@@ -160,7 +156,7 @@ class StockMove(APIView):
                 part = StockItem.objects.get(pk=pid)
                 parts.append(part)
             except StockItem.DoesNotExist:
-                errors.append({'part': 'Part {id} does not exist'.format(id=part_id)})
+                errors.append({'part': 'Part {id} does not exist'.format(id=pid)})
 
         if len(errors) > 0:
             raise ValidationError(errors)
@@ -227,7 +223,7 @@ class StockList(generics.ListCreateAPIView):
         'supplier_part',
         'customer',
         'belongs_to',
-        #'status',
+        # 'status' TODO - There are some issues filtering based on an enumeration field
     ]
 
 
@@ -250,7 +246,7 @@ class StockTrackingList(generics.ListCreateAPIView):
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockTrackingSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly,]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -273,7 +269,6 @@ class StockTrackingList(generics.ListCreateAPIView):
         'title',
         'notes',
     ]
-
 
 
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -303,9 +298,7 @@ location_endpoints = [
     url(r'^$', LocationDetail.as_view(), name='stocklocation-detail'),
 ]
 
-
 stock_api_urls = [
-
     url(r'location/?', StockLocationList.as_view(), name='api-location-list'),
 
     url(r'location/(?P<pk>\d+)/', include(location_endpoints)),

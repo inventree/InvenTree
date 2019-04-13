@@ -16,6 +16,6 @@ class EditBuildForm(HelperForm):
             'quantity',
             'batch',
             'notes',
-#            'status',
-#            'completion_date',
+            # 'status',
+            # 'completion_date',
         ]

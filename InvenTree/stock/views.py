@@ -10,15 +10,17 @@ from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from part.models import Part
 from .models import StockItem, StockLocation
 
-import datetime
-
 from .forms import EditStockLocationForm
 from .forms import CreateStockItemForm
 from .forms import EditStockItemForm
 from .forms import MoveStockItemForm
 from .forms import StocktakeForm
 
+
 class StockIndex(ListView):
+    """
+    StockIndex view loads all StockLocation and StockItem object
+    """
     model = StockItem
     template_name = 'stock/location.html'
     context_obect_name = 'locations'
@@ -36,6 +38,10 @@ class StockIndex(ListView):
 
 
 class StockLocationDetail(DetailView):
+    """
+    Detailed view of a single StockLocation object
+    """
+
     context_object_name = 'location'
     template_name = 'stock/location.html'
     queryset = StockLocation.objects.all()
@@ -43,6 +49,10 @@ class StockLocationDetail(DetailView):
 
 
 class StockItemDetail(DetailView):
+    """
+    Detailed view of a single StockItem object
+    """
+
     context_object_name = 'item'
     template_name = 'stock/item.html'
     queryset = StockItem.objects.all()
@@ -50,6 +60,11 @@ class StockItemDetail(DetailView):
 
 
 class StockLocationEdit(AjaxUpdateView):
+    """
+    View for editing details of a StockLocation.
+    This view is used with the EditStockLocationForm to deliver a modal form to the web view
+    """
+
     model = StockLocation
     form_class = EditStockLocationForm
     template_name = 'stock/location_edit.html'
@@ -59,6 +74,10 @@ class StockLocationEdit(AjaxUpdateView):
 
 
 class StockItemEdit(AjaxUpdateView):
+    """
+    View for editing details of a single StockItem
+    """
+
     model = StockItem
     form_class = EditStockItemForm
     template_name = 'stock/item_edit.html'
@@ -68,6 +87,11 @@ class StockItemEdit(AjaxUpdateView):
 
 
 class StockLocationCreate(AjaxCreateView):
+    """
+    View for creating a new StockLocation
+    A parent location (another StockLocation object) can be passed as a query parameter
+    """
+
     model = StockLocation
     form_class = EditStockLocationForm
     template_name = 'stock/location_create.html'
@@ -87,6 +111,13 @@ class StockLocationCreate(AjaxCreateView):
 
 
 class StockItemCreate(AjaxCreateView):
+    """
+    View for creating a new StockItem
+    Parameters can be pre-filled by passing query items:
+    - part: The part of which the new StockItem is an instance
+    - location: The location of the new StockItem
+    """
+
     model = StockItem
     form_class = CreateStockItemForm
     template_name = 'stock/item_create.html'
@@ -114,6 +145,11 @@ class StockItemCreate(AjaxCreateView):
 
 
 class StockLocationDelete(AjaxDeleteView):
+    """
+    View to delete a StockLocation
+    Presents a deletion confirmation form to the user
+    """
+
     model = StockLocation
     success_url = '/stock'
     template_name = 'stock/location_delete.html'
@@ -122,6 +158,11 @@ class StockLocationDelete(AjaxDeleteView):
 
 
 class StockItemDelete(AjaxDeleteView):
+    """
+    View to delete a StockItem
+    Presents a deletion confirmation form to the user
+    """
+
     model = StockItem
     success_url = '/stock/'
     template_name = 'stock/item_delete.html'
@@ -130,6 +171,11 @@ class StockItemDelete(AjaxDeleteView):
 
 
 class StockItemMove(AjaxUpdateView):
+    """
+    View to move a StockItem from one location to another
+    Performs some data validation to prevent illogical stock moves
+    """
+
     model = StockItem
     template_name = 'modal_form.html'
     context_object_name = 'item'
@@ -156,7 +202,6 @@ class StockItemMove(AjaxUpdateView):
                     form.errors['location'] = ['Cannot move to an empty location']
 
             except StockLocation.DoesNotExist:
-                loc_path = ''
                 form.errors['location'] = ['Location does not exist']
 
         data = {
@@ -167,6 +212,11 @@ class StockItemMove(AjaxUpdateView):
 
 
 class StockItemStocktake(AjaxUpdateView):
+    """
+    View to perform stocktake on a single StockItem
+    Updates the quantity, which will also create a new StockItemTracking item
+    """
+
     model = StockItem
     template_name = 'modal_form.html'
     context_object_name = 'item'
@@ -188,5 +238,3 @@ class StockItemStocktake(AjaxUpdateView):
         }
 
         return self.renderJsonResponse(request, form, data)
-
-
