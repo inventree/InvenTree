@@ -69,11 +69,10 @@ class StockItem(models.Model):
         if add_note:
             # This StockItem is being saved for the first time
             self.add_transaction_note(
-            'Created stock item',
-            None,
-            system=True
+                'Created stock item',
+                None,
+                system=True
             )
-
 
     def clean(self):
 
@@ -227,8 +226,10 @@ class StockItem(models.Model):
         if location.pk == self.location.pk:
             return False  # raise forms.ValidationError("Cannot move item to its current location")
 
-        msg = "Moved to {loc} (from {src})".format(loc=location.name,
-                                                    src=self.location.name)
+        msg = "Moved to {loc} (from {src})".format(
+            loc=location.name,
+            src=self.location.name
+        )
 
         self.location = location
         self.save()
@@ -239,7 +240,6 @@ class StockItem(models.Model):
                                   system=True)
 
         return True
-
 
     @transaction.atomic
     def stocktake(self, count, user, notes=''):
