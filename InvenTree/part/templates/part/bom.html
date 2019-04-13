@@ -18,6 +18,10 @@
     <button type='button' class='btn btn-success' id='new-bom-item'>Add BOM Item</button>
 </div>
 
+<div class='container-fluid'>
+    <button type='button' class='btn btn-basic' id='export-bom'>Export BOM</button>
+</div>
+
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
@@ -54,6 +58,19 @@
                             data: {
                                 parent: {{ part.id }}
                             }
+                        });
+    });
+
+    $("#export-bom").click(function () {
+        launchModalForm(
+                        "{% url 'bom-export' part.id %}",
+                        {
+                            /*
+                            reload: true,
+                            data: {
+                                format: 'csv',
+                            }
+                            */
                         });
     });
 

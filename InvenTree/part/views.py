@@ -18,7 +18,7 @@ from .forms import EditBomItemForm
 
 from .forms import EditSupplierPartForm
 
-from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 
 
 class PartIndex(ListView):
@@ -108,6 +108,28 @@ class PartEdit(AjaxUpdateView):
     template_name = 'part/edit.html'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Part Properties'
+
+
+class BomExport(AjaxView):
+
+    model = Part
+    template_name = 'part/bom_export.html'
+    #ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Export Bill of Materials'
+    ajax_submit_text = 'Export'
+    context_object_name = 'part'
+    fields = []
+
+    def post(self, request, *args, **kwargs):
+
+        part = get_object_or_404(Part, pk=self.kwargs['pk'])
+        
+        return self.renderJsonResponse(request, None)
+
+    def get_data(self):
+        return {
+            'info': 'Exported BOM'
+        }
 
 
 class PartDelete(AjaxDeleteView):
