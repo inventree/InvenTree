@@ -207,7 +207,7 @@ function moveStockItems(items, options) {
             openModal({
                 modal: modal,
                 title: "Move " + items.length + " stock items",
-                buttonText: "Move"
+                submit_label: "Move"
             });
 
             // Extact part row info

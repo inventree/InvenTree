@@ -102,8 +102,8 @@ function openModal(options) {
         modalSetContent(modal, options.content);
     }
 
-    if (options.buttonText) {
-        modalSetButtonText(modal, options.buttonText);
+    if (options.submit_label) {
+        modalSetButtonText(modal, options.submit_label);
     }
 
     $(modal).modal({
@@ -256,8 +256,8 @@ function launchModalForm(url, options = {}) {
                 modalSetTitle(modal, response.title);
             }
 
-            if (response.submit_text) {
-                modalSetButtonText(response.submit_text);
+            if (response.submit_label) {
+                modalSetButtonText(modal, String(response.submit_label));
             }
 
             if (response.html_form) {
