@@ -21,6 +21,7 @@ from .forms import EditSupplierPartForm
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 
+from InvenTree.helpers import DownloadFile
 
 class PartIndex(ListView):
     model = Part
@@ -111,34 +112,36 @@ class PartEdit(AjaxUpdateView):
     ajax_form_title = 'Edit Part Properties'
 
 
-class BomExport(AjaxUpdateView):
+class BomExport(AjaxView):
+    # TODO - This should no longer extend an AjaxView!
 
     model = Part
-    form_class = BomExportForm
-    template_name = 'part/bom_export.html'
-    ajax_form_title = 'Export Bill of Materials'
-    ajax_submit_text = 'Export'
-    context_object_name = 'part'
+    #form_class = BomExportForm
+    #template_name = 'part/bom_export.html'
+    #ajax_form_title = 'Export Bill of Materials'
+    #ajax_submit_text = 'Export'
+    #context_object_name = 'part'
 
     def get(self, request, *args, **kwargs):
 
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
-        form = self.form_class(instance=part, data=request.POST, files=request.FILES)
 
-        return self.renderJsonResponse(request, form=form, context={'part': part})
+        export_format = request.GET.get('format', 'csv')
+        
+        # Placeholder to test file export
+        filename = '"' + part.name + '_BOM.' + export_format + '"'
 
-    def post(self, request, *args, **kwargs):
+        filedata = "Part,Quantity,Available\n"
 
-        part = get_object_or_404(Part, pk=self.kwargs['pk'])
-        form = self.form_class(instance=part, data=request.POST, files=request.FILES)
+        for bom_item in part.bom_items.all():
+            filedata += bom_item.sub_part.name
+            filedata += ","
+            filedata += str(bom_item.quantity)
+            filedata += ","
+            filedata += str(bom_item.sub_part.available_stock)
+            filedata += "\n"
 
-        export_format = request.POST.get('format', None)
-
-        if not export_format:
-            # TODO
-            pass
-
-        return self.renderJsonResponse(request, form=form, context={'part': part})
+        return DownloadFile(filedata, filename)
 
     def get_data(self):
         return {

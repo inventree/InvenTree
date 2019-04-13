@@ -62,16 +62,14 @@
     });
 
     $("#export-bom").click(function () {
+        /*
         launchModalForm(
                         "{% url 'bom-export' part.id %}",
                         {
-                            /*
-                            reload: true,
-                            data: {
-                                format: 'csv',
-                            }
-                            */
                         });
+        */
+        //TODO - Select format of the data
+        location.href = "{% url 'bom-export' part.id %}";
     });
 
     $("#bom-table").bootstrapTable({
