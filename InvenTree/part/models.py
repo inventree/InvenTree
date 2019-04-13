@@ -278,6 +278,38 @@ class Part(models.Model):
         # Return the number of supplier parts available for this part
         return self.supplier_parts.count()
 
+    def export_bom(self, file_format='csv'):
+        # TODO - Allow other file formats
+
+        lines = []
+
+        # Construct header line
+        header = []
+        header.append('Part')
+        header.append('Description')
+        header.append('Quantity')
+        
+        lines.append(header)
+
+        for it in self.bom_items.all():
+            line = []
+            
+            line.append(it.sub_part.name)
+            line.append(it.sub_part.description)
+            line.append(it.quantity)
+
+            lines.append([str(x) for x in line])
+
+        # TODO - Choice of formatters goes here?
+        out = ''
+
+        for line in lines:
+            print(line)
+            out += ','.join(line)
+            out += '\n'
+
+        return out
+
     """
     @property
     def projects(self):

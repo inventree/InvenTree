@@ -131,15 +131,7 @@ class BomExport(AjaxView):
         # Placeholder to test file export
         filename = '"' + part.name + '_BOM.' + export_format + '"'
 
-        filedata = "Part,Quantity,Available\n"
-
-        for bom_item in part.bom_items.all():
-            filedata += bom_item.sub_part.name
-            filedata += ","
-            filedata += str(bom_item.quantity)
-            filedata += ","
-            filedata += str(bom_item.sub_part.available_stock)
-            filedata += "\n"
+        filedata = part.export_bom()
 
         return DownloadFile(filedata, filename)
 
