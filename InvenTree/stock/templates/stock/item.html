@@ -135,7 +135,8 @@
         launchModalForm(
                         "{% url 'stock-item-edit' item.id %}",
                         {
-                            reload: true
+                            reload: true,
+                            submit_text: "Save",
                         });
     });
 
@@ -145,6 +146,7 @@
                         "{% url 'stock-item-move' item.id %}",
                         {
                             reload: true,
+                            submit_text: "Move"
                         });
         });
 

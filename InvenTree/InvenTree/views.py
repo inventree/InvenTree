@@ -56,7 +56,6 @@ class AjaxMixin(object):
 
     ajax_form_action = ''
     ajax_form_title = ''
-    ajax_submit_text = 'Submit'
 
     def get_data(self):
         return {}
@@ -75,8 +74,6 @@ class AjaxMixin(object):
             context['form'] = form
 
         data['title'] = self.ajax_form_title
-
-        data['submit_label'] = self.ajax_submit_text
 
         data['html_form'] = render_to_string(
             self.getAjaxTemplate(),
