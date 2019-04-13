@@ -14,5 +14,5 @@ before_install:
     - make setup_ci
 
 script:
-    # - make style
     - make test
+    - make style
