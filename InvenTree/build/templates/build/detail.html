@@ -109,7 +109,8 @@
     $("#build-cancel").click(function() {
         launchModalForm("{% url 'build-cancel' build.id %}",
                         {
-                            reload: true
+                            reload: true,
+                            submit_text: "Cancel",
                         });
     });
 {% endblock %}

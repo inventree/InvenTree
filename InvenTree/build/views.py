@@ -40,7 +40,6 @@ class BuildCancel(AjaxView):
     model = Build
     template_name = 'build/cancel.html'
     ajax_form_title = 'Cancel Build'
-    ajax_submit_text = 'Cancel'
     context_object_name = 'build'
     fields = []
 

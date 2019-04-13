@@ -134,7 +134,6 @@ class StockItemMove(AjaxUpdateView):
     template_name = 'modal_form.html'
     context_object_name = 'item'
     ajax_form_title = 'Move Stock Item'
-    ajax_submit_text = 'Move'
     form_class = MoveStockItemForm
 
     def post(self, request, *args, **kwargs):

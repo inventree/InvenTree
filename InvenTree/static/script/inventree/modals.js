@@ -57,8 +57,9 @@ function modalSetContent(modal, content='') {
     $(modal).find('.modal-form-content').html(content);
 }
 
-function modalSetButtonText(modal, text) {
-    $(modal).find("#modal-form-submit").html(text);
+function modalSetButtonText(modal, submit_text, close_text) {
+    $(modal).find("#modal-form-submit").html(submit_text);
+    $(modal).find("#modal-form-close").html(close_text);
 }
 
 function closeModal(modal='#modal-form') {
@@ -102,9 +103,11 @@ function openModal(options) {
         modalSetContent(modal, options.content);
     }
 
-    if (options.submit_label) {
-        modalSetButtonText(modal, options.submit_label);
-    }
+    // Default labels for 'Submit' and 'Close' buttons in the form
+    var submit_text = options.submit_text || 'Submit';
+    var close_text = options.close_text || 'Close';
+
+    modalSetButtonText(modal, submit_text, close_text);
 
     $(modal).modal({
         backdrop: 'static',
@@ -243,21 +246,25 @@ function launchModalForm(url, options = {}) {
 
     var modal = options.modal || '#modal-form';
 
+    // Default labels for 'Submit' and 'Close' buttons in the form
+    var submit_text = options.submit_text || 'Submit';
+    var close_text = options.close_text || 'Close';
+
     // Form the ajax request to retrieve the django form data
     ajax_data = {
         url: url,
         type: 'get',
         dataType: 'json',
         beforeSend: function () {
-            openModal({modal: modal});
+            openModal({
+                modal: modal,
+                submit_text: submit_text,
+                close_text: close_text,
+            });
         },
         success: function(response) {
             if (response.title) {
                 modalSetTitle(modal, response.title);
-            }
-
-            if (response.submit_label) {
-                modalSetButtonText(modal, String(response.submit_label));
             }
 
             if (response.html_form) {
