@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from django.db import models
-from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
 from django.db.models.signals import pre_delete
@@ -250,7 +249,6 @@ class Part(models.Model):
             self.allocated_build_count,
         ])
 
-
     @property
     def stock_entries(self):
         return [loc for loc in self.locations.all() if loc.in_stock]
@@ -262,7 +260,6 @@ class Part(models.Model):
         """
 
         return sum([loc.quantity for loc in self.stock_entries])
-
 
     @property
     def has_bom(self):
