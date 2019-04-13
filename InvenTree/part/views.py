@@ -15,6 +15,7 @@ from .forms import PartImageForm
 from .forms import EditPartForm
 from .forms import EditCategoryForm
 from .forms import EditBomItemForm
+from .forms import BomExportForm
 
 from .forms import EditSupplierPartForm
 
@@ -110,7 +111,7 @@ class PartEdit(AjaxUpdateView):
     ajax_form_title = 'Edit Part Properties'
 
 
-class BomExport(AjaxView):
+class BomExport(AjaxUpdateView):
 
     model = Part
     form_class = BomExportForm
@@ -118,19 +119,26 @@ class BomExport(AjaxView):
     ajax_form_title = 'Export Bill of Materials'
     ajax_submit_text = 'Export'
     context_object_name = 'part'
-    fields = []
 
     def get(self, request, *args, **kwargs):
 
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
+        form = self.form_class(instance=part, data=request.POST, files=request.FILES)
 
-        return self.renderJsonResponse(request, context={'part': part})
+        return self.renderJsonResponse(request, form=form, context={'part': part})
 
     def post(self, request, *args, **kwargs):
 
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
+        form = self.form_class(instance=part, data=request.POST, files=request.FILES)
 
-        return self.renderJsonResponse(request, context={'part': part})
+        export_format = request.POST.get('format', None)
+
+        if not export_format:
+            # TODO
+            pass
+
+        return self.renderJsonResponse(request, form=form, context={'part': part})
 
     def get_data(self):
         return {
@@ -227,6 +235,7 @@ class BomItemCreate(AjaxCreateView):
     template_name = 'part/bom-create.html'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create BOM item'
+    ajax_submit_text = 'Create'
 
     def get_initial(self):
         # Look for initial values

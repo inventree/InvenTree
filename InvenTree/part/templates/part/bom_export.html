@@ -1,3 +1,7 @@
-Export BOM for {{ part.name }}
+Export BOM (Bill of Materials) for {{ part.name }}
 
-{% include "modal_csrf.html" %}
+<form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+    {% crispy form %}
+  </form>

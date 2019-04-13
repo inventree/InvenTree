@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
 
+from django import forms
+
 from .models import Part, PartCategory, BomItem
 from .models import SupplierPart
 
@@ -13,6 +15,24 @@ class PartImageForm(HelperForm):
         model = Part
         fields = [
             'image',
+        ]
+
+
+class BomExportForm(HelperForm):
+
+    # TODO - Define these choices somewhere else, and import them here
+    format_choices = (
+        ('csv', 'CSV'),
+        ('xlsx', 'XLSX'),
+        ('pdf', 'PDF'),
+    )
+
+    # Select export type
+    format = forms.CharField(label='Format', widget=forms.Select(choices=format_choices), required='true', help_text='Select export format')
+
+    class Meta:
+        model = Part
+        fields = [
         ]
 
 

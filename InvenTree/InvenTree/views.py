@@ -127,7 +127,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
         if request.is_ajax():
             form = self.form_class(initial=self.get_initial())
 
-            return self.renderJsonResponse(request, form=form, data=data, **kwargs)
+            return self.renderJsonResponse(request, form=form, **kwargs)
 
         else:
             return response
