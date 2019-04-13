@@ -257,7 +257,7 @@ function launchModalForm(url, options = {}) {
             }
 
             if (response.submit_label) {
-                modalSetButtonText(response.submit_label);
+                modalSetButtonText(modal, String(response.submit_label));
             }
 
             if (response.html_form) {
