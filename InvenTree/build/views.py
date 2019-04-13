@@ -7,11 +7,9 @@ from django.views.generic import DetailView, ListView
 
 from part.models import Part
 from .models import Build
-
 from .forms import EditBuildForm
 
 from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView
-from django.http import JsonResponse
 
 
 class BuildIndex(ListView):
