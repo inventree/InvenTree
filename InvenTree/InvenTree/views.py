@@ -65,9 +65,7 @@ class AjaxMixin(object):
         else:
             return self.template_name
 
-    def renderJsonResponse(self, request, form, data={}):
-
-        context = {}
+    def renderJsonResponse(self, request, form=None, data={}, context={}):
 
         if form:
             context['form'] = form
@@ -97,7 +95,7 @@ class AjaxView(AjaxMixin, View):
 
     def get(self, request, *args, **kwargs):
 
-        return self.renderJsonResponse(request, None)
+        return self.renderJsonResponse(request, **kwargs)
 
 
 class AjaxCreateView(AjaxMixin, CreateView):
@@ -117,7 +115,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
                 data['url'] = obj.get_absolute_url()
 
-            return self.renderJsonResponse(request, form, data)
+            return self.renderJsonResponse(request, form=form, data=data, **kwargs)
 
         else:
             return super(CreateView, self).post(request, *args, **kwargs)
@@ -129,7 +127,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
         if request.is_ajax():
             form = self.form_class(initial=self.get_initial())
 
-            return self.renderJsonResponse(request, form)
+            return self.renderJsonResponse(request, form=form, data=data, **kwargs)
 
         else:
             return response

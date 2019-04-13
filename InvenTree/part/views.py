@@ -113,18 +113,24 @@ class PartEdit(AjaxUpdateView):
 class BomExport(AjaxView):
 
     model = Part
+    form_class = BomExportForm
     template_name = 'part/bom_export.html'
-    #ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Export Bill of Materials'
     ajax_submit_text = 'Export'
     context_object_name = 'part'
     fields = []
 
+    def get(self, request, *args, **kwargs):
+
+        part = get_object_or_404(Part, pk=self.kwargs['pk'])
+
+        return self.renderJsonResponse(request, context={'part': part})
+
     def post(self, request, *args, **kwargs):
 
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
-        
-        return self.renderJsonResponse(request, None)
+
+        return self.renderJsonResponse(request, context={'part': part})
 
     def get_data(self):
         return {
