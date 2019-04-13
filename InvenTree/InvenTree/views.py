@@ -76,7 +76,7 @@ class AjaxMixin(object):
 
         data['title'] = self.ajax_form_title
 
-        data['submit_text'] = self.ajax_submit_text
+        data['submit_label'] = self.ajax_submit_text
 
         data['html_form'] = render_to_string(
             self.getAjaxTemplate(),
