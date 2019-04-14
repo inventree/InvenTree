@@ -375,6 +375,9 @@ class BomItem(models.Model):
     # Quantity required
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])
 
+    # Note attached to this BOM line item
+    note = models.CharField(max_length=100, blank=True, help_text='Item notes')
+
     def clean(self):
 
         # A part cannot refer to itself in its BOM
