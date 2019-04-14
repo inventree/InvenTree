@@ -120,6 +120,7 @@
             return {
                 {% if category %}
                 category: {{ category.id }},
+                include_child_categories: true,
                 {% endif %}
             }
         },
@@ -148,21 +149,19 @@
                 field: 'description',
                 title: 'Description',
             },
-            {% if category == None %}
             {
                 sortable: true,
                 field: 'category',
                 title: 'Category',
                 formatter: function(value, row, index, field) {
                     if (row.category) {
-                        return renderLink(row.category.name, row.category.url);
+                        return renderLink(row.category.pathstring, row.category.url);
                     }
                     else {
                         return '';
                     }
                 }
             },
-            {% endif %}
             {
                 field: 'total_stock',
                 title: 'Stock',
