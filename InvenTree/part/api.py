@@ -5,7 +5,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework import generics, permissions
 
+from django.db.models import Q
 from django.conf.urls import url, include
+from django.shortcuts import get_object_or_404
 
 from .models import Part, PartCategory, BomItem
 from .models import SupplierPart
@@ -65,8 +67,32 @@ class PartDetail(DraftRUDView):
 
 class PartList(generics.ListCreateAPIView):
 
-    queryset = Part.objects.all()
+    #queryset = Part.objects.all()
     serializer_class = PartSerializer
+
+    def get_queryset(self):
+        print("Get queryset")
+
+        # Does the user wish to filter by category?
+        cat_id = self.request.query_params.get('category', None)
+
+        if cat_id:
+            print("Getting category:", cat_id)
+            category = get_object_or_404(PartCategory, pk=cat_id)
+
+            # Filter by the supplied category
+            flt = Q(category=cat_id)
+
+            if self.request.query_params.get('include_child_categories', None):
+                childs = category.getUniqueChildren()
+                for child in childs:
+                    if child == cat_id: continue
+                    flt |= Q(category=child)
+
+            return Part.objects.filter(flt)
+        
+        # Default - return all parts
+        return Part.objects.all()
 
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
@@ -79,7 +105,7 @@ class PartList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'category',
+        #'category',
     ]
 
     ordering_fields = [

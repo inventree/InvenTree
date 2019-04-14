@@ -120,6 +120,7 @@
             return {
                 {% if category %}
                 category: {{ category.id }},
+                include_child_categories: true,
                 {% endif %}
             }
         },
