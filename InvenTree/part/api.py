@@ -67,7 +67,6 @@ class PartDetail(DraftRUDView):
 
 class PartList(generics.ListCreateAPIView):
 
-    #queryset = Part.objects.all()
     serializer_class = PartSerializer
 
     def get_queryset(self):
@@ -86,11 +85,13 @@ class PartList(generics.ListCreateAPIView):
             if self.request.query_params.get('include_child_categories', None):
                 childs = category.getUniqueChildren()
                 for child in childs:
-                    if child == cat_id: continue
+                    # Ignore the top-level category (already filtered)
+                    if child == cat_id:
+                        continue
                     flt |= Q(category=child)
 
             return Part.objects.filter(flt)
-        
+
         # Default - return all parts
         return Part.objects.all()
 
@@ -105,7 +106,6 @@ class PartList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        #'category',
     ]
 
     ordering_fields = [
