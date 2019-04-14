@@ -21,7 +21,8 @@ function renderEditable(text, options) {
      * Can pass the following parameters in 'options':
      * _type     - parameter for data-type (default = 'text')
      * _pk       - parameter for data-pk (required)
-     * _title    - 
+     * _title    - title to show when editing
+     * _empty    - placeholder text to show when field is empty
      * _class    - html class (default = 'editable-item')
      * _id       - id
      */
@@ -42,6 +43,11 @@ function renderEditable(text, options) {
 
     if (options._title) {
         html = html + " data-title='" + options._title + "'";
+    }
+
+    if (options._empty) {
+        html = html + " data-placeholder='" + options._empty + "'";
+        html = html + " data-emptytext='" + options._empty + "'";
     }
 
     html = html + ">" + text + "</a>";
