@@ -79,7 +79,8 @@ class BomItemSerializer(serializers.ModelSerializer):
             'url',
             'part',
             'sub_part',
-            'quantity'
+            'quantity',
+            'note',
         ]
 
 
