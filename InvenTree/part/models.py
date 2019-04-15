@@ -288,6 +288,7 @@ class Part(models.Model):
         header.append('Part')
         header.append('Description')
         header.append('Quantity')
+        header.append('Note')
         
         lines.append(header)
 
@@ -297,6 +298,7 @@ class Part(models.Model):
             line.append(it.sub_part.name)
             line.append(it.sub_part.description)
             line.append(it.quantity)
+            line.append(it.note)
 
             lines.append([str(x) for x in line])
 

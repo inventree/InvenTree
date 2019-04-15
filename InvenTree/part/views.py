@@ -90,6 +90,17 @@ class PartDetail(DetailView):
     queryset = Part.objects.all()
     template_name = 'part/detail.html'
 
+    # Add in some extra context information based on query params
+    def get_context_data(self, **kwargs):
+        context = super(PartDetail, self).get_context_data(**kwargs)
+
+        if str(self.request.GET.get('edit', None)) == '1':
+            context['editing_enabled'] = True
+        else:
+            context['editing_enabled'] = False
+
+        return context
+
 
 class PartImage(AjaxUpdateView):
 
