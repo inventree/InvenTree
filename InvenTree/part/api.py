@@ -107,6 +107,11 @@ class PartList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
+        'buildable',
+        'consumable',
+        'trackable',
+        'purchaseable',
+        'salable',
     ]
 
     ordering_fields = [

@@ -32,7 +32,7 @@
 </tr>
 <tr>
     <td>Description</td>
-    <td>{{ part.decription }}</td>
+    <td>{{ part.description }}</td>
 </tr>
 {% if part.IPN %}
 <tr>
@@ -44,7 +44,7 @@
     <td>Category</td>
     <td>
     {% if part.category %}
-        <a href="{% url 'category-detail' part.category.id %}">{{ part.category.name }}</a>
+        <a href="{% url 'category-detail' part.category.id %}">{{ part.category.pathstring }}</a>
     {% endif %}
     </td>
 </tr>
@@ -69,6 +69,10 @@
 <tr>
     <td>Buildable</td>
     <td>{% include "yesnolabel.html" with value=part.buildable %}</td>
+</tr>
+<tr>
+    <td>Consumable</td>
+    <td>{% include "yesnolabel.html" with value=part.consumable %}</td>
 </tr>
 <tr>
     <td>Trackable</td>

@@ -37,7 +37,7 @@
     </div>
 </div>
 <div class="col-sm-6">
-    <h4>Stock Status - {{ part.available_stock }} available</h4>
+    <h4>Stock Status - {{ part.available_stock }}{% if part.units %} {{ part.units }} {% endif%} available</h4>
     <table class="table table-striped">
         <tr>
             <td>In Stock</td>

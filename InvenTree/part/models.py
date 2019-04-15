@@ -126,8 +126,11 @@ class Part(models.Model):
     # Units of quantity for this part. Default is "pcs"
     units = models.CharField(max_length=20, default="pcs", blank=True)
 
-    # Can this part be built?
+    # Can this part be built from other parts?
     buildable = models.BooleanField(default=False, help_text='Can this part be built from other parts?')
+
+    # Can this part be used to make other parts?
+    consumable = models.BooleanField(default=True, help_text='Can this part be used to build other parts?')
 
     # Is this part "trackable"?
     # Trackable parts can have unique instances

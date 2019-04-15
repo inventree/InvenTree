@@ -61,6 +61,7 @@ class PartSerializer(serializers.ModelSerializer):
             'units',
             'trackable',
             'buildable',
+            'consumable',
             'trackable',
             'salable',
         ]

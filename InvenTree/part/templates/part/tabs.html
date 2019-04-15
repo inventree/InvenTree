@@ -7,7 +7,7 @@
     <li{% ifequal tab 'build' %} class="active"{% endifequal %}>
         <a href="{% url 'part-build' part.id %}">Build<span class='badge'>{{ part.active_builds|length }}</span></a></li>
     {% endif %}
-    {% if part.used_in_count > 0 %}
+    {% if part.consumable or part.used_in_count > 0 %}
     <li{% ifequal tab 'used' %} class="active"{% endifequal %}>
         <a href="{% url 'part-used-in' part.id %}">Used In{% if part.used_in_count > 0 %}<span class="badge">{{ part.used_in_count }}</span>{% endif %}</a></li>
     {% endif %}
