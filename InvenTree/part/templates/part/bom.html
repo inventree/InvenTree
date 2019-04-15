@@ -11,28 +11,28 @@
 
 <h3>Bill of Materials</h3>
 
-<table class='table table-striped table-condensed' id='bom-table'>
+<div id='button-toolbar'>
+    {% if editing_enabled %}
+    <div class='btn-group' style='float: right;'>
+        <button class='btn btn-info' type='button' id='bom-item-new'>New BOM Item</button>
+        <button class='btn btn-success' type='button' id='editing-finished'>Save Changes</button>
+    </div>
+    {% else %}
+    <div class='dropdown' style="float: right;">
+        <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
+            Options
+            <span class='caret'></span>
+        </button>
+        <ul class='dropdown-menu'>
+            <li><a href='#' id='edit-bom' title='Edit BOM'>Edit BOM</a></li>
+            <li><a href='#' id='export-bom' title='Export BOM'>Export BOM</a></li>
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
+<table class='table table-striped table-condensed' data-toolbar="#button-toolbar" id='bom-table'>
 </table>
-
-<div><br></div>
-
-{% if editing_enabled %}
-<div class='btn-group' style='float: right;'>
-    <button class='btn btn-info' type='button' id='bom-item-new'>New BOM Item</button>
-    <button class='btn btn-success' type='button' id='editing-finished'>Save Changes</button>
-</div>
-{% else %}
-<div class='dropdown' style="float: right;">
-    <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
-        Options
-        <span class='caret'></span>
-    </button>
-    <ul class='dropdown-menu'>
-        <li><a href='#' id='edit-bom' title='Edit BOM'>Edit BOM</a></li>
-        <li><a href='#' id='export-bom' title='Export BOM'>Export BOM</a></li>
-    </ul>
-</div>
-{% endif %}
 
 {% endblock %}
 
