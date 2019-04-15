@@ -18,6 +18,7 @@ function loadBomTable(table, options) {
      * Following options are available:
      * editable      - Should the BOM table be editable?
      * bom_url       - Address to request BOM data from
+     * part_url      - Address to request Part data from
      * parent_id     - Parent ID of the owning part
      * 
      * BOM data are retrieved from the server via AJAX query
@@ -34,7 +35,14 @@ function loadBomTable(table, options) {
     ];
 
     if (options.editable) {
-        // TODO - Add checkbox column
+        cols.push({
+            formatter: function(value, row, index, field) {
+                var bEdit = "<button class='btn btn-success bom-edit-button btn-sm' type='button' url='" + row.url + "edit'>Edit</button>";
+                var bDelt = "<button class='btn btn-danger bom-delete-button btn-sm' type='button' url='" + row.url + "delete'>Delete</button>";
+
+                return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
+            }
+        });
     }
 
     // Part column
@@ -44,19 +52,7 @@ function loadBomTable(table, options) {
             title: 'Part',
             sortable: true,
             formatter: function(value, row, index, field) {
-                if (options.editable) {
-                    return renderEditable(value.name,
-                        {
-                            _pk: row.pk,
-                            _type: 'select',
-                            _title: 'Part',
-                            _class: 'editable-part',
-                            _value: 1,
-                        });
-                }
-                else {
-                    return renderLink(value.name, value.url);
-                }
+                return renderLink(value.name, value.url);
             }
         }
     );
@@ -76,18 +72,6 @@ function loadBomTable(table, options) {
             title: 'Required',
             searchable: false,
             sortable: true,
-            formatter: function(value, row, index, field) {
-                if (options.editable) {
-                    return renderEditable(value, 
-                        {
-                            _pk: row.pk,
-                            _title: 'Quantity',
-                        });
-                }
-                else {
-                    return value;
-                }
-            }
         }
     );
 
@@ -98,19 +82,6 @@ function loadBomTable(table, options) {
             title: 'Notes',
             searchable: true,
             sortable: false,
-            formatter: function(value, row, index, field) {
-                if (options.editable) {
-                    return renderEditable(value, 
-                        {
-                            _pk: row.pk,
-                            _title: 'Note',
-                            _empty: 'Enter note',
-                        });
-                }
-                else {
-                    return value; 
-                }
-            }
         }
     );
 
@@ -145,6 +116,7 @@ function loadBomTable(table, options) {
     table.bootstrapTable({
         sortable: true,
         search: true,
+        clickToSelect: true,
         queryParams: function(p) {
             return {
                 part: options.parent_id,
@@ -154,19 +126,78 @@ function loadBomTable(table, options) {
         url: options.bom_url
     });
 
+    // In editing mode, attached editables to the appropriate table elements
     if (options.editable) {
+
+        table.on('click', '.bom-delete-button', function() {
+            var button = $(this);
+            
+            launchDeleteForm(button.attr('url'), {
+                                success: function() {
+                                    reloadBomTable(table);
+                                }
+            });
+        });
+
+        table.on('click', '.bom-edit-button', function() {
+            var button = $(this);
+
+            launchModalForm(button.attr('url'), {
+                                success: function() {
+                                    reloadBomTable(table);
+                                }
+            });
+        });
+
         // Callback when the BOM data are successfully loaded
         table.on('load-success.bs.table', function() {
             table.find('.editable-item').editable();
-            $("#bom-table").find('.editable-part').editable({
-                source: [
-                    // Dummy data (for now)
-                    {value: 1, text: 'Apple'},
-                    {value: 2, text: 'Banana'},
-                    {value: 3, text: 'Carrot'},
-                ]   
+            
+            // Table has loaded - Request list of available parts
+            // Request list of parts which could (potentially) be added to this BOM
+            $.ajax({
+                url: options.part_url,
+                method: 'GET',
+                data: {
+                    consumable: true,       // Only list parts that can be used in other parts
+                },
+                success: function(result, status, xhr) {
+                    // Convert returned data to select2 format
+                    var data = $.map(result, function(obj) {
+                        obj.id = obj.id || obj.pk;        // Part ID is supplied as field 'pk'
+                        obj.text = obj.text || obj.name;    // Part text is supplied as field 'name'
+
+                        return obj;
+                    });
+
+                    table.find('.part-select').select2({
+                        data: data,
+                        dropdownAutoWidth: true,
+                    }).select2('val', 1);
+
+                    /*
+                    // Insert these data into each row drop-down
+                    table.find('.editable-part').editable({
+                        source: data,
+                        select2: {
+                            placeholder: 'Select Part',
+                            minimumInputLength: 3,
+                            dropdownAutoWidth: true,
+                        }
+                    }).on('shown', function(e, editable){
+                        editable.input.$input.select2({
+                            //data: data,
+                            minimumResultsForSearch: Infinity,
+                            dropdownAutoWidth: true,
+                            dropdownParent: table,
+                        });
+                        editable.input.$input.select2('val', editable.input.$input.val());
+                      });
+                    */
+                }
             });
         });
+
     }
 
 }

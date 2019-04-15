@@ -17,6 +17,11 @@
 <div><br></div>
 
 {% if editing_enabled %}
+<div class='btn-group' style='float: left;'>
+    <button class='btn btn-basic' type='button' id='bom-item-new'>New</button>
+    <button class='btn btn-basic' type='button' id='bom-item-new'>Edit</button>
+    <button class='btn btn-basic' type='button' id='bom-item-new'>Delete</button>
+</div>
 <div style='float: right;'>
     <button class='btn btn-warning' type='button' id='editing-cancel'>Cancel</button>
     <button class='btn btn-success' type='button' id='editing-finish'>Save Changes</button>
@@ -49,26 +54,17 @@
     loadBomTable($("#bom-table"), {
         editable: {{ editing_enabled }},
         bom_url: "{% url 'api-bom-list' %}",
+        part_url: "{% url 'api-part-list' %}",
         parent_id: {{ part.id }} 
     });
 
-    {% if editing_enabled %}
-    $("#editing-finish").click(function() {
-        alert("Finished!");
-        location.href = "{% url 'part-bom' part.id %}";
-    });
-
-    $("#editing-cancel").click(function() {
-        alert("Cancelled!");
-        location.href = "{% url 'part-bom' part.id %}";
-    });
-
-    {% else %}
-
     $("#edit-bom").click(function () {
         
+        {% if editing_enabled %}
+        location.href = "{% url 'part-bom' part.id %}";
+        {% else %}
         location.href = "{% url 'part-bom' part.id %}?edit=True";
-        
+        {% endif %}
     });
 
     $("#export-bom").click(function () {
@@ -76,6 +72,8 @@
         location.href = "{% url 'bom-export' part.id %}";
     });
 
-    {% endif %}
+    $("#bom-item-new").click(function () {
+        launchModalForm("{% url 'bom-item-create' %}?parent={{ part.id }}", {});
+    });
 
 {% endblock %}

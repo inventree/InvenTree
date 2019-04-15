@@ -78,8 +78,10 @@ class EditBomItemForm(HelperForm):
         fields = [
             'part',
             'sub_part',
-            'quantity'
+            'quantity',
+            'note'
         ]
+        widgets = {'part': forms.HiddenInput()}
 
 
 class EditSupplierPartForm(HelperForm):
