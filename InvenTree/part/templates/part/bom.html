@@ -9,7 +9,7 @@
 
 {% include 'part/tabs.html' with tab='bom' %}
 
-<h3>Bill of Materials{% if editing_enabled %} (Edit Mode){% endif %}</h3>
+<h3>Bill of Materials</h3>
 
 <table class='table table-striped table-condensed' id='bom-table'>
 </table>
@@ -17,14 +17,9 @@
 <div><br></div>
 
 {% if editing_enabled %}
-<div class='btn-group' style='float: left;'>
-    <button class='btn btn-basic' type='button' id='bom-item-new'>New</button>
-    <button class='btn btn-basic' type='button' id='bom-item-new'>Edit</button>
-    <button class='btn btn-basic' type='button' id='bom-item-new'>Delete</button>
-</div>
-<div style='float: right;'>
-    <button class='btn btn-warning' type='button' id='editing-cancel'>Cancel</button>
-    <button class='btn btn-success' type='button' id='editing-finish'>Save Changes</button>
+<div class='btn-group' style='float: right;'>
+    <button class='btn btn-info' type='button' id='bom-item-new'>New BOM Item</button>
+    <button class='btn btn-success' type='button' id='editing-finished'>Save Changes</button>
 </div>
 {% else %}
 <div class='dropdown' style="float: right;">
@@ -51,6 +46,7 @@
 {% block js_ready %}
 {{ block.super }}
 
+    // Load the BOM table data
     loadBomTable($("#bom-table"), {
         editable: {{ editing_enabled }},
         bom_url: "{% url 'api-bom-list' %}",
@@ -58,13 +54,19 @@
         parent_id: {{ part.id }} 
     });
 
-    $("#edit-bom").click(function () {
-        
-        {% if editing_enabled %}
+    {% if editing_enabled %}
+    $("#editing-finished").click(function() {
         location.href = "{% url 'part-bom' part.id %}";
-        {% else %}
+    });
+
+    $("#bom-item-new").click(function () {
+        launchModalForm("{% url 'bom-item-create' %}?parent={{ part.id }}", {});
+    });
+
+    {% else %}
+
+    $("#edit-bom").click(function () {
         location.href = "{% url 'part-bom' part.id %}?edit=True";
-        {% endif %}
     });
 
     $("#export-bom").click(function () {
@@ -72,8 +74,6 @@
         location.href = "{% url 'bom-export' part.id %}";
     });
 
-    $("#bom-item-new").click(function () {
-        launchModalForm("{% url 'bom-item-create' %}?parent={{ part.id }}", {});
-    });
+    {% endif %}
 
 {% endblock %}

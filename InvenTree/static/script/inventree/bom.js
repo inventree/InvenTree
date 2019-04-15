@@ -148,56 +148,5 @@ function loadBomTable(table, options) {
                                 }
             });
         });
-
-        // Callback when the BOM data are successfully loaded
-        table.on('load-success.bs.table', function() {
-            table.find('.editable-item').editable();
-            
-            // Table has loaded - Request list of available parts
-            // Request list of parts which could (potentially) be added to this BOM
-            $.ajax({
-                url: options.part_url,
-                method: 'GET',
-                data: {
-                    consumable: true,       // Only list parts that can be used in other parts
-                },
-                success: function(result, status, xhr) {
-                    // Convert returned data to select2 format
-                    var data = $.map(result, function(obj) {
-                        obj.id = obj.id || obj.pk;        // Part ID is supplied as field 'pk'
-                        obj.text = obj.text || obj.name;    // Part text is supplied as field 'name'
-
-                        return obj;
-                    });
-
-                    table.find('.part-select').select2({
-                        data: data,
-                        dropdownAutoWidth: true,
-                    }).select2('val', 1);
-
-                    /*
-                    // Insert these data into each row drop-down
-                    table.find('.editable-part').editable({
-                        source: data,
-                        select2: {
-                            placeholder: 'Select Part',
-                            minimumInputLength: 3,
-                            dropdownAutoWidth: true,
-                        }
-                    }).on('shown', function(e, editable){
-                        editable.input.$input.select2({
-                            //data: data,
-                            minimumResultsForSearch: Infinity,
-                            dropdownAutoWidth: true,
-                            dropdownParent: table,
-                        });
-                        editable.input.$input.select2('val', editable.input.$input.val());
-                      });
-                    */
-                }
-            });
-        });
-
     }
-
 }
