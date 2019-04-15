@@ -86,6 +86,7 @@
                                           {
                                              _pk: row.pk,
                                              _title: 'Quantity',
+                                             enabled: {{ editing_enabled }},
                                           }
                     );
                 }
@@ -101,6 +102,7 @@
                             _pk: row.pk,
                             _title: 'Note',
                             _empty: 'Enter note',
+                            enabled: {{ editing_enabled }},
                         });
                 }
             },
@@ -127,29 +129,6 @@
         url: "{% url 'api-bom-list' %}"
     });
 
-    /*
-    $('#bom-table').on('click', '.delete-button', function () {
-        var button = $(this);
-
-        launchDeleteForm(
-                         button.attr('url'),
-                         {
-                             success: reloadBom
-                         });
-    });
-
-    $("#bom-table").on('click', '.edit-button', function () {
-        var button = $(this);
-
-        launchModalForm(
-                        button.attr('url'),
-                        {
-                            success: reloadBom
-                        });
-
-    });
-    */
-
     {% if editing_enabled %}
     $("#editing-finish").click(function() {
         alert("Finished!");
@@ -160,9 +139,6 @@
         alert("Cancelled!");
         location.href = "{% url 'part-bom' part.id %}";
     });
-
-    // Inline mode
-    //$.fn.editable.defaults.mode = 'inline';
 
     $("#bom-table").on('load-success.bs.table', function() {
         // Make the table elements editable

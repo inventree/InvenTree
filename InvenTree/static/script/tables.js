@@ -25,7 +25,15 @@ function renderEditable(text, options) {
      * _empty    - placeholder text to show when field is empty
      * _class    - html class (default = 'editable-item')
      * _id       - id
+     * 
+     * And some further parameters:
+     * enabled   - if 1 or true, render the editable.
+     *             otherwise, just return the supplied text
      */
+
+    if (!options.enabled) {
+        return text;
+    }
 
     // Default values (if not supplied)
     var _type  = options._type || 'text';

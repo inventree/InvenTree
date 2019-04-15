@@ -95,9 +95,9 @@ class PartDetail(DetailView):
         context = super(PartDetail, self).get_context_data(**kwargs)
 
         if str(self.request.GET.get('edit', None)) == '1':
-            context['editing_enabled'] = True
+            context['editing_enabled'] = 1
         else:
-            context['editing_enabled'] = False
+            context['editing_enabled'] = 0
 
         return context
 
