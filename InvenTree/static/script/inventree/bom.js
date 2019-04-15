@@ -6,77 +6,167 @@
  */
 
 
-function refreshBOM(){
-    // TODO - Update the BOM data once the data are read from the server
+function reloadBomTable(table, options) {
+
+    table.bootstrapTable('refresh');
 }
 
 
-function editBOM(options){
-
-    /* Launch a modal window to edit the BOM options.
-     * The caller should pass the following key:value data in 'options':
-     * part_name: The name of the part being edited
-     * part_id: The pk of the part (for AJAX lookup)
-     * url: The JSON API URL to get BOM data
+function loadBomTable(table, options) {
+    /* Load a BOM table with some configurable options.
+     * 
+     * Following options are available:
+     * editable      - Should the BOM table be editable?
+     * bom_url       - Address to request BOM data from
+     * parent_id     - Parent ID of the owning part
+     * 
+     * BOM data are retrieved from the server via AJAX query
      */
 
-    // Default modal target if none is supplied
-    var modal = options.modal || '#modal-form';
-    
-    var title = 'Edit BOM for ' + options.part_name;
+    // Construct the table columns
 
-    var body = `
-        <table class='table table-striped table-condensed' id='modal-bom-table'></table>
-        <div style='float: right;'>
-            <button class='btn btn-basic' type='button' id='new-bom-item'>Add BOM Item</button>
-        </div>
-    `;
-
-    openModal(
+    var cols = [
         {
-            modal: modal,
-            content: body,
-            title: title,
-            submit_text: 'Save',
-            close_text: 'Cancel',
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+        }
+    ];
+
+    if (options.editable) {
+        // TODO - Add checkbox column
+    }
+
+    // Part column
+    cols.push(
+        {
+            field: 'sub_part',
+            title: 'Part',
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                if (options.editable) {
+                    return renderEditable(value.name,
+                        {
+                            _pk: row.pk,
+                            _type: 'select',
+                            _title: 'Part',
+                            _class: 'editable-part',
+                            _value: 1,
+                        });
+                }
+                else {
+                    return renderLink(value.name, value.url);
+                }
+            }
         }
     );
 
-    $('#new-bom-item').click(function() {
-        alert("New BOM item!");
-    });
+    // Part description
+    cols.push(
+        {
+            field: 'sub_part.description',
+            title: 'Description',
+        }
+    );
 
-    $('#modal-bom-table').bootstrapTable({
+    // Part quantity
+    cols.push(
+        {
+            field: 'quantity',
+            title: 'Required',
+            searchable: false,
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                if (options.editable) {
+                    return renderEditable(value, 
+                        {
+                            _pk: row.pk,
+                            _title: 'Quantity',
+                        });
+                }
+                else {
+                    return value;
+                }
+            }
+        }
+    );
+
+    // Part notes
+    cols.push(
+        {
+            field: 'note',
+            title: 'Notes',
+            searchable: true,
+            sortable: false,
+            formatter: function(value, row, index, field) {
+                if (options.editable) {
+                    return renderEditable(value, 
+                        {
+                            _pk: row.pk,
+                            _title: 'Note',
+                            _empty: 'Enter note',
+                        });
+                }
+                else {
+                    return value; 
+                }
+            }
+        }
+    );
+
+    // If we are NOT editing, display the available stock
+    if (!options.editable) {
+        cols.push(
+            {
+                field: 'sub_part.available_stock',
+                title: 'Available',
+                searchable: false,
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    var text = "";
+
+                    if (row.quantity < row.sub_part.available_stock)
+                    {
+                        text = "<span class='label label-success'>" + value + "</span>";
+                    }
+                    else
+                    {
+                        text = "<span class='label label-warning'>" + value + "</span>";
+                    }
+
+                    return renderLink(text, row.sub_part.url + "stock/");
+                }
+            }
+        );
+    }
+
+    // Configure the table (bootstrap-table)
+
+    table.bootstrapTable({
         sortable: true,
         search: true,
         queryParams: function(p) {
             return {
-                part: options.part_id,
+                part: options.parent_id,
             }
         },
-        //data: {},
-        columns: [
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false
-            },
-            {
-                field: 'sub_part.name',
-                title: 'Part',
-                sortable: true,
-            },
-            {
-                field: 'sub_part.description',
-                title: 'Description',
-            },
-            {
-                field: 'quantity',
-                title: 'Required',
-                searchable: false,
-                sortable: true,
-            }
-        ],
-        url: options.url,
+        columns: cols,
+        url: options.bom_url
     });
+
+    if (options.editable) {
+        // Callback when the BOM data are successfully loaded
+        table.on('load-success.bs.table', function() {
+            table.find('.editable-item').editable();
+            $("#bom-table").find('.editable-part').editable({
+                source: [
+                    // Dummy data (for now)
+                    {value: 1, text: 'Apple'},
+                    {value: 2, text: 'Banana'},
+                    {value: 3, text: 'Carrot'},
+                ]   
+            });
+        });
+    }
+
 }

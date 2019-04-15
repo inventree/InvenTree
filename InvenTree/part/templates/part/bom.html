@@ -45,88 +45,11 @@
 
 {% block js_ready %}
 {{ block.super }}
-    function reloadBom() {
-        $("#bom-table").bootstrapTable('refresh');
-    }
 
-    // Load the BOM data
-    $("#bom-table").bootstrapTable({
-        sortable: true,
-        search: true,
-        queryParams: function(p) {
-            return {
-                part: {{ part.id }}
-            }
-        },
-        columns: [
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-            },
-            {
-                field: 'sub_part',
-                title: 'Part',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    return renderLink(value.name, value.url);
-                }
-            },
-            {
-                field: 'sub_part.description',
-                title: 'Description',
-            },
-            {
-                field: 'quantity',
-                title: 'Required',
-                searchable: false,
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    return renderEditable(value,
-                                          {
-                                             _pk: row.pk,
-                                             _title: 'Quantity',
-                                             enabled: {{ editing_enabled }},
-                                          }
-                    );
-                }
-            },
-            {
-                field: 'note',
-                title: 'Note',
-                searchable: true,
-                sortable: false,
-                formatter: function(value, row, index, field) {
-                    return renderEditable(value,
-                        {
-                            _pk: row.pk,
-                            _title: 'Note',
-                            _empty: 'Enter note',
-                            enabled: {{ editing_enabled }},
-                        });
-                }
-            },
-            {
-                field: 'sub_part.available_stock',
-                title: 'Available',
-                searchable: false,
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    var text = "";
-                    if (row.quantity < row.sub_part.available_stock)
-                    {
-                        text = "<span class='label label-success'>" + value + "</span>";
-                    }
-                    else
-                    {
-                        text = "<span class='label label-warning'>" + value + "</span>";
-                    }
-
-                    return renderLink(text, row.sub_part.url + "stock/");
-                }      
-            },
-        ],
-        url: "{% url 'api-bom-list' %}"
+    loadBomTable($("#bom-table"), {
+        editable: {{ editing_enabled }},
+        bom_url: "{% url 'api-bom-list' %}",
+        parent_id: {{ part.id }} 
     });
 
     {% if editing_enabled %}
@@ -140,45 +63,15 @@
         location.href = "{% url 'part-bom' part.id %}";
     });
 
-    $("#bom-table").on('load-success.bs.table', function() {
-        // Make the table elements editable
-        $("#bom-table").find('.editable-item').editable();
-    });
-
     {% else %}
 
     $("#edit-bom").click(function () {
         
         location.href = "{% url 'part-bom' part.id %}?edit=1";
         
-        /*
-        editBOM(
-            {
-                url: "{% url 'api-bom-list' %}",
-                part_name: "{{ part.name }}",
-                part_id: "{{ part.id }}",
-            }
-        );
-        */
-        /*
-        launchModalForm(
-                        "{% url 'bom-item-create' %}",
-                        {
-                            reload: true,
-                            data: {
-                                parent: {{ part.id }}
-                            }
-                        });
-        */
     });
 
     $("#export-bom").click(function () {
-        /*
-        launchModalForm(
-                        "{% url 'bom-export' part.id %}",
-                        {
-                        });
-        */
         //TODO - Select format of the data
         location.href = "{% url 'bom-export' part.id %}";
     });
