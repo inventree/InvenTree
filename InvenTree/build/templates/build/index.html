@@ -4,7 +4,11 @@
 
 <h3>Part Builds</h3>
 
-<table class='table table-striped table-condensed' id='build-table'>
+<div id='button-toolbar'>
+    <button class="btn btn-success" id='new-build'>Start New Build</button>
+</div>
+
+<table class='table table-striped table-condensed' id='build-table' data-toolbar='#button-toolbar'>
 <thead>
 <tr>
     <th>Build</th>
@@ -20,9 +24,6 @@
 </tbody>
 </table>
 
-<div class='container-fluid'>
-<button class="btn btn-success" id='new-build'>Start New Build</button>
-</div>
 
 {% include 'modals.html' %}
 
