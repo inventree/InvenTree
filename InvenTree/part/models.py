@@ -281,39 +281,80 @@ class Part(models.Model):
         # Return the number of supplier parts available for this part
         return self.supplier_parts.count()
 
-    def export_bom(self, file_format='csv'):
-        # TODO - Allow other file formats
+    def export_bom(self, **kwargs):
 
-        lines = []
-
-        # Construct header line
+        # Construct the export data
         header = []
         header.append('Part')
         header.append('Description')
         header.append('Quantity')
         header.append('Note')
-        
-        lines.append(header)
+
+        rows = []
 
         for it in self.bom_items.all():
             line = []
-            
+
             line.append(it.sub_part.name)
             line.append(it.sub_part.description)
             line.append(it.quantity)
             line.append(it.note)
 
-            lines.append([str(x) for x in line])
+            rows.append([str(x) for x in line])
+
+        file_format = kwargs.get('file_format', 'csv').lower()
+
+        kwargs['header'] = header
+        kwargs['rows'] = rows
+
+        if file_format == 'csv':
+            return self.export_bom_csv(**kwargs)
+        elif file_format in ['xls', 'xlsx']:
+            return self.export_bom_xls(**kwargs)
+        elif file_format == 'xml':
+            return self.export_bom_xml(**kwargs)
+        elif file_format in ['htm', 'html']:
+            return self.export_bom_htm(**kwargs)
+        elif file_format == 'pdf':
+            return self.export_bom_pdf(**kwargs)
+        else:
+            return None
+
+
+    def export_bom_csv(self, **kwargs):
+
+        # Construct header line
+        header = kwargs.get('header')
+        rows = kwargs.get('rows')
 
         # TODO - Choice of formatters goes here?
-        out = ''
+        out = ','.join(header)
 
-        for line in lines:
-            print(line)
-            out += ','.join(line)
+        for row in rows:
             out += '\n'
+            out += ','.join(row)
 
         return out
+
+
+    def export_bom_xls(self, **kwargs):
+
+        return ''
+
+
+    def export_bom_xml(self, **kwargs):
+        return ''
+
+
+    def export_bom_htm(self, **kwargs):
+        return ''
+
+
+    def export_bom_pdf(self, **kwargs):
+        return ''
+
+    
+
 
     """
     @property
