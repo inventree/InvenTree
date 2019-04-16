@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 
 from django.urls import reverse_lazy
-
 from django.views.generic import DetailView, ListView
 
 from company.models import Company
@@ -15,10 +14,13 @@ from .forms import PartImageForm
 from .forms import EditPartForm
 from .forms import EditCategoryForm
 from .forms import EditBomItemForm
+from .forms import BomExportForm
 
 from .forms import EditSupplierPartForm
 
-from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+
+from InvenTree.helpers import DownloadFile
 
 
 class PartIndex(ListView):
@@ -88,6 +90,17 @@ class PartDetail(DetailView):
     queryset = Part.objects.all()
     template_name = 'part/detail.html'
 
+    # Add in some extra context information based on query params
+    def get_context_data(self, **kwargs):
+        context = super(PartDetail, self).get_context_data(**kwargs)
+
+        if self.request.GET.get('edit', '').lower() in ['true', 'yes', '1']:
+            context['editing_enabled'] = 1
+        else:
+            context['editing_enabled'] = 0
+
+        return context
+
 
 class PartImage(AjaxUpdateView):
 
@@ -104,10 +117,88 @@ class PartImage(AjaxUpdateView):
 
 class PartEdit(AjaxUpdateView):
     model = Part
-    form_class = EditPartForm
     template_name = 'part/edit.html'
+    form_class = EditPartForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Part Properties'
+    context_object_name = 'part'
+
+
+class BomExport(AjaxView):
+
+    model = Part
+    ajax_form_title = 'Export BOM'
+    ajax_template_name = 'part/bom_export.html'
+    context_object_name = 'part'
+    form_class = BomExportForm
+
+    def get_object(self):
+        return get_object_or_404(Part, pk=self.kwargs['pk'])
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+
+        """
+        part = self.get_object()
+
+        context = {
+            'part': part
+        }
+
+        if request.is_ajax():
+            passs
+        """
+
+        return self.renderJsonResponse(request, form)
+
+    def post(self, request, *args, **kwargs):
+        """
+        User has now submitted the BOM export data
+        """
+
+        # part = self.get_object()
+
+        return super(AjaxView, self).post(request, *args, **kwargs)
+
+    def get_data(self):
+        return {
+            # 'form_valid': True,
+            # 'redirect': '/'
+            # 'redirect': reverse('bom-download', kwargs={'pk': self.request.GET.get('pk')})
+        }
+
+
+class BomDownload(AjaxView):
+    """
+    Provide raw download of a BOM file.
+    - File format should be passed as a query param e.g. ?format=csv
+    """
+
+    # TODO - This should no longer extend an AjaxView!
+
+    model = Part
+    # form_class = BomExportForm
+    # template_name = 'part/bom_export.html'
+    # ajax_form_title = 'Export Bill of Materials'
+    # context_object_name = 'part'
+
+    def get(self, request, *args, **kwargs):
+
+        part = get_object_or_404(Part, pk=self.kwargs['pk'])
+
+        export_format = request.GET.get('format', 'csv')
+
+        # Placeholder to test file export
+        filename = '"' + part.name + '_BOM.' + export_format + '"'
+
+        filedata = part.export_bom(format=export_format)
+
+        return DownloadFile(filedata, filename)
+
+    def get_data(self):
+        return {
+            'info': 'Exported BOM'
+        }
 
 
 class PartDelete(AjaxDeleteView):
@@ -115,6 +206,7 @@ class PartDelete(AjaxDeleteView):
     template_name = 'part/delete.html'
     ajax_template_name = 'part/partial_delete.html'
     ajax_form_title = 'Confirm Part Deletion'
+    context_object_name = 'part'
 
     success_url = '/part/'
 

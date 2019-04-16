@@ -70,13 +70,14 @@ class PartList(generics.ListCreateAPIView):
     serializer_class = PartSerializer
 
     def get_queryset(self):
-        print("Get queryset")
 
         # Does the user wish to filter by category?
         cat_id = self.request.query_params.get('category', None)
 
+        # Start with all objects
+        parts_list = Part.objects.all()
+
         if cat_id:
-            print("Getting category:", cat_id)
             category = get_object_or_404(PartCategory, pk=cat_id)
 
             # Filter by the supplied category
@@ -90,10 +91,10 @@ class PartList(generics.ListCreateAPIView):
                         continue
                     flt |= Q(category=child)
 
-            return Part.objects.filter(flt)
+            parts_list = parts_list.filter(flt)
 
         # Default - return all parts
-        return Part.objects.all()
+        return parts_list
 
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
@@ -106,6 +107,11 @@ class PartList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
+        'buildable',
+        'consumable',
+        'trackable',
+        'purchaseable',
+        'salable',
     ]
 
     ordering_fields = [

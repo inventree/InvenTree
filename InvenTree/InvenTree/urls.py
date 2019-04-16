@@ -14,6 +14,7 @@ from build.urls import build_urls
 from part.api import part_api_urls
 from company.api import company_api_urls
 from stock.api import stock_api_urls
+from build.api import build_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -31,6 +32,7 @@ apipatterns = [
     url(r'^part/', include(part_api_urls)),
     url(r'^company/', include(company_api_urls)),
     url(r'^stock/', include(stock_api_urls)),
+    url(r'^build/', include(build_api_urls)),
 
     # User URLs
     url(r'^user/', include(user_urls)),

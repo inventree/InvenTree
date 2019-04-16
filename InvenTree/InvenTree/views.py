@@ -65,9 +65,7 @@ class AjaxMixin(object):
         else:
             return self.template_name
 
-    def renderJsonResponse(self, request, form, data={}):
-
-        context = {}
+    def renderJsonResponse(self, request, form=None, data={}, context={}):
 
         if form:
             context['form'] = form
@@ -92,22 +90,46 @@ class AjaxMixin(object):
 class AjaxView(AjaxMixin, View):
     """ Bare-bones AjaxView """
 
+    # By default, point to the modal_form template
+    # (this can be overridden by a child class)
+    ajax_template_name = 'modal_form.html'
+
     def post(self, request, *args, **kwargs):
         return JsonResponse('', safe=False)
 
     def get(self, request, *args, **kwargs):
 
-        return self.renderJsonResponse(request, None)
+        return self.renderJsonResponse(request)
 
 
 class AjaxCreateView(AjaxMixin, CreateView):
+
+    """ An 'AJAXified' CreateView for creating a new object in the db
+    - Returns a form in JSON format (for delivery to a modal window)
+    - Handles form validation via AJAX POST requests
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        response = super(CreateView, self).get(request, *args, **kwargs)
+
+        if request.is_ajax():
+            # Initialize a a new form
+            form = self.form_class(initial=self.get_initial())
+
+            return self.renderJsonResponse(request, form)
+
+        else:
+            return response
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data=request.POST, files=request.FILES)
 
         if request.is_ajax():
 
-            data = {'form_valid': form.is_valid()}
+            data = {
+                'form_valid': form.is_valid(),
+            }
 
             if form.is_valid():
                 obj = form.save()
@@ -122,20 +144,25 @@ class AjaxCreateView(AjaxMixin, CreateView):
         else:
             return super(CreateView, self).post(request, *args, **kwargs)
 
+
+class AjaxUpdateView(AjaxMixin, UpdateView):
+
+    """ An 'AJAXified' UpdateView for updating an object in the db
+    - Returns form in JSON format (for delivery to a modal window)
+    - Handles repeated form validation (via AJAX) until the form is valid
+    """
+
     def get(self, request, *args, **kwargs):
 
-        response = super(CreateView, self).get(request, *args, **kwargs)
+        html_response = super(UpdateView, self).get(request, *args, **kwargs)
 
         if request.is_ajax():
-            form = self.form_class(initial=self.get_initial())
+            form = self.form_class(instance=self.get_object())
 
             return self.renderJsonResponse(request, form)
 
         else:
-            return response
-
-
-class AjaxUpdateView(AjaxMixin, UpdateView):
+            return html_response
 
     def post(self, request, *args, **kwargs):
 
@@ -155,44 +182,25 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             return response
 
         else:
-            return response
-
-    def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            form = self.form_class(instance=self.get_object())
-
-            return self.renderJsonResponse(request, form)
-
-        else:
             return super(UpdateView, self).post(request, *args, **kwargs)
 
 
 class AjaxDeleteView(AjaxMixin, DeleteView):
 
-    def post(self, request, *args, **kwargs):
-
-        if request.is_ajax():
-            obj = self.get_object()
-            pk = obj.id
-            obj.delete()
-
-            data = {'id': pk,
-                    'delete': True}
-
-            return self.renderJsonResponse(request, None, data)
-
-        else:
-            return super(DeleteView, self).post(request, *args, **kwargs)
+    """ An 'AJAXified DeleteView for removing an object from the DB
+    - Returns a HTML object (not a form!) in JSON format (for delivery to a modal window)
+    - Handles deletion
+    """
 
     def get(self, request, *args, **kwargs):
 
-        response = super(DeleteView, self).get(request, *args, **kwargs)
+        html_response = super(DeleteView, self).get(request, *args, **kwargs)
 
         if request.is_ajax():
 
             data = {'id': self.get_object().id,
-                    'title': self.ajax_form_title,
                     'delete': False,
+                    'title': self.ajax_form_title,
                     'html_data': render_to_string(self.getAjaxTemplate(),
                                                   self.get_context_data(),
                                                   request=request)
@@ -201,7 +209,23 @@ class AjaxDeleteView(AjaxMixin, DeleteView):
             return JsonResponse(data)
 
         else:
-            return response
+            return html_response
+
+    def post(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+
+            obj = self.get_object()
+            pk = obj.id
+            obj.delete()
+
+            data = {'id': pk,
+                    'delete': True}
+
+            return self.renderJsonResponse(request, data=data)
+
+        else:
+            return super(DeleteView, self).post(request, *args, **kwargs)
 
 
 class IndexView(TemplateView):

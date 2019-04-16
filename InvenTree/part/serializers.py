@@ -43,7 +43,7 @@ class PartSerializer(serializers.ModelSerializer):
     """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
-    category = CategorySerializer(many=False, read_only=True)
+    category_name = serializers.CharField(source='category_path', read_only=True)
 
     class Meta:
         model = Part
@@ -55,11 +55,13 @@ class PartSerializer(serializers.ModelSerializer):
             'URL',  # Link to an external URL (optional)
             'description',
             'category',
+            'category_name',
             'total_stock',
             'available_stock',
             'units',
             'trackable',
             'buildable',
+            'consumable',
             'trackable',
             'salable',
         ]
@@ -79,7 +81,8 @@ class BomItemSerializer(serializers.ModelSerializer):
             'url',
             'part',
             'sub_part',
-            'quantity'
+            'quantity',
+            'note',
         ]
 
 

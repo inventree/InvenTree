@@ -126,8 +126,11 @@ class Part(models.Model):
     # Units of quantity for this part. Default is "pcs"
     units = models.CharField(max_length=20, default="pcs", blank=True)
 
-    # Can this part be built?
+    # Can this part be built from other parts?
     buildable = models.BooleanField(default=False, help_text='Can this part be built from other parts?')
+
+    # Can this part be used to make other parts?
+    consumable = models.BooleanField(default=True, help_text='Can this part be used to build other parts?')
 
     # Is this part "trackable"?
     # Trackable parts can have unique instances
@@ -278,6 +281,73 @@ class Part(models.Model):
         # Return the number of supplier parts available for this part
         return self.supplier_parts.count()
 
+    def export_bom(self, **kwargs):
+
+        # Construct the export data
+        header = []
+        header.append('Part')
+        header.append('Description')
+        header.append('Quantity')
+        header.append('Note')
+
+        rows = []
+
+        for it in self.bom_items.all():
+            line = []
+
+            line.append(it.sub_part.name)
+            line.append(it.sub_part.description)
+            line.append(it.quantity)
+            line.append(it.note)
+
+            rows.append([str(x) for x in line])
+
+        file_format = kwargs.get('format', 'csv').lower()
+
+        kwargs['header'] = header
+        kwargs['rows'] = rows
+
+        if file_format == 'csv':
+            return self.export_bom_csv(**kwargs)
+        elif file_format in ['xls', 'xlsx']:
+            return self.export_bom_xls(**kwargs)
+        elif file_format == 'xml':
+            return self.export_bom_xml(**kwargs)
+        elif file_format in ['htm', 'html']:
+            return self.export_bom_htm(**kwargs)
+        elif file_format == 'pdf':
+            return self.export_bom_pdf(**kwargs)
+        else:
+            return None
+
+    def export_bom_csv(self, **kwargs):
+
+        # Construct header line
+        header = kwargs.get('header')
+        rows = kwargs.get('rows')
+
+        # TODO - Choice of formatters goes here?
+        out = ','.join(header)
+
+        for row in rows:
+            out += '\n'
+            out += ','.join(row)
+
+        return out
+
+    def export_bom_xls(self, **kwargs):
+
+        return ''
+
+    def export_bom_xml(self, **kwargs):
+        return ''
+
+    def export_bom_htm(self, **kwargs):
+        return ''
+
+    def export_bom_pdf(self, **kwargs):
+        return ''
+
     """
     @property
     def projects(self):
@@ -338,10 +408,14 @@ class BomItem(models.Model):
 
     # A link to the child item (sub-part)
     # Each part will get a reverse lookup field 'used_in'
-    sub_part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='used_in')
+    sub_part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='used_in',
+                                 limit_choices_to={'consumable': True})
 
     # Quantity required
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])
+
+    # Note attached to this BOM line item
+    note = models.CharField(max_length=100, blank=True, help_text='Item notes')
 
     def clean(self):
 
