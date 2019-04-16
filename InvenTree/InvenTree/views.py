@@ -65,7 +65,10 @@ class AjaxMixin(object):
         else:
             return self.template_name
 
-    def renderJsonResponse(self, request, form=None, data={}, context={}):
+    def renderJsonResponse(self, request, form=None, data={}, context=None):
+
+        if context is None:
+            context = self.get_context_data()
 
         if form:
             context['form'] = form
@@ -100,12 +103,32 @@ class AjaxView(AjaxMixin, View):
 
 class AjaxCreateView(AjaxMixin, CreateView):
 
+    """ An 'AJAXified' CreateView for creating a new object in the db
+    - Returns a form in JSON format (for delivery to a modal window)
+    - Handles form validation via AJAX POST requests
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        response = super(CreateView, self).get(request, *args, **kwargs)
+
+        if request.is_ajax():
+            # Initialize a a new form
+            form = self.form_class(initial=self.get_initial())
+
+            return self.renderJsonResponse(request, form)
+
+        else:
+            return response
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(data=request.POST, files=request.FILES)
 
         if request.is_ajax():
 
-            data = {'form_valid': form.is_valid()}
+            data = {
+                'form_valid': form.is_valid(),
+            }
 
             if form.is_valid():
                 obj = form.save()
@@ -115,22 +138,12 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
                 data['url'] = obj.get_absolute_url()
 
-            return self.renderJsonResponse(request, form=form, data=data, **kwargs)
+            return self.renderJsonResponse(request, form, data)
 
         else:
             return super(CreateView, self).post(request, *args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
 
-        response = super(CreateView, self).get(request, *args, **kwargs)
-
-        if request.is_ajax():
-            form = self.form_class(initial=self.get_initial())
-
-            return self.renderJsonResponse(request, form=form, **kwargs)
-
-        else:
-            return response
 
 
 class AjaxUpdateView(AjaxMixin, UpdateView):
