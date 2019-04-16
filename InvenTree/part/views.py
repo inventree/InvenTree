@@ -341,7 +341,7 @@ class SupplierPartCreate(AjaxCreateView):
     form_class = EditSupplierPartForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create new Supplier Part'
-    template_name = 'company/partcreate.html'
+    #template_name = 'company/partcreate.html'
     context_object_name = 'part'
 
     def get_initial(self):

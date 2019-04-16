@@ -459,7 +459,7 @@ class SupplierPart(models.Model):
 # The part will have a field 'supplier_parts' which links to the supplier part options
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='supplier_parts',
-                             limit_choices_to={'purchasable': True},
+                             limit_choices_to={'purchaseable': True},
                              )
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
