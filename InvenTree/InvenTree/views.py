@@ -241,4 +241,8 @@ class SearchView(TemplateView):
 
         context = self.get_context_data()
 
+        query = request.POST.get('search', '')
+
+        context['query'] = query
+
         return super(TemplateView, self).render_to_response(context)
