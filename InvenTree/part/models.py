@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 
 import os
 
+import math
+
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
@@ -456,7 +458,9 @@ class SupplierPart(models.Model):
     # Link to an actual part
 # The part will have a field 'supplier_parts' which links to the supplier part options
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
-                             related_name='supplier_parts')
+                             related_name='supplier_parts',
+                             limit_choices_to={'purchaseable': True},
+                             )
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
                                  related_name='parts')
@@ -469,22 +473,25 @@ class SupplierPart(models.Model):
 
     URL = models.URLField(blank=True)
 
-    description = models.CharField(max_length=250, blank=True)
+    description = models.CharField(max_length=250, blank=True, help_text='Supplier part description')
+
+    # Note attached to this BOM line item
+    note = models.CharField(max_length=100, blank=True, help_text='Notes')
 
     # Default price for a single unit
-    single_price = models.DecimalField(max_digits=10, decimal_places=3, default=0)
+    single_price = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text='Price for single quantity')
 
     # Base charge added to order independent of quantity e.g. "Reeling Fee"
-    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0)
+    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text='Minimum charge (e.g. stocking fee)')
 
     # packaging that the part is supplied in, e.g. "Reel"
-    packaging = models.CharField(max_length=50, blank=True)
+    packaging = models.CharField(max_length=50, blank=True, help_text='Part packaging')
 
     # multiple that the part is provided in
-    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])
+    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Order multiple')
 
     # Mimumum number required to order
-    minimum = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])
+    minimum = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Minimum order quantity (MOQ)')
 
     # lead time for parts that cannot be delivered immediately
     lead_time = models.DurationField(blank=True, null=True)
@@ -501,6 +508,50 @@ class SupplierPart(models.Model):
 
         return ' | '.join(items)
 
+    @property
+    def has_price_breaks(self):
+        return self.price_breaks.count() > 0
+
+    def get_price(self, quantity, moq=True, multiples=True):
+        """ Calculate the supplier price based on quantity price breaks.
+        - If no price breaks available, use the single_price field
+        - Don't forget to add in flat-fee cost (base_cost field)
+        - If MOQ (minimum order quantity) is required, bump quantity
+        - If order multiples are to be observed, then we need to calculate based on that, too
+        """
+
+        # Order multiples
+        if multiples:
+            quantity = int(math.ceil(quantity / self.multipe) * self.multiple)
+
+        # Minimum ordering requirement
+        if moq and self.minimum > quantity:
+            quantity = self.minimum
+
+        pb_found = False
+        pb_quantity = -1
+        pb_cost = 0.0
+
+        for pb in self.price_breaks.all():
+            # Ignore this pricebreak!
+            if pb.quantity > quantity:
+                continue
+
+            pb_found = True
+
+            # If this price-break quantity is the largest so far, use it!
+            if pb.quantity > pb_quantity:
+                pb_quantity = pb.quantity
+                pb_cost = pb.cost
+
+        # No appropriate price-break found - use the single cost!
+        if pb_found:
+            cost = pb_cost * quantity
+        else:
+            cost = self.single_price * quantity
+
+        return cost + self.base_cost
+
     def __str__(self):
         return "{sku} - {supplier}".format(
             sku=self.SKU,
@@ -514,8 +565,11 @@ class SupplierPriceBreak(models.Model):
     """
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='price_breaks')
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)])
-    cost = models.DecimalField(max_digits=10, decimal_places=3)
+
+    # At least 2 units are required for a 'price break' - Otherwise, just use single-price!
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(2)])
+
+    cost = models.DecimalField(max_digits=10, decimal_places=3, validators=[MinValueValidator(0)])
 
     class Meta:
         unique_together = ("part", "quantity")

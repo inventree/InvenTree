@@ -44,9 +44,42 @@
     <tr><td>Manufacturer</td><td>{{ part.manufacturer }}</td></tr>
     <tr><td>MPN</td><td>{{ part.MPN }}</td></tr>
 {% endif %}
+{% if part.note %}
+    <tr><td>Note</td><td>{{ part.note }}</td></tr>
+{% endif %}
+    <tr><th colspan='2'>Pricing</th></tr>
+    <tr><td>Single Price</td><td>{{ part.single_price }}</td></tr>
+{% if part.multiple > 1 %}
+    <tr><td>Order Multiple</td><td>{{ part.multiple }}</td></tr>
+{% endif %}
+{% if part.base_cost > 0 %}
+    <tr><td>Base Price (Flat Fee)</td><td>{{ part.base_cost }}</td></tr>
+{% endif %}
+{% if part.minimum > 1 %}
+    <tr><td>Minimum Order Quantity</td><td>{{ part.minimum }}</td></tr>
+{% endif %}
 </table>
 
 <br>
+
+<h3>Price Breaks</h3>
+
+<table class="table table-striped table-condensed">
+    <tr>
+        <th>Quantity</th>
+        <th>Price</th>
+    </tr>
+{% for pb in part.price_breaks.all %}
+    <tr>
+        <td>{{ pb.quantity }}</td>
+        <td>{{ pb.cost }}</td>
+    </tr>
+{% endfor %}
+</table>
+
+<div>
+    <button class='btn btn-primary' type='button'>New Price Break</button>
+</div>
 
 {% include 'modals.html' %}
 

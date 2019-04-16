@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Part, PartCategory, BomItem
-from .models import SupplierPart
+from .models import SupplierPart, SupplierPriceBreak
 
 from company.serializers import CompanyBriefSerializer
 
@@ -103,4 +103,16 @@ class SupplierPartSerializer(serializers.ModelSerializer):
             'SKU',
             'manufacturer',
             'MPN',
+        ]
+
+
+class SupplierPriceBreakSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SupplierPriceBreak
+        fields = [
+            'pk',
+            'part',
+            'quantity',
+            'cost'
         ]
