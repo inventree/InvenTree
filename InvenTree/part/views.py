@@ -128,38 +128,38 @@ class BomExport(AjaxView):
 
     model = Part
     ajax_form_title = 'Export BOM'
-    template_name = 'part/bom_export.html'
+    ajax_template_name = 'part/bom_export.html'
     #template_name = 'modal_form.html'
     context_object_name = 'part'
     form_class = BomExportForm
 
+    def get_object(self):
+        return get_object_or_404(Part, pk=self.kwargs['pk'])
+
     def get(self, request, *args, **kwargs):
         form = self.form_class()
 
-        part = get_object_or_404(Part, pk=self.kwargs['pk'])
+        part = self.get_object()
 
         context = {
             'part': part
         }
 
+        if request.is_ajax():
+            pass
+
         return self.renderJsonResponse(request, form, context=context)
 
     def post(self, request, *args, **kwargs):
+        """
+        User has now submitted the BOM export data
+        """ 
+
+        part = self.get_object()
+
+        print("POSTED")
 
         return super(AjaxView, self).post(request, *args, **kwargs)
-
-    """
-    def get(self, request, *args, **kwargs):
-
-        data = {
-            'title': 'Export BOM',
-            'html_data': render_to_string(self.getAjaxTemplate(),
-                                          self.get_context_data(),
-                                          request=request)
-        }
-
-        return JsonResponse(data)
-    """
 
     def get_data(self):
         return {
@@ -188,11 +188,11 @@ class BomDownload(AjaxView):
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
 
         export_format = request.GET.get('format', 'csv')
-        
+
         # Placeholder to test file export
         filename = '"' + part.name + '_BOM.' + export_format + '"'
 
-        filedata = part.export_bom()
+        filedata = part.export_bom(format=export_format)
 
         return DownloadFile(filedata, filename)
 

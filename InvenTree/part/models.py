@@ -302,7 +302,7 @@ class Part(models.Model):
 
             rows.append([str(x) for x in line])
 
-        file_format = kwargs.get('file_format', 'csv').lower()
+        file_format = kwargs.get('format', 'csv').lower()
 
         kwargs['header'] = header
         kwargs['rows'] = rows

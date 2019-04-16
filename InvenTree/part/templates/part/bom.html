@@ -70,8 +70,11 @@
     });
 
     $("#export-bom").click(function () {
-        //TODO - Select format of the data
-        location.href = "{% url 'bom-export' part.id %}";
+        downloadBom({
+            modal: '#modal-form',
+            url: "{% url 'bom-export' part.id %}"
+        });
+
     });
 
     {% endif %}

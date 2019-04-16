@@ -12,6 +12,46 @@ function reloadBomTable(table, options) {
 }
 
 
+function downloadBom(options = {}) {
+
+    var modal = options.modal || "#modal-form";
+    
+    var content = `
+        <b>Select file format</b><br>
+        <div class='controls'>
+        <select id='bom-format' class='select'>
+            <option value='csv'>CSV</option>
+            <option value='xls'>XLSX</option>
+            <option value='pdf'>PDF</option>
+            <option value='xml'>XML</option>
+            <option value='htm'>HTML</option>
+        </select>
+        </div>
+    `;
+
+    openModal({
+        modal: modal,
+        title: "Export Bill of Materials",
+        submit_text: "Download",
+        close_text: "Cancel",
+    });
+
+    modalSetContent(modal, content);
+
+    $(modal).on('click', '#modal-form-submit', function() {
+        $(modal).modal('hide');
+
+        var format = $(modal).find('#bom-format :selected').val();
+
+        if (options.url) {
+            var url = options.url + "?format=" + format;
+
+            location.href = url;
+        }
+    });
+}
+
+
 function loadBomTable(table, options) {
     /* Load a BOM table with some configurable options.
      * 

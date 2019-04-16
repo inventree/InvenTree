@@ -23,8 +23,10 @@ class BomExportForm(HelperForm):
     # TODO - Define these choices somewhere else, and import them here
     format_choices = (
         ('csv', 'CSV'),
-        ('xlsx', 'XLSX'),
         ('pdf', 'PDF'),
+        ('xml', 'XML'),
+        ('xlsx', 'XLSX'),
+        ('html', 'HTML')
     )
 
     # Select export type
@@ -33,6 +35,7 @@ class BomExportForm(HelperForm):
     class Meta:
         model = Part
         fields = [
+            'format',
         ]
 
 
