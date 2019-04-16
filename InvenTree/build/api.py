@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework import generics, permissions
 
-from django.conf.urls import url, include
+from django.conf.urls import url
 
 from .models import Build
 from .serializers import BuildSerializer
@@ -29,6 +29,7 @@ class BuildList(generics.ListAPIView):
     filter_fields = [
         'part',
     ]
+
 
 build_api_urls = [
     url(r'^.*$', BuildList.as_view(), name='api-build-list')

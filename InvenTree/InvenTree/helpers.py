@@ -1,7 +1,7 @@
 import io
-import os
+
 from wsgiref.util import FileWrapper
-from django.http import StreamingHttpResponse, HttpResponse
+from django.http import StreamingHttpResponse
 
 
 def WrapWithQuotes(text):

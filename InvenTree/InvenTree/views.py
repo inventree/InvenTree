@@ -145,8 +145,6 @@ class AjaxCreateView(AjaxMixin, CreateView):
             return super(CreateView, self).post(request, *args, **kwargs)
 
 
-
-
 class AjaxUpdateView(AjaxMixin, UpdateView):
 
     """ An 'AJAXified' UpdateView for updating an object in the db
@@ -187,13 +185,11 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             return super(UpdateView, self).post(request, *args, **kwargs)
 
 
-
-
 class AjaxDeleteView(AjaxMixin, DeleteView):
 
     """ An 'AJAXified DeleteView for removing an object from the DB
     - Returns a HTML object (not a form!) in JSON format (for delivery to a modal window)
-    - Handles deletion 
+    - Handles deletion
     """
 
     def get(self, request, *args, **kwargs):

@@ -3,8 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import get_object_or_404
 
-from django.template.loader import render_to_string
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 
 from company.models import Company
@@ -19,9 +18,10 @@ from .forms import BomExportForm
 
 from .forms import EditSupplierPartForm
 
-from InvenTree.views import AjaxMixin, AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 
 from InvenTree.helpers import DownloadFile
+
 
 class PartIndex(ListView):
     model = Part
@@ -129,7 +129,6 @@ class BomExport(AjaxView):
     model = Part
     ajax_form_title = 'Export BOM'
     ajax_template_name = 'part/bom_export.html'
-    #template_name = 'modal_form.html'
     context_object_name = 'part'
     form_class = BomExportForm
 
@@ -139,6 +138,7 @@ class BomExport(AjaxView):
     def get(self, request, *args, **kwargs):
         form = self.form_class()
 
+        """
         part = self.get_object()
 
         context = {
@@ -146,26 +146,25 @@ class BomExport(AjaxView):
         }
 
         if request.is_ajax():
-            pass
+            passs
+        """
 
-        return self.renderJsonResponse(request, form, context=context)
+        return self.renderJsonResponse(request, form)
 
     def post(self, request, *args, **kwargs):
         """
         User has now submitted the BOM export data
-        """ 
+        """
 
-        part = self.get_object()
-
-        print("POSTED")
+        # part = self.get_object()
 
         return super(AjaxView, self).post(request, *args, **kwargs)
 
     def get_data(self):
         return {
-            #'form_valid': True,
-            #'redirect': '/'
-            #'redirect': reverse('bom-download', kwargs={'pk': self.request.GET.get('pk')})
+            # 'form_valid': True,
+            # 'redirect': '/'
+            # 'redirect': reverse('bom-download', kwargs={'pk': self.request.GET.get('pk')})
         }
 
 
@@ -178,10 +177,10 @@ class BomDownload(AjaxView):
     # TODO - This should no longer extend an AjaxView!
 
     model = Part
-    #form_class = BomExportForm
-    #template_name = 'part/bom_export.html'
-    #ajax_form_title = 'Export Bill of Materials'
-    #context_object_name = 'part'
+    # form_class = BomExportForm
+    # template_name = 'part/bom_export.html'
+    # ajax_form_title = 'Export Bill of Materials'
+    # context_object_name = 'part'
 
     def get(self, request, *args, **kwargs):
 

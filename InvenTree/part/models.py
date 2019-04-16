@@ -320,7 +320,6 @@ class Part(models.Model):
         else:
             return None
 
-
     def export_bom_csv(self, **kwargs):
 
         # Construct header line
@@ -336,25 +335,18 @@ class Part(models.Model):
 
         return out
 
-
     def export_bom_xls(self, **kwargs):
 
         return ''
 
-
     def export_bom_xml(self, **kwargs):
         return ''
-
 
     def export_bom_htm(self, **kwargs):
         return ''
 
-
     def export_bom_pdf(self, **kwargs):
         return ''
-
-    
-
 
     """
     @property
@@ -412,12 +404,12 @@ class BomItem(models.Model):
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='bom_items',
-                            limit_choices_to={'buildable': True})
+                             limit_choices_to={'buildable': True})
 
     # A link to the child item (sub-part)
     # Each part will get a reverse lookup field 'used_in'
     sub_part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='used_in',
-                            limit_choices_to={'consumable': True})
+                                 limit_choices_to={'consumable': True})
 
     # Quantity required
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])

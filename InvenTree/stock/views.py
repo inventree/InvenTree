@@ -80,9 +80,9 @@ class StockItemEdit(AjaxUpdateView):
 
     model = StockItem
     form_class = EditStockItemForm
-    template_name = 'stock/item_edit.html'
+    # template_name = 'stock/item_edit.html'
     context_object_name = 'item'
-    #ajax_template_name = 'modal_form.html'
+    ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Stock Item'
 
 
