@@ -2,14 +2,58 @@
 
 {% block content %}
 
-<h3>InvenTree Search</h3>
+<h3>Search Results</h3>
 
-<p>
-    Searched for: {{ query }}
-</p>
+{% include "search_form.html" with query_text=query %}
+
+<br><br>
+<h3>Parts <span id='part-result-count'></span></h3>
+<table class='table table-striped table-condensed' data-toolbar="#button-toolbar" id='part-results-table'>
+</table>
 
 {% endblock %}
 
+{% block js_ready %}
+{{ block.super }}
 
-{% block js_load %}
+    $("#part-results-table").on('load-success.bs.table', function() {
+        var n = $("#part-results-table").bootstrapTable('getData').length;
+        $("#part-result-count").html("(found " + n + " results)");
+    });
+    
+    $("#part-results-table").bootstrapTable({
+        sortable: true,
+        search: true,
+        pagination: true,
+        queryParams: function(p) {
+            return {
+                search: "{{ query }}",
+            }
+        },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                field: 'name',
+                title: 'Name',
+                sortable: true,
+                searchable: true,
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, row.url);
+                }
+            },
+            {
+                field: 'description',
+                title: 'Description',
+                searchable: true,
+            }
+        ],
+        url: "{% url 'api-part-list' %}"
+    });
+
+
+
 {% endblock %}
