@@ -145,6 +145,20 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
 class AjaxUpdateView(AjaxMixin, UpdateView):
 
+    """ An 'AJAXified' UpdateView for updating an object in the db
+    - Returns form in JSON format (for delivery to a modal window)
+    - Handles repeated form validation (via AJAX) until the form is valid
+    """
+
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax():
+            form = self.form_class(instance=self.get_object())
+
+            return self.renderJsonResponse(request, form)
+
+        else:
+            return super(UpdateView, self).post(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
 
         form = self.form_class(instance=self.get_object(), data=request.POST, files=request.FILES)
@@ -165,14 +179,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         else:
             return response
 
-    def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            form = self.form_class(instance=self.get_object())
 
-            return self.renderJsonResponse(request, form)
-
-        else:
-            return super(UpdateView, self).post(request, *args, **kwargs)
 
 
 class AjaxDeleteView(AjaxMixin, DeleteView):
