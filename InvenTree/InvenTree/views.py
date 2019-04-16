@@ -90,12 +90,16 @@ class AjaxMixin(object):
 class AjaxView(AjaxMixin, View):
     """ Bare-bones AjaxView """
 
+    # By default, point to the modal_form template
+    # (this can be overridden by a child class)
+    ajax_template_name = 'modal_form.html'
+
     def post(self, request, *args, **kwargs):
         return JsonResponse('', safe=False)
 
     def get(self, request, *args, **kwargs):
 
-        return self.renderJsonResponse(request, **kwargs)
+        return self.renderJsonResponse(request)
 
 
 class AjaxCreateView(AjaxMixin, CreateView):
@@ -151,13 +155,16 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
     """
 
     def get(self, request, *args, **kwargs):
+
+        html_response = super(UpdateView, self).get(request, *args, **kwargs)
+
         if request.is_ajax():
             form = self.form_class(instance=self.get_object())
 
             return self.renderJsonResponse(request, form)
 
         else:
-            return super(UpdateView, self).post(request, *args, **kwargs)
+            return html_response
 
     def post(self, request, *args, **kwargs):
 
@@ -177,7 +184,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             return response
 
         else:
-            return response
+            return super(UpdateView, self).post(request, *args, **kwargs)
 
 
 

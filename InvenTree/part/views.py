@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 from django.shortcuts import get_object_or_404
 
-from django.urls import reverse_lazy
-
+from django.template.loader import render_to_string
+from django.urls import reverse_lazy, reverse
 from django.views.generic import DetailView, ListView
 
 from company.models import Company
@@ -19,7 +19,7 @@ from .forms import BomExportForm
 
 from .forms import EditSupplierPartForm
 
-from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+from InvenTree.views import AjaxMixin, AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 
 from InvenTree.helpers import DownloadFile
 
@@ -117,20 +117,70 @@ class PartImage(AjaxUpdateView):
 
 class PartEdit(AjaxUpdateView):
     model = Part
-    form_class = EditPartForm
     template_name = 'part/edit.html'
+    form_class = EditPartForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Part Properties'
+    context_object_name = 'part'
 
 
 class BomExport(AjaxView):
+
+    model = Part
+    ajax_form_title = 'Export BOM'
+    template_name = 'part/bom_export.html'
+    #template_name = 'modal_form.html'
+    context_object_name = 'part'
+    form_class = BomExportForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+
+        part = get_object_or_404(Part, pk=self.kwargs['pk'])
+
+        context = {
+            'part': part
+        }
+
+        return self.renderJsonResponse(request, form, context=context)
+
+    def post(self, request, *args, **kwargs):
+
+        return super(AjaxView, self).post(request, *args, **kwargs)
+
+    """
+    def get(self, request, *args, **kwargs):
+
+        data = {
+            'title': 'Export BOM',
+            'html_data': render_to_string(self.getAjaxTemplate(),
+                                          self.get_context_data(),
+                                          request=request)
+        }
+
+        return JsonResponse(data)
+    """
+
+    def get_data(self):
+        return {
+            #'form_valid': True,
+            #'redirect': '/'
+            #'redirect': reverse('bom-download', kwargs={'pk': self.request.GET.get('pk')})
+        }
+
+
+class BomDownload(AjaxView):
+    """
+    Provide raw download of a BOM file.
+    - File format should be passed as a query param e.g. ?format=csv
+    """
+
     # TODO - This should no longer extend an AjaxView!
 
     model = Part
     #form_class = BomExportForm
     #template_name = 'part/bom_export.html'
     #ajax_form_title = 'Export Bill of Materials'
-    #ajax_submit_text = 'Export'
     #context_object_name = 'part'
 
     def get(self, request, *args, **kwargs):
@@ -157,6 +207,7 @@ class PartDelete(AjaxDeleteView):
     template_name = 'part/delete.html'
     ajax_template_name = 'part/partial_delete.html'
     ajax_form_title = 'Confirm Part Deletion'
+    context_object_name = 'part'
 
     success_url = '/part/'
 
@@ -241,7 +292,6 @@ class BomItemCreate(AjaxCreateView):
     template_name = 'part/bom-create.html'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create BOM item'
-    ajax_submit_text = 'Create'
 
     def get_initial(self):
         # Look for initial values
