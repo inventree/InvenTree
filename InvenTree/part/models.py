@@ -516,7 +516,7 @@ class SupplierPart(models.Model):
         """ Calculate the supplier price based on quantity price breaks.
         - If no price breaks available, use the single_price field
         - Don't forget to add in flat-fee cost (base_cost field)
-        - If MOQ (minimum order quantity) is required, bump quantity 
+        - If MOQ (minimum order quantity) is required, bump quantity
         - If order multiples are to be observed, then we need to calculate based on that, too
         """
 
@@ -552,7 +552,6 @@ class SupplierPart(models.Model):
 
         return cost + self.base_cost
 
-
     def __str__(self):
         return "{sku} - {supplier}".format(
             sku=self.SKU,
@@ -566,7 +565,7 @@ class SupplierPriceBreak(models.Model):
     """
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='price_breaks')
-    
+
     # At least 2 units are required for a 'price break' - Otherwise, just use single-price!
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(2)])
 
