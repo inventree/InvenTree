@@ -10,10 +10,10 @@ from django.conf.urls import url, include
 from django.shortcuts import get_object_or_404
 
 from .models import Part, PartCategory, BomItem
-from .models import SupplierPart
+from .models import SupplierPart, SupplierPriceBreak
 
 from .serializers import PartSerializer, BomItemSerializer
-from .serializers import SupplierPartSerializer
+from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
 from .serializers import CategorySerializer
 
 from InvenTree.views import TreeSerializer
@@ -168,6 +168,24 @@ class SupplierPartList(generics.ListAPIView):
     ]
 
 
+class SupplierPriceBreakList(generics.ListCreateAPIView):
+
+    queryset = SupplierPriceBreak.objects.all()
+    serializer_class = SupplierPriceBreakSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
+    filter_fields = [
+        'part',
+    ]
+
+
 cat_api_urls = [
     url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
 ]
@@ -177,6 +195,7 @@ part_api_urls = [
 
     url(r'^category/', include(cat_api_urls)),
 
+    url(r'^price-break/?', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
     url(r'^supplier/?', SupplierPartList.as_view(), name='api-part-supplier-list'),
     url(r'^bom/?', BomList.as_view(), name='api-bom-list'),
 

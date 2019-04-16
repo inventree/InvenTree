@@ -508,6 +508,10 @@ class SupplierPart(models.Model):
 
         return ' | '.join(items)
 
+    @property
+    def has_price_breaks(self):
+        return self.price_breaks.count() > 0
+
     def get_price(self, quantity, moq=True, multiples=True):
         """ Calculate the supplier price based on quantity price breaks.
         - If no price breaks available, use the single_price field
