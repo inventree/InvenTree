@@ -99,4 +99,11 @@ class EditSupplierPartForm(HelperForm):
                 'URL',
                 'manufacturer',
                 'MPN',
+                'note',
+                'single_price',
+                'base_cost',
+                'multiple',
+                'minimum',
+                'packaging',
+                'lead_time'
             ]

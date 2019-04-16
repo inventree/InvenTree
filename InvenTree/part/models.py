@@ -488,10 +488,10 @@ class SupplierPart(models.Model):
     packaging = models.CharField(max_length=50, blank=True, help_text='Part packaging')
 
     # multiple that the part is provided in
-    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)], help_text='Order multiple')
+    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Order multiple')
 
     # Mimumum number required to order
-    minimum = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)], help_text='Minimum order quantity (MOQ)')
+    minimum = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Minimum order quantity (MOQ)')
 
     # lead time for parts that cannot be delivered immediately
     lead_time = models.DurationField(blank=True, null=True)
