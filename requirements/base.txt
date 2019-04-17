@@ -6,6 +6,7 @@ django_filter>=1.0.2
 django-simple-history>=1.8.2
 coreapi>=2.3.0
 pygments>=2.2.0
+tablib>=0.13.0
 django-crispy-forms>=1.7.2
 django-import-export>=1.0.0
 django-cleanup>=2.1.0

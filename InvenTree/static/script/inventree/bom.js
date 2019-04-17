@@ -22,9 +22,10 @@ function downloadBom(options = {}) {
         <select id='bom-format' class='select'>
             <option value='csv'>CSV</option>
             <option value='xls'>XLSX</option>
-            <option value='pdf'>PDF</option>
+            <option value='yaml'>YAML</option>
+            <option value='json'>JSON</option>
             <option value='xml'>XML</option>
-            <option value='htm'>HTML</option>
+            <option value='html'>HTML</option>
         </select>
         </div>
     `;

@@ -5,6 +5,8 @@ import os
 
 import math
 
+import tablib
+
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
@@ -285,14 +287,12 @@ class Part(models.Model):
 
     def export_bom(self, **kwargs):
 
-        # Construct the export data
-        header = []
-        header.append('Part')
-        header.append('Description')
-        header.append('Quantity')
-        header.append('Note')
-
-        rows = []
+        data = tablib.Dataset(headers=[
+            'Part',
+            'Description',
+            'Quantity',
+            'Note',
+        ])
 
         for it in self.bom_items.all():
             line = []
@@ -302,73 +302,11 @@ class Part(models.Model):
             line.append(it.quantity)
             line.append(it.note)
 
-            rows.append([str(x) for x in line])
+            data.append(line)
 
         file_format = kwargs.get('format', 'csv').lower()
 
-        kwargs['header'] = header
-        kwargs['rows'] = rows
-
-        if file_format == 'csv':
-            return self.export_bom_csv(**kwargs)
-        elif file_format in ['xls', 'xlsx']:
-            return self.export_bom_xls(**kwargs)
-        elif file_format == 'xml':
-            return self.export_bom_xml(**kwargs)
-        elif file_format in ['htm', 'html']:
-            return self.export_bom_htm(**kwargs)
-        elif file_format == 'pdf':
-            return self.export_bom_pdf(**kwargs)
-        else:
-            return None
-
-    def export_bom_csv(self, **kwargs):
-
-        # Construct header line
-        header = kwargs.get('header')
-        rows = kwargs.get('rows')
-
-        # TODO - Choice of formatters goes here?
-        out = ','.join(header)
-
-        for row in rows:
-            out += '\n'
-            out += ','.join(row)
-
-        return out
-
-    def export_bom_xls(self, **kwargs):
-
-        return ''
-
-    def export_bom_xml(self, **kwargs):
-        return ''
-
-    def export_bom_htm(self, **kwargs):
-        return ''
-
-    def export_bom_pdf(self, **kwargs):
-        return ''
-
-    """
-    @property
-    def projects(self):
-        " Return a list of unique projects that this part is associated with.
-        A part may be used in zero or more projects.
-        "
-
-        project_ids = set()
-        project_parts = self.projectpart_set.all()
-
-        projects = []
-
-        for pp in project_parts:
-            if pp.project.id not in project_ids:
-                project_ids.add(pp.project.id)
-                projects.append(pp.project)
-
-        return projects
-    """
+        return data.export(file_format)
 
 
 def attach_file(instance, filename):
