@@ -62,6 +62,13 @@
         </tr>
         {% endif %}
     </table>
+
+    <h4>Attachments</h4>
+    <ul>
+    {% for attachment in part.attachments.all %}
+    <li><a href="{{ attachment.attachment }}">{{ attachment.attachment }}</a></li>
+    {% endfor %}
+    </ul>
 </div>
 </div>
 
