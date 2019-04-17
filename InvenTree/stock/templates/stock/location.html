@@ -9,6 +9,7 @@
     <p>{{ location.description }}</p>
     {% else %}
     <h3>Stock</h3>
+    <p>All stock items</p>
     {% endif %}
 </div>
 <div class='col-sm-6'>
@@ -135,92 +136,33 @@
         return false;
     });
 
-    function _stock(action) {
-        adjustStock({
-            action: action,
-            items: selectedStock(),
-            success: function() {
-                $('#stock-table').bootstrapTable('refresh');
-            }
-        })
-    }
-
     $('#multi-item-stocktake').click(function() {
-        _stock('stocktake');
+        updateStockItems({
+            action: 'stocktake',
+        });
         return false;
     });
 
     $('#multi-item-remove').click(function() {
-        _stock('remove');
+        updateStockItems({
+            action: 'remove',
+        });
         return false;
     });
 
     $('#multi-item-add').click(function() {
-        _stock('add');
+        updateStockItems({
+            action: 'add',
+        });
         return false;
     });
 
-    $("#stock-table").bootstrapTable({
-        sortable: true,
-        search: true,
-        method: 'get',
-        pagination: true,
-        rememberOrder: true,
-        {% if location %}
-        queryParams: function(p) {
-            return {
-                location: {{ location.id }}
-            }
-        },
-        {% endif %}
-        columns: [
-            {
-                checkbox: true,
-                title: 'Select',
-                searchable: false,
-            },
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-            },
-            {
-                field: 'part.name',
-                title: 'Part',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, row.part.url);
-                }
-            },
-            {% if location == None %}
-            {
-                field: 'location',
-                title: 'Location',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    if (row.location) {
-                        return renderLink(row.location.name, row.location.url);
-                    }
-                    else {
-                        return '';
-                    }
-                }
-            },
+    loadStockTable($("#stock-table"), {
+        params: {
+            {% if location %}
+            location: {{ location.id }}
             {% endif %}
-            {
-                field: 'quantity',
-                title: 'Stock',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url);
-                }
-            },
-            {
-                field: 'status',
-                title: 'Status',
-                sortable: true,
-            }
-        ],
+        },
         url: "{% url 'api-stock-list' %}",
     });
 

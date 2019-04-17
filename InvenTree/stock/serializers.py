@@ -63,6 +63,7 @@ class StockItemSerializer(serializers.ModelSerializer):
 
     part = PartBriefSerializer(many=False, read_only=True)
     location = LocationBriefSerializer(many=False, read_only=True)
+    status_text = serializers.CharField(source='get_status_display', read_only=True)
 
     class Meta:
         model = StockItem
@@ -78,6 +79,7 @@ class StockItemSerializer(serializers.ModelSerializer):
             'serial',
             'batch',
             'status',
+            'status_text',
             'notes',
         ]
 

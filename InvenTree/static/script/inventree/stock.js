@@ -153,6 +153,19 @@ function updateStock(items, options={}) {
     });
 }
 
+
+function selectStockItems(options) {
+    /* Return list of selections from stock table
+     * If options.table not provided, assumed to be '#stock-table'
+     */
+
+    var table_name = options.table || '#stock-table';
+
+    // Return list of selected items from the bootstrap table
+    return $(table_name).bootstrapTable('getSelections');
+}
+
+
 function adjustStock(options) {
     if (options.items) {
         updateStock(options.items, options);
@@ -170,6 +183,32 @@ function adjustStock(options) {
             });
          }
     }
+}
+
+ 
+function updateStockItems(options) {
+    /* Update one or more stock items selected from a stock-table
+     * Options available:
+     * 'action' - Action to perform - 'add' / 'remove' / 'stocktake'
+     * 'table' - ID of the stock table (default = '#stock-table'
+     */
+
+    var table = options.table || '#stock-table';
+
+    var items = selectStockItems({
+        table: table,
+    });
+
+    // Pass items through
+    options.items = items;
+    options.table = table;
+
+    // On success, reload the table
+    options.success = function() {
+        $(table).bootstrapTable('refresh');
+    };
+
+    adjustStock(options);
 }
 
 function moveStockItems(items, options) {
@@ -278,3 +317,63 @@ function deleteStockItems(items, options) {
         title: 'Delete ' + items.length + ' stock items'
     });
 }
+
+
+function loadStockTable(modal, options) {
+    modal.bootstrapTable({
+        sortable: true,
+        search: true,
+        method: 'get',
+        pagination: true,
+        rememberOrder: true,
+        queryParams: options.params,
+        columns: [
+            {
+                checkbox: true,
+                title: 'Select',
+                searchable: false,
+            },
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                field: 'part.name',
+                title: 'Part',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, row.part.url);
+                }
+            },
+            {
+                field: 'location',
+                title: 'Location',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    if (row.location) {
+                        return renderLink(row.location.pathstring, row.location.url);
+                    }
+                    else {
+                        return '';
+                    }
+                }
+            },
+            {
+                field: 'quantity',
+                title: 'Quantity',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    var text = renderLink(value, row.url);
+                    text = text + "<span class='badge'>" + row.status_text + "</span>";
+                    return text;
+                }
+            },
+            {
+                field: 'notes',
+                title: 'Notes',
+            }
+        ],
+        url: options.url,
+    });
+};
