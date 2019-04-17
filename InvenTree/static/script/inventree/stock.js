@@ -278,3 +278,63 @@ function deleteStockItems(items, options) {
         title: 'Delete ' + items.length + ' stock items'
     });
 }
+
+
+function loadStockTable(modal, options) {
+    modal.bootstrapTable({
+        sortable: true,
+        search: true,
+        method: 'get',
+        pagination: true,
+        rememberOrder: true,
+        queryParams: options.params,
+        columns: [
+            {
+                checkbox: true,
+                title: 'Select',
+                searchable: false,
+            },
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                field: 'part.name',
+                title: 'Part',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, row.part.url);
+                }
+            },
+            {
+                field: 'location',
+                title: 'Location',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    if (row.location) {
+                        return renderLink(row.location.pathstring, row.location.url);
+                    }
+                    else {
+                        return '';
+                    }
+                }
+            },
+            {
+                field: 'quantity',
+                title: 'Quantity',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    var text = renderLink(value, row.url);
+                    text = text + "<span class='badge'>" + row.status + "</span>";
+                    return text;
+                }
+            },
+            {
+                field: 'notes',
+                title: 'Notes',
+            }
+        ],
+        url: options.url,
+    });
+};

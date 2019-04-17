@@ -45,50 +45,11 @@
                         });
     });
 
-    $("#stock-table").bootstrapTable({
-        sortable: true,
-        search: true,
-        pagination: true,
-        queryParams: function(p) {
-            return {
-                part: {{ part.id }},
-                in_stock: true,
-            }
+    loadStockTable($("#stock-table"), {
+        params: {
+            part: {{ part.id }},
         },
-        columns: [
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-            },
-            {
-                checkbox: true,
-            },
-            {
-                field: 'location',
-                title: 'Location',
-                sortable: true,
-                formatter: function(value, row, index, field){
-                    return renderLink(value.pathstring, value.url);
-                }
-            },
-            {
-                field: 'quantity',
-                title: 'Stock',
-                searchable: false,
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    var text = renderLink(value, row.url)
-                    text = text + "<span class='badge'>" + row.status + "</span>";
-                    return text;
-                }
-            },
-            {
-                field: 'notes',
-                title: 'Notes',
-            },
-        ],
-        url: "{% url 'api-stock-list' %}"
+        url: "{% url 'api-stock-list' %}",
     });
 
     function selectedStock() {
