@@ -136,28 +136,24 @@
         return false;
     });
 
-    function _stock(action) {
-        adjustStock({
-            action: action,
-            items: selectedStock(),
-            success: function() {
-                $('#stock-table').bootstrapTable('refresh');
-            }
-        })
-    }
-
     $('#multi-item-stocktake').click(function() {
-        _stock('stocktake');
+        updateStockItems({
+            action: 'stocktake',
+        });
         return false;
     });
 
     $('#multi-item-remove').click(function() {
-        _stock('remove');
+        updateStockItems({
+            action: 'remove',
+        });
         return false;
     });
 
     $('#multi-item-add').click(function() {
-        _stock('add');
+        updateStockItems({
+            action: 'add',
+        });
         return false;
     });
 
