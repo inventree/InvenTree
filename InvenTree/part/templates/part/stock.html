@@ -78,9 +78,15 @@
                 searchable: false,
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url);
+                    var text = renderLink(value, row.url)
+                    text = text + "<span class='badge'>" + row.status + "</span>";
+                    return text;
                 }
-            }
+            },
+            {
+                field: 'notes',
+                title: 'Notes',
+            },
         ],
         url: "{% url 'api-stock-list' %}"
     });

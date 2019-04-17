@@ -163,7 +163,8 @@ class StockItem(models.Model):
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)
 
-    stocktake_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    stocktake_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
+                                       related_name='stocktake_stock')
 
     review_needed = models.BooleanField(default=False)
 
@@ -184,7 +185,7 @@ class StockItem(models.Model):
         choices=ITEM_STATUS_CODES.items(),
         validators=[MinValueValidator(0)])
 
-    notes = models.TextField(blank=True)
+    notes = models.CharField(max_length=250, blank=True, help_text='Stock Item Notes')
 
     # If stock item is incoming, an (optional) ETA field
     # expected_arrival = models.DateField(null=True, blank=True)
