@@ -160,7 +160,8 @@
     loadStockTable($("#stock-table"), {
         params: {
             {% if location %}
-            location: {{ location.id }}
+            location: {{ location.id }},
+            include_child_locations: true,
             {% endif %}
         },
         url: "{% url 'api-stock-list' %}",

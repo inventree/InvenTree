@@ -87,13 +87,12 @@ class PartList(generics.ListCreateAPIView):
                 childs = category.getUniqueChildren()
                 for child in childs:
                     # Ignore the top-level category (already filtered)
-                    if child == cat_id:
+                    if str(child) == str(cat_id):
                         continue
                     flt |= Q(category=child)
 
             parts_list = parts_list.filter(flt)
 
-        # Default - return all parts
         return parts_list
 
     permission_classes = [
