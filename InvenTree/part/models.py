@@ -310,15 +310,8 @@ class Part(models.Model):
 
 
 def attach_file(instance, filename):
-
-    base = 'part_files'
-
-    # TODO - For a new PartAttachment object, PK is NULL!!
-
-    # Prefix the attachment ID to the filename
-    fn = "{id}_{fn}".format(id=instance.pk, fn=filename)
-
-    return os.path.join(base, fn)
+    # Construct a path to store a file attachment
+    return os.path.join('part_files', str(instance.part.id), filename)
 
 
 class PartAttachment(models.Model):
@@ -330,6 +323,10 @@ class PartAttachment(models.Model):
                              related_name='attachments')
 
     attachment = models.FileField(upload_to=attach_file, null=True, blank=True)
+
+    @property
+    def basename(self):
+        return os.path.basename(self.attachment.name)
 
 
 class BomItem(models.Model):
