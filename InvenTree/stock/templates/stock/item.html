@@ -20,7 +20,7 @@
           <li><a href="#" id='stock-edit' title='Edit stock item'>Edit stock item</a></li>
           <li><a href="#" id='stock-move' title='Move stock item'>Move stock item</a></li>
           <li><a href='#' id='stock-add' title='Add stock'>Add to stock</a></li>
-          <li><a href='#' id='stock-remove' title='Remove stock'>Remove from stock</a></li>
+          <li><a href='#' id='stock-remove' title='Remove stock'>Take from stock</a></li>
           <li><a href='#' id='stock-stocktake' title='Count stock'>Stocktake</a></li>
           {% endif %}
           <li><a href="#" id='stock-delete' title='Delete stock item'>Delete stock item</a></li>
@@ -31,86 +31,95 @@
 </div>
 </div>
 
-{% qr_from_text item.uuid size="s" image_format="png" error_correction="L" %}
+<div class='row'>
+    <div class='col-sm-6'>
+        <table class="table table-striped">
+        <tr>
+            <td>Part</td>
+            <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</td>
+        </tr>
+        <tr>
+            <td>UUID</td>
+            <td>{{ item.uuid }}</td>
+        </tr>
+        {% if item.belongs_to %}
+        <tr>
+            <td>Belongs To</td>
+            <td><a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a></td>
+        </tr>
+        {% elif item.location %}
+        <tr>
+            <td>Location</td>
+            <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
+        </tr>
+        {% endif %}
+        {% if item.serial %}
+        <tr>
+            <td>Serial</td>
+            <td>{{ item.serial }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td>Quantity</td>
+            <td>{{ item.quantity }}</td>
+        </tr>
+        {% endif %}
+        {% if item.batch %}
+        <tr>
+            <td>Batch</td>
+            <td>{{ item.batch }}</td>
+        </tr>
+        {% endif %}
+        {% if item.customer %}
+        <tr>
+            <td>Customer</td>
+            <td>{{ item.customer.name }}</td>
+        </tr>
+        {% endif %}
+        {% if item.URL %}
+        <tr>
+            <td>URL</td>
+            <td><a href="{{ item.URL }}">{{ item.URL }}</a></td>
+        </tr>
+        {% endif %}
+        {% if item.supplier_part %}
+        <tr>
+            <td>Supplier Part</td>
+            <td><a href="{% url 'supplier-part-detail' item.supplier_part.id %}">{{ item.supplier_part.SKU }}</a></td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Last Updated</td>
+            <td>{{ item.updated }}</td>
+        </tr>
+        <tr>
+            <td>Last Stocktake</td>
+            {% if item.stocktake_date %}
+            <td>{{ item.stocktake_date }} <span class='badge'>{{ item.stocktake_user }}</span></td>
+            {% else %}
+            <td>No stocktake performed</td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td>{{ item.get_status_display }}</td>
+        </tr>
+        {% if item.notes %}
+        <tr>
+            <td>Notes</td>
+            <td>{{ item.notes }}</td>
+        </tr>
+        {% endif %}
+        </table>
+    </div>
+    <div class='col-sm-6'>
+        {% qr_from_text item.uuid size="s" image_format="png" error_correction="L" %}
+    </div>
+</div>
 
-<table class="table table-striped">
-<tr>
-    <td>Part</td>
-    <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</td>
-</tr>
-<tr>
-    <td>UUID</td>
-    <td>{{ item.uuid }}</td>
-</tr>
-{% if item.belongs_to %}
-<tr>
-    <td>Belongs To</td>
-    <td><a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a></td>
-</tr>
-{% elif item.location %}
-<tr>
-    <td>Location</td>
-    <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
-</tr>
-{% endif %}
-{% if item.serial %}
-<tr>
-    <td>Serial</td>
-    <td>{{ item.serial }}</td>
-</tr>
-{% else %}
-<tr>
-    <td>Quantity</td>
-    <td>{{ item.quantity }}</td>
-</tr>
-{% endif %}
-{% if item.batch %}
-<tr>
-    <td>Batch</td>
-    <td>{{ item.batch }}</td>
-</tr>
-{% endif %}
-{% if item.customer %}
-<tr>
-    <td>Customer</td>
-    <td>{{ item.customer.name }}</td>
-</tr>
-{% endif %}
-{% if item.URL %}
-<tr>
-    <td>URL</td>
-    <td><a href="{{ item.URL }}">{{ item.URL }}</a></td>
-</tr>
-{% endif %}
-{% if item.supplier_part %}
-<tr>
-    <td>Supplier Part</td>
-    <td><a href="{% url 'supplier-part-detail' item.supplier_part.id %}">{{ item.supplier_part.SKU }}</a></td>
-</tr>
-{% endif %}
-<tr>
-    <td>Updated</td>
-    <td>{{ item.updated }}</td>
-</tr>
-{% if item.stocktake_date %}
-<tr>
-    <td>Stocktake</td>
-    <td>{{ item.stocktake_date }} <span class='badge'>{{ item.stocktake_user }}</span></td>
-</tr>
-{% endif %}
-<tr>
-    <td>Status</td>
-    <td>{{ item.get_status_display }}</td>
-</tr>
-{% if item.notes %}
-<tr>
-    <td>Notes</td>
-    <td>{{ item.notes }}</td>
-</tr>
-{% endif %}
-</table>
 
 {% if item.has_tracking_info %}
+
 <hr>
 <div class="panel-group">
  <div class="panel panel-default">
