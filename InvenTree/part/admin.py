@@ -6,6 +6,7 @@ from .models import PartAttachment
 from .models import SupplierPart
 from .models import BomItem
 
+
 class PartAdmin(ImportExportModelAdmin):
 
     list_display = ('name', 'IPN', 'description', 'total_stock', 'category')
