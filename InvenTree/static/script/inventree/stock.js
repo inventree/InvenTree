@@ -365,7 +365,7 @@ function loadStockTable(modal, options) {
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     var text = renderLink(value, row.url);
-                    text = text + "<span class='badge'>" + row.status + "</span>";
+                    text = text + "<span class='badge'>" + row.status_text + "</span>";
                     return text;
                 }
             },
