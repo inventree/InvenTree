@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
+from django.forms.models import model_to_dict
 
 from company.models import Company
 from .models import PartCategory, Part, BomItem
@@ -49,6 +50,7 @@ class PartCreate(AjaxCreateView):
     """
     model = Part
     form_class = EditPartForm
+
     ajax_form_title = 'Create new part'
     ajax_template_name = 'modal_form.html'
 
@@ -75,7 +77,19 @@ class PartCreate(AjaxCreateView):
     # Pre-fill the category field if a valid category is provided
     def get_initial(self):
 
-        initials = super(PartCreate, self).get_initial().copy()
+        # Is the client attempting to copy an existing part?
+        part_to_copy = self.request.GET.get('copy', None)
+
+        if part_to_copy:
+            try:
+                original = Part.objects.get(pk=part_to_copy)
+                initials = model_to_dict(original)
+                self.ajax_form_title = "Copy Part '{p}'".format(p=original.name)
+            except Part.DoesNotExist:
+                initials = super(PartCreate, self).get_initial()
+
+        else:
+            initials = super(PartCreate, self).get_initial()
 
         if self.get_category_id():
             initials['category'] = get_object_or_404(PartCategory, pk=self.get_category_id())
@@ -115,6 +129,7 @@ class PartImage(AjaxUpdateView):
 
 class PartEdit(AjaxUpdateView):
     model = Part
+    template_name = 'part/edit.html'
     form_class = EditPartForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Part Properties'
@@ -200,6 +215,7 @@ class BomDownload(AjaxView):
 
 class PartDelete(AjaxDeleteView):
     model = Part
+    template_name = 'part/delete.html'
     ajax_template_name = 'part/partial_delete.html'
     ajax_form_title = 'Confirm Part Deletion'
     context_object_name = 'part'
@@ -221,6 +237,7 @@ class CategoryDetail(DetailView):
 
 class CategoryEdit(AjaxUpdateView):
     model = PartCategory
+    template_name = 'part/category_edit.html'
     form_class = EditCategoryForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Part Category'
@@ -235,7 +252,7 @@ class CategoryEdit(AjaxUpdateView):
 
 class CategoryDelete(AjaxDeleteView):
     model = PartCategory
-    ajax_template_name = 'part/category_delete.html'
+    template_name = 'part/category_delete.html'
     context_object_name = 'category'
     success_url = '/part/'
 
@@ -250,6 +267,7 @@ class CategoryCreate(AjaxCreateView):
     ajax_form_action = reverse_lazy('category-create')
     ajax_form_title = 'Create new part category'
     ajax_template_name = 'modal_form.html'
+    template_name = 'part/category_new.html'
     form_class = EditCategoryForm
 
     def get_context_data(self, **kwargs):
@@ -282,6 +300,7 @@ class BomItemDetail(DetailView):
 class BomItemCreate(AjaxCreateView):
     model = BomItem
     form_class = EditBomItemForm
+    template_name = 'part/bom-create.html'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create BOM item'
 
@@ -301,6 +320,7 @@ class BomItemCreate(AjaxCreateView):
 class BomItemEdit(AjaxUpdateView):
     model = BomItem
     form_class = EditBomItemForm
+    template_name = 'part/bom-edit.html'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit BOM item'
 
@@ -321,6 +341,7 @@ class SupplierPartDetail(DetailView):
 
 class SupplierPartEdit(AjaxUpdateView):
     model = SupplierPart
+    template_name = 'company/partedit.html'
     context_object_name = 'part'
     form_class = EditSupplierPartForm
     ajax_template_name = 'modal_form.html'

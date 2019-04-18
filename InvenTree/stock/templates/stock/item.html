@@ -13,6 +13,7 @@
     <h3>
     <div style='float: right;'>
     <div class="dropdown" style="float: right;">
+        <button class='btn btn-primary' type='button' id='duplicate-item'>Copy Stock Item</button>
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
         <span class="caret"></span></button>
         <ul class="dropdown-menu">
@@ -140,6 +141,19 @@
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
+
+    $("#duplicate-item").click(function() {
+        launchModalForm(
+            "{% url 'stock-item-create' %}",
+            {
+                follow: true,
+                data: {
+                    copy: {{ item.id }},
+                },
+            }
+        );
+    });
+
     $("#stock-edit").click(function () {
         launchModalForm(
                         "{% url 'stock-item-edit' item.id %}",
