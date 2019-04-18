@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
+from django.forms.models import model_to_dict
 
 from company.models import Company
 from .models import PartCategory, Part, BomItem
@@ -49,7 +50,6 @@ class PartCreate(AjaxCreateView):
     """
     model = Part
     form_class = EditPartForm
-    template_name = 'part/create.html'
 
     ajax_form_title = 'Create new part'
     ajax_template_name = 'modal_form.html'
@@ -77,7 +77,19 @@ class PartCreate(AjaxCreateView):
     # Pre-fill the category field if a valid category is provided
     def get_initial(self):
 
-        initials = super(PartCreate, self).get_initial().copy()
+        # Is the client attempting to copy an existing part?
+        part_to_copy = self.request.GET.get('copy', None)
+
+        if part_to_copy:
+            try:
+                original = Part.objects.get(pk=part_to_copy)
+                initials = model_to_dict(original)
+                self.ajax_form_title = "Copy Part '{p}'".format(p=original.name)
+            except Part.DoesNotExist:
+                initials = super(PartCreate, self).get_initial()
+
+        else:
+            initials = super(PartCreate, self).get_initial()
 
         if self.get_category_id():
             initials['category'] = get_object_or_404(PartCategory, pk=self.get_category_id())

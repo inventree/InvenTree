@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 
 from django.views.generic import DetailView, ListView
+from django.forms.models import model_to_dict
 
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 
@@ -126,7 +127,20 @@ class StockItemCreate(AjaxCreateView):
     ajax_form_title = 'Create new Stock Item'
 
     def get_initial(self):
-        initials = super(StockItemCreate, self).get_initial().copy()
+
+        # Is the client attempting to copy an existing stock item?
+        item_to_copy = self.request.GET.get('copy', None)
+
+        if item_to_copy:
+            try:
+                original = StockItem.objects.get(pk=item_to_copy)
+                initials = model_to_dict(original)
+                self.ajax_form_title = "Copy Stock Item"
+            except StockItem.DoesNotExist:
+                initials = super(StockItemCreate, self).get_initial().copy()
+
+        else:
+            initials = super(StockItemCreate, self).get_initial().copy()
 
         part_id = self.request.GET.get('part', None)
         loc_id = self.request.GET.get('location', None)
