@@ -43,7 +43,7 @@
     <div class='container-fluid' style='float: right;'>
         <button class="btn btn-success" id='item-create'>New Stock Item</span></button>
         <div class="dropdown" style='float: right;'>
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
+            <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
             <span class="caret"></span></button>
             <ul class="dropdown-menu">
                 <li><a href="#" id='multi-item-add' title='Add to selected stock items'>Add stock</a></li>
@@ -158,6 +158,9 @@
     });
 
     loadStockTable($("#stock-table"), {
+        buttons: [
+            '#stock-options',
+        ],
         params: {
             {% if location %}
             location: {{ location.id }},

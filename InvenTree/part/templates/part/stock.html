@@ -9,7 +9,7 @@
 <div id='button-toolbar'>
     <button class='btn btn-success' id='add-stock-item'>New Stock Item</button>
     <div id='opt-dropdown' class="dropdown" style='float: right;'>
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
+        <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
             <span class="caret"></span></button>
             <ul class="dropdown-menu">
                 <li><a href='#' id='multi-item-take' title='Take items from stock'>Take items</a></li>
@@ -49,6 +49,9 @@
         params: {
             part: {{ part.id }},
         },
+        buttons: [
+            '#stock-options',
+        ],
         url: "{% url 'api-stock-list' %}",
     });
 
