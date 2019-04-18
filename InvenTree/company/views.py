@@ -51,7 +51,6 @@ class CompanyImage(AjaxUpdateView):
 class CompanyEdit(AjaxUpdateView):
     model = Company
     form_class = EditCompanyForm
-    template_name = 'company/edit.html'
     context_object_name = 'company'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Company'
@@ -66,7 +65,6 @@ class CompanyCreate(AjaxCreateView):
     model = Company
     context_object_name = 'company'
     form_class = EditCompanyForm
-    template_name = "company/create.html"
     ajax_template_name = 'modal_form.html'
     ajax_form_title = "Create new Company"
 
@@ -79,7 +77,7 @@ class CompanyCreate(AjaxCreateView):
 class CompanyDelete(AjaxDeleteView):
     model = Company
     success_url = '/company/'
-    template_name = 'company/delete.html'
+    ajax_template_name = 'company/delete.html'
     ajax_form_title = 'Delete Company'
 
     def get_data(self):
