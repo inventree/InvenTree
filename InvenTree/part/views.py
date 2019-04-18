@@ -78,7 +78,7 @@ class PartCreate(AjaxCreateView):
     def get_initial(self):
 
         # Is the client attempting to copy an existing part?
-        part_to_copy = self.request.GET.get('copy_part', None)
+        part_to_copy = self.request.GET.get('copy', None)
 
         if part_to_copy:
             try:
