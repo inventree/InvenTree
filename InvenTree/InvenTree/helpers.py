@@ -4,6 +4,15 @@ from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
 
 
+def str2bool(text, test=True):
+    """ Test if a string 'looks' like a boolean value
+    """
+    if test:
+        return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', ]
+    else:
+        return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false',]
+
+
 def WrapWithQuotes(text):
     # TODO - Make this better
     if not text.startswith('"'):

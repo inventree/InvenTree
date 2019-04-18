@@ -183,7 +183,7 @@ def FilterChildren(queryset, parent):
 
     if not parent:
         return queryset
-    elif str(parent).lower() in ['none', 'false', 'null', 'top', '0']:
+    elif str2bool(parent, False):
         return queryset.filter(parent=None)
     else:
         try:
