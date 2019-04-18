@@ -23,7 +23,10 @@ def DownloadFile(data, filename, content_type='application/text'):
 
     filename = WrapWithQuotes(filename)
 
-    wrapper = FileWrapper(io.StringIO(data))
+    if type(data) == str:
+        wrapper = FileWrapper(io.StringIO(data))
+    else:
+        wrapper = FileWrapper(io.BytesIO(data))
 
     response = StreamingHttpResponse(wrapper, content_type=content_type)
     response['Content-Length'] = len(data)

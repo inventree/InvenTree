@@ -21,7 +21,10 @@ function downloadBom(options = {}) {
         <div class='controls'>
         <select id='bom-format' class='select'>
             <option value='csv'>CSV</option>
-            <option value='xls'>XLSX</option>
+            <option value='tsv'>TSV</option>
+            <option value='xls'>XLS</option>
+            <option value='xlsx'>XLSX</option>
+            <option value='ods'>ODS</option>
             <option value='yaml'>YAML</option>
             <option value='json'>JSON</option>
             <option value='xml'>XML</option>
@@ -72,19 +75,14 @@ function loadBomTable(table, options) {
             field: 'pk',
             title: 'ID',
             visible: false,
-        }
+        },
+        {
+            checkbox: true,
+            title: 'Select',
+            searchable: false,
+            sortable: false,
+        },
     ];
-
-    if (options.editable) {
-        cols.push({
-            formatter: function(value, row, index, field) {
-                var bEdit = "<button class='btn btn-success bom-edit-button btn-sm' type='button' url='" + row.url + "edit'>Edit</button>";
-                var bDelt = "<button class='btn btn-danger bom-delete-button btn-sm' type='button' url='" + row.url + "delete'>Delete</button>";
-
-                return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
-            }
-        });
-    }
 
     // Part column
     cols.push(
@@ -126,8 +124,17 @@ function loadBomTable(table, options) {
         }
     );
 
-    // If we are NOT editing, display the available stock
-    if (!options.editable) {
+    if (options.editable) {
+        cols.push({
+            formatter: function(value, row, index, field) {
+                var bEdit = "<button class='btn btn-success bom-edit-button btn-sm' type='button' url='" + row.url + "edit'>Edit</button>";
+                var bDelt = "<button class='btn btn-danger bom-delete-button btn-sm' type='button' url='" + row.url + "delete'>Delete</button>";
+
+                return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
+            }
+        });
+    }
+    else {
         cols.push(
             {
                 field: 'sub_part.available_stock',

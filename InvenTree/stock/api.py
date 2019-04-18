@@ -2,6 +2,8 @@ from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
 from django.conf.urls import url, include
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
@@ -202,7 +204,36 @@ class StockList(generics.ListCreateAPIView):
     Create a new StockItem
     """
 
-    queryset = StockItem.objects.all()
+    def get_queryset(self):
+        """
+        If the query includes a particular location,
+        we may wish to also request stock items from all child locations.
+        This is set by the optional param 'include_child_categories'
+        """
+
+        # Does the client wish to filter by category?
+        loc_id = self.request.query_params.get('location', None)
+
+        # Start with all objects
+        stock_list = StockItem.objects.all()
+
+        if loc_id:
+            location = get_object_or_404(StockLocation, pk=loc_id)
+
+            # Filter by the supplied category
+            flt = Q(location=loc_id)
+
+            if self.request.query_params.get('include_child_locations', None):
+                childs = location.getUniqueChildren()
+                for child in childs:
+                    # Ignore the top-level category (already filtered!)
+                    if str(child) == str(loc_id):
+                        continue
+                    flt |= Q(location=child)
+
+            stock_list = stock_list.filter(flt)
+
+        return stock_list
 
     serializer_class = StockItemSerializer
 
@@ -219,7 +250,6 @@ class StockList(generics.ListCreateAPIView):
     filter_fields = [
         'part',
         'uuid',
-        'location',
         'supplier_part',
         'customer',
         'belongs_to',
