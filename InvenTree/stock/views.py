@@ -67,7 +67,6 @@ class StockLocationEdit(AjaxUpdateView):
 
     model = StockLocation
     form_class = EditStockLocationForm
-    template_name = 'stock/location_edit.html'
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Stock Location'
@@ -80,7 +79,6 @@ class StockItemEdit(AjaxUpdateView):
 
     model = StockItem
     form_class = EditStockItemForm
-    # template_name = 'stock/item_edit.html'
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Stock Item'
@@ -94,7 +92,6 @@ class StockLocationCreate(AjaxCreateView):
 
     model = StockLocation
     form_class = EditStockLocationForm
-    template_name = 'stock/location_create.html'
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create new Stock Location'
@@ -120,7 +117,6 @@ class StockItemCreate(AjaxCreateView):
 
     model = StockItem
     form_class = CreateStockItemForm
-    template_name = 'stock/item_create.html'
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create new Stock Item'
