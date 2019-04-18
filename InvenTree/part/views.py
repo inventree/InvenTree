@@ -50,8 +50,7 @@ class PartCreate(AjaxCreateView):
     """
     model = Part
     form_class = EditPartForm
-    template_name = 'part/create.html'
-
+    
     ajax_form_title = 'Create new part'
     ajax_template_name = 'modal_form.html'
 
@@ -85,6 +84,7 @@ class PartCreate(AjaxCreateView):
             try:
                 original = Part.objects.get(pk=part_to_copy)
                 initials = model_to_dict(original)
+                self.ajax_form_title = "Copy Part '{p}'".format(p=original.name)
             except Part.DoesNotExist:
                 initials = super(PartCreate, self).get_initial()
 
