@@ -21,7 +21,10 @@ function downloadBom(options = {}) {
         <div class='controls'>
         <select id='bom-format' class='select'>
             <option value='csv'>CSV</option>
-            <option value='xls'>XLSX</option>
+            <option value='tsv'>TSV</option>
+            <option value='xls'>XLS</option>
+            <option value='xlsx'>XLSX</option>
+            <option value='ods'>ODS</option>
             <option value='yaml'>YAML</option>
             <option value='json'>JSON</option>
             <option value='xml'>XML</option>

@@ -12,7 +12,7 @@ class PartAdmin(ImportExportModelAdmin):
     list_display = ('name', 'IPN', 'description', 'total_stock', 'category')
 
 
-class PartCategoryAdmin(admin.ModelAdmin):
+class PartCategoryAdmin(ImportExportModelAdmin):
 
     list_display = ('name', 'pathstring', 'description')
 

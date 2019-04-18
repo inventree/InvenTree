@@ -1,19 +1,19 @@
 from django.contrib import admin
-from simple_history.admin import SimpleHistoryAdmin
+from import_export.admin import ImportExportModelAdmin
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
 
 
-class LocationAdmin(admin.ModelAdmin):
+class LocationAdmin(ImportExportModelAdmin):
     list_display = ('name', 'pathstring', 'description')
 
 
-class StockItemAdmin(SimpleHistoryAdmin):
+class StockItemAdmin(ImportExportModelAdmin):
     list_display = ('part', 'quantity', 'location', 'status', 'updated')
 
 
-class StockTrackingAdmin(admin.ModelAdmin):
+class StockTrackingAdmin(ImportExportModelAdmin):
     list_display = ('item', 'date', 'title')
 
 
