@@ -319,8 +319,11 @@ function deleteStockItems(items, options) {
 }
 
 
-function loadStockTable(modal, options) {
-    modal.bootstrapTable({
+
+
+function loadStockTable(table, options) {
+
+    table.bootstrapTable({
         sortable: true,
         search: true,
         method: 'get',
@@ -376,4 +379,8 @@ function loadStockTable(modal, options) {
         ],
         url: options.url,
     });
+
+    if (options.buttons) {
+        linkButtonsToSelection(table, options.buttons);
+    }
 };
