@@ -70,7 +70,6 @@ class BuildAllocate(DetailView):
 
 class BuildCreate(AjaxCreateView):
     model = Build
-    template_name = 'build/create.html'
     context_object_name = 'build'
     form_class = EditBuildForm
     ajax_form_title = 'Start new Build'
@@ -96,7 +95,6 @@ class BuildUpdate(AjaxUpdateView):
     model = Build
     form_class = EditBuildForm
     context_object_name = 'build'
-    template_name = 'build/update.html'
     ajax_form_title = 'Edit Build Details'
     ajax_template_name = 'modal_form.html'
 
