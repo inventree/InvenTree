@@ -10,7 +10,7 @@ def str2bool(text, test=True):
     if test:
         return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', ]
     else:
-        return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false',]
+        return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', ]
 
 
 def WrapWithQuotes(text):

@@ -50,7 +50,7 @@ class PartCreate(AjaxCreateView):
     """
     model = Part
     form_class = EditPartForm
-    
+
     ajax_form_title = 'Create new part'
     ajax_template_name = 'modal_form.html'
 
@@ -89,7 +89,7 @@ class PartCreate(AjaxCreateView):
                 initials = super(PartCreate, self).get_initial()
 
         else:
-            initials = super(PartCreate, self).get_initial()        
+            initials = super(PartCreate, self).get_initial()
 
         if self.get_category_id():
             initials['category'] = get_object_or_404(PartCategory, pk=self.get_category_id())
