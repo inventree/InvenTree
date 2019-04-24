@@ -70,23 +70,3 @@ part_urls = [
     # Top level part list (display top level parts and categories)
     url(r'^.*$', views.PartIndex.as_view(), name='part-index'),
 ]
-
-"""
-part_param_urls = [
-    # Detail of a single part parameter
-    url(r'^(?P<pk>[0-9]+)/?$', views.PartParamDetail.as_view(), name='partparameter-detail'),
-
-    # Parameters associated with a particular part
-    url(r'^\?.*/?$', views.PartParamList.as_view()),
-    url(r'^$', views.PartParamList.as_view()),
-]
-
-part_param_template_urls = [
-    # Detail of a single part field template
-    url(r'^(?P<pk>[0-9]+)/?$', views.PartTemplateDetail.as_view(), name='partparametertemplate-detail'),
-
-    # List all part field templates
-    url(r'^\?.*/?$', views.PartTemplateList.as_view()),
-    url(r'^$', views.PartTemplateList.as_view())
-]
-"""

@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from .models import Part, PartCategory
 
+
 class SimplePartTest(TestCase):
 
     def setUp(self):

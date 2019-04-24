@@ -6,8 +6,6 @@ from django.test import TestCase
 from .models import Build
 from part.models import Part
 
-# Create your tests here.
-
 
 class BuildTestSimple(TestCase):
 
@@ -56,4 +54,3 @@ class BuildTestSimple(TestCase):
     def test_required_parts(self):
         # TODO - Generate BOM for test part
         pass
-    

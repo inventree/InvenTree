@@ -187,11 +187,8 @@ def FilterChildren(queryset, parent):
     elif str2bool(parent, False):
         return queryset.filter(parent=None)
     else:
-        try:
-            parent_id = int(parent)
-            if parent_id == 0:
-                return queryset.filter(parent=None)
-            else:
-                return queryset.filter(parent=parent_id)
-        except:
-            return queryset
+        parent_id = int(parent)
+        if parent_id == 0:
+            return queryset.filter(parent=None)
+        else:
+            return queryset.filter(parent=parent_id)

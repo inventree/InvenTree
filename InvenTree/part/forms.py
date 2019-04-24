@@ -89,21 +89,21 @@ class EditBomItemForm(HelperForm):
 
 class EditSupplierPartForm(HelperForm):
 
-        class Meta:
-            model = SupplierPart
-            fields = [
-                'supplier',
-                'SKU',
-                'part',
-                'description',
-                'URL',
-                'manufacturer',
-                'MPN',
-                'note',
-                'single_price',
-                'base_cost',
-                'multiple',
-                'minimum',
-                'packaging',
-                'lead_time'
-            ]
+    class Meta:
+        model = SupplierPart
+        fields = [
+            'supplier',
+            'SKU',
+            'part',
+            'description',
+            'URL',
+            'manufacturer',
+            'MPN',
+            'note',
+            'single_price',
+            'base_cost',
+            'multiple',
+            'minimum',
+            'packaging',
+            'lead_time'
+        ]

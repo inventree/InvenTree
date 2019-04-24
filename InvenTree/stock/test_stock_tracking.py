@@ -1,4 +1,7 @@
 from django.test import TestCase
 
-# Create your tests here.
 
+class StockTrackingTest(TestCase):
+
+    def setUp(self):
+        pass

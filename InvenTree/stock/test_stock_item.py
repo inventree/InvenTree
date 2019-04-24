@@ -1,4 +1,7 @@
 from django.test import TestCase
 
-# Create your tests here.
 
+class StockItemTest(TestCase):
+
+    def setUp(self):
+        pass

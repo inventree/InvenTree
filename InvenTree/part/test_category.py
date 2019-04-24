@@ -1,7 +1,6 @@
 from django.test import TestCase
 
 from .models import Part, PartCategory
-from .models import rename_part_image
 
 
 class CategoryTest(TestCase):
@@ -11,16 +10,16 @@ class CategoryTest(TestCase):
 
     def setUp(self):
         self.p1 = PartCategory.objects.create(name='A',
-                                         description='Most highest level',
-                                         parent=None)
+                                              description='Most highest level',
+                                              parent=None)
 
         self.p2 = PartCategory.objects.create(name='B',
-                                         description='Sits under second',
-                                         parent=self.p1)
+                                              description='Sits under second',
+                                              parent=self.p1)
 
         self.p3 = PartCategory.objects.create(name='C',
-                                         description='Third tier category',
-                                         parent=self.p2)
+                                              description='Third tier category',
+                                              parent=self.p2)
 
         # Add two parts in p2
         Part.objects.create(name='Flange', category=self.p2)
