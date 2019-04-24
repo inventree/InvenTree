@@ -7,7 +7,9 @@ import os
 fn = 'secret_key.txt'
 
 def generate_key():
-	return ''.join(random.choices(string.digits + string.ascii_letters + string.punctuation, k=50))
+    options = string.digits + string.ascii_letters + string.punctuation
+    key = ''.join([random.choice(options) for i in range(50)])
+    return key
 
 if __name__ == '__main__':
 
@@ -15,6 +17,6 @@ if __name__ == '__main__':
     path = os.path.dirname(os.path.realpath(__file__))
     key_file = os.path.join(path, fn)
 
-    with open(key_file, 'w') as key:
-        key.write(generate_key())
+    with open(key_file, 'w') as kf:
+        kf.write(generate_key())
         print('Generated SECRET_KEY to {f}'.format(f=key_file))
