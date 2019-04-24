@@ -337,7 +337,7 @@ class BomItem(models.Model):
     """
 
     def get_absolute_url(self):
-        return '/part/bom/{id}/'.format(id=self.id)
+        return reverse('bom-detail', kwargs={'pk': self.id})
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
@@ -386,7 +386,7 @@ class SupplierPart(models.Model):
     """
 
     def get_absolute_url(self):
-        return "/supplier-part/{id}/".format(id=self.id)
+        return reverse('supplier-part-detail', kwargs={'pk': self.id})
 
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')
