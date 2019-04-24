@@ -12,7 +12,7 @@ style:
 
 test:
 	python InvenTree/manage.py check
-	python InvenTree/manage.py test build company part project stock supplier track
+	python manage.py test build company part stock
 
 migrate:
 	python InvenTree/manage.py makemigrations company
@@ -32,7 +32,7 @@ setup_ci:
 
 coverage:
 	python InvenTree/manage.py check
-	coverage run InvenTree/manage.py test build company part project stock supplier track
+	coverage run InvenTree/manage.py test build company part stock
 	coverage html
 
 superuser:
