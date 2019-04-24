@@ -13,7 +13,7 @@ before_install:
     - make setup_ci
 
 script:
-    - make test
+    - make coverage
     - make style
 
 after_success:
