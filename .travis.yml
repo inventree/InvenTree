@@ -16,5 +16,5 @@ script:
     - make test
     - make style
 
-after-success:
+after_success:
     - coveralls
