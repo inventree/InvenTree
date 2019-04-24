@@ -31,8 +31,5 @@ setup: install migrate
 setup_ci:
 	pip install -U -r requirements/build.txt
 
-develop:
-	pip install -U -r requirements/dev.txt
-
 superuser:
 	python InvenTree/manage.py createsuperuser
