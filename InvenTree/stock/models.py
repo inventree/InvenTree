@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 
 from django.db import models, transaction
 from django.core.validators import MinValueValidator
@@ -25,7 +26,7 @@ class StockLocation(InvenTreeTree):
     """
 
     def get_absolute_url(self):
-        return '/stock/location/{id}/'.format(id=self.id)
+        return reverse('stock-location-detail', kwargs={'pk': self.id})
 
     @property
     def stock_items(self):
@@ -109,7 +110,7 @@ class StockItem(models.Model):
             })
 
     def get_absolute_url(self):
-        return '/stock/item/{id}/'.format(id=self.id)
+        return reverse('stock-item-detail', kwargs={'pk': self.id})
 
     class Meta:
         unique_together = [
@@ -331,7 +332,7 @@ class StockItemTracking(models.Model):
     """
 
     def get_absolute_url(self):
-        return '/stock/track/{id}/'.format(id=self.id)
+        return reverse('stock-tracking-detail', kwargs={'pk': self.id})
 
     # Stock item
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE,
