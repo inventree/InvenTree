@@ -6,10 +6,12 @@ import os
 
 fn = 'secret_key.txt'
 
+
 def generate_key():
     options = string.digits + string.ascii_letters + string.punctuation
     key = ''.join([random.choice(options) for i in range(50)])
     return key
+
 
 if __name__ == '__main__':
 
