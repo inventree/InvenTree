@@ -30,7 +30,10 @@ local_settings.py
 # Local media storage (only when running in development mode)
 InvenTree/media
 
-# Ignore PyCharm project configuration
+# Key file
+secret_key.txt
+
+# Ignore python IDE project configuration
 .idea/
 
 # Coverage reports
