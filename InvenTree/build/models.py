@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 
+from django.urls import reverse
 from django.db import models
 from django.core.validators import MinValueValidator
 
@@ -14,7 +15,7 @@ class Build(models.Model):
     """
 
     def get_absolute_url(self):
-        return '/build/{pk}/'.format(pk=self.id)
+        return reverse('build-detail', kwargs={'pk': self.id})
 
     # Build status codes
     PENDING = 10  # Build is pending / active
