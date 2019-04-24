@@ -11,8 +11,11 @@ style:
 	flake8 InvenTree --ignore=C901,E501
 
 test:
+	# Perform Django system checks
 	python InvenTree/manage.py check
-	python InvenTree/manage.py test --noinput
+
+	# Run the test framework (through coverage script)
+	coverage run InvenTree/manage.py test
 
 migrate:
 	python InvenTree/manage.py makemigrations company
@@ -30,9 +33,6 @@ setup: install migrate
 
 setup_ci:
 	pip install -U -r requirements/build.txt
-
-develop:
-	pip install -U -r requirements/dev.txt
 
 superuser:
 	python InvenTree/manage.py createsuperuser

@@ -1,2 +1,4 @@
 -r base.txt
 flake8==3.3.0
+coverage>=4.5.3
+python-coveralls==2.9.1
