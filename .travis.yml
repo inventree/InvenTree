@@ -15,3 +15,6 @@ before_install:
 script:
     - make test
     - make style
+
+after-success:
+    - coveralls
