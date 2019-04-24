@@ -9,6 +9,7 @@ import tablib
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 
 from django.db import models
 from django.core.validators import MinValueValidator
@@ -25,7 +26,7 @@ class PartCategory(InvenTreeTree):
     """
 
     def get_absolute_url(self):
-        return '/part/category/{id}/'.format(id=self.id)
+        return reverse('category-detail', kwargs={'pk': self.id})
 
     class Meta:
         verbose_name = "Part Category"
