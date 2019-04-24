@@ -12,7 +12,7 @@ style:
 
 test:
 	python InvenTree/manage.py check
-	python manage.py test build company part stock
+	python InvenTree/manage.py test build company part stock
 
 migrate:
 	python InvenTree/manage.py makemigrations company
