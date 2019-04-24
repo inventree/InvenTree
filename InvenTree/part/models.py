@@ -89,7 +89,7 @@ class Part(models.Model):
     """
 
     def get_absolute_url(self):
-        return '/part/{id}/'.format(id=self.id)
+        return reverse('part-detail', kwargs={'pk': self.id})
 
     # Short name of the part
     name = models.CharField(max_length=100, unique=True, help_text='Part name (must be unique)')
