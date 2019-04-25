@@ -1,6 +1,9 @@
 from django.test import TestCase
 
+import os
+
 from .models import Part, PartCategory
+from .models import rename_part_image
 
 
 class SimplePartTest(TestCase):
@@ -21,3 +24,15 @@ class SimplePartTest(TestCase):
     def test_category(self):
         self.assertEqual(self.px.category_path, '')
         self.assertEqual(self.pz.category_path, 'TLC')
+
+    def test_rename_img(self):
+        img = rename_part_image(self.px, 'hello.png')
+        self.assertEqual(img, os.path.join('part_images', 'part_1_img.png'))
+
+        img = rename_part_image(self.pz, 'test')
+        self.assertEqual(img, os.path.join('part_images', 'part_3_img'))
+
+    def test_stock(self):
+        # Stock should initially be zero
+        self.assertEqual(self.px.total_stock, 0)
+        self.assertEqual(self.py.available_stock, 0)
