@@ -9,6 +9,7 @@ import tablib
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 
 from django.db import models
 from django.core.validators import MinValueValidator
@@ -25,7 +26,7 @@ class PartCategory(InvenTreeTree):
     """
 
     def get_absolute_url(self):
-        return '/part/category/{id}/'.format(id=self.id)
+        return reverse('category-detail', kwargs={'pk': self.id})
 
     class Meta:
         verbose_name = "Part Category"
@@ -88,7 +89,7 @@ class Part(models.Model):
     """
 
     def get_absolute_url(self):
-        return '/part/{id}/'.format(id=self.id)
+        return reverse('part-detail', kwargs={'pk': self.id})
 
     # Short name of the part
     name = models.CharField(max_length=100, unique=True, help_text='Part name (must be unique)')
@@ -336,7 +337,7 @@ class BomItem(models.Model):
     """
 
     def get_absolute_url(self):
-        return '/part/bom/{id}/'.format(id=self.id)
+        return reverse('bom-detail', kwargs={'pk': self.id})
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
@@ -385,7 +386,7 @@ class SupplierPart(models.Model):
     """
 
     def get_absolute_url(self):
-        return "/supplier-part/{id}/".format(id=self.id)
+        return reverse('supplier-part-detail', kwargs={'pk': self.id})
 
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')

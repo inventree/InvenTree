@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import os
 
 from django.db import models
+from django.urls import reverse
 
 
 def rename_company_image(instance, filename):
@@ -56,7 +57,7 @@ class Company(models.Model):
         return "{n} - {d}".format(n=self.name, d=self.description)
 
     def get_absolute_url(self):
-        return "/company/{id}/".format(id=self.id)
+        return reverse('company-detail', kwargs={'pk': self.id})
 
     @property
     def part_count(self):

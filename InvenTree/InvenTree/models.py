@@ -74,9 +74,9 @@ class InvenTreeTree(models.Model):
     @property
     def children(self):
         contents = ContentType.objects.get_for_model(type(self))
-        children = contents.get_all_objects_for_this_type(parent=self.id)
+        childs = contents.get_all_objects_for_this_type(parent=self.id)
 
-        return children
+        return childs
 
     def getAcceptableParents(self):
         """ Returns a list of acceptable parent items within this model
@@ -187,11 +187,8 @@ def FilterChildren(queryset, parent):
     elif str2bool(parent, False):
         return queryset.filter(parent=None)
     else:
-        try:
-            parent_id = int(parent)
-            if parent_id == 0:
-                return queryset.filter(parent=None)
-            else:
-                return queryset.filter(parent=parent_id)
-        except:
-            return queryset
+        parent_id = int(parent)
+        if parent_id == 0:
+            return queryset.filter(parent=None)
+        else:
+            return queryset.filter(parent=parent_id)
