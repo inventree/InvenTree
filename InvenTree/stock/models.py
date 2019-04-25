@@ -330,7 +330,8 @@ class StockItemTracking(models.Model):
     """
 
     def get_absolute_url(self):
-        return reverse('stock-tracking-detail', kwargs={'pk': self.id})
+        return '/stock/track/{pk}'.format(pk=self.id)
+        #return reverse('stock-tracking-detail', kwargs={'pk': self.id})
 
     # Stock item
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE,
