@@ -42,7 +42,7 @@ class CategoryTest(TestCase):
         childs = self.p1.getUniqueChildren()
 
         self.assertIn(self.p2.id, childs)
-        self.assertIn(self.p2.id, childs)
+        self.assertIn(self.p3.id, childs)
 
     def test_unique_parents(self):
         parents = self.p2.getUniqueParents()

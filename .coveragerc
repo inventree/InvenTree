@@ -3,3 +3,4 @@ source = ./InvenTree
 omit =
     # Do not run coverage on migration files
     */migrations/*
+    InvenTree/manage.py
