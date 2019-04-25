@@ -10,3 +10,6 @@ django-crispy-forms>=1.7.2
 django-import-export>=1.0.0
 django-cleanup>=2.1.0
 django-qr-code==1.0.0
+flake8==3.3.0
+coverage>=4.5.3
+python-coveralls==2.9.1

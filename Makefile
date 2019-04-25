@@ -23,15 +23,12 @@ migrate:
 	python InvenTree/manage.py check
 
 install:
-	pip install -U -r requirements/base.txt
+	pip install -U -r requirements.txt
 	
 	# Generate a secret key
 	python InvenTree/key.py
 
 setup: install migrate
-
-setup_ci:
-	pip install -U -r requirements/build.txt
 
 coverage:
 	python InvenTree/manage.py check

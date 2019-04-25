@@ -1,4 +1,0 @@
--r build.txt
-django-extensions==1.7.8
-graphviz==0.6
-ipython==5.3.0
