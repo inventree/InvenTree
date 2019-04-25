@@ -7,10 +7,15 @@
 <h3>Part Suppliers</h3>
 
 <div id='button-toolbar'>
-    <button class="btn btn-success float-right" id='supplier-create'>New Supplier Part</button>
+    <button class="btn btn-success" id='supplier-create'>New Supplier Part</button>
+    <div id='opt-dropdown' class="dropdown" style='float: right;'>
+        <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
+            <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <li><a href='#' id='supplier-part-delete' title='Delete supplier parts'>Delete</a></li>
+            </ul>
+    </div>
 </div>
-
-<hr>
 
 <table class="table table-striped table-condensed" id='supplier-table' data-toolbar='#button-toolbar'>
 </table>
@@ -73,5 +78,7 @@
         ],
         url: "{% url 'api-part-supplier-list' %}"
     });
+
+    linkButtonsToSelection($("#supplier-table"), ['#supplier-part-options'])
 
 {% endblock %}
