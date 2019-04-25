@@ -72,5 +72,5 @@ class CategoryTest(TestCase):
         self.p2.delete()
 
         self.assertEqual(Part.objects.filter(category=self.p1).count(), 2)
-        
+
         self.assertEqual(PartCategory.objects.get(pk=self.p3.id).parent, self.p1)
