@@ -67,6 +67,7 @@ class StockItem(models.Model):
             self.add_transaction_note(
                 'Created stock item',
                 None,
+                notes="Created new stock item for part '{p}'".format(p=str(self.part)),
                 system=True
             )
 
