@@ -90,8 +90,9 @@ class SupplierPartSerializer(serializers.ModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    part = PartBriefSerializer(many=False, read_only=True)
-    supplier = CompanyBriefSerializer(many=False, read_only=True)
+    part_name = serializers.CharField(source='part.name', read_only=True)
+
+    supplier_name = serializers.CharField(source='supplier.name', read_only=True)
 
     class Meta:
         model = SupplierPart
@@ -99,7 +100,9 @@ class SupplierPartSerializer(serializers.ModelSerializer):
             'pk',
             'url',
             'part',
+            'part_name',
             'supplier',
+            'supplier_name',
             'SKU',
             'manufacturer',
             'MPN',

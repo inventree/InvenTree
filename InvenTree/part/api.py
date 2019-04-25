@@ -146,7 +146,7 @@ class BomList(generics.ListAPIView):
     ]
 
 
-class SupplierPartList(generics.ListAPIView):
+class SupplierPartList(generics.ListCreateAPIView):
 
     queryset = SupplierPart.objects.all()
     serializer_class = SupplierPartSerializer
