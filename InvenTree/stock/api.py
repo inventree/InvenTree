@@ -111,17 +111,22 @@ class StockStocktake(APIView):
         if 'notes' in request.data:
             notes = request.data['notes']
 
+        n = 0
+
         for item in items:
             quantity = int(item['quantity'])
 
             if action == u'stocktake':
-                item['item'].stocktake(quantity, request.user, notes=notes)
+                if item['item'].stocktake(quantity, request.user, notes=notes):
+                    n += 1
             elif action == u'remove':
-                item['item'].take_stock(quantity, request.user, notes=notes)
+                if item['item'].take_stock(quantity, request.user, notes=notes):
+                    n += 1
             elif action == u'add':
-                item['item'].add_stock(quantity, request.user, notes=notes)
+                if item['item'].add_stock(quantity, request.user, notes=notes):
+                    n += 1
 
-        return Response({'success': 'success'})
+        return Response({'success': 'Updated stock for {n} items'.format(n=n)})
 
 
 class StockMove(APIView):
