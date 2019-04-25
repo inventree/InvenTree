@@ -166,12 +166,15 @@ class StockMove(APIView):
         if len(errors) > 0:
             raise ValidationError(errors)
 
+        n  = 0
+
         for part in parts:
-            part.move(location, data.get('notes'), request.user)
+            if part.move(location, data.get('notes'), request.user):
+                n += 1
 
         return Response({'success': 'Moved {n} parts to {loc}'.format(
-            n=len(parts),
-            loc=location.name
+            n=n,
+            loc=str(location)
         )})
 
 

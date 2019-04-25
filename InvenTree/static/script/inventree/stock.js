@@ -149,9 +149,7 @@ function updateStock(items, options={}) {
                             method: 'post',
                         }).then(function(response) {
                             closeModal(modal);
-                            if (options.success) {
-                                options.success();
-                            }
+                            afterForm(response, options);
                         }).fail(function(xhr, status, error) {
                             alert(error);
                         });
@@ -227,33 +225,26 @@ function moveStockItems(items, options) {
 
     function doMove(location, parts, notes) {
         inventreeUpdate("/api/stock/move/",
-                        {
-                            location: location,
-                            'parts[]': parts,
-                            'notes': notes,
-                        },
-                        {
-                            success: function(response) {
-                                closeModal(modal);
-                                if (options.success) {
-                                    options.success();
-                                }
-                            },
-                            error: function(error) {
-                                alert('error!:\n' + error);
-                            },
-                            method: 'post'
-                        });
+            {
+                location: location,
+                'parts[]': parts,
+                'notes': notes,
+            },
+            {
+                method: 'post',
+            }).then(function(response) {
+                closeModal(modal);
+                afterForm(response, options);
+            }).fail(function(xhr, status, error) {
+                alert(error);
+            });
     }
+        
 
     getStockLocations({},
     {
         success: function(response) {
-            openModal({
-                modal: modal,
-                title: "Move " + items.length + " stock items",
-                submit_text: "Move"
-            });
+            
 
             // Extact part row info
             var parts = [];
@@ -290,7 +281,14 @@ function moveStockItems(items, options) {
 
             html += "</ul>\n";
 
-            modalSetContent(modal, html);
+            openModal({
+                modal: modal,
+                title: "Move " + items.length + " stock items",
+                submit_text: "Move",
+                content: html
+            });
+
+            //modalSetContent(modal, html);
             attachSelect(modal);
 
             $(modal).find('#note-warning').hide();
