@@ -171,7 +171,7 @@ class StockMove(APIView):
         if len(errors) > 0:
             raise ValidationError(errors)
 
-        n  = 0
+        n = 0
 
         for part in parts:
             if part.move(location, data.get('notes'), request.user):
