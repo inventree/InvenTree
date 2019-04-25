@@ -225,11 +225,12 @@ function moveStockItems(items, options) {
         return;
     }
 
-    function doMove(location, parts) {
+    function doMove(location, parts, notes) {
         inventreeUpdate("/api/stock/move/",
                         {
                             location: location,
-                            'parts[]': parts
+                            'parts[]': parts,
+                            'notes': notes,
                         },
                         {
                             success: function(response) {
@@ -267,9 +268,13 @@ function moveStockItems(items, options) {
                 html += makeOption(loc.pk, loc.name + ' - <i>' + loc.description + '</i>');
             }
 
-            html += "</select><br><hr>";
+            html += "</select><br>";
 
-            html += "The following stock items will be moved:<br><ul class='list-group'>\n";
+            html += "<hr><input type='text' id='notes' placeholder='Notes'/>";
+
+            html += "<p class='warning-msg' id='note-warning'><i>Note field must be filled</i></p>";
+
+            html += "<hr>The following stock items will be moved:<br><ul class='list-group'>\n";
 
             for (i = 0; i < items.length; i++) {
                 parts.push(items[i].pk);
@@ -288,10 +293,19 @@ function moveStockItems(items, options) {
             modalSetContent(modal, html);
             attachSelect(modal);
 
+            $(modal).find('#note-warning').hide();
+
             modalSubmit(modal, function() {
                 var locId = $(modal).find("#stock-location").val();
 
-                doMove(locId, parts);
+                var notes = $(modal).find('#notes').val();
+
+                if (!notes) {
+                    $(modal).find('#note-warning').show();
+                    return false;
+                }
+
+                doMove(locId, parts, notes);
             });
         },
         error: function(error) {
@@ -363,7 +377,7 @@ function loadStockTable(table, options) {
                         return renderLink(row.location.pathstring, row.location.url);
                     }
                     else {
-                        return '';
+                        return '<i>No stock location set</i>';
                     }
                 }
             },

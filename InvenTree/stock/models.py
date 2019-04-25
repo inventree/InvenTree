@@ -221,13 +221,17 @@ class StockItem(models.Model):
     @transaction.atomic
     def move(self, location, notes, user):
 
-        if location.pk == self.location.pk:
-            return False  # raise forms.ValidationError("Cannot move item to its current location")
+        if location is None:
+            # TODO - Raise appropriate error (cannot move to blank location)
+            return False
+        elif self.location and (location.pk == self.location.pk):
+            # TODO - Raise appropriate error (cannot move to same location)
+            return False
 
-        msg = "Moved to {loc} (from {src})".format(
-            loc=location.name,
-            src=self.location.name
-        )
+        msg = "Moved to {loc}".format(loc=str(location))
+
+        if self.location:
+            msg += " (from {loc})".format(loc=str(self.location))
 
         self.location = location
         self.save()

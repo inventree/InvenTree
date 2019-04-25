@@ -153,6 +153,9 @@ class StockMove(APIView):
 
         errors = []
 
+        if u'notes' not in data:
+            errors.append({'notes': 'Notes field must be supplied'})
+
         for pid in part_list:
             try:
                 part = StockItem.objects.get(pk=pid)
@@ -164,7 +167,7 @@ class StockMove(APIView):
             raise ValidationError(errors)
 
         for part in parts:
-            part.move(location, request.user)
+            part.move(location, data.get('notes'), request.user)
 
         return Response({'success': 'Moved {n} parts to {loc}'.format(
             n=len(parts),
