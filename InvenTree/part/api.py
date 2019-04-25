@@ -167,6 +167,16 @@ class SupplierPartList(generics.ListAPIView):
     ]
 
 
+class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = SupplierPart.objects.all()
+    serializer_class = SupplierPartSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    read_only_fields = [
+    ]
+
+
 class SupplierPriceBreakList(generics.ListCreateAPIView):
 
     queryset = SupplierPriceBreak.objects.all()
@@ -189,13 +199,21 @@ cat_api_urls = [
     url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
 ]
 
+supplier_part_api_urls = [
+
+    url(r'^(?P<pk>\d+)/?', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
+
+    # Catch anything else
+    url(r'^.*$', SupplierPartList.as_view(), name='api-part-supplier-list'),
+]
+
 part_api_urls = [
     url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
     url(r'^category/', include(cat_api_urls)),
+    url(r'^supplier/?', include(supplier_part_api_urls)),
 
     url(r'^price-break/?', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
-    url(r'^supplier/?', SupplierPartList.as_view(), name='api-part-supplier-list'),
     url(r'^bom/?', BomList.as_view(), name='api-bom-list'),
 
     url(r'^(?P<pk>\d+)/', PartDetail.as_view(), name='api-part-detail'),
