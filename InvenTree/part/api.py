@@ -17,7 +17,6 @@ from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
 from .serializers import CategorySerializer
 
 from InvenTree.views import TreeSerializer
-from InvenTree.serializers import DraftRUDView
 
 
 class PartCategoryTree(TreeSerializer):
@@ -56,7 +55,7 @@ class CategoryList(generics.ListCreateAPIView):
     ]
 
 
-class PartDetail(DraftRUDView):
+class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Part.objects.all()
     serializer_class = PartSerializer
 
