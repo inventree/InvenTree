@@ -483,6 +483,7 @@ function loadStockTrackingTable(table, options) {
         rememberOrder: true,
         queryParams: options.params,
         columns: cols,
+        pagination: true,
         url: options.url,
     });
 
