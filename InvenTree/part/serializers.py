@@ -3,8 +3,6 @@ from rest_framework import serializers
 from .models import Part, PartCategory, BomItem
 from .models import SupplierPart, SupplierPriceBreak
 
-from company.serializers import CompanyBriefSerializer
-
 
 class CategorySerializer(serializers.ModelSerializer):
 
