@@ -65,7 +65,12 @@ function updateStock(items, options={}) {
         html += '<tr>';
 
         html += '<td>' + item.part.name + '</td>';
-        html += '<td>' + item.location.name + '</td>';
+
+        if (item.location) {
+            html += '<td>' + item.location.name + '</td>';
+        } else {
+            html += '<td><i>No location set</i></td>';
+        }
         html += "<td><input class='form-control' ";
         html += "value='" + vCur + "' ";
         html += "min='" + vMin + "' ";
