@@ -65,7 +65,12 @@ function updateStock(items, options={}) {
         html += '<tr>';
 
         html += '<td>' + item.part.name + '</td>';
-        html += '<td>' + item.location.name + '</td>';
+
+        if (item.location) {
+            html += '<td>' + item.location.name + '</td>';
+        } else {
+            html += '<td><i>No location set</i></td>';
+        }
         html += "<td><input class='form-control' ";
         html += "value='" + vCur + "' ";
         html += "min='" + vMin + "' ";
@@ -144,9 +149,7 @@ function updateStock(items, options={}) {
                             method: 'post',
                         }).then(function(response) {
                             closeModal(modal);
-                            if (options.success) {
-                                options.success();
-                            }
+                            afterForm(response, options);
                         }).fail(function(xhr, status, error) {
                             alert(error);
                         });
@@ -220,34 +223,28 @@ function moveStockItems(items, options) {
         return;
     }
 
-    function doMove(location, parts) {
+    function doMove(location, parts, notes) {
         inventreeUpdate("/api/stock/move/",
-                        {
-                            location: location,
-                            'parts[]': parts
-                        },
-                        {
-                            success: function(response) {
-                                closeModal(modal);
-                                if (options.success) {
-                                    options.success();
-                                }
-                            },
-                            error: function(error) {
-                                alert('error!:\n' + error);
-                            },
-                            method: 'post'
-                        });
+            {
+                location: location,
+                'parts[]': parts,
+                'notes': notes,
+            },
+            {
+                method: 'post',
+            }).then(function(response) {
+                closeModal(modal);
+                afterForm(response, options);
+            }).fail(function(xhr, status, error) {
+                alert(error);
+            });
     }
+        
 
     getStockLocations({},
     {
         success: function(response) {
-            openModal({
-                modal: modal,
-                title: "Move " + items.length + " stock items",
-                submit_text: "Move"
-            });
+            
 
             // Extact part row info
             var parts = [];
@@ -262,9 +259,13 @@ function moveStockItems(items, options) {
                 html += makeOption(loc.pk, loc.name + ' - <i>' + loc.description + '</i>');
             }
 
-            html += "</select><br><hr>";
+            html += "</select><br>";
 
-            html += "The following stock items will be moved:<br><ul class='list-group'>\n";
+            html += "<hr><input type='text' id='notes' placeholder='Notes'/>";
+
+            html += "<p class='warning-msg' id='note-warning'><i>Note field must be filled</i></p>";
+
+            html += "<hr>The following stock items will be moved:<br><ul class='list-group'>\n";
 
             for (i = 0; i < items.length; i++) {
                 parts.push(items[i].pk);
@@ -280,13 +281,29 @@ function moveStockItems(items, options) {
 
             html += "</ul>\n";
 
-            modalSetContent(modal, html);
+            openModal({
+                modal: modal,
+                title: "Move " + items.length + " stock items",
+                submit_text: "Move",
+                content: html
+            });
+
+            //modalSetContent(modal, html);
             attachSelect(modal);
+
+            $(modal).find('#note-warning').hide();
 
             modalSubmit(modal, function() {
                 var locId = $(modal).find("#stock-location").val();
 
-                doMove(locId, parts);
+                var notes = $(modal).find('#notes').val();
+
+                if (!notes) {
+                    $(modal).find('#note-warning').show();
+                    return false;
+                }
+
+                doMove(locId, parts, notes);
             });
         },
         error: function(error) {
@@ -358,7 +375,7 @@ function loadStockTable(table, options) {
                         return renderLink(row.location.pathstring, row.location.url);
                     }
                     else {
-                        return '';
+                        return '<i>No stock location set</i>';
                     }
                 }
             },
@@ -383,4 +400,94 @@ function loadStockTable(table, options) {
     if (options.buttons) {
         linkButtonsToSelection(table, options.buttons);
     }
-};
+}
+
+
+function loadStockTrackingTable(table, options) {
+
+    var cols = [
+        {
+            field: 'pk',
+            visible: false,
+        },
+        {
+            field: 'date',
+            title: 'Date',
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                var m = moment(value);
+                if (m.isValid()) {
+                    var html = m.format('dddd MMMM Do YYYY') + '<br>' + m.format('h:mm a');
+                    return html;
+                }
+
+                return 'N/A';
+            }
+        },
+    ];
+
+    // If enabled, provide a link to the referenced StockItem
+    if (options.partColumn) {
+        cols.push({
+            field: 'item',
+            title: 'Stock Item',
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                return renderLink(value.part_name, value.url);
+            }
+        });
+    }
+
+    // Stock transaction description
+    cols.push({
+        field: 'title',
+        title: 'Description',
+        sortable: true,
+        formatter: function(value, row, index, field) {
+            var html = "<b>" + value + "</b>";
+
+            if (row.notes) {
+                html += "<br><i>" + row.notes + "</i>";
+            }
+
+            return html;
+        }
+    });
+
+    cols.push({
+        field: 'quantity',
+        title: 'Quantity',
+    });
+
+    cols.push({
+        sortable: true,
+        field: 'user',
+        title: 'User',
+        formatter: function(value, row, index, field) {
+            if (value)
+            {
+                // TODO - Format the user's first and last names
+                return value.username;
+            }
+            else
+            {
+                return "No user information";
+            }
+        }
+    });
+
+    table.bootstrapTable({
+        sortable: true,
+        search: true,
+        method: 'get',
+        rememberOrder: true,
+        queryParams: options.params,
+        columns: cols,
+        pagination: true,
+        url: options.url,
+    });
+
+    if (options.buttons) {
+        linkButtonsToSelection(table, options.buttons);
+    }
+}

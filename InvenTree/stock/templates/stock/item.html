@@ -121,22 +121,11 @@
 
 {% if item.has_tracking_info %}
 
-<hr>
-<div class="panel-group">
- <div class="panel panel-default">
-   <div class="panel-heading">
-     <h4 class="panel-title">
-       <a data-toggle="collapse" href="#collapse1">Stock Tracking</a><span class='badge'>{{ item.tracking_info.all|length }}</span>
-     </h4>
-   </div>
-   <div id="collapse1" class="panel-collapse collapse">
-     <div class="panel-body">
-         <table class='table table-condensed table-striped' id='track-table'>
-         </table>
-     </div>
-   </div>
- </div>
+<div id='table-toolbar'>    
+    <h4>Stock Tracking Information</h4>
 </div>
+<table class='table table-condensed table-striped' id='track-table' data-toolbar='#table-toolbar'>
+</table>
 {% endif %}
 {% endblock %}
 {% block js_ready %}
@@ -210,66 +199,14 @@
                          });
     });
 
-    $('#track-table').bootstrapTable({
-        sortable: true,
-        search: true,
-        method: 'get',
-        queryParams: function(p) {
+    loadStockTrackingTable($("#track-table"), {
+        params: function(p) {
             return {
+                ordering: '-date',
                 item: {{ item.pk }},
-            }
+            };
         },
-        columns: [
-            {
-                field: 'date',
-                title: 'Date',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    var m = moment(value);
-                    if (m.isValid()) {
-                        var html = m.format('dddd MMMM Do YYYY') + '<br>' + m.format('h:mm a');
-                        return html;
-                    }
-
-                    return 'N/A';
-                }
-            },
-            {
-                field: 'title',
-                title: 'Description',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    var html = "<b>" + value + "</b>";
-
-                    if (row.notes) {
-                        html += "<br><i>" + row.notes + "</i>";
-                    }
-
-                    return html;
-                }
-            },
-            {
-                field: 'quantity',
-                title: 'Quantity',
-            },
-            {
-                sortable: true,
-                field: 'user',
-                title: 'User',
-                formatter: function(value, row, index, field) {
-                    if (value)
-                    {
-                        // TODO - Format the user's first and last names
-                        return value.username;
-                    }
-                    else
-                    {
-                        return "No user information";
-                    }
-                }
-            }
-        ],
-        url: "{% url 'api-stock-track' %}",
-    })
+        url: "{% url 'api-stock-track' %}", 
+    });
 
 {% endblock %}

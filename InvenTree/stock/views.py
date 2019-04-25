@@ -9,7 +9,7 @@ from django.forms.models import model_to_dict
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 
 from part.models import Part
-from .models import StockItem, StockLocation
+from .models import StockItem, StockLocation, StockItemTracking
 
 from .forms import EditStockLocationForm
 from .forms import CreateStockItemForm
@@ -248,3 +248,13 @@ class StockItemStocktake(AjaxUpdateView):
         }
 
         return self.renderJsonResponse(request, form, data)
+
+
+class StockTrackingIndex(ListView):
+    """
+    StockTrackingIndex provides a page to display StockItemTracking objects
+    """
+
+    model = StockItemTracking
+    template_name = 'stock/tracking.html'
+    context_object_name = 'items'

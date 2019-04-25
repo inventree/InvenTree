@@ -1,0 +1,28 @@
+{% extends "stock/stock_app_base.html" %}
+{% load static %}
+
+{% block content %}
+
+<h3>Stock list here!</h3>
+
+<table class='table table-striped table-condensed' data-toolbar='#button-toolbar' id='tracking-table'>
+</table>
+
+{% include 'modals.html' %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+    loadStockTrackingTable($("#tracking-table"), {
+        params: function(p) {
+            return {
+                ordering: '-date',
+            };
+        },
+        partColumn: true,
+        url: "{% url 'api-stock-track' %}", 
+    });
+
+{% endblock %}
