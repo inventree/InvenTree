@@ -124,7 +124,7 @@ class PartList(generics.ListCreateAPIView):
     ]
 
 
-class BomList(generics.ListAPIView):
+class BomList(generics.ListCreateAPIView):
 
     queryset = BomItem.objects.all()
     serializer_class = BomItemSerializer
@@ -142,6 +142,16 @@ class BomList(generics.ListAPIView):
     filter_fields = [
         'part',
         'sub_part'
+    ]
+
+
+class BomDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = BomItem.objects.all()
+    serializer_class = BomItemSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
     ]
 
 
@@ -213,9 +223,16 @@ part_api_urls = [
     url(r'^supplier/?', include(supplier_part_api_urls)),
 
     url(r'^price-break/?', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
-    url(r'^bom/?', BomList.as_view(), name='api-bom-list'),
 
     url(r'^(?P<pk>\d+)/', PartDetail.as_view(), name='api-part-detail'),
 
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
+]
+
+bom_api_urls = [
+    # BOM Item Detail
+    url('^(?P<pk>\d+)/?', BomDetail.as_view(), name='api-bom-detail'),
+
+    # Catch-all
+    url(r'^.*$', BomList.as_view(), name='api-bom-list'),
 ]

@@ -67,18 +67,20 @@ class PartSerializer(serializers.ModelSerializer):
 
 class BomItemSerializer(serializers.ModelSerializer):
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    # url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    part = PartBriefSerializer(many=False, read_only=True)
-    sub_part = PartBriefSerializer(many=False, read_only=True)
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
 
     class Meta:
         model = BomItem
         fields = [
             'pk',
-            'url',
+            # 'url',
             'part',
+            'part_detail',
             'sub_part',
+            'sub_part_detail',
             'quantity',
             'note',
         ]
