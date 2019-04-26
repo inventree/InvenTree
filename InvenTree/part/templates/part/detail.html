@@ -14,6 +14,7 @@
                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu">
+                  <li><a href='#' id='duplicate-part' title='Duplicate Part'>Duplicate</a></li>
                   <li><a href="#" id='edit-part' title='Edit part'>Edit</a></li>
                   <li><a href='#' id='stocktake-part' title='Stocktake'>Stocktake</a></li>
                   <li><a href="#" id='delete-part' title='Delete part'>Delete</a></li>
@@ -119,6 +120,19 @@
 
 {% block js_ready %}
     {{ block.super }}
+    
+    $("#duplicate-part").click(function() {
+        launchModalForm(
+            "{% url 'part-create' %}",
+            {
+                follow: true,
+                data: {
+                    copy: {{ part.id }},
+                },
+            }
+        );
+    });
+    
     $("#edit-part").click(function() {
         launchModalForm(
                         "{% url 'part-edit' part.id %}",
