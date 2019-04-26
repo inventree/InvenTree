@@ -51,7 +51,18 @@
                 field: 'description',
                 title: 'Description',
                 searchable: true,
-            }
+            },
+            {
+                field: 'available_stock',
+                title: 'Stock',
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value, row.url + 'stock/');
+                    } else {
+                        return renderLink('No stock', row.url + 'stock/');
+                    }
+                }
+            },
         ],
         url: "{% url 'api-part-list' %}"
     });
