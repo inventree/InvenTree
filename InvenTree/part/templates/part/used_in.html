@@ -41,14 +41,14 @@
                 visible: false,
             },
             {
-                field: 'part',
+                field: 'part_detail',
                 title: 'Part',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value.name, value.url);
+                    return renderLink(value.name, value.url + 'bom/');
                 }
             },
             {
-                field: 'part.description',
+                field: 'part_detail.description',
                 title: 'Description',
             },
             {

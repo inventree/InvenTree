@@ -87,7 +87,7 @@ function loadBomTable(table, options) {
     // Part column
     cols.push(
         {
-            field: 'sub_part',
+            field: 'sub_part_detail',
             title: 'Part',
             sortable: true,
             formatter: function(value, row, index, field) {
@@ -99,7 +99,7 @@ function loadBomTable(table, options) {
     // Part description
     cols.push(
         {
-            field: 'sub_part.description',
+            field: 'sub_part_detail.description',
             title: 'Description',
         }
     );
@@ -127,8 +127,8 @@ function loadBomTable(table, options) {
     if (options.editable) {
         cols.push({
             formatter: function(value, row, index, field) {
-                var bEdit = "<button class='btn btn-success bom-edit-button btn-sm' type='button' url='" + row.url + "edit'>Edit</button>";
-                var bDelt = "<button class='btn btn-danger bom-delete-button btn-sm' type='button' url='" + row.url + "delete'>Delete</button>";
+                var bEdit = "<button class='btn btn-success bom-edit-button btn-sm' type='button' url='/part/bom/" + row.pk + "/edit'>Edit</button>";
+                var bDelt = "<button class='btn btn-danger bom-delete-button btn-sm' type='button' url='/part/bom/" + row.pk + "/delete'>Delete</button>";
 
                 return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
             }
@@ -137,14 +137,14 @@ function loadBomTable(table, options) {
     else {
         cols.push(
             {
-                field: 'sub_part.available_stock',
+                field: 'sub_part_detail.available_stock',
                 title: 'Available',
                 searchable: false,
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     var text = "";
 
-                    if (row.quantity < row.sub_part.available_stock)
+                    if (row.quantity < row.sub_part_detail.available_stock)
                     {
                         text = "<span class='label label-success'>" + value + "</span>";
                     }
