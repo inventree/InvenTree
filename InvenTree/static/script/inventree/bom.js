@@ -87,7 +87,7 @@ function loadBomTable(table, options) {
     // Part column
     cols.push(
         {
-            field: 'sub_part',
+            field: 'sub_part_detail',
             title: 'Part',
             sortable: true,
             formatter: function(value, row, index, field) {
@@ -99,7 +99,7 @@ function loadBomTable(table, options) {
     // Part description
     cols.push(
         {
-            field: 'sub_part.description',
+            field: 'sub_part_detail.description',
             title: 'Description',
         }
     );
@@ -137,14 +137,14 @@ function loadBomTable(table, options) {
     else {
         cols.push(
             {
-                field: 'sub_part.available_stock',
+                field: 'sub_part_detail.available_stock',
                 title: 'Available',
                 searchable: false,
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     var text = "";
 
-                    if (row.quantity < row.sub_part.available_stock)
+                    if (row.quantity < row.sub_part_detail.available_stock)
                     {
                         text = "<span class='label label-success'>" + value + "</span>";
                     }
