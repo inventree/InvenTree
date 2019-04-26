@@ -55,6 +55,11 @@ class CategoryList(generics.ListCreateAPIView):
     ]
 
 
+class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = CategorySerializer
+    queryset = PartCategory.objects.all()
+
+
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Part.objects.all()
     serializer_class = PartSerializer
@@ -205,6 +210,9 @@ class SupplierPriceBreakList(generics.ListCreateAPIView):
 
 
 cat_api_urls = [
+
+    url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
+
     url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
 ]
 
