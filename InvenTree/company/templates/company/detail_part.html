@@ -50,10 +50,10 @@
             },
             {
                 sortable: true,
-                field: 'part',
+                field: 'part_name',
                 title: 'Part',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value.name, value.url + 'suppliers/');
+                    return renderLink(value, '/part/' + row.part + '/suppliers/');
                 }
             },
             {
