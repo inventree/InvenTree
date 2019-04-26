@@ -3,6 +3,8 @@ from rest_framework import serializers
 from .models import Part, PartCategory, BomItem
 from .models import SupplierPart, SupplierPriceBreak
 
+from InvenTree.serializers import InvenTreeModelSerializer
+
 
 class CategorySerializer(serializers.ModelSerializer):
 
@@ -65,14 +67,9 @@ class PartSerializer(serializers.ModelSerializer):
         ]
 
 
-class BomItemSerializer(serializers.ModelSerializer):
+class BomItemSerializer(InvenTreeModelSerializer):
 
     # url = serializers.CharField(source='get_absolute_url', read_only=True)
-
-    def validate(self, data):
-        instance = BomItem(**data)
-        instance.clean()
-        return data
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
