@@ -24,8 +24,6 @@ migrate:
 
 install:
 	pip install -U -r requirements/base.txt
-	
-	# Generate a secret key
 	python InvenTree/key.py
 
 setup: install migrate
