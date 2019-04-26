@@ -51,10 +51,10 @@
             },
             {
                 sortable: true,
-                field: 'supplier',
+                field: 'supplier_name',
                 title: 'Supplier',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value.name, value.url);
+                    return renderLink(value, '/company/' + row.supplier + '/');
                 }
             },
             {
