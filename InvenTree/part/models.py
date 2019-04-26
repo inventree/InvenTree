@@ -337,7 +337,7 @@ class BomItem(models.Model):
     """
 
     def get_absolute_url(self):
-        return reverse('bom-detail', kwargs={'pk': self.id})
+        return reverse('bom-item-detail', kwargs={'pk': self.id})
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
