@@ -69,6 +69,11 @@ class BomItemSerializer(serializers.ModelSerializer):
 
     # url = serializers.CharField(source='get_absolute_url', read_only=True)
 
+    def validate(self, data):
+        instance = BomItem(**data)
+        instance.clean()
+        return data
+
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
 

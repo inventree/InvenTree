@@ -220,7 +220,7 @@ part_api_urls = [
     url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
     url(r'^category/', include(cat_api_urls)),
-    url(r'^supplier/?', include(supplier_part_api_urls)),
+    url(r'^supplier/', include(supplier_part_api_urls)),
 
     url(r'^price-break/?', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
 

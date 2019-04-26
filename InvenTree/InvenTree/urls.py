@@ -29,11 +29,11 @@ from users.urls import user_urls
 admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
-    url(r'^part/?', include(part_api_urls)),
-    url(r'^bom/?', include(bom_api_urls)),
-    url(r'^company/?', include(company_api_urls)),
-    url(r'^stock/?', include(stock_api_urls)),
-    url(r'^build/?', include(build_api_urls)),
+    url(r'^part/', include(part_api_urls)),
+    url(r'^bom/', include(bom_api_urls)),
+    url(r'^company/', include(company_api_urls)),
+    url(r'^stock/', include(stock_api_urls)),
+    url(r'^build/', include(build_api_urls)),
 
     # User URLs
     url(r'^user/', include(user_urls)),
