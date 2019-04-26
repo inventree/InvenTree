@@ -13,7 +13,6 @@ from .serializers import LocationSerializer
 from .serializers import StockTrackingSerializer
 
 from InvenTree.views import TreeSerializer
-from InvenTree.serializers import DraftRUDView
 
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
@@ -26,7 +25,7 @@ class StockCategoryTree(TreeSerializer):
     model = StockLocation
 
 
-class StockDetail(DraftRUDView):
+class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     """
 
     get:

@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from rest_framework import serializers
-from rest_framework import generics
 
 from django.contrib.auth.models import User
 
@@ -24,13 +23,18 @@ class UserSerializerBrief(serializers.ModelSerializer):
         ]
 
 
-class DraftRUDView(generics.RetrieveAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
+class InvenTreeModelSerializer(serializers.ModelSerializer):
+    """
+    Inherits the standard Django ModelSerializer class,
+    but also ensures that the underlying model class data are checked on validation.
+    """
 
-    def perform_update(self, serializer):
+    def validate(self, data):
+        # Run any native validation checks first (may throw an ValidationError)
+        data = super(serializers.ModelSerializer, self).validate(data)
 
-        ctx_data = serializer._context['request'].data
+        # Now ensure the underlying model is correct
+        instance = self.Meta.model(**data)
+        instance.clean()
 
-        if ctx_data.get('_is_final', False) in [True, u'true', u'True', 1]:
-            super(generics.UpdateAPIView, self).perform_update(serializer)
-        else:
-            pass
+        return data

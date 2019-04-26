@@ -43,7 +43,19 @@ class CompanyList(generics.ListCreateAPIView):
     ordering = 'name'
 
 
+class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+    
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+
 company_api_urls = [
+
+    url(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
 
     url(r'^.*$', CompanyList.as_view(), name='api-company-list'),
 ]

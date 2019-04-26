@@ -11,7 +11,7 @@ from stock.urls import stock_urls
 
 from build.urls import build_urls
 
-from part.api import part_api_urls
+from part.api import part_api_urls, bom_api_urls
 from company.api import company_api_urls
 from stock.api import stock_api_urls
 from build.api import build_api_urls
@@ -30,6 +30,7 @@ admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
     url(r'^part/', include(part_api_urls)),
+    url(r'^bom/', include(bom_api_urls)),
     url(r'^company/', include(company_api_urls)),
     url(r'^stock/', include(stock_api_urls)),
     url(r'^build/', include(build_api_urls)),
