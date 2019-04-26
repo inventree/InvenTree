@@ -28,6 +28,8 @@ stock_urls = [
 
     url(r'^item/new/?', views.StockItemCreate.as_view(), name='stock-item-create'),
 
+    url(r'^track/?', views.StockTrackingIndex.as_view(), name='stock-tracking-list'),
+
     # Individual stock items
     url(r'^item/(?P<pk>\d+)/', include(stock_item_detail_urls)),
 

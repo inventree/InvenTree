@@ -64,7 +64,9 @@ class EditStockItemForm(HelperForm):
         model = StockItem
 
         fields = [
+            'supplier_part',
             'batch',
             'status',
-            'notes'
+            'notes',
+            'URL',
         ]

@@ -24,31 +24,22 @@ class LocationBriefSerializer(serializers.ModelSerializer):
         ]
 
 
-class StockTrackingSerializer(serializers.ModelSerializer):
+class StockItemSerializerBrief(serializers.ModelSerializer):
+    """
+    Provide a brief serializer for StockItem
+    """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    user = UserSerializerBrief(many=False, read_only=True)
+    part_name = serializers.CharField(source='part.name', read_only=True)
 
     class Meta:
-        model = StockItemTracking
+        model = StockItem
         fields = [
             'pk',
+            'uuid',
             'url',
-            'item',
-            'date',
-            'title',
-            'notes',
-            'quantity',
-            'user',
-            'system',
-        ]
-
-        read_only_fields = [
-            'date',
-            'user',
-            'system',
-            'quantity',
+            'part_name',
         ]
 
 
@@ -117,4 +108,34 @@ class LocationSerializer(serializers.ModelSerializer):
             'description',
             'parent',
             'pathstring'
+        ]
+
+
+class StockTrackingSerializer(serializers.ModelSerializer):
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
+    user = UserSerializerBrief(many=False, read_only=True)
+
+    item = StockItemSerializerBrief(many=False, read_only=True)
+
+    class Meta:
+        model = StockItemTracking
+        fields = [
+            'pk',
+            'url',
+            'item',
+            'date',
+            'title',
+            'notes',
+            'quantity',
+            'user',
+            'system',
+        ]
+
+        read_only_fields = [
+            'date',
+            'user',
+            'system',
+            'quantity',
         ]

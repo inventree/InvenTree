@@ -111,17 +111,22 @@ class StockStocktake(APIView):
         if 'notes' in request.data:
             notes = request.data['notes']
 
+        n = 0
+
         for item in items:
             quantity = int(item['quantity'])
 
             if action == u'stocktake':
-                item['item'].stocktake(quantity, request.user, notes=notes)
+                if item['item'].stocktake(quantity, request.user, notes=notes):
+                    n += 1
             elif action == u'remove':
-                item['item'].take_stock(quantity, request.user, notes=notes)
+                if item['item'].take_stock(quantity, request.user, notes=notes):
+                    n += 1
             elif action == u'add':
-                item['item'].add_stock(quantity, request.user, notes=notes)
+                if item['item'].add_stock(quantity, request.user, notes=notes):
+                    n += 1
 
-        return Response({'success': 'success'})
+        return Response({'success': 'Updated stock for {n} items'.format(n=n)})
 
 
 class StockMove(APIView):
@@ -153,6 +158,9 @@ class StockMove(APIView):
 
         errors = []
 
+        if u'notes' not in data:
+            errors.append({'notes': 'Notes field must be supplied'})
+
         for pid in part_list:
             try:
                 part = StockItem.objects.get(pk=pid)
@@ -163,12 +171,15 @@ class StockMove(APIView):
         if len(errors) > 0:
             raise ValidationError(errors)
 
+        n = 0
+
         for part in parts:
-            part.move(location, request.user)
+            if part.move(location, data.get('notes'), request.user):
+                n += 1
 
         return Response({'success': 'Moved {n} parts to {loc}'.format(
-            n=len(parts),
-            loc=location.name
+            n=n,
+            loc=str(location)
         )})
 
 
