@@ -32,7 +32,6 @@
             <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
         </tr>
         {% endif %}
-        <button class='btn btn-success' id='duplicate-part'>Copy Part</button>
     </div>
     </div>
 </div>
@@ -94,18 +93,6 @@
                             reload: true
                         }
                         );
-    });
-
-    $("#duplicate-part").click(function() {
-        launchModalForm(
-            "{% url 'part-create' %}",
-            {
-                follow: true,
-                data: {
-                    copy: {{ part.id }},
-                },
-            }
-        );
     });
 
 {% endblock %}
