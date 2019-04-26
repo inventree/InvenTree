@@ -42,7 +42,7 @@ class CategoryTest(TestCase):
         childs = self.p1.getUniqueChildren()
 
         self.assertIn(self.p2.id, childs)
-        self.assertIn(self.p2.id, childs)
+        self.assertIn(self.p3.id, childs)
 
     def test_unique_parents(self):
         parents = self.p2.getUniqueParents()
@@ -64,3 +64,13 @@ class CategoryTest(TestCase):
         self.assertEqual(self.p1.partcount, 3)
         self.assertEqual(self.p2.partcount, 3)
         self.assertEqual(self.p3.partcount, 1)
+
+    def test_delete(self):
+        self.assertEqual(Part.objects.filter(category=self.p1).count(), 0)
+
+        # Delete p2 (it has 2 direct parts and one child category)
+        self.p2.delete()
+
+        self.assertEqual(Part.objects.filter(category=self.p1).count(), 2)
+
+        self.assertEqual(PartCategory.objects.get(pk=self.p3.id).parent, self.p1)

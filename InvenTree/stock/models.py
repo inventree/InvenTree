@@ -28,11 +28,6 @@ class StockLocation(InvenTreeTree):
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
 
-    @property
-    def stock_items(self):
-        return self.stockitem_set.all()
-
-    @property
     def has_items(self):
         return self.stock_items.count() > 0
 
@@ -128,7 +123,7 @@ class StockItem(models.Model):
 
     # Where the part is stored. If the part has been used to build another stock item, the location may not make sense
     location = models.ForeignKey(StockLocation, on_delete=models.DO_NOTHING,
-                                 related_name='items', blank=True, null=True,
+                                 related_name='stock_items', blank=True, null=True,
                                  help_text='Where is this stock item located?')
 
     # If this StockItem belongs to another StockItem (e.g. as part of a sub-assembly)
@@ -253,7 +248,7 @@ class StockItem(models.Model):
         count = int(count)
 
         if count < 0 or self.infinite:
-            return
+            return False
 
         self.quantity = count
         self.stocktake_date = datetime.now().date()
@@ -264,6 +259,8 @@ class StockItem(models.Model):
                                   user,
                                   notes=notes,
                                   system=True)
+
+        return True
 
     @transaction.atomic
     def add_stock(self, quantity, user, notes=''):
@@ -276,7 +273,7 @@ class StockItem(models.Model):
 
         # Ignore amounts that do not make sense
         if quantity <= 0 or self.infinite:
-            return
+            return False
 
         self.quantity += quantity
 
@@ -287,18 +284,20 @@ class StockItem(models.Model):
                                   notes=notes,
                                   system=True)
 
+        return True
+
     @transaction.atomic
     def take_stock(self, quantity, user, notes=''):
         """ Remove items from stock
         """
 
         if self.quantity == 0:
-            return
+            return False
 
         quantity = int(quantity)
 
         if quantity <= 0 or self.infinite:
-            return
+            return False
 
         self.quantity -= quantity
 
@@ -312,6 +311,8 @@ class StockItem(models.Model):
                                   notes=notes,
                                   system=True)
 
+        return True
+
     def __str__(self):
         s = '{n} x {part}'.format(
             n=self.quantity,
@@ -321,10 +322,6 @@ class StockItem(models.Model):
             s += ' @ {loc}'.format(loc=self.location.name)
 
         return s
-
-    @property
-    def is_trackable(self):
-        return self.part.trackable
 
 
 class StockItemTracking(models.Model):

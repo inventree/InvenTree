@@ -12,7 +12,7 @@ style:
 
 test:
 	python InvenTree/manage.py check
-	python manage.py test build company part stock
+	python InvenTree/manage.py test build company part stock
 
 migrate:
 	python InvenTree/manage.py makemigrations company
@@ -23,13 +23,10 @@ migrate:
 	python InvenTree/manage.py check
 
 install:
-	pip install -U -r requirements/base.txt
+	pip install -U -r requirements.txt
 	python InvenTree/key.py
 
 setup: install migrate
-
-setup_ci:
-	pip install -U -r requirements/build.txt
 
 coverage:
 	python InvenTree/manage.py check
