@@ -101,13 +101,13 @@ class EditSupplierPartForm(HelperForm):
     class Meta:
         model = SupplierPart
         fields = [
+            'part',
             'supplier',
             'SKU',
-            'part',
             'description',
-            'URL',
             'manufacturer',
             'MPN',
+            'URL',
             'note',
             'single_price',
             'base_cost',
