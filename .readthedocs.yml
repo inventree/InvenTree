@@ -1,0 +1,14 @@
+# .readthedocs.yml
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
+# Location of sphinx configuration settings
+sphinx:
+  configuration: docs/conf.py
+
+formats: all
+
+python:
+  version: 3.5
+  install:
+    - requirements: docs/requirements.txt
