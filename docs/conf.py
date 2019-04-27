@@ -28,8 +28,12 @@ copyright = '2019, InvenTree'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'autoapi.extension'
+    'sphinx.ext.napoleon',
+    'autoapi.extension',
 ]
+
+napoleon_google_docstring = True
+napoleon_numpy_docstring = False
 
 autoapi_dirs = [
     '../InvenTree',
@@ -44,7 +48,10 @@ autoapi_type = 'python'
 autoapi_ignore = [
     '*migrations*',
     '**/test*.py',
-    '**/manage.py'
+    '**/manage.py',
+    '**/apps.py',
+    '**/admin.py',
+    '**/templates/',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
