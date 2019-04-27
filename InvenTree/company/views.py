@@ -17,7 +17,7 @@ from .forms import CompanyImageForm
 
 
 class CompanyIndex(ListView):
-    """ View for displaying list of companies 
+    """ View for displaying list of companies
     """
 
     model = Company

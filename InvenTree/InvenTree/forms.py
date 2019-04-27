@@ -1,4 +1,4 @@
-""" 
+"""
 Helper forms which subclass Django forms to provide additional functionality
 """
 

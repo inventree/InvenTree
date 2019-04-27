@@ -1,4 +1,4 @@
-""" 
+"""
 Various Views which provide extra functionality over base Django Views.
 
 In particular these views provide base functionality for rendering Django forms
@@ -20,7 +20,7 @@ from rest_framework import views
 
 class TreeSerializer(views.APIView):
     """ JSON View for serializing a Tree object.
-    """ 
+    """
 
     def itemToJson(self, item):
 
@@ -259,7 +259,7 @@ class IndexView(TemplateView):
 
 
 class SearchView(TemplateView):
-    """ View for InvenTree search page. 
+    """ View for InvenTree search page.
 
     Displays results of search query
     """

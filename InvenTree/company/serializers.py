@@ -1,4 +1,4 @@
-""" 
+"""
 JSON serializers for Company app
 """
 

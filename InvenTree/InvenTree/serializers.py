@@ -1,4 +1,4 @@
-""" 
+"""
 Serializers used in various InvenTree apps
 """
 

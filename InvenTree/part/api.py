@@ -226,7 +226,7 @@ class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class SupplierPriceBreakList(generics.ListCreateAPIView):
-    """ API endpoint for list view of SupplierPriceBreak object 
+    """ API endpoint for list view of SupplierPriceBreak object
 
     - GET: Retrieve list of SupplierPriceBreak objects
     - POST: Create a new SupplierPriceBreak object

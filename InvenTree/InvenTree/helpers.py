@@ -9,7 +9,7 @@ from django.http import StreamingHttpResponse
 
 
 def str2bool(text, test=True):
-    """ Test if a string 'looks' like a boolean value. 
+    """ Test if a string 'looks' like a boolean value.
 
     Args:
         text: Input text

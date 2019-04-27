@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.exceptions import ValidationError
-from .helpers import str2bool
 
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -125,7 +124,7 @@ class InvenTreeTree(models.Model):
         e.g. ["Top", "Second", "Third", "This"]
 
         Returns:
-            List of category names from the top level to this category 
+            List of category names from the top level to this category
         """
         return self.parentpath + [self]
 

@@ -55,7 +55,6 @@ class Build(models.Model):
     batch = models.CharField(max_length=100, blank=True, null=True,
                              help_text='Batch code for this build output')
 
-
     #: Date the build model was 'created'
     creation_date = models.DateField(auto_now=True, editable=False)
 
