@@ -29,6 +29,8 @@ local_settings.py
 
 # Sphinx files
 docs/_build
+docs/_static
+docs/_templates
 
 # Local media storage (only when running in development mode)
 InvenTree/media
