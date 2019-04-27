@@ -68,7 +68,9 @@ autoapi_ignore = [
 
 # Add any paths that contain templates here, relative to this directory.
 autoapi_template_dir = 'templates'
+autoapi_root = 'api'
 
+templates_path = ['templates']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
