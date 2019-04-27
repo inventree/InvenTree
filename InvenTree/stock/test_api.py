@@ -3,11 +3,11 @@ from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
-from .models import StockLocation, StockItem
+from .models import StockLocation
 
 
 class StockLocationTest(APITestCase):
-    """ 
+    """
     Series of API tests for the StockLocation API
     """
     list_url = reverse('api-location-list')
@@ -46,7 +46,7 @@ class StockItemTest(APITestCase):
     list_url = reverse('api-stock-list')
 
     def detail_url(self, pk):
-        return revere('api-stock-detail', kwargs={'pk': pk})
+        return reverse('api-stock-detail', kwargs={'pk': pk})
 
     def setUp(self):
         # Create a user for auth

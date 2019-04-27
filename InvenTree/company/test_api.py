@@ -7,7 +7,7 @@ from .models import Company
 
 
 class CompanyTest(APITestCase):
-    """ 
+    """
     Series of tests for the Company DRF API
     """
 
