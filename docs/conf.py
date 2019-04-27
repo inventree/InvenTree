@@ -38,12 +38,6 @@ napoleon_numpy_docstring = False
 
 autoapi_dirs = [
     '../InvenTree',
-    '../Inventree/build',
-    '../InvenTree/company',
-    '../InvenTree/InvenTree',
-    '../InvenTree/part',
-    '../InvenTree/stock',
-    '../InvenTree/users',
 ]
 
 autoapi_options = [
