@@ -1,3 +1,7 @@
+"""
+JSON API for the Stock app
+"""
+
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
@@ -26,7 +30,7 @@ class StockCategoryTree(TreeSerializer):
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
+    """ API detail endpoint for Stock object
 
     get:
     Return a single StockItem object
@@ -44,6 +48,11 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class StockFilter(FilterSet):
+    """ FilterSet for advanced stock filtering.
+
+    Allows greater-than / less-than filtering for stock quantity
+    """
+
     min_stock = NumberFilter(name='quantity', lookup_expr='gte')
     max_stock = NumberFilter(name='quantity', lookup_expr='lte')
 
@@ -53,12 +62,11 @@ class StockFilter(FilterSet):
 
 
 class StockStocktake(APIView):
-    """
-    Stocktake API endpoint provides stock update of multiple items simultaneously
+    """ Stocktake API endpoint provides stock update of multiple items simultaneously.
     The 'action' field tells the type of stock action to perform:
-        * 'stocktake' - Count the stock item(s)
-        * 'remove' - Remove the quantity provided from stock
-        * 'add' - Add the quantity provided from stock
+    - stocktake: Count the stock item(s)
+    - remove: Remove the quantity provided from stock
+    - add: Add the quantity provided from stock
     """
 
     permission_classes = [
@@ -129,6 +137,7 @@ class StockStocktake(APIView):
 
 
 class StockMove(APIView):
+    """ API endpoint for performing stock movements """
 
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
@@ -183,6 +192,11 @@ class StockMove(APIView):
 
 
 class StockLocationList(generics.ListCreateAPIView):
+    """ API endpoint for list view of StockLocation objects:
+
+    - GET: Return list of StockLocation objects
+    - POST: Create a new StockLocation
+    """
 
     queryset = StockLocation.objects.all()
 
@@ -204,14 +218,10 @@ class StockLocationList(generics.ListCreateAPIView):
 
 
 class StockList(generics.ListCreateAPIView):
-    """
+    """ API endpoint for list view of Stock objects
 
-    get:
-    Return a list of all StockItem objects
-    (with optional query filters)
-
-    post:
-    Create a new StockItem
+    - GET: Return a list of all StockItem objects (with optional query filters)
+    - POST: Create a new StockItem
     """
 
     def get_queryset(self):
@@ -268,6 +278,7 @@ class StockList(generics.ListCreateAPIView):
 
 
 class StockStocktakeEndpoint(generics.UpdateAPIView):
+    """ API endpoint for performing stocktake """
 
     queryset = StockItem.objects.all()
     serializer_class = StockQuantitySerializer
@@ -283,6 +294,13 @@ class StockStocktakeEndpoint(generics.UpdateAPIView):
 
 
 class StockTrackingList(generics.ListCreateAPIView):
+    """ API endpoint for list view of StockItemTracking objects.
+
+    StockItemTracking objects are read-only
+    (they are created by internal model functionality)
+
+    - GET: Return list of StockItemTracking objects
+    """
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockTrackingSerializer
@@ -312,17 +330,11 @@ class StockTrackingList(generics.ListCreateAPIView):
 
 
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
+    """ API endpoint for detail view of StockLocation object
 
-    get:
-    Return a single StockLocation object
-
-    post:
-    Update a StockLocation object
-
-    delete:
-    Remove a StockLocation object
-
+    - GET: Return a single StockLocation object
+    - PATCH: Update a StockLocation object
+    - DELETE: Remove a StockLocation object
     """
 
     queryset = StockLocation.objects.all()

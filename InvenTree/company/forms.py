@@ -1,5 +1,5 @@
 """
-Django Forms for interacting with Company objects
+Django Forms for interacting with Company app
 """
 
 # -*- coding: utf-8 -*-

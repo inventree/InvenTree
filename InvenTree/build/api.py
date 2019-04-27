@@ -1,5 +1,5 @@
 """
-Provides a JSON API for the Build app
+JSON API for the Build app
 """
 
 # -*- coding: utf-8 -*-

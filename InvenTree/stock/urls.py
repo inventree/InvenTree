@@ -1,3 +1,7 @@
+"""
+URL lookup for Stock app
+"""
+
 from django.conf.urls import url, include
 
 from . import views
