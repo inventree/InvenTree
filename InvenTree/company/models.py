@@ -1,3 +1,7 @@
+"""
+Company database model definitions
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -8,6 +12,16 @@ from django.urls import reverse
 
 
 def rename_company_image(instance, filename):
+    """ Function to rename a company image after upload
+
+    Args:
+        instance: Company object
+        filename: uploaded image filename
+
+    Returns:
+        New image filename
+    """
+
     base = 'company_images'
 
     if filename.count('.') > 0:
@@ -24,6 +38,9 @@ def rename_company_image(instance, filename):
 
 
 class Company(models.Model):
+    """ A Company object represents an external company.
+    It may be a supplier or a customer (or both).
+    """
 
     name = models.CharField(max_length=100, unique=True,
                             help_text='Company name')
@@ -54,21 +71,28 @@ class Company(models.Model):
     is_supplier = models.BooleanField(default=True)
 
     def __str__(self):
+        """ Get string representation of a Company """
         return "{n} - {d}".format(n=self.name, d=self.description)
 
     def get_absolute_url(self):
+        """ Get the web URL for the detail view for this Company """
         return reverse('company-detail', kwargs={'pk': self.id})
 
     @property
     def part_count(self):
+        """ The number of parts supplied by this company """
         return self.parts.count()
 
     @property
     def has_parts(self):
+        """ Return True if this company supplies any parts """
         return self.part_count > 0
 
 
 class Contact(models.Model):
+    """ A Contact represents a person who works at a particular company.
+    A Company may have zero or more associated Contact objects
+    """
 
     name = models.CharField(max_length=100)
 

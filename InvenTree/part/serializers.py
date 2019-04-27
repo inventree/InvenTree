@@ -1,3 +1,7 @@
+"""
+JSON serializers for Part app
+"""
+
 from rest_framework import serializers
 
 from .models import Part, PartCategory, BomItem
@@ -7,6 +11,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """ Serializer for PartCategory """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -23,6 +28,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class PartBriefSerializer(serializers.ModelSerializer):
+    """ Serializer for Part (brief detail) """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -68,6 +74,7 @@ class PartSerializer(serializers.ModelSerializer):
 
 
 class BomItemSerializer(InvenTreeModelSerializer):
+    """ Serializer for BomItem object """
 
     # url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -89,6 +96,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
 
 class SupplierPartSerializer(serializers.ModelSerializer):
+    """ Serializer for SupplierPart object """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -112,6 +120,7 @@ class SupplierPartSerializer(serializers.ModelSerializer):
 
 
 class SupplierPriceBreakSerializer(serializers.ModelSerializer):
+    """ Serializer for SupplierPriceBreak object """
 
     class Meta:
         model = SupplierPriceBreak

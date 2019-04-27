@@ -1,3 +1,7 @@
+"""
+Django Forms for interacting with Part objects
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -10,6 +14,7 @@ from .models import SupplierPart
 
 
 class PartImageForm(HelperForm):
+    """ Form for uploading a Part image """
 
     class Meta:
         model = Part
@@ -40,6 +45,7 @@ class BomExportForm(HelperForm):
 
 
 class EditPartForm(HelperForm):
+    """ Form for editing a Part object """
 
     class Meta:
         model = Part
@@ -64,6 +70,7 @@ class EditPartForm(HelperForm):
 
 
 class EditCategoryForm(HelperForm):
+    """ Form for editing a PartCategory object """
 
     class Meta:
         model = PartCategory
@@ -75,6 +82,7 @@ class EditCategoryForm(HelperForm):
 
 
 class EditBomItemForm(HelperForm):
+    """ Form for editing a BomItem object """
 
     class Meta:
         model = BomItem
@@ -88,6 +96,7 @@ class EditBomItemForm(HelperForm):
 
 
 class EditSupplierPartForm(HelperForm):
+    """ Form for editing a SupplierPart object """
 
     class Meta:
         model = SupplierPart

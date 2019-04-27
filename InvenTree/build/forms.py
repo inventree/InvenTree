@@ -1,3 +1,7 @@
+"""
+Django Forms for interacting with Build objects
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -7,6 +11,8 @@ from .models import Build
 
 
 class EditBuildForm(HelperForm):
+    """ Form for editing a Build object.
+    """
 
     class Meta:
         model = Build

@@ -1,3 +1,7 @@
+"""
+JSON API for the Build app
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -11,7 +15,12 @@ from .models import Build
 from .serializers import BuildSerializer
 
 
-class BuildList(generics.ListAPIView):
+class BuildList(generics.ListCreateAPIView):
+    """ API endpoint for accessing a list of Build objects.
+    
+    - GET: Return list of objects (with filters)
+    - POST: Create a new Build object
+    """
 
     queryset = Build.objects.all()
     serializer_class = BuildSerializer

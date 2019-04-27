@@ -1,3 +1,7 @@
+"""
+Provides a JSON API for the Company app
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -12,6 +16,13 @@ from .serializers import CompanySerializer
 
 
 class CompanyList(generics.ListCreateAPIView):
+    """ API endpoint for accessing a list of Company objects
+
+    Provides two methods:
+
+    - GET: Return list of objects
+    - POST: Create a new Company object
+    """
 
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
@@ -44,6 +55,7 @@ class CompanyList(generics.ListCreateAPIView):
 
 
 class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail of a single Company object """
 
     queryset = Company.objects.all()
     serializer_class = CompanySerializer

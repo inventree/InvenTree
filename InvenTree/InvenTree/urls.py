@@ -1,3 +1,10 @@
+"""
+Top-level URL lookup for InvenTree application.
+
+Passes URL lookup downstream to each app as required.
+"""
+
+
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views

@@ -28,15 +28,28 @@ copyright = '2019, InvenTree'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'autoapi.extension'
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'autoapi.extension',
 ]
+
+napoleon_google_docstring = True
+napoleon_numpy_docstring = False
 
 autoapi_dirs = [
     '../InvenTree',
+    '../Inventree/build',
+    '../InvenTree/company',
+    '../InvenTree/InvenTree',
+    '../InvenTree/part',
+    '../InvenTree/stock',
+    '../InvenTree/users',
 ]
 
 autoapi_options = [
     'members',
+    'private-members',
+    'special-members',
 ]
 
 autoapi_type = 'python'
@@ -44,11 +57,21 @@ autoapi_type = 'python'
 autoapi_ignore = [
     '*migrations*',
     '**/test*.py',
-    '**/manage.py'
+    '**/manage.py',
+    '**/apps.py',
+    '**/admin.py',
+    '**/middleware.py',
+    '**/utils.py',
+    '**/wsgi.py',
+    '**/templates/',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+autoapi_template_dir = 'templates'
+autoapi_root = 'docs'
+autoapi_add_toctree_entry = False
+
+templates_path = ['templates']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -73,3 +96,11 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# Table of contents in sidebar
+html_sidebars = {'**': [
+    'globaltoc.html',
+    'relations.html',
+    'sourcelink.html',
+    'searchbox.html'
+]}

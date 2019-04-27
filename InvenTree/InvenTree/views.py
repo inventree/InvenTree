@@ -1,3 +1,10 @@
+"""
+Various Views which provide extra functionality over base Django Views.
+
+In particular these views provide base functionality for rendering Django forms
+as JSON objects and passing them to modal forms (using jQuery / bootstrap).
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -12,6 +19,8 @@ from rest_framework import views
 
 
 class TreeSerializer(views.APIView):
+    """ JSON View for serializing a Tree object.
+    """
 
     def itemToJson(self, item):
 
@@ -52,20 +61,34 @@ class TreeSerializer(views.APIView):
 
 
 class AjaxMixin(object):
+    """ AjaxMixin provides basic functionality for rendering a Django form to JSON.
+    Handles jsonResponse rendering, and adds extra data for the modal forms to process
+    on the client side.
+    """
 
     ajax_form_action = ''
     ajax_form_title = ''
 
     def get_data(self):
+        """ Get extra context data (default implementation is empty dict)
+
+        Returns:
+            dict object (empty)
+        """
         return {}
 
-    def getAjaxTemplate(self):
-        if hasattr(self, 'ajax_template_name'):
-            return self.ajax_template_name
-        else:
-            return self.template_name
-
     def renderJsonResponse(self, request, form=None, data={}, context={}):
+        """ Render a JSON response based on specific class context.
+
+        Args:
+            request: HTTP request object (e.g. GET / POST)
+            form: Django form object (may be None)
+            data: Extra JSON data to pass to client
+            context: Extra context data to pass to template rendering
+
+        Returns:
+            JSON response object
+        """
 
         if form:
             context['form'] = form
@@ -73,7 +96,7 @@ class AjaxMixin(object):
         data['title'] = self.ajax_form_title
 
         data['html_form'] = render_to_string(
-            self.getAjaxTemplate(),
+            self.ajax_template_name,
             context,
             request=request
         )
@@ -88,7 +111,8 @@ class AjaxMixin(object):
 
 
 class AjaxView(AjaxMixin, View):
-    """ Bare-bones AjaxView """
+    """ An 'AJAXified' View for displaying an object
+    """
 
     # By default, point to the modal_form template
     # (this can be overridden by a child class)
@@ -201,7 +225,7 @@ class AjaxDeleteView(AjaxMixin, DeleteView):
             data = {'id': self.get_object().id,
                     'delete': False,
                     'title': self.ajax_form_title,
-                    'html_data': render_to_string(self.getAjaxTemplate(),
+                    'html_data': render_to_string(self.ajax_template_name,
                                                   self.get_context_data(),
                                                   request=request)
                     }
@@ -229,15 +253,24 @@ class AjaxDeleteView(AjaxMixin, DeleteView):
 
 
 class IndexView(TemplateView):
+    """ View for InvenTree index page """
 
     template_name = 'InvenTree/index.html'
 
 
 class SearchView(TemplateView):
+    """ View for InvenTree search page.
+
+    Displays results of search query
+    """
 
     template_name = 'InvenTree/search.html'
 
     def post(self, request, *args, **kwargs):
+        """ Handle POST request (which contains search query).
+
+        Pass the search query to the page template
+        """
 
         context = self.get_context_data()
 
