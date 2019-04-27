@@ -1,3 +1,7 @@
+"""
+Django Forms for interacting with Company objects
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -7,6 +11,7 @@ from .models import Company
 
 
 class EditCompanyForm(HelperForm):
+    """ Form for editing a Company object """
 
     class Meta:
         model = Company
@@ -26,6 +31,7 @@ class EditCompanyForm(HelperForm):
 
 
 class CompanyImageForm(HelperForm):
+    """ Form for uploading a Company image """
 
     class Meta:
         model = Company

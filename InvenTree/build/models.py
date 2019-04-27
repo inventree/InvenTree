@@ -1,7 +1,5 @@
 """
-Build models
-
-Defines the database models for part Builds
+Build database model definitions
 """
 
 # -*- coding: utf-8 -*-
