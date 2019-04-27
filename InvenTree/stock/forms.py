@@ -31,6 +31,7 @@ class CreateStockItemForm(HelperForm):
             'batch',
             'quantity',
             'status',
+            'notes',
             # 'customer',
             'URL',
         ]
