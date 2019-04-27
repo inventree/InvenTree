@@ -41,6 +41,8 @@ autoapi_dirs = [
 
 autoapi_options = [
     'members',
+    'private-members',
+    'special-members',
 ]
 
 autoapi_type = 'python'
@@ -51,6 +53,9 @@ autoapi_ignore = [
     '**/manage.py',
     '**/apps.py',
     '**/admin.py',
+    '**/middleware.py',
+    '**/utils.py',
+    '**/wsgi.py',
     '**/templates/',
 ]
 

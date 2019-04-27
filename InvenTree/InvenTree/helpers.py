@@ -1,3 +1,7 @@
+"""
+Provides helper functions used throughout the InvenTree project
+"""
+
 import io
 
 from wsgiref.util import FileWrapper
@@ -5,7 +9,14 @@ from django.http import StreamingHttpResponse
 
 
 def str2bool(text, test=True):
-    """ Test if a string 'looks' like a boolean value
+    """ Test if a string 'looks' like a boolean value. 
+
+    Args:
+        text: Input text
+        test (default = True): Set which boolean value to look for
+
+    Returns:
+        True if the text looks like the selected boolean value
     """
     if test:
         return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', ]
@@ -13,21 +24,36 @@ def str2bool(text, test=True):
         return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', ]
 
 
-def WrapWithQuotes(text):
-    # TODO - Make this better
-    if not text.startswith('"'):
-        text = '"' + text
+def WrapWithQuotes(text, quote='"'):
+    """ Wrap the supplied text with quotes
 
-    if not text.endswith('"'):
-        text = text + '"'
+    Args:
+        text: Input text to wrap
+        quote: Quote character to use for wrapping (default = "")
+
+    Returns:
+        Supplied text wrapped in quote char
+    """
+
+    if not text.startswith(quote):
+        text = quote + text
+
+    if not text.endswith(quote):
+        text = text + quote
 
     return text
 
 
 def DownloadFile(data, filename, content_type='application/text'):
-    """
-    Create a dynamic file for the user to download.
-    @param data is the raw file data
+    """ Create a dynamic file for the user to download.
+    
+    Args:
+        data: Raw file data (string or bytes)
+        filename: Filename for the file download
+        content_type: Content type for the download
+
+    Return:
+        A StreamingHttpResponse object wrapping the supplied data
     """
 
     filename = WrapWithQuotes(filename)

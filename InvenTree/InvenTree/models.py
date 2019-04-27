@@ -1,3 +1,7 @@
+"""
+Generic models which provide extra functionality over base Django model types.
+"""
+
 from __future__ import unicode_literals
 
 from django.db import models
@@ -11,6 +15,7 @@ from django.dispatch import receiver
 
 class InvenTreeTree(models.Model):
     """ Provides an abstracted self-referencing tree model for data categories.
+
     - Each Category has one parent Category, which can be blank (for a top-level Category).
     - Each Category can have zero-or-more child Categor(y/ies)
     """
@@ -69,10 +74,12 @@ class InvenTreeTree(models.Model):
 
     @property
     def has_children(self):
+        """ True if there are any children under this item """
         return self.children.count() > 0
 
     @property
     def children(self):
+        """ Return the children of this item """
         contents = ContentType.objects.get_for_model(type(self))
         childs = contents.get_all_objects_for_this_type(parent=self.id)
 
@@ -100,11 +107,10 @@ class InvenTreeTree(models.Model):
 
     @property
     def parentpath(self):
-        """ Return the parent path of this category
+        """ Get the parent path of this category
 
-        Todo:
-            This function is recursive and expensive.
-            It should be reworked such that only a single db call is required
+        Returns:
+            List of category names from the top level to the parent of this category
         """
 
         if self.parent:
@@ -114,10 +120,21 @@ class InvenTreeTree(models.Model):
 
     @property
     def path(self):
+        """ Get the complete part of this category.
+
+        e.g. ["Top", "Second", "Third", "This"]
+
+        Returns:
+            List of category names from the top level to this category 
+        """
         return self.parentpath + [self]
 
     @property
     def pathstring(self):
+        """ Get a string representation for the path of this item.
+
+        e.g. "Top/Second/Third/This"
+        """
         return '/'.join([item.name for item in self.path])
 
     def __setattr__(self, attrname, val):
@@ -157,38 +174,19 @@ class InvenTreeTree(models.Model):
         super(InvenTreeTree, self).__setattr__(attrname, val)
 
     def __str__(self):
-        """ String representation of a category is the full path to that category
-
-        Todo:
-            This is recursive - Make it not so.
-        """
+        """ String representation of a category is the full path to that category """
 
         return self.pathstring
 
 
 @receiver(pre_delete, sender=InvenTreeTree, dispatch_uid='tree_pre_delete_log')
 def before_delete_tree_item(sender, instance, using, **kwargs):
+    """ Receives pre_delete signal from InvenTreeTree object.
+
+    Before an item is deleted, update each child object to point to the parent of the object being deleted.
+    """
 
     # Update each tree item below this one
     for child in instance.children.all():
         child.parent = instance.parent
         child.save()
-
-
-def FilterChildren(queryset, parent):
-    """ Filter a queryset, limit to only objects that are a child of the given parent
-    Filter is passed in the URL string, e.g. '/?parent=123'
-    To accommodate for items without a parent, top-level items can be specified as:
-    none / false / null / top / 0
-    """
-
-    if not parent:
-        return queryset
-    elif str2bool(parent, False):
-        return queryset.filter(parent=None)
-    else:
-        parent_id = int(parent)
-        if parent_id == 0:
-            return queryset.filter(parent=None)
-        else:
-            return queryset.filter(parent=parent_id)
