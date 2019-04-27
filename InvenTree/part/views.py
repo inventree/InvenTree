@@ -1,3 +1,7 @@
+"""
+Django views for interacting with Part app
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -21,10 +25,12 @@ from .forms import EditSupplierPartForm
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 
-from InvenTree.helpers import DownloadFile
+from InvenTree.helpers import DownloadFile, str2bool
 
 
 class PartIndex(ListView):
+    """ View for displaying list of Part objects
+    """
     model = Part
     template_name = 'part/category.html'
     context_object_name = 'parts'
@@ -45,8 +51,12 @@ class PartIndex(ListView):
 
 
 class PartCreate(AjaxCreateView):
-    """ Create a new part
-    - Optionally provide a category object as initial data
+    """ View for creating a new Part object.
+
+    Options for providing initial conditions:
+    
+    - Provide a category object as initial data
+    - Copy an existing Part
     """
     model = Part
     form_class = EditPartForm
@@ -64,6 +74,10 @@ class PartCreate(AjaxCreateView):
 
     # If a category is provided in the URL, pass that to the page context
     def get_context_data(self, **kwargs):
+        """ Provide extra context information for the form to display:
+
+        - Add category information (if provided)
+        """
         context = super(PartCreate, self).get_context_data(**kwargs)
 
         # Add category information to the page
@@ -76,6 +90,11 @@ class PartCreate(AjaxCreateView):
 
     # Pre-fill the category field if a valid category is provided
     def get_initial(self):
+        """ Get initial data for the new Part object:
+
+        - If a category is provided, pre-fill the Category field
+        - If 'copy' parameter is provided, copy from referenced Part
+        """
 
         # Is the client attempting to copy an existing part?
         part_to_copy = self.request.GET.get('copy', None)
@@ -98,15 +117,22 @@ class PartCreate(AjaxCreateView):
 
 
 class PartDetail(DetailView):
+    """ Detail view for Part object
+    """
+
     context_object_name = 'part'
     queryset = Part.objects.all()
     template_name = 'part/detail.html'
 
     # Add in some extra context information based on query params
     def get_context_data(self, **kwargs):
+        """ Provide extra context data to template
+
+        - If '?editing=True', set 'editing_enabled' context variable
+        """
         context = super(PartDetail, self).get_context_data(**kwargs)
 
-        if self.request.GET.get('edit', '').lower() in ['true', 'yes', '1']:
+        if str2bool(self.request.GET.get('edit', '')):
             context['editing_enabled'] = 1
         else:
             context['editing_enabled'] = 0
@@ -115,6 +141,7 @@ class PartDetail(DetailView):
 
 
 class PartImage(AjaxUpdateView):
+    """ View for uploading Part image """
 
     model = Part
     ajax_template_name = 'modal_form.html'
@@ -128,6 +155,8 @@ class PartImage(AjaxUpdateView):
 
 
 class PartEdit(AjaxUpdateView):
+    """ View for editing Part object """
+
     model = Part
     template_name = 'part/edit.html'
     form_class = EditPartForm
@@ -214,6 +243,8 @@ class BomDownload(AjaxView):
 
 
 class PartDelete(AjaxDeleteView):
+    """ View to delete a Part object """
+
     model = Part
     template_name = 'part/delete.html'
     ajax_template_name = 'part/partial_delete.html'
@@ -229,6 +260,7 @@ class PartDelete(AjaxDeleteView):
 
 
 class CategoryDetail(DetailView):
+    """ Detail view for PartCategory """
     model = PartCategory
     context_object_name = 'category'
     queryset = PartCategory.objects.all()
@@ -236,6 +268,7 @@ class CategoryDetail(DetailView):
 
 
 class CategoryEdit(AjaxUpdateView):
+    """ Update view to edit a PartCategory """
     model = PartCategory
     template_name = 'part/category_edit.html'
     form_class = EditCategoryForm
@@ -251,6 +284,7 @@ class CategoryEdit(AjaxUpdateView):
 
 
 class CategoryDelete(AjaxDeleteView):
+    """ Delete view to delete a PartCategory """
     model = PartCategory
     template_name = 'part/category_delete.html'
     context_object_name = 'category'
@@ -263,6 +297,7 @@ class CategoryDelete(AjaxDeleteView):
 
 
 class CategoryCreate(AjaxCreateView):
+    """ Create view to make a new PartCategory """
     model = PartCategory
     ajax_form_action = reverse_lazy('category-create')
     ajax_form_title = 'Create new part category'
@@ -271,6 +306,10 @@ class CategoryCreate(AjaxCreateView):
     form_class = EditCategoryForm
 
     def get_context_data(self, **kwargs):
+        """ Add extra context data to template.
+
+        - If parent category provided, pass the category details to the template
+        """
         context = super(CategoryCreate, self).get_context_data(**kwargs).copy()
 
         parent_id = self.request.GET.get('category', None)
@@ -281,6 +320,10 @@ class CategoryCreate(AjaxCreateView):
         return context
 
     def get_initial(self):
+        """ Get initial data for new PartCategory
+
+        - If parent provided, pre-fill the parent category
+        """
         initials = super(CategoryCreate, self).get_initial().copy()
 
         parent_id = self.request.GET.get('category', None)
@@ -292,12 +335,14 @@ class CategoryCreate(AjaxCreateView):
 
 
 class BomItemDetail(DetailView):
+    """ Detail view for BomItem """
     context_object_name = 'item'
     queryset = BomItem.objects.all()
     template_name = 'part/bom-detail.html'
 
 
 class BomItemCreate(AjaxCreateView):
+    """ Create view for making a new BomItem object """
     model = BomItem
     form_class = EditBomItemForm
     template_name = 'part/bom-create.html'
@@ -305,6 +350,11 @@ class BomItemCreate(AjaxCreateView):
     ajax_form_title = 'Create BOM item'
 
     def get_initial(self):
+        """ Provide initial data for the BomItem:
+
+        - If 'parent' provided, set the parent part field
+        """
+
         # Look for initial values
         initials = super(BomItemCreate, self).get_initial().copy()
 
@@ -318,6 +368,8 @@ class BomItemCreate(AjaxCreateView):
 
 
 class BomItemEdit(AjaxUpdateView):
+    """ Update view for editing BomItem """
+
     model = BomItem
     form_class = EditBomItemForm
     template_name = 'part/bom-edit.html'
@@ -326,6 +378,7 @@ class BomItemEdit(AjaxUpdateView):
 
 
 class BomItemDelete(AjaxDeleteView):
+    """ Delete view for removing BomItem """
     model = BomItem
     template_name = 'part/bom-delete.html'
     context_object_name = 'item'
@@ -333,6 +386,7 @@ class BomItemDelete(AjaxDeleteView):
 
 
 class SupplierPartDetail(DetailView):
+    """ Detail view for SupplierPart """
     model = SupplierPart
     template_name = 'company/partdetail.html'
     context_object_name = 'part'
@@ -340,6 +394,8 @@ class SupplierPartDetail(DetailView):
 
 
 class SupplierPartEdit(AjaxUpdateView):
+    """ Update view for editing SupplierPart """
+
     model = SupplierPart
     template_name = 'company/partedit.html'
     context_object_name = 'part'
@@ -349,6 +405,8 @@ class SupplierPartEdit(AjaxUpdateView):
 
 
 class SupplierPartCreate(AjaxCreateView):
+    """ Create view for making new SupplierPart """
+
     model = SupplierPart
     form_class = EditSupplierPartForm
     ajax_template_name = 'modal_form.html'
@@ -356,6 +414,11 @@ class SupplierPartCreate(AjaxCreateView):
     context_object_name = 'part'
 
     def get_initial(self):
+        """ Provide initial data for new SupplierPart:
+
+        - If 'supplier_id' provided, pre-fill supplier field
+        - If 'part_id' provided, pre-fill part field
+        """
         initials = super(SupplierPartCreate, self).get_initial().copy()
 
         supplier_id = self.request.GET.get('supplier', None)
@@ -374,6 +437,7 @@ class SupplierPartCreate(AjaxCreateView):
 
 
 class SupplierPartDelete(AjaxDeleteView):
+    """ Delete view for removing a SupplierPart """
     model = SupplierPart
     success_url = '/supplier/'
     template_name = 'company/partdelete.html'

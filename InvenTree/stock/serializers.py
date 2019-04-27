@@ -1,3 +1,7 @@
+"""
+JSON serializers for Stock app
+"""
+
 from rest_framework import serializers
 
 from .models import StockItem, StockLocation
@@ -44,8 +48,8 @@ class StockItemSerializerBrief(serializers.ModelSerializer):
 
 
 class StockItemSerializer(serializers.ModelSerializer):
-    """
-    Serializer for a StockItem
+    """ Serializer for a StockItem:
+
     - Includes serialization for the linked part
     - Includes serialization for the item location
     """
@@ -112,6 +116,7 @@ class LocationSerializer(serializers.ModelSerializer):
 
 
 class StockTrackingSerializer(serializers.ModelSerializer):
+    """ Serializer for StockItemTracking model """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 

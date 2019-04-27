@@ -1,3 +1,7 @@
+"""
+URL lookup for Build app
+"""
+
 from django.conf.urls import url, include
 
 from . import views

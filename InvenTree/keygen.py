@@ -1,7 +1,5 @@
 """
-Module keygen
-=============
-This module generates a Django SECRET_KEY file to be used by manage.py
+Generates a Django SECRET_KEY file to be used by manage.py
 """
 
 import random
@@ -15,11 +13,13 @@ KEY_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 def generate_key(length=50):
-    """
-    Generate a random string
+    """ Generate a random string
 
-    :param length: Number of characters in returned string (default=50)
-    :returns: Randomized secret key string
+    Args:
+        length: Number of characters in returned string (default = 50)
+
+    Returns:
+        Randomized secret key string
     """
 
     options = string.digits + string.ascii_letters + string.punctuation

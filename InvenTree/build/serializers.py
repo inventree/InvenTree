@@ -1,3 +1,7 @@
+"""
+JSON serializers for Build API
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -7,6 +11,7 @@ from .models import Build
 
 
 class BuildSerializer(serializers.ModelSerializer):
+    """ Serializes a Build object """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     status_text = serializers.CharField(source='get_status_display', read_only=True)

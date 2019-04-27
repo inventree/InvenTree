@@ -1,3 +1,7 @@
+"""
+Part database model definitions
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -47,11 +51,19 @@ class PartCategory(InvenTreeTree):
 
     @property
     def has_parts(self):
+        """ True if there are any parts in this category """
         return self.parts.count() > 0
 
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
 def before_delete_part_category(sender, instance, using, **kwargs):
+    """ Receives before_delete signal for PartCategory object
+
+    Before deleting, update child Part and PartCategory objects:
+
+    - For each child category, set the parent to the parent of *this* category
+    - For each part, set the 'category' to the parent of *this* category
+    """
 
     # Update each part in this category to point to the parent category
     for part in instance.parts.all():
@@ -67,6 +79,16 @@ def before_delete_part_category(sender, instance, using, **kwargs):
 # Function to automatically rename a part image on upload
 # Format: part_pk.<img>
 def rename_part_image(instance, filename):
+    """ Function for renaming a part image file
+
+    Args:
+        instance: Instance of a Part object
+        filename: Name of original uploaded file
+
+    Returns:
+        Cleaned filename in format part_<n>_img
+    """
+
     base = 'part_images'
 
     if filename.count('.') > 0:
@@ -248,7 +270,8 @@ class Part(models.Model):
 
     @property
     def allocation_count(self):
-        """ Return true if any of this part is allocated
+        """ Return true if any of this part is allocated:
+
         - To another build
         - To a customer order
         """
@@ -311,6 +334,15 @@ class Part(models.Model):
 
 
 def attach_file(instance, filename):
+    """ Function for storing a file for a PartAttachment
+
+    Args:
+        instance: Instance of a PartAttachment object
+        filename: name of uploaded file
+
+    Returns:
+        path to store file, format: 'part_file_<pk>_filename'
+    """
     # Construct a path to store a file attachment
     return os.path.join('part_files', str(instance.part.id), filename)
 
@@ -356,6 +388,13 @@ class BomItem(models.Model):
     note = models.CharField(max_length=100, blank=True, help_text='Item notes')
 
     def clean(self):
+        """ Check validity of the BomItem model.
+
+        Performs model checks beyond simple field validation.
+
+        - A part cannot refer to itself in its BOM
+        - A part cannot refer to a part which refers to it
+        """
 
         # A part cannot refer to itself in its BOM
         if self.part == self.sub_part:
@@ -382,8 +421,9 @@ class BomItem(models.Model):
 class SupplierPart(models.Model):
     """ Represents a unique part as provided by a Supplier
     Each SupplierPart is identified by a MPN (Manufacturer Part Number)
-    Each SupplierPart is also linked to a Part object
-    - A Part may be available from multiple suppliers
+    Each SupplierPart is also linked to a Part object.
+
+    A Part may be available from multiple suppliers
     """
 
     def get_absolute_url(self):
@@ -453,6 +493,7 @@ class SupplierPart(models.Model):
 
     def get_price(self, quantity, moq=True, multiples=True):
         """ Calculate the supplier price based on quantity price breaks.
+        
         - If no price breaks available, use the single_price field
         - Don't forget to add in flat-fee cost (base_cost field)
         - If MOQ (minimum order quantity) is required, bump quantity

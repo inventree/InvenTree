@@ -1,3 +1,7 @@
+"""
+Django Forms for interacting with Stock app
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -8,6 +12,7 @@ from .models import StockLocation, StockItem
 
 
 class EditStockLocationForm(HelperForm):
+    """ Form for editing a StockLocation """
 
     class Meta:
         model = StockLocation
@@ -19,6 +24,7 @@ class EditStockLocationForm(HelperForm):
 
 
 class CreateStockItemForm(HelperForm):
+    """ Form for creating a new StockItem """
 
     class Meta:
         model = StockItem
@@ -38,6 +44,7 @@ class CreateStockItemForm(HelperForm):
 
 
 class MoveStockItemForm(forms.ModelForm):
+    """ Form for moving a StockItem to a new location """
 
     note = forms.CharField(label='Notes', required=True, help_text='Add note (required)')
 
@@ -60,6 +67,7 @@ class StocktakeForm(forms.ModelForm):
 
 
 class EditStockItemForm(HelperForm):
+    """ Form for editing a StockItem object """
 
     class Meta:
         model = StockItem

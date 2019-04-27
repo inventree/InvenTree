@@ -1,3 +1,7 @@
+"""
+Django views for interacting with Stock app
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -19,8 +23,7 @@ from .forms import StocktakeForm
 
 
 class StockIndex(ListView):
-    """
-    StockIndex view loads all StockLocation and StockItem object
+    """ StockIndex view loads all StockLocation and StockItem object
     """
     model = StockItem
     template_name = 'stock/location.html'

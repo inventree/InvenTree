@@ -1,20 +1,12 @@
-.. InvenTree documentation master file, created by
-   sphinx-quickstart on Sat Apr 27 15:45:39 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+InvenTree's Django Documentation
+================================
 
-Welcome to InvenTree's documentation!
-=====================================
+This documentation is auto-generated from the `InvenTree codebase <https://github.com/InvenTree/InvenTree>`_
 
 .. toctree::
+   :titlesonly:
    :maxdepth: 2
    :caption: Contents:
+   :hidden:
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   InvenTree <introduction>

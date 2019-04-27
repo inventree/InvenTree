@@ -1,3 +1,8 @@
+"""
+Serializers used in various InvenTree apps
+"""
+
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -7,6 +12,7 @@ from django.contrib.auth.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """ Serializer for User - provides all fields """
 
     class Meta:
         model = User
@@ -14,6 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserSerializerBrief(serializers.ModelSerializer):
+    """ Serializer for User - provides limited information """
 
     class Meta:
         model = User
