@@ -2,13 +2,18 @@
 # Read the Docs configuration file
 # See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
 
+version: 2
+
 # Location of sphinx configuration settings
 sphinx:
   configuration: docs/conf.py
 
-formats: all
+formats:
+  - pdf
+  - epub
 
 python:
   version: 3.5
   install:
     - requirements: docs/requirements.txt
+    - method: pip
