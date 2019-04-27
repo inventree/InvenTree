@@ -400,7 +400,9 @@ class SupplierPart(models.Model):
                              )
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
-                                 related_name='parts')
+                                 related_name='parts',
+                                 limit_choices_to={'is_supplier': True}
+                                 )
 
     SKU = models.CharField(max_length=100, help_text='Supplier stock keeping unit')
 
