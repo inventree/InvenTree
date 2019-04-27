@@ -406,6 +406,7 @@ class SupplierPartCreate(AjaxCreateView):
     ajax_form_title = 'Create new Supplier Part'
     context_object_name = 'part'
 
+
     def get_initial(self):
         """ Provide initial data for new SupplierPart:
 
@@ -414,18 +415,21 @@ class SupplierPartCreate(AjaxCreateView):
         """
         initials = super(SupplierPartCreate, self).get_initial().copy()
 
-        supplier_id = self.request.GET.get('supplier', None)
-        part_id = self.request.GET.get('part', None)
+        supplier_id = self.get_param('supplier')
+        part_id = self.get_param('part')
 
         if supplier_id:
-            initials['supplier'] = get_object_or_404(Company, pk=supplier_id)
-            # TODO
-            # self.fields['supplier'].disabled = True
+            try:
+                initials['supplier'] = Company.objects.get(pk=supplier_id)
+            except Company.DoesNotExist:
+                initials['supplier'] = None
+        
         if part_id:
-            initials['part'] = get_object_or_404(Part, pk=part_id)
-            # TODO
-            # self.fields['part'].disabled = True
-
+            try:
+                initials['part'] = Part.objects.get(pk=part_id)
+            except Part.DoesNotExist:
+                initials['part'] = None
+        
         return initials
 
 

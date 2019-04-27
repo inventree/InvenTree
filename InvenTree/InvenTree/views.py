@@ -69,6 +69,22 @@ class AjaxMixin(object):
     ajax_form_action = ''
     ajax_form_title = ''
 
+    def get_param(self, name, method='GET'):
+        """ Get a request query parameter value from URL e.g. ?part=3
+
+        Args:
+            name: Variable name e.g. 'part'
+            method: Request type ('GET' or 'POST')
+
+        Returns:
+            Value of the supplier parameter or None if parameter is not available
+        """
+
+        if method == 'POST':
+            return self.request.POST.get(name, None)
+        else:
+            return self.request.GET.get(name, None)
+
     def get_data(self):
         """ Get extra context data (default implementation is empty dict)
 
