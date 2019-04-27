@@ -4,16 +4,14 @@
 
 version: 2
 
-# Location of sphinx configuration settings
+# Build documentation in the docs/ directory with Sphinx
 sphinx:
   configuration: docs/conf.py
 
-formats:
-  - pdf
-  - epub
+formats: all
 
+# Optionally set the version of Python and requirements required to build your docs
 python:
   version: 3.5
   install:
     - requirements: docs/requirements.txt
-    - method: pip
