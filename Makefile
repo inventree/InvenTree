@@ -19,7 +19,8 @@ install:
 	pip install -U -r requirements.txt
 	python InvenTree/keygen.py
 
-setup: install migrate
+superuser:
+	python InvenTree/manage.py createsuperuser
 
 style:
 	flake8 InvenTree
@@ -37,5 +38,3 @@ documentation:
 	pip install -U -r docs/requirements.txt
 	cd docs & make html
 
-superuser:
-	python InvenTree/manage.py createsuperuser
