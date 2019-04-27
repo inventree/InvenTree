@@ -17,7 +17,7 @@ migrate:
 
 install:
 	pip install -U -r requirements.txt
-	python InvenTree/key.py
+	python InvenTree/keygen.py
 
 setup: install migrate
 
