@@ -1,5 +1,5 @@
 """
-Provides JSON serializers for Build API
+JSON serializers for Build API
 """
 
 # -*- coding: utf-8 -*-

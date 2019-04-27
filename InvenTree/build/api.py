@@ -17,8 +17,6 @@ from .serializers import BuildSerializer
 
 class BuildList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of Build objects.
-
-    Provides two methods:
     
     - GET: Return list of objects (with filters)
     - POST: Create a new Build object

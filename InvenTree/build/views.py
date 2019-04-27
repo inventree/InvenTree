@@ -1,5 +1,5 @@
 """
-Provides Django views for interacting with Build objects
+Django views for interacting with Build objects
 """
 
 # -*- coding: utf-8 -*-

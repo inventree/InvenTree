@@ -1,3 +1,7 @@
+"""
+Provides a JSON API for the Part app
+"""
+
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -26,6 +30,12 @@ class PartCategoryTree(TreeSerializer):
 
 
 class CategoryList(generics.ListCreateAPIView):
+    """ API endpoint for accessing a list of PartCategory objects.
+
+    - GET: Return a list of PartCategory objects
+    - POST: Create a new PartCategory object
+    """
+
     queryset = PartCategory.objects.all()
     serializer_class = CategorySerializer
 
@@ -56,11 +66,13 @@ class CategoryList(generics.ListCreateAPIView):
 
 
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail view of a single PartCategory object """
     serializer_class = CategorySerializer
     queryset = PartCategory.objects.all()
 
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail view of a single Part object """
     queryset = Part.objects.all()
     serializer_class = PartSerializer
 
@@ -70,6 +82,11 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartList(generics.ListCreateAPIView):
+    """ API endpoint for accessing a list of Part objects
+
+    - GET: Return list of objects
+    - POST: Create a new Part object
+    """
 
     serializer_class = PartSerializer
 
@@ -130,6 +147,11 @@ class PartList(generics.ListCreateAPIView):
 
 
 class BomList(generics.ListCreateAPIView):
+    """ API endpoing for accessing a list of BomItem objects
+
+    - GET: Return list of BomItem objects
+    - POST: Create a new BomItem object
+    """
 
     queryset = BomItem.objects.all()
     serializer_class = BomItemSerializer
@@ -151,6 +173,7 @@ class BomList(generics.ListCreateAPIView):
 
 
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail view of a single BomItem object """
 
     queryset = BomItem.objects.all()
     serializer_class = BomItemSerializer
@@ -161,6 +184,11 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class SupplierPartList(generics.ListCreateAPIView):
+    """ API endpoint for list view of SupplierPart object
+
+    - GET: Return list of SupplierPart objects
+    - POST: Create a new SupplierPart object
+    """
 
     queryset = SupplierPart.objects.all()
     serializer_class = SupplierPartSerializer
@@ -182,6 +210,12 @@ class SupplierPartList(generics.ListCreateAPIView):
 
 
 class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail view of SupplierPart object
+
+    - GET: Retrieve detail view
+    - PATCH: Update object
+    - DELETE: Delete objec
+    """
 
     queryset = SupplierPart.objects.all()
     serializer_class = SupplierPartSerializer
@@ -192,6 +226,11 @@ class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class SupplierPriceBreakList(generics.ListCreateAPIView):
+    """ API endpoint for list view of SupplierPriceBreak object 
+
+    - GET: Retrieve list of SupplierPriceBreak objects
+    - POST: Create a new SupplierPriceBreak object
+    """
 
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
