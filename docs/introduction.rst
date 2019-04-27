@@ -11,8 +11,8 @@ Django Apps
 
 The InvenTree Django ecosystem provides the following 'apps' for core functionality:
 
-* `InvenTree </api/InvenTree/index.html>`_ - High level management functions
-* `Build </api/build/index.html>`_ - Part build projects
-* `Company </api/company/index.html>`_ - Company management (suppliers / customers)
-* `Part </api/part/index.html>`_ - Part management
-* `Stock </api/stock/index.html>`_ - Stock management 
+* `InvenTree </docs/InvenTree/index.html>`_ - High level management functions
+* `Build </docs/build/index.html>`_ - Part build projects
+* `Company </docs/company/index.html>`_ - Company management (suppliers / customers)
+* `Part </docs/part/index.html>`_ - Part management
+* `Stock </docs/stock/index.html>`_ - Stock management 

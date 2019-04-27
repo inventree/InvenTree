@@ -68,7 +68,7 @@ autoapi_ignore = [
 
 # Add any paths that contain templates here, relative to this directory.
 autoapi_template_dir = 'templates'
-autoapi_root = 'api'
+autoapi_root = 'docs'
 autoapi_add_toctree_entry = False
 
 templates_path = ['templates']
