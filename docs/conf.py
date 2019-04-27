@@ -19,8 +19,7 @@ sys.path.append(os.path.abspath('../InvenTree'))
 # -- Project information -----------------------------------------------------
 
 project = 'InvenTree'
-copyright = '2019, Oliver Walters'
-author = 'Oliver Walters'
+copyright = '2019, InvenTree'
 
 
 # -- General configuration ---------------------------------------------------
@@ -48,8 +47,8 @@ exclude_patterns = [
     '_build',
     'Thumbs.db',
     '.DS_Store',
-    '**/migrations/',
-    '**/migrations',
+    'manage.rst',  # Ignore django management file
+    '**/*.migrations*.rst',  # Ignore migration files
 ]
 
 
