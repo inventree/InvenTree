@@ -239,7 +239,7 @@ part_api_urls = [
 
 bom_api_urls = [
     # BOM Item Detail
-    url('^(?P<pk>\d+)/?', BomDetail.as_view(), name='api-bom-detail'),
+    url('^(?P<pk>\d+)/', BomDetail.as_view(), name='api-bom-detail'),
 
     # Catch-all
     url(r'^.*$', BomList.as_view(), name='api-bom-list'),
