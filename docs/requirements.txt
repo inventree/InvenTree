@@ -1,2 +1,3 @@
 Sphinx>=2.0.1
-sphinx_rtd_theme==0.4.3
+sphinx-auto-api==1.0.0
+sphinx-rtd-theme==0.4.3
