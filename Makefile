@@ -7,13 +7,6 @@ clean:
 	rm -rf .tox
 	rm -f .coverage
 
-style:
-	flake8 InvenTree
-
-test:
-	python InvenTree/manage.py check
-	python InvenTree/manage.py test build company part stock
-
 migrate:
 	python InvenTree/manage.py makemigrations company
 	python InvenTree/manage.py makemigrations part
@@ -28,10 +21,20 @@ install:
 
 setup: install migrate
 
+style:
+	flake8 InvenTree
+
+test:
+	python InvenTree/manage.py check
+	python InvenTree/manage.py test build company part stock
+
 coverage:
 	python InvenTree/manage.py check
 	coverage run InvenTree/manage.py test build company part stock
 	coverage html
+
+docs:
+	pip install -U -r docs/requirements.txt
 
 superuser:
 	python InvenTree/manage.py createsuperuser
