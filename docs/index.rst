@@ -9,12 +9,10 @@ Welcome to InvenTree's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   :hidden:
 
+   InvenTree <introduction>
 
-
-Indices and tables
-==================
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
