@@ -33,8 +33,9 @@ coverage:
 	coverage run InvenTree/manage.py test build company part stock
 	coverage html
 
-docs:
+documentation:
 	pip install -U -r docs/requirements.txt
+	cd docs & make html
 
 superuser:
 	python InvenTree/manage.py createsuperuser
