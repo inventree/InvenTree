@@ -1,15 +1,15 @@
-Django==2.2
-psycopg2>=2.8.1
-pillow>=5.0.0
-djangorestframework>=3.6.2
-django_filter>=1.0.2
-coreapi>=2.3.0
-pygments>=2.2.0
-tablib>=0.13.0
-django-crispy-forms>=1.7.2
-django-import-export>=1.0.0
-django-cleanup>=2.1.0
-django-qr-code==1.0.0
-flake8==3.3.0
-coverage>=4.5.3
-python-coveralls==2.9.1
+Django==2.2                     # Django package
+psycopg2>=2.8.1                 # PostgreSQL package 
+pillow>=5.0.0                   # Image manipulation
+djangorestframework>=3.6.2      # DRF framework
+django_filter>=1.0.2            # Extended filtering options
+coreapi>=2.3.0                  # API documentation
+pygments>=2.2.0                 # Syntax highlighting
+tablib>=0.13.0                  # Import / export data files
+django-crispy-forms>=1.7.2      # Form helpers
+django-import-export>=1.0.0     # Data import / export for admin interface
+django-cleanup>=2.1.0           # Manage deletion of old / unused uploaded files
+django-qr-code==1.0.0           # Generate QR codes
+flake8==3.3.0                   # PEP checking
+coverage>=4.5.3                 # Unit test coverage
+python-coveralls==2.9.1         # Coveralls linking (for Travis)
