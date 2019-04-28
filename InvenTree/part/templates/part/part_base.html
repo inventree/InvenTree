@@ -5,6 +5,11 @@
 {% block content %}
 
 <div class="row">
+    {% if part.active == False %}
+    <div class='alert alert-danger' style='display: block;'>
+        This part ({{ part.name }}) is not active:
+    </div>
+    {% endif %}
 <div class="col-sm-6">
     <div class="media">
       <div class="media-left">
@@ -16,7 +21,7 @@
         {% endif %}/>
       </div>
     <div class="media-body">
-        <h4>{{ part.name }}</h4>
+        <h4>{{ part.name }}{% if part.active == False %} <i>- INACTIVE</i>{% endif %}</h4>
         {% if part.description %}
         <p><i>{{ part.description }}</i></p>
         {% endif %}
