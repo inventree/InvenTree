@@ -533,7 +533,7 @@ class SupplierPart(models.Model):
         return cost + self.base_cost
 
     def __str__(self):
-        return "{sku} - {supplier}".format(
+        return "{supplier} ({sku})".format(
             sku=self.SKU,
             supplier=self.supplier.name)
 
