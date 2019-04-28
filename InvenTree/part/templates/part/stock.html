@@ -7,7 +7,9 @@
 <h3>Part Stock</h3>
 
 <div id='button-toolbar'>
+    {% if part.active %}
     <button class='btn btn-success' id='add-stock-item'>New Stock Item</button>
+    {% endif %}
     <div id='opt-dropdown' class="dropdown" style='float: right;'>
         <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
             <span class="caret"></span></button>

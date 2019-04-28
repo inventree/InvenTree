@@ -17,7 +17,12 @@
                   <li><a href='#' id='duplicate-part' title='Duplicate Part'>Duplicate</a></li>
                   <li><a href="#" id='edit-part' title='Edit part'>Edit</a></li>
                   <li><a href='#' id='stocktake-part' title='Stocktake'>Stocktake</a></li>
-                  <li><a href="#" id='delete-part' title='Delete part'>Delete</a></li>
+                  <hr>
+                  {% if part.active %}
+                  <li><a href="#" id='deactivate-part' title='Deactivate part'>Deactivate</a></li>
+                  {% else %}
+                  <li><a href="#" id='activate-part' title='Activate part'>Activate</a></li>
+                  {% endif %}
                 </ul>
             </div>
         </h3>
