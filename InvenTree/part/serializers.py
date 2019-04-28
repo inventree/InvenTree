@@ -70,6 +70,7 @@ class PartSerializer(serializers.ModelSerializer):
             'consumable',
             'trackable',
             'salable',
+            'active',
         ]
 
 
