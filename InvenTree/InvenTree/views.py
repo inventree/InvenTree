@@ -184,7 +184,6 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
 
 class AjaxUpdateView(AjaxMixin, UpdateView):
-
     """ An 'AJAXified' UpdateView for updating an object in the db
     - Returns form in JSON format (for delivery to a modal window)
     - Handles repeated form validation (via AJAX) until the form is valid
@@ -192,35 +191,31 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
 
     def get(self, request, *args, **kwargs):
 
-        html_response = super(UpdateView, self).get(request, *args, **kwargs)
+        super(UpdateView, self).get(request, *args, **kwargs)
 
-        if request.is_ajax():
-            form = self.form_class(instance=self.get_object())
+        form = self.get_form()
+            # form = self.form_class(instance=self.get_object())
 
-            return self.renderJsonResponse(request, form)
-
-        else:
-            return html_response
+        return self.renderJsonResponse(request, form)
 
     def post(self, request, *args, **kwargs):
 
-        form = self.form_class(instance=self.get_object(), data=request.POST, files=request.FILES)
+        super(UpdateView, self).post(request, *args, **kwargs)
 
-        if request.is_ajax():
+        form = self.get_form()
 
-            data = {'form_valid': form.is_valid()}
+        data = {
+            'form_valid': form.is_valid()
+        }
 
-            if form.is_valid():
-                obj = form.save()
+        if form.is_valid():
+            obj = form.save()
+            
+            # Include context data about the updated object
+            data['pk'] = obj.id
+            data['url'] = obj.get_absolute_url()
 
-                data['pk'] = obj.id
-                data['url'] = obj.get_absolute_url()
-
-            response = self.renderJsonResponse(request, form, data)
-            return response
-
-        else:
-            return super(UpdateView, self).post(request, *args, **kwargs)
+        return self.renderJsonResponse(request, form, data)
 
 
 class AjaxDeleteView(AjaxMixin, DeleteView):
