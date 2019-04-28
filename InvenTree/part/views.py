@@ -98,7 +98,6 @@ class PartCreate(AjaxCreateView):
         form = super(AjaxCreateView, self).get_form()
 
         # Hide the default_supplier field (there are no matching supplier parts yet!)
-        #form.fields['default_supplier'].widget.attrs['hidden'] = True
         del form.fields['default_supplier']
 
         return form
@@ -194,7 +193,6 @@ class PartEdit(AjaxUpdateView):
         form.fields['default_supplier'].queryset = SupplierPart.objects.filter(part=part)
 
         return form
-
 
 
 class BomExport(AjaxView):
