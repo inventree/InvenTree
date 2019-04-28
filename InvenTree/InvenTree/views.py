@@ -150,39 +150,37 @@ class AjaxCreateView(AjaxMixin, CreateView):
     """
 
     def get(self, request, *args, **kwargs):
+        """ Creates form with initial data, and renders JSON response """ 
 
-        response = super(CreateView, self).get(request, *args, **kwargs)
+        super(CreateView, self).get(request, *args, **kwargs)
 
-        if request.is_ajax():
-            # Initialize a a new form
-            form = self.form_class(initial=self.get_initial())
-
-            return self.renderJsonResponse(request, form)
-
-        else:
-            return response
+        form = self.get_form()
+        return self.renderJsonResponse(request, form)
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(data=request.POST, files=request.FILES)
+        """ Responds to form POST. Validates POST data and returns status info.
 
-        if request.is_ajax():
+        Steps:
+        1. Validate POST form data
+        2. If valid, save form 
+        3. Return status info (success / failure)
+        """
+        form = self.get_form()
 
-            data = {
-                'form_valid': form.is_valid(),
-            }
+        # Extra JSON data sent alongside form
+        data = {
+            'form_valid': form.is_valid(),
+        }
 
-            if form.is_valid():
-                obj = form.save()
+        if form.is_valid():
+            obj = form.save()
 
-                # Return the PK of the newly-created object
-                data['pk'] = obj.pk
+            # Return the PK of the newly-created object
+            data['pk'] = obj.pk
 
-                data['url'] = obj.get_absolute_url()
+            data['url'] = obj.get_absolute_url()
 
-            return self.renderJsonResponse(request, form, data)
-
-        else:
-            return super(CreateView, self).post(request, *args, **kwargs)
+        return self.renderJsonResponse(request, form, data)
 
 
 class AjaxUpdateView(AjaxMixin, UpdateView):
