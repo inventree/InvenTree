@@ -126,6 +126,27 @@ class StockItemCreate(AjaxCreateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create new Stock Item'
 
+    def get_form(self):
+        """ Get form for StockItem creation.
+        Overrides the default get_form() method to intelligently limit
+        ForeignKey choices based on other selections
+        """
+
+        form = super(AjaxCreateView, self).get_form()
+
+        # If the user has selected a Part, limit choices for SupplierPart
+        if form['part'].value() is not None:
+            part = form['part'].value()
+            parts = form.fields['supplier_part'].queryset
+            parts = parts.filter(part=part)
+            form.fields['supplier_part'].queryset = parts
+
+        # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
+        elif form['supplier_part'].value() is not None:
+            pass
+
+        return form
+
     def get_initial(self):
         """ Provide initial data to create a new StockItem object
         """
@@ -188,7 +209,7 @@ class StockItemDelete(AjaxDeleteView):
 
     model = StockItem
     success_url = '/stock/'
-    template_name = 'stock/item_delete.html'
+    ajax_template_name = 'stock/item_delete.html'
     context_object_name = 'item'
     ajax_form_title = 'Delete Stock Item'
 
@@ -200,7 +221,7 @@ class StockItemMove(AjaxUpdateView):
     """
 
     model = StockItem
-    template_name = 'modal_form.html'
+    ajax_template_name = 'modal_form.html'
     context_object_name = 'item'
     ajax_form_title = 'Move Stock Item'
     form_class = MoveStockItemForm

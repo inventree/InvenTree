@@ -426,11 +426,6 @@ class SupplierPartCreate(AjaxCreateView):
 
     def get_form(self):
         form = super(AjaxCreateView, self).get_form()
-
-        # Was the form supplied with initial data?
-
-        print("Initial:", form.initial)
-        print(dir(form))
         
         if form.initial.get('supplier', None):
             # Hide the supplier field
