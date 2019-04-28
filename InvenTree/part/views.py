@@ -169,6 +169,21 @@ class PartEdit(AjaxUpdateView):
     ajax_form_title = 'Edit Part Properties'
     context_object_name = 'part'
 
+    def get_form(self):
+        """ Create form for Part editing.
+        Overrides default get_form() method to limit the choices
+        for the 'default_supplier' field to SupplierParts that reference this part
+        """
+
+        form = super(AjaxUpdateView, self).get_form()
+
+        part = self.get_object()
+
+        form.fields['default_supplier'].queryset = SupplierPart.objects.filter(part=part)
+
+        return form
+
+
 
 class BomExport(AjaxView):
 
