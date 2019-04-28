@@ -77,6 +77,14 @@ class StockItem(models.Model):
             )
 
     def clean(self):
+        """ Validate the StockItem object (separate to field validation)
+
+        The following validation checks are performed:
+
+        - The 'part' and 'supplier_part.part' fields cannot point to the same Part object
+        - The 'part' does not belong to itself
+        - Quantity must be 1 if the StockItem has a serial number
+        """ 
 
         # The 'supplier_part' field must point to the same part!
         try:
