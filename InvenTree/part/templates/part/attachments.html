@@ -14,11 +14,16 @@
 <tr>
     <th>File</th>
     <th>Comment</th>
+    <th></th>
 </tr>
 {% for attachment in part.attachments.all %}
 <tr>
     <td><a href='/media/{{ attachment.attachment }}'>{{ attachment.basename }}</a></td>
     <td>{{ attachment.comment }}</td>
+    <td>
+        <button type='button' class='btn btn-primary' data-toggle='tooltip' title='Edit attachment ({{ attachment.basename }})'><span class='glyphicon glyphicon-edit'></span></button>
+        <button type='button' class='btn btn-danger' data-toggle='tooltip' title='Delete attachment ({{ attachment.basename }})'><span class='glyphicon glyphicon-trash'></span></button>
+    </td>
 </tr>
 {% endfor %}
 </table>
