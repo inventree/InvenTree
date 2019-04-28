@@ -84,7 +84,10 @@ class PartCreate(AjaxCreateView):
         cat_id = self.get_category_id()
 
         if cat_id:
-            context['category'] = get_object_or_404(PartCategory, pk=cat_id)
+            try:
+                context['category'] = PartCategory.objects.get(pk=cat_id)
+            except PartCategory.DoesNotExist:
+                pass
 
         return context
 
@@ -111,7 +114,10 @@ class PartCreate(AjaxCreateView):
             initials = super(PartCreate, self).get_initial()
 
         if self.get_category_id():
-            initials['category'] = get_object_or_404(PartCategory, pk=self.get_category_id())
+            try:
+                initials['category'] = PartCategory.objects.get(pk=self.get_category_id())
+            except PartCategory.DoesNotExist:
+                pass
 
         return initials
 
@@ -158,7 +164,6 @@ class PartEdit(AjaxUpdateView):
     """ View for editing Part object """
 
     model = Part
-    template_name = 'part/edit.html'
     form_class = EditPartForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Part Properties'
@@ -246,7 +251,6 @@ class PartDelete(AjaxDeleteView):
     """ View to delete a Part object """
 
     model = Part
-    template_name = 'part/delete.html'
     ajax_template_name = 'part/partial_delete.html'
     ajax_form_title = 'Confirm Part Deletion'
     context_object_name = 'part'
@@ -270,7 +274,6 @@ class CategoryDetail(DetailView):
 class CategoryEdit(AjaxUpdateView):
     """ Update view to edit a PartCategory """
     model = PartCategory
-    template_name = 'part/category_edit.html'
     form_class = EditCategoryForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Part Category'
@@ -278,7 +281,10 @@ class CategoryEdit(AjaxUpdateView):
     def get_context_data(self, **kwargs):
         context = super(CategoryEdit, self).get_context_data(**kwargs).copy()
 
-        context['category'] = get_object_or_404(PartCategory, pk=self.kwargs['pk'])
+        try:
+            context['category'] = PartCategory.objects.get(pk=self.kwargs['pk'])
+        except:
+            pass
 
         return context
 
@@ -286,7 +292,7 @@ class CategoryEdit(AjaxUpdateView):
 class CategoryDelete(AjaxDeleteView):
     """ Delete view to delete a PartCategory """
     model = PartCategory
-    template_name = 'part/category_delete.html'
+    ajax_template_name = 'part/category_delete.html'
     context_object_name = 'category'
     success_url = '/part/'
 
@@ -302,7 +308,6 @@ class CategoryCreate(AjaxCreateView):
     ajax_form_action = reverse_lazy('category-create')
     ajax_form_title = 'Create new part category'
     ajax_template_name = 'modal_form.html'
-    template_name = 'part/category_new.html'
     form_class = EditCategoryForm
 
     def get_context_data(self, **kwargs):
@@ -315,7 +320,10 @@ class CategoryCreate(AjaxCreateView):
         parent_id = self.request.GET.get('category', None)
 
         if parent_id:
-            context['category'] = get_object_or_404(PartCategory, pk=parent_id)
+            try:
+                context['category'] = PartCategory.objects.get(pk=parent_id)
+            except PartCategory.DoesNotExist:
+                pass
 
         return context
 
@@ -329,7 +337,10 @@ class CategoryCreate(AjaxCreateView):
         parent_id = self.request.GET.get('category', None)
 
         if parent_id:
-            initials['parent'] = get_object_or_404(PartCategory, pk=parent_id)
+            try:
+                initials['parent'] = PartCategory.objects.get(pk=parent_id)
+            except PartCategory.DoesNotExist:
+                pass
 
         return initials
 
@@ -345,7 +356,6 @@ class BomItemCreate(AjaxCreateView):
     """ Create view for making a new BomItem object """
     model = BomItem
     form_class = EditBomItemForm
-    template_name = 'part/bom-create.html'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create BOM item'
 
@@ -362,7 +372,10 @@ class BomItemCreate(AjaxCreateView):
         parent_id = self.request.GET.get('parent', None)
 
         if parent_id:
-            initials['part'] = get_object_or_404(Part, pk=parent_id)
+            try:
+                initials['part'] = Part.objects.get(pk=parent_id)
+            except Part.DoesNotExist:
+                pass
 
         return initials
 
@@ -372,7 +385,6 @@ class BomItemEdit(AjaxUpdateView):
 
     model = BomItem
     form_class = EditBomItemForm
-    template_name = 'part/bom-edit.html'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit BOM item'
 
@@ -380,7 +392,7 @@ class BomItemEdit(AjaxUpdateView):
 class BomItemDelete(AjaxDeleteView):
     """ Delete view for removing BomItem """
     model = BomItem
-    template_name = 'part/bom-delete.html'
+    ajax_template_name = 'part/bom-delete.html'
     context_object_name = 'item'
     ajax_form_title = 'Confim BOM item deletion'
 
@@ -397,7 +409,6 @@ class SupplierPartEdit(AjaxUpdateView):
     """ Update view for editing SupplierPart """
 
     model = SupplierPart
-    template_name = 'company/partedit.html'
     context_object_name = 'part'
     form_class = EditSupplierPartForm
     ajax_template_name = 'modal_form.html'
@@ -413,6 +424,19 @@ class SupplierPartCreate(AjaxCreateView):
     ajax_form_title = 'Create new Supplier Part'
     context_object_name = 'part'
 
+    def get_form(self):
+        form = super(AjaxCreateView, self).get_form()
+        
+        if form.initial.get('supplier', None):
+            # Hide the supplier field
+            form.fields['supplier'].widget.attrs['disabled'] = True
+
+        if form.initial.get('part', None):
+            # Hide the part field
+            form.fields['part'].widget.attrs['disabled'] = True
+
+        return form
+
     def get_initial(self):
         """ Provide initial data for new SupplierPart:
 
@@ -421,18 +445,21 @@ class SupplierPartCreate(AjaxCreateView):
         """
         initials = super(SupplierPartCreate, self).get_initial().copy()
 
-        supplier_id = self.request.GET.get('supplier', None)
-        part_id = self.request.GET.get('part', None)
+        supplier_id = self.get_param('supplier')
+        part_id = self.get_param('part')
 
         if supplier_id:
-            initials['supplier'] = get_object_or_404(Company, pk=supplier_id)
-            # TODO
-            # self.fields['supplier'].disabled = True
+            try:
+                initials['supplier'] = Company.objects.get(pk=supplier_id)
+            except Company.DoesNotExist:
+                initials['supplier'] = None
+        
         if part_id:
-            initials['part'] = get_object_or_404(Part, pk=part_id)
-            # TODO
-            # self.fields['part'].disabled = True
-
+            try:
+                initials['part'] = Part.objects.get(pk=part_id)
+            except Part.DoesNotExist:
+                initials['part'] = None
+        
         return initials
 
 
@@ -440,4 +467,4 @@ class SupplierPartDelete(AjaxDeleteView):
     """ Delete view for removing a SupplierPart """
     model = SupplierPart
     success_url = '/supplier/'
-    template_name = 'company/partdelete.html'
+    ajax_template_name = 'company/partdelete.html'

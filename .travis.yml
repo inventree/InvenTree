@@ -9,7 +9,8 @@ addons:
         -sqlite3
 
 before_install:
-    - make setup
+    - make install
+    - make migrate
 
 script:
     - make coverage

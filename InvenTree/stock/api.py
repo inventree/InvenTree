@@ -7,7 +7,6 @@ from django_filters import NumberFilter
 
 from django.conf.urls import url, include
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
@@ -238,20 +237,24 @@ class StockList(generics.ListCreateAPIView):
         stock_list = StockItem.objects.all()
 
         if loc_id:
-            location = get_object_or_404(StockLocation, pk=loc_id)
+            try:
+                location = StockLocation.objects.get(pk=loc_id)
 
-            # Filter by the supplied category
-            flt = Q(location=loc_id)
+                # Filter by the supplied category
+                flt = Q(location=loc_id)
 
-            if self.request.query_params.get('include_child_locations', None):
-                childs = location.getUniqueChildren()
-                for child in childs:
-                    # Ignore the top-level category (already filtered!)
-                    if str(child) == str(loc_id):
-                        continue
-                    flt |= Q(location=child)
+                if self.request.query_params.get('include_child_locations', None):
+                    childs = location.getUniqueChildren()
+                    for child in childs:
+                        # Ignore the top-level category (already filtered!)
+                        if str(child) == str(loc_id):
+                            continue
+                        flt |= Q(location=child)
 
-            stock_list = stock_list.filter(flt)
+                stock_list = stock_list.filter(flt)
+            
+            except StockLocation.DoesNotExist:
+                pass
 
         return stock_list
 

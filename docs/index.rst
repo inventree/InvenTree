@@ -7,6 +7,6 @@ This documentation is auto-generated from the `InvenTree codebase <https://githu
    :titlesonly:
    :maxdepth: 2
    :caption: Contents:
-   :hidden:
 
-   InvenTree <introduction>
+   InvenTree Modules <introduction>
+   API Reference<reference>

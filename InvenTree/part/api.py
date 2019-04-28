@@ -11,7 +11,6 @@ from rest_framework import generics, permissions
 
 from django.db.models import Q
 from django.conf.urls import url, include
-from django.shortcuts import get_object_or_404
 
 from .models import Part, PartCategory, BomItem
 from .models import SupplierPart, SupplierPriceBreak
@@ -99,20 +98,24 @@ class PartList(generics.ListCreateAPIView):
         parts_list = Part.objects.all()
 
         if cat_id:
-            category = get_object_or_404(PartCategory, pk=cat_id)
+            try:
+                category = PartCategory.objects.get(pk=cat_id)
+                
+                # Filter by the supplied category
+                flt = Q(category=cat_id)
 
-            # Filter by the supplied category
-            flt = Q(category=cat_id)
+                if self.request.query_params.get('include_child_categories', None):
+                    childs = category.getUniqueChildren()
+                    for child in childs:
+                        # Ignore the top-level category (already filtered)
+                        if str(child) == str(cat_id):
+                            continue
+                        flt |= Q(category=child)
 
-            if self.request.query_params.get('include_child_categories', None):
-                childs = category.getUniqueChildren()
-                for child in childs:
-                    # Ignore the top-level category (already filtered)
-                    if str(child) == str(cat_id):
-                        continue
-                    flt |= Q(category=child)
+                parts_list = parts_list.filter(flt)
 
-            parts_list = parts_list.filter(flt)
+            except PartCategory.DoesNotExist:
+                pass
 
         return parts_list
 
