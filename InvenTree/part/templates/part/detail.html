@@ -146,6 +146,33 @@
                         });
     });
 
+    $('#activate-part').click(function() {
+        inventreeUpdate(
+            "{% url 'api-part-detail' part.id %}",
+            {
+                active: true,
+            },
+            {
+                method: 'PATCH',
+                reloadOnSuccess: true,
+            }
+        );
+    });
+
+    $('#deactivate-part').click(function() {
+        inventreeUpdate(
+            "{% url 'api-part-detail' part.id %}",
+            {
+                active: false,
+            },
+            {
+                method: 'PATCH',
+                reloadOnSuccess: true,
+            }
+        );
+    });
+
+
     $('#delete-part').click(function() {
         launchDeleteForm(
                          "{% url 'part-delete' part.id %}",
