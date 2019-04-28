@@ -84,7 +84,10 @@ class PartCreate(AjaxCreateView):
         cat_id = self.get_category_id()
 
         if cat_id:
-            context['category'] = get_object_or_404(PartCategory, pk=cat_id)
+            try:
+                context['category'] = PartCategory.objects.get(pk=cat_id)
+            except PartCategory.DoesNotExist:
+                pass
 
         return context
 
@@ -111,7 +114,10 @@ class PartCreate(AjaxCreateView):
             initials = super(PartCreate, self).get_initial()
 
         if self.get_category_id():
-            initials['category'] = get_object_or_404(PartCategory, pk=self.get_category_id())
+            try:
+                initials['category'] = PartCategory.objects.get(pk=self.get_category_id())
+            except PartCategory.DoesNotExist:
+                pass
 
         return initials
 
@@ -275,7 +281,10 @@ class CategoryEdit(AjaxUpdateView):
     def get_context_data(self, **kwargs):
         context = super(CategoryEdit, self).get_context_data(**kwargs).copy()
 
-        context['category'] = get_object_or_404(PartCategory, pk=self.kwargs['pk'])
+        try:
+            context['category'] = PartCategory.objects.get(pk=self.kwargs['pk'])
+        except:
+            pass
 
         return context
 
@@ -311,7 +320,10 @@ class CategoryCreate(AjaxCreateView):
         parent_id = self.request.GET.get('category', None)
 
         if parent_id:
-            context['category'] = get_object_or_404(PartCategory, pk=parent_id)
+            try:
+                context['category'] = PartCategory.objects.get(pk=parent_id)
+            except PartCategory.DoesNotExist:
+                pass
 
         return context
 
@@ -325,7 +337,10 @@ class CategoryCreate(AjaxCreateView):
         parent_id = self.request.GET.get('category', None)
 
         if parent_id:
-            initials['parent'] = get_object_or_404(PartCategory, pk=parent_id)
+            try:
+                initials['parent'] = PartCategory.objects.get(pk=parent_id)
+            except PartCategory.DoesNotExist:
+                pass
 
         return initials
 
@@ -357,7 +372,10 @@ class BomItemCreate(AjaxCreateView):
         parent_id = self.request.GET.get('parent', None)
 
         if parent_id:
-            initials['part'] = get_object_or_404(Part, pk=parent_id)
+            try:
+                initials['part'] = Part.objects.get(pk=parent_id)
+            except Part.DoesNotExist:
+                pass
 
         return initials
 

@@ -150,7 +150,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
     """
 
     def get(self, request, *args, **kwargs):
-        """ Creates form with initial data, and renders JSON response """ 
+        """ Creates form with initial data, and renders JSON response """
 
         super(CreateView, self).get(request, *args, **kwargs)
 
@@ -161,7 +161,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
         """ Responds to form POST. Validates POST data and returns status info.
 
         - Validate POST form data
-        - If valid, save form 
+        - If valid, save form
         - Return status info (success / failure)
         """
         form = self.get_form()
@@ -198,8 +198,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         super(UpdateView, self).get(request, *args, **kwargs)
 
         form = self.get_form()
-            # form = self.form_class(instance=self.get_object())
-
+        
         return self.renderJsonResponse(request, form)
 
     def post(self, request, *args, **kwargs):

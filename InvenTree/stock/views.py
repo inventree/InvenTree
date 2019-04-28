@@ -5,8 +5,6 @@ Django views for interacting with Stock app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import get_object_or_404
-
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 
@@ -106,7 +104,10 @@ class StockLocationCreate(AjaxCreateView):
         loc_id = self.request.GET.get('location', None)
 
         if loc_id:
-            initials['parent'] = get_object_or_404(StockLocation, pk=loc_id)
+            try:
+                initials['parent'] = StockLocation.objects.get(pk=loc_id)
+            except StockLocation.DoesNotExist:
+                pass
 
         return initials
 
@@ -126,6 +127,8 @@ class StockItemCreate(AjaxCreateView):
     ajax_form_title = 'Create new Stock Item'
 
     def get_initial(self):
+        """ Provide initial data to create a new StockItem object
+        """
 
         # Is the client attempting to copy an existing stock item?
         item_to_copy = self.request.GET.get('copy', None)
@@ -144,15 +147,22 @@ class StockItemCreate(AjaxCreateView):
         part_id = self.request.GET.get('part', None)
         loc_id = self.request.GET.get('location', None)
 
+        # Part field has been specified
         if part_id:
-            part = get_object_or_404(Part, pk=part_id)
-            if part:
-                initials['part'] = get_object_or_404(Part, pk=part_id)
+            try:
+                part = Part.objects.get(pk=part_id)
+                initials['part'] = part
                 initials['location'] = part.default_location
                 initials['supplier_part'] = part.default_supplier
+            except Part.DoesNotExist:
+                pass
 
+        # Location has been specified
         if loc_id:
-            initials['location'] = get_object_or_404(StockLocation, pk=loc_id)
+            try:
+                initials['location'] = StockLocation.objects.get(pk=loc_id)
+            except StockLocation.DoesNotExist:
+                pass
 
         return initials
 
