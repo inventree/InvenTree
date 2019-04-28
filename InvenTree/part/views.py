@@ -92,12 +92,15 @@ class PartCreate(AjaxCreateView):
         return context
 
     def get_form(self):
+        """ Create Form for making new Part object.
+        Remove the 'default_supplier' field as there are not yet any matching SupplierPart objects
+        """
         form = super(AjaxCreateView, self).get_form()
 
         # Hide the default_supplier field (there are no matching supplier parts yet!)
         #form.fields['default_supplier'].widget.attrs['hidden'] = True
         del form.fields['default_supplier']
-        
+
         return form
 
     # Pre-fill the category field if a valid category is provided
@@ -449,6 +452,9 @@ class SupplierPartCreate(AjaxCreateView):
     context_object_name = 'part'
 
     def get_form(self):
+        """ Create Form instance to create a new SupplierPart object.
+        Hide some fields if they are not appropriate in context
+        """
         form = super(AjaxCreateView, self).get_form()
         
         if form.initial.get('supplier', None):
