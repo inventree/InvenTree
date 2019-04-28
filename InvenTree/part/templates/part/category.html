@@ -115,16 +115,15 @@
         method: 'get',
         pagination: true,
         rememberOrder: true,
-        {% if category %}
         queryParams: function(p) {
             return {
+                active: true,
                 {% if category %}
                 category: {{ category.id }},
                 include_child_categories: true,
                 {% endif %}
             }
         },
-        {% endif %}
         columns: [
             {
                 checkbox: true,
@@ -160,7 +159,7 @@
                     else {
                         return '';
                     }
-                }
+                }   
             },
             {
                 field: 'total_stock',
