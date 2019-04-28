@@ -130,7 +130,6 @@ class PartList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'category',
         'buildable',
         'consumable',
         'trackable',
