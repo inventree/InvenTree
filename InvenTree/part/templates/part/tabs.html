@@ -31,4 +31,7 @@
         {% endif %}
     </a></li>
     {% endif %}
+    <li{% ifequal tab 'attachments' %} class="active"{% endifequal %}>
+        <a href="{% url 'part-attachments' part.id %}">Attachments {% if part.attachments.all|length > 0 %}<span class="badge">{{ part.attachments.all|length }}</span>{% endif %}</a>
+    </li>
 </ul>
