@@ -125,7 +125,7 @@ class Part(models.Model):
     IPN = models.CharField(max_length=100, blank=True, help_text='Internal Part Number')
 
     # Provide a URL for an external link
-    URL = models.URLField(blank=True, help_text='Link to external URL')
+    URL = models.URLField(blank=True, help_text='Link to extenal URL')
 
     # Part category - all parts must be assigned to a category
     category = models.ForeignKey(PartCategory, related_name='parts',
@@ -307,12 +307,6 @@ class Part(models.Model):
     def used_in_count(self):
         return self.used_in.count()
 
-    def required_parts(self):
-        parts = []
-        for bom in self.bom_items.all():
-            parts.append(bom.sub_part)
-        return parts
-
     @property
     def supplier_count(self):
         # Return the number of supplier parts available for this part
@@ -366,7 +360,7 @@ class PartAttachment(models.Model):
 
     attachment = models.FileField(upload_to=attach_file, null=True, blank=True)
 
-    comment = models.CharField(max_length=100, blank=True, help_text="Attachment description")
+    comment = models.CharField(max_length=100, blank=True, help_text='File comment')
 
     @property
     def basename(self):
@@ -407,11 +401,8 @@ class BomItem(models.Model):
         - A part cannot refer to a part which refers to it
         """
 
-        if self.part is None or self.sub_part is None:
-            # Field validation will catch these None values
-            pass
         # A part cannot refer to itself in its BOM
-        elif self.part == self.sub_part:
+        if self.part == self.sub_part:
             raise ValidationError({'sub_part': _('Part cannot be added to its own Bill of Materials')})
 
         # Test for simple recursion
