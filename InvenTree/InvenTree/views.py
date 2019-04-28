@@ -160,10 +160,9 @@ class AjaxCreateView(AjaxMixin, CreateView):
     def post(self, request, *args, **kwargs):
         """ Responds to form POST. Validates POST data and returns status info.
 
-        Steps:
-        1. Validate POST form data
-        2. If valid, save form 
-        3. Return status info (success / failure)
+        - Validate POST form data
+        - If valid, save form 
+        - Return status info (success / failure)
         """
         form = self.get_form()
 
@@ -190,6 +189,11 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
     """
 
     def get(self, request, *args, **kwargs):
+        """ Respond to GET request.
+
+        - Populates form with object data
+        - Renders form to JSON and returns to client
+        """
 
         super(UpdateView, self).get(request, *args, **kwargs)
 
@@ -199,6 +203,13 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         return self.renderJsonResponse(request, form)
 
     def post(self, request, *args, **kwargs):
+        """ Respond to POST request.
+
+        - Updates model with POST field data
+        - Performs form and object validation
+        - If errors exist, re-render the form
+        - Otherwise, return sucess status
+        """
 
         super(UpdateView, self).post(request, *args, **kwargs)
 
@@ -226,6 +237,11 @@ class AjaxDeleteView(AjaxMixin, DeleteView):
     """
 
     def get(self, request, *args, **kwargs):
+        """ Respond to GET request
+
+        - Render a DELETE confirmation form to JSON
+        - Return rendered form to client
+        """
 
         super(DeleteView, self).get(request, *args, **kwargs)
 
@@ -242,6 +258,11 @@ class AjaxDeleteView(AjaxMixin, DeleteView):
         return JsonResponse(data)
 
     def post(self, request, *args, **kwargs):
+        """ Respond to POST request
+
+        - DELETE the object
+        - Render success message to JSON and return to client
+        """
 
         obj = self.get_object()
         pk = obj.id
@@ -253,7 +274,7 @@ class AjaxDeleteView(AjaxMixin, DeleteView):
         }
 
         return self.renderJsonResponse(request, data=data)
-        
+
 
 class IndexView(TemplateView):
     """ View for InvenTree index page """
