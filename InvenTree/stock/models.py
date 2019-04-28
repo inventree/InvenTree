@@ -84,7 +84,7 @@ class StockItem(models.Model):
         - The 'part' and 'supplier_part.part' fields cannot point to the same Part object
         - The 'part' does not belong to itself
         - Quantity must be 1 if the StockItem has a serial number
-        """ 
+        """
 
         # The 'supplier_part' field must point to the same part!
         try:
