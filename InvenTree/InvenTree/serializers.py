@@ -37,6 +37,11 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
     """
 
     def validate(self, data):
+        """ Perform serializer validation.
+        In addition to running validators on the serializer fields,
+        this class ensures that the underlying model is also validated.
+        """
+        
         # Run any native validation checks first (may throw an ValidationError)
         data = super(serializers.ModelSerializer, self).validate(data)
 
