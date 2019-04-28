@@ -37,6 +37,10 @@ Run `make migrate` to perform all pending database migrations to ensure the data
 
 Run `make superuser` to create an admin account for the database
 
+### Launch Development Server
+
+Run `python InvenTree/manage.py runserver` to launch a (development / debug) server. InvenTree can be then accessed via a web browser at `http://127.0.0.1:8000`
+
 ### Test
 
 Run `make test` to run all code tests
