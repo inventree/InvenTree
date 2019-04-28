@@ -47,11 +47,7 @@ function inventreeUpdate(url, data={}, options={}) {
         data["_is_final"] = true;
     }
 
-    var method = 'put';
-
-    if ('method' in options) {
-        method = options.method;
-    }
+    var method = options.method || 'PUT';
 
     // Middleware token required for data update
     //var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
@@ -69,12 +65,21 @@ function inventreeUpdate(url, data={}, options={}) {
         success: function(response, status) {
             response['_status_code'] = status;
             console.log('UPDATE object to ' + url + ' - result = ' + status);
+            if (options.success) {
+                options.success(response, status);
+            }
+            if (options.reloadOnSuccess) {
+                location.reload();
+            }
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on UPDATE to ' + url);
             console.error(thrownError);
+            if (options.error) {
+                options.error(xhr, ajaxOptions, thrownError);
             }
-        });
+        }
+    });
 }
 
 // Return list of parts with optional filters

@@ -171,6 +171,9 @@ class Part(models.Model):
     # Can this part be sold to customers?
     salable = models.BooleanField(default=False, help_text="Can this part be sold to customers?")
 
+    # Is this part active?
+    active = models.BooleanField(default=True, help_text='Is this part active?')
+
     notes = models.TextField(blank=True)
 
     def __str__(self):

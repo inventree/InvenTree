@@ -53,6 +53,7 @@ class PartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Part
+        partial = True
         fields = [
             'pk',
             'url',  # Link to the part detail page
@@ -70,6 +71,7 @@ class PartSerializer(serializers.ModelSerializer):
             'consumable',
             'trackable',
             'salable',
+            'active',
         ]
 
 
