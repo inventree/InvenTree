@@ -227,39 +227,33 @@ class AjaxDeleteView(AjaxMixin, DeleteView):
 
     def get(self, request, *args, **kwargs):
 
-        html_response = super(DeleteView, self).get(request, *args, **kwargs)
+        super(DeleteView, self).get(request, *args, **kwargs)
 
-        if request.is_ajax():
+        data = {
+            'id': self.get_object().id,
+            'delete': False,
+            'title': self.ajax_form_title,
+            'html_data': render_to_string(
+                self.ajax_template_name,
+                self.get_context_data(),
+                request=request)
+        }
 
-            data = {'id': self.get_object().id,
-                    'delete': False,
-                    'title': self.ajax_form_title,
-                    'html_data': render_to_string(self.ajax_template_name,
-                                                  self.get_context_data(),
-                                                  request=request)
-                    }
-
-            return JsonResponse(data)
-
-        else:
-            return html_response
+        return JsonResponse(data)
 
     def post(self, request, *args, **kwargs):
 
-        if request.is_ajax():
+        obj = self.get_object()
+        pk = obj.id
+        obj.delete()
 
-            obj = self.get_object()
-            pk = obj.id
-            obj.delete()
+        data = {
+            'id': pk,
+            'delete': True
+        }
 
-            data = {'id': pk,
-                    'delete': True}
-
-            return self.renderJsonResponse(request, data=data)
-
-        else:
-            return super(DeleteView, self).post(request, *args, **kwargs)
-
+        return self.renderJsonResponse(request, data=data)
+        
 
 class IndexView(TemplateView):
     """ View for InvenTree index page """
