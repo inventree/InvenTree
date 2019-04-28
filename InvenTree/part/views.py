@@ -91,6 +91,15 @@ class PartCreate(AjaxCreateView):
 
         return context
 
+    def get_form(self):
+        form = super(AjaxCreateView, self).get_form()
+
+        # Hide the default_supplier field (there are no matching supplier parts yet!)
+        #form.fields['default_supplier'].widget.attrs['hidden'] = True
+        del form.fields['default_supplier']
+        
+        return form
+
     # Pre-fill the category field if a valid category is provided
     def get_initial(self):
         """ Get initial data for the new Part object:
