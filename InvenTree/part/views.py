@@ -406,6 +406,23 @@ class SupplierPartCreate(AjaxCreateView):
     ajax_form_title = 'Create new Supplier Part'
     context_object_name = 'part'
 
+    def get_form(self):
+        form = super(AjaxCreateView, self).get_form()
+
+        # Was the form supplied with initial data?
+
+        print("Initial:", form.initial)
+        print(dir(form))
+        
+        if form.initial.get('supplier', None):
+            # Hide the supplier field
+            form.fields['supplier'].widget.attrs['disabled'] = True
+
+        if form.initial.get('part', None):
+            # Hide the part field
+            form.fields['part'].widget.attrs['disabled'] = True
+
+        return form
 
     def get_initial(self):
         """ Provide initial data for new SupplierPart:
