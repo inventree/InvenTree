@@ -92,6 +92,8 @@ class EditBomItemForm(HelperForm):
             'quantity',
             'note'
         ]
+
+        # Prevent editing of the part associated with this BomItem
         widgets = {'part': forms.HiddenInput()}
 
 
@@ -101,13 +103,13 @@ class EditSupplierPartForm(HelperForm):
     class Meta:
         model = SupplierPart
         fields = [
+            'part',
             'supplier',
             'SKU',
-            'part',
             'description',
-            'URL',
             'manufacturer',
             'MPN',
+            'URL',
             'note',
             'single_price',
             'base_cost',

@@ -101,7 +101,10 @@ class BuildCreate(AjaxCreateView):
         part_id = self.request.GET.get('part', None)
 
         if part_id:
-            initials['part'] = get_object_or_404(Part, pk=part_id)
+            try:
+                initials['part'] = Part.objects.get(pk=part_id)
+            except Part.DoesNotExist:
+                pass
 
         return initials
 
