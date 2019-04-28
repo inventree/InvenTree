@@ -11,6 +11,16 @@
 </div>
 
 <table class='table table-striped table-condensed' data-toolbar='#toolbar' id='attachment-table'>
+<tr>
+    <th>File</th>
+    <th>Comment</th>
+</tr>
+{% for attachment in part.attachments.all %}
+<tr>
+    <td><a href='/media/{{ attachment.attachment }}'>{{ attachment.basename }}</a></td>
+    <td>{{ attachment.comment }}</td>
+</tr>
+{% endfor %}
 </table>
 
 {% endblock %}
