@@ -70,7 +70,7 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = PartCategory.objects.all()
 
 
-class PartDetail(generics.RetrieveUpdateDestroyAPIView):
+class PartDetail(generics.RetrieveUpdateAPIView):
     """ API endpoint for detail view of a single Part object """
     queryset = Part.objects.all()
     serializer_class = PartSerializer
