@@ -34,13 +34,16 @@ class BuildSerializer(InvenTreeModelSerializer):
 class BuildItemSerializer(InvenTreeModelSerializer):
     """ Serializes a BuildItem object """
 
-    part = serializers.CharField(source='stock_item.part', read_only=True)
+    part = serializers.IntegerField(source='stock_item.part.pk', read_only=True)
+    part_name = serializers.CharField(source='stock_item.part', read_only=True)
 
     class Meta:
         model = BuildItem
         fields = [
+            'pk',
             'build',
             'part',
+            'part_name',
             'stock_item',
             'quantity'
         ]

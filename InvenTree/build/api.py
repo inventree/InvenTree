@@ -36,7 +36,7 @@ class BuildList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'build',
+        'part',
     ]
 
 
@@ -47,16 +47,33 @@ class BuildItemList(generics.ListCreateAPIView):
     - POST: Create a new BuildItem object
     """
 
-    queryset = BuildItem.objects.all()
     serializer_class = BuildItemSerializer
+
+    def get_queryset(self):
+        """ Override the queryset method,
+        to allow filtering by stock_item.part
+        """
+
+        # Does the user wish to filter by part?
+        part_pk = self.request.query_params.get('part', None)
+
+        query = BuildItem.objects.all()
+
+        if part_pk:
+            query = query.filter(stock_item__part=part_pk)
+
+        return query
 
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
     ]
 
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
     filter_fields = [
         'build',
-        'part',
         'stock_item'
     ]
 
