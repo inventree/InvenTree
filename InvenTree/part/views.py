@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
+from django.forms import HiddenInput
 
 from company.models import Company
 from .models import PartCategory, Part, BomItem
@@ -98,7 +99,7 @@ class PartCreate(AjaxCreateView):
         form = super(AjaxCreateView, self).get_form()
 
         # Hide the default_supplier field (there are no matching supplier parts yet!)
-        del form.fields['default_supplier']
+        form.fields['default_supplier'] = HiddenInput()
 
         return form
 
@@ -457,11 +458,11 @@ class SupplierPartCreate(AjaxCreateView):
         
         if form.initial.get('supplier', None):
             # Hide the supplier field
-            form.fields['supplier'].widget.attrs['disabled'] = True
+            form.fields['supplier'].widget = HiddenInput()
 
         if form.initial.get('part', None):
             # Hide the part field
-            form.fields['part'].widget.attrs['disabled'] = True
+            form.fields['part'].widget = HiddenInput()
 
         return form
 
