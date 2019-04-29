@@ -28,6 +28,9 @@ class Build(models.Model):
         notes: Text notes
     """
 
+    def __str__(self):
+        return "Build {q} x {part}".format(q=self.quantity, part=str(self.part))
+
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.id})
 

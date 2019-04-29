@@ -73,6 +73,7 @@
 {% endif %}
 </table>
 
+{% if build.is_active %}
 <h3>Required Parts</h3>
 <table class='table table-striped' id='build-list' data-sorting='true'>
 <thead>
@@ -92,6 +93,8 @@
     {% endfor %}
 </tbody>
 </table>
+
+{% endif %}
 
 {% include 'modals.html' %}
 

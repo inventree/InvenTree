@@ -307,6 +307,12 @@ class Part(models.Model):
     def used_in_count(self):
         return self.used_in.count()
 
+    def required_parts(self):
+        parts = []
+        for bom in self.bom_items.all():
+            parts.append(bom.sub_part)
+        return parts
+
     @property
     def supplier_count(self):
         # Return the number of supplier parts available for this part

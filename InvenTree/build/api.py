@@ -9,10 +9,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework import generics, permissions
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 
-from .models import Build
-from .serializers import BuildSerializer
+from .models import Build, BuildItem
+from .serializers import BuildSerializer, BuildItemSerializer
 
 
 class BuildList(generics.ListCreateAPIView):
@@ -36,10 +36,37 @@ class BuildList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'part',
+        'build',
     ]
 
 
+class BuildItemList(generics.ListCreateAPIView):
+    """ API endpoint for accessing a list of BuildItem objects
+
+    - GET: Return list of objects
+    - POST: Create a new BuildItem object
+    """
+
+    queryset = BuildItem.objects.all()
+    serializer_class = BuildItemSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    filter_fields = [
+        'build',
+        'part',
+        'stock_item'
+    ]
+
+
+build_item_api_urls = [
+    url('^.*$', BuildItemList.as_view(), name='api-build-item-list'),
+]
+
 build_api_urls = [
-    url(r'^.*$', BuildList.as_view(), name='api-build-list')
+    url(r'^item/?', include(build_item_api_urls)),
+
+    url(r'^.*$', BuildList.as_view(), name='api-build-list'),
 ]
