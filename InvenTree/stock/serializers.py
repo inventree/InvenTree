@@ -29,12 +29,9 @@ class LocationBriefSerializer(serializers.ModelSerializer):
 
 
 class StockItemSerializerBrief(serializers.ModelSerializer):
-    """
-    Provide a brief serializer for StockItem
-    """
+    """ Brief serializers for a StockItem """
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
+    location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.name', read_only=True)
 
     class Meta:
@@ -42,22 +39,8 @@ class StockItemSerializerBrief(serializers.ModelSerializer):
         fields = [
             'pk',
             'uuid',
-            'url',
-            'part_name',
-        ]
-
-
-class StockItemSerializerBrief(serializers.ModelSerializer):
-    """ Brief serializers for a StockItem """
-
-    location_name = serializers.CharField(source='location', read_only=True)
-
-    class Meta:
-        model = StockItem
-        fields = [
-            'pk',
-            'uuid',
             'part',
+            'part_name',
             'supplier_part',
             'location',
             'location_name',

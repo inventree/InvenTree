@@ -390,7 +390,7 @@ class BomItemCreate(AjaxCreateView):
         - Do not allow part to be added to its own BOM
         - Remove any Part items that are already in the BOM
         """
-        
+
         form = super(AjaxCreateView, self).get_form()
 
         part_id = form['part'].value()
@@ -405,7 +405,7 @@ class BomItemCreate(AjaxCreateView):
             query = query.exclude(id=part.id)
             
             # Eliminate any options that are already in the BOM!
-            query = query.exclude(id__in=[item.id for item in part.required_parts()]) 
+            query = query.exclude(id__in=[item.id for item in part.required_parts()])
             
             form.fields['sub_part'].queryset = query
         except Part.DoesNotExist:

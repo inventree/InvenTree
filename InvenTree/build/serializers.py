@@ -11,6 +11,7 @@ from stock.serializers import StockItemSerializerBrief
 
 from .models import Build, BuildItem
 
+
 class BuildSerializer(InvenTreeModelSerializer):
     """ Serializes a Build object """
 
