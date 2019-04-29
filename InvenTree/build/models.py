@@ -116,8 +116,8 @@ class Build(models.Model):
         return self.status == self.COMPLETE
 
 
-class BuildItemAllocation(models.Model):
-    """ A BuildItemAllocation links multiple StockItem objects to a Build.
+class BuildItem(models.Model):
+    """ A BuildItem links multiple StockItem objects to a Build.
     These are used to allocate part stock to a build.
     Once the Build is completed, the parts are removed from stock and the
     BuildItemAllocation objects are removed.
