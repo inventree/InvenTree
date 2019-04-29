@@ -6,6 +6,7 @@ Build database model definitions
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
 
 from django.urls import reverse
 from django.db import models
@@ -127,6 +128,26 @@ class BuildItem(models.Model):
         stock: Link to a StockItem object
         quantity: Number of units allocated
     """
+
+    class Meta:
+        unique_together = [
+            ('build', 'stock_item'),
+        ]
+
+    def clean(self):
+        """ Check validity of the BuildItem model.
+        The following checks are performed:
+
+        - StockItem.part must be in the BOM of the Part object referenced by Build
+        """
+
+        if self.stock_item.part not in self.build.part.required_parts():
+            print('stock_item:', self.stock_item.part)
+            for p in self.build.part.bom_items.all():
+                print('bom_part:', p)
+            raise ValidationError(
+                {'stock_item': _("Selected stock item not found in BOM for part '{p}'".format(p=str(self.build.part)))}
+            )
 
     build = models.ForeignKey(
         Build,
