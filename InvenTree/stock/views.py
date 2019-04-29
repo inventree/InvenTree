@@ -145,7 +145,6 @@ class StockItemCreate(AjaxCreateView):
             # Hide the 'part' field
             form.fields['part'].widget = HiddenInput()
 
-
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
         elif form['supplier_part'].value() is not None:
             pass
