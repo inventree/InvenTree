@@ -14,6 +14,17 @@ from django.core.validators import MinValueValidator
 
 class Build(models.Model):
     """ A Build object organises the creation of new parts from the component parts.
+
+    Attributes:
+        part: The part to be built (from component BOM items)
+        title: Brief title describing the build (required)
+        quantity: Number of units to be built
+        status: Build status code
+        batch: Batch code transferred to build parts (optional)
+        creation_date: Date the build was created (auto)
+        completion_date: Date the build was completed
+        URL: External URL for extra information
+        notes: Text notes
     """
 
     def get_absolute_url(self):
@@ -23,16 +34,15 @@ class Build(models.Model):
                              related_name='builds',
                              limit_choices_to={'buildable': True},
                              )
-    """ A reference to the part being built - only parts marked as 'buildable' may be selected """
     
-    #: Brief title describing the build
     title = models.CharField(max_length=100, help_text='Brief description of the build')
     
-    #: Number of output parts to build
-    quantity = models.PositiveIntegerField(default=1,
-                                           validators=[MinValueValidator(1)],
-                                           help_text='Number of parts to build')
-
+    quantity = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        help_text='Number of parts to build'
+    )
+    
     # Build status codes
     PENDING = 10  # Build is pending / active
     HOLDING = 20  # Build is currently being held
@@ -46,23 +56,21 @@ class Build(models.Model):
                           COMPLETE: _("Complete"),
                           }
 
-    #: Status of the build (ref BUILD_STATUS_CODES)
     status = models.PositiveIntegerField(default=PENDING,
                                          choices=BUILD_STATUS_CODES.items(),
                                          validators=[MinValueValidator(0)])
-
-    #: Batch number for the build (optional)
+    
     batch = models.CharField(max_length=100, blank=True, null=True,
                              help_text='Batch code for this build output')
-
-    #: Date the build model was 'created'
+    
     creation_date = models.DateField(auto_now=True, editable=False)
-
-    #: Date the build was 'completed' (and parts removed from stock)
+    
     completion_date = models.DateField(null=True, blank=True)
+    
+    URL = models.URLField(blank=True, help_text='Link to external URL')
 
-    #: Notes attached to each build output
     notes = models.TextField(blank=True)
+    """ Notes attached to each build output """
 
     @property
     def required_parts(self):
@@ -106,3 +114,35 @@ class Build(models.Model):
     def is_complete(self):
         """ Returns True if the build status is COMPLETE """
         return self.status == self.COMPLETE
+
+
+class BuildItemAllocation(models.Model):
+    """ A BuildItemAllocation links multiple StockItem objects to a Build.
+    These are used to allocate part stock to a build.
+    Once the Build is completed, the parts are removed from stock and the
+    BuildItemAllocation objects are removed.
+
+    Attributes:
+        build: Link to a Build object
+        stock: Link to a StockItem object
+        quantity: Number of units allocated
+    """
+
+    build = models.ForeignKey(
+        Build,
+        on_delete=models.CASCADE,
+        related_name='allocated_stock',
+    )
+
+    stock = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.CASCADE,
+        related_name='allocations',
+        help_text='Stock Item to allocate to build',
+    )
+
+    quantity = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        help_text='Stock quantity to allocate to build'
+    )
