@@ -134,7 +134,7 @@ class BuildItem(models.Model):
         related_name='allocated_stock',
     )
 
-    stock = models.ForeignKey(
+    stock_item = models.ForeignKey(
         'stock.StockItem',
         on_delete=models.CASCADE,
         related_name='allocations',
