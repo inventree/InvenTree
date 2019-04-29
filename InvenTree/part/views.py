@@ -384,6 +384,35 @@ class BomItemCreate(AjaxCreateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create BOM item'
 
+    def get_form(self):
+        """ Override get_form() method to reduce Part selection options.
+
+        - Do not allow part to be added to its own BOM
+        - Remove any Part items that are already in the BOM
+        """
+        
+        form = super(AjaxCreateView, self).get_form()
+
+        part_id = form['part'].value()
+
+        try:
+            part = Part.objects.get(id=part_id)
+
+            # Don't allow selection of sub_part objects which are already added to the Bom!
+            query = form.fields['sub_part'].queryset
+            
+            # Don't allow a part to be added to its own BOM
+            query = query.exclude(id=part.id)
+            
+            # Eliminate any options that are already in the BOM!
+            query = query.exclude(id__in=[item.id for item in part.required_parts()]) 
+            
+            form.fields['sub_part'].queryset = query
+        except Part.DoesNotExist:
+            pass
+
+        return form
+
     def get_initial(self):
         """ Provide initial data for the BomItem:
 
