@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from rest_framework import serializers
 from InvenTree.serializers import InvenTreeModelSerializer
+from stock.serializers import StockItemSerializerBrief
 
 from .models import Build, BuildItem
 
@@ -35,7 +36,8 @@ class BuildItemSerializer(InvenTreeModelSerializer):
     """ Serializes a BuildItem object """
 
     part = serializers.IntegerField(source='stock_item.part.pk', read_only=True)
-    part_name = serializers.CharField(source='stock_item.part', read_only=True)
+    part_name = serializers.CharField(source='stock_item.part.name', read_only=True)
+    stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
 
     class Meta:
         model = BuildItem
@@ -45,5 +47,6 @@ class BuildItemSerializer(InvenTreeModelSerializer):
             'part',
             'part_name',
             'stock_item',
+            'stock_item_detail',
             'quantity'
         ]

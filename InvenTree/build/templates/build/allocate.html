@@ -18,16 +18,45 @@
 {{ block.super }}
 <script src="{% static 'script/inventree/api.js' %}"></script>
 <script src="{% static 'script/inventree/part.js' %}"></script>
+<script src="{% static 'script/inventree/build.js' %}"></script>
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
 
+    function makeInnerTable(pk) {
+        var table = "<table class='table table-striped' id='part-table-" + pk + "'></table>";
+        return table;
+    }
+
     $('#build-table').bootstrapTable({
         sortable: true,
+        detailView: true,
+        detailFormatter: function(index, row, element) {
+            return makeInnerTable(row.pk);
+        },
+        onExpandRow: function(index, row, $detail) {
+            $('#part-table-' + row.pk).bootstrapTable({
+                columns: [
+                    {
+                        field: 'stock_item_detail.location_name',
+                        title: 'Location',
+                    },
+                    {
+                        field: 'stock_item_detail.quantity',
+                        title: 'Available',
+                    },
+                    {
+                        field: 'quantity',
+                        title: 'Allocated',
+                    },
+                ],
+                url: "/api/build/item/?build={{ build.pk }}&part=" + row.sub_part,
+            });
+        },
         columns: [
             {
-                field: 'sub_part.name',
+                field: 'sub_part_detail.name',
                 title: 'Part',
             },
             {
@@ -36,7 +65,7 @@
             {
                 field: 'quantity',
                 title: 'Quantity',
-            }
+            },
         ],
     });
 

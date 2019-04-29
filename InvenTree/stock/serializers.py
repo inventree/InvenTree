@@ -47,6 +47,24 @@ class StockItemSerializerBrief(serializers.ModelSerializer):
         ]
 
 
+class StockItemSerializerBrief(serializers.ModelSerializer):
+    """ Brief serializers for a StockItem """
+
+    location_name = serializers.CharField(source='location', read_only=True)
+
+    class Meta:
+        model = StockItem
+        fields = [
+            'pk',
+            'uuid',
+            'part',
+            'supplier_part',
+            'location',
+            'location_name',
+            'quantity',
+        ]
+
+
 class StockItemSerializer(serializers.ModelSerializer):
     """ Serializer for a StockItem:
 
