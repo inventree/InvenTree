@@ -12,9 +12,11 @@
     </li>
     {% endif %}
     {% endif %}
-    {% if company.is_customer and 0 %}
+    {% if company.is_customer %}
+    {% if 0 %}
     <li{% if tab == 'co' %} class='active'{% endif %}>
         <a href="#">Sales Orders</a>
     </li>
+    {% endif %}
     {% endif %}
 </ul>
