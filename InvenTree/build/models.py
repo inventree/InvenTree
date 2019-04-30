@@ -12,6 +12,8 @@ from django.urls import reverse
 from django.db import models
 from django.core.validators import MinValueValidator
 
+from stock.models import StockItem
+
 
 class Build(models.Model):
     """ A Build object organises the creation of new parts from the component parts.
@@ -27,6 +29,50 @@ class Build(models.Model):
         URL: External URL for extra information
         notes: Text notes
     """
+
+    def save(self, *args, **kwargs):
+        """ Called when the Build model is saved to the database. 
+        
+        If this is a new Build, try to allocate StockItem objects automatically.
+        
+        - If there is only one StockItem for a Part, use that one.
+        - If there are multiple StockItem objects, leave blank and let the user decide
+        """
+
+        allocate_parts = False
+
+        # If there is no PK yet, then this is the first time the Build has been saved
+        if not self.pk:
+            allocate_parts = True
+
+        # Save this Build first
+        super(Build, self).save(*args, **kwargs)
+
+        if allocate_parts:
+            for item in self.part.bom_items.all():
+                part = item.sub_part
+                # Number of parts required for this build
+                q_req = item.quantity * self.quantity
+
+                stock = StockItem.objects.filter(part=part)
+
+                if len(stock) == 1:
+                    stock_item = stock[0]
+
+                    # Are there any parts available?
+                    if stock_item.quantity > 0:
+                        # If there are not enough parts, reduce the amount we will take
+                        if stock_item.quantity < q_req:
+                            q_req = stock_item.quantity
+
+                        # Allocate parts to this build
+                        build_item = BuildItem(
+                            build=self, 
+                            stock_item=stock_item,
+                            quantity=q_req)
+
+                        build_item.save()
+
 
     def __str__(self):
         return "Build {q} x {part}".format(q=self.quantity, part=str(self.part))
