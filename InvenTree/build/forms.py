@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
 
-from .models import Build
+from .models import Build, BuildItem
 
 
 class EditBuildForm(HelperForm):
@@ -25,4 +25,16 @@ class EditBuildForm(HelperForm):
             'notes',
             'status',
             # 'completion_date',
+        ]
+
+
+class EditBuildItemForm(HelperForm):
+    """ Form for adding a new BuildItem to a Build """
+
+    class Meta:
+        model = BuildItem
+        fields = [
+            'build',
+            'stock_item',
+            'quantity',
         ]

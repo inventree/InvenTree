@@ -10,8 +10,8 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, ListView
 
 from part.models import Part
-from .models import Build
-from .forms import EditBuildForm
+from .models import Build, BuildItem
+from .forms import EditBuildForm, EditBuildItemForm
 
 from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView
 
@@ -127,3 +127,30 @@ class BuildUpdate(AjaxUpdateView):
         return {
             'info': 'Edited build',
         }
+
+
+class BuildItemCreate(AjaxCreateView):
+    """ View for allocating a new part to a build """
+
+    model = BuildItem
+    form_class = EditBuildItemForm
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Allocate new Part'
+
+    def get_initial(self):
+        """ Provide initial data for BomItem. Look for the folllowing in the GET data:
+
+        - build: pk of the Build object
+        """
+
+        initials = super(AjaxCreateView, self).get_initial().copy()
+
+        build_id = self.get_param('build')
+        
+        if build_id:
+            try:
+                initials['build'] = Build.objects.get(pk=build_id)
+            except Build.DoesNotExist:
+                pass
+
+        return initials

@@ -6,6 +6,7 @@ function makeBuildTable(table, options) {
      * options:
      * build - ID of the build object
      * part - ID of the part object for the build
+     * new_item_url - URL to create a new BuildItem
      *
      */
 
@@ -20,7 +21,9 @@ function makeBuildTable(table, options) {
         onExpandRow: function(index, row, $detail) {
             fillAllocationTable(
                 $("#part-table-" + row.pk),
+                index,
                 row,
+                table,
                 {
                     build: options.build
                 },
@@ -28,8 +31,17 @@ function makeBuildTable(table, options) {
         },
         columns: [
             {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
                 field: 'sub_part_detail.name',
                 title: 'Part',
+            },
+            {
+                field: 'note',
+                title: 'Note',
             },
             {
                 field: 'quantity',
@@ -38,7 +50,28 @@ function makeBuildTable(table, options) {
             {
                 field: 'allocated',
                 title: 'Allocated',
-            }
+                formatter: function(value, row, index, field) {
+                    var html = "";
+
+                    var url = options.new_item_url;
+
+                    url += "?build=" + options.build + "&part=" + row.sub_part;
+                    
+                    if (value) {
+                        html = value;
+                    } else {
+                        html = "0";
+                    }
+
+                    html += "<div class='btn-group' style='float: right;'>";
+
+                    html += "<button class='btn btn-success btn-sm new-item-button' type='button' url='" + url + "'>Allocate</button>";
+
+                    html += "</div>";
+
+                    return html;
+                }
+            },
         ],
     });
 
@@ -48,6 +81,16 @@ function makeBuildTable(table, options) {
         }).then(function(response) {
             table.bootstrapTable('load', response)
         });
+
+    // Button callbacks
+    table.on('click', '.new-item-button', function() {
+        var button = $(this);
+
+        launchModalForm(button.attr('url'), {
+            success: function() {
+            }
+        });
+    });
 }
 
 
@@ -68,12 +111,14 @@ function makeAllocationTable(options) {
      return table;
 }
 
-function fillAllocationTable(table, parent_row, options) {
+function fillAllocationTable(table, index, parent_row, parent_table, options) {
     /* Load data into an allocation table,
      * and update the total stock allocation count in the parent row.
      *
      * table - the part allocation table
-     * row - parent row in the build allocation table
+     * index - row index in the parent table
+     * parent_row - parent row data in the build allocation table
+     * parent_table - the parent build table
      * 
      * options:
      * build - pk of the Build object
@@ -113,5 +158,15 @@ function fillAllocationTable(table, parent_row, options) {
         for (var i = 0; i < allocationData.length; i++) {
             allocated += allocationData[i].quantity;
         }
+
+        // Update the parent_row data
+        parent_row.quantity = allocated;
+
+        /*parent_table.bootstrapTable('updateRow',
+            {
+                index: index,
+                row: parent_row
+            }
+        );*/
     });
 }
