@@ -123,6 +123,7 @@ function fillAllocationTable(table, index, parent_row, parent_table, options) {
      */
 
     table.bootstrapTable({
+        formatNoMatches: function() { return 'No parts allocated for ' + parent_row.sub_part_detail.name; },
         columns: [
             {
                 field: 'stock_item_detail',
@@ -164,6 +165,7 @@ function fillAllocationTable(table, index, parent_row, parent_table, options) {
 
         launchModalForm(button.attr('url'), {
             success: function() {
+                table.bootstrapTable('refresh');
             }
         });
     });
@@ -173,6 +175,7 @@ function fillAllocationTable(table, index, parent_row, parent_table, options) {
 
         launchDeleteForm(button.attr('url'), {
             success: function() {
+                table.bootstrapTable('refresh');
             }
         });
     });
