@@ -1,4 +1,4 @@
-function makeBuildTable(table, options) {
+function makeBuildTable(build_table, options) {
     /* Construct a table for allocation items to a build.
      * Each row contains a sub_part for the BOM.
      * Each row can be expended to allocate stock items against that part.
@@ -23,7 +23,6 @@ function makeBuildTable(table, options) {
                 $("#part-table-" + row.pk),
                 index,
                 row,
-                table,
                 {
                     build: options.build
                 },
@@ -77,11 +76,11 @@ function makeBuildTable(table, options) {
         {
             part: options.part
         }).then(function(response) {
-            table.bootstrapTable('load', response)
-        });
+            build_table.bootstrapTable('load', response);
+    });
 
     // Button callbacks
-    table.on('click', '.new-item-button', function() {
+    build_table.on('click', '.new-item-button', function() {
         var button = $(this);
 
         launchModalForm(button.attr('url'), {
@@ -109,7 +108,7 @@ function makeAllocationTable(options) {
      return table;
 }
 
-function fillAllocationTable(table, index, parent_row, parent_table, options) {
+function fillAllocationTable(table, index, parent_row, options) {
     /* Load data into an allocation table,
      * and update the total stock allocation count in the parent row.
      *

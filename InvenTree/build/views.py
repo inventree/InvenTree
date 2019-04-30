@@ -12,7 +12,6 @@ from django.forms import HiddenInput
 
 from part.models import Part
 from .models import Build, BuildItem
-from stock.models import StockItem
 from .forms import EditBuildForm, EditBuildItemForm
 
 from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView, AjaxDeleteView
