@@ -12,6 +12,10 @@
 <table class='table table-striped' id='build-table'>
 </table>
 
+<div>
+    <button class='btn btn-warning' type='button' id='complete-build'>Complete Build</button>
+</div>
+
 {% endblock %}
 
 {% block js_load %}
@@ -31,5 +35,15 @@
             new_item_url: "{% url 'build-item-create' %}",
         }
     );
+
+    $("#complete-build").on('click', function() {
+        launchModalForm(
+            "{% url 'build-complete' build.id %}",
+            {
+                reload: true,
+                submit_text: "Complete Build",
+            }
+        );
+    });
 
 {% endblock %}

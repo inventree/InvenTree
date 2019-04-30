@@ -10,9 +10,10 @@ function makeBuildTable(build_table, options) {
      *
      */
 
-    table.bootstrapTable({
+    build_table.bootstrapTable({
         sortable: false,
         detailView: true,
+        showHeader: false,
         detailFormatter: function(index, row, element) {
             return makeAllocationTable({
                 part: row.pk
@@ -45,16 +46,16 @@ function makeBuildTable(build_table, options) {
                 field: 'allocated',
                 title: 'Allocated to Build',
                 formatter: function(value, row, index, field) {
-                    var html = "";
+                    var html = "Allocated ";
 
                     var url = options.new_item_url;
 
                     url += "?build=" + options.build + "&part=" + row.sub_part;
                     
                     if (value) {
-                        html = value;
+                        html += value;
                     } else {
-                        html = "0";
+                        html += "0";
                     }
 
                     html += " of ";
@@ -62,7 +63,7 @@ function makeBuildTable(build_table, options) {
 
                     html += "<div class='btn-group' style='float: right;'>";
 
-                    html += "<button class='btn btn-success btn-sm new-item-button' type='button' url='" + url + "'>Allocate</button>";
+                    html += "<button class='btn btn-success btn-sm new-item-button' type='button' url='" + url + "'>Allocate Parts</button>";
 
                     html += "</div>";
 

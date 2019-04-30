@@ -76,6 +76,23 @@ class Build(models.Model):
     notes = models.TextField(blank=True)
     """ Notes attached to each build output """
 
+    def cancelBuild(self):
+        """ Mark the Build as CANCELLED
+
+        - Delete any pending BuildItem objects (but do not remove items from stock)
+        """
+        print("cancelled!")
+
+
+    def completeBuild(self):
+        """ Mark the Build as COMPLETE
+
+        - Takes allocated items from stock
+        - Delete pending BuildItem objects
+        """
+
+        print("complete!!!!")
+
     @property
     def required_parts(self):
         """ Returns a dict of parts required to build this part (BOM) """

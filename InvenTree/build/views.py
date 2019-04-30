@@ -47,7 +47,7 @@ class BuildCancel(AjaxView):
     Provides a cancellation information dialog
     """
     model = Build
-    template_name = 'build/cancel.html'
+    ajax_template_name = 'build/cancel.html'
     ajax_form_title = 'Cancel Build'
     context_object_name = 'build'
     fields = []
@@ -57,8 +57,7 @@ class BuildCancel(AjaxView):
 
         build = get_object_or_404(Build, pk=self.kwargs['pk'])
 
-        build.status = Build.CANCELLED
-        build.save()
+        build.cancelBuild()
 
         return self.renderJsonResponse(request, None)
 
@@ -66,6 +65,36 @@ class BuildCancel(AjaxView):
         """ Provide JSON context data. """
         return {
             'info': 'Build was cancelled'
+        }
+
+
+class BuildComplete(AjaxView):
+    """ View to mark a build as Complete. 
+
+    - Notifies the user of which parts will be removed from stock.
+    - Removes allocated items from stock
+    - Deletes pending BuildItem objects
+    """
+
+    model = Build
+    ajax_template_name = "build/complete.html"
+    ajax_form_title = "Complete Build"
+    context_object_name = "build"
+    fields = []
+    
+    def post(self, request, *args, **kwargs):
+        """ Handle POST request. Mark the build as COMPLETE """
+
+        build = get_object_or_404(Build, pk=self.kwargs['pk'])
+
+        build.complete()
+
+        return self.renderJsonResponse(request, None)
+
+    def get_data(self):
+        """ Provide feedback data back to the form """
+        return {
+            'info': 'Build marked as COMPLETE'
         }
 
 
