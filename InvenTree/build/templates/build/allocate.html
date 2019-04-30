@@ -9,6 +9,10 @@
 
 <hr>
 
+{% for bom_item in bom_items.all %}
+{% include "build/allocation_item.html" with item=bom_item build=build %}
+{% endfor %}
+
 <table class='table table-striped' id='build-table'>
 </table>
 
@@ -28,13 +32,17 @@
 {% block js_ready %}
 {{ block.super }}
 
-    makeBuildTable($('#build-table'),
-        {
-            build: {{ build.pk }},
-            part: {{ build.part.pk }},
-            new_item_url: "{% url 'build-item-create' %}",
-        }
+    {% for bom_item in bom_items.all %}
+
+    loadAllocationTable(
+        $("#allocate-table-id-{{ bom_item.sub_part.id }}"),
+        "{% url 'api-build-item-list' %}?build={{ build.id }}&part={{ bom_item.sub_part.id }}",
+        $("#new-item-{{ bom_item.sub_part.id }}")
     );
+
+    {% endfor %}
+
+    /*
 
     $("#complete-build").on('click', function() {
         launchModalForm(
@@ -45,5 +53,6 @@
             }
         );
     });
+    */
 
 {% endblock %}

@@ -111,6 +111,20 @@ class BuildAllocate(DetailView):
     context_object_name = 'build'
     template_name = 'build/allocate.html'
 
+    def get_context_data(self, **kwargs):
+        """ Provide extra context information for the Build allocation page """
+
+        context = super(DetailView, self).get_context_data(**kwargs)
+
+        build = self.get_object()
+        part = build.part
+        bom_items = part.bom_items
+
+        context['part'] = part
+        context['bom_items'] = bom_items
+
+        return context
+
 
 class BuildCreate(AjaxCreateView):
     """ View to create a new Build object """

@@ -126,53 +126,53 @@ function loadBomTable(table, options) {
     }
     else {
         cols.push(
-            {
-                field: 'sub_part_detail.available_stock',
-                title: 'Available',
-                searchable: false,
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    var text = "";
-                    
-                    if (row.quantity < row.sub_part_detail.available_stock)
-                    {
-                        text = "<span class='label label-success'>" + value + "</span>";
-                    }
-                    else
-                    {
-                        text = "<span class='label label-warning'>" + value + "</span>";
-                    }
-                    
-                    return renderLink(text, row.sub_part.url + "stock/");
-                }
-            }
-            );
-        }
-        
-        // Part notes
-        cols.push(
-            {
-                field: 'note',
-                title: 'Notes',
-                searchable: true,
-                sortable: false,
-            }
-        );
-
-        // Configure the table (bootstrap-table)
-        
-        table.bootstrapTable({
+        {
+            field: 'sub_part_detail.available_stock',
+            title: 'Available',
+            searchable: false,
             sortable: true,
-            search: true,
-            clickToSelect: true,
-            queryParams: function(p) {
-                return {
-                    part: options.parent_id,
+            formatter: function(value, row, index, field) {
+                var text = "";
+                
+                if (row.quantity < row.sub_part_detail.available_stock)
+                {
+                    text = "<span class='label label-success'>" + value + "</span>";
+                }
+                else
+                {
+                    text = "<span class='label label-warning'>" + value + "</span>";
+                }
+                
+                return renderLink(text, row.sub_part.url + "stock/");
             }
-        },
-        columns: cols,
-        url: options.bom_url
-    });
+        }
+        );
+    }
+    
+    // Part notes
+    cols.push(
+        {
+            field: 'note',
+            title: 'Notes',
+            searchable: true,
+            sortable: false,
+        }
+    );
+
+    // Configure the table (bootstrap-table)
+    
+    table.bootstrapTable({
+        sortable: true,
+        search: true,
+        clickToSelect: true,
+        queryParams: function(p) {
+            return {
+                part: options.parent_id,
+        }
+    },
+    columns: cols,
+    url: options.bom_url
+});
 
     // In editing mode, attached editables to the appropriate table elements
     if (options.editable) {

@@ -72,7 +72,6 @@ class PartCreate(AjaxCreateView):
     def get_category_id(self):
         return self.request.GET.get('category', None)
 
-    # If a category is provided in the URL, pass that to the page context
     def get_context_data(self, **kwargs):
         """ Provide extra context information for the form to display:
 
