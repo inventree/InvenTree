@@ -12,6 +12,7 @@ from django.forms import HiddenInput
 
 from part.models import Part
 from .models import Build, BuildItem
+from stock.models import StockItem
 from .forms import EditBuildForm, EditBuildItemForm
 
 from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView
@@ -145,7 +146,9 @@ class BuildItemCreate(AjaxCreateView):
 
         # If the Build object is specified, hide the input field.
         # We do not want the users to be able to move a BuildItem to a different build
-        if form['build'].value() is not None:
+        build_id = form['build'].value()
+
+        if build_id is not None:
             form.fields['build'].widget = HiddenInput()
 
         # If the sub_part is supplied, limit to matching stock items
@@ -153,9 +156,17 @@ class BuildItemCreate(AjaxCreateView):
 
         if part_id:
             try:
-                part = Part.objects.get(pk=part_id)
+                Part.objects.get(pk=part_id)
+
                 query = form.fields['stock_item'].queryset
+                
+                # Only allow StockItem objects which match the current part
                 query = query.filter(part=part_id)
+
+                if build_id is not None:
+                    # Exclude StockItem objects which are already allocated to this build and part
+                    query = query.exclude(id__in=[item.stock_item.id for item in BuildItem.objects.filter(build=build_id, stock_item__part=part_id)])
+
                 form.fields['stock_item'].queryset = query
             except Part.DoesNotExist:
                 pass
