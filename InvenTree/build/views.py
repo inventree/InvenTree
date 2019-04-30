@@ -15,7 +15,7 @@ from .models import Build, BuildItem
 from stock.models import StockItem
 from .forms import EditBuildForm, EditBuildItemForm
 
-from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView
+from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView, AjaxDeleteView
 
 
 class BuildIndex(ListView):
@@ -131,6 +131,22 @@ class BuildUpdate(AjaxUpdateView):
         }
 
 
+class BuildItemDelete(AjaxDeleteView):
+    """ View to 'unallocate' a BuildItem.
+    Really we are deleting the BuildItem object from the database.
+    """
+
+    model = BuildItem
+    ajax_template_name = 'build/delete_build_item.html'
+    ajax_form_title = 'Unallocate Stock'
+    context_object_name = 'item'
+
+    def get_data(self):
+        return {
+            'danger': 'Removed parts from build allocation'
+        }
+
+
 class BuildItemCreate(AjaxCreateView):
     """ View for allocating a new part to a build """
 
@@ -190,3 +206,17 @@ class BuildItemCreate(AjaxCreateView):
                 pass
 
         return initials
+
+
+class BuildItemEdit(AjaxUpdateView):
+    """ View to edit a BuildItem object """
+
+    model = BuildItem
+    ajax_template_name = 'modal_form.html'
+    form_class = EditBuildItemForm
+    ajax_form_title = 'Edit Stock Allocation'
+
+    def get_data(self):
+        return {
+            'info': 'Updated Build Item',
+        }

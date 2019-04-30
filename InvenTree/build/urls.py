@@ -6,7 +6,13 @@ from django.conf.urls import url, include
 
 from . import views
 
+build_item_detail_urls = [
+    url('^edit/?', views.BuildItemEdit.as_view(), name='build-item-edit'),
+    url('^delete/?', views.BuildItemDelete.as_view(), name='build-item-delete'),
+]
+
 build_item_urls = [
+    url(r'^(?P<pk>\d+)/', include(build_item_detail_urls)),
     url('^new/', views.BuildItemCreate.as_view(), name='build-item-create'),
 ]
 

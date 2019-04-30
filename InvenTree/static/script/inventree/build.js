@@ -38,18 +38,13 @@ function makeBuildTable(table, options) {
             {
                 field: 'sub_part_detail.name',
                 title: 'Part',
-            },
-            {
-                field: 'note',
-                title: 'Note',
-            },
-            {
-                field: 'quantity',
-                title: 'Required',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, row.sub_part_detail.url);
+                }
             },
             {
                 field: 'allocated',
-                title: 'Allocated',
+                title: 'Allocated to Build',
                 formatter: function(value, row, index, field) {
                     var html = "";
 
@@ -62,6 +57,9 @@ function makeBuildTable(table, options) {
                     } else {
                         html = "0";
                     }
+
+                    html += " of ";
+                    html += row.quantity;
 
                     html += "<div class='btn-group' style='float: right;'>";
 
@@ -140,13 +138,43 @@ function fillAllocationTable(table, index, parent_row, parent_table, options) {
             {
                 field: 'stock_item_detail.quantity',
                 title: 'Available',
-                },
+            },
             {
                 field: 'quantity',
-                title: 'Allocated'
-            },
+                title: 'Allocated',
+                formatter: function(value, row, index, field) {
+                    
+                    var html = value;
+
+                    var bEdit = "<button class='btn btn-success item-edit-button btn-sm' type='button' url='/build/item/" + row.pk + "/edit/'>Edit</button>";
+                    var bDel = "<button class='btn btn-danger item-del-button btn-sm' type='button' url='/build/item/" + row.pk + "/delete/'>Delete</button>";
+                    
+                    html += "<div class='btn-group' style='float: right;'>" + bEdit + bDel + "</div>";
+                    
+                    return html;
+                }
+            }
         ],
         url: "/api/build/item?build=" + options.build + "&part=" + parent_row.sub_part,
+    });
+
+    // Button callbacks for editing and deleting the allocations
+    table.on('click', '.item-edit-button', function() {
+        var button = $(this);
+
+        launchModalForm(button.attr('url'), {
+            success: function() {
+            }
+        });
+    });
+
+    table.on('click', '.item-del-button', function() {
+        var button = $(this);
+
+        launchDeleteForm(button.attr('url'), {
+            success: function() {
+            }
+        });
     });
 
     table.on('load-success.bs.table', function(data) {
