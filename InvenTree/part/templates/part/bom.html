@@ -60,7 +60,14 @@
     });
 
     $("#bom-item-new").click(function () {
-        launchModalForm("{% url 'bom-item-create' %}?parent={{ part.id }}", {});
+        launchModalForm(
+            "{% url 'bom-item-create' %}?parent={{ part.id }}",
+            {
+                success: function() {
+                    $("#bom-table").bootstrapTable('refresh');
+                }
+            }
+        );
     });
 
     {% else %}

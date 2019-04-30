@@ -114,22 +114,12 @@ function loadBomTable(table, options) {
         }
     );
 
-    // Part notes
-    cols.push(
-        {
-            field: 'note',
-            title: 'Notes',
-            searchable: true,
-            sortable: false,
-        }
-    );
-
     if (options.editable) {
         cols.push({
             formatter: function(value, row, index, field) {
                 var bEdit = "<button class='btn btn-success bom-edit-button btn-sm' type='button' url='/part/bom/" + row.pk + "/edit'>Edit</button>";
                 var bDelt = "<button class='btn btn-danger bom-delete-button btn-sm' type='button' url='/part/bom/" + row.pk + "/delete'>Delete</button>";
-
+                
                 return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
             }
         });
@@ -143,7 +133,7 @@ function loadBomTable(table, options) {
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     var text = "";
-
+                    
                     if (row.quantity < row.sub_part_detail.available_stock)
                     {
                         text = "<span class='label label-success'>" + value + "</span>";
@@ -152,22 +142,32 @@ function loadBomTable(table, options) {
                     {
                         text = "<span class='label label-warning'>" + value + "</span>";
                     }
-
+                    
                     return renderLink(text, row.sub_part.url + "stock/");
                 }
             }
+            );
+        }
+        
+        // Part notes
+        cols.push(
+            {
+                field: 'note',
+                title: 'Notes',
+                searchable: true,
+                sortable: false,
+            }
         );
-    }
 
-    // Configure the table (bootstrap-table)
-
-    table.bootstrapTable({
-        sortable: true,
-        search: true,
-        clickToSelect: true,
-        queryParams: function(p) {
-            return {
-                part: options.parent_id,
+        // Configure the table (bootstrap-table)
+        
+        table.bootstrapTable({
+            sortable: true,
+            search: true,
+            clickToSelect: true,
+            queryParams: function(p) {
+                return {
+                    part: options.parent_id,
             }
         },
         columns: cols,

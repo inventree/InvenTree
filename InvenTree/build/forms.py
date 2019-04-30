@@ -23,8 +23,6 @@ class EditBuildForm(HelperForm):
             'batch',
             'URL',
             'notes',
-            'status',
-            # 'completion_date',
         ]
 
 
