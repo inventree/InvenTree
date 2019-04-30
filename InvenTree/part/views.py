@@ -98,7 +98,7 @@ class PartCreate(AjaxCreateView):
         form = super(AjaxCreateView, self).get_form()
 
         # Hide the default_supplier field (there are no matching supplier parts yet!)
-        form.fields['default_supplier'] = HiddenInput()
+        form.fields['default_supplier'].widget = HiddenInput()
 
         return form
 

@@ -366,6 +366,8 @@ class PartAttachment(models.Model):
 
     attachment = models.FileField(upload_to=attach_file, null=True, blank=True)
 
+    comment = models.CharField(max_length=100, blank=True, help_text="Attachment description")
+
     @property
     def basename(self):
         return os.path.basename(self.attachment.name)
@@ -405,8 +407,11 @@ class BomItem(models.Model):
         - A part cannot refer to a part which refers to it
         """
 
+        if self.part is None or self.sub_part is None:
+            # Field validation will catch these None values
+            pass
         # A part cannot refer to itself in its BOM
-        if self.part == self.sub_part:
+        elif self.part == self.sub_part:
             raise ValidationError({'sub_part': _('Part cannot be added to its own Bill of Materials')})
 
         # Test for simple recursion
