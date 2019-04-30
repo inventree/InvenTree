@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 
 from django.views.generic import DetailView, ListView
+from django.forms import HiddenInput
 
 from part.models import Part
 from .models import Build, BuildItem
@@ -136,6 +137,30 @@ class BuildItemCreate(AjaxCreateView):
     form_class = EditBuildItemForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Allocate new Part'
+
+    def get_form(self):
+        """ Create Form for making / editing new Part object """
+
+        form = super(AjaxCreateView, self).get_form()
+
+        # If the Build object is specified, hide the input field.
+        # We do not want the users to be able to move a BuildItem to a different build
+        if form['build'].value() is not None:
+            form.fields['build'].widget = HiddenInput()
+
+        # If the sub_part is supplied, limit to matching stock items
+        part_id = self.get_param('part')
+
+        if part_id:
+            try:
+                part = Part.objects.get(pk=part_id)
+                query = form.fields['stock_item'].queryset
+                query = query.filter(part=part_id)
+                form.fields['stock_item'].queryset = query
+            except Part.DoesNotExist:
+                pass
+
+        return form
 
     def get_initial(self):
         """ Provide initial data for BomItem. Look for the folllowing in the GET data:

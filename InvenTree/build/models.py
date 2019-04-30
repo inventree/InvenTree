@@ -132,6 +132,11 @@ class BuildItem(models.Model):
         quantity: Number of units allocated
     """
 
+    def get_absolute_url(self):
+        # TODO - Fix!
+        return '/build/item/{pk}/'.format(pk=self.id)
+        #return reverse('build-detail', kwargs={'pk': self.id})
+
     class Meta:
         unique_together = [
             ('build', 'stock_item'),
