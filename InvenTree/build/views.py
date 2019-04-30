@@ -69,7 +69,7 @@ class BuildCancel(AjaxView):
 
 
 class BuildComplete(AjaxView):
-    """ View to mark a build as Complete. 
+    """ View to mark a build as Complete.
 
     - Notifies the user of which parts will be removed from stock.
     - Removes allocated items from stock

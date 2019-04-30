@@ -31,7 +31,7 @@ class Build(models.Model):
     """
 
     def save(self, *args, **kwargs):
-        """ Called when the Build model is saved to the database. 
+        """ Called when the Build model is saved to the database.
         
         If this is a new Build, try to allocate StockItem objects automatically.
         
@@ -67,12 +67,11 @@ class Build(models.Model):
 
                         # Allocate parts to this build
                         build_item = BuildItem(
-                            build=self, 
+                            build=self,
                             stock_item=stock_item,
                             quantity=q_req)
 
                         build_item.save()
-
 
     def __str__(self):
         return "Build {q} x {part}".format(q=self.quantity, part=str(self.part))
@@ -128,7 +127,6 @@ class Build(models.Model):
         - Delete any pending BuildItem objects (but do not remove items from stock)
         """
         print("cancelled!")
-
 
     def completeBuild(self):
         """ Mark the Build as COMPLETE
