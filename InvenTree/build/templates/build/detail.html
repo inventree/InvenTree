@@ -38,14 +38,19 @@
 <tr>
     <td>Quantity</td><td>{{ build.quantity }}</td>
 </tr>
+<tr>
+    <td>Status</td><td>{% include "build_status.html" with build=build %}</td>
+</tr>
 {% if build.batch %}
 <tr>
     <td>Batch</td><td>{{ build.batch }}</td>
 </tr>
 {% endif %}
+{% if build.URL %}
 <tr>
-    <td>Status</td><td>{% include "build_status.html" with build=build %}</td>
+    <td>URL</td><td><a href="{{ build.URL }}">{{ build.URL }}</a></td>
 </tr>
+{% endif %}
 <tr>
     <td>Created</td><td>{{ build.creation_date }}</td>
 </tr>
