@@ -103,4 +103,15 @@ function fillAllocationTable(table, parent_row, options) {
         ],
         url: "/api/build/item?build=" + options.build + "&part=" + parent_row.sub_part,
     });
+
+    table.on('load-success.bs.table', function(data) {
+        var allocated = 0;
+
+        var allocationData = table.bootstrapTable('getData');
+        
+        // Calculate total allocation
+        for (var i = 0; i < allocationData.length; i++) {
+            allocated += allocationData[i].quantity;
+        }
+    });
 }
