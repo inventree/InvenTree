@@ -130,7 +130,7 @@ class StockItem(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, blank=True, editable=False, help_text='Unique ID for the StockItem')
 
     # The 'master' copy of the part of which this stock item is an instance
-    part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='locations')
+    part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='locations', help_text='Base part')
 
     # The 'supplier part' used in this instance. May be null if no supplier parts are defined the master part
     supplier_part = models.ForeignKey('part.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL)

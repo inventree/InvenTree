@@ -14,7 +14,6 @@ before_install:
 
 script:
     - git ls-files --exclude-standard --others
-    - test -z "$(git ls-files --exclude-standard --others)"
     - make coverage
     - make style
 
