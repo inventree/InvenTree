@@ -260,13 +260,13 @@ class BuildItem(models.Model):
 
         if self.stock_item is not None and self.stock_item.part is not None:
             if self.stock_item.part not in self.build.part.required_parts():
-                errors['stock_item'] = _("Selected stock item not found in BOM for part '{p}'".format(p=str(self.build.part)))
+                errors['stock_item'] = [_("Selected stock item not found in BOM for part '{p}'".format(p=self.build.part.name))]
             
         if self.stock_item is not None and self.quantity > self.stock_item.quantity:
-            errors['quantity'] = _("Allocated quantity ({n}) must not exceed available quantity ({q})".format(
+            errors['quantity'] = [_("Allocated quantity ({n}) must not exceed available quantity ({q})".format(
                 n=self.quantity,
                 q=self.stock_item.quantity
-            ))
+            ))]
 
         if len(errors) > 0:
             raise ValidationError(errors)

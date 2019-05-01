@@ -13,7 +13,7 @@ from django.forms import HiddenInput
 from part.models import Part
 from .models import Build, BuildItem
 from .forms import EditBuildForm, EditBuildItemForm, CompleteBuildForm
-from stock.models import StockLocation
+from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView, AjaxDeleteView
 
@@ -328,3 +328,25 @@ class BuildItemEdit(AjaxUpdateView):
         return {
             'info': 'Updated Build Item',
         }
+
+    def get_form(self):
+        """ Create form for editing a BuildItem.
+
+        - Limit the StockItem options to items that match the part
+        """
+
+        build_item = self.get_object()
+
+        form = super(BuildItemEdit, self).get_form()
+
+        query = StockItem.objects.all()
+        
+        if build_item.stock_item:
+            part_id = build_item.stock_item.part.id
+            query = query.filter(part=part_id)
+
+        form.fields['stock_item'].queryset = query
+
+        form.fields['build'].widget = HiddenInput()
+
+        return form
