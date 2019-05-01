@@ -4,10 +4,21 @@
 <b>Build: {{ build.title }}</b> - {{ build.quantity }} x {{ build.part.name }}
 <br>
 Are you sure you want to mark this build as complete?
-<br>
-Completing the build will perform the following actions:
+<hr>
+{% if taking %}
+The following items will be removed from stock:
 <ul>
-    <li>Remove allocated parts from stock</li>
-    <li>Create {{ build.quantity }} new items in the selected location</li>
+{% for item in taking %}
+    <li>{{ item.quantity }} x {{ item.stock_item.part.name }} from {{ item.stock_item.location }}</li>
+{% endfor %}
 </ul>
+{% else %}
+No parts have been allocated to this build.
+{% endif %}
+<hr>
+The following items will be created:
+<ul>
+    <li>{{ build.quantity }} x {{ build.part.name }}</li>
+</ul>
+
 {% endblock %}

@@ -95,6 +95,7 @@ class BuildComplete(AjaxUpdateView):
         if build.part.default_location is not None:
             try:
                 location = StockLocation.objects.get(pk=build.part.default_location.id)
+                initials['location'] = location
             except StockLocation.DoesNotExist:
                 pass
 
@@ -106,8 +107,15 @@ class BuildComplete(AjaxUpdateView):
         - Build information is required
         """
 
+        build = self.get_object()
+
+        # Build object
         context = super(BuildComplete, self).get_context_data(**kwargs).copy()
-        context['build'] = self.get_object() 
+        context['build'] = build
+
+        # Items to be removed from stock
+        taking = BuildItem.objects.filter(build=build.id)
+        context['taking'] = taking
 
         return context
     
