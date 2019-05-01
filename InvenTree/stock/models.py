@@ -127,7 +127,7 @@ class StockItem(models.Model):
         ]
 
     # UUID for generating QR codes
-    uuid = models.UUIDField(default=uuid.uuid4, blank=True, editable=False)
+    uuid = models.UUIDField(default=uuid.uuid4, blank=True, editable=False, help_text='Unique ID for the StockItem')
 
     # The 'master' copy of the part of which this stock item is an instance
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='locations')
