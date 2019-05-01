@@ -28,7 +28,6 @@ class BuildSerializer(InvenTreeModelSerializer):
             'completion_date',
             'part',
             'quantity',
-            'is_active',
             'status',
             'status_text',
             'notes']
@@ -38,7 +37,6 @@ class BuildSerializer(InvenTreeModelSerializer):
             'creation_date',
             'completion_data',
             'status_text',
-            'is_active',
         ]
 
 
