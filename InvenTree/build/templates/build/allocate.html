@@ -36,6 +36,7 @@
 
     loadAllocationTable(
         $("#allocate-table-id-{{ bom_item.sub_part.id }}"),
+        "{{ bom_item.sub_part.name }}",
         "{% url 'api-build-item-list' %}?build={{ build.id }}&part={{ bom_item.sub_part.id }}",
         $("#new-item-{{ bom_item.sub_part.id }}")
     );

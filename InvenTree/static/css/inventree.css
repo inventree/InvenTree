@@ -122,6 +122,10 @@
     margin-right: 2px;
 }
 
+.panel-group {
+    margin-bottom: 5px;
+}
+
 .float-right {
     float: right;
 }

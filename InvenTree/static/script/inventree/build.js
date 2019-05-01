@@ -1,9 +1,10 @@
-function loadAllocationTable(table, url, button) {
+function loadAllocationTable(table, part, url, button) {
     
     // Load the allocation table
     table.bootstrapTable({
         url: url,
         sortable: false,
+        formatNoMatches: function() { return 'No parts allocated for ' + part; },
         columns: [
             {
                 field: 'stock_item_detail',
