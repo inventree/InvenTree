@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
+from django.forms import HiddenInput
 
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 
@@ -140,6 +141,9 @@ class StockItemCreate(AjaxCreateView):
             parts = form.fields['supplier_part'].queryset
             parts = parts.filter(part=part)
             form.fields['supplier_part'].queryset = parts
+
+            # Hide the 'part' field
+            form.fields['part'].widget = HiddenInput()
 
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
         elif form['supplier_part'].value() is not None:
