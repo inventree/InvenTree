@@ -13,9 +13,9 @@ before_install:
     - make migrate
 
 script:
+    - test -z "$(git ls-files --exclude-standard --others)"
     - make coverage
     - make style
-    - git ls-files --exclude-standard --others
 
 after_success:
     - coveralls
