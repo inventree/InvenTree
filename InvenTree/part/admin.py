@@ -19,7 +19,7 @@ class PartCategoryAdmin(ImportExportModelAdmin):
 
 class PartAttachmentAdmin(admin.ModelAdmin):
 
-    list_display = ('part', 'attachment')
+    list_display = ('part', 'attachment', 'comment')
 
 
 class BomItemAdmin(ImportExportModelAdmin):

@@ -114,6 +114,41 @@ function loadBomTable(table, options) {
         }
     );
 
+    if (options.editable) {
+        cols.push({
+            formatter: function(value, row, index, field) {
+                var bEdit = "<button class='btn btn-success bom-edit-button btn-sm' type='button' url='/part/bom/" + row.pk + "/edit'>Edit</button>";
+                var bDelt = "<button class='btn btn-danger bom-delete-button btn-sm' type='button' url='/part/bom/" + row.pk + "/delete'>Delete</button>";
+                
+                return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
+            }
+        });
+    }
+    else {
+        cols.push(
+        {
+            field: 'sub_part_detail.available_stock',
+            title: 'Available',
+            searchable: false,
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                var text = "";
+                
+                if (row.quantity < row.sub_part_detail.available_stock)
+                {
+                    text = "<span class='label label-success'>" + value + "</span>";
+                }
+                else
+                {
+                    text = "<span class='label label-warning'>" + value + "</span>";
+                }
+                
+                return renderLink(text, row.sub_part.url + "stock/");
+            }
+        }
+        );
+    }
+    
     // Part notes
     cols.push(
         {
@@ -124,43 +159,8 @@ function loadBomTable(table, options) {
         }
     );
 
-    if (options.editable) {
-        cols.push({
-            formatter: function(value, row, index, field) {
-                var bEdit = "<button class='btn btn-success bom-edit-button btn-sm' type='button' url='/part/bom/" + row.pk + "/edit'>Edit</button>";
-                var bDelt = "<button class='btn btn-danger bom-delete-button btn-sm' type='button' url='/part/bom/" + row.pk + "/delete'>Delete</button>";
-
-                return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
-            }
-        });
-    }
-    else {
-        cols.push(
-            {
-                field: 'sub_part_detail.available_stock',
-                title: 'Available',
-                searchable: false,
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    var text = "";
-
-                    if (row.quantity < row.sub_part_detail.available_stock)
-                    {
-                        text = "<span class='label label-success'>" + value + "</span>";
-                    }
-                    else
-                    {
-                        text = "<span class='label label-warning'>" + value + "</span>";
-                    }
-
-                    return renderLink(text, row.sub_part.url + "stock/");
-                }
-            }
-        );
-    }
-
     // Configure the table (bootstrap-table)
-
+    
     table.bootstrapTable({
         sortable: true,
         search: true,
@@ -168,11 +168,11 @@ function loadBomTable(table, options) {
         queryParams: function(p) {
             return {
                 part: options.parent_id,
-            }
-        },
-        columns: cols,
-        url: options.bom_url
-    });
+        }
+    },
+    columns: cols,
+    url: options.bom_url
+});
 
     // In editing mode, attached editables to the appropriate table elements
     if (options.editable) {

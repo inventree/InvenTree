@@ -6,8 +6,9 @@ Django Forms for interacting with Build objects
 from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
-
-from .models import Build
+from django import forms
+from .models import Build, BuildItem
+from stock.models import StockLocation
 
 
 class EditBuildForm(HelperForm):
@@ -21,7 +22,36 @@ class EditBuildForm(HelperForm):
             'part',
             'quantity',
             'batch',
+            'URL',
             'notes',
-            # 'status',
-            # 'completion_date',
+        ]
+
+
+class CompleteBuildForm(HelperForm):
+    """ Form for marking a Build as complete """
+
+    location = forms.ModelChoiceField(
+        queryset=StockLocation.objects.all(),
+        help_text='Location of completed parts',
+    )
+
+    confirm = forms.BooleanField(required=False, help_text='Confirm build submission')
+
+    class Meta:
+        model = Build
+        fields = [
+            'location',
+            'confirm'
+        ]
+
+
+class EditBuildItemForm(HelperForm):
+    """ Form for adding a new BuildItem to a Build """
+
+    class Meta:
+        model = BuildItem
+        fields = [
+            'build',
+            'stock_item',
+            'quantity',
         ]

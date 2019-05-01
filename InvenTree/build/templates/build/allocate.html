@@ -1,16 +1,25 @@
 {% extends "base.html" %}
 {% load static %}
+{% load inventree_extras %}
 
 {% block content %}
 
 <h3>Allocate Parts for Build</h3>
 
 <h4><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></h4>
-
+{{ build.quantity }} x {{ build.part.name }}
 <hr>
+
+{% for bom_item in bom_items.all %}
+{% include "build/allocation_item.html" with item=bom_item build=build %}
+{% endfor %}
 
 <table class='table table-striped' id='build-table'>
 </table>
+
+<div>
+    <button class='btn btn-warning' type='button' id='complete-build'>Complete Build</button>
+</div>
 
 {% endblock %}
 
@@ -18,30 +27,33 @@
 {{ block.super }}
 <script src="{% static 'script/inventree/api.js' %}"></script>
 <script src="{% static 'script/inventree/part.js' %}"></script>
+<script src="{% static 'script/inventree/build.js' %}"></script>
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
 
-    $('#build-table').bootstrapTable({
-        sortable: true,
-        columns: [
-            {
-                field: 'sub_part.name',
-                title: 'Part',
-            },
-            {
-                title: 'Source',
-            },
-            {
-                field: 'quantity',
-                title: 'Quantity',
-            }
-        ],
-    });
+    {% for bom_item in bom_items.all %}
 
-    getBomList({part: {{ build.part.id }}}).then(function(response) {
-        $("#build-table").bootstrapTable('load', response);
+    loadAllocationTable(
+        $("#allocate-table-id-{{ bom_item.sub_part.id }}"),
+        {{ bom_item.sub_part.id }},
+        "{{ bom_item.sub_part.name }}",
+        "{% url 'api-build-item-list' %}?build={{ build.id }}&part={{ bom_item.sub_part.id }}",
+        {% multiply build.quantity bom_item.quantity %},
+        $("#new-item-{{ bom_item.sub_part.id }}")
+    );
+
+    {% endfor %}
+
+    $("#complete-build").on('click', function() {
+        launchModalForm(
+            "{% url 'build-complete' build.id %}",
+            {
+                reload: true,
+                submit_text: "Complete Build",
+            }
+        );
     });
 
 {% endblock %}

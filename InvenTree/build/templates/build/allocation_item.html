@@ -1,0 +1,38 @@
+{% load inventree_extras %}
+
+<div class='panel-group'>
+    <div class='panel pane-default'>
+        <div class='panel panel-heading'>
+            <div class='row'>
+                <div class='col-sm-6'>        
+                    <div class='panel-title'>
+                        <a data-toggle='collapse' href='#collapse-item-{{ item.id }}'>{{ item.sub_part.name }}</a>
+                    </div>
+                </div>
+                <div class='col-sm-1' align='right'>
+                    Required:
+                </div>
+                <div class='col-sm-1'>   
+                    <b>{% multiply build.quantity item.quantity %}</b>
+                </div>
+                <div class='col-sm-1' align='right'>
+                    Allocated:
+                </div>
+                <div class='col-sm-1' id='allocation-panel-{{ item.sub_part.id }}'>
+                    <b><span id='allocation-total-{{ item.sub_part.id }}'>0</span></b>
+                </div>
+                <div class='col-sm-2'>
+                    <div class='btn-group' style='float: right;'>
+                        <button class='btn btn-success btn-sm' id='new-item-{{ item.sub_part.id }}' url="{% url 'build-item-create' %}?part={{ item.sub_part.id }}&build={{ build.id }}">Allocate Parts</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id='collapse-item-{{ item.id }}' class='panel-collapse collapse'>
+            <div class='panel-body'>
+                <table class='table table-striped table-condensed' id='allocate-table-id-{{ item.sub_part.id }}'>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
