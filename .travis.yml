@@ -15,6 +15,7 @@ before_install:
 script:
     - make coverage
     - make style
+    - git ls-files --exclude-standard --others
 
 after_success:
     - coveralls
