@@ -1,4 +1,21 @@
-function loadAllocationTable(table, part, url, button) {
+function updateAllocationTotal(id, count, required) {
+    
+    
+    $('#allocation-total-'+id).html(count);
+    
+    var el = $("#allocation-panel-" + id);
+    el.removeClass('part-allocation-pass part-allocation-underallocated part-allocation-overallocated');
+
+    if (count < required) {
+        el.addClass('part-allocation-underallocated');
+    } else if (count > required) {
+        el.addClass('part-allocation-overallocated');
+    } else {
+        el.addClass('part-allocation-pass');
+    }
+}
+
+function loadAllocationTable(table, part_id, part, url, required, button) {
     
     // Load the allocation table
     table.bootstrapTable({
@@ -37,6 +54,19 @@ function loadAllocationTable(table, part, url, button) {
                 table.bootstrapTable('refresh');
             }
         });
+    });
+
+    table.on('load-success.bs.table', function(data) {
+        // Extract table data
+        var results = table.bootstrapTable('getData');
+
+        var count = 0;
+
+        for (var i = 0; i < results.length; i++) {
+            count += results[i].quantity;
+        }
+
+        updateAllocationTotal(part_id, count, required);
     });
 
     // Button callbacks for editing and deleting the allocations

@@ -140,3 +140,15 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+.part-allocation-pass {
+    background: #dbf0db;
+}
+
+.part-allocation-underallocated {
+    background: #f0dbdb;
+}
+
+.part-allocation-overallocated {
+    background: #ccf5ff;
+}

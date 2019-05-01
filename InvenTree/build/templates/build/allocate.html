@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load inventree_extras %}
 
 {% block content %}
 
@@ -36,8 +37,10 @@
 
     loadAllocationTable(
         $("#allocate-table-id-{{ bom_item.sub_part.id }}"),
+        {{ bom_item.sub_part.id }},
         "{{ bom_item.sub_part.name }}",
         "{% url 'api-build-item-list' %}?build={{ build.id }}&part={{ bom_item.sub_part.id }}",
+        {% multiply build.quantity bom_item.quantity %},
         $("#new-item-{{ bom_item.sub_part.id }}")
     );
 
