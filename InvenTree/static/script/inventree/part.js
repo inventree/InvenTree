@@ -15,5 +15,5 @@ function getPartList(filters={}, options={}) {
 }
 
 function getBomList(filters={}, options={}) {
-    return inventreeGet('/api/part/bom/', filters, options);
+    return inventreeGet('/api/bom/', filters, options);
 }

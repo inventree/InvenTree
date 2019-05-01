@@ -158,7 +158,7 @@ class StockItem(models.Model):
     URL = models.URLField(max_length=125, blank=True)
 
     # Optional batch information
-    batch = models.CharField(max_length=100, blank=True,
+    batch = models.CharField(max_length=100, blank=True, null=True,
                              help_text='Batch code for this stock item')
 
     # If this part was produced by a build, point to that build here

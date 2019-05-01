@@ -6,11 +6,13 @@ JSON serializers for Build API
 from __future__ import unicode_literals
 
 from rest_framework import serializers
+from InvenTree.serializers import InvenTreeModelSerializer
+from stock.serializers import StockItemSerializerBrief
 
-from .models import Build
+from .models import Build, BuildItem
 
 
-class BuildSerializer(serializers.ModelSerializer):
+class BuildSerializer(InvenTreeModelSerializer):
     """ Serializes a Build object """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -29,3 +31,30 @@ class BuildSerializer(serializers.ModelSerializer):
             'status',
             'status_text',
             'notes']
+
+        read_only_fields = [
+            'status',
+            'creation_date',
+            'completion_data',
+            'status_text',
+        ]
+
+
+class BuildItemSerializer(InvenTreeModelSerializer):
+    """ Serializes a BuildItem object """
+
+    part = serializers.IntegerField(source='stock_item.part.pk', read_only=True)
+    part_name = serializers.CharField(source='stock_item.part.name', read_only=True)
+    stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
+
+    class Meta:
+        model = BuildItem
+        fields = [
+            'pk',
+            'build',
+            'part',
+            'part_name',
+            'stock_item',
+            'stock_item_detail',
+            'quantity'
+        ]

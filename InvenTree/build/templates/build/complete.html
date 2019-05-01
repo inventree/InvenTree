@@ -1,0 +1,24 @@
+{% extends "modal_form.html" %}
+
+{% block pre_form_content %}
+<b>Build: {{ build.title }}</b> - {{ build.quantity }} x {{ build.part.name }}
+<br>
+Are you sure you want to mark this build as complete?
+<hr>
+{% if taking %}
+The following items will be removed from stock:
+<ul>
+{% for item in taking %}
+    <li>{{ item.quantity }} x {{ item.stock_item.part.name }} from {{ item.stock_item.location }}</li>
+{% endfor %}
+</ul>
+{% else %}
+No parts have been allocated to this build.
+{% endif %}
+<hr>
+The following items will be created:
+<ul>
+    <li>{{ build.quantity }} x {{ build.part.name }}</li>
+</ul>
+
+{% endblock %}
