@@ -32,6 +32,13 @@ class BuildSerializer(InvenTreeModelSerializer):
             'status_text',
             'notes']
 
+        read_only_fields = [
+            'status',
+            'creation_date',
+            'completion_data',
+            'status_text',
+        ]
+
 
 class BuildItemSerializer(InvenTreeModelSerializer):
     """ Serializes a BuildItem object """

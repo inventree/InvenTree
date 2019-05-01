@@ -64,7 +64,7 @@ class BuildCancel(AjaxView):
     def get_data(self):
         """ Provide JSON context data. """
         return {
-            'info': 'Build was cancelled'
+            'danger': 'Build was cancelled'
         }
 
 

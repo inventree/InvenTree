@@ -9,7 +9,7 @@ from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 
 from django.urls import reverse
-from django.db import models
+from django.db import models, transaction
 from django.core.validators import MinValueValidator
 
 from stock.models import StockItem
@@ -94,13 +94,11 @@ class Build(models.Model):
     
     # Build status codes
     PENDING = 10  # Build is pending / active
-    HOLDING = 20  # Build is currently being held
     CANCELLED = 30  # Build was cancelled
     COMPLETE = 40  # Build is complete
 
     #: Build status codes
     BUILD_STATUS_CODES = {PENDING: _("Pending"),
-                          HOLDING: _("Holding"),
                           CANCELLED: _("Cancelled"),
                           COMPLETE: _("Complete"),
                           }
@@ -121,13 +119,23 @@ class Build(models.Model):
     notes = models.TextField(blank=True)
     """ Notes attached to each build output """
 
+    @transaction.atomic
     def cancelBuild(self):
         """ Mark the Build as CANCELLED
 
         - Delete any pending BuildItem objects (but do not remove items from stock)
+        - Set build status to CANCELLED
+        - Save the Build object
         """
+
+        for item in BuildItem.objects.filter(build=self.id):
+            item.delete()
+
+        self.status = self.CANCELLED
+        self.save()
         print("cancelled!")
 
+    @transaction.atomic
     def completeBuild(self):
         """ Mark the Build as COMPLETE
 
@@ -172,7 +180,6 @@ class Build(models.Model):
 
         return self.status in [
             self.PENDING,
-            self.HOLDING
         ]
 
     @property
@@ -232,6 +239,7 @@ class BuildItem(models.Model):
         Build,
         on_delete=models.CASCADE,
         related_name='allocated_stock',
+        help_text='Build to allocate parts'
     )
 
     stock_item = models.ForeignKey(
