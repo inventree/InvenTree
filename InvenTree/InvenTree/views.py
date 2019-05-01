@@ -199,7 +199,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
 
         form = self.get_form()
         
-        return self.renderJsonResponse(request, form)
+        return self.renderJsonResponse(request, form, context=self.get_context_data())
 
     def post(self, request, *args, **kwargs):
         """ Respond to POST request.

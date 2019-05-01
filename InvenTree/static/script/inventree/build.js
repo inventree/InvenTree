@@ -31,6 +31,10 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
                 }
             },
             {
+                field: 'stock_item_detail.quantity',
+                title: 'Available',
+            },
+            {
                 field: 'quantity',
                 title: 'Allocated',
                 formatter: function(value, row, index, field) {

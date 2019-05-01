@@ -7,7 +7,7 @@
 <h3>Allocate Parts for Build</h3>
 
 <h4><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></h4>
-
+{{ build.quantity }} x {{ build.part.name }}
 <hr>
 
 {% for bom_item in bom_items.all %}
@@ -46,8 +46,6 @@
 
     {% endfor %}
 
-    /*
-
     $("#complete-build").on('click', function() {
         launchModalForm(
             "{% url 'build-complete' build.id %}",
@@ -57,6 +55,5 @@
             }
         );
     });
-    */
 
 {% endblock %}

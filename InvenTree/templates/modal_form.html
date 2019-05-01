@@ -1,3 +1,6 @@
+{% block pre_form_content %}
+{% endblock %}
+
 {% if form.non_field_errors %}
 <div class='alert alert-danger' role='alert' style='display: block;'>
   <b>Error Submitting Form:</b>
@@ -12,3 +15,6 @@
   
   {% crispy form %}
 </form>
+
+{% block post_form_content %}
+{% endblock %}

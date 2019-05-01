@@ -1,1 +1,13 @@
-Mark as COMPLETE
+{% extends "modal_form.html" %}
+
+{% block pre_form_content %}
+<b>Build: {{ build.title }}</b> - {{ build.quantity }} x {{ build.part.name }}
+<br>
+Are you sure you want to mark this build as complete?
+<br>
+Completing the build will perform the following actions:
+<ul>
+    <li>Remove allocated parts from stock</li>
+    <li>Create {{ build.quantity }} new items in the selected location</li>
+</ul>
+{% endblock %}

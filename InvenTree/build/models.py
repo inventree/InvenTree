@@ -5,6 +5,8 @@ Build database model definitions
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import datetime
+
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 
@@ -128,22 +130,56 @@ class Build(models.Model):
         - Save the Build object
         """
 
-        for item in BuildItem.objects.filter(build=self.id):
+        for item in self.allocated_stock.all():
             item.delete()
 
         self.status = self.CANCELLED
         self.save()
-        print("cancelled!")
 
     @transaction.atomic
-    def completeBuild(self):
+    def completeBuild(self, location, user):
         """ Mark the Build as COMPLETE
 
         - Takes allocated items from stock
         - Delete pending BuildItem objects
         """
 
-        print("complete!!!!")
+        for item in self.allocated_stock.all():
+            
+            # Subtract stock from the item
+            item.stock_item.take_stock(
+                item.quantity,
+                user,
+                'Removed {n} items to build {m} x {part}'.format(
+                    n=item.quantity,
+                    m=self.quantity,
+                    part=self.part.name
+                )
+            )
+
+            # Delete the item
+            item.delete()
+
+        # Mark the date of completion
+        self.completion_date = datetime.now().date()
+
+        # Add stock of the newly created item
+        item = StockItem.objects.create(
+            part=self.part,
+            location=location,
+            quantity=self.quantity,
+            batch=str(self.batch) if self.batch else '',
+            notes='Built {q} on {now}'.format(
+                q=self.quantity,
+                now=str(datetime.now().date())
+            )
+        )
+
+        item.save()
+
+        # Finally, mark the build as complete
+        self.status = self.COMPLETE
+        self.save()
 
     @property
     def required_parts(self):

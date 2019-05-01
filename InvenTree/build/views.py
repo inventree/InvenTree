@@ -12,7 +12,8 @@ from django.forms import HiddenInput
 
 from part.models import Part
 from .models import Build, BuildItem
-from .forms import EditBuildForm, EditBuildItemForm
+from .forms import EditBuildForm, EditBuildItemForm, CompleteBuildForm
+from stock.models import StockLocation
 
 from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView, AjaxDeleteView
 
@@ -68,7 +69,7 @@ class BuildCancel(AjaxView):
         }
 
 
-class BuildComplete(AjaxView):
+class BuildComplete(AjaxUpdateView):
     """ View to mark a build as Complete.
 
     - Notifies the user of which parts will be removed from stock.
@@ -77,19 +78,76 @@ class BuildComplete(AjaxView):
     """
 
     model = Build
-    ajax_template_name = "build/complete.html"
-    ajax_form_title = "Complete Build"
+    form_class = CompleteBuildForm
     context_object_name = "build"
-    fields = []
+    ajax_form_title = "Complete Build"
+    ajax_template_name = "build/complete.html"
+
+    def get_initial(self):
+        """ Get initial form data for the CompleteBuild form
+
+        - If the part being built has a default location, pre-select that location
+        """
+        
+        initials = super(BuildComplete, self).get_initial().copy()
+
+        build = self.get_object()
+        if build.part.default_location is not None:
+            try:
+                location = StockLocation.objects.get(pk=build.part.default_location.id)
+            except StockLocation.DoesNotExist:
+                pass
+
+        return initials
+
+    def get_context_data(self, **kwargs):
+        """ Get context data for passing to the rendered form
+
+        - Build information is required
+        """
+
+        context = super(BuildComplete, self).get_context_data(**kwargs).copy()
+        context['build'] = self.get_object() 
+
+        return context
     
     def post(self, request, *args, **kwargs):
-        """ Handle POST request. Mark the build as COMPLETE """
+        """ Handle POST request. Mark the build as COMPLETE
+        
+        - If the form validation passes, the Build objects completeBuild() method is called
+        - Otherwise, the form is passed back to the client
+        """
 
-        build = get_object_or_404(Build, pk=self.kwargs['pk'])
+        build = self.get_object()
 
-        build.complete()
+        form = self.get_form()
 
-        return self.renderJsonResponse(request, None)
+        confirm = request.POST.get('confirm', False)
+
+        loc_id = request.POST.get('location', None)
+
+        valid = False
+
+        if confirm is False:
+            form.errors['confirm'] = [
+                'Confirm completion of build',
+            ]
+        else:
+            try:
+                location = StockLocation.objects.get(id=loc_id)
+                valid = True
+            except StockLocation.DoesNotExist:
+                print('id:', loc_id)
+                form.errors['location'] = ['Invalid location selected']
+
+            if valid:
+                build.completeBuild(location, request.user)
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data)
 
     def get_data(self):
         """ Provide feedback data back to the form """
