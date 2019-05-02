@@ -193,14 +193,25 @@ class Part(models.Model):
     def available_stock(self):
         """
         Return the total available stock.
-        This subtracts stock which is already allocated
+
+        - This subtracts stock which is already allocated to builds
         """
 
         total = self.total_stock
 
         total -= self.allocation_count
 
-        return max(total, 0)
+        return total
+
+    def need_to_restock(self):
+        """ Return True if this part needs to be restocked
+        (either by purchasing or building).
+
+        If the allocated_stock exceeds the total_stock, 
+        then we need to restock.
+        """
+
+        return (self.total_stock - self.allocation_count) < self.minimum_stock
 
     @property
     def can_build(self):
