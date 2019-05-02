@@ -1,7 +1,7 @@
 {% extends "collapse.html" %}
 
 {% block collapse_title %}
-{{ title }}<span class='badge'>{{ builds | length }}</span>
+<b>{{ title }}</b> - {{ builds | length }}
 {% endblock %}
 
 {% block collapse_content %}

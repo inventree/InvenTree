@@ -35,7 +35,7 @@ class BuildIndex(ListView):
 
         context['active'] = self.get_queryset().filter(status__in=[Build.PENDING,])
 
-        context['complete'] = self.get_queryset().filter(status=Build.COMPLETE)
+        context['completed'] = self.get_queryset().filter(status=Build.COMPLETE)
         context['cancelled'] = self.get_queryset().filter(status=Build.CANCELLED)
 
         return context
