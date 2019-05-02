@@ -56,7 +56,7 @@ class BuildCancel(AjaxView):
 
         build = get_object_or_404(Build, pk=self.kwargs['pk'])
 
-        build.cancelBuild()
+        build.cancelBuild(request.user)
 
         return self.renderJsonResponse(request, None)
 

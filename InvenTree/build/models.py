@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 
@@ -115,6 +116,12 @@ class Build(models.Model):
     creation_date = models.DateField(auto_now=True, editable=False)
     
     completion_date = models.DateField(null=True, blank=True)
+
+    completed_by = models.ForeignKey(User,
+                                     on_delete=models.SET_NULL,
+                                     blank=True, null=True,
+                                     related_name='builds_completed'
+                                     )
     
     URL = models.URLField(blank=True, help_text='Link to external URL')
 
@@ -122,7 +129,7 @@ class Build(models.Model):
     """ Notes attached to each build output """
 
     @transaction.atomic
-    def cancelBuild(self):
+    def cancelBuild(self, user):
         """ Mark the Build as CANCELLED
 
         - Delete any pending BuildItem objects (but do not remove items from stock)
@@ -135,6 +142,7 @@ class Build(models.Model):
 
         # Date of 'completion' is the date the build was cancelled
         self.completion_date = datetime.now().date()
+        self.completed_by = user
 
         self.status = self.CANCELLED
         self.save()
@@ -165,6 +173,8 @@ class Build(models.Model):
 
         # Mark the date of completion
         self.completion_date = datetime.now().date()
+
+        self.completed_by = user
 
         # Add stock of the newly created item
         item = StockItem.objects.create(
