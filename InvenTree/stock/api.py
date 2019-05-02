@@ -345,11 +345,11 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 stock_endpoints = [
-    url(r'^$', StockDetail.as_view(), name='stockitem-detail'),
+    url(r'^$', StockDetail.as_view(), name='api-stock-detail'),
 ]
 
 location_endpoints = [
-    url(r'^$', LocationDetail.as_view(), name='stocklocation-detail'),
+    url(r'^$', LocationDetail.as_view(), name='api-location-detail'),
 ]
 
 stock_api_urls = [

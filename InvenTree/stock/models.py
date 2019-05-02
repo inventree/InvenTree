@@ -36,6 +36,19 @@ class StockLocation(InvenTreeTree):
     def has_items(self):
         return self.stock_items.count() > 0
 
+    @property
+    def format_barcode(self):
+        """ Return a JSON string for formatting a barcode for this StockLocation object """
+
+        return helpers.MakeBarcode(
+            'StockLocation',
+            reverse('api-location-detail', kwargs={'pk': self.id}),
+            {
+                'id': self.id,
+                'name': self.name,
+            }
+        )
+
 
 @receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')
 def before_delete_stock_location(sender, instance, using, **kwargs):
@@ -135,13 +148,18 @@ class StockItem(models.Model):
 
         { type: 'StockItem', stock_id: <pk>, part_id: <part_pk> }
 
-        Any other data should be looked up using the InvenTree API (as it may change)
+        Voltagile data (e.g. stock quantity) should be looked up using the InvenTree API (as it may change)
         """
 
-        return helpers.MakeBarcode('StockItem', {
-            'stock_id': self.id,
-            'part_id': self.part.id
-        })
+        return helpers.MakeBarcode(
+            'StockItem',
+            reverse('api-stock-detail', kwargs={'pk': self.id}),
+            {
+                'id': self.id,
+                'part_id': self.part.id,
+                'part_name': self.part.name
+            }
+        )
 
     # The 'master' copy of the part of which this stock item is an instance
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='locations', help_text='Base part')
