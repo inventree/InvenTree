@@ -42,9 +42,9 @@ class StockLocation(InvenTreeTree):
 
         return helpers.MakeBarcode(
             'StockLocation',
+            self.id,
             reverse('api-location-detail', kwargs={'pk': self.id}),
             {
-                'id': self.id,
                 'name': self.name,
             }
         )
@@ -153,9 +153,9 @@ class StockItem(models.Model):
 
         return helpers.MakeBarcode(
             'StockItem',
+            self.id,
             reverse('api-stock-detail', kwargs={'pk': self.id}),
             {
-                'id': self.id,
                 'part_id': self.part.id,
                 'part_name': self.part.name
             }

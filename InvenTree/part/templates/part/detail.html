@@ -1,5 +1,6 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load qr_code %}
 {% block details  %}
 
 {% include 'part/tabs.html' with tab='detail' %}
@@ -114,6 +115,8 @@
   <div class="panel-body">{{ part.notes }}</div>
 </div>
 {% endif %}
+
+{% qr_from_text part.format_barcode size="s" image_format="png" error_correction="L" %}
 
 {% endblock %}
 

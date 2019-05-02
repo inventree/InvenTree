@@ -21,6 +21,7 @@ from django.core.validators import MinValueValidator
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from InvenTree import helpers
 from InvenTree.models import InvenTreeTree
 from company.models import Company
 
@@ -178,6 +179,16 @@ class Part(models.Model):
 
     def __str__(self):
         return "{n} - {d}".format(n=self.name, d=self.description)
+
+    @property
+    def format_barcode(self):
+        """ Return a JSON string for formatting a barcode for this Part object """
+
+        return helpers.MakeBarcode(
+            "Part",
+            self.id,
+            reverse('api-part-detail', kwargs={'pk': self.id}),
+        )
 
     class Meta:
         verbose_name = "Part"
