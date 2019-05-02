@@ -15,4 +15,9 @@ class Migration(migrations.Migration):
             name='active',
             field=models.BooleanField(default=True, help_text='Is this part active?'),
         ),
+		migrations.AddField(
+            model_name='partattachment',
+            name='comment',
+            field=models.CharField(blank=True, help_text='File comment', max_length=100),
+        ),
     ]

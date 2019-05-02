@@ -177,7 +177,10 @@ class AjaxCreateView(AjaxMixin, CreateView):
             # Return the PK of the newly-created object
             data['pk'] = obj.pk
 
-            data['url'] = obj.get_absolute_url()
+            try:
+                data['url'] = obj.get_absolute_url()
+            except AttributeError:
+                pass
 
         return self.renderJsonResponse(request, form, data)
 
@@ -223,7 +226,11 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             
             # Include context data about the updated object
             data['pk'] = obj.id
-            data['url'] = obj.get_absolute_url()
+
+            try:
+                data['url'] = obj.get_absolute_url()
+            except AttributeError:
+                pass
 
         return self.renderJsonResponse(request, form, data)
 

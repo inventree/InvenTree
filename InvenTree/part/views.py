@@ -13,11 +13,13 @@ from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 
 from company.models import Company
-from .models import PartCategory, Part, BomItem
+from .models import PartCategory, Part, PartAttachment
+from .models import BomItem
 from .models import SupplierPart
 
 from .forms import PartImageForm
 from .forms import EditPartForm
+from .forms import EditPartAttachmentForm
 from .forms import EditCategoryForm
 from .forms import EditBomItemForm
 from .forms import BomExportForm
@@ -49,6 +51,81 @@ class PartIndex(ListView):
         context['children'] = children
 
         return context
+
+
+class PartAttachmentCreate(AjaxCreateView):
+    """ View for creating a new PartAttachment object
+
+    - The view only makes sense if a Part object is passed to it
+    """
+    model = PartAttachment
+    form_class = EditPartAttachmentForm
+    ajax_form_title = "Add part attachment"
+    ajax_template_name = "modal_form.html"
+
+    def get_data(self):
+        return {
+            'success': 'Added attachment'
+        }
+
+    def get_initial(self):
+        """ Get initial data for new PartAttachment object.
+
+        - Client should have requested this form with a parent part in mind
+        - e.g. ?part=<pk>
+        """
+
+        initials = super(AjaxCreateView, self).get_initial()
+
+        # TODO - If the proper part was not sent, return an error message
+        initials['part'] = Part.objects.get(id=self.request.GET.get('part'))
+
+        return initials
+
+    def get_form(self):
+        """ Create a form to upload a new PartAttachment
+
+        - Hide the 'part' field
+        """
+
+        form = super(AjaxCreateView, self).get_form()
+
+        form.fields['part'].widget = HiddenInput()
+
+        return form
+
+
+class PartAttachmentEdit(AjaxUpdateView):
+    """ View for editing a PartAttachment object """
+    model = PartAttachment
+    form_class = EditPartAttachmentForm
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Edit attachment'
+    
+    def get_data(self):
+        return {
+            'success': 'Part attachment updated'
+        }
+
+    def get_form(self):
+        form = super(AjaxUpdateView, self).get_form()
+
+        form.fields['part'].widget = HiddenInput()
+
+        return form
+
+
+class PartAttachmentDelete(AjaxDeleteView):
+    """ View for deleting a PartAttachment """
+
+    model = PartAttachment
+    ajax_template_name = "part/attachment_delete.html"
+    context_object_name = "attachment"
+
+    def get_data(self):
+        return {
+            'danger': 'Deleted part attachment'
+        }
 
 
 class PartCreate(AjaxCreateView):
@@ -102,7 +179,6 @@ class PartCreate(AjaxCreateView):
 
         return form
 
-    # Pre-fill the category field if a valid category is provided
     def get_initial(self):
         """ Get initial data for the new Part object:
 
