@@ -133,6 +133,9 @@ class Build(models.Model):
         for item in self.allocated_stock.all():
             item.delete()
 
+        # Date of 'completion' is the date the build was cancelled
+        self.completion_date = datetime.now().date()
+
         self.status = self.CANCELLED
         self.save()
 
