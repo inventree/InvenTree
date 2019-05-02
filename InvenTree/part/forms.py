@@ -9,7 +9,8 @@ from InvenTree.forms import HelperForm
 
 from django import forms
 
-from .models import Part, PartCategory, BomItem
+from .models import Part, PartCategory, PartAttachment
+from .models import BomItem
 from .models import SupplierPart
 
 
@@ -41,6 +42,18 @@ class BomExportForm(HelperForm):
         model = Part
         fields = [
             'format',
+        ]
+
+
+class EditPartAttachmentForm(HelperForm):
+    """ Form for editing a PartAttachment object """
+
+    class Meta:
+        model = PartAttachment
+        fields = [
+            'part',
+            'attachment',
+            'comment'
         ]
 
 

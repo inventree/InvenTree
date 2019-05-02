@@ -1,5 +1,11 @@
 """
-URL lookup for Part app
+URL lookup for Part app. Provides URL endpoints for:
+
+- Display / Create / Edit / Delete PartCategory
+- Display / Create / Edit / Delete Part
+- Create / Edit / Delete PartAttachment
+- Display / Create / Edit / Delete SupplierPart
+
 """
 
 from django.conf.urls import url, include
@@ -19,11 +25,18 @@ supplier_part_urls = [
     url(r'^(?P<pk>\d+)/', include(supplier_part_detail_urls)),
 ]
 
+part_attachment_urls = [
+    url('^new/?', views.PartAttachmentCreate.as_view(), name='part-attachment-create'),
+    url(r'^(?P<pk>\d+)/edit/?', views.PartAttachmentEdit.as_view(), name='part-attachment-edit'),
+    url(r'^(?P<pk>\d+)/delete/?', views.PartAttachmentDelete.as_view(), name='part-attachment-delete'),
+]
+
 part_detail_urls = [
     url(r'^edit/?', views.PartEdit.as_view(), name='part-edit'),
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^bom-export/?', views.BomDownload.as_view(), name='bom-export'),
+    url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
     url(r'^bom/?', views.PartDetail.as_view(template_name='part/bom.html'), name='part-bom'),
     url(r'^build/?', views.PartDetail.as_view(template_name='part/build.html'), name='part-build'),
     url(r'^stock/?', views.PartDetail.as_view(template_name='part/stock.html'), name='part-stock'),
@@ -69,6 +82,10 @@ part_urls = [
     # Part category
     url(r'^category/(?P<pk>\d+)/', include(part_category_urls)),
 
+    # Part attachments
+    url(r'^attachment/', include(part_attachment_urls)),
+
+    # Bom Items
     url(r'^bom/(?P<pk>\d+)/', include(part_bom_urls)),
 
     # Top level part list (display top level parts and categories)
