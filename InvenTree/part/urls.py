@@ -1,5 +1,11 @@
 """
-URL lookup for Part app
+URL lookup for Part app. Provides URL endpoints for:
+
+- Display / Create / Edit / Delete PartCategory
+- Display / Create / Edit / Delete Part
+- Create / Edit / Delete PartAttachment
+- Display / Create / Edit / Delete SupplierPart
+
 """
 
 from django.conf.urls import url, include
@@ -17,6 +23,12 @@ supplier_part_urls = [
     url(r'^new/?', views.SupplierPartCreate.as_view(), name='supplier-part-create'),
 
     url(r'^(?P<pk>\d+)/', include(supplier_part_detail_urls)),
+]
+
+part_attachment_urls = [
+    url('^new/?', views.PartAttachmentCreate.as_view(), name='part-attachment-create'),
+    url(r'^(?P<pk>\d+)/edit/?', views.PartAttachmentEdit.as_view(), name='part-attachment-edit'),
+    url(r'^(?P<pk>\d+)/delete/?', views.PartAttachmentDelete.as_view(), name='part-attachment-delete'),
 ]
 
 part_detail_urls = [
@@ -70,6 +82,10 @@ part_urls = [
     # Part category
     url(r'^category/(?P<pk>\d+)/', include(part_category_urls)),
 
+    # Part attachments
+    url(r'^attachment/', include(part_attachment_urls)),
+
+    # Bom Items
     url(r'^bom/(?P<pk>\d+)/', include(part_bom_urls)),
 
     # Top level part list (display top level parts and categories)

@@ -7,7 +7,8 @@
 
 <h4>Attachments</h4>
 
-<div id='toolbar'>
+<div id='toolbar' class='btn-group'>
+    <button type='button' class='btn btn-success' id='new-attachment'>Add Attachment</button>
 </div>
 
 <table class='table table-striped table-condensed' data-toolbar='#toolbar' id='attachment-table'>
@@ -21,8 +22,10 @@
     <td><a href='/media/{{ attachment.attachment }}'>{{ attachment.basename }}</a></td>
     <td>{{ attachment.comment }}</td>
     <td>
-        <button type='button' class='btn btn-primary' data-toggle='tooltip' title='Edit attachment ({{ attachment.basename }})'><span class='glyphicon glyphicon-edit'></span></button>
-        <button type='button' class='btn btn-danger' data-toggle='tooltip' title='Delete attachment ({{ attachment.basename }})'><span class='glyphicon glyphicon-trash'></span></button>
+        <div class='btn-group' style='float: right;'>    
+            <button type='button' class='btn btn-primary attachment-edit-button' url="{% url 'part-attachment-edit' attachment.id %}" data-toggle='tooltip' title='Edit attachment ({{ attachment.basename }})'>Edit</button>
+            <button type='button' class='btn btn-danger attachment-delete-button' url="{% url 'part-attachment-delete' attachment.id %}" data-toggle='tooltip' title='Delete attachment ({{ attachment.basename }})'>Delete</button>
+        </div>
     </td>
 </tr>
 {% endfor %}
@@ -32,5 +35,28 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    $("#new-attachment").click(function() {
+        launchModalForm("{% url 'part-attachment-create' %}?part={{ part.id }}");
+    });
+
+    $("#attachment-table").on('click', '.attachment-edit-button', function() {
+        var button = $(this);
+
+        launchModalForm(button.attr('url'), 
+            {
+                success: function() {
+            }
+        });
+    });
+
+    $("#attachment-table").on('click', '.attachment-delete-button', function() {
+        var button = $(this);
+
+        launchDeleteForm(button.attr('url'), {
+            success: function() {
+            }
+        });
+    });
 
 {% endblock %}
