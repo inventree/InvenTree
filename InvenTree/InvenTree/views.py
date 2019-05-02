@@ -9,8 +9,8 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 from __future__ import unicode_literals
 
 from django.template.loader import render_to_string
-from django.http import JsonResponse
-
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.views import View
 from django.views.generic import UpdateView, CreateView, DeleteView
 from django.views.generic.base import TemplateView
@@ -105,8 +105,12 @@ class AjaxMixin(object):
             context: Extra context data to pass to template rendering
 
         Returns:
-            JSON response object
+            JSON response object if the request is an AJAX request.
+            Otherwise, redirects to the home page
         """
+
+        if not request.is_ajax():
+            return HttpResponseRedirect(reverse('index'))
 
         if form:
             context['form'] = form
