@@ -23,59 +23,66 @@
 
 <hr>
 
-<table class="table table-striped table-condensed">
-    <tr><td>Supplier</td><td><a href="{% url 'company-detail-parts' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
-    <tr><td>SKU</td><td>{{ part.SKU }}</tr></tr>
-    <tr>
-        <td>Internal Part</td>
-        <td>
-    {% if part.part %}
-        <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.name }}</a>
+<div class='row'>
+<div class='col-sm-6'>
+    <table class="table table-striped table-condensed">
+        <tr><td>Supplier</td><td><a href="{% url 'company-detail-parts' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
+        <tr><td>SKU</td><td>{{ part.SKU }}</tr></tr>
+        <tr>
+            <td>Internal Part</td>
+            <td>
+        {% if part.part %}
+            <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.name }}</a>
+        {% endif %}
+            </td>
+        </tr>
+    {% if part.URL %}
+        <tr><td>URL</td><td><a href="{{ part.URL }}">{{ part.URL }}</a></td></tr>
     {% endif %}
-        </td>
-    </tr>
-{% if part.URL %}
-    <tr><td>URL</td><td><a href="{{ part.URL }}">{{ part.URL }}</a></td></tr>
-{% endif %}
-{% if part.description %}
-    <tr><td>Description</td><td>{{ part.description }}</td></tr>
-{% endif %}
-{% if part.manufacturer %}
-    <tr><td>Manufacturer</td><td>{{ part.manufacturer }}</td></tr>
-    <tr><td>MPN</td><td>{{ part.MPN }}</td></tr>
-{% endif %}
-{% if part.note %}
-    <tr><td>Note</td><td>{{ part.note }}</td></tr>
-{% endif %}
+    {% if part.description %}
+        <tr><td>Description</td><td>{{ part.description }}</td></tr>
+    {% endif %}
+    {% if part.manufacturer %}
+        <tr><td>Manufacturer</td><td>{{ part.manufacturer }}</td></tr>
+        <tr><td>MPN</td><td>{{ part.MPN }}</td></tr>
+    {% endif %}
+    {% if part.note %}
+        <tr><td>Note</td><td>{{ part.note }}</td></tr>
+    {% endif %}
+    </table>
+</div>
+
+<div class='col-sm-6'>
+<table class="table table-striped table-condensed">
     <tr><th colspan='2'>Pricing</th></tr>
     <tr><td>Single Price</td><td>{{ part.single_price }}</td></tr>
-{% if part.multiple > 1 %}
+    {% if part.multiple > 1 %}
     <tr><td>Order Multiple</td><td>{{ part.multiple }}</td></tr>
-{% endif %}
-{% if part.base_cost > 0 %}
+    {% endif %}
+    {% if part.base_cost > 0 %}
     <tr><td>Base Price (Flat Fee)</td><td>{{ part.base_cost }}</td></tr>
-{% endif %}
-{% if part.minimum > 1 %}
+    {% endif %}
+    {% if part.minimum > 1 %}
     <tr><td>Minimum Order Quantity</td><td>{{ part.minimum }}</td></tr>
-{% endif %}
-</table>
-
-<br>
-
-<h3>Price Breaks</h3>
-
-<table class="table table-striped table-condensed">
+    {% endif %}
+    {% if part.price_breaks.all %}
+    <tr><th colspan='2'>Price Breaks</th></tr>
     <tr>
         <th>Quantity</th>
         <th>Price</th>
     </tr>
-{% for pb in part.price_breaks.all %}
-    <tr>
-        <td>{{ pb.quantity }}</td>
-        <td>{{ pb.cost }}</td>
-    </tr>
-{% endfor %}
+    {% for pb in part.price_breaks.all %}
+        <tr>
+            <td>{{ pb.quantity }}</td>
+            <td>{{ pb.cost }}</td>
+        </tr>
+    {% endfor %}
+    {% endif %}
 </table>
+</div>
+</div>
+
+<br>
 
 <div>
     <button class='btn btn-primary' type='button'>New Price Break</button>
