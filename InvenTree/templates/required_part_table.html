@@ -1,0 +1,18 @@
+<table class='table table-striped table-condensed' id='{{ table_id }}'>
+    <tr>
+        <th>Part</th>
+        <th>Description</th>
+        <th>In Stock</th>
+        <th>Allocated</th>
+        <th>Net Stock</th>
+    </tr>
+    {% for part in parts %}
+    <tr>
+        <td><a href="{% url 'part-detail' part.id %}">{{ part.name }}</a></td>
+        <td>{{ part.description }}</td>
+        <td>{{ part.total_stock }}</td>
+        <td>{{ part.allocation_count }}</td>
+        <td>{{ part.available_stock }}</td>
+    </tr>
+    {% endfor %}
+</table>

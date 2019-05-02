@@ -3,9 +3,20 @@
 {% block content %}
 <h3>InvenTree</h3>
 
-<p>Index!</p>
+{% if to_order %}
+{% include "InvenTree/parts_to_order.html" with collapse_id="order" %}
+{% endif %}
+
+{% if to_build %}
+{% include "InvenTree/parts_to_build.html" with collapse_id="build" %}
+{% endif %}
 
 {% endblock %}
 
 {% block js_load %}
+{{ block.super }}
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
 {% endblock %}

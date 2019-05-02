@@ -1,23 +1,15 @@
-{% if children|length > 0 %}
-<hr>
-<div class="panel-group">
- <div class="panel panel-default">
-   <div class="panel-heading">
-     <h4 class="panel-title">
-       <a data-toggle="collapse" href="#collapse1">Sub-Locations</a><span class='badge'>{{ children|length }}</span>
-     </h4>
-   </div>
-   <div id="collapse1" class="panel-collapse collapse">
-     <div class="panel-body">
-         <ul class="list-group">
-         {% for child in children %}
-        <li class="list-group-item"><a href="{% url 'stock-location-detail' child.id %}">{{ child.name }}</a> - <i>{{ child.description }}</i></li>
-             <span class='badge'>{{ child.partcount }}</span>
-         </li>
-         {% endfor %}
-         </ul>
-     </div>
-   </div>
- </div>
-</div>
-{% endif %}
+{% extends "collapse.html" %}
+
+{% block collapse_title %}
+Sub-Locations<span class='badge'>{{ children|length }}</span>
+{% endblock %}
+
+{% block collapse_content %}
+<ul class="list-group">
+{% for child in children %}
+<li class="list-group-item"><a href="{% url 'stock-location-detail' child.id %}">{{ child.name }}</a> - <i>{{ child.description }}</i></li>
+    <span class='badge'>{{ child.partcount }}</span>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}

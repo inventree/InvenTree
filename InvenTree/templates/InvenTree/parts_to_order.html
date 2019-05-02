@@ -1,0 +1,14 @@
+{% extends "collapse.html" %}
+{% block collapse_title %}
+Parts to Order<span class='badge'>{{ to_order | length }}</span>
+{% endblock %}
+
+{% block collapse_heading %}
+There are {{ to_order | length }} parts which need to be ordered.
+{% endblock %}
+
+{% block collapse_content %}
+
+{% include "required_part_table.html" with parts=to_order table_id="to-order-table" %}
+
+{% endblock %}

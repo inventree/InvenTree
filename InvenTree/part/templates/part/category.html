@@ -33,9 +33,9 @@
 </div>
 </div>
 
-{% if category %}
-{% include "part/subcategories.html" with children=category.children.all %}
-{% else %}
+{% if category and category.children.all|length > 0 %}
+{% include "part/subcategories.html" with children=category.children.all collapse_id="children"%}
+{% elif children|length > 0 %}
 {% include "part/subcategories.html" with children=children %}
 {% endif %}
 <hr>

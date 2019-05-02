@@ -31,10 +31,10 @@
 </div>
 </div>
 
-{% if location %}
-{% include 'stock/location_list.html' with children=location.children.all %}
-{% else %}
-{% include 'stock/location_list.html' with children=locations %}
+{% if location and location.children.all|length > 0 %}
+{% include 'stock/location_list.html' with children=location.children.all collapse_id="locations" %}
+{% elif locations|length > 0 %}
+{% include 'stock/location_list.html' with children=locations collapse_id="locations" %}
 {% endif %}
 
 <hr>
