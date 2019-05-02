@@ -118,11 +118,10 @@ class Build(models.Model):
     completion_date = models.DateField(null=True, blank=True)
 
     completed_by = models.ForeignKey(User,
-        on_delete=models.SET_NULL,
-        blank=True, null=True,
-        related_name='builds_completed'
-    )
-
+                                     on_delete=models.SET_NULL,
+                                     blank=True, null=True,
+                                     related_name='builds_completed'
+                                     )
     
     URL = models.URLField(blank=True, help_text='Link to external URL')
 
@@ -140,7 +139,6 @@ class Build(models.Model):
 
         for item in self.allocated_stock.all():
             item.delete()
-
 
         # Date of 'completion' is the date the build was cancelled
         self.completion_date = datetime.now().date()
