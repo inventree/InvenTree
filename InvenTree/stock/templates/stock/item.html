@@ -39,10 +39,6 @@
             <td>Part</td>
             <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</td>
         </tr>
-        <tr>
-            <td>UUID</td>
-            <td>{{ item.uuid }}</td>
-        </tr>
         {% if item.belongs_to %}
         <tr>
             <td>Belongs To</td>
@@ -114,7 +110,7 @@
         </table>
     </div>
     <div class='col-sm-6'>
-        {% qr_from_text item.uuid size="s" image_format="png" error_correction="L" %}
+        {% qr_from_text item.format_barcode size="s" image_format="png" error_correction="L" %}
     </div>
 </div>
 

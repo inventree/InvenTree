@@ -17,7 +17,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from datetime import datetime
-import uuid
+from InvenTree import helpers
 
 from InvenTree.models import InvenTreeTree
 
@@ -35,6 +35,19 @@ class StockLocation(InvenTreeTree):
 
     def has_items(self):
         return self.stock_items.count() > 0
+
+    @property
+    def format_barcode(self):
+        """ Return a JSON string for formatting a barcode for this StockLocation object """
+
+        return helpers.MakeBarcode(
+            'StockLocation',
+            self.id,
+            reverse('api-location-detail', kwargs={'pk': self.id}),
+            {
+                'name': self.name,
+            }
+        )
 
 
 @receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')
@@ -126,8 +139,27 @@ class StockItem(models.Model):
             ('part', 'serial'),
         ]
 
-    # UUID for generating QR codes
-    uuid = models.UUIDField(default=uuid.uuid4, blank=True, editable=False, help_text='Unique ID for the StockItem')
+    @property
+    def format_barcode(self):
+        """ Return a JSON string for formatting a barcode for this StockItem.
+        Can be used to perform lookup of a stockitem using barcode
+
+        Contains the following data:
+
+        { type: 'StockItem', stock_id: <pk>, part_id: <part_pk> }
+
+        Voltagile data (e.g. stock quantity) should be looked up using the InvenTree API (as it may change)
+        """
+
+        return helpers.MakeBarcode(
+            'StockItem',
+            self.id,
+            reverse('api-stock-detail', kwargs={'pk': self.id}),
+            {
+                'part_id': self.part.id,
+                'part_name': self.part.name
+            }
+        )
 
     # The 'master' copy of the part of which this stock item is an instance
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='locations', help_text='Base part')
