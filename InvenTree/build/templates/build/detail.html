@@ -66,9 +66,9 @@
     </td>
 </tr>
 {% endif %}
-{% if batch.completion_date %}
+{% if build.completion_date %}
 <tr>
-    <td>Completed</td><td>{{ build.creation_date }}</td>
+    <td>Completed</td><td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
 </tr>
 {% endif %}
 {% if build.notes %}
