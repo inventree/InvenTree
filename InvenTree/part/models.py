@@ -207,7 +207,7 @@ class Part(models.Model):
         """ Return True if this part needs to be restocked
         (either by purchasing or building).
 
-        If the allocated_stock exceeds the total_stock, 
+        If the allocated_stock exceeds the total_stock,
         then we need to restock.
         """
 
