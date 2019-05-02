@@ -51,6 +51,7 @@ def MakeBarcode(object_type, object_id, object_url, data={}):
 
     Args:
         object_type: string describing the object type e.g. 'StockItem'
+        object_id: ID (Primary Key) of the object in the database
         object_url: url for JSON API detail view of the object
         data: Python dict object containing extra datawhich will be rendered to string (must only contain stringable values)
 
