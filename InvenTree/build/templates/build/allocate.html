@@ -11,11 +11,8 @@
 <hr>
 
 {% for bom_item in bom_items.all %}
-{% include "build/allocation_item.html" with item=bom_item build=build %}
+{% include "build/allocation_item.html" with item=bom_item build=build collapse_id=bom_item.id %}
 {% endfor %}
-
-<table class='table table-striped' id='build-table'>
-</table>
 
 <div>
     <button class='btn btn-warning' type='button' id='complete-build'>Complete Build</button>

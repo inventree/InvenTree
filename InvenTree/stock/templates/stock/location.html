@@ -1,5 +1,6 @@
 {% extends "stock/stock_app_base.html" %}
 {% load static %}
+{% load qr_code %}
 {% block content %}
 
 <div class='row'>
@@ -25,16 +26,17 @@
           <li><a href="#" id='location-delete' title='Delete stock location'>Delete</a></li>
         </ul>
     </div>
+    {% qr_from_text location.format_barcode size="s" image_format="png" error_correction="L" %}
     {% endif %}
     </div>
     </h3>
 </div>
 </div>
 
-{% if location %}
-{% include 'stock/location_list.html' with children=location.children.all %}
-{% else %}
-{% include 'stock/location_list.html' with children=locations %}
+{% if location and location.children.all|length > 0 %}
+{% include 'stock/location_list.html' with children=location.children.all collapse_id="locations" %}
+{% elif locations|length > 0 %}
+{% include 'stock/location_list.html' with children=locations collapse_id="locations" %}
 {% endif %}
 
 <hr>

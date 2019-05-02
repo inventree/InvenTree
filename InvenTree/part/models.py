@@ -21,6 +21,7 @@ from django.core.validators import MinValueValidator
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from InvenTree import helpers
 from InvenTree.models import InvenTreeTree
 from company.models import Company
 
@@ -179,6 +180,16 @@ class Part(models.Model):
     def __str__(self):
         return "{n} - {d}".format(n=self.name, d=self.description)
 
+    @property
+    def format_barcode(self):
+        """ Return a JSON string for formatting a barcode for this Part object """
+
+        return helpers.MakeBarcode(
+            "Part",
+            self.id,
+            reverse('api-part-detail', kwargs={'pk': self.id}),
+        )
+
     class Meta:
         verbose_name = "Part"
         verbose_name_plural = "Parts"
@@ -193,14 +204,25 @@ class Part(models.Model):
     def available_stock(self):
         """
         Return the total available stock.
-        This subtracts stock which is already allocated
+
+        - This subtracts stock which is already allocated to builds
         """
 
         total = self.total_stock
 
         total -= self.allocation_count
 
-        return max(total, 0)
+        return total
+
+    def need_to_restock(self):
+        """ Return True if this part needs to be restocked
+        (either by purchasing or building).
+
+        If the allocated_stock exceeds the total_stock,
+        then we need to restock.
+        """
+
+        return (self.total_stock - self.allocation_count) < self.minimum_stock
 
     @property
     def can_build(self):
@@ -306,6 +328,12 @@ class Part(models.Model):
     @property
     def used_in_count(self):
         return self.used_in.count()
+
+    def required_parts(self):
+        parts = []
+        for bom in self.bom_items.all():
+            parts.append(bom.sub_part)
+        return parts
 
     @property
     def supplier_count(self):

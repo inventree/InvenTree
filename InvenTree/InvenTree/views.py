@@ -15,6 +15,8 @@ from django.views import View
 from django.views.generic import UpdateView, CreateView, DeleteView
 from django.views.generic.base import TemplateView
 
+from part.models import Part
+
 from rest_framework import views
 
 
@@ -286,6 +288,21 @@ class IndexView(TemplateView):
     """ View for InvenTree index page """
 
     template_name = 'InvenTree/index.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(TemplateView, self).get_context_data(**kwargs)
+        
+        # Generate a list of orderable parts which have stock below their minimum values
+        context['to_order'] = [part for part in Part.objects.filter(purchaseable=True) if part.need_to_restock()]
+    
+        # Generate a list of buildable parts which have stock below their minimum values
+        context['to_build'] = [part for part in Part.objects.filter(buildable=True) if part.need_to_restock()]
+
+        print("order:", len(context['to_order']))
+        print("build:", len(context['to_build']))
+
+        return context
 
 
 class SearchView(TemplateView):
