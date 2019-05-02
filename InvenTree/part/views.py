@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 
@@ -18,7 +18,7 @@ from .models import BomItem
 from .models import SupplierPart
 
 from .forms import PartImageForm
-from .forms import EditPartForm
+from .forms import EditPartForm, CopyPartForm
 from .forms import EditPartAttachmentForm
 from .forms import EditCategoryForm
 from .forms import EditBomItemForm
@@ -128,13 +128,64 @@ class PartAttachmentDelete(AjaxDeleteView):
         }
 
 
+class PartCopy(AjaxUpdateView):
+    """ View for duplicating an existing Part object.
+    The part is instantiated with the data from the existing part.
+
+    User is presented with extra fields allowing duplication of:
+
+    - BOM items (create a new part with the same BOM)
+    - Part attachments (copy the existing part attachments)
+    """
+    model = Part
+    form_class = CopyPartForm
+    ajax_form_title = 'Copy Existing Part'
+    ajax_template_name = 'modal_form.html'
+
+    def get_data(self):
+        return {
+            'success': 'Copied part'
+        }
+
+    def get(self, request, *args, **kwargs):
+
+        part = self.get_object()
+
+        self.ajax_form_title = "Copy part '{p}'".format(p=part.name)
+
+        super(UpdateView, self).get(request, *args, **kwargs)
+
+        form = self.get_form()
+
+        return self.renderJsonResponse(request, form, context=self.get_context_data())
+
+    def post(self, request, *args, **kwargs):
+        """ Respond to the POST request (actually save the duplicated object """
+
+        print("POST")
+
+
+        print(request.POST)
+
+        copy_bom = request.POST.get('copy_bom', False)
+        
+        if copy_bom:
+            print("COPY COPY COPY COPY COPY")
+
+        part = self.get_object()
+        print("part:", part.id, part.name)
+
+        return self.renderJsonResponse(request, self.get_form(), {'form_valid': True})
+
+
+
+
 class PartCreate(AjaxCreateView):
     """ View for creating a new Part object.
 
     Options for providing initial conditions:
     
     - Provide a category object as initial data
-    - Copy an existing Part
     """
     model = Part
     form_class = EditPartForm
@@ -183,22 +234,8 @@ class PartCreate(AjaxCreateView):
         """ Get initial data for the new Part object:
 
         - If a category is provided, pre-fill the Category field
-        - If 'copy' parameter is provided, copy from referenced Part
         """
-
-        # Is the client attempting to copy an existing part?
-        part_to_copy = self.request.GET.get('copy', None)
-
-        if part_to_copy:
-            try:
-                original = Part.objects.get(pk=part_to_copy)
-                initials = model_to_dict(original)
-                self.ajax_form_title = "Copy Part '{p}'".format(p=original.name)
-            except Part.DoesNotExist:
-                initials = super(PartCreate, self).get_initial()
-
-        else:
-            initials = super(PartCreate, self).get_initial()
+        initials = super(PartCreate, self).get_initial()
 
         if self.get_category_id():
             try:

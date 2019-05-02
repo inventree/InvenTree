@@ -57,6 +57,35 @@ class EditPartAttachmentForm(HelperForm):
         ]
 
 
+class CopyPartForm(HelperForm):
+    """ Form for copying a Part object. 
+    In addition to direct editing of Part fields,
+    the user is presented with some options for deep-copy of the Part.
+    """
+
+    copy_bom = forms.BooleanField(required=False, help_text='Copy all BOM entries for this part')
+    copy_attachments = forms.BooleanField(required=False, help_text='Copy all file attachments for this part')
+
+    class Meta:
+        model = Part
+        fields = [
+            'copy_bom',
+            'copy_attachments',
+            'category',
+            'name',
+            'description',
+            'IPN',
+            'default_location',
+            'units',
+            'buildable',
+            'consumable',
+            'trackable',
+            'purchaseable',
+            'salable',
+            'notes',
+        ]
+
+
 class EditPartForm(HelperForm):
     """ Form for editing a Part object """
 

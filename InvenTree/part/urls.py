@@ -32,10 +32,14 @@ part_attachment_urls = [
 ]
 
 part_detail_urls = [
+    url(r'^copy/?', views.PartCopy.as_view(), name='part-copy'),
     url(r'^edit/?', views.PartEdit.as_view(), name='part-edit'),
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
-    url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^bom-export/?', views.BomDownload.as_view(), name='bom-export'),
+    url(r'^thumbnail/?', views.PartImage.as_view(), name='part-image'),
+    
+    # Tabbed pages of the main 'PartDetail' view
+    url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
     url(r'^bom/?', views.PartDetail.as_view(template_name='part/bom.html'), name='part-bom'),
     url(r'^build/?', views.PartDetail.as_view(template_name='part/build.html'), name='part-build'),
@@ -43,8 +47,6 @@ part_detail_urls = [
     url(r'^used/?', views.PartDetail.as_view(template_name='part/used_in.html'), name='part-used-in'),
     url(r'^allocation/?', views.PartDetail.as_view(template_name='part/allocation.html'), name='part-allocation'),
     url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
-
-    url(r'^thumbnail/?', views.PartImage.as_view(), name='part-image'),
 
     # Any other URLs go to the part detail page
     url(r'^.*$', views.PartDetail.as_view(), name='part-detail'),
