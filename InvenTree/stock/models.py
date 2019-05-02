@@ -17,7 +17,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from datetime import datetime
-import uuid
+from InvenTree import helpers
 
 from InvenTree.models import InvenTreeTree
 
@@ -126,8 +126,22 @@ class StockItem(models.Model):
             ('part', 'serial'),
         ]
 
-    # UUID for generating QR codes
-    uuid = models.UUIDField(default=uuid.uuid4, blank=True, editable=False, help_text='Unique ID for the StockItem')
+    @property
+    def format_barcode(self):
+        """ Return a JSON string for formatting a barcode for this StockItem.
+        Can be used to perform lookup of a stockitem using barcode
+
+        Contains the following data:
+
+        { type: 'StockItem', stock_id: <pk>, part_id: <part_pk> }
+
+        Any other data should be looked up using the InvenTree API (as it may change)
+        """
+
+        return helpers.MakeBarcode('StockItem', {
+            'stock_id': self.id,
+            'part_id': self.part.id
+        })
 
     # The 'master' copy of the part of which this stock item is an instance
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='locations', help_text='Base part')

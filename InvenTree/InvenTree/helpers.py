@@ -3,6 +3,8 @@ Provides helper functions used throughout the InvenTree project
 """
 
 import io
+import json
+from datetime import datetime
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
@@ -42,6 +44,24 @@ def WrapWithQuotes(text, quote='"'):
         text = text + quote
 
     return text
+
+
+def MakeBarcode(object_type, data={}):
+    """ Generate a string for a barcode. Adds some global InvenTree parameters.
+
+    Args:
+        data: Python dict obejct which will be rendered to string (must only contain stringable values)
+
+    Returns:
+        json string of the supplied data plus some other data
+    """
+
+    # Add in some generic InvenTree data
+    data['type'] = object_type
+    data['tool'] = 'InvenTree'
+    data['generated'] = str(datetime.now().date())
+
+    return json.dumps(data, sort_keys=True)
 
 
 def DownloadFile(data, filename, content_type='application/text'):

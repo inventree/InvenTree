@@ -272,7 +272,6 @@ class StockList(generics.ListCreateAPIView):
 
     filter_fields = [
         'part',
-        'uuid',
         'supplier_part',
         'customer',
         'belongs_to',
