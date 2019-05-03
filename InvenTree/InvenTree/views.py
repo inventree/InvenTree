@@ -201,10 +201,8 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         """
 
         super(UpdateView, self).get(request, *args, **kwargs)
-
-        form = self.get_form()
         
-        return self.renderJsonResponse(request, form, context=self.get_context_data())
+        return self.renderJsonResponse(request, self.get_form(), context=self.get_context_data())
 
     def post(self, request, *args, **kwargs):
         """ Respond to POST request.
@@ -215,7 +213,8 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         - Otherwise, return sucess status
         """
 
-        super(UpdateView, self).post(request, *args, **kwargs)
+        # Make sure we have an object to point to
+        self.object = self.get_object()
 
         form = self.get_form()
 
@@ -225,7 +224,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
 
         if form.is_valid():
             obj = form.save()
-            
+
             # Include context data about the updated object
             data['pk'] = obj.id
 
