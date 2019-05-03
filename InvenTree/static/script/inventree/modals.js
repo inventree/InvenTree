@@ -1,20 +1,45 @@
 function makeOption(id, title) {
+    /* Format an option for a select element
+     */
     return "<option value='" + id + "'>" + title + "</option>";
 }
 
-function attachSelect(modal) {
 
-    // Attach to any 'select' inputs on the modal
-    // Provide search filtering of dropdown items
-    $(modal + ' .select').select2({
+function attachSelect(modal) {
+    /* Attach 'select2' functionality to any drop-down list in the modal. 
+     * Provides search filtering for dropdown items
+     */
+
+     $(modal + ' .select').select2({
         dropdownParent: $(modal),
+        // dropdownAutoWidth parameter is required to work properly with modal forms
         dropdownAutoWidth: true,
     });
 }
 
-function afterForm(response, options) {
 
-    // Should we show alerts immediately or cache them?
+function loadingMessageContent() {
+    /* Render a 'loading' message to display in a form 
+     * when waiting for a response from the server
+     */
+
+    // TODO - This can be made a lot better
+    return '<b>Loading...</b>';
+}
+
+
+function afterForm(response, options) {
+    /* afterForm is called after a form is successfully submitted,
+     * and the form is dismissed.
+     * Used for general purpose functionality after form submission:
+     * 
+     * - Display a bootstrap alert (success / info / warning / danger)
+     * - Run a supplied success callback function
+     * - Redirect the browser to a different URL
+     * - Reload the page
+     */
+    
+     // Should we show alerts immediately or cache them?
     var cache = (options.follow && response.url) ||
                 options.redirect ||
                 options.reload;
@@ -46,27 +71,53 @@ function afterForm(response, options) {
     else if (options.reload) {
         location.reload();
     }
-
 }
 
+
+function modalEnable(modal, enable=true) {
+    /* Enable (or disable) modal form elements to prevent user input
+     */
+
+    // Enable or disable the submit button
+    $(modal).find('#modal-form-submit').prop('disabled', !enable);
+}
+
+
 function modalSetTitle(modal, title='') {
+    /* Update the title of a modal form 
+     */
     $(modal + ' #modal-title').html(title);
 }
 
+
 function modalSetContent(modal, content='') {
+    /* Update the content panel of a modal form
+     */
     $(modal).find('.modal-form-content').html(content);
 }
 
+
 function modalSetButtonText(modal, submit_text, close_text) {
+    /* Set the button text for a modal form
+     * 
+     * submit_text - text for the form submit button
+     * close_text - text for the form dismiss button
+     */
     $(modal).find("#modal-form-submit").html(submit_text);
     $(modal).find("#modal-form-close").html(close_text);
 }
 
+
 function closeModal(modal='#modal-form') {
+    /* Dismiss (hide) a modal form
+     */
     $(modal).modal('hide');
 }
 
+
 function modalSubmit(modal, callback) {
+    /* Perform the submission action for the modal form
+     */
     $(modal).off('click', '#modal-form-submit');
 
     $(modal).on('click', '#modal-form-submit', function() {
@@ -75,7 +126,72 @@ function modalSubmit(modal, callback) {
 }
 
 
+function renderErrorMessage(xhr) {
+    
+    var html = '<b>' + xhr.statusText + '</b><br>';
+    
+    html += '<b>Status Code - ' + xhr.status + '</b><br><hr>';
+    
+    html += `
+    <div class='panel-group'>
+        <div class='panel panel-default'>
+            <div class='panel panel-heading'>
+                <div class='panel-title'>
+                    <a data-toggle='collapse' href="#collapse-error-info">Show Error Information</a>
+                </div>
+            </div>
+            <div class='panel-collapse collapse' id='collapse-error-info'>
+                <div class='panel-body'>`;
+
+    html += xhr.responseText;
+    
+    html += `
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    return html;
+}
+
+
+function showDialog(title, content, options={}) {
+    /* Display a modal dialog message box.
+     * 
+     * title - Title text 
+     * content - HTML content of the dialog window
+     * options:
+     *  modal - modal form to use (default = '#modal-dialog')
+     */
+
+     var modal = options.modal || '#modal-dialog';
+
+     $(modal).on('shown.bs.modal', function() {
+        $(modal + ' .modal-form-content').scrollTop(0);
+    });
+
+     modalSetTitle(modal, title);
+     modalSetContent(modal, content);
+
+     $(modal).modal({
+        backdrop: 'static',
+        keyboard: false,
+    });
+
+     $(modal).modal('show');
+}
+
 function openModal(options) {
+    /* Open a modal form, and perform some action based on the provided options object:
+     * 
+     * options can contain:
+     * 
+     * modal - ID of the modal form element (default = '#modal-form')
+     * title - Custom title for the form
+     * content - Default content for the form panel
+     * submit_text - Label for the submit button (default = 'Submit')
+     * close_text - Label for the close button (default = 'Close')
+     */
 
     var modal = options.modal || '#modal-form';
 
@@ -95,12 +211,18 @@ function openModal(options) {
         }
     });
 
+    // Unless the title is explicitly set, display loading message
     if (options.title) {
         modalSetTitle(modal, options.title);
+    } else {
+        modalSetTitle(modal, 'Loading Form Data...');
     }
 
+    // Unless the content is explicitly set, display loading message
     if (options.content) {
         modalSetContent(modal, options.content);
+    } else {
+        modalSetContent(modal, loadingMessageContent());
     }
 
     // Default labels for 'Submit' and 'Close' buttons in the form
@@ -113,11 +235,18 @@ function openModal(options) {
         backdrop: 'static',
         keyboard: false,
     });
+
+    // Disable the form
+    modalEnable(modal, false);
+
+    // Finally, display the modal window
     $(modal).modal('show');
 }
 
 
 function launchDeleteForm(url, options = {}) {
+    /* Launch a modal form to delete an object
+     */
 
     var modal = options.modal || '#modal-delete';
 
@@ -144,13 +273,14 @@ function launchDeleteForm(url, options = {}) {
                 modalSetContent(modal, response.html_data);
             }
             else {
-                alert('JSON response missing HTML data');
+
                 $(modal).modal('hide');
+                showDialog('Invalid form response', 'JSON response missing HTML data');
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            alert('Error requesting JSON data:\n' + thrownError);
             $(modal).modal('hide');
+            showDialog('Error requesting form data', renderErrorMessage(xhr));
         }
     });
 
@@ -168,20 +298,30 @@ function launchDeleteForm(url, options = {}) {
                 afterForm(response, options);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert('Error deleting item:\n' + thrownError);
                 $(modal).modal('hide');
+                showDialog('Error deleting item', renderErrorMessage(xhr));
             }
         });
     });
 }
 
+
 function injectModalForm(modal, form_html) {
-    // Inject the form data into the modal window
+    /* Inject form content into the modal.
+     * Updates the HTML of the form content, and then applies some other updates
+     */
     $(modal).find('.modal-form-content').html(form_html);
     attachSelect(modal);
 }
 
+
 function handleModalForm(url, options) {
+    /* Update a modal form after data are received from the server.
+     * Manages POST requests until the form is successfully submitted.
+     * 
+     * The server should respond with a JSON object containing a boolean value 'form_valid'
+     * Form submission repeats (after user interaction) until 'form_valid' = true
+     */
 
     var modal = options.modal || '#modal-form';
 
@@ -196,6 +336,7 @@ function handleModalForm(url, options) {
     });
 
     form.submit(function() {
+        // We should never get here (form submission is overridden)
         alert('form submit');
         return false;
     });
@@ -203,8 +344,14 @@ function handleModalForm(url, options) {
     modalSubmit(modal, function() {
         $(modal).find('.js-modal-form').ajaxSubmit({
             url: url,
+            beforeSend: function() {
+                // Disable modal until the server returns a response
+                modalEnable(modal, false);
+            },
             // POST was successful
             success: function(response, status, xhr, f) {
+                // Re-enable the modal
+                modalEnable(modal, true);
                 if ('form_valid' in response) {
                     // Form data was validated correctly
                     if (response.form_valid) {
@@ -217,7 +364,8 @@ function handleModalForm(url, options) {
                             injectModalForm(modal, response.html_form);
                         }
                         else {
-                            alert('HTML form data missing from server response');
+                            $(modal).modal('hide');
+                            showDialog('Invalid response from server', 'Form data missing from server response');
                         }
                     }
                 }
@@ -227,8 +375,10 @@ function handleModalForm(url, options) {
                 }
             },
             error: function(xhr, ajaxOptions, thrownError) {
-                alert('Error posting form data:\n' + thrownError);
-                $(modal).modal('hide');
+                // There was an error submitting form data via POST
+                
+                $(modal).modal('hide'); 
+                showDialog('Error posting form data', renderErrorMessage(xhr));                
             },
             complete: function(xhr) {
                 //TODO
@@ -237,12 +387,16 @@ function handleModalForm(url, options) {
     });
 }
 
-/*
- * launchModalForm
- * Opens a model window and fills it with a requested form
- * If the form is loaded successfully, calls handleModalForm
- */
+
 function launchModalForm(url, options = {}) {
+    /* Launch a modal form, and request data from the server to fill the form
+     * If the form data is returned from the server, calls handleModalForm() 
+     *
+     * A successful request will return a JSON object with, at minimum,
+     * an object called 'html_form'
+     * 
+     * If the request is NOT successful, displays an appropriate error message.
+     */
 
     var modal = options.modal || '#modal-form';
 
@@ -263,6 +417,10 @@ function launchModalForm(url, options = {}) {
             });
         },
         success: function(response) {
+
+            // Enable the form
+            modalEnable(modal, true);
+
             if (response.title) {
                 modalSetTitle(modal, response.title);
             }
@@ -272,13 +430,13 @@ function launchModalForm(url, options = {}) {
                 handleModalForm(url, options);
 
             } else {
-                alert('JSON response missing form data');
                 $(modal).modal('hide');
+                showDialog('Invalid server response', 'JSON response missing form data');
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            alert('Error requesting form data:\n' + thrownError);
             $(modal).modal('hide');
+            showDialog('Error requesting form data', renderErrorMessage(xhr));
         }
     };
 
