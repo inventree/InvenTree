@@ -1,20 +1,35 @@
 function makeOption(id, title) {
+    /* Format an option for a select element
+     */
     return "<option value='" + id + "'>" + title + "</option>";
 }
 
-function attachSelect(modal) {
 
-    // Attach to any 'select' inputs on the modal
-    // Provide search filtering of dropdown items
-    $(modal + ' .select').select2({
+function attachSelect(modal) {
+    /* Attach 'select2' functionality to any drop-down list in the modal. 
+     * Provides search filtering for dropdown items
+     */
+
+     $(modal + ' .select').select2({
         dropdownParent: $(modal),
+        // dropdownAutoWidth parameter is required to work properly with modal forms
         dropdownAutoWidth: true,
     });
 }
 
-function afterForm(response, options) {
 
-    // Should we show alerts immediately or cache them?
+function afterForm(response, options) {
+    /* afterForm is called after a form is successfully submitted,
+     * and the form is dismissed.
+     * Used for general purpose functionality after form submission:
+     * 
+     * - Display a bootstrap alert (success / info / warning / danger)
+     * - Run a supplied success callback function
+     * - Redirect the browser to a different URL
+     * - Reload the page
+     */
+    
+     // Should we show alerts immediately or cache them?
     var cache = (options.follow && response.url) ||
                 options.redirect ||
                 options.reload;
@@ -49,24 +64,42 @@ function afterForm(response, options) {
 
 }
 
+
 function modalSetTitle(modal, title='') {
+    /* Update the title of a modal form 
+     */
     $(modal + ' #modal-title').html(title);
 }
 
+
 function modalSetContent(modal, content='') {
+    /* Update the content panel of a modal form
+     */
     $(modal).find('.modal-form-content').html(content);
 }
 
+
 function modalSetButtonText(modal, submit_text, close_text) {
+    /* Set the button text for a modal form
+     * 
+     * submit_text - text for the form submit button
+     * close_text - text for the form dismiss button
+     */
     $(modal).find("#modal-form-submit").html(submit_text);
     $(modal).find("#modal-form-close").html(close_text);
 }
 
+
 function closeModal(modal='#modal-form') {
+    /* Dismiss (hide) a modal form
+     */
     $(modal).modal('hide');
 }
 
+
 function modalSubmit(modal, callback) {
+    /* Perform the submission action for the modal form
+     */
     $(modal).off('click', '#modal-form-submit');
 
     $(modal).on('click', '#modal-form-submit', function() {
@@ -76,6 +109,16 @@ function modalSubmit(modal, callback) {
 
 
 function openModal(options) {
+    /* Open a modal form, and perform some action based on the provided options object:
+     * 
+     * options can contain:
+     * 
+     * modal - ID of the modal form element (default = '#modal-form')
+     * title - Custom title for the form
+     * content - Default content for the form panel
+     * submit_text - Label for the submit button (default = 'Submit')
+     * close_text - Label for the close button (default = 'Close')
+     */
 
     var modal = options.modal || '#modal-form';
 
@@ -118,6 +161,8 @@ function openModal(options) {
 
 
 function launchDeleteForm(url, options = {}) {
+    /* Launch a modal form to delete an object
+     */
 
     var modal = options.modal || '#modal-delete';
 
@@ -175,13 +220,23 @@ function launchDeleteForm(url, options = {}) {
     });
 }
 
+
 function injectModalForm(modal, form_html) {
-    // Inject the form data into the modal window
+    /* Inject form content into the modal.
+     * Updates the HTML of the form content, and then applies some other updates
+     */
     $(modal).find('.modal-form-content').html(form_html);
     attachSelect(modal);
 }
 
+
 function handleModalForm(url, options) {
+    /* Update a modal form after data are received from the server.
+     * Manages POST requests until the form is successfully submitted.
+     * 
+     * The server should respond with a JSON object containing a boolean value 'form_valid'
+     * Form submission repeats (after user interaction) until 'form_valid' = true
+     */
 
     var modal = options.modal || '#modal-form';
 
@@ -237,12 +292,16 @@ function handleModalForm(url, options) {
     });
 }
 
-/*
- * launchModalForm
- * Opens a model window and fills it with a requested form
- * If the form is loaded successfully, calls handleModalForm
- */
+
 function launchModalForm(url, options = {}) {
+    /* Launch a modal form, and request data from the server to fill the form
+     * If the form data is returned from the server, calls handleModalForm() 
+     *
+     * A successful request will return a JSON object with, at minimum,
+     * an object called 'html_form'
+     * 
+     * If the request is NOT successful, displays an appropriate error message.
+     */
 
     var modal = options.modal || '#modal-form';
 
