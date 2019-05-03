@@ -39,6 +39,7 @@
     $("#part-table").bootstrapTable({
         sortable: true,
         search: true,
+        formatNoMatches: function() { return "No supplier parts found for {{ company.name }}"; },
         queryParams: function(p) {
             return {
                 supplier: {{ company.id }}

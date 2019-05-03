@@ -27,6 +27,7 @@
         sortable: true,
         search: true,
         pagination: true,
+        formatNoMatches: function() { return "No parts found matching search query"; },
         queryParams: function(p) {
             return {
                 search: "{{ query }}",
