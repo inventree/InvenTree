@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import logging
+import tempfile 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -56,12 +57,13 @@ INSTALLED_APPS = [
     'build.apps.BuildConfig',
 
     # Third part add-ons
-    'django_filters',
-    'rest_framework',
-    'crispy_forms',
-    'import_export',
-    'django_cleanup',
-    'qr_code',
+    'django_filters',       # Extended filter functionality
+    'dbbackup',             # Database backup / restore
+    'rest_framework',       # DRF (Django Rest Framework)
+    'crispy_forms',         # Improved form rendering
+    'import_export',        # Import / export tables to file
+    'django_cleanup',       # Automatically delete orphaned MEDIA files
+    'qr_code',              # Generate QR codes
 ]
 
 MIDDLEWARE = [
@@ -174,3 +176,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
+
+# Settings for dbbsettings app
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': tempfile.gettempdir()}
