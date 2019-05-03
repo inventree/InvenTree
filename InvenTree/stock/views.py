@@ -136,11 +136,16 @@ class StockItemCreate(AjaxCreateView):
         form = super(AjaxCreateView, self).get_form()
 
         # If the user has selected a Part, limit choices for SupplierPart
-        if form['part'].value() is not None:
-            part = form['part'].value()
-            parts = form.fields['supplier_part'].queryset
-            parts = parts.filter(part=part)
-            form.fields['supplier_part'].queryset = parts
+        if form['part'].value():
+            part_id = form['part'].value()
+
+            try:
+                part = Part.objects.get(id=part_id)
+                parts = form.fields['supplier_part'].queryset
+                parts = parts.filter(part=part.id)
+                form.fields['supplier_part'].queryset = parts
+            except Part.DoesNotExist:
+                pass
 
             # Hide the 'part' field
             form.fields['part'].widget = HiddenInput()
