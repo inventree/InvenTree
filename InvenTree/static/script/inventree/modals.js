@@ -126,6 +126,61 @@ function modalSubmit(modal, callback) {
 }
 
 
+function renderErrorMessage(xhr) {
+    
+    var html = '<b>' + xhr.statusText + '</b><br>';
+    
+    html += '<b>Status Code - ' + xhr.status + '</b><br><hr>';
+    
+    html += `
+    <div class='panel-group'>
+        <div class='panel panel-default'>
+            <div class='panel panel-heading'>
+                <div class='panel-title'>
+                    <a data-toggle='collapse' href="#collapse-error-info">Show Error Information</a>
+                </div>
+            </div>
+            <div class='panel-collapse collapse' id='collapse-error-info'>
+                <div class='panel-body'>`;
+
+    html += xhr.responseText;
+    
+    html += `
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    return html;
+}
+
+
+function showDialog(title, content, options={}) {
+    /* Display a modal dialog message box.
+     * 
+     * title - Title text 
+     * content - HTML content of the dialog window
+     * options:
+     *  modal - modal form to use (default = '#modal-dialog')
+     */
+
+     var modal = options.modal || '#modal-dialog';
+
+     $(modal).on('shown.bs.modal', function() {
+        $(modal + ' .modal-form-content').scrollTop(0);
+    });
+
+     modalSetTitle(modal, title);
+     modalSetContent(modal, content);
+
+     $(modal).modal({
+        backdrop: 'static',
+        keyboard: false,
+    });
+
+     $(modal).modal('show');
+}
+
 function openModal(options) {
     /* Open a modal form, and perform some action based on the provided options object:
      * 
@@ -317,8 +372,10 @@ function handleModalForm(url, options) {
                 }
             },
             error: function(xhr, ajaxOptions, thrownError) {
-                alert('Error posting form data:\n' + thrownError);
-                $(modal).modal('hide');
+                // There was an error submitting form data via POST
+                
+                $(modal).modal('hide'); 
+                showDialog('Error posting form data', renderErrorMessage(xhr));                
             },
             complete: function(xhr) {
                 //TODO
