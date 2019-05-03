@@ -6,20 +6,8 @@
 
 <h3>Used In</h3>
 
-{% if part.used_in_count > 0 %}
-
-<p>
-    <b>{{ part.name }}</b> is used to make {{ part.used_in_count }} other parts.
-</p>
-
 <table class="table table-striped table-condensed" id='used-table'>
 </table>
-
-{% else %}
-<p>
-    {{ part.name }} is not used to make any other parts.
-</p>
-{% endif %}
 
 {% endblock %}
 
@@ -29,6 +17,7 @@
     $("#used-table").bootstrapTable({
         sortable: true,
         search: true,
+        formatNoMatches: function() { return "{{ part.name }} is not used to make any other parts"; },
         queryParams: function(p) {
             return {
                 sub_part: {{ part.id }}

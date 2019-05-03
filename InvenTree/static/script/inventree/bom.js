@@ -164,6 +164,7 @@ function loadBomTable(table, options) {
     table.bootstrapTable({
         sortable: true,
         search: true,
+        formatNoMatches: function() { return "No BOM items found"; },
         clickToSelect: true,
         queryParams: function(p) {
             return {
