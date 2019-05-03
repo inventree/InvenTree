@@ -18,6 +18,16 @@ function attachSelect(modal) {
 }
 
 
+function loadingMessageContent() {
+    /* Render a 'loading' message to display in a form 
+     * when waiting for a response from the server
+     */
+
+    // TODO - This can be made a lot better
+    return '<b>Loading...</b>';
+}
+
+
 function afterForm(response, options) {
     /* afterForm is called after a form is successfully submitted,
      * and the form is dismissed.
@@ -61,7 +71,15 @@ function afterForm(response, options) {
     else if (options.reload) {
         location.reload();
     }
+}
 
+
+function modalEnable(modal, enable=true) {
+    /* Enable (or disable) modal form elements to prevent user input
+     */
+
+    // Enable or disable the submit button
+    $(modal).find('#modal-form-submit').prop('disabled', !enable);
 }
 
 
@@ -138,12 +156,18 @@ function openModal(options) {
         }
     });
 
+    // Unless the title is explicitly set, display loading message
     if (options.title) {
         modalSetTitle(modal, options.title);
+    } else {
+        modalSetTitle(modal, 'Loading Form Data...');
     }
 
+    // Unless the content is explicitly set, display loading message
     if (options.content) {
         modalSetContent(modal, options.content);
+    } else {
+        modalSetContent(modal, loadingMessageContent());
     }
 
     // Default labels for 'Submit' and 'Close' buttons in the form
@@ -156,6 +180,11 @@ function openModal(options) {
         backdrop: 'static',
         keyboard: false,
     });
+
+    // Disable the form
+    modalEnable(modal, false);
+
+    // Finally, display the modal window
     $(modal).modal('show');
 }
 
@@ -258,8 +287,14 @@ function handleModalForm(url, options) {
     modalSubmit(modal, function() {
         $(modal).find('.js-modal-form').ajaxSubmit({
             url: url,
+            beforeSend: function() {
+                // Disable modal until the server returns a response
+                modalEnable(modal, false);
+            },
             // POST was successful
             success: function(response, status, xhr, f) {
+                // Re-enable the modal
+                modalEnable(modal, true);
                 if ('form_valid' in response) {
                     // Form data was validated correctly
                     if (response.form_valid) {
@@ -322,6 +357,10 @@ function launchModalForm(url, options = {}) {
             });
         },
         success: function(response) {
+
+            // Enable the form
+            modalEnable(modal, true);
+
             if (response.title) {
                 modalSetTitle(modal, response.title);
             }
