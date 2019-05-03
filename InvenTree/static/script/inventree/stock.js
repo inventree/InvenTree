@@ -110,6 +110,8 @@ function updateStock(items, options={}) {
 
     $(modal).find('#note-warning').hide();
 
+    modalEnable(modal, true);
+
     modalSubmit(modal, function() {
 
         var stocktake = [];
