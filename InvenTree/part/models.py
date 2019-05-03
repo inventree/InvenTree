@@ -115,10 +115,10 @@ class Part(models.Model):
         return reverse('part-detail', kwargs={'pk': self.id})
 
     # Short name of the part
-    name = models.CharField(max_length=100, unique=True, help_text='Part name (must be unique)')
+    name = models.CharField(max_length=100, unique=True, blank=False, help_text='Part name (must be unique)')
 
     # Longer description of the part (optional)
-    description = models.CharField(max_length=250, help_text='Part description')
+    description = models.CharField(max_length=250, blank=False, help_text='Part description')
 
     # Internal Part Number (optional)
     # Potentially multiple parts map to the same internal IPN (variants?)
