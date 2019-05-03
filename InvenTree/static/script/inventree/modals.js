@@ -273,13 +273,14 @@ function launchDeleteForm(url, options = {}) {
                 modalSetContent(modal, response.html_data);
             }
             else {
-                alert('JSON response missing HTML data');
+
                 $(modal).modal('hide');
+                showDialog('Invalid form response', 'JSON response missing HTML data');
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            alert('Error requesting JSON data:\n' + thrownError);
             $(modal).modal('hide');
+            showDialog('Error requesting form data', renderErrorMessage(xhr));
         }
     });
 
@@ -297,8 +298,8 @@ function launchDeleteForm(url, options = {}) {
                 afterForm(response, options);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert('Error deleting item:\n' + thrownError);
                 $(modal).modal('hide');
+                showDialog('Error deleting item', renderErrorMessage(xhr));
             }
         });
     });
@@ -335,6 +336,7 @@ function handleModalForm(url, options) {
     });
 
     form.submit(function() {
+        // We should never get here (form submission is overridden)
         alert('form submit');
         return false;
     });
@@ -362,7 +364,8 @@ function handleModalForm(url, options) {
                             injectModalForm(modal, response.html_form);
                         }
                         else {
-                            alert('HTML form data missing from server response');
+                            $(modal).modal('hide');
+                            showDialog('Invalid response from server', 'Form data missing from server response');
                         }
                     }
                 }
@@ -427,13 +430,13 @@ function launchModalForm(url, options = {}) {
                 handleModalForm(url, options);
 
             } else {
-                alert('JSON response missing form data');
                 $(modal).modal('hide');
+                showDialog('Invalid server response', 'JSON response missing form data');
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            alert('Error requesting form data:\n' + thrownError);
             $(modal).modal('hide');
+            showDialog('Error requesting form data', renderErrorMessage(xhr));
         }
     };
 
