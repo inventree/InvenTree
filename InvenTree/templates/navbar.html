@@ -13,19 +13,21 @@
     </ul>
     <ul class="nav navbar-nav navbar-right">
         {% include "search_form.html" %}
-    {% if user.is_authenticated %}
-      <li class='dropdown'>
+        <li class='dropdown'>
           <a class='dropdown-toggle' data-toggle='dropdown' href="#"><span class="glyphicon glyphicon-user"></span> <b>{{ user.get_username }}</b></a>
           <ul class='dropdown-menu'>
+              {% if user.is_authenticated %}
               {% if user.is_staff %}
               <li><a href="/admin/"><span class="glyphicon glyphicon-edit"></span> Admin</a></li>
               {% endif %}
               <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-          </ul>
-      </li>
-    {% else %}
-      <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-    {% endif %}
+              {% else %}
+              <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+              {% endif %}
+              <hr>  
+              <li id='launch-about'><a href='#'>About InvenTree</a></li>
+            </ul>
+          </li> 
     </ul>
   </div>
 </nav>

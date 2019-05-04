@@ -143,7 +143,6 @@ class BuildComplete(AjaxUpdateView):
                 location = StockLocation.objects.get(id=loc_id)
                 valid = True
             except StockLocation.DoesNotExist:
-                print('id:', loc_id)
                 form.errors['location'] = ['Invalid location selected']
 
             if valid:
