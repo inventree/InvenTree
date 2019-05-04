@@ -159,8 +159,16 @@ class Part(models.Model):
         if self.default_location:
             return self.default_location
         elif self.category:
-            return self.category.default_location
+            # Traverse up the category tree until we find a default location
+            cat = self.category
 
+            while cat:
+                if cat.default_location:
+                    return cat.default_location
+                else:
+                    cat = cat.parent
+
+        # Default case - no default category found
         return None
 
     # Default supplier part
