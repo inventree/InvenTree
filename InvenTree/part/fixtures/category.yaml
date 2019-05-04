@@ -1,0 +1,56 @@
+# Create some PartCategory objects
+
+- model: part.partcategory
+  pk: 1
+  fields:
+    name: Electronics
+    description: Electronic components
+    parent: null
+    default_location: null
+- model: part.partcategory
+  pk: 2
+  fields:
+    name: Resistors
+    description: Resistors
+    parent: 1
+    default_location: null
+- model: part.partcategory
+  pk: 3
+  fields:
+    name: Capacitors
+    description: Capacitors
+    parent: 1
+    default_location: null
+- model: part.partcategory
+  pk: 4
+  fields:
+    name: IC
+    description: Integrated Circuits
+    parent: 1
+    default_location: null
+- model: part.partcategory
+  pk: 5
+  fields:
+    name: MCU
+    description: Microcontrollers
+    parent: 4
+    default_location: null
+- model: part.partcategory
+  pk: 6
+  fields:
+    name: Transceivers
+    description: Communication interfaces
+    parent: 4
+    default_location: null
+- model: part.partcategory
+  pk: 7
+  fields:
+    name: Mechanical
+    description: Mechanical componenets
+    default_location: null
+- model: part.partcategory
+  pk: 8
+  fields:
+    name: Fasteners
+    description: Screws, bolts, etc
+    parent: 7

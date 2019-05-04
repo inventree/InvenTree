@@ -6,71 +6,101 @@ from .models import Part, PartCategory
 class CategoryTest(TestCase):
     """
     Tests to ensure that the relational category tree functions correctly.
+
+    Loads the following test fixtures:
+    - category.yaml
     """
+    fixtures = [
+        'category',
+        'part',
+    ]
 
     def setUp(self):
-        self.p1 = PartCategory.objects.create(name='A',
-                                              description='Most highest level',
-                                              parent=None)
-
-        self.p2 = PartCategory.objects.create(name='B',
-                                              description='Sits under second',
-                                              parent=self.p1)
-
-        self.p3 = PartCategory.objects.create(name='C',
-                                              description='Third tier category',
-                                              parent=self.p2)
-
-        # Add two parts in p2
-        Part.objects.create(name='Flange', category=self.p2)
-        Part.objects.create(name='Flob', category=self.p2)
-
-        # Add one part in p3
-        Part.objects.create(name='Blob', category=self.p3)
+        # Extract some interesting categories for time-saving
+        self.electronics = PartCategory.objects.get(name='Electronics')
+        self.mechanical = PartCategory.objects.get(name='Mechanical')
+        self.resistors = PartCategory.objects.get(name='Resistors')
+        self.capacitors = PartCategory.objects.get(name='Capacitors')
+        self.fasteners = PartCategory.objects.get(name='Fasteners')
+        self.ic = PartCategory.objects.get(name='IC')
+        self.transceivers = PartCategory.objects.get(name='Transceivers')
 
     def test_parents(self):
-        self.assertEqual(self.p1.parent, None)
-        self.assertEqual(self.p2.parent, self.p1)
-        self.assertEqual(self.p3.parent, self.p2)
+        """ Test that the parent fields are properly set,
+        based on the test fixtures """
+
+        self.assertEqual(self.resistors.parent, self.electronics)
+        self.assertEqual(self.capacitors.parent, self.electronics)
+        self.assertEqual(self.electronics.parent, None)
+
+        self.assertEqual(self.fasteners.parent, self.mechanical)
 
     def test_children_count(self):
-        self.assertEqual(self.p1.has_children, True)
-        self.assertEqual(self.p2.has_children, True)
-        self.assertEqual(self.p3.has_children, False)
+        """ Test that categories have the correct number of children """
+
+        self.assertTrue(self.electronics.has_children)
+        self.assertTrue(self.mechanical.has_children)
+
+        self.assertEqual(len(self.electronics.children.all()), 3)
+        self.assertEqual(len(self.mechanical.children.all()), 1)
 
     def test_unique_childs(self):
-        childs = self.p1.getUniqueChildren()
+        """ Test the 'unique_children' functionality """
 
-        self.assertIn(self.p2.id, childs)
-        self.assertIn(self.p3.id, childs)
+        childs = self.electronics.getUniqueChildren()
+
+        self.assertIn(self.transceivers.id, childs)
+        self.assertIn(self.ic.id, childs)
+
+        self.assertNotIn(self.fasteners.id, childs)
 
     def test_unique_parents(self):
-        parents = self.p2.getUniqueParents()
+        """ Test the 'unique_parents' functionality """
+        
+        parents = self.transceivers.getUniqueParents()
 
-        self.assertIn(self.p1.id, parents)
+        self.assertIn(self.electronics.id, parents)
+        self.assertIn(self.ic.id, parents)
+        self.assertNotIn(self.fasteners.id, parents)
 
     def test_path_string(self):
-        self.assertEqual(str(self.p3), 'A/B/C')
+        """ Test that the category path string works correctly """
+
+        self.assertEqual(str(self.resistors), 'Electronics/Resistors')
+        self.assertEqual(str(self.transceivers), 'Electronics/IC/Transceivers')
 
     def test_url(self):
-        self.assertEqual(self.p1.get_absolute_url(), '/part/category/1/')
+        """ Test that the PartCategory URL works """
+
+        self.assertEqual(self.capacitors.get_absolute_url(), '/part/category/3/')
 
     def test_part_count(self):
-        # No direct parts in the top-level category
-        self.assertEqual(self.p1.has_parts, False)
-        self.assertEqual(self.p2.has_parts, True)
-        self.assertEqual(self.p3.has_parts, True)
+        """ Test that the Category part count works """
 
-        self.assertEqual(self.p1.partcount, 3)
-        self.assertEqual(self.p2.partcount, 3)
-        self.assertEqual(self.p3.partcount, 1)
+        self.assertTrue(self.resistors.has_parts)
+        self.assertTrue(self.fasteners.has_parts)
+        self.assertFalse(self.transceivers.has_parts)
+
+        self.assertEqual(self.fasteners.partcount, 2)
+        self.assertEqual(self.capacitors.partcount, 1)
 
     def test_delete(self):
-        self.assertEqual(Part.objects.filter(category=self.p1).count(), 0)
+        """ Test that category deletion moves the children properly """
 
-        # Delete p2 (it has 2 direct parts and one child category)
-        self.p2.delete()
+        # Delete the 'IC' category and 'Transceiver' should move to be under 'Electronics'
+        self.assertEqual(self.transceivers.parent, self.ic)
+        self.assertEqual(self.ic.parent, self.electronics)
 
-        self.assertEqual(Part.objects.filter(category=self.p1).count(), 2)
+        self.ic.delete()
 
-        self.assertEqual(PartCategory.objects.get(pk=self.p3.id).parent, self.p1)
+        # Get the data again
+        transceivers = PartCategory.objects.get(name='Transceivers')
+        self.assertEqual(transceivers.parent, self.electronics)
+
+        # Now delete the 'fasteners' category - the parts should move to 'mechanical'
+        self.fasteners.delete()
+
+        fasteners = Part.objects.filter(description__contains='screw')
+
+        for f in fasteners:
+            self.assertEqual(f.category, self.mechanical)
