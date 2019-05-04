@@ -4,9 +4,27 @@ import os
 
 from .models import Part
 from .models import rename_part_image
+from .templatetags import inventree_extras
 
 
-class SimplePartTest(TestCase):
+class TemplateTagTest(TestCase):
+    """ Tests for the custom template tag code """
+
+    def test_multiply(self):
+        self.assertEqual(inventree_extras.multiply(3, 5), 15)
+
+    def test_version(self):
+        self.assertEqual(type(inventree_extras.inventree_version()), str)
+
+    def test_hash(self):
+        hash = inventree_extras.inventree_commit()
+        self.assertEqual(len(hash), 7)
+
+    def test_github(self):
+        self.assertIn('github.com', inventree_extras.inventree_github())
+
+
+class PartTest(TestCase):
     """ Tests for the Part model """
 
     fixtures = [
