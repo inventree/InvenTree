@@ -28,6 +28,7 @@
         <p>
             <div class='btn-group'>
                 <button type='button' class='btn btn-default btn-glyph' id='show-qr-code' title='Show QR code'><span class='glyphicon glyphicon-qrcode'></span></button>
+                <button type='button' class='btn btn-default btn-glyph' id='toggle-starred' title='Star this part'><span id='part-star-icon' class='glyphicon glyphicon-star-empty'/></button>
             </div>
         </p>
         <table class='table table-condensed'>
@@ -100,6 +101,9 @@
                 no_post: true,
             }
         );
+    });
+
+    $('#toggle-starred').click(function() {
     });
 
     $("#part-thumb").click(function() {
