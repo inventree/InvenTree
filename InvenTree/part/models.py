@@ -30,6 +30,13 @@ class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
     """
 
+    default_location = models.ForeignKey(
+        'stock.StockLocation', related_name="default_categories",
+        null=True, blank=True,
+        on_delete = models.SET_NULL,
+        help_text='Default location for parts in this category'
+    )
+
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={'pk': self.id})
 
