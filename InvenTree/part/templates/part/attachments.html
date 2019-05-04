@@ -37,7 +37,10 @@
 {{ block.super }}
 
     $("#new-attachment").click(function() {
-        launchModalForm("{% url 'part-attachment-create' %}?part={{ part.id }}");
+        launchModalForm("{% url 'part-attachment-create' %}?part={{ part.id }}",
+            {
+                reload: true, 
+            });
     });
 
     $("#attachment-table").on('click', '.attachment-edit-button', function() {
@@ -45,9 +48,8 @@
 
         launchModalForm(button.attr('url'), 
             {
-                success: function() {
-            }
-        });
+                reload: true,
+            });
     });
 
     $("#attachment-table").on('click', '.attachment-delete-button', function() {
@@ -55,6 +57,7 @@
 
         launchDeleteForm(button.attr('url'), {
             success: function() {
+                location.reload();
             }
         });
     });
