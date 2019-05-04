@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.db import models
 from django.core.validators import MinValueValidator
 
+from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
@@ -425,6 +426,18 @@ class PartAttachment(models.Model):
     @property
     def basename(self):
         return os.path.basename(self.attachment.name)
+
+
+class PartStar(models.Model):
+    """ A PartStar object creates a relationship between a User and a Part.
+
+    It is used to designate a Part as 'starred' (or favourited) for a given User,
+    so that the user can track a list of their favourite parts.
+    """
+
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='starred_users')
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='starred_parts')
 
 
 class BomItem(models.Model):
