@@ -24,7 +24,7 @@ function loadingMessageContent() {
      */
 
     // TODO - This can be made a lot better
-    return '<b>Loading...</b>';
+    return "<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> Waiting for server...";
 }
 
 
@@ -263,7 +263,7 @@ function openModal(options) {
     if (options.title) {
         modalSetTitle(modal, options.title);
     } else {
-        modalSetTitle(modal, 'Loading Form Data...');
+        modalSetTitle(modal, 'Loading Data...');
     }
 
     // Unless the content is explicitly set, display loading message
