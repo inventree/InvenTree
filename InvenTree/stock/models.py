@@ -390,7 +390,7 @@ class StockItemTracking(models.Model):
     date = models.DateTimeField(auto_now_add=True, editable=False)
 
     # Short-form title for this tracking entry
-    title = models.CharField(max_length=250)
+    title = models.CharField(blank=False, max_length=250)
 
     # Optional longer description
     notes = models.TextField(blank=True)

@@ -23,9 +23,16 @@ class InvenTreeTree(models.Model):
         abstract = True
         unique_together = ('name', 'parent')
 
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(
+        blank=False,
+        max_length=100,
+        unique=True
+    )
 
-    description = models.CharField(max_length=250)
+    description = models.CharField(
+        blank=False,
+        max_length=250
+    )
 
     # When a category is deleted, graft the children onto its parent
     parent = models.ForeignKey('self',
