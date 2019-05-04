@@ -24,7 +24,7 @@ function loadingMessageContent() {
      */
 
     // TODO - This can be made a lot better
-    return '<b>Loading...</b>';
+    return "<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> Waiting for server...";
 }
 
 
@@ -70,6 +70,17 @@ function afterForm(response, options) {
     }
     else if (options.reload) {
         location.reload();
+    }
+}
+
+function modalShowSubmitButton(modal, show=true) {
+    /* Show (or hide) the 'Submit' button for the given modal form
+     */
+
+    if (show) {
+        $(modal).find('#modal-form-submit').show();
+    } else {
+        $(modal).find('#modal-form-submit').hide();
     }
 }
 
@@ -155,16 +166,16 @@ function renderErrorMessage(xhr) {
 }
 
 
-function showDialog(title, content, options={}) {
+function showAlertDialog(title, content, options={}) {
     /* Display a modal dialog message box.
      * 
      * title - Title text 
      * content - HTML content of the dialog window
      * options:
-     *  modal - modal form to use (default = '#modal-dialog')
+     *  modal - modal form to use (default = '#modal-alert-dialog')
      */
 
-     var modal = options.modal || '#modal-dialog';
+     var modal = options.modal || '#modal-alert-dialog';
 
      $(modal).on('shown.bs.modal', function() {
         $(modal + ' .modal-form-content').scrollTop(0);
@@ -179,6 +190,54 @@ function showDialog(title, content, options={}) {
     });
 
      $(modal).modal('show');
+}
+
+
+function showQuestionDialog(title, content, options={}) {
+    /* Display a modal dialog for user input (Yes/No confirmation dialog)
+     * 
+     * title - Title text
+     * content - HTML content of the dialog window
+     * options:
+     *   modal - Modal target (default = 'modal-question-dialog')
+     *   accept_text - Text for the accept button (default = 'Accept')
+     *   cancel_text - Text for the cancel button (default = 'Cancel')
+     *   accept - Function to run if the user presses 'Accept'
+     *   cancel - Functino to run if the user presses 'Cancel'
+     */ 
+
+    var modal = options.modal || '#modal-question-dialog';
+
+    $(modal).on('shown.bs.modal', function() {
+        $(modal + ' .modal-form-content').scrollTop(0);
+    });
+
+    modalSetTitle(modal, title);
+    modalSetContent(modal, content);
+
+    var accept_text = options.accept_text || 'Accept';
+    var cancel_text = options.cancel_text || 'Cancel';
+
+    $(modal).find('#modal-form-cancel').html(cancel_text);
+    $(modal).find('#modal-form-accept').html(accept_text);
+
+    $(modal).on('click', '#modal-form-accept', function() {
+        $(modal).modal('hide');
+
+        if (options.accept) {
+            options.accept();
+        }
+    });
+
+    $(modal).on('click', 'modal-form-cancel', function() {
+        $(modal).modal('hide');
+
+        if (options.cancel) {
+            options.cancel();
+        }
+    });
+
+    $(modal).modal('show');
 }
 
 function openModal(options) {
@@ -215,7 +274,7 @@ function openModal(options) {
     if (options.title) {
         modalSetTitle(modal, options.title);
     } else {
-        modalSetTitle(modal, 'Loading Form Data...');
+        modalSetTitle(modal, 'Loading Data...');
     }
 
     // Unless the content is explicitly set, display loading message
@@ -275,12 +334,12 @@ function launchDeleteForm(url, options = {}) {
             else {
 
                 $(modal).modal('hide');
-                showDialog('Invalid form response', 'JSON response missing HTML data');
+                showAlertDialog('Invalid form response', 'JSON response missing HTML data');
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
             $(modal).modal('hide');
-            showDialog('Error requesting form data', renderErrorMessage(xhr));
+            showAlertDialog('Error requesting form data', renderErrorMessage(xhr));
         }
     });
 
@@ -299,7 +358,7 @@ function launchDeleteForm(url, options = {}) {
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 $(modal).modal('hide');
-                showDialog('Error deleting item', renderErrorMessage(xhr));
+                showAlertDialog('Error deleting item', renderErrorMessage(xhr));
             }
         });
     });
@@ -365,7 +424,7 @@ function handleModalForm(url, options) {
                         }
                         else {
                             $(modal).modal('hide');
-                            showDialog('Invalid response from server', 'Form data missing from server response');
+                            showAlertDialog('Invalid response from server', 'Form data missing from server response');
                         }
                     }
                 }
@@ -378,7 +437,7 @@ function handleModalForm(url, options) {
                 // There was an error submitting form data via POST
                 
                 $(modal).modal('hide'); 
-                showDialog('Error posting form data', renderErrorMessage(xhr));                
+                showAlertDialog('Error posting form data', renderErrorMessage(xhr));                
             },
             complete: function(xhr) {
                 //TODO
@@ -396,6 +455,14 @@ function launchModalForm(url, options = {}) {
      * an object called 'html_form'
      * 
      * If the request is NOT successful, displays an appropriate error message.
+     * 
+     * options:
+     * 
+     * modal - Name of the modal (default = '#modal-form')
+     * data - Data to pass through to the AJAX request to fill the form
+     * submit_text - Text for the submit button (default = 'Submit')
+     * close_text - Text for the close button (default = 'Close')
+     * no_post - If true, only display form data, hide submit button, and disallow POST
      */
 
     var modal = options.modal || '#modal-form';
@@ -427,16 +494,22 @@ function launchModalForm(url, options = {}) {
 
             if (response.html_form) {
                 injectModalForm(modal, response.html_form);
-                handleModalForm(url, options);
+
+                if (options.no_post) {
+                    modalShowSubmitButton(modal, false);
+                } else {
+                    modalShowSubmitButton(modal, true);
+                    handleModalForm(url, options);
+                }
 
             } else {
                 $(modal).modal('hide');
-                showDialog('Invalid server response', 'JSON response missing form data');
+                showAlertDialog('Invalid server response', 'JSON response missing form data');
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
             $(modal).modal('hide');
-            showDialog('Error requesting form data', renderErrorMessage(xhr));
+            showAlertDialog('Error requesting form data', renderErrorMessage(xhr));
         }
     };
 

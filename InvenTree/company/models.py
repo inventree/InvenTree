@@ -42,7 +42,7 @@ class Company(models.Model):
     It may be a supplier or a customer (or both).
     """
 
-    name = models.CharField(max_length=100, unique=True,
+    name = models.CharField(max_length=100, blank=False, unique=True,
                             help_text='Company name')
 
     description = models.CharField(max_length=500)
