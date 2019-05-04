@@ -6,8 +6,10 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework import filters
 from rest_framework import generics, permissions
+from rest_framework.serializers import ValidationError
 
 from django.db.models import Q
 from django.conf.urls import url, include
@@ -160,6 +162,16 @@ class PartStarList(generics.ListCreateAPIView):
 
     queryset = PartStar.objects.all()
     serializer_class = PartStarSerializer
+
+    def create(self, request, *args, **kwargs):
+
+        # Ensure the 'user' field is the authenticated user
+        user_id = request.data['user']
+
+        if not str(user_id) == str(request.user.id):
+            raise ValidationError({'user': 'Parts can only be starred for the currently authenticated user'})
+
+        return super(generics.ListCreateAPIView, self).create(request, *args, **kwargs)
 
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
