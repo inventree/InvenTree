@@ -73,6 +73,17 @@ function afterForm(response, options) {
     }
 }
 
+function modalShowSubmitButton(modal, show=true) {
+    /* Show (or hide) the 'Submit' button for the given modal form
+     */
+
+    if (show) {
+        $(modal).find('#modal-form-submit').show();
+    } else {
+        $(modal).find('#modal-form-submit').hide();
+    }
+}
+
 
 function modalEnable(modal, enable=true) {
     /* Enable (or disable) modal form elements to prevent user input
@@ -444,6 +455,14 @@ function launchModalForm(url, options = {}) {
      * an object called 'html_form'
      * 
      * If the request is NOT successful, displays an appropriate error message.
+     * 
+     * options:
+     * 
+     * modal - Name of the modal (default = '#modal-form')
+     * data - Data to pass through to the AJAX request to fill the form
+     * submit_text - Text for the submit button (default = 'Submit')
+     * close_text - Text for the close button (default = 'Close')
+     * no_post - If true, only display form data, hide submit button, and disallow POST
      */
 
     var modal = options.modal || '#modal-form';
@@ -475,7 +494,13 @@ function launchModalForm(url, options = {}) {
 
             if (response.html_form) {
                 injectModalForm(modal, response.html_form);
-                handleModalForm(url, options);
+
+                if (options.no_post) {
+                    modalShowSubmitButton(modal, false);
+                } else {
+                    modalShowSubmitButton(modal, true);
+                    handleModalForm(url, options);
+                }
 
             } else {
                 $(modal).modal('hide');

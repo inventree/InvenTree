@@ -12,7 +12,7 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 
 from django.views import View
-from django.views.generic import UpdateView, CreateView, DeleteView
+from django.views.generic import UpdateView, CreateView, DeleteView, DetailView
 from django.views.generic.base import TemplateView
 
 from part.models import Part
@@ -142,6 +142,43 @@ class AjaxView(AjaxMixin, View):
     def get(self, request, *args, **kwargs):
 
         return self.renderJsonResponse(request)
+
+
+class QRCodeView(AjaxView):
+    """ An 'AJAXified' view for displaying a QR code.
+
+    Subclasses should implement the get_qr_data(self) function.
+    """
+
+    ajax_template_name = "qr_code.html"
+    
+    def get(self, request, *args, **kwargs):
+        self.request = request
+        self.pk = self.kwargs['pk']
+        return self.renderJsonResponse(request, None, context=self.get_context_data())
+
+    def get_qr_data(self):
+        """ Returns the text object to render to a QR code.
+        The actual rendering will be handled by the template """
+        
+        return None
+
+    def get_context_data(self):
+        """ Get context data for passing to the rendering template.
+
+        Explicity passes the parameter 'qr_data'
+        """
+        
+        context = {}
+
+        qr = self.get_qr_data()
+
+        if qr:
+            context['qr_data'] = qr
+        else:
+            context['error_msg'] = 'Error generating QR code'
+        
+        return context
 
 
 class AjaxCreateView(AjaxMixin, CreateView):

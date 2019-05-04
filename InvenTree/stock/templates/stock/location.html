@@ -1,6 +1,5 @@
 {% extends "stock/stock_app_base.html" %}
 {% load static %}
-{% load qr_code %}
 {% block content %}
 
 <div class='row'>
@@ -24,12 +23,13 @@
         <ul class="dropdown-menu">
           <li><a href="#" id='location-edit' title='Edit stock location'>Edit</a></li>
           <li><a href="#" id='location-delete' title='Delete stock location'>Delete</a></li>
+          <hr>
+          <li><a href="#" id='location-qr-code' title='Generate QR code'>Show QR code</a></li>
         </ul>
     </div>
-    {% qr_from_text location.format_barcode size="s" image_format="png" error_correction="L" %}
     {% endif %}
-    </div>
-    </h3>
+</div>
+</h3>
 </div>
 </div>
 
@@ -101,6 +101,13 @@
         return false;
     });
 
+    $('#location-qr-code').click(function() {
+        launchModalForm("{% url 'stock-location-qr' location.id %}",
+        {
+            no_post: true,
+        });
+    });
+
     {% endif %}
 
     $('#item-create').click(function () {
@@ -170,5 +177,4 @@
         },
         url: "{% url 'api-stock-list' %}",
     });
-
 {% endblock %}

@@ -10,6 +10,7 @@ from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
+from InvenTree.views import QRCodeView
 
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
@@ -74,6 +75,34 @@ class StockLocationEdit(AjaxUpdateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Stock Location'
 
+
+class StockLocationQRCode(QRCodeView):
+    """ View for displaying a QR code for a StockLocation object """
+
+    ajax_form_title = "Stock Location QR code"
+
+    def get_qr_data(self):
+        """ Generate QR code data for the StockLocation """
+        try:
+            loc = StockLocation.objects.get(id=self.pk)
+            return loc.format_barcode()
+        except StockLocation.DoesNotExist:
+            return None
+
+
+class StockItemQRCode(QRCodeView):
+    """ View for displaying a QR code for a StockItem object """
+
+    ajax_form_title = "Stock Item QR Code"
+
+    def get_qr_data(self):
+        """ Generate QR code data for the StockItem """
+        try:
+            item = StockItem.objects.get(id=self.pk)
+            return item.format_barcode()
+        except StockItem.DoesNotExist:
+            return None
+            
 
 class StockItemEdit(AjaxUpdateView):
     """

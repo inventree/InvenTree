@@ -2,8 +2,6 @@
 {% load static %}
 {% block content %}
 
-{% load qr_code %}
-
 <div class='row'>
 <div class='col-sm-6'>
     <h3>Stock Item Details</h3>
@@ -25,6 +23,8 @@
           <li><a href='#' id='stock-stocktake' title='Count stock'>Stocktake</a></li>
           {% endif %}
           <li><a href="#" id='stock-delete' title='Delete stock item'>Delete stock item</a></li>
+          <hr>
+          <li><a href="#" id='item-qr-code' title='Generate QR code'>Show QR code</a></li>
         </ul>
     </div>
     </div>
@@ -109,9 +109,6 @@
         {% endif %}
         </table>
     </div>
-    <div class='col-sm-6'>
-        {% qr_from_text item.format_barcode size="s" image_format="png" error_correction="L" %}
-    </div>
 </div>
 
 
@@ -146,6 +143,13 @@
                             reload: true,
                             submit_text: "Save",
                         });
+    });
+
+    $("#item-qr-code").click(function() {
+        launchModalForm("{% url 'stock-item-qr' item.id %}",
+        {
+            no_post: true,
+        });
     });
 
     {% if item.in_stock %}

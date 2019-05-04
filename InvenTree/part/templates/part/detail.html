@@ -1,6 +1,5 @@
 {% extends "part/part_base.html" %}
 {% load static %}
-{% load qr_code %}
 {% block details  %}
 
 {% include 'part/tabs.html' with tab='detail' %}
@@ -24,6 +23,7 @@
                   {% else %}
                   <li><a href="#" id='activate-part' title='Activate part'>Activate</a></li>
                   {% endif %}
+                  <li><a href='#' id='show-qr-code' title='Generate QR Code'>Show QR Code</a></li>
                 </ul>
             </div>
         </h3>
@@ -116,8 +116,6 @@
 </div>
 {% endif %}
 
-{% qr_from_text part.format_barcode size="s" image_format="png" error_correction="L" %}
-
 {% endblock %}
 
 {% block js_load %}
@@ -128,6 +126,15 @@
 
 {% block js_ready %}
     {{ block.super }}
+
+    $("#show-qr-code").click(function() {
+        launchModalForm(
+            "{% url 'part-qr' part.id %}",
+            {
+                no_post: true,
+            }
+        );
+    });
     
     $("#duplicate-part").click(function() {
         launchModalForm(

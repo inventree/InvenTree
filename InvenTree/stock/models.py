@@ -36,7 +36,6 @@ class StockLocation(InvenTreeTree):
     def has_items(self):
         return self.stock_items.count() > 0
 
-    @property
     def format_barcode(self):
         """ Return a JSON string for formatting a barcode for this StockLocation object """
 
@@ -139,7 +138,6 @@ class StockItem(models.Model):
             ('part', 'serial'),
         ]
 
-    @property
     def format_barcode(self):
         """ Return a JSON string for formatting a barcode for this StockItem.
         Can be used to perform lookup of a stockitem using barcode
