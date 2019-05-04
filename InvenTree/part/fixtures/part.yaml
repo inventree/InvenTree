@@ -37,3 +37,9 @@
     name: 'Widget'
     description: 'A watchamacallit'
     category: 7
+
+- model: part.part
+  fields:
+    name: 'Orphan'
+    description: 'A part without a category'
+    category: null

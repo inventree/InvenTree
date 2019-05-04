@@ -217,6 +217,9 @@ class Part(models.Model):
             "Part",
             self.id,
             reverse('api-part-detail', kwargs={'pk': self.id}),
+            {
+                'name': self.name,
+            }
         )
 
     class Meta:

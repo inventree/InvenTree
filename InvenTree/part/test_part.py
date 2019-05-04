@@ -28,6 +28,10 @@ class SimplePartTest(TestCase):
     def test_category(self):
         self.assertEqual(str(self.C1.category), 'Electronics/Capacitors')
 
+        orphan = Part.objects.get(name='Orphan')
+        self.assertIsNone(orphan.category)
+        self.assertEqual(orphan.category_path, '')
+
     def test_rename_img(self):
         img = rename_part_image(self.R1, 'hello.png')
         self.assertEqual(img, os.path.join('part_images', 'part_3_img.png'))
@@ -41,3 +45,8 @@ class SimplePartTest(TestCase):
         for r in res:
             self.assertEqual(r.total_stock, 0)
             self.assertEqual(r.available_stock, 0)
+
+    def test_barcode(self):
+        barcode = self.R1.format_barcode()
+        self.assertIn('InvenTree', barcode)
+        self.assertIn(self.R1.name, barcode)
