@@ -49,6 +49,7 @@ InvenTree
 </div>
 
 {% include 'modals.html' %}
+{% include 'about.html' %}
 {% include 'notification.html' %}
 </div>
 
@@ -76,6 +77,17 @@ $(document).ready(function () {
 {% block js_ready %}
 {% endblock %}
     showCachedAlerts();
+
+    $('#launch-about').click(function() {
+        var modal = $('#modal-about');
+
+        modal.modal({
+            backdrop: 'static',
+            keyboard: 'false',
+        });
+
+        modal.modal('show');
+    });
 });
 </script>
 

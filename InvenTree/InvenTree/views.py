@@ -298,9 +298,6 @@ class IndexView(TemplateView):
         # Generate a list of buildable parts which have stock below their minimum values
         context['to_build'] = [part for part in Part.objects.filter(buildable=True) if part.need_to_restock()]
 
-        print("order:", len(context['to_order']))
-        print("build:", len(context['to_build']))
-
         return context
 
 
