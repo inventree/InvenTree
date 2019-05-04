@@ -15,11 +15,11 @@
                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu">
+                  {% if part.active %}
                   <li><a href='#' id='duplicate-part' title='Duplicate Part'>Duplicate</a></li>
                   <li><a href="#" id='edit-part' title='Edit part'>Edit</a></li>
                   <li><a href='#' id='stocktake-part' title='Stocktake'>Stocktake</a></li>
                   <hr>
-                  {% if part.active %}
                   <li><a href="#" id='deactivate-part' title='Deactivate part'>Deactivate</a></li>
                   {% else %}
                   <li><a href="#" id='activate-part' title='Activate part'>Activate</a></li>
@@ -150,27 +150,46 @@
     });
 
     $('#activate-part').click(function() {
-        inventreeUpdate(
-            "{% url 'api-part-detail' part.id %}",
+        showQuestionDialog(
+            'Activate Part?',
+            'Are you sure you wish to reactivate {{ part.name }}?',
             {
-                active: true,
+                accept_text: 'Activate',
+                accept: function() {
+                    inventreeUpdate(
+                        "{% url 'api-part-detail' part.id %}",
+                        {
+                            active: true,
+                        },
+                        {
+                            method: 'PATCH',
+                            reloadOnSuccess: true,
+                        }
+                    );
+                }
             },
-            {
-                method: 'PATCH',
-                reloadOnSuccess: true,
-            }
         );
     });
 
     $('#deactivate-part').click(function() {
-        inventreeUpdate(
-            "{% url 'api-part-detail' part.id %}",
+        showQuestionDialog(
+            'Deactivate Part?',
+            `Are you sure you wish to deactivate {{ part.name }}?<br>
+            `,
             {
-                active: false,
-            },
-            {
-                method: 'PATCH',
-                reloadOnSuccess: true,
+                accept_text: 'Deactivate',
+                accept: function() {
+                    inventreeUpdate(
+                        "{% url 'api-part-detail' part.id %}",
+                        {
+                            active: false,
+                        },
+                        {
+                            method: 'PATCH',
+                            reloadOnSuccess: true,
+                        }
+                    );
+                }
             }
         );
     });
