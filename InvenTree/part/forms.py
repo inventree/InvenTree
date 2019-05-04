@@ -90,7 +90,8 @@ class EditCategoryForm(HelperForm):
         fields = [
             'parent',
             'name',
-            'description'
+            'description',
+            'default_location'
         ]
 
 
