@@ -119,6 +119,7 @@ class PartAttachmentDelete(AjaxDeleteView):
     """ View for deleting a PartAttachment """
 
     model = PartAttachment
+    ajax_form_title = "Delete Part Attachment"
     ajax_template_name = "part/attachment_delete.html"
     context_object_name = "attachment"
 
