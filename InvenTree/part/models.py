@@ -439,6 +439,9 @@ class PartStar(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='starred_parts')
 
+    class Meta:
+        unique_together = ['part', 'user']
+
 
 class BomItem(models.Model):
     """ A BomItem links a part to its component items.
