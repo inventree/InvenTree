@@ -7,6 +7,7 @@
     description: Electronic components
     parent: null
     default_location: 1  # Home
+
 - model: part.partcategory
   pk: 2
   fields:
@@ -14,6 +15,7 @@
     description: Resistors
     parent: 1
     default_location: null
+
 - model: part.partcategory
   pk: 3
   fields:
@@ -21,6 +23,7 @@
     description: Capacitors
     parent: 1
     default_location: null
+
 - model: part.partcategory
   pk: 4
   fields:
@@ -28,6 +31,7 @@
     description: Integrated Circuits
     parent: 1
     default_location: null
+
 - model: part.partcategory
   pk: 5
   fields:
@@ -35,6 +39,7 @@
     description: Microcontrollers
     parent: 4
     default_location: null
+
 - model: part.partcategory
   pk: 6
   fields:
@@ -42,12 +47,14 @@
     description: Communication interfaces
     parent: 4
     default_location: null
+
 - model: part.partcategory
   pk: 7
   fields:
     name: Mechanical
     description: Mechanical componenets
     default_location: null
+    
 - model: part.partcategory
   pk: 8
   fields:
