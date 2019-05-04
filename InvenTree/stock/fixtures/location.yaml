@@ -1,0 +1,31 @@
+# Create some locations for stock
+
+- model: stock.stocklocation
+  pk: 1
+  fields:
+    name: 'Home'
+    description: 'My house'
+- model: stock.stocklocation
+  pk: 2
+  fields:
+    name: 'Bathroom'
+    description: 'Where I keep my bath'
+    parent: 1
+- model: stock.stocklocation
+  pk: 3
+  fields:
+    name: 'Dining Room'
+    description: 'A table lives here'
+    parent: 1
+
+- model: stock.stocklocation
+  pk: 4
+  fields:
+    name: 'Office'
+    description: 'Place of work'
+- model: stock.stocklocation
+  pk: 5
+  fields:
+    name: 'Drawer'
+    description: 'In my desk'
+    parent: 4

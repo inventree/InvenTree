@@ -1,0 +1,57 @@
+# Create some fasteners 
+
+- model: part.part
+  fields:
+    name: 'M2x4 LPHS'
+    description: 'M2x4 low profile head screw'
+    category: 8
+
+- model: part.part
+  fields:
+    name: 'M3x12 SHCS'
+    description: 'M3x12 socket head cap screw'
+    category: 8
+
+# Create some resistors
+
+- model: part.part
+  fields:
+    name: 'R_2K2_0805'
+    description: '2.2kOhm resistor in 0805 package'
+    category: 2
+
+- model: part.part
+  fields:
+    name: 'R_4K7_0603'
+    description: '4.7kOhm resistor in 0603 package'
+    category: 2
+    default_location: 2  # Home/Bathroom
+
+# Create some capacitors
+- model: part.part
+  fields:
+    name: 'C_22N_0805'
+    description: '22nF capacitor in 0805 package'
+    category: 3
+
+- model: part.part
+  fields:
+    name: 'Widget'
+    description: 'A watchamacallit'
+    category: 7
+
+- model: part.part
+  pk: 50
+  fields:
+    name: 'Orphan'
+    description: 'A part without a category'
+    category: null
+
+# A part that can be made from other parts
+- model: part.part
+  pk: 100
+  fields:
+    name: 'Bob'
+    description: 'Can we build it?'
+    buildable: true
+    

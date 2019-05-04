@@ -217,6 +217,9 @@ class Part(models.Model):
             "Part",
             self.id,
             reverse('api-part-detail', kwargs={'pk': self.id}),
+            {
+                'name': self.name,
+            }
         )
 
     class Meta:
@@ -474,8 +477,8 @@ class BomItem(models.Model):
         unique_together = ('part', 'sub_part')
 
     def __str__(self):
-        return "{par} -> {child} ({n})".format(
-            par=self.part.name,
+        return "{n} x {child} to make {parent}".format(
+            parent=self.part.name,
             child=self.sub_part.name,
             n=self.quantity)
 
