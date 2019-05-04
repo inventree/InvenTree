@@ -148,6 +148,21 @@ class Part(models.Model):
                                          help_text='Where is this item normally stored?',
                                          related_name='default_parts')
 
+    def get_default_location(self):
+        """ Get the default location for a Part (may be None).
+
+        If the Part does not specify a default location,
+        look at the Category this part is in.
+        The PartCategory object may also specify a default stock location 
+        """
+
+        if self.default_location:
+            return self.default_location
+        elif self.category:
+            return self.category.default_location
+
+        return None
+
     # Default supplier part
     default_supplier = models.ForeignKey('part.SupplierPart',
                                          on_delete=models.SET_NULL,
