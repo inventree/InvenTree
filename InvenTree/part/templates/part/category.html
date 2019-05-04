@@ -8,8 +8,11 @@
     {% if category %}
     <h3>{{ category.name }}</h3>
     <p>{{ category.description }}</p>
+    {% if category.default_location %}
+    <p>Default Location: <a href="{% url 'stock-location-detail' category.default-location.id }%">{{ category.default_location }}</a></p>
+    {% endif %}
     {% else %}
-    <h3>Parts</h3>
+    <h3>Part Categories</h3>
     {% endif %}
 </div>
 <div class='col-sm-6'>

@@ -211,7 +211,7 @@ class StockItemCreate(AjaxCreateView):
             try:
                 part = Part.objects.get(pk=part_id)
                 initials['part'] = part
-                initials['location'] = part.default_location
+                initials['location'] = part.get_default_location()
                 initials['supplier_part'] = part.default_supplier
             except Part.DoesNotExist:
                 pass
