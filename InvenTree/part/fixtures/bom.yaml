@@ -1,0 +1,29 @@
+# Construct a BOM for item 100 'Bob'
+
+# 10 x M2x4 LPHS
+- model: part.bomitem
+  fields:
+    part: 100
+    sub_part: 1
+    quantity: 10
+
+# 40 x R_2K2_0805
+- model: part.bomitem
+  fields:
+    part: 100
+    sub_part: 3
+    quantity: 40
+
+# 25 x C_22N_0805
+- model: part.bomitem
+  fields:
+    part: 100
+    sub_part: 5
+    quantity: 25
+
+# 3 x Orphan
+- model: part.bomitem
+  fields:
+    part: 100
+    sub_part: 50
+    quantity: 3

@@ -5,6 +5,7 @@
     name: 'M2x4 LPHS'
     description: 'M2x4 low profile head screw'
     category: 8
+
 - model: part.part
   fields:
     name: 'M3x12 SHCS'
@@ -18,6 +19,7 @@
     name: 'R_2K2_0805'
     description: '2.2kOhm resistor in 0805 package'
     category: 2
+
 - model: part.part
   fields:
     name: 'R_4K7_0603'
@@ -39,7 +41,17 @@
     category: 7
 
 - model: part.part
+  pk: 50
   fields:
     name: 'Orphan'
     description: 'A part without a category'
     category: null
+
+# A part that can be made from other parts
+- model: part.part
+  pk: 100
+  fields:
+    name: 'Bob'
+    description: 'Can we build it?'
+    buildable: true
+    
