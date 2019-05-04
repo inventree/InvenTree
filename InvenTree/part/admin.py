@@ -2,7 +2,7 @@ from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 
 from .models import PartCategory, Part
-from .models import PartAttachment
+from .models import PartAttachment, PartStar
 from .models import SupplierPart
 from .models import BomItem
 
@@ -20,6 +20,11 @@ class PartCategoryAdmin(ImportExportModelAdmin):
 class PartAttachmentAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'attachment', 'comment')
+
+
+class PartStarAdmin(admin.ModelAdmin):
+
+    list_display = ('part', 'user')
 
 
 class BomItemAdmin(ImportExportModelAdmin):
@@ -42,5 +47,6 @@ class ParameterAdmin(admin.ModelAdmin):
 admin.site.register(Part, PartAdmin)
 admin.site.register(PartCategory, PartCategoryAdmin)
 admin.site.register(PartAttachment, PartAttachmentAdmin)
+admin.site.register(PartStar, PartStarAdmin)
 admin.site.register(BomItem, BomItemAdmin)
 admin.site.register(SupplierPart, SupplierPartAdmin)
