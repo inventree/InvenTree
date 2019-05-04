@@ -30,6 +30,13 @@ class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
     """
 
+    default_location = models.ForeignKey(
+        'stock.StockLocation', related_name="default_categories",
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        help_text='Default location for parts in this category'
+    )
+
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={'pk': self.id})
 
@@ -140,6 +147,29 @@ class Part(models.Model):
                                          blank=True, null=True,
                                          help_text='Where is this item normally stored?',
                                          related_name='default_parts')
+
+    def get_default_location(self):
+        """ Get the default location for a Part (may be None).
+
+        If the Part does not specify a default location,
+        look at the Category this part is in.
+        The PartCategory object may also specify a default stock location
+        """
+
+        if self.default_location:
+            return self.default_location
+        elif self.category:
+            # Traverse up the category tree until we find a default location
+            cat = self.category
+
+            while cat:
+                if cat.default_location:
+                    return cat.default_location
+                else:
+                    cat = cat.parent
+
+        # Default case - no default category found
+        return None
 
     # Default supplier part
     default_supplier = models.ForeignKey('part.SupplierPart',
