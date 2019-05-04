@@ -33,7 +33,7 @@ class PartCategory(InvenTreeTree):
     default_location = models.ForeignKey(
         'stock.StockLocation', related_name="default_categories",
         null=True, blank=True,
-        on_delete = models.SET_NULL,
+        on_delete=models.SET_NULL,
         help_text='Default location for parts in this category'
     )
 
@@ -153,7 +153,7 @@ class Part(models.Model):
 
         If the Part does not specify a default location,
         look at the Category this part is in.
-        The PartCategory object may also specify a default stock location 
+        The PartCategory object may also specify a default stock location
         """
 
         if self.default_location:
