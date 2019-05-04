@@ -7,6 +7,11 @@
     {% if location %}
     <h3>{{ location.name }}</h3>
     <p>{{ location.description }}</p>
+    <p>
+        <div class='btn-group'>
+            <button type='button' class='btn btn-default btn-glyph' id='show-qr-code' title='Show QR code'><span class='glyphicon glyphicon-qrcode'></span></button>
+        </div>
+    </p>
     {% else %}
     <h3>Stock</h3>
     <p>All stock items</p>
@@ -23,8 +28,6 @@
         <ul class="dropdown-menu">
           <li><a href="#" id='location-edit' title='Edit stock location'>Edit</a></li>
           <li><a href="#" id='location-delete' title='Delete stock location'>Delete</a></li>
-          <hr>
-          <li><a href="#" id='location-qr-code' title='Generate QR code'>Show QR code</a></li>
         </ul>
     </div>
     {% endif %}
@@ -101,7 +104,7 @@
         return false;
     });
 
-    $('#location-qr-code').click(function() {
+    $('#show-qr-code').click(function() {
         launchModalForm("{% url 'stock-location-qr' location.id %}",
         {
             no_post: true,

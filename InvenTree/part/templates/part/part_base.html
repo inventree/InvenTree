@@ -21,20 +21,31 @@
         {% endif %}/>
       </div>
     <div class="media-body">
-        <h4>{{ part.name }}{% if part.active == False %} <i>- INACTIVE</i>{% endif %}</h4>
+        <h4>
+            {{ part.name }}
+        </h4>   
         <p><i>{{ part.description }}</i></p>
-        {% if part.IPN %}
-        <tr>
-            <td>IPN</td>
-            <td>{{ part.IPN }}</td>
-        </tr>
-        {% endif %}
-        {% if part.URL %}
-        <tr>
-            <td>URL</td>
-            <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
-        </tr>
-        {% endif %}
+        <p>
+            <div class='btn-group'>
+                <button type='button' class='btn btn-default btn-glyph' id='show-qr-code' title='Show QR code'><span class='glyphicon glyphicon-qrcode'></span></button>
+            </div>
+        </p>
+        <table class='table table-condensed'>
+            {% if part.IPN %}
+            <tr>
+                <td>IPN</td>
+                <td>{{ part.IPN }}</td>
+            </tr>
+            {% endif %}
+            {% if part.URL %}
+            <tr>
+                <td>URL</td>
+                <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
+            </tr>
+            {% endif %}
+            <tr>
+            </tr>
+        </table>
     </div>
     </div>
 </div>
@@ -82,6 +93,15 @@
 
 {% block js_ready %}
 {{ block.super }}
+    $("#show-qr-code").click(function() {
+        launchModalForm(
+            "{% url 'part-qr' part.id %}",
+            {
+                no_post: true,
+            }
+        );
+    });
+
     $("#part-thumb").click(function() {
         launchModalForm(
                         "{% url 'part-image' part.id %}",
