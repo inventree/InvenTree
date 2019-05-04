@@ -87,7 +87,10 @@ class Build(models.Model):
                              limit_choices_to={'buildable': True},
                              )
     
-    title = models.CharField(max_length=100, help_text='Brief description of the build')
+    title = models.CharField(
+        blank=False,
+        max_length=100,
+        help_text='Brief description of the build')
     
     quantity = models.PositiveIntegerField(
         default=1,

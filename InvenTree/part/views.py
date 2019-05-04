@@ -27,6 +27,7 @@ from .forms import BomExportForm
 from .forms import EditSupplierPartForm
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import DownloadFile, str2bool
 
@@ -234,6 +235,21 @@ class PartDetail(DetailView):
         return context
 
 
+class PartQRCode(QRCodeView):
+    """ View for displaying a QR code for a Part object """
+
+    ajax_form_title = "Part QR Code"
+
+    def get_qr_data(self):
+        """ Generate QR code data for the Part """
+
+        try:
+            part = Part.objects.get(id=self.pk)
+            return part.format_barcode()
+        except Part.DoesNotExist:
+            return None
+
+
 class PartImage(AjaxUpdateView):
     """ View for uploading Part image """
 
@@ -395,6 +411,7 @@ class CategoryDelete(AjaxDeleteView):
     """ Delete view to delete a PartCategory """
     model = PartCategory
     ajax_template_name = 'part/category_delete.html'
+    ajax_form_title = 'Delete Part Category'
     context_object_name = 'category'
     success_url = '/part/'
 

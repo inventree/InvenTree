@@ -22,9 +22,7 @@
       </div>
     <div class="media-body">
         <h4>{{ part.name }}{% if part.active == False %} <i>- INACTIVE</i>{% endif %}</h4>
-        {% if part.description %}
         <p><i>{{ part.description }}</i></p>
-        {% endif %}
         {% if part.IPN %}
         <tr>
             <td>IPN</td>

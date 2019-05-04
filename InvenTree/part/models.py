@@ -180,7 +180,6 @@ class Part(models.Model):
     def __str__(self):
         return "{n} - {d}".format(n=self.name, d=self.description)
 
-    @property
     def format_barcode(self):
         """ Return a JSON string for formatting a barcode for this Part object """
 
