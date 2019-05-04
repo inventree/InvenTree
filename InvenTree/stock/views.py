@@ -205,7 +205,7 @@ class StockLocationDelete(AjaxDeleteView):
 
     model = StockLocation
     success_url = '/stock'
-    template_name = 'stock/location_delete.html'
+    ajax_template_name = 'stock/location_delete.html'
     context_object_name = 'location'
     ajax_form_title = 'Delete Stock Location'
 

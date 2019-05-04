@@ -395,6 +395,7 @@ class CategoryDelete(AjaxDeleteView):
     """ Delete view to delete a PartCategory """
     model = PartCategory
     ajax_template_name = 'part/category_delete.html'
+    ajax_form_title = 'Delete Part Category'
     context_object_name = 'category'
     success_url = '/part/'
 
