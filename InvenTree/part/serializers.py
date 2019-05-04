@@ -4,8 +4,10 @@ JSON serializers for Part app
 
 from rest_framework import serializers
 
-from .models import Part, PartCategory, BomItem
+from .models import Part, PartStar, PartAttachment
 from .models import SupplierPart, SupplierPriceBreak
+from .models import PartCategory
+from .models import BomItem
 
 from InvenTree.serializers import InvenTreeModelSerializer
 
@@ -72,6 +74,22 @@ class PartSerializer(serializers.ModelSerializer):
             'trackable',
             'salable',
             'active',
+        ]
+
+
+class PartStarSerializer(InvenTreeModelSerializer):
+    """ Serializer for a PartStar object """
+
+    partname = serializers.CharField(source='part.name', read_only=True)
+    username = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = PartStar
+        fields = [
+            'part',
+            'partname',
+            'user',
+            'username',
         ]
 
 

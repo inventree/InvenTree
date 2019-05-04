@@ -12,12 +12,13 @@ from rest_framework import generics, permissions
 from django.db.models import Q
 from django.conf.urls import url, include
 
-from .models import Part, PartCategory, BomItem
+from .models import Part, PartCategory, BomItem, PartStar
 from .models import SupplierPart, SupplierPriceBreak
 
 from .serializers import PartSerializer, BomItemSerializer
 from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
 from .serializers import CategorySerializer
+from .serializers import PartStarSerializer
 
 from InvenTree.views import TreeSerializer
 
@@ -150,8 +151,37 @@ class PartList(generics.ListCreateAPIView):
     ]
 
 
+class PartStarList(generics.ListCreateAPIView):
+    """ API endpoint for accessing a list of PartStar objects.
+
+    - GET: Return list of PartStar objects
+    - POST: Create a new PartStar object
+    """
+
+    queryset = PartStar.objects.all()
+    serializer_class = PartStarSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter
+    ]
+
+    filter_fields = [
+        'part',
+        'user',
+    ]
+
+    search_fields = [
+        'partname'
+    ]
+
+
 class BomList(generics.ListCreateAPIView):
-    """ API endpoing for accessing a list of BomItem objects
+    """ API endpoint for accessing a list of BomItem objects.
 
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
@@ -267,11 +297,19 @@ supplier_part_api_urls = [
     url(r'^.*$', SupplierPartList.as_view(), name='api-part-supplier-list'),
 ]
 
+part_star_api_urls = [
+
+    # Catchall
+    url(r'^.*$', PartStarList.as_view(), name='api-part-star-list'),
+]
+
 part_api_urls = [
     url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
     url(r'^category/', include(cat_api_urls)),
     url(r'^supplier/', include(supplier_part_api_urls)),
+
+    url(r'^star/', include(part_star_api_urls)),
 
     url(r'^price-break/?', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
 
