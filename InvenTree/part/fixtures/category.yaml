@@ -6,7 +6,7 @@
     name: Electronics
     description: Electronic components
     parent: null
-    default_location: null
+    default_location: 1  # Home
 - model: part.partcategory
   pk: 2
   fields:
@@ -54,3 +54,4 @@
     name: Fasteners
     description: Screws, bolts, etc
     parent: 7
+    default_location: 5

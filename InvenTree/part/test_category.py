@@ -13,6 +13,7 @@ class CategoryTest(TestCase):
     fixtures = [
         'category',
         'part',
+        'location',
     ]
 
     def setUp(self):
@@ -104,3 +105,25 @@ class CategoryTest(TestCase):
 
         for f in fasteners:
             self.assertEqual(f.category, self.mechanical)
+
+    def test_default_locations(self):
+        """ Test traversal for default locations """
+
+        self.assertEqual(str(self.fasteners.default_location), 'Office/Drawer')
+
+        # Test that parts in this location return the same default location, too
+        for p in self.fasteners.children.all():
+            self.assert_equal(p.get_default_location(), 'Office/Drawer')
+
+        # Any part under electronics should default to 'Home'
+        R1 = Part.objects.get(name='R_2K2_0805')
+        self.assertIsNone(R1.default_location)
+        self.assertEqual(R1.get_default_location().name, 'Home')
+
+        # But one part has a default_location set
+        R2 = Part.objects.get(name='R_4K7_0603')
+        self.assertEqual(R2.get_default_location().name, 'Bathroom')
+
+        # And one part should have no default location at all
+        W = Part.objects.get(name='Widget')
+        self.assertIsNone(W.get_default_location())
