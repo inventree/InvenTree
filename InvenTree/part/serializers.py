@@ -4,7 +4,7 @@ JSON serializers for Part app
 
 from rest_framework import serializers
 
-from .models import Part, PartStar, PartAttachment
+from .models import Part, PartStar
 from .models import SupplierPart, SupplierPriceBreak
 from .models import PartCategory
 from .models import BomItem
