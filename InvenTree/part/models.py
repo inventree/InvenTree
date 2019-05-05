@@ -464,12 +464,18 @@ class BomItem(models.Model):
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='bom_items',
-                             limit_choices_to={'buildable': True})
+                             limit_choices_to={
+                                 'buildable': True,
+                                 'active': True,
+                                 })
 
     # A link to the child item (sub-part)
     # Each part will get a reverse lookup field 'used_in'
     sub_part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='used_in',
-                                 limit_choices_to={'consumable': True})
+                                 limit_choices_to={
+                                     'consumable': True,
+                                     'active': True
+                                     })
 
     # Quantity required
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])
