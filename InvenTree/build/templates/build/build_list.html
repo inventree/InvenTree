@@ -12,6 +12,11 @@
             <th>Part</th>
             <th>Quantity</th>
             <th>Status</th>
+            {% if completed %}
+            <th>Completed</th>
+            {% else %}
+            <th>Created</th>
+            {% endif %}
         </tr>
         </thead>
         <tbody>
@@ -21,6 +26,11 @@
     <td><a href="{% url 'part-build' build.part.id %}">{{ build.part.name }}</a></td>
     <td>{{ build.quantity }}</td>
     <td>{% include "build_status.html" with build=build %}
+    {% if completed %}
+    <td>{{ build.completion_date }}</td>
+    {% else %}
+    <td>{{ build.creation_date }}</td>
+    {% endif %}
 </tr>
 {% endfor %}
 </tbody>

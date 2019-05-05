@@ -3,39 +3,26 @@
 {% block content %}
 
 
-<h4>Active Builds</h4>
-
-<div id='active-build-toolbar'>
-    <div class='btn-group'>
-        <button class="btn btn-success" id='new-build'>Start New Build</button>
+<div class='row'>
+    <div class='col-sm-6'>
+        <h4>Part Builds</h4>
+    </div>
+    <div class='col-sm-6'>
+        <div class='container' id='active-build-toolbar' style='float: right;'>
+            <div class='btn-group' style='float: right;'>
+                <button class="btn btn-success" id='new-build'>Start New Build</button>
+            </div>
+        </div>
     </div>
 </div>
 
-<table class='table table-striped table-condensed build-table' id='build-table-{{collapse_id}}' data-toolbar='#active-build-toolbar'>
-        <thead>
-        <tr>
-            <th>Build</th>
-            <th>Part</th>
-            <th>Quantity</th>
-            <th>Status</th>
-        </tr>
-        </thead>
-        <tbody>
-{% for build in active %}
-<tr>
-    <td><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></td>
-    <td><a href="{% url 'part-build' build.part.id %}">{{ build.part.name }}</a></td>
-    <td>{{ build.quantity }}</td>
-    <td>{% include "build_status.html" with build=build %}
-</tr>
-{% endfor %}
-</tbody>
-</table>
+<hr>
 
-<p></p>
-{% include "build/build_list.html" with builds=completed title="Completed Builds" collapse_id="complete" %}
-<p></p>
-{% include "build/build_list.html" with builds=cancelled title="Cancelled Builds" collapse_id="cancelled" %}
+{% include "build/build_list.html" with builds=active title="Active Builds" completed=False collapse_id='active' %}
+
+{% include "build/build_list.html" with builds=completed completed=True title="Completed Builds" collapse_id="complete" %}
+
+{% include "build/build_list.html" with builds=cancelled title="Cancelled Builds" completed=False collapse_id="cancelled" %}
 
 {% include 'modals.html' %}
 
@@ -74,6 +61,21 @@
             {
                 title: 'Status',
                 sortable: true,
+            }
+            {
+                title: 'Created',
+                sortable: true,
+            },
+            {
+                title: 'Completed',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return 'hello';
+                    } else { 
+                        return "---";
+                    }
+                },
             }
         ]
     });
