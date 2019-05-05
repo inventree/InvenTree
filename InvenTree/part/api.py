@@ -7,6 +7,8 @@ from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
 
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework import generics, permissions
 from rest_framework.serializers import ValidationError
@@ -172,15 +174,11 @@ class PartStarList(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
 
-        # Automatically add the user information
+        # Override the user field (with the logged-in user)
         data = request.data.copy()
         data['user'] = str(request.user.id)
 
         serializer = self.get_serializer(data=data)
-
-        print(serializer)
-        print(data)
-        print(request.user)
 
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
