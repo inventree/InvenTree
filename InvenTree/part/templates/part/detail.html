@@ -23,7 +23,6 @@
                   {% else %}
                   <li><a href="#" id='activate-part' title='Activate part'>Activate</a></li>
                   {% endif %}
-                  <li><a href='#' id='show-qr-code' title='Generate QR Code'>Show QR Code</a></li>
                 </ul>
             </div>
         </h3>
@@ -126,15 +125,6 @@
 
 {% block js_ready %}
     {{ block.super }}
-
-    $("#show-qr-code").click(function() {
-        launchModalForm(
-            "{% url 'part-qr' part.id %}",
-            {
-                no_post: true,
-            }
-        );
-    });
     
     $("#duplicate-part").click(function() {
         launchModalForm(

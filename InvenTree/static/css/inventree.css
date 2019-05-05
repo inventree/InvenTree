@@ -2,6 +2,21 @@
     float: left;
 }
 
+.glyphicon {
+    font-size: 20px;
+}
+
+.starred-part {
+    color: #ffcc00;
+}
+
+.btn-glyph {
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 3px;
+    padding-bottom: 2px;
+}
+
 .badge {
     float: right;
     background-color: #777;

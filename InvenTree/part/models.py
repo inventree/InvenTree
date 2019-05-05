@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.db import models
 from django.core.validators import MinValueValidator
 
+from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
@@ -246,6 +247,15 @@ class Part(models.Model):
 
         return total
 
+    def isStarredBy(self, user):
+        """ Return True if this part has been starred by a particular user """
+
+        try:
+            PartStar.objects.get(part=self, user=user)
+            return True
+        except PartStar.DoesNotExist:
+            return False
+
     def need_to_restock(self):
         """ Return True if this part needs to be restocked
         (either by purchasing or building).
@@ -425,6 +435,21 @@ class PartAttachment(models.Model):
     @property
     def basename(self):
         return os.path.basename(self.attachment.name)
+
+
+class PartStar(models.Model):
+    """ A PartStar object creates a relationship between a User and a Part.
+
+    It is used to designate a Part as 'starred' (or favourited) for a given User,
+    so that the user can track a list of their favourite parts.
+    """
+
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='starred_users')
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='starred_parts')
+
+    class Meta:
+        unique_together = ['part', 'user']
 
 
 class BomItem(models.Model):

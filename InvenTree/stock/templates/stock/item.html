@@ -6,6 +6,11 @@
 <div class='col-sm-6'>
     <h3>Stock Item Details</h3>
     <p><i>{{ item.quantity }} &times {{ item.part.name }}</i></p>
+    <p>
+        <div class='btn-group'>
+            {% include "qr_button.html" %}
+        </div>
+    </p>
 </div>
 <div class='col-sm-6'>
     <h3>
@@ -23,9 +28,6 @@
           <li><a href='#' id='stock-stocktake' title='Count stock'>Stocktake</a></li>
           {% endif %}
           <li><a href="#" id='stock-delete' title='Delete stock item'>Delete stock item</a></li>
-          <hr>
-          <li><a href="#" id='item-qr-code' title='Generate QR code'>Show QR code</a></li>
-        </ul>
     </div>
     </div>
     </h3>
@@ -145,7 +147,7 @@
                         });
     });
 
-    $("#item-qr-code").click(function() {
+    $("#show-qr-code").click(function() {
         launchModalForm("{% url 'stock-item-qr' item.id %}",
         {
             no_post: true,

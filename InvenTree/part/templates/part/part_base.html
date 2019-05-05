@@ -21,20 +21,34 @@
         {% endif %}/>
       </div>
     <div class="media-body">
-        <h4>{{ part.name }}{% if part.active == False %} <i>- INACTIVE</i>{% endif %}</h4>
+        <h4>
+            {{ part.name }}
+        </h4>   
         <p><i>{{ part.description }}</i></p>
-        {% if part.IPN %}
-        <tr>
-            <td>IPN</td>
-            <td>{{ part.IPN }}</td>
-        </tr>
-        {% endif %}
-        {% if part.URL %}
-        <tr>
-            <td>URL</td>
-            <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
-        </tr>
-        {% endif %}
+        <p>
+            <div class='btn-group'>
+                {% include "qr_button.html" %}
+                <button type='button' class='btn btn-default btn-glyph' id='toggle-starred' title='Star this part'>
+                    <span id='part-star-icon' class='starred-part glyphicon {% if starred %}glyphicon-star{% else %}glyphicon-star-empty{% endif %}'/>
+                </button>
+            </div>
+        </p>
+        <table class='table table-condensed'>
+            {% if part.IPN %}
+            <tr>
+                <td>IPN</td>
+                <td>{{ part.IPN }}</td>
+            </tr>
+            {% endif %}
+            {% if part.URL %}
+            <tr>
+                <td>URL</td>
+                <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
+            </tr>
+            {% endif %}
+            <tr>
+            </tr>
+        </table>
     </div>
     </div>
 </div>
@@ -82,6 +96,26 @@
 
 {% block js_ready %}
 {{ block.super }}
+    $("#show-qr-code").click(function() {
+        launchModalForm(
+            "{% url 'part-qr' part.id %}",
+            {
+                no_post: true,
+            }
+        );
+    });
+
+    $("#toggle-starred").click(function() {
+        toggleStar({
+            part: {{ part.id }},
+            user: {{ user.id }},
+            button: '#part-star-icon'
+        });
+    });
+
+    $('#toggle-starred').click(function() {
+    });
+
     $("#part-thumb").click(function() {
         launchModalForm(
                         "{% url 'part-image' part.id %}",

@@ -6,18 +6,22 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
+
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework import generics, permissions
 
 from django.db.models import Q
 from django.conf.urls import url, include
 
-from .models import Part, PartCategory, BomItem
+from .models import Part, PartCategory, BomItem, PartStar
 from .models import SupplierPart, SupplierPriceBreak
 
 from .serializers import PartSerializer, BomItemSerializer
 from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
 from .serializers import CategorySerializer
+from .serializers import PartStarSerializer
 
 from InvenTree.views import TreeSerializer
 
@@ -150,8 +154,57 @@ class PartList(generics.ListCreateAPIView):
     ]
 
 
+class PartStarDetail(generics.RetrieveDestroyAPIView):
+    """ API endpoint for viewing or removing a PartStar object """
+
+    queryset = PartStar.objects.all()
+    serializer_class = PartStarSerializer
+
+
+class PartStarList(generics.ListCreateAPIView):
+    """ API endpoint for accessing a list of PartStar objects.
+
+    - GET: Return list of PartStar objects
+    - POST: Create a new PartStar object
+    """
+
+    queryset = PartStar.objects.all()
+    serializer_class = PartStarSerializer
+
+    def create(self, request, *args, **kwargs):
+
+        # Override the user field (with the logged-in user)
+        data = request.data.copy()
+        data['user'] = str(request.user.id)
+
+        serializer = self.get_serializer(data=data)
+
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter
+    ]
+
+    filter_fields = [
+        'part',
+        'user',
+    ]
+
+    search_fields = [
+        'partname'
+    ]
+
+
 class BomList(generics.ListCreateAPIView):
-    """ API endpoing for accessing a list of BomItem objects
+    """ API endpoint for accessing a list of BomItem objects.
 
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
@@ -267,11 +320,20 @@ supplier_part_api_urls = [
     url(r'^.*$', SupplierPartList.as_view(), name='api-part-supplier-list'),
 ]
 
+part_star_api_urls = [
+    url(r'^(?P<pk>\d+)/?', PartStarDetail.as_view(), name='api-part-star-detail'),
+
+    # Catchall
+    url(r'^.*$', PartStarList.as_view(), name='api-part-star-list'),
+]
+
 part_api_urls = [
     url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
     url(r'^category/', include(cat_api_urls)),
     url(r'^supplier/', include(supplier_part_api_urls)),
+
+    url(r'^star/', include(part_star_api_urls)),
 
     url(r'^price-break/?', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
 
