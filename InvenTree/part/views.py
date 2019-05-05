@@ -232,6 +232,10 @@ class PartDetail(DetailView):
         else:
             context['editing_enabled'] = 0
 
+        part = self.get_object()
+
+        context['starred'] = part.isStarredBy(self.request.user)
+
         return context
 
 
