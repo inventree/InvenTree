@@ -32,50 +32,7 @@ class Build(models.Model):
         URL: External URL for extra information
         notes: Text notes
     """
-
-    def save(self, *args, **kwargs):
-        """ Called when the Build model is saved to the database.
-        
-        If this is a new Build, try to allocate StockItem objects automatically.
-        
-        - If there is only one StockItem for a Part, use that one.
-        - If there are multiple StockItem objects, leave blank and let the user decide
-        """
-
-        allocate_parts = False
-
-        # If there is no PK yet, then this is the first time the Build has been saved
-        if not self.pk:
-            allocate_parts = True
-
-        # Save this Build first
-        super(Build, self).save(*args, **kwargs)
-
-        if allocate_parts:
-            for item in self.part.bom_items.all():
-                part = item.sub_part
-                # Number of parts required for this build
-                q_req = item.quantity * self.quantity
-
-                stock = StockItem.objects.filter(part=part)
-
-                if len(stock) == 1:
-                    stock_item = stock[0]
-
-                    # Are there any parts available?
-                    if stock_item.quantity > 0:
-                        # If there are not enough parts, reduce the amount we will take
-                        if stock_item.quantity < q_req:
-                            q_req = stock_item.quantity
-
-                        # Allocate parts to this build
-                        build_item = BuildItem(
-                            build=self,
-                            stock_item=stock_item,
-                            quantity=q_req)
-
-                        build_item.save()
-
+    
     def __str__(self):
         return "Build {q} x {part}".format(q=self.quantity, part=str(self.part))
 
@@ -152,6 +109,62 @@ class Build(models.Model):
 
         self.status = self.CANCELLED
         self.save()
+
+    def getAutoAllocations(self):
+        """ Return a list of parts which will be allocated
+        using the 'AutoAllocate' function.
+
+        For each item in the BOM for the attached Part:
+
+        - If there is a single StockItem, use that StockItem
+        - Take as many parts as available (up to the quantity required for the BOM)
+        - If there are multiple StockItems available, ignore (leave up to the user)
+
+        Returns:
+            A dict object containing the StockItem objects to be allocated (and the quantities)
+        """
+
+        allocations = {}
+
+        for item in self.part.bom_items.all():
+
+            # How many parts required for this build?
+            q_required = item.quantity * self.quantity
+
+            stock = StockItem.objects.filter(part=item.sub_part)
+
+            # Only one StockItem to choose from? Default to that one!
+            if len(stock) == 1:
+                stock_item = stock[0]
+
+                # Are there any parts available?
+                if stock_item.quantity > 0:
+                    # Only take as many as are available
+                    if stock_item.quantity < q_required:
+                        q_required = stock_item.quantity
+
+                    # Add the item to the allocations list
+                    allocations[stock_item] = q_required
+
+        return allocations
+
+    @transaction.atomic
+    def autoAllocate(self):
+        """ Run auto-allocation routine to allocate StockItems to this Build.
+
+        See: getAutoAllocations()
+        """
+
+        allocations = self.getAutoAllocations()
+
+        for item in allocations:
+            # Create a new allocation
+            build_item = BuildItem(
+                build=self,
+                stock_item=item,
+                quantity=allocations[item])
+
+            build_item.save()
 
     @transaction.atomic
     def completeBuild(self, location, user):
