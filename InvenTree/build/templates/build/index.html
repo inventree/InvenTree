@@ -30,6 +30,9 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    $("#collapse-item-active").collapse().show();
+
     $("#new-build").click(function() {
         launchModalForm(
                         "{% url 'build-create' %}",
@@ -61,22 +64,10 @@
             {
                 title: 'Status',
                 sortable: true,
-            }
-            {
-                title: 'Created',
-                sortable: true,
             },
             {
-                title: 'Completed',
                 sortable: true,
-                formatter: function(value, row, index, field) {
-                    if (value) {
-                        return 'hello';
-                    } else { 
-                        return "---";
-                    }
-                },
-            }
+            },
         ]
     });
 
