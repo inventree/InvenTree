@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block sidenav %}
 <div id='part-tree'></div>
 {% endblock %}
@@ -12,6 +14,11 @@
 {% include 'part/cat_link.html' with category=category %}
 {% endif %}
 
+{% endblock %}
+
+{% block js_load %}
+{{ block.super }}
+<script type='text/javascript' src="{% static 'script/inventree/part.js' %}"></script>
 {% endblock %}
 
 {% block js_ready %}

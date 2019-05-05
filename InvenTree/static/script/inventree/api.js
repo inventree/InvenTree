@@ -43,9 +43,6 @@ function inventreeGet(url, filters={}, options={}) {
 }
 
 function inventreeUpdate(url, data={}, options={}) {
-    if ('final' in options && options.final) {
-        data["_is_final"] = true;
-    }
 
     var method = options.method || 'PUT';
 
@@ -63,8 +60,7 @@ function inventreeUpdate(url, data={}, options={}) {
         dataType: 'json',
         contentType: 'application/json',
         success: function(response, status) {
-            response['_status_code'] = status;
-            console.log('UPDATE object to ' + url + ' - result = ' + status);
+            console.log(method + ' - ' + url + ' : result = ' + status);
             if (options.success) {
                 options.success(response, status);
             }

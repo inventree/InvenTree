@@ -105,6 +105,14 @@
         );
     });
 
+    $("#toggle-starred").click(function() {
+        toggleStar({
+            part: {{ part.id }},
+            user: {{ user.id }},
+            button: '#part-star-icon'
+        });
+    });
+
     $('#toggle-starred').click(function() {
     });
 
