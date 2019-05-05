@@ -32,7 +32,7 @@ class Build(models.Model):
         URL: External URL for extra information
         notes: Text notes
     """
-    
+
     def __str__(self):
         return "Build {q} x {part}".format(q=self.quantity, part=str(self.part))
 
@@ -136,6 +136,12 @@ class Build(models.Model):
             # Only one StockItem to choose from? Default to that one!
             if len(stock) == 1:
                 stock_item = stock[0]
+
+                # Check that we have not already allocated this stock-item against this build
+                build_items = BuildItem.objects.filter(build=self, stock_item=stock_item)
+
+                if len(build_items) > 0:
+                    continue
 
                 # Are there any parts available?
                 if stock_item.quantity > 0:
