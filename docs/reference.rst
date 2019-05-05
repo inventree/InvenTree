@@ -1,5 +1,12 @@
-API Reference Index
+Module Reference
 ===================
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :caption: Module Reference
+   :hidden:
+
 
 The complete reference indexes are found below:
 
