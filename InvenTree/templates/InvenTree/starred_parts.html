@@ -1,0 +1,15 @@
+{% extends "collapse.html" %}
+{% block collapse_title %}
+<span class='glyphicon glyphicon-star'></span>
+Starred Parts<span class='badge'>{{ starred | length }}</span>
+{% endblock %}
+
+{% block collapse_heading %}
+You have {{ starred | length }} favourite parts
+{% endblock %}
+
+{% block collapse_content %}
+
+{% include "required_part_table.html" with parts=starred table_id="starred-parts-table" %}
+
+{% endblock %}

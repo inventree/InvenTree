@@ -3,6 +3,8 @@
 {% block content %}
 <h3>InvenTree</h3>
 
+{% include "InvenTree/starred_parts.html" with collapse_id="starred" %}
+
 {% if to_order %}
 {% include "InvenTree/parts_to_order.html" with collapse_id="order" %}
 {% endif %}
@@ -19,4 +21,9 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+$("#to-build-table").bootstrapTable();
+$("#to-order-table").bootstrapTable();
+$("#starred-parts-table").bootstrapTable();
+
 {% endblock %}
