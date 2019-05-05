@@ -87,7 +87,7 @@ class Build(models.Model):
                              limit_choices_to={
                                  'buildable': True,
                                  'active': True
-                                 },
+                             },
                              )
     
     title = models.CharField(

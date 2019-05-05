@@ -467,7 +467,7 @@ class BomItem(models.Model):
                              limit_choices_to={
                                  'buildable': True,
                                  'active': True,
-                                 })
+                             })
 
     # A link to the child item (sub-part)
     # Each part will get a reverse lookup field 'used_in'
@@ -475,7 +475,7 @@ class BomItem(models.Model):
                                  limit_choices_to={
                                      'consumable': True,
                                      'active': True
-                                     })
+                                 })
 
     # Quantity required
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])
