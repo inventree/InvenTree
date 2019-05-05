@@ -153,6 +153,13 @@ class PartList(generics.ListCreateAPIView):
     ]
 
 
+class PartStarDetail(generics.RetrieveDestroyAPIView):
+    """ API endpoint for viewing or removing a PartStar object """
+
+    queryset = PartStar.objects.all()
+    serializer_class = PartStarSerializer
+
+
 class PartStarList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PartStar objects.
 
@@ -165,13 +172,20 @@ class PartStarList(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
 
-        # Ensure the 'user' field is the authenticated user
-        user_id = request.data['user']
+        # Automatically add the user information
+        data = request.data.copy()
+        data['user'] = str(request.user.id)
 
-        if not str(user_id) == str(request.user.id):
-            raise ValidationError({'user': 'Parts can only be starred for the currently authenticated user'})
+        serializer = self.get_serializer(data=data)
 
-        return super(generics.ListCreateAPIView, self).create(request, *args, **kwargs)
+        print(serializer)
+        print(data)
+        print(request.user)
+
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
@@ -310,6 +324,7 @@ supplier_part_api_urls = [
 ]
 
 part_star_api_urls = [
+    url(r'^(?P<pk>\d+)/?', PartStarDetail.as_view(), name='api-part-star-detail'),
 
     # Catchall
     url(r'^.*$', PartStarList.as_view(), name='api-part-star-list'),

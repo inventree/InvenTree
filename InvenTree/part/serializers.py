@@ -86,6 +86,7 @@ class PartStarSerializer(InvenTreeModelSerializer):
     class Meta:
         model = PartStar
         fields = [
+            'pk',
             'part',
             'partname',
             'user',
