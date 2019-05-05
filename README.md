@@ -15,46 +15,6 @@ However, complex business logic works in the background to ensure that stock tra
 
 For project code documentation, refer to the online [documentation](http://inventree.readthedocs.io/en/latest/) (auto-generated)
 
-
 ## Getting Started
 
-It is recommended to set up a clean Python 3.4+ virtual environment first:
-`mkdir ~/.env && python3 -m venv ~/.env/InvenTree && source ~/.env/InvenTree/bin/activate`
-
-A makefile is provided for project configuration:
-
-### Install
-
-Run `make install` to ensure that all required pip packages are installed (see `requirements.txt`). This step will also generate a `SECRET_KEY.txt` file (unless one already exists) for Django authentication.
-
-### Migrate
-
-Run `make migrate` to perform all pending database migrations to ensure the database schema is up to date. 
-
-**Note:** Run this step once after `make install` to create the initial empty database.
-
-### Superuser
-
-Run `make superuser` to create an admin account for the database
-
-### Launch Development Server
-
-Run `python InvenTree/manage.py runserver` to launch a (development / debug) server. InvenTree can be then accessed via a web browser at `http://127.0.0.1:8000`
-
-### Test
-
-Run `make test` to run all code tests
-
-### Style
-
-Run `make style` to check the codebase against PEP coding standards (uses Flake)
-
-## Contributing
-
-### Testing
-
-Any new functionality should be submitted with matching test cases (using the Django testing framework). Tests should at bare minimum ensure that any new Python code is covered by the integrated coverage testing. Tests can be run using `make test`.
-
-### Coding Style
-
-All Python code should conform to the [PEP 8](https://www.python.org/dev/peps/pep-0008/) style guide. Run `make style` which will compare all source (.py) files against the PEP 8 style. 
+Refer to the [getting started guide](https://inventree.readthedocs.io/en/latest/start.html) for installation and setup instructions.
