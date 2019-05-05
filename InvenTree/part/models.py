@@ -247,6 +247,15 @@ class Part(models.Model):
 
         return total
 
+    def isStarredBy(self, user):
+        """ Return True if this part has been starred by a particular user """
+
+        try:
+            PartStar.objects.get(part=self, user=user)
+            return True
+        except PartStar.DoesNotExist:
+            return False
+
     def need_to_restock(self):
         """ Return True if this part needs to be restocked
         (either by purchasing or building).
