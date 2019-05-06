@@ -16,11 +16,17 @@ function inventreeDocReady() {
     /* Add drag-n-drop functionality to any element
      * marked with the class 'dropzone'
      */
-    $('.dropzone').on('dragenter', function() {
-        $(this).addClass('dragover');
+    $('.dropzone').on('dragenter', function(event) {
+
+        // TODO - Only indicate that a drop event will occur if a file is being dragged
+        var transfer = event.originalEvent.dataTransfer;
+
+        if (true || isFileTransfer(transfer)) {
+            $(this).addClass('dragover');
+        }
     });
 
-    $('.dropzone').on('dragleave drop', function() {
+    $('.dropzone').on('dragleave drop', function(event) {
         $(this).removeClass('dragover');
     });
 

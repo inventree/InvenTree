@@ -7,6 +7,7 @@ import json
 import os.path
 from datetime import datetime
 from PIL import Image
+import requests
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
@@ -32,6 +33,68 @@ def TestIfImageURL(url):
         '.tif', '.tiff',
         '.webp',
     ]
+
+
+def DownloadExternalFile(url, **kwargs):
+    """ Attempt to download an external file 
+
+    Args:
+        url - External URL
+    
+    """
+
+    result = {
+        'status': False,
+        'url': url,
+        'file': None,
+        'status_code': 200,
+    }
+
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    max_size = kwargs.get('max_size', 1048576)  # 1MB default limit
+
+    # Get the HEAD for the file
+    try:
+        head = requests.head(url, stream=True, headers=headers)
+    except:
+        result['error'] = 'Error retrieving HEAD data'
+        return result
+
+    if not head.status_code == 200:
+        result['error'] = 'Incorrect HEAD status code'
+        result['status_code'] = head.status_code
+        return result
+
+    try:
+        filesize = int(head.headers['Content-Length'])
+    except ValueError:
+        result['error'] = 'Could not decode filesize'
+        result['extra'] = head.headers['Content-Length']
+        return result
+
+    if filesize > max_size:
+        result['error'] = 'File size too large ({s})'.format(s=filesize)
+        return result
+
+    # All checks have passed - download the file
+
+    try:
+        request = requests.get(url, stream=True, headers=headers)
+    except:
+        result['error'] = 'Error retriving GET data'
+        return result
+
+    try:
+        dl_file = io.StringIO(request.text)
+        result['status'] = True
+        result['file'] = dl_file
+        return result
+    except:
+        result['error'] = 'Could not convert downloaded data to file'
+        return result
+
+
+
 
 
 def str2bool(text, test=True):

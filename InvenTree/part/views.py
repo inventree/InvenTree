@@ -319,7 +319,7 @@ class UploadPartImage(AjaxView):
             return JsonResponse(response, status=status)
 
         elif 'image_url' in request.POST:
-            image_url = request.POST['image_url']
+            image_url = str(request.POST['image_url']).split('?')[0]
 
             validator = URLValidator()
 
@@ -334,6 +334,7 @@ class UploadPartImage(AjaxView):
             # Test the the URL at least looks like an image
             if not TestIfImageURL(image_url):
                 response['error'] = 'Invalid image URL'
+                response['url'] = image_url
                 return JsonResponse(response, status=400)
 
             response['error'] = 'Cannot download cross-site images (yet)'
