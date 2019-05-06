@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import get_object_or_404
 
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
@@ -266,6 +267,31 @@ class PartImage(AjaxUpdateView):
         return {
             'success': 'Updated part image',
         }
+
+
+class UploadPartImage(AjaxView):
+    """ View for uploading a Part image """
+
+    model = Part
+
+    def post(self, request, *args, **kwargs):
+        try:
+            part = Part.objects.get(pk=kwargs.get('pk'))
+        except Part.DoesNotExist:
+            error_dict = {
+                'error': 'Part not found',
+            }
+            return JsonResponse(error_dict, status=404)
+
+        print("Files:", request.FILES)
+        uploaded_file = request.FILES['file']
+
+        response_dict = {
+            'success': 'File was uploaded successfully',
+        }
+
+        return JsonResponse(response_dict, status=200)
+
 
 
 class PartEdit(AjaxUpdateView):
