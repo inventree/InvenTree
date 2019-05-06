@@ -38,3 +38,6 @@ documentation:
 	pip install -U -r docs/requirements.txt
 	cd docs & make html
 
+backup:
+	python InvenTree/manage.py dbbackup
+	python InvenTree/manage.py mediabackup
