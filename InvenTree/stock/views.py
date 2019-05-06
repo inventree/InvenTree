@@ -115,6 +115,22 @@ class StockItemEdit(AjaxUpdateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Stock Item'
 
+    def get_form(self):
+        """ Get form for StockItem editing.
+
+        Limit the choices for supplier_part
+        """
+
+        form = super(AjaxUpdateView, self).get_form()
+
+        item = self.get_object()
+
+        query = form.fields['supplier_part'].queryset
+        query = query.filter(part=item.part.id)
+        form.fields['supplier_part'].queryset = query
+
+        return form
+
 
 class StockLocationCreate(AjaxCreateView):
     """
