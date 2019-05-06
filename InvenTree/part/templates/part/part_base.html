@@ -106,11 +106,10 @@
 
         var transfer = event.originalEvent.dataTransfer;
 
-        var files = transfer.files;
+        if (isFileTransfer(transfer)) {
 
-        if (files.length > 0) {
-            var file = files[0];
-
+            var file = transfer.files[0];
+    
             inventreeFileUpload(
                 "{% url 'part-image-upload' part.id %}",
                 file,
@@ -124,6 +123,18 @@
                     }
                 }
             );
+        } else if (isOnlineTransfer(transfer)) {
+
+            getImageUrlFromTransfer(transfer);
+            /*
+            for (var i = 0; i < 12; i++) {
+                transfer.items[i].getAsString(function(text) {
+                    console.log('item ' + i + ' - ' + text);
+                });
+            }
+            */
+        } else {
+            console.log('Unknown transfer');
         }
 
     });

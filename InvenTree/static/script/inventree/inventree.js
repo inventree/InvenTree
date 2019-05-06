@@ -36,3 +36,27 @@ function inventreeDocReady() {
         modal.modal('show');
     });
 }
+
+function isFileTransfer(transfer) {
+    /* Determine if a transfer (e.g. drag-and-drop) is a file transfer 
+     */
+
+    return transfer.files.length > 0;
+}
+
+
+function isOnlineTransfer(transfer) {
+    /* Determine if a drag-and-drop transfer is from another website.
+     * e.g. dragged from another browser window
+     */
+
+    return transfer.items.length > 0;
+}
+
+
+function getImageUrlFromTransfer(transfer) {
+    /* Extract external image URL from a drag-and-dropped image
+     */
+
+    console.log(transfer.getData('text/html').match(/src\s*=\s*"(.+?)"/)[1]);
+}
