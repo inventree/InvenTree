@@ -151,6 +151,7 @@ class PartList(generics.ListCreateAPIView):
     search_fields = [
         '$name',
         'description',
+        '$IPN',
     ]
 
 
