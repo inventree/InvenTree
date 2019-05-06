@@ -5,9 +5,19 @@ Provides helper functions used throughout the InvenTree project
 import io
 import json
 from datetime import datetime
+from PIL import Image
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
+
+
+def TestIfImage(img):
+    """ Test if an image file is indeed an image """
+    try:
+        Image.open(img).verify()
+        return True
+    except:
+        return False
 
 
 def str2bool(text, test=True):

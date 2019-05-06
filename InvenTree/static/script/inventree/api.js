@@ -42,7 +42,49 @@ function inventreeGet(url, filters={}, options={}) {
     });
 }
 
-function inventreeUpdate(url, data={}, options={}) {
+function inventreeFileUpload(url, file, data={}, options={}) {
+    /* Upload a file via AJAX using the FormData approach.
+     * 
+     * Note that the following AJAX parameters are required for FormData upload
+     * 
+     * processData: false
+     * contentType: false
+     */
+
+    // CSRF cookie token
+    var csrftoken = getCookie('csrftoken');
+    
+    var data = new FormData();
+    
+    data.append('file', file);
+
+    return $.ajax({
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+        },
+        url: url,
+        method: 'POST',
+        data: data,
+        processData: false,
+        contentType: false,
+        success: function(data, status, xhr) {
+            console.log('Uploaded file - ' + file.name);
+
+            if (options.success) {
+                options.success(data, status, xhr);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.log('Error uploading file: ' + status);
+
+            if (options.error) {
+                options.error(xhr, status, error);
+            }
+        }
+    });
+}
+
+function inventreePut(url, data={}, options={}) {
 
     var method = options.method || 'PUT';
 
@@ -93,9 +135,9 @@ function getCompanies(filters={}, options={}) {
 }
 
 function updateStockItem(pk, data, final=false) {
-    return inventreeUpdate('/api/stock/' + pk + '/', data, final);
+    return inventreePut('/api/stock/' + pk + '/', data, final);
 }
 
 function updatePart(pk, data, final=false) {
-    return inventreeUpdate('/api/part/' + pk + '/', data, final);
+    return inventreePut('/api/part/' + pk + '/', data, final);
 }

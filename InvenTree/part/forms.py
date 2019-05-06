@@ -78,7 +78,6 @@ class EditPartForm(HelperForm):
             'purchaseable',
             'salable',
             'notes',
-            'image',
         ]
 
 

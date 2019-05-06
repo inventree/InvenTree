@@ -30,7 +30,7 @@ from .forms import EditSupplierPartForm
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
 
-from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers import DownloadFile, str2bool, TestIfImage
 
 
 class PartIndex(ListView):
@@ -275,22 +275,29 @@ class UploadPartImage(AjaxView):
     model = Part
 
     def post(self, request, *args, **kwargs):
+
+        response = {}
+        status = 200
+
         try:
             part = Part.objects.get(pk=kwargs.get('pk'))
         except Part.DoesNotExist:
-            error_dict = {
-                'error': 'Part not found',
-            }
+            response['error'] = 'Part not found'
             return JsonResponse(error_dict, status=404)
 
-        print("Files:", request.FILES)
         uploaded_file = request.FILES['file']
 
-        response_dict = {
-            'success': 'File was uploaded successfully',
-        }
+        if TestIfImage(uploaded_file):
+            part.image = uploaded_file
+            part.clean()
+            part.save()
 
-        return JsonResponse(response_dict, status=200)
+            response['success'] = 'File was uploaded successfully'
+        else:
+            response['error'] = 'Not a valid image file'
+            status = 400
+
+        return JsonResponse(response, status=status)
 
 
 

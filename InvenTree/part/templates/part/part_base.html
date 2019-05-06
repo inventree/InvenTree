@@ -108,47 +108,22 @@
 
         var files = transfer.files;
 
-        console.log('dropped');
-
         if (files.length > 0) {
             var file = files[0];
 
-            var formData = new FormData();
-
-            var token = getCookie('csrftoken');
-
-            formData.append('file', file);
-
-            $.ajax({
-                beforeSend: function(xhr, settings) {
-                    xhr.setRequestHeader('X-CSRFToken', token);
-                },
-                url: "{% url 'part-image-upload' part.id %}",
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(data, status, xhr) {
-                    //location.reload();
-                },
-                error: function(xhr, status, error) {
-                    console.log('Error uploading thumbnail: ' + status);
-                    console.log(error);
-                }
-            });
-
-            /*
-            inventreeUpdate(
+            inventreeFileUpload(
                 "{% url 'part-image-upload' part.id %}",
-                formData,
+                file,
+                {},
                 {
-                    method: 'POST',
-                    dataType: 'json',
+                    success: function(data, status, xhr) {
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        showAlertDialog('Error uploading image', renderErrorMessage(xhr));
+                    }
                 }
             );
-            */
-
-            console.log('submitted');
         }
 
     });
