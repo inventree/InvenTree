@@ -299,7 +299,7 @@ class UploadPartImage(AjaxView):
             part = Part.objects.get(pk=kwargs.get('pk'))
         except Part.DoesNotExist:
             response['error'] = 'Part not found'
-            return JsonResponse(error_dict, status=404)
+            return JsonResponse(response, status=404)
 
         # Direct image upload
         if 'image_file' in request.FILES:
@@ -325,7 +325,7 @@ class UploadPartImage(AjaxView):
 
             try:
                 validator(image_url)
-            except ValidationError: 
+            except ValidationError:
                 response['error'] = 'Invalid image URL'
                 response['url'] = image_url
 
@@ -359,7 +359,6 @@ class UploadPartImage(AjaxView):
 
         # Default response
         return JsonResponse(response, status=status)
-
 
 
 class PartEdit(AjaxUpdateView):

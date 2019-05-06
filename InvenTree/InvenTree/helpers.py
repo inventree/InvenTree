@@ -30,10 +30,10 @@ def TestIfImageURL(url):
         '.jpg', '.jpeg',
         '.png', '.bmp',
         '.tif', '.tiff',
-        '.webp', 
+        '.webp',
     ]
 
-    
+
 def str2bool(text, test=True):
     """ Test if a string 'looks' like a boolean value.
 
