@@ -7,6 +7,10 @@ from __future__ import unicode_literals
 
 from django.shortcuts import get_object_or_404
 
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
@@ -29,7 +33,7 @@ from .forms import EditSupplierPartForm
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
 
-from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers import DownloadFile, str2bool, TestIfImage, TestIfImageURL
 
 
 class PartIndex(ListView):
@@ -266,6 +270,95 @@ class PartImage(AjaxUpdateView):
         return {
             'success': 'Updated part image',
         }
+
+
+class UploadPartImage(AjaxView):
+    """ View for uploading a Part image via AJAX request.
+    e.g. via a "drag and drop" event.
+
+    There are two ways to upload a file:
+
+    1. Attach an image file as request.FILES['image_file']
+        - Image is validated saved
+        - Part object is saved
+    2. Attach an iamge URL as request.POST['image_url']
+        NOT YET IMPLEMENTED
+        - Image URL is valiated
+        - Image is downloaded and validated
+        - Part object is saved
+    """
+
+    model = Part
+
+    def post(self, request, *args, **kwargs):
+
+        response = {}
+        status = 200
+
+        try:
+            part = Part.objects.get(pk=kwargs.get('pk'))
+        except Part.DoesNotExist:
+            response['error'] = 'Part not found'
+            return JsonResponse(response, status=404)
+
+        # Direct image upload
+        if 'image_file' in request.FILES:
+            image = request.FILES['image_file']
+
+            if TestIfImage(image):
+                part.image = image
+                part.clean()
+                part.save()
+
+                response['success'] = 'File was uploaded successfully'
+                status = 200
+            else:
+                response['error'] = 'Not a valid image file'
+                status = 400
+
+            return JsonResponse(response, status=status)
+
+        elif 'image_url' in request.POST:
+            image_url = request.POST['image_url']
+
+            validator = URLValidator()
+
+            try:
+                validator(image_url)
+            except ValidationError:
+                response['error'] = 'Invalid image URL'
+                response['url'] = image_url
+
+                return JsonResponse(response, status=400)
+
+            # Test the the URL at least looks like an image
+            if not TestIfImageURL(image_url):
+                response['error'] = 'Invalid image URL'
+                return JsonResponse(response, status=400)
+
+            response['error'] = 'Cannot download cross-site images (yet)'
+            response['url'] = image_url
+            response['apology'] = 'deepest'
+
+            return JsonResponse(response, status=400)
+
+            # TODO - Attempt to download the image file here
+
+            """
+            head = requests.head(url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+
+            if head.headers['Content-Length'] < SOME_MAX_LENGTH:
+
+                image = requests.get(url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+
+                file = io.BytesIO(image.raw.read())
+
+                - Save the file?
+
+            """
+
+        # Default response
+        return JsonResponse(response, status=status)
 
 
 class PartEdit(AjaxUpdateView):

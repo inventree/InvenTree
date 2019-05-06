@@ -10,6 +10,25 @@
     color: #ffcc00;
 }
 
+/* dropzone class - for Drag-n-Drop file uploads */
+.dropzone {
+    border: 1px solid #555;
+    z-index: 2;
+}
+
+.dropzone * {
+    pointer-events: none;
+}
+
+.dragover {
+    background-color: #55A;
+    border: 1px dashed #111;
+    opacity: 0.1;
+    -moz-opacity: 10%;
+    -webkit-opacity: 10%;
+}
+
+
 .btn-glyph {
     padding-left: 6px;
     padding-right: 6px;
@@ -28,7 +47,6 @@
 .part-thumb {
     width: 150px;
     height: 150px;
-    border: 1px black solid;
     margin: 5px;
     padding: 5px;
     object-fit: contain;
@@ -62,7 +80,7 @@
     margin-right: 50px;
     margin-left: 50px;
     width: 100%;
-    //transition: 0.1s;
+    transition: 0.1s;
 }
 
 .body {
@@ -182,3 +200,4 @@
     from { transform: scale(1) rotate(0deg);}
     to { transform: scale(1) rotate(360deg);}
 }
+

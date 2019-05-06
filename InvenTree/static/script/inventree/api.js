@@ -42,7 +42,44 @@ function inventreeGet(url, filters={}, options={}) {
     });
 }
 
-function inventreeUpdate(url, data={}, options={}) {
+function inventreeFormDataUpload(url, data, options={}) {
+    /* Upload via AJAX using the FormData approach.
+     * 
+     * Note that the following AJAX parameters are required for FormData upload
+     * 
+     * processData: false
+     * contentType: false
+     */
+
+    // CSRF cookie token
+    var csrftoken = getCookie('csrftoken');
+
+    return $.ajax({
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+        },
+        url: url,
+        method: 'POST',
+        data: data,
+        processData: false,
+        contentType: false,
+        success: function(data, status, xhr) {
+            console.log('Form data upload success');
+            if (options.success) {
+                options.success(data, status, xhr);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.log('Form data upload failure: ' + status);
+
+            if (options.error) {
+                options.error(xhr, status, error);
+            }
+        }
+    });
+}
+
+function inventreePut(url, data={}, options={}) {
 
     var method = options.method || 'PUT';
 
@@ -93,9 +130,9 @@ function getCompanies(filters={}, options={}) {
 }
 
 function updateStockItem(pk, data, final=false) {
-    return inventreeUpdate('/api/stock/' + pk + '/', data, final);
+    return inventreePut('/api/stock/' + pk + '/', data, final);
 }
 
 function updatePart(pk, data, final=false) {
-    return inventreeUpdate('/api/part/' + pk + '/', data, final);
+    return inventreePut('/api/part/' + pk + '/', data, final);
 }
