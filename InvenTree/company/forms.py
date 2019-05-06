@@ -23,7 +23,6 @@ class EditCompanyForm(HelperForm):
             'phone',
             'email',
             'contact',
-            'image',
             'is_customer',
             'is_supplier',
             'notes'
