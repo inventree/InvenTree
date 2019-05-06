@@ -101,6 +101,18 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    $('#part-thumb').on('drop', function(event) {
+
+        var transfer = event.originalEvent.dataTransfer;
+
+        var files = transfer.files;
+
+        console.log('dropped');
+
+        //$(this).removeClass('dragover');
+    });
+
     $("#show-qr-code").click(function() {
         launchModalForm(
             "{% url 'part-qr' part.id %}",
