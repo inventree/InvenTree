@@ -58,5 +58,9 @@ function getImageUrlFromTransfer(transfer) {
     /* Extract external image URL from a drag-and-dropped image
      */
 
-    console.log(transfer.getData('text/html').match(/src\s*=\s*"(.+?)"/)[1]);
+    var url = transfer.getData('text/html').match(/src\s*=\s*"(.+?)"/)[1];
+
+    console.log('Image URL: ' + url);
+
+    return url;
 }

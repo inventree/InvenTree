@@ -42,8 +42,8 @@ function inventreeGet(url, filters={}, options={}) {
     });
 }
 
-function inventreeFileUpload(url, file, data={}, options={}) {
-    /* Upload a file via AJAX using the FormData approach.
+function inventreeFormDataUpload(url, data, options={}) {
+    /* Upload via AJAX using the FormData approach.
      * 
      * Note that the following AJAX parameters are required for FormData upload
      * 
@@ -53,10 +53,6 @@ function inventreeFileUpload(url, file, data={}, options={}) {
 
     // CSRF cookie token
     var csrftoken = getCookie('csrftoken');
-    
-    var data = new FormData();
-    
-    data.append('file', file);
 
     return $.ajax({
         beforeSend: function(xhr, settings) {
@@ -68,14 +64,13 @@ function inventreeFileUpload(url, file, data={}, options={}) {
         processData: false,
         contentType: false,
         success: function(data, status, xhr) {
-            console.log('Uploaded file - ' + file.name);
-
+            console.log('Form data upload success');
             if (options.success) {
                 options.success(data, status, xhr);
             }
         },
         error: function(xhr, status, error) {
-            console.log('Error uploading file: ' + status);
+            console.log('Form data upload failure: ' + status);
 
             if (options.error) {
                 options.error(xhr, status, error);

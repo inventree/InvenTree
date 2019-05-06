@@ -106,37 +106,29 @@
 
         var transfer = event.originalEvent.dataTransfer;
 
+        var formData = new FormData();
+
         if (isFileTransfer(transfer)) {
-
-            var file = transfer.files[0];
-    
-            inventreeFileUpload(
-                "{% url 'part-image-upload' part.id %}",
-                file,
-                {},
-                {
-                    success: function(data, status, xhr) {
-                        location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        showAlertDialog('Error uploading image', renderErrorMessage(xhr));
-                    }
-                }
-            );
+            formData.append('image_file', transfer.files[0]);
         } else if (isOnlineTransfer(transfer)) {
-
-            getImageUrlFromTransfer(transfer);
-            /*
-            for (var i = 0; i < 12; i++) {
-                transfer.items[i].getAsString(function(text) {
-                    console.log('item ' + i + ' - ' + text);
-                });
-            }
-            */
+            formData.append('image_url', getImageUrlFromTransfer(transfer));
         } else {
             console.log('Unknown transfer');
+            return;
         }
-
+ 
+        inventreeFormDataUpload(
+            "{% url 'part-image-upload' part.id %}",
+            formData,
+            {
+                success: function(data, status, xhr) {
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    showAlertDialog('Error uploading image', renderErrorMessage(xhr));
+                }
+            }
+        );
     });
 
     $("#show-qr-code").click(function() {
