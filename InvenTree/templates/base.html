@@ -65,6 +65,8 @@ InvenTree
 <script type="text/javascript" src="{% static 'script/select2/select2.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
 
+<script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/tables.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/modals.js' %}"></script>
@@ -76,6 +78,15 @@ InvenTree
 $(document).ready(function () {
 {% block js_ready %}
 {% endblock %}
+
+    /* Run document-ready scripts.
+     * Ref: static/script/inventree/inventree.js
+    */
+    inventreeDocReady();
+    
+    /* Display any cached alert messages
+     * Ref: static/script/inventree/notification.js
+     */
     showCachedAlerts();
 
     $('#launch-about').click(function() {

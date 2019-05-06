@@ -13,12 +13,17 @@
 <div class="col-sm-6">
     <div class="media">
       <div class="media-left">
-        <img class="part-thumb" id="part-thumb"
-        {% if part.image %}
-        src="{{ part.image.url }}"
-        {% else %}
-        src="{% static 'img/blank_image.png' %}"
-        {% endif %}/>
+        <form id='upload-photo' method='post' action="{% url 'part-image-upload' part.id %}">
+            <div class='dropzone' id='part-thumb'>
+                <img class="part-thumb"
+                {% if part.image %}
+                src="{{ part.image.url }}"
+                {% else %}
+                src="{% static 'img/blank_image.png' %}"
+                {% endif %}/>
+            </div>
+                {% csrf_token %}
+        </form>
       </div>
     <div class="media-body">
         <h4>
