@@ -36,7 +36,7 @@ def TestIfImageURL(url):
 
 
 def DownloadExternalFile(url, **kwargs):
-    """ Attempt to download an external file 
+    """ Attempt to download an external file
 
     Args:
         url - External URL
@@ -92,10 +92,7 @@ def DownloadExternalFile(url, **kwargs):
     except:
         result['error'] = 'Could not convert downloaded data to file'
         return result
-
-
-
-
+        
 
 def str2bool(text, test=True):
     """ Test if a string 'looks' like a boolean value.
