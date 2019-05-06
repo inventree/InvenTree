@@ -4,10 +4,34 @@ Provides helper functions used throughout the InvenTree project
 
 import io
 import json
+import os.path
 from datetime import datetime
+from PIL import Image
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
+
+
+def TestIfImage(img):
+    """ Test if an image file is indeed an image """
+    try:
+        Image.open(img).verify()
+        return True
+    except:
+        return False
+
+
+def TestIfImageURL(url):
+    """ Test if an image URL (or filename) looks like a valid image format.
+
+    Simply tests the extension against a set of allowed values
+    """
+    return os.path.splitext(os.path.basename(url))[-1].lower() in [
+        '.jpg', '.jpeg',
+        '.png', '.bmp',
+        '.tif', '.tiff',
+        '.webp',
+    ]
 
 
 def str2bool(text, test=True):

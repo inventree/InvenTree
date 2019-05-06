@@ -47,6 +47,10 @@ part_detail_urls = [
     
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 
+    # Drag-and-drop thumbnail upload
+    url(r'^thumbnail-upload/?', views.UploadPartImage.as_view(), name='part-image-upload'),
+
+    # Normal thumbnail with form
     url(r'^thumbnail/?', views.PartImage.as_view(), name='part-image'),
 
     # Any other URLs go to the part detail page

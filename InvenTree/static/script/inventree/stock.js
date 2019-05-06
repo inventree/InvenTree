@@ -141,7 +141,7 @@ function updateStock(items, options={}) {
             return false;
         }
 
-        inventreeUpdate("/api/stock/stocktake/",
+        inventreePut("/api/stock/stocktake/",
                         {
                             'action': options.action,
                             'items[]': stocktake,
@@ -226,7 +226,7 @@ function moveStockItems(items, options) {
     }
 
     function doMove(location, parts, notes) {
-        inventreeUpdate("/api/stock/move/",
+        inventreePut("/api/stock/move/",
             {
                 location: location,
                 'parts[]': parts,

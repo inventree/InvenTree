@@ -41,7 +41,7 @@ function toggleStar(options) {
                 if (response.length == 0) {
                     // Zero length response = star does not exist
                     // So let's add one!
-                    inventreeUpdate(
+                    inventreePut(
                         url,
                         {
                             part: options.part,
@@ -57,7 +57,7 @@ function toggleStar(options) {
                 } else {
                     var pk = response[0].pk;
                     // There IS a star (delete it!)
-                    inventreeUpdate(
+                    inventreePut(
                         url + pk + "/",
                         {
                         },

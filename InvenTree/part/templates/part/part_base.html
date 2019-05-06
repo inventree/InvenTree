@@ -13,12 +13,17 @@
 <div class="col-sm-6">
     <div class="media">
       <div class="media-left">
-        <img class="part-thumb" id="part-thumb"
-        {% if part.image %}
-        src="{{ part.image.url }}"
-        {% else %}
-        src="{% static 'img/blank_image.png' %}"
-        {% endif %}/>
+        <form id='upload-photo' method='post' action="{% url 'part-image-upload' part.id %}">
+            <div class='dropzone' id='part-thumb'>
+                <img class="part-thumb"
+                {% if part.image %}
+                src="{{ part.image.url }}"
+                {% else %}
+                src="{% static 'img/blank_image.png' %}"
+                {% endif %}/>
+            </div>
+                {% csrf_token %}
+        </form>
       </div>
     <div class="media-body">
         <h4>
@@ -96,6 +101,36 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    $('#part-thumb').on('drop', function(event) {
+
+        var transfer = event.originalEvent.dataTransfer;
+
+        var formData = new FormData();
+
+        if (isFileTransfer(transfer)) {
+            formData.append('image_file', transfer.files[0]);
+        } else if (isOnlineTransfer(transfer)) {
+            formData.append('image_url', getImageUrlFromTransfer(transfer));
+        } else {
+            console.log('Unknown transfer');
+            return;
+        }
+ 
+        inventreeFormDataUpload(
+            "{% url 'part-image-upload' part.id %}",
+            formData,
+            {
+                success: function(data, status, xhr) {
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    showAlertDialog('Error uploading image', renderErrorMessage(xhr));
+                }
+            }
+        );
+    });
+
     $("#show-qr-code").click(function() {
         launchModalForm(
             "{% url 'part-qr' part.id %}",
