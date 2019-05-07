@@ -27,7 +27,7 @@
     <td>{{ build.quantity }}</td>
     <td>{% include "build_status.html" with build=build %}
     {% if completed %}
-    <td>{{ build.completion_date }}</td>
+    <td>{{ build.completion_date }}<span class='badge'>{{ build.completed_by.username }}</span></td>
     {% else %}
     <td>{{ build.creation_date }}</td>
     {% endif %}
