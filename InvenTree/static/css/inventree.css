@@ -159,6 +159,14 @@
     margin-bottom: 5px;
 }
 
+.panel-group .panel {
+    border-radius: 8px;
+}
+
+.panel-heading {
+    padding: 2px 10px;
+}
+
 .float-right {
     float: right;
 }
