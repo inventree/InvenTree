@@ -264,7 +264,8 @@ class Build(models.Model):
         for item in self.part.bom_items.all():
             part = {'part': item.sub_part,
                     'per_build': item.quantity,
-                    'quantity': item.quantity * self.quantity
+                    'quantity': item.quantity * self.quantity,
+                    'allocated': self.getAllocatedQuantity(item.sub_part)
                     }
 
             parts.append(part)
