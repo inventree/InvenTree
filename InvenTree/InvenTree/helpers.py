@@ -148,7 +148,6 @@ def MakeBarcode(object_type, object_id, object_url, data={}):
     data['id'] = object_id
     data['url'] = object_url
     data['tool'] = 'InvenTree'
-    data['generated'] = str(datetime.now().date())
 
     return json.dumps(data, sort_keys=True)
 

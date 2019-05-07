@@ -7,15 +7,17 @@
 <div class="row">
     <div class="col-sm-6">
         <div class="media">
-          <div class="media-left">
-            <img class="part-thumb" id='company-thumb'
-            {% if company.image %}
-            src="{{ company.image.url }}"
-            {% else %}
-            src="{% static 'img/blank_image.png' %}"
-            {% endif %}/>
-          </div>
-          <div class='media-body'>
+            <div class='media-left'>
+                <div class='dropzone' id='company-thumb'>
+                    <img class="part-thumb"
+                    {% if company.image %}
+                    src="{{ company.image.url }}"
+                    {% else %}
+                    src="{% static 'img/blank_image.png' %}"
+                    {% endif %}/>
+                </div>
+            </div>
+            <div class='media-body'>
               <h4>{{ company.name }}</h4>
               <p>{{ company.description }}</p>
           </div>
@@ -67,6 +69,17 @@
 {% endblock %}
 
 {% block js_ready %}
+
+    enableDragAndDrop(
+        "#company-thumb",
+        "{% url 'company-image' company.id %}",
+        {
+            label: 'image',
+            success: function(data, status, xhr) {
+                location.reload();
+            }
+        }
+    );
 
     $("#company-thumb").click(function() {
         launchModalForm(
