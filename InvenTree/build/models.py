@@ -13,9 +13,11 @@ from django.core.exceptions import ValidationError
 
 from django.urls import reverse
 from django.db import models, transaction
+from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
 from stock.models import StockItem
+from part.models import BomItem
 
 
 class Build(models.Model):
@@ -218,6 +220,38 @@ class Build(models.Model):
         # Finally, mark the build as complete
         self.status = self.COMPLETE
         self.save()
+
+    def getAllocatedQuantity(self, part):
+        """ Calculate the total number of <part> currently allocated to this build
+        """
+
+        allocated = BuildItem.objects.filter(build=self.id, stock_item__part=part.id).aggregate(Sum('quantity'))
+
+        q = allocated['quantity__sum']
+
+        if q:
+            return int(q)
+        else:
+            return 0
+
+    def getUnallocatedQuantity(self, part):
+        """ Calculate the quantity of <part> which still needs to be allocated to this build.
+
+        Args:
+            Part - the part to be tested
+
+        Returns:
+            The remaining allocated quantity
+        """
+
+        try:
+            bom_item = BomItem.objects.get(part=self.part.id, sub_part=part.id)
+        except BomItem.DoesNotExist:
+            return 0
+
+        quantity = bom_item.quantity * self.quantity
+
+        return quantity - self.getAllocatedQuantity(part)
 
     @property
     def required_parts(self):
