@@ -31,6 +31,20 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CORS_ORIGIN_WHITELIST = [
+    """
+    TODO - Implement a proper CORS whitelist strategy here.
+
+    - The CORS headers should be set per-application and not hard-coded into settings.py
+    - Provide an external settings.yaml file which defines extra options
+    - Then the site admin can adjust these without touching tracked files
+    """
+]
+
+if DEBUG:
+    print("Warning: DEBUG mode is enabled, CORS requests are allowed for any domain")
+    CORS_ORIGIN_ALLOW_ALL = True
+
 if DEBUG:
     # will output to your console
     logging.basicConfig(
@@ -60,6 +74,7 @@ INSTALLED_APPS = [
     'django_filters',       # Extended filter functionality
     'dbbackup',             # Database backup / restore
     'rest_framework',       # DRF (Django Rest Framework)
+    'corsheaders',         # Cross-origin Resource Sharing for DRF
     'crispy_forms',         # Improved form rendering
     'import_export',        # Import / export tables to file
     'django_cleanup',       # Automatically delete orphaned MEDIA files
@@ -71,6 +86,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
