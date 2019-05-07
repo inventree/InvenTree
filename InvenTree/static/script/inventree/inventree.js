@@ -70,3 +70,51 @@ function getImageUrlFromTransfer(transfer) {
 
     return url;
 }
+
+
+function enableDragAndDrop(element, url, options) {
+    /* Enable drag-and-drop file uploading for a given element.
+    
+    Params:
+        element - HTML element lookup string e.g. "#drop-div"
+        url - URL to POST the file to
+        options - object with following possible values:
+            label - Label of the file to upload (default='file')
+            success - Callback function in case of success
+            error - Callback function in case of error
+    */
+
+    $(element).on('drop', function(event) {
+
+        var transfer = event.originalEvent.dataTransfer;
+
+        var label = options.label || 'file';
+
+        var formData = new FormData();
+
+        if (isFileTransfer(transfer)) {
+            formData.append(label, transfer.files[0]);
+            
+            inventreeFormDataUpload(
+                url,
+                formData,
+                {
+                    success: function(data, status, xhr) {
+                        console.log('Uploaded file via drag-and-drop');
+                        if (options.success) {
+                            options.success(data, status, xhr);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('File upload failed');
+                        if (options.error) {
+                            options.error(xhr, status, error);
+                        }
+                    }
+                }
+            );
+        } else {
+            console.log('Ignoring drag-and-drop event (not a file)');
+        }
+    });
+}

@@ -5,7 +5,6 @@ Provides helper functions used throughout the InvenTree project
 import io
 import json
 import os.path
-from datetime import datetime
 from PIL import Image
 import requests
 
@@ -148,7 +147,6 @@ def MakeBarcode(object_type, object_id, object_url, data={}):
     data['id'] = object_id
     data['url'] = object_url
     data['tool'] = 'InvenTree'
-    data['generated'] = str(datetime.now().date())
 
     return json.dumps(data, sort_keys=True)
 
