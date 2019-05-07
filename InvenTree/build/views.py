@@ -294,6 +294,10 @@ class BuildItemCreate(AjaxCreateView):
                 # If there is only one item selected, select it
                 if len(stocks) == 1:
                     form.fields['stock_item'].initial = stocks[0].id
+                # There is no stock available
+                elif len(stocks) == 0:
+                    # TODO - Add a message to the form describing the problem
+                    pass
 
             except Part.DoesNotExist:
                 pass
@@ -324,7 +328,8 @@ class BuildItemCreate(AjaxCreateView):
 
                 # Try to work out how many parts to allocate
                 if part:
-                    initials['quantity'] = build.getUnallocatedQuantity(part)
+                    unallocated = build.getUnallocatedQuantity(part)
+                    initials['quantity'] = unallocated
 
             except Build.DoesNotExist:
                 pass

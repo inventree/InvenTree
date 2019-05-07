@@ -221,6 +221,16 @@ class Build(models.Model):
         self.status = self.COMPLETE
         self.save()
 
+    def getRequiredQuantity(self, part):
+        """ Calculate the quantity of <part> required to make this build.
+        """
+
+        try:
+            item = BomItem.objects.get(part=self.part.id, sub_part=part.id)
+            return item.quantity * self.quantity
+        except BomItem.DoesNotExist:
+            return 0
+
     def getAllocatedQuantity(self, part):
         """ Calculate the total number of <part> currently allocated to this build
         """
@@ -244,14 +254,7 @@ class Build(models.Model):
             The remaining allocated quantity
         """
 
-        try:
-            bom_item = BomItem.objects.get(part=self.part.id, sub_part=part.id)
-        except BomItem.DoesNotExist:
-            return 0
-
-        quantity = bom_item.quantity * self.quantity
-
-        return quantity - self.getAllocatedQuantity(part)
+        return max(self.getRequiredQuantity(part) - self.getAllocatedQuantity(part), 0)
 
     @property
     def required_parts(self):
