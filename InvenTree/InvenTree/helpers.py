@@ -5,7 +5,6 @@ Provides helper functions used throughout the InvenTree project
 import io
 import json
 import os.path
-from datetime import datetime
 from PIL import Image
 import requests
 

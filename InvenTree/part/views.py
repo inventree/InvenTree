@@ -7,10 +7,6 @@ from __future__ import unicode_literals
 
 from django.shortcuts import get_object_or_404
 
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
-
-from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
@@ -33,7 +29,7 @@ from .forms import EditSupplierPartForm
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
 
-from InvenTree.helpers import DownloadFile, str2bool, TestIfImage, TestIfImageURL
+from InvenTree.helpers import DownloadFile, str2bool
 
 
 class PartIndex(ListView):
