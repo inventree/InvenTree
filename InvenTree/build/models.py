@@ -62,11 +62,13 @@ class Build(models.Model):
     
     # Build status codes
     PENDING = 10  # Build is pending / active
+    ALLOCATED = 20  # Parts have been removed from stock
     CANCELLED = 30  # Build was cancelled
     COMPLETE = 40  # Build is complete
 
     #: Build status codes
     BUILD_STATUS_CODES = {PENDING: _("Pending"),
+                          ALLOCATED: _("Allocated"),
                           CANCELLED: _("Cancelled"),
                           COMPLETE: _("Complete"),
                           }
