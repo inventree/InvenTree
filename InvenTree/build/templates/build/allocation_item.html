@@ -3,7 +3,8 @@
 {% load inventree_extras %}
 
 {% block collapse_title %}
-{{ item.sub_part.name }}
+{{ item.sub_part.name }}<br>
+<small><i>{{ item.sub_part.description }}</i></small>
 {% endblock %}
 
 {% block collapse_heading %}
