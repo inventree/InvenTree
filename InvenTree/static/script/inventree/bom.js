@@ -120,7 +120,7 @@ function loadBomTable(table, options) {
             field: 'note',
             title: 'Notes',
             searchable: true,
-            sortable: false,
+            sortable: true,
         }
     );
 
@@ -159,7 +159,7 @@ function loadBomTable(table, options) {
         }
         );
     }
-    
+
     // Configure the table (bootstrap-table)
     
     table.bootstrapTable({
