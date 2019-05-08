@@ -163,7 +163,8 @@ class StockItem(models.Model):
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='locations', help_text='Base part')
 
     # The 'supplier part' used in this instance. May be null if no supplier parts are defined the master part
-    supplier_part = models.ForeignKey('part.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL)
+    supplier_part = models.ForeignKey('part.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
+                                      help_text='Select a matching supplier part for this stock item')
 
     # Where the part is stored. If the part has been used to build another stock item, the location may not make sense
     location = models.ForeignKey(StockLocation, on_delete=models.DO_NOTHING,

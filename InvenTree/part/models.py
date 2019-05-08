@@ -193,7 +193,7 @@ class Part(models.Model):
     minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text='Minimum allowed stock level')
 
     # Units of quantity for this part. Default is "pcs"
-    units = models.CharField(max_length=20, default="pcs", blank=True)
+    units = models.CharField(max_length=20, default="pcs", blank=True, help_text='Stock keeping units for this part')
 
     # Can this part be built from other parts?
     buildable = models.BooleanField(default=False, help_text='Can this part be built from other parts?')
@@ -438,7 +438,8 @@ class PartAttachment(models.Model):
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='attachments')
 
-    attachment = models.FileField(upload_to=attach_file, null=True, blank=True)
+    attachment = models.FileField(upload_to=attach_file, null=True, blank=True,
+                                  help_text='Select file to attach')
 
     comment = models.CharField(max_length=100, blank=True, help_text='File comment')
 
@@ -543,11 +544,13 @@ class SupplierPart(models.Model):
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='supplier_parts',
                              limit_choices_to={'purchaseable': True},
+                             help_text='Select part',
                              )
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
                                  related_name='parts',
-                                 limit_choices_to={'is_supplier': True}
+                                 limit_choices_to={'is_supplier': True},
+                                 help_text='Select supplier',
                                  )
 
     SKU = models.CharField(max_length=100, help_text='Supplier stock keeping unit')
@@ -639,9 +642,14 @@ class SupplierPart(models.Model):
         return cost + self.base_cost
 
     def __str__(self):
-        return "{supplier} ({sku})".format(
+        s =  "{supplier} ({sku})".format(
             sku=self.SKU,
             supplier=self.supplier.name)
+
+        if self.manufacturer_string:
+            s = s + ' - ' + self.manufacturer_string
+        
+        return s
 
 
 class SupplierPriceBreak(models.Model):
