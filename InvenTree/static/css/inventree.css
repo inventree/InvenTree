@@ -13,12 +13,14 @@
 /* Part image icons with full-display on mouse hover */
 
 .hover-img-thumb {
+    background: #eee;
     width: 28px;
     height: 28px;
     border: 1px solid #cce;
 }
 
 .hover-img-large {
+    background: #eee;
     display: none;
     position: absolute;
     z-index: 999;

@@ -128,6 +128,7 @@ class SupplierPartSerializer(serializers.ModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     supplier_name = serializers.CharField(source='supplier.name', read_only=True)
+    supplier_logo = serializers.CharField(source='supplier.get_image_url', read_only=True)
 
     class Meta:
         model = SupplierPart
@@ -138,6 +139,7 @@ class SupplierPartSerializer(serializers.ModelSerializer):
             'part_detail',
             'supplier',
             'supplier_name',
+            'supplier_logo',
             'SKU',
             'manufacturer',
             'MPN',

@@ -63,7 +63,7 @@
                 field: 'supplier_name',
                 title: 'Supplier',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, '/company/' + row.supplier + '/');
+                    return imageHoverIcon(row.supplier_logo) + renderLink(value, '/company/' + row.supplier + '/');
                 }
             },
             {

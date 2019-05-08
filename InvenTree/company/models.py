@@ -9,6 +9,7 @@ import os
 
 from django.db import models
 from django.urls import reverse
+from django.conf import settings
 
 
 def rename_company_image(instance, filename):
@@ -77,6 +78,14 @@ class Company(models.Model):
     def get_absolute_url(self):
         """ Get the web URL for the detail view for this Company """
         return reverse('company-detail', kwargs={'pk': self.id})
+
+    def get_image_url(self):
+        """ Return the URL of the image for this company """
+
+        if self.image:
+            return os.path.join(settings.MEDIA_URL, str(self.image.url))
+        else:
+            return ''
 
     @property
     def part_count(self):
