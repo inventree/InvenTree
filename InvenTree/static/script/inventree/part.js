@@ -86,7 +86,9 @@ function loadPartTable(table, url, options={}) {
      */
 
     // Default query params
-    options.active = true;
+    query = options.query;
+
+    query.active = true;
 
     $(table).bootstrapTable({
         url: url,
@@ -98,7 +100,7 @@ function loadPartTable(table, url, options={}) {
         pageSize: 25,
         rememberOrder: true,
         queryParams: function(p) {
-            return options;
+            return  query;
         },
         columns: [
             {
