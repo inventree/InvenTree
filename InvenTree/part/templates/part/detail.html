@@ -6,26 +6,24 @@
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h3>Part Details</h3>
+        <h4>Part Details</h4>
     </div>
     <div class='col-sm-6'>
-        <h3>
-            <div class="dropdown" style="float: right;">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
-                <span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                  {% if part.active %}
-                  <li><a href='#' id='duplicate-part' title='Duplicate Part'>Duplicate</a></li>
-                  <li><a href="#" id='edit-part' title='Edit part'>Edit</a></li>
-                  <li><a href='#' id='stocktake-part' title='Stocktake'>Stocktake</a></li>
-                  <hr>
-                  <li><a href="#" id='deactivate-part' title='Deactivate part'>Deactivate</a></li>
-                  {% else %}
-                  <li><a href="#" id='activate-part' title='Activate part'>Activate</a></li>
-                  {% endif %}
-                </ul>
-            </div>
-        </h3>
+        <div class="btn-group" style="float: right;">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
+            <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                {% if part.active %}
+                <li><a href='#' id='duplicate-part' title='Duplicate Part'>Duplicate</a></li>
+                <li><a href="#" id='edit-part' title='Edit part'>Edit</a></li>
+                <li><a href='#' id='stocktake-part' title='Stocktake'>Stocktake</a></li>
+                <hr>
+                <li><a href="#" id='deactivate-part' title='Deactivate part'>Deactivate</a></li>
+                {% else %}
+                <li><a href="#" id='activate-part' title='Activate part'>Activate</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 </div>
 

@@ -73,3 +73,99 @@ function toggleStar(options) {
         }
     );
 }
+
+function loadPartTable(table, url, options={}) {
+    /* Load part listing data into specified table.
+     * 
+     * Args:
+     *  - table: HTML reference to the table
+     *  - url: Base URL for API query
+     *  - options: object containing following (optional) fields
+     *      allowInactive: If true, allow display of inactive parts
+     *      query: extra query params for API request
+     *      buttons: If provided, link buttons to selection status of this table
+     */
+
+    // Default query params
+    query = options.query;
+    
+    if (!options.allowInactive) {
+        // Only display active parts
+        query.active = true;
+    }
+
+    $(table).bootstrapTable({
+        url: url,
+        sortable: true,
+        search: true,
+        sortName: 'name',
+        method: 'get',
+        pagination: true,
+        pageSize: 25,
+        rememberOrder: true,
+        formatNoMatches: function() { return "No parts found"; },
+        queryParams: function(p) {
+            return  query;
+        },
+        columns: [
+            {
+                checkbox: true,
+                title: 'Select',
+                searchable: false,
+            },
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                field: 'name',
+                title: 'Part',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    var display = imageHoverIcon(row.image_url) + renderLink(value, row.url);
+                    if (!row.active) {
+                        display = display + "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
+                    }
+                    return display; 
+                }
+            },
+            {
+                sortable: true,
+                field: 'description',
+                title: 'Description',
+            },
+            {
+                sortable: true,
+                field: 'category_name',
+                title: 'Category',
+                formatter: function(value, row, index, field) {
+                    if (row.category) {
+                        return renderLink(row.category_name, "/part/category/" + row.category + "/");
+                    }
+                    else {
+                        return '';
+                    }
+                }   
+            },
+            {
+                field: 'total_stock',
+                title: 'Stock',
+                searchable: false,
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value, row.url + 'stock/');
+                    }
+                    else {
+                        return "<span class='label label-warning'>No stock</span>";
+                    }
+                }
+            }
+        ],
+    });
+
+    if (options.buttons) {
+        linkButtonsToSelection($(table), options.buttons);
+    }
+}

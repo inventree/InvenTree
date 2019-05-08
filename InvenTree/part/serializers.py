@@ -33,6 +33,7 @@ class PartBriefSerializer(serializers.ModelSerializer):
     """ Serializer for Part (brief detail) """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
+    image_url = serializers.CharField(source='get_image_url', read_only=True)
 
     class Meta:
         model = Part
@@ -40,6 +41,7 @@ class PartBriefSerializer(serializers.ModelSerializer):
             'pk',
             'url',
             'name',
+            'image_url',
             'description',
             'available_stock',
         ]
@@ -51,6 +53,7 @@ class PartSerializer(serializers.ModelSerializer):
     """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
+    image_url = serializers.CharField(source='get_image_url', read_only=True)
     category_name = serializers.CharField(source='category_path', read_only=True)
 
     class Meta:
@@ -60,6 +63,7 @@ class PartSerializer(serializers.ModelSerializer):
             'pk',
             'url',  # Link to the part detail page
             'name',
+            'image_url',
             'IPN',
             'URL',  # Link to an external URL (optional)
             'description',
@@ -121,9 +125,10 @@ class SupplierPartSerializer(serializers.ModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    part_name = serializers.CharField(source='part.name', read_only=True)
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     supplier_name = serializers.CharField(source='supplier.name', read_only=True)
+    supplier_logo = serializers.CharField(source='supplier.get_image_url', read_only=True)
 
     class Meta:
         model = SupplierPart
@@ -131,9 +136,10 @@ class SupplierPartSerializer(serializers.ModelSerializer):
             'pk',
             'url',
             'part',
-            'part_name',
+            'part_detail',
             'supplier',
             'supplier_name',
+            'supplier_logo',
             'SKU',
             'manufacturer',
             'MPN',

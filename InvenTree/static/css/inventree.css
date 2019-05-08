@@ -10,6 +10,32 @@
     color: #ffcc00;
 }
 
+/* Part image icons with full-display on mouse hover */
+
+.hover-img-thumb {
+    background: #eee;
+    width: 28px;
+    height: 28px;
+    border: 1px solid #cce;
+}
+
+.hover-img-large {
+    background: #eee;
+    display: none;
+    position: absolute;
+    z-index: 999;
+    border: 1px solid #555;
+    max-width: 250px;
+}
+
+.hover-icon {
+    margin-right: 10px;
+}
+
+.hover-icon:hover > .hover-img-large {
+    display: block;
+}
+
 /* dropzone class - for Drag-n-Drop file uploads */
 .dropzone {
     border: 1px solid #555;
@@ -157,6 +183,14 @@
 
 .panel-group {
     margin-bottom: 5px;
+}
+
+.panel-group .panel {
+    border-radius: 8px;
+}
+
+.panel-heading {
+    padding: 5px 10px;
 }
 
 .float-right {

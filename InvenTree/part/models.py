@@ -14,6 +14,7 @@ import tablib
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.urls import reverse
+from django.conf import settings
 
 from django.db import models
 from django.core.validators import MinValueValidator
@@ -120,7 +121,16 @@ class Part(models.Model):
     """
 
     def get_absolute_url(self):
+        """ Return the web URL for viewing this part """
         return reverse('part-detail', kwargs={'pk': self.id})
+
+    def get_image_url(self):
+        """ Return the URL of the image for this part """
+
+        if self.image:
+            return os.path.join(settings.MEDIA_URL, str(self.image.url))
+        else:
+            return ''
 
     # Short name of the part
     name = models.CharField(max_length=100, unique=True, blank=False, help_text='Part name (must be unique)')

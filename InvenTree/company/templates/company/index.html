@@ -4,10 +4,20 @@
 
 {% block content %}
 
-<h3>Companies</h3>
-<div id='button-toolbar'>
-<button style='float: right;' class="btn btn-success" id='new-company'>New Company</button>
+<div class='row'>
+    <div class='col-sm-6'>
+        <h3>Company List</h3>
+    </div>
+    <div class='col-sm-6'>
+        <div class='container' id='active-build-toolbar' style='float: right;'>
+            <div class='btn-group' style='float: right;'>
+                <button type='button' class="btn btn-success" id='new-company'>New Company</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+<hr>
 
 <table class='table table-striped' id='company-table' data-toolbar='#button-toolbar'>
 </table>

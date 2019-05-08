@@ -13,9 +13,11 @@ from django.core.exceptions import ValidationError
 
 from django.urls import reverse
 from django.db import models, transaction
+from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
 from stock.models import StockItem
+from part.models import BomItem
 
 
 class Build(models.Model):
@@ -32,49 +34,6 @@ class Build(models.Model):
         URL: External URL for extra information
         notes: Text notes
     """
-
-    def save(self, *args, **kwargs):
-        """ Called when the Build model is saved to the database.
-        
-        If this is a new Build, try to allocate StockItem objects automatically.
-        
-        - If there is only one StockItem for a Part, use that one.
-        - If there are multiple StockItem objects, leave blank and let the user decide
-        """
-
-        allocate_parts = False
-
-        # If there is no PK yet, then this is the first time the Build has been saved
-        if not self.pk:
-            allocate_parts = True
-
-        # Save this Build first
-        super(Build, self).save(*args, **kwargs)
-
-        if allocate_parts:
-            for item in self.part.bom_items.all():
-                part = item.sub_part
-                # Number of parts required for this build
-                q_req = item.quantity * self.quantity
-
-                stock = StockItem.objects.filter(part=part)
-
-                if len(stock) == 1:
-                    stock_item = stock[0]
-
-                    # Are there any parts available?
-                    if stock_item.quantity > 0:
-                        # If there are not enough parts, reduce the amount we will take
-                        if stock_item.quantity < q_req:
-                            q_req = stock_item.quantity
-
-                        # Allocate parts to this build
-                        build_item = BuildItem(
-                            build=self,
-                            stock_item=stock_item,
-                            quantity=q_req)
-
-                        build_item.save()
 
     def __str__(self):
         return "Build {q} x {part}".format(q=self.quantity, part=str(self.part))
@@ -103,11 +62,13 @@ class Build(models.Model):
     
     # Build status codes
     PENDING = 10  # Build is pending / active
+    ALLOCATED = 20  # Parts have been removed from stock
     CANCELLED = 30  # Build was cancelled
     COMPLETE = 40  # Build is complete
 
     #: Build status codes
     BUILD_STATUS_CODES = {PENDING: _("Pending"),
+                          ALLOCATED: _("Allocated"),
                           CANCELLED: _("Cancelled"),
                           COMPLETE: _("Complete"),
                           }
@@ -152,6 +113,68 @@ class Build(models.Model):
 
         self.status = self.CANCELLED
         self.save()
+
+    def getAutoAllocations(self):
+        """ Return a list of parts which will be allocated
+        using the 'AutoAllocate' function.
+
+        For each item in the BOM for the attached Part:
+
+        - If there is a single StockItem, use that StockItem
+        - Take as many parts as available (up to the quantity required for the BOM)
+        - If there are multiple StockItems available, ignore (leave up to the user)
+
+        Returns:
+            A dict object containing the StockItem objects to be allocated (and the quantities)
+        """
+
+        allocations = {}
+
+        for item in self.part.bom_items.all():
+
+            # How many parts required for this build?
+            q_required = item.quantity * self.quantity
+
+            stock = StockItem.objects.filter(part=item.sub_part)
+
+            # Only one StockItem to choose from? Default to that one!
+            if len(stock) == 1:
+                stock_item = stock[0]
+
+                # Check that we have not already allocated this stock-item against this build
+                build_items = BuildItem.objects.filter(build=self, stock_item=stock_item)
+
+                if len(build_items) > 0:
+                    continue
+
+                # Are there any parts available?
+                if stock_item.quantity > 0:
+                    # Only take as many as are available
+                    if stock_item.quantity < q_required:
+                        q_required = stock_item.quantity
+
+                    # Add the item to the allocations list
+                    allocations[stock_item] = q_required
+
+        return allocations
+
+    @transaction.atomic
+    def autoAllocate(self):
+        """ Run auto-allocation routine to allocate StockItems to this Build.
+
+        See: getAutoAllocations()
+        """
+
+        allocations = self.getAutoAllocations()
+
+        for item in allocations:
+            # Create a new allocation
+            build_item = BuildItem(
+                build=self,
+                stock_item=item,
+                quantity=allocations[item])
+
+            build_item.save()
 
     @transaction.atomic
     def completeBuild(self, location, user):
@@ -200,6 +223,41 @@ class Build(models.Model):
         self.status = self.COMPLETE
         self.save()
 
+    def getRequiredQuantity(self, part):
+        """ Calculate the quantity of <part> required to make this build.
+        """
+
+        try:
+            item = BomItem.objects.get(part=self.part.id, sub_part=part.id)
+            return item.quantity * self.quantity
+        except BomItem.DoesNotExist:
+            return 0
+
+    def getAllocatedQuantity(self, part):
+        """ Calculate the total number of <part> currently allocated to this build
+        """
+
+        allocated = BuildItem.objects.filter(build=self.id, stock_item__part=part.id).aggregate(Sum('quantity'))
+
+        q = allocated['quantity__sum']
+
+        if q:
+            return int(q)
+        else:
+            return 0
+
+    def getUnallocatedQuantity(self, part):
+        """ Calculate the quantity of <part> which still needs to be allocated to this build.
+
+        Args:
+            Part - the part to be tested
+
+        Returns:
+            The remaining allocated quantity
+        """
+
+        return max(self.getRequiredQuantity(part) - self.getAllocatedQuantity(part), 0)
+
     @property
     def required_parts(self):
         """ Returns a dict of parts required to build this part (BOM) """
@@ -208,7 +266,8 @@ class Build(models.Model):
         for item in self.part.bom_items.all():
             part = {'part': item.sub_part,
                     'per_build': item.quantity,
-                    'quantity': item.quantity * self.quantity
+                    'quantity': item.quantity * self.quantity,
+                    'allocated': self.getAllocatedQuantity(item.sub_part)
                     }
 
             parts.append(part)

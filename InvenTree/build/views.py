@@ -289,6 +289,16 @@ class BuildItemCreate(AjaxCreateView):
                     query = query.exclude(id__in=[item.stock_item.id for item in BuildItem.objects.filter(build=build_id, stock_item__part=part_id)])
 
                 form.fields['stock_item'].queryset = query
+
+                stocks = query.all()
+                # If there is only one item selected, select it
+                if len(stocks) == 1:
+                    form.fields['stock_item'].initial = stocks[0].id
+                # There is no stock available
+                elif len(stocks) == 0:
+                    # TODO - Add a message to the form describing the problem
+                    pass
+
             except Part.DoesNotExist:
                 pass
 
@@ -303,10 +313,24 @@ class BuildItemCreate(AjaxCreateView):
         initials = super(AjaxCreateView, self).get_initial().copy()
 
         build_id = self.get_param('build')
+        part_id = self.get_param('part')
+
+        if part_id:
+            try:
+                part = Part.objects.get(pk=part_id)
+            except Part.DoesNotExist:
+                part = None
         
         if build_id:
             try:
-                initials['build'] = Build.objects.get(pk=build_id)
+                build = Build.objects.get(pk=build_id)
+                initials['build'] = build
+
+                # Try to work out how many parts to allocate
+                if part:
+                    unallocated = build.getUnallocatedQuantity(part)
+                    initials['quantity'] = unallocated
+
             except Build.DoesNotExist:
                 pass
 
