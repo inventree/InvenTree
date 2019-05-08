@@ -43,7 +43,7 @@
                 field: 'part_detail',
                 title: 'Part',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value.name, value.url + 'bom/');
+                    return imageHoverIcon(row.part_detail.image_url) + renderLink(value.name, value.url + 'bom/');
                 }
             },
             {
