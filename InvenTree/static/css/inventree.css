@@ -6,6 +6,10 @@
     font-size: 20px;
 }
 
+.glyphicon-small {
+    font-size: 14px;
+}
+
 .starred-part {
     color: #ffcc00;
 }
