@@ -46,7 +46,7 @@ class Company(models.Model):
     name = models.CharField(max_length=100, blank=False, unique=True,
                             help_text='Company name')
 
-    description = models.CharField(max_length=500)
+    description = models.CharField(max_length=500, help_text='Description of the company')
 
     website = models.URLField(blank=True, help_text='Company website URL')
 
@@ -54,12 +54,12 @@ class Company(models.Model):
                                blank=True, help_text='Company address')
 
     phone = models.CharField(max_length=50,
-                             blank=True)
+                             blank=True, help_text='Contact phone number')
 
-    email = models.EmailField(blank=True)
+    email = models.EmailField(blank=True, help_text='Contact email address')
 
     contact = models.CharField(max_length=100,
-                               blank=True)
+                               blank=True, help_text='Point of contact')
 
     URL = models.URLField(blank=True, help_text='Link to external company information')
 
@@ -67,9 +67,9 @@ class Company(models.Model):
 
     notes = models.TextField(blank=True)
 
-    is_customer = models.BooleanField(default=False)
+    is_customer = models.BooleanField(default=False, help_text='Do you sell items to this company?')
 
-    is_supplier = models.BooleanField(default=True)
+    is_supplier = models.BooleanField(default=True, help_text='Do you purchase items from this company?')
 
     def __str__(self):
         """ Get string representation of a Company """
