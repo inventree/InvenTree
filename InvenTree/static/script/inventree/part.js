@@ -81,14 +81,18 @@ function loadPartTable(table, url, options={}) {
      *  - table: HTML reference to the table
      *  - url: Base URL for API query
      *  - options: object containing following (optional) fields
+     *      allowInactive: If true, allow display of inactive parts
      *      query: extra query params for API request
      *      buttons: If provided, link buttons to selection status of this table
      */
 
     // Default query params
     query = options.query;
-
-    query.active = true;
+    
+    if (!options.allowInactive) {
+        // Only display active parts
+        query.active = true;
+    }
 
     $(table).bootstrapTable({
         url: url,
@@ -99,6 +103,7 @@ function loadPartTable(table, url, options={}) {
         pagination: true,
         pageSize: 25,
         rememberOrder: true,
+        formatNoMatches: function() { return "No parts found"; },
         queryParams: function(p) {
             return  query;
         },
@@ -118,7 +123,11 @@ function loadPartTable(table, url, options={}) {
                 title: 'Part',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.image_url) + renderLink(value, row.url);
+                    var display = imageHoverIcon(row.image_url) + renderLink(value, row.url);
+                    if (!row.active) {
+                        display = display + "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
+                    }
+                    return display; 
                 }
             },
             {
