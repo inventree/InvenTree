@@ -10,6 +10,11 @@
     color: #ffcc00;
 }
 
+/* Force select2 elements in modal forms to be full width */
+.select-full-width {
+    width: 100%;
+}
+
 /* Part image icons with full-display on mouse hover */
 
 .hover-img-thumb {
@@ -116,6 +121,10 @@
 .modal {
   overflow: hidden;
   z-index: 99999999;
+}
+
+.modal-dialog {
+    width: 45%;
 }
 
 .modal-content h3 {
