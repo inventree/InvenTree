@@ -53,7 +53,7 @@
                 title: 'Company',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url);
+                    return imageHoverIcon(row.image) + renderLink(value, row.url);
                 }
             },
             {
