@@ -370,6 +370,11 @@ function loadStockTable(table, options) {
                 }
             },
             {
+                field: 'part.description',
+                title: 'Description',
+                sortable: true,
+            },
+            {
                 field: 'location',
                 title: 'Location',
                 sortable: true,
