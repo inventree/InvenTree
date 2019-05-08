@@ -119,81 +119,18 @@
 
     {% endif %}
 
-    $("#part-table").bootstrapTable({
-        sortable: true,
-        search: true,
-        sortName: 'name',
-        idField: 'pk',
-        method: 'get',
-        pagination: true,
-        rememberOrder: true,
-        queryParams: function(p) {
-            return {
-                active: true,
+    loadPartTable(
+        "#part-table",
+        "{% url 'api-part-list' %}",
+        {
+            query: {
                 {% if category %}
                 category: {{ category.id }},
                 include_child_categories: true,
                 {% endif %}
-            }
+            },
+            buttons: ['#part-options'],
         },
-        columns: [
-            {
-                checkbox: true,
-                title: 'Select',
-                searchable: false,
-            },
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-            },
-            {
-                field: 'name',
-                title: 'Part',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.image_url) + renderLink(value, row.url);
-                }
-            },
-            {
-                sortable: true,
-                field: 'description',
-                title: 'Description',
-            },
-            {
-                sortable: true,
-                field: 'category_name',
-                title: 'Category',
-                formatter: function(value, row, index, field) {
-                    if (row.category) {
-                        return renderLink(row.category_name, "/part/category/" + row.category + "/");
-                    }
-                    else {
-                        return '';
-                    }
-                }   
-            },
-            {
-                field: 'total_stock',
-                title: 'Stock',
-                searchable: false,
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    if (value) {
-                        return renderLink(value, row.url + 'stock/');
-                    }
-                    else {
-                        return "<span class='label label-warning'>No stock</span>";
-                    }
-                }
-            }
-        ],
-        url: "{% url 'api-part-list' %}",
-    });
-
-    linkButtonsToSelection(
-        $("#part-table"),
-        ['#part-options']
     );
 
 {% endblock %}
