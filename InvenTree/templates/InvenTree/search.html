@@ -22,57 +22,15 @@
         var n = $("#part-results-table").bootstrapTable('getData').length;
         $("#part-result-count").html("(found " + n + " results)");
     });
-    
-    $("#part-results-table").bootstrapTable({
-        sortable: true,
-        search: true,
-        pagination: true,
-        formatNoMatches: function() { return "No parts found matching search query"; },
-        queryParams: function(p) {
-            return {
+
+    loadPartTable("#part-results-table",
+        "{% url 'api-part-list' %}",
+        {
+            query: {
                 search: "{{ query }}",
-            }
-        },
-        columns: [
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
             },
-            {
-                field: 'name',
-                title: 'Name',
-                sortable: true,
-                searchable: true,
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url);
-                }
-            },
-            {
-                field: 'IPN',
-                title: 'Internal Part Number',
-                searchable: true,
-            },
-            {
-                field: 'description',
-                title: 'Description',
-                searchable: true,
-            },
-            {
-                field: 'available_stock',
-                title: 'Stock',
-                formatter: function(value, row, index, field) {
-                    if (value) {
-                        return renderLink(value, row.url + 'stock/');
-                    } else {
-                        return renderLink('No stock', row.url + 'stock/');
-                    }
-                }
-            },
-        ],
-        url: "{% url 'api-part-list' %}"
-    });
-
-
-
+            allowInactive: true,
+        }
+    );
+    
 {% endblock %}

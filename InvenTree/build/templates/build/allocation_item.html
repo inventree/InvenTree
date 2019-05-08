@@ -1,9 +1,23 @@
 {% extends "collapse.html" %}
 
+{% load static %}
 {% load inventree_extras %}
 
 {% block collapse_title %}
-{{ item.sub_part.name }}
+<div>
+    <div class='media-left'>
+        <img class='part-thumb' style='height: auto; width: 48px;'  
+        {% if item.sub_part.image %}
+        src="{{ item.sub_part.image.url }}" alt='{{ item.sub_part.name }}'>
+        {% else %}
+        src="{% static 'img/blank_image.png' %}" alt='No image'>
+        {% endif %}
+    </div>
+    <div class='media-body'>
+        {{ item.sub_part.name }}<br>
+        <small><i>{{ item.sub_part.description }}</i></small>
+    </div>
+</div>
 {% endblock %}
 
 {% block collapse_heading %}

@@ -347,6 +347,7 @@ function loadStockTable(table, options) {
         search: true,
         method: 'get',
         pagination: true,
+        pageSize: 25,
         rememberOrder: true,
         queryParams: options.params,
         columns: [
@@ -365,8 +366,13 @@ function loadStockTable(table, options) {
                 title: 'Part',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, row.part.url);
+                    return imageHoverIcon(row.part.image_url) + renderLink(value, row.part.url);
                 }
+            },
+            {
+                field: 'part.description',
+                title: 'Description',
+                sortable: true,
             },
             {
                 field: 'location',

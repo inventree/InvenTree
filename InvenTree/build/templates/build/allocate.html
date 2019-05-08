@@ -6,17 +6,24 @@
 
 <h3>Allocate Parts for Build</h3>
 
-<h4><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></h4>
-{{ build.quantity }} x {{ build.part.name }}
+<div class='row'>
+    <div class='col-sm-6'>
+        
+        <h4><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></h4>
+        {{ build.quantity }} x {{ build.part.name }}    
+    </div>
+    <div class='col-sm-6'>
+        <div class='btn-group' style='float: right;'>
+                <button class='btn btn-warning' type='button' id='complete-build'>Complete Build</button>
+        </div>
+    </div>
+</div>
 <hr>
 
 {% for bom_item in bom_items.all %}
 {% include "build/allocation_item.html" with item=bom_item build=build collapse_id=bom_item.id %}
 {% endfor %}
 
-<div>
-    <button class='btn btn-warning' type='button' id='complete-build'>Complete Build</button>
-</div>
 
 {% endblock %}
 

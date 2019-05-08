@@ -4,7 +4,15 @@
 
 {% include 'part/tabs.html' with tab='suppliers' %}
 
-<h3>Part Suppliers</h3>
+<div class='row'>
+    <div class='col-sm-6'>
+        <h4>Part Suppliers</h4>
+    </div>
+    <div class='col-sm-6'>
+    </div>
+</div>
+
+<hr>
 
 <div id='button-toolbar'>
     <button class="btn btn-success" id='supplier-create'>New Supplier Part</button>
@@ -55,7 +63,7 @@
                 field: 'supplier_name',
                 title: 'Supplier',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, '/company/' + row.supplier + '/');
+                    return imageHoverIcon(row.supplier_logo) + renderLink(value, '/company/' + row.supplier + '/');
                 }
             },
             {

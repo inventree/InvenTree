@@ -85,7 +85,8 @@
 <tr>
     <th>Part</th>
     <th>Required</th>
-    <th>Stock</th>
+    <th>Available</th>
+    <th>Allocated</th>
 </tr>
 </thead>
 <tbody>
@@ -94,6 +95,7 @@
         <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.name }}</a></td>
         <td>{{ item.quantity }}</td>
         <td>{{ item.part.total_stock }}</td>
+        <td>{{ item.allocated }}</td>
     </tr>
     {% endfor %}
 </tbody>

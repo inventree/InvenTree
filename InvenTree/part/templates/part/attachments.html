@@ -5,11 +5,18 @@
 
 {% include 'part/tabs.html' with tab='attachments' %}
 
-<h4>Attachments</h4>
-
-<div id='toolbar' class='btn-group'>
-    <button type='button' class='btn btn-success' id='new-attachment'>Add Attachment</button>
+<div class='row'>
+    <div class='col-sm-6'>
+        <h4>Part Attachments</h4>
+    </div>
+    <div class='col-sm-6'>
+        <div class="btn-group" style="float: right;">
+                <button type='button' class='btn btn-success' id='new-attachment'>Add Attachment</button>
+        </div>
+    </div>
 </div>
+
+<hr>
 
 <table class='table table-striped table-condensed' data-toolbar='#toolbar' id='attachment-table'>
 <tr>
