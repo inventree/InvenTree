@@ -28,7 +28,7 @@ which performs the following actions:
 Superuser Account
 -----------------
 
-Run ``make supeuser`` to create a superuser account, required for initial system login.
+Run ``make superuser`` to create a superuser account, required for initial system login.
 
 Run Development Server
 ----------------------
