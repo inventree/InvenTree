@@ -13,8 +13,11 @@ function attachSelect(modal) {
      $(modal + ' .select').select2({
         dropdownParent: $(modal),
         // dropdownAutoWidth parameter is required to work properly with modal forms
-        dropdownAutoWidth: true,
+        dropdownAutoWidth: false,
     });
+
+    $(modal + ' .select2-container').addClass('select-full-width');
+    $(modal + ' .select2-container').css('width', '100%');
 }
 
 
