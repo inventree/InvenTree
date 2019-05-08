@@ -113,6 +113,16 @@ function loadBomTable(table, options) {
             sortable: true,
         }
     );
+    
+    // Part notes
+    cols.push(
+        {
+            field: 'note',
+            title: 'Notes',
+            searchable: true,
+            sortable: false,
+        }
+    );
 
     if (options.editable) {
         cols.push({
@@ -124,6 +134,7 @@ function loadBomTable(table, options) {
             }
         });
     }
+
     else {
         cols.push(
         {
@@ -149,16 +160,6 @@ function loadBomTable(table, options) {
         );
     }
     
-    // Part notes
-    cols.push(
-        {
-            field: 'note',
-            title: 'Notes',
-            searchable: true,
-            sortable: false,
-        }
-    );
-
     // Configure the table (bootstrap-table)
     
     table.bootstrapTable({
