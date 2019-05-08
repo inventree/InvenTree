@@ -10,6 +10,11 @@
     color: #ffcc00;
 }
 
+/* CSS overrides for treeview */
+.expand-icon {
+    font-size: 11px;
+}
+
 /* Force select2 elements in modal forms to be full width */
 .select-full-width {
     width: 100%;
