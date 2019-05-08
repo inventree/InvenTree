@@ -21,7 +21,7 @@ from rest_framework import views
 
 
 class TreeSerializer(views.APIView):
-    """ JSON View for serializing a Tree object. 
+    """ JSON View for serializing a Tree object.
 
     Turns a 'tree' model into a JSON object compatible with bootstrap-treview.
 
