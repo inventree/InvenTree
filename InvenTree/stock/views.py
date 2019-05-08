@@ -75,6 +75,24 @@ class StockLocationEdit(AjaxUpdateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Stock Location'
 
+    def get_form(self):
+        """ Customize form data for StockLocation editing.
+
+        Limit the choices for 'parent' field to those which make sense.
+        """
+
+        form = super(AjaxUpdateView, self).get_form()
+
+        location = self.get_object()
+
+        # Remove any invalid choices for the 'parent' field
+        parent_choices = StockLocation.objects.all()
+        parent_choices = parent_choices.exclude(id__in=location.getUniqueChildren())
+
+        form.fields['parent'].queryset = parent_choices
+
+        return form
+
 
 class StockLocationQRCode(QRCodeView):
     """ View for displaying a QR code for a StockLocation object """
