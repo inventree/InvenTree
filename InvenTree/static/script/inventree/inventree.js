@@ -118,3 +118,18 @@ function enableDragAndDrop(element, url, options) {
         }
     });
 }
+
+function imageHoverIcon(url) {
+    /* Render a small thumbnail icon for an image.
+     * On mouseover, display a full-size version of the image
+     */
+
+    var html = `
+        <a class='hover-icon'>
+            <img class='hover-img-thumb' src='` + url + `'>
+            <img class='hover-img-large' src='` + url + `'>
+        </a>
+        `;
+
+    return html;
+}
