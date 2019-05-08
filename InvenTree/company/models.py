@@ -10,6 +10,7 @@ import os
 from django.db import models
 from django.urls import reverse
 from django.conf import settings
+from django.contrib.staticfiles.templatetags.staticfiles import static
 
 
 def rename_company_image(instance, filename):
@@ -85,7 +86,7 @@ class Company(models.Model):
         if self.image:
             return os.path.join(settings.MEDIA_URL, str(self.image.url))
         else:
-            return ''
+            return static('/img/blank_image.png')
 
     @property
     def part_count(self):

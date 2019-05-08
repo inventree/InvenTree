@@ -19,6 +19,7 @@ from django.conf import settings
 from django.db import models
 from django.core.validators import MinValueValidator
 
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -130,7 +131,7 @@ class Part(models.Model):
         if self.image:
             return os.path.join(settings.MEDIA_URL, str(self.image.url))
         else:
-            return ''
+            return static('/img/blank_image.png')
 
     # Short name of the part
     name = models.CharField(max_length=100, unique=True, blank=False, help_text='Part name (must be unique)')
