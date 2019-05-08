@@ -47,6 +47,7 @@ class Build(models.Model):
                                  'buildable': True,
                                  'active': True
                              },
+                             help_text='Select part to build',
                              )
     
     title = models.CharField(
@@ -75,7 +76,8 @@ class Build(models.Model):
 
     status = models.PositiveIntegerField(default=PENDING,
                                          choices=BUILD_STATUS_CODES.items(),
-                                         validators=[MinValueValidator(0)])
+                                         validators=[MinValueValidator(0)],
+                                         help_text='Build status')
     
     batch = models.CharField(max_length=100, blank=True, null=True,
                              help_text='Batch code for this build output')
@@ -92,7 +94,7 @@ class Build(models.Model):
     
     URL = models.URLField(blank=True, help_text='Link to external URL')
 
-    notes = models.TextField(blank=True)
+    notes = models.TextField(blank=True, help_text='Extra build notes')
     """ Notes attached to each build output """
 
     @transaction.atomic

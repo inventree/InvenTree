@@ -207,6 +207,14 @@ class StockItemCreate(AjaxCreateView):
                 parts = form.fields['supplier_part'].queryset
                 parts = parts.filter(part=part.id)
                 form.fields['supplier_part'].queryset = parts
+
+                # If there is one (and only one) supplier part available, pre-select it
+                all_parts = parts.all()
+                if len(all_parts) == 1:
+
+                    # TODO - This does NOT work for some reason? Ref build.views.BuildItemCreate
+                    form.fields['supplier_part'].initial = all_parts[0].id
+
             except Part.DoesNotExist:
                 pass
 
