@@ -366,7 +366,7 @@ function loadStockTable(table, options) {
                 title: 'Part',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.part.image_url) + renderLink(value, row.part.url);
+                    return imageHoverIcon(row.part.image_url) + renderLink(value, row.part.url + 'stock/');
                 }
             },
             {

@@ -4,20 +4,14 @@
 {% load inventree_extras %}
 
 {% block collapse_title %}
-<div>
-    <div class='media-left'>
-        <img class='part-thumb' style='height: auto; width: 48px;'  
-        {% if item.sub_part.image %}
-        src="{{ item.sub_part.image.url }}" alt='{{ item.sub_part.name }}'>
-        {% else %}
-        src="{% static 'img/blank_image.png' %}" alt='No image'>
-        {% endif %}
+    <div class='hover-icon media-left' style='float: left;'>
+        <img class='hover-img-thumb' src="{% if item.sub_part.image %}{{ item.sub_part.image.url }}{% endif %}">
+        <img class='hover-img-large' src="{% if item.sub_part.image %}{{ item.sub_part.image.url }}{% endif %}">
     </div>
-    <div class='media-body'>
+    <div>
         {{ item.sub_part.name }}<br>
         <small><i>{{ item.sub_part.description }}</i></small>
     </div>
-</div>
 {% endblock %}
 
 {% block collapse_heading %}
