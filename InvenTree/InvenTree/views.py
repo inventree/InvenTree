@@ -28,6 +28,15 @@ class TreeSerializer(views.APIView):
     Ref: https://github.com/jonmiles/bootstrap-treeview
     """
 
+    @property
+    def root_url(self):
+        """ Return the root URL for the tree. Implementation is class dependent.
+
+        Default implementation returns #
+        """
+
+        return '#'
+
     def itemToJson(self, item):
 
         data = {
@@ -60,6 +69,7 @@ class TreeSerializer(views.APIView):
 
         top = {
             'text': self.title,
+            'href': self.root_url,
             'nodes': nodes,
             'tags': [top_count],
         }
