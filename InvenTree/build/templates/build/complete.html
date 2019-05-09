@@ -7,7 +7,7 @@ Are you sure you want to mark this build as complete?
 <hr>
 {% if taking %}
 The following items will be removed from stock:
-<ul>
+<ul class='list-group'>
 {% for item in taking %}
     <li>{{ item.quantity }} x {{ item.stock_item.part.name }} from {{ item.stock_item.location }}</li>
 {% endfor %}

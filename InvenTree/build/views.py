@@ -12,7 +12,7 @@ from django.forms import HiddenInput
 
 from part.models import Part
 from .models import Build, BuildItem
-from .forms import EditBuildForm, EditBuildItemForm, CompleteBuildForm
+from .forms import EditBuildForm, EditBuildItemForm, CompleteBuildForm, AutoAllocateBuildForm
 from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView, AjaxDeleteView
@@ -65,6 +65,61 @@ class BuildCancel(AjaxView):
         return {
             'danger': 'Build was cancelled'
         }
+
+
+class BuildAutoAllocate(AjaxUpdateView):
+    """ View to auto-allocate parts for a build.
+    Follows a simple set of rules to automatically allocate StockItem objects.
+
+    Ref: build.models.Build.getAutoAllocations()
+    """
+
+    model = Build
+    form_class = AutoAllocateBuildForm
+    context_object_name = 'build'
+    ajax_form_title = 'Allocate Stock'
+    ajax_template_name = 'build/auto_allocate.html'
+
+    def get_context_data(self, *args, **kwargs):
+        """ Get the context data for form rendering. """
+
+        context = {}
+
+        try:
+            build = Build.objects.get(id=self.kwargs['pk'])
+            context['build'] = build
+            context['allocations'] = build.getAutoAllocations()
+        except Build.DoesNotExist:
+            context['error'] = 'No matching buidl found'
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """ Handle POST request. Perform auto allocations.
+
+        - If the form validation passes, perform allocations
+        - Otherwise, the form is passed back to the client
+        """
+
+        build = self.get_object()
+        form = self.get_form()
+
+        confirm = request.POST.get('confirm', False)
+
+        valid = False
+
+        if confirm is False:
+            form.errors['confirm'] = ['Confirm stock allocation']
+            form.non_field_errors = 'Check the confirmation box at the bottom of the list'
+        else:
+            build.autoAllocate()
+            valid = True
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data, context=self.get_context_data())
 
 
 class BuildComplete(AjaxUpdateView):

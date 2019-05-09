@@ -127,10 +127,10 @@ class Build(models.Model):
         - If there are multiple StockItems available, ignore (leave up to the user)
 
         Returns:
-            A dict object containing the StockItem objects to be allocated (and the quantities)
+            A list object containing the StockItem objects to be allocated (and the quantities)
         """
 
-        allocations = {}
+        allocations = []
 
         for item in self.part.bom_items.all():
 
@@ -151,18 +151,30 @@ class Build(models.Model):
 
                 # Are there any parts available?
                 if stock_item.quantity > 0:
+
                     # Only take as many as are available
                     if stock_item.quantity < q_required:
                         q_required = stock_item.quantity
 
-                    # Add the item to the allocations list
-                    allocations[stock_item] = q_required
+                    allocation = {
+                        'stock_item': stock_item,
+                        'quantity': q_required,
+                    }
+
+                    allocations.append(allocation)
 
         return allocations
 
     @transaction.atomic
     def autoAllocate(self):
         """ Run auto-allocation routine to allocate StockItems to this Build.
+
+        Returns a list of dict objects with keys like:
+
+            {
+                'stock_item': item,
+                'quantity': quantity,
+            }
 
         See: getAutoAllocations()
         """
@@ -173,8 +185,8 @@ class Build(models.Model):
             # Create a new allocation
             build_item = BuildItem(
                 build=self,
-                stock_item=item,
-                quantity=allocations[item])
+                stock_item=item['stock_item'],
+                quantity=item['quantity'])
 
             build_item.save()
 

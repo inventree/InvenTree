@@ -27,6 +27,18 @@ class EditBuildForm(HelperForm):
         ]
 
 
+class AutoAllocateBuildForm(HelperForm):
+    """ Form for auto-allocation of stock to a build """
+
+    confirm = forms.BooleanField(required=False, help_text='Confirm stock allocation')
+
+    class Meta:
+        model = Build
+        fields = [
+            'confirm'
+        ]
+
+
 class CompleteBuildForm(HelperForm):
     """ Form for marking a Build as complete """
 
