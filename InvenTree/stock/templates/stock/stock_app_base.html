@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block page_title %}
+{% if item %}
+InvenTree | Stock Item - {{ item }}
+{% elif location %}
+InvenTree | Stock Location - {{ location }}
+{% else %}
+InvenTree | Stock
+{% endif %}
+{% endblock %}
+
 {% block sidenav %}
 <div id='stock-tree'></div>
 {% endblock %}
