@@ -14,6 +14,7 @@ from rest_framework import generics, permissions
 
 from django.db.models import Q
 from django.conf.urls import url, include
+from django.urls import reverse
 
 from .models import Part, PartCategory, BomItem, PartStar
 from .models import SupplierPart, SupplierPriceBreak
@@ -30,6 +31,10 @@ class PartCategoryTree(TreeSerializer):
 
     title = "Parts"
     model = PartCategory
+    
+    @property
+    def root_url(self):
+        return reverse('part-index')
 
 
 class CategoryList(generics.ListCreateAPIView):

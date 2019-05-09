@@ -33,7 +33,12 @@ InvenTree | Stock
     initSideNav();
 {{ block.super }}
     loadTree("{% url 'api-stock-tree' %}",
-             "#stock-tree");
+            "#stock-tree",
+            {
+                name: 'stock',
+                selected: 'elab',
+            }
+    );
 
     $("#toggle-stock-tree").click(function() {
         toggleSideNav("#sidenav");

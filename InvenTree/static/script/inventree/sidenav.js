@@ -1,4 +1,26 @@
-function loadTree(url, tree, data) {
+function loadTree(url, tree, options={}) {
+    /* Load the side-nav tree view
+
+    Args:
+        url: URL to request tree data
+        tree: html ref to treeview
+        options:
+            data: data object to pass to the AJAX request
+            selected: ID of currently selected item
+            name: name of the tree
+    */
+
+    var data = {};
+
+    if (options.data) {
+        data = options.data;
+    }
+
+    var key = "inventree-sidenav-items-";
+
+    if (options.name) {
+        key += options.name;
+    }
 
     $.ajax({
         url: url,
@@ -9,14 +31,17 @@ function loadTree(url, tree, data) {
             if (response.tree) {
                 $(tree).treeview({
                     data: response.tree,
-                    enableLinks: true
+                    enableLinks: true,
+                    showTags: true,
                 });
 
-                var saved_exp = sessionStorage.getItem('inventree-sidenav-expanded-items').split(",");
+                if (sessionStorage.getItem(key)) {
+                    var saved_exp = sessionStorage.getItem(key).split(",");
 
-                // Automatically expand the desired notes
-                for (var q = 0; q < saved_exp.length; q++) {
-                    $(tree).treeview('expandNode', parseInt(saved_exp[q]));
+                    // Automatically expand the desired notes
+                    for (var q = 0; q < saved_exp.length; q++) {
+                        $(tree).treeview('expandNode', parseInt(saved_exp[q]));
+                    }
                 }
 
                 // Setup a callback whenever a node is toggled
@@ -32,7 +57,7 @@ function loadTree(url, tree, data) {
                     }
 
                     // Save the expanded nodes
-                    sessionStorage.setItem('inventree-sidenav-expanded-items', exp);
+                    sessionStorage.setItem(key, exp);
                 });
             }
         },
@@ -43,6 +68,7 @@ function loadTree(url, tree, data) {
 }
 
 function openSideNav() {
+    document.getElementById("sidenav").style.display = "block";
     document.getElementById("sidenav").style.width = "250px";
     document.getElementById("inventree-content").style.marginLeft = "270px";
 
@@ -52,8 +78,9 @@ function openSideNav() {
 }
 
 function closeSideNav() {
+    document.getElementById("sidenav").style.display = "none";
     document.getElementById("sidenav").style.width = "0";
-    document.getElementById("inventree-content").style.marginLeft = "50px";
+    document.getElementById("inventree-content").style.marginLeft = "0px";
 
     sessionStorage.setItem('inventree-sidenav-state', 'closed');
 }

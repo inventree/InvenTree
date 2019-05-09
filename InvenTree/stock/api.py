@@ -6,6 +6,7 @@ from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
 from django.conf.urls import url, include
+from django.urls import reverse
 from django.db.models import Q
 
 from .models import StockLocation, StockItem
@@ -26,6 +27,10 @@ from rest_framework import generics, response, filters, permissions
 class StockCategoryTree(TreeSerializer):
     title = 'Stock'
     model = StockLocation
+
+    @property
+    def root_url(self):
+        return reverse('stock-index')
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
