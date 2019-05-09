@@ -52,24 +52,33 @@ InvenTree
 
 <div class='main body wrapper'>
 
+<div class='inventree-body'>
+
+<div class='containter-fluid inventree-pre-content'>    
+    {% block pre_content %}
+    {% endblock %}
+</div>
+
 <div class='sidenav' id='sidenav'>
 {% block sidenav %}
 {% endblock %}
 </div>
-
+    
 <div class="container container-fluid inventree-content" id='inventree-content'>
-{% block pre_content %}
-{% endblock %}
 {% block content %}
 <!-- Each view fills in here.. -->
 {% endblock %}
+
 {% block post_content %}
 {% endblock %}
+
 </div>
 
 {% include 'modals.html' %}
 {% include 'about.html' %}
 {% include 'notification.html' %}
+</div>
+
 </div>
 
 <!-- Scripts -->

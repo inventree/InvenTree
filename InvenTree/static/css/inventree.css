@@ -19,6 +19,14 @@
     font-size: 11px;
 }
 
+.treeview .badge {
+    font-size: 10px;
+}
+
+.treeview .list-group-item {
+    padding: 6px 12px;
+}
+
 /* Force select2 elements in modal forms to be full width */
 .select-full-width {
     width: 100%;
@@ -113,13 +121,26 @@
 .navigation {
 }
 
+.breadcrump {
+    margin-bottom: 5px;
+}
+
+.inventree-body {
+    width: 100%;
+    padding: 5px;
+    margin: 10px;
+}
+
+.inventree-pre-content {
+    width: 100%;
+    clear: both;
+}
+
 .inventree-content {
     padding-left: 5px;
     padding-right: 5px;
-    padding-top: 15px;
-    margin-right: 50px;
-    margin-left: 50px;
-    width: 100%;
+    padding-top: 5px;
+    width: auto;
     transition: 0.1s;
 }
 
@@ -165,7 +186,7 @@
     position: fixed; /* Stay in place */
     background-color: #fff; /* Black*/
     overflow-x: hidden; /* Disable horizontal scroll */
-    //transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
+    transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
 }
 
 .wrapper {
