@@ -284,14 +284,38 @@ class StockItem(models.Model):
             msg += " (from {loc})".format(loc=str(self.location))
 
         self.location = location
-        self.save()
 
         self.addTransactionNote(msg,
                                   user,
                                   notes=notes,
                                   system=True)
 
+        self.save()
+
         return True
+
+    @transaction.atomic
+    def updateQuantity(self, quantity):
+        """ Update stock quantity for this item. 
+
+        If the quantity has reached zero, this StockItem will be deleted.
+
+        Returns:
+            - True if the quantity was saved
+            - False if the StockItem was deleted
+        """
+
+        if quantity < 0:
+            quantity = 0
+
+        self.quantity = quantity
+
+        if quantity <= 0 and self.delete_on_deplete:
+            self.delete()
+            return False
+        else:
+            self.save()
+            return True
 
     @transaction.atomic
     def stocktake(self, count, user, notes=''):
@@ -305,15 +329,15 @@ class StockItem(models.Model):
         if count < 0 or self.infinite:
             return False
 
-        self.quantity = count
         self.stocktake_date = datetime.now().date()
         self.stocktake_user = user
-        self.save()
 
-        self.addTransactionNote('Stocktake - counted {n} items'.format(n=count),
-                                  user,
-                                  notes=notes,
-                                  system=True)
+        if self.updateQuantity(count):
+
+            self.addTransactionNote('Stocktake - counted {n} items'.format(n=count),
+                                    user,
+                                    notes=notes,
+                                    system=True)
 
         return True
 
@@ -330,14 +354,12 @@ class StockItem(models.Model):
         if quantity <= 0 or self.infinite:
             return False
 
-        self.quantity += quantity
-
-        self.save()
-
-        self.addTransactionNote('Added {n} items to stock'.format(n=quantity),
-                                  user,
-                                  notes=notes,
-                                  system=True)
+        if self.updateQuantity(self.quantity + quantity):
+            
+            self.addTransactionNote('Added {n} items to stock'.format(n=quantity),
+                                    user,
+                                    notes=notes,
+                                    system=True)
 
         return True
 
@@ -354,17 +376,12 @@ class StockItem(models.Model):
         if quantity <= 0 or self.infinite:
             return False
 
-        self.quantity -= quantity
+        if self.updateQuantity(self.quantity - quantity):
 
-        if self.quantity < 0:
-            self.quantity = 0
-
-        self.save()
-
-        self.addTransactionNote('Removed {n} items from stock'.format(n=quantity),
-                                  user,
-                                  notes=notes,
-                                  system=True)
+            self.addTransactionNote('Removed {n} items from stock'.format(n=quantity),
+                                    user,
+                                    notes=notes,
+                                    system=True)
 
         return True
 
