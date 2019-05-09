@@ -293,6 +293,8 @@ function moveStockItems(items, options) {
             //modalSetContent(modal, html);
             attachSelect(modal);
 
+            modalEnable(modal, true);
+
             $(modal).find('#note-warning').hide();
 
             modalSubmit(modal, function() {
