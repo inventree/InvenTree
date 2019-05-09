@@ -32,13 +32,10 @@ class CreateStockItemForm(HelperForm):
             'part',
             'supplier_part',
             'location',
-            'belongs_to',
-            'serial',
             'batch',
             'quantity',
             'status',
             'notes',
-            # 'customer',
             'URL',
         ]
 
@@ -67,7 +64,13 @@ class StocktakeForm(forms.ModelForm):
 
 
 class EditStockItemForm(HelperForm):
-    """ Form for editing a StockItem object """
+    """ Form for editing a StockItem object.
+    Note that not all fields can be edited here (even if they can be specified during creation.
+    
+    location - Must be updated in a 'move' transaction
+    quantity - Must be updated in a 'stocktake' transaction
+    part - Cannot be edited after creation
+    """
 
     class Meta:
         model = StockItem
