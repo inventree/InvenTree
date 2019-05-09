@@ -17,12 +17,15 @@ InvenTree | Build - {{ build }}
     <h3>
     <div style='float: right;'>
     <div class="dropdown" style="float: right;">
+        <a href="{% url 'build-allocate' build.id %}">
+            <button class='btn btn-info' type='button' title='Allocate Parts' id='build-allocate'>Allocate Parts</button>
+        </a>
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
         <span class="caret"></span></button>
         <ul class="dropdown-menu">
           <li><a href='#' id='build-edit' title='Edit build'>Edit build</a></li>
           {% if build.is_active %}
-          <li><a href="{% url 'build-allocate' build.id %}" title='Allocate parts'>Allocate Parts</a></li>
+          <li><a href='#' id='build-complete' title='Complete Build'>Complete Build</a></li>
           <li><a href='#' id='build-cancel' title='Cancel build'>Cancel build</a></li>
           {% endif %}
         </ul>
@@ -127,4 +130,15 @@ InvenTree | Build - {{ build }}
                             submit_text: "Cancel Build",
                         });
     });
+
+    $("#build-complete").on('click', function() {
+        launchModalForm(
+            "{% url 'build-complete' build.id %}",
+            {
+                reload: true,
+                submit_text: "Complete Build",
+            }
+        );
+    });
+
 {% endblock %}

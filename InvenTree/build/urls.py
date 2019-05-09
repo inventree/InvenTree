@@ -21,6 +21,8 @@ build_detail_urls = [
     url(r'^allocate/?', views.BuildAllocate.as_view(), name='build-allocate'),
     url(r'^cancel/?', views.BuildCancel.as_view(), name='build-cancel'),
     url(r'^complete/?', views.BuildComplete.as_view(), name='build-complete'),
+    url(r'^auto-allocate/?', views.BuildAutoAllocate.as_view(), name='build-auto-allocate'),
+    url(r'^unallocate/', views.BuildUnallocate.as_view(), name='build-unallocate'),
 
     url(r'^.*$', views.BuildDetail.as_view(), name='build-detail'),
 ]

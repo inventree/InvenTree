@@ -3,9 +3,9 @@
 # InvenTree 
 InvenTree is an open-source Inventory Management System which provides powerful low-level stock control and part tracking. The core of the InvenTree system is a Python/Django database backend which provides an admin interface (web-based) and a JSON API for interaction with external interfaces and applications.
 
-InvenTree is designed to be lightweight and easy to use for SME or hobbyist applications, where many existing stock management solutions are bloated and cumbersome to use. Updating stock is a single-action procses and does not require a complex system of work orders or stock transactions. 
+InvenTree is designed to be lightweight and easy to use for SME or hobbyist applications, where many existing stock management solutions are bloated and cumbersome to use. Updating stock is a single-action process and does not require a complex system of work orders or stock transactions. 
 
-However, complex business logic works in the background to ensure that stock tracking history is maintained, and users have ready access to stock level information.
+However, powerful business logic works in the background to ensure that stock tracking history is maintained, and users have ready access to stock level information.
 
 ## User Documentation
 
