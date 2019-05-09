@@ -30,6 +30,7 @@
     background: #eee;
     width: 28px;
     height: 28px;
+    object-fit: contain;
     border: 1px solid #cce;
 }
 
@@ -85,10 +86,10 @@
 }
 
 .part-thumb {
-    width: 150px;
-    height: 150px;
-    margin: 5px;
-    padding: 5px;
+    width: 200px;
+    height: 200px;
+    margin: 2px;
+    padding: 3px;
     object-fit: contain;
 }
 
@@ -110,7 +111,6 @@
 }
 
 .navigation {
-    padding-left: 15px;
 }
 
 .inventree-content {
@@ -197,6 +197,10 @@
 .btn {
     margin-left: 2px;
     margin-right: 2px;
+}
+
+.button-toolbar {
+    padding-left: 0px;
 }
 
 .panel-group {
