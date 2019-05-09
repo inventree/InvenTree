@@ -33,6 +33,7 @@ class TreeSerializer(views.APIView):
         data = {
             'text': item.name,
             'href': item.get_absolute_url(),
+            'tags': [item.item_count],
         }
 
         if item.has_children:
@@ -51,12 +52,16 @@ class TreeSerializer(views.APIView):
 
         nodes = []
 
+        top_count = 0
+
         for item in top_items:
             nodes.append(self.itemToJson(item))
+            top_count += item.item_count
 
         top = {
             'text': self.title,
             'nodes': nodes,
+            'tags': [top_count],
         }
 
         response = {

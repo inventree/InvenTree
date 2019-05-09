@@ -48,6 +48,18 @@ class StockLocation(InvenTreeTree):
             }
         )
 
+    @property
+    def stock_item_count(self):
+        """ Return the number of StockItem objects which live in or under this category
+        """
+
+        return len(StockItem.objects.filter(location__in=self.getUniqueChildren()))
+
+    @property
+    def item_count(self):
+
+        return self.stock_item_count
+
 
 @receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')
 def before_delete_stock_location(sender, instance, using, **kwargs):

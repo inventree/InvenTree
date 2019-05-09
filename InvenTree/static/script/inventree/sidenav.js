@@ -9,7 +9,8 @@ function loadTree(url, tree, data) {
             if (response.tree) {
                 $(tree).treeview({
                     data: response.tree,
-                    enableLinks: true
+                    enableLinks: true,
+                    showTags: true,
                 });
 
                 var saved_exp = sessionStorage.getItem('inventree-sidenav-expanded-items').split(",");

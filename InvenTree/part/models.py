@@ -48,17 +48,16 @@ class PartCategory(InvenTreeTree):
         verbose_name_plural = "Part Categories"
 
     @property
+    def item_count(self):
+        return self.partcount
+
+    @property
     def partcount(self):
         """ Return the total part count under this category
         (including children of child categories)
         """
 
-        count = self.parts.count()
-
-        for child in self.children.all():
-            count += child.partcount
-
-        return count
+        return len(Part.objects.filter(category__in=self.getUniqueChildren()))
 
     @property
     def has_parts(self):

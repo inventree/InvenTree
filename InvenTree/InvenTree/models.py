@@ -41,6 +41,17 @@ class InvenTreeTree(models.Model):
                                null=True,
                                related_name='children')
 
+    @property
+    def item_count(self):
+        """ Return the number of items which exist *under* this node in the tree.
+
+        Here an 'item' is considered to be the 'leaf' at the end of each branch,
+        and the exact nature here will depend on the class implementation.
+        
+        The default implementation returns zero
+        """
+        return 0
+
     def getUniqueParents(self, unique=None):
         """ Return a flat set of all parent items that exist above this node.
         If any parents are repeated (which would be very bad!), the process is halted
