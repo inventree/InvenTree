@@ -40,6 +40,7 @@ class TreeSerializer(views.APIView):
     def itemToJson(self, item):
 
         data = {
+            'pk': item.id,
             'text': item.name,
             'href': item.get_absolute_url(),
             'tags': [item.item_count],
@@ -68,6 +69,7 @@ class TreeSerializer(views.APIView):
             top_count += item.item_count
 
         top = {
+            'pk': None,
             'text': self.title,
             'href': self.root_url,
             'nodes': nodes,
