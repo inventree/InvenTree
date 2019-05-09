@@ -68,6 +68,7 @@ function loadTree(url, tree, options={}) {
 }
 
 function openSideNav() {
+    document.getElementById("sidenav").style.display = "block";
     document.getElementById("sidenav").style.width = "250px";
     document.getElementById("inventree-content").style.marginLeft = "270px";
 
@@ -77,8 +78,9 @@ function openSideNav() {
 }
 
 function closeSideNav() {
+    document.getElementById("sidenav").style.display = "none";
     document.getElementById("sidenav").style.width = "0";
-    document.getElementById("inventree-content").style.marginLeft = "50px";
+    document.getElementById("inventree-content").style.marginLeft = "0px";
 
     sessionStorage.setItem('inventree-sidenav-state', 'closed');
 }
