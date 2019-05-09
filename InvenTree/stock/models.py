@@ -81,7 +81,7 @@ class StockItem(models.Model):
 
         if add_note:
             # This StockItem is being saved for the first time
-            self.add_transaction_note(
+            self.addTransactionNote(
                 'Created stock item',
                 None,
                 notes="Created new stock item for part '{p}'".format(p=str(self.part)),
@@ -209,6 +209,8 @@ class StockItem(models.Model):
 
     review_needed = models.BooleanField(default=False)
 
+    delete_on_deplete = models.BooleanField(default=True, help_text='Delete this Stock Item when stock is depleted')
+
     ITEM_OK = 10
     ITEM_ATTENTION = 50
     ITEM_DAMAGED = 55
@@ -249,7 +251,11 @@ class StockItem(models.Model):
     def has_tracking_info(self):
         return self.tracking_info.count() > 0
 
-    def add_transaction_note(self, title, user, notes='', system=True):
+    def addTransactionNote(self, title, user, notes='', system=True):
+        """ Generation a stock transaction note for this item.
+
+        Brief automated note detailing a movement or quantity change.
+        """
         track = StockItemTracking.objects.create(
             item=self,
             title=title,
@@ -280,7 +286,7 @@ class StockItem(models.Model):
         self.location = location
         self.save()
 
-        self.add_transaction_note(msg,
+        self.addTransactionNote(msg,
                                   user,
                                   notes=notes,
                                   system=True)
@@ -304,7 +310,7 @@ class StockItem(models.Model):
         self.stocktake_user = user
         self.save()
 
-        self.add_transaction_note('Stocktake - counted {n} items'.format(n=count),
+        self.addTransactionNote('Stocktake - counted {n} items'.format(n=count),
                                   user,
                                   notes=notes,
                                   system=True)
@@ -328,7 +334,7 @@ class StockItem(models.Model):
 
         self.save()
 
-        self.add_transaction_note('Added {n} items to stock'.format(n=quantity),
+        self.addTransactionNote('Added {n} items to stock'.format(n=quantity),
                                   user,
                                   notes=notes,
                                   system=True)
@@ -355,7 +361,7 @@ class StockItem(models.Model):
 
         self.save()
 
-        self.add_transaction_note('Removed {n} items from stock'.format(n=quantity),
+        self.addTransactionNote('Removed {n} items from stock'.format(n=quantity),
                                   user,
                                   notes=notes,
                                   system=True)
