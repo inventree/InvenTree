@@ -284,7 +284,7 @@ class Part(models.Model):
 
         # If this part does NOT have a BOM, result is simply the currently available stock
         if not self.has_bom:
-            return self.available_stock
+            return 0
 
         total = None
 
