@@ -87,8 +87,8 @@
 .part-thumb {
     width: 200px;
     height: 200px;
-    margin: 5px;
-    padding: 5px;
+    margin: 2px;
+    padding: 3px;
     object-fit: contain;
 }
 
