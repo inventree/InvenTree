@@ -143,9 +143,13 @@ class StockItemEdit(AjaxUpdateView):
 
         item = self.get_object()
 
-        query = form.fields['supplier_part'].queryset
-        query = query.filter(part=item.part.id)
-        form.fields['supplier_part'].queryset = query
+        # If the part cannot be purchased, hide the supplier_part field
+        if not item.part.purchaseable:
+            form.fields['supplier_part'].widget = HiddenInput()
+        else:
+            query = form.fields['supplier_part'].queryset
+            query = query.filter(part=item.part.id)
+            form.fields['supplier_part'].queryset = query
 
         return form
 
@@ -206,6 +210,11 @@ class StockItemCreate(AjaxCreateView):
                 part = Part.objects.get(id=part_id)
                 parts = form.fields['supplier_part'].queryset
                 parts = parts.filter(part=part.id)
+
+                # If the part is NOT purchaseable, hide the supplier_part field
+                if not part.purchaseable:
+                    form.fields['supplier_part'].widget = HiddenInput()
+
                 form.fields['supplier_part'].queryset = parts
 
                 # If there is one (and only one) supplier part available, pre-select it
