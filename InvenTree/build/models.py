@@ -166,6 +166,12 @@ class Build(models.Model):
         return allocations
 
     @transaction.atomic
+    def unallocateStock(self):
+        """ Deletes all stock allocations for this build. """
+
+        BuildItem.objects.filter(build=self.id).delete()
+
+    @transaction.atomic
     def autoAllocate(self):
         """ Run auto-allocation routine to allocate StockItems to this Build.
 

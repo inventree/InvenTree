@@ -27,10 +27,10 @@ class EditBuildForm(HelperForm):
         ]
 
 
-class AutoAllocateBuildForm(HelperForm):
+class ConfirmBuildForm(HelperForm):
     """ Form for auto-allocation of stock to a build """
 
-    confirm = forms.BooleanField(required=False, help_text='Confirm stock allocation')
+    confirm = forms.BooleanField(required=False, help_text='Confirm')
 
     class Meta:
         model = Build

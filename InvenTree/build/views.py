@@ -12,7 +12,7 @@ from django.forms import HiddenInput
 
 from part.models import Part
 from .models import Build, BuildItem
-from .forms import EditBuildForm, EditBuildItemForm, CompleteBuildForm, AutoAllocateBuildForm
+from . import forms
 from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView, AjaxDeleteView
@@ -75,7 +75,7 @@ class BuildAutoAllocate(AjaxUpdateView):
     """
 
     model = Build
-    form_class = AutoAllocateBuildForm
+    form_class = forms.ConfirmBuildForm
     context_object_name = 'build'
     ajax_form_title = 'Allocate Stock'
     ajax_template_name = 'build/auto_allocate.html'
@@ -122,6 +122,40 @@ class BuildAutoAllocate(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context=self.get_context_data())
 
 
+class BuildUnallocate(AjaxUpdateView):
+    """ View to un-allocate all parts from a build.
+
+    Provides a simple confirmation dialog with a BooleanField checkbox.
+    """
+
+    model = Build
+    form_class = forms.ConfirmBuildForm
+    ajax_form_title = "Unallocate Stock"
+    ajax_template_name = "build/unallocate.html"
+
+    def post(self, request, *args, **kwargs):
+
+        build = self.get_object()
+        form = self.get_form()
+        
+        confirm = request.POST.get('confirm', False)
+
+        valid = False
+
+        if confirm is False:
+            form.errors['confirm'] = ['Confirm unallocation of build stock']
+            form.non_field_errors = 'Check the confirmation box'
+        else:
+            build.unallocateStock()
+            valid = True
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data)
+
+
 class BuildComplete(AjaxUpdateView):
     """ View to mark a build as Complete.
 
@@ -131,7 +165,7 @@ class BuildComplete(AjaxUpdateView):
     """
 
     model = Build
-    form_class = CompleteBuildForm
+    form_class = forms.CompleteBuildForm
     context_object_name = "build"
     ajax_form_title = "Complete Build"
     ajax_template_name = "build/complete.html"
@@ -248,7 +282,7 @@ class BuildCreate(AjaxCreateView):
     """ View to create a new Build object """
     model = Build
     context_object_name = 'build'
-    form_class = EditBuildForm
+    form_class = forms.EditBuildForm
     ajax_form_title = 'Start new Build'
     ajax_template_name = 'modal_form.html'
 
@@ -280,7 +314,7 @@ class BuildUpdate(AjaxUpdateView):
     """ View for editing a Build object """
     
     model = Build
-    form_class = EditBuildForm
+    form_class = forms.EditBuildForm
     context_object_name = 'build'
     ajax_form_title = 'Edit Build Details'
     ajax_template_name = 'modal_form.html'
@@ -311,7 +345,7 @@ class BuildItemCreate(AjaxCreateView):
     """ View for allocating a new part to a build """
 
     model = BuildItem
-    form_class = EditBuildItemForm
+    form_class = forms.EditBuildItemForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Allocate new Part'
 
@@ -397,7 +431,7 @@ class BuildItemEdit(AjaxUpdateView):
 
     model = BuildItem
     ajax_template_name = 'modal_form.html'
-    form_class = EditBuildItemForm
+    form_class = forms.EditBuildItemForm
     ajax_form_title = 'Edit Stock Allocation'
 
     def get_data(self):

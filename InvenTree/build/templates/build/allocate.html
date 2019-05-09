@@ -19,7 +19,8 @@ InvenTree | Allocate Parts
     <div class='col-sm-6'>
         <div class='btn-group' style='float: right;'>
                 <button class='btn btn-primary' type='button' title='Automatic allocation' id='auto-allocate-build'>Auto Allocate</button>
-                <button class='btn btn-warning' type='button' title='Complete build' id='complete-build'>Complete Build</button>
+                <button class='btn btn-warning' type='button' title='Unallocate build stock' id='unallocate-build'>Unallocate</button>
+                <button class='btn btn-success' type='button' title='Complete build' id='complete-build'>Complete Build</button>
         </div>
     </div>
 </div>
@@ -68,6 +69,15 @@ InvenTree | Allocate Parts
     $("#auto-allocate-build").on('click', function() {
         launchModalForm(
             "{% url 'build-auto-allocate' build.id %}",
+            {
+                reload: true,
+            }
+        );
+    });
+
+    $('#unallocate-build').on('click', function() {
+        launchModalForm(
+            "{% url 'build-unallocate' build.id %}",
             {
                 reload: true,
             }
