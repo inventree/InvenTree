@@ -199,6 +199,10 @@
     margin-right: 2px;
 }
 
+.button-toolbar {
+    padding-left: 0px;
+}
+
 .panel-group {
     margin-bottom: 5px;
 }
