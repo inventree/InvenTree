@@ -57,7 +57,8 @@ class PartCategory(InvenTreeTree):
         (including children of child categories)
         """
 
-        return len(Part.objects.filter(category__in=self.getUniqueChildren()))
+        return len(Part.objects.filter(category__in=self.getUniqueChildren(),
+                                       active=True))
 
     @property
     def has_parts(self):

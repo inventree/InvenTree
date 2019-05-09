@@ -19,6 +19,14 @@
     font-size: 11px;
 }
 
+.treeview .badge {
+    font-size: 10px;
+}
+
+.treeview .list-group-item {
+    padding: 6px 12px;
+}
+
 /* Force select2 elements in modal forms to be full width */
 .select-full-width {
     width: 100%;
