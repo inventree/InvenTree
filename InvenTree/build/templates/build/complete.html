@@ -7,18 +7,42 @@ Are you sure you want to mark this build as complete?
 <hr>
 {% if taking %}
 The following items will be removed from stock:
-<ul class='list-group'>
+
+<table class='table table-striped table-condensed'>
+<tr>
+    <th></th>
+    <th>Part</th>
+    <th>Quantity</th>
+    <th>Location</th>
+</tr>
 {% for item in taking %}
-    <li>{{ item.quantity }} x {{ item.stock_item.part.name }} from {{ item.stock_item.location }}</li>
+<tr>
+    <td>
+        <a class='hover-icon'>
+            <img class='hover-img-thumb' src='{{ item.stock_item.part.image.url }}'>
+            <img class='hover-img-large' src='{{ item.stock_item.part.image.url }}'>
+        </a>
+    </td>
+    <td>
+        {{ item.stock_item.part.name }}<br>
+        <i>{{ item.stock_item.part.description }}</i>
+    </td>
+    <td>{{ item.quantity }}</td>
+    <td>{{ item.stock_item.location }}</td>
+</tr>
 {% endfor %}
-</ul>
+</table>
 {% else %}
 No parts have been allocated to this build.
 {% endif %}
 <hr>
 The following items will be created:
-<ul>
-    <li>{{ build.quantity }} x {{ build.part.name }}</li>
-</ul>
+<div class='panel panel-default'>
+    <a class='hover-icon'>
+        <img class='hover-img-thumb' src='{{ build.part.image.url }}'>
+        <img class='hover-img-large' src='{{ build.part.image.url }}'>
+    </a>
+    {{ build.quantity }} x {{ build.part.name }}
+</div>
 
 {% endblock %}
