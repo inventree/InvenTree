@@ -34,6 +34,7 @@ class CreateStockItemForm(HelperForm):
             'location',
             'batch',
             'quantity',
+            'delete_on_deplete',
             'status',
             'notes',
             'URL',
@@ -78,6 +79,7 @@ class EditStockItemForm(HelperForm):
         fields = [
             'supplier_part',
             'batch',
+            'delete_on_deplete',
             'status',
             'notes',
             'URL',
