@@ -286,9 +286,9 @@ class StockItem(models.Model):
         self.location = location
 
         self.addTransactionNote(msg,
-                                  user,
-                                  notes=notes,
-                                  system=True)
+                                user,
+                                notes=notes,
+                                system=True)
 
         self.save()
 
@@ -296,8 +296,8 @@ class StockItem(models.Model):
 
     @transaction.atomic
     def updateQuantity(self, quantity):
-        """ Update stock quantity for this item. 
-
+        """ Update stock quantity for this item.
+        
         If the quantity has reached zero, this StockItem will be deleted.
 
         Returns:
