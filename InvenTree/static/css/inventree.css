@@ -30,6 +30,7 @@
     background: #eee;
     width: 28px;
     height: 28px;
+    object-fit: contain;
     border: 1px solid #cce;
 }
 
