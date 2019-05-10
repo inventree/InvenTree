@@ -281,7 +281,64 @@ class StockItem(models.Model):
         track.save()
 
     @transaction.atomic
-    def move(self, location, notes, user):
+    def splitStock(self, quantity, user):
+        """ Split this stock item into two items, in the same location.
+        Stock tracking notes for this StockItem will be duplicated,
+        and added to the new StockItem.
+
+        Args:
+            quantity: Number of stock items to remove from this entity, and pass to the next
+
+        Notes:
+            The provided quantity will be subtracted from this item and given to the new one.
+            The new item will have a different StockItem ID, while this will remain the same.
+        """
+
+        # Doesn't make sense for a zero quantity
+        if quantity <= 0:
+            return
+
+        # Also doesn't make sense to split the full amount
+        if quantity >= self.quantity:
+            return
+
+        # Create a new StockItem object, duplicating relevant fields
+        new_stock = StockItem.objects.create(
+            part=self.part,
+            quantity=quantity,
+            supplier_part=self.supplier_part,
+            location=self.location,
+            batch=self.batch,
+            delete_on_deplete=self.delete_on_deplete
+        )
+
+        new_stock.save()
+
+        # Add a new tracking item for the new stock item
+        new_stock.addTransactionNote(
+            "Split from existing stock",
+            user,
+            "Split {n} from existing stock item".format(n=quantity))
+
+        # Remove the specified quantity from THIS stock item
+        self.take_stock(quantity, user, 'Split {n} items into new stock item'.format(n=quantity))
+
+    @transaction.atomic
+    def move(self, location, notes, user, **kwargs):
+        """ Move part to a new location.
+
+        Args:
+            location: Destination location (cannot be null)
+            notes: User notes
+            user: Who is performing the move
+            kwargs:
+                quantity: If provided, override the quantity (default = total stock quantity)
+        """
+
+        quantity = int(kwargs.get('quantity', self.quantity))
+
+        if quantity <= 0:
+            return False
 
         if location is None:
             # TODO - Raise appropriate error (cannot move to blank location)
@@ -289,6 +346,13 @@ class StockItem(models.Model):
         elif self.location and (location.pk == self.location.pk):
             # TODO - Raise appropriate error (cannot move to same location)
             return False
+
+        # Test for a partial movement
+        if quantity < self.quantity:
+            # We need to split the stock!
+
+            # Leave behind certain quantity
+            self.splitStock(self.quantity - quantity, user)
 
         msg = "Moved to {loc}".format(loc=str(location))
 

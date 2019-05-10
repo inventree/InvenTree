@@ -151,46 +151,50 @@ class StockMove(APIView):
 
         data = request.data
 
-        if u'location' not in data:
+        if 'location' not in data:
             raise ValidationError({'location': 'Destination must be specified'})
 
-        loc_id = data.get(u'location')
+        try:
+            loc_id = int(data.get('location'))
+        except ValueError:
+            raise ValidationError({'location': 'Integer ID required'})
 
         try:
             location = StockLocation.objects.get(pk=loc_id)
         except StockLocation.DoesNotExist:
             raise ValidationError({'location': 'Location does not exist'})
 
-        if u'parts[]' not in data:
-            raise ValidationError({'parts[]': 'Parts list must be specified'})
+        if 'stock' not in data:
+            raise ValidationError({'stock': 'Stock list must be specified'})
+        
+        stock_list = data.get('stock')
 
-        part_list = data.get(u'parts[]')
+        if type(stock_list) is not list:
+            raise ValidationError({'stock': 'Stock must be supplied as a list'})
 
-        parts = []
+        if 'notes' not in data:
+            raise ValidationError({'notes': 'Notes field must be supplied'})
 
-        errors = []
-
-        if u'notes' not in data:
-            errors.append({'notes': 'Notes field must be supplied'})
-
-        for pid in part_list:
+        for item in stock_list:
             try:
-                part = StockItem.objects.get(pk=pid)
-                parts.append(part)
+                stock_id = int(item['pk'])
+                quantity = int(item['quantity'])
+            except ValueError:
+                # Ignore this one
+                continue
+
+            # Ignore a zero quantity movement
+            if quantity <= 0:
+                continue
+
+            try:
+                stock = StockItem.objects.get(pk=stock_id)
             except StockItem.DoesNotExist:
-                errors.append({'part': 'Part {id} does not exist'.format(id=pid)})
+                continue
 
-        if len(errors) > 0:
-            raise ValidationError(errors)
+            stock.move(location, data.get('notes'), request.user, quantity=quantity)
 
-        n = 0
-
-        for part in parts:
-            if part.move(location, data.get('notes'), request.user):
-                n += 1
-
-        return Response({'success': 'Moved {n} parts to {loc}'.format(
-            n=n,
+        return Response({'success': 'Moved parts to {loc}'.format(
             loc=str(location)
         )})
 
