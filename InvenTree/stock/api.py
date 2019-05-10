@@ -151,7 +151,7 @@ class StockMove(APIView):
 
         data = request.data
 
-        if u'location' not in data:
+        if 'location' not in data:
             raise ValidationError({'location': 'Destination must be specified'})
 
         loc_id = data.get(u'location')
@@ -161,18 +161,34 @@ class StockMove(APIView):
         except StockLocation.DoesNotExist:
             raise ValidationError({'location': 'Location does not exist'})
 
-        if u'parts[]' not in data:
-            raise ValidationError({'parts[]': 'Parts list must be specified'})
+        if 'stock' not in data:
+            raise ValidationError({'stock': 'Stock list must be specified'})
+        
+        stock_list = data.get('stock')
 
-        part_list = data.get(u'parts[]')
+        if type(stock_list) is not list:
+            raise ValidationError({'stock': 'Stock must be supplied as a list'})
+
+        if 'notes' not in data:
+            raise ValidationError({'notes': 'Notes field must be supplied'})
 
         parts = []
 
         errors = []
 
-        if u'notes' not in data:
-            errors.append({'notes': 'Notes field must be supplied'})
+        for item in stock_list:
+            try:
+                stock_id = int(item['pk'])
+                quantity = int(item['quantity'])
+            except ValueError:
+                # Ignore this one
+                continue
+            
+            print('stock:', stock_id)
+            print('quantity:', quantity)
 
+        """
+            
         for pid in part_list:
             try:
                 part = StockItem.objects.get(pk=pid)
@@ -188,6 +204,10 @@ class StockMove(APIView):
         for part in parts:
             if part.move(location, data.get('notes'), request.user):
                 n += 1
+
+        """
+
+        n = 0
 
         return Response({'success': 'Moved {n} parts to {loc}'.format(
             n=n,
