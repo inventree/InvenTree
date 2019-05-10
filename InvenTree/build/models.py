@@ -27,6 +27,7 @@ class Build(models.Model):
         part: The part to be built (from component BOM items)
         title: Brief title describing the build (required)
         quantity: Number of units to be built
+        take_from: Location to take stock from to make this build (if blank, can take from anywhere)
         status: Build status code
         batch: Batch code transferred to build parts (optional)
         creation_date: Date the build was created (auto)
@@ -41,6 +42,11 @@ class Build(models.Model):
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.id})
 
+    title = models.CharField(
+        blank=False,
+        max_length=100,
+        help_text='Brief description of the build')
+
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='builds',
                              limit_choices_to={
@@ -50,10 +56,11 @@ class Build(models.Model):
                              help_text='Select part to build',
                              )
     
-    title = models.CharField(
-        blank=False,
-        max_length=100,
-        help_text='Brief description of the build')
+    take_from = models.ForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
+                                  related_name='sourcing_builds',
+                                  null=True, blank=True,
+                                  help_text='Select location to take stock from for this build (leave blank to take from any stock location'
+                                  )
     
     quantity = models.PositiveIntegerField(
         default=1,
