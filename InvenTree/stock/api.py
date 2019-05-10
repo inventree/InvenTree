@@ -186,34 +186,19 @@ class StockMove(APIView):
             except ValueError:
                 # Ignore this one
                 continue
-            
-            print('stock:', stock_id)
-            print('quantity:', quantity)
 
-        """
-            
-        for pid in part_list:
+            # Ignore a zero quantity movement
+            if quantity <= 0:
+                continue
+
             try:
-                part = StockItem.objects.get(pk=pid)
-                parts.append(part)
+                stock = StockItem.objects.get(pk=stock_id)
             except StockItem.DoesNotExist:
-                errors.append({'part': 'Part {id} does not exist'.format(id=pid)})
+                continue
 
-        if len(errors) > 0:
-            raise ValidationError(errors)
+            stock.move(location, data.get('notes'), request.user, quantity=quantity)
 
-        n = 0
-
-        for part in parts:
-            if part.move(location, data.get('notes'), request.user):
-                n += 1
-
-        """
-
-        n = 0
-
-        return Response({'success': 'Moved {n} parts to {loc}'.format(
-            n=n,
+        return Response({'success': 'Moved parts to {loc}'.format(
             loc=str(location)
         )})
 
