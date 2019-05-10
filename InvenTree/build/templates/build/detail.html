@@ -46,6 +46,16 @@ InvenTree | Build - {{ build }}
     <td>Quantity</td><td>{{ build.quantity }}</td>
 </tr>
 <tr>
+    <td>Stock Source</td>
+    <td>
+        {% if build.take_from %}
+        <a href="{% url 'stock-location-detail' build.take_from.id %}">{{ build.take_from }}</a>
+        {% else %}
+        Stock can be taken from any available location.
+        {% endif %}
+    </td>
+</tr>
+<tr>
     <td>Status</td><td>{% include "build_status.html" with build=build %}</td>
 </tr>
 {% if build.batch %}
