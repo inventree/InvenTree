@@ -134,7 +134,7 @@ class Part(models.Model):
         minimum_stock: Minimum preferred quantity to keep in stock
         units: Units of measure for this part (default='pcs')
         salable: Can this part be sold to customers?
-        buildable: Can this part be build from other parts? 
+        buildable: Can this part be build from other parts?
         consumable: Can this part be used to make other parts?
         purchaseable: Can this part be purchased from suppliers?
         trackable: Trackable parts can have unique serial numbers assigned, etc, etc

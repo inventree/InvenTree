@@ -50,7 +50,7 @@ class Company(models.Model):
         address: Postal address
         phone: contact phone number
         email: contact email address
-        URL: Secondary URL e.g. for link to internal Wiki page 
+        URL: Secondary URL e.g. for link to internal Wiki page
         image: Company image / logo
         notes: Extra notes about the company
         is_customer: boolean value, is this company a customer
