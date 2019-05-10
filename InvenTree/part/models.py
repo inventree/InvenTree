@@ -25,6 +25,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from InvenTree import helpers
+from InvenTree import validators
 from InvenTree.models import InvenTreeTree
 from company.models import Company
 
@@ -172,7 +173,9 @@ class Part(models.Model):
         else:
             return static('/img/blank_image.png')
 
-    name = models.CharField(max_length=100, blank=False, help_text='Part name')
+    name = models.CharField(max_length=100, blank=False, help_text='Part name',
+                            validators=[validators.validate_part_name]
+                            )
 
     variant = models.CharField(max_length=32, blank=True, help_text='Part variant or revision code') 
 
