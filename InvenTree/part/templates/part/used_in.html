@@ -27,7 +27,7 @@
     $("#used-table").bootstrapTable({
         sortable: true,
         search: true,
-        formatNoMatches: function() { return "{{ part.name }} is not used to make any other parts"; },
+        formatNoMatches: function() { return "{{ part.long_name }} is not used to make any other parts"; },
         queryParams: function(p) {
             return {
                 sub_part: {{ part.id }}

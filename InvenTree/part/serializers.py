@@ -41,9 +41,10 @@ class PartBriefSerializer(serializers.ModelSerializer):
             'pk',
             'url',
             'name',
-            'image_url',
+            'variant',
             'description',
             'available_stock',
+            'image_url',
         ]
 
 
@@ -63,6 +64,7 @@ class PartSerializer(serializers.ModelSerializer):
             'pk',
             'url',  # Link to the part detail page
             'name',
+            'variant',
             'image_url',
             'IPN',
             'URL',  # Link to an external URL (optional)
