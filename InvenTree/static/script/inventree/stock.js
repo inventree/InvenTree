@@ -79,7 +79,7 @@ function updateStock(items, options={}) {
             html += "max='" + vMax + "' ";
         }
 
-        html += "type='number' id='q-" + item.pk + "'/></td>";
+        html += "type='number' id='q-update-" + item.pk + "'/></td>";
 
         html += '</tr>';
     }
@@ -128,7 +128,7 @@ function updateStock(items, options={}) {
         for (idx = 0; idx < items.length; idx++) {
             var item = items[idx];
 
-            var q = $(modal).find("#q-" + item.pk).val();
+            var q = $(modal).find("#q-update-" + item.pk).val();
 
             stocktake.push({
                 pk: item.pk,
@@ -229,7 +229,7 @@ function moveStockItems(items, options) {
         inventreePut("/api/stock/move/",
             {
                 location: location,
-                'parts[]': parts,
+                'stock': parts,
                 'notes': notes,
             },
             {
@@ -246,7 +246,6 @@ function moveStockItems(items, options) {
     getStockLocations({},
     {
         success: function(response) {
-            
 
             // Extact part row info
             var parts = [];
@@ -267,21 +266,42 @@ function moveStockItems(items, options) {
 
             html += "<p class='warning-msg' id='note-warning'><i>Note field must be filled</i></p>";
 
-            html += "<hr>The following stock items will be moved:<br><ul class='list-group'>\n";
+            html += "<hr>The following stock items will be moved:<hr>";
+
+            html += `
+                <table class='table table-striped table-condensed'>
+                <tr>
+                    <th>Part</th>
+                    <th>Location</th>
+                    <th>Available</th>
+                    <th>Moving</th>
+                </tr>
+                `;
 
             for (i = 0; i < items.length; i++) {
-                parts.push(items[i].pk);
+                
+                parts.push({
+                    pk: items[i].pk,
+                    quantity: items[i].quantity,
+                });
 
-                html += "<li class='list-group-item'>" + items[i].quantity + " &times " + items[i].part.name;
+                var item = items[i];
 
-                if (items[i].location) {
-                    html += " (" + items[i].location.name + ")";
-                }
+                html += "<tr>";
 
-                html += "</li>\n";
+                html += "<td>" + item.part.name + "</td>";
+                html += "<td>" + item.location.pathstring + "</td>";
+                html += "<td>" + item.quantity + "</td>";
+
+                html += "<td>";
+                html += "<input class='form-control' min='0' max='" + item.quantity + "'";
+                html += " value='" + item.quantity + "'";
+                html += "type='number' id='q-move-" + item.pk + "'/></td>";
+
+                html += "</tr>";
             }
 
-            html += "</ul>\n";
+            html += "</table>";
 
             openModal({
                 modal: modal,
@@ -305,6 +325,15 @@ function moveStockItems(items, options) {
                 if (!notes) {
                     $(modal).find('#note-warning').show();
                     return false;
+                }
+
+                // Update the quantity for each item
+                for (var ii = 0; ii < parts.length; ii++) {
+                    var pk = parts[ii].pk;
+
+                    var q = $(modal).find('#q-move-' + pk).val();
+
+                    parts[ii].quantity = q;
                 }
 
                 doMove(locId, parts, notes);
