@@ -267,21 +267,38 @@ function moveStockItems(items, options) {
 
             html += "<p class='warning-msg' id='note-warning'><i>Note field must be filled</i></p>";
 
-            html += "<hr>The following stock items will be moved:<br><ul class='list-group'>\n";
+            html += "<hr>The following stock items will be moved:<hr>";
+
+            html += `
+                <table class='table table-striped table-condensed'>
+                <tr>
+                    <th>Part</th>
+                    <th>Location</th>
+                    <th>Available</th>
+                    <th>Moving</th>
+                </tr>
+                `;
 
             for (i = 0; i < items.length; i++) {
                 parts.push(items[i].pk);
 
-                html += "<li class='list-group-item'>" + items[i].quantity + " &times " + items[i].part.name;
+                var item = items[i];
 
-                if (items[i].location) {
-                    html += " (" + items[i].location.name + ")";
-                }
+                html += "<tr>";
 
-                html += "</li>\n";
+                html += "<td>" + item.part.name + "</td>";
+                html += "<td>" + item.location.pathstring + "</td>";
+                html += "<td>" + item.quantity + "</td>";
+
+                html += "<td>";
+                html += "<input class='form-control' min='0' max='" + item.quantity + "'";
+                html += " value='" + item.quantity + "'";
+                html += "type='number' id='q-" + item.pk + "'/></td>";
+
+                html += "</tr>";
             }
 
-            html += "</ul>\n";
+            html += "</table>";
 
             openModal({
                 modal: modal,
