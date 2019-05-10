@@ -175,10 +175,6 @@ class StockMove(APIView):
         if 'notes' not in data:
             raise ValidationError({'notes': 'Notes field must be supplied'})
 
-        parts = []
-
-        errors = []
-
         for item in stock_list:
             try:
                 stock_id = int(item['pk'])
