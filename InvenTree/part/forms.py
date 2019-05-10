@@ -65,6 +65,7 @@ class EditPartForm(HelperForm):
         fields = [
             'category',
             'name',
+            'variant',
             'description',
             'IPN',
             'URL',

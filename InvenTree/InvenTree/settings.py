@@ -32,13 +32,6 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 CORS_ORIGIN_WHITELIST = [
-    """
-    TODO - Implement a proper CORS whitelist strategy here.
-
-    - The CORS headers should be set per-application and not hard-coded into settings.py
-    - Provide an external settings.yaml file which defines extra options
-    - Then the site admin can adjust these without touching tracked files
-    """
 ]
 
 if DEBUG:

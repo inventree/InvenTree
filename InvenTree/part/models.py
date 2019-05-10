@@ -25,6 +25,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from InvenTree import helpers
+from InvenTree import validators
 from InvenTree.models import InvenTreeTree
 from company.models import Company
 
@@ -124,6 +125,7 @@ class Part(models.Model):
 
     Attributes:
         name: Brief name for this part
+        variant: Optional variant number for this part - Must be unique for the part name
         description: Longer form description of the part
         category: The PartCategory to which this part belongs
         IPN: Internal part number (optional)
@@ -142,6 +144,23 @@ class Part(models.Model):
         notes: Additional notes field for this part
     """
 
+    class Meta:
+        verbose_name = "Part"
+        verbose_name_plural = "Parts"
+        unique_together = [
+            ('name', 'variant')
+        ]
+
+    def __str__(self):
+        return "{n} - {d}".format(n=self.long_name, d=self.description)
+
+    @property
+    def long_name(self):
+        name = self.name
+        if self.variant:
+            name += " | " + self.variant
+        return name
+
     def get_absolute_url(self):
         """ Return the web URL for viewing this part """
         return reverse('part-detail', kwargs={'pk': self.id})
@@ -154,7 +173,11 @@ class Part(models.Model):
         else:
             return static('/img/blank_image.png')
 
-    name = models.CharField(max_length=100, unique=True, blank=False, help_text='Part name (must be unique)')
+    name = models.CharField(max_length=100, blank=False, help_text='Part name',
+                            validators=[validators.validate_part_name]
+                            )
+
+    variant = models.CharField(max_length=32, blank=True, help_text='Part variant or revision code')
 
     description = models.CharField(max_length=250, blank=False, help_text='Part description')
 
@@ -228,9 +251,6 @@ class Part(models.Model):
 
     notes = models.TextField(blank=True)
 
-    def __str__(self):
-        return "{n} - {d}".format(n=self.name, d=self.description)
-
     def format_barcode(self):
         """ Return a JSON string for formatting a barcode for this Part object """
 
@@ -242,10 +262,6 @@ class Part(models.Model):
                 'name': self.name,
             }
         )
-
-    class Meta:
-        verbose_name = "Part"
-        verbose_name_plural = "Parts"
 
     @property
     def category_path(self):

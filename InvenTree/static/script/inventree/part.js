@@ -123,7 +123,13 @@ function loadPartTable(table, url, options={}) {
                 title: 'Part',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    var display = imageHoverIcon(row.image_url) + renderLink(value, row.url);
+                    var name = row.name;
+
+                    if (row.variant) {
+                        name = name + " | " + row.variant;
+                    }
+
+                    var display = imageHoverIcon(row.image_url) + renderLink(name, row.url);
                     if (!row.active) {
                         display = display + "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
                     }

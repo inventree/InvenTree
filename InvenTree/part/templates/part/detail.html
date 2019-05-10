@@ -34,7 +34,7 @@
     <table class='table table-striped'>
         <tr>
             <td>Part name</td>
-            <td>{{ part.name }}</td>
+            <td>{{ part.long_name }}</td>
         </tr>
         <tr>
             <td>Description</td>
@@ -147,7 +147,7 @@
     $('#activate-part').click(function() {
         showQuestionDialog(
             'Activate Part?',
-            'Are you sure you wish to reactivate {{ part.name }}?',
+            'Are you sure you wish to reactivate {{ part.long_name }}?',
             {
                 accept_text: 'Activate',
                 accept: function() {
@@ -169,7 +169,7 @@
     $('#deactivate-part').click(function() {
         showQuestionDialog(
             'Deactivate Part?',
-            `Are you sure you wish to deactivate {{ part.name }}?<br>
+            `Are you sure you wish to deactivate {{ part.long_name }}?<br>
             `,
             {
                 accept_text: 'Deactivate',
