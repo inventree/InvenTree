@@ -177,7 +177,7 @@ class Part(models.Model):
                             validators=[validators.validate_part_name]
                             )
 
-    variant = models.CharField(max_length=32, blank=True, help_text='Part variant or revision code') 
+    variant = models.CharField(max_length=32, blank=True, help_text='Part variant or revision code')
 
     description = models.CharField(max_length=250, blank=False, help_text='Part description')
 
