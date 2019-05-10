@@ -5,6 +5,44 @@ function makeOption(id, title) {
 }
 
 
+function partialMatcher(params, data) {
+    /* Replacement function for the 'matcher' parameter for a select2 dropdown.
+
+    Intead of performing an exact match search, a partial match search is performed.
+    This splits the search term by the space ' ' character and matches each segment.
+    Segments can appear out of order and are not case sensitive
+
+    Args:
+        params.term : search query
+        data.text : text to match
+    */
+
+    // Quickly check for an empty search query
+    if ($.trim(params.term) == '') {
+        return data;
+    }
+
+    // Do not display the item if there is no 'text' property
+    if (typeof data.text === 'undefined') {
+        return null;
+    }
+
+    var search_terms = params.term.toLowerCase().trim().split(' ');
+
+    var match_text = data.text.toLowerCase().trim();
+
+    for (var ii = 0; ii < search_terms.length; ii++) {
+        if (!match_text.includes(search_terms[ii])) {
+            // Text must contain each search term
+            return null;
+        }
+    }
+
+    // Default: match!
+    return data;
+}
+
+
 function attachSelect(modal) {
     /* Attach 'select2' functionality to any drop-down list in the modal. 
      * Provides search filtering for dropdown items
@@ -14,6 +52,7 @@ function attachSelect(modal) {
         dropdownParent: $(modal),
         // dropdownAutoWidth parameter is required to work properly with modal forms
         dropdownAutoWidth: false,
+        matcher: partialMatcher,
     });
 
     $(modal + ' .select2-container').addClass('select-full-width');
