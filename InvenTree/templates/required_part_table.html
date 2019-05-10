@@ -8,7 +8,7 @@
     </tr>
     {% for part in parts %}
     <tr>
-        <td><a href="{% url 'part-detail' part.id %}">{{ part.name }}</a></td>
+        <td><a href="{% url 'part-detail' part.id %}">{{ part.long_name }}</a></td>
         <td>{{ part.description }}</td>
         <td>{{ part.total_stock }}</td>
         <td>{{ part.allocation_count }}</td>
