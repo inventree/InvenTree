@@ -178,7 +178,11 @@ class StockMove(APIView):
         for item in stock_list:
             try:
                 stock_id = int(item['pk'])
-                quantity = int(item['quantity'])
+                if 'quantity' in item:
+                    quantity = int(item['quantity'])
+                else:
+                    # If quantity not supplied, we'll move the entire stock
+                    quantity = None
             except ValueError:
                 # Ignore this one
                 continue
@@ -191,6 +195,9 @@ class StockMove(APIView):
                 stock = StockItem.objects.get(pk=stock_id)
             except StockItem.DoesNotExist:
                 continue
+
+            if quantity is None:
+                quantity = stock.quantity
 
             stock.move(location, data.get('notes'), request.user, quantity=quantity)
 
