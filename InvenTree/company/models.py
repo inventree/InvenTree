@@ -42,6 +42,19 @@ def rename_company_image(instance, filename):
 class Company(models.Model):
     """ A Company object represents an external company.
     It may be a supplier or a customer (or both).
+
+    Attributes:
+        name: Brief name of the company
+        description: Longer form description
+        website: URL for the company website
+        address: Postal address
+        phone: contact phone number
+        email: contact email address
+        URL: Secondary URL e.g. for link to internal Wiki page 
+        image: Company image / logo
+        notes: Extra notes about the company
+        is_customer: boolean value, is this company a customer
+        is_supplier: boolean value, is this company a supplier
     """
 
     name = models.CharField(max_length=100, blank=False, unique=True,
@@ -101,8 +114,18 @@ class Company(models.Model):
 
 class Contact(models.Model):
     """ A Contact represents a person who works at a particular company.
-    A Company may have zero or more associated Contact objects
+    A Company may have zero or more associated Contact objects.
+
+    Attributes:
+        company: Company link for this contact
+        name: Name of the contact
+        phone: contact phone number
+        email: contact email
+        role: position in company
     """
+
+    company = models.ForeignKey(Company, related_name='contacts',
+                                on_delete=models.CASCADE)
 
     name = models.CharField(max_length=100)
 

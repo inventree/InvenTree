@@ -330,7 +330,7 @@ class BuildItem(models.Model):
 
     Attributes:
         build: Link to a Build object
-        stock: Link to a StockItem object
+        stock_item: Link to a StockItem object
         quantity: Number of units allocated
     """
 
