@@ -154,7 +154,10 @@ class StockMove(APIView):
         if 'location' not in data:
             raise ValidationError({'location': 'Destination must be specified'})
 
-        loc_id = data.get(u'location')
+        try:
+            loc_id = int(data.get('location'))
+        except ValueError:
+            raise ValidationError({'location': 'Integer ID required'})
 
         try:
             location = StockLocation.objects.get(pk=loc_id)
