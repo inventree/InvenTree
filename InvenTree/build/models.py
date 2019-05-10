@@ -146,6 +146,11 @@ class Build(models.Model):
 
             stock = StockItem.objects.filter(part=item.sub_part)
 
+            # Ensure that the available stock items are in the correct location
+            if self.take_from is not None:
+                # Filter for stock that is located downstream of the designated location
+                stock = stock.filter(location__in=[cat for cat in self.take_from.getUniqueChildren()])
+
             # Only one StockItem to choose from? Default to that one!
             if len(stock) == 1:
                 stock_item = stock[0]

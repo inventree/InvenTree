@@ -21,6 +21,7 @@ class EditBuildForm(HelperForm):
             'title',
             'part',
             'quantity',
+            'take_from',
             'batch',
             'URL',
             'notes',
