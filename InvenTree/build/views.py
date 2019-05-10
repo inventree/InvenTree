@@ -374,6 +374,16 @@ class BuildItemCreate(AjaxCreateView):
                 query = query.filter(part=part_id)
 
                 if build_id is not None:
+                    try:
+                        build = Build.objects.get(id=build_id)
+                        
+                        if build.take_from is not None:
+                            # Limit query to stock items that are downstream of the 'take_from' location
+                            query = query.filter(location__in=[loc for loc in build.take_from.getUniqueChildren()])
+                            
+                    except Build.DoesNotExist:
+                        pass
+
                     # Exclude StockItem objects which are already allocated to this build and part
                     query = query.exclude(id__in=[item.stock_item.id for item in BuildItem.objects.filter(build=build_id, stock_item__part=part_id)])
 
