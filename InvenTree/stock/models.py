@@ -323,12 +323,36 @@ class StockItem(models.Model):
         # Remove the specified quantity from THIS stock item
         self.take_stock(quantity, user, 'Split {n} items into new stock item'.format(n=quantity))
 
+    @transaction.atomic
+    def move(self, location, notes, user, **kwargs):
+        """ Move part to a new location.
+
+        Args:
+            location: Destination location (cannot be null)
+            notes: User notes
+            user: Who is performing the move
+            kwargs:
+                quantity: If provided, override the quantity (default = total stock quantity)
+        """
+
+        quantity = int(kwargs.get('quantity', self.quantity))
+
+        if quantity <= 0:
+            return False
+
         if location is None:
             # TODO - Raise appropriate error (cannot move to blank location)
             return False
         elif self.location and (location.pk == self.location.pk):
             # TODO - Raise appropriate error (cannot move to same location)
             return False
+
+        # Test for a partial movement
+        if quantity < self.quantity:
+            # We need to split the stock!
+
+            # Leave behind certain quantity
+            self.splitStock(self.quantity - quantity, user)
 
         msg = "Moved to {loc}".format(loc=str(location))
 
