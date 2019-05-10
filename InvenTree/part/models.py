@@ -116,9 +116,30 @@ def rename_part_image(instance, filename):
 
 
 class Part(models.Model):
-    """ Represents an abstract part
-    Parts can be "stocked" in multiple warehouses,
-    and can be combined to form other parts
+    """ The Part object represents an abstract part, the 'concept' of an actual entity.
+
+    An actual physical instance of a Part is a StockItem which is treated separately.
+
+    Parts can be used to create other parts (as part of a Bill of Materials or BOM).
+
+    Attributes:
+        name: Brief name for this part
+        description: Longer form description of the part
+        category: The PartCategory to which this part belongs
+        IPN: Internal part number (optional)
+        URL: Link to an external page with more information about this part (e.g. internal Wiki)
+        image: Image of this part
+        default_location: Where the item is normally stored (may be null)
+        default_supplier: The default SupplierPart which should be used to procure and stock this part
+        minimum_stock: Minimum preferred quantity to keep in stock
+        units: Units of measure for this part (default='pcs')
+        salable: Can this part be sold to customers?
+        buildable: Can this part be build from other parts?
+        consumable: Can this part be used to make other parts?
+        purchaseable: Can this part be purchased from suppliers?
+        trackable: Trackable parts can have unique serial numbers assigned, etc, etc
+        active: Is this part active? Parts are deactivated instead of being deleted
+        notes: Additional notes field for this part
     """
 
     def get_absolute_url(self):
@@ -133,25 +154,18 @@ class Part(models.Model):
         else:
             return static('/img/blank_image.png')
 
-    # Short name of the part
     name = models.CharField(max_length=100, unique=True, blank=False, help_text='Part name (must be unique)')
 
-    # Longer description of the part (optional)
     description = models.CharField(max_length=250, blank=False, help_text='Part description')
 
-    # Internal Part Number (optional)
-    # Potentially multiple parts map to the same internal IPN (variants?)
-    # So this does not have to be unique
-    IPN = models.CharField(max_length=100, blank=True, help_text='Internal Part Number')
-
-    # Provide a URL for an external link
-    URL = models.URLField(blank=True, help_text='Link to extenal URL')
-
-    # Part category - all parts must be assigned to a category
     category = models.ForeignKey(PartCategory, related_name='parts',
                                  null=True, blank=True,
                                  on_delete=models.DO_NOTHING,
                                  help_text='Part category')
+
+    IPN = models.CharField(max_length=100, blank=True, help_text='Internal Part Number')
+
+    URL = models.URLField(blank=True, help_text='Link to extenal URL')
 
     image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
 
@@ -183,23 +197,18 @@ class Part(models.Model):
         # Default case - no default category found
         return None
 
-    # Default supplier part
     default_supplier = models.ForeignKey('part.SupplierPart',
                                          on_delete=models.SET_NULL,
                                          blank=True, null=True,
                                          help_text='Default supplier part',
                                          related_name='default_parts')
 
-    # Minimum "allowed" stock level
     minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text='Minimum allowed stock level')
 
-    # Units of quantity for this part. Default is "pcs"
     units = models.CharField(max_length=20, default="pcs", blank=True, help_text='Stock keeping units for this part')
 
-    # Can this part be built from other parts?
     buildable = models.BooleanField(default=False, help_text='Can this part be built from other parts?')
 
-    # Can this part be used to make other parts?
     consumable = models.BooleanField(default=True, help_text='Can this part be used to build other parts?')
 
     # Is this part "trackable"?
@@ -434,6 +443,11 @@ def attach_file(instance, filename):
 class PartAttachment(models.Model):
     """ A PartAttachment links a file to a part
     Parts can have multiple files such as datasheets, etc
+
+    Attributes:
+        part: Link to a Part object
+        attachment: File
+        comment: String descriptor for the attachment
     """
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
@@ -454,6 +468,10 @@ class PartStar(models.Model):
 
     It is used to designate a Part as 'starred' (or favourited) for a given User,
     so that the user can track a list of their favourite parts.
+
+    Attributes:
+        part: Link to a Part object
+        user: Link to a User object
     """
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='starred_users')
@@ -467,7 +485,13 @@ class PartStar(models.Model):
 class BomItem(models.Model):
     """ A BomItem links a part to its component items.
     A part can have a BOM (bill of materials) which defines
-    which parts are required (and in what quatity) to make it
+    which parts are required (and in what quatity) to make it.
+
+    Attributes:
+        part: Link to the parent part (the part that will be produced)
+        sub_part: Link to the child part (the part that will be consumed)
+        quantity: Number of 'sub_parts' consumed to produce one 'part'
+        note: Note field for this BOM item
     """
 
     def get_absolute_url(self):
@@ -530,8 +554,23 @@ class SupplierPart(models.Model):
     """ Represents a unique part as provided by a Supplier
     Each SupplierPart is identified by a MPN (Manufacturer Part Number)
     Each SupplierPart is also linked to a Part object.
-
     A Part may be available from multiple suppliers
+
+    Attributes:
+        part: Link to the master Part
+        supplier: Company that supplies this SupplierPart object
+        SKU: Stock keeping unit (supplier part number)
+        manufacturer: Manufacturer name
+        MPN: Manufacture part number
+        URL: Link to external website for this part
+        description: Descriptive notes field
+        note: Longer form note field
+        single_price: Default price for a single unit
+        base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
+        multiple: Multiple that the part is provided in
+        minimum: MOQ (minimum order quantity) required for purchase
+        lead_time: Supplier lead time
+        packaging: packaging that the part is supplied in, e.g. "Reel"
     """
 
     def get_absolute_url(self):
@@ -540,8 +579,6 @@ class SupplierPart(models.Model):
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')
 
-    # Link to an actual part
-# The part will have a field 'supplier_parts' which links to the supplier part options
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='supplier_parts',
                              limit_choices_to={'purchaseable': True},
@@ -564,25 +601,18 @@ class SupplierPart(models.Model):
 
     description = models.CharField(max_length=250, blank=True, help_text='Supplier part description')
 
-    # Note attached to this BOM line item
     note = models.CharField(max_length=100, blank=True, help_text='Notes')
 
-    # Default price for a single unit
     single_price = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text='Price for single quantity')
 
-    # Base charge added to order independent of quantity e.g. "Reeling Fee"
     base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text='Minimum charge (e.g. stocking fee)')
 
-    # packaging that the part is supplied in, e.g. "Reel"
     packaging = models.CharField(max_length=50, blank=True, help_text='Part packaging')
-
-    # multiple that the part is provided in
+    
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Order multiple')
 
-    # Mimumum number required to order
     minimum = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Minimum order quantity (MOQ)')
 
-    # lead time for parts that cannot be delivered immediately
     lead_time = models.DurationField(blank=True, null=True)
 
     @property
@@ -654,9 +684,14 @@ class SupplierPart(models.Model):
 
 
 class SupplierPriceBreak(models.Model):
-    """ Represents a quantity price break for a SupplierPart
+    """ Represents a quantity price break for a SupplierPart.
     - Suppliers can offer discounts at larger quantities
     - SupplierPart(s) may have zero-or-more associated SupplierPriceBreak(s)
+
+    Attributes:
+        part: Link to a SupplierPart object that this price break applies to
+        quantity: Quantity required for price break
+        cost: Cost at specified quantity
     """
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='price_breaks')

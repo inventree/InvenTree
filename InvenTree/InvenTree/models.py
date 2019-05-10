@@ -17,6 +17,11 @@ class InvenTreeTree(models.Model):
 
     - Each Category has one parent Category, which can be blank (for a top-level Category).
     - Each Category can have zero-or-more child Categor(y/ies)
+
+    Attributes:
+        name: brief name
+        description: longer form description
+        parent: The item immediately above this one. An item with a null parent is a top-level item
     """
 
     class Meta:
