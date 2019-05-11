@@ -116,14 +116,14 @@ def rename_part_image(instance, filename):
     return os.path.join(base, fn)
 
 
-def match_part_names(match, include_description=False, threshold=65, reverse=True):
+def match_part_names(match, threshold=80, reverse=True, compare_length=False):
     """ Return a list of parts whose name matches the search term using fuzzy search.
 
     Args:
         match: Term to match against
-        include_description: Also search the part description (default = False)
         threshold: Match percentage that must be exceeded (default = 65)
         reverse: Ordering for search results (default = True - highest match is first)
+        compare_length: Include string length checks
 
     Returns:
         A sorted dict where each element contains the following key:value pairs:
@@ -131,16 +131,29 @@ def match_part_names(match, include_description=False, threshold=65, reverse=Tru
             - 'ratio' : The matched ratio
     """
 
+    match = str(match).strip().lower()
+
+    if len(match) == 0:
+        return []
+
     parts = Part.objects.all()
 
     matches = []
 
     for part in parts:
-        compare = part.name
-        if include_description:
-            compare += part.description
+        compare = str(part.name).strip().lower()
 
-        ratio = fuzz.partial_ratio(match, compare)
+        if len(compare) == 0:
+            continue
+
+        ratio = fuzz.partial_ratio(compare, match)
+
+        if compare_length:
+            # Also employ primitive length comparison
+            l_min = min(len(match), len(compare))
+            l_max = max(len(match), len(compare))
+
+            ratio *= (l_min / l_max)
 
         if ratio >= threshold:
             matches.append({

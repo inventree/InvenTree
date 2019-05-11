@@ -16,6 +16,7 @@ from company.models import Company
 from .models import PartCategory, Part, PartAttachment
 from .models import BomItem
 from .models import SupplierPart
+from .models import match_part_names
 
 from . import forms as part_forms
 
@@ -135,7 +136,7 @@ class PartCreate(AjaxCreateView):
     form_class = part_forms.EditPartForm
 
     ajax_form_title = 'Create new part'
-    ajax_template_name = 'modal_form.html'
+    ajax_template_name = 'part/create_part.html'
 
     def get_data(self):
         return {
@@ -173,6 +174,28 @@ class PartCreate(AjaxCreateView):
         form.fields['default_supplier'].widget = HiddenInput()
 
         return form
+
+    def post(self, request, *args, **kwargs):
+
+        form = self.get_form()
+
+        name = request.POST.get('name', None)
+
+        context = {}
+        
+        if name:
+            matches = match_part_names(name)
+
+            if len(matches) > 0:
+                context['matches'] = matches
+            
+                form.non_field_errors = 'Check matches'
+
+        data = {
+            'form_valid': False
+        }
+
+        return self.renderJsonResponse(request, form, data, context=context)
 
     def get_initial(self):
         """ Get initial data for the new Part object:
