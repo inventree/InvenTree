@@ -1,13 +1,14 @@
-{% block pre_form_content %}
-{% endblock %}
-
+{% block non_field_error %}
 {% if form.non_field_errors %}
 <div class='alert alert-danger' role='alert' style='display: block;'>
   <b>Error Submitting Form:</b>
   {{ form.non_field_errors }}
 </div>
 {% endif %}
+{% endblock %}
 
+{% block pre_form_content %}
+{% endblock %}
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
   {% csrf_token %}
   {% load crispy_forms_tags %}
