@@ -10,21 +10,15 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
-from django.forms import HiddenInput
+from django.forms import HiddenInput, CheckboxInput
 
 from company.models import Company
 from .models import PartCategory, Part, PartAttachment
 from .models import BomItem
 from .models import SupplierPart
+from .models import match_part_names
 
-from .forms import PartImageForm
-from .forms import EditPartForm
-from .forms import EditPartAttachmentForm
-from .forms import EditCategoryForm
-from .forms import EditBomItemForm
-from .forms import BomExportForm
-
-from .forms import EditSupplierPartForm
+from . import forms as part_forms
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
@@ -60,7 +54,7 @@ class PartAttachmentCreate(AjaxCreateView):
     - The view only makes sense if a Part object is passed to it
     """
     model = PartAttachment
-    form_class = EditPartAttachmentForm
+    form_class = part_forms.EditPartAttachmentForm
     ajax_form_title = "Add part attachment"
     ajax_template_name = "modal_form.html"
 
@@ -99,7 +93,7 @@ class PartAttachmentCreate(AjaxCreateView):
 class PartAttachmentEdit(AjaxUpdateView):
     """ View for editing a PartAttachment object """
     model = PartAttachment
-    form_class = EditPartAttachmentForm
+    form_class = part_forms.EditPartAttachmentForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit attachment'
     
@@ -139,10 +133,10 @@ class PartCreate(AjaxCreateView):
     - Copy an existing Part
     """
     model = Part
-    form_class = EditPartForm
+    form_class = part_forms.EditPartForm
 
     ajax_form_title = 'Create new part'
-    ajax_template_name = 'modal_form.html'
+    ajax_template_name = 'part/create_part.html'
 
     def get_data(self):
         return {
@@ -180,6 +174,51 @@ class PartCreate(AjaxCreateView):
         form.fields['default_supplier'].widget = HiddenInput()
 
         return form
+
+    def post(self, request, *args, **kwargs):
+
+        form = self.get_form()
+
+        context = {}
+
+        valid = form.is_valid()
+        
+        name = request.POST.get('name', None)
+        
+        if name:
+            matches = match_part_names(name)
+
+            if len(matches) > 0:
+                context['matches'] = matches
+            
+                # Enforce display of the checkbox
+                form.fields['confirm_creation'].widget = CheckboxInput()
+                
+                # Check if the user has checked the 'confirm_creation' input
+                confirmed = str2bool(request.POST.get('confirm_creation', False))
+
+                if not confirmed:
+                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
+                    
+                    form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
+                    valid = False
+
+        data = {
+            'form_valid': valid
+        }
+
+        if valid:
+            # Create the new Part
+            part = form.save()
+
+            data['pk'] = part.pk
+
+            try:
+                data['url'] = part.get_absolute_url()
+            except AttributeError:
+                pass
+
+        return self.renderJsonResponse(request, form, data, context=context)
 
     def get_initial(self):
         """ Get initial data for the new Part object:
@@ -260,7 +299,7 @@ class PartImage(AjaxUpdateView):
     model = Part
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Upload Part Image'
-    form_class = PartImageForm
+    form_class = part_forms.PartImageForm
 
     def get_data(self):
         return {
@@ -272,7 +311,7 @@ class PartEdit(AjaxUpdateView):
     """ View for editing Part object """
 
     model = Part
-    form_class = EditPartForm
+    form_class = part_forms.EditPartForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Part Properties'
     context_object_name = 'part'
@@ -298,7 +337,7 @@ class BomExport(AjaxView):
     ajax_form_title = 'Export BOM'
     ajax_template_name = 'part/bom_export.html'
     context_object_name = 'part'
-    form_class = BomExportForm
+    form_class = part_forms.BomExportForm
 
     def get_object(self):
         return get_object_or_404(Part, pk=self.kwargs['pk'])
@@ -396,7 +435,7 @@ class CategoryDetail(DetailView):
 class CategoryEdit(AjaxUpdateView):
     """ Update view to edit a PartCategory """
     model = PartCategory
-    form_class = EditCategoryForm
+    form_class = part_forms.EditCategoryForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Part Category'
 
@@ -449,7 +488,7 @@ class CategoryCreate(AjaxCreateView):
     ajax_form_action = reverse_lazy('category-create')
     ajax_form_title = 'Create new part category'
     ajax_template_name = 'modal_form.html'
-    form_class = EditCategoryForm
+    form_class = part_forms.EditCategoryForm
 
     def get_context_data(self, **kwargs):
         """ Add extra context data to template.
@@ -496,7 +535,7 @@ class BomItemDetail(DetailView):
 class BomItemCreate(AjaxCreateView):
     """ Create view for making a new BomItem object """
     model = BomItem
-    form_class = EditBomItemForm
+    form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create BOM item'
 
@@ -554,7 +593,7 @@ class BomItemEdit(AjaxUpdateView):
     """ Update view for editing BomItem """
 
     model = BomItem
-    form_class = EditBomItemForm
+    form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit BOM item'
 
@@ -580,7 +619,7 @@ class SupplierPartEdit(AjaxUpdateView):
 
     model = SupplierPart
     context_object_name = 'part'
-    form_class = EditSupplierPartForm
+    form_class = part_forms.EditSupplierPartForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Supplier Part'
 
@@ -589,7 +628,7 @@ class SupplierPartCreate(AjaxCreateView):
     """ Create view for making new SupplierPart """
 
     model = SupplierPart
-    form_class = EditSupplierPartForm
+    form_class = part_forms.EditSupplierPartForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create new Supplier Part'
     context_object_name = 'part'
