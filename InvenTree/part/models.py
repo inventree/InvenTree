@@ -24,6 +24,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from fuzzywuzzy import fuzz
+
 from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree
@@ -88,8 +90,6 @@ def before_delete_part_category(sender, instance, using, **kwargs):
         child.save()
 
 
-# Function to automatically rename a part image on upload
-# Format: part_pk.<img>
 def rename_part_image(instance, filename):
     """ Function for renaming a part image file
 
@@ -114,6 +114,56 @@ def rename_part_image(instance, filename):
         fn += '.' + ext
 
     return os.path.join(base, fn)
+
+
+def match_part_names(match, threshold=80, reverse=True, compare_length=False):
+    """ Return a list of parts whose name matches the search term using fuzzy search.
+
+    Args:
+        match: Term to match against
+        threshold: Match percentage that must be exceeded (default = 65)
+        reverse: Ordering for search results (default = True - highest match is first)
+        compare_length: Include string length checks
+
+    Returns:
+        A sorted dict where each element contains the following key:value pairs:
+            - 'part' : The matched part
+            - 'ratio' : The matched ratio
+    """
+
+    match = str(match).strip().lower()
+
+    if len(match) == 0:
+        return []
+
+    parts = Part.objects.all()
+
+    matches = []
+
+    for part in parts:
+        compare = str(part.name).strip().lower()
+
+        if len(compare) == 0:
+            continue
+
+        ratio = fuzz.partial_token_sort_ratio(compare, match)
+
+        if compare_length:
+            # Also employ primitive length comparison
+            l_min = min(len(match), len(compare))
+            l_max = max(len(match), len(compare))
+
+            ratio *= (l_min / l_max)
+
+        if ratio >= threshold:
+            matches.append({
+                'part': part,
+                'ratio': ratio
+            })
+
+    matches = sorted(matches, key=lambda item: item['ratio'], reverse=reverse)
+
+    return matches
 
 
 class Part(models.Model):

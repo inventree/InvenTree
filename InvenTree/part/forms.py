@@ -60,9 +60,12 @@ class EditPartAttachmentForm(HelperForm):
 class EditPartForm(HelperForm):
     """ Form for editing a Part object """
 
+    confirm_creation = forms.BooleanField(required=False, initial=False, help_text='Confirm part creation', widget=forms.HiddenInput())
+
     class Meta:
         model = Part
         fields = [
+            'confirm_creation',
             'category',
             'name',
             'variant',

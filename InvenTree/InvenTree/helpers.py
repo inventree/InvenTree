@@ -104,9 +104,9 @@ def str2bool(text, test=True):
         True if the text looks like the selected boolean value
     """
     if test:
-        return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', ]
+        return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', 'on', ]
     else:
-        return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', ]
+        return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
 
 
 def WrapWithQuotes(text, quote='"'):
