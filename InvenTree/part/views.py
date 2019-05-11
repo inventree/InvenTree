@@ -179,7 +179,6 @@ class PartCreate(AjaxCreateView):
 
         form = self.get_form()
 
-
         context = {}
 
         valid = form.is_valid()
