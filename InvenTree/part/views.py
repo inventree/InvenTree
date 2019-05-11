@@ -191,13 +191,16 @@ class PartCreate(AjaxCreateView):
             if len(matches) > 0:
                 context['matches'] = matches
             
+                # Enforce display of the checkbox
+                form.fields['confirm_creation'].widget = CheckboxInput()
+                
                 # Check if the user has checked the 'confirm_creation' input
                 confirmed = str2bool(request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.fields['confirm_creation'].widget = CheckboxInput()
                     form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
-                    form.non_field_errors = 'Possible matches exist - confirm creation of new part'
+                    
+                    form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
                     valid = False
 
         data = {
