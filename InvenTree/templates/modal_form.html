@@ -1,3 +1,14 @@
+<div>
+{% if form.pre_form_info %}
+<div class='alert alert-info' role='alert' style='display: block;'>
+{{ form.pre_form_info }}
+</div>
+{% endif %}
+{% if form.pre_form_warning %}
+<div class='alert alert-warning' role='alert' style='display: block;'>
+{{ form.pre_form_warning }}
+</div>
+{% endif %}
 {% block non_field_error %}
 {% if form.non_field_errors %}
 <div class='alert alert-danger' role='alert' style='display: block;'>
@@ -6,6 +17,7 @@
 </div>
 {% endif %}
 {% endblock %}
+</div>
 
 {% block pre_form_content %}
 {% endblock %}
