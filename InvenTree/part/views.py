@@ -192,7 +192,7 @@ class PartCreate(AjaxCreateView):
                 context['matches'] = matches
             
                 # Check if the user has checked the 'confirm_creation' input
-                confirmed = request.POST.get('confirm_creation', False)
+                confirmed = str2bool(request.POST.get('confirm_creation', False))
 
                 if not confirmed:
                     form.fields['confirm_creation'].widget = CheckboxInput()
