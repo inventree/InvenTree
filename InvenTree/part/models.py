@@ -146,7 +146,7 @@ def match_part_names(match, threshold=80, reverse=True, compare_length=False):
         if len(compare) == 0:
             continue
 
-        ratio = fuzz.partial_ratio(compare, match)
+        ratio = fuzz.partial_token_sort_ratio(compare, match)
 
         if compare_length:
             # Also employ primitive length comparison

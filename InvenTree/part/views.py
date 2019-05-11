@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
-from django.forms import HiddenInput
+from django.forms import HiddenInput, CheckboxInput
 
 from company.models import Company
 from .models import PartCategory, Part, PartAttachment
@@ -179,9 +179,12 @@ class PartCreate(AjaxCreateView):
 
         form = self.get_form()
 
-        name = request.POST.get('name', None)
 
         context = {}
+
+        valid = form.is_valid()
+        
+        name = request.POST.get('name', None)
         
         if name:
             matches = match_part_names(name)
@@ -189,11 +192,29 @@ class PartCreate(AjaxCreateView):
             if len(matches) > 0:
                 context['matches'] = matches
             
-                form.non_field_errors = 'Check matches'
+                # Check if the user has checked the 'confirm_creation' input
+                confirmed = request.POST.get('confirm_creation', False)
+
+                if not confirmed:
+                    form.fields['confirm_creation'].widget = CheckboxInput()
+                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
+                    form.non_field_errors = 'Possible matches exist - confirm creation of new part'
+                    valid = False
 
         data = {
-            'form_valid': False
+            'form_valid': valid
         }
+
+        if valid:
+            # Create the new Part
+            part = form.save()
+
+            data['pk'] = part.pk
+
+            try:
+                data['url'] = part.get_absolute_url()
+            except AttributeError:
+                pass
 
         return self.renderJsonResponse(request, form, data, context=context)
 
