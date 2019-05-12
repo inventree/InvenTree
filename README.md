@@ -9,11 +9,11 @@ However, powerful business logic works in the background to ensure that stock tr
 
 ## User Documentation
 
-**TODO:** User documentation will be provided on a linked ```.github.io``` site, and will document the various InvenTree functionality
+For InvenTree documentation, refer to the [user documentation](https://inventree.github.io).
 
 ## Code Documentation
 
-For project code documentation, refer to the online [documentation](http://inventree.readthedocs.io/en/latest/) (auto-generated)
+For project code documentation, refer to the [developer documentation](http://inventree.readthedocs.io/en/latest/) (auto-generated)
 
 ## Getting Started
 
