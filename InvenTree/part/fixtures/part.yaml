@@ -1,12 +1,14 @@
 # Create some fasteners 
 
 - model: part.part
+  pk: 1
   fields:
     name: 'M2x4 LPHS'
     description: 'M2x4 low profile head screw'
     category: 8
 
 - model: part.part
+  pk: 2
   fields:
     name: 'M3x12 SHCS'
     description: 'M3x12 socket head cap screw'
@@ -15,6 +17,7 @@
 # Create some resistors
 
 - model: part.part
+  pk: 3
   fields:
     name: 'R_2K2_0805'
     description: '2.2kOhm resistor in 0805 package'
@@ -35,6 +38,7 @@
     category: 3
 
 - model: part.part
+  pk: 25
   fields:
     name: 'Widget'
     description: 'A watchamacallit'

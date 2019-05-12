@@ -26,6 +26,18 @@
 - model: stock.stocklocation
   pk: 5
   fields:
-    name: 'Drawer'
+    name: 'Drawer_1'
     description: 'In my desk'
+    parent: 4
+- model: stock.stocklocation
+  pk: 6
+  fields:
+    name: 'Drawer_2'
+    description: 'Also in my desk'
+    parent: 4
+- model: stock.stocklocation
+  pk: 7
+  fields:
+    name: 'Drawer_3'
+    description: 'Again, in my desk'
     parent: 4

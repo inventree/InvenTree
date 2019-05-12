@@ -1,0 +1,42 @@
+# Create some sample stock items
+
+# 4,000 screws in the dining room
+- model: stock.stockitem
+  fields:
+    part: 1
+    location: 3
+    batch: 'B123'
+    quantity: 4000
+
+# 5,000 screws in the bathroom
+- model: stock.stockitem
+  fields:
+    part: 1
+    location: 2
+    quantity: 5000
+
+# 1234 2K2 resistors in 'Drawer_1'
+- model: stock.stockitem
+  fields:
+    part: 3
+    location: 5
+    quantity: 1234
+
+# Some widgets in drawer 3
+- model: stock.stockitem
+  fields:
+    part: 25
+    location: 7
+    quantity: 10
+
+- model: stock.stockitem
+  fields:
+    part: 25
+    location: 7
+    quantity: 5
+
+- model: stock.stockitem
+  fields:
+    part: 25
+    location: 7
+    quantity: 3

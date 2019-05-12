@@ -111,11 +111,11 @@ class CategoryTest(TestCase):
     def test_default_locations(self):
         """ Test traversal for default locations """
 
-        self.assertEqual(str(self.fasteners.default_location), 'Office/Drawer')
+        self.assertEqual(str(self.fasteners.default_location), 'Office/Drawer_1')
 
         # Test that parts in this location return the same default location, too
         for p in self.fasteners.children.all():
-            self.assert_equal(p.get_default_location(), 'Office/Drawer')
+            self.assert_equal(p.get_default_location(), 'Office/Drawer_1')
 
         # Any part under electronics should default to 'Home'
         R1 = Part.objects.get(name='R_2K2_0805')
