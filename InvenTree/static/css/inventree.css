@@ -224,6 +224,10 @@
     pointer-events: all;
 }
 
+.alert-block {
+    display: block;
+}
+
 .btn {
     margin-left: 2px;
     margin-right: 2px;
