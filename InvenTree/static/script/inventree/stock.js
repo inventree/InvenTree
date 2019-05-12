@@ -393,7 +393,7 @@ function loadStockTable(table, options) {
                 visible: false,
             },
             {
-                field: 'part.name',
+                field: 'part.full_name',
                 title: 'Part',
                 sortable: true,
                 formatter: function(value, row, index, field) {

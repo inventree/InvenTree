@@ -23,7 +23,7 @@
 {% for build in builds %}
 <tr>
     <td><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></td>
-    <td><a href="{% url 'part-build' build.part.id %}">{{ build.part.name }}</a></td>
+    <td><a href="{% url 'part-build' build.part.id %}">{{ build.part.full_name }}</a></td>
     <td>{{ build.quantity }}</td>
     <td>{% include "build_status.html" with build=build %}
     {% if completed %}

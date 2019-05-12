@@ -14,7 +14,7 @@ InvenTree | Allocate Parts
     <div class='col-sm-6'>
         
         <h4><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></h4>
-        {{ build.quantity }} x {{ build.part.name }}    
+        {{ build.quantity }} x {{ build.part.lonname }}    
     </div>
     <div class='col-sm-6'>
         <div class='btn-group' style='float: right;'>
@@ -47,7 +47,7 @@ InvenTree | Allocate Parts
     loadAllocationTable(
         $("#allocate-table-id-{{ bom_item.sub_part.id }}"),
         {{ bom_item.sub_part.id }},
-        "{{ bom_item.sub_part.name }}",
+        "{{ bom_item.sub_part.full_name }}",
         "{% url 'api-build-item-list' %}?build={{ build.id }}&part={{ bom_item.sub_part.id }}",
         {% multiply build.quantity bom_item.quantity %},
         $("#new-item-{{ bom_item.sub_part.id }}")

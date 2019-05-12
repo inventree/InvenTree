@@ -5,7 +5,7 @@
 <div class='row'>
 <div class='col-sm-6'>
     <h3>Stock Item Details</h3>
-    <p><i>{{ item.quantity }} &times {{ item.part.name }}</i></p>
+    <p><i>{{ item.quantity }} &times {{ item.part.full_name }}</i></p>
     <p>
         <div class='btn-group'>
             {% include "qr_button.html" %}
@@ -39,7 +39,7 @@
         <table class="table table-striped">
         <tr>
             <td>Part</td>
-            <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.name }}</td>
+            <td><a href="{% url 'part-stock' item.part.id %}">{{ item.part.full_name }}</td>
         </tr>
         {% if item.belongs_to %}
         <tr>

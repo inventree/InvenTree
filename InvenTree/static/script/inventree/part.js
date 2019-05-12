@@ -123,11 +123,7 @@ function loadPartTable(table, url, options={}) {
                 title: 'Part',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    var name = row.name;
-
-                    if (row.variant) {
-                        name = name + " | " + row.variant;
-                    }
+                    var name = row.full_name;
 
                     var display = imageHoverIcon(row.image_url) + renderLink(name, row.url);
                     if (!row.active) {

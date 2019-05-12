@@ -51,7 +51,7 @@
             },
             {
                 sortable: true,
-                field: 'part_detail.name',
+                field: 'part_detail.full_name',
                 title: 'Part',
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.part_detail.image_url) + renderLink(value, '/part/' + row.part + '/suppliers/');
@@ -74,7 +74,18 @@
                 sortable: true,
                 field: 'MPN',
                 title: 'MPN',
-            }
+            },
+            {
+                field: 'URL',
+                title: 'URL',
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value, value);
+                    } else {
+                        return '';
+                    }
+                }
+            },
         ],
         url: "{% url 'api-part-supplier-list' %}"
     });

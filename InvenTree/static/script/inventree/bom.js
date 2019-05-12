@@ -93,7 +93,7 @@ function loadBomTable(table, options) {
             title: 'Part',
             sortable: true,
             formatter: function(value, row, index, field) {
-                return imageHoverIcon(value.image_url) + renderLink(value.name, value.url);
+                return imageHoverIcon(value.image_url) + renderLink(value.full_name, value.url);
             }
         }
     );

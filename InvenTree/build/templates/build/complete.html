@@ -1,7 +1,7 @@
 {% extends "modal_form.html" %}
 
 {% block pre_form_content %}
-<b>Build: {{ build.title }}</b> - {{ build.quantity }} x {{ build.part.name }}
+<b>Build: {{ build.title }}</b> - {{ build.quantity }} x {{ build.part.full_name }}
 <br>
 Are you sure you want to mark this build as complete?
 <hr>
@@ -24,7 +24,7 @@ The following items will be removed from stock:
         </a>
     </td>
     <td>
-        {{ item.stock_item.part.name }}<br>
+        {{ item.stock_item.part.full_name }}<br>
         <i>{{ item.stock_item.part.description }}</i>
     </td>
     <td>{{ item.quantity }}</td>
@@ -42,7 +42,7 @@ The following items will be created:
         <img class='hover-img-thumb' src='{{ build.part.image.url }}'>
         <img class='hover-img-large' src='{{ build.part.image.url }}'>
     </a>
-    {{ build.quantity }} x {{ build.part.name }}
+    {{ build.quantity }} x {{ build.part.full_name }}
 </div>
 
 {% endblock %}

@@ -11,7 +11,7 @@ InvenTree | Build - {{ build }}
 <div class='col-sm-6'>
     <h3>Build Details</h3>
     <p><b>{{ build.title }}</b>{% include "build_status.html" with build=build %}</p>
-    <p>Building {{ build.quantity }} &times {{ build.part.name }}</p>
+    <p>Building {{ build.quantity }} &times {{ build.part.full_name }}</p>
 </div>
 <div class='col-sm-6'>
     <h3>
@@ -40,7 +40,7 @@ InvenTree | Build - {{ build }}
     <td>Title</td><td>{{ build.title }}</td>
 </tr>
 <tr>
-    <td>Part</td><td><a href="{% url 'part-build' build.part.id %}">{{ build.part.name }}</a></td>
+    <td>Part</td><td><a href="{% url 'part-build' build.part.id %}">{{ build.part.full_name }}</a></td>
 </tr>
 <tr>
     <td>Quantity</td><td>{{ build.quantity }}</td>
@@ -109,7 +109,7 @@ InvenTree | Build - {{ build }}
 <tbody>
     {% for item in build.required_parts %}
     <tr>
-        <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.name }}</a></td>
+        <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.full_name }}</a></td>
         <td>{{ item.quantity }}</td>
         <td>{{ item.part.total_stock }}</td>
         <td>{{ item.allocated }}</td>

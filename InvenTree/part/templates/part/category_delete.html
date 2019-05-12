@@ -27,7 +27,7 @@ the top level 'Parts' category.
 </p>
 <ul class='list-group'>
 {% for part in category.parts.all %}
-    <li class='list-group-item'><b>{{ part.long_name }}</b> - <i>{{ part.description }}</i></li>
+    <li class='list-group-item'><b>{{ part.full_name }}</b> - <i>{{ part.description }}</i></li>
 {% endfor %}
 </ul>
 {% endif %}

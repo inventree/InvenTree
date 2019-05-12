@@ -16,7 +16,7 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.conf import settings
 
-from django.db import models
+from django.db import models, transaction
 from django.core.validators import MinValueValidator
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -24,7 +24,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from datetime import datetime
 from fuzzywuzzy import fuzz
+import hashlib
 
 from InvenTree import helpers
 from InvenTree import validators
@@ -202,14 +204,30 @@ class Part(models.Model):
         ]
 
     def __str__(self):
-        return "{n} - {d}".format(n=self.long_name, d=self.description)
+        return "{n} - {d}".format(n=self.full_name, d=self.description)
 
     @property
-    def long_name(self):
-        name = self.name
+    def full_name(self):
+        """ Format a 'full name' for this Part.
+
+        - IPN (if not null)
+        - Part name
+        - Part variant (if not null)
+
+        Elements are joined by the | character
+        """
+
+        elements = []
+
+        if self.IPN:
+            elements.append(self.IPN)
+        
+        elements.append(self.name)
+
         if self.variant:
-            name += " | " + self.variant
-        return name
+            elements.append(self.variant)
+
+        return ' | '.join(elements)
 
     def get_absolute_url(self):
         """ Return the web URL for viewing this part """
@@ -284,22 +302,22 @@ class Part(models.Model):
 
     consumable = models.BooleanField(default=True, help_text='Can this part be used to build other parts?')
 
-    # Is this part "trackable"?
-    # Trackable parts can have unique instances
-    # which are assigned serial numbers (or batch numbers)
-    # and can have their movements tracked
     trackable = models.BooleanField(default=False, help_text='Does this part have tracking for unique items?')
 
-    # Is this part "purchaseable"?
     purchaseable = models.BooleanField(default=True, help_text='Can this part be purchased from external suppliers?')
 
-    # Can this part be sold to customers?
     salable = models.BooleanField(default=False, help_text="Can this part be sold to customers?")
 
-    # Is this part active?
     active = models.BooleanField(default=True, help_text='Is this part active?')
 
     notes = models.TextField(blank=True)
+
+    bom_checksum = models.CharField(max_length=128, blank=True, help_text='Stored BOM checksum')
+
+    bom_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
+                                       related_name='boms_checked')
+
+    bom_checked_date = models.DateField(blank=True, null=True)
 
     def format_barcode(self):
         """ Return a JSON string for formatting a barcode for this Part object """
@@ -451,13 +469,59 @@ class Part(models.Model):
 
     @property
     def bom_count(self):
+        """ Return the number of items contained in the BOM for this part """
         return self.bom_items.count()
 
     @property
     def used_in_count(self):
+        """ Return the number of part BOMs that this part appears in """
         return self.used_in.count()
 
+    def get_bom_hash(self):
+        """ Return a checksum hash for the BOM for this part.
+        Used to determine if the BOM has changed (and needs to be signed off!)
+
+        For hash is calculated from the following fields of each BOM item:
+
+        - Part.full_name (if the part name changes, the BOM checksum is invalidated)
+        - quantity
+        - Note field
+        
+        returns a string representation of a hash object which can be compared with a stored value
+        """
+
+        hash = hashlib.md5('bom seed'.encode())
+
+        for item in self.bom_items.all():
+            hash.update(str(item.sub_part.full_name).encode())
+            hash.update(str(item.quantity).encode())
+            hash.update(str(item.note).encode())
+
+        return str(hash.digest())
+
+    @property
+    def is_bom_valid(self):
+        """ Check if the BOM is 'valid' - if the calculated checksum matches the stored value
+        """
+
+        return self.get_bom_hash() == self.bom_checksum
+
+    @transaction.atomic
+    def validate_bom(self, user):
+        """ Validate the BOM (mark the BOM as validated by the given User.
+
+        - Calculates and stores the hash for the BOM
+        - Saves the current date and the checking user
+        """
+
+        self.bom_checksum = self.get_bom_hash()
+        self.bom_checked_by = user
+        self.bom_checked_date = datetime.now().date()
+
+        self.save()
+
     def required_parts(self):
+        """ Return a list of parts required to make this part (list of BOM items) """
         parts = []
         for bom in self.bom_items.all():
             parts.append(bom.sub_part)
@@ -465,7 +529,7 @@ class Part(models.Model):
 
     @property
     def supplier_count(self):
-        # Return the number of supplier parts available for this part
+        """ Return the number of supplier parts available for this part """
         return self.supplier_parts.count()
 
     def export_bom(self, **kwargs):
@@ -480,7 +544,7 @@ class Part(models.Model):
         for it in self.bom_items.all():
             line = []
 
-            line.append(it.sub_part.name)
+            line.append(it.sub_part.full_name)
             line.append(it.sub_part.description)
             line.append(it.quantity)
             line.append(it.note)
@@ -611,8 +675,8 @@ class BomItem(models.Model):
 
     def __str__(self):
         return "{n} x {child} to make {parent}".format(
-            parent=self.part.name,
-            child=self.sub_part.name,
+            parent=self.part.full_name,
+            child=self.sub_part.full_name,
             n=self.quantity)
 
 

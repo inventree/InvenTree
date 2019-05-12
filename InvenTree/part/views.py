@@ -331,12 +331,50 @@ class PartEdit(AjaxUpdateView):
         return form
 
 
+class BomValidate(AjaxUpdateView):
+    """ Modal form view for validating a part BOM """
+
+    model = Part
+    ajax_form_title = "Validate BOM"
+    ajax_template_name = 'part/bom_validate.html'
+    context_object_name = 'part'
+    form_class = part_forms.BomValidateForm
+
+    def get_context(self):
+        return {
+            'part': self.get_object(),
+        }
+
+    def get(self, request, *args, **kwargs):
+
+        form = self.get_form()
+
+        return self.renderJsonResponse(request, form, context=self.get_context())
+
+    def post(self, request, *args, **kwargs):
+
+        form = self.get_form()
+        part = self.get_object()
+
+        confirmed = str2bool(request.POST.get('validate', False))
+
+        if confirmed:
+            part.validate_bom(request.user)
+        else:
+            form.errors['validate'] = ['Confirm that the BOM is valid']
+
+        data = {
+            'form_valid': confirmed
+        }
+
+        return self.renderJsonResponse(request, form, data, context=self.get_context())
+
+
 class BomExport(AjaxView):
 
     model = Part
     ajax_form_title = 'Export BOM'
     ajax_template_name = 'part/bom_export.html'
-    context_object_name = 'part'
     form_class = part_forms.BomExportForm
 
     def get_object(self):
@@ -344,17 +382,6 @@ class BomExport(AjaxView):
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
-
-        """
-        part = self.get_object()
-
-        context = {
-            'part': part
-        }
-
-        if request.is_ajax():
-            passs
-        """
 
         return self.renderJsonResponse(request, form)
 
