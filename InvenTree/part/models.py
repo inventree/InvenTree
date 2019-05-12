@@ -504,7 +504,7 @@ class Part(models.Model):
         return self.get_bom_hash() == self.bom_checksum
 
     @transaction.atomic
-    def check_bom(self, user):
+    def validate_bom(self, user):
         """ Check the BOM (mark the BOM as validated by the given User.
 
         - Calculates and stores the hash for the BOM
