@@ -24,6 +24,21 @@ class PartImageForm(HelperForm):
         ]
 
 
+class BomValidateForm(HelperForm):
+    """ Simple confirmation form for BOM validation.
+    User is presented with a single checkbox input,
+    to confirm that the BOM for this part is valid
+    """
+
+    validate = forms.BooleanField(required=False, initial=False, help_text='Confirm that the BOM is correct')
+
+    class Meta:
+        model = Part
+        fields = [
+            'validate'
+        ]
+
+
 class BomExportForm(HelperForm):
 
     # TODO - Define these choices somewhere else, and import them here

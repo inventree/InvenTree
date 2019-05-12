@@ -11,6 +11,21 @@
 
 <h3>Bill of Materials</h3>
 
+{% if part.bom_checked_date %}
+{% if part.is_bom_valid %}
+<div class='alert alert-block alert-info'>
+{% else %}
+<div class='alert alert-block alert-danger'>
+    The BOM for <i>{{ part.full_name }}</i> has changed, and must be validated.<br>
+{% endif %}
+    The BOM for <i>{{ part.full_name }}</i> was last checked by {{ part.bom_checked_by }} on {{ part.bom_checked_date }}
+</div>
+{% else %}
+<div class='alert alert-danger alert-block'>
+    <b>The BOM for <i>{{ part.full_name }}</i> has not been validated.</b>
+</div>
+{% endif %}
+
 <div id='button-toolbar'>
     {% if editing_enabled %}
     <div class='btn-group' style='float: right;'>
@@ -24,6 +39,9 @@
             <span class='caret'></span>
         </button>
         <ul class='dropdown-menu'>
+            {% if part.is_bom_valid == False %}
+            <li><a href='#' id='validate-bom' title='Validate BOM'>Validate BOM</a></li>
+            {% endif %}
             <li><a href='#' id='edit-bom' title='Edit BOM'>Edit BOM</a></li>
             <li><a href='#' id='export-bom' title='Export BOM'>Export BOM</a></li>
         </ul>
@@ -71,6 +89,15 @@
     });
 
     {% else %}
+
+    $("#validate-bom").click(function() {
+        launchModalForm(
+            "{% url 'bom-validate' part.id %}",
+            {
+                reload: true,
+            }
+        );
+    });
 
     $("#edit-bom").click(function () {
         location.href = "{% url 'part-bom' part.id %}?edit=True";
