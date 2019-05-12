@@ -74,7 +74,18 @@
                 sortable: true,
                 field: 'MPN',
                 title: 'MPN',
-            }
+            },
+            {
+                field: 'URL',
+                title: 'URL',
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value, value);
+                    } else {
+                        return '';
+                    }
+                }
+            },
         ],
         url: "{% url 'api-part-supplier-list' %}"
     });

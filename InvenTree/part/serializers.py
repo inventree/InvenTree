@@ -145,6 +145,7 @@ class SupplierPartSerializer(serializers.ModelSerializer):
             'SKU',
             'manufacturer',
             'MPN',
+            'URL',
         ]
 
 
