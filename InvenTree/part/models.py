@@ -16,7 +16,7 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.conf import settings
 
-from django.db import models
+from django.db import models, transaction
 from django.core.validators import MinValueValidator
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -474,7 +474,6 @@ class Part(models.Model):
     def used_in_count(self):
         return self.used_in.count()
 
-    @property
     def get_bom_hash(self):
         """ Return a checksum hash for the BOM for this part. 
         Used to determine if the BOM has changed (and needs to be signed off!)
@@ -497,7 +496,29 @@ class Part(models.Model):
 
         return str(hash.digest())
 
+    @property
+    def is_bom_valid(self):
+        """ Check if the BOM is 'valid' - if the calculated checksum matches the stored value
+        """
+
+        return self.get_bom_hash() == self.bom_checksum
+
+    @transaction.atomic
+    def check_bom(self, user):
+        """ Check the BOM (mark the BOM as validated by the given User.
+
+        - Calculates and stores the hash for the BOM
+        - Saves the current date and the checking user
+        """
+
+        self.bom_checksum = get_bom_hash()
+        self.bom_checked_by = user
+        self.bom_checked_date = datetime.now().date()
+
+        self.save()
+
     def required_parts(self):
+        """ Return a list of parts required to make this part (list of BOM items) """
         parts = []
         for bom in self.bom_items.all():
             parts.append(bom.sub_part)
@@ -505,7 +526,7 @@ class Part(models.Model):
 
     @property
     def supplier_count(self):
-        # Return the number of supplier parts available for this part
+        """ Return the number of supplier parts available for this part """
         return self.supplier_parts.count()
 
     def export_bom(self, **kwargs):
