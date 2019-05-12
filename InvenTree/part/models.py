@@ -505,7 +505,7 @@ class Part(models.Model):
 
     @transaction.atomic
     def validate_bom(self, user):
-        """ Check the BOM (mark the BOM as validated by the given User.
+        """ Validate the BOM (mark the BOM as validated by the given User.
 
         - Calculates and stores the hash for the BOM
         - Saves the current date and the checking user
