@@ -35,6 +35,7 @@ part_detail_urls = [
     url(r'^edit/?', views.PartEdit.as_view(), name='part-edit'),
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
     url(r'^bom-export/?', views.BomDownload.as_view(), name='bom-export'),
+    url(r'^validate-bom/', views.BomValidate.as_view(), name='bom-validate'),
     
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),

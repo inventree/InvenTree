@@ -39,6 +39,9 @@
             <span class='caret'></span>
         </button>
         <ul class='dropdown-menu'>
+            {% if part.is_bom_valid == False %}
+            <li><a href='#' id='validate-bom' title='Validate BOM'>Validate BOM</a></li>
+            {% endif %}
             <li><a href='#' id='edit-bom' title='Edit BOM'>Edit BOM</a></li>
             <li><a href='#' id='export-bom' title='Export BOM'>Export BOM</a></li>
         </ul>
@@ -86,6 +89,15 @@
     });
 
     {% else %}
+
+    $("#validate-bom").click(function() {
+        launchModalForm(
+            "{% url 'bom-validate' part.id %}",
+            {
+                reload: true,
+            }
+        );
+    });
 
     $("#edit-bom").click(function () {
         location.href = "{% url 'part-bom' part.id %}?edit=True";

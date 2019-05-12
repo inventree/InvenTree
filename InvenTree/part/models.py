@@ -24,6 +24,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from datetime import datetime
 from fuzzywuzzy import fuzz
 import hashlib
 
@@ -468,14 +469,16 @@ class Part(models.Model):
 
     @property
     def bom_count(self):
+        """ Return the number of items contained in the BOM for this part """
         return self.bom_items.count()
 
     @property
     def used_in_count(self):
+        """ Return the number of part BOMs that this part appears in """
         return self.used_in.count()
 
     def get_bom_hash(self):
-        """ Return a checksum hash for the BOM for this part. 
+        """ Return a checksum hash for the BOM for this part.
         Used to determine if the BOM has changed (and needs to be signed off!)
 
         For hash is calculated from the following fields of each BOM item:
@@ -511,7 +514,7 @@ class Part(models.Model):
         - Saves the current date and the checking user
         """
 
-        self.bom_checksum = get_bom_hash()
+        self.bom_checksum = self.get_bom_hash()
         self.bom_checked_by = user
         self.bom_checked_date = datetime.now().date()
 
