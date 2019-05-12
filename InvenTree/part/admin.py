@@ -9,7 +9,7 @@ from .models import BomItem
 
 class PartAdmin(ImportExportModelAdmin):
 
-    list_display = ('long_name', 'IPN', 'description', 'total_stock', 'category')
+    list_display = ('full_name', 'description', 'total_stock', 'category')
 
 
 class PartCategoryAdmin(ImportExportModelAdmin):

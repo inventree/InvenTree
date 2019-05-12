@@ -7,7 +7,7 @@
 <div class="row">
     {% if part.active == False %}
     <div class='alert alert-danger' style='display: block;'>
-        This part ({{ part.long_name }}) is not active:
+        This part ({{ part.full_name }}) is not active:
     </div>
     {% endif %}
 <div class="col-sm-6">
@@ -24,7 +24,7 @@
       </div>
     <div class="media-body">
         <h4>
-            {{ part.long_name }}
+            {{ part.full_name }}
         </h4>   
         {% if part.variant %}
         <p>Variant: {{ part.variant }}</p>

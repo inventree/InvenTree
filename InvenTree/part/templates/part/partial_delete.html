@@ -1,10 +1,10 @@
-Are you sure you want to delete part '{{ part.long_name }}'?
+Are you sure you want to delete part '{{ part.full_name }}'?
 
 {% if part.used_in_count %}
 <p>This part is used in BOMs for {{ part.used_in_count }} other parts. If you delete this part, the BOMs for the following parts will be updated:
 <ul class="list-group">
     {% for child in part.used_in.all %}
-    <li class='list-group-item'>{{ child.part.name }} - {{ child.part.description }}</li>
+    <li class='list-group-item'>{{ child.part.full_name }} - {{ child.part.description }}</li>
     {% endfor %}
 </p>
 {% endif %}
@@ -30,5 +30,5 @@ Are you sure you want to delete part '{{ part.long_name }}'?
 {% endif %}
 
 {% if part.serials.all|length > 0 %}
-<p>There are {{ part.serials.all|length }} unique parts tracked for '{{ part.long_name }}'. Deleting this part will permanently remove this tracking information.</p>
+<p>There are {{ part.serials.all|length }} unique parts tracked for '{{ part.full_name }}'. Deleting this part will permanently remove this tracking information.</p>
 {% endif %}

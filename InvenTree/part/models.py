@@ -202,14 +202,30 @@ class Part(models.Model):
         ]
 
     def __str__(self):
-        return "{n} - {d}".format(n=self.long_name, d=self.description)
+        return "{n} - {d}".format(n=self.full_name, d=self.description)
 
     @property
-    def long_name(self):
-        name = self.name
+    def full_name(self):
+        """ Format a 'full name' for this Part.
+
+        - IPN (if not null)
+        - Part name
+        - Part variant (if not null)
+
+        Elements are joined by the | character
+        """
+
+        elements = []
+
+        if self.IPN:
+            elements.append(self.IPN)
+        
+        elements.append(self.name)
+
         if self.variant:
-            name += " | " + self.variant
-        return name
+            elements.append(self.variant)
+
+        return ' | '.join(elements)
 
     def get_absolute_url(self):
         """ Return the web URL for viewing this part """
@@ -480,7 +496,7 @@ class Part(models.Model):
         for it in self.bom_items.all():
             line = []
 
-            line.append(it.sub_part.name)
+            line.append(it.sub_part.full_name)
             line.append(it.sub_part.description)
             line.append(it.quantity)
             line.append(it.note)
@@ -611,8 +627,8 @@ class BomItem(models.Model):
 
     def __str__(self):
         return "{n} x {child} to make {parent}".format(
-            parent=self.part.name,
-            child=self.sub_part.name,
+            parent=self.part.full_name,
+            child=self.sub_part.full_name,
             n=self.quantity)
 
 

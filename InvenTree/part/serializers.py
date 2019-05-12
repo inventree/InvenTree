@@ -34,14 +34,13 @@ class PartBriefSerializer(serializers.ModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     image_url = serializers.CharField(source='get_image_url', read_only=True)
-
+    
     class Meta:
         model = Part
         fields = [
             'pk',
             'url',
-            'name',
-            'variant',
+            'full_name',
             'description',
             'available_stock',
             'image_url',
@@ -63,6 +62,7 @@ class PartSerializer(serializers.ModelSerializer):
         fields = [
             'pk',
             'url',  # Link to the part detail page
+            'full_name',
             'name',
             'variant',
             'image_url',
@@ -86,7 +86,7 @@ class PartSerializer(serializers.ModelSerializer):
 class PartStarSerializer(InvenTreeModelSerializer):
     """ Serializer for a PartStar object """
 
-    partname = serializers.CharField(source='part.name', read_only=True)
+    partname = serializers.CharField(source='part.full_name', read_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
 
     class Meta:
@@ -145,6 +145,7 @@ class SupplierPartSerializer(serializers.ModelSerializer):
             'SKU',
             'manufacturer',
             'MPN',
+            'URL',
         ]
 
 

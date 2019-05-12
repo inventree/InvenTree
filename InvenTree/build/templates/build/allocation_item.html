@@ -9,7 +9,7 @@
         <img class='hover-img-large' src="{% if item.sub_part.image %}{{ item.sub_part.image.url }}{% endif %}">
     </div>
     <div>
-        {{ item.sub_part.name }}<br>
+        {{ item.sub_part.full_name }}<br>
         <small><i>{{ item.sub_part.description }}</i></small>
     </div>
 {% endblock %}
