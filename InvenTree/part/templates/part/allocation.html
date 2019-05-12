@@ -17,7 +17,7 @@
 {% for allocation in part.build_allocation %}
 <tr>
     <td><a href="{% url 'build-detail' allocation.build.id %}">{{ allocation.build.title }}</a></td>
-    <td>{{ allocation.build.quantity }} &times <a href="{% url 'part-detail' allocation.build.part.id %}">{{ allocation.build.part.name }}</a></td>
+    <td>{{ allocation.build.quantity }} &times <a href="{% url 'part-detail' allocation.build.part.id %}">{{ allocation.build.part.full_name }}</a></td>
     <td>{{ allocation.quantity }}</td>
     <td>{% include "build_status.html" with build=allocation.build %}</td>
 </tr>

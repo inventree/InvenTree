@@ -16,7 +16,6 @@
                 {% if part.active %}
                 <li><a href='#' id='duplicate-part' title='Duplicate Part'>Duplicate</a></li>
                 <li><a href="#" id='edit-part' title='Edit part'>Edit</a></li>
-                <li><a href='#' id='stocktake-part' title='Stocktake'>Stocktake</a></li>
                 <hr>
                 <li><a href="#" id='deactivate-part' title='Deactivate part'>Deactivate</a></li>
                 {% else %}
@@ -34,7 +33,7 @@
     <table class='table table-striped'>
         <tr>
             <td>Part name</td>
-            <td>{{ part.long_name }}</td>
+            <td>{{ part.full_name }}</td>
         </tr>
         <tr>
             <td>Description</td>
@@ -44,6 +43,12 @@
         <tr>
             <td>IPN</td>
             <td>{{ part.IPN }}</td>
+        </tr>
+        {% endif %}
+        {% if part.URL %}
+        <tr>
+            <td>URL</td>
+            <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
         </tr>
         {% endif %}
         <tr>
@@ -147,7 +152,7 @@
     $('#activate-part').click(function() {
         showQuestionDialog(
             'Activate Part?',
-            'Are you sure you wish to reactivate {{ part.long_name }}?',
+            'Are you sure you wish to reactivate {{ part.full_name }}?',
             {
                 accept_text: 'Activate',
                 accept: function() {
@@ -169,7 +174,7 @@
     $('#deactivate-part').click(function() {
         showQuestionDialog(
             'Deactivate Part?',
-            `Are you sure you wish to deactivate {{ part.long_name }}?<br>
+            `Are you sure you wish to deactivate {{ part.full_name }}?<br>
             `,
             {
                 accept_text: 'Deactivate',
@@ -196,18 +201,6 @@
                          {
                              redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %}
                          });
-    });
-
-    $('#stocktake-part').click(function() {
-        adjustStock({
-            action: 'stocktake',
-            query: {
-                part: {{ part.id }},
-            },
-            success: function() {
-                location.reload();
-            }
-        });
     });
 
 {% endblock %}

@@ -32,7 +32,7 @@ class StockItemSerializerBrief(serializers.ModelSerializer):
     """ Brief serializers for a StockItem """
 
     location_name = serializers.CharField(source='location', read_only=True)
-    part_name = serializers.CharField(source='part.name', read_only=True)
+    part_name = serializers.CharField(source='part.full_name', read_only=True)
 
     class Meta:
         model = StockItem

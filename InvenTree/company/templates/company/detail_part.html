@@ -51,7 +51,7 @@
             },
             {
                 sortable: true,
-                field: 'part_detail.name',
+                field: 'part_detail.full_name',
                 title: 'Part',
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.part_detail.image_url) + renderLink(value, '/part/' + row.part + '/suppliers/');

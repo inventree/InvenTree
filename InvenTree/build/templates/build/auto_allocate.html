@@ -4,7 +4,7 @@
 
 {{ block.super }}
 
-<b>Build: {{ build.title }}</b> - {{ build.quantity }} x {{ build.part.name }}
+<b>Build: {{ build.title }}</b> - {{ build.quantity }} x {{ build.part.full_name }}
 <br><br>
 Automatically allocate stock to this build?
 <hr>
@@ -27,7 +27,7 @@ Automatically allocate stock to this build?
         </a>
     </td>
     <td>
-        {{ item.stock_item.part.name }}<br>
+        {{ item.stock_item.part.full_name }}<br>
         <i>{{ item.stock_item.part.description }}</i>
     </td>
     <td>{{ item.quantity }}</td>

@@ -225,7 +225,7 @@ class Build(models.Model):
                 'Removed {n} items to build {m} x {part}'.format(
                     n=item.quantity,
                     m=self.quantity,
-                    part=self.part.name
+                    part=self.part.full_name
                 )
             )
 
@@ -370,7 +370,7 @@ class BuildItem(models.Model):
 
         if self.stock_item is not None and self.stock_item.part is not None:
             if self.stock_item.part not in self.build.part.required_parts():
-                errors['stock_item'] = [_("Selected stock item not found in BOM for part '{p}'".format(p=self.build.part.name))]
+                errors['stock_item'] = [_("Selected stock item not found in BOM for part '{p}'".format(p=self.build.part.full_name))]
             
         if self.stock_item is not None and self.quantity > self.stock_item.quantity:
             errors['quantity'] = [_("Allocated quantity ({n}) must not exceed available quantity ({q})".format(

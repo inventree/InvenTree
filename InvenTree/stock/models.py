@@ -180,7 +180,7 @@ class StockItem(models.Model):
             reverse('api-stock-detail', kwargs={'pk': self.id}),
             {
                 'part_id': self.part.id,
-                'part_name': self.part.name
+                'part_name': self.part.full_name
             }
         )
 
@@ -464,7 +464,7 @@ class StockItem(models.Model):
     def __str__(self):
         s = '{n} x {part}'.format(
             n=self.quantity,
-            part=self.part.name)
+            part=self.part.full_name)
 
         if self.location:
             s += ' @ {loc}'.format(loc=self.location.name)

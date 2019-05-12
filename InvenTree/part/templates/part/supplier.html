@@ -48,7 +48,7 @@
     $("#supplier-table").bootstrapTable({
         sortable: true,
         search: true,
-        formatNoMatches: function() { return "No supplier parts available for {{ part.long_name }}"; },
+        formatNoMatches: function() { return "No supplier parts available for {{ part.full_name }}"; },
         queryParams: function(p) {
             return {
                 part: {{ part.id }}
