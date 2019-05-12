@@ -206,11 +206,13 @@ class Part(models.Model):
 
     @property
     def full_name(self):
-        """ Format a 'full name' for this Part. 
+        """ Format a 'full name' for this Part.
 
         - IPN (if not null)
         - Part name
         - Part variant (if not null)
+
+        Elements are joined by the | character
         """
 
         elements = []
