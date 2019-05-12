@@ -25,6 +25,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from fuzzywuzzy import fuzz
+import hashlib
 
 from InvenTree import helpers
 from InvenTree import validators
@@ -472,6 +473,29 @@ class Part(models.Model):
     @property
     def used_in_count(self):
         return self.used_in.count()
+
+    @property
+    def get_bom_hash(self):
+        """ Return a checksum hash for the BOM for this part. 
+        Used to determine if the BOM has changed (and needs to be signed off!)
+
+        For hash is calculated from the following fields of each BOM item:
+
+        - Part.full_name (if the part name changes, the BOM checksum is invalidated)
+        - quantity
+        - Note field
+        
+        returns a string representation of a hash object which can be compared with a stored value
+        """
+
+        hash = hashlib.md5('bom seed'.encode())
+
+        for item in self.bom_items.all():
+            hash.update(str(item.sub_part.full_name).encode())
+            hash.update(str(item.quantity).encode())
+            hash.update(str(item.notes).encode())
+
+        return str(hash.digest())
 
     def required_parts(self):
         parts = []
