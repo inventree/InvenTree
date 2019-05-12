@@ -301,22 +301,22 @@ class Part(models.Model):
 
     consumable = models.BooleanField(default=True, help_text='Can this part be used to build other parts?')
 
-    # Is this part "trackable"?
-    # Trackable parts can have unique instances
-    # which are assigned serial numbers (or batch numbers)
-    # and can have their movements tracked
     trackable = models.BooleanField(default=False, help_text='Does this part have tracking for unique items?')
 
-    # Is this part "purchaseable"?
     purchaseable = models.BooleanField(default=True, help_text='Can this part be purchased from external suppliers?')
 
-    # Can this part be sold to customers?
     salable = models.BooleanField(default=False, help_text="Can this part be sold to customers?")
 
-    # Is this part active?
     active = models.BooleanField(default=True, help_text='Is this part active?')
 
     notes = models.TextField(blank=True)
+
+    bom_checksum = models.CharField(max_length=128, blank=True, help_text='Stored BOM checksum')
+
+    bom_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
+                                       related_name='boms_checked')
+
+    bom_checked_date = models.DateField(blank=True, null=True)
 
     def format_barcode(self):
         """ Return a JSON string for formatting a barcode for this Part object """
@@ -493,7 +493,7 @@ class Part(models.Model):
         for item in self.bom_items.all():
             hash.update(str(item.sub_part.full_name).encode())
             hash.update(str(item.quantity).encode())
-            hash.update(str(item.notes).encode())
+            hash.update(str(item.note).encode())
 
         return str(hash.digest())
 
