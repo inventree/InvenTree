@@ -211,7 +211,7 @@ class StockItem(models.Model):
 
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1)
 
-    updated = models.DateField(auto_now=True)
+    updated = models.DateField(auto_now=True, null=True)
 
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)
