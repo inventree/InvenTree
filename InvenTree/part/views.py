@@ -804,3 +804,4 @@ class SupplierPartDelete(AjaxDeleteView):
     success_url = '/supplier/'
     ajax_template_name = 'company/partdelete.html'
     ajax_form_title = 'Delete Supplier Part'
+    context_object_name = 'supplier_part'

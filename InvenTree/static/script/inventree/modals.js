@@ -345,68 +345,6 @@ function openModal(options) {
 }
 
 
-function launchDeleteForm(url, options = {}) {
-    /* Launch a modal form to delete an object
-     */
-
-    var modal = options.modal || '#modal-delete';
-
-    $(modal).on('shown.bs.modal', function() {
-        $(modal + ' .modal-form-content').scrollTop(0);
-    });
-
-    // Un-bind any attached click listeners
-    $(modal).off('click', '#modal-form-delete');
-
-    // Request delete form data
-    $.ajax({
-        url: url,
-        type: 'get',
-        dataType: 'json',
-        beforeSend: function() {
-            openModal({modal: modal});
-        },
-        success: function (response) {
-            if (response.title) {
-                modalSetTitle(modal, response.title);
-            }
-            if (response.html_data) {
-                modalSetContent(modal, response.html_data);
-            }
-            else {
-
-                $(modal).modal('hide');
-                showAlertDialog('Invalid form response', 'JSON response missing HTML data');
-            }
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-            $(modal).modal('hide');
-            showAlertDialog('Error requesting form data', renderErrorMessage(xhr));
-        }
-    });
-
-    $(modal).on('click', '#modal-form-delete', function() {
-
-        var form = $(modal).find('#delete-form');
-
-        $.ajax({
-            url: url,
-            data: form.serialize(),
-            type: 'post',
-            dataType: 'json',
-            success: function (response) {
-                $(modal).modal('hide');
-                afterForm(response, options);
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                $(modal).modal('hide');
-                showAlertDialog('Error deleting item', renderErrorMessage(xhr));
-            }
-        });
-    });
-}
-
-
 function injectModalForm(modal, form_html) {
     /* Inject form content into the modal.
      * Updates the HTML of the form content, and then applies some other updates

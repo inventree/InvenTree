@@ -97,7 +97,7 @@
     });
 
     $('#location-delete').click(function() {
-        launchDeleteForm("{% url 'stock-location-delete' location.id %}",
+        launchModalForm("{% url 'stock-location-delete' location.id %}",
                          {
                              redirect: "{% url 'stock-index' %}"
                          });

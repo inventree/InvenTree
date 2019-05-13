@@ -194,7 +194,7 @@
     {% endif %}
 
     $("#stock-delete").click(function () {
-        launchDeleteForm(
+        launchModalForm(
                          "{% url 'stock-item-delete' item.id %}",
                          {
                              redirect: "{% url 'part-stock' item.part.id %}"
