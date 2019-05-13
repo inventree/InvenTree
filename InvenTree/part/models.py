@@ -16,6 +16,7 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.conf import settings
 
+from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.core.validators import MinValueValidator
 
@@ -533,18 +534,32 @@ class Part(models.Model):
         """ Return the number of supplier parts available for this part """
         return self.supplier_parts.count()
 
-    def copyBomFrom(self, other):
-        """ Duplicates the BOM from another part.
-        
-        This should only be called during part creation,
-        and it does not delete any existing BOM items for *this* part.
+    def deepCopy(self, other, **kwargs):
+        """ Duplicates non-field data from another part.
+        Does not alter the normal fields of this part,
+        but can be used to copy other data linked by ForeignKey refernce.
+
+        Keyword Args:
+            image: If True, copies Part image (default = True)
+            bom: If True, copies BOM data (default = False)
         """
 
-        for item in other.bom_items.all():
-            # Point the item to THIS part
-            item.part = self
-            item.pk = None
-            item.save()
+        # Copy the part image
+        if kwargs.get('image', True):
+            image_file = ContentFile(other.image.read())
+            image_file.name = rename_part_image(self, 'test.png')
+
+            self.image = image_file
+
+        # Copy the BOM data
+        if kwargs.get('bom', False):
+            for item in other.bom_items.all():
+                # Point the item to THIS part
+                item.part = self
+                item.pk = None
+                item.save()
+
+        self.save()
 
     def export_bom(self, **kwargs):
 

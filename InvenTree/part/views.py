@@ -208,8 +208,7 @@ class PartDuplicate(AjaxCreateView):
             original = self.get_part_to_copy()
 
             if original:
-                if deep_copy:
-                    part.copyBomFrom(original)
+                    part.deepCopy(original, bom=deep_copy)
 
             try:
                 data['url'] = part.get_absolute_url()
@@ -230,7 +229,7 @@ class PartDuplicate(AjaxCreateView):
         if part:
             initials = model_to_dict(part)
         else:
-            initials = super(AjaxCreateView, self).get_initials()
+            initials = super(AjaxCreateView, self).get_initial()
 
         return initials
 
