@@ -64,7 +64,7 @@ function updateStock(items, options={}) {
 
         html += '<tr>';
 
-        html += '<td>' + item.part.name + '</td>';
+        html += '<td>' + item.part.full_name + '</td>';
 
         if (item.location) {
             html += '<td>' + item.location.name + '</td>';
@@ -289,7 +289,7 @@ function moveStockItems(items, options) {
 
                 html += "<tr>";
 
-                html += "<td>" + item.part.name + "</td>";
+                html += "<td>" + item.part.full_name + "</td>";
                 html += "<td>" + item.location.pathstring + "</td>";
                 html += "<td>" + item.quantity + "</td>";
 
