@@ -131,12 +131,9 @@
     
     $("#duplicate-part").click(function() {
         launchModalForm(
-            "{% url 'part-create' %}",
+            "{% url 'part-duplicate' part.id %}",
             {
                 follow: true,
-                data: {
-                    copy: {{ part.id }},
-                },
             }
         );
     });

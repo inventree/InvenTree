@@ -533,6 +533,19 @@ class Part(models.Model):
         """ Return the number of supplier parts available for this part """
         return self.supplier_parts.count()
 
+    def copyBomFrom(self, other):
+        """ Duplicates the BOM from another part. 
+        
+        This should only be called during part creation,
+        and it does not delete any existing BOM items for *this* part.
+        """
+
+        for item in other.bom_items.all():
+            # Point the item to THIS part
+            item.part = self
+            item.pk = None
+            item.save()
+
     def export_bom(self, **kwargs):
 
         data = tablib.Dataset(headers=[
