@@ -12,7 +12,7 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 
 from django.views import View
-from django.views.generic import UpdateView, CreateView, DeleteView
+from django.views.generic import UpdateView, CreateView
 from django.views.generic.base import TemplateView
 
 from part.models import Part

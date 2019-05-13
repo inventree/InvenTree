@@ -20,7 +20,7 @@ class HelperForm(forms.ModelForm):
 
 
 class DeleteForm(forms.Form):
-    """ Generic deletion form which provides simple user confirmation 
+    """ Generic deletion form which provides simple user confirmation
     """
 
     confirm_delete = forms.BooleanField(
