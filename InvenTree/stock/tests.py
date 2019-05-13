@@ -140,15 +140,12 @@ class StockTest(TestCase):
 
     def test_partial_move(self):
         w1 = StockItem.objects.get(pk=100)
-        w2 = StockItem.objects.get(pk=101)
-
-        q = w1.quantity
 
         # Move 6 of the units
         self.assertTrue(w1.move(self.diningroom, 'Moved', None, quantity=6))
         self.assertEqual(w1.quantity, 6)
 
-        # There should also be a new object still in drawer3 
+        # There should also be a new object still in drawer3
         self.assertEqual(StockItem.objects.filter(part=25).count(), 4)
         widget = StockItem.objects.get(location=self.drawer3.id, part=25, quantity=4)
 
@@ -246,4 +243,4 @@ class StockTest(TestCase):
         w2.take_stock(30, None, notes='Took 30')
 
         with self.assertRaises(StockItem.DoesNotExist):
-            w2 = StockItem.objects.get(pk=101)  
+            w2 = StockItem.objects.get(pk=101)
