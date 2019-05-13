@@ -124,13 +124,122 @@ class PartAttachmentDelete(AjaxDeleteView):
         }
 
 
+class PartDuplicate(AjaxCreateView):
+    """ View for duplicating an existing Part object.
+
+    - Part <pk> is provided in the URL '/part/<pk>/copy/'
+    - Option for 'deep-copy' which will duplicate all BOM items (default = True)
+    """
+
+    model = Part
+    form_class = part_forms.EditPartForm
+
+    ajax_form_title = "Duplicate Part"
+    ajax_template_name = "part/copy_part.html"
+
+    def get_data(self):
+        return {
+            'success': 'Copied part'
+        }
+
+    def get_part_to_copy(self):
+        try:
+            return Part.objects.get(id=self.kwargs['pk'])
+        except Part.DoesNotExist:
+            return None
+
+    def get_context_data(self):
+        return {
+            'part': self.get_part_to_copy()
+        }
+
+    def get_form(self):
+        form = super(AjaxCreateView, self).get_form()
+
+        # Force display of the 'deep_copy' widget
+        form.fields['deep_copy'].widget = CheckboxInput()
+
+        return form
+
+    def post(self, request, *args, **kwargs):
+        """ Capture the POST request for part duplication
+
+        - If the deep_copy object is set, copy all the BOM items too!
+        """
+
+        form = self.get_form()
+
+        context = self.get_context_data()
+
+        valid = form.is_valid()
+
+        name = request.POST.get('name', None)
+        
+        if name:
+            matches = match_part_names(name)
+
+            if len(matches) > 0:
+                context['matches'] = matches
+            
+                # Enforce display of the checkbox
+                form.fields['confirm_creation'].widget = CheckboxInput()
+                
+                # Check if the user has checked the 'confirm_creation' input
+                confirmed = str2bool(request.POST.get('confirm_creation', False))
+
+                if not confirmed:
+                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
+                    
+                    form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
+                    valid = False
+
+        data = {
+            'form_valid': valid
+        }
+
+        if valid:
+            # Create the new Part
+            part = form.save()
+
+            data['pk'] = part.pk
+
+            deep_copy = str2bool(request.POST.get('deep_copy', False))
+
+            original = self.get_part_to_copy()
+
+            if original:
+                    part.deepCopy(original, bom=deep_copy)
+
+            try:
+                data['url'] = part.get_absolute_url()
+            except AttributeError:
+                pass
+
+        if valid:
+            pass
+
+        return self.renderJsonResponse(request, form, data, context=context)
+
+    def get_initial(self):
+        """ Get initial data based on the Part to be copied from.
+        """
+
+        part = self.get_part_to_copy()
+
+        if part:
+            initials = model_to_dict(part)
+        else:
+            initials = super(AjaxCreateView, self).get_initial()
+
+        return initials
+
+
 class PartCreate(AjaxCreateView):
     """ View for creating a new Part object.
 
     Options for providing initial conditions:
     
     - Provide a category object as initial data
-    - Copy an existing Part
     """
     model = Part
     form_class = part_forms.EditPartForm
@@ -224,22 +333,9 @@ class PartCreate(AjaxCreateView):
         """ Get initial data for the new Part object:
 
         - If a category is provided, pre-fill the Category field
-        - If 'copy' parameter is provided, copy from referenced Part
         """
 
-        # Is the client attempting to copy an existing part?
-        part_to_copy = self.request.GET.get('copy', None)
-
-        if part_to_copy:
-            try:
-                original = Part.objects.get(pk=part_to_copy)
-                initials = model_to_dict(original)
-                self.ajax_form_title = "Copy Part '{p}'".format(p=original.name)
-            except Part.DoesNotExist:
-                initials = super(PartCreate, self).get_initial()
-
-        else:
-            initials = super(PartCreate, self).get_initial()
+        initials = super(PartCreate, self).get_initial()
 
         if self.get_category_id():
             try:

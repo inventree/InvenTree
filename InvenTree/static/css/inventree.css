@@ -162,6 +162,10 @@
   z-index: 99999999;
 }
 
+.js-modal-form .checkbox {
+    margin-left: 0px;
+}
+
 .modal-dialog {
     width: 45%;
 }

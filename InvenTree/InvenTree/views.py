@@ -116,7 +116,7 @@ class AjaxMixin(object):
         """
         return {}
 
-    def renderJsonResponse(self, request, form=None, data={}, context={}):
+    def renderJsonResponse(self, request, form=None, data={}, context=None):
         """ Render a JSON response based on specific class context.
 
         Args:
@@ -128,6 +128,12 @@ class AjaxMixin(object):
         Returns:
             JSON response object
         """
+
+        if context is None:
+            try:
+                context = self.get_context_data()
+            except AttributeError:
+                context = {}
 
         if form:
             context['form'] = form

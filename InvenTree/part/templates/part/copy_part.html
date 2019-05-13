@@ -1,0 +1,24 @@
+{% extends "modal_form.html" %}
+
+{% block pre_form_content %}
+
+{{ block.super }}
+
+<div class='alert alert-info alert-block'>
+    <b>Duplicate Part</b><br>
+    Make a copy of part '{{ part.full_name }}'.
+</div>
+
+{% if matches %}
+<b>Possible Matching Parts</b>
+<p>The new part may be a duplicate of these existing parts:</p>
+<ul class='list-group'>
+{% for match in matches %}
+<li class='list-group-item list-group-item-condensed'>
+    {{ match.part.full_name }} - <i>{{ match.part.description }}</i> ({{ match.ratio }}%)
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% endblock %}
