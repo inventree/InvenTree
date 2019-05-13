@@ -493,6 +493,7 @@ class Part(models.Model):
         hash = hashlib.md5('bom seed'.encode())
 
         for item in self.bom_items.all():
+            hash.update(str(item.sub_part.id).encode())
             hash.update(str(item.sub_part.full_name).encode())
             hash.update(str(item.quantity).encode())
             hash.update(str(item.note).encode())
