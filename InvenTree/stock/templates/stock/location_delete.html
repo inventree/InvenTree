@@ -1,3 +1,6 @@
+{% extends "modal_delete_form.html" %}
+
+{% block pre_form_content %}
 Are you sure you want to delete stock location '{{ location.name }}'?
 
 <br>
@@ -34,3 +37,4 @@ If this location is deleted, these items will be moved to the top level 'Stock' 
     {% endfor %}
 </ul>
 {% endif %}
+{% endblock %}

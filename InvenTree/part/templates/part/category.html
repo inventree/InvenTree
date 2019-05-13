@@ -111,7 +111,7 @@
     {% endif %}
 
     $('#cat-delete').click(function() {
-        launchDeleteForm("{% url 'category-delete' category.id %}",
+        launchModalForm("{% url 'category-delete' category.id %}",
                          {
                              redirect: redirect
                          });

@@ -87,7 +87,7 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
     table.on('click', '.item-del-button', function() {
         var button = $(this);
 
-        launchDeleteForm(button.attr('url'), {
+        launchModalForm(button.attr('url'), {
             success: function() {
                 table.bootstrapTable('refresh');
             }

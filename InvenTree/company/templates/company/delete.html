@@ -1,3 +1,7 @@
+{% extends "modal_delete_form.html" %}
+
+{% block pre_form_content %}
+
 Are you sure you want to delete company '{{ company.name }}'?
 
 <br>
@@ -11,3 +15,5 @@ If this supplier is deleted, these supplier part entries will also be deleted.</
 {% endfor %}
 </ul>
 {% endif %}
+
+{% endblock %}

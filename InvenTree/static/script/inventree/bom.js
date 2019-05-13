@@ -184,7 +184,7 @@ function loadBomTable(table, options) {
         table.on('click', '.bom-delete-button', function() {
             var button = $(this);
             
-            launchDeleteForm(button.attr('url'), {
+            launchModalForm(button.attr('url'), {
                                 success: function() {
                                     reloadBomTable(table);
                                 }

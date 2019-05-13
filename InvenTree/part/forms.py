@@ -75,11 +75,20 @@ class EditPartAttachmentForm(HelperForm):
 class EditPartForm(HelperForm):
     """ Form for editing a Part object """
 
-    confirm_creation = forms.BooleanField(required=False, initial=False, help_text='Confirm part creation', widget=forms.HiddenInput())
+    deep_copy = forms.BooleanField(required=False,
+                                   initial=True,
+                                   help_text="Perform 'deep copy' which will duplicate all BOM data for this part",
+                                   widget=forms.HiddenInput())
+
+    confirm_creation = forms.BooleanField(required=False,
+                                          initial=False,
+                                          help_text='Confirm part creation',
+                                          widget=forms.HiddenInput())
 
     class Meta:
         model = Part
         fields = [
+            'deep_copy',
             'confirm_creation',
             'category',
             'name',

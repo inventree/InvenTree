@@ -17,3 +17,19 @@ class HelperForm(forms.ModelForm):
         self.helper = FormHelper()
 
         self.helper.form_tag = False
+
+
+class DeleteForm(forms.Form):
+    """ Generic deletion form which provides simple user confirmation
+    """
+
+    confirm_delete = forms.BooleanField(
+        required=False,
+        initial=False,
+        help_text='Confirm item deletion'
+    )
+
+    class Meta:
+        fields = [
+            'confirm_delete'
+        ]

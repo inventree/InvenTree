@@ -54,7 +54,7 @@
     });
 
     $('#delete-company').click(function() {
-        launchDeleteForm(
+        launchModalForm(
                          "{% url 'company-delete' company.id %}",
                          {
                              redirect: "{% url 'company-index' %}"

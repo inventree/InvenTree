@@ -62,7 +62,7 @@
     $("#attachment-table").on('click', '.attachment-delete-button', function() {
         var button = $(this);
 
-        launchDeleteForm(button.attr('url'), {
+        launchModalForm(button.attr('url'), {
             success: function() {
                 location.reload();
             }

@@ -12,10 +12,13 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 
 from django.views import View
-from django.views.generic import UpdateView, CreateView, DeleteView
+from django.views.generic import UpdateView, CreateView
 from django.views.generic.base import TemplateView
 
 from part.models import Part
+
+from .forms import DeleteForm
+from .helpers import str2bool
 
 from rest_framework import views
 
@@ -116,7 +119,7 @@ class AjaxMixin(object):
         """
         return {}
 
-    def renderJsonResponse(self, request, form=None, data={}, context={}):
+    def renderJsonResponse(self, request, form=None, data={}, context=None):
         """ Render a JSON response based on specific class context.
 
         Args:
@@ -128,6 +131,12 @@ class AjaxMixin(object):
         Returns:
             JSON response object
         """
+
+        if context is None:
+            try:
+                context = self.get_context_data()
+            except AttributeError:
+                context = {}
 
         if form:
             context['form'] = form
@@ -294,12 +303,27 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class AjaxDeleteView(AjaxMixin, DeleteView):
+class AjaxDeleteView(AjaxMixin, UpdateView):
 
     """ An 'AJAXified DeleteView for removing an object from the DB
     - Returns a HTML object (not a form!) in JSON format (for delivery to a modal window)
     - Handles deletion
     """
+
+    form_class = DeleteForm
+    ajax_form_title = "Delete Item"
+    ajax_template_name = "modal_delete_form.html"
+    context_object_name = 'item'
+
+    def get_object(self):
+        try:
+            self.object = self.model.objects.get(pk=self.kwargs['pk'])
+        except:
+            return None
+        return self.object
+
+    def get_form(self):
+        return self.form_class(self.get_form_kwargs())
 
     def get(self, request, *args, **kwargs):
         """ Respond to GET request
@@ -308,19 +332,15 @@ class AjaxDeleteView(AjaxMixin, DeleteView):
         - Return rendered form to client
         """
 
-        super(DeleteView, self).get(request, *args, **kwargs)
+        super(UpdateView, self).get(request, *args, **kwargs)
 
-        data = {
-            'id': self.get_object().id,
-            'delete': False,
-            'title': self.ajax_form_title,
-            'html_data': render_to_string(
-                self.ajax_template_name,
-                self.get_context_data(),
-                request=request)
-        }
+        form = self.get_form()
 
-        return JsonResponse(data)
+        context = self.get_context_data()
+
+        context[self.context_object_name] = self.get_object()
+
+        return self.renderJsonResponse(request, form, context=context)
 
     def post(self, request, *args, **kwargs):
         """ Respond to POST request
@@ -331,14 +351,24 @@ class AjaxDeleteView(AjaxMixin, DeleteView):
 
         obj = self.get_object()
         pk = obj.id
-        obj.delete()
+
+        form = self.get_form()
+
+        confirmed = str2bool(request.POST.get('confirm_delete', False))
+        context = self.get_context_data()
+
+        if confirmed:
+            obj.delete()
+        else:
+            form.errors['confirm_delete'] = ['Check box to confirm item deletion']
+            context[self.context_object_name] = self.get_object()
 
         data = {
             'id': pk,
-            'delete': True
+            'form_valid': confirmed
         }
 
-        return self.renderJsonResponse(request, data=data)
+        return self.renderJsonResponse(request, form, data=data, context=context)
 
 
 class IndexView(TemplateView):
