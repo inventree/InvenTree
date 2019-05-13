@@ -1,3 +1,6 @@
+{% extends "modal_delete_form.html" %}
+
+{% block pre_form_content %}
 Are you sure you want to delete category '{{ category.name }}'?
 
 {% if category.children.all|length > 0 %}
@@ -31,3 +34,5 @@ the top level 'Parts' category.
 {% endfor %}
 </ul>
 {% endif %}
+
+{% endblock %}
