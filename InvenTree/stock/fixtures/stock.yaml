@@ -17,6 +17,7 @@
 
 # 1234 2K2 resistors in 'Drawer_1'
 - model: stock.stockitem
+  pk: 1234
   fields:
     part: 3
     location: 5
@@ -24,18 +25,22 @@
 
 # Some widgets in drawer 3
 - model: stock.stockitem
+  pk: 100
   fields:
     part: 25
     location: 7
     quantity: 10
+    delete_on_deplete: False
 
 - model: stock.stockitem
+  pk: 101
   fields:
     part: 25
     location: 7
     quantity: 5
 
 - model: stock.stockitem
+  pk: 102
   fields:
     part: 25
     location: 7

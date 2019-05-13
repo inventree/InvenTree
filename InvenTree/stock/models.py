@@ -53,12 +53,7 @@ class StockLocation(InvenTreeTree):
         """ Return the number of StockItem objects which live in or under this category
         """
 
-        return len(StockItem.objects.filter(location__in=self.getUniqueChildren()))
-
-    @property
-    def item_count(self):
-
-        return self.stock_item_count
+        return StockItem.objects.filter(location__in=self.getUniqueChildren()).count()
 
 
 @receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')
@@ -443,9 +438,6 @@ class StockItem(models.Model):
     def take_stock(self, quantity, user, notes=''):
         """ Remove items from stock
         """
-
-        if self.quantity == 0:
-            return False
 
         quantity = int(quantity)
 

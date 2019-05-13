@@ -43,7 +43,7 @@ class TreeSerializer(views.APIView):
             'pk': item.id,
             'text': item.name,
             'href': item.get_absolute_url(),
-            'tags': [item.item_count],
+            'tags': [item.stock_item_count],
         }
 
         if item.has_children:
@@ -66,7 +66,7 @@ class TreeSerializer(views.APIView):
 
         for item in top_items:
             nodes.append(self.itemToJson(item))
-            top_count += item.item_count
+            top_count += item.stock_item_count
 
         top = {
             'pk': None,

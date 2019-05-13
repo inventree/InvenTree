@@ -37,6 +37,11 @@ class StockTest(TestCase):
 
         self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
 
+    def test_barcode(self):
+        barcode = self.office.format_barcode()
+
+        self.assertIn('"name": "Office"', barcode)
+
     def test_strings(self):
         it = StockItem.objects.get(pk=1)
         self.assertEqual(str(it), '4000 x M2x4 LPHS @ Dining Room')
@@ -74,6 +79,7 @@ class StockTest(TestCase):
 
         # Drawer 3 should have three stock items
         self.assertEqual(self.drawer3.stock_items.count(), 3)
+        self.assertEqual(self.drawer3.stock_item_count, 3)
 
     def test_stock_count(self):
         part = Part.objects.get(pk=1)
@@ -133,7 +139,44 @@ class StockTest(TestCase):
         self.assertEqual(it.tracking_info.count(), n)
 
     def test_partial_move(self):
-        pass
+        w1 = StockItem.objects.get(pk=100)
+        w2 = StockItem.objects.get(pk=101)
+
+        q = w1.quantity
+
+        # Move 6 of the units
+        self.assertTrue(w1.move(self.diningroom, 'Moved', None, quantity=6))
+        self.assertEqual(w1.quantity, 6)
+
+        # There should also be a new object still in drawer3 
+        self.assertEqual(StockItem.objects.filter(part=25).count(), 4)
+        widget = StockItem.objects.get(location=self.drawer3.id, part=25, quantity=4)
+
+        # Try to move negative units
+        self.assertFalse(widget.move(self.bathroom, 'Test', None, quantity=-100))
+        self.assertEqual(StockItem.objects.filter(part=25).count(), 4)
+
+        # Try to move to a blank location
+        self.assertFalse(widget.move(None, 'null', None))
+
+    def test_split_stock(self):
+        # Split the 1234 x 2K2 resistors in Drawer_1
+
+        N = StockItem.objects.filter(part=3).count()
+
+        stock = StockItem.objects.get(id=1234)
+        stock.splitStock(1000, None)
+        self.assertEqual(stock.quantity, 234)
+
+        # There should be a new stock item too!
+        self.assertEqual(StockItem.objects.filter(part=3).count(), N + 1)
+
+        # Try to split a negative quantity
+        stock.splitStock(-10, None)
+        self.assertEqual(StockItem.objects.filter(part=3).count(), N + 1)
+
+        stock.splitStock(stock.quantity, None)
+        self.assertEqual(StockItem.objects.filter(part=3).count(), N + 1)
 
     def test_stocktake(self):
         # Perform stocktake
@@ -168,6 +211,8 @@ class StockTest(TestCase):
         self.assertIn('Added', track.title)
         self.assertIn('Added some items', track.notes)
 
+        self.assertFalse(it.add_stock(-10, None))
+
     def test_take_stock(self):
         it = StockItem.objects.get(pk=2)
         n = it.quantity
@@ -181,3 +226,24 @@ class StockTest(TestCase):
         self.assertIn('Removed', track.title)
         self.assertIn('Removed some items', track.notes)
         self.assertTrue(it.has_tracking_info)
+
+        # Test that negative quantity does nothing
+        self.assertFalse(it.take_stock(-10, None))
+
+    def test_deplete_stock(self):
+
+        w1 = StockItem.objects.get(pk=100)
+        w2 = StockItem.objects.get(pk=101)
+
+        # Take 25 units from w1
+        w1.take_stock(30, None, notes='Took 30')
+
+        # Get from database again
+        w1 = StockItem.objects.get(pk=100)
+        self.assertEqual(w1.quantity, 0)
+
+        # Take 25 units from w2 (will be deleted)
+        w2.take_stock(30, None, notes='Took 30')
+
+        with self.assertRaises(StockItem.DoesNotExist):
+            w2 = StockItem.objects.get(pk=101)  
