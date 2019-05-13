@@ -534,7 +534,7 @@ class Part(models.Model):
         return self.supplier_parts.count()
 
     def copyBomFrom(self, other):
-        """ Duplicates the BOM from another part. 
+        """ Duplicates the BOM from another part.
         
         This should only be called during part creation,
         and it does not delete any existing BOM items for *this* part.

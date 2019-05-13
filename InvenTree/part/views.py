@@ -235,7 +235,6 @@ class PartDuplicate(AjaxCreateView):
         return initials
 
 
-
 class PartCreate(AjaxCreateView):
     """ View for creating a new Part object.
 
