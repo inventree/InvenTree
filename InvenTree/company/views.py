@@ -93,10 +93,12 @@ class CompanyCreate(AjaxCreateView):
 
 class CompanyDelete(AjaxDeleteView):
     """ View for deleting a Company object """
+    
     model = Company
     success_url = '/company/'
     ajax_template_name = 'company/delete.html'
     ajax_form_title = 'Delete Company'
+    context_object_name = 'company'
 
     def get_data(self):
         return {
