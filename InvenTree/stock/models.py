@@ -53,11 +53,13 @@ class StockLocation(InvenTreeTree):
         """ Return the number of StockItem objects which live in or under this category
         """
 
-        return len(StockItem.objects.filter(location__in=self.getUniqueChildren()))
+        return StockItem.objects.filter(location__in=self.getUniqueChildren()).count()
 
     @property
     def item_count(self):
-
+        """ Simply returns the number of stock items in this location.
+        Required for tree view serializer.
+        """
         return self.stock_item_count
 
 
@@ -211,7 +213,7 @@ class StockItem(models.Model):
 
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1)
 
-    updated = models.DateField(auto_now=True)
+    updated = models.DateField(auto_now=True, null=True)
 
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)
@@ -443,9 +445,6 @@ class StockItem(models.Model):
     def take_stock(self, quantity, user, notes=''):
         """ Remove items from stock
         """
-
-        if self.quantity == 0:
-            return False
 
         quantity = int(quantity)
 
