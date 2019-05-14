@@ -354,6 +354,18 @@ function injectModalForm(modal, form_html) {
 }
 
 
+function insertNewItemButton(modal, field, text) {
+
+    var html = "<span style='float: right;'>";
+
+    html += "<div type='button' class='btn btn-primary' id='btn-new-" + field + "'>" + text + "</div>";
+
+    html += "</span>";
+
+    $(modal).find('label[for="id_'+ field + '"]').append(html);
+}
+
+
 function handleModalForm(url, options) {
     /* Update a modal form after data are received from the server.
      * Manages POST requests until the form is successfully submitted.

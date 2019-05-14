@@ -192,6 +192,16 @@
     width: 100%;
 }
 
+/* Force a control-label div to be 100% width */
+.modal .control-label {
+    width: 100%;
+}
+
+.modal .control-label .btn {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
 /* The side navigation menu */
 .sidenav {
     height: 100%; /* 100% Full-height */
