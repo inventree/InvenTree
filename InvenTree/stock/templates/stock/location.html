@@ -128,17 +128,19 @@
 
                                 attachSecondaryModal(modal,
                                     {
-                                        'field': 'part',
-                                        'label': 'New Part',
-                                        'title': 'Create New Part',
+                                        field: 'part',
+                                        label: 'New Part',
+                                        title: 'Create New Part',
+                                        url: "{% url 'part-create' %}",
                                     }
                                 );
 
                                 attachSecondaryModal(modal,
                                     {
-                                        'field': 'location',
-                                        'label': 'New Location',
-                                        'title': 'Create New Location'
+                                        field: 'location',
+                                        label: 'New Location',
+                                        title: 'Create New Location',
+                                        url: "{% url 'stock-location-create' %}",
                                     }
                                 );
                             }

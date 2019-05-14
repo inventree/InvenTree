@@ -385,10 +385,24 @@ function attachSecondaryModal(modal, options) {
      *  field: Name of the field to attach to
      *  label: Button text
      *  title: Hover text to display over button (optional)
+     *  url: URL for the secondary modal
+     *  query: Query params for the secondary modal
      */
 
     // Insert the button
     insertNewItemButton(modal, options);
+
+    // Add a callback to the button
+    $(modal).find("#btn-new-" + options.field).on('click', function() {
+
+        // Launch the secondary modal
+        launchModalForm(
+            options.url,
+            {
+                modal: '#modal-form-secondary',
+            }
+        );
+    });
 }
 
 
