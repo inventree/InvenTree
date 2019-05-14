@@ -102,7 +102,7 @@ function afterForm(response, options) {
 
     // Was a callback provided?
     if (options.success) {
-        options.success();
+        options.success(response);
     }
     else if (options.follow && response.url) {
         window.location.href = response.url;
@@ -400,6 +400,20 @@ function attachSecondaryModal(modal, options) {
             options.url,
             {
                 modal: '#modal-form-secondary',
+                success: function(response) {
+
+                    /* A successful object creation event should return a response which contains:
+                     *  - pk: ID of the newly created object
+                     *  - text: String descriptor of the newly created object
+                     *
+                     * So it is simply a matter of appending and selecting the new object!
+                     */
+
+                    var select = '#id_' + options.field;
+                    var option = new Option(response.text, response.pk, true, true)
+                    
+                    $(modal).find(select).append(option).trigger('change');
+                }
             }
         );
     });
