@@ -661,6 +661,7 @@ class BomItem(models.Model):
         part: Link to the parent part (the part that will be produced)
         sub_part: Link to the child part (the part that will be consumed)
         quantity: Number of 'sub_parts' consumed to produce one 'part'
+        overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
     """
 
@@ -687,6 +688,10 @@ class BomItem(models.Model):
 
     # Quantity required
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)], help_text='BOM quantity for this BOM item')
+
+    overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
+                               help_text='Estimated build wastage quantity (absolute or percentage)'
+                               )
 
     # Note attached to this BOM line item
     note = models.CharField(max_length=100, blank=True, help_text='BOM item notes')
