@@ -104,8 +104,6 @@ class PartStarSerializer(InvenTreeModelSerializer):
 class BomItemSerializer(InvenTreeModelSerializer):
     """ Serializer for BomItem object """
 
-    # url = serializers.CharField(source='get_absolute_url', read_only=True)
-
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
 
@@ -113,12 +111,12 @@ class BomItemSerializer(InvenTreeModelSerializer):
         model = BomItem
         fields = [
             'pk',
-            # 'url',
             'part',
             'part_detail',
             'sub_part',
             'sub_part_detail',
             'quantity',
+            'overage',
             'note',
         ]
 

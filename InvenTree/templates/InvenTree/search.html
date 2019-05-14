@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block page_title %}
 InvenTree | Search Results
 {% endblock %}
@@ -17,6 +19,11 @@ InvenTree | Search Results
 <table class='table table-striped table-condensed' data-toolbar="#button-toolbar" id='part-results-table'>
 </table>
 
+{% endblock %}
+
+{% block js_load %}
+{{ block.super }}
+<script type='text/javascript' src="{% static 'script/inventree/part.js' %}"></script>
 {% endblock %}
 
 {% block js_ready %}

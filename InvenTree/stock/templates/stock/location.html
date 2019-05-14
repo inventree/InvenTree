@@ -80,7 +80,15 @@
                                 location: {{ location.id }}
                                 {% endif %}
                             },
-                            follow: true
+                            follow: true,
+                            secondary: [
+                                {
+                                    field: 'parent',
+                                    label: 'New Location',
+                                    title: 'Create new location',
+                                    url: "{% url 'stock-location-create' %}",
+                                },
+                            ]
                         });
         return false;
     });

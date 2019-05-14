@@ -261,7 +261,7 @@ class Build(models.Model):
 
         try:
             item = BomItem.objects.get(part=self.part.id, sub_part=part.id)
-            return item.quantity * self.quantity
+            return item.get_required_quantity(self.quantity)
         except BomItem.DoesNotExist:
             return 0
 

@@ -73,8 +73,22 @@
                             {% if category %}
                             data: {
                                 category: {{ category.id }}
-                            }
+                            },
                             {% endif %}
+                            secondary: [
+                                {
+                                    field: 'default_location',
+                                    label: 'New Location',
+                                    title: 'Create new location',
+                                    url: "{% url 'stock-location-create' %}",
+                                },
+                                {
+                                    field: 'parent',
+                                    label: 'New Category',
+                                    title: 'Create new category',
+                                    url: "{% url 'category-create' %}",
+                                },
+                            ]
                         });
     })
 

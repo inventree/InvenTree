@@ -133,6 +133,7 @@ class EditBomItemForm(HelperForm):
             'part',
             'sub_part',
             'quantity',
+            'overage',
             'note'
         ]
 

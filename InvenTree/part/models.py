@@ -300,6 +300,23 @@ class Part(models.Model):
         # Default case - no default category found
         return None
 
+    def get_default_supplier(self):
+        """ Get the default supplier part for this part (may be None).
+
+        - If the part specifies a default_supplier, return that
+        - If there is only one supplier part available, return that
+        - Else, return None
+        """
+
+        if self.default_supplier:
+            return self.default_suppliers
+
+        if self.supplier_count == 1:
+            return self.supplier_parts.first()
+
+        # Default to None if there are multiple suppliers to choose from
+        return None
+
     default_supplier = models.ForeignKey('part.SupplierPart',
                                          on_delete=models.SET_NULL,
                                          blank=True, null=True,
@@ -661,6 +678,7 @@ class BomItem(models.Model):
         part: Link to the parent part (the part that will be produced)
         sub_part: Link to the child part (the part that will be consumed)
         quantity: Number of 'sub_parts' consumed to produce one 'part'
+        overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
     """
 
@@ -687,6 +705,10 @@ class BomItem(models.Model):
 
     # Quantity required
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)], help_text='BOM quantity for this BOM item')
+
+    overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
+                               help_text='Estimated build wastage quantity (absolute or percentage)'
+                               )
 
     # Note attached to this BOM line item
     note = models.CharField(max_length=100, blank=True, help_text='BOM item notes')
@@ -720,6 +742,62 @@ class BomItem(models.Model):
             parent=self.part.full_name,
             child=self.sub_part.full_name,
             n=self.quantity)
+
+    def get_overage_quantity(self, quantity):
+        """ Calculate overage quantity
+        """
+
+        # Most of the time overage string will be empty
+        if len(self.overage) == 0:
+            return 0
+
+        overage = str(self.overage).strip()
+
+        # Is the overage an integer value?
+        try:
+            ovg = int(overage)
+
+            if ovg < 0:
+                ovg = 0
+
+            return ovg
+        except ValueError:
+            pass
+
+        # Is the overage a percentage?
+        if overage.endswith('%'):
+            overage = overage[:-1].strip()
+
+            try:
+                percent = float(overage) / 100.0
+                if percent > 1:
+                    percent = 1
+                if percent < 0:
+                    percent = 0
+
+                return int(percent * quantity)
+
+            except ValueError:
+                pass
+
+        # Default = No overage
+        return 0
+
+    def get_required_quantity(self, build_quantity):
+        """ Calculate the required part quantity, based on the supplier build_quantity.
+        Includes overage estimate in the returned value.
+        
+        Args:
+            build_quantity: Number of parts to build
+
+        Returns:
+            Quantity required for this build (including overage)
+        """
+
+        # Base quantity requirement
+        base_quantity = self.quantity * build_quantity
+
+        return base_quantity + self.get_overage_quantity(base_quantity)
 
 
 class SupplierPart(models.Model):

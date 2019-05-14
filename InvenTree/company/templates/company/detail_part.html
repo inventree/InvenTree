@@ -33,6 +33,14 @@
                                 supplier: {{ company.id }}
                             },
                             reload: true,
+                            secondary: [
+                                {
+                                    field: 'part',
+                                    label: 'New Part',
+                                    title: 'Create New Part',
+                                    url: "{% url 'part-create' %}"
+                                },
+                            ]
                         });
     });
 
