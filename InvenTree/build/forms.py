@@ -58,6 +58,18 @@ class CompleteBuildForm(HelperForm):
         ]
 
 
+class CancelBuildForm(HelperForm):
+    """ Form for cancelling a build """
+
+    confirm_cancel = forms.BooleanField(required=False, help_text='Confirm build cancellation')
+
+    class Meta:
+        model = Build
+        fields = [
+            'confirm_cancel'
+        ]
+
+
 class EditBuildItemForm(HelperForm):
     """ Form for adding a new BuildItem to a Build """
 

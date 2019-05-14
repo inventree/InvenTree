@@ -17,7 +17,7 @@ from django.views.generic.base import TemplateView
 
 from part.models import Part
 
-from .forms import DeleteForm
+from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .helpers import str2bool
 
 from rest_framework import views
@@ -371,6 +371,59 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
         return self.renderJsonResponse(request, form, data=data, context=context)
 
 
+class EditUserView(AjaxUpdateView):
+    """ View for editing user information """
+
+    ajax_template_name = "modal_form.html"
+    ajax_form_title = "Edit User Information"
+    form_class = EditUserForm
+
+    def get_object(self):
+        return self.request.user
+
+
+class SetPasswordView(AjaxUpdateView):
+    """ View for setting user password """
+
+    ajax_template_name = "InvenTree/password.html"
+    ajax_form_title = "Set Password"
+    form_class = SetPasswordForm
+
+    def get_object(self):
+        return self.request.user
+
+    def post(self, request, *args, **kwargs):
+
+        form = self.get_form()
+
+        valid = form.is_valid()
+
+        p1 = request.POST.get('enter_password', '')
+        p2 = request.POST.get('confirm_password', '')
+        
+        if valid:
+            # Passwords must match
+
+            if not p1 == p2:
+                error = 'Password fields must match'
+                form.errors['enter_password'] = [error]
+                form.errors['confirm_password'] = [error]
+
+                valid = False
+
+        data = {
+            'form_valid': valid
+        }
+
+        if valid:
+            user = self.request.user
+
+            user.set_password(p1)
+            user.save()
+
+        return self.renderJsonResponse(request, form, data=data)
+
+
 class IndexView(TemplateView):
     """ View for InvenTree index page """
 
@@ -414,3 +467,10 @@ class SearchView(TemplateView):
         context['query'] = query
 
         return super(TemplateView, self).render_to_response(context)
+
+
+class SettingsView(TemplateView):
+    """ View for configuring User settings
+    """
+
+    template_name = "InvenTree/settings.html"

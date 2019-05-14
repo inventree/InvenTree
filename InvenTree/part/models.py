@@ -37,6 +37,12 @@ from company.models import Company
 
 class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
+
+    Attributes:
+        name: Name of this category
+        parent: Parent category
+        default_location: Default storage location for parts in this category or child categories
+        default_keywords: Default keywords for parts created in this category
     """
 
     default_location = models.ForeignKey(
@@ -45,6 +51,8 @@ class PartCategory(InvenTreeTree):
         on_delete=models.SET_NULL,
         help_text='Default location for parts in this category'
     )
+
+    default_keywords = models.CharField(blank=True, max_length=250, help_text='Default keywords for parts in this category')
 
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={'pk': self.id})
@@ -179,8 +187,9 @@ class Part(models.Model):
     Attributes:
         name: Brief name for this part
         variant: Optional variant number for this part - Must be unique for the part name
-        description: Longer form description of the part
         category: The PartCategory to which this part belongs
+        description: Longer form description of the part
+        keywords: Optional keywords for improving part search results
         IPN: Internal part number (optional)
         URL: Link to an external page with more information about this part (e.g. internal Wiki)
         image: Image of this part
@@ -249,6 +258,8 @@ class Part(models.Model):
     variant = models.CharField(max_length=32, blank=True, help_text='Part variant or revision code')
 
     description = models.CharField(max_length=250, blank=False, help_text='Part description')
+
+    keywords = models.CharField(max_length=250, blank=True, help_text='Part keywords to improve visibility in search results')
 
     category = models.ForeignKey(PartCategory, related_name='parts',
                                  null=True, blank=True,

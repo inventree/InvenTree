@@ -35,14 +35,20 @@
             <td>Part name</td>
             <td>{{ part.full_name }}</td>
         </tr>
-        <tr>
-            <td>Description</td>
-            <td>{{ part.description }}</td>
-        </tr>
         {% if part.IPN %}
         <tr>
             <td>IPN</td>
             <td>{{ part.IPN }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Description</td>
+            <td>{{ part.description }}</td>
+        </tr>
+        {% if part.keywords %}
+        <tr>
+            <td>Keywords</td>
+            <td>{{ part.keywords }}</td>
         </tr>
         {% endif %}
         {% if part.URL %}

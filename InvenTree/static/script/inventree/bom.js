@@ -89,11 +89,11 @@ function loadBomTable(table, options) {
     // Part column
     cols.push(
         {
-            field: 'sub_part_detail',
+            field: 'sub_part_detail.full_name',
             title: 'Part',
             sortable: true,
             formatter: function(value, row, index, field) {
-                return imageHoverIcon(value.image_url) + renderLink(value.full_name, value.url);
+                return imageHoverIcon(row.sub_part_detail.image_url) + renderLink(row.sub_part_detail.full_name, row.sub_part_detail.url);
             }
         }
     );
@@ -115,6 +115,34 @@ function loadBomTable(table, options) {
             sortable: true,
         }
     );
+
+    if (!options.editable) {
+        cols.push(
+        {
+            field: 'sub_part_detail.available_stock',
+            title: 'Available',
+            searchable: false,
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                var text = "";
+                
+                if (row.quantity < row.sub_part_detail.available_stock)
+                {
+                    text = "<span class='label label-success'>" + value + "</span>";
+                }
+                else
+                {
+                    if (!value) {
+                        value = 'No Stock';
+                    }
+                    text = "<span class='label label-warning'>" + value + "</span>";
+                }
+                
+                return renderLink(text, row.sub_part_detail.url + "stock/");
+            }
+        }
+        );
+    }
     
     // Part notes
     cols.push(
@@ -137,31 +165,6 @@ function loadBomTable(table, options) {
         });
     }
 
-    else {
-        cols.push(
-        {
-            field: 'sub_part_detail.available_stock',
-            title: 'Available',
-            searchable: false,
-            sortable: true,
-            formatter: function(value, row, index, field) {
-                var text = "";
-                
-                if (row.quantity < row.sub_part_detail.available_stock)
-                {
-                    text = "<span class='label label-success'>" + value + "</span>";
-                }
-                else
-                {
-                    text = "<span class='label label-warning'>" + value + "</span>";
-                }
-                
-                return renderLink(text, row.sub_part.url + "stock/");
-            }
-        }
-        );
-    }
-
     // Configure the table (bootstrap-table)
     
     table.bootstrapTable({
@@ -172,6 +175,7 @@ function loadBomTable(table, options) {
         queryParams: function(p) {
             return {
                 part: options.parent_id,
+                ordering: 'name',
         }
     },
     columns: cols,

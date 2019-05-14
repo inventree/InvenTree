@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django import forms
 from crispy_forms.helper import FormHelper
+from django.contrib.auth.models import User
 
 
 class HelperForm(forms.ModelForm):
@@ -32,4 +33,43 @@ class DeleteForm(forms.Form):
     class Meta:
         fields = [
             'confirm_delete'
+        ]
+
+
+class EditUserForm(HelperForm):
+    """ Form for editing user information
+    """
+
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'email'
+        ]
+
+
+class SetPasswordForm(HelperForm):
+    """ Form for setting user password
+    """
+
+    enter_password = forms.CharField(max_length=100,
+                                     min_length=8,
+                                     required=True,
+                                     initial='',
+                                     widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+                                     help_text='Enter new password')
+
+    confirm_password = forms.CharField(max_length=100,
+                                       min_length=8,
+                                       required=True,
+                                       initial='',
+                                       widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+                                       help_text='Confirm new password')
+
+    class Meta:
+        model = User
+        fields = [
+            'enter_password',
+            'confirm_password'
         ]
