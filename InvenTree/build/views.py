@@ -101,7 +101,7 @@ class BuildAutoAllocate(AjaxUpdateView):
             context['build'] = build
             context['allocations'] = build.getAutoAllocations()
         except Build.DoesNotExist:
-            context['error'] = 'No matching buidl found'
+            context['error'] = 'No matching build found'
 
         return context
 
