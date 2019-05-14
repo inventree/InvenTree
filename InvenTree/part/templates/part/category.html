@@ -82,15 +82,35 @@
 
     $("#part-create").click(function() {
         launchModalForm(
-                        "{% url 'part-create' %}",
+            "{% url 'part-create' %}",
+            {
+                follow: true,
+                data: {
+                {% if category %}
+                    category: {{ category.id }}
+                {% endif %}
+                },
+                after_render: function(modal, response) {
+                    attachSecondaryModal(modal,
                         {
-                            follow: true,
-                            data: {
-                            {% if category %}
-                                category: {{ category.id }}
-                            {% endif %}
-                            }
-                        });
+                            field: 'category',
+                            label: 'New Category',
+                            title: 'Create new Part Category',
+                            url: "{% url 'category-create' %}",
+                        }
+                    );
+
+                    attachSecondaryModal(modal,
+                        {
+                            field: 'default_location',
+                            label: 'New Location',
+                            title: 'Create new Stock Location',
+                            url: "{% url 'stock-location-create' %}",
+                        }
+                    );
+                }   
+            }
+        );
     });
 
     {% if category %}
