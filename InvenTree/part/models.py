@@ -758,7 +758,7 @@ class BomItem(models.Model):
             ovg = int(overage)
 
             if ovg < 0:
-                ovg = 0;
+                ovg = 0
 
             return ovg
         except ValueError:
@@ -770,12 +770,12 @@ class BomItem(models.Model):
 
             try:
                 percent = float(overage) / 100.0
-                if percetage > 1:
-                    percentage = 1
-                if percentage < 0:
-                    percentage = 0
+                if percent > 1:
+                    percent = 1
+                if percent < 0:
+                    percent = 0
 
-                return int(percentage * quantity)
+                return int(percent * quantity)
 
             except ValueError:
                 pass
