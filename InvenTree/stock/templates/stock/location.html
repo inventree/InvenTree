@@ -124,26 +124,20 @@
                                 location: {{ location.id }}
                                 {% endif %}
                             },
-                            after_render: function(modal, response) {
-
-                                attachSecondaryModal(modal,
-                                    {
-                                        field: 'part',
-                                        label: 'New Part',
-                                        title: 'Create New Part',
-                                        url: "{% url 'part-create' %}",
-                                    }
-                                );
-
-                                attachSecondaryModal(modal,
-                                    {
-                                        field: 'location',
-                                        label: 'New Location',
-                                        title: 'Create New Location',
-                                        url: "{% url 'stock-location-create' %}",
-                                    }
-                                );
-                            }
+                            secondary: [
+                                {
+                                    field: 'part',
+                                    label: 'New Part',
+                                    title: 'Create New Part',
+                                    url: "{% url 'part-create' %}",
+                                },
+                                {
+                                    field: 'location',
+                                    label: 'New Location',
+                                    title: 'Create New Location',
+                                    url: "{% url 'stock-location-create' %}",
+                                }
+                            ]
                         });
 
 

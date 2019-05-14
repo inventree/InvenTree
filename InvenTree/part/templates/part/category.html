@@ -90,25 +90,20 @@
                     category: {{ category.id }}
                 {% endif %}
                 },
-                after_render: function(modal, response) {
-                    attachSecondaryModal(modal,
-                        {
-                            field: 'category',
-                            label: 'New Category',
-                            title: 'Create new Part Category',
-                            url: "{% url 'category-create' %}",
-                        }
-                    );
-
-                    attachSecondaryModal(modal,
-                        {
-                            field: 'default_location',
-                            label: 'New Location',
-                            title: 'Create new Stock Location',
-                            url: "{% url 'stock-location-create' %}",
-                        }
-                    );
-                }   
+                secondary: [
+                    {
+                        field: 'category',
+                        label: 'New Category',
+                        title: 'Create new Part Category',
+                        url: "{% url 'category-create' %}",
+                    },
+                    {
+                        field: 'default_location',
+                        label: 'New Location',
+                        title: 'Create new Stock Location',
+                        url: "{% url 'stock-location-create' %}",
+                    }
+                ]   
             }
         );
     });

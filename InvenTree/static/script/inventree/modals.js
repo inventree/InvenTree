@@ -420,6 +420,15 @@ function attachSecondaryModal(modal, options) {
 }
 
 
+function attachSecondaries(modal, secondaries) {
+    /* Attach a provided list of secondary modals */
+
+    for (var i = 0; i < secondaries.length; i++) {
+        attachSecondaryModal(modal, secondaries[i]);
+    }
+}
+
+
 function handleModalForm(url, options) {
     /* Update a modal form after data are received from the server.
      * Manages POST requests until the form is successfully submitted.
@@ -471,6 +480,10 @@ function handleModalForm(url, options) {
                             if (options.after_render) {
                                 options.after_render(modal, response);
                             }
+
+                            if (options.secondary) {
+                                attachSecondaries(modal, options.secondary);
+                            }
                         }
                         else {
                             $(modal).modal('hide');
@@ -514,6 +527,7 @@ function launchModalForm(url, options = {}) {
      * close_text - Text for the close button (default = 'Close')
      * no_post - If true, only display form data, hide submit button, and disallow POST
      * after_render - Callback function to run after form is rendered
+     * secondary - List of secondary modals to attach
      */
 
     var modal = options.modal || '#modal-form';
@@ -548,6 +562,10 @@ function launchModalForm(url, options = {}) {
 
                 if (options.after_render) {
                     options.after_render(modal, response);
+                }
+
+                if (options.secondary) {
+                    attachSecondaries(modal, options.secondary);
                 }
 
                 if (options.no_post) {
