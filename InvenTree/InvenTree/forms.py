@@ -9,6 +9,7 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from django.contrib.auth.models import User
 
+
 class HelperForm(forms.ModelForm):
     """ Provides simple integration of crispy_forms extension. """
 
@@ -49,7 +50,7 @@ class EditUserForm(HelperForm):
 
 
 class SetPasswordForm(HelperForm):
-    """ Form for setting user password 
+    """ Form for setting user password
     """
 
     enter_password = forms.CharField(max_length=100,
