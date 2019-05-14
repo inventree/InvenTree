@@ -1,4 +1,4 @@
-<div class='modal fade modal-fixed-footer' tabindex='-1' role='dialog' id='modal-form'>
+<div class='modal fade modal-fixed-footer modal-primary' tabindex='-1' role='dialog' id='modal-form'>
     <div class='modal-dialog'>
         <div class='modal-content'>
             <div class="modal-header">
@@ -17,27 +17,25 @@
     </div>
 </div>
 
-<div class='modal fade modal-fixed-footer' tabindex='-1' role='dialog' id='modal-delete'>
-    <div class='modal-dialog'>
-        <div class='modal-content'>
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-              <h3 id='modal-title'>Confirm Item Deletion</h3>
-            </div>
-            <form action='' method='post' id='delete-form'>
-                {% csrf_token %}
-            </form>
-            <div class='modal-form-content'>
-            </div>
-            <div class='modal-footer'>
-                <button type='button' class='btn btn-default' data-dismiss='modal'>Cancel</button>
-                <button type='button' class='btn btn-danger' id='modal-form-delete'>Delete</button>
+<div class='modal fade modal-fixed-footer modal-secondary' tabindex='-1' role='dialog' id='modal-form-secondary'>
+        <div class='modal-dialog'>
+            <div class='modal-content'>
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                  <h3 id='modal-title'>Form Title Here</h3>
+                </div>
+                <div class='modal-form-content'>
+                </div>
+                <div class='modal-footer'>
+                    <button type='button' class='btn btn-default' id='modal-form-close' data-dismiss='modal'>Close</button>
+                    <button type='button' class='btn btn-primary' id='modal-form-submit'>Submit</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    
 
 <div class='modal fade modal-fixed-footer' tabindex='-1' role='dialog' id='modal-question-dialog'>
         <div class='modal-dialog'>

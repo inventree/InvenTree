@@ -354,15 +354,41 @@ function injectModalForm(modal, form_html) {
 }
 
 
-function insertNewItemButton(modal, field, text) {
+function insertNewItemButton(modal, options) {
+    /* Insert a button into a modal form, after a field label.
+     * Looks for a <label> tag inside the form with the attribute "for='id_<field>'"
+     * Inserts a button at the end of this lael element.
+     */
 
     var html = "<span style='float: right;'>";
 
-    html += "<div type='button' class='btn btn-primary' id='btn-new-" + field + "'>" + text + "</div>";
+    html += "<div type='button' class='btn btn-primary'";
+    
+    if (options.title) {
+        html += " title='" + options.title + "'";
+    }
+
+    html += " id='btn-new-" + options.field + "'>" + options.label + "</div>";
 
     html += "</span>";
 
-    $(modal).find('label[for="id_'+ field + '"]').append(html);
+    $(modal).find('label[for="id_'+ options.field + '"]').append(html);
+}
+
+
+function attachSecondaryModal(modal, options) {
+    /* Attach a secondary modal form to the primary modal form.
+     * Inserts a button into the primary form which, when clicked,
+     * will launch the secondary modal to do /something/ and then return a result.
+     * 
+     * options:
+     *  field: Name of the field to attach to
+     *  label: Button text
+     *  title: Hover text to display over button (optional)
+     */
+
+    // Insert the button
+    insertNewItemButton(modal, options);
 }
 
 

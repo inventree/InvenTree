@@ -345,32 +345,6 @@ function moveStockItems(items, options) {
     });
 }
 
-function deleteStockItems(items, options) {
-
-    var modal = '#modal-delete';
-
-    if ('modal' in options) {
-        modal = options.modal;
-    }
-
-    if (items.length == 0) {
-        alert('No stock items selected');
-        return;
-    }
-
-    function doDelete(parts) {
-        //TODO
-    }
-
-    openModal({
-        modal: modal,
-        title: 'Delete ' + items.length + ' stock items'
-    });
-}
-
-
-
-
 function loadStockTable(table, options) {
 
     table.bootstrapTable({
