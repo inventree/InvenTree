@@ -30,7 +30,7 @@ from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
 
-from .views import IndexView, SearchView
+from .views import IndexView, SearchView, SettingsView, EditUserView, SetPasswordView
 
 from users.urls import user_urls
 
@@ -61,6 +61,11 @@ urlpatterns = [
 
     url(r'^login/', auth_views.LoginView.as_view(), name='login'),
     url(r'^logout/', auth_views.LogoutView.as_view(template_name='registration/logout.html'), name='logout'),
+    
+    url(r'^settings/', SettingsView.as_view(), name='settings'),
+
+    url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
+    url(r'^set-password/', SetPasswordView.as_view(), name='set-password'),
 
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
 
