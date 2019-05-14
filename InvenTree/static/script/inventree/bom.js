@@ -135,7 +135,7 @@ function loadBomTable(table, options) {
                     text = "<span class='label label-warning'>" + value + "</span>";
                 }
                 
-                return renderLink(text, row.sub_part.url + "stock/");
+                return renderLink(text, row.sub_part_detail.url + "stock/");
             }
         }
         );
