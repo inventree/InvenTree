@@ -401,6 +401,10 @@ function handleModalForm(url, options) {
                     else {
                         if (response.html_form) {
                             injectModalForm(modal, response.html_form);
+
+                            if (options.after_render) {
+                                options.after_render(modal, response);
+                            }
                         }
                         else {
                             $(modal).modal('hide');
@@ -443,6 +447,7 @@ function launchModalForm(url, options = {}) {
      * submit_text - Text for the submit button (default = 'Submit')
      * close_text - Text for the close button (default = 'Close')
      * no_post - If true, only display form data, hide submit button, and disallow POST
+     * after_render - Callback function to run after form is rendered
      */
 
     var modal = options.modal || '#modal-form';
@@ -474,6 +479,10 @@ function launchModalForm(url, options = {}) {
 
             if (response.html_form) {
                 injectModalForm(modal, response.html_form);
+
+                if (options.after_render) {
+                    options.after_render(modal, response);
+                }
 
                 if (options.no_post) {
                     modalShowSubmitButton(modal, false);
