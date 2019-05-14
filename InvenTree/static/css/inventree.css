@@ -178,6 +178,11 @@
     width: 45%;
 }
 
+.modal-secondary .modal-dialog {
+    width: 40%;
+    padding-top: 15px;
+}
+
 .modal-content h3 {
     margin-top: 3px;
     margin-bottom: 3px;
