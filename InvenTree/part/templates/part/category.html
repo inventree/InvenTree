@@ -61,8 +61,6 @@
 {% endblock %}
 {% block js_load %}
 {{ block.super }}
-<script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
-<script type='text/javacript' src="{% static 'script/inventree/stock.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
@@ -82,15 +80,30 @@
 
     $("#part-create").click(function() {
         launchModalForm(
-                        "{% url 'part-create' %}",
-                        {
-                            follow: true,
-                            data: {
-                            {% if category %}
-                                category: {{ category.id }}
-                            {% endif %}
-                            }
-                        });
+            "{% url 'part-create' %}",
+            {
+                follow: true,
+                data: {
+                {% if category %}
+                    category: {{ category.id }}
+                {% endif %}
+                },
+                secondary: [
+                    {
+                        field: 'category',
+                        label: 'New Category',
+                        title: 'Create new Part Category',
+                        url: "{% url 'category-create' %}",
+                    },
+                    {
+                        field: 'default_location',
+                        label: 'New Location',
+                        title: 'Create new Stock Location',
+                        url: "{% url 'stock-location-create' %}",
+                    }
+                ]   
+            }
+        );
     });
 
     {% if category %}

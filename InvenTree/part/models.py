@@ -670,6 +670,7 @@ class BomItem(models.Model):
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='bom_items',
+                             help_text='Select parent part',
                              limit_choices_to={
                                  'buildable': True,
                                  'active': True,
@@ -678,16 +679,17 @@ class BomItem(models.Model):
     # A link to the child item (sub-part)
     # Each part will get a reverse lookup field 'used_in'
     sub_part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='used_in',
+                                 help_text='Select part to be used in BOM',
                                  limit_choices_to={
                                      'consumable': True,
                                      'active': True
                                  })
 
     # Quantity required
-    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)])
+    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)], help_text='BOM quantity for this BOM item')
 
     # Note attached to this BOM line item
-    note = models.CharField(max_length=100, blank=True, help_text='Item notes')
+    note = models.CharField(max_length=100, blank=True, help_text='BOM item notes')
 
     def clean(self):
         """ Check validity of the BomItem model.
@@ -767,7 +769,7 @@ class SupplierPart(models.Model):
 
     MPN = models.CharField(max_length=100, blank=True, help_text='Manufacturer part number')
 
-    URL = models.URLField(blank=True)
+    URL = models.URLField(blank=True, help_text='URL for external supplier part link')
 
     description = models.CharField(max_length=250, blank=True, help_text='Supplier part description')
 

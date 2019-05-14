@@ -245,6 +245,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
             # Return the PK of the newly-created object
             data['pk'] = obj.pk
+            data['text'] = str(obj)
 
             try:
                 data['url'] = obj.get_absolute_url()

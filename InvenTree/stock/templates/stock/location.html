@@ -69,8 +69,6 @@
 
 {% block js_load %}
 {{ block.super }}
-<script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/stock.js' %}"></script>
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
@@ -123,8 +121,23 @@
                                 {% if location %}
                                 location: {{ location.id }}
                                 {% endif %}
-                            }
+                            },
+                            secondary: [
+                                {
+                                    field: 'part',
+                                    label: 'New Part',
+                                    title: 'Create New Part',
+                                    url: "{% url 'part-create' %}",
+                                },
+                                {
+                                    field: 'location',
+                                    label: 'New Location',
+                                    title: 'Create New Location',
+                                    url: "{% url 'stock-location-create' %}",
+                                }
+                            ]
                         });
+
 
         return false;
     });
