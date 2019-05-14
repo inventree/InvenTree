@@ -62,15 +62,16 @@ class PartSerializer(serializers.ModelSerializer):
         fields = [
             'pk',
             'url',  # Link to the part detail page
-            'full_name',
-            'name',
-            'variant',
-            'image_url',
-            'IPN',
-            'URL',  # Link to an external URL (optional)
-            'description',
             'category',
             'category_name',
+            'image_url',
+            'full_name',
+            'name',
+            'IPN',
+            'variant',
+            'description',
+            'keywords',
+            'URL', 
             'total_stock',
             'available_stock',
             'units',

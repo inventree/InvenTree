@@ -179,8 +179,9 @@ class Part(models.Model):
     Attributes:
         name: Brief name for this part
         variant: Optional variant number for this part - Must be unique for the part name
-        description: Longer form description of the part
         category: The PartCategory to which this part belongs
+        description: Longer form description of the part
+        keywords: Optional keywords for improving part search results
         IPN: Internal part number (optional)
         URL: Link to an external page with more information about this part (e.g. internal Wiki)
         image: Image of this part
@@ -249,6 +250,8 @@ class Part(models.Model):
     variant = models.CharField(max_length=32, blank=True, help_text='Part variant or revision code')
 
     description = models.CharField(max_length=250, blank=False, help_text='Part description')
+
+    keywords = models.CharField(max_length=250, blank=True, help_text='Part keywords to improve visibility in search results')
 
     category = models.ForeignKey(PartCategory, related_name='parts',
                                  null=True, blank=True,
