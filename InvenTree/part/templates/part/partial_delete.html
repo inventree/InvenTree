@@ -1,6 +1,11 @@
+{% extends "modal_form.html" %}
+
+{% block pre_form_content %}
+
 Are you sure you want to delete part '{{ part.full_name }}'?
 
 {% if part.used_in_count %}
+<hr>
 <p>This part is used in BOMs for {{ part.used_in_count }} other parts. If you delete this part, the BOMs for the following parts will be updated:
 <ul class="list-group">
     {% for child in part.used_in.all %}
@@ -10,6 +15,7 @@ Are you sure you want to delete part '{{ part.full_name }}'?
 {% endif %}
 
 {% if part.locations.all|length > 0 %}
+<hr>
 <p>There are {{ part.locations.all|length }} stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:
     <ul class='list-group'>
         {% for stock in part.locations.all %}
@@ -20,6 +26,7 @@ Are you sure you want to delete part '{{ part.full_name }}'?
 {% endif %}
 
 {% if part.supplier_parts.all|length > 0 %}
+<hr>
 <p>There are {{ part.supplier_parts.all|length }} suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted.
     <ul class='list-group'>
         {% for spart in part.supplier_parts.all %}
@@ -30,5 +37,8 @@ Are you sure you want to delete part '{{ part.full_name }}'?
 {% endif %}
 
 {% if part.serials.all|length > 0 %}
+<hr>
 <p>There are {{ part.serials.all|length }} unique parts tracked for '{{ part.full_name }}'. Deleting this part will permanently remove this tracking information.</p>
 {% endif %}
+
+{% endblock %}

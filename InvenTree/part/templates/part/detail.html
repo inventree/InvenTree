@@ -20,6 +20,7 @@
                 <li><a href="#" id='deactivate-part' title='Deactivate part'>Deactivate</a></li>
                 {% else %}
                 <li><a href="#" id='activate-part' title='Activate part'>Activate</a></li>
+                <li><a href='#' id='delete-part' title='Delete part'>Delete</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -128,8 +129,6 @@
 
 {% block js_load %}
 {{ block.super }}
-<script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/stock.js' %}"></script>
 {% endblock %}
 
 {% block js_ready %}
@@ -200,10 +199,10 @@
 
     $('#delete-part').click(function() {
         launchModalForm(
-                         "{% url 'part-delete' part.id %}",
-                         {
-                             redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %}
-                         });
+            "{% url 'part-delete' part.id %}",
+            {
+                redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %}
+            });
     });
 
 {% endblock %}

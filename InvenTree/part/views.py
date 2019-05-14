@@ -202,6 +202,7 @@ class PartDuplicate(AjaxCreateView):
             part = form.save()
 
             data['pk'] = part.pk
+            data['text'] = str(part)
 
             deep_copy = str2bool(request.POST.get('deep_copy', False))
 
@@ -321,6 +322,7 @@ class PartCreate(AjaxCreateView):
             part = form.save()
 
             data['pk'] = part.pk
+            data['text'] = str(part)
 
             try:
                 data['url'] = part.get_absolute_url()

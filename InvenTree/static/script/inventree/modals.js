@@ -102,7 +102,7 @@ function afterForm(response, options) {
 
     // Was a callback provided?
     if (options.success) {
-        options.success();
+        options.success(response);
     }
     else if (options.follow && response.url) {
         window.location.href = response.url;
@@ -354,6 +354,81 @@ function injectModalForm(modal, form_html) {
 }
 
 
+function insertNewItemButton(modal, options) {
+    /* Insert a button into a modal form, after a field label.
+     * Looks for a <label> tag inside the form with the attribute "for='id_<field>'"
+     * Inserts a button at the end of this lael element.
+     */
+
+    var html = "<span style='float: right;'>";
+
+    html += "<div type='button' class='btn btn-primary'";
+    
+    if (options.title) {
+        html += " title='" + options.title + "'";
+    }
+
+    html += " id='btn-new-" + options.field + "'>" + options.label + "</div>";
+
+    html += "</span>";
+
+    $(modal).find('label[for="id_'+ options.field + '"]').append(html);
+}
+
+
+function attachSecondaryModal(modal, options) {
+    /* Attach a secondary modal form to the primary modal form.
+     * Inserts a button into the primary form which, when clicked,
+     * will launch the secondary modal to do /something/ and then return a result.
+     * 
+     * options:
+     *  field: Name of the field to attach to
+     *  label: Button text
+     *  title: Hover text to display over button (optional)
+     *  url: URL for the secondary modal
+     *  query: Query params for the secondary modal
+     */
+
+    // Insert the button
+    insertNewItemButton(modal, options);
+
+    // Add a callback to the button
+    $(modal).find("#btn-new-" + options.field).on('click', function() {
+
+        // Launch the secondary modal
+        launchModalForm(
+            options.url,
+            {
+                modal: '#modal-form-secondary',
+                success: function(response) {
+
+                    /* A successful object creation event should return a response which contains:
+                     *  - pk: ID of the newly created object
+                     *  - text: String descriptor of the newly created object
+                     *
+                     * So it is simply a matter of appending and selecting the new object!
+                     */
+
+                    var select = '#id_' + options.field;
+                    var option = new Option(response.text, response.pk, true, true)
+                    
+                    $(modal).find(select).append(option).trigger('change');
+                }
+            }
+        );
+    });
+}
+
+
+function attachSecondaries(modal, secondaries) {
+    /* Attach a provided list of secondary modals */
+
+    for (var i = 0; i < secondaries.length; i++) {
+        attachSecondaryModal(modal, secondaries[i]);
+    }
+}
+
+
 function handleModalForm(url, options) {
     /* Update a modal form after data are received from the server.
      * Manages POST requests until the form is successfully submitted.
@@ -401,6 +476,14 @@ function handleModalForm(url, options) {
                     else {
                         if (response.html_form) {
                             injectModalForm(modal, response.html_form);
+
+                            if (options.after_render) {
+                                options.after_render(modal, response);
+                            }
+
+                            if (options.secondary) {
+                                attachSecondaries(modal, options.secondary);
+                            }
                         }
                         else {
                             $(modal).modal('hide');
@@ -443,6 +526,8 @@ function launchModalForm(url, options = {}) {
      * submit_text - Text for the submit button (default = 'Submit')
      * close_text - Text for the close button (default = 'Close')
      * no_post - If true, only display form data, hide submit button, and disallow POST
+     * after_render - Callback function to run after form is rendered
+     * secondary - List of secondary modals to attach
      */
 
     var modal = options.modal || '#modal-form';
@@ -474,6 +559,14 @@ function launchModalForm(url, options = {}) {
 
             if (response.html_form) {
                 injectModalForm(modal, response.html_form);
+
+                if (options.after_render) {
+                    options.after_render(modal, response);
+                }
+
+                if (options.secondary) {
+                    attachSecondaries(modal, options.secondary);
+                }
 
                 if (options.no_post) {
                     modalShowSubmitButton(modal, false);

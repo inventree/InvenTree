@@ -51,7 +51,7 @@
     background: #eee;
     display: none;
     position: absolute;
-    z-index: 999;
+    z-index: 400;
     border: 1px solid #555;
     max-width: 250px;
 }
@@ -159,7 +159,15 @@
 
 .modal {
   overflow: hidden;
-  z-index: 99999999;
+  z-index: 9999;
+}
+
+.modal-primary {
+    z-index: 10000;
+}
+
+.modal-secondary {
+    z-index: 11000;
 }
 
 .js-modal-form .checkbox {
@@ -168,6 +176,11 @@
 
 .modal-dialog {
     width: 45%;
+}
+
+.modal-secondary .modal-dialog {
+    width: 40%;
+    padding-top: 15px;
 }
 
 .modal-content h3 {
@@ -190,6 +203,16 @@
 
 .modal textarea {
     width: 100%;
+}
+
+/* Force a control-label div to be 100% width */
+.modal .control-label {
+    width: 100%;
+}
+
+.modal .control-label .btn {
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 /* The side navigation menu */
@@ -217,7 +240,7 @@
     margin-top: 20px;
     width: 100%;
     padding: 20px;
-    z-index: 999999;
+    z-index: 5000;
     pointer-events: none; // Prevent this div from blocking links underneath
 }
 
