@@ -300,6 +300,23 @@ class Part(models.Model):
         # Default case - no default category found
         return None
 
+    def get_default_supplier(self):
+        """ Get the default supplier part for this part (may be None).
+
+        - If the part specifies a default_supplier, return that
+        - If there is only one supplier part available, return that
+        - Else, return None
+        """
+
+        if self.default_supplier:
+            return self.default_suppliers
+
+        if self.supplier_count == 1:
+            return self.supplier_parts.first()
+
+        # Default to None if there are multiple suppliers to choose from
+        return None
+
     default_supplier = models.ForeignKey('part.SupplierPart',
                                          on_delete=models.SET_NULL,
                                          blank=True, null=True,
