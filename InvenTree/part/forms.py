@@ -92,9 +92,10 @@ class EditPartForm(HelperForm):
             'confirm_creation',
             'category',
             'name',
+            'IPN',
             'variant',
             'description',
-            'IPN',
+            'keywords',
             'URL',
             'default_location',
             'default_supplier',
@@ -118,7 +119,8 @@ class EditCategoryForm(HelperForm):
             'parent',
             'name',
             'description',
-            'default_location'
+            'default_location',
+            'default_keywords',
         ]
 
 

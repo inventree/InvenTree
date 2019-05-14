@@ -5,8 +5,6 @@ Django views for interacting with Build objects
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import get_object_or_404
-
 from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
 
@@ -15,7 +13,8 @@ from .models import Build, BuildItem
 from . import forms
 from stock.models import StockLocation, StockItem
 
-from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView, AjaxDeleteView
+from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
+from InvenTree.helpers import str2bool
 
 
 class BuildIndex(ListView):
@@ -41,30 +40,40 @@ class BuildIndex(ListView):
         return context
 
 
-class BuildCancel(AjaxView):
+class BuildCancel(AjaxUpdateView):
     """ View to cancel a Build.
     Provides a cancellation information dialog
     """
+
     model = Build
     ajax_template_name = 'build/cancel.html'
     ajax_form_title = 'Cancel Build'
     context_object_name = 'build'
-    fields = []
+    form_class = forms.CancelBuildForm
 
     def post(self, request, *args, **kwargs):
         """ Handle POST request. Mark the build status as CANCELLED """
 
-        build = get_object_or_404(Build, pk=self.kwargs['pk'])
+        build = self.get_object()
 
-        build.cancelBuild(request.user)
+        form = self.get_form()
 
-        return self.renderJsonResponse(request, None)
+        valid = form.is_valid()
 
-    def get_data(self):
-        """ Provide JSON context data. """
-        return {
+        confirm = str2bool(request.POST.get('confirm_cancel', False))
+
+        if confirm:
+            build.cancelBuild(request.user)
+        else:
+            form.errors['confirm_cancel'] = ['Confirm build cancellation']
+            valid = False
+
+        data = {
+            'form_valid': valid,
             'danger': 'Build was cancelled'
         }
+
+        return self.renderJsonResponse(request, form, data=data)
 
 
 class BuildAutoAllocate(AjaxUpdateView):
@@ -90,7 +99,7 @@ class BuildAutoAllocate(AjaxUpdateView):
             context['build'] = build
             context['allocations'] = build.getAutoAllocations()
         except Build.DoesNotExist:
-            context['error'] = 'No matching buidl found'
+            context['error'] = 'No matching build found'
 
         return context
 
@@ -217,7 +226,7 @@ class BuildComplete(AjaxUpdateView):
 
         form = self.get_form()
 
-        confirm = request.POST.get('confirm', False)
+        confirm = str2bool(request.POST.get('confirm', False))
 
         loc_id = request.POST.get('location', None)
 

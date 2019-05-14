@@ -157,6 +157,7 @@ class PartList(generics.ListCreateAPIView):
         '$name',
         'description',
         '$IPN',
+        'keywords',
     ]
 
 

@@ -22,8 +22,8 @@ Automatically allocate stock to this build?
 <tr>
     <td>
         <a class='hover-icon'>
-            <img class='hover-img-thumb' src='{{ item.stock_item.part.image.url }}'>
-            <img class='hover-img-large' src='{{ item.stock_item.part.image.url }}'>
+            <img class='hover-img-thumb' src='{% if item.stock_item.part.image %}{{ item.stock_item.part.image.url }}{% endif %}'>
+            <img class='hover-img-large' src='{% if item.stock_item.part.image %}{{ item.stock_item.part.image.url }}{% endif %}'>
         </a>
     </td>
     <td>
