@@ -574,10 +574,11 @@ class Part(models.Model):
 
         # Copy the part image
         if kwargs.get('image', True):
-            image_file = ContentFile(other.image.read())
-            image_file.name = rename_part_image(self, 'test.png')
+            if other.image:
+                image_file = ContentFile(other.image.read())
+                image_file.name = rename_part_image(self, 'test.png')
 
-            self.image = image_file
+                self.image = image_file
 
         # Copy the BOM data
         if kwargs.get('bom', False):
