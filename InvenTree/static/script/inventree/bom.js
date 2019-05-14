@@ -89,11 +89,11 @@ function loadBomTable(table, options) {
     // Part column
     cols.push(
         {
-            field: 'sub_part_detail',
+            field: 'sub_part_detail.full_name',
             title: 'Part',
             sortable: true,
             formatter: function(value, row, index, field) {
-                return imageHoverIcon(value.image_url) + renderLink(value.full_name, value.url);
+                return imageHoverIcon(row.sub_part_detail.image_url) + renderLink(row.sub_part_detail.full_name, row.sub_part_detail.url);
             }
         }
     );
@@ -115,29 +115,8 @@ function loadBomTable(table, options) {
             sortable: true,
         }
     );
-    
-    // Part notes
-    cols.push(
-        {
-            field: 'note',
-            title: 'Notes',
-            searchable: true,
-            sortable: true,
-        }
-    );
 
-    if (options.editable) {
-        cols.push({
-            formatter: function(value, row, index, field) {
-                var bEdit = "<button title='Edit BOM Item' class='btn btn-primary bom-edit-button btn-sm' type='button' url='/part/bom/" + row.pk + "/edit'><span class='glyphicon glyphicon-small glyphicon-pencil'></span></button>";
-                var bDelt = "<button title='Delete BOM Item' class='btn btn-danger bom-delete-button btn-sm' type='button' url='/part/bom/" + row.pk + "/delete'><span class='glyphicon glyphicon-small glyphicon-trash'></span></button>";
-                
-                return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
-            }
-        });
-    }
-
-    else {
+    if (!options.editable) {
         cols.push(
         {
             field: 'sub_part_detail.available_stock',
@@ -161,6 +140,27 @@ function loadBomTable(table, options) {
         }
         );
     }
+    
+    // Part notes
+    cols.push(
+        {
+            field: 'note',
+            title: 'Notes',
+            searchable: true,
+            sortable: true,
+        }
+    );
+
+    if (options.editable) {
+        cols.push({
+            formatter: function(value, row, index, field) {
+                var bEdit = "<button title='Edit BOM Item' class='btn btn-primary bom-edit-button btn-sm' type='button' url='/part/bom/" + row.pk + "/edit'><span class='glyphicon glyphicon-small glyphicon-pencil'></span></button>";
+                var bDelt = "<button title='Delete BOM Item' class='btn btn-danger bom-delete-button btn-sm' type='button' url='/part/bom/" + row.pk + "/delete'><span class='glyphicon glyphicon-small glyphicon-trash'></span></button>";
+                
+                return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
+            }
+        });
+    }
 
     // Configure the table (bootstrap-table)
     
@@ -172,6 +172,7 @@ function loadBomTable(table, options) {
         queryParams: function(p) {
             return {
                 part: options.parent_id,
+                ordering: 'name',
         }
     },
     columns: cols,
