@@ -5,8 +5,6 @@ Django views for interacting with Build objects
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import get_object_or_404
-
 from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
 
@@ -15,7 +13,7 @@ from .models import Build, BuildItem
 from . import forms
 from stock.models import StockLocation, StockItem
 
-from InvenTree.views import AjaxView, AjaxUpdateView, AjaxCreateView, AjaxDeleteView
+from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
 from InvenTree.helpers import str2bool
 
 

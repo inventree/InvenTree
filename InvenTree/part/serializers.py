@@ -71,7 +71,7 @@ class PartSerializer(serializers.ModelSerializer):
             'variant',
             'description',
             'keywords',
-            'URL', 
+            'URL',
             'total_stock',
             'available_stock',
             'units',
