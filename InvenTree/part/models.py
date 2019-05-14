@@ -743,6 +743,62 @@ class BomItem(models.Model):
             child=self.sub_part.full_name,
             n=self.quantity)
 
+    def get_overage_quantity(self, quantity):
+        """ Calculate overage quantity
+        """
+
+        # Most of the time overage string will be empty
+        if len(self.overage) == 0:
+            return 0
+
+        overage = str(self.overage).strip()
+
+        # Is the overage an integer value?
+        try:
+            ovg = int(overage)
+
+            if ovg < 0:
+                ovg = 0;
+
+            return ovg
+        except ValueError:
+            pass
+
+        # Is the overage a percentage?
+        if overage.endswith('%'):
+            overage = overage[:-1].strip()
+
+            try:
+                percent = float(overage) / 100.0
+                if percetage > 1:
+                    percentage = 1
+                if percentage < 0:
+                    percentage = 0
+
+                return int(percentage * quantity)
+
+            except ValueError:
+                pass
+
+        # Default = No overage
+        return 0
+
+    def get_required_quantity(self, build_quantity):
+        """ Calculate the required part quantity, based on the supplier build_quantity.
+        Includes overage estimate in the returned value.
+        
+        Args:
+            build_quantity: Number of parts to build
+
+        Returns:
+            Quantity required for this build (including overage)
+        """
+
+        # Base quantity requirement
+        base_quantity = self.quantity * build_quantity
+
+        return base_quantity + self.get_overage_quantity(base_quantity)
+
 
 class SupplierPart(models.Model):
     """ Represents a unique part as provided by a Supplier
