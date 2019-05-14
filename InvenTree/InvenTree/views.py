@@ -414,3 +414,10 @@ class SearchView(TemplateView):
         context['query'] = query
 
         return super(TemplateView, self).render_to_response(context)
+
+
+class SettingsView(TemplateView):
+    """ View for configuring User settings
+    """
+
+    template_name = "InvenTree/settings.html"

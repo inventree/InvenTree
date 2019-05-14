@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+InvenTree | Settings
+{% endblock %}
+
+{% block content %}
+<h3>Settings</h3>
+<hr>
+
+Logged in as {{ user.username }}
+
+{% endblock %}
+
+{% block js_load %}
+{{ block.super }}
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+{% endblock %}

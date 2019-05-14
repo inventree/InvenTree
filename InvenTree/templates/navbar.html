@@ -19,7 +19,9 @@
               {% if user.is_authenticated %}
               {% if user.is_staff %}
               <li><a href="/admin/"><span class="glyphicon glyphicon-edit"></span> Admin</a></li>
+              <hr>
               {% endif %}
+              <li><a href="{% url 'settings' %}"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
               <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
               {% else %}
               <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
