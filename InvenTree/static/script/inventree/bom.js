@@ -132,6 +132,9 @@ function loadBomTable(table, options) {
                 }
                 else
                 {
+                    if (!value) {
+                        value = 'No Stock';
+                    }
                     text = "<span class='label label-warning'>" + value + "</span>";
                 }
                 

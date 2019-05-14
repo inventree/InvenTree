@@ -119,13 +119,12 @@ function loadPartTable(table, url, options={}) {
                 visible: false,
             },
             {
-                field: 'name',
+                field: 'full_name',
                 title: 'Part',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    var name = row.full_name;
 
-                    var display = imageHoverIcon(row.image_url) + renderLink(name, row.url);
+                    var display = imageHoverIcon(row.image_url) + renderLink(value, row.url);
                     if (!row.active) {
                         display = display + "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
                     }
@@ -160,7 +159,7 @@ function loadPartTable(table, url, options={}) {
                         return renderLink(value, row.url + 'stock/');
                     }
                     else {
-                        return "<span class='label label-warning'>No stock</span>";
+                        return "<span class='label label-warning'>No Stock</span>";
                     }
                 }
             }
