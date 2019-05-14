@@ -339,7 +339,9 @@ class PartCreate(AjaxCreateView):
 
         if self.get_category_id():
             try:
-                initials['category'] = PartCategory.objects.get(pk=self.get_category_id())
+                category = PartCategory.objects.get(pk=self.get_category_id())
+                initials['category'] = category
+                initials['keywords'] = category.default_keywords
             except PartCategory.DoesNotExist:
                 pass
 
