@@ -46,3 +46,29 @@ class EditUserForm(HelperForm):
             'last_name',
             'email'
         ]
+
+
+class SetPasswordForm(HelperForm):
+    """ Form for setting user password 
+    """
+
+    enter_password = forms.CharField(max_length=100,
+                                     min_length=8,
+                                     required=True,
+                                     initial='',
+                                     widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+                                     help_text='Enter new password')
+
+    confirm_password = forms.CharField(max_length=100,
+                                       min_length=8,
+                                       required=True,
+                                       initial='',
+                                       widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+                                       help_text='Confirm new password')
+
+    class Meta:
+        model = User
+        fields = [
+            'enter_password',
+            'confirm_password'
+        ]

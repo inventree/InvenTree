@@ -54,4 +54,13 @@ InvenTree | Settings
         );
     });
 
+    $("#edit-password").on('click', function() {
+        launchModalForm(
+            "{% url 'set-password' %}",
+            {
+                reload: true,
+            }
+        );
+    });
+
 {% endblock %}
