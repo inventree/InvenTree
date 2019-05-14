@@ -83,7 +83,15 @@
             {
                 success: function() {
                     $("#bom-table").bootstrapTable('refresh');
-                }
+                },
+                secondary: [
+                    {
+                        field: 'sub_part',
+                        label: 'New Part',
+                        title: 'Create New Part',
+                        url: "{% url 'part-create' %}",
+                    },
+                ]
             }
         );
     });
