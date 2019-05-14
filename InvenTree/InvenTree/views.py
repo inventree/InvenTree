@@ -17,7 +17,7 @@ from django.views.generic.base import TemplateView
 
 from part.models import Part
 
-from .forms import DeleteForm
+from .forms import DeleteForm, EditUserForm
 from .helpers import str2bool
 
 from rest_framework import views
@@ -369,6 +369,18 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
         }
 
         return self.renderJsonResponse(request, form, data=data, context=context)
+
+
+class EditUserView(AjaxUpdateView):
+    """ View for editing user information """
+
+    ajax_template_name = "modal_form.html"
+    ajax_form_title = "Edit User Information"
+    form_class = EditUserForm
+
+    def get_object(self):
+        return self.request.user
+
 
 
 class IndexView(TemplateView):

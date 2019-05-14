@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django import forms
 from crispy_forms.helper import FormHelper
-
+from django.contrib.auth.models import User
 
 class HelperForm(forms.ModelForm):
     """ Provides simple integration of crispy_forms extension. """
@@ -32,4 +32,17 @@ class DeleteForm(forms.Form):
     class Meta:
         fields = [
             'confirm_delete'
+        ]
+
+
+class EditUserForm(HelperForm):
+    """ Form for editing user information
+    """
+
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'email'
         ]
