@@ -119,7 +119,8 @@ class EditCategoryForm(HelperForm):
             'parent',
             'name',
             'description',
-            'default_location'
+            'default_location',
+            'default_keywords',
         ]
 
 

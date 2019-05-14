@@ -37,6 +37,12 @@ from company.models import Company
 
 class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
+
+    Attributes:
+        name: Name of this category
+        parent: Parent category
+        default_location: Default storage location for parts in this category or child categories
+        default_keywords: Default keywords for parts created in this category
     """
 
     default_location = models.ForeignKey(
@@ -45,6 +51,8 @@ class PartCategory(InvenTreeTree):
         on_delete=models.SET_NULL,
         help_text='Default location for parts in this category'
     )
+
+    default_keywords = models.CharField(blank=True, max_length=250, help_text='Default keywords for parts in this category')
 
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={'pk': self.id})
