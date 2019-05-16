@@ -43,6 +43,7 @@ function updateStock(items, options={}) {
     html += '<th>Item</th>';
     html += '<th>Location</th>';
     html += '<th>Quantity</th>';
+    html += '<th>' + options.action + '</th>';
 
     html += '</thead><tbody>';
 
@@ -71,6 +72,9 @@ function updateStock(items, options={}) {
         } else {
             html += '<td><i>No location set</i></td>';
         }
+
+        html += '<td>' + item.quantity + '</td>';
+
         html += "<td><input class='form-control' ";
         html += "value='" + vCur + "' ";
         html += "min='" + vMin + "' ";
