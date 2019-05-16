@@ -125,7 +125,6 @@ class Company(models.Model):
         return stock.objects.filter(supplier_part__supplier=self.id).count()
 
 
-
 class Contact(models.Model):
     """ A Contact represents a person who works at a particular company.
     A Company may have zero or more associated Contact objects.
