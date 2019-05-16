@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "build/build_base.html" %}
 {% load static %}
 {% load inventree_extras %}
 
@@ -6,15 +6,14 @@
 InvenTree | Allocate Parts
 {% endblock %}
 
-{% block content %}
+{% block details %}
 
-<h3>Allocate Parts for Build</h3>
+{% include "build/tabs.html" with tab='allocate' %}
+
+<h4>Allocate Parts for Build</h4>
 
 <div class='row'>
     <div class='col-sm-6'>
-        
-        <h4><a href="{% url 'build-detail' build.id %}">{{ build.title }}</a></h4>
-        {{ build.quantity }} x {{ build.part.lonname }}    
     </div>
     <div class='col-sm-6'>
         <div class='btn-group' style='float: right;'>
