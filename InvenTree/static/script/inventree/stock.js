@@ -434,6 +434,42 @@ function loadStockTable(table, options) {
     if (options.buttons) {
         linkButtonsToSelection(table, options.buttons);
     }
+
+    // Automatically link button callbacks
+    $('#multi-item-stocktake').click(function() {
+        updateStockItems({
+            action: 'stocktake',
+        });
+        return false;
+    });
+
+    $('#multi-item-remove').click(function() {
+        updateStockItems({
+            action: 'remove',
+        });
+        return false;
+    });
+
+    $('#multi-item-add').click(function() {
+        updateStockItems({
+            action: 'add',
+        });
+        return false;
+    });
+
+    $("#multi-item-move").click(function() {
+
+        var items = $("#stock-table").bootstrapTable('getSelections');
+
+        moveStockItems(items,
+                       {
+                           success: function() {
+                               $("#stock-table").bootstrapTable('refresh');
+                           }
+                       });
+
+        return false;
+    });
 }
 
 
