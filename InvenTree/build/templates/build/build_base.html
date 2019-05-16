@@ -10,9 +10,23 @@ InvenTree | Build - {{ build }}
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h3>Build Details</h3>
-        <p><b>{{ build.title }}</b>{% include "build_status.html" with build=build %}</p>
-        <p>Building {{ build.quantity }} &times {{ build.part.full_name }}</p>
+        <div class="media">
+            <div class="media-left">
+                <div class='dropzone' id='part-thumb'>
+                    <img class="part-thumb"
+                    {% if build.part.image %}
+                    src="{{ build.part.image.url }}"
+                    {% else %}
+                    src="{% static 'img/blank_image.png' %}"
+                    {% endif %}/>
+                </div>
+            </div>
+            <div class='media-body'>
+                <h4>Build Details</h4>
+                <p><b>{{ build.title }}</b>{% include "build_status.html" with build=build %}</p>
+                <p>Building {{ build.quantity }} &times {{ build.part.full_name }}</p>
+            </div>
+        </div>
     </div>
     <div class='col-sm-6'>
         <h3>
