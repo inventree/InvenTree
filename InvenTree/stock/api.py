@@ -7,10 +7,11 @@ from django_filters import NumberFilter
 
 from django.conf.urls import url, include
 from django.urls import reverse
-from django.db.models import Q
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
+
+from part.models import PartCategory
 
 from .serializers import StockItemSerializer, StockQuantitySerializer
 from .serializers import LocationSerializer
@@ -237,16 +238,19 @@ class StockList(generics.ListCreateAPIView):
 
     - GET: Return a list of all StockItem objects (with optional query filters)
     - POST: Create a new StockItem
+
+    Additional query parameters are available:
+        - location: Filter stock by location
+        - category: Filter by parts belonging to a certain category
     """
 
     def get_queryset(self):
         """
         If the query includes a particular location,
         we may wish to also request stock items from all child locations.
-        This is set by the optional param 'include_child_categories'
         """
 
-        # Does the client wish to filter by category?
+        # Does the client wish to filter by stock location?
         loc_id = self.request.query_params.get('location', None)
 
         # Start with all objects
@@ -255,21 +259,20 @@ class StockList(generics.ListCreateAPIView):
         if loc_id:
             try:
                 location = StockLocation.objects.get(pk=loc_id)
-
-                # Filter by the supplied category
-                flt = Q(location=loc_id)
-
-                if self.request.query_params.get('include_child_locations', None):
-                    childs = location.getUniqueChildren()
-                    for child in childs:
-                        # Ignore the top-level category (already filtered!)
-                        if str(child) == str(loc_id):
-                            continue
-                        flt |= Q(location=child)
-
-                stock_list = stock_list.filter(flt)
-            
+                stock_list = stock_list.filter(location__in=location.getUniqueChildren())
+                 
             except StockLocation.DoesNotExist:
+                pass
+
+        # Does the client wish to filter by part category?
+        cat_id = self.request.query_params.get('category', None)
+
+        if cat_id:
+            try:
+                category = PartCategory.objects.get(pk=cat_id)
+                stock_list = stock_list.filter(part__category__in=category.getUniqueChildren())
+
+            except PartCategory.DoesNotExist:
                 pass
 
         return stock_list
