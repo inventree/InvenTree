@@ -1,0 +1,26 @@
+{% extends "company/company_base.html" %}
+{% load static %}
+
+{% block details %}
+
+{% include "company/tabs.html" with tab='stock' %}
+
+<h3>Supplier Stock</h3>
+
+{% include "stock_table.html" %}
+
+{% endblock %}
+{% block js_ready %}
+{{ block.super }}
+
+    loadStockTable($('#stock-table'), {
+        url: "{% url 'api-stock-list' %}",
+        params: {
+            supplier: {{ company.id }},
+        },
+        buttons: [
+            '#stock-options',
+        ]
+    });
+
+{% endblock %}

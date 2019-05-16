@@ -44,24 +44,7 @@
 
 <hr>
 
-<div id='button-toolbar'>
-    <div class='button-toolbar container-fluid' style='float: right;'>
-        <button class="btn btn-success" id='item-create'>New Stock Item</button>
-        <div class="dropdown" style='float: right;'>
-            <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options<span class="caret"></span></button>
-            <ul class="dropdown-menu">
-                <li><a href="#" id='multi-item-add' title='Add to selected stock items'>Add stock</a></li>
-                <li><a href="#" id='multi-item-remove' title='Remove from selected stock items'>Remove stock</a></li>
-                <li><a href="#" id='multi-item-stocktake' title='Stocktake selected stock items'>Stocktake</a></li>
-              <li><a href='#' id='multi-item-move' title='Move selected stock items'>Move</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<table class='table table-striped table-condensed' data-toolbar='#button-toolbar' id='stock-table'>
-</table>
-
+{% include "stock_table.html" %}
 
 {% include 'modals.html' %}
 
@@ -80,7 +63,15 @@
                                 location: {{ location.id }}
                                 {% endif %}
                             },
-                            follow: true
+                            follow: true,
+                            secondary: [
+                                {
+                                    field: 'parent',
+                                    label: 'New Location',
+                                    title: 'Create new location',
+                                    url: "{% url 'stock-location-create' %}",
+                                },
+                            ]
                         });
         return false;
     });
@@ -141,46 +132,7 @@
 
         return false;
     });
-
-    function selectedStock() {
-        return $("#stock-table").bootstrapTable('getSelections');
-    }
-
-    $("#multi-item-move").click(function() {
-
-        var items = selectedStock();
-
-        moveStockItems(items,
-                       {
-                           success: function() {
-                               $("#stock-table").bootstrapTable('refresh');
-                           }
-                       });
-
-        return false;
-    });
-
-    $('#multi-item-stocktake').click(function() {
-        updateStockItems({
-            action: 'stocktake',
-        });
-        return false;
-    });
-
-    $('#multi-item-remove').click(function() {
-        updateStockItems({
-            action: 'remove',
-        });
-        return false;
-    });
-
-    $('#multi-item-add').click(function() {
-        updateStockItems({
-            action: 'add',
-        });
-        return false;
-    });
-
+    
     loadStockTable($("#stock-table"), {
         buttons: [
             '#stock-options',
@@ -188,7 +140,6 @@
         params: {
             {% if location %}
             location: {{ location.id }},
-            include_child_locations: true,
             {% endif %}
         },
         url: "{% url 'api-stock-list' %}",

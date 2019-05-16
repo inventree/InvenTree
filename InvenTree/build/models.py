@@ -59,7 +59,7 @@ class Build(models.Model):
     take_from = models.ForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
                                   related_name='sourcing_builds',
                                   null=True, blank=True,
-                                  help_text='Select location to take stock from for this build (leave blank to take from any stock location'
+                                  help_text='Select location to take stock from for this build (leave blank to take from any stock location)'
                                   )
     
     quantity = models.PositiveIntegerField(
@@ -261,7 +261,7 @@ class Build(models.Model):
 
         try:
             item = BomItem.objects.get(part=self.part.id, sub_part=part.id)
-            return item.quantity * self.quantity
+            return item.get_required_quantity(self.quantity)
         except BomItem.DoesNotExist:
             return 0
 

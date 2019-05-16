@@ -3,19 +3,19 @@
 {% load static %}
 
 {% block page_title %}
-InvenTree | Company List 
+InvenTree | Supplier List 
 {% endblock %}
 
 {% block content %}
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h3>Company List</h3>
+        <h3>Supplier List</h3>
     </div>
     <div class='col-sm-6'>
         <div class='container' id='active-build-toolbar' style='float: right;'>
             <div class='btn-group' style='float: right;'>
-                <button type='button' class="btn btn-success" id='new-company'>New Company</button>
+                <button type='button' class="btn btn-success" id='new-company' title='Add new supplier'>New Supplier</button>
             </div>
         </div>
     </div>
@@ -54,7 +54,7 @@ InvenTree | Company List
             },
             {
                 field: 'name',
-                title: 'Company',
+                title: 'Supplier',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.image) + renderLink(value, row.url);
@@ -73,7 +73,14 @@ InvenTree | Company List
                     }
                     return '';
                 }
-            }
+            },
+            {
+                field: 'part_count',
+                title: 'Parts',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, row.url + 'parts/');
+                }
+            },
         ],
         url: "{% url 'api-company-list' %}"
     });

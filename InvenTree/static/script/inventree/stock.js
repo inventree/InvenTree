@@ -43,6 +43,7 @@ function updateStock(items, options={}) {
     html += '<th>Item</th>';
     html += '<th>Location</th>';
     html += '<th>Quantity</th>';
+    html += '<th>' + options.action + '</th>';
 
     html += '</thead><tbody>';
 
@@ -71,6 +72,9 @@ function updateStock(items, options={}) {
         } else {
             html += '<td><i>No location set</i></td>';
         }
+
+        html += '<td>' + item.quantity + '</td>';
+
         html += "<td><input class='form-control' ";
         html += "value='" + vCur + "' ";
         html += "min='" + vMin + "' ";
@@ -87,8 +91,18 @@ function updateStock(items, options={}) {
     html += '</tbody></table>';
 
     html += "<hr><input type='text' id='stocktake-notes' placeholder='Notes'/>";
+    html += "<p class='help-inline' id='note-warning'><strong>Note field must be filled</strong></p>";
 
-    html += "<p class='warning-msg' id='note-warning'><i>Note field must be filled</i></p>";
+    html += `
+        <hr>
+        <div class='control-group'>
+            <label class='checkbox'>
+                <input type='checkbox' id='stocktake-confirm' placeholder='Confirm'/>
+                Confirm Stocktake
+            </label>
+            <p class='help-inline' id='confirm-warning'><strong>Confirm stock count</strong></p>
+        </div>`;
+
 
     var title = '';
 
@@ -109,6 +123,7 @@ function updateStock(items, options={}) {
     });
 
     $(modal).find('#note-warning').hide();
+    $(modal).find('#confirm-warning').hide();
 
     modalEnable(modal, true);
 
@@ -116,13 +131,23 @@ function updateStock(items, options={}) {
 
         var stocktake = [];
         var notes = $(modal).find('#stocktake-notes').val();
+        var confirm = $(modal).find('#stocktake-confirm').is(':checked');
+
+        var valid = true;
 
         if (!notes) {
             $(modal).find('#note-warning').show();
-            return false;
+            valid = false;
         }
 
-        var valid = true;
+        if (!confirm) {
+            $(modal).find('#confirm-warning').show();
+            valid = false;
+        }
+
+        if (!valid) {
+            return false;
+        }
 
         // Form stocktake data
         for (idx = 0; idx < items.length; idx++) {
@@ -413,6 +438,42 @@ function loadStockTable(table, options) {
     if (options.buttons) {
         linkButtonsToSelection(table, options.buttons);
     }
+
+    // Automatically link button callbacks
+    $('#multi-item-stocktake').click(function() {
+        updateStockItems({
+            action: 'stocktake',
+        });
+        return false;
+    });
+
+    $('#multi-item-remove').click(function() {
+        updateStockItems({
+            action: 'remove',
+        });
+        return false;
+    });
+
+    $('#multi-item-add').click(function() {
+        updateStockItems({
+            action: 'add',
+        });
+        return false;
+    });
+
+    $("#multi-item-move").click(function() {
+
+        var items = $("#stock-table").bootstrapTable('getSelections');
+
+        moveStockItems(items,
+                       {
+                           success: function() {
+                               $("#stock-table").bootstrapTable('refresh');
+                           }
+                       });
+
+        return false;
+    });
 }
 
 

@@ -12,7 +12,6 @@ from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework import generics, permissions
 
-from django.db.models import Q
 from django.conf.urls import url, include
 from django.urls import reverse
 
@@ -109,20 +108,7 @@ class PartList(generics.ListCreateAPIView):
         if cat_id:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
-                
-                # Filter by the supplied category
-                flt = Q(category=cat_id)
-
-                if self.request.query_params.get('include_child_categories', None):
-                    childs = category.getUniqueChildren()
-                    for child in childs:
-                        # Ignore the top-level category (already filtered)
-                        if str(child) == str(cat_id):
-                            continue
-                        flt |= Q(category=child)
-
-                parts_list = parts_list.filter(flt)
-
+                parts_list = parts_list.filter(category__in=category.getUniqueChildren())
             except PartCategory.DoesNotExist:
                 pass
 

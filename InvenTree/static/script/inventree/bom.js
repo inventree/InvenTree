@@ -113,6 +113,15 @@ function loadBomTable(table, options) {
             title: 'Required',
             searchable: false,
             sortable: true,
+            formatter: function(value, row, index, field) {
+                var text = value;
+
+                if (row.overage) {
+                    text += "<small> (+" + row.overage + ")    </small>";
+                }
+
+                return text;
+            }
         }
     );
 
