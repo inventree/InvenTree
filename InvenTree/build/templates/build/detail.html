@@ -1,39 +1,11 @@
-{% extends "base.html" %}
+{% extends "build/build_base.html" %}
 {% load static %}
 
-{% block page_title %}
-InvenTree | Build - {{ build }}
-{% endblock %}
+{% block details %}
 
-{% block content %}
+{% include "build/tabs.html" with tab='details' %}
 
-<div class='row'>
-<div class='col-sm-6'>
-    <h3>Build Details</h3>
-    <p><b>{{ build.title }}</b>{% include "build_status.html" with build=build %}</p>
-    <p>Building {{ build.quantity }} &times {{ build.part.full_name }}</p>
-</div>
-<div class='col-sm-6'>
-    <h3>
-    <div style='float: right;'>
-    <div class="dropdown" style="float: right;">
-        <a href="{% url 'build-allocate' build.id %}">
-            <button class='btn btn-info' type='button' title='Allocate Parts' id='build-allocate'>Allocate Parts</button>
-        </a>
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
-        <span class="caret"></span></button>
-        <ul class="dropdown-menu">
-          <li><a href='#' id='build-edit' title='Edit build'>Edit build</a></li>
-          {% if build.is_active %}
-          <li><a href='#' id='build-complete' title='Complete Build'>Complete Build</a></li>
-          <li><a href='#' id='build-cancel' title='Cancel build'>Cancel build</a></li>
-          {% endif %}
-        </ul>
-    </div>
-    </div>
-    </h3>
-</div>
-</div>
+<h4>Build Details</h4>
 
 <table class='table table-striped'>
 <tr>
@@ -94,61 +66,5 @@ InvenTree | Build - {{ build }}
 </tr>
 {% endif %}
 </table>
-
-{% if build.is_active %}
-<h3>Required Parts</h3>
-<table class='table table-striped' id='build-list' data-sorting='true'>
-<thead>
-<tr>
-    <th>Part</th>
-    <th>Required</th>
-    <th>Available</th>
-    <th>Allocated</th>
-</tr>
-</thead>
-<tbody>
-    {% for item in build.required_parts %}
-    <tr>
-        <td><a href="{% url 'part-detail' item.part.id %}">{{ item.part.full_name }}</a></td>
-        <td>{{ item.quantity }}</td>
-        <td>{{ item.part.total_stock }}</td>
-        <td>{{ item.allocated }}</td>
-    </tr>
-    {% endfor %}
-</tbody>
-</table>
-
-{% endif %}
-
-{% include 'modals.html' %}
-
-{% endblock %}
-
-{% block js_ready %}
-{{ block.super }}
-    $("#build-edit").click(function () {
-        launchModalForm("{% url 'build-edit' build.id %}",
-                        {
-                            reload: true
-                        });
-    });
-
-    $("#build-cancel").click(function() {
-        launchModalForm("{% url 'build-cancel' build.id %}",
-                        {
-                            reload: true,
-                            submit_text: "Cancel Build",
-                        });
-    });
-
-    $("#build-complete").on('click', function() {
-        launchModalForm(
-            "{% url 'build-complete' build.id %}",
-            {
-                reload: true,
-                submit_text: "Complete Build",
-            }
-        );
-    });
 
 {% endblock %}
