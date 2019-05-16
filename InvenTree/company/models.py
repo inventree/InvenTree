@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 import os
 
+from django.apps import apps
 from django.db import models
 from django.urls import reverse
 from django.conf import settings
@@ -110,6 +111,19 @@ class Company(models.Model):
     def has_parts(self):
         """ Return True if this company supplies any parts """
         return self.part_count > 0
+
+    @property
+    def stock_items(self):
+        """ Return a list of all stock items supplied by this company """
+        stock = apps.get_model('stock', 'StockItem')
+        return stock.objects.filter(supplier_part__supplier=self.id).all()
+
+    @property
+    def stock_count(self):
+        """ Return the number of stock items supplied by this company """
+        stock = apps.get_model('stock', 'StockItem')
+        return stock.objects.filter(supplier_part__supplier=self.id).count()
+
 
 
 class Contact(models.Model):
