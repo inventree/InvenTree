@@ -18,7 +18,6 @@ from .serializers import LocationSerializer
 from .serializers import StockTrackingSerializer
 
 from InvenTree.views import TreeSerializer
-from InvenTree.helpers import str2bool
 
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
@@ -249,7 +248,6 @@ class StockList(generics.ListCreateAPIView):
         """
         If the query includes a particular location,
         we may wish to also request stock items from all child locations.
-        This is set by the optional param 'include_child_categories'
         """
 
         # Does the client wish to filter by stock location?
@@ -261,12 +259,8 @@ class StockList(generics.ListCreateAPIView):
         if loc_id:
             try:
                 location = StockLocation.objects.get(pk=loc_id)
-
-                if str2bool(self.request.query_params.get('include_child_locations', None)):
-                    stock_list = stock_list.filter(location__in=location.getUniqueChildren())
-                else:
-                    stock_list = stock_list.filter(location=location.id)
-            
+                stock_list = stock_list.filter(location__in=location.getUniqueChildren())
+                 
             except StockLocation.DoesNotExist:
                 pass
 
@@ -276,11 +270,7 @@ class StockList(generics.ListCreateAPIView):
         if cat_id:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
-
-                if str2bool(self.request.query_params.get('include_child_categories', None)):
-                    stock_list = stock_list.filter(part__category__in=category.getUniqueChildren())
-                else:
-                    stock_list = stock_list.filter(category=category.id)
+                stock_list = stock_list.filter(part__category__in=category.getUniqueChildren())
 
             except PartCategory.DoesNotExist:
                 pass

@@ -105,13 +105,6 @@ class PartAPITest(APITestCase):
         url = reverse('api-part-list')
         data = {'category': 1}
 
-        response = self.client.get(url, data, format='json')
-
-        # There should be 1 part in this category
-        self.assertEqual(len(response.data), 0)
-
-        data['include_child_categories'] = 1
-
         # Now request to include child categories
         response = self.client.get(url, data, format='json')
 
