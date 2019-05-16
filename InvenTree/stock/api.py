@@ -242,6 +242,7 @@ class StockList(generics.ListCreateAPIView):
     Additional query parameters are available:
         - location: Filter stock by location
         - category: Filter by parts belonging to a certain category
+        - supplier: Filter by supplier
     """
 
     def get_queryset(self):
@@ -274,6 +275,12 @@ class StockList(generics.ListCreateAPIView):
 
             except PartCategory.DoesNotExist:
                 pass
+
+        # Filter by supplier
+        supplier_id = self.request.query_params.get('supplier', None)
+
+        if supplier_id:
+            stock_list = stock_list.filter(supplier_part__supplier=supplier_id)
 
         return stock_list
 

@@ -16,6 +16,7 @@ company_detail_urls = [
     # url(r'orders/?', views.CompanyDetail.as_view(template_name='company/orders.html'), name='company-detail-orders'),
 
     url(r'parts/?', views.CompanyDetail.as_view(template_name='company/detail_part.html'), name='company-detail-parts'),
+    url(r'stock/?', views.CompanyDetail.as_view(template_name='company/detail_stock.html'), name='company-detail-stock'),
 
     url(r'thumbnail/?', views.CompanyImage.as_view(), name='company-image'),
 
