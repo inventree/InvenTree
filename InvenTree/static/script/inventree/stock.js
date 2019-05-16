@@ -87,8 +87,18 @@ function updateStock(items, options={}) {
     html += '</tbody></table>';
 
     html += "<hr><input type='text' id='stocktake-notes' placeholder='Notes'/>";
+    html += "<p class='help-inline' id='note-warning'><strong>Note field must be filled</strong></p>";
 
-    html += "<p class='warning-msg' id='note-warning'><i>Note field must be filled</i></p>";
+    html += `
+        <hr>
+        <div class='control-group'>
+            <label class='checkbox'>
+                <input type='checkbox' id='stocktake-confirm' placeholder='Confirm'/>
+                Confirm Stocktake
+            </label>
+            <p class='help-inline' id='confirm-warning'><strong>Confirm stock count</strong></p>
+        </div>`;
+
 
     var title = '';
 
@@ -109,6 +119,7 @@ function updateStock(items, options={}) {
     });
 
     $(modal).find('#note-warning').hide();
+    $(modal).find('#confirm-warning').hide();
 
     modalEnable(modal, true);
 
@@ -116,13 +127,23 @@ function updateStock(items, options={}) {
 
         var stocktake = [];
         var notes = $(modal).find('#stocktake-notes').val();
+        var confirm = $(modal).find('#stocktake-confirm').is(':checked');
+
+        var valid = true;
 
         if (!notes) {
             $(modal).find('#note-warning').show();
-            return false;
+            valid = false;
         }
 
-        var valid = true;
+        if (!confirm) {
+            $(modal).find('#confirm-warning').show();
+            valid = false;
+        }
+
+        if (!valid) {
+            return false;
+        }
 
         // Form stocktake data
         for (idx = 0; idx < items.length; idx++) {
