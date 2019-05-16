@@ -73,7 +73,14 @@ InvenTree | Supplier List
                     }
                     return '';
                 }
-            }
+            },
+            {
+                field: 'part_count',
+                title: 'Parts',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, row.url + 'parts/');
+                }
+            },
         ],
         url: "{% url 'api-company-list' %}"
     });
