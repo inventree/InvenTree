@@ -13,25 +13,7 @@
 </div>
 <hr>
 
-<div id='button-toolbar'>
-    {% if part.active %}
-    <button class='btn btn-success' id='add-stock-item'>New Stock Item</button>
-    {% endif %}
-    <div id='opt-dropdown' class="dropdown" style='float: right;'>
-        <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
-            <span class="caret"></span></button>
-            <ul class="dropdown-menu">
-                <li><a href='#' id='multi-item-take' title='Take items from stock'>Take items</a></li>
-                <li><a href='#' id='multi-item-give' title='Give items to stock'>Add items</a></li>
-                <li><a href="#" id='multi-item-stocktake' title='Stocktake selected stock items'>Stocktake</a></li>
-                <li><a href='#' id='multi-item-move' title='Move selected stock items'>Move items</a></li>
-            </ul>
-    </div>
-</div>
-
-<table class='table table-striped table-condensed' data-toolbar='#button-toolbar' id='stock-table'>
-</table>
-
+{% include "stock_table.html" %}
 
 {% endblock %}
 
@@ -87,14 +69,14 @@
         return false;
     });
 
-    $("#multi-item-take").click(function() {
+    $("#multi-item-remove").click(function() {
         updateStockItems({
             action: 'remove',
         });
         return false;
     });
 
-    $("#multi-item-give").click(function() {
+    $("#multi-item-add").click(function() {
         updateStockItems({
             action: 'add',
         });
