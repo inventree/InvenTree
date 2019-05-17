@@ -32,6 +32,14 @@
     padding: 5px 10px;
 }
 
+/* Extra label styles */
+
+.label-large {
+    padding: 5px;
+    margin: 3px;
+    font-size: 100%;
+}
+
 /* Force select2 elements in modal forms to be full width */
 .select-full-width {
     width: 100%;
