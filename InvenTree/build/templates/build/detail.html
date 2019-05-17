@@ -60,11 +60,13 @@
     <td>Completed</td><td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
 </tr>
 {% endif %}
-{% if build.notes %}
-<tr>
-    <td>Notes</td><td>{{ build.notes }}</td>
-</tr>
-{% endif %}
 </table>
+
+{% if build.notes %}
+<div class="panel panel-default">
+  <div class="panel-heading"><b>Notes</b></div>
+  <div class="panel-body">{{ build.notes }}</div>
+</div>
+{% endif %}
 
 {% endblock %}

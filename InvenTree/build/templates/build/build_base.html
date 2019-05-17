@@ -23,8 +23,20 @@ InvenTree | Build - {{ build }}
             </div>
             <div class='media-body'>
                 <h4>Build Details</h4>
-                <p><b>{{ build.title }}</b>{% include "build_status.html" with build=build %}</p>
-                <p>Building {{ build.quantity }} &times {{ build.part.full_name }}</p>
+                <table class='table table-striped table-condensed'>
+                    <tr>
+                        <td>{{ build.title }}</td>
+                        <td>{% include "build_status.html" with build=build %}</td>
+                    </tr>
+                    <tr>
+                        <td>Part</td>
+                        <td>{{ build.part.full_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Quantity</td>
+                        <td>{{ build.quantity }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
