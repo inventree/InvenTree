@@ -15,13 +15,13 @@ Calculate pricing information for {{ part }}.
         <td><b>Quantity</b></td>
         <td>{{ quantity }}</td>
     </tr>
-{% if buy_price %}
+    {% if buy_price %}
     <tr>
         <td><b>Buy Cost</b></td>
         <td>{{ buy_price }}</td>
     </tr>
-{% endif %}
-{% if bom_price %}
+    {% endif %}
+    {% if bom_price %}
     <tr>
         <td><b>BOM Cost</b></td>
         <td>{{ bom_price }}</td>
@@ -33,8 +33,15 @@ Calculate pricing information for {{ part }}.
         </td>
     </tr>
     {% endif %}
-{% endif %}
+    {% endif %}
 </table>
+
+{% if buy_price or bom_price %}
+{% else %}
+<div class='alert alert-danger alert-block'>
+    No pricing information is available for this part.
+</div>
+{% endif %}
 
 <hr>
 
