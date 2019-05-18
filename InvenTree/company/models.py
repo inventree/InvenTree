@@ -312,7 +312,7 @@ class SupplierPriceBreak(models.Model):
 
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
-    cost = models.DecimalField(max_digits=10, decimal_places=3, validators=[MinValueValidator(0)])
+    cost = models.DecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
 
     class Meta:
         unique_together = ("part", "quantity")
