@@ -355,8 +355,24 @@ class BuildItemCreate(AjaxCreateView):
 
     model = BuildItem
     form_class = forms.EditBuildItemForm
-    ajax_template_name = 'modal_form.html'
+    ajax_template_name = 'build/create_build_item.html'
     ajax_form_title = 'Allocate new Part'
+
+    part = None
+    available_stock = None
+
+    def get_context_data(self):
+        ctx = super(AjaxCreateView, self).get_context_data()
+
+        if self.part:
+            ctx['part'] = self.part
+
+        if self.available_stock:
+            ctx['stock'] = self.available_stock
+        else:
+            ctx['no_stock'] = True
+
+        return ctx
 
     def get_form(self):
         """ Create Form for making / editing new Part object """
@@ -375,7 +391,7 @@ class BuildItemCreate(AjaxCreateView):
 
         if part_id:
             try:
-                Part.objects.get(pk=part_id)
+                self.part = Part.objects.get(pk=part_id)
 
                 query = form.fields['stock_item'].queryset
                 
@@ -399,6 +415,8 @@ class BuildItemCreate(AjaxCreateView):
                 form.fields['stock_item'].queryset = query
 
                 stocks = query.all()
+                self.available_stock = stocks
+
                 # If there is only one item selected, select it
                 if len(stocks) == 1:
                     form.fields['stock_item'].initial = stocks[0].id
@@ -408,6 +426,7 @@ class BuildItemCreate(AjaxCreateView):
                     pass
 
             except Part.DoesNotExist:
+                self.part = None
                 pass
 
         return form

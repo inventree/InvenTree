@@ -15,6 +15,13 @@ def multiply(x, y, *args, **kwargs):
 
 
 @register.simple_tag()
+def part_allocation_count(build, part, *args, **kwargs):
+    """ Return the total number of <part> allocated to <build> """
+
+    return build.getAllocatedQuantity(part)
+
+
+@register.simple_tag()
 def inventree_version(*args, **kwargs):
     """ Return InvenTree version string """
     return version.inventreeVersion()

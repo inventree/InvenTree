@@ -1,0 +1,9 @@
+{% extends "modal_form.html" %}
+
+{% block pre_form_content %}
+{% if no_stock %}
+<div class='alert alert-danger alert-block' role='alert'>
+    No stock available for {{ part }}
+</div>
+{% endif %}
+{% endblock %}
