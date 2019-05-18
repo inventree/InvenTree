@@ -22,7 +22,6 @@ from InvenTree import helpers
 from InvenTree.models import InvenTreeTree
 
 from part.models import Part
-from company.models import SupplierPart
 
 
 class StockLocation(InvenTreeTree):
