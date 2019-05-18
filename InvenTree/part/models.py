@@ -644,7 +644,7 @@ class PartAttachment(models.Model):
     attachment = models.FileField(upload_to=attach_file, null=True, blank=True,
                                   help_text='Select file to attach')
 
-    comment = models.CharField(max_length=100, blank=True, help_text='File comment')
+    comment = models.CharField(max_length=100, help_text='File comment')
 
     @property
     def basename(self):
