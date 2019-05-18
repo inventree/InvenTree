@@ -108,6 +108,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
+    price_info = serializers.CharField(read_only=True)
 
     class Meta:
         model = BomItem
@@ -118,6 +119,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'sub_part',
             'sub_part_detail',
             'quantity',
+            'price_info',
             'overage',
             'note',
         ]

@@ -636,7 +636,7 @@ class Part(models.Model):
         if min_price is None:
             return None
         else:
-            return min_price * quantity
+            return min_price
 
     def get_max_supplier_price(self, quantity=1):
         """ Return the maximum price of this part from all available suppliers.
@@ -662,7 +662,7 @@ class Part(models.Model):
         if max_price is None:
             return None
         else:
-            return max_price * quantity
+            return max_price
 
     def get_min_bom_price(self, quantity=1):
         """ Return the minimum price of the BOM for this part.
@@ -989,3 +989,8 @@ class BomItem(models.Model):
         base_quantity = self.quantity * build_quantity
 
         return base_quantity + self.get_overage_quantity(base_quantity)
+
+    @property
+    def price_info(self):
+        """ Return the price for this item in the BOM """
+        return self.sub_part.get_price_info(self.quantity)

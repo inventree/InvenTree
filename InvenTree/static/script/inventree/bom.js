@@ -153,7 +153,7 @@ function loadBomTable(table, options) {
         );
 
         cols.push({
-            field: 'sub_part_detail.single_price_info',
+            field: 'price_info',
             title: 'Price',
             sortable: true,
             formatter: function(value, row, index, field) {
