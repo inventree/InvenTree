@@ -3,33 +3,30 @@
 {% load static %}
 {% load inventree_extras %}
 
+{% block collapse_panel_setup %}class='panel part-allocation' id='allocation-panel-{{ item.sub_part.id }}'{% endblock %}
+
 {% block collapse_title %}
     <div class='hover-icon media-left' style='float: left;'>
         <img class='hover-img-thumb' src="{% if item.sub_part.image %}{{ item.sub_part.image.url }}{% endif %}">
         <img class='hover-img-large' src="{% if item.sub_part.image %}{{ item.sub_part.image.url }}{% endif %}">
     </div>
     <div>
-        {{ item.sub_part.full_name }}<br>
+        {{ item.sub_part.full_name }}
         <small><i>{{ item.sub_part.description }}</i></small>
     </div>
 {% endblock %}
 
 {% block collapse_heading %}
-<div class='col-sm-1' align='right'>
-        Required:
-    </div>
-    <div class='col-sm-1'>   
-        <b>{% multiply build.quantity item.quantity %}</b>
-    </div>
-    <div class='col-sm-1' align='right'>
-        Allocated:
-    </div>
-    <div class='col-sm-1' id='allocation-panel-{{ item.sub_part.id }}'>
-        <b><span id='allocation-total-{{ item.sub_part.id }}'>0</span></b>
+    <div class='col-sm-2'>
+        <b>{{ item.sub_part.available_stock }}</b>
     </div>
     <div class='col-sm-2'>
+        <b>{% multiply build.quantity item.quantity %}</b>
+    </div>
+    <div class='col-sm-2'>
+        <b><span id='allocation-total-{{ item.sub_part.id }}'>{% part_allocation_count build item.sub_part %}</span></b>
         <div class='btn-group' style='float: right;'>
-            <button class='btn btn-success btn-sm' id='new-item-{{ item.sub_part.id }}' url="{% url 'build-item-create' %}?part={{ item.sub_part.id }}&build={{ build.id }}">Allocate Parts</button>
+            <button class='btn btn-success btn-sm' title='Allocate stock for {{ item.sub_part}}' id='new-item-{{ item.sub_part.id }}' url="{% url 'build-item-create' %}?part={{ item.sub_part.id }}&build={{ build.id }}">Allocate</button>
         </div>
 </div>
 {% endblock %}

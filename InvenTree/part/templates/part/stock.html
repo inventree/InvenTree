@@ -44,4 +44,29 @@
         url: "{% url 'api-stock-list' %}",
     });
 
+    $('#item-create').click(function () {
+        launchModalForm("{% url 'stock-item-create' %}", {
+            reload: true,
+            data: {
+                part: {{ part.id }}
+            },
+            secondary: [
+                {
+                    field: 'part',
+                    label: 'New Part',
+                    title: 'Create New Part',
+                    url: "{% url 'part-create' %}",
+                },
+                {
+                    field: 'location',
+                    label: 'New Location',
+                    title: 'Create New Location',
+                    url: "{% url 'stock-location-create' %}",
+                }
+            ]
+        });
+
+        return false;
+    });
+
 {% endblock %}

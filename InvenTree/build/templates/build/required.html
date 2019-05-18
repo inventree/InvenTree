@@ -1,0 +1,36 @@
+{% extends "build/build_base.html" %}
+{% load static %}
+
+{% block details %}
+
+{% include "build/tabs.html" with tab='required' %}
+
+<h4>Required Parts</h4>
+<table class='table table-striped table-condensed' id='build-list' data-sorting='true'>
+<thead>
+<tr>
+    <th>Part</th>
+    <th>Available</th>
+    <th>Required</th>
+    <th>Allocated</th>
+</tr>
+</thead>
+<tbody>
+    {% for item in build.required_parts %}
+    <tr>
+        <td>
+            <a class='hover-icon'>
+                <img class='hover-img-thumb' src='{% if item.part.image %}{{ item.part.image.url }}{% endif %}'>
+                <img class='hover-img-large' src='{% if item.part.image %}{{ item.part.image.url }}{% endif %}'>
+            </a>
+            <a class='hover-icon'a href="{% url 'part-detail' item.part.id %}">{{ item.part.full_name }}</a>
+        </td>
+        <td>{{ item.part.total_stock }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.allocated }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+{% endblock %}
