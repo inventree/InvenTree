@@ -941,8 +941,7 @@ class SupplierPriceBreak(models.Model):
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='price_breaks')
 
-    # At least 2 units are required for a 'price break' - Otherwise, just use single-price!
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(2)])
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
 
     cost = models.DecimalField(max_digits=10, decimal_places=3, validators=[MinValueValidator(0)])
 
