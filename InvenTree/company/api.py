@@ -9,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework import generics, permissions
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 from .models import Company
 from .models import SupplierPart, SupplierPriceBreak
@@ -68,7 +68,85 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     ]
 
 
+class SupplierPartList(generics.ListCreateAPIView):
+    """ API endpoint for list view of SupplierPart object
+
+    - GET: Return list of SupplierPart objects
+    - POST: Create a new SupplierPart object
+    """
+
+    queryset = SupplierPart.objects.all()
+    serializer_class = SupplierPartSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+        'part',
+        'supplier'
+    ]
+
+
+class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail view of SupplierPart object
+
+    - GET: Retrieve detail view
+    - PATCH: Update object
+    - DELETE: Delete objec
+    """
+
+    queryset = SupplierPart.objects.all()
+    serializer_class = SupplierPartSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    read_only_fields = [
+    ]
+
+
+class SupplierPriceBreakList(generics.ListCreateAPIView):
+    """ API endpoint for list view of SupplierPriceBreak object
+
+    - GET: Retrieve list of SupplierPriceBreak objects
+    - POST: Create a new SupplierPriceBreak object
+    """
+
+    queryset = SupplierPriceBreak.objects.all()
+    serializer_class = SupplierPriceBreakSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
+    filter_fields = [
+        'part',
+    ]
+
+
+supplier_part_api_urls = [
+
+    url(r'^(?P<pk>\d+)/?', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
+
+    # Catch anything else
+    url(r'^.*$', SupplierPartList.as_view(), name='api-part-supplier-list'),
+]
+
+
 company_api_urls = [
+    
+    url(r'^part/', include(supplier_part_api_urls)),
+
+    url(r'^price-break/?', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
 
     url(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
 

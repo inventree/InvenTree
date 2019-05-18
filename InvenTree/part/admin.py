@@ -44,4 +44,3 @@ admin.site.register(PartCategory, PartCategoryAdmin)
 admin.site.register(PartAttachment, PartAttachmentAdmin)
 admin.site.register(PartStar, PartStarAdmin)
 admin.site.register(BomItem, BomItemAdmin)
-

@@ -16,6 +16,8 @@ from .models import Company
 from .models import SupplierPart
 from .models import SupplierPriceBreak
 
+from part.models import Part
+
 from .forms import EditCompanyForm
 from .forms import CompanyImageForm
 from .forms import EditSupplierPartForm

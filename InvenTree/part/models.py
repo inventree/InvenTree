@@ -7,8 +7,6 @@ from __future__ import unicode_literals
 
 import os
 
-import math
-
 import tablib
 
 from django.utils.translation import gettext_lazy as _
@@ -617,7 +615,6 @@ class Part(models.Model):
 
         return max_price
 
-
     def deepCopy(self, other, **kwargs):
         """ Duplicates non-field data from another part.
         Does not alter the normal fields of this part,
@@ -855,4 +852,3 @@ class BomItem(models.Model):
         base_quantity = self.quantity * build_quantity
 
         return base_quantity + self.get_overage_quantity(base_quantity)
-

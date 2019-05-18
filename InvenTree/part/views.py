@@ -12,10 +12,11 @@ from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 
-from company.models import Company
 from .models import PartCategory, Part, PartAttachment
 from .models import BomItem
 from .models import match_part_names
+
+from company.models import SupplierPart
 
 from . import forms as part_forms
 
