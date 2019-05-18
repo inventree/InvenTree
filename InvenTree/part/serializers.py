@@ -34,6 +34,7 @@ class PartBriefSerializer(serializers.ModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     image_url = serializers.CharField(source='get_image_url', read_only=True)
+    single_price_info = serializers.CharField(read_only=True)
     
     class Meta:
         model = Part
@@ -43,6 +44,7 @@ class PartBriefSerializer(serializers.ModelSerializer):
             'full_name',
             'description',
             'available_stock',
+            'single_price_info',
             'image_url',
         ]
 
