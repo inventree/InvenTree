@@ -598,11 +598,17 @@ class Part(models.Model):
 
         return self.get_price_info()
 
-    def get_price_info(self, quantity=1):
-        """ Return a simplified pricing string for this part """
-
-        min_price = self.get_min_price(quantity)
-        max_price = self.get_max_price(quantity)
+    def get_price_info(self, quantity=1, buy=True, bom=True):
+        """ Return a simplified pricing string for this part
+        
+        Args:
+            quantity: Number of units to calculate price for
+            buy: Include supplier pricing (default = True)
+            bom: Include BOM pricing (default = True)
+        """
+        
+        min_price = self.get_min_price(quantity, buy, bom)
+        max_price = self.get_max_price(quantity, buy, bom)
 
         if min_price is None:
             return None
@@ -710,7 +716,7 @@ class Part(models.Model):
 
         return max_price
 
-    def get_min_price(self, quantity=1):
+    def get_min_price(self, quantity=1, buy=True, bom=True):
         """ Return the minimum price for this part. This price can be either:
 
         - Supplier price (if purchased from suppliers)
@@ -720,8 +726,8 @@ class Part(models.Model):
             Minimum of the supplier price or BOM price. If no pricing available, returns None
         """
 
-        buy_price = self.get_min_supplier_price(quantity)
-        bom_price = self.get_min_bom_price(quantity)
+        buy_price = self.get_min_supplier_price(quantity) if buy else None
+        bom_price = self.get_min_bom_price(quantity) if bom else None
 
         if buy_price is None:
             return bom_price
@@ -731,7 +737,7 @@ class Part(models.Model):
         
         return min(buy_price, bom_price)
 
-    def get_max_price(self, quantity=1):
+    def get_max_price(self, quantity=1, buy=True, bom=True):
         """ Return the maximum price for this part. This price can be either:
 
         - Supplier price (if purchsed from suppliers)
@@ -741,8 +747,8 @@ class Part(models.Model):
             Maximum of the supplier price or BOM price. If no pricing available, returns None
         """
 
-        buy_price = self.get_max_supplier_price(quantity)
-        bom_price = self.get_max_bom_price(quantity)
+        buy_price = self.get_max_supplier_price(quantity) if buy else None
+        bom_price = self.get_max_bom_price(quantity) if bom else None
 
         if buy_price is None:
             return bom_price
