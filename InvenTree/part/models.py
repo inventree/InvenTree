@@ -641,7 +641,7 @@ class PartAttachment(models.Model):
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='attachments')
 
-    attachment = models.FileField(upload_to=attach_file, null=True, blank=True,
+    attachment = models.FileField(upload_to=attach_file,
                                   help_text='Select file to attach')
 
     comment = models.CharField(max_length=100, help_text='File comment')
