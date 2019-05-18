@@ -5,13 +5,13 @@
 </div>
 {% endif %}
 {% if form.pre_form_warning %}
-<div class='alert alert-warning' role='alert' style='display: block;'>
+<div class='alert alert-warning alert-block' role='alert'>
 {{ form.pre_form_warning }}
 </div>
 {% endif %}
 {% block non_field_error %}
 {% if form.non_field_errors %}
-<div class='alert alert-danger' role='alert' style='display: block;'>
+<div class='alert alert-danger alert-block' role='alert'>
   <b>Error Submitting Form:</b>
   {{ form.non_field_errors }}
 </div>

@@ -56,7 +56,7 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
         launchModalForm(button.attr('url'), {
             success: function() {
                 table.bootstrapTable('refresh');
-            }
+            },
         });
     });
 
