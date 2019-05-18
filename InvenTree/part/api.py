@@ -16,10 +16,8 @@ from django.conf.urls import url, include
 from django.urls import reverse
 
 from .models import Part, PartCategory, BomItem, PartStar
-from .models import SupplierPart, SupplierPriceBreak
 
 from .serializers import PartSerializer, BomItemSerializer
-from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
 from .serializers import CategorySerializer
 from .serializers import PartStarSerializer
 
@@ -233,71 +231,6 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     ]
 
 
-class SupplierPartList(generics.ListCreateAPIView):
-    """ API endpoint for list view of SupplierPart object
-
-    - GET: Return list of SupplierPart objects
-    - POST: Create a new SupplierPart object
-    """
-
-    queryset = SupplierPart.objects.all()
-    serializer_class = SupplierPartSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-    ]
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
-
-    filter_fields = [
-        'part',
-        'supplier'
-    ]
-
-
-class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of SupplierPart object
-
-    - GET: Retrieve detail view
-    - PATCH: Update object
-    - DELETE: Delete objec
-    """
-
-    queryset = SupplierPart.objects.all()
-    serializer_class = SupplierPartSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-    read_only_fields = [
-    ]
-
-
-class SupplierPriceBreakList(generics.ListCreateAPIView):
-    """ API endpoint for list view of SupplierPriceBreak object
-
-    - GET: Retrieve list of SupplierPriceBreak objects
-    - POST: Create a new SupplierPriceBreak object
-    """
-
-    queryset = SupplierPriceBreak.objects.all()
-    serializer_class = SupplierPriceBreakSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-    ]
-
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-
-    filter_fields = [
-        'part',
-    ]
-
-
 cat_api_urls = [
 
     url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
@@ -305,13 +238,6 @@ cat_api_urls = [
     url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
 ]
 
-supplier_part_api_urls = [
-
-    url(r'^(?P<pk>\d+)/?', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
-
-    # Catch anything else
-    url(r'^.*$', SupplierPartList.as_view(), name='api-part-supplier-list'),
-]
 
 part_star_api_urls = [
     url(r'^(?P<pk>\d+)/?', PartStarDetail.as_view(), name='api-part-star-detail'),
@@ -320,20 +246,18 @@ part_star_api_urls = [
     url(r'^.*$', PartStarList.as_view(), name='api-part-star-list'),
 ]
 
+
 part_api_urls = [
     url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
     url(r'^category/', include(cat_api_urls)),
-    url(r'^supplier/', include(supplier_part_api_urls)),
-
     url(r'^star/', include(part_star_api_urls)),
-
-    url(r'^price-break/?', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
 
     url(r'^(?P<pk>\d+)/', PartDetail.as_view(), name='api-part-detail'),
 
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]
+
 
 bom_api_urls = [
     # BOM Item Detail

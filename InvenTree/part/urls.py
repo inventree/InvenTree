@@ -12,19 +12,6 @@ from django.conf.urls import url, include
 
 from . import views
 
-supplier_part_detail_urls = [
-    url(r'edit/?', views.SupplierPartEdit.as_view(), name='supplier-part-edit'),
-    url(r'delete/?', views.SupplierPartDelete.as_view(), name='supplier-part-delete'),
-
-    url('^.*$', views.SupplierPartDetail.as_view(), name='supplier-part-detail'),
-]
-
-supplier_part_urls = [
-    url(r'^new/?', views.SupplierPartCreate.as_view(), name='supplier-part-create'),
-
-    url(r'^(?P<pk>\d+)/', include(supplier_part_detail_urls)),
-]
-
 part_attachment_urls = [
     url('^new/?', views.PartAttachmentCreate.as_view(), name='part-attachment-create'),
     url(r'^(?P<pk>\d+)/edit/?', views.PartAttachmentEdit.as_view(), name='part-attachment-edit'),
@@ -37,6 +24,7 @@ part_detail_urls = [
     url(r'^bom-export/?', views.BomDownload.as_view(), name='bom-export'),
     url(r'^validate-bom/', views.BomValidate.as_view(), name='bom-validate'),
     url(r'^duplicate/', views.PartDuplicate.as_view(), name='part-duplicate'),
+    url(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
     
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),

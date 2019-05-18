@@ -1,0 +1,88 @@
+{% extends "modal_form.html" %}
+
+{% block pre_form_content %}
+
+<div class='alert alert-info alert-block'>
+Calculate pricing information for {{ part }}.
+</div>
+
+<h4>Quantity</h4>
+<table class='table table-striped table-condensed'>
+    <tr>
+        <td><b>Part</b></td>
+        <td colspan='2'>{{ part  }}</td>
+    </tr>
+    <tr>
+        <td><b>Quantity</b></td>
+        <td colspan='2'>{{ quantity }}</td>
+    </tr>
+</table>
+    {% if part.supplier_count > 0 %}
+    <h4>Supplier Pricing</h4>
+<table class='table table-striped table-condensed'>
+    {% if min_total_buy_price %}
+    <tr>
+        <td><b>Unit Cost</b></td>
+        <td>Min: {{ min_unit_buy_price }}</td>
+        <td>Max: {{ max_unit_buy_price }}</td>
+    </tr>
+    {% if quantity > 1 %}
+    <tr>
+        <td><b>Total Cost</b></td>
+        <td>Min: {{ min_total_buy_price }}</td>
+        <td>Max: {{ max_total_buy_price }}</td>
+    </tr>
+    {% endif %}
+    {% else %}
+    <tr>
+        <td colspan='3'>
+            <span class='warning-msg'><i>No supplier pricing available</i></span>
+        </td>
+    </tr>
+    {% endif %}
+</table>
+    {% endif %}
+
+    {% if part.bom_count > 0 %}
+    <h4>BOM Pricing</h4>
+<table class='table table-striped table-condensed'>
+    {% if min_total_bom_price %}
+    <tr>
+        <td><b>Unit Cost</b></td>
+        <td>Min: {{ min_unit_bom_price }}</td>
+        <td>Max: {{ max_unit_bom_price }}</td>
+    </tr>
+    {% if quantity > 1 %}
+    <tr>
+        <td><b>Total Cost</b></td>
+        <td>Min: {{ min_total_bom_price }}</td>
+        <td>Max: {{ max_total_bom_price }}</td>
+    </tr>
+    {% endif %}
+    {% if part.has_complete_bom_pricing == False %}
+    <tr>
+        <td colspan='3'>
+            <span class='warning-msg'><i>Note: BOM pricing is incomplete for this part</i></span>
+        </td>
+    </tr>
+    {% endif %}
+    {% else %}
+    <tr>
+        <td colspan='3'>
+            <span class='warning-msg'><i>No BOM pricing available</i></span>
+        </td>
+    </tr>
+    {% endif %}
+</table>
+    {% endif %}
+
+{% if min_unit_buy_price or min_unit_bom_price %}
+{% else %}
+<div class='alert alert-danger alert-block'>
+    No pricing information is available for this part.
+</div>
+{% endif %}
+
+<hr>
+
+{% endblock %}

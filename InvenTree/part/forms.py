@@ -11,7 +11,6 @@ from django import forms
 
 from .models import Part, PartCategory, PartAttachment
 from .models import BomItem
-from .models import SupplierPart
 
 
 class PartImageForm(HelperForm):
@@ -141,24 +140,17 @@ class EditBomItemForm(HelperForm):
         widgets = {'part': forms.HiddenInput()}
 
 
-class EditSupplierPartForm(HelperForm):
-    """ Form for editing a SupplierPart object """
+class PartPriceForm(forms.Form):
+    """ Simple form for viewing part pricing information """
+
+    quantity = forms.IntegerField(
+        required=True,
+        initial=1,
+        help_text='Input quantity for price calculation'
+    )
 
     class Meta:
-        model = SupplierPart
+        model = Part
         fields = [
-            'part',
-            'supplier',
-            'SKU',
-            'description',
-            'manufacturer',
-            'MPN',
-            'URL',
-            'note',
-            'single_price',
-            'base_cost',
-            'multiple',
-            'minimum',
-            'packaging',
-            'lead_time'
+            'quantity'
         ]

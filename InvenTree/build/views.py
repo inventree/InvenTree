@@ -265,6 +265,16 @@ class BuildDetail(DetailView):
     template_name = 'build/detail.html'
     context_object_name = 'build'
 
+    def get_context_data(self, **kwargs):
+
+        ctx = super(DetailView, self).get_context_data(**kwargs)
+
+        build = self.get_object()
+
+        ctx['bom_price'] = build.part.get_price_info(build.quantity, buy=False)
+
+        return ctx
+
 
 class BuildAllocate(DetailView):
     """ View for allocating parts to a Build """

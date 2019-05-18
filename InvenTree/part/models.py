@@ -7,8 +7,6 @@ from __future__ import unicode_literals
 
 import os
 
-import math
-
 import tablib
 
 from django.utils.translation import gettext_lazy as _
@@ -32,7 +30,8 @@ import hashlib
 from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree
-from company.models import Company
+
+from company.models import SupplierPart
 
 
 class PartCategory(InvenTreeTree):
@@ -317,7 +316,7 @@ class Part(models.Model):
         # Default to None if there are multiple suppliers to choose from
         return None
 
-    default_supplier = models.ForeignKey('part.SupplierPart',
+    default_supplier = models.ForeignKey(SupplierPart,
                                          on_delete=models.SET_NULL,
                                          blank=True, null=True,
                                          help_text='Default supplier part',
@@ -562,6 +561,203 @@ class Part(models.Model):
         """ Return the number of supplier parts available for this part """
         return self.supplier_parts.count()
 
+    @property
+    def min_single_price(self):
+        return self.get_min_supplier_price(1)
+
+    @property
+    def max_single_price(self):
+        return self.get_max_supplier_price(1)
+
+    @property
+    def min_bom_price(self):
+        return self.get_min_bom_price(1)
+
+    @property
+    def max_bom_price(self):
+        return self.get_max_bom_price(1)
+
+    @property
+    def has_pricing_info(self):
+        """ Return true if there is pricing information for this part """
+        return self.get_min_price() is not None
+
+    @property
+    def has_complete_bom_pricing(self):
+        """ Return true if there is pricing information for each item in the BOM. """
+
+        for item in self.bom_items.all():
+            if not item.sub_part.has_pricing_info:
+                return False
+
+        return True
+
+    @property
+    def single_price_info(self):
+        """ Return a simplified pricing string for this part at single quantity """
+
+        return self.get_price_info()
+
+    def get_price_info(self, quantity=1, buy=True, bom=True):
+        """ Return a simplified pricing string for this part
+        
+        Args:
+            quantity: Number of units to calculate price for
+            buy: Include supplier pricing (default = True)
+            bom: Include BOM pricing (default = True)
+        """
+        
+        min_price = self.get_min_price(quantity, buy, bom)
+        max_price = self.get_max_price(quantity, buy, bom)
+
+        if min_price is None:
+            return None
+
+        if min_price == max_price:
+            return min_price
+
+        return "{a} to {b}".format(a=min_price, b=max_price)
+
+    def get_min_supplier_price(self, quantity=1):
+        """ Return the minimum price of this part from all available suppliers.
+        
+        Args:
+            quantity: Number of units we wish to purchase (default = 1)
+
+        Returns:
+            Numerical price if pricing is available, else None
+         """
+
+        min_price = None
+
+        for supplier_part in self.supplier_parts.all():
+            supplier_price = supplier_part.get_price(quantity)
+
+            if supplier_price is None:
+                continue
+
+            if min_price is None or supplier_price < min_price:
+                min_price = supplier_price
+
+        if min_price is None:
+            return None
+        else:
+            return min_price
+
+    def get_max_supplier_price(self, quantity=1):
+        """ Return the maximum price of this part from all available suppliers.
+        
+        Args:
+            quantity: Number of units we wish to purchase (default = 1)
+
+        Returns:
+            Numerical price if pricing is available, else None
+         """
+
+        max_price = None
+
+        for supplier_part in self.supplier_parts.all():
+            supplier_price = supplier_part.get_price(quantity)
+
+            if supplier_price is None:
+                continue
+
+            if max_price is None or supplier_price > max_price:
+                max_price = supplier_price
+
+        if max_price is None:
+            return None
+        else:
+            return max_price
+
+    def get_min_bom_price(self, quantity=1):
+        """ Return the minimum price of the BOM for this part.
+        Adds the minimum price for all components in the BOM.
+
+        Note: If the BOM contains items without pricing information,
+        these items cannot be included in the BOM!
+        """
+
+        min_price = None
+
+        for item in self.bom_items.all():
+            price = item.sub_part.get_min_price(quantity * item.quantity)
+
+            if price is None:
+                continue
+
+            if min_price is None:
+                min_price = 0
+
+            min_price += price
+
+        return min_price
+
+    def get_max_bom_price(self, quantity=1):
+        """ Return the maximum price of the BOM for this part.
+        Adds the maximum price for all components in the BOM.
+
+        Note: If the BOM contains items without pricing information,
+        these items cannot be included in the BOM!
+        """
+
+        max_price = None
+
+        for item in self.bom_items.all():
+            price = item.sub_part.get_max_price(quantity * item.quantity)
+
+            if price is None:
+                continue
+
+            if max_price is None:
+                max_price = 0
+
+            max_price += price
+
+        return max_price
+
+    def get_min_price(self, quantity=1, buy=True, bom=True):
+        """ Return the minimum price for this part. This price can be either:
+
+        - Supplier price (if purchased from suppliers)
+        - BOM price (if built from other parts)
+
+        Returns:
+            Minimum of the supplier price or BOM price. If no pricing available, returns None
+        """
+
+        buy_price = self.get_min_supplier_price(quantity) if buy else None
+        bom_price = self.get_min_bom_price(quantity) if bom else None
+
+        if buy_price is None:
+            return bom_price
+
+        if bom_price is None:
+            return buy_price
+        
+        return min(buy_price, bom_price)
+
+    def get_max_price(self, quantity=1, buy=True, bom=True):
+        """ Return the maximum price for this part. This price can be either:
+
+        - Supplier price (if purchsed from suppliers)
+        - BOM price (if built from other parts)
+
+        Returns:
+            Maximum of the supplier price or BOM price. If no pricing available, returns None
+        """
+
+        buy_price = self.get_max_supplier_price(quantity) if buy else None
+        bom_price = self.get_max_bom_price(quantity) if bom else None
+
+        if buy_price is None:
+            return bom_price
+
+        if bom_price is None:
+            return buy_price
+        
+        return max(buy_price, bom_price)
+
     def deepCopy(self, other, **kwargs):
         """ Duplicates non-field data from another part.
         Does not alter the normal fields of this part,
@@ -641,10 +837,10 @@ class PartAttachment(models.Model):
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='attachments')
 
-    attachment = models.FileField(upload_to=attach_file, null=True, blank=True,
+    attachment = models.FileField(upload_to=attach_file,
                                   help_text='Select file to attach')
 
-    comment = models.CharField(max_length=100, blank=True, help_text='File comment')
+    comment = models.CharField(max_length=100, help_text='File comment')
 
     @property
     def basename(self):
@@ -800,164 +996,7 @@ class BomItem(models.Model):
 
         return base_quantity + self.get_overage_quantity(base_quantity)
 
-
-class SupplierPart(models.Model):
-    """ Represents a unique part as provided by a Supplier
-    Each SupplierPart is identified by a MPN (Manufacturer Part Number)
-    Each SupplierPart is also linked to a Part object.
-    A Part may be available from multiple suppliers
-
-    Attributes:
-        part: Link to the master Part
-        supplier: Company that supplies this SupplierPart object
-        SKU: Stock keeping unit (supplier part number)
-        manufacturer: Manufacturer name
-        MPN: Manufacture part number
-        URL: Link to external website for this part
-        description: Descriptive notes field
-        note: Longer form note field
-        single_price: Default price for a single unit
-        base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
-        multiple: Multiple that the part is provided in
-        minimum: MOQ (minimum order quantity) required for purchase
-        lead_time: Supplier lead time
-        packaging: packaging that the part is supplied in, e.g. "Reel"
-    """
-
-    def get_absolute_url(self):
-        return reverse('supplier-part-detail', kwargs={'pk': self.id})
-
-    class Meta:
-        unique_together = ('part', 'supplier', 'SKU')
-
-    part = models.ForeignKey(Part, on_delete=models.CASCADE,
-                             related_name='supplier_parts',
-                             limit_choices_to={'purchaseable': True},
-                             help_text='Select part',
-                             )
-
-    supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
-                                 related_name='parts',
-                                 limit_choices_to={'is_supplier': True},
-                                 help_text='Select supplier',
-                                 )
-
-    SKU = models.CharField(max_length=100, help_text='Supplier stock keeping unit')
-
-    manufacturer = models.CharField(max_length=100, blank=True, help_text='Manufacturer')
-
-    MPN = models.CharField(max_length=100, blank=True, help_text='Manufacturer part number')
-
-    URL = models.URLField(blank=True, help_text='URL for external supplier part link')
-
-    description = models.CharField(max_length=250, blank=True, help_text='Supplier part description')
-
-    note = models.CharField(max_length=100, blank=True, help_text='Notes')
-
-    single_price = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text='Price for single quantity')
-
-    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text='Minimum charge (e.g. stocking fee)')
-
-    packaging = models.CharField(max_length=50, blank=True, help_text='Part packaging')
-    
-    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Order multiple')
-
-    minimum = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Minimum order quantity (MOQ)')
-
-    lead_time = models.DurationField(blank=True, null=True)
-
     @property
-    def manufacturer_string(self):
-
-        items = []
-
-        if self.manufacturer:
-            items.append(self.manufacturer)
-        if self.MPN:
-            items.append(self.MPN)
-
-        return ' | '.join(items)
-
-    @property
-    def has_price_breaks(self):
-        return self.price_breaks.count() > 0
-
-    def get_price(self, quantity, moq=True, multiples=True):
-        """ Calculate the supplier price based on quantity price breaks.
-        
-        - If no price breaks available, use the single_price field
-        - Don't forget to add in flat-fee cost (base_cost field)
-        - If MOQ (minimum order quantity) is required, bump quantity
-        - If order multiples are to be observed, then we need to calculate based on that, too
-        """
-
-        # Order multiples
-        if multiples:
-            quantity = int(math.ceil(quantity / self.multipe) * self.multiple)
-
-        # Minimum ordering requirement
-        if moq and self.minimum > quantity:
-            quantity = self.minimum
-
-        pb_found = False
-        pb_quantity = -1
-        pb_cost = 0.0
-
-        for pb in self.price_breaks.all():
-            # Ignore this pricebreak!
-            if pb.quantity > quantity:
-                continue
-
-            pb_found = True
-
-            # If this price-break quantity is the largest so far, use it!
-            if pb.quantity > pb_quantity:
-                pb_quantity = pb.quantity
-                pb_cost = pb.cost
-
-        # No appropriate price-break found - use the single cost!
-        if pb_found:
-            cost = pb_cost * quantity
-        else:
-            cost = self.single_price * quantity
-
-        return cost + self.base_cost
-
-    def __str__(self):
-        s = "{supplier} ({sku})".format(
-            sku=self.SKU,
-            supplier=self.supplier.name)
-
-        if self.manufacturer_string:
-            s = s + ' - ' + self.manufacturer_string
-        
-        return s
-
-
-class SupplierPriceBreak(models.Model):
-    """ Represents a quantity price break for a SupplierPart.
-    - Suppliers can offer discounts at larger quantities
-    - SupplierPart(s) may have zero-or-more associated SupplierPriceBreak(s)
-
-    Attributes:
-        part: Link to a SupplierPart object that this price break applies to
-        quantity: Quantity required for price break
-        cost: Cost at specified quantity
-    """
-
-    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='price_breaks')
-
-    # At least 2 units are required for a 'price break' - Otherwise, just use single-price!
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(2)])
-
-    cost = models.DecimalField(max_digits=10, decimal_places=3, validators=[MinValueValidator(0)])
-
-    class Meta:
-        unique_together = ("part", "quantity")
-
-    def __str__(self):
-        return "{mpn} - {cost}{currency} @ {quan}".format(
-            mpn=self.part.MPN,
-            cost=self.cost,
-            currency=self.currency if self.currency else '',
-            quan=self.quantity)
+    def price_info(self):
+        """ Return the price for this item in the BOM """
+        return self.sub_part.get_price_info(self.quantity)

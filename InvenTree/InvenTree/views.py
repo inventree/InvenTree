@@ -223,6 +223,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
         super(CreateView, self).get(request, *args, **kwargs)
 
+        self.request = request
         form = self.get_form()
         return self.renderJsonResponse(request, form)
 
@@ -233,6 +234,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
         - If valid, save form
         - Return status info (success / failure)
         """
+        self.request = request
         form = self.get_form()
 
         # Extra JSON data sent alongside form

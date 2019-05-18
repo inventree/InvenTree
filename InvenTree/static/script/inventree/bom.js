@@ -151,6 +151,19 @@ function loadBomTable(table, options) {
             }
         }
         );
+
+        cols.push({
+            field: 'price_info',
+            title: 'Price',
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                if (value) {
+                    return value;
+                } else {
+                    return "<span class='warning-msg'><i>No pricing information</i></span>";
+                }
+            },
+        });
     }
     
     // Part notes
