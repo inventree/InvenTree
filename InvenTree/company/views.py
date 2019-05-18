@@ -8,12 +8,18 @@ from __future__ import unicode_literals
 
 from django.views.generic import DetailView, ListView
 
+from django.forms import HiddenInput
+
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 
 from .models import Company
+from .models import SupplierPart
+from .models import SupplierPriceBreak
 
 from .forms import EditCompanyForm
 from .forms import CompanyImageForm
+from .forms import EditSupplierPartForm
+from .forms import EditPriceBreakForm
 
 
 class CompanyIndex(ListView):
@@ -104,3 +110,142 @@ class CompanyDelete(AjaxDeleteView):
         return {
             'danger': 'Company was deleted',
         }
+
+
+class SupplierPartDetail(DetailView):
+    """ Detail view for SupplierPart """
+    model = SupplierPart
+    template_name = 'company/partdetail.html'
+    context_object_name = 'part'
+    queryset = SupplierPart.objects.all()
+
+
+class SupplierPartEdit(AjaxUpdateView):
+    """ Update view for editing SupplierPart """
+
+    model = SupplierPart
+    context_object_name = 'part'
+    form_class = EditSupplierPartForm
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Edit Supplier Part'
+
+
+class SupplierPartCreate(AjaxCreateView):
+    """ Create view for making new SupplierPart """
+
+    model = SupplierPart
+    form_class = EditSupplierPartForm
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = 'Create new Supplier Part'
+    context_object_name = 'part'
+
+    def get_form(self):
+        """ Create Form instance to create a new SupplierPart object.
+        Hide some fields if they are not appropriate in context
+        """
+        form = super(AjaxCreateView, self).get_form()
+        
+        if form.initial.get('supplier', None):
+            # Hide the supplier field
+            form.fields['supplier'].widget = HiddenInput()
+
+        if form.initial.get('part', None):
+            # Hide the part field
+            form.fields['part'].widget = HiddenInput()
+
+        return form
+
+    def get_initial(self):
+        """ Provide initial data for new SupplierPart:
+
+        - If 'supplier_id' provided, pre-fill supplier field
+        - If 'part_id' provided, pre-fill part field
+        """
+        initials = super(SupplierPartCreate, self).get_initial().copy()
+
+        supplier_id = self.get_param('supplier')
+        part_id = self.get_param('part')
+
+        if supplier_id:
+            try:
+                initials['supplier'] = Company.objects.get(pk=supplier_id)
+            except Company.DoesNotExist:
+                initials['supplier'] = None
+        
+        if part_id:
+            try:
+                initials['part'] = Part.objects.get(pk=part_id)
+            except Part.DoesNotExist:
+                initials['part'] = None
+        
+        return initials
+
+
+class SupplierPartDelete(AjaxDeleteView):
+    """ Delete view for removing a SupplierPart """
+    model = SupplierPart
+    success_url = '/supplier/'
+    ajax_template_name = 'company/partdelete.html'
+    ajax_form_title = 'Delete Supplier Part'
+    context_object_name = 'supplier_part'
+
+
+class PriceBreakCreate(AjaxCreateView):
+    """ View for creating a supplier price break """
+
+    model = SupplierPriceBreak
+    form_class = EditPriceBreakForm
+    ajax_form_title = 'Add Price Break'
+    ajax_template_name = 'modal_form.html'
+
+    def get_data(self):
+        return {
+            'success': 'Added new price break'
+        }
+
+    def get_part(self):
+        try:
+            return SupplierPart.objects.get(id=self.request.GET.get('part'))
+        except SupplierPart.DoesNotExist:
+            return SupplierPart.objects.get(id=self.request.POST.get('part'))
+
+    def get_form(self):
+
+        form = super(AjaxCreateView, self).get_form()
+        form.fields['part'].widget = HiddenInput()
+
+        return form
+
+    def get_initial(self):
+
+        initials = super(AjaxCreateView, self).get_initial()
+
+        print("GETTING INITIAL DAtA")
+
+        initials['part'] = self.get_part()
+
+        return initials
+
+
+class PriceBreakEdit(AjaxUpdateView):
+    """ View for editing a supplier price break """
+
+    model = SupplierPriceBreak
+    form_class = EditPriceBreakForm
+    ajax_form_title = 'Edit Price Break'
+    ajax_template_name = 'modal_form.html'
+
+    def get_form(self):
+
+        form = super(AjaxUpdateView, self).get_form()
+        form.fields['part'].widget = HiddenInput()
+
+        return form
+
+
+class PriceBreakDelete(AjaxDeleteView):
+    """ View for deleting a supplier price break """
+
+    model = SupplierPriceBreak
+    ajax_form_title = "Delete Price Break"
+    ajax_template_name = 'modal_delete_form.html'

@@ -15,11 +15,13 @@ from rest_framework import generics, permissions
 from django.conf.urls import url, include
 from django.urls import reverse
 
+
+from company.models import SupplierPart, SupplierPriceBreak
+from company.serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
+
 from .models import Part, PartCategory, BomItem, PartStar
-from .models import SupplierPart, SupplierPriceBreak
 
 from .serializers import PartSerializer, BomItemSerializer
-from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
 from .serializers import CategorySerializer
 from .serializers import PartStarSerializer
 

@@ -5,6 +5,5 @@ It includes models for:
 
 - PartCategory
 - Part
-- SupplierPart
 - BomItem
 """

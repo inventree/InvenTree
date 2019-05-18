@@ -12,7 +12,10 @@ from rest_framework import generics, permissions
 from django.conf.urls import url
 
 from .models import Company
+from .models import SupplierPart, SupplierPriceBreak
+
 from .serializers import CompanySerializer
+from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
 
 
 class CompanyList(generics.ListCreateAPIView):

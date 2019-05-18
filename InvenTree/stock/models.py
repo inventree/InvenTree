@@ -22,6 +22,7 @@ from InvenTree import helpers
 from InvenTree.models import InvenTreeTree
 
 from part.models import Part
+from company.models import SupplierPart
 
 
 class StockLocation(InvenTreeTree):
@@ -188,7 +189,7 @@ class StockItem(models.Model):
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='locations', help_text='Base part')
 
-    supplier_part = models.ForeignKey('part.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
+    supplier_part = models.ForeignKey(SupplierPart, blank=True, null=True, on_delete=models.SET_NULL,
                                       help_text='Select a matching supplier part for this stock item')
 
     location = models.ForeignKey(StockLocation, on_delete=models.DO_NOTHING,

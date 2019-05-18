@@ -32,7 +32,8 @@ import hashlib
 from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree
-from company.models import Company
+
+from company.models import SupplierPart
 
 
 class PartCategory(InvenTreeTree):
@@ -317,7 +318,7 @@ class Part(models.Model):
         # Default to None if there are multiple suppliers to choose from
         return None
 
-    default_supplier = models.ForeignKey('part.SupplierPart',
+    default_supplier = models.ForeignKey(SupplierPart,
                                          on_delete=models.SET_NULL,
                                          blank=True, null=True,
                                          help_text='Default supplier part',
@@ -800,167 +801,3 @@ class BomItem(models.Model):
 
         return base_quantity + self.get_overage_quantity(base_quantity)
 
-
-class SupplierPart(models.Model):
-    """ Represents a unique part as provided by a Supplier
-    Each SupplierPart is identified by a MPN (Manufacturer Part Number)
-    Each SupplierPart is also linked to a Part object.
-    A Part may be available from multiple suppliers
-
-    Attributes:
-        part: Link to the master Part
-        supplier: Company that supplies this SupplierPart object
-        SKU: Stock keeping unit (supplier part number)
-        manufacturer: Manufacturer name
-        MPN: Manufacture part number
-        URL: Link to external website for this part
-        description: Descriptive notes field
-        note: Longer form note field
-        base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
-        multiple: Multiple that the part is provided in
-        minimum: MOQ (minimum order quantity) required for purchase
-        lead_time: Supplier lead time
-        packaging: packaging that the part is supplied in, e.g. "Reel"
-    """
-
-    def get_absolute_url(self):
-        return reverse('supplier-part-detail', kwargs={'pk': self.id})
-
-    class Meta:
-        unique_together = ('part', 'supplier', 'SKU')
-
-    part = models.ForeignKey(Part, on_delete=models.CASCADE,
-                             related_name='supplier_parts',
-                             limit_choices_to={'purchaseable': True},
-                             help_text='Select part',
-                             )
-
-    supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
-                                 related_name='parts',
-                                 limit_choices_to={'is_supplier': True},
-                                 help_text='Select supplier',
-                                 )
-
-    SKU = models.CharField(max_length=100, help_text='Supplier stock keeping unit')
-
-    manufacturer = models.CharField(max_length=100, blank=True, help_text='Manufacturer')
-
-    MPN = models.CharField(max_length=100, blank=True, help_text='Manufacturer part number')
-
-    URL = models.URLField(blank=True, help_text='URL for external supplier part link')
-
-    description = models.CharField(max_length=250, blank=True, help_text='Supplier part description')
-
-    note = models.CharField(max_length=100, blank=True, help_text='Notes')
-
-    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text='Minimum charge (e.g. stocking fee)')
-
-    packaging = models.CharField(max_length=50, blank=True, help_text='Part packaging')
-    
-    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Order multiple')
-
-    minimum = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Minimum order quantity (MOQ)')
-
-    lead_time = models.DurationField(blank=True, null=True)
-
-    @property
-    def manufacturer_string(self):
-
-        items = []
-
-        if self.manufacturer:
-            items.append(self.manufacturer)
-        if self.MPN:
-            items.append(self.MPN)
-
-        return ' | '.join(items)
-
-    @property
-    def has_price_breaks(self):
-        return self.price_breaks.count() > 0
-
-    @property
-    def price_breaks(self):
-        """ Return the associated price breaks in the correct order """
-        return self.pricebreaks.order_by('quantity').all()
-
-    def get_price(self, quantity, moq=True, multiples=True):
-        """ Calculate the supplier price based on quantity price breaks.
-
-        - Don't forget to add in flat-fee cost (base_cost field)
-        - If MOQ (minimum order quantity) is required, bump quantity
-        - If order multiples are to be observed, then we need to calculate based on that, too
-        """
-
-        price_breaks = self.price_breaks.all()
-
-        # No price break information available?
-        if len(price_breaks) == 0:
-            return None
-
-        # Minimum ordering requirement
-        if moq and self.minimum > quantity:
-            quantity = self.minimum
-
-        # Order multiples
-        if multiples:
-            quantity = int(math.ceil(quantity / self.multipe) * self.multiple)
-
-        pb_found = False
-        pb_quantity = -1
-        pb_cost = 0.0
-
-        for pb in self.price_breaks.all():
-            # Ignore this pricebreak (quantity is too high)
-            if pb.quantity > quantity:
-                continue
-
-            pb_found = True
-
-            # If this price-break quantity is the largest so far, use it!
-            if pb.quantity > pb_quantity:
-                pb_quantity = pb.quantity
-                pb_cost = pb.cost
-
-        if pb_found:
-            cost = pb_cost * quantity
-            return cost + self.base_cost
-        else:
-            return None
-
-    def __str__(self):
-        s = "{supplier} ({sku})".format(
-            sku=self.SKU,
-            supplier=self.supplier.name)
-
-        if self.manufacturer_string:
-            s = s + ' - ' + self.manufacturer_string
-        
-        return s
-
-
-class SupplierPriceBreak(models.Model):
-    """ Represents a quantity price break for a SupplierPart.
-    - Suppliers can offer discounts at larger quantities
-    - SupplierPart(s) may have zero-or-more associated SupplierPriceBreak(s)
-
-    Attributes:
-        part: Link to a SupplierPart object that this price break applies to
-        quantity: Quantity required for price break
-        cost: Cost at specified quantity
-    """
-
-    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks')
-
-    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
-
-    cost = models.DecimalField(max_digits=10, decimal_places=3, validators=[MinValueValidator(0)])
-
-    class Meta:
-        unique_together = ("part", "quantity")
-
-    def __str__(self):
-        return "{mpn} - {cost} @ {quan}".format(
-            mpn=self.part.MPN,
-            cost=self.cost,
-            quan=self.quantity)

@@ -5,7 +5,7 @@ JSON serializers for Part app
 from rest_framework import serializers
 
 from .models import Part, PartStar
-from .models import SupplierPart, SupplierPriceBreak
+
 from .models import PartCategory
 from .models import BomItem
 
@@ -118,44 +118,4 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'quantity',
             'overage',
             'note',
-        ]
-
-
-class SupplierPartSerializer(serializers.ModelSerializer):
-    """ Serializer for SupplierPart object """
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-
-    supplier_name = serializers.CharField(source='supplier.name', read_only=True)
-    supplier_logo = serializers.CharField(source='supplier.get_image_url', read_only=True)
-
-    class Meta:
-        model = SupplierPart
-        fields = [
-            'pk',
-            'url',
-            'part',
-            'part_detail',
-            'supplier',
-            'supplier_name',
-            'supplier_logo',
-            'SKU',
-            'manufacturer',
-            'MPN',
-            'URL',
-        ]
-
-
-class SupplierPriceBreakSerializer(serializers.ModelSerializer):
-    """ Serializer for SupplierPriceBreak object """
-
-    class Meta:
-        model = SupplierPriceBreak
-        fields = [
-            'pk',
-            'part',
-            'quantity',
-            'cost'
         ]

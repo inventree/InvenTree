@@ -11,10 +11,10 @@ from django.contrib.auth import views as auth_views
 from qr_code import urls as qr_code_urls
 
 from company.urls import company_urls
+from company.urls import supplier_part_urls
+from company.urls import price_break_urls
 
 from part.urls import part_urls
-from part.urls import supplier_part_urls
-from part.urls import price_break_urls
 
 from stock.urls import stock_urls
 

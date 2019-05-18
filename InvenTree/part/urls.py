@@ -12,26 +12,6 @@ from django.conf.urls import url, include
 
 from . import views
 
-price_break_urls = [
-    url('^new/', views.PriceBreakCreate.as_view(), name='price-break-create'),
-
-    url(r'^(?P<pk>\d+)/edit/', views.PriceBreakEdit.as_view(), name='price-break-edit'),
-    url(r'^(?P<pk>\d+)/delete/', views.PriceBreakDelete.as_view(), name='price-break-delete'),
-]
-
-supplier_part_detail_urls = [
-    url(r'edit/?', views.SupplierPartEdit.as_view(), name='supplier-part-edit'),
-    url(r'delete/?', views.SupplierPartDelete.as_view(), name='supplier-part-delete'),
-
-    url('^.*$', views.SupplierPartDetail.as_view(), name='supplier-part-detail'),
-]
-
-supplier_part_urls = [
-    url(r'^new/?', views.SupplierPartCreate.as_view(), name='supplier-part-create'),
-
-    url(r'^(?P<pk>\d+)/', include(supplier_part_detail_urls)),
-]
-
 part_attachment_urls = [
     url('^new/?', views.PartAttachmentCreate.as_view(), name='part-attachment-create'),
     url(r'^(?P<pk>\d+)/edit/?', views.PartAttachmentEdit.as_view(), name='part-attachment-edit'),
