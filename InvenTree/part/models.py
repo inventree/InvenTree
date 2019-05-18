@@ -879,6 +879,11 @@ class SupplierPart(models.Model):
     def has_price_breaks(self):
         return self.price_breaks.count() > 0
 
+    @property
+    def price_breaks(self):
+        """ Return the associated price breaks in the correct order """
+        return self.pricebreaks.order_by('quantity').all()
+
     def get_price(self, quantity, moq=True, multiples=True):
         """ Calculate the supplier price based on quantity price breaks.
 
@@ -939,7 +944,7 @@ class SupplierPriceBreak(models.Model):
         cost: Cost at specified quantity
     """
 
-    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='price_breaks')
+    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks')
 
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
 
@@ -949,8 +954,7 @@ class SupplierPriceBreak(models.Model):
         unique_together = ("part", "quantity")
 
     def __str__(self):
-        return "{mpn} - {cost}{currency} @ {quan}".format(
+        return "{mpn} - {cost} @ {quan}".format(
             mpn=self.part.MPN,
             cost=self.cost,
-            currency=self.currency if self.currency else '',
             quan=self.quantity)
