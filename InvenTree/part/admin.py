@@ -4,6 +4,7 @@ from import_export.admin import ImportExportModelAdmin
 from .models import PartCategory, Part
 from .models import PartAttachment, PartStar
 from .models import SupplierPart
+from .models import SupplierPriceBreak
 from .models import BomItem
 
 
@@ -35,6 +36,10 @@ class SupplierPartAdmin(ImportExportModelAdmin):
     list_display = ('part', 'supplier', 'SKU')
 
 
+class SupplierPriceBreakAdmin(ImportExportModelAdmin):
+    list_display = ('part', 'quantity', 'cost')
+
+
 """
 class ParameterTemplateAdmin(admin.ModelAdmin):
     list_display = ('name', 'units', 'format')
@@ -50,3 +55,4 @@ admin.site.register(PartAttachment, PartAttachmentAdmin)
 admin.site.register(PartStar, PartStarAdmin)
 admin.site.register(BomItem, BomItemAdmin)
 admin.site.register(SupplierPart, SupplierPartAdmin)
+admin.site.register(SupplierPriceBreak, SupplierPriceBreakAdmin)
