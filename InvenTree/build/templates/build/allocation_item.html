@@ -25,7 +25,7 @@
         Allocated:
     </div>
     <div class='col-sm-1' id='allocation-panel-{{ item.sub_part.id }}'>
-        <b><span id='allocation-total-{{ item.sub_part.id }}'>0</span></b>
+        <b><span id='allocation-total-{{ item.sub_part.id }}'>{% part_allocation_count build item.sub_part %}</span></b>
     </div>
     <div class='col-sm-2'>
         <div class='btn-group' style='float: right;'>
