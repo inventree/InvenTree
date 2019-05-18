@@ -155,7 +155,6 @@ class EditSupplierPartForm(HelperForm):
             'MPN',
             'URL',
             'note',
-            'single_price',
             'base_cost',
             'multiple',
             'minimum',

@@ -816,7 +816,6 @@ class SupplierPart(models.Model):
         URL: Link to external website for this part
         description: Descriptive notes field
         note: Longer form note field
-        single_price: Default price for a single unit
         base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
         multiple: Multiple that the part is provided in
         minimum: MOQ (minimum order quantity) required for purchase
@@ -854,8 +853,6 @@ class SupplierPart(models.Model):
 
     note = models.CharField(max_length=100, blank=True, help_text='Notes')
 
-    single_price = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text='Price for single quantity')
-
     base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text='Minimum charge (e.g. stocking fee)')
 
     packaging = models.CharField(max_length=50, blank=True, help_text='Part packaging')
@@ -884,27 +881,26 @@ class SupplierPart(models.Model):
 
     def get_price(self, quantity, moq=True, multiples=True):
         """ Calculate the supplier price based on quantity price breaks.
-        
-        - If no price breaks available, use the single_price field
+
         - Don't forget to add in flat-fee cost (base_cost field)
         - If MOQ (minimum order quantity) is required, bump quantity
         - If order multiples are to be observed, then we need to calculate based on that, too
         """
 
-        # Order multiples
-        if multiples:
-            quantity = int(math.ceil(quantity / self.multipe) * self.multiple)
-
         # Minimum ordering requirement
         if moq and self.minimum > quantity:
             quantity = self.minimum
+
+        # Order multiples
+        if multiples:
+            quantity = int(math.ceil(quantity / self.multipe) * self.multiple)
 
         pb_found = False
         pb_quantity = -1
         pb_cost = 0.0
 
         for pb in self.price_breaks.all():
-            # Ignore this pricebreak!
+            # Ignore this pricebreak (quantity is too high)
             if pb.quantity > quantity:
                 continue
 
@@ -915,13 +911,11 @@ class SupplierPart(models.Model):
                 pb_quantity = pb.quantity
                 pb_cost = pb.cost
 
-        # No appropriate price-break found - use the single cost!
         if pb_found:
             cost = pb_cost * quantity
+            return cost + self.base_cost
         else:
-            cost = self.single_price * quantity
-
-        return cost + self.base_cost
+            return None
 
     def __str__(self):
         s = "{supplier} ({sku})".format(
