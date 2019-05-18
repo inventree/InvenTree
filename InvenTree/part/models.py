@@ -892,6 +892,12 @@ class SupplierPart(models.Model):
         - If order multiples are to be observed, then we need to calculate based on that, too
         """
 
+        price_breaks = self.price_breaks.all()
+
+        # No price break information available?
+        if len(price_breaks) == 0:
+            return None
+
         # Minimum ordering requirement
         if moq and self.minimum > quantity:
             quantity = self.minimum
@@ -946,7 +952,7 @@ class SupplierPriceBreak(models.Model):
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks')
 
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
     cost = models.DecimalField(max_digits=10, decimal_places=3, validators=[MinValueValidator(0)])
 

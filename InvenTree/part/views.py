@@ -834,7 +834,6 @@ class PriceBreakCreate(AjaxCreateView):
     def get_form(self):
 
         form = super(AjaxCreateView, self).get_form()
-
         form.fields['part'].widget = HiddenInput()
 
         return form
@@ -857,6 +856,13 @@ class PriceBreakEdit(AjaxUpdateView):
     form_class = part_forms.EditPriceBreakForm
     ajax_form_title = 'Edit Price Break'
     ajax_template_name = 'modal_form.html'
+
+    def get_form(self):
+
+        form = super(AjaxUpdateView, self).get_form()
+        form.fields['part'].widget = HiddenInput()
+
+        return form
 
 
 class PriceBreakDelete(AjaxDeleteView):
