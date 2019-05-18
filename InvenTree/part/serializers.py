@@ -5,7 +5,7 @@ JSON serializers for Part app
 from rest_framework import serializers
 
 from .models import Part, PartStar
-from .models import SupplierPart, SupplierPriceBreak
+
 from .models import PartCategory
 from .models import BomItem
 
@@ -34,6 +34,7 @@ class PartBriefSerializer(serializers.ModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     image_url = serializers.CharField(source='get_image_url', read_only=True)
+    single_price_info = serializers.CharField(read_only=True)
     
     class Meta:
         model = Part
@@ -43,6 +44,7 @@ class PartBriefSerializer(serializers.ModelSerializer):
             'full_name',
             'description',
             'available_stock',
+            'single_price_info',
             'image_url',
         ]
 
@@ -106,6 +108,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
+    price_info = serializers.CharField(read_only=True)
 
     class Meta:
         model = BomItem
@@ -116,46 +119,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'sub_part',
             'sub_part_detail',
             'quantity',
+            'price_info',
             'overage',
             'note',
-        ]
-
-
-class SupplierPartSerializer(serializers.ModelSerializer):
-    """ Serializer for SupplierPart object """
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-
-    supplier_name = serializers.CharField(source='supplier.name', read_only=True)
-    supplier_logo = serializers.CharField(source='supplier.get_image_url', read_only=True)
-
-    class Meta:
-        model = SupplierPart
-        fields = [
-            'pk',
-            'url',
-            'part',
-            'part_detail',
-            'supplier',
-            'supplier_name',
-            'supplier_logo',
-            'SKU',
-            'manufacturer',
-            'MPN',
-            'URL',
-        ]
-
-
-class SupplierPriceBreakSerializer(serializers.ModelSerializer):
-    """ Serializer for SupplierPriceBreak object """
-
-    class Meta:
-        model = SupplierPriceBreak
-        fields = [
-            'pk',
-            'part',
-            'quantity',
-            'cost'
         ]

@@ -12,11 +12,11 @@ from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 
-from company.models import Company
 from .models import PartCategory, Part, PartAttachment
 from .models import BomItem
-from .models import SupplierPart
 from .models import match_part_names
+
+from company.models import SupplierPart
 
 from . import forms as part_forms
 
@@ -551,6 +551,80 @@ class PartDelete(AjaxDeleteView):
         }
 
 
+class PartPricing(AjaxView):
+    """ View for inspecting part pricing information """
+
+    model = Part
+    ajax_template_name = "part/part_pricing.html"
+    ajax_form_title = "Part Pricing"
+    form_class = part_forms.PartPriceForm
+
+    def get_part(self):
+        try:
+            return Part.objects.get(id=self.kwargs['pk'])
+        except Part.DoesNotExist:
+            return None
+
+    def get_pricing(self, quantity=1):
+
+        part = self.get_part()
+        
+        ctx = {
+            'part': part,
+            'quantity': quantity
+        }
+
+        if part is None:
+            return ctx
+
+        # Supplier pricing information
+        if part.supplier_count > 0:
+            min_buy_price = part.get_min_supplier_price(quantity)
+            max_buy_price = part.get_max_supplier_price(quantity)
+
+            if min_buy_price:
+                ctx['min_total_buy_price'] = min_buy_price
+                ctx['min_unit_buy_price'] = min_buy_price / quantity
+
+            if max_buy_price:
+                ctx['max_total_buy_price'] = max_buy_price
+                ctx['max_unit_buy_price'] = max_buy_price / quantity
+
+        # BOM pricing information
+        if part.bom_count > 0:
+
+            min_bom_price = part.get_min_bom_price(quantity)
+            max_bom_price = part.get_max_bom_price(quantity)
+
+            if min_bom_price:
+                ctx['min_total_bom_price'] = min_bom_price
+                ctx['min_unit_bom_price'] = min_bom_price / quantity
+            
+            if max_bom_price:
+                ctx['max_total_bom_price'] = max_bom_price
+                ctx['max_unit_bom_price'] = max_bom_price / quantity
+
+        return ctx
+
+    def get(self, request, *args, **kwargs):
+
+        return self.renderJsonResponse(request, self.form_class(), context=self.get_pricing())
+
+    def post(self, request, *args, **kwargs):
+
+        try:
+            quantity = int(self.request.POST.get('quantity', 1))
+        except ValueError:
+            quantity = 1
+
+        # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)
+        data = {
+            'form_valid': False,
+        }
+
+        return self.renderJsonResponse(request, self.form_class(), data=data, context=self.get_pricing(quantity))
+
+
 class CategoryDetail(DetailView):
     """ Detail view for PartCategory """
     model = PartCategory
@@ -731,81 +805,3 @@ class BomItemDelete(AjaxDeleteView):
     ajax_template_name = 'part/bom-delete.html'
     context_object_name = 'item'
     ajax_form_title = 'Confim BOM item deletion'
-
-
-class SupplierPartDetail(DetailView):
-    """ Detail view for SupplierPart """
-    model = SupplierPart
-    template_name = 'company/partdetail.html'
-    context_object_name = 'part'
-    queryset = SupplierPart.objects.all()
-
-
-class SupplierPartEdit(AjaxUpdateView):
-    """ Update view for editing SupplierPart """
-
-    model = SupplierPart
-    context_object_name = 'part'
-    form_class = part_forms.EditSupplierPartForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Supplier Part'
-
-
-class SupplierPartCreate(AjaxCreateView):
-    """ Create view for making new SupplierPart """
-
-    model = SupplierPart
-    form_class = part_forms.EditSupplierPartForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Create new Supplier Part'
-    context_object_name = 'part'
-
-    def get_form(self):
-        """ Create Form instance to create a new SupplierPart object.
-        Hide some fields if they are not appropriate in context
-        """
-        form = super(AjaxCreateView, self).get_form()
-        
-        if form.initial.get('supplier', None):
-            # Hide the supplier field
-            form.fields['supplier'].widget = HiddenInput()
-
-        if form.initial.get('part', None):
-            # Hide the part field
-            form.fields['part'].widget = HiddenInput()
-
-        return form
-
-    def get_initial(self):
-        """ Provide initial data for new SupplierPart:
-
-        - If 'supplier_id' provided, pre-fill supplier field
-        - If 'part_id' provided, pre-fill part field
-        """
-        initials = super(SupplierPartCreate, self).get_initial().copy()
-
-        supplier_id = self.get_param('supplier')
-        part_id = self.get_param('part')
-
-        if supplier_id:
-            try:
-                initials['supplier'] = Company.objects.get(pk=supplier_id)
-            except Company.DoesNotExist:
-                initials['supplier'] = None
-        
-        if part_id:
-            try:
-                initials['part'] = Part.objects.get(pk=part_id)
-            except Part.DoesNotExist:
-                initials['part'] = None
-        
-        return initials
-
-
-class SupplierPartDelete(AjaxDeleteView):
-    """ Delete view for removing a SupplierPart """
-    model = SupplierPart
-    success_url = '/supplier/'
-    ajax_template_name = 'company/partdelete.html'
-    ajax_form_title = 'Delete Supplier Part'
-    context_object_name = 'supplier_part'

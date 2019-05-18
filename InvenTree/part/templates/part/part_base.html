@@ -32,9 +32,12 @@
         <p><i>{{ part.description }}</i></p>
         <p>
             <div class='btn-group'>
-                {% include "qr_button.html" %}
                 <button type='button' class='btn btn-default btn-glyph' id='toggle-starred' title='Star this part'>
                     <span id='part-star-icon' class='starred-part glyphicon {% if starred %}glyphicon-star{% else %}glyphicon-star-empty{% endif %}'/>
+                </button>
+                {% include "qr_button.html" %}
+                <button type='button' class='btn btn-default btn-glyph' id='price-button' title='Show pricing information'>
+                    <span id='part-price-icon' class='part-price glyphicon glyphicon-usd'/>
                 </button>
             </div>
         </p>
@@ -82,6 +85,25 @@
             <td>{{ part.allocation_count }}</td>
         </tr>
         {% endif %}
+        {% if part.supplier_count > 0 %}
+        <tr>
+            <td>
+                Price
+            </td>
+            <td>
+                {% if part.min_single_price %}
+                {% if part.min_single_price == part.max_single_price %}
+                {{ part.min_single_price }}
+                {% else %}
+                {{ part.min_single_price }} to {{ part.max_single_price }}
+                {% endif %}
+                from {{ part.supplier_count }} suppliers.
+                {% else %}
+                <span class='warning-msg'><i>No pricing data avilable</i></span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endif %}
     </table>
 </div>
 </div>
@@ -118,6 +140,15 @@
             "{% url 'part-qr' part.id %}",
             {
                 no_post: true,
+            }
+        );
+    });
+
+    $("#price-button").click(function() {
+        launchModalForm(
+            "{% url 'part-pricing' part.id %}",
+            {
+                submit_text: 'Calculate',
             }
         );
     });
