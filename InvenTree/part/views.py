@@ -16,6 +16,7 @@ from company.models import Company
 from .models import PartCategory, Part, PartAttachment
 from .models import BomItem
 from .models import SupplierPart
+from .models import SupplierPriceBreak
 from .models import match_part_names
 
 from . import forms as part_forms
@@ -809,3 +810,58 @@ class SupplierPartDelete(AjaxDeleteView):
     ajax_template_name = 'company/partdelete.html'
     ajax_form_title = 'Delete Supplier Part'
     context_object_name = 'supplier_part'
+
+
+class PriceBreakCreate(AjaxCreateView):
+    """ View for creating a supplier price break """
+
+    model = SupplierPriceBreak
+    form_class = part_forms.EditPriceBreakForm
+    ajax_form_title = 'Add Price Break'
+    ajax_template_name = 'modal_form.html'
+
+    def get_data(self):
+        return {
+            'success': 'Added new price break'
+        }
+
+    def get_part(self):
+        try:
+            return SupplierPart.objects.get(id=self.request.GET.get('part'))
+        except SupplierPart.DoesNotExist:
+            return SupplierPart.objects.get(id=self.request.POST.get('part'))
+
+    def get_form(self):
+
+        form = super(AjaxCreateView, self).get_form()
+
+        form.fields['part'].widget = HiddenInput()
+
+        return form
+
+    def get_initial(self):
+
+        initials = super(AjaxCreateView, self).get_initial()
+
+        print("GETTING INITIAL DAtA")
+
+        initials['part'] = self.get_part()
+
+        return initials
+
+
+class PriceBreakEdit(AjaxUpdateView):
+    """ View for editing a supplier price break """
+
+    model = SupplierPriceBreak
+    form_class = part_forms.EditPriceBreakForm
+    ajax_form_title = 'Edit Price Break'
+    ajax_template_name = 'modal_form.html'
+
+
+class PriceBreakDelete(AjaxDeleteView):
+    """ View for deleting a supplier price break """
+
+    model = SupplierPriceBreak
+    ajax_form_title = "Delete Price Break"
+    ajax_template_name = 'modal_delete_form.html'

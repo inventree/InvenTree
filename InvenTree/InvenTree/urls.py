@@ -14,6 +14,7 @@ from company.urls import company_urls
 
 from part.urls import part_urls
 from part.urls import supplier_part_urls
+from part.urls import price_break_urls
 
 from stock.urls import stock_urls
 
@@ -50,6 +51,7 @@ apipatterns = [
 urlpatterns = [
     url(r'^part/', include(part_urls)),
     url(r'^supplier-part/', include(supplier_part_urls)),
+    url(r'^price-break/', include(price_break_urls)),
 
     url(r'^stock/', include(stock_urls)),
 
