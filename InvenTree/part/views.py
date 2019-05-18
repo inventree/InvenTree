@@ -551,6 +551,62 @@ class PartDelete(AjaxDeleteView):
         }
 
 
+class PartPricing(AjaxView):
+    """ View for inspecting part pricing information """
+
+    model = Part
+    ajax_template_name = "part/part_pricing.html"
+    ajax_form_title = "Part Pricing"
+    form_class = part_forms.PartPriceForm
+
+    def get_part(self):
+        try:
+            return Part.objects.get(id=self.kwargs['pk'])
+        except Part.DoesNotExist:
+            return None
+
+    def get_pricing(self, quantity=1):
+
+        part = self.get_part()
+        
+        ctx = {
+            'part': part,
+            'quantity': quantity
+        }
+
+        if part is None:
+            return ctx
+
+        buy_price = part.get_price_info(quantity, bom=False)
+        bom_price = part.get_price_info(quantity, buy=False)
+
+        if buy_price:
+            ctx['buy_price'] = buy_price
+
+        if bom_price:
+            ctx['bom_price'] = bom_price
+
+        return ctx
+
+    def get(self, request, *args, **kwargs):
+
+        return self.renderJsonResponse(request, self.form_class(), context=self.get_pricing())
+
+    def post(self, request, *args, **kwargs):
+
+        try:
+            quantity = int(self.request.POST.get('quantity', 1))
+        except ValueError:
+            quantity = 1
+
+        # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)
+        data = {
+            'form_valid': False,
+        }
+
+        return self.renderJsonResponse(request, self.form_class(), data=data, context=self.get_pricing(quantity))
+
+
 class CategoryDetail(DetailView):
     """ Detail view for PartCategory """
     model = PartCategory

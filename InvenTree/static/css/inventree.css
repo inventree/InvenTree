@@ -11,7 +11,11 @@
 }
 
 .starred-part {
-    color: #ffcc00;
+    color: #ffbb00;
+}
+
+.part-price {
+    color: rgb(13, 245, 25);
 }
 
 /* CSS overrides for treeview */

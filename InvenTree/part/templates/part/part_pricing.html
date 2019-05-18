@@ -1,0 +1,41 @@
+{% extends "modal_form.html" %}
+
+{% block pre_form_content %}
+
+<div class='alert alert-info alert-block'>
+Calculate pricing information for {{ part }}.
+</div>
+
+<table class='table table-striped table-condensed'>
+    <tr>
+        <td><b>Part</b></td>
+        <td>{{ part  }}</td>
+    </tr>
+    <tr>
+        <td><b>Quantity</b></td>
+        <td>{{ quantity }}</td>
+    </tr>
+{% if buy_price %}
+    <tr>
+        <td><b>Buy Cost</b></td>
+        <td>{{ buy_price }}</td>
+    </tr>
+{% endif %}
+{% if bom_price %}
+    <tr>
+        <td><b>BOM Cost</b></td>
+        <td>{{ bom_price }}</td>
+    </tr>
+    {% if part.has_complete_bom_pricing == false %}
+    <tr>
+        <td colspan='2'>
+            <span class='warning-msg'><i>BOM pricing is incomplete</i></span>
+        </td>
+    </tr>
+    {% endif %}
+{% endif %}
+</table>
+
+<hr>
+
+{% endblock %}

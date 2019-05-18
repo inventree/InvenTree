@@ -138,3 +138,19 @@ class EditBomItemForm(HelperForm):
 
         # Prevent editing of the part associated with this BomItem
         widgets = {'part': forms.HiddenInput()}
+
+
+class PartPriceForm(forms.Form):
+    """ Simple form for viewing part pricing information """
+
+    quantity = forms.IntegerField(
+        required=True,
+        initial=1,
+        help_text='Input quantity for price calculation'
+    )
+
+    class Meta:
+        model = Part
+        fields = [
+            'quantity'
+        ]

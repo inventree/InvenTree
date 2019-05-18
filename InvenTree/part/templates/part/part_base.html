@@ -32,9 +32,12 @@
         <p><i>{{ part.description }}</i></p>
         <p>
             <div class='btn-group'>
-                {% include "qr_button.html" %}
                 <button type='button' class='btn btn-default btn-glyph' id='toggle-starred' title='Star this part'>
                     <span id='part-star-icon' class='starred-part glyphicon {% if starred %}glyphicon-star{% else %}glyphicon-star-empty{% endif %}'/>
+                </button>
+                {% include "qr_button.html" %}
+                <button type='button' class='btn btn-default btn-glyph' id='price-button' title='Show pricing information'>
+                    <span id='part-price-icon' class='part-price glyphicon glyphicon-usd'/>
                 </button>
             </div>
         </p>
@@ -137,6 +140,15 @@
             "{% url 'part-qr' part.id %}",
             {
                 no_post: true,
+            }
+        );
+    });
+
+    $("#price-button").click(function() {
+        launchModalForm(
+            "{% url 'part-pricing' part.id %}",
+            {
+                submit_text: 'Calculate',
             }
         );
     });

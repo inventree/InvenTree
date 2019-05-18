@@ -24,6 +24,7 @@ part_detail_urls = [
     url(r'^bom-export/?', views.BomDownload.as_view(), name='bom-export'),
     url(r'^validate-bom/', views.BomValidate.as_view(), name='bom-validate'),
     url(r'^duplicate/', views.PartDuplicate.as_view(), name='part-duplicate'),
+    url(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
     
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
