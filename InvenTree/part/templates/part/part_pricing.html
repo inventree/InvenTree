@@ -26,10 +26,10 @@ Calculate pricing information for {{ part }}.
         <td><b>BOM Cost</b></td>
         <td>{{ bom_price }}</td>
     </tr>
-    {% if part.has_complete_bom_pricing == false %}
+    {% if part.has_complete_bom_pricing == False %}
     <tr>
         <td colspan='2'>
-            <span class='warning-msg'><i>BOM pricing is incomplete</i></span>
+            <span class='warning-msg'><i>Note: BOM pricing is incomplete for this part</i></span>
         </td>
     </tr>
     {% endif %}
