@@ -26,6 +26,7 @@ var/
 *.log
 local_settings.py
 *.sqlite3
+*.backup
 
 # Sphinx files
 docs/_build
