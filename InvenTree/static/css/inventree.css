@@ -14,7 +14,6 @@
     color: #ffcc00;
 }
 
-
 /* CSS overrides for treeview */
 .expand-icon {
     font-size: 11px;
@@ -277,11 +276,12 @@
 }
 
 .panel-group .panel {
-    border-radius: 8px;
+    border-radius: 2px;
 }
 
 .panel-heading {
     padding: 5px 10px;
+    background-color: #fafafa;
 }
 
 .float-right {
@@ -299,16 +299,22 @@
     transform: translate(-50%, -50%);
 }
 
+.part-allocation {
+    padding: 3px 10px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+}
+
 .part-allocation-pass {
-    background: #dbf0db;
+    background-color: #dbf0db;
 }
 
 .part-allocation-underallocated {
-    background: #f0dbdb;
+    background-color: #f0dbdb;
 }
 
 .part-allocation-overallocated {
-    background: #ccf5ff;
+    background-color: #ccf5ff;
 }
 
 .glyphicon-refresh-animate {

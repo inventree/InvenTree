@@ -24,6 +24,21 @@ InvenTree | Allocate Parts
 </div>
 <hr>
 
+<div class='row'>
+    <div class='col-sm-6'>
+        <h4>Part</h4>
+    </div>
+    <div class='col-sm-2'>
+        <h4>Available</h4>
+    </div>
+    <div class='col-sm-2'>
+        <h4>Required</h4>
+    </div>
+    <div class='col-sm-2'>
+        <h4>Allocated</h4>
+    </div>
+</div>
+
 {% for bom_item in bom_items.all %}
 {% include "build/allocation_item.html" with item=bom_item build=build collapse_id=bom_item.id %}
 {% endfor %}
