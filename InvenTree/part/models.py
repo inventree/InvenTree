@@ -563,6 +563,61 @@ class Part(models.Model):
         """ Return the number of supplier parts available for this part """
         return self.supplier_parts.count()
 
+    @property
+    def min_single_price(self):
+        return self.get_min_supplier_price(1)
+
+    @property
+    def max_single_price(self):
+        return self.get_max_supplier_price(1)
+
+    def get_min_supplier_price(self, quantity=1):
+        """ Return the minimum price of this part from all available suppliers.
+        
+        Args:
+            quantity: Number of units we wish to purchase (default = 1)
+
+        Returns:
+            Numerical price if pricing is available, else None
+         """
+
+        min_price = None
+
+        for supplier_part in self.supplier_parts.all():
+            supplier_price = supplier_part.get_price(quantity)
+
+            if supplier_price is None:
+                continue
+
+            if min_price is None or supplier_price < min_price:
+                min_price = supplier_price
+
+        return min_price
+
+    def get_max_supplier_price(self, quantity=1):
+        """ Return the maximum price of this part from all available suppliers.
+        
+        Args:
+            quantity: Number of units we wish to purchase (default = 1)
+
+        Returns:
+            Numerical price if pricing is available, else None
+         """
+
+        max_price = None
+
+        for supplier_part in self.supplier_parts.all():
+            supplier_price = supplier_part.get_price(quantity)
+
+            if supplier_price is None:
+                continue
+
+            if max_price is None or supplier_price > max_price:
+                max_price = supplier_price
+
+        return max_price
+
+
     def deepCopy(self, other, **kwargs):
         """ Duplicates non-field data from another part.
         Does not alter the normal fields of this part,

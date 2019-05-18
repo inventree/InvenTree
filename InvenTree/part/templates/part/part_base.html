@@ -82,6 +82,25 @@
             <td>{{ part.allocation_count }}</td>
         </tr>
         {% endif %}
+        {% if part.supplier_count > 0 %}
+        <tr>
+            <td>
+                Price
+            </td>
+            <td>
+                {% if part.min_single_price %}
+                {% if part.min_single_price == part.max_single_price %}
+                {{ part.min_single_price }}
+                {% else %}
+                {{ part.min_single_price }} to {{ part.max_single_price }}
+                {% endif %}
+                from {{ part.supplier_count }} suppliers.
+                {% else %}
+                <span class='warning-msg'><i>No pricing data avilable</i></span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endif %}
     </table>
 </div>
 </div>

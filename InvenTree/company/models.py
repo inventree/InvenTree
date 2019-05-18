@@ -7,6 +7,8 @@ from __future__ import unicode_literals
 
 import os
 
+import math
+
 from django.core.validators import MinValueValidator
 
 from django.apps import apps
@@ -260,7 +262,7 @@ class SupplierPart(models.Model):
 
         # Order multiples
         if multiples:
-            quantity = int(math.ceil(quantity / self.multipe) * self.multiple)
+            quantity = int(math.ceil(quantity / self.multiple) * self.multiple)
 
         pb_found = False
         pb_quantity = -1
