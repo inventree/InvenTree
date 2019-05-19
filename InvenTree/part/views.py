@@ -567,6 +567,14 @@ class PartPricing(AjaxView):
 
     def get_pricing(self, quantity=1):
 
+        try:
+            quantity = int(quantity)
+        except ValueError:
+            quantity = 1
+
+        if quantity < 1:
+            quantity = 1
+
         part = self.get_part()
         
         ctx = {
