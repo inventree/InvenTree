@@ -60,6 +60,15 @@ class StockItemSerializer(serializers.ModelSerializer):
     location = LocationBriefSerializer(many=False, read_only=True)
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
+    @staticmethod
+    def setup_eager_loading(queryset):
+        queryset = queryset.prefetch_related('part')
+        queryset = queryset.prefetch_related('part__locations')
+        queryset = queryset.prefetch_related('part__category')
+        queryset = queryset.prefetch_related('location')
+
+        return queryset
+
     class Meta:
         model = StockItem
         fields = [

@@ -119,6 +119,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
     def setup_eager_loading(queryset):
         queryset = queryset.prefetch_related('sub_part')
         queryset = queryset.prefetch_related('sub_part__category')
+        queryset = queryset.prefetch_related('sub_part__locations')
         return queryset
 
     class Meta:
