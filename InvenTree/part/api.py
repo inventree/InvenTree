@@ -110,6 +110,9 @@ class PartList(generics.ListCreateAPIView):
             except PartCategory.DoesNotExist:
                 pass
 
+        # Ensure that related models are pre-loaded to reduce DB trips
+        parts_list = self.get_serializer_class().setup_eager_loading(parts_list)
+
         return parts_list
 
     permission_classes = [
