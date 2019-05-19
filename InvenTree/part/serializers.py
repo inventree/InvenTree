@@ -112,16 +112,20 @@ class PartStarSerializer(InvenTreeModelSerializer):
 class BomItemSerializer(InvenTreeModelSerializer):
     """ Serializer for BomItem object """
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
     price_info = serializers.CharField(read_only=True)
+
+    @staticmethod
+    def setup_eager_loading(queryset):
+        queryset = queryset.prefetch_related('sub_part')
+        queryset = queryset.prefetch_related('sub_part__category')
+        return queryset
 
     class Meta:
         model = BomItem
         fields = [
             'pk',
             'part',
-            'part_detail',
             'sub_part',
             'sub_part_detail',
             'quantity',

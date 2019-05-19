@@ -203,9 +203,13 @@ class BomList(generics.ListCreateAPIView):
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
     """
-
-    queryset = BomItem.objects.all()
+    
     serializer_class = BomItemSerializer
+
+    def get_queryset(self):
+        queryset = BomItem.objects.all()
+        queryset = self.get_serializer_class().setup_eager_loading(queryset)
+        return queryset
 
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
