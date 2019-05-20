@@ -632,7 +632,6 @@ class Part(models.Model):
 
         return (min_price, max_price)
 
-
     def get_bom_price_range(self, quantity=1):
         """ Return the price range of the BOM for this part.
         Adds the minimum price for all components in the BOM.
@@ -690,7 +689,7 @@ class Part(models.Model):
             return (
                 min(buy_price_range[0], bom_price_range[0]),
                 max(buy_price_range[1], bom_price_range[1])
-            ) 
+            )
 
     def deepCopy(self, other, **kwargs):
         """ Duplicates non-field data from another part.
