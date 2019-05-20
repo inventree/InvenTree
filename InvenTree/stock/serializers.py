@@ -63,7 +63,7 @@ class StockItemSerializer(serializers.ModelSerializer):
     @staticmethod
     def setup_eager_loading(queryset):
         queryset = queryset.prefetch_related('part')
-        queryset = queryset.prefetch_related('part__locations')
+        queryset = queryset.prefetch_related('part__stock_items')
         queryset = queryset.prefetch_related('part__category')
         queryset = queryset.prefetch_related('location')
 

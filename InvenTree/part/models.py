@@ -463,7 +463,7 @@ class Part(models.Model):
 
     @property
     def allocated_build_count(self):
-        """ Return the total number of this that are allocated for builds
+        """ Return the total number of this part that are allocated for builds
         """
 
         return sum([a['quantity'] for a in self.build_allocation])
@@ -530,7 +530,7 @@ class Part(models.Model):
         returns a string representation of a hash object which can be compared with a stored value
         """
 
-        hash = hashlib.md5(str(item.part.id).encode())
+        hash = hashlib.md5(str(self.id).encode())
 
         for item in self.bom_items.all():
             hash.update(str(item.sub_part.id).encode())
