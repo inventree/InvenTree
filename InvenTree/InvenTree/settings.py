@@ -86,6 +86,9 @@ MIDDLEWARE = [
     'InvenTree.middleware.AuthRequiredMiddleware'
 ]
 
+if DEBUG:
+    MIDDLEWARE.append('InvenTree.middleware.QueryCountMiddleware')
+
 ROOT_URLCONF = 'InvenTree.urls'
 
 TEMPLATES = [
