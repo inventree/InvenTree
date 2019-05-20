@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.db import connection
 import logging
 import time
+import operator
 
 logger = logging.getLogger(__name__)
 
@@ -55,8 +56,17 @@ class QueryCountMiddleware(object):
 
             if len(connection.queries) > 0:
 
+                queries = {}
+
                 for query in connection.queries:
                     query_time = query.get('time')
+
+                    sql = query.get('sql').split('.')[0]
+
+                    if sql in queries:
+                        queries[sql] += 1
+                    else:
+                        queries[sql] = 1
 
                     if query_time is None:
                         # django-debug-toolbar monkeypatches the connection
@@ -73,4 +83,7 @@ class QueryCountMiddleware(object):
                     a=total_time,
                     b=(t_stop - t_start)))
                     
+                for x in sorted(queries.items(), key=operator.itemgetter(1), reverse=True):
+                    print(x[0], ':', x[1])
+
         return response

@@ -34,6 +34,14 @@ class PartBriefSerializer(serializers.ModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     image_url = serializers.CharField(source='get_image_url', read_only=True)
+
+    @staticmethod
+    def setup_eager_loading(queryset):
+        queryset = queryset.prefetch_related('category')
+        queryset = queryset.prefetch_related('stock_items')
+        queryset = queryset.prefetch_related('bom_items')
+        queryset = queryset.prefetch_related('builds')
+        return queryset
     
     class Meta:
         model = Part
@@ -60,6 +68,8 @@ class PartSerializer(serializers.ModelSerializer):
     def setup_eager_loading(queryset):
         queryset = queryset.prefetch_related('category')
         queryset = queryset.prefetch_related('stock_items')
+        queryset = queryset.prefetch_related('bom_items')
+        queryset = queryset.prefetch_related('builds')
         return queryset
 
     class Meta:
