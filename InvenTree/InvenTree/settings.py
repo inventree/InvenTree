@@ -67,12 +67,37 @@ INSTALLED_APPS = [
     'django_filters',       # Extended filter functionality
     'dbbackup',             # Database backup / restore
     'rest_framework',       # DRF (Django Rest Framework)
-    'corsheaders',         # Cross-origin Resource Sharing for DRF
+    'corsheaders',          # Cross-origin Resource Sharing for DRF
     'crispy_forms',         # Improved form rendering
     'import_export',        # Import / export tables to file
     'django_cleanup',       # Automatically delete orphaned MEDIA files
     'qr_code',              # Generate QR codes
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': './debug.log',
+        },
+    },
+
+    'loggers': {
+        'ddjango.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['file'],
+            'propagate': True
+        },
+    },
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -83,7 +108,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware'
+    'InvenTree.middleware.AuthRequiredMiddleware',
+    'InvenTree.middleware.QueryCountMiddleware',
 ]
 
 if DEBUG:

@@ -2,6 +2,7 @@ from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.db import connection
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +46,9 @@ class QueryCountMiddleware(object):
 
     def __call__(self, request):
 
+        t_start = time.time()
         response = self.get_response(request)
+        t_stop = time.time()
 
         if response.status_code == 200:
             total_time = 0
@@ -54,14 +57,20 @@ class QueryCountMiddleware(object):
 
                 for query in connection.queries:
                     query_time = query.get('time')
+
                     if query_time is None:
                         # django-debug-toolbar monkeypatches the connection
                         # cursor wrapper and adds extra information in each
                         # item in connection.queries. The query time is stored
                         # under the key "duration" rather than "time" and is
                         # in milliseconds, not seconds.
-                        query_time = query.get('duration', 0) / 1000
+                        query_time = float(query.get('duration', 0))
+
                     total_time += float(query_time)
 
-                logger.debug('%s queries run, total %s seconds' % (len(connection.queries), total_time))
+                logger.debug('{n} queries run, {a:.3f}s / {b:.3f}s'.format(
+                    n=len(connection.queries),
+                    a=total_time,
+                    b=(t_stop - t_start)))
+                    
         return response
