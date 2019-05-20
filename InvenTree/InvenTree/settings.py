@@ -82,17 +82,19 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
         },
-        'file': {
+        'debug_file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': './debug.log',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            #'maxBytes': 1024*1024*15, # 15MB
+            #'backupCount': 10,
         },
     },
 
     'loggers': {
         'ddjango.db.backends': {
             'level': 'DEBUG',
-            'handlers': ['file'],
+            'handlers': ['debug_file', 'console',],
             'propagate': True
         },
     },

@@ -83,9 +83,7 @@ class QueryCountMiddleware(object):
                     a=total_time,
                     b=(t_stop - t_start)))
 
-                """    
                 for x in sorted(queries.items(), key=operator.itemgetter(1), reverse=True):
                     print(x[0], ':', x[1])
-                """
 
         return response
