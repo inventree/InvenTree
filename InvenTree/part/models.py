@@ -17,6 +17,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.db.models import Sum
+from django.db.models import prefetch_related_objects
 from django.core.validators import MinValueValidator
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -411,7 +412,7 @@ class Part(models.Model):
         total = None
 
         # Calculate the minimum number of parts that can be built using each sub-part
-        for item in self.bom_items.all().select_related('sub_part'):
+        for item in self.bom_items.all().prefetch_related('sub_part__stock_items'):
             stock = item.sub_part.available_stock
             n = int(1.0 * stock / item.quantity)
 
@@ -449,15 +450,19 @@ class Part(models.Model):
 
         builds = []
 
-        for item in self.used_in.all().prefetch_related('part'):
+        for item in self.used_in.all().prefetch_related('part__builds'):
 
-            for build in item.part.active_builds:
+            active = item.part.active_builds
+            
+            for build in active:
                 b = {}
 
                 b['build'] = build
                 b['quantity'] = item.quantity * build.quantity
 
                 builds.append(b)
+
+        prefetch_related_objects(builds, 'build_items')
 
         return builds
 
