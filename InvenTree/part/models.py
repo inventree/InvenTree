@@ -1007,8 +1007,3 @@ class BomItem(models.Model):
         base_quantity = self.quantity * build_quantity
 
         return base_quantity + self.get_overage_quantity(base_quantity)
-
-    @property
-    def price_info(self):
-        """ Return the price for this item in the BOM """
-        return self.sub_part.get_price_info(self.quantity)
