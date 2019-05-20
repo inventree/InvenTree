@@ -61,7 +61,7 @@ class PartSerializer(serializers.ModelSerializer):
     @staticmethod
     def setup_eager_loading(queryset):
         queryset = queryset.prefetch_related('category')
-        queryset = queryset.prefetch_related('locations')
+        queryset = queryset.prefetch_related('stock_items')
         return queryset
 
     class Meta:

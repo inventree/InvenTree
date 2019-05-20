@@ -16,6 +16,7 @@ from django.conf import settings
 
 from django.core.files.base import ContentFile
 from django.db import models, transaction
+from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -481,7 +482,13 @@ class Part(models.Model):
 
     @property
     def stock_entries(self):
-        return [loc for loc in self.locations.all() if loc.in_stock]
+        """ Return all 'in stock' items. To be in stock:
+
+        - customer is None
+        - belongs_to is None
+        """
+
+        return self.stock_items.filter(customer=None, belongs_to=None)
 
     @property
     def total_stock(self):
@@ -489,7 +496,12 @@ class Part(models.Model):
         Part may be stored in multiple locations
         """
 
-        return sum([loc.quantity for loc in self.stock_entries])
+        total = self.stock_entries.aggregate(total=Sum('quantity'))['total']
+
+        if total:
+            return total
+        else:
+            return 0
 
     @property
     def has_bom(self):
@@ -518,7 +530,7 @@ class Part(models.Model):
         returns a string representation of a hash object which can be compared with a stored value
         """
 
-        hash = hashlib.md5('bom seed'.encode())
+        hash = hashlib.md5(str(item.part.id).encode())
 
         for item in self.bom_items.all():
             hash.update(str(item.sub_part.id).encode())
