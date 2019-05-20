@@ -139,7 +139,7 @@ class Build(models.Model):
 
         allocations = []
 
-        for item in self.part.bom_items.all():
+        for item in self.part.bom_items.all().prefetch_related('sub_part'):
 
             # How many parts required for this build?
             q_required = item.quantity * self.quantity
@@ -216,7 +216,7 @@ class Build(models.Model):
         - Delete pending BuildItem objects
         """
 
-        for item in self.allocated_stock.all():
+        for item in self.allocated_stock.all().prefetch_related('stock_item'):
             
             # Subtract stock from the item
             item.stock_item.take_stock(
@@ -295,7 +295,7 @@ class Build(models.Model):
         """ Returns a dict of parts required to build this part (BOM) """
         parts = []
 
-        for item in self.part.bom_items.all():
+        for item in self.part.bom_items.all().prefetch_related('sub_part'):
             part = {'part': item.sub_part,
                     'per_build': item.quantity,
                     'quantity': item.quantity * self.quantity,
