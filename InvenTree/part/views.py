@@ -34,7 +34,7 @@ class PartIndex(ListView):
     context_object_name = 'parts'
 
     def get_queryset(self):
-        return Part.objects.all()  # filter(category=None)
+        return Part.objects.all().select_related('category')
 
     def get_context_data(self, **kwargs):
 
@@ -355,7 +355,7 @@ class PartDetail(DetailView):
     """
 
     context_object_name = 'part'
-    queryset = Part.objects.all()
+    queryset = Part.objects.all().select_related('category')
     template_name = 'part/detail.html'
 
     # Add in some extra context information based on query params
@@ -641,7 +641,7 @@ class CategoryDetail(DetailView):
     """ Detail view for PartCategory """
     model = PartCategory
     context_object_name = 'category'
-    queryset = PartCategory.objects.all()
+    queryset = PartCategory.objects.all().prefetch_related('children')
     template_name = 'part/category.html'
 
 
