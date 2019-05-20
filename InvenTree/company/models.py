@@ -250,7 +250,7 @@ class SupplierPart(models.Model):
         - If order multiples are to be observed, then we need to calculate based on that, too
         """
 
-        price_breaks = self.price_breaks.all()
+        price_breaks = self.price_breaks.filter(quantity__lte=quantity)
 
         # No price break information available?
         if len(price_breaks) == 0:
