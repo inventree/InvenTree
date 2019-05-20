@@ -34,7 +34,14 @@ class PartBriefSerializer(serializers.ModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     image_url = serializers.CharField(source='get_image_url', read_only=True)
-    single_price_info = serializers.CharField(read_only=True)
+
+    @staticmethod
+    def setup_eager_loading(queryset):
+        queryset = queryset.prefetch_related('category')
+        queryset = queryset.prefetch_related('stock_items')
+        queryset = queryset.prefetch_related('bom_items')
+        queryset = queryset.prefetch_related('builds')
+        return queryset
     
     class Meta:
         model = Part
@@ -44,7 +51,6 @@ class PartBriefSerializer(serializers.ModelSerializer):
             'full_name',
             'description',
             'available_stock',
-            'single_price_info',
             'image_url',
         ]
 
@@ -57,6 +63,14 @@ class PartSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     image_url = serializers.CharField(source='get_image_url', read_only=True)
     category_name = serializers.CharField(source='category_path', read_only=True)
+
+    @staticmethod
+    def setup_eager_loading(queryset):
+        queryset = queryset.prefetch_related('category')
+        queryset = queryset.prefetch_related('stock_items')
+        queryset = queryset.prefetch_related('bom_items')
+        queryset = queryset.prefetch_related('builds')
+        return queryset
 
     class Meta:
         model = Part
@@ -108,7 +122,16 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
-    price_info = serializers.CharField(read_only=True)
+
+    @staticmethod
+    def setup_eager_loading(queryset):
+        queryset = queryset.prefetch_related('part')
+        queryset = queryset.prefetch_related('part__category')
+        queryset = queryset.prefetch_related('part__stock_items')
+        queryset = queryset.prefetch_related('sub_part')
+        queryset = queryset.prefetch_related('sub_part__category')
+        queryset = queryset.prefetch_related('sub_part__stock_items')
+        return queryset
 
     class Meta:
         model = BomItem
@@ -119,7 +142,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'sub_part',
             'sub_part_detail',
             'quantity',
-            'price_info',
             'overage',
             'note',
         ]

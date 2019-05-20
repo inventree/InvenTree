@@ -186,7 +186,7 @@ class StockItem(models.Model):
             }
         )
 
-    part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='locations', help_text='Base part')
+    part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='stock_items', help_text='Base part')
 
     supplier_part = models.ForeignKey('company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
                                       help_text='Select a matching supplier part for this stock item')

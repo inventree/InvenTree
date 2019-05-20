@@ -16,6 +16,7 @@ from django.conf import settings
 
 from django.core.files.base import ContentFile
 from django.db import models, transaction
+from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -410,7 +411,7 @@ class Part(models.Model):
         total = None
 
         # Calculate the minimum number of parts that can be built using each sub-part
-        for item in self.bom_items.all():
+        for item in self.bom_items.all().select_related('sub_part'):
             stock = item.sub_part.available_stock
             n = int(1.0 * stock / item.quantity)
 
@@ -448,7 +449,7 @@ class Part(models.Model):
 
         builds = []
 
-        for item in self.used_in.all():
+        for item in self.used_in.all().prefetch_related('part'):
 
             for build in item.part.active_builds:
                 b = {}
@@ -462,7 +463,7 @@ class Part(models.Model):
 
     @property
     def allocated_build_count(self):
-        """ Return the total number of this that are allocated for builds
+        """ Return the total number of this part that are allocated for builds
         """
 
         return sum([a['quantity'] for a in self.build_allocation])
@@ -481,7 +482,13 @@ class Part(models.Model):
 
     @property
     def stock_entries(self):
-        return [loc for loc in self.locations.all() if loc.in_stock]
+        """ Return all 'in stock' items. To be in stock:
+
+        - customer is None
+        - belongs_to is None
+        """
+
+        return self.stock_items.filter(customer=None, belongs_to=None)
 
     @property
     def total_stock(self):
@@ -489,7 +496,12 @@ class Part(models.Model):
         Part may be stored in multiple locations
         """
 
-        return sum([loc.quantity for loc in self.stock_entries])
+        total = self.stock_entries.aggregate(total=Sum('quantity'))['total']
+
+        if total:
+            return total
+        else:
+            return 0
 
     @property
     def has_bom(self):
@@ -518,9 +530,9 @@ class Part(models.Model):
         returns a string representation of a hash object which can be compared with a stored value
         """
 
-        hash = hashlib.md5('bom seed'.encode())
+        hash = hashlib.md5(str(self.id).encode())
 
-        for item in self.bom_items.all():
+        for item in self.bom_items.all().prefetch_related('sub_part'):
             hash.update(str(item.sub_part.id).encode())
             hash.update(str(item.sub_part.full_name).encode())
             hash.update(str(item.quantity).encode())
@@ -552,7 +564,7 @@ class Part(models.Model):
     def required_parts(self):
         """ Return a list of parts required to make this part (list of BOM items) """
         parts = []
-        for bom in self.bom_items.all():
+        for bom in self.bom_items.all().select_related('sub_part'):
             parts.append(bom.sub_part)
         return parts
 
@@ -562,41 +574,19 @@ class Part(models.Model):
         return self.supplier_parts.count()
 
     @property
-    def min_single_price(self):
-        return self.get_min_supplier_price(1)
-
-    @property
-    def max_single_price(self):
-        return self.get_max_supplier_price(1)
-
-    @property
-    def min_bom_price(self):
-        return self.get_min_bom_price(1)
-
-    @property
-    def max_bom_price(self):
-        return self.get_max_bom_price(1)
-
-    @property
     def has_pricing_info(self):
         """ Return true if there is pricing information for this part """
-        return self.get_min_price() is not None
+        return self.get_price_range() is not None
 
     @property
     def has_complete_bom_pricing(self):
         """ Return true if there is pricing information for each item in the BOM. """
 
-        for item in self.bom_items.all():
+        for item in self.bom_items.all().select_related('sub_part'):
             if not item.sub_part.has_pricing_info:
                 return False
 
         return True
-
-    @property
-    def single_price_info(self):
-        """ Return a simplified pricing string for this part at single quantity """
-
-        return self.get_price_info()
 
     def get_price_info(self, quantity=1, buy=True, bom=True):
         """ Return a simplified pricing string for this part
@@ -606,72 +596,44 @@ class Part(models.Model):
             buy: Include supplier pricing (default = True)
             bom: Include BOM pricing (default = True)
         """
-        
-        min_price = self.get_min_price(quantity, buy, bom)
-        max_price = self.get_max_price(quantity, buy, bom)
 
-        if min_price is None:
+        price_range = self.get_price_range(quantity, buy, bom)
+
+        if price_range is None:
             return None
+
+        min_price, max_price = price_range
 
         if min_price == max_price:
             return min_price
 
-        return "{a} to {b}".format(a=min_price, b=max_price)
+        return "{a} - {b}".format(a=min_price, b=max_price)
 
-    def get_min_supplier_price(self, quantity=1):
-        """ Return the minimum price of this part from all available suppliers.
+    def get_supplier_price_range(self, quantity=1):
         
-        Args:
-            quantity: Number of units we wish to purchase (default = 1)
-
-        Returns:
-            Numerical price if pricing is available, else None
-         """
-
         min_price = None
-
-        for supplier_part in self.supplier_parts.all():
-            supplier_price = supplier_part.get_price(quantity)
-
-            if supplier_price is None:
-                continue
-
-            if min_price is None or supplier_price < min_price:
-                min_price = supplier_price
-
-        if min_price is None:
-            return None
-        else:
-            return min_price
-
-    def get_max_supplier_price(self, quantity=1):
-        """ Return the maximum price of this part from all available suppliers.
-        
-        Args:
-            quantity: Number of units we wish to purchase (default = 1)
-
-        Returns:
-            Numerical price if pricing is available, else None
-         """
-
         max_price = None
 
-        for supplier_part in self.supplier_parts.all():
-            supplier_price = supplier_part.get_price(quantity)
+        for supplier in self.supplier_parts.all():
 
-            if supplier_price is None:
+            price = supplier.get_price(quantity)
+
+            if price is None:
                 continue
 
-            if max_price is None or supplier_price > max_price:
-                max_price = supplier_price
+            if min_price is None or price < min_price:
+                min_price = price
 
-        if max_price is None:
+            if max_price is None or price > max_price:
+                max_price = price
+
+        if min_price is None or max_price is None:
             return None
-        else:
-            return max_price
 
-    def get_min_bom_price(self, quantity=1):
-        """ Return the minimum price of the BOM for this part.
+        return (min_price, max_price)
+
+    def get_bom_price_range(self, quantity=1):
+        """ Return the price range of the BOM for this part.
         Adds the minimum price for all components in the BOM.
 
         Note: If the BOM contains items without pricing information,
@@ -679,45 +641,33 @@ class Part(models.Model):
         """
 
         min_price = None
+        max_price = None
 
-        for item in self.bom_items.all():
-            price = item.sub_part.get_min_price(quantity * item.quantity)
+        for item in self.bom_items.all().select_related('sub_part'):
+            prices = item.sub_part.get_price_range(quantity * item.quantity)
 
-            if price is None:
+            if prices is None:
                 continue
+
+            low, high = prices
 
             if min_price is None:
                 min_price = 0
 
-            min_price += price
-
-        return min_price
-
-    def get_max_bom_price(self, quantity=1):
-        """ Return the maximum price of the BOM for this part.
-        Adds the maximum price for all components in the BOM.
-
-        Note: If the BOM contains items without pricing information,
-        these items cannot be included in the BOM!
-        """
-
-        max_price = None
-
-        for item in self.bom_items.all():
-            price = item.sub_part.get_max_price(quantity * item.quantity)
-
-            if price is None:
-                continue
-
             if max_price is None:
                 max_price = 0
 
-            max_price += price
+            min_price += low
+            max_price += high
 
-        return max_price
+        if min_price is None or max_price is None:
+            return None
 
-    def get_min_price(self, quantity=1, buy=True, bom=True):
-        """ Return the minimum price for this part. This price can be either:
+        return (min_price, max_price)
+
+    def get_price_range(self, quantity=1, buy=True, bom=True):
+        
+        """ Return the price range for this part. This price can be either:
 
         - Supplier price (if purchased from suppliers)
         - BOM price (if built from other parts)
@@ -726,37 +676,20 @@ class Part(models.Model):
             Minimum of the supplier price or BOM price. If no pricing available, returns None
         """
 
-        buy_price = self.get_min_supplier_price(quantity) if buy else None
-        bom_price = self.get_min_bom_price(quantity) if bom else None
+        buy_price_range = self.get_supplier_price_range(quantity) if buy else None
+        bom_price_range = self.get_bom_price_range(quantity) if bom else None
 
-        if buy_price is None:
-            return bom_price
+        if buy_price_range is None:
+            return bom_price_range
 
-        if bom_price is None:
-            return buy_price
-        
-        return min(buy_price, bom_price)
+        elif bom_price_range is None:
+            return buy_price_range
 
-    def get_max_price(self, quantity=1, buy=True, bom=True):
-        """ Return the maximum price for this part. This price can be either:
-
-        - Supplier price (if purchsed from suppliers)
-        - BOM price (if built from other parts)
-
-        Returns:
-            Maximum of the supplier price or BOM price. If no pricing available, returns None
-        """
-
-        buy_price = self.get_max_supplier_price(quantity) if buy else None
-        bom_price = self.get_max_bom_price(quantity) if bom else None
-
-        if buy_price is None:
-            return bom_price
-
-        if bom_price is None:
-            return buy_price
-        
-        return max(buy_price, bom_price)
+        else:
+            return (
+                min(buy_price_range[0], bom_price_range[0]),
+                max(buy_price_range[1], bom_price_range[1])
+            )
 
     def deepCopy(self, other, **kwargs):
         """ Duplicates non-field data from another part.
@@ -995,8 +928,3 @@ class BomItem(models.Model):
         base_quantity = self.quantity * build_quantity
 
         return base_quantity + self.get_overage_quantity(base_quantity)
-
-    @property
-    def price_info(self):
-        """ Return the price for this item in the BOM """
-        return self.sub_part.get_price_info(self.quantity)

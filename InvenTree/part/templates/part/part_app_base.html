@@ -34,6 +34,7 @@ InvenTree | Part List
 
 {% block js_ready %}
 {{ block.super }}
+
     loadTree("{% url 'api-part-tree' %}",
             "#part-tree",
             {

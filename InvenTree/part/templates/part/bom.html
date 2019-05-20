@@ -16,9 +16,6 @@
     The BOM for <i>{{ part.full_name }}</i> does not have complete pricing information
 </div>
 {% endif %}
-<div class='panel panel-default'>
-    Single BOM Price: {{ part.min_bom_price }} to {{ part.max_bom_price }}
-</div>
 {% if part.bom_checked_date %}
 {% if part.is_bom_valid %}
 <div class='alert alert-block alert-info'>

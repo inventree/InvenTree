@@ -282,6 +282,9 @@ class StockList(generics.ListCreateAPIView):
         if supplier_id:
             stock_list = stock_list.filter(supplier_part__supplier=supplier_id)
 
+        # Pre-fetch related objects for better response time
+        stock_list = self.get_serializer_class().setup_eager_loading(stock_list)
+
         return stock_list
 
     serializer_class = StockItemSerializer
