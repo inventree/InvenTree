@@ -89,7 +89,7 @@ class PartSerializer(serializers.ModelSerializer):
             'keywords',
             'URL',
             'total_stock',
-            'available_stock',
+            # 'available_stock',
             'units',
             'trackable',
             'buildable',

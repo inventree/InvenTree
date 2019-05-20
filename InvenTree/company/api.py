@@ -75,7 +75,14 @@ class SupplierPartList(generics.ListCreateAPIView):
     - POST: Create a new SupplierPart object
     """
 
-    queryset = SupplierPart.objects.all()
+    queryset = SupplierPart.objects.all().prefetch_related(
+        'part',
+        'part__category',
+        'part__stock_items',
+        'part__bom_items',
+        'part__builds',
+        'supplier')
+
     serializer_class = SupplierPartSerializer
 
     permission_classes = [
