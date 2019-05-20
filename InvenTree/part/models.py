@@ -411,7 +411,7 @@ class Part(models.Model):
         total = None
 
         # Calculate the minimum number of parts that can be built using each sub-part
-        for item in self.bom_items.all():
+        for item in self.bom_items.all().select_related('sub_part'):
             stock = item.sub_part.available_stock
             n = int(1.0 * stock / item.quantity)
 
@@ -449,7 +449,7 @@ class Part(models.Model):
 
         builds = []
 
-        for item in self.used_in.all():
+        for item in self.used_in.all().prefetch_related('part'):
 
             for build in item.part.active_builds:
                 b = {}
@@ -532,7 +532,7 @@ class Part(models.Model):
 
         hash = hashlib.md5(str(self.id).encode())
 
-        for item in self.bom_items.all():
+        for item in self.bom_items.all().prefetch('sub_part'):
             hash.update(str(item.sub_part.id).encode())
             hash.update(str(item.sub_part.full_name).encode())
             hash.update(str(item.quantity).encode())
@@ -564,7 +564,7 @@ class Part(models.Model):
     def required_parts(self):
         """ Return a list of parts required to make this part (list of BOM items) """
         parts = []
-        for bom in self.bom_items.all():
+        for bom in self.bom_items.all().select_related('sub_part'):
             parts.append(bom.sub_part)
         return parts
 
@@ -582,17 +582,11 @@ class Part(models.Model):
     def has_complete_bom_pricing(self):
         """ Return true if there is pricing information for each item in the BOM. """
 
-        for item in self.bom_items.all().prefetch_related('sub_part'):
+        for item in self.bom_items.all().select_related('sub_part'):
             if not item.sub_part.has_pricing_info:
                 return False
 
         return True
-
-    @property
-    def single_price_info(self):
-        """ Return a simplified pricing string for this part at single quantity """
-
-        return self.get_price_info()
 
     def get_price_info(self, quantity=1, buy=True, bom=True):
         """ Return a simplified pricing string for this part
@@ -613,7 +607,7 @@ class Part(models.Model):
         if min_price == max_price:
             return min_price
 
-        return "{a} to {b}".format(a=min_price, b=max_price)
+        return "{a} - {b}".format(a=min_price, b=max_price)
 
     def get_supplier_price_range(self, quantity=1):
         
@@ -650,7 +644,7 @@ class Part(models.Model):
         min_price = None
         max_price = None
 
-        for item in self.bom_items.all().prefetch_related('sub_part'):
+        for item in self.bom_items.all().select_related('sub_part'):
             prices = item.sub_part.get_price_range(quantity * item.quantity)
 
             if prices is None:
