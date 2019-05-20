@@ -587,30 +587,34 @@ class PartPricing(AjaxView):
 
         # Supplier pricing information
         if part.supplier_count > 0:
-            min_buy_price = part.get_min_supplier_price(quantity)
-            max_buy_price = part.get_max_supplier_price(quantity)
+            buy_price = part.get_supplier_price_range(quantity)
 
-            if min_buy_price:
-                ctx['min_total_buy_price'] = min_buy_price
-                ctx['min_unit_buy_price'] = min_buy_price / quantity
+            if buy_price is not None:
+                min_buy_price, max_buy_price = buy_price
 
-            if max_buy_price:
-                ctx['max_total_buy_price'] = max_buy_price
-                ctx['max_unit_buy_price'] = max_buy_price / quantity
+                if min_buy_price:
+                    ctx['min_total_buy_price'] = min_buy_price
+                    ctx['min_unit_buy_price'] = min_buy_price / quantity
+
+                if max_buy_price:
+                    ctx['max_total_buy_price'] = max_buy_price
+                    ctx['max_unit_buy_price'] = max_buy_price / quantity
 
         # BOM pricing information
         if part.bom_count > 0:
 
-            min_bom_price = part.get_min_bom_price(quantity)
-            max_bom_price = part.get_max_bom_price(quantity)
+            bom_price = part.get_bom_price_range(quantity)
 
-            if min_bom_price:
-                ctx['min_total_bom_price'] = min_bom_price
-                ctx['min_unit_bom_price'] = min_bom_price / quantity
-            
-            if max_bom_price:
-                ctx['max_total_bom_price'] = max_bom_price
-                ctx['max_unit_bom_price'] = max_bom_price / quantity
+            if bom_price is not None:
+                min_bom_price, max_bom_price = bom_price
+
+                if min_bom_price:
+                    ctx['min_total_bom_price'] = min_bom_price
+                    ctx['min_unit_bom_price'] = min_bom_price / quantity
+                
+                if max_bom_price:
+                    ctx['max_total_bom_price'] = max_bom_price
+                    ctx['max_unit_bom_price'] = max_bom_price / quantity
 
         return ctx
 
