@@ -933,3 +933,19 @@ class BomItem(models.Model):
         base_quantity = self.quantity * build_quantity
 
         return base_quantity + self.get_overage_quantity(base_quantity)
+
+    @property
+    def price_range(self):
+        """ Return the price-range for this BOM item. """
+
+        prange = self.sub_part.get_price_range(self.quantity)
+
+        if prange is None:
+            return prange
+
+        pmin, pmax = prange
+
+        if pmin == pmax:
+            return str(pmin)
+
+        return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)

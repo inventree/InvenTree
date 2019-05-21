@@ -149,8 +149,22 @@ function loadBomTable(table, options) {
                 
                 return renderLink(text, row.sub_part_detail.url + "stock/");
             }
-        }
-        );
+        });
+
+        cols.push(
+        {
+            field: 'price_range',
+            title: 'Price',
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                if (value) {
+                    return value;
+                } else {
+                    return "<span class='warning-msg'>No pricing available</span>";
+                }
+            }
+        });
+
     }
     
     // Part notes
