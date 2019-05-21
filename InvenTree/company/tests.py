@@ -2,7 +2,7 @@ from django.test import TestCase
 
 import os
 
-from .models import Company, Contact
+from .models import Company, Contact, SupplierPart, SupplierPriceBreak
 from .models import rename_company_image
 
 
@@ -15,6 +15,7 @@ class CompanySimpleTest(TestCase):
         'location',
         'bom',
         'supplier_part',
+        'price_breaks',
     ]
 
     def setUp(self):
@@ -24,6 +25,11 @@ class CompanySimpleTest(TestCase):
                                address='123 Sales St.',
                                is_customer=False,
                                is_supplier=True)
+
+        self.acme0001 = SupplierPart.objects.get(SKU='ACME0001')
+        self.acme0002 = SupplierPart.objects.get(SKU='ACME0002')
+        self.zerglphs = SupplierPart.objects.get(SKU='ZERGLPHS')
+        self.zergm312 = SupplierPart.objects.get(SKU='ZERGM312')
 
     def test_company_model(self):
         c = Company.objects.get(name='ABC Co.')
@@ -51,15 +57,40 @@ class CompanySimpleTest(TestCase):
         self.assertTrue(acme.has_parts)
         self.assertEqual(acme.part_count, 2)
 
-        self.assertFalse(appel.has_parts)
-        self.assertEqual(appel.part_count, 0)
+        self.assertTrue(appel.has_parts)
+        self.assertEqual(appel.part_count, 1)
 
         self.assertTrue(zerg.has_parts)
         self.assertEqual(zerg.part_count, 1)
 
+    def test_price_breaks(self):
+        
+        self.assertTrue(self.acme0001.has_price_breaks)
+        self.assertTrue(self.acme0002.has_price_breaks)
+        self.assertTrue(self.zerglphs.has_price_breaks)
+        self.assertFalse(self.zergm312.has_price_breaks)
 
+        self.assertEqual(self.acme0001.price_breaks.count(), 3)
+        self.assertEqual(self.acme0002.price_breaks.count(), 2)
+        self.assertEqual(self.zerglphs.price_breaks.count(), 2)
+        self.assertEqual(self.zergm312.price_breaks.count(), 0)
 
-        # TODO - Add some supplier parts here
+    def test_quantity_pricing(self):
+        """ Simple test for quantity pricing """
+
+        p = self.acme0001.get_price
+        self.assertEqual(p(1), 10)
+        self.assertEqual(p(4), 40)
+        self.assertEqual(p(11), 82.5)
+        self.assertEqual(p(23), 172.5)
+        self.assertEqual(p(100), 350)
+
+        p = self.acme0002.get_price
+        self.assertEqual(p(1), None)
+        self.assertEqual(p(2), None)
+        self.assertEqual(p(5), 35)
+        self.assertEqual(p(45), 315)
+        self.assertEqual(p(55), 68.75)
 
 
 class ContactSimpleTest(TestCase):

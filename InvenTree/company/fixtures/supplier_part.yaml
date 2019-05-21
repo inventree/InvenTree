@@ -22,3 +22,10 @@
     part: 1
     supplier: 3
     SKU: 'ZERGLPHS'
+
+- model: company.supplierpart
+  pk: 4
+  fields:
+    part: 2
+    supplier: 2
+    SKU: 'ZERGM312'
