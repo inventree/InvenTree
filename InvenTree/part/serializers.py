@@ -132,7 +132,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
         queryset = queryset.prefetch_related('sub_part')
         queryset = queryset.prefetch_related('sub_part__category')
         queryset = queryset.prefetch_related('sub_part__stock_items')
-        queryset = queryset.prefetch_related('sub_part__suppliers__price_breaks')
+        queryset = queryset.prefetch_related('sub_part__supplier_parts__pricebreaks')
         return queryset
 
     class Meta:
