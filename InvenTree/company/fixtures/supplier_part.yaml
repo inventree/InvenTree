@@ -1,0 +1,31 @@
+# Supplier Parts
+
+# M2x4 LPHS from ACME
+- model: company.supplierpart
+  pk: 1
+  fields:
+    part: 1
+    supplier: 1
+    SKU: 'ACME0001'
+
+- model: company.supplierpart
+  pk: 2
+  fields:
+    part: 1
+    supplier: 1
+    SKU: 'ACME0002'
+
+# M2x4 LPHS from Zerg Corp
+- model: company.supplierpart
+  pk: 3
+  fields:
+    part: 1
+    supplier: 3
+    SKU: 'ZERGLPHS'
+
+- model: company.supplierpart
+  pk: 4
+  fields:
+    part: 2
+    supplier: 2
+    SKU: 'ZERGM312'

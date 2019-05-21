@@ -1,0 +1,14 @@
+# Sample company data
+
+- model: company.company
+  fields:
+    name: ACME
+    description: A Cool Military Enterprise
+- model: company.company
+  fields:
+    name: Appel Computers
+    description: Think more differenter
+- model: company.company
+  fields:
+    name: Zerg Corp
+    description: We eat the competition
