@@ -36,12 +36,12 @@
 # Price breaks for ZERGLPHS
 - model: company.supplierpricebreak
   fields:
-    part: 3
-    quantity: 5
+    part: 4
+    quantity: 25
     cost: 8
 
 - model: company.supplierpricebreak
   fields:
-    part: 3
+    part: 4
     quantity: 100
     cost: 1.25

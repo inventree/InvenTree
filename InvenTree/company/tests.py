@@ -2,8 +2,9 @@ from django.test import TestCase
 
 import os
 
-from .models import Company, Contact, SupplierPart, SupplierPriceBreak
+from .models import Company, Contact, SupplierPart
 from .models import rename_company_image
+from part.models import Part
 
 
 class CompanySimpleTest(TestCase):
@@ -67,13 +68,13 @@ class CompanySimpleTest(TestCase):
         
         self.assertTrue(self.acme0001.has_price_breaks)
         self.assertTrue(self.acme0002.has_price_breaks)
-        self.assertTrue(self.zerglphs.has_price_breaks)
-        self.assertFalse(self.zergm312.has_price_breaks)
+        self.assertTrue(self.zergm312.has_price_breaks)
+        self.assertFalse(self.zerglphs.has_price_breaks)
 
         self.assertEqual(self.acme0001.price_breaks.count(), 3)
         self.assertEqual(self.acme0002.price_breaks.count(), 2)
-        self.assertEqual(self.zerglphs.price_breaks.count(), 2)
-        self.assertEqual(self.zergm312.price_breaks.count(), 0)
+        self.assertEqual(self.zerglphs.price_breaks.count(), 0)
+        self.assertEqual(self.zergm312.price_breaks.count(), 2)
 
     def test_quantity_pricing(self):
         """ Simple test for quantity pricing """
@@ -91,6 +92,21 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(p(5), 35)
         self.assertEqual(p(45), 315)
         self.assertEqual(p(55), 68.75)
+
+    def test_part_pricing(self):
+        m2x4 = Part.objects.get(name='M2x4 LPHS')
+
+        self.assertEqual(m2x4.get_price_info(10), "70.00000 - 75.00000")
+        self.assertEqual(m2x4.get_price_info(100), "125.00000 - 350.00000")
+
+        pmin, pmax = m2x4.get_price_range(5)
+        self.assertEqual(pmin, 35)
+        self.assertEqual(pmax, 37.5)
+        
+        m3x12 = Part.objects.get(name='M3x12 SHCS')
+
+        self.assertIsNone(m3x12.get_price_info(3))
+        self.assertIsNotNone(m3x12.get_price_info(50))
 
 
 class ContactSimpleTest(TestCase):
