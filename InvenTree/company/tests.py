@@ -8,6 +8,15 @@ from .models import rename_company_image
 
 class CompanySimpleTest(TestCase):
 
+    fixtures = [
+        'company',
+        'category',
+        'part',
+        'location',
+        'bom',
+        'supplier_part',
+    ]
+
     def setUp(self):
         Company.objects.create(name='ABC Co.',
                                description='Seller of ABC products',
@@ -17,7 +26,7 @@ class CompanySimpleTest(TestCase):
                                is_supplier=True)
 
     def test_company_model(self):
-        c = Company.objects.get(pk=1)
+        c = Company.objects.get(name='ABC Co.')
         self.assertEqual(c.name, 'ABC Co.')
         self.assertEqual(str(c), 'ABC Co. - Seller of ABC products')
 
@@ -34,9 +43,21 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(rn, 'company_images' + os.path.sep + 'company_1_img')
 
     def test_part_count(self):
-        # Initially the company should have no associated parts
-        c = Company.objects.get(pk=1)
-        self.assertEqual(c.has_parts, False)
+
+        acme = Company.objects.get(pk=1)
+        appel = Company.objects.get(pk=2)
+        zerg = Company.objects.get(pk=3)
+        
+        self.assertTrue(acme.has_parts)
+        self.assertEqual(acme.part_count, 2)
+
+        self.assertFalse(appel.has_parts)
+        self.assertEqual(appel.part_count, 0)
+
+        self.assertTrue(zerg.has_parts)
+        self.assertEqual(zerg.part_count, 1)
+
+
 
         # TODO - Add some supplier parts here
 
