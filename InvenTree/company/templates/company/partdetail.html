@@ -66,9 +66,6 @@ InvenTree | {{ company.name }} - Parts
     {% if part.base_cost > 0 %}
     <tr><td>Base Price (Flat Fee)</td><td>{{ part.base_cost }}</td></tr>
     {% endif %}
-    {% if part.minimum > 1 %}
-    <tr><td>Minimum Order Quantity</td><td>{{ part.minimum }}</td></tr>
-    {% endif %}
     <tr>
         <th>Price Breaks</th>
         <th>

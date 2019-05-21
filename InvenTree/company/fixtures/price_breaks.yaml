@@ -1,0 +1,47 @@
+# Price breaks for supplier parts
+
+# Price breaks for ACME0001
+
+- model: company.supplierpricebreak
+  fields:
+    part: 1
+    quantity: 1
+    cost: 10
+
+- model: company.supplierpricebreak
+  fields:
+    part: 1
+    quantity: 5
+    cost: 7.50
+
+- model: company.supplierpricebreak
+  fields:
+    part: 1
+    quantity: 25
+    cost: 3.50
+
+# Price breaks for ACME0002
+- model: company.supplierpricebreak
+  fields:
+    part: 2
+    quantity: 5
+    cost: 7.00
+
+- model: company.supplierpricebreak
+  fields:
+    part: 2
+    quantity: 50
+    cost: 1.25
+
+# Price breaks for ZERGLPHS
+- model: company.supplierpricebreak
+  fields:
+    part: 4
+    quantity: 25
+    cost: 8
+
+- model: company.supplierpricebreak
+  fields:
+    part: 4
+    quantity: 100
+    cost: 1.25

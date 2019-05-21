@@ -57,7 +57,6 @@ class EditSupplierPartForm(HelperForm):
             'note',
             'base_cost',
             'multiple',
-            'minimum',
             'packaging',
             'lead_time'
         ]

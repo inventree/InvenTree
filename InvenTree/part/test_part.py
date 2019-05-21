@@ -68,3 +68,7 @@ class PartTest(TestCase):
         barcode = self.R1.format_barcode()
         self.assertIn('InvenTree', barcode)
         self.assertIn(self.R1.name, barcode)
+
+    def test_copy(self):
+
+        self.R2.deepCopy(self.R1, image=True, bom=True)

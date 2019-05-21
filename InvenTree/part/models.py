@@ -710,7 +710,7 @@ class Part(models.Model):
         if kwargs.get('image', True):
             if other.image:
                 image_file = ContentFile(other.image.read())
-                image_file.name = rename_part_image(self, 'test.png')
+                image_file.name = rename_part_image(self, other.image.url)
 
                 self.image = image_file
 
