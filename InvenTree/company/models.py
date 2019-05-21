@@ -173,7 +173,6 @@ class SupplierPart(models.Model):
         note: Longer form note field
         base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
         multiple: Multiple that the part is provided in
-        minimum: MOQ (minimum order quantity) required for purchase
         lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
     """
@@ -217,8 +216,6 @@ class SupplierPart(models.Model):
     
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Order multiple')
 
-    minimum = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Minimum order quantity (MOQ)')
-
     lead_time = models.DurationField(blank=True, null=True)
 
     @property
@@ -255,10 +252,6 @@ class SupplierPart(models.Model):
         # No price break information available?
         if len(price_breaks) == 0:
             return None
-
-        # Minimum ordering requirement
-        if moq and self.minimum > quantity:
-            quantity = self.minimum
 
         # Order multiples
         if multiples:
