@@ -81,7 +81,8 @@ class SupplierPartList(generics.ListCreateAPIView):
         'part__stock_items',
         'part__bom_items',
         'part__builds',
-        'supplier')
+        'supplier',
+        'pricebreaks')
 
     serializer_class = SupplierPartSerializer
 

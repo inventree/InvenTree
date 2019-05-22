@@ -362,7 +362,7 @@ function insertNewItemButton(modal, options) {
 
     var html = "<span style='float: right;'>";
 
-    html += "<div type='button' class='btn btn-primary'";
+    html += "<div type='button' class='btn btn-primary btn-secondary'";
     
     if (options.title) {
         html += " title='" + options.title + "'";
@@ -392,6 +392,8 @@ function attachSecondaryModal(modal, options) {
     // Insert the button
     insertNewItemButton(modal, options);
 
+    var data = options.data || {};
+
     // Add a callback to the button
     $(modal).find("#btn-new-" + options.field).on('click', function() {
 
@@ -400,6 +402,7 @@ function attachSecondaryModal(modal, options) {
             options.url,
             {
                 modal: '#modal-form-secondary',
+                data: data,
                 success: function(response) {
 
                     /* A successful object creation event should return a response which contains:

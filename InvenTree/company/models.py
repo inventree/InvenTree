@@ -239,6 +239,10 @@ class SupplierPart(models.Model):
         """ Return the associated price breaks in the correct order """
         return self.pricebreaks.order_by('quantity').all()
 
+    @property
+    def unit_pricing(self):
+        return self.get_price(1)
+
     def get_price(self, quantity, moq=True, multiples=True):
         """ Calculate the supplier price based on quantity price breaks.
 
