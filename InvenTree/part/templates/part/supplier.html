@@ -38,11 +38,21 @@
 
     $('#supplier-create').click(function () {
         launchModalForm(
-                        "{% url 'supplier-part-create' %}",
-                        {
-                            reload: true,
-                            data: {part: {{ part.id }} }
-                        });
+            "{% url 'supplier-part-create' %}",
+            {
+                reload: true,
+                data: {
+                    part: {{ part.id }}
+                },
+                secondary: [
+                    {
+                        field: 'supplier',
+                        label: 'New Supplier',
+                        title: 'Create new supplier',
+                        url: "{% url 'company-create' %}"
+                    }
+                ]
+            });
     });
 
     $("#supplier-table").bootstrapTable({
@@ -83,6 +93,18 @@
                 sortable: true,
                 field: 'MPN',
                 title: 'MPN',
+            },
+            {
+                sortable: true,
+                field: 'pricing',
+                title: 'Price',
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return value;
+                    } else {
+                        return "<span class='warning-msg'><i>No pricing available</i></span>";
+                    }
+                },
             }
         ],
         url: "{% url 'api-part-supplier-list' %}"
