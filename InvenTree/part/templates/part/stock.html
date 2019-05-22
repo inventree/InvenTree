@@ -58,6 +58,15 @@
                     url: "{% url 'part-create' %}",
                 },
                 {
+                    field: 'supplier_part',
+                    label: 'New Supplier Part',
+                    title: 'Create new Supplier Part',
+                    url: "{% url 'supplier-part-create' %}",
+                    data: {
+                        part: {{ part.id }}
+                    },
+                },
+                {
                     field: 'location',
                     label: 'New Location',
                     title: 'Create New Location',

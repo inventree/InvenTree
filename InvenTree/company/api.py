@@ -81,7 +81,8 @@ class SupplierPartList(generics.ListCreateAPIView):
         'part__stock_items',
         'part__bom_items',
         'part__builds',
-        'supplier')
+        'supplier',
+        'pricebreaks')
 
     serializer_class = SupplierPartSerializer
 
@@ -151,7 +152,7 @@ supplier_part_api_urls = [
 
 company_api_urls = [
     
-    url(r'^part/', include(supplier_part_api_urls)),
+    url(r'^part/?', include(supplier_part_api_urls)),
 
     url(r'^price-break/?', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
 

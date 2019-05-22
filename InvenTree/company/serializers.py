@@ -33,7 +33,7 @@ class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = [
-            'id',
+            'pk',
             'url',
             'name',
             'description',
@@ -62,6 +62,8 @@ class SupplierPartSerializer(serializers.ModelSerializer):
     supplier_name = serializers.CharField(source='supplier.name', read_only=True)
     supplier_logo = serializers.CharField(source='supplier.get_image_url', read_only=True)
 
+    pricing = serializers.CharField(source='unit_pricing', read_only=True)
+
     class Meta:
         model = SupplierPart
         fields = [
@@ -76,6 +78,7 @@ class SupplierPartSerializer(serializers.ModelSerializer):
             'manufacturer',
             'MPN',
             'URL',
+            'pricing',
         ]
 
 

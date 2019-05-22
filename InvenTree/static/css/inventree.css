@@ -226,6 +226,10 @@
     padding-bottom: 3px;
 }
 
+.modal .btn-secondary {
+    background-color: #5e7d87;
+}
+
 /* The side navigation menu */
 .sidenav {
     height: 100%; /* 100% Full-height */

@@ -33,33 +33,39 @@
     <div class='col-sm-6'>
     <table class='table table-striped'>
         <tr>
-            <td>Part name</td>
+            <td><b>Part name</b></td>
             <td>{{ part.full_name }}</td>
         </tr>
         {% if part.IPN %}
         <tr>
-            <td>IPN</td>
+            <td><b>IPN</b></td>
             <td>{{ part.IPN }}</td>
         </tr>
         {% endif %}
+        {% if part.variant %}
         <tr>
-            <td>Description</td>
+            <td><b>Variant</b></td>
+            <td>{{ part.variant }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td><b>Description</b></td>
             <td>{{ part.description }}</td>
         </tr>
         {% if part.keywords %}
         <tr>
-            <td>Keywords</td>
+            <td><b>Keywords</b></td>
             <td>{{ part.keywords }}</td>
         </tr>
         {% endif %}
         {% if part.URL %}
         <tr>
-            <td>URL</td>
+            <td><b>URL</b></td>
             <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
         </tr>
         {% endif %}
         <tr>
-            <td>Category</td>
+            <td><b>Category</b></td>
             <td>
             {% if part.category %}
                 <a href="{% url 'category-detail' part.category.id %}">{{ part.category.pathstring }}</a>
@@ -68,20 +74,20 @@
         </tr>
         {% if part.default_location %}
         <tr>
-            <td>Default Location</td>
+            <td><b>Default Location</b></td>
             <td><a href="{% url 'stock-location-detail' part.default_location.id %}">{{ part.default_location.pathstring }}</a></td>
         </tr>
         {% endif %}
         {% if part.default_supplier %}
         <tr>
-            <td>Default Supplier</td>
+            <td><b>Default Supplier</b></td>
             <td><a href="{% url 'supplier-part-detail' part.default_supplier.id %}">
                 {{ part.default_supplier.supplier.name }} | {{ part.default_supplier.SKU }}
             </a></td>
         </tr>
         {% endif %}
         <tr>
-            <td>Units</td>
+            <td><b>Units</b></td>
             <td>{{ part.units }}</td>
         </tr>
     </table>
@@ -89,28 +95,28 @@
     <div class='col-sm-6'>
     <table class='table table-striped'>
         <tr>
-            <td>Buildable</td>
+            <td><b>Buildable</b></td>
             <td>{% include "yesnolabel.html" with value=part.buildable %}</td>
         </tr>
         <tr>
-            <td>Consumable</td>
+            <td><b>Consumable</b></td>
             <td>{% include "yesnolabel.html" with value=part.consumable %}</td>
         </tr>
         <tr>
-            <td>Trackable</td>
+            <td><b>Trackable</b></td>
             <td>{% include "yesnolabel.html" with value=part.trackable %}</td>
         </tr>
         <tr>
-            <td>Purchaseable</td>
+            <td><b>Purchaseable</b></td>
             <td>{% include "yesnolabel.html" with value=part.purchaseable %}</td>
         </tr>
         <tr>
-            <td>Salable</td>
+            <td><b>Salable</b></td>
             <td>{% include "yesnolabel.html" with value=part.salable %}</td>
         </tr>
         {% if part.minimum_stock > 0 %}
         <tr>
-            <td>Minimum Stock</td>
+            <td><b>Minimum Stock</b></td>
             <td>{{ part.minimum_stock }}</td>
         </tr>
         {% endif %}
