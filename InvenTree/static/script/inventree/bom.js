@@ -121,7 +121,16 @@ function loadBomTable(table, options) {
                 }
 
                 return text;
-            }
+            },
+            footerFormatter: function(data) {
+                var quantity = 0;
+
+                data.forEach(function(item) {
+                    quantity += item.quantity;
+                });
+
+                return quantity;
+            },
         }
     );
 
@@ -208,6 +217,7 @@ function loadBomTable(table, options) {
         search: true,
         formatNoMatches: function() { return "No BOM items found"; },
         clickToSelect: true,
+        showFooter: true,
         queryParams: function(p) {
             return params;
         },
