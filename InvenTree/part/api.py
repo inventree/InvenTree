@@ -22,6 +22,7 @@ from .serializers import CategorySerializer
 from .serializers import PartStarSerializer
 
 from InvenTree.views import TreeSerializer
+from InvenTree.helpers import str2bool
 
 
 class PartCategoryTree(TreeSerializer):
@@ -203,8 +204,20 @@ class BomList(generics.ListCreateAPIView):
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
     """
-    
+
     serializer_class = BomItemSerializer
+    
+    def get_serializer(self, *args, **kwargs):
+
+        # Do we wish to include extra detail?
+        part_detail = str2bool(self.request.GET.get('part_detail', None))
+        sub_part_detail = str2bool(self.request.GET.get('sub_part_detail', None))
+
+        kwargs['part_detail'] = part_detail
+        kwargs['sub_part_detail'] = sub_part_detail
+
+        kwargs['context'] = self.get_serializer_context()
+        return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self):
         queryset = BomItem.objects.all()
