@@ -125,7 +125,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
     price_range = serializers.CharField(read_only=True)
 
     def __init__(self, *args, **kwargs):
-        # part_detail and sub_part_detail serializers are only included if requested. 
+        # part_detail and sub_part_detail serializers are only included if requested.
         # This saves a bunch of database requests
 
         part_detail = kwargs.pop('part_detail', False)
