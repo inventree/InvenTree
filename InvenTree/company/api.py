@@ -11,6 +11,8 @@ from rest_framework import generics, permissions
 
 from django.conf.urls import url, include
 
+from InvenTree.helpers import str2bool
+
 from .models import Company
 from .models import SupplierPart, SupplierPriceBreak
 
@@ -83,6 +85,16 @@ class SupplierPartList(generics.ListCreateAPIView):
         'part__builds',
         'supplier',
         'pricebreaks')
+
+    def get_serializer(self, *args, **kwargs):
+
+        # Do we wish to include extra detail?
+        part_detail = str2bool(self.request.GET.get('part_detail', None))
+
+        kwargs['part_detail'] = part_detail
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
 
     serializer_class = SupplierPartSerializer
 

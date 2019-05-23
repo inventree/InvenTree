@@ -72,7 +72,8 @@
         editable: {{ editing_enabled }},
         bom_url: "{% url 'api-bom-list' %}",
         part_url: "{% url 'api-part-list' %}",
-        parent_id: {{ part.id }} 
+        parent_id: {{ part.id }} ,
+        sub_part_detail: true,
     });
 
     {% if editing_enabled %}

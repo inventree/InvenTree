@@ -30,7 +30,8 @@
         formatNoMatches: function() { return "{{ part.full_name }} is not used to make any other parts"; },
         queryParams: function(p) {
             return {
-                sub_part: {{ part.id }}
+                sub_part: {{ part.id }},
+                part_detail: true,
             }
         },
         columns: [

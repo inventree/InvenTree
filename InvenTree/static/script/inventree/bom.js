@@ -121,7 +121,16 @@ function loadBomTable(table, options) {
                 }
 
                 return text;
-            }
+            },
+            footerFormatter: function(data) {
+                var quantity = 0;
+
+                data.forEach(function(item) {
+                    quantity += item.quantity;
+                });
+
+                return quantity;
+            },
         }
     );
 
@@ -189,21 +198,32 @@ function loadBomTable(table, options) {
     }
 
     // Configure the table (bootstrap-table)
+
+    var params = {
+        part: options.parent_id,
+        ordering: 'name',
+    }
+
+    if (options.part_detail) {
+        params.part_detail = true;
+    }
+
+    if (options.sub_part_detail) {
+        params.sub_part_detail = true;
+    }
     
     table.bootstrapTable({
         sortable: true,
         search: true,
         formatNoMatches: function() { return "No BOM items found"; },
         clickToSelect: true,
+        showFooter: true,
         queryParams: function(p) {
-            return {
-                part: options.parent_id,
-                ordering: 'name',
-        }
-    },
-    columns: cols,
-    url: options.bom_url
-});
+            return params;
+        },
+        columns: cols,
+        url: options.bom_url
+    });
 
     // In editing mode, attached editables to the appropriate table elements
     if (options.editable) {
