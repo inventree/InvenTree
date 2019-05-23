@@ -40,6 +40,17 @@ class BuildList(generics.ListCreateAPIView):
     ]
 
 
+class BuildDetail(generics.RetrieveUpdateAPIView):
+    """ API endpoint for detail view of a Build object """
+
+    queryset = Build.objects.all()
+    serializer_class = BuildSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+
 class BuildItemList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of BuildItem objects
 
@@ -84,6 +95,8 @@ build_item_api_urls = [
 
 build_api_urls = [
     url(r'^item/?', include(build_item_api_urls)),
+
+    url(r'^(?P<pk>\d+)/', BuildDetail.as_view(), name='api-build-detail'),
 
     url(r'^.*$', BuildList.as_view(), name='api-build-list'),
 ]

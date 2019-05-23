@@ -50,6 +50,7 @@ class PartBriefSerializer(serializers.ModelSerializer):
             'url',
             'full_name',
             'description',
+            'total_stock',
             'available_stock',
             'image_url',
         ]

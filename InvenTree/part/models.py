@@ -379,7 +379,7 @@ class Part(models.Model):
 
         total -= self.allocation_count
 
-        return total
+        return max(total, 0)
 
     def isStarredBy(self, user):
         """ Return True if this part has been starred by a particular user """
