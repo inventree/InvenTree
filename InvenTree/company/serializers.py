@@ -64,6 +64,15 @@ class SupplierPartSerializer(serializers.ModelSerializer):
 
     pricing = serializers.CharField(source='unit_pricing', read_only=True)
 
+    def __init__(self, *args, **kwargs):
+
+        part_detail = kwargs.pop('part_detail', False)
+
+        super(SupplierPartSerializer, self).__init__(*args, **kwargs)
+
+        if part_detail is not True:
+            self.fields.pop('part_detail')
+
     class Meta:
         model = SupplierPart
         fields = [

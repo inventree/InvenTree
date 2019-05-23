@@ -377,7 +377,7 @@ function loadStockTable(table, options) {
         search: true,
         method: 'get',
         pagination: true,
-        pageSize: 25,
+        pageSize: 50,
         rememberOrder: true,
         queryParams: options.params,
         columns: [
@@ -558,6 +558,7 @@ function loadStockTrackingTable(table, options) {
         queryParams: options.params,
         columns: cols,
         pagination: true,
+        pageSize: 50,
         url: options.url,
     });
 
