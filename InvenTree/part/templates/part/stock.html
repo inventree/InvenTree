@@ -37,6 +37,8 @@
     loadStockTable($("#stock-table"), {
         params: {
             part: {{ part.id }},
+            location_detail: true,
+            part_detail: true,
         },
         buttons: [
             '#stock-options',

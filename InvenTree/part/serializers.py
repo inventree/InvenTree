@@ -125,6 +125,21 @@ class BomItemSerializer(InvenTreeModelSerializer):
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
     price_range = serializers.CharField(read_only=True)
 
+    def __init__(self, *args, **kwargs):
+        # part_detail and sub_part_detail serializers are only included if requested.
+        # This saves a bunch of database requests
+
+        part_detail = kwargs.pop('part_detail', False)
+        sub_part_detail = kwargs.pop('sub_part_detail', False)
+
+        super(BomItemSerializer, self).__init__(*args, **kwargs)
+
+        if part_detail is not True:
+            self.fields.pop('part_detail')
+
+        if sub_part_detail is not True:
+            self.fields.pop('sub_part_detail')
+
     @staticmethod
     def setup_eager_loading(queryset):
         queryset = queryset.prefetch_related('part')

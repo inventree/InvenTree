@@ -18,6 +18,7 @@ from .serializers import LocationSerializer
 from .serializers import StockTrackingSerializer
 
 from InvenTree.views import TreeSerializer
+from InvenTree.helpers import str2bool
 
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
@@ -244,6 +245,17 @@ class StockList(generics.ListCreateAPIView):
         - category: Filter by parts belonging to a certain category
         - supplier: Filter by supplier
     """
+
+    def get_serializer(self, *args, **kwargs):
+
+        part_detail = str2bool(self.request.GET.get('part_detail', None))
+        location_detail = str2bool(self.request.GET.get('location_detail', None))
+
+        kwargs['part_detail'] = part_detail
+        kwargs['location_detail'] = location_detail
+        
+        kwargs['context'] = self.get_serializer_context()
+        return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self):
         """

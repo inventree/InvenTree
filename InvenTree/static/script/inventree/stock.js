@@ -377,7 +377,7 @@ function loadStockTable(table, options) {
         search: true,
         method: 'get',
         pagination: true,
-        pageSize: 25,
+        pageSize: 50,
         rememberOrder: true,
         queryParams: options.params,
         columns: [
@@ -392,25 +392,25 @@ function loadStockTable(table, options) {
                 visible: false,
             },
             {
-                field: 'part.full_name',
+                field: 'part_detail',
                 title: 'Part',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.part.image_url) + renderLink(value, row.part.url + 'stock/');
+                    return imageHoverIcon(value.image_url) + renderLink(value.full_name, value.url + 'stock/');
                 }
             },
             {
-                field: 'part.description',
+                field: 'part_detail.description',
                 title: 'Description',
                 sortable: true,
             },
             {
-                field: 'location',
+                field: 'location_detail',
                 title: 'Location',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    if (row.location) {
-                        return renderLink(row.location.pathstring, row.location.url);
+                    if (value) {
+                        return renderLink(value.pathstring, value.url);
                     }
                     else {
                         return '<i>No stock location set</i>';
@@ -558,6 +558,7 @@ function loadStockTrackingTable(table, options) {
         queryParams: options.params,
         columns: cols,
         pagination: true,
+        pageSize: 50,
         url: options.url,
     });
 
