@@ -5,6 +5,9 @@ Django views for interacting with Part app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import tablib
+import os
+
 from django.shortcuts import get_object_or_404
 
 from django.urls import reverse_lazy
@@ -510,6 +513,8 @@ class BomUpload(AjaxView):
 
         Initially returns a form for file upload """
 
+        self.request = request
+
         # A valid Part object must be supplied. This is the 'parent' part for the BOM
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
 
@@ -517,17 +522,56 @@ class BomUpload(AjaxView):
 
         return self.renderJsonResponse(request, form)
 
+    def handleBomFileUpload(self, bom_file):
+
+        form = part_forms.BomImportForm()
+        
+        data = {
+            # TODO - Validate the form if there isn't actually an error!
+            'form_valid': False
+        }
+
+        # Extract the file format data
+        ext = os.path.splitext(bom_file.name)[-1].lower()
+
+        if ext in ['.csv', '.tsv', ]:
+            # These file formats need string decoding
+            raw_data = bom_file.read().decode('utf-8')
+        elif ext in ['.xls', '.xlsx']:
+            raw_data = bom_file.read()
+        else:
+            form.errors['bom_file'] = ['Unsupported file format: ' + ext]
+            return self.renderJsonResponse(self.request, form, data)
+
+        # Now try to read the data
+        try:
+            bom_data = tablib.Dataset().load(raw_data)
+            print(bom_data)
+        except tablib.UnsupportedFormat:
+            valid = False
+            form.errors['bom_file'] = [
+                "Error reading '{f}' (Unsupported file format)".format(f=str(bom_file)),
+            ]
+
+        return self.renderJsonResponse(self.request, form, data=data)
+
     def post(self, request, *args, **kwargs):
         """ Perform the various 'POST' requests required.
         """
 
-        data = {
-            'form_valid': False,
-        }
+        self.request = request
+
+        # Did the user POST a file named bom_file?
+        bom_file = request.FILES.get('bom_file', None)
 
         form = self.get_form()
 
-        form.errors['bom_file'] = ['Nah mate']
+        if bom_file:
+            return self.handleBomFileUpload(bom_file)
+
+        data = {
+            'form_valid': False,
+        }
 
         return self.renderJsonResponse(request, form, data=data)
 
