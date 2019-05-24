@@ -34,6 +34,7 @@
 <div id='button-toolbar' class="btn-group" role="group" aria-label="...">
     {% if editing_enabled %}
     <button class='btn btn-danger' type='button' title='Remove selected BOM items' id='bom-item-delete'><span class='glyphicon glyphicon-trash'></span></button>
+    <button class='btn btn-primary' type='button' title='Import BOM data' id='bom-upload'><span class='glyphicon glyphicon-open-file'></span></button>
     <button class='btn btn-primary' type='button' title='New BOM Item' id='bom-item-new'><span class='glyphicon glyphicon-plus'></span></button>
     <button class='btn btn-success' type='button' title='Finish Editing' id='editing-finished'><span class='glyphicon glyphicon-ok'></span></button>
     {% else %}
@@ -103,6 +104,12 @@
                     },
                 ]
             }
+        );
+    });
+
+    $("#bom-upload").click(function() {
+        launchModalForm(
+            "{% url 'bom-import' part.id %}",
         );
     });
 

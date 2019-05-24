@@ -470,6 +470,68 @@ class BomValidate(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context=self.get_context())
 
 
+class BomUpload(AjaxView):
+    """ View for uploading a BOM file, and handling BOM data importing.
+
+    The BOM upload process is as follows:
+
+    1. (Client) Select and upload BOM file
+    2. (Server) Verify that supplied file is a file compatible with tablib library
+    3. (Server) Introspect data file, try to find sensible columns / values / etc
+    4. (Server) Send suggestions back to the client
+    5. (Client) Makes choices based on suggestions:
+        - Accept automatic matching to parts found in database
+        - Accept suggestions for 'partial' or 'fuzzy' matches
+        - Create new parts in case of parts not being available
+    6. (Client) Sends updated dataset back to server
+    7. (Server) Check POST data for validity, sanity checking, etc.
+    8. (Server) Respond to POST request
+        - If data are valid, proceed to 9.
+        - If data not valid, return to 4.
+    9. (Server) Send confirmation form to user
+        - Display the actions which will occur
+        - Provide final "CONFIRM" button
+    10. (Client) Confirm final changes
+    11. (Server) Apply changes to database, update BOM items.
+
+    During these steps, data are passed between the server/client as JSON objects.
+    """
+
+    def get_form(self):
+        """ Return the correct form for the given step in the upload process """
+
+        if 1 or self.request.method == 'GET':
+            form = part_forms.BomImportForm()
+
+        return form
+
+    def get(self, request, *args, **kwargs):
+        """ Perform the initial 'GET' request. 
+
+        Initially returns a form for file upload """
+
+        # A valid Part object must be supplied. This is the 'parent' part for the BOM
+        part = get_object_or_404(Part, pk=self.kwargs['pk'])
+
+        form = self.get_form()
+
+        return self.renderJsonResponse(request, form)
+
+    def post(self, request, *args, **kwargs):
+        """ Perform the various 'POST' requests required.
+        """
+
+        data = {
+            'form_valid': False,
+        }
+
+        form = self.get_form()
+
+        form.errors['bom_file'] = ['Nah mate']
+
+        return self.renderJsonResponse(request, form, data=data)
+
+
 class BomDownload(AjaxView):
     """
     Provide raw download of a BOM file.

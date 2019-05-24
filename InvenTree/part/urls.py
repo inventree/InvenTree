@@ -22,6 +22,7 @@ part_detail_urls = [
     url(r'^edit/?', views.PartEdit.as_view(), name='part-edit'),
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
     url(r'^bom-export/?', views.BomDownload.as_view(), name='bom-export'),
+    url(r'^bom-import/?', views.BomUpload.as_view(), name='bom-import'),
     url(r'^validate-bom/', views.BomValidate.as_view(), name='bom-validate'),
     url(r'^duplicate/', views.PartDuplicate.as_view(), name='part-duplicate'),
     url(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
