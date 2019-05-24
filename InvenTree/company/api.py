@@ -113,6 +113,14 @@ class SupplierPartList(generics.ListCreateAPIView):
         'supplier'
     ]
 
+    search_fields = [
+        'SKU',
+        'supplier__name',
+        'manufacturer',
+        'description',
+        'MPN',
+    ]
+
 
 class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of SupplierPart object
