@@ -38,24 +38,15 @@ class BomValidateForm(HelperForm):
         ]
 
 
-class BomExportForm(HelperForm):
+class BomImportForm(HelperForm):
+    """ Form for importing a BOM. Provides a file input box for upload """
 
-    # TODO - Define these choices somewhere else, and import them here
-    format_choices = (
-        ('csv', 'CSV'),
-        ('pdf', 'PDF'),
-        ('xml', 'XML'),
-        ('xlsx', 'XLSX'),
-        ('html', 'HTML')
-    )
-
-    # Select export type
-    format = forms.CharField(label='Format', widget=forms.Select(choices=format_choices), required='true', help_text='Select export format')
+    bom_file = forms.FileField(label='BOM file', required=True, help_text="Select BOM file to upload")
 
     class Meta:
         model = Part
         fields = [
-            'format',
+            'bom_file',
         ]
 
 
