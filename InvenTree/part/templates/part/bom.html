@@ -31,25 +31,25 @@
 </div>
 {% endif %}
 
-<div id='button-toolbar'>
+<div id='button-toolbar' class="btn-group" role="group" aria-label="...">
     {% if editing_enabled %}
-    <div class='btn-group' style='float: right;'>
-        <button class='btn btn-info' type='button' id='bom-item-new'>New BOM Item</button>
-        <button class='btn btn-success' type='button' id='editing-finished'>Finish Editing</button>
-    </div>
+    <button class='btn btn-danger' type='button' title='Remove selected BOM items' id='bom-item-delete'><span class='glyphicon glyphicon-trash'></span></button>
+    <button class='btn btn-primary' type='button' title='New BOM Item' id='bom-item-new'><span class='glyphicon glyphicon-plus'></span></button>
+    <button class='btn btn-success' type='button' title='Finish Editing' id='editing-finished'><span class='glyphicon glyphicon-ok'></span></button>
     {% else %}
-    <div class='dropdown' style="float: right;">
-        <button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>
-            Options
-            <span class='caret'></span>
-        </button>
-        <ul class='dropdown-menu'>
-            {% if part.is_bom_valid == False %}
-            <li><a href='#' id='validate-bom' title='Validate BOM'>Validate BOM</a></li>
-            {% endif %}
-            <li><a href='#' id='edit-bom' title='Edit BOM'>Edit BOM</a></li>
-            <li><a href='#' id='export-bom' title='Export BOM'>Export BOM</a></li>
-        </ul>
+    <button class='btn btn-default' type='button' title='Edit BOM' id='edit-bom'><span class='glyphicon glyphicon-edit'></span></button>
+    {% if part.is_bom_valid == False %}
+    <button class='btn btn-default' type='button'><span class='glyphicon glyphicon-check'></span></button>
+    {% endif %}
+    <div class='btn-group' role='group'>
+        <div class='dropdown'>
+            <button title='Export BOM' class='btn btn-default dropdown-toggle' data-toggle='dropdown' type='button'><span class='glyphicon glyphicon-download-alt'></span></button>
+            <ul class='dropdown-menu'>
+                <li><a href='#' class='download-bom' format='csv'>CSV</a></li>
+                <li><a href='#' class='download-bom' format='xlsx'>XLSX</a></li>
+                <li><a href='#' class='download-bom' format='json'>JSON</a></li>
+            </ul>
+        </div>
     </div>
     {% endif %}
 </div>
@@ -75,6 +75,12 @@
         parent_id: {{ part.id }} ,
         sub_part_detail: true,
     });
+
+    linkButtonsToSelection($("#bom-table"),
+        [
+            "#bom-item-delete",
+        ]
+    );
 
     {% if editing_enabled %}
     $("#editing-finished").click(function() {
@@ -115,12 +121,8 @@
         location.href = "{% url 'part-bom' part.id %}?edit=True";
     });
 
-    $("#export-bom").click(function () {
-        downloadBom({
-            modal: '#modal-form',
-            url: "{% url 'bom-export' part.id %}"
-        });
-
+    $(".download-bom").click(function () {
+        location.href = "{% url 'bom-export' part.id %}?format=" + $(this).attr('format');
     });
 
     {% endif %}
