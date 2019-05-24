@@ -85,6 +85,7 @@ class SupplierPartSerializer(serializers.ModelSerializer):
             'supplier_logo',
             'SKU',
             'manufacturer',
+            'description',
             'MPN',
             'URL',
             'pricing',
