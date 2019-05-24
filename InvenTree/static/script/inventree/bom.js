@@ -32,13 +32,16 @@ function loadBomTable(table, options) {
             title: 'ID',
             visible: false,
         },
-        {
+    ];
+
+    if (options.editable) {
+        cols.push({
             checkbox: true,
             title: 'Select',
             searchable: false,
             sortable: false,
-        },
-    ];
+        });
+    }
 
     // Part column
     cols.push(
