@@ -4,12 +4,24 @@
 
 {% block content %}
 
+{% if part.active == False %}
+<div class='alert alert-danger alert-block'>
+    This part is not active:
+</div>
+{% endif %}
+{% if part.has_variants %}
+<div class='alert alert-info alert-block'>
+    This part is a <i>template part</i>.<br>
+    It is not a <i>real</i> part, but real parts can be based on this template.
+</div>
+{% endif %}
+{% if part.variant_of %}
+<div class='alert alert-info alert-block'>
+    This part is a variant of <a href="{% url 'part-detail' part.variant_of.id %}">{{ part.variant_of.full_name }}</a>
+</div>
+{% endif %}
+
 <div class="row">
-    {% if part.active == False %}
-    <div class='alert alert-danger' style='display: block;'>
-        This part ({{ part.full_name }}) is not active:
-    </div>
-    {% endif %}
 <div class="col-sm-6">
     <div class="media">
       <div class="media-left">
