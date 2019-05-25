@@ -135,9 +135,16 @@ class StockItem(models.Model):
                                            })
 
             if self.part is not None:
+                # A trackable part must have a serial number
                 if self.part.trackable and not self.serial:
                     raise ValidationError({
                         'serial': _('Serial number must be set for trackable items')
+                    })
+
+                # A template part cannot be instantiated as a StockItem
+                if self.part.has_variants:
+                    raise ValidationError({
+                        'part': _('Stock item cannot be created for a template Part')
                     })
 
         except Part.DoesNotExist:
@@ -186,7 +193,12 @@ class StockItem(models.Model):
             }
         )
 
-    part = models.ForeignKey('part.Part', on_delete=models.CASCADE, related_name='stock_items', help_text='Base part')
+    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
+                            related_name='stock_items', help_text='Base part',
+                            limit_choices_to={
+                                'has_variants': True,
+                                'active': True,
+                            })
 
     supplier_part = models.ForeignKey('company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
                                       help_text='Select a matching supplier part for this stock item')

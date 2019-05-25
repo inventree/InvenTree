@@ -192,6 +192,7 @@ class Part(models.Model):
         description: Longer form description of the part
         keywords: Optional keywords for improving part search results
         IPN: Internal part number (optional)
+        has_variants: If True, this part is a 'template' part and cannot be instantiated as a StockItem
         URL: Link to an external page with more information about this part (e.g. internal Wiki)
         image: Image of this part
         default_location: Where the item is normally stored (may be null)
@@ -257,6 +258,17 @@ class Part(models.Model):
                             )
 
     variant = models.CharField(max_length=32, blank=True, help_text='Part variant or revision code')
+
+    has_variants = models.BooleanField(default=False, help_text='Is this part a template part?')
+
+    variant_of = models.ForeignKey('part.Part', related_name='variants',
+                                   null=True, blank=True,
+                                   limit_choices_to={
+                                       'has_variants': True,
+                                       'active': True,
+                                   },
+                                   on_delete=models.SET_NULL,
+                                   help_text='Is this part a variant of another part?')
 
     description = models.CharField(max_length=250, blank=False, help_text='Part description')
 
