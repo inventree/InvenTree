@@ -188,7 +188,10 @@ class SupplierPart(models.Model):
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='supplier_parts',
-                             limit_choices_to={'purchaseable': True},
+                             limit_choices_to={
+                                 'purchaseable': True,
+                                 'has_variants': False,
+                             },
                              help_text='Select part',
                              )
 
