@@ -774,7 +774,7 @@ class Part(models.Model):
     @property
     def attachment_count(self):
         """ Count the number of attachments for this part.
-        If the part is a variant of a template part, 
+        If the part is a variant of a template part,
         include the number of attachments for the template part.
 
         """
