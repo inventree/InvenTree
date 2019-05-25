@@ -30,7 +30,7 @@
     <td>{{ attachment.comment }}</td>
     <td>
         <div class='btn-group' style='float: right;'>    
-            <button type='button' class='btn btn-primary attachment-edit-button' url="{% url 'part-attachment-edit' attachment.id %}" data-toggle='tooltip' title='Edit attachment ({{ attachment.basename }})'><span class='glyphicon glyphicon-small glyphicon-pencil'></span></button>
+            <button type='button' class='btn btn-primary attachment-edit-button' url="{% url 'part-attachment-edit' attachment.id %}" data-toggle='tooltip' title='Edit attachment ({{ attachment.basename }})'><span class='glyphicon glyphicon-small glyphicon-edit'></span></button>
             <button type='button' class='btn btn-danger attachment-delete-button' url="{% url 'part-attachment-delete' attachment.id %}" data-toggle='tooltip' title='Delete attachment ({{ attachment.basename }})'><span class='glyphicon glyphicon-small glyphicon-trash'></span></button>
         </div>
     </td>
