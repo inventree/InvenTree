@@ -522,7 +522,10 @@ class Part(models.Model):
         Part may be stored in multiple locations
         """
 
-        total = self.stock_entries.aggregate(total=Sum('quantity'))['total']
+        if self.is_template:
+            total = sum([variant.total_stock for variant in self.variants.all()])
+        else:
+            total = self.stock_entries.aggregate(total=Sum('quantity'))['total']
 
         if total:
             return total
