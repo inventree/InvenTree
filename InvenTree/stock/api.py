@@ -285,7 +285,6 @@ class StockList(generics.ListCreateAPIView):
         # Does the client wish to filter by stock location?
         loc_id = self.request.query_params.get('location', None)
 
-
         if loc_id:
             try:
                 location = StockLocation.objects.get(pk=loc_id)

@@ -122,7 +122,6 @@ class StockItem(models.Model):
         # ensure that the serial number is unique
         # across all variants of the same template part
 
-
         try:
             if self.serial is not None and self.part.variant_of is not None:
                 if StockItem.objects.filter(part__variant_of=self.part.variant_of, serial=self.serial).exclude(id=self.id).exists():
@@ -211,11 +210,11 @@ class StockItem(models.Model):
         )
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
-                            related_name='stock_items', help_text='Base part',
-                            limit_choices_to={
-                                'is_template': False,
-                                'active': True,
-                            })
+                             related_name='stock_items', help_text='Base part',
+                             limit_choices_to={
+                                 'is_template': False,
+                                 'active': True,
+                             })
 
     supplier_part = models.ForeignKey('company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
                                       help_text='Select a matching supplier part for this stock item')

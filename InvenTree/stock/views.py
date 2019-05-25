@@ -208,9 +208,9 @@ class StockItemCreate(AjaxCreateView):
 
             try:
                 part = Part.objects.get(id=part_id)
+                
                 # Hide the 'part' field (as a valid part is selected)
                 form.fields['part'].widget = HiddenInput()
-                
 
                 # If the part is NOT purchaseable, hide the supplier_part field
                 if not part.purchaseable:
