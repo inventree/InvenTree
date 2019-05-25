@@ -52,6 +52,12 @@
             <td><b>Description</b></td>
             <td>{{ part.description }}</td>
         </tr>
+        {% if part.variant_of %}
+        <tr>
+            <td><b>Variant Of</b></td>
+            <td><a href="{% url 'part-detail' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></td>
+        </tr>
+        {% endif %}
         {% if part.keywords %}
         <tr>
             <td><b>Keywords</b></td>

@@ -1,0 +1,63 @@
+{% extends "part/part_base.html" %}
+{% load static %}
+
+{% block details %}
+{% include "part/tabs.html" with tab='variants' %}
+
+<div class='row'>
+    <div class='col-sm-6'>
+        <h4>Part Variants</h4>
+    </div>
+    <div class='col-sm-6'>
+    </div>
+</div>
+<hr>
+
+<div id='button-toolbar'>
+    <div class='btn-group'>
+        {% if part.is_template and part.active %}
+        <button class='btn btn-success' id='new-variant' title='Create new variant'>New Variant</button>
+        {% endif %}
+    </div>
+</div>
+
+<table class='table table-striped table-condensed' id='variant-table' data-toolbar='#button-toolbar'>
+    <thead>
+        <tr>
+            <th>Variant</th>
+            <th>Description</th>
+            <th>Stock</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for variant in part.variants.all %}
+        <tr>
+            <td>
+                <div class='hover-icon media-left' style='float: left;'>
+                        <img class='hover-img-thumb' src="{% if variant.image %}{{ variant.image.url }}{% else %}{% static 'img/blank_image.png' %}{% endif %}">
+                        {% if variant.image %}
+                        <img class='hover-img-large' src="{{ variant.image.url }}">
+                        {% endif %}
+                    </div>
+                <a href="{% url 'part-detail' variant.id %}">{{ variant.full_name }}</a>
+            </td>
+            <td>{{ variant.description }}</td>
+            <td>{{ variant.total_stock }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
+
+{% block js_ready %}
+{{ block.super }}
+
+
+    $('#variant-table').bootstrapTable({
+        search: true,
+        sortable: true,
+    });
+
+{% endblock %}

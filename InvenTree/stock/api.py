@@ -11,7 +11,7 @@ from django.urls import reverse
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
 
-from part.models import PartCategory
+from part.models import Part, PartCategory
 
 from .serializers import StockItemSerializer, StockQuantitySerializer
 from .serializers import LocationSerializer
@@ -263,11 +263,27 @@ class StockList(generics.ListCreateAPIView):
         we may wish to also request stock items from all child locations.
         """
 
-        # Does the client wish to filter by stock location?
-        loc_id = self.request.query_params.get('location', None)
-
         # Start with all objects
         stock_list = StockItem.objects.all()
+
+        # Does the client wish to filter by the Part ID?
+        part_id = self.request.query_params.get('part', None)
+
+        if part_id:
+            try:
+                part = Part.objects.get(pk=part_id)
+
+                # If the part is a Template part, select stock items for any "variant" parts under that template
+                if part.is_template:
+                    stock_list = stock_list.filter(part__in=[part.id for part in Part.objects.filter(variant_of=part_id)])
+                else:
+                    stock_list = stock_list.filter(part=part_id)
+
+            except Part.DoesNotExist:
+                pass
+
+        # Does the client wish to filter by stock location?
+        loc_id = self.request.query_params.get('location', None)
 
         if loc_id:
             try:
@@ -312,7 +328,6 @@ class StockList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'part',
         'supplier_part',
         'customer',
         'belongs_to',
