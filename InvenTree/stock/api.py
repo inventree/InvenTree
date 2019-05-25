@@ -274,7 +274,7 @@ class StockList(generics.ListCreateAPIView):
                 part = Part.objects.get(pk=part_id)
 
                 # If the part is a Template part, select stock items for any "variant" parts under that template
-                if part.has_variants:
+                if part.is_template:
                     stock_list = stock_list.filter(part__in=[part.id for part in Part.objects.filter(variant_of=part_id)])
                 else:
                     stock_list = stock_list.filter(part=part_id)

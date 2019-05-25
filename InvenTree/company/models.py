@@ -190,7 +190,7 @@ class SupplierPart(models.Model):
                              related_name='supplier_parts',
                              limit_choices_to={
                                  'purchaseable': True,
-                                 'has_variants': False,
+                                 'is_template': False,
                              },
                              help_text='Select part',
                              )

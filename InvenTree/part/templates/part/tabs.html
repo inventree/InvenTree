@@ -2,7 +2,7 @@
     <li{% ifequal tab 'detail' %} class="active"{% endifequal %}>
         <a href="{% url 'part-detail' part.id %}">Details</a>
     </li>
-    {% if part.has_variants %}
+    {% if part.is_template %}
     <li{% ifequal tab 'variants' %} class='active'{% endifequal %}>
         <a href="{% url 'part-variants' part.id %}">Variants <span class='badge'>{{ part.variants.count }}</span></span></a>
     </li>
@@ -25,7 +25,7 @@
     <li{% ifequal tab 'used' %} class="active"{% endifequal %}>
         <a href="{% url 'part-used-in' part.id %}">Used In{% if part.used_in_count > 0 %}<span class="badge">{{ part.used_in_count }}</span>{% endif %}</a></li>
     {% endif %}
-    {% if part.purchaseable and part.has_variants == False %}
+    {% if part.purchaseable and part.is_template == False %}
     <li{% ifequal tab 'suppliers' %} class="active"{% endifequal %}>
         <a href="{% url 'part-suppliers' part.id %}">Suppliers
             <span class="badge">{{ part.supplier_count }}</span>

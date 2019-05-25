@@ -50,7 +50,7 @@ class Build(models.Model):
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='builds',
                              limit_choices_to={
-                                 'has_variants': False,
+                                 'is_template': False,
                                  'buildable': True,
                                  'active': True
                              },

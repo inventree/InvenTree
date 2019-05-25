@@ -15,7 +15,7 @@
 
 <div id='button-toolbar'>
     <div class='btn-group'>
-        {% if part.has_variants and part.active %}
+        {% if part.is_template and part.active %}
         <button class='btn btn-success' id='new-variant' title='Create new variant'>New Variant</button>
         {% endif %}
     </div>
