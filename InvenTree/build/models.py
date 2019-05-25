@@ -17,7 +17,7 @@ from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
 from stock.models import StockItem
-from part.models import BomItem
+from part.models import Part, BomItem
 
 
 class Build(models.Model):
