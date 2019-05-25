@@ -25,7 +25,7 @@
     <li{% ifequal tab 'used' %} class="active"{% endifequal %}>
         <a href="{% url 'part-used-in' part.id %}">Used In{% if part.used_in_count > 0 %}<span class="badge">{{ part.used_in_count }}</span>{% endif %}</a></li>
     {% endif %}
-    {% if part.purchaseable %}
+    {% if part.purchaseable and part.has_variants == False %}
     <li{% ifequal tab 'suppliers' %} class="active"{% endifequal %}>
         <a href="{% url 'part-suppliers' part.id %}">Suppliers
             <span class="badge">{{ part.supplier_count }}</span>

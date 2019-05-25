@@ -4,6 +4,51 @@
 {% block details %}
 {% include "part/tabs.html" with tab='variants' %}
 
-TODO
+<div class='row'>
+    <div class='col-sm-6'>
+        <h4>Part Variants</h4>
+    </div>
+    <div class='col-sm-6'>
+    </div>
+</div>
+<hr>
+
+<table class='table table-striped table-condensed' id='variant-table'>
+    <thead>
+        <tr>
+            <th>Variant</th>
+            <th>Description</th>
+            <th>Stock</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for variant in part.variants.all %}
+        <tr>
+            <td>
+                <div class='hover-icon media-left' style='float: left;'>
+                        <img class='hover-img-thumb' src="{% if variant.image %}{{ variant.image.url }}{% else %}{% static 'img/blank_image.png' %}{% endif %}">
+                        {% if variant.image %}
+                        <img class='hover-img-large' src="{{ variant.image.url }}">
+                        {% endif %}
+                    </div>
+                {{ variant.full_name }}</td>
+            <td>{{ variant.description }}</td>
+            <td>{{ variant.total_stock }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
+
+{% block js_ready %}
+{{ block.super }}
+
+
+    $('#variant-table').bootstrapTable({
+        search: true,
+        sortable: true,
+    });
 
 {% endblock %}
