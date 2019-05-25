@@ -39,7 +39,8 @@
                         <img class='hover-img-large' src="{{ variant.image.url }}">
                         {% endif %}
                     </div>
-                {{ variant.full_name }}</td>
+                <a href="{% url 'part-detail' variant.id %}">{{ variant.full_name }}</a>
+            </td>
             <td>{{ variant.description }}</td>
             <td>{{ variant.total_stock }}</td>
         </tr>
