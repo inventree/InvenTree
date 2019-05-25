@@ -124,7 +124,12 @@ function loadPartTable(table, url, options={}) {
                 sortable: true,
                 formatter: function(value, row, index, field) {
 
+                    if (row.is_template) {
+                        value = '<i>' + value + '</i>';
+                    }
+
                     var display = imageHoverIcon(row.image_url) + renderLink(value, row.url);
+                    
                     if (!row.active) {
                         display = display + "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
                     }
@@ -135,6 +140,14 @@ function loadPartTable(table, url, options={}) {
                 sortable: true,
                 field: 'description',
                 title: 'Description',
+                formatter: function(value, row, index, field) {
+
+                    if (row.is_template) {
+                        value = '<i>' + value + '</i>';
+                    }
+
+                    return value;
+                }
             },
             {
                 sortable: true,
