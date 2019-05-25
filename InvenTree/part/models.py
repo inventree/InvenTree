@@ -253,6 +253,15 @@ class Part(models.Model):
         else:
             return static('/img/blank_image.png')
 
+    def clean(self):
+        """ Perform cleaning operations for the Part model """
+
+        if self.has_variants and self.variant_of is not None:
+            raise ValidationError({
+                'variant_of': _("Part cannot be a variant of another part if it is already a template"),
+                'has_variants': _("Part cannot be a template part if it is a variant of another part")
+            })
+
     name = models.CharField(max_length=100, blank=False, help_text='Part name',
                             validators=[validators.validate_part_name]
                             )
