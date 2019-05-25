@@ -36,6 +36,20 @@
     </td>
 </tr>
 {% endfor %}
+{% if part.variant_of and part.variant_of.attachments.count > 0 %}
+<tr>
+    <td colspan='3'>
+        Attachments for template part <b><i>{{ part.variant_of.full_name }}</i></b>
+    </td>
+</tr>
+{% for attachment in part.variant_of.attachments.all %}
+<tr>
+    <td><a href='/media/{{ attachment.attachment }}'>{{ attachment.basename }}</a></td>
+    <td>{{ attachment.comment }}</td>
+    <td></td>
+</tr>
+{% endfor %}
+{% endif %}
 </table>
 
 {% endblock %}
