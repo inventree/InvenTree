@@ -115,6 +115,23 @@ class StockItem(models.Model):
                 system=True
             )
 
+    def validate_unique(self, exclude=None):
+        super(StockItem, self).validate_unique(exclude)
+
+        # If the Part object is a variant (of a template part),
+        # ensure that the serial number is unique
+        # across all variants of the same template part
+
+
+        try:
+            if self.serial is not None and self.part.variant_of is not None:
+                if StockItem.objects.filter(part__variant_of=self.part.variant_of, serial=self.serial).exclude(id=self.id).exists():
+                    raise ValidationError({
+                        'serial': _('A part with this serial number already exists for template part {part}'.format(part=self.part.variant_of))
+                    })
+        except Part.DoesNotExist:
+            pass
+
     def clean(self):
         """ Validate the StockItem object (separate to field validation)
 
@@ -196,7 +213,7 @@ class StockItem(models.Model):
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                             related_name='stock_items', help_text='Base part',
                             limit_choices_to={
-                                'has_variants': True,
+                                'has_variants': False,
                                 'active': True,
                             })
 

@@ -208,27 +208,30 @@ class StockItemCreate(AjaxCreateView):
 
             try:
                 part = Part.objects.get(id=part_id)
-                parts = form.fields['supplier_part'].queryset
-                parts = parts.filter(part=part.id)
+                # Hide the 'part' field (as a valid part is selected)
+                form.fields['part'].widget = HiddenInput()
+                
 
                 # If the part is NOT purchaseable, hide the supplier_part field
                 if not part.purchaseable:
                     form.fields['supplier_part'].widget = HiddenInput()
 
-                form.fields['supplier_part'].queryset = parts
+                else:
+                    # Pre-select the allowable SupplierPart options
+                    parts = form.fields['supplier_part'].queryset
+                    parts = parts.filter(part=part.id)
 
-                # If there is one (and only one) supplier part available, pre-select it
-                all_parts = parts.all()
-                if len(all_parts) == 1:
+                    form.fields['supplier_part'].queryset = parts
 
-                    # TODO - This does NOT work for some reason? Ref build.views.BuildItemCreate
-                    form.fields['supplier_part'].initial = all_parts[0].id
+                    # If there is one (and only one) supplier part available, pre-select it
+                    all_parts = parts.all()
+                    if len(all_parts) == 1:
+
+                        # TODO - This does NOT work for some reason? Ref build.views.BuildItemCreate
+                        form.fields['supplier_part'].initial = all_parts[0].id
 
             except Part.DoesNotExist:
                 pass
-
-            # Hide the 'part' field
-            form.fields['part'].widget = HiddenInput()
 
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
         elif form['supplier_part'].value() is not None:
