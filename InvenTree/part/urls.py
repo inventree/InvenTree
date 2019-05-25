@@ -26,14 +26,15 @@ part_detail_urls = [
     url(r'^duplicate/', views.PartDuplicate.as_view(), name='part-duplicate'),
     url(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
     
-    url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
-    url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
+    url(r'^variants/?', views.PartDetail.as_view(template_name='part/variants.html'), name='part-variants'),
+    url(r'^stock/?', views.PartDetail.as_view(template_name='part/stock.html'), name='part-stock'),
+    url(r'^allocation/?', views.PartDetail.as_view(template_name='part/allocation.html'), name='part-allocation'),
     url(r'^bom/?', views.PartDetail.as_view(template_name='part/bom.html'), name='part-bom'),
     url(r'^build/?', views.PartDetail.as_view(template_name='part/build.html'), name='part-build'),
-    url(r'^stock/?', views.PartDetail.as_view(template_name='part/stock.html'), name='part-stock'),
     url(r'^used/?', views.PartDetail.as_view(template_name='part/used_in.html'), name='part-used-in'),
-    url(r'^allocation/?', views.PartDetail.as_view(template_name='part/allocation.html'), name='part-allocation'),
     url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
+    url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
+    url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
     
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 

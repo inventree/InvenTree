@@ -30,12 +30,26 @@
     <td>{{ attachment.comment }}</td>
     <td>
         <div class='btn-group' style='float: right;'>    
-            <button type='button' class='btn btn-primary attachment-edit-button' url="{% url 'part-attachment-edit' attachment.id %}" data-toggle='tooltip' title='Edit attachment ({{ attachment.basename }})'><span class='glyphicon glyphicon-small glyphicon-pencil'></span></button>
+            <button type='button' class='btn btn-primary attachment-edit-button' url="{% url 'part-attachment-edit' attachment.id %}" data-toggle='tooltip' title='Edit attachment ({{ attachment.basename }})'><span class='glyphicon glyphicon-small glyphicon-edit'></span></button>
             <button type='button' class='btn btn-danger attachment-delete-button' url="{% url 'part-attachment-delete' attachment.id %}" data-toggle='tooltip' title='Delete attachment ({{ attachment.basename }})'><span class='glyphicon glyphicon-small glyphicon-trash'></span></button>
         </div>
     </td>
 </tr>
 {% endfor %}
+{% if part.variant_of and part.variant_of.attachments.count > 0 %}
+<tr>
+    <td colspan='3'>
+        Attachments for template part <b><i>{{ part.variant_of.full_name }}</i></b>
+    </td>
+</tr>
+{% for attachment in part.variant_of.attachments.all %}
+<tr>
+    <td><a href='/media/{{ attachment.attachment }}'>{{ attachment.basename }}</a></td>
+    <td>{{ attachment.comment }}</td>
+    <td></td>
+</tr>
+{% endfor %}
+{% endif %}
 </table>
 
 {% endblock %}
