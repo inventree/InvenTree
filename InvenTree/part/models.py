@@ -771,6 +771,21 @@ class Part(models.Model):
 
         return data.export(file_format)
 
+    @property
+    def attachment_count(self):
+        """ Count the number of attachments for this part.
+        If the part is a variant of a template part, 
+        include the number of attachments for the template part.
+
+        """
+
+        n = self.attachments.count()
+
+        if self.variant_of:
+            n += self.variant_of.attachments.count()
+
+        return n
+
 
 def attach_file(instance, filename):
     """ Function for storing a file for a PartAttachment
