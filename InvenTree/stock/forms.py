@@ -34,6 +34,7 @@ class CreateStockItemForm(HelperForm):
             'location',
             'quantity',
             'batch',
+            'serial',
             'delete_on_deplete',
             'status',
             'notes',
