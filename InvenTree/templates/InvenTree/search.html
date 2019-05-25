@@ -15,9 +15,11 @@ InvenTree | Search Results
 </div>
 
 <br><br>
-<h3>Parts <span id='part-result-count'></span></h3>
-<table class='table table-striped table-condensed' data-toolbar="#button-toolbar" id='part-results-table'>
-</table>
+<hr>
+
+{% include "InvenTree/search_parts.html" with collapse_id='parts' %}
+
+{% include "InvenTree/search_supplier_parts.html" with collapse_id='supplier_parts' %}
 
 {% endblock %}
 
@@ -29,10 +31,28 @@ InvenTree | Search Results
 {% block js_ready %}
 {{ block.super }}
 
-    $("#part-results-table").on('load-success.bs.table', function() {
-        var n = $("#part-results-table").bootstrapTable('getData').length;
-        $("#part-result-count").html("(found " + n + " results)");
-    });
+    function onSearchResults(table, output) {
+        $(table).on('load-success.bs.table', function() {
+            var n = $(table).bootstrapTable('getData').length;
+
+            var text = '';
+            if (n == 0) {
+                text = '<i>No results</i>'
+            } else {
+                text = n + ' result';
+
+                if (n > 1) {
+                    text += 's';
+                }
+            }
+
+            $(output).html(text);
+        });
+    }
+
+    onSearchResults('#part-results-table', '#part-result-count');
+
+    onSearchResults('#supplier-part-results-table', '#supplier-part-result-count');
 
     loadPartTable("#part-results-table",
         "{% url 'api-part-list' %}",
@@ -43,5 +63,39 @@ InvenTree | Search Results
             allowInactive: true,
         }
     );
+
+    $("#supplier-part-results-table").bootstrapTable({
+        url: "{% url 'api-part-supplier-list' %}",
+        queryParams: {
+            search: "{{ query }}",
+        },
+        pagination: true,
+        pageSize: 25,
+        search: true,
+        columns: [
+            {
+                field: 'supplier_name',
+                title: 'Supplier',
+                formatter: function(value, row, index, field) {
+                    return imageHoverIcon(row.supplier_logo) + renderLink(value, '/company/' + row.supplier + '/');
+                }
+            },
+            {
+                field: 'SKU',
+                title: 'SKU',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, row.url);
+                }
+            },
+            {
+                field: 'manufacturer',
+                title: 'Manufacturer',
+            },
+            {
+                field: 'MPN',
+                title: 'MPN',
+            }
+        ]
+    });
     
 {% endblock %}

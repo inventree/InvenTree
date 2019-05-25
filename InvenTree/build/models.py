@@ -17,7 +17,7 @@ from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
 from stock.models import StockItem
-from part.models import BomItem
+from part.models import Part, BomItem
 
 
 class Build(models.Model):
@@ -368,15 +368,21 @@ class BuildItem(models.Model):
 
         errors = {}
 
-        if self.stock_item is not None and self.stock_item.part is not None:
+        try:
             if self.stock_item.part not in self.build.part.required_parts():
                 errors['stock_item'] = [_("Selected stock item not found in BOM for part '{p}'".format(p=self.build.part.full_name))]
             
-        if self.stock_item is not None and self.quantity > self.stock_item.quantity:
-            errors['quantity'] = [_("Allocated quantity ({n}) must not exceed available quantity ({q})".format(
-                n=self.quantity,
-                q=self.stock_item.quantity
-            ))]
+            if self.quantity > self.stock_item.quantity:
+                errors['quantity'] = [_("Allocated quantity ({n}) must not exceed available quantity ({q})".format(
+                    n=self.quantity,
+                    q=self.stock_item.quantity
+                ))]
+
+        except StockItem.DoesNotExist:
+            pass
+
+        except Part.DoesNotExist:
+            pass
 
         if len(errors) > 0:
             raise ValidationError(errors)
