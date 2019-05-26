@@ -92,7 +92,6 @@ class EditPartForm(HelperForm):
             'category',
             'name',
             'IPN',
-            'variant',
             'is_template',
             'variant_of',
             'description',

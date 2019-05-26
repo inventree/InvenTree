@@ -60,4 +60,13 @@
         sortable: true,
     });
 
+    $('#new-variant').click(function() {
+        launchModalForm(
+            "{% url 'make-part-variant' part.id %}",
+            {
+                follow: true,
+            }
+        );
+    });
+
 {% endblock %}
