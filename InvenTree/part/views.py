@@ -125,7 +125,7 @@ class PartAttachmentDelete(AjaxDeleteView):
 
 
 class MakePartVariant(AjaxCreateView):
-    """ View for creating a new variant based on an existing template Part 
+    """ View for creating a new variant based on an existing template Part
 
     - Part <pk> is provided in the URL '/part/<pk>/make_variant/'
     - Automatically copy relevent data (BOM, etc, etc)
