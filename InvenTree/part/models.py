@@ -162,6 +162,7 @@ def match_part_names(match, threshold=80, reverse=True, compare_length=False):
 
         if compare_length:
             # Also employ primitive length comparison
+            # TODO - Improve this somewhat...
             l_min = min(len(match), len(compare))
             l_max = max(len(match), len(compare))
 
@@ -211,9 +212,6 @@ class Part(models.Model):
     class Meta:
         verbose_name = "Part"
         verbose_name_plural = "Parts"
-        unique_together = [
-            ('name', 'variant')
-        ]
 
     def __str__(self):
         return "{n} - {d}".format(n=self.full_name, d=self.description)
@@ -235,9 +233,6 @@ class Part(models.Model):
             elements.append(self.IPN)
         
         elements.append(self.name)
-
-        if self.variant:
-            elements.append(self.variant)
 
         return ' | '.join(elements)
 
@@ -262,11 +257,10 @@ class Part(models.Model):
                 'variant_of': _("Part cannot be a variant of another part if it is already a template"),
             })
 
-    name = models.CharField(max_length=100, blank=False, help_text='Part name',
+    name = models.CharField(max_length=100, blank=False, unique=True,
+                            help_text='Part name (must be unique)',
                             validators=[validators.validate_part_name]
                             )
-
-    variant = models.CharField(max_length=32, blank=True, help_text='Part variant or revision code')
 
     is_template = models.BooleanField(default=False, help_text='Is this part a template part?')
 

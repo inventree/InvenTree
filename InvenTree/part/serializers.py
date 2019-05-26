@@ -87,7 +87,6 @@ class PartSerializer(serializers.ModelSerializer):
             'IPN',
             'is_template',
             'variant_of',
-            'variant',
             'description',
             'keywords',
             'URL',
