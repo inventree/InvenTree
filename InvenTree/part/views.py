@@ -124,6 +124,77 @@ class PartAttachmentDelete(AjaxDeleteView):
         }
 
 
+class MakePartVariant(AjaxCreateView):
+    """ View for creating a new variant based on an existing template Part 
+
+    - Part <pk> is provided in the URL '/part/<pk>/make_variant/'
+    - Automatically copy relevent data (BOM, etc, etc)
+
+    """
+
+    model = Part
+    form_class = part_forms.EditPartForm
+
+    ajax_form_title = 'Create Variant'
+    ajax_template_name = 'part/variant_part.html'
+
+    def get_part_template(self):
+        return get_object_or_404(Part, id=self.kwargs['pk'])
+
+    def get_context_data(self):
+        return {
+            'part': self.get_part_template(),
+        }
+
+    def get_form(self):
+        form = super(AjaxCreateView, self).get_form()
+
+        # Hide some variant-related fields
+        form.fields['is_template'].widget = HiddenInput()
+        form.fields['variant_of'].widget = HiddenInput()
+
+        return form
+
+    def post(self, request, *args, **kwargs):
+
+        form = self.get_form()
+        context = self.get_context_data()
+        part_template = self.get_part_template()
+
+        valid = form.is_valid()
+
+        data = {
+            'form_valid': valid,
+        }
+
+        if valid:
+            # Create the new part variant
+            part = form.save(commit=False)
+            part.variant_of = part_template
+            part.is_template = False
+
+            part.save()
+
+            data['pk'] = part.pk
+            data['text'] = str(part)
+            data['url'] = part.get_absolute_url()
+
+            # Copy relevent information from the template part
+            part.deepCopy(part_template, bom=True)
+
+        return self.renderJsonResponse(request, form, data, context=context)
+
+    def get_initial(self):
+
+        part_template = self.get_part_template()
+
+        initials = model_to_dict(part_template)
+        initials['is_template'] = False
+        initials['variant_of'] = part_template
+
+        return initials
+
+
 class PartDuplicate(AjaxCreateView):
     """ View for duplicating an existing Part object.
 
@@ -209,7 +280,7 @@ class PartDuplicate(AjaxCreateView):
             original = self.get_part_to_copy()
 
             if original:
-                    part.deepCopy(original, bom=deep_copy)
+                part.deepCopy(original, bom=deep_copy)
 
             try:
                 data['url'] = part.get_absolute_url()
