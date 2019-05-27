@@ -10,39 +10,11 @@ InvenTree | Allocate Parts
 
 {% include "build/tabs.html" with tab='allocate' %}
 
-<h4>Allocate Parts for Build</h4>
-
-<div class='row'>
-    <div class='col-sm-6'>
-    </div>
-    <div class='col-sm-6'>
-        <div class='btn-group' style='float: right;'>
-                <button class='btn btn-primary' type='button' title='Automatic allocation' id='auto-allocate-build'>Auto Allocate</button>
-                <button class='btn btn-warning' type='button' title='Unallocate build stock' id='unallocate-build'>Unallocate</button>
-        </div>
-    </div>
-</div>
-<hr>
-
-<div class='row'>
-    <div class='col-sm-6'>
-        <h4>Part</h4>
-    </div>
-    <div class='col-sm-2'>
-        <h4>Available</h4>
-    </div>
-    <div class='col-sm-2'>
-        <h4>Required</h4>
-    </div>
-    <div class='col-sm-2'>
-        <h4>Allocated</h4>
-    </div>
-</div>
-
-{% for bom_item in bom_items.all %}
-{% include "build/allocation_item.html" with item=bom_item build=build collapse_id=bom_item.id %}
-{% endfor %}
-
+{% if editing %}
+{% include "build/allocate_edit.html" %}
+{% else %}
+{% include "build/allocate_view.html" %}
+{% endif %}
 
 {% endblock %}
 
@@ -54,6 +26,8 @@ InvenTree | Allocate Parts
 
 {% block js_ready %}
 {{ block.super }}
+
+    {% if editing %}
 
     {% for bom_item in bom_items.all %}
 
@@ -85,5 +59,38 @@ InvenTree | Allocate Parts
             }
         );
     });
+
+    {% else %}
+
+    $("#build-item-table").bootstrapTable({
+        url: "{% url 'api-build-item-list' %}",
+        queryParams: {
+            build: {{ build.id }},
+        },
+        search: true,
+        columns: [
+            {
+                field: 'part_name',
+                title: 'Part',
+                formatter: function(value, row, index, field) {
+                    return imageHoverIcon(row.part_image) + value;
+                }
+            },
+            {
+                field: 'stock_item_detail.location_name',
+                title: 'Location',
+            },
+            {
+                field: 'quantity',
+                title: 'Quantity Allocated',
+            },
+        ]
+    });
+
+    $("#btn-allocate").click(function() {
+        location.href = "{% url 'build-allocate' build.id %}?edit=1";
+    });
+
+    {% endif %}
 
 {% endblock %}

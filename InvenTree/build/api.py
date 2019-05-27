@@ -70,6 +70,10 @@ class BuildItemList(generics.ListCreateAPIView):
 
         query = BuildItem.objects.all()
 
+        query = query.select_related('stock_item')
+        query = query.prefetch_related('stock_item__part')
+        query = query.prefetch_related('stock_item__part__category')
+
         if part_pk:
             query = query.filter(stock_item__part=part_pk)
 
