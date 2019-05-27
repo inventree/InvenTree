@@ -59,15 +59,6 @@ class StockItemSerializer(serializers.ModelSerializer):
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
-    
-    @staticmethod
-    def setup_eager_loading(queryset):
-        queryset = queryset.prefetch_related('part')
-        queryset = queryset.prefetch_related('part__stock_items')
-        queryset = queryset.prefetch_related('part__category')
-        queryset = queryset.prefetch_related('location')
-
-        return queryset
 
     def __init__(self, *args, **kwargs):
 
