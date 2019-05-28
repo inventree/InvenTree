@@ -153,7 +153,7 @@
                         var cell = '<td>';
 
                         if (typeof that.options.groupByFormatter == 'function') {
-                            cell += that.options.groupByFormatter(col.title, item.id, item.data);
+                            cell += '<i>' + that.options.groupByFormatter(col.title, item.id, item.data) + "</i>";
                         }
 
                         cell += "</td>";
@@ -177,7 +177,7 @@
 
                     if(item.data.length > 1) {
 
-                        that.$body.find('tr[data-parent-index=' + item.id + ']').addClass('hidden');
+                        that.$body.find('tr[data-parent-index=' + item.id + ']').addClass('hidden stock-sub-group');
 
                         that.$body.find('tr[data-parent-index=' + item.id + ']:first').before($(html.join('')));
                     }

@@ -404,9 +404,25 @@ function loadStockTable(table, options) {
                     stock += item.quantity; 
                 });
 
-                return stock;
-            }
+                return stock + ' <i>(' + data.length + ' items)</i>';
+            } else if (field == 'Location') {
+                /* Determine how many locations */
+                var locations = [];
 
+                data.forEach(function(item) {
+                    var loc = item.location;
+
+                    if (!locations.includes(loc)) {
+                        locations.push(loc); 
+                    }
+                });
+
+                if (locations.length > 1) {
+                    return "In " + locations.length + " locations";
+                } else {
+                    return renderLink(data[0].location_detail.pathstring, data[0].location_detail.url);
+                }
+            }
             else {
                 return '';
             }
