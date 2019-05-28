@@ -57,6 +57,8 @@ class StockItemSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
+    part_name = serializers.CharField(source='get_part_name', read_only=True)
+
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
 
@@ -79,6 +81,7 @@ class StockItemSerializer(serializers.ModelSerializer):
             'pk',
             'url',
             'part',
+            'part_name',
             'part_detail',
             'supplier_part',
             'location',

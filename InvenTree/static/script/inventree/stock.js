@@ -372,14 +372,45 @@ function moveStockItems(items, options) {
 
 function loadStockTable(table, options) {
 
+    var params = options.params || {};
+
+    // Aggregate stock items 
+    //params.aggregate = true;
+
     table.bootstrapTable({
         sortable: true,
         search: true,
         method: 'get',
         pagination: true,
-        pageSize: 50,
+        pageSize: 25,
         rememberOrder: true,
-        queryParams: options.params,
+        groupBy: true,
+        groupByField: 'part_name',
+        groupByFields: ['part_name', 'test'],
+        groupByFormatter: function(field, id, data) {
+
+            if (field == 'Part') {
+                return imageHoverIcon(data[0].part_detail.image_url) + 
+                    data[0].part_detail.full_name + 
+                    ' <i>(' + data.length + ' items)</i>';
+            }
+            else if (field == 'Description') {
+                return data[0].part_detail.description;
+            }
+            else if (field == 'Stock') {
+                var stock = 0;
+
+                data.forEach(function(item) {
+                    stock += item.quantity; 
+                });
+
+                return stock;
+            }
+
+            else {
+                return '';
+            }
+        },
         columns: [
             {
                 checkbox: true,
@@ -419,7 +450,7 @@ function loadStockTable(table, options) {
             },
             {
                 field: 'quantity',
-                title: 'Quantity',
+                title: 'Stock',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     var text = renderLink(value, row.url);
@@ -433,6 +464,7 @@ function loadStockTable(table, options) {
             }
         ],
         url: options.url,
+        queryParams: params,
     });
 
     if (options.buttons) {
