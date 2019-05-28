@@ -5,6 +5,7 @@ JSON API for the Stock app
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
+from django.conf import settings
 from django.conf.urls import url, include
 from django.urls import reverse
 
@@ -19,6 +20,8 @@ from .serializers import StockTrackingSerializer
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool
+
+import os
 
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
@@ -241,6 +244,7 @@ class StockList(generics.ListCreateAPIView):
     - POST: Create a new StockItem
 
     Additional query parameters are available:
+        - aggregate: If 'true' then stock items are aggregated by Part and Location
         - location: Filter stock by location
         - category: Filter by parts belonging to a certain category
         - supplier: Filter by supplier
@@ -257,6 +261,53 @@ class StockList(generics.ListCreateAPIView):
         kwargs['context'] = self.get_serializer_context()
         return self.serializer_class(*args, **kwargs)
 
+    def list(self, request, *args, **kwargs):
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Instead of using the DRF serializer to LIST,
+        # we will serialize the objects manually.
+        # This is significantly faster
+
+        data = queryset.values(
+            'pk',
+            'quantity',
+            'serial',
+            'batch',
+            'status',
+            'notes',
+            'location',
+            'location__name',
+            'location__description',
+            'part',
+            'part__IPN',
+            'part__name',
+            'part__description',
+            'part__image',
+            'part__category',
+            'part__category__name',
+            'part__category__description',
+        )
+
+        # Reduce the number of lookups we need to do for categories
+        # Cache location lookups for this query
+        locations = {}
+
+        for item in data:
+            item['part__image'] = os.path.join(settings.MEDIA_URL, item['part__image'])
+
+            loc_id = item['location']
+
+            if loc_id:
+                if loc_id not in locations:
+                    locations[loc_id] = StockLocation.objects.get(pk=loc_id).pathstring
+                
+                item['location__path'] = locations[loc_id]
+            else:
+                item['location__path'] = None
+
+        return Response(data)
+
     def get_queryset(self):
         """
         If the query includes a particular location,
@@ -264,7 +315,7 @@ class StockList(generics.ListCreateAPIView):
         """
 
         # Start with all objects
-        stock_list = StockItem.objects.all()
+        stock_list = StockItem.objects.filter(customer=None, belongs_to=None)
 
         # Does the client wish to filter by the Part ID?
         part_id = self.request.query_params.get('part', None)
@@ -310,8 +361,14 @@ class StockList(generics.ListCreateAPIView):
         if supplier_id:
             stock_list = stock_list.filter(supplier_part__supplier=supplier_id)
 
-        # Pre-fetch related objects for better response time
-        stock_list = self.get_serializer_class().setup_eager_loading(stock_list)
+        # Also ensure that we pre-fecth all the related items
+        stock_list = stock_list.prefetch_related(
+            'part',
+            'part__category',
+            'location'
+        )
+
+        stock_list = stock_list.order_by('part__name')
 
         return stock_list
 

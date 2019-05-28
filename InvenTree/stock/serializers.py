@@ -57,17 +57,10 @@ class StockItemSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
+    part_name = serializers.CharField(source='get_part_name', read_only=True)
+
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
-    
-    @staticmethod
-    def setup_eager_loading(queryset):
-        queryset = queryset.prefetch_related('part')
-        queryset = queryset.prefetch_related('part__stock_items')
-        queryset = queryset.prefetch_related('part__category')
-        queryset = queryset.prefetch_related('location')
-
-        return queryset
 
     def __init__(self, *args, **kwargs):
 
@@ -88,6 +81,7 @@ class StockItemSerializer(serializers.ModelSerializer):
             'pk',
             'url',
             'part',
+            'part_name',
             'part_detail',
             'supplier_part',
             'location',

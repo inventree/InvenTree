@@ -1,0 +1,32 @@
+<h4>Allocate Stock to Build</h4>
+
+<div class='row'>
+    <div class='col-sm-6'>
+    </div>
+    <div class='col-sm-6'>
+        <div class='btn-group' style='float: right;'>
+                <button class='btn btn-primary' type='button' title='Automatic allocation' id='auto-allocate-build'>Auto Allocate</button>
+                <button class='btn btn-warning' type='button' title='Unallocate build stock' id='unallocate-build'>Unallocate</button>
+        </div>
+    </div>
+</div>
+<hr>
+
+<div class='row'>
+    <div class='col-sm-6'>
+        <h4>Part</h4>
+    </div>
+    <div class='col-sm-2'>
+        <h4>Available</h4>
+    </div>
+    <div class='col-sm-2'>
+        <h4>Required</h4>
+    </div>
+    <div class='col-sm-2'>
+        <h4>Allocated</h4>
+    </div>
+</div>
+
+{% for bom_item in bom_items.all %}
+{% include "build/allocation_item.html" with item=bom_item build=build collapse_id=bom_item.id %}
+{% endfor %}

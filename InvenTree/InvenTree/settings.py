@@ -104,7 +104,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'InvenTree.middleware.AuthRequiredMiddleware',
-    'InvenTree.middleware.QueryCountMiddleware',
 ]
 
 if DEBUG:

@@ -45,6 +45,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
 
     part = serializers.IntegerField(source='stock_item.part.pk', read_only=True)
     part_name = serializers.CharField(source='stock_item.part.full_name', read_only=True)
+    part_image = serializers.CharField(source='stock_item.part.image.url', read_only=True)
     stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
 
     class Meta:
@@ -54,6 +55,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
             'build',
             'part',
             'part_name',
+            'part_image',
             'stock_item',
             'stock_item_detail',
             'quantity'
