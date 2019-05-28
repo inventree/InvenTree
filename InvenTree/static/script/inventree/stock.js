@@ -469,7 +469,16 @@ function loadStockTable(table, options) {
                 title: 'Stock',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    var text = renderLink(value, row.url);
+
+                    var val = value;
+
+                    // If there is a single unit with a serial number, use the serial number
+                    if (row.serial && row.quantity == 1) {
+                        val = '# ' + row.serial;
+                    }
+
+                    var text = renderLink(val, row.url);
+                    
                     text = text + "<span class='badge'>" + row.status_text + "</span>";
                     return text;
                 }
