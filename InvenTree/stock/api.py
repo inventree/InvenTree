@@ -278,13 +278,15 @@ class StockList(generics.ListCreateAPIView):
             'notes',
             'location',
             'location__name',
+            'location__description',
             'part',
             'part__IPN',
             'part__name',
             'part__description',
             'part__image',
             'part__category',
-            'part__category__name'
+            'part__category__name',
+            'part__category__description',
         )
 
         # Reduce the number of lookups we need to do for categories

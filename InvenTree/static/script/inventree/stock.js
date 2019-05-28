@@ -282,7 +282,7 @@ function moveStockItems(items, options) {
             for (i = 0; i < response.length; i++) {
                 var loc = response[i];
 
-                html += makeOption(loc.pk, loc.name + ' - <i>' + loc.description + '</i>');
+                html += makeOption(loc.pk, loc.pathstring + ' - <i>' + loc.description + '</i>');
             }
 
             html += "</select><br>";
@@ -312,10 +312,18 @@ function moveStockItems(items, options) {
 
                 var item = items[i];
 
+                var name = item.part__IPN;
+
+                if (name) { 
+                    name += ' | ';
+                }
+
+                name += item.part__name;
+
                 html += "<tr>";
 
-                html += "<td>" + item.part.full_name + "</td>";
-                html += "<td>" + item.location.pathstring + "</td>";
+                html += "<td>" + name + "</td>";
+                html += "<td>" + item.location__path + "</td>";
                 html += "<td>" + item.quantity + "</td>";
 
                 html += "<td>";
