@@ -64,19 +64,19 @@
             _initBody = BootstrapTable.prototype.initBody,
             _updateSelected = BootstrapTable.prototype.updateSelected;
 
+        function isNumeric(n) {
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        }
+
         BootstrapTable.prototype.initSort = function () {
             _initSort.apply(this, Array.prototype.slice.apply(arguments));
 
             var that = this;
             tableGroups = [];
 
-            if (this.options.groupBy && this.options.groupByField !== '') {
+            /* Sort the items into groups */
 
-                if (this.options.sortName != this.options.groupByField) {
-                    this.data.sort(function (a, b) {
-                        return a[that.options.groupByField] == b[that.options.groupByField];
-                    });
-                }
+            if (this.options.groupBy && this.options.groupByField !== '') {
 
                 var that = this;
                 var groups = groupBy(that.data, function (item) {
@@ -96,7 +96,14 @@
                             item._data = {};
                         }
 
-                        item._data['parent-index'] = index;
+                        if (value.length > 1) {
+                            item._data['parent-index'] = index;
+                        } else {
+                            item._data['parent-index'] = null;
+                        }
+
+                        item._data['group-data'] = value;
+                        item._data['table'] = that;
                     });
 
                     index++;
@@ -148,7 +155,7 @@
                         var cell = '<td>';
 
                         if (typeof that.options.groupByFormatter == 'function') {
-                            cell += '<i>' + that.options.groupByFormatter(col.title, item.id, item.data) + "</i>";
+                            cell += '<i>' + that.options.groupByFormatter(col.field, item.id, item.data) + "</i>";
                         }
 
                         cell += "</td>";
@@ -175,6 +182,15 @@
                         that.$body.find('tr[data-parent-index=' + item.id + ']').addClass('hidden stock-sub-group');
 
                         that.$body.find('tr[data-parent-index=' + item.id + ']:first').before($(html.join('')));
+
+                        var group_header = that.$body.find('tr[data-group-index=' + item.id + ']');
+                        
+                        // Ensure all the sub-items are in the right place...
+
+                        that.$body.find('tr[data-parent-index=' + item.id + ']').each(function() {
+                            $(this).detach();
+                            group_header.after(this);
+                        });
                     }
                 });
 

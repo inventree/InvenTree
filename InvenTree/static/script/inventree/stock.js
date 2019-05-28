@@ -387,13 +387,14 @@ function loadStockTable(table, options) {
         formatNoMatches: function() {
             return 'No stock items matching query';
         },
+        customSort: customGroupSorter,
         groupBy: true,
         groupByField: options.groupByField || 'part',
         groupByFormatter: function(field, id, data) {
 
             var row = data[0];
 
-            if (field == 'Part') {
+            if (field == 'part__name') {
 
                 var name = row.part__IPN;
 
@@ -405,10 +406,10 @@ function loadStockTable(table, options) {
 
                 return imageHoverIcon(row.part__image) + name + ' <i>(' + data.length + ' items)</i>';
             }
-            else if (field == 'Description') {
+            else if (field == 'part__description') {
                 return row.part__description;
             }
-            else if (field == 'Stock') {
+            else if (field == 'quantity') {
                 var stock = 0;
 
                 data.forEach(function(item) {
@@ -416,7 +417,7 @@ function loadStockTable(table, options) {
                 });
 
                 return stock;
-            } else if (field == 'Location') {
+            } else if (field == 'location__path') {
                 /* Determine how many locations */
                 var locations = [];
 
