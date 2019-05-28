@@ -451,19 +451,6 @@ function loadStockTable(table, options) {
                 sortable: true,
             },
             {
-                field: 'location_detail',
-                title: 'Location',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    if (value) {
-                        return renderLink(value.pathstring, value.url);
-                    }
-                    else {
-                        return '<i>No stock location set</i>';
-                    }
-                }
-            },
-            {
                 field: 'quantity',
                 title: 'Stock',
                 sortable: true,
@@ -480,6 +467,19 @@ function loadStockTable(table, options) {
                     
                     text = text + "<span class='badge'>" + row.status_text + "</span>";
                     return text;
+                }
+            },
+            {
+                field: 'location_detail',
+                title: 'Location',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value.pathstring, value.url);
+                    }
+                    else {
+                        return '<i>No stock location set</i>';
+                    }
                 }
             },
             {
