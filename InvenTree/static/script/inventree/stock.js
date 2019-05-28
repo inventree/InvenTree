@@ -384,6 +384,9 @@ function loadStockTable(table, options) {
         pagination: true,
         pageSize: 25,
         rememberOrder: true,
+        formatNoMatches: function() {
+            return 'No stock items matching query';
+        },
         groupBy: true,
         groupByField: options.groupByField || 'part',
         groupByFormatter: function(field, id, data) {
