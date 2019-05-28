@@ -5,6 +5,7 @@ JSON API for the Stock app
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
+from django.conf import settings
 from django.conf.urls import url, include
 from django.urls import reverse
 
@@ -21,6 +22,8 @@ from .serializers import StockTrackingSerializer
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool
+
+import os
 
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
@@ -264,47 +267,43 @@ class StockList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        if str2bool(self.request.GET.get('aggregate', None)):
-            # Aggregate stock by part type
-            queryset = queryset.values(
-                'part',
-                'part__name',
-                'part__image',
-                'location',
-                'location__name').annotate(
-                    stock=Sum('quantity'),
-                    items=Count('part'))
+        # Instead of using the DRF serializer to LIST,
+        # we will serialize the objects manually. 
+        # This is significantly faster
 
-            for result in queryset:
-                # If there is only 1 stock item (which will be a lot of the time),
-                # Add that data to the dict
-                if result['items'] == 1:
-                    items = StockItem.objects.filter(
-                        part=result['part'],
-                        location=result['location']
-                    )
+        data = queryset.values(
+            'pk',
+            'quantity',
+            'serial',
+            'batch',
+            'status',
+            'notes',
+            'location',
+            'location__name',
+            'part',
+            'part__IPN',
+            'part__name',
+            'part__description',
+            'part__image',
+            'part__category',
+            'part__category__name'
+        )
 
-                    if items.count() == 1:
-                        result.pop('items')
+        # Reduce the number of lookups we need to do for categories
+        # Cache location lookups for this query
+        locations = {}
 
-                        item = items[0]
+        for item in data:
+            item['part__image'] = os.path.join(settings.MEDIA_URL, item['part__image'])
 
-                        # Add in some extra information specific to this StockItem
-                        result['pk'] = item.id
-                        result['serial'] = item.serial
-                        result['batch'] = item.batch
-                        result['notes'] = item.notes
+            loc_id = item['location']
 
-            return Response(queryset)
+            if loc_id not in locations:
+                locations[loc_id] = StockLocation.objects.get(pk=loc_id).pathstring
+            
+            item['location__path'] = locations[loc_id]
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-                
+        return Response(data)
 
     def get_queryset(self):
         """
@@ -365,6 +364,8 @@ class StockList(generics.ListCreateAPIView):
             'part__category',
             'location'
         )
+
+        stock_list = stock_list.order_by('part__name')
 
         return stock_list
 

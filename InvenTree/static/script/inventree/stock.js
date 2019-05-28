@@ -388,13 +388,22 @@ function loadStockTable(table, options) {
         groupByField: options.groupByField || 'part',
         groupByFormatter: function(field, id, data) {
 
+            var row = data[0];
+
             if (field == 'Part') {
-                return imageHoverIcon(data[0].part_detail.image_url) + 
-                    data[0].part_detail.full_name + 
-                    ' <i>(' + data.length + ' items)</i>';
+
+                var name = row.part__IPN;
+
+                if (name) {
+                    name += ' | ';
+                }
+
+                name += row.part__name;
+
+                return imageHoverIcon(row.part__image) + name + ' <i>(' + data.length + ' items)</i>';
             }
             else if (field == 'Description') {
-                return data[0].part_detail.description;
+                return row.part__description;
             }
             else if (field == 'Stock') {
                 var stock = 0;
@@ -419,7 +428,8 @@ function loadStockTable(table, options) {
                 if (locations.length > 1) {
                     return "In " + locations.length + " locations";
                 } else {
-                    return renderLink(data[0].location_detail.pathstring, data[0].location_detail.url);
+                    // A single location!
+                    return renderLink(row.location__path, '/stock/location/' + row.location + '/')
                 }
             }
             else {
@@ -438,15 +448,24 @@ function loadStockTable(table, options) {
                 visible: false,
             },
             {
-                field: 'part_detail',
+                field: 'part__name',
                 title: 'Part',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    return imageHoverIcon(value.image_url) + renderLink(value.full_name, value.url + 'stock/');
+
+                    var name = row.part__IPN;
+
+                    if (name) {
+                        name += ' | ';
+                    }
+
+                    name += row.part__name;
+                    
+                    return imageHoverIcon(row.part__image) + renderLink(name, '/part/' + row.part + '/stock/');
                 }
             },
             {
-                field: 'part_detail.description',
+                field: 'part__description',
                 title: 'Description',
                 sortable: true,
             },
@@ -463,19 +482,19 @@ function loadStockTable(table, options) {
                         val = '# ' + row.serial;
                     }
 
-                    var text = renderLink(val, row.url);
+                    var text = renderLink(val, '/stock/item/' + row.pk + '/');
                     
                     text = text + "<span class='badge'>" + row.status_text + "</span>";
                     return text;
                 }
             },
             {
-                field: 'location_detail',
+                field: 'location__path',
                 title: 'Location',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     if (value) {
-                        return renderLink(value.pathstring, value.url);
+                        return renderLink(value, '/stock/location/' + row.location + '/');
                     }
                     else {
                         return '<i>No stock location set</i>';
