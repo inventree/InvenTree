@@ -176,6 +176,9 @@
                     html.push('</tr>');
 
                     if(item.data.length > 1) {
+
+                        that.$body.find('tr[data-parent-index=' + item.id + ']').addClass('hidden');
+
                         that.$body.find('tr[data-parent-index=' + item.id + ']:first').before($(html.join('')));
                     }
                 });
