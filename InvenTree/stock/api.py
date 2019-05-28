@@ -9,8 +9,6 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.urls import reverse
 
-from django.db.models import Sum, Count
-
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
 
@@ -268,7 +266,7 @@ class StockList(generics.ListCreateAPIView):
         queryset = self.filter_queryset(self.get_queryset())
 
         # Instead of using the DRF serializer to LIST,
-        # we will serialize the objects manually. 
+        # we will serialize the objects manually.
         # This is significantly faster
 
         data = queryset.values(
@@ -298,10 +296,13 @@ class StockList(generics.ListCreateAPIView):
 
             loc_id = item['location']
 
-            if loc_id not in locations:
-                locations[loc_id] = StockLocation.objects.get(pk=loc_id).pathstring
-            
-            item['location__path'] = locations[loc_id]
+            if loc_id:
+                if loc_id not in locations:
+                    locations[loc_id] = StockLocation.objects.get(pk=loc_id).pathstring
+                
+                item['location__path'] = locations[loc_id]
+            else:
+                item['location__path'] = None
 
         return Response(data)
 
