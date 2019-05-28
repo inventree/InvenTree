@@ -72,9 +72,9 @@
 
             if (this.options.groupBy && this.options.groupByField !== '') {
 
-                if (1 || (this.options.sortName != this.options.groupByField)) {
+                if (this.options.sortName != this.options.groupByField) {
                     this.data.sort(function (a, b) {
-                        return a[that.options.groupByField].localeCompare(b[that.options.groupByField]);
+                        return a[that.options.groupByField] == b[that.options.groupByField];
                     });
                 }
 

@@ -385,8 +385,7 @@ function loadStockTable(table, options) {
         pageSize: 25,
         rememberOrder: true,
         groupBy: true,
-        groupByField: 'part_name',
-        groupByFields: ['part_name', 'test'],
+        groupByField: options.groupByField || 'part',
         groupByFormatter: function(field, id, data) {
 
             if (field == 'Part') {
@@ -404,7 +403,7 @@ function loadStockTable(table, options) {
                     stock += item.quantity; 
                 });
 
-                return stock + ' <i>(' + data.length + ' items)</i>';
+                return stock;
             } else if (field == 'Location') {
                 /* Determine how many locations */
                 var locations = [];
