@@ -282,7 +282,7 @@ function moveStockItems(items, options) {
             for (i = 0; i < response.length; i++) {
                 var loc = response[i];
 
-                html += makeOption(loc.pk, loc.name + ' - <i>' + loc.description + '</i>');
+                html += makeOption(loc.pk, loc.pathstring + ' - <i>' + loc.description + '</i>');
             }
 
             html += "</select><br>";
@@ -312,10 +312,18 @@ function moveStockItems(items, options) {
 
                 var item = items[i];
 
+                var name = item.part__IPN;
+
+                if (name) { 
+                    name += ' | ';
+                }
+
+                name += item.part__name;
+
                 html += "<tr>";
 
-                html += "<td>" + item.part.full_name + "</td>";
-                html += "<td>" + item.location.pathstring + "</td>";
+                html += "<td>" + name + "</td>";
+                html += "<td>" + item.location__path + "</td>";
                 html += "<td>" + item.quantity + "</td>";
 
                 html += "<td>";
@@ -372,14 +380,74 @@ function moveStockItems(items, options) {
 
 function loadStockTable(table, options) {
 
+    var params = options.params || {};
+
+    // Aggregate stock items 
+    //params.aggregate = true;
+
     table.bootstrapTable({
         sortable: true,
         search: true,
         method: 'get',
         pagination: true,
-        pageSize: 50,
+        pageSize: 25,
         rememberOrder: true,
-        queryParams: options.params,
+        formatNoMatches: function() {
+            return 'No stock items matching query';
+        },
+        customSort: customGroupSorter,
+        groupBy: true,
+        groupByField: options.groupByField || 'part',
+        groupByFormatter: function(field, id, data) {
+
+            var row = data[0];
+
+            if (field == 'part__name') {
+
+                var name = row.part__IPN;
+
+                if (name) {
+                    name += ' | ';
+                }
+
+                name += row.part__name;
+
+                return imageHoverIcon(row.part__image) + name + ' <i>(' + data.length + ' items)</i>';
+            }
+            else if (field == 'part__description') {
+                return row.part__description;
+            }
+            else if (field == 'quantity') {
+                var stock = 0;
+
+                data.forEach(function(item) {
+                    stock += item.quantity; 
+                });
+
+                return stock;
+            } else if (field == 'location__path') {
+                /* Determine how many locations */
+                var locations = [];
+
+                data.forEach(function(item) {
+                    var loc = item.location;
+
+                    if (!locations.includes(loc)) {
+                        locations.push(loc); 
+                    }
+                });
+
+                if (locations.length > 1) {
+                    return "In " + locations.length + " locations";
+                } else {
+                    // A single location!
+                    return renderLink(row.location__path, '/stock/location/' + row.location + '/')
+                }
+            }
+            else {
+                return '';
+            }
+        },
         columns: [
             {
                 checkbox: true,
@@ -392,39 +460,57 @@ function loadStockTable(table, options) {
                 visible: false,
             },
             {
-                field: 'part_detail',
+                field: 'part__name',
                 title: 'Part',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    return imageHoverIcon(value.image_url) + renderLink(value.full_name, value.url + 'stock/');
+
+                    var name = row.part__IPN;
+
+                    if (name) {
+                        name += ' | ';
+                    }
+
+                    name += row.part__name;
+                    
+                    return imageHoverIcon(row.part__image) + renderLink(name, '/part/' + row.part + '/stock/');
                 }
             },
             {
-                field: 'part_detail.description',
+                field: 'part__description',
                 title: 'Description',
                 sortable: true,
             },
             {
-                field: 'location_detail',
+                field: 'quantity',
+                title: 'Stock',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+
+                    var val = value;
+
+                    // If there is a single unit with a serial number, use the serial number
+                    if (row.serial && row.quantity == 1) {
+                        val = '# ' + row.serial;
+                    }
+
+                    var text = renderLink(val, '/stock/item/' + row.pk + '/');
+                    
+                    text = text + "<span class='badge'>" + row.status_text + "</span>";
+                    return text;
+                }
+            },
+            {
+                field: 'location__path',
                 title: 'Location',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     if (value) {
-                        return renderLink(value.pathstring, value.url);
+                        return renderLink(value, '/stock/location/' + row.location + '/');
                     }
                     else {
                         return '<i>No stock location set</i>';
                     }
-                }
-            },
-            {
-                field: 'quantity',
-                title: 'Quantity',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    var text = renderLink(value, row.url);
-                    text = text + "<span class='badge'>" + row.status_text + "</span>";
-                    return text;
                 }
             },
             {
@@ -433,6 +519,7 @@ function loadStockTable(table, options) {
             }
         ],
         url: options.url,
+        queryParams: params,
     });
 
     if (options.buttons) {

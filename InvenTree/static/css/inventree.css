@@ -43,6 +43,12 @@
     font-size: 100%;
 }
 
+/* Bootstrap table overrides */
+
+.stock-sub-group td {
+    background-color: #ebf4f4;
+}
+
 /* Force select2 elements in modal forms to be full width */
 .select-full-width {
     width: 100%;

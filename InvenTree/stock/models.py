@@ -183,6 +183,9 @@ class StockItem(models.Model):
     def get_absolute_url(self):
         return reverse('stock-item-detail', kwargs={'pk': self.id})
 
+    def get_part_name(self):
+        return self.part.full_name
+
     class Meta:
         unique_together = [
             ('part', 'serial'),
