@@ -181,16 +181,8 @@
 
                         that.$body.find('tr[data-parent-index=' + item.id + ']').addClass('hidden stock-sub-group');
 
+                        // Insert the group header row before the first item
                         that.$body.find('tr[data-parent-index=' + item.id + ']:first').before($(html.join('')));
-
-                        var group_header = that.$body.find('tr[data-group-index=' + item.id + ']');
-                        
-                        // Ensure all the sub-items are in the right place...
-
-                        that.$body.find('tr[data-parent-index=' + item.id + ']').each(function() {
-                            $(this).detach();
-                            group_header.after(this);
-                        });
                     }
                 });
 
