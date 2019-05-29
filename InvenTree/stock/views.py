@@ -132,8 +132,26 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
     ajax_form_title = 'Move Stock'
     form_class = MoveStockItemForm
 
+    def get_items(self, item_list):
+        """ Return list of stock items. """
+
+        items = []
+
+        for pk in item_list:
+            try:
+                items.append(StockItem.objects.get(pk=pk))
+            except StockItem.DoesNotExist:
+                pass
+
+        return items
 
     def get(self, request, *args, **kwargs):
+
+        item_list = request.GET.getlist('stock[]')
+    
+        items = self.get_items(item_list)
+
+        print(items)
 
         return self.renderJsonResponse(request, self.form_class())
 

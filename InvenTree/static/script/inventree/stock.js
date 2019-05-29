@@ -550,6 +550,24 @@ function loadStockTable(table, options) {
 
     $("#multi-item-move").click(function() {
 
+        var items = $('#stock-table').bootstrapTable('getSelections');
+
+        var stock = [];
+
+        items.forEach(function(item) {
+            stock.push(item.pk);
+        });
+
+        launchModalForm("/stock/move/",
+            {
+                data: {
+                    stock: stock,
+                },
+            }
+        );
+
+        /*
+
         var items = $("#stock-table").bootstrapTable('getSelections');
 
         moveStockItems(items,
@@ -560,6 +578,7 @@ function loadStockTable(table, options) {
                        });
 
         return false;
+        */
     });
 }
 
