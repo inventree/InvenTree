@@ -5,10 +5,12 @@ Django views for interacting with Stock app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.views.generic.edit import FormMixin
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 
+from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
 
@@ -20,6 +22,7 @@ from .forms import CreateStockItemForm
 from .forms import EditStockItemForm
 from .forms import MoveStockItemForm
 from .forms import StocktakeForm
+from .forms import MoveStockItemForm
 
 
 class StockIndex(ListView):
@@ -120,6 +123,36 @@ class StockItemQRCode(QRCodeView):
             return item.format_barcode()
         except StockItem.DoesNotExist:
             return None
+
+
+class StockItemMoveMultiple(AjaxView, FormMixin):
+    """ Move multiple stock items """
+
+    ajax_template_name = 'stock/stock_move.html'
+    ajax_form_title = 'Move Stock'
+    form_class = MoveStockItemForm
+
+
+    def get(self, request, *args, **kwargs):
+
+        return self.renderJsonResponse(request, self.form_class())
+
+    def post(self, request, *args, **kwargs):
+
+        form = self.get_form()
+
+        valid = form.is_valid()
+
+        print("Valid:", valid)
+
+        data = {
+            'form_valid': False,
+        }
+
+        #form.errors['note'] = ['hello world']
+
+        return self.renderJsonResponse(request, form, data=data)
+
             
 
 class StockItemEdit(AjaxUpdateView):
