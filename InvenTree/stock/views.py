@@ -131,6 +131,7 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
     ajax_template_name = 'stock/stock_move.html'
     ajax_form_title = 'Move Stock'
     form_class = MoveStockItemForm
+    items = []
 
     def get_items(self, item_list):
         """ Return list of stock items. """
@@ -145,19 +146,26 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
 
         return items
 
+    def get_form_kwargs(self):
+
+        args = super().get_form_kwargs()
+
+        args['stock_items'] = self.get_items(self.items)
+
+        return args
+
     def get(self, request, *args, **kwargs):
 
-        item_list = request.GET.getlist('stock[]')
-    
-        items = self.get_items(item_list)
+        # Save list of items!
+        self.items = request.GET.getlist('stock[]')
 
-        print(items)
-
-        return self.renderJsonResponse(request, self.form_class())
+        return self.renderJsonResponse(request, self.get_form())
 
     def post(self, request, *args, **kwargs):
 
         form = self.get_form()
+
+        print(request.POST)
 
         valid = form.is_valid()
 

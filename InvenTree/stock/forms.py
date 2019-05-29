@@ -61,9 +61,14 @@ class MoveStockItemForm(forms.ModelForm):
     confirm = forms.BooleanField(required=False, initial=False, label='Confirm Stock Movement', help_text='Confirm movement of stock items')
 
     def __init__(self, *args, **kwargs):
+        stock_items = kwargs.pop('stock_items', [])
+
         super(MoveStockItemForm, self).__init__(*args, **kwargs)
 
         self.fields['location'].choices = self.get_location_choices()
+
+        for item in stock_items:
+            self.fields['stock_item_{id}'.format(id=item.id)] = forms.IntegerField(required=True, initial=item.quantity, help_text='Quantity for ' + str(item))
 
     class Meta:
         model = StockItem
