@@ -9,7 +9,7 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 from __future__ import unicode_literals
 
 from django.template.loader import render_to_string
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 
 from django.views import View
 from django.views.generic import UpdateView, CreateView
@@ -131,6 +131,9 @@ class AjaxMixin(object):
         Returns:
             JSON response object
         """
+
+        if not request.is_ajax():
+            return HttpResponseRedirect('/')
 
         if context is None:
             try:
