@@ -198,7 +198,7 @@ class InvenTreeTree(models.Model):
     def __str__(self):
         """ String representation of a category is the full path to that category """
 
-        return self.pathstring
+        return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
 
 
 @receiver(pre_delete, sender=InvenTreeTree, dispatch_uid='tree_pre_delete_log')

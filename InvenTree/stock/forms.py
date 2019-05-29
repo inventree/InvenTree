@@ -42,8 +42,20 @@ class CreateStockItemForm(HelperForm):
         ]
 
 
-class MoveStockItemForm(forms.ModelForm):
+class MoveStockItemForm(HelperForm):
     """ Form for moving a StockItem to a new location """
+
+    note = forms.CharField(label='Notes', required=True, help_text='Add note (required)')
+
+    class Meta:
+        model = StockItem
+
+        fields = [
+            'location',
+            'note'
+        ]
+
+class MoveMultipleStockItemsForm(forms.ModelForm):
 
     def get_location_choices(self):
         locs = StockLocation.objects.all()
@@ -68,7 +80,27 @@ class MoveStockItemForm(forms.ModelForm):
         self.fields['location'].choices = self.get_location_choices()
 
         for item in stock_items:
-            self.fields['stock_item_{id}'.format(id=item.id)] = forms.IntegerField(required=True, initial=item.quantity, help_text='Quantity for ' + str(item))
+            field = forms.IntegerField(
+                label= str(item.part),
+                required=True,
+                initial=item.quantity,
+                help_text='Quantity for ' + str(item))
+
+            extra = {
+                'name': str(item.part),
+                'location': str(item.location),
+                'quantity': str(item.quantity),
+            }
+
+            field.extra = extra
+
+            self.fields['stock_item_{id}'.format(id=item.id)] = field
+
+    def get_stock_fields(self):
+        for field_name in self.fields:
+            if field_name.startswith('stock_item_'):
+                print(field_name, self[field_name], self[field_name].extra)
+                yield self[field_name]
 
     class Meta:
         model = StockItem
