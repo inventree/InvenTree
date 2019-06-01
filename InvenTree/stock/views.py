@@ -135,15 +135,14 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
     stock_items = []
 
     def get_items(self, item_list):
-        """ Return list of stock items. """
+        """ Return list of stock items initally requested using GET """
 
-        items = []
+        # Start with all 'in stock' items
+        items = StockItem.objects.filter(customer=None, belongs_to=None)
 
-        for pk in item_list:
-            try:
-                items.append(StockItem.objects.get(pk=pk))
-            except StockItem.DoesNotExist:
-                pass
+        # Client provides a list of individual stock items
+        if 'stock[]' in self.request.GET:
+            items = items.filter(id__in=self.request.GET.getlist('stock[]'))
 
         return items
 
@@ -165,6 +164,8 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
         return context
 
     def get(self, request, *args, **kwargs):
+
+        self.request = request
 
         # Save list of items!
         self.stock_items = self.get_items(request.GET.getlist('stock[]'))

@@ -6,10 +6,9 @@
   {% csrf_token %}
   {% load crispy_forms_tags %}
   
-  <b>Stock Items</b>
   <table class='table table-condensed table-striped' id='stock-table'>
       <tr>
-          <th>Item</th>
+          <th>Stock Item</th>
           <th>Location</th>
           <th>{{ stock_action }}</th>
           <th></th>
