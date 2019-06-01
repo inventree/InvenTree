@@ -30,7 +30,7 @@ InvenTree | Build - {{ build }}
                     </tr>
                     <tr>
                         <td>Part</td>
-                        <td>{{ build.part.full_name }}</td>
+                        <td><a href="{% url 'part-detail' build.part.id %}">{{ build.part.full_name }}</a></td>
                     </tr>
                     <tr>
                         <td>Quantity</td>
