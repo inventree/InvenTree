@@ -69,7 +69,7 @@ class MoveMultipleStockItemsForm(forms.ModelForm):
 
     location = forms.ChoiceField(label='Destination', required=True, help_text='Destination stock location')
     note = forms.CharField(label='Notes', required=True, help_text='Add note (required)')
-    transaction = forms.BooleanField(required=False, initial=False, label='Create Transaction', help_text='Create a stock transaction for these parts')
+    # transaction = forms.BooleanField(required=False, initial=False, label='Create Transaction', help_text='Create a stock transaction for these parts')
     confirm = forms.BooleanField(required=False, initial=False, label='Confirm Stock Movement', help_text='Confirm movement of stock items')
 
     def __init__(self, *args, **kwargs):
@@ -83,7 +83,7 @@ class MoveMultipleStockItemsForm(forms.ModelForm):
         fields = [
             'location',
             'note',
-            'transaction',
+            # 'transaction',
             'confirm',
         ]
 

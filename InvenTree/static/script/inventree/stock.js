@@ -14,6 +14,20 @@ function getStockLocations(filters={}, options={}) {
     return inventreeGet('/api/stock/location/', filters, options)
 }
 
+/* Functions for interacting with stock management forms
+ */
+
+function removeStockRow(e) {
+    // Remove a selected row from a stock modal form
+
+    e = e || window.event;
+    var src = e.target || e.srcElement;
+
+    var row = $(src).attr('row');
+
+    $('#' + row).remove();
+}
+
 
 /* Present user with a dialog to update multiple stock items
  * Possible actions:
