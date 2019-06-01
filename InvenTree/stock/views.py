@@ -23,6 +23,7 @@ from .forms import EditStockItemForm
 from .forms import MoveStockItemForm
 from .forms import StocktakeForm
 from .forms import MoveStockItemForm
+from .forms import MoveMultipleStockItemsForm
 
 
 class StockIndex(ListView):
@@ -130,8 +131,8 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
 
     ajax_template_name = 'stock/stock_move.html'
     ajax_form_title = 'Move Stock'
-    form_class = MoveStockItemForm
-    items = []
+    form_class = MoveMultipleStockItemsForm
+    stock_items = []
 
     def get_items(self, item_list):
         """ Return list of stock items. """
@@ -146,18 +147,27 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
 
         return items
 
-    def get_form_kwargs(self):
+    def _get_form_kwargs(self):
 
         args = super().get_form_kwargs()
 
-        args['stock_items'] = self.get_items(self.items)
+        #args['stock_items'] = self.stock_items
 
         return args
+
+    def get_context_data(self):
+
+        context = super().get_context_data()
+
+        context['stock_items'] = self.stock_items
+        context['stock_action'] = 'Move'    
+
+        return context
 
     def get(self, request, *args, **kwargs):
 
         # Save list of items!
-        self.items = request.GET.getlist('stock[]')
+        self.stock_items = self.get_items(request.GET.getlist('stock[]'))
 
         return self.renderJsonResponse(request, self.get_form())
 

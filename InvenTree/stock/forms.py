@@ -73,34 +73,9 @@ class MoveMultipleStockItemsForm(forms.ModelForm):
     confirm = forms.BooleanField(required=False, initial=False, label='Confirm Stock Movement', help_text='Confirm movement of stock items')
 
     def __init__(self, *args, **kwargs):
-        stock_items = kwargs.pop('stock_items', [])
+       super().__init__(*args, **kwargs)
 
-        super(MoveStockItemForm, self).__init__(*args, **kwargs)
-
-        self.fields['location'].choices = self.get_location_choices()
-
-        for item in stock_items:
-            field = forms.IntegerField(
-                label= str(item.part),
-                required=True,
-                initial=item.quantity,
-                help_text='Quantity for ' + str(item))
-
-            extra = {
-                'name': str(item.part),
-                'location': str(item.location),
-                'quantity': str(item.quantity),
-            }
-
-            field.extra = extra
-
-            self.fields['stock_item_{id}'.format(id=item.id)] = field
-
-    def get_stock_fields(self):
-        for field_name in self.fields:
-            if field_name.startswith('stock_item_'):
-                print(field_name, self[field_name], self[field_name].extra)
-                yield self[field_name]
+       self.fields['location'].choices = self.get_location_choices()
 
     class Meta:
         model = StockItem

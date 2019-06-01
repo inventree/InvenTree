@@ -1,1 +1,33 @@
-{% extends "modal_form.html" %}
+{% block pre_form_content %}
+{% endblock %}
+<form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
+  {% csrf_token %}
+  {% load crispy_forms_tags %}
+  
+  
+  {% crispy form %}
+
+  {% block form_data %}
+
+  {% endblock %}
+
+  <hr>
+  <table class='table table-condensed table-striped' id='stock-table'>
+    <tr>
+        <th>Item</th>
+        <th>Location</th>
+        <th>{{ stock_action }}</th>
+    </tr>
+    {% for item in stock_items %}
+    <tr id='stock-row-{{ item.id }}'>
+        <td>{% include "hover_image.html" with image=item.part.image %}
+          {{ item.part.full_name }} <small><i>{{ item.part.description }}</i></small></td> 
+        <td>{{ item.location.pathstring }}</td> 
+        <td>
+          <input class='form-control' min='0' max='{{ item.quantity }}' value='{{ item.quantity }}' type='number' name='stock-id-{{ item.id }}' id='stock-id-{{ item.id }}'/>
+        </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+</form>
