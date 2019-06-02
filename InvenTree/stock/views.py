@@ -14,6 +14,8 @@ from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
 
+from InvenTree.helpers import str2bool
+
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
 
@@ -134,7 +136,7 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
     form_class = MoveMultipleStockItemsForm
     stock_items = []
 
-    def get_items(self, item_list):
+    def get_GET_items(self):
         """ Return list of stock items initally requested using GET """
 
         # Start with all 'in stock' items
@@ -144,8 +146,48 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
         if 'stock[]' in self.request.GET:
             items = items.filter(id__in=self.request.GET.getlist('stock[]'))
 
+        # Client provides a PART reference
+        elif 'part' in self.request.GET:
+            items = items.filter(part=self.request.GET.get('part'))
+
+        # Client provides a LOCATION reference
+        elif 'location' in self.request.GET:
+            items = items.filter(location=self.request.GET.get('location'))
+
+        # Client provides a single StockItem lookup
+        elif 'item' in self.request.GET:
+            items = [StockItem.objects.get(id=self.request.GET.get('item'))]
+
+        # Unsupported query
+        else:
+            items = None
+
+        for item in items:
+            item.new_quantity = item.quantity
+
         return items
 
+    def get_POST_items(self):
+        """ Return list of stock items sent back by client on a POST request """
+
+        items = []
+
+        for item in self.request.POST:
+            if item.startswith('stock-id-'):
+                
+                pk = item.replace('stock-id-', '')
+                q = self.request.POST[item]
+
+                try:
+                    stock_item = StockItem.objects.get(pk=pk)
+                except StockItem.DoesNotExist:
+                    continue
+
+                stock_item.new_quantity = q
+
+                items.append(stock_item)
+
+        return items
     def _get_form_kwargs(self):
 
         args = super().get_form_kwargs()
@@ -168,7 +210,7 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
         self.request = request
 
         # Save list of items!
-        self.stock_items = self.get_items(request.GET.getlist('stock[]'))
+        self.stock_items = self.get_GET_items()
 
         return self.renderJsonResponse(request, self.get_form())
 
@@ -176,17 +218,30 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
 
         form = self.get_form()
 
-        print(request.POST)
+        self.request = request
+
+        # Update list of stock items
+        self.stock_items = self.get_POST_items()
 
         valid = form.is_valid()
+        
+        for item in self.stock_items:
+            try:
+                q = int(item.new_quantity)
+            except ValueError:
+                item.error = 'Must enter integer value'
+                valid = False
+                continue
 
-        print("Valid:", valid)
+        confirmed = str2bool(request.POST.get('confirm'))
+
+        if not confirmed:
+            valid = False
+            form.errors['confirm'] = ['Confirm stock adjustment']
 
         data = {
             'form_valid': False,
         }
-
-        #form.errors['note'] = ['hello world']
 
         return self.renderJsonResponse(request, form, data=data)
 

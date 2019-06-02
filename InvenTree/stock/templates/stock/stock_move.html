@@ -19,7 +19,7 @@
             {{ item.part.full_name }} <small><i>{{ item.part.description }}</i></small></td> 
           <td>{{ item.location.pathstring }}</td> 
           <td>
-            <input class='numberinput' min='0' max='{{ item.quantity }}' value='{{ item.quantity }}' type='number' name='stock-id-{{ item.id }}' id='stock-id-{{ item.id }}'/>
+            <input class='numberinput' min='0' max='{{ item.quantity }}' value='{{ item.new_quantity }}' type='number' name='stock-id-{{ item.id }}' id='stock-id-{{ item.id }}'/>
           </td>
           <td><button class='btn btn-default btn-remove' id='del-{{ item.id }}' title='Remove item' type='button'><span row='stock-row-{{ item.id }}' onclick='removeStockRow()' class='glyphicon glyphicon-small glyphicon-remove'></span></button></td>
       </tr>
