@@ -306,6 +306,8 @@ class StockList(generics.ListCreateAPIView):
             else:
                 item['location__path'] = None
 
+            item['status_text'] = StockItem.ITEM_STATUS_CODES[item['status']]
+
         return Response(data)
 
     def get_queryset(self):
