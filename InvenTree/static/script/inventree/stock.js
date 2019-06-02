@@ -153,7 +153,10 @@ function loadStockTable(table, options) {
 
                     var text = renderLink(val, '/stock/item/' + row.pk + '/');
                     
-                    text = text + "<span class='badge'>" + row.status_text + "</span>";
+                    if (row.status_text != 'OK') {
+                        text = text + "<span class='badge'>" + row.status_text + "</span>";
+                    }
+                    
                     return text;
                 }
             },

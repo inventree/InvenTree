@@ -15,13 +15,13 @@
         <a href="{% url 'part-allocation' part.id %}">Allocated <span class="badge">{{ part.allocation_count }}</span></a>
     </li>
     {% endif %}
-    {% if part.buildable %}
+    {% if part.assembly %}
     <li{% ifequal tab 'bom' %} class="active"{% endifequal %}>
         <a href="{% url 'part-bom' part.id %}">BOM<span class="badge{% if part.is_bom_valid == False %} badge-alert{% endif %}">{{ part.bom_count }}</span></a></li>
     <li{% ifequal tab 'build' %} class="active"{% endifequal %}>
         <a href="{% url 'part-build' part.id %}">Build<span class='badge'>{{ part.active_builds|length }}</span></a></li>
     {% endif %}
-    {% if part.consumable or part.used_in_count > 0 %}
+    {% if part.component or part.used_in_count > 0 %}
     <li{% ifequal tab 'used' %} class="active"{% endifequal %}>
         <a href="{% url 'part-used-in' part.id %}">Used In{% if part.used_in_count > 0 %}<span class="badge">{{ part.used_in_count }}</span>{% endif %}</a></li>
     {% endif %}

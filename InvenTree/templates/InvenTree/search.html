@@ -17,9 +17,17 @@ InvenTree | Search Results
 <br><br>
 <hr>
 
+<div id='no-search-results'>
+    <h4><i>No results found</i></h4>
+</div>
+
+{% include "InvenTree/search_part_category.html" with collapse_id="categories" %}
+
 {% include "InvenTree/search_parts.html" with collapse_id='parts' %}
 
 {% include "InvenTree/search_supplier_parts.html" with collapse_id='supplier_parts' %}
+
+{% include "InvenTree/search_stock_location.html" with collapse_id="locations" %}
 
 {% endblock %}
 
@@ -31,28 +39,85 @@ InvenTree | Search Results
 {% block js_ready %}
 {{ block.super }}
 
+    $(".panel-group").hide();
+
     function onSearchResults(table, output) {
         $(table).on('load-success.bs.table', function() {
+
+            var panel = $(output).closest('.panel-group');
+
             var n = $(table).bootstrapTable('getData').length;
 
             var text = '';
             if (n == 0) {
                 text = '<i>No results</i>'
+
+                $(panel).hide();
+                
+
             } else {
                 text = n + ' result';
 
                 if (n > 1) {
                     text += 's';
                 }
+
+                $(panel).show();
+
+                $("#no-search-results").hide();
             }
 
             $(output).html(text);
         });
     }
 
+    onSearchResults("#category-results-table", "#category-results-count");
+    
+    onSearchResults("#location-results-table", "#location-results-count");
+
     onSearchResults('#part-results-table', '#part-result-count');
 
     onSearchResults('#supplier-part-results-table', '#supplier-part-result-count');
+
+    $("#category-results-table").bootstrapTable({
+        url: "{% url 'api-part-category-list' %}",
+        queryParams: {
+            search: "{{ query }}",
+        },
+        columns: [
+            {
+                field: 'name',
+                title: 'Name',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, '/part/category/' + row.pk + '/');
+                },
+            },
+            {
+                field: 'description',
+                title: 'Description',
+            },
+        ],
+    });
+
+    $("#location-results-table").bootstrapTable({
+        url: "{% url 'api-location-list' %}",
+        queryParams: {
+            search: "{{ query }}",
+        },
+        columns: [
+            {
+                field: 'name',
+                title: 'Name',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, '/stock/location/' + row.pk + '/');
+                },
+            },
+            {
+                field: 'description',
+                title: 'Description',
+            },
+        ],
+    });
 
     loadPartTable("#part-results-table",
         "{% url 'api-part-list' %}",
@@ -61,6 +126,7 @@ InvenTree | Search Results
                 search: "{{ query }}",
             },
             allowInactive: true,
+            checkbox: false,
         }
     );
 
