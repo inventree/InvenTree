@@ -248,6 +248,18 @@ class Part(models.Model):
         else:
             return static('/img/blank_image.png')
 
+    def validate_unique(self, exclude=None):
+        super().validate_unique(exclude)
+
+        # Part name uniqueness should be case insensitive
+        try:
+            if Part.objects.filter(name__iexact=self.name).exclude(id=self.id).exists():
+                raise ValidationError({
+                    "name": _("A part with this name already exists")
+                })
+        except Part.DoesNotExist:
+            pass
+
     def clean(self):
         """ Perform cleaning operations for the Part model """
 
