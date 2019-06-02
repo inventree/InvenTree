@@ -336,6 +336,8 @@ class StockAdjust(AjaxView, FormMixin):
             if item.new_quantity <= 0:
                 continue
 
+            item.add_stock(item.new_quantity, self.request.user, notes=note)
+
             count += 1
 
         return _("Added stock to {n} items".format(n=count))
