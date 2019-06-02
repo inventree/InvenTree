@@ -540,6 +540,28 @@ function loadStockTable(table, options) {
         linkButtonsToSelection(table, options.buttons);
     }
 
+    function stockAdjustment(action) {
+        var items = $("#stock-table").bootstrapTable("getSelections");
+
+        var stock = [];
+
+        items.forEach(function(item) {
+            stock.push(item.pk);
+        });
+
+        launchModalForm("/stock/adjust/",
+            {
+                data: {
+                    action: action,
+                    stock: stock,
+                },
+                success: function() {
+                    $("#stock-table").bootstrapTable('refresh');
+                },
+            }
+        );
+    }
+
     // Automatically link button callbacks
     $('#multi-item-stocktake').click(function() {
         updateStockItems({
@@ -563,40 +585,7 @@ function loadStockTable(table, options) {
     });
 
     $("#multi-item-move").click(function() {
-
-        var items = $('#stock-table').bootstrapTable('getSelections');
-
-        var stock = [];
-
-        items.forEach(function(item) {
-            stock.push(item.pk);
-        });
-
-        launchModalForm("/stock/adjust/",
-            {
-                data: {
-                    action: 'move',
-                    stock: stock,
-                },
-                success: function() {
-                    $("#stock-table").bootstrapTable('refresh');
-                },
-            }
-        );
-
-        /*
-
-        var items = $("#stock-table").bootstrapTable('getSelections');
-
-        moveStockItems(items,
-                       {
-                           success: function() {
-                               $("#stock-table").bootstrapTable('refresh');
-                           }
-                       });
-
-        return false;
-        */
+        stockAdjustment('move');
     });
 }
 

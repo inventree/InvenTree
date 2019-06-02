@@ -172,7 +172,13 @@ class StockAdjust(AjaxView, FormMixin):
             items = None
 
         for item in items:
-            item.new_quantity = item.quantity
+
+            # Initialize quantity to zero for addition/removal
+            if self.stock_action in ['take', 'give']:
+                item.new_quantity = 0
+            # Initialize quantity at full amount for counting or moving
+            else:
+                item.new_quantity = item.quantity
 
         return items
 
@@ -197,13 +203,6 @@ class StockAdjust(AjaxView, FormMixin):
                 items.append(stock_item)
 
         return items
-    def _get_form_kwargs(self):
-
-        args = super().get_form_kwargs()
-
-        #args['stock_items'] = self.stock_items
-
-        return args
 
     def get_context_data(self):
 
@@ -211,7 +210,9 @@ class StockAdjust(AjaxView, FormMixin):
 
         context['stock_items'] = self.stock_items
 
-        context['stock_action'] = self.stock_action 
+        context['stock_action'] = self.stock_action
+
+        context['stock_action_title'] = self.stock_action.capitalize()
 
         return context
 
@@ -220,8 +221,22 @@ class StockAdjust(AjaxView, FormMixin):
         self.request = request
 
         # Action
-        self.stock_action = request.GET.get('action').lower()
+        self.stock_action = request.GET.get('action', '').lower()
 
+        # Pick a default action...
+        if self.stock_action not in ['move', 'count', 'take', 'give']:
+            self.stock_action = 'count'
+
+        # Choose the form title based on the action
+        titles = {
+            'move': 'Move Stock',
+            'count': 'Count Stock',
+            'take': 'Remove Stock',
+            'give': 'Add Stock'
+        }
+
+        self.ajax_form_title = titles[self.stock_action]
+        
         # Save list of items!
         self.stock_items = self.get_GET_items()
 
@@ -229,12 +244,12 @@ class StockAdjust(AjaxView, FormMixin):
 
     def post(self, request, *args, **kwargs):
 
-        form = self.get_form()
-
         self.request = request
 
         # Update list of stock items
         self.stock_items = self.get_POST_items()
+
+        form = self.get_form()
 
         valid = form.is_valid()
         
