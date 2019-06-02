@@ -201,8 +201,8 @@ class Part(models.Model):
         minimum_stock: Minimum preferred quantity to keep in stock
         units: Units of measure for this part (default='pcs')
         salable: Can this part be sold to customers?
-        buildable: Can this part be build from other parts?
-        consumable: Can this part be used to make other parts?
+        assembly: Can this part be build from other parts?
+        component: Can this part be used to make other parts?
         purchaseable: Can this part be purchased from suppliers?
         trackable: Trackable parts can have unique serial numbers assigned, etc, etc
         active: Is this part active? Parts are deactivated instead of being deleted
@@ -247,6 +247,18 @@ class Part(models.Model):
             return os.path.join(settings.MEDIA_URL, str(self.image.url))
         else:
             return static('/img/blank_image.png')
+
+    def validate_unique(self, exclude=None):
+        super().validate_unique(exclude)
+
+        # Part name uniqueness should be case insensitive
+        try:
+            if Part.objects.filter(name__iexact=self.name).exclude(id=self.id).exists():
+                raise ValidationError({
+                    "name": _("A part with this name already exists")
+                })
+        except Part.DoesNotExist:
+            pass
 
     def clean(self):
         """ Perform cleaning operations for the Part model """
@@ -343,9 +355,9 @@ class Part(models.Model):
 
     units = models.CharField(max_length=20, default="pcs", blank=True, help_text='Stock keeping units for this part')
 
-    buildable = models.BooleanField(default=False, help_text='Can this part be built from other parts?')
+    assembly = models.BooleanField(default=False, verbose_name='Assembly', help_text='Can this part be built from other parts?')
 
-    consumable = models.BooleanField(default=True, help_text='Can this part be used to build other parts?')
+    component = models.BooleanField(default=True, verbose_name='Component', help_text='Can this part be used to build other parts?')
 
     trackable = models.BooleanField(default=False, help_text='Does this part have tracking for unique items?')
 
@@ -858,7 +870,7 @@ class BomItem(models.Model):
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='bom_items',
                              help_text='Select parent part',
                              limit_choices_to={
-                                 'buildable': True,
+                                 'assembly': True,
                                  'active': True,
                              })
 
@@ -867,7 +879,7 @@ class BomItem(models.Model):
     sub_part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='used_in',
                                  help_text='Select part to be used in BOM',
                                  limit_choices_to={
-                                     'consumable': True,
+                                     'component': True,
                                      'active': True
                                  })
 

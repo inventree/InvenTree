@@ -57,5 +57,5 @@
   fields:
     name: 'Bob'
     description: 'Can we build it?'
-    buildable: true
+    assembly: true
     

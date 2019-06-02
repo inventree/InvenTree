@@ -124,6 +124,10 @@ function imageHoverIcon(url) {
      * On mouseover, display a full-size version of the image
      */
 
+    if (!url) {
+        url = '/static/img/blank_image.png';
+    }
+
     var html = `
         <a class='hover-icon'>
             <img class='hover-img-thumb' src='` + url + `'>

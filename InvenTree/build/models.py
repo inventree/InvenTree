@@ -51,7 +51,7 @@ class Build(models.Model):
                              related_name='builds',
                              limit_choices_to={
                                  'is_template': False,
-                                 'buildable': True,
+                                 'assembly': True,
                                  'active': True
                              },
                              help_text='Select part to build',

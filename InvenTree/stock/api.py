@@ -236,6 +236,11 @@ class StockLocationList(generics.ListCreateAPIView):
         'parent',
     ]
 
+    search_fields = [
+        'name',
+        'description',
+    ]
+
 
 class StockList(generics.ListCreateAPIView):
     """ API endpoint for list view of Stock objects
@@ -305,6 +310,8 @@ class StockList(generics.ListCreateAPIView):
                 item['location__path'] = locations[loc_id]
             else:
                 item['location__path'] = None
+
+            item['status_text'] = StockItem.ITEM_STATUS_CODES[item['status']]
 
         return Response(data)
 
