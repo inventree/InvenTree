@@ -21,7 +21,10 @@
             {{ item.part.full_name }} <small><i>{{ item.part.description }}</i></small></td> 
           <td>{{ item.location.pathstring }}</td> 
           <td>
-            <input class='numberinput' min='0' max='{{ item.quantity }}' value='{{ item.new_quantity }}' type='number' name='stock-id-{{ item.id }}' id='stock-id-{{ item.id }}'/>
+            <input class='numberinput'
+              min='0'
+              {% if  stock_action == 'move' %} max='{{ item.quantity }}' {% endif %}
+              value='{{ item.new_quantity }}' type='number' name='stock-id-{{ item.id }}' id='stock-id-{{ item.id }}'/>
             {% if item.error %}
             <br><span class='help-inline'>{{ item.error }}</span>
             {% endif %}

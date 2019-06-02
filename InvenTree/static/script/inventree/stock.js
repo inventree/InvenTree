@@ -578,10 +578,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-add').click(function() {
-        updateStockItems({
-            action: 'add',
-        });
-        return false;
+        stockAdjustment('add');
     });
 
     $("#multi-item-move").click(function() {

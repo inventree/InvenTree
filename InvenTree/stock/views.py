@@ -174,7 +174,7 @@ class StockAdjust(AjaxView, FormMixin):
         for item in items:
 
             # Initialize quantity to zero for addition/removal
-            if self.stock_action in ['take', 'give']:
+            if self.stock_action in ['take', 'add']:
                 item.new_quantity = 0
             # Initialize quantity at full amount for counting or moving
             else:
@@ -216,6 +216,15 @@ class StockAdjust(AjaxView, FormMixin):
 
         return context
 
+    def get_form(self):
+
+        form = super().get_form()
+
+        if not self.stock_action == 'move':
+            form.fields.pop('destination')
+
+        return form
+
     def get(self, request, *args, **kwargs):
 
         self.request = request
@@ -224,7 +233,7 @@ class StockAdjust(AjaxView, FormMixin):
         self.stock_action = request.GET.get('action', '').lower()
 
         # Pick a default action...
-        if self.stock_action not in ['move', 'count', 'take', 'give']:
+        if self.stock_action not in ['move', 'count', 'take', 'add']:
             self.stock_action = 'count'
 
         # Choose the form title based on the action
@@ -232,7 +241,7 @@ class StockAdjust(AjaxView, FormMixin):
             'move': 'Move Stock',
             'count': 'Count Stock',
             'take': 'Remove Stock',
-            'give': 'Add Stock'
+            'add': 'Add Stock'
         }
 
         self.ajax_form_title = titles[self.stock_action]
@@ -245,6 +254,8 @@ class StockAdjust(AjaxView, FormMixin):
     def post(self, request, *args, **kwargs):
 
         self.request = request
+
+        self.stock_action = request.POST.get('stock_action').lower()
 
         # Update list of stock items
         self.stock_items = self.get_POST_items()
@@ -265,11 +276,13 @@ class StockAdjust(AjaxView, FormMixin):
                 item.error = _('Quantity must be positive')
                 valid = False
                 continue
-            
-            if item.new_quantity > item.quantity:
-                item.error = _('Quantity must not exceed {x}'.format(x=item.quantity))
-                valid = False
-                continue
+
+            if self.stock_action in ['move']:
+
+                if item.new_quantity > item.quantity:
+                    item.error = _('Quantity must not exceed {x}'.format(x=item.quantity))
+                    valid = False
+                    continue
 
         confirmed = str2bool(request.POST.get('confirm'))
 
@@ -281,25 +294,67 @@ class StockAdjust(AjaxView, FormMixin):
             'form_valid': valid,
         }
 
-        self.stock_action = request.POST.get('stock_action').lower()
-
         if valid:
 
-            if self.stock_action == 'move':
-
-                destination = None
-            
-                try:
-                    destination = StockLocation.objects.get(id=form['destination'].value())
-                except StockLocation.DoesNotExist:
-                    pass
-                except ValueError:
-                    pass
-
-                if destination:
-                    data['success'] = self.do_move(destination)
+            data['success'] = self.do_action()
 
         return self.renderJsonResponse(request, form, data=data)
+
+    def do_action(self):
+        """ Perform stock adjustment action """
+
+        if self.stock_action == 'move':
+            destination = None
+
+            try:
+                destination = StockLocation.objects.get(id=self.request.POST.get('destination'))
+            except StockLocation.DoesNotExist:
+                pass
+            except ValueError:
+                pass
+
+            return self.do_move(destination)
+
+        elif self.stock_action == 'add':
+            return self.do_add()
+
+        elif self.stock_action == 'take':
+            return self.do_take()
+
+        elif self.stock_action == 'count':
+            return self.do_count()
+
+        else:
+            return 'No action performed'
+
+    def do_add(self):
+        
+        count = 0
+        note = self.request.POST['note']
+
+        for item in self.stock_items:
+            if item.new_quantity <= 0:
+                continue
+
+            count += 1
+
+        return _("Added stock to {n} items".format(n=count))
+
+    def do_take(self):
+
+        count = 0
+        note = self.request.POST['note']
+
+        for item in self.stock_items:
+            if item.new_quantity <= 0:
+                continue
+
+            count += 1
+
+        return _("Removed stock from {n} items".format(n=count))
+
+    def do_count(self):
+        pass
 
     def do_move(self, destination):
         """ Perform actual stock movement """
