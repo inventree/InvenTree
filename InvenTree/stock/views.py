@@ -251,8 +251,18 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
             valid = False
             form.errors['confirm'] = [_('Confirm stock adjustment')]
 
+        try:
+            destination = StockLocation.objects.get(id=form['destination'].value())
+            destination_name = destination.pathstring
+        except StockLocation.DoesNotExist:
+            destination = None
+            destination_name = ""
+
         data = {
-            'form_valid': False,
+            'form_valid': valid,
+            'success': _('Moved {n} items to {loc}'.format(
+                n=len(self.stock_items),
+                loc=destination_name))
         }
 
         return self.renderJsonResponse(request, form, data=data)
