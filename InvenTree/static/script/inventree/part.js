@@ -82,6 +82,7 @@ function loadPartTable(table, url, options={}) {
      *  - url: Base URL for API query
      *  - options: object containing following (optional) fields
      *      allowInactive: If true, allow display of inactive parts
+     *      checkbox: Show the checkbox column
      *      query: extra query params for API request
      *      buttons: If provided, link buttons to selection status of this table
      */
@@ -93,6 +94,84 @@ function loadPartTable(table, url, options={}) {
         // Only display active parts
         query.active = true;
     }
+
+    var columns = [
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+        }
+    ];
+
+    if (options.checkbox) {
+        columns.push({
+            checkbox: true,
+            title: 'Select',
+            searchable: false,
+        });
+    }
+
+    columns.push({
+        field: 'full_name',
+        title: 'Part',
+        sortable: true,
+        formatter: function(value, row, index, field) {
+
+            if (row.is_template) {
+                value = '<i>' + value + '</i>';
+            }
+
+            var display = imageHoverIcon(row.image_url) + renderLink(value, row.url);
+            
+            if (!row.active) {
+                display = display + "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
+            }
+            return display; 
+        }
+    });
+
+    columns.push({
+        sortable: true,
+        field: 'description',
+        title: 'Description',
+        formatter: function(value, row, index, field) {
+
+            if (row.is_template) {
+                value = '<i>' + value + '</i>';
+            }
+
+            return value;
+        }
+    });
+    
+    columns.push({
+        sortable: true,
+        field: 'category_name',
+        title: 'Category',
+        formatter: function(value, row, index, field) {
+            if (row.category) {
+                return renderLink(row.category_name, "/part/category/" + row.category + "/");
+            }
+            else {
+                return '';
+            }
+        }   
+    });
+
+    columns.push({
+        field: 'total_stock',
+        title: 'Stock',
+        searchable: false,
+        sortable: true,
+        formatter: function(value, row, index, field) {
+            if (value) {
+                return renderLink(value, row.url + 'stock/');
+            }
+            else {
+                return "<span class='label label-warning'>No Stock</span>";
+            }
+        }
+    });
 
     $(table).bootstrapTable({
         url: url,
@@ -107,76 +186,7 @@ function loadPartTable(table, url, options={}) {
         queryParams: function(p) {
             return  query;
         },
-        columns: [
-            {
-                checkbox: true,
-                title: 'Select',
-                searchable: false,
-            },
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-            },
-            {
-                field: 'full_name',
-                title: 'Part',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-
-                    if (row.is_template) {
-                        value = '<i>' + value + '</i>';
-                    }
-
-                    var display = imageHoverIcon(row.image_url) + renderLink(value, row.url);
-                    
-                    if (!row.active) {
-                        display = display + "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
-                    }
-                    return display; 
-                }
-            },
-            {
-                sortable: true,
-                field: 'description',
-                title: 'Description',
-                formatter: function(value, row, index, field) {
-
-                    if (row.is_template) {
-                        value = '<i>' + value + '</i>';
-                    }
-
-                    return value;
-                }
-            },
-            {
-                sortable: true,
-                field: 'category_name',
-                title: 'Category',
-                formatter: function(value, row, index, field) {
-                    if (row.category) {
-                        return renderLink(row.category_name, "/part/category/" + row.category + "/");
-                    }
-                    else {
-                        return '';
-                    }
-                }   
-            },
-            {
-                field: 'total_stock',
-                title: 'Stock',
-                searchable: false,
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    if (value) {
-                        return renderLink(value, row.url + 'stock/');
-                    }
-                    else {
-                        return "<span class='label label-warning'>No Stock</span>";
-                    }
-                }
-            }
-        ],
+        columns: columns,
     });
 
     if (options.buttons) {

@@ -17,6 +17,10 @@ InvenTree | Search Results
 <br><br>
 <hr>
 
+<div id='no-search-results'>
+    <h4><i>No results found</i></h4>
+</div>
+
 {% include "InvenTree/search_part_category.html" with collapse_id="categories" %}
 
 {% include "InvenTree/search_parts.html" with collapse_id='parts' %}
@@ -35,10 +39,12 @@ InvenTree | Search Results
 {% block js_ready %}
 {{ block.super }}
 
+    $(".panel-group").hide();
+
     function onSearchResults(table, output) {
         $(table).on('load-success.bs.table', function() {
 
-            var panel = $(output).parent('.panel-group');
+            var panel = $(output).closest('.panel-group');
 
             var n = $(table).bootstrapTable('getData').length;
 
@@ -47,8 +53,6 @@ InvenTree | Search Results
                 text = '<i>No results</i>'
 
                 $(panel).hide();
-
-                $(table).hide();
                 
 
             } else {
@@ -59,6 +63,8 @@ InvenTree | Search Results
                 }
 
                 $(panel).show();
+
+                $("#no-search-results").hide();
             }
 
             $(output).html(text);
@@ -120,6 +126,7 @@ InvenTree | Search Results
                 search: "{{ query }}",
             },
             allowInactive: true,
+            checkbox: false,
         }
     );
 
