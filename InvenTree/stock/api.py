@@ -236,6 +236,11 @@ class StockLocationList(generics.ListCreateAPIView):
         'parent',
     ]
 
+    search_fields = [
+        'name',
+        'description',
+    ]
+
 
 class StockList(generics.ListCreateAPIView):
     """ API endpoint for list view of Stock objects

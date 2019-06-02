@@ -51,7 +51,7 @@ class CategoryList(generics.ListCreateAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
-        # filters.SearchFilter,
+        filters.SearchFilter,
         filters.OrderingFilter,
     ]
 
