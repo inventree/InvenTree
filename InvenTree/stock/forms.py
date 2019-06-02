@@ -69,9 +69,9 @@ class AdjustStockForm(forms.ModelForm):
     confirm = forms.BooleanField(required=False, initial=False, label='Confirm Stock Movement', help_text='Confirm movement of stock items')
 
     def __init__(self, *args, **kwargs):
-       super().__init__(*args, **kwargs)
-
-       self.fields['destination'].choices = self.get_location_choices()
+        super().__init__(*args, **kwargs)
+        
+        self.fields['destination'].choices = self.get_location_choices()
 
     class Meta:
         model = StockItem
