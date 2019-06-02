@@ -277,7 +277,7 @@ class StockAdjust(AjaxView, FormMixin):
                 valid = False
                 continue
 
-            if self.stock_action in ['move']:
+            if self.stock_action in ['move', 'take']:
 
                 if item.new_quantity > item.quantity:
                     item.error = _('Quantity must not exceed {x}'.format(x=item.quantity))
@@ -350,6 +350,8 @@ class StockAdjust(AjaxView, FormMixin):
         for item in self.stock_items:
             if item.new_quantity <= 0:
                 continue
+
+            item.take_stock(item.new_quantity, self.request.user, notes=note)
 
             count += 1
 
