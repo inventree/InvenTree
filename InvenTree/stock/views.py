@@ -229,18 +229,18 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
         
         for item in self.stock_items:
             try:
-                q = int(item.new_quantity)
+                item.new_quantity = int(item.new_quantity)
             except ValueError:
                 item.error = _('Must enter integer value')
                 valid = False
                 continue
 
-            if q < 0:
+            if item.new_quantity < 0:
                 item.error = _('Quantity must be positive')
                 valid = False
                 continue
             
-            if q > item.quantity:
+            if item.new_quantity > item.quantity:
                 item.error = _('Quantity must not exceed {x}'.format(x=item.quantity))
                 valid = False
                 continue
@@ -251,27 +251,57 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
             valid = False
             form.errors['confirm'] = [_('Confirm stock adjustment')]
 
-        destination = None
-        destination_name = ""
-        
-        try:
-            destination = StockLocation.objects.get(id=form['destination'].value())
-            destination_name = destination.pathstring
-        except StockLocation.DoesNotExist:
-            pass
-        except ValueError:
-            pass
-
         data = {
             'form_valid': valid,
-            'success': _('Moved {n} items to {loc}'.format(
-                n=len(self.stock_items),
-                loc=destination_name))
         }
+
+        if valid:
+            action = request.POST.get('stock_action').lower()
+
+            if action == 'move':
+
+                destination = None
+            
+                try:
+                    destination = StockLocation.objects.get(id=form['destination'].value())
+                except StockLocation.DoesNotExist:
+                    pass
+                except ValueError:
+                    pass
+
+                if destination:
+                    data['success'] = self.do_move(destination)
 
         return self.renderJsonResponse(request, form, data=data)
 
+    def do_move(self, destination):
+        """ Perform actual stock movement """
+
+        count = 0
+
+        note = self.request.POST['note']
+
+        for item in self.stock_items:
+            # Avoid moving zero quantity
+            if item.new_quantity <= 0:
+                continue
             
+            # Do not move to the same location
+            if destination == item.location:
+                continue
+
+            item.move(destination, note, self.request.user, quantity=int(item.new_quantity))
+
+            count += 1
+
+        if count == 0:
+            return _('No items were moved')
+        
+        else:
+            return _('Moved {n} items to {dest}'.format(
+                n=count,
+                dest=destination.pathstring))
+
 
 class StockItemEdit(AjaxUpdateView):
     """
