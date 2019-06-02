@@ -572,10 +572,14 @@ function loadStockTable(table, options) {
             stock.push(item.pk);
         });
 
-        launchModalForm("/stock/move/",
+        launchModalForm("/stock/adjust/",
             {
                 data: {
+                    action: 'move',
                     stock: stock,
+                },
+                success: function() {
+                    $("#stock-table").bootstrapTable('refresh');
                 },
             }
         );

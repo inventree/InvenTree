@@ -27,7 +27,7 @@ from .forms import EditStockItemForm
 from .forms import MoveStockItemForm
 from .forms import StocktakeForm
 from .forms import MoveStockItemForm
-from .forms import MoveMultipleStockItemsForm
+from .forms import AdjustStockForm
 
 
 class StockIndex(ListView):
@@ -130,12 +130,19 @@ class StockItemQRCode(QRCodeView):
             return None
 
 
-class StockItemMoveMultiple(AjaxView, FormMixin):
-    """ Move multiple stock items """
+class StockAdjust(AjaxView, FormMixin):
+    """ View for enacting simple stock adjustments:
+    
+    - Take items from stock
+    - Add items to stock
+    - Count items
+    - Move stock
+    
+    """
 
-    ajax_template_name = 'stock/stock_move.html'
-    ajax_form_title = 'Move Stock'
-    form_class = MoveMultipleStockItemsForm
+    ajax_template_name = 'stock/stock_adjust.html'
+    ajax_form_title = 'Adjust Stock'
+    form_class = AdjustStockForm
     stock_items = []
 
     def get_GET_items(self):
@@ -203,13 +210,17 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
         context = super().get_context_data()
 
         context['stock_items'] = self.stock_items
-        context['stock_action'] = 'Move'    
+
+        context['stock_action'] = self.stock_action 
 
         return context
 
     def get(self, request, *args, **kwargs):
 
         self.request = request
+
+        # Action
+        self.stock_action = request.GET.get('action').lower()
 
         # Save list of items!
         self.stock_items = self.get_GET_items()
@@ -255,10 +266,11 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
             'form_valid': valid,
         }
 
-        if valid:
-            action = request.POST.get('stock_action').lower()
+        self.stock_action = request.POST.get('stock_action').lower()
 
-            if action == 'move':
+        if valid:
+
+            if self.stock_action == 'move':
 
                 destination = None
             

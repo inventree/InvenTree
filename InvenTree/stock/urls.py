@@ -36,7 +36,7 @@ stock_urls = [
 
     url(r'^track/?', views.StockTrackingIndex.as_view(), name='stock-tracking-list'),
 
-    url(r'^move/?', views.StockItemMoveMultiple.as_view(), name='stock-item-move-multiple'),
+    url(r'^adjust/?', views.StockAdjust.as_view(), name='stock-adjust'),
 
     # Individual stock items
     url(r'^item/(?P<pk>\d+)/', include(stock_item_detail_urls)),

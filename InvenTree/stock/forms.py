@@ -55,7 +55,7 @@ class MoveStockItemForm(HelperForm):
             'note'
         ]
 
-class MoveMultipleStockItemsForm(forms.ModelForm):
+class AdjustStockForm(forms.ModelForm):
 
     def get_location_choices(self):
         locs = StockLocation.objects.all()
