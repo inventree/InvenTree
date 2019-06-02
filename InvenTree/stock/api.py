@@ -470,9 +470,9 @@ stock_api_urls = [
 
     url(r'location/(?P<pk>\d+)/', include(location_endpoints)),
 
-    url(r'stocktake/?', StockStocktake.as_view(), name='api-stock-stocktake'),
-
-    url(r'move/?', StockMove.as_view(), name='api-stock-move'),
+    # These JSON endpoints have been replaced (for now) with server-side form rendering - 02/06/2019
+    # url(r'stocktake/?', StockStocktake.as_view(), name='api-stock-stocktake'),
+    # url(r'move/?', StockMove.as_view(), name='api-stock-move'),
 
     url(r'track/?', StockTrackingList.as_view(), name='api-stock-track'),
 

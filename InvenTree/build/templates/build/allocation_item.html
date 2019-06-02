@@ -6,10 +6,7 @@
 {% block collapse_panel_setup %}class='panel part-allocation' id='allocation-panel-{{ item.sub_part.id }}'{% endblock %}
 
 {% block collapse_title %}
-    <div class='hover-icon media-left' style='float: left;'>
-        <img class='hover-img-thumb' src="{% if item.sub_part.image %}{{ item.sub_part.image.url }}{% endif %}">
-        <img class='hover-img-large' src="{% if item.sub_part.image %}{{ item.sub_part.image.url }}{% endif %}">
-    </div>
+    {% include "hover_image.html" with image=item.sub_part.image %}
     <div>
         {{ item.sub_part.full_name }}
         <small><i>{{ item.sub_part.description }}</i></small>

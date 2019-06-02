@@ -5,12 +5,18 @@ Django views for interacting with Stock app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.views.generic.edit import FormMixin
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 
+from django.utils.translation import ugettext as _
+
+from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
+
+from InvenTree.helpers import str2bool
 
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
@@ -18,8 +24,7 @@ from .models import StockItem, StockLocation, StockItemTracking
 from .forms import EditStockLocationForm
 from .forms import CreateStockItemForm
 from .forms import EditStockItemForm
-from .forms import MoveStockItemForm
-from .forms import StocktakeForm
+from .forms import AdjustStockForm
 
 
 class StockIndex(ListView):
@@ -120,7 +125,276 @@ class StockItemQRCode(QRCodeView):
             return item.format_barcode()
         except StockItem.DoesNotExist:
             return None
+
+
+class StockAdjust(AjaxView, FormMixin):
+    """ View for enacting simple stock adjustments:
+    
+    - Take items from stock
+    - Add items to stock
+    - Count items
+    - Move stock
+    
+    """
+
+    ajax_template_name = 'stock/stock_adjust.html'
+    ajax_form_title = 'Adjust Stock'
+    form_class = AdjustStockForm
+    stock_items = []
+
+    def get_GET_items(self):
+        """ Return list of stock items initally requested using GET """
+
+        # Start with all 'in stock' items
+        items = StockItem.objects.filter(customer=None, belongs_to=None)
+
+        # Client provides a list of individual stock items
+        if 'stock[]' in self.request.GET:
+            items = items.filter(id__in=self.request.GET.getlist('stock[]'))
+
+        # Client provides a PART reference
+        elif 'part' in self.request.GET:
+            items = items.filter(part=self.request.GET.get('part'))
+
+        # Client provides a LOCATION reference
+        elif 'location' in self.request.GET:
+            items = items.filter(location=self.request.GET.get('location'))
+
+        # Client provides a single StockItem lookup
+        elif 'item' in self.request.GET:
+            items = [StockItem.objects.get(id=self.request.GET.get('item'))]
+
+        # Unsupported query
+        else:
+            items = None
+
+        for item in items:
+
+            # Initialize quantity to zero for addition/removal
+            if self.stock_action in ['take', 'add']:
+                item.new_quantity = 0
+            # Initialize quantity at full amount for counting or moving
+            else:
+                item.new_quantity = item.quantity
+
+        return items
+
+    def get_POST_items(self):
+        """ Return list of stock items sent back by client on a POST request """
+
+        items = []
+
+        for item in self.request.POST:
+            if item.startswith('stock-id-'):
+                
+                pk = item.replace('stock-id-', '')
+                q = self.request.POST[item]
+
+                try:
+                    stock_item = StockItem.objects.get(pk=pk)
+                except StockItem.DoesNotExist:
+                    continue
+
+                stock_item.new_quantity = q
+
+                items.append(stock_item)
+
+        return items
+
+    def get_context_data(self):
+
+        context = super().get_context_data()
+
+        context['stock_items'] = self.stock_items
+
+        context['stock_action'] = self.stock_action
+
+        context['stock_action_title'] = self.stock_action.capitalize()
+
+        return context
+
+    def get_form(self):
+
+        form = super().get_form()
+
+        if not self.stock_action == 'move':
+            form.fields.pop('destination')
+
+        return form
+
+    def get(self, request, *args, **kwargs):
+
+        self.request = request
+
+        # Action
+        self.stock_action = request.GET.get('action', '').lower()
+
+        # Pick a default action...
+        if self.stock_action not in ['move', 'count', 'take', 'add']:
+            self.stock_action = 'count'
+
+        # Choose the form title based on the action
+        titles = {
+            'move': 'Move Stock',
+            'count': 'Count Stock',
+            'take': 'Remove Stock',
+            'add': 'Add Stock'
+        }
+
+        self.ajax_form_title = titles[self.stock_action]
+        
+        # Save list of items!
+        self.stock_items = self.get_GET_items()
+
+        return self.renderJsonResponse(request, self.get_form())
+
+    def post(self, request, *args, **kwargs):
+
+        self.request = request
+
+        self.stock_action = request.POST.get('stock_action').lower()
+
+        # Update list of stock items
+        self.stock_items = self.get_POST_items()
+
+        form = self.get_form()
+
+        valid = form.is_valid()
+        
+        for item in self.stock_items:
+            try:
+                item.new_quantity = int(item.new_quantity)
+            except ValueError:
+                item.error = _('Must enter integer value')
+                valid = False
+                continue
+
+            if item.new_quantity < 0:
+                item.error = _('Quantity must be positive')
+                valid = False
+                continue
+
+            if self.stock_action in ['move', 'take']:
+
+                if item.new_quantity > item.quantity:
+                    item.error = _('Quantity must not exceed {x}'.format(x=item.quantity))
+                    valid = False
+                    continue
+
+        confirmed = str2bool(request.POST.get('confirm'))
+
+        if not confirmed:
+            valid = False
+            form.errors['confirm'] = [_('Confirm stock adjustment')]
+
+        data = {
+            'form_valid': valid,
+        }
+
+        if valid:
+
+            data['success'] = self.do_action()
+
+        return self.renderJsonResponse(request, form, data=data)
+
+    def do_action(self):
+        """ Perform stock adjustment action """
+
+        if self.stock_action == 'move':
+            destination = None
+
+            try:
+                destination = StockLocation.objects.get(id=self.request.POST.get('destination'))
+            except StockLocation.DoesNotExist:
+                pass
+            except ValueError:
+                pass
+
+            return self.do_move(destination)
+
+        elif self.stock_action == 'add':
+            return self.do_add()
+
+        elif self.stock_action == 'take':
+            return self.do_take()
+
+        elif self.stock_action == 'count':
+            return self.do_count()
+
+        else:
+            return 'No action performed'
+
+    def do_add(self):
+        
+        count = 0
+        note = self.request.POST['note']
+
+        for item in self.stock_items:
+            if item.new_quantity <= 0:
+                continue
+
+            item.add_stock(item.new_quantity, self.request.user, notes=note)
+
+            count += 1
+
+        return _("Added stock to {n} items".format(n=count))
+
+    def do_take(self):
+
+        count = 0
+        note = self.request.POST['note']
+
+        for item in self.stock_items:
+            if item.new_quantity <= 0:
+                continue
+
+            item.take_stock(item.new_quantity, self.request.user, notes=note)
+
+            count += 1
+
+        return _("Removed stock from {n} items".format(n=count))
+
+    def do_count(self):
+        
+        count = 0
+        note = self.request.POST['note']
+
+        for item in self.stock_items:
             
+            item.stocktake(item.new_quantity, self.request.user, notes=note)
+
+            count += 1
+
+        return _("Counted stock for {n} items".format(n=count))
+
+    def do_move(self, destination):
+        """ Perform actual stock movement """
+
+        count = 0
+
+        note = self.request.POST['note']
+
+        for item in self.stock_items:
+            # Avoid moving zero quantity
+            if item.new_quantity <= 0:
+                continue
+            
+            # Do not move to the same location
+            if destination == item.location:
+                continue
+
+            item.move(destination, note, self.request.user, quantity=int(item.new_quantity))
+
+            count += 1
+
+        if count == 0:
+            return _('No items were moved')
+        
+        else:
+            return _('Moved {n} items to {dest}'.format(
+                n=count,
+                dest=destination.pathstring))
+
 
 class StockItemEdit(AjaxUpdateView):
     """
@@ -304,76 +578,6 @@ class StockItemDelete(AjaxDeleteView):
     ajax_template_name = 'stock/item_delete.html'
     context_object_name = 'item'
     ajax_form_title = 'Delete Stock Item'
-
-
-class StockItemMove(AjaxUpdateView):
-    """
-    View to move a StockItem from one location to another
-    Performs some data validation to prevent illogical stock moves
-    """
-
-    model = StockItem
-    ajax_template_name = 'modal_form.html'
-    context_object_name = 'item'
-    ajax_form_title = 'Move Stock Item'
-    form_class = MoveStockItemForm
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, instance=self.get_object())
-
-        if form.is_valid():
-
-            obj = self.get_object()
-
-            try:
-                loc_id = form['location'].value()
-
-                if loc_id:
-                    loc = StockLocation.objects.get(pk=form['location'].value())
-                    if str(loc.pk) == str(obj.pk):
-                        form.errors['location'] = ['Item is already in this location']
-                    else:
-                        obj.move(loc, form['note'].value(), request.user)
-                else:
-                    form.errors['location'] = ['Cannot move to an empty location']
-
-            except StockLocation.DoesNotExist:
-                form.errors['location'] = ['Location does not exist']
-
-        data = {
-            'form_valid': form.is_valid() and len(form.errors) == 0,
-        }
-
-        return self.renderJsonResponse(request, form, data)
-
-
-class StockItemStocktake(AjaxUpdateView):
-    """
-    View to perform stocktake on a single StockItem
-    Updates the quantity, which will also create a new StockItemTracking item
-    """
-
-    model = StockItem
-    template_name = 'modal_form.html'
-    context_object_name = 'item'
-    ajax_form_title = 'Item stocktake'
-    form_class = StocktakeForm
-
-    def post(self, request, *args, **kwargs):
-
-        form = self.form_class(request.POST, instance=self.get_object())
-
-        if form.is_valid():
-
-            obj = self.get_object()
-
-            obj.stocktake(form.data['quantity'], request.user)
-
-        data = {
-            'form_valid': form.is_valid()
-        }
-
-        return self.renderJsonResponse(request, form, data)
 
 
 class StockTrackingIndex(ListView):

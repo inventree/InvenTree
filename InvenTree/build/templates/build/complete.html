@@ -18,10 +18,7 @@ The following items will be removed from stock:
 {% for item in taking %}
 <tr>
     <td>
-        <a class='hover-icon'>
-            <img class='hover-img-thumb' src='{{ item.stock_item.part.image.url }}'>
-            <img class='hover-img-large' src='{{ item.stock_item.part.image.url }}'>
-        </a>
+        {% include "hover_image.html" with image=item.stock_item.part.image %}
     </td>
     <td>
         {{ item.stock_item.part.full_name }}<br>
@@ -38,10 +35,7 @@ No parts have been allocated to this build.
 <hr>
 The following items will be created:
 <div class='panel panel-default'>
-    <a class='hover-icon'>
-        <img class='hover-img-thumb' src='{{ build.part.image.url }}'>
-        <img class='hover-img-large' src='{{ build.part.image.url }}'>
-    </a>
+    {% include "hover_image.html" with image=build.part.image %}
     {{ build.quantity }} x {{ build.part.full_name }}
 </div>
 
