@@ -5,6 +5,8 @@
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
   {% csrf_token %}
   {% load crispy_forms_tags %}
+
+  <input type='hidden' name='stock_action' value='{{ stock_action }}'/>
   
   <table class='table table-condensed table-striped' id='stock-table'>
       <tr>
