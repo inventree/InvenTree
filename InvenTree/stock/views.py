@@ -24,9 +24,6 @@ from .models import StockItem, StockLocation, StockItemTracking
 from .forms import EditStockLocationForm
 from .forms import CreateStockItemForm
 from .forms import EditStockItemForm
-from .forms import MoveStockItemForm
-from .forms import StocktakeForm
-from .forms import MoveStockItemForm
 from .forms import AdjustStockForm
 
 
@@ -581,76 +578,6 @@ class StockItemDelete(AjaxDeleteView):
     ajax_template_name = 'stock/item_delete.html'
     context_object_name = 'item'
     ajax_form_title = 'Delete Stock Item'
-
-
-class StockItemMove(AjaxUpdateView):
-    """
-    View to move a StockItem from one location to another
-    Performs some data validation to prevent illogical stock moves
-    """
-
-    model = StockItem
-    ajax_template_name = 'modal_form.html'
-    context_object_name = 'item'
-    ajax_form_title = 'Move Stock Item'
-    form_class = MoveStockItemForm
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, instance=self.get_object())
-
-        if form.is_valid():
-
-            obj = self.get_object()
-
-            try:
-                loc_id = form['location'].value()
-
-                if loc_id:
-                    loc = StockLocation.objects.get(pk=form['location'].value())
-                    if str(loc.pk) == str(obj.pk):
-                        form.errors['location'] = ['Item is already in this location']
-                    else:
-                        obj.move(loc, form['note'].value(), request.user)
-                else:
-                    form.errors['location'] = ['Cannot move to an empty location']
-
-            except StockLocation.DoesNotExist:
-                form.errors['location'] = ['Location does not exist']
-
-        data = {
-            'form_valid': form.is_valid() and len(form.errors) == 0,
-        }
-
-        return self.renderJsonResponse(request, form, data)
-
-
-class StockItemStocktake(AjaxUpdateView):
-    """
-    View to perform stocktake on a single StockItem
-    Updates the quantity, which will also create a new StockItemTracking item
-    """
-
-    model = StockItem
-    template_name = 'modal_form.html'
-    context_object_name = 'item'
-    ajax_form_title = 'Item stocktake'
-    form_class = StocktakeForm
-
-    def post(self, request, *args, **kwargs):
-
-        form = self.form_class(request.POST, instance=self.get_object())
-
-        if form.is_valid():
-
-            obj = self.get_object()
-
-            obj.stocktake(form.data['quantity'], request.user)
-
-        data = {
-            'form_valid': form.is_valid()
-        }
-
-        return self.renderJsonResponse(request, form, data)
 
 
 class StockTrackingIndex(ListView):

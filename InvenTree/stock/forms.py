@@ -42,20 +42,16 @@ class CreateStockItemForm(HelperForm):
         ]
 
 
-class MoveStockItemForm(HelperForm):
-    """ Form for moving a StockItem to a new location """
-
-    note = forms.CharField(label='Notes', required=True, help_text='Add note (required)')
-
-    class Meta:
-        model = StockItem
-
-        fields = [
-            'location',
-            'note'
-        ]
-
 class AdjustStockForm(forms.ModelForm):
+    """ Form for performing simple stock adjustments.
+
+    - Add stock
+    - Remove stock
+    - Count stock
+    - Move stock
+
+    This form is used for managing stock adjuments for single or multiple stock items.
+    """
 
     def get_location_choices(self):
         locs = StockLocation.objects.all()
@@ -85,16 +81,6 @@ class AdjustStockForm(forms.ModelForm):
             'note',
             # 'transaction',
             'confirm',
-        ]
-
-
-class StocktakeForm(forms.ModelForm):
-
-    class Meta:
-        model = StockItem
-
-        fields = [
-            'quantity',
         ]
 
 

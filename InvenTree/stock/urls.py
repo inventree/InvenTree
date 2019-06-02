@@ -19,8 +19,6 @@ stock_location_detail_urls = [
 stock_item_detail_urls = [
     url(r'^edit/?', views.StockItemEdit.as_view(), name='stock-item-edit'),
     url(r'^delete/?', views.StockItemDelete.as_view(), name='stock-item-delete'),
-    url(r'^move/?', views.StockItemMove.as_view(), name='stock-item-move'),
-    url(r'^stocktake/?', views.StockItemStocktake.as_view(), name='stock-item-stocktake'),
     url(r'^qr_code/?', views.StockItemQRCode.as_view(), name='stock-item-qr'),
 
     url('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
