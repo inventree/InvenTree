@@ -129,8 +129,8 @@ class PartList(generics.ListCreateAPIView):
     filter_fields = [
         'is_template',
         'variant_of',
-        'buildable',
-        'consumable',
+        'assembly',
+        'component',
         'trackable',
         'purchaseable',
         'salable',

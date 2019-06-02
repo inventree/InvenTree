@@ -37,17 +37,28 @@ InvenTree | Search Results
 
     function onSearchResults(table, output) {
         $(table).on('load-success.bs.table', function() {
+
+            var panel = $(output).parent('.panel-group');
+
             var n = $(table).bootstrapTable('getData').length;
 
             var text = '';
             if (n == 0) {
                 text = '<i>No results</i>'
+
+                $(panel).hide();
+
+                $(table).hide();
+                
+
             } else {
                 text = n + ' result';
 
                 if (n > 1) {
                     text += 's';
                 }
+
+                $(panel).show();
             }
 
             $(output).html(text);

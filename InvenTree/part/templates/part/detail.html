@@ -100,13 +100,13 @@
     </div>
     <div class='col-sm-6'>
     <table class='table table-striped'>
-        {% if part.buildable %}
+        {% if part.assembly %}
         <tr>
             <td><b>Assembly</b></td>   
             <td><i>This part can be assembled from other parts</i></td>
         </tr>
         {% endif %}
-        {% if part.consumable %}
+        {% if part.component %}
         <tr>
             <td><b>Component</b></td>
             <td><i>This part can be used in assemblies</i></td>

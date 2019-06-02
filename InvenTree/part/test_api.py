@@ -149,7 +149,7 @@ class PartAPITest(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        # Now try to create a BomItem which points to a non-buildable part (should fail)
+        # Now try to create a BomItem which points to a non-assembly part (should fail)
         data['part'] = 3
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
