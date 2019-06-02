@@ -260,12 +260,14 @@ class StockItem(models.Model):
     ITEM_ATTENTION = 50
     ITEM_DAMAGED = 55
     ITEM_DESTROYED = 60
+    ITEM_LOST = 70
 
     ITEM_STATUS_CODES = {
         ITEM_OK: _("OK"),
         ITEM_ATTENTION: _("Attention needed"),
         ITEM_DAMAGED: _("Damaged"),
-        ITEM_DESTROYED: _("Destroyed")
+        ITEM_DESTROYED: _("Destroyed"),
+        ITEM_LOST: _("Lost")
     }
 
     status = models.PositiveIntegerField(
