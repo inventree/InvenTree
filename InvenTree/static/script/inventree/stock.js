@@ -564,10 +564,7 @@ function loadStockTable(table, options) {
 
     // Automatically link button callbacks
     $('#multi-item-stocktake').click(function() {
-        updateStockItems({
-            action: 'stocktake',
-        });
-        return false;
+        stockAdjustment('count');
     });
 
     $('#multi-item-remove').click(function() {

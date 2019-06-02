@@ -358,7 +358,17 @@ class StockAdjust(AjaxView, FormMixin):
         return _("Removed stock from {n} items".format(n=count))
 
     def do_count(self):
-        pass
+        
+        count = 0
+        note = self.request.POST['note']
+
+        for item in self.stock_items:
+            
+            item.stocktake(item.new_quantity, self.request.user, notes=note)
+
+            count += 1
+
+        return _("Counted stock for {n} items".format(n=count))
 
     def do_move(self, destination):
         """ Perform actual stock movement """
