@@ -90,34 +90,44 @@
             <td><b>Units</b></td>
             <td>{{ part.units }}</td>
         </tr>
-    </table>
-    </div>
-    <div class='col-sm-6'>
-    <table class='table table-striped'>
-        <tr>
-            <td><b>Buildable</b></td>
-            <td>{% include "yesnolabel.html" with value=part.buildable %}</td>
-        </tr>
-        <tr>
-            <td><b>Consumable</b></td>
-            <td>{% include "yesnolabel.html" with value=part.consumable %}</td>
-        </tr>
-        <tr>
-            <td><b>Trackable</b></td>
-            <td>{% include "yesnolabel.html" with value=part.trackable %}</td>
-        </tr>
-        <tr>
-            <td><b>Purchaseable</b></td>
-            <td>{% include "yesnolabel.html" with value=part.purchaseable %}</td>
-        </tr>
-        <tr>
-            <td><b>Salable</b></td>
-            <td>{% include "yesnolabel.html" with value=part.salable %}</td>
-        </tr>
         {% if part.minimum_stock > 0 %}
         <tr>
             <td><b>Minimum Stock</b></td>
             <td>{{ part.minimum_stock }}</td>
+        </tr>
+        {% endif %}
+    </table>
+    </div>
+    <div class='col-sm-6'>
+    <table class='table table-striped'>
+        {% if part.buildable %}
+        <tr>
+            <td><b>Assembly</b></td>   
+            <td><i>This part can be assembled from other parts</i></td>
+        </tr>
+        {% endif %}
+        {% if part.consumable %}
+        <tr>
+            <td><b>Component</b></td>
+            <td><i>This part can be used in assemblies</i></td>
+        </tr>
+        {% endif %}
+        {% if part.trackable %}
+        <tr>
+            <td><b>Trackable</b></td>
+            <td><i>Stock for this part will be tracked by (serial or batch)</i></td>
+        </tr>
+        {% endif %}
+        {% if part.purchaseable %}
+        <tr>
+            <td><b>Purchaseable</b></td> 
+            <td><i>This part can be purchased from external suppliers</i></td>
+        </tr>
+        {% endif %}
+        {% if part.salable %}
+        <tr>
+            <td><b>Salable</b></td>
+            <td><i>This part can be sold to customers</i></td>
         </tr>
         {% endif %}
     </table>
