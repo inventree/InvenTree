@@ -67,7 +67,7 @@ class MoveMultipleStockItemsForm(forms.ModelForm):
 
         return choices
 
-    location = forms.ChoiceField(label='Destination', required=True, help_text='Destination stock location')
+    destination = forms.ChoiceField(label='Destination', required=True, help_text='Destination stock location')
     note = forms.CharField(label='Notes', required=True, help_text='Add note (required)')
     # transaction = forms.BooleanField(required=False, initial=False, label='Create Transaction', help_text='Create a stock transaction for these parts')
     confirm = forms.BooleanField(required=False, initial=False, label='Confirm Stock Movement', help_text='Confirm movement of stock items')
@@ -75,13 +75,13 @@ class MoveMultipleStockItemsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
        super().__init__(*args, **kwargs)
 
-       self.fields['location'].choices = self.get_location_choices()
+       self.fields['destination'].choices = self.get_location_choices()
 
     class Meta:
         model = StockItem
 
         fields = [
-            'location',
+            'destination',
             'note',
             # 'transaction',
             'confirm',

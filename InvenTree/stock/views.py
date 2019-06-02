@@ -10,6 +10,8 @@ from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 
+from django.utils.translation import ugettext as _
+
 from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
@@ -229,7 +231,17 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
             try:
                 q = int(item.new_quantity)
             except ValueError:
-                item.error = 'Must enter integer value'
+                item.error = _('Must enter integer value')
+                valid = False
+                continue
+
+            if q < 0:
+                item.error = _('Quantity must be positive')
+                valid = False
+                continue
+            
+            if q > item.quantity:
+                item.error = _('Quantity must not exceed {x}'.format(x=item.quantity))
                 valid = False
                 continue
 
@@ -237,7 +249,7 @@ class StockItemMoveMultiple(AjaxView, FormMixin):
 
         if not confirmed:
             valid = False
-            form.errors['confirm'] = ['Confirm stock adjustment']
+            form.errors['confirm'] = [_('Confirm stock adjustment')]
 
         data = {
             'form_valid': False,
