@@ -192,7 +192,7 @@
 }
 
 .modal-dialog {
-    width: 45%;
+    width: 60%;
 }
 
 .modal-secondary .modal-dialog {
@@ -225,6 +225,7 @@
 /* Force a control-label div to be 100% width */
 .modal .control-label {
     width: 100%;
+    margin-top: 5px;
 }
 
 .modal .control-label .btn {
@@ -279,6 +280,13 @@
 .btn {
     margin-left: 2px;
     margin-right: 2px;
+}
+
+.btn-remove {
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #A11;
 }
 
 .button-toolbar {

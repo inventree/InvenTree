@@ -1,0 +1,39 @@
+{% block pre_form_content %}
+
+{% endblock %}
+
+<form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
+  {% csrf_token %}
+  {% load crispy_forms_tags %}
+
+  <input type='hidden' name='stock_action' value='{{ stock_action }}'/>
+  
+  <table class='table table-condensed table-striped' id='stock-table'>
+      <tr>
+          <th>Stock Item</th>
+          <th>Location</th>
+          <th>{{ stock_action_title }}</th>
+          <th></th>
+      </tr>
+      {% for item in stock_items %}
+      <tr id='stock-row-{{ item.id }}' class='error'>
+          <td>{% include "hover_image.html" with image=item.part.image %}
+            {{ item.part.full_name }} <small><i>{{ item.part.description }}</i></small></td> 
+          <td>{{ item.location.pathstring }}</td> 
+          <td>
+            <input class='numberinput'
+              min='0'
+              {% if stock_action == 'take' or stock_action == 'move' %} max='{{ item.quantity }}' {% endif %}
+              value='{{ item.new_quantity }}' type='number' name='stock-id-{{ item.id }}' id='stock-id-{{ item.id }}'/>
+            {% if item.error %}
+            <br><span class='help-inline'>{{ item.error }}</span>
+            {% endif %}
+          </td>
+          <td><button class='btn btn-default btn-remove' id='del-{{ item.id }}' title='Remove item' type='button'><span row='stock-row-{{ item.id }}' onclick='removeStockRow()' class='glyphicon glyphicon-small glyphicon-remove'></span></button></td>
+      </tr>
+      {% endfor %}
+    </table>
+  
+  {% crispy form %}
+
+</form>

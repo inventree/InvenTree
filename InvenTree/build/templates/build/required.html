@@ -19,10 +19,7 @@
     {% for item in build.required_parts %}
     <tr>
         <td>
-            <a class='hover-icon'>
-                <img class='hover-img-thumb' src='{% if item.part.image %}{{ item.part.image.url }}{% endif %}'>
-                <img class='hover-img-large' src='{% if item.part.image %}{{ item.part.image.url }}{% endif %}'>
-            </a>
+            {% include "hover_image.html" with image=item.part.image %}
             <a class='hover-icon'a href="{% url 'part-detail' item.part.id %}">{{ item.part.full_name }}</a>
         </td>
         <td>{{ item.part.total_stock }}</td>
