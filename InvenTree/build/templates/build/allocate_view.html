@@ -20,7 +20,7 @@
     {% for item in build.required_parts %}
     <tr>
         <td>
-            {% include "hover_image.html" with image=item.part.image %}
+            {% include "hover_image.html" with image=item.part.image hover=True %}
             <a class='hover-icon'a href="{% url 'part-detail' item.part.id %}">{{ item.part.full_name }}</a>
         </td>
         <td>{{ item.part.description }}</td>
