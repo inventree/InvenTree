@@ -2,11 +2,8 @@
     <li{% if tab == 'details' %} class='active'{% endif %}>
         <a href="{% url 'build-detail' build.id %}">Details</a>
     </li>
-    <li{% if tab == 'required' %} class='active'{% endif %}>
-        <a href="{% url 'build-required' build.id %}">Required</a>
-    </li>
     <li{% if tab == 'allocate' %} class='active'{% endif %}>
-        <a href="{% url 'build-allocate' build.id %}">Allocate</a>
+        <a href="{% url 'build-allocate' build.id %}">Parts</a>
     </li>
 </ul>
 

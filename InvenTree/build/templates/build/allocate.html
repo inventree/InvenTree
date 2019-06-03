@@ -62,30 +62,7 @@ InvenTree | Allocate Parts
 
     {% else %}
 
-    $("#build-item-table").bootstrapTable({
-        url: "{% url 'api-build-item-list' %}",
-        queryParams: {
-            build: {{ build.id }},
-        },
-        search: true,
-        columns: [
-            {
-                field: 'part_name',
-                title: 'Part',
-                formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.part_image) + value;
-                }
-            },
-            {
-                field: 'stock_item_detail.location_name',
-                title: 'Location',
-            },
-            {
-                field: 'quantity',
-                title: 'Quantity Allocated',
-            },
-        ]
-    });
+    $("#build-list").bootstrapTable({});
 
     $("#btn-allocate").click(function() {
         location.href = "{% url 'build-allocate' build.id %}?edit=1";

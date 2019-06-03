@@ -6,7 +6,7 @@
 {% block collapse_panel_setup %}class='panel part-allocation' id='allocation-panel-{{ item.sub_part.id }}'{% endblock %}
 
 {% block collapse_title %}
-    {% include "hover_image.html" with image=item.sub_part.image %}
+    {% include "hover_image.html" with image=item.sub_part.image hover=false %}
     <div>
         {{ item.sub_part.full_name }}
         <small><i>{{ item.sub_part.description }}</i></small>
@@ -15,7 +15,7 @@
 
 {% block collapse_heading %}
     <div class='col-sm-2'>
-        <b>{{ item.sub_part.available_stock }}</b>
+        <b>{{ item.sub_part.total_stock }}</b>
     </div>
     <div class='col-sm-2'>
         <b>{% multiply build.quantity item.quantity %}</b>

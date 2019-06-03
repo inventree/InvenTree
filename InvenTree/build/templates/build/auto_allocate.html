@@ -21,7 +21,7 @@ Automatically allocate stock to this build?
 {% for item in allocations %}
 <tr>
     <td>
-        {% include "hover_image.html" with image=item.stock_item.part.image %}
+        {% include "hover_image.html" with image=item.stock_item.part.image hover=True %}
     </td>
     <td>
         {{ item.stock_item.part.full_name }}<br>
