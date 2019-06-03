@@ -6,7 +6,7 @@
 {% block collapse_panel_setup %}class='panel part-allocation' id='allocation-panel-{{ item.sub_part.id }}'{% endblock %}
 
 {% block collapse_title %}
-    {% include "hover_image.html" with image=item.sub_part.image %}
+    {% include "hover_image.html" with image=item.sub_part.image hover=false %}
     <div>
         {{ item.sub_part.full_name }}
         <small><i>{{ item.sub_part.description }}</i></small>
