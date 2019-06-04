@@ -17,7 +17,7 @@
     {% for order in orders %}
     <tr>
         <td>{% include "hover_image.html" with image=order.supplier.image hover=True %}<a href="{{ order.supplier.get_absolute_url }}">{{ order.supplier.name }}</a></td>
-        <td>{{ order }}</td>
+        <td><a href="{% url 'purchase-order-detail' order.id %}">{{ order }}</a></td>
         <td>{{ order.description }}</td>
         <td>{% include "order/order_status.html" %}</td>
     </tr>

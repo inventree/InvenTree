@@ -13,6 +13,7 @@ from InvenTree.status_codes import OrderStatus
 
 
 class PurchaseOrderIndex(ListView):
+    """ List view for all purchase orders """
 
     model = PurchaseOrder
     template_name = 'order/purchase_orders.html'
@@ -24,3 +25,11 @@ class PurchaseOrderIndex(ListView):
         ctx['OrderStatus'] = OrderStatus
 
         return ctx
+
+
+class PurchaseOrderDetail(DetailView):
+    """ Detail view for a PurchaseOrder object """
+
+    context_object_name = 'order'
+    queryset = PurchaseOrder.objects.all().prefetch_related('lines')
+    template_name = 'order/purchase_order_detail.html'
