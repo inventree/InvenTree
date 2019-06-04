@@ -6,6 +6,8 @@ from django.test import TestCase
 from .models import Build
 from part.models import Part
 
+from InvenTree.status_codes import BuildStatus
+
 
 class BuildTestSimple(TestCase):
 
@@ -14,14 +16,14 @@ class BuildTestSimple(TestCase):
                                    description='Simple description')
         Build.objects.create(part=part,
                              batch='B1',
-                             status=Build.PENDING,
+                             status=BuildStatus.PENDING,
                              title='Building 7 parts',
                              quantity=7,
                              notes='Some simple notes')
 
         Build.objects.create(part=part,
                              batch='B2',
-                             status=Build.COMPLETE,
+                             status=BuildStatus.COMPLETE,
                              title='Building 21 parts',
                              quantity=21,
                              notes='Some simple notes')
