@@ -10,7 +10,7 @@
         <a href="{% url 'company-detail-stock' company.id %}">Stock <span class='badge'>{{ company.stock_count }}</a>
     </li>
     <li{% if tab == 'po' %} class='active'{% endif %}>
-        <a href="#">Purchase Orders <span class='badge'>{{ company.purchase_orders.count }}</span></a>
+        <a href="{% url 'company-detail-purchase-orders' company.id %}">Purchase Orders <span class='badge'>{{ company.purchase_orders.count }}</span></a>
     </li>
     {% endif %}
     {% if company.is_customer %}
