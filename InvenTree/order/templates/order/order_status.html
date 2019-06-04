@@ -2,9 +2,9 @@
 <span class='label label-info'>
 {% elif order.status == order.PLACED %}
 <span class='label label-primary'>
-{% elif order.status == order.RECEIVED %}
+{% elif order.status == order.COMPLETE %}
 <span class='label label-success'>
-{% elif order.status == order.CANCELLED %}
+{% elif order.status == order.CANCELLED or order.status == order.RETURNED %}
 <span class='label label-warning'>
 {% else %}
 <span class='label label-danger'>

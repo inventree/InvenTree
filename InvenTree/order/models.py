@@ -8,6 +8,8 @@ from part.models import Part
 from company.models import Company
 from stock.models import StockItem
 
+from InvenTree.status_codes import OrderStatus
+
 
 class Order(models.Model):
     """ Abstract model for an order.
@@ -26,13 +28,17 @@ class Order(models.Model):
 
     """
 
-    # Order status codes
-    PENDING = 10  # Order is pending (not yet placed)
-    PLACED = 20  # Order has been placed
-    RECEIVED = 30  # Order has been received
-    CANCELLED = 40  # Order was cancelled
-    LOST = 50  # Order was lost
-    RETURNED = 60 # Order was returned
+    ORDER_PREFIX = ""
+
+    def __str__(self):
+        el = []
+
+        if self.ORDER_PREFIX:
+            el.append(self.ORDER_PREFIX)
+
+        el.append(self.reference)
+
+        return " ".join(el)
 
     class Meta:
         abstract = True
@@ -44,6 +50,9 @@ class Order(models.Model):
     URL = models.URLField(blank=True, help_text=_('Link to external page'))
 
     creation_date = models.DateField(auto_now=True, editable=False)
+
+    status = models.PositiveIntegerField(default=OrderStatus.PENDING, choices=OrderStatus.items(),
+                                         help_text='Order status')
 
     created_by = models.ForeignKey(User,
                                    on_delete=models.SET_NULL,
@@ -63,6 +72,8 @@ class PurchaseOrder(Order):
         supplier: Reference to the company supplying the goods in the order
 
     """
+
+    ORDER_PREFIX = "PO"
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
                                 limit_choices_to={

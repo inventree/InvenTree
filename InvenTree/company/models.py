@@ -17,6 +17,8 @@ from django.urls import reverse
 from django.conf import settings
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
+from InvenTree.status_codes import OrderStatus
+
 
 def rename_company_image(instance, filename):
     """ Function to rename a company image after upload
@@ -127,6 +129,26 @@ class Company(models.Model):
         """ Return the number of stock items supplied by this company """
         stock = apps.get_model('stock', 'StockItem')
         return stock.objects.filter(supplier_part__supplier=self.id).count()
+
+    def outstanding_purchase_orders(self):
+        """ Return purchase orders which are 'outstanding' """
+        return self.purchase_orders.filter(status__in=[
+            OrderStatus.PENDING,
+            OrderStatus.PLACED
+        ])
+
+    def complete_purchase_orders(self):
+        return self.purchase_orders.filter(status=OrderStatus.COMPLETE)
+
+    def failed_purchase_orders(self):
+        """ Return any purchase orders which were not successful """
+
+        return self.purchase_orders.filter(status__in=[
+            OrderStatus.CANCELLED,
+            OrderStatus.LOST,
+            OrderStatus.RETURNED
+        ])
+
 
 
 class Contact(models.Model):
