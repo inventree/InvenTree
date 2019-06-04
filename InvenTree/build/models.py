@@ -16,6 +16,8 @@ from django.db import models, transaction
 from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
+from InvenTree.status_codes import BuildStatus
+
 from stock.models import StockItem
 from part.models import Part, BomItem
 
@@ -68,22 +70,10 @@ class Build(models.Model):
         validators=[MinValueValidator(1)],
         help_text='Number of parts to build'
     )
-    
-    # Build status codes
-    PENDING = 10  # Build is pending / active
-    ALLOCATED = 20  # Parts have been removed from stock
-    CANCELLED = 30  # Build was cancelled
-    COMPLETE = 40  # Build is complete
 
-    #: Build status codes
-    BUILD_STATUS_CODES = {PENDING: _("Pending"),
-                          ALLOCATED: _("Allocated"),
-                          CANCELLED: _("Cancelled"),
-                          COMPLETE: _("Complete"),
-                          }
 
-    status = models.PositiveIntegerField(default=PENDING,
-                                         choices=BUILD_STATUS_CODES.items(),
+    status = models.PositiveIntegerField(default=BuildStatus.PENDING,
+                                         choices=BuildStatus.items(),
                                          validators=[MinValueValidator(0)],
                                          help_text='Build status')
     
@@ -325,14 +315,12 @@ class Build(models.Model):
         - HOLDING
         """
 
-        return self.status in [
-            self.PENDING,
-        ]
+        return self.status in BuildStatus.ACTIVE_CODES
 
     @property
     def is_complete(self):
         """ Returns True if the build status is COMPLETE """
-        return self.status == self.COMPLETE
+        return self.status == self.BuildStatus.COMPLETE
 
 
 class BuildItem(models.Model):

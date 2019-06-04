@@ -33,6 +33,8 @@ from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree
 
+from InvenTree.status_codes import BuildStatus, StockStatus
+
 from company.models import SupplierPart
 
 
@@ -454,14 +456,14 @@ class Part(models.Model):
         Builds marked as 'complete' or 'cancelled' are ignored
         """
 
-        return [b for b in self.builds.all() if b.is_active]
+        return self.builds.filter(status__in=BuildStatus.ACTIVE_CODES)
 
     @property
     def inactive_builds(self):
         """ Return a list of inactive builds
         """
 
-        return [b for b in self.builds.all() if not b.is_active]
+        return self.builds.exclude(status__in=BuildStatus.ACTIVE_CODES)
 
     @property
     def quantity_being_built(self):
@@ -531,7 +533,7 @@ class Part(models.Model):
         if self.is_template:
             total = sum([variant.total_stock for variant in self.variants.all()])
         else:
-            total = self.stock_entries.aggregate(total=Sum('quantity'))['total']
+            total = self.stock_entries.filter(status__in=StockStatus.AVAILABLE_CODES).aggregate(total=Sum('quantity'))['total']
 
         if total:
             return total

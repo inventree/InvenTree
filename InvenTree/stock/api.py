@@ -20,6 +20,7 @@ from .serializers import StockTrackingSerializer
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool
+from InvenTree.status_codes import StockStatus
 
 import os
 
@@ -311,7 +312,7 @@ class StockList(generics.ListCreateAPIView):
             else:
                 item['location__path'] = None
 
-            item['status_text'] = StockItem.ITEM_STATUS_CODES[item['status']]
+            item['status_text'] = StockStatus.label(item['status'])
 
         return Response(data)
 
