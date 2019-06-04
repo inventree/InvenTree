@@ -68,7 +68,7 @@ class PurchaseOrder(Order):
                                 limit_choices_to={
                                     'is_supplier': True,
                                 },
-                                related_name=_('Orders'),
+                                related_name='purchase_orders',
                                 help_text=_('Company')
                                 )
 
