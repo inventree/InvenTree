@@ -1,12 +1,10 @@
-from django.db import models, transaction
+from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 
 from django.utils.translation import ugettext as _
 
-from part.models import Part
 from company.models import Company
-from stock.models import StockItem
 
 from InvenTree.status_codes import OrderStatus
 
@@ -75,16 +73,18 @@ class PurchaseOrder(Order):
 
     ORDER_PREFIX = "PO"
 
-    supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
-                                limit_choices_to={
-                                    'is_supplier': True,
-                                },
-                                related_name='purchase_orders',
-                                help_text=_('Company')
-                                )
+    supplier = models.ForeignKey(
+        Company, on_delete=models.CASCADE,
+        limit_choices_to={
+            'is_supplier': True,
+        },
+        related_name='purchase_orders',
+        help_text=_('Company')
+    )
+
 
 class OrderLineItem(models.Model):
-    """ Abstract model for an order line item 
+    """ Abstract model for an order line item
     
     Attributes:
         quantity: Number of items
@@ -101,7 +101,7 @@ class OrderLineItem(models.Model):
 
 
 class PurchaseOrderLineItem(OrderLineItem):
-    """ Model for a purchase order line item. 
+    """ Model for a purchase order line item.
     
     Attributes:
         order: Reference to a PurchaseOrder object

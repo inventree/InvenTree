@@ -21,7 +21,7 @@ class OrderStatus(StatusCode):
     COMPLETE = 30  # Order has been completed
     CANCELLED = 40  # Order was cancelled
     LOST = 50  # Order was lost
-    RETURNED = 60 # Order was returned
+    RETURNED = 60  # Order was returned
 
     options = {
         PENDING: _("Pending"),
@@ -35,7 +35,7 @@ class OrderStatus(StatusCode):
 
 class StockStatus(StatusCode):
 
-    OK = 10  # Item is OK 
+    OK = 10  # Item is OK
     ATTENTION = 50  # Item requires attention
     DAMAGED = 55  # Item is damaged
     DESTROYED = 60  # Item is destroyed

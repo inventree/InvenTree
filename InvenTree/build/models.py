@@ -71,7 +71,6 @@ class Build(models.Model):
         help_text='Number of parts to build'
     )
 
-
     status = models.PositiveIntegerField(default=BuildStatus.PENDING,
                                          choices=BuildStatus.items(),
                                          validators=[MinValueValidator(0)],
