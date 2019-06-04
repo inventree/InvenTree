@@ -9,15 +9,15 @@
 
 <table class='table table-striped table-condensed' id='po-table'>
     <tr>
-        <th>Reference</th>
         <th>Company</th>
+        <th>Order Reference</th>
         <th>Description</th>
         <th>Status</th>
     </tr>
     {% for order in orders %}
     <tr>
+        <td>{% include "hover_image.html" with image=order.supplier.image hover=True %}<a href="{{ order.supplier.get_absolute_url }}">{{ order.supplier.name }}</a></td>
         <td>{{ order }}</td>
-        <td>{{ order.supplier }}</td>
         <td>{{ order.description }}</td>
         <td>{% include "order/order_status.html" %}</td>
     </tr>
