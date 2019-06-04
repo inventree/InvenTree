@@ -11,6 +11,7 @@ class PurchaseOrderAdmin(admin.ModelAdmin):
 
     list_display = (
         'reference',
+        'supplier',
         'description',
         'creation_date'
     )

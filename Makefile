@@ -12,6 +12,7 @@ migrate:
 	python InvenTree/manage.py makemigrations part
 	python InvenTree/manage.py makemigrations stock
 	python InvenTree/manage.py makemigrations build
+	python InvenTree/manage.py makemigrations order
 	python InvenTree/manage.py migrate --run-syncdb
 	python InvenTree/manage.py check
 
@@ -27,11 +28,11 @@ style:
 
 test:
 	python InvenTree/manage.py check
-	python InvenTree/manage.py test build company part stock
+	python InvenTree/manage.py test build company part stock order
 
 coverage:
 	python InvenTree/manage.py check
-	coverage run InvenTree/manage.py test build company part stock
+	coverage run InvenTree/manage.py test build company part stock order
 	coverage html
 
 documentation:
