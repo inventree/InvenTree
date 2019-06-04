@@ -294,6 +294,8 @@ class BuildAllocate(DetailView):
         context['part'] = part
         context['bom_items'] = bom_items
 
+        context['bom_price'] = build.part.get_price_info(build.quantity, buy=False)
+
         if str2bool(self.request.GET.get('edit', None)):
             context['editing'] = True
 

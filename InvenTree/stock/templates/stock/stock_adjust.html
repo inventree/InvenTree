@@ -17,7 +17,7 @@
       </tr>
       {% for item in stock_items %}
       <tr id='stock-row-{{ item.id }}' class='error'>
-          <td>{% include "hover_image.html" with image=item.part.image %}
+          <td>{% include "hover_image.html" with image=item.part.image hover=True %}
             {{ item.part.full_name }} <small><i>{{ item.part.description }}</i></small></td> 
           <td>{{ item.location.pathstring }}</td> 
           <td>

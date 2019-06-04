@@ -42,7 +42,7 @@ InvenTree | Build - {{ build }}
                             {% if bom_price %}
                             {{ bom_price }}
                             {% if build.part.has_complete_bom_pricing == False %}
-                             <span class='warning-msg'><i>BOM pricing is incomplete</i></span>
+                            <br><span class='warning-msg'><i>BOM pricing is incomplete</i></span>
                             {% endif %}
                             {% else %}
                             <span class='warning-msg'><i>No pricing information</i></span>
@@ -80,8 +80,6 @@ InvenTree | Build - {{ build }}
 {% endblock %}
 
 </div>
-
-{% include "modals.html" %}
 
 {% endblock %}
 

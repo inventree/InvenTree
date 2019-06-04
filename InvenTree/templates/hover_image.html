@@ -1,12 +1,12 @@
 {% load static %}
 
-<div class='hover-icon media-left' style='float: left;'>
-    {% if image %}
+<div class='media-left' style='float: left;'>
+    {% if hover %}
     <a class='hover-icon'>
     {% endif %}
         <img class='hover-img-thumb' {% if image %}src='{{ image.url }}'{% else %}src='{% static "img/blank_image.png" %}'{% endif %}>
-    {% if image %}
-        <img class='hover-img-large' src='{{ image.url }}'>
+    {% if hover %}
+        <img class='hover-img-large' {% if image %}src='{{ image.url }}'{% else %}src='{% static "img/blank_image.png" %}'{% endif %}>
     </a>
     {% endif %}
 </div>
