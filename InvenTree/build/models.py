@@ -320,7 +320,7 @@ class Build(models.Model):
     @property
     def is_complete(self):
         """ Returns True if the build status is COMPLETE """
-        return self.status == self.BuildStatus.COMPLETE
+        return self.status == BuildStatus.COMPLETE
 
 
 class BuildItem(models.Model):
