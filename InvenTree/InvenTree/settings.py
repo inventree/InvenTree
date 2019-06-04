@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'stock.apps.StockConfig',
     'company.apps.CompanyConfig',
     'build.apps.BuildConfig',
+    'order.apps.OrderConfig',
 
     # Third part add-ons
     'django_filters',       # Extended filter functionality
