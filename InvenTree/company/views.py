@@ -11,6 +11,7 @@ from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+from InvenTree.status_codes import OrderStatus
 
 from .models import Company
 from .models import SupplierPart
@@ -56,6 +57,12 @@ class CompanyDetail(DetailView):
     template_name = 'company/detail.html'
     queryset = Company.objects.all()
     model = Company
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['OrderStatus'] = OrderStatus
+
+        return ctx
 
 
 class CompanyImage(AjaxUpdateView):
