@@ -64,6 +64,9 @@ class PurchaseOrder(Order):
     """
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
+                                limit_choices_to={
+                                    'is_supplier': True,
+                                },
                                 related_name=_('Orders'),
                                 help_text=_('Company')
                                 )
