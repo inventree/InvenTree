@@ -128,6 +128,12 @@ class SupplierPartDetail(DetailView):
     context_object_name = 'part'
     queryset = SupplierPart.objects.all()
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['OrderStatus'] = OrderStatus
+
+        return ctx
+
 
 class SupplierPartEdit(AjaxUpdateView):
     """ Update view for editing SupplierPart """

@@ -101,7 +101,10 @@ InvenTree | {{ company.name }} - Parts
 </div>
 </div>
 
-<br>
+<hr>
+
+<h4>Purchase Orders</h4>
+{% include "order/po_table.html" with orders=part.purchase_orders %}
 
 {% endblock %}
 
