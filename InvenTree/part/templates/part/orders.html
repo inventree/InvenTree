@@ -1,0 +1,18 @@
+{% extends "part/part_base.html" %}
+{% load static %}
+
+{% block details %}
+
+{% include 'part/tabs.html' with tab='orders' %}
+
+<div class='row'>
+    <div class='col-sm-6'>
+        <h4>Part Orders</h4>
+    </div>
+    <div class='col-sm-6'>
+    </div>
+</div>
+
+{% include "order/po_table.html" with orders=part.purchase_orders %}
+
+{% endblock %}

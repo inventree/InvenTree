@@ -34,6 +34,7 @@ part_detail_urls = [
     url(r'^build/?', views.PartDetail.as_view(template_name='part/build.html'), name='part-build'),
     url(r'^used/?', views.PartDetail.as_view(template_name='part/used_in.html'), name='part-used-in'),
     url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
+    url(r'^orders/?', views.PartDetail.as_view(template_name='part/orders.html'), name='part-orders'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
     

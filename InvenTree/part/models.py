@@ -794,6 +794,18 @@ class Part(models.Model):
 
         return n
 
+    def purchase_orders(self):
+        """ Return a list of purchase orders which reference this part """
+
+        orders = []
+
+        for part in self.supplier_parts.all().prefetch_related('purchase_order_line_items'):
+            for order in part.purchase_orders():
+                if order not in orders:
+                    orders.append(order)
+
+        return orders
+
 
 def attach_file(instance, filename):
     """ Function for storing a file for a PartAttachment

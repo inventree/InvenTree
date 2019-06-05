@@ -1,0 +1,16 @@
+<table class='table table-striped table-condensed' id='po-table'>
+    <tr>
+        <th data-field='company'>Company</th>
+        <th data-field='reference'>Order Reference</th>
+        <th data-field='description'>Description</th>
+        <th data-field='status'>Status</th>
+    </tr>
+    {% for order in orders %}
+    <tr>
+        <td>{% include "hover_image.html" with image=order.supplier.image hover=True %}<a href="{{ order.supplier.get_absolute_url }}">{{ order.supplier.name }}</a></td>
+        <td><a href="{% url 'purchase-order-detail' order.id %}">{{ order }}</a></td>
+        <td>{{ order.description }}</td>
+        <td>{% include "order/order_status.html" %}</td>
+    </tr>
+    {% endfor %}
+</table>

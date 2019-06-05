@@ -307,6 +307,11 @@ class SupplierPart(models.Model):
         else:
             return None
 
+    def purchase_orders(self):
+        """ Returns a list of purchase orders relating to this supplier part """
+
+        return [line.order for line in self.purchase_order_line_items.all().prefetch_related('order')]
+
     def __str__(self):
         s = "{supplier} ({sku})".format(
             sku=self.SKU,

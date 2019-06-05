@@ -124,7 +124,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     part = models.ForeignKey(
         SupplierPart, on_delete=models.SET_NULL,
         blank=True, null=True,
-        related_name='orders',
+        related_name='purchase_order_line_items',
         help_text=_("Supplier part"),
     )
 
