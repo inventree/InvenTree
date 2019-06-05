@@ -71,11 +71,11 @@ class POLineItemCreate(AjaxCreateView):
             # Only allow parts from the selected supplier
             query = query.filter(supplier=order.supplier.id)
 
-            print('limiting queryset')
+            # Remove parts that are already in the order
+            query = query.exclude(id__in=[line.part.id for line in order.lines.all()])
 
             form.fields['part'].queryset = query
         except PurchaseOrder.DoesNotExist:
-            print('error')
             pass
 
         return form
