@@ -14,10 +14,17 @@ purchase_order_detail_urls = [
     url(r'^.*$', views.PurchaseOrderDetail.as_view(), name='purchase-order-detail'),
 ]
 
+po_line_urls = [
+
+    url(r'^new/', views.POLineItemCreate.as_view(), name='po-line-item-create'),
+]
+
 purchase_order_urls = [
 
     # Display detail view for a single purchase order
     url(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),
+
+    url(r'^line/', include(po_line_urls)),
 
     # Display complete list of purchase orders
     url(r'^.*$', views.PurchaseOrderIndex.as_view(), name='purchase-order-index'),

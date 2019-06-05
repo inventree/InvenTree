@@ -1,9 +1,106 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% load static %}
 
-Purchase Order: {{ order.reference }}
-<br><hr>
-Description: {{ order.description }}
+{% block page_title %}
+InvenTree | {{ order }}
+{% endblock %}
+
+{% block content %}
+<div class='row'>
+    <div class='col-sm-6'>
+        <div class='media'>
+            <div class='media-left'>
+                <img class='part-thumb'
+                {% if order.supplier.image %}
+                src="{{ order.supplier.image.url }}"
+                {% else %}
+                src="{% static 'img/blank_image.png' %}"
+                {% endif %}
+                />
+            </div>
+            <div class='media-body'>
+                <h4>{{ order }}</h4>
+                <p>{{ order.description }}</p>
+                {% if order.URL %}
+                <a href="{{ order.URL }}">{{ order.URL }}</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='col-sm-6'>
+        <table class='table'>
+            <tr>
+                <td>Status</td>
+                <td>{% include "order/order_status.html" %}</td>
+            </tr>
+            <tr>
+                <td>Created</td>
+                <td>{{ order.creation_date }}</td>
+            </tr>
+            <tr>
+                <td>Created By</td>
+                <td>{{ order.created_by }}</td>
+            </tr>
+            {% if order.issue_date %}
+            <tr>
+                <td>Issued</td>
+                <td>{{ order.issue_date }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+</div>
+
+<hr>
+
+<h4>Order Items</h4>
+
+<button type='button' class='btn btn-default' id='new-po-line'>Add Line Item</button>
+
+<table class='table table-striped table-condensed' id='po-lines-table'>
+    <tr>
+        <th data-field='line'>Line</th>
+        <th data-field='part'>Part</th>
+        <th data-field='reference'>Reference</th>
+        <th data-field='quantity'>Quantity</th>
+        <th data-field='received'>Received</th>
+    </tr>
+    {% for line in order.lines.all %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td></td>
+        <td>{{ line.reference }}</td>
+        <td>{{ line.quantity }}</td>
+        <td>{{ line.received }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% if order.notes %}
+<hr>
+<div class='panel panel-default'>
+    <div class='panel-heading'><b>Notes</b></div>
+    <div class='panel-body'>{{ order.notes }}</div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block js_ready %}
+
+$('#new-po-line').click(function() {
+    launchModalForm("{% url 'po-line-item-create' %}",
+        {
+            reload: true,
+            data: {
+                order: {{ order.id }},
+            },
+        }
+    );
+});
+
+$("#po-lines-table").bootstrapTable({
+});
 
 {% endblock %}

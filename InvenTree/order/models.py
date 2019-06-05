@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from django.utils.translation import ugettext as _
 
-from company.models import Company
+from company.models import Company, SupplierPart
 
 from InvenTree.status_codes import OrderStatus
 
@@ -108,11 +108,24 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     """
 
-    order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE,
-                              related_name='lines',
-                              help_text=_('Purchase Order')
-                              )
+    class Meta:
+        unique_together = (
+            ('order', 'part')
+        )
+
+    order = models.ForeignKey(
+        PurchaseOrder, on_delete=models.CASCADE,
+        related_name='lines',
+        help_text=_('Purchase Order')
+    )
 
     # TODO - foreign key references to part and stockitem objects
+
+    part = models.ForeignKey(
+        SupplierPart, on_delete=models.SET_NULL,
+        blank=True, null=True,
+        related_name='orders',
+        help_text=_("Supplier part"),
+    )
 
     received = models.PositiveIntegerField(default=0, help_text=_('Number of items received'))

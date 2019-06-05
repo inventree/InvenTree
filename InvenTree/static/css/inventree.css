@@ -297,6 +297,10 @@
     margin-bottom: 5px;
 }
 
+.panel-body {
+    padding: 10px;
+}
+
 .panel-group .panel {
     border-radius: 2px;
 }
