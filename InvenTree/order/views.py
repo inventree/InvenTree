@@ -6,6 +6,7 @@ Django views for interacting with Order app
 from __future__ import unicode_literals
 
 from django.views.generic import DetailView, ListView
+from django.forms import HiddenInput
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .forms import EditPurchaseOrderLineItemForm
@@ -53,7 +54,7 @@ class POLineItemCreate(AjaxCreateView):
     context_object_name = 'line'
     form_class = EditPurchaseOrderLineItemForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_action = 'Add Line Item'
+    ajax_form_title = 'Add Line Item'
 
     def get_form(self):
         """ Limit choice options based on the selected order, etc
@@ -71,10 +72,17 @@ class POLineItemCreate(AjaxCreateView):
             # Only allow parts from the selected supplier
             query = query.filter(supplier=order.supplier.id)
 
+            exclude = []
+
+            for line in order.lines.all():
+                if line.part and line.part.id not in exclude:
+                    exclude.append(line.part.id)
+
             # Remove parts that are already in the order
-            query = query.exclude(id__in=[line.part.id for line in order.lines.all()])
+            query = query.exclude(id__in=exclude)
 
             form.fields['part'].queryset = query
+            form.fields['order'].widget = HiddenInput()
         except PurchaseOrder.DoesNotExist:
             pass
 
