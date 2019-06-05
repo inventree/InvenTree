@@ -1,13 +1,13 @@
 {% if order.status == OrderStatus.PENDING %}
-<span class='label label-info'>
+<span class='label label-large label-info'>
 {% elif order.status == OrderStatus.PLACED %}
-<span class='label label-primary'>
+<span class='label label-large label-primary'>
 {% elif order.status == OrderStatus.COMPLETE %}
-<span class='label label-success'>
+<span class='label label-large label-success'>
 {% elif order.status == OrderStatus.CANCELLED or order.status == OrderStatus.RETURNED %}
-<span class='label label-warning'>
+<span class='label label-large label-warning'>
 {% else %}
-<span class='label label-danger'>
+<span class='label label-large label-danger'>
 {% endif %}
 {{ order.get_status_display }}
 </span>

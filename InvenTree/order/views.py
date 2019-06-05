@@ -9,7 +9,8 @@ from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
-from .forms import EditPurchaseOrderLineItemForm
+
+from . import forms as order_forms
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView
 
@@ -46,14 +47,41 @@ class PurchaseOrderDetail(DetailView):
         return ctx
 
 
+class PurchaseOrderEdit(AjaxUpdateView):
+    """ View for editing a PurchaseOrder using a modal form """
+
+    model = PurchaseOrder
+    ajax_form_title = 'Edit Purchase Order'
+    form_class = order_forms.EditPurchaseOrderForm
+
+    def get_form(self):
+
+        form = super(AjaxUpdateView, self).get_form()
+
+        order = self.get_object()
+
+        if order.lines.count() > 0:
+            form.fields['supplier'].widget = HiddenInput()
+
+        return form
+
+
+class PurchaseOrderIssue(AjaxUpdateView):
+    """ View for changing a purchase order from 'PENDING' to 'ISSUED' """
+
+    model = PurchaseOrder
+    ajax_form_title = 'Issue Order'
+    ajax_template_name = "order/order_issue.html"
+    form_class = order_forms.IssuePurchaseOrderForm
+
+
 class POLineItemCreate(AjaxCreateView):
     """ AJAX view for creating a new PurchaseOrderLineItem object
     """
 
     model = PurchaseOrderLineItem
     context_object_name = 'line'
-    form_class = EditPurchaseOrderLineItemForm
-    ajax_template_name = 'modal_form.html'
+    form_class = order_forms.EditPurchaseOrderLineItemForm
     ajax_form_title = 'Add Line Item'
 
     def get_form(self):
@@ -113,6 +141,6 @@ class POLineItemCreate(AjaxCreateView):
 class POLineItemEdit(AjaxUpdateView):
 
     model = PurchaseOrderLineItem
-    form_class = EditPurchaseOrderLineItemForm
+    form_class = order_forms.EditPurchaseOrderLineItemForm
     ajax_template_name = 'modal_form.html'
     ajax_form_action = 'Edit Line Item'

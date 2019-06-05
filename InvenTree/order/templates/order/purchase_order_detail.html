@@ -55,6 +55,13 @@ InvenTree | {{ order }}
 
 <hr>
 
+<div class='btn-group' style='float: right;'>
+    <button type='button' class='btn btn-primary' id='edit-order'>Edit Order</button>
+    {% if order.status == OrderStatus.PENDING %}
+    <button type='button' class='btn btn-primary' id='issue-order'>Issue Order</button>
+    {% endif %}
+</div>
+
 <h4>Order Items</h4>
 
 <button type='button' class='btn btn-default' id='new-po-line'>Add Line Item</button>
@@ -95,6 +102,14 @@ InvenTree | {{ order }}
 {% endblock %}
 
 {% block js_ready %}
+
+$("#edit-order").click(function() {
+    launchModalForm("{% url 'purchase-order-edit' order.id %}",
+        {
+            reload: true,
+        }
+    );
+});
 
 $('#new-po-line').click(function() {
     launchModalForm("{% url 'po-line-item-create' %}",

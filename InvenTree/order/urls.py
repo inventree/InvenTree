@@ -11,6 +11,9 @@ from . import views
 
 purchase_order_detail_urls = [
 
+    url(r'^edit/?', views.PurchaseOrderEdit.as_view(), name='purchase-order-edit'),
+    url(r'^issue/?', views.PurchaseOrderIssue.as_view(), name='purchase-order-issue'),
+
     url(r'^.*$', views.PurchaseOrderDetail.as_view(), name='purchase-order-detail'),
 ]
 
