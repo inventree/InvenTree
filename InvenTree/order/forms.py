@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
 
-from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import PurchaseOrderLineItem
 
 
 class EditPurchaseOrderLineItemForm(HelperForm):

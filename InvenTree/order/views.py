@@ -11,7 +11,7 @@ from django.forms import HiddenInput
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .forms import EditPurchaseOrderLineItemForm
 
-from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+from InvenTree.views import AjaxCreateView, AjaxUpdateView
 
 from InvenTree.status_codes import OrderStatus
 
@@ -87,7 +87,6 @@ class POLineItemCreate(AjaxCreateView):
             pass
 
         return form
-
 
     def get_initial(self):
         """ Extract initial data for the line item.
