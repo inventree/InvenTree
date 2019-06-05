@@ -70,8 +70,12 @@ InvenTree | {{ order }}
     {% for line in order.lines.all %}
     <tr>
         <td>{{ forloop.counter }}</td>
+        {% if line.part %}
         <td><a href="{% url 'part-detail' line.part.part.id %}">{{ line.part.part.full_name }}</a></td>
         <td><a href="{% url 'supplier-part-detail' line.part.id %}">{{ line.part.SKU }}</a></td>
+        {% else %}
+        <td colspan='2'><strong>Warning: Part has been deleted.</strong></td>
+        {% endif %}
         <td>{{ line.reference }}</td>
         <td>{{ line.quantity }}</td>
         <td>{{ line.received }}</td>
@@ -98,6 +102,17 @@ $('#new-po-line').click(function() {
             data: {
                 order: {{ order.id }},
             },
+            secondary: [
+                {
+                    field: 'part',
+                    label: 'New Supplier Part',
+                    title: 'Create new supplier part',
+                    url: "{% url 'supplier-part-create' %}",
+                    data: {
+                        supplier: {{ order.supplier.id }},
+                    },
+                },
+            ],
         }
     );
 });
