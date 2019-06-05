@@ -62,6 +62,7 @@ InvenTree | {{ order }}
     <tr>
         <th data-field='line'>Line</th>
         <th data-field='part'>Part</th>
+        <th data-field='sku'>Order Code</th>
         <th data-field='reference'>Reference</th>
         <th data-field='quantity'>Quantity</th>
         <th data-field='received'>Received</th>
@@ -69,7 +70,8 @@ InvenTree | {{ order }}
     {% for line in order.lines.all %}
     <tr>
         <td>{{ forloop.counter }}</td>
-        <td></td>
+        <td><a href="{% url 'part-detail' line.part.part.id %}">{{ line.part.part.full_name }}</a></td>
+        <td><a href="{% url 'supplier-part-detail' line.part.id %}">{{ line.part.SKU }}</a></td>
         <td>{{ line.reference }}</td>
         <td>{{ line.quantity }}</td>
         <td>{{ line.received }}</td>
