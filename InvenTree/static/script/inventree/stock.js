@@ -195,6 +195,18 @@ function loadStockTable(table, options) {
             stock.push(item.pk);
         });
 
+        // Buttons for launching secondary modals
+        var secondary = [];
+
+        if (action == 'move') {
+            secondary.push({
+                field: 'destination',
+                label: 'New Location',
+                title: 'Create new location',
+                url: "/stock/location/new/",
+            });
+        }
+
         launchModalForm("/stock/adjust/",
             {
                 data: {
@@ -204,6 +216,7 @@ function loadStockTable(table, options) {
                 success: function() {
                     $("#stock-table").bootstrapTable('refresh');
                 },
+                secondary: secondary,
             }
         );
     }
