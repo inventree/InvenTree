@@ -242,7 +242,7 @@ class Build(models.Model):
         item.save()
 
         # Finally, mark the build as complete
-        self.status = self.COMPLETE
+        self.status = BuildStatus.COMPLETE
         self.save()
 
     def getRequiredQuantity(self, part):
