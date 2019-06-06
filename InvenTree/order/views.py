@@ -24,6 +24,14 @@ class PurchaseOrderIndex(ListView):
     template_name = 'order/purchase_orders.html'
     context_object_name = 'orders'
 
+    def get_queryset(self):
+        """ Retrieve the list of purchase orders,
+        ensure that the most recent ones are returned first. """
+
+        queryset = PurchaseOrder.objects.all().order_by('-creation_date')
+
+        return queryset
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
@@ -47,6 +55,21 @@ class PurchaseOrderDetail(DetailView):
         return ctx
 
 
+class PurchaseOrderCreate(AjaxCreateView):
+    """ View for creating a new PurchaseOrder object using a modal form """
+
+    model = PurchaseOrder
+    ajax_form_title = "Create Purchase Order"
+    form_class = order_forms.EditPurchaseOrderForm
+
+    def get_initial(self):
+        initials = super().get_initial().copy()
+
+        initials['status'] = OrderStatus.PENDING
+
+        return initials 
+
+
 class PurchaseOrderEdit(AjaxUpdateView):
     """ View for editing a PurchaseOrder using a modal form """
 
@@ -60,6 +83,7 @@ class PurchaseOrderEdit(AjaxUpdateView):
 
         order = self.get_object()
 
+        # Prevent user from editing supplier if there are already lines in the order
         if order.lines.count() > 0:
             form.fields['supplier'].widget = HiddenInput()
 

@@ -24,6 +24,8 @@ po_line_urls = [
 
 purchase_order_urls = [
 
+    url(r'^new/', views.PurchaseOrderCreate.as_view(), name='purchase-order-create'),
+
     # Display detail view for a single purchase order
     url(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),
 

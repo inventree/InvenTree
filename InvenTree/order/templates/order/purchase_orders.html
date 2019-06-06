@@ -8,8 +8,30 @@ InvenTree | Purchase Orders
 
 {% block content %}
 
-<h4>Purchase Orders</h4>
+<div class='row'>
+    <div class='col-sm-6'>
+        <h3>Purchase Orders</h3>
+    </div>
+    <div class='col-sm-6'>
+        <div class='btn-group' style='float: right;'>
+            <button class='btn btn-primary' type='button' id='po-create' title='Create new purchase order'>New Purchase Order</button>
+        </div>
+    </div>
+</div>
 
 {% include "order/po_table.html" %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$("#po-create").click(function() {
+    launchModalForm("{% url 'purchase-order-create' %}",
+        {
+            reload: true,
+        }
+    );
+});
 
 {% endblock %}

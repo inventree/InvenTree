@@ -43,7 +43,7 @@ class Order(models.Model):
 
     reference = models.CharField(unique=True, max_length=64, blank=False, help_text=_('Order reference'))
 
-    description = models.CharField(max_length=250, blank=True, help_text=_('Order description'))
+    description = models.CharField(max_length=250, help_text=_('Order description'))
 
     URL = models.URLField(blank=True, help_text=_('Link to external page'))
 

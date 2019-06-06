@@ -29,7 +29,6 @@ class EditPurchaseOrderForm(HelperForm):
             'supplier',
             'description',
             'URL',
-            'status',
             'notes'
         ]
 
