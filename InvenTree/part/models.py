@@ -806,6 +806,11 @@ class Part(models.Model):
 
         return orders
 
+    def on_order(self):
+        """ Return the total number of items on order for this part. """
+
+        return sum([part.on_order() for part in self.supplier_parts.all()])
+
 
 def attach_file(instance, filename):
     """ Function for storing a file for a PartAttachment

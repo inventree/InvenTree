@@ -10,9 +10,10 @@ import os
 import math
 
 from django.core.validators import MinValueValidator
+from django.db import models
+from django.db.models import Sum
 
 from django.apps import apps
-from django.db import models
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -132,10 +133,7 @@ class Company(models.Model):
 
     def outstanding_purchase_orders(self):
         """ Return purchase orders which are 'outstanding' """
-        return self.purchase_orders.filter(status__in=[
-            OrderStatus.PENDING,
-            OrderStatus.PLACED
-        ])
+        return self.purchase_orders.filter(status__in=OrderStatus.OPEN)
 
     def complete_purchase_orders(self):
         return self.purchase_orders.filter(status=OrderStatus.COMPLETE)
@@ -143,12 +141,7 @@ class Company(models.Model):
     def failed_purchase_orders(self):
         """ Return any purchase orders which were not successful """
 
-        return self.purchase_orders.filter(status__in=[
-            OrderStatus.CANCELLED,
-            OrderStatus.LOST,
-            OrderStatus.RETURNED
-        ])
-
+        return self.purchase_orders.filter(status__in=OrderStatus.FAILED)
 
 class Contact(models.Model):
     """ A Contact represents a person who works at a particular company.
@@ -306,6 +299,24 @@ class SupplierPart(models.Model):
             return cost + self.base_cost
         else:
             return None
+
+    def open_orders(self):
+        """ Return a database query for PO line items for this SupplierPart, 
+        limited to purchase orders that are open / outstanding.
+        """
+
+        return self.purchase_order_line_items.prefetch_related('order').filter(order__status__in=OrderStatus.OPEN)
+
+    def on_order(self):
+        """ Return the total quantity of items currently on order. 
+
+        Subtract partially received stock as appropriate
+        """
+
+        totals = self.open_orders().aggregate(Sum('quantity'), Sum('received'))
+
+        return totals['quantity__sum'] - totals['received__sum']
+    
 
     def purchase_orders(self):
         """ Returns a list of purchase orders relating to this supplier part """

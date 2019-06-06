@@ -32,6 +32,19 @@ class OrderStatus(StatusCode):
         RETURNED: _("Returned"),
     }
 
+    # Open orders
+    OPEN = [
+        PENDING,
+        PLACED,
+    ]
+
+    # Failed orders
+    FAILED = [
+        CANCELLED,
+        LOST,
+        RETURNED
+    ]    
+
 
 class StockStatus(StatusCode):
 

@@ -96,6 +96,12 @@
             <td>{{ part.allocation_count }}</td>
         </tr>
         {% endif %}
+        {% if part.on_order > 0 %}
+        <tr>
+            <td>On Order</td>
+            <td>{{ part.on_order }}</td>
+        </tr>
+        {% endif %}
     </table>
 </div>
 </div>
