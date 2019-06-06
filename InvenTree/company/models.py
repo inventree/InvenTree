@@ -237,6 +237,9 @@ class SupplierPart(models.Model):
 
     @property
     def manufacturer_string(self):
+        """ Format a MPN string for this SupplierPart.
+        Concatenates manufacture name and part number 
+        """
 
         items = []
 
@@ -315,7 +318,16 @@ class SupplierPart(models.Model):
 
         totals = self.open_orders().aggregate(Sum('quantity'), Sum('received'))
 
-        return totals['quantity__sum'] - totals['received__sum']
+        # Quantity on order
+        q = totals.get('quantity__sum', 0)
+
+        # Quantity received
+        r  = totals.get('received__sum', 0)
+
+        if q is None or r is None:
+            return 0
+        else:
+            return q - r
     
 
     def purchase_orders(self):
