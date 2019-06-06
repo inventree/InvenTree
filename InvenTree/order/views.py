@@ -5,10 +5,12 @@ Django views for interacting with Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
+from company.models import SupplierPart
 
 from . import forms as order_forms
 
@@ -107,6 +109,36 @@ class POLineItemCreate(AjaxCreateView):
     context_object_name = 'line'
     form_class = order_forms.EditPurchaseOrderLineItemForm
     ajax_form_title = 'Add Line Item'
+
+    def post(self, request, *arg, **kwargs):
+
+        self.request = request
+
+        form = self.get_form()
+
+        valid = form.is_valid()
+
+        part_id = form['part'].value()
+
+        try:
+            SupplierPart.objects.get(id=part_id)
+        except (SupplierPart.DoesNotExist, ValueError):
+            valid = False
+            form.errors['part'] = [_('This field is required')]
+
+        data = {
+            'form_valid': valid,
+        }
+
+        if valid:
+            self.object = form.save()
+
+            data['pk'] = self.object.pk
+            data['text'] = str(self.object)
+        else:
+            self.object = None
+        
+        return self.renderJsonResponse(request, form, data,)
 
     def get_form(self):
         """ Limit choice options based on the selected order, etc
