@@ -119,7 +119,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         help_text=_('Purchase Order')
     )
 
-    # TODO - foreign key references to part and stockitem objects
+    # TODO - Function callback for when the SupplierPart is deleted?
 
     part = models.ForeignKey(
         SupplierPart, on_delete=models.SET_NULL,
