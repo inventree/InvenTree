@@ -64,7 +64,9 @@ InvenTree | {{ order }}
 
 <h4>Order Items</h4>
 
+{% if order.status == OrderStatus.PENDING %}
 <button type='button' class='btn btn-default' id='new-po-line'>Add Line Item</button>
+{% endif %}
 
 <table class='table table-striped table-condensed' id='po-lines-table'>
     <tr>
@@ -118,6 +120,7 @@ $("#edit-order").click(function() {
     );
 });
 
+{% if order.status == OrderStatus.PENDING %}
 $('#new-po-line').click(function() {
     launchModalForm("{% url 'po-line-item-create' %}",
         {
@@ -139,6 +142,7 @@ $('#new-po-line').click(function() {
         }
     );
 });
+{% endif %}
 
 $("#po-lines-table").bootstrapTable({
 });

@@ -87,7 +87,7 @@ class PurchaseOrderEdit(AjaxUpdateView):
         order = self.get_object()
 
         # Prevent user from editing supplier if there are already lines in the order
-        if order.lines.count() > 0:
+        if order.lines.count() > 0 or not order.status == OrderStatus.PENDING:
             form.fields['supplier'].widget = HiddenInput()
 
         return form
@@ -121,7 +121,7 @@ class PurchaseOrderIssue(AjaxUpdateView):
         }
 
         if valid:
-            order.issue_order()
+            order.place_order()
 
         return self.renderJsonResponse(request, form, data)
 
