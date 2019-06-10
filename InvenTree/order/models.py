@@ -7,7 +7,7 @@ Order model definitions
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
-
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 from datetime import datetime
@@ -97,6 +97,9 @@ class PurchaseOrder(Order):
         related_name='purchase_orders',
         help_text=_('Company')
     )
+
+    def get_absolute_url(self):
+        return reverse('purchase-order-detail', kwargs={'pk': self.id})
 
 
 class OrderLineItem(models.Model):

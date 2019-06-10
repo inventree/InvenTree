@@ -10,7 +10,7 @@ from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
-from company.models import SupplierPart
+from company.models import Company, SupplierPart
 
 from . import forms as order_forms
 
@@ -69,6 +69,15 @@ class PurchaseOrderCreate(AjaxCreateView):
         initials = super().get_initial().copy()
 
         initials['status'] = OrderStatus.PENDING
+
+        supplier_id = self.request.GET.get('supplier', None)
+
+        if supplier_id:
+            try:
+                supplier = Company.objects.get(id=supplier_id)
+                initials['supplier'] = supplier
+            except Company.DoesNotExist:
+                pass
 
         return initials 
 

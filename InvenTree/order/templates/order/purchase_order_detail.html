@@ -32,6 +32,10 @@ InvenTree | {{ order }}
         <h4>Purchase Order Details</h4>
         <table class='table'>
             <tr>
+                <td>Supplier</td>
+                <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier }}</a></td>
+            </tr>
+            <tr>
                 <td>Status</td>
                 <td>{% include "order/order_status.html" %}</td>
             </tr>
@@ -57,7 +61,7 @@ InvenTree | {{ order }}
 
 <div class='btn-group' style='float: right;'>
     <button type='button' class='btn btn-primary' id='edit-order'>Edit Order</button>
-    {% if order.status == OrderStatus.PENDING %}
+    {% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
     <button type='button' class='btn btn-primary' id='place-order'>Place Order</button>
     {% endif %}
 </div>
