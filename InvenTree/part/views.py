@@ -24,6 +24,7 @@ from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDelete
 from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.status_codes import OrderStatus
 
 
 class PartIndex(ListView):
@@ -445,6 +446,8 @@ class PartDetail(DetailView):
         part = self.get_object()
 
         context['starred'] = part.isStarredBy(self.request.user)
+
+        context['OrderStatus'] = OrderStatus
 
         return context
 

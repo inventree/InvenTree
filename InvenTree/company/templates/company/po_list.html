@@ -1,0 +1,7 @@
+{% for order in orders %}
+<tr>
+    <td>{{ order }}</td>
+    <td>{{ order.description }}</td>
+    <td>{% include "order/order_status.html" with order=order %}</td>
+</tr>
+{% endfor %}

@@ -92,6 +92,10 @@ class AjaxMixin(object):
     on the client side.
     """
 
+    # By default, point to the modal_form template
+    # (this can be overridden by a child class)
+    ajax_template_name = 'modal_form.html'
+
     ajax_form_action = ''
     ajax_form_title = ''
 
@@ -164,10 +168,6 @@ class AjaxMixin(object):
 class AjaxView(AjaxMixin, View):
     """ An 'AJAXified' View for displaying an object
     """
-
-    # By default, point to the modal_form template
-    # (this can be overridden by a child class)
-    ajax_template_name = 'modal_form.html'
 
     def post(self, request, *args, **kwargs):
         return JsonResponse('', safe=False)

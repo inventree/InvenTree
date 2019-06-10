@@ -1,10 +1,10 @@
-{% if build.status == build.PENDING %}
+{% if build.status == BuildStatus.PENDING %}
 <span class='label label-large label-info'>
-{% elif build.status == build.ALLOCATED %}
+{% elif build.status == BuildStatus.ALLOCATED %}
 <span class='label label-large label-primary'>
-{% elif build.status == build.CANCELLED %}
+{% elif build.status == BuildStatus.CANCELLED %}
 <span class='label label-large label-danger'>
-{% elif build.status == build.COMPLETE %}
+{% elif build.status == BuildStatus.COMPLETE %}
 <span class='label label-large label-success'>
 {% endif %}
 {{ build.get_status_display }}

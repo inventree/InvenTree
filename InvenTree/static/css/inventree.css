@@ -38,7 +38,6 @@
 /* Extra label styles */
 
 .label-large {
-    padding: 5px;
     margin: 3px;
     font-size: 100%;
 }
@@ -295,6 +294,10 @@
 
 .panel-group {
     margin-bottom: 5px;
+}
+
+.panel-body {
+    padding: 10px;
 }
 
 .panel-group .panel {
