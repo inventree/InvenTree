@@ -1,8 +1,16 @@
+"""
+Order model definitions
+"""
+
+# -*- coding: utf-8 -*-
+
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 
 from django.utils.translation import ugettext as _
+
+from datetime import datetime
 
 from company.models import Company, SupplierPart
 
@@ -61,6 +69,14 @@ class Order(models.Model):
     issue_date = models.DateField(blank=True, null=True)
 
     notes = models.TextField(blank=True, help_text=_('Order notes'))
+
+    def place_order(self):
+        """ Marks the order as PLACED. Order must be currently PENDING. """
+
+        if self.status == OrderStatus.PENDING:
+            self.status = OrderStatus.PLACED
+            self.issue_date = datetime.now().date()
+            self.save()
 
 
 class PurchaseOrder(Order):

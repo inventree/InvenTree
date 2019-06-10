@@ -15,6 +15,7 @@ from company.models import SupplierPart
 from . import forms as order_forms
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView
+from InvenTree.helpers import str2bool
 
 from InvenTree.status_codes import OrderStatus
 
@@ -99,6 +100,30 @@ class PurchaseOrderIssue(AjaxUpdateView):
     ajax_form_title = 'Issue Order'
     ajax_template_name = "order/order_issue.html"
     form_class = order_forms.IssuePurchaseOrderForm
+
+    def post(self, request, *args, **kwargs):
+        """ Mark the purchase order as 'PLACED' """
+
+        order = self.get_object()
+        form = self.get_form()
+
+        confirm = str2bool(request.POST.get('confirm', False))
+
+        valid = False
+
+        if not confirm:
+            form.errors['confirm'] = [_('Confirm order placement')]
+        else:
+            valid = True
+
+        data = {
+            'form_valid': valid,
+        }
+
+        if valid:
+            order.issue_order()
+
+        return self.renderJsonResponse(request, form, data)
 
 
 class POLineItemCreate(AjaxCreateView):

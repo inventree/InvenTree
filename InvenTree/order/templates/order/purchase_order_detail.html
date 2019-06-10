@@ -58,7 +58,7 @@ InvenTree | {{ order }}
 <div class='btn-group' style='float: right;'>
     <button type='button' class='btn btn-primary' id='edit-order'>Edit Order</button>
     {% if order.status == OrderStatus.PENDING %}
-    <button type='button' class='btn btn-primary' id='issue-order'>Issue Order</button>
+    <button type='button' class='btn btn-primary' id='place-order'>Place Order</button>
     {% endif %}
 </div>
 
@@ -102,6 +102,13 @@ InvenTree | {{ order }}
 {% endblock %}
 
 {% block js_ready %}
+
+$("#place-order").click(function() {
+    launchModalForm("{% url 'purchase-order-issue' order.id %}",
+    {
+        reload: true,
+    });
+});
 
 $("#edit-order").click(function() {
     launchModalForm("{% url 'purchase-order-edit' order.id %}",
