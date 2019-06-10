@@ -8,37 +8,37 @@ clean:
 	rm -f .coverage
 
 migrate:
-	python InvenTree/manage.py makemigrations company
-	python InvenTree/manage.py makemigrations part
-	python InvenTree/manage.py makemigrations stock
-	python InvenTree/manage.py makemigrations build
-	python InvenTree/manage.py makemigrations order
-	python InvenTree/manage.py migrate --run-syncdb
-	python InvenTree/manage.py check
+	python3 InvenTree/manage.py makemigrations company
+	python3 InvenTree/manage.py makemigrations part
+	python3 InvenTree/manage.py makemigrations stock
+	python3 InvenTree/manage.py makemigrations build
+	python3 InvenTree/manage.py makemigrations order
+	python3 InvenTree/manage.py migrate --run-syncdb
+	python3 InvenTree/manage.py check
 
 install:
-	pip install -U -r requirements.txt
-	python InvenTree/keygen.py
+	pip3 install -U -r requirements.txt
+	python3 InvenTree/keygen.py
 
 superuser:
-	python InvenTree/manage.py createsuperuser
+	python3 InvenTree/manage.py createsuperuser
 
 style:
 	flake8 InvenTree
 
 test:
-	python InvenTree/manage.py check
-	python InvenTree/manage.py test build company part stock order
+	python3 InvenTree/manage.py check
+	python3 InvenTree/manage.py test build company part stock order
 
 coverage:
-	python InvenTree/manage.py check
+	python3 InvenTree/manage.py check
 	coverage run InvenTree/manage.py test build company part stock order
 	coverage html
 
 documentation:
-	pip install -U -r docs/requirements.txt
+	pip3 install -U -r docs/requirements.txt
 	cd docs & make html
 
 backup:
-	python InvenTree/manage.py dbbackup
-	python InvenTree/manage.py mediabackup
+	python3 InvenTree/manage.py dbbackup
+	python3 InvenTree/manage.py mediabackup
