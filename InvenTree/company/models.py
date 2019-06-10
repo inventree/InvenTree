@@ -327,7 +327,7 @@ class SupplierPart(models.Model):
         if q is None or r is None:
             return 0
         else:
-            return q - r
+            return max(q-r, 0)
     
 
     def purchase_orders(self):

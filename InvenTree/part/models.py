@@ -809,7 +809,7 @@ class Part(models.Model):
     def on_order(self):
         """ Return the total number of items on order for this part. """
 
-        return sum([part.on_order() for part in self.supplier_parts.all()])
+        return sum([part.on_order() for part in self.supplier_parts.all().prefetch_related('purchase_order_line_items')])
 
 
 def attach_file(instance, filename):
