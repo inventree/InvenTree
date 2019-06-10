@@ -4,17 +4,13 @@
 
 {% include 'company/tabs.html' with tab='po' %}
 
-<h4>Purchase Orders</h4>
+<h4>Open Purchase Orders</h4>
 
-<table class='table table-striped table-condensed' id='po-table'>
-    <tr>
-        <th>Reference</th>
-        <th>Description</th>
-        <th>Status</th>
-    </tr>
-    {% include "company/po_list.html" with orders=company.outstanding_purchase_orders %}
-    {% include "company/po_list.html" with orders=company.complete_purchase_orders %}
-    {% include "company/po_list.html" with orders=company.failed_purchase_orders %}
-</table>
+{% include "order/po_table.html" with orders=company.outstanding_purchase_orders.all %}
+
+{% if company.closed_purchase_orders.count > 0 %}
+{% include "order/po_table_collapse.html" with title="Closed Orders" orders=company.closed_purchase_orders.all %}
+{% endif %}
+
 
 {% endblock %}

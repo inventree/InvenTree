@@ -135,6 +135,16 @@ class Company(models.Model):
         """ Return purchase orders which are 'outstanding' """
         return self.purchase_orders.filter(status__in=OrderStatus.OPEN)
 
+    def closed_purchase_orders(self):
+        """ Return purchase orders which are not 'outstanding'
+
+        - Complete
+        - Failed / lost
+        - Returned 
+        """
+
+        return self.purchase_orders.exclude(status__in=OrderStatus.OPEN)
+
     def complete_purchase_orders(self):
         return self.purchase_orders.filter(status=OrderStatus.COMPLETE)
 
