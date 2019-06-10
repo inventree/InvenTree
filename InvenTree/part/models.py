@@ -427,7 +427,7 @@ class Part(models.Model):
         then we need to restock.
         """
 
-        return (self.total_stock - self.allocation_count) < self.minimum_stock
+        return (self.total_stock + self.on_order - self.allocation_count) < self.minimum_stock
 
     @property
     def can_build(self):
@@ -816,6 +816,7 @@ class Part(models.Model):
 
         return [order for order in self.purchase_orders() if order.status not in OrderStatus.OPEN]
 
+    @property
     def on_order(self):
         """ Return the total number of items on order for this part. """
 

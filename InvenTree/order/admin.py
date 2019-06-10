@@ -21,6 +21,7 @@ class PurchaseOrderLineItemAdmin(admin.ModelAdmin):
 
     list_display = (
         'order',
+        'part',
         'quantity',
         'reference'
     )
