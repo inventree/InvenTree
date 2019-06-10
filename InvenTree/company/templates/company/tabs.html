@@ -9,11 +9,9 @@
     <li{% if tab == 'stock' %} class='active'{% endif %}>
         <a href="{% url 'company-detail-stock' company.id %}">Stock <span class='badge'>{{ company.stock_count }}</a>
     </li>
-    {% if 0 %}
     <li{% if tab == 'po' %} class='active'{% endif %}>
-        <a href="#">Purchase Orders</a>
+        <a href="{% url 'company-detail-purchase-orders' company.id %}">Purchase Orders <span class='badge'>{{ company.purchase_orders.count }}</span></a>
     </li>
-    {% endif %}
     {% endif %}
     {% if company.is_customer %}
     {% if 0 %}

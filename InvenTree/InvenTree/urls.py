@@ -15,10 +15,9 @@ from company.urls import supplier_part_urls
 from company.urls import price_break_urls
 
 from part.urls import part_urls
-
 from stock.urls import stock_urls
-
 from build.urls import build_urls
+from order.urls import order_urls
 
 from part.api import part_api_urls, bom_api_urls
 from company.api import company_api_urls
@@ -56,6 +55,7 @@ urlpatterns = [
     url(r'^stock/', include(stock_urls)),
 
     url(r'^company/', include(company_urls)),
+    url(r'^order/', include(order_urls)),
 
     url(r'^build/', include(build_urls)),
 

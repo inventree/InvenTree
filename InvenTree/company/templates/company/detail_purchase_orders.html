@@ -1,0 +1,37 @@
+{% extends "company/company_base.html" %}
+{% load static %}
+{% block details %}
+
+{% include 'company/tabs.html' with tab='po' %}
+
+<h4>Open Purchase Orders</h4>
+
+<div class='container' style='float: right;'>
+    <div class='btn-group'>
+        <button class='btn btn-primary' type='button' id='po-create' title='Create new purchase order'>New Purchase Order</button>
+    </div>
+</div>
+
+{% include "order/po_table.html" with orders=company.outstanding_purchase_orders.all %}
+
+{% if company.closed_purchase_orders.count > 0 %}
+{% include "order/po_table_collapse.html" with title="Closed Orders" orders=company.closed_purchase_orders.all %}
+{% endif %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$("#po-create").click(function() {
+    launchModalForm("{% url 'purchase-order-create' %}",
+        {
+            data: {
+                supplier: {{ company.id }},
+            },
+            follow: true,
+        }
+    );
+});
+
+{% endblock %}

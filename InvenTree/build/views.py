@@ -15,6 +15,7 @@ from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
 from InvenTree.helpers import str2bool
+from InvenTree.status_codes import BuildStatus
 
 
 class BuildIndex(ListView):
@@ -32,10 +33,12 @@ class BuildIndex(ListView):
 
         context = super(BuildIndex, self).get_context_data(**kwargs).copy()
 
-        context['active'] = self.get_queryset().filter(status__in=[Build.PENDING, ])
+        context['BuildStatus'] = BuildStatus
 
-        context['completed'] = self.get_queryset().filter(status=Build.COMPLETE)
-        context['cancelled'] = self.get_queryset().filter(status=Build.CANCELLED)
+        context['active'] = self.get_queryset().filter(status__in=BuildStatus.ACTIVE_CODES)
+
+        context['completed'] = self.get_queryset().filter(status=BuildStatus.COMPLETE)
+        context['cancelled'] = self.get_queryset().filter(status=BuildStatus.CANCELLED)
 
         return context
 

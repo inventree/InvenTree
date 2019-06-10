@@ -33,6 +33,8 @@ from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree
 
+from InvenTree.status_codes import BuildStatus, StockStatus, OrderStatus
+
 from company.models import SupplierPart
 
 
@@ -425,7 +427,7 @@ class Part(models.Model):
         then we need to restock.
         """
 
-        return (self.total_stock - self.allocation_count) < self.minimum_stock
+        return (self.total_stock + self.on_order - self.allocation_count) < self.minimum_stock
 
     @property
     def can_build(self):
@@ -454,14 +456,14 @@ class Part(models.Model):
         Builds marked as 'complete' or 'cancelled' are ignored
         """
 
-        return [b for b in self.builds.all() if b.is_active]
+        return self.builds.filter(status__in=BuildStatus.ACTIVE_CODES)
 
     @property
     def inactive_builds(self):
         """ Return a list of inactive builds
         """
 
-        return [b for b in self.builds.all() if not b.is_active]
+        return self.builds.exclude(status__in=BuildStatus.ACTIVE_CODES)
 
     @property
     def quantity_being_built(self):
@@ -531,7 +533,7 @@ class Part(models.Model):
         if self.is_template:
             total = sum([variant.total_stock for variant in self.variants.all()])
         else:
-            total = self.stock_entries.aggregate(total=Sum('quantity'))['total']
+            total = self.stock_entries.filter(status__in=StockStatus.AVAILABLE_CODES).aggregate(total=Sum('quantity'))['total']
 
         if total:
             return total
@@ -791,6 +793,34 @@ class Part(models.Model):
             n += self.variant_of.attachments.count()
 
         return n
+
+    def purchase_orders(self):
+        """ Return a list of purchase orders which reference this part """
+
+        orders = []
+
+        for part in self.supplier_parts.all().prefetch_related('purchase_order_line_items'):
+            for order in part.purchase_orders():
+                if order not in orders:
+                    orders.append(order)
+
+        return orders
+
+    def open_purchase_orders(self):
+        """ Return a list of open purchase orders against this part """
+
+        return [order for order in self.purchase_orders() if order.status in OrderStatus.OPEN]
+
+    def closed_purchase_orders(self):
+        """ Return a list of closed purchase orders against this part """
+
+        return [order for order in self.purchase_orders() if order.status not in OrderStatus.OPEN]
+
+    @property
+    def on_order(self):
+        """ Return the total number of items on order for this part. """
+
+        return sum([part.on_order() for part in self.supplier_parts.all().prefetch_related('purchase_order_line_items')])
 
 
 def attach_file(instance, filename):

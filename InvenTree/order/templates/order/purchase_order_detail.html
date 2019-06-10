@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block page_title %}
+InvenTree | {{ order }}
+{% endblock %}
+
+{% block content %}
+<div class='row'>
+    <div class='col-sm-6'>
+        <div class='media'>
+            <div class='media-left'>
+                <img class='part-thumb'
+                {% if order.supplier.image %}
+                src="{{ order.supplier.image.url }}"
+                {% else %}
+                src="{% static 'img/blank_image.png' %}"
+                {% endif %}
+                />
+            </div>
+            <div class='media-body'>
+                <h4>{{ order }}</h4>
+                <p>{{ order.description }}</p>
+                {% if order.URL %}
+                <a href="{{ order.URL }}">{{ order.URL }}</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='col-sm-6'>
+        <h4>Purchase Order Details</h4>
+        <table class='table'>
+            <tr>
+                <td>Supplier</td>
+                <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier }}</a></td>
+            </tr>
+            <tr>
+                <td>Status</td>
+                <td>{% include "order/order_status.html" %}</td>
+            </tr>
+            <tr>
+                <td>Created</td>
+                <td>{{ order.creation_date }}</td>
+            </tr>
+            <tr>
+                <td>Created By</td>
+                <td>{{ order.created_by }}</td>
+            </tr>
+            {% if order.issue_date %}
+            <tr>
+                <td>Issued</td>
+                <td>{{ order.issue_date }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+</div>
+
+<hr>
+
+<div class='btn-group' style='float: right;'>
+    <button type='button' class='btn btn-primary' id='edit-order'>Edit Order</button>
+    {% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
+    <button type='button' class='btn btn-primary' id='place-order'>Place Order</button>
+    {% endif %}
+</div>
+
+<h4>Order Items</h4>
+
+{% if order.status == OrderStatus.PENDING %}
+<button type='button' class='btn btn-default' id='new-po-line'>Add Line Item</button>
+{% endif %}
+
+<table class='table table-striped table-condensed' id='po-lines-table'>
+    <tr>
+        <th data-field='line'>Line</th>
+        <th data-field='part'>Part</th>
+        <th data-field='sku'>Order Code</th>
+        <th data-field='reference'>Reference</th>
+        <th data-field='quantity'>Quantity</th>
+        <th data-field='received'>Received</th>
+    </tr>
+    {% for line in order.lines.all %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        {% if line.part %}
+        <td><a href="{% url 'part-detail' line.part.part.id %}">{{ line.part.part.full_name }}</a></td>
+        <td><a href="{% url 'supplier-part-detail' line.part.id %}">{{ line.part.SKU }}</a></td>
+        {% else %}
+        <td colspan='2'><strong>Warning: Part has been deleted.</strong></td>
+        {% endif %}
+        <td>{{ line.reference }}</td>
+        <td>{{ line.quantity }}</td>
+        <td>{{ line.received }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% if order.notes %}
+<hr>
+<div class='panel panel-default'>
+    <div class='panel-heading'><b>Notes</b></div>
+    <div class='panel-body'>{{ order.notes }}</div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block js_ready %}
+
+$("#place-order").click(function() {
+    launchModalForm("{% url 'purchase-order-issue' order.id %}",
+    {
+        reload: true,
+    });
+});
+
+$("#edit-order").click(function() {
+    launchModalForm("{% url 'purchase-order-edit' order.id %}",
+        {
+            reload: true,
+        }
+    );
+});
+
+{% if order.status == OrderStatus.PENDING %}
+$('#new-po-line').click(function() {
+    launchModalForm("{% url 'po-line-item-create' %}",
+        {
+            reload: true,
+            data: {
+                order: {{ order.id }},
+            },
+            secondary: [
+                {
+                    field: 'part',
+                    label: 'New Supplier Part',
+                    title: 'Create new supplier part',
+                    url: "{% url 'supplier-part-create' %}",
+                    data: {
+                        supplier: {{ order.supplier.id }},
+                    },
+                },
+            ],
+        }
+    );
+});
+{% endif %}
+
+$("#po-lines-table").bootstrapTable({
+});
+
+{% endblock %}

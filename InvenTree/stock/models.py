@@ -19,6 +19,7 @@ from django.dispatch import receiver
 from datetime import datetime
 from InvenTree import helpers
 
+from InvenTree.status_codes import StockStatus
 from InvenTree.models import InvenTreeTree
 
 from part.models import Part
@@ -93,7 +94,7 @@ class StockItem(models.Model):
         stocktake_user: User that performed the most recent stocktake
         review_needed: Flag if StockItem needs review
         delete_on_deplete: If True, StockItem will be deleted when the stock level gets to zero
-        status: Status of this StockItem (ref: ITEM_STATUS_CODES)
+        status: Status of this StockItem (ref: InvenTree.status_codes.StockStatus)
         notes: Extra notes field
         infinite: If True this StockItem can never be exhausted
     """
@@ -256,23 +257,9 @@ class StockItem(models.Model):
 
     delete_on_deplete = models.BooleanField(default=True, help_text='Delete this Stock Item when stock is depleted')
 
-    ITEM_OK = 10
-    ITEM_ATTENTION = 50
-    ITEM_DAMAGED = 55
-    ITEM_DESTROYED = 60
-    ITEM_LOST = 70
-
-    ITEM_STATUS_CODES = {
-        ITEM_OK: _("OK"),
-        ITEM_ATTENTION: _("Attention needed"),
-        ITEM_DAMAGED: _("Damaged"),
-        ITEM_DESTROYED: _("Destroyed"),
-        ITEM_LOST: _("Lost")
-    }
-
     status = models.PositiveIntegerField(
-        default=ITEM_OK,
-        choices=ITEM_STATUS_CODES.items(),
+        default=StockStatus.OK,
+        choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
 
     notes = models.CharField(max_length=250, blank=True, help_text='Stock Item Notes')

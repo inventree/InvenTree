@@ -10,12 +10,15 @@ import os
 import math
 
 from django.core.validators import MinValueValidator
+from django.db import models
+from django.db.models import Sum
 
 from django.apps import apps
-from django.db import models
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.staticfiles.templatetags.staticfiles import static
+
+from InvenTree.status_codes import OrderStatus
 
 
 def rename_company_image(instance, filename):
@@ -128,6 +131,28 @@ class Company(models.Model):
         stock = apps.get_model('stock', 'StockItem')
         return stock.objects.filter(supplier_part__supplier=self.id).count()
 
+    def outstanding_purchase_orders(self):
+        """ Return purchase orders which are 'outstanding' """
+        return self.purchase_orders.filter(status__in=OrderStatus.OPEN)
+
+    def closed_purchase_orders(self):
+        """ Return purchase orders which are not 'outstanding'
+
+        - Complete
+        - Failed / lost
+        - Returned
+        """
+
+        return self.purchase_orders.exclude(status__in=OrderStatus.OPEN)
+
+    def complete_purchase_orders(self):
+        return self.purchase_orders.filter(status=OrderStatus.COMPLETE)
+
+    def failed_purchase_orders(self):
+        """ Return any purchase orders which were not successful """
+
+        return self.purchase_orders.filter(status__in=OrderStatus.FAILED)
+
 
 class Contact(models.Model):
     """ A Contact represents a person who works at a particular company.
@@ -223,6 +248,9 @@ class SupplierPart(models.Model):
 
     @property
     def manufacturer_string(self):
+        """ Format a MPN string for this SupplierPart.
+        Concatenates manufacture name and part number.
+        """
 
         items = []
 
@@ -285,6 +313,37 @@ class SupplierPart(models.Model):
             return cost + self.base_cost
         else:
             return None
+
+    def open_orders(self):
+        """ Return a database query for PO line items for this SupplierPart,
+        limited to purchase orders that are open / outstanding.
+        """
+
+        return self.purchase_order_line_items.prefetch_related('order').filter(order__status__in=OrderStatus.OPEN)
+
+    def on_order(self):
+        """ Return the total quantity of items currently on order.
+
+        Subtract partially received stock as appropriate
+        """
+
+        totals = self.open_orders().aggregate(Sum('quantity'), Sum('received'))
+
+        # Quantity on order
+        q = totals.get('quantity__sum', 0)
+
+        # Quantity received
+        r = totals.get('received__sum', 0)
+
+        if q is None or r is None:
+            return 0
+        else:
+            return max(q - r, 0)
+
+    def purchase_orders(self):
+        """ Returns a list of purchase orders relating to this supplier part """
+
+        return [line.order for line in self.purchase_order_line_items.all().prefetch_related('order')]
 
     def __str__(self):
         s = "{supplier} ({sku})".format(
