@@ -7,12 +7,17 @@
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h4>Part Orders</h4>
+        <h4>Open Part Orders</h4>
     </div>
     <div class='col-sm-6'>
     </div>
 </div>
 
-{% include "order/po_table.html" with orders=part.purchase_orders %}
+{% include "order/po_table.html" with orders=part.open_purchase_orders %}
+
+{% if part.closed_purchase_orders|length > 0 %}
+<h4>Closed Orders</h4>
+{% include "order/po_table.html" with orders=part.closed_purchase_orders %}
+{% endif %}
 
 {% endblock %}

@@ -33,7 +33,7 @@ from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree
 
-from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import BuildStatus, StockStatus, OrderStatus
 
 from company.models import SupplierPart
 
@@ -805,6 +805,16 @@ class Part(models.Model):
                     orders.append(order)
 
         return orders
+
+    def open_purchase_orders(self):
+        """ Return a list of open purchase orders against this part """
+
+        return [order for order in self.purchase_orders() if order.status in OrderStatus.OPEN]
+
+    def closed_purchase_orders(self):
+        """ Return a list of closed purchase orders against this part """
+
+        return [order for order in self.purchase_orders() if order.status not in OrderStatus.OPEN]
 
     def on_order(self):
         """ Return the total number of items on order for this part. """
