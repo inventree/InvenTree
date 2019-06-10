@@ -140,7 +140,7 @@ class Company(models.Model):
 
         - Complete
         - Failed / lost
-        - Returned 
+        - Returned
         """
 
         return self.purchase_orders.exclude(status__in=OrderStatus.OPEN)
@@ -152,6 +152,7 @@ class Company(models.Model):
         """ Return any purchase orders which were not successful """
 
         return self.purchase_orders.filter(status__in=OrderStatus.FAILED)
+
 
 class Contact(models.Model):
     """ A Contact represents a person who works at a particular company.
@@ -248,7 +249,7 @@ class SupplierPart(models.Model):
     @property
     def manufacturer_string(self):
         """ Format a MPN string for this SupplierPart.
-        Concatenates manufacture name and part number 
+        Concatenates manufacture name and part number.
         """
 
         items = []
@@ -314,14 +315,14 @@ class SupplierPart(models.Model):
             return None
 
     def open_orders(self):
-        """ Return a database query for PO line items for this SupplierPart, 
+        """ Return a database query for PO line items for this SupplierPart,
         limited to purchase orders that are open / outstanding.
         """
 
         return self.purchase_order_line_items.prefetch_related('order').filter(order__status__in=OrderStatus.OPEN)
 
     def on_order(self):
-        """ Return the total quantity of items currently on order. 
+        """ Return the total quantity of items currently on order.
 
         Subtract partially received stock as appropriate
         """
@@ -332,13 +333,12 @@ class SupplierPart(models.Model):
         q = totals.get('quantity__sum', 0)
 
         # Quantity received
-        r  = totals.get('received__sum', 0)
+        r = totals.get('received__sum', 0)
 
         if q is None or r is None:
             return 0
         else:
-            return max(q-r, 0)
-    
+            return max(q - r, 0)
 
     def purchase_orders(self):
         """ Returns a list of purchase orders relating to this supplier part """

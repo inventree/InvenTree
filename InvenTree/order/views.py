@@ -79,7 +79,7 @@ class PurchaseOrderCreate(AjaxCreateView):
             except Company.DoesNotExist:
                 pass
 
-        return initials 
+        return initials
 
 
 class PurchaseOrderEdit(AjaxUpdateView):

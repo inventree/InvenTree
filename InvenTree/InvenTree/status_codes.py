@@ -43,7 +43,7 @@ class OrderStatus(StatusCode):
         CANCELLED,
         LOST,
         RETURNED
-    ]    
+    ]
 
 
 class StockStatus(StatusCode):
