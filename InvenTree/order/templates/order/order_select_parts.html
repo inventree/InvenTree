@@ -22,12 +22,16 @@
                 {{ part.full_name }} <small><i>{{ part.description }}</i></small>
             </td>
             <td>
-                <select name="part_select_{{ item.part.id }}">
-                    <option value=''>---------</option>
-                    {% for supplier in part.supplier_parts.all %}
-                    <option value="{{ supplier.id }}"{% if part.get_default_supplier and part.get_default_supplier.id == supplier.id %} selected="selected"{% endif %}>{{ supplier }}</option>
-                    {% endfor %}
-                </select>
+                <div class='control-group'>
+                    <div class='controls'>
+                        <select class='select' id='id_supplier_part_{{ part.id }}' name="part_select_{{ part.id }}">
+                            <option value=''>---------</option>
+                            {% for supplier in part.supplier_parts.all %}
+                            <option value="{{ supplier.id }}"{% if part.get_default_supplier and part.get_default_supplier.id == supplier.id %} selected="selected"{% endif %}>{{ supplier }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </td>
             <td>
                 <input class='numberinput' min='0' value='{{ part.quantity_to_order }}' name='part_quantity_{{ part.id }}'/>
