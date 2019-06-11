@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView
-from django.views.generic.edit import FormMixin
 from django.forms import HiddenInput
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
@@ -181,7 +180,7 @@ class OrderParts(AjaxView):
             
             """ Get a list of all the parts associated with the stock items.
             - Base part must be purchaseable.
-            - Return a set of corresponding Part IDs  
+            - Return a set of corresponding Part IDs
             """
             stock_items = StockItem.objects.filter(
                 part__purchaseable=True,
