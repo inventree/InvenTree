@@ -9,7 +9,10 @@
     </tr>
     {% for part in parts %}
     <tr>
-        <td><a href="{% url 'part-detail' part.id %}">{{ part.full_name }}</a></td>
+        <td>
+            {% include "hover_image.html" with image=part.image hover=True %}
+            <a href="{% url 'part-detail' part.id %}">{{ part.full_name }}</a>
+        </td>
         <td>{{ part.description }}</td>
         <td>{{ part.allocation_count }}</td>
         <td>{{ part.total_stock }}</td>
