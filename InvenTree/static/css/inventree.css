@@ -14,6 +14,10 @@
     color: #ffbb00;
 }
 
+.red-cell {
+    background-color: #ec7f7f;
+}
+
 .part-price {
     color: rgb(13, 245, 25);
 }

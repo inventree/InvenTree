@@ -410,6 +410,19 @@ class Part(models.Model):
 
         return max(total, 0)
 
+    @property
+    def net_stock(self):
+        """ Return the 'net' stock. It takes into account:
+
+        - Stock on hand (total_stock)
+        - Stock on order (on_order)
+        - Stock allocated (allocation_count)
+
+        This number (unlike 'available_stock') can be negative.
+        """
+
+        return self.total_stock - self.allocation_count + self.on_order
+
     def isStarredBy(self, user):
         """ Return True if this part has been starred by a particular user """
 

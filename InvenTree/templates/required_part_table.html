@@ -2,9 +2,9 @@
     <tr>
         <th>Part</th>
         <th>Description</th>
-        <th>Required</th>
         <th>In Stock</th>
         <th>On Order</th>
+        <th>Allocted</th>
         <th>Net Stock</th>
     </tr>
     {% for part in parts %}
@@ -14,10 +14,10 @@
             <a href="{% url 'part-detail' part.id %}">{{ part.full_name }}</a>
         </td>
         <td>{{ part.description }}</td>
-        <td>{{ part.allocation_count }}</td>
         <td>{{ part.total_stock }}</td>
         <td>{{ part.on_order }}</td>
-        <td>{{ part.available_stock }}</td>
+        <td>{{ part.allocation_count }}</td>
+        <td{% if part.net_stock < 0 %} class='red-cell'{% endif %}>{{ part.net_stock }}</td>
     </tr>
     {% endfor %}
 </table>
