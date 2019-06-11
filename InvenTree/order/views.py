@@ -194,8 +194,22 @@ class OrderParts(AjaxView):
             for item in stock_items:
                 part_ids.add(item.part.id)
 
-            print("Parts:", part_ids)
 
+        # User has passed a list of part ID values
+        if 'parts[]' in self.request.GET:
+            part_id_list = self.request.GET.getlist('parts[]')
+
+            print("Provided list of part:")
+            print(part_id_list)
+
+            parts = Part.objects.filter(
+                purchaseable=True,
+                id__in=part_id_list)
+
+            for part in parts:
+                part_ids.add(part.id)
+
+        print("Parts:", part_ids)
 
         # Create the list of parts
         for id in part_ids:
