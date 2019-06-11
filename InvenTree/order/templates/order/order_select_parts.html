@@ -2,6 +2,16 @@
 
 {% block form %}
 
+{% if parts|length > 0 %}
+<div class='alert alert-info alert-block' role='alert'>
+    Select suppliers for {{ parts|length }} parts.
+</div>
+{% else %}
+<div class='alert alert-warning alert-block' role='alert'>
+    No purchaseable parts selected.
+</div>
+{% endif %}
+
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
     {% csrf_token %}
     {% load crispy_forms_tags %}
