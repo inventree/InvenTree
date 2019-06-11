@@ -1,0 +1,44 @@
+{% extends "modal_form.html" %}
+
+{% block form %}
+
+<form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+
+    <input type='hidden' name='form_step' value='select_parts'/>
+
+    <table class='table table-condensed table-striped' id='part-table'>
+        <tr>
+            <th>Part</th>
+            <th>Supplier</th>
+            <th>Quantity</th>
+            <th></th>
+        </tr>
+        {% for part in parts %}
+        <tr>
+            <td>
+                {% include "hover_image.html" with image=part.image hover=False %}
+                {{ part.full_name }} <small><i>{{ part.description }}</i></small>
+            </td>
+            <td>
+                <select name="part_select_{{ item.part.id }}">
+                    <option value=''>---------</option>
+                    {% for supplier in part.supplier_parts.all %}
+                    <option value="{{ supplier.id }}"{% if part.get_default_supplier and part.get_default_supplier.id == supplier.id %} selected="selected"{% endif %}>{{ supplier }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <input class='numberinput' min='0' value='{{ part.quantity_to_order }}' name='part_quantity_{{ part.id }}'/>
+            </td>
+            <td>
+                <button class='btn btn-default btn-remove' id='del_item_{{ part.id }}' title='Remove part' type='button'>
+                    <span row='part_row_{{ item.part.id }}' onclick='removeOrderRow()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

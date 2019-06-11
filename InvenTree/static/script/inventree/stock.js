@@ -237,6 +237,22 @@ function loadStockTable(table, options) {
     $("#multi-item-move").click(function() {
         stockAdjustment('move');
     });
+
+    $("#multi-item-order").click(function() {
+        var selections = $("#stock-table").bootstrapTable("getSelections");
+
+        var stock = [];
+
+        selections.forEach(function(item) {
+            stock.push(item.pk);
+        });
+
+        launchModalForm("/order/purchase-order/order-parts/", {
+            data: {
+                stock: stock,
+            },
+        });
+    });
 }
 
 

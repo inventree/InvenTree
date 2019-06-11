@@ -21,6 +21,8 @@
 
 {% block pre_form_content %}
 {% endblock %}
+
+{% block form %}
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
   {% csrf_token %}
   {% load crispy_forms_tags %}
@@ -31,6 +33,8 @@
   {% block form_data %}
   {% endblock %}
 </form>
+
+{% endblock %}
 
 {% block post_form_content %}
 {% endblock %}

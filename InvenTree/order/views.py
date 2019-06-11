@@ -7,14 +7,17 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView
+from django.views.generic.edit import FormMixin
 from django.forms import HiddenInput
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from company.models import Company, SupplierPart
+from stock.models import StockItem
+from part.models import Part
 
 from . import forms as order_forms
 
-from InvenTree.views import AjaxCreateView, AjaxUpdateView
+from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView
 from InvenTree.helpers import str2bool
 
 from InvenTree.status_codes import OrderStatus
@@ -133,6 +136,96 @@ class PurchaseOrderIssue(AjaxUpdateView):
             order.place_order()
 
         return self.renderJsonResponse(request, form, data)
+
+
+class OrderParts(AjaxView):
+    """ View for adding various SupplierPart items to a Purchase Order.
+
+    SupplierParts can be selected from a variety of 'sources':
+
+    - ?supplier_parts[]= -> Direct list of SupplierPart objects
+    - ?parts[]= -> List of base Part objects (user must then select supplier parts)
+    - ?stock[]= -> List of StockItem objects (user must select supplier parts)
+    - ?build= -> A Build object (user must select parts, then supplier parts)
+
+    """
+
+    ajax_form_title = "Order Parts"
+    ajax_template_name = 'order/order_select_parts.html'
+
+    # List of Parts we wish to order
+    parts = []
+
+    def get_context_data(self):
+
+        ctx = {}
+
+        print("Getting context data")
+
+        ctx['parts'] = self.get_parts()
+
+        return ctx
+
+    def get_parts(self):
+        """ Determine which parts the user wishes to order.
+        This is performed on the initial GET request.
+        """
+
+        self.parts = []
+
+        part_ids = set()
+
+        # User has passed a list of stock items
+        if 'stock[]' in self.request.GET:
+
+            stock_id_list = self.request.GET.getlist('stock[]')
+
+            print("Looking up parts from stock items:")
+            print(stock_id_list)
+            
+            """ Get a list of all the parts associated with the stock items.
+            - Base part must be purchaseable.
+            - Return a set of corresponding Part IDs  
+            """
+            stock_items = StockItem.objects.filter(
+                part__purchaseable=True,
+                id__in=stock_id_list)
+
+            for item in stock_items:
+                part_ids.add(item.part.id)
+
+            print("Parts:", part_ids)
+
+
+        # Create the list of parts
+        for id in part_ids:
+            try:
+                part = Part.objects.get(id=id)
+            except Part.DoesNotExist:
+                continue
+
+            self.parts.append(part)
+
+        return self.parts
+
+    def get(self, request, *args, **kwargs):
+
+        self.request = request
+
+        print("GET HERE")
+
+        print(request.GET)
+
+        self.get_parts()
+
+        return self.renderJsonResponse(request)
+
+    def post(self, request, *args, **kwargs):
+
+        self.request = request
+        print("POST here")
+
+        return self.renderJsonResponse(request)
 
 
 class POLineItemCreate(AjaxCreateView):
