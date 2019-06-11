@@ -11,6 +11,7 @@ from django.views.generic.edit import FormMixin
 from django.forms import HiddenInput
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
+from build.models import Build
 from company.models import Company, SupplierPart
 from stock.models import StockItem
 from part.models import Part
@@ -211,6 +212,19 @@ class OrderParts(AjaxView):
             for part in parts:
                 part_ids.add(part.id)
 
+        # User has provided a Build ID
+        elif 'build' in self.request.GET:
+            build_id = self.request.GET.get('build')
+            try:
+                build = Build.objects.get(id=build_id)
+
+                parts = build.part.required_parts()
+
+                for part in parts:
+                    part_ids.add(part.id)
+            except Build.DoesNotExist:
+                pass
+
         # Create the list of parts
         for id in part_ids:
             try:
@@ -220,7 +234,7 @@ class OrderParts(AjaxView):
 
             self.parts.append(part)
 
-        return self.parts
+        return sorted(self.parts, key=lambda part: part.quantity_to_order, reverse=True)
 
     def get(self, request, *args, **kwargs):
 

@@ -68,6 +68,14 @@ InvenTree | Allocate Parts
         location.href = "{% url 'build-allocate' build.id %}?edit=1";
     });
 
+    $("#btn-order-parts").click(function() {
+        launchModalForm("/order/purchase-order/order-parts/", {
+            data: {
+                build: {{ build.id }},
+            },
+        });
+    });
+
     {% endif %}
 
 {% endblock %}
