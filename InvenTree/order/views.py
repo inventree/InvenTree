@@ -160,8 +160,6 @@ class OrderParts(AjaxView):
 
         ctx = {}
 
-        print("Getting context data")
-
         ctx['parts'] = self.get_parts()
 
         return ctx
@@ -179,9 +177,6 @@ class OrderParts(AjaxView):
         if 'stock[]' in self.request.GET:
 
             stock_id_list = self.request.GET.getlist('stock[]')
-
-            print("Looking up parts from stock items:")
-            print(stock_id_list)
             
             """ Get a list of all the parts associated with the stock items.
             - Base part must be purchaseable.
@@ -205,14 +200,9 @@ class OrderParts(AjaxView):
             except Part.DoesNotExist:
                 pass
 
-
-
         # User has passed a list of part ID values
         elif 'parts[]' in self.request.GET:
             part_id_list = self.request.GET.getlist('parts[]')
-
-            print("Provided list of part:")
-            print(part_id_list)
 
             parts = Part.objects.filter(
                 purchaseable=True,
@@ -220,8 +210,6 @@ class OrderParts(AjaxView):
 
             for part in parts:
                 part_ids.add(part.id)
-
-        print("Parts:", part_ids)
 
         # Create the list of parts
         for id in part_ids:
@@ -238,10 +226,6 @@ class OrderParts(AjaxView):
 
         self.request = request
 
-        print("GET HERE")
-
-        print(request.GET)
-
         self.get_parts()
 
         return self.renderJsonResponse(request)
@@ -249,8 +233,7 @@ class OrderParts(AjaxView):
     def post(self, request, *args, **kwargs):
 
         self.request = request
-        print("POST here")
-
+        
         data = {
             'form_valid': False,
         }
