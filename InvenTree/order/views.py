@@ -225,7 +225,11 @@ class OrderParts(AjaxView):
         self.request = request
         print("POST here")
 
-        return self.renderJsonResponse(request)
+        data = {
+            'form_valid': False,
+        }
+
+        return self.renderJsonResponse(request, data=data)
 
 
 class POLineItemCreate(AjaxCreateView):

@@ -16,7 +16,7 @@
             <th></th>
         </tr>
         {% for part in parts %}
-        <tr>
+        <tr id='part_row_{{ part.id }}'>
             <td>
                 {% include "hover_image.html" with image=part.image hover=False %}
                 {{ part.full_name }} <small><i>{{ part.description }}</i></small>
@@ -34,11 +34,15 @@
                 </div>
             </td>
             <td>
-                <input class='numberinput' min='0' value='{{ part.quantity_to_order }}' name='part_quantity_{{ part.id }}'/>
+                <div class='control-group'>
+                    <div class='controls'>
+                        <input class='numberinput' type='number' min='0' value='{{ part.quantity_to_order }}' name='part_quantity_{{ part.id }}'/>
+                    </div>
+                </div>
             </td>
             <td>
                 <button class='btn btn-default btn-remove' id='del_item_{{ part.id }}' title='Remove part' type='button'>
-                    <span row='part_row_{{ item.part.id }}' onclick='removeOrderRow()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                    <span row='part_row_{{ part.id }}' onclick='removeOrderRow()' class='glyphicon glyphicon-small glyphicon-remove'></span>
                 </button>
             </td>
         </tr>
