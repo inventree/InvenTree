@@ -194,9 +194,21 @@ class OrderParts(AjaxView):
             for item in stock_items:
                 part_ids.add(item.part.id)
 
+        # User has passed a single Part ID
+        elif 'part' in self.request.GET:
+            try:
+                part_id = self.request.GET.get('part')
+                part = Part.objects.get(id=part_id)
+
+                part_ids.add(part.id)
+
+            except Part.DoesNotExist:
+                pass
+
+
 
         # User has passed a list of part ID values
-        if 'parts[]' in self.request.GET:
+        elif 'parts[]' in self.request.GET:
             part_id_list = self.request.GET.getlist('parts[]')
 
             print("Provided list of part:")
