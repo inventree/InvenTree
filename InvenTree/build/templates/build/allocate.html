@@ -62,7 +62,10 @@ InvenTree | Allocate Parts
 
     {% else %}
 
-    $("#build-list").bootstrapTable({});
+    $("#build-list").bootstrapTable({
+        search: true,
+        sortable: true,
+    });
 
     $("#btn-allocate").click(function() {
         location.href = "{% url 'build-allocate' build.id %}?edit=1";
