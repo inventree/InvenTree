@@ -19,7 +19,7 @@ from part.models import Part
 
 from . import forms as order_forms
 
-from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView
+from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import str2bool
 
 from InvenTree.status_codes import OrderStatus
@@ -539,8 +539,32 @@ class POLineItemCreate(AjaxCreateView):
 
 
 class POLineItemEdit(AjaxUpdateView):
+    """ View for editing a PurchaseOrderLineItem object in a modal form.
+    """
 
     model = PurchaseOrderLineItem
     form_class = order_forms.EditPurchaseOrderLineItemForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_action = 'Edit Line Item'
+    ajax_form_title = 'Edit Line Item'
+
+    def get_form(self):
+        form = super().get_form()
+
+        # Prevent user from editing order once line item is assigned
+        form.fields.pop('order')
+
+        return form
+
+
+class POLineItemDelete(AjaxDeleteView):
+    """ View for deleting a PurchaseOrderLineItem object in a modal form
+    """
+
+    model = PurchaseOrderLineItem
+    ajax_form_title = 'Delete Line Item'
+    ajax_template_name = 'order/po_lineitem_delete.html'
+    
+    def get_data(self):
+        return {
+            'danger': 'Deleted line item',
+        }

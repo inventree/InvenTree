@@ -110,10 +110,10 @@ InvenTree | {{ order }}
         <td>
             <div class='btn-group'>
                 <button class='btn btn-default btn-edit' id='edit-line-item-{{ line.id }} title='Edit line item' onclick='editPurchaseOrderLineItem()'>
-                    <span line='{{ line.id }}' class='glyphicon glyphicon-small glyphicon-edit'></span>
+                    <span url="{% url 'po-line-item-edit' line.id %}" line='{{ line.id }}' class='glyphicon glyphicon-small glyphicon-edit'></span>
                 </button>
                 <button class='btn btn-default btn-remove' id='remove-line-item-{{ line.id }' title='Remove line item' type='button' onclick='removePurchaseOrderLineItem()'>
-                    <span line='{{ line.id }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                    <span url="{% url 'po-line-item-delete' line.id %}" line='{{ line.id }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
                 </button>
             </div>
         </td>

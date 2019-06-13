@@ -67,3 +67,35 @@ function newPurchaseOrderFromOrderWizard(e) {
         },
     });
 }
+
+function editPurchaseOrderLineItem(e) {
+
+    /* Edit a purchase order line item in a modal form.
+     */
+
+    e = e || window.event;
+
+    var src = e.target || e.srcElement;
+
+    var url = $(src).attr('url');
+
+    launchModalForm(url, {
+        reload: true,
+    });
+}
+
+function removePurchaseOrderLineItem(e) {
+
+    /* Delete a purchase order line item in a modal form 
+     */
+
+    e = e || window.event;
+
+    var src = e.target || e.srcElement;
+
+    var url = $(src).attr('url');
+
+    launchModalForm(url, {
+        reload: true,
+    });
+}

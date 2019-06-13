@@ -17,9 +17,17 @@ purchase_order_detail_urls = [
     url(r'^.*$', views.PurchaseOrderDetail.as_view(), name='purchase-order-detail'),
 ]
 
+po_line_item_detail_urls = [
+    
+    url(r'^edit/', views.POLineItemEdit.as_view(), name='po-line-item-edit'),
+    url(r'^delete/', views.POLineItemDelete.as_view(), name='po-line-item-delete'),
+]
+
 po_line_urls = [
 
     url(r'^new/', views.POLineItemCreate.as_view(), name='po-line-item-create'),
+
+    url(r'^(?P<pk>\d+)/', include(po_line_item_detail_urls)),
 ]
 
 purchase_order_urls = [
