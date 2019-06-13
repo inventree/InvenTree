@@ -12,7 +12,7 @@ from .models import BomItem
 from InvenTree.serializers import InvenTreeModelSerializer
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class CategorySerializer(InvenTreeModelSerializer):
     """ Serializer for PartCategory """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -29,7 +29,7 @@ class CategorySerializer(serializers.ModelSerializer):
         ]
 
 
-class PartBriefSerializer(serializers.ModelSerializer):
+class PartBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Part (brief detail) """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -56,7 +56,7 @@ class PartBriefSerializer(serializers.ModelSerializer):
         ]
 
 
-class PartSerializer(serializers.ModelSerializer):
+class PartSerializer(InvenTreeModelSerializer):
     """ Serializer for complete detail information of a part.
     Used when displaying all details of a single component.
     """
