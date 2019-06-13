@@ -37,6 +37,11 @@
                             id='id_purchase_order_{{ supplier.id }}'
                             name='purchase_order_{{ supplier.id }}'>
                             <option value=''>---------</option>
+                            {% for order in supplier.outstanding_purchase_orders %}
+                            <option value='{{ order.id }}'>
+                                {{ order }}
+                            </option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>

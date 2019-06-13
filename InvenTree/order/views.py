@@ -185,6 +185,10 @@ class OrderParts(AjaxView):
             if not supplier.name in suppliers:
                 supplier.order_items = []
                 suppliers[supplier.name] = supplier
+
+                print("Supplier:", supplier.name)
+                for order in supplier.outstanding_purchase_orders():
+                    print("order:", order.reference)
                 
             suppliers[supplier.name].order_items.append(part)
 
