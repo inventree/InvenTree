@@ -299,6 +299,14 @@
     color: #1A1;
 }
 
+.btn-edit {
+    padding: 3px;
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #55E;
+}
+
 .button-toolbar {
     padding-left: 0px;
 }

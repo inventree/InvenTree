@@ -79,20 +79,40 @@ InvenTree | {{ order }}
         <th data-field='sku'>Order Code</th>
         <th data-field='reference'>Reference</th>
         <th data-field='quantity'>Quantity</th>
+        {% if not order.status == OrderStatus.PENDING %}
         <th data-field='received'>Received</th>
+        {% endif %}
+        <th data-field='buttons'></th>
     </tr>
     {% for line in order.lines.all %}
     <tr>
-        <td>{{ forloop.counter }}</td>
+        <td>
+            {{ forloop.counter }}
+        </td>
         {% if line.part %}
-        <td><a href="{% url 'part-detail' line.part.part.id %}">{{ line.part.part.full_name }}</a></td>
+        <td>
+            {% include "hover_image.html" with image=line.part.part.image hover=True %}
+            <a href="{% url 'part-detail' line.part.part.id %}">{{ line.part.part.full_name }}</a>
+        </td>
         <td><a href="{% url 'supplier-part-detail' line.part.id %}">{{ line.part.SKU }}</a></td>
         {% else %}
         <td colspan='2'><strong>Warning: Part has been deleted.</strong></td>
         {% endif %}
         <td>{{ line.reference }}</td>
         <td>{{ line.quantity }}</td>
+        {% if not order.status == OrderStatus.PENDING %}
         <td>{{ line.received }}</td>
+        {% endif %}
+        <td>
+            <div class='btn-group'>
+                <button class='btn btn-default btn-edit' id='edit-line-item-{{ line.id }}' line='{{ line.id }}' title='Edit line item' onclick='editPurchaseOrderLineItem'>
+                    <span class='glyphicon glyphicon-small glyphicon-edit'></span>
+                </button>
+                <button class='btn btn-default btn-remove' id='remove-line-item-{{ line.id }' title='Remove line item' type='button' onclick='removePurchaseOrderLineItem'>
+                    <span class='glyphicon glyphicon-small glyphicon-remove'></span>
+                </button>
+            </div>
+        </td>
     </tr>
     {% endfor %}
 </table>
