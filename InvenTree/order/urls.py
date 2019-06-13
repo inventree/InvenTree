@@ -14,17 +14,29 @@ purchase_order_detail_urls = [
     url(r'^edit/?', views.PurchaseOrderEdit.as_view(), name='purchase-order-edit'),
     url(r'^issue/?', views.PurchaseOrderIssue.as_view(), name='purchase-order-issue'),
 
+    url(r'^export/?', views.PurchaseOrderExport.as_view(), name='purchase-order-export'),
+
     url(r'^.*$', views.PurchaseOrderDetail.as_view(), name='purchase-order-detail'),
+]
+
+po_line_item_detail_urls = [
+    
+    url(r'^edit/', views.POLineItemEdit.as_view(), name='po-line-item-edit'),
+    url(r'^delete/', views.POLineItemDelete.as_view(), name='po-line-item-delete'),
 ]
 
 po_line_urls = [
 
     url(r'^new/', views.POLineItemCreate.as_view(), name='po-line-item-create'),
+
+    url(r'^(?P<pk>\d+)/', include(po_line_item_detail_urls)),
 ]
 
 purchase_order_urls = [
 
     url(r'^new/', views.PurchaseOrderCreate.as_view(), name='purchase-order-create'),
+
+    url(r'^order-parts/', views.OrderParts.as_view(), name='order-parts'),
 
     # Display detail view for a single purchase order
     url(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),

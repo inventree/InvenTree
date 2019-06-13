@@ -6,10 +6,12 @@ Order model definitions
 
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
+import tablib
 from datetime import datetime
 
 from company.models import Company, SupplierPart
@@ -98,8 +100,100 @@ class PurchaseOrder(Order):
         help_text=_('Company')
     )
 
+    def export_to_file(self, **kwargs):
+        """ Export order information to external file """
+
+        file_format = kwargs.get('format', 'csv').lower()
+
+        data = tablib.Dataset(headers=[
+            'Line',
+            'Part',
+            'Description',
+            'Manufacturer',
+            'MPN',
+            'Order Code',
+            'Quantity',
+            'Received',
+            'Reference',
+            'Notes',
+        ])
+
+        idx = 0
+
+        for item in self.lines.all():
+
+            line = []
+
+            line.append(idx)
+
+            if item.part:
+                line.append(item.part.part.name)
+                line.append(item.part.part.description)
+
+                line.append(item.part.manufacturer)
+                line.append(item.part.MPN)
+                line.append(item.part.SKU)
+
+            else:
+                line += [[] * 5]
+            
+            line.append(item.quantity)
+            line.append(item.received)
+            line.append(item.reference)
+            line.append(item.notes)
+
+            idx += 1
+
+            data.append(line)
+
+        return data.export(file_format)
+
     def get_absolute_url(self):
         return reverse('purchase-order-detail', kwargs={'pk': self.id})
+
+    def add_line_item(self, supplier_part, quantity, group=True, reference=''):
+        """ Add a new line item to this purchase order.
+        This function will check that:
+
+        * The supplier part matches the supplier specified for this purchase order
+        * The quantity is greater than zero
+
+        Args:
+            supplier_part - The supplier_part to add
+            quantity - The number of items to add
+            group - If True, this new quantity will be added to an existing line item for the same supplier_part (if it exists)
+        """
+
+        try:
+            quantity = int(quantity)
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _("Quantity must be greater than zero")})
+        except ValueError:
+            raise ValidationError({'quantity': _("Invalid quantity provided")})
+
+        if not supplier_part.supplier == self.supplier:
+            raise ValidationError({'supplier': _("Part supplier must match PO supplier")})
+
+        if group:
+            # Check if there is already a matching line item
+            matches = PurchaseOrderLineItem.objects.filter(part=supplier_part)
+
+            if matches.count() > 0:
+                line = matches.first()
+
+                line.quantity += quantity
+                line.save()
+
+                return
+
+        line = PurchaseOrderLineItem(
+            order=self,
+            part=supplier_part,
+            quantity=quantity,
+            reference=reference)
+
+        line.save()
 
 
 class OrderLineItem(models.Model):
@@ -117,6 +211,8 @@ class OrderLineItem(models.Model):
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1, help_text=_('Item quantity'))
 
     reference = models.CharField(max_length=100, blank=True, help_text=_('Line item reference'))
+    
+    notes = models.CharField(max_length=500, blank=True, help_text=_('Line item notes'))
 
 
 class PurchaseOrderLineItem(OrderLineItem):
@@ -131,6 +227,13 @@ class PurchaseOrderLineItem(OrderLineItem):
         unique_together = (
             ('order', 'part')
         )
+
+    def __str__(self):
+        return "{n} x {part} from {supplier} (for {po})".format(
+            n=self.quantity,
+            part=self.part.SKU if self.part else 'unknown part',
+            supplier=self.order.supplier.name,
+            po=self.order)
 
     order = models.ForeignKey(
         PurchaseOrder, on_delete=models.CASCADE,

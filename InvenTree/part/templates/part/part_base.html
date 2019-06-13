@@ -72,24 +72,16 @@
     </div>
 </div>
 <div class="col-sm-6">
-    <h4>Stock Status - {{ part.available_stock }}{% if part.units %} {{ part.units }} {% endif%} available</h4>
     <table class="table table-striped">
+        <tr>
+            <td colspan='2'>
+                <h4>Stock Status</h4>
+            </td>
+        </tr>
         <tr>
             <td>In Stock</td>
             <td>{{ part.total_stock }}</td>
         </tr>
-        {% if part.assembly %}
-        <tr>
-            <td>Can Build</td>
-            <td>{{ part.can_build }}</td>
-        </tr>
-        {% if part.quantity_being_built > 0 %}
-        <tr>
-            <td>Underway</td>
-            <td>{{ part.quantity_being_built }}</td>
-        </tr>
-        {% endif %}
-        {% endif %}
         {% if part.allocation_count > 0 %}
         <tr>
             <td>Allocated</td>
@@ -102,6 +94,27 @@
             <td>{{ part.on_order }}</td>
         </tr>
         {% endif %}
+        <tr>
+            <td><b>Total Available</b></td>
+            <td><b>{{ part.net_stock }}</b></td>
+        </tr>
+    {% if part.assembly %}
+        <tr>
+            <td colspan='2'>
+                <h4>Build Status</h4>
+            </td>
+        </tr>
+        <tr>
+            <td>Can Build</td>
+            <td>{{ part.can_build }}</td>
+        </tr>
+        {% if part.quantity_being_built > 0 %}
+        <tr>
+            <td>Underway</td>
+            <td>{{ part.quantity_being_built }}</td>
+        </tr>
+        {% endif %}
+    {% endif %}
     </table>
 </div>
 </div>

@@ -1,0 +1,74 @@
+{% extends "modal_form.html" %}
+
+{% block form %}
+
+<h4>
+    Step 1 of 2 - Select Parts
+</h4>
+
+{% if parts|length > 0 %}
+<div class='alert alert-info alert-block' role='alert'>
+    Select suppliers for {{ parts|length }} parts.
+</div>
+{% else %}
+<div class='alert alert-warning alert-block' role='alert'>
+    No purchaseable parts selected.
+</div>
+{% endif %}
+
+<form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+
+    <input type='hidden' name='form_step' value='select_parts'/>
+
+    <table class='table table-condensed table-striped' id='order-wizard-part-table'>
+        <tr>
+            <th>Part</th>
+            <th colspan='2'>Select Supplier</th>
+            <th>Quantity</th>
+            <th></th>
+        </tr>
+        {% for part in parts %}
+        <tr id='part_row_{{ part.id }}'>
+            <td>
+                {% include "hover_image.html" with image=part.image hover=False %}
+                {{ part.full_name }} <small><i>{{ part.description }}</i></small>
+            </td>
+            <td>
+                <button class='btn btn-default btn-create' id='new_supplier_part_{{ part.id }}' title='Create new supplier part for {{ part }}' type='button'>
+                    <span part-id='{{ part.id }}' onClick='newSupplierPartFromOrderWizard()' class='glyphicon glyphicon-small glyphicon-plus'></span>
+                </button>
+            </td>
+            <td>
+                <div class='control-group'>
+                    <div class='controls'>
+                        <select class='select' id='id_supplier_part_{{ part.id }}' name="part-supplier-{{ part.id }}">
+                            <option value=''>---------</option>
+                            {% for supplier in part.supplier_parts.all %}
+                            <option value="{{ supplier.id }}"{% if part.order_supplier == supplier.id %} selected="selected"{% endif %}>{{ supplier }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% if not part.order_supplier %}
+                    <span class='help-inline'>Select a supplier for <i>{{ part.name }}</i></span>
+                    {% endif %}
+                </div>
+            </td>
+            <td>
+                <div class='control-group'>
+                    <div class='controls'>
+                        <input class='numberinput' type='number' min='0' value='{{ part.order_quantity }}' name='part-quantity-{{ part.id }}'/>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <button class='btn btn-default btn-remove' id='del_item_{{ part.id }}' title='Remove part' type='button'>
+                    <span row='part_row_{{ part.id }}' onclick='removeOrderRowFromOrderWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</form>
+{% endblock %}

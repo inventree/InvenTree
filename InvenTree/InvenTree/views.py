@@ -170,7 +170,7 @@ class AjaxView(AjaxMixin, View):
     """
 
     def post(self, request, *args, **kwargs):
-        return JsonResponse('', safe=False)
+        return self.renderJsonResponse(request)
 
     def get(self, request, *args, **kwargs):
 

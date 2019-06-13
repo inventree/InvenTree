@@ -275,6 +275,7 @@ class BuildDetail(DetailView):
         build = self.get_object()
 
         ctx['bom_price'] = build.part.get_price_info(build.quantity, buy=False)
+        ctx['BuildStatus'] = BuildStatus
 
         return ctx
 
@@ -296,6 +297,7 @@ class BuildAllocate(DetailView):
 
         context['part'] = part
         context['bom_items'] = bom_items
+        context['BuildStatus'] = BuildStatus
 
         context['bom_price'] = build.part.get_price_info(build.quantity, buy=False)
 
