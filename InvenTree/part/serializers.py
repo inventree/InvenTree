@@ -65,6 +65,8 @@ class PartSerializer(serializers.ModelSerializer):
     image_url = serializers.CharField(source='get_image_url', read_only=True)
     category_name = serializers.CharField(source='category_path', read_only=True)
 
+    allocated_stock = serializers.IntegerField(source='allocation_count', read_only=True)
+
     @staticmethod
     def setup_eager_loading(queryset):
         queryset = queryset.prefetch_related('category')
@@ -91,7 +93,8 @@ class PartSerializer(serializers.ModelSerializer):
             'keywords',
             'URL',
             'total_stock',
-            # 'available_stock',
+            'allocated_stock',
+            'on_order',
             'units',
             'trackable',
             'assembly',
