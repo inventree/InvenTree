@@ -6,6 +6,7 @@ Order model definitions
 
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import ugettext as _
@@ -100,6 +101,50 @@ class PurchaseOrder(Order):
 
     def get_absolute_url(self):
         return reverse('purchase-order-detail', kwargs={'pk': self.id})
+
+    def add_line_item(self, supplier_part, quantity, group=True, reference=''):
+        """ Add a new line item to this purchase order.
+        This function will check that:
+
+        * The supplier part matches the supplier specified for this purchase order
+        * The quantity is greater than zero
+
+        Args:
+            supplier_part - The supplier_part to add
+            quantity - The number of items to add
+            group - If True, this new quantity will be added to an existing line item for the same supplier_part (if it exists)
+        """
+
+        try:
+            quantity = int(quantity)
+            if quantity <= 0:
+                raise ValidationError({
+                    'quantity': _("Quantity must be greater than zero")})
+        except ValueError:
+            raise ValidationError({'quantity': _("Invalid quantity provided")})
+
+        if not supplier_part.supplier == self.supplier:
+            raise ValidationError({'supplier': _("Part supplier must match PO supplier")})
+
+        if group:
+            # Check if there is already a matching line item
+            matches = PurchaseOrderLineItem.objects.filter(part=supplier_part)
+
+            if matches.count() > 0:
+                line = matches.first()
+
+                line.quantity += quantity
+                line.save()
+
+                return
+
+        line = PurchaseOrderLineItem(
+            order=self,
+            part=supplier_part,
+            quantity=quantity,
+            reference=reference)
+
+        line.save()
 
 
 class OrderLineItem(models.Model):

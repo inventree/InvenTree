@@ -9,6 +9,8 @@ from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
 
+import logging
+
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from build.models import Build
 from company.models import Company, SupplierPart
@@ -21,6 +23,8 @@ from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView
 from InvenTree.helpers import str2bool
 
 from InvenTree.status_codes import OrderStatus
+
+logger = logging.getLogger(__name__)
 
 
 class PurchaseOrderIndex(ListView):
@@ -323,7 +327,6 @@ class OrderParts(AjaxView):
                     supplier_part = SupplierPart.objects.get(id=supplier_part_id)
                 except (SupplierPart.DoesNotExist, ValueError):
                     supplier_part = None
-                    print('Error getting supplier part for ID', supplier_part_id)
 
                 # Ensure a valid quantity is passed
                 try:
@@ -349,8 +352,6 @@ class OrderParts(AjaxView):
             elif item.startswith('purchase-order-'):
                 # Which purchase order is selected for a given supplier?
                 pk = item.replace('purchase-order-', '')
-
-                print(item)
 
                 # Check that the Supplier actually exists
                 try:
@@ -379,6 +380,8 @@ class OrderParts(AjaxView):
         # Map parts to suppliers
         self.get_suppliers()
 
+        valid = False
+
         if form_step == 'select_parts':
             # No errors? Proceed to PO selection form
             if part_errors == False:
@@ -389,14 +392,54 @@ class OrderParts(AjaxView):
 
         elif form_step == 'select_purchase_orders':
 
-
             self.ajax_template_name = 'order/order_wizard/select_pos.html'
 
+            valid = part_errors is False and supplier_errors is False
+
+            # Form wizard is complete! Add items to purchase orders
+            if valid:
+                self.order_items()
+
         data = {
-            'form_valid': False,
+            'form_valid': valid,
+            'success': 'Ordered {n} parts'.format(n=len(self.parts))
         }
 
         return self.renderJsonResponse(self.request, data=data)
+
+    def order_items(self):
+        """ Add the selected items to the purchase orders. """
+
+        for supplier in self.suppliers:
+
+            # Check that the purchase order does actually exist
+            try:
+                order = PurchaseOrder.objects.get(pk=supplier.selected_purchase_order)
+            except PurchaseOrder.DoesNotExist:
+                logger.critical('Could not add items to purchase order {po} - Order does not exist'.format(po=supplier.selected_purchase_order))
+                continue
+
+            for item in supplier.order_items:
+
+                # Ensure that the quantity is valid
+                try:
+                    quantity = int(item.order_quantity)
+                    if quantity <= 0:
+                        continue
+                except ValueError:
+                    logger.warning("Did not add part to purchase order - incorrect quantity")
+                    continue
+
+                # Check that the supplier part does actually exist
+                try:
+                    supplier_part = SupplierPart.objects.get(pk=item.order_supplier)
+                except SupplierPart.DoesNotExist:
+                    logger.critical("Could not add part '{part}' to purchase order - selected supplier part '{sp}' does not exist.".format(
+                        part=item,
+                        sp=item.order_supplier))
+                    continue
+
+                order.add_line_item(supplier_part, quantity)
 
 
 class POLineItemCreate(AjaxCreateView):
