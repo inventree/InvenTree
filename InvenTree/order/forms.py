@@ -47,5 +47,5 @@ class EditPurchaseOrderLineItemForm(HelperForm):
             'part',
             'quantity',
             'reference',
-            'received'
+            'notes',
         ]

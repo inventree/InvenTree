@@ -192,4 +192,22 @@ function loadPartTable(table, url, options={}) {
     if (options.buttons) {
         linkButtonsToSelection($(table), options.buttons);
     }
+
+    /* Button callbacks for part table buttons */
+
+    $("#multi-part-order").click(function() {
+        var selections = $(table).bootstrapTable("getSelections");
+
+        var parts = [];
+
+        selections.forEach(function(item) {
+            parts.push(item.pk);
+        });
+
+        launchModalForm("/order/purchase-order/order-parts/", {
+            data: {
+                parts: parts,
+            },
+        });
+    });
 }

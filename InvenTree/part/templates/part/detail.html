@@ -15,6 +15,9 @@
             <ul class="dropdown-menu">
                 {% if part.active %}
                 <li><a href="#" id='edit-part' title='Edit part'>Edit</a></li>
+                {% if part.purchaseable %}
+                <li><a href='#' id='order-part' title='Order part'>Order</a></li>
+                {% endif %}
                 <li><a href='#' id='duplicate-part' title='Duplicate Part'>Duplicate</a></li>
                 <hr>
                 <li><a href="#" id='deactivate-part' title='Deactivate part'>Deactivate</a></li>
@@ -157,6 +160,14 @@
                 follow: true,
             }
         );
+    });
+
+    $("#order-part").click(function() {
+        launchModalForm("/order/purchase-order/order-parts/", {
+            data: {
+                part: {{ part.id }},
+            },
+        });
     });
     
     $("#edit-part").click(function() {

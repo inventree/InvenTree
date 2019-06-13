@@ -12,6 +12,7 @@
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
         <span class="caret"></span></button>
         <ul class="dropdown-menu">
+            <li><a href='#' id='multi-part-order' title='Order parts'>Order Parts</a></li>
         </ul>
     </div>
 </div>
@@ -99,6 +100,22 @@
             },
         ],
         url: "{% url 'api-part-supplier-list' %}"
+    });
+
+    $("#multi-part-order").click(function() {
+        var selections = $("#part-table").bootstrapTable("getSelections");
+
+        var parts = [];
+
+        selections.forEach(function(item) {
+            parts.push(item.part);
+        });
+
+        launchModalForm("/order/purchase-order/order-parts/", {
+            data: {
+                parts: parts,
+            },
+        });
     });
 
 {% endblock %}

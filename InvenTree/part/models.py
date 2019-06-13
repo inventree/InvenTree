@@ -339,7 +339,7 @@ class Part(models.Model):
         """
 
         if self.default_supplier:
-            return self.default_suppliers
+            return self.default_supplier
 
         if self.supplier_count == 1:
             return self.supplier_parts.first()
@@ -409,6 +409,26 @@ class Part(models.Model):
         total -= self.allocation_count
 
         return max(total, 0)
+
+    @property
+    def quantity_to_order(self):
+        """ Return the quantity needing to be ordered for this part. """
+
+        required = -1 * self.net_stock
+        return max(required, 0)
+
+    @property
+    def net_stock(self):
+        """ Return the 'net' stock. It takes into account:
+
+        - Stock on hand (total_stock)
+        - Stock on order (on_order)
+        - Stock allocated (allocation_count)
+
+        This number (unlike 'available_stock') can be negative.
+        """
+
+        return self.total_stock - self.allocation_count + self.on_order
 
     def isStarredBy(self, user):
         """ Return True if this part has been starred by a particular user """
