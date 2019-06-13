@@ -13,6 +13,7 @@
     <th>Part</th>
     <th>Description</th>
     <th>Available</th>
+    <th>On Order</th>
     <th>Required</th>
     <th>Allocated</th>
 </tr>
@@ -26,6 +27,7 @@
         </td>
         <td>{{ item.part.description }}</td>
         <td>{{ item.part.total_stock }}</td>
+        <td>{{ item.part.on_order }}</td>
         <td>{{ item.quantity }}</td>
         <td>{{ item.allocated }}</td>
     </tr>

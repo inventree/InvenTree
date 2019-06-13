@@ -255,6 +255,9 @@ class OrderParts(AjaxView):
                 parts = build.part.required_parts()
 
                 for part in parts:
+                    # If ordering from a Build page, ignore parts that we have enough of
+                    if part.quantity_to_order <= 0:
+                        continue
                     part_ids.add(part.id)
             except Build.DoesNotExist:
                 pass
