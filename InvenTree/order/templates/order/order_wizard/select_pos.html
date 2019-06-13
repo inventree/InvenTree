@@ -1,0 +1,49 @@
+{% extends "modal_form.html" %}
+
+{% block form %}
+
+<h4>
+    Step 2 of 2 - Select Purchase Orders
+</h4>
+
+<div class='alert alert-info alert-block' role='alert'>
+    Select existing purchase orders, or create new orders.
+</div>
+
+<form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+
+    <input type='hidden' name='form_step' value='select_purchase_orders'/>
+
+    <table class='table table-condensed table-striped' id='order-wizard-po-table'>
+        <tr>
+            <th>Supplier</th>
+            <th>Items</th>
+            <th>Purchase Order</th>
+        </tr>
+        {% for supplier in suppliers %}
+        <tr id='suppier_row_{{ supplier.id }}'>
+            <td>
+                {% include 'hover_image.html' with image=supplier.image hover=False %}
+                {{ supplier.name }}
+            </td>
+            <td>{{ supplier.order_items|length }}</td>
+            <td>
+                <div class='control-group'>
+                    <div class='controls'>
+                        <select
+                            class='select'
+                            id='id_purchase_order_{{ supplier.id }}'
+                            name='purchase_order_{{ supplier.id }}'>
+                            <option value=''>---------</option>
+                        </select>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+</form>
+{% endblock %}

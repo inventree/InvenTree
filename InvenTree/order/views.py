@@ -155,14 +155,40 @@ class OrderParts(AjaxView):
 
     # List of Parts we wish to order
     parts = []
+    suppliers = []
 
     def get_context_data(self):
 
         ctx = {}
 
         ctx['parts'] = sorted(self.parts, key=lambda part: int(part.order_quantity), reverse=True)
+        ctx['suppliers'] = self.suppliers
 
         return ctx
+
+    def get_suppliers(self):
+        """ Calculates a list of suppliers which the user will need to create POs for.
+        This is calculated AFTER the user finishes selecting the parts to order.
+        Crucially, get_parts() must be called before get_suppliers()
+        """
+
+        suppliers = {}
+
+        for part in self.parts:
+            supplier_part_id = part.order_supplier
+
+            try:
+                supplier = SupplierPart.objects.get(pk=supplier_part_id).supplier
+            except SupplierPart.DoesNotExist:
+                continue
+
+            if not supplier.name in suppliers:
+                supplier.order_items = []
+                suppliers[supplier.name] = supplier
+                
+            suppliers[supplier.name].order_items.append(part)
+
+        self.suppliers = [suppliers[key] for key in suppliers.keys()]
 
     def get_parts(self):
         """ Determine which parts the user wishes to order.
@@ -279,6 +305,9 @@ class OrderParts(AjaxView):
 
         self.parts = []
 
+        # Any errors for the part selection form?
+        errors = False
+
         for item in self.request.POST:
             
             if item.startswith('supplier-'):
@@ -316,11 +345,17 @@ class OrderParts(AjaxView):
 
                 self.parts.append(part)
 
-                print(part.name, part.order_supplier, part.order_quantity)
+                if supplier_part is None:
+                    errors = True
 
         data = {
             'form_valid': False,
         }
+
+        # No errors? Proceed to PO selection form
+        if errors == False:
+            self.ajax_template_name = 'order/order_wizard/select_pos.html'
+            self.get_suppliers()
 
         return self.renderJsonResponse(self.request, data=data)
 
