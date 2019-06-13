@@ -151,7 +151,7 @@ class OrderParts(AjaxView):
     """
 
     ajax_form_title = "Order Parts"
-    ajax_template_name = 'order/order_select_parts.html'
+    ajax_template_name = 'order/order_wizard/select_parts.html'
 
     # List of Parts we wish to order
     parts = []
@@ -160,7 +160,7 @@ class OrderParts(AjaxView):
 
         ctx = {}
 
-        ctx['parts'] = self.get_parts()
+        ctx['parts'] = sorted(self.parts, key=lambda part: part.order_quantity, reverse=True)
 
         return ctx
 
@@ -228,12 +228,19 @@ class OrderParts(AjaxView):
         for id in part_ids:
             try:
                 part = Part.objects.get(id=id)
+                # Pre-fill the 'order quantity' value
+                part.order_quantity = part.quantity_to_order
+
+                default_supplier = part.get_default_supplier()
+
+                if default_supplier:
+                    part.order_supplier = default_supplier.id
+                else:
+                    part.order_supplier = None
             except Part.DoesNotExist:
                 continue
 
             self.parts.append(part)
-
-        return sorted(self.parts, key=lambda part: part.quantity_to_order, reverse=True)
 
     def get(self, request, *args, **kwargs):
 
@@ -246,12 +253,76 @@ class OrderParts(AjaxView):
     def post(self, request, *args, **kwargs):
 
         self.request = request
+        form_step = request.POST.get('form_step')
+
+        if form_step == 'select_parts':
+            return self.handlePartSelection()
+        elif form_step == 'assign_orders':
+            return self.handleOrderAssignment()
         
         data = {
             'form_valid': False,
         }
 
         return self.renderJsonResponse(request, data=data)
+
+    def handlePartSelection(self):
+        """ Handle the POST action for part selection.
+
+        - Validates each part / quantity / supplier / etc
+
+        Part selection form contains the following fields for each part:
+
+        - supplier-<pk> : The ID of the selected supplier
+        - quantity-<pk> : The quantity to add to the order
+        """
+
+        self.parts = []
+
+        for item in self.request.POST:
+            
+            if item.startswith('supplier-'):
+                
+                pk = item.replace('supplier-', '')
+                
+                # Check that the part actually exists
+                try:
+                    part = Part.objects.get(id=pk)
+                except (Part.DoesNotExist, ValueError):
+                    continue
+                
+                supplier_part_id = self.request.POST[item]
+                
+                quantity = self.request.POST.get('quantity-' + str(pk), 0)
+
+                # Ensure a valid supplier has been passed
+                try:
+                    supplier_part = SupplierPart.objects.get(id=supplier_part_id)
+                except (SupplierPart.DoesNotExist, ValueError):
+                    supplier_part = None
+                    print('Error getting supplier part for ID', supplier_part_id)
+
+                # Ensure a valid quantity is passed
+                try:
+                    q = int(quantity)
+                    # Ignore any parts for which the selected quantity is zero
+                    if q <= 0:
+                        continue
+                except ValueError:
+                    quantity = part.quantity_to_order
+
+                part.order_supplier = supplier_part.id if supplier_part else None
+                part.order_quantity = quantity
+
+                self.parts.append(part)
+
+                print(part.name, part.order_supplier, part.order_quantity)
+
+        data = {
+            'form_valid': False,
+        }
+
+        return self.renderJsonResponse(self.request, data=data)
 
 
 class POLineItemCreate(AjaxCreateView):
