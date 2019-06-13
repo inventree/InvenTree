@@ -25,7 +25,7 @@
     <table class='table table-condensed table-striped' id='order-wizard-part-table'>
         <tr>
             <th>Part</th>
-            <th>Supplier</th>
+            <th colspan='2'>Select Supplier</th>
             <th>Quantity</th>
             <th></th>
         </tr>
@@ -34,6 +34,11 @@
             <td>
                 {% include "hover_image.html" with image=part.image hover=False %}
                 {{ part.full_name }} <small><i>{{ part.description }}</i></small>
+            </td>
+            <td>
+                <button class='btn btn-default btn-create' id='new_supplier_part_{{ part.id }}' title='Create new supplier part for {{ part }}' type='button'>
+                    <span onClick='newSupplierPartFromWizard()' class='glyphicon glyphicon-small glyphicon-plus'></span>
+                </button>
             </td>
             <td>
                 <div class='control-group'>
@@ -59,7 +64,7 @@
             </td>
             <td>
                 <button class='btn btn-default btn-remove' id='del_item_{{ part.id }}' title='Remove part' type='button'>
-                    <span row='part_row_{{ part.id }}' onclick='removeOrderRow()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                    <span row='part_row_{{ part.id }}' onclick='removeOrderRowFromOrderWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
                 </button>
             </td>
         </tr>

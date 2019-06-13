@@ -27,8 +27,7 @@
         <tr>
             <th>Supplier</th>
             <th>Items</th>
-            <th>Purchase Order</th>
-            <th></th>
+            <th colspan='2'>Select Purchase Order</th>
         </tr>
         {% for supplier in suppliers %}
         <tr id='suppier_row_{{ supplier.id }}'>
@@ -37,6 +36,15 @@
                 {{ supplier.name }}
             </td>
             <td>{{ supplier.order_items|length }}</td>
+            <td>
+                <button 
+                    class='btn btn-default btn-create'
+                    id='new_po_{{ supplier.id }}'
+                    title='Create new purchase order for {{ supplier.name }}'
+                    type='button'>
+                    <span onclick='newPurchaseOrderFromWizard()' class='glyphicon glyphicon-small glyphicon-plus'></span>
+                </button>
+            </td>
             <td>
                 <div class='control-group'>
                     <div class='controls'>
@@ -56,15 +64,6 @@
                     <span class='help-inline'>Select a purchase order for {{ supplier.name }}</span>
                     {% endif %}
                 </div>
-            </td>
-            <td>
-                <button
-                    class='btn btn-default btn-create'
-                    id='new_po_{{ supplier.id }}'
-                    title='Create new purchase order for {{ supplier.name }}'
-                    type='button'>
-                    <span onclick='newPurchaseOrderFromWizard()' class='glyphicon glyphicon-small glyphicon-plus'></span>
-                </button>
             </td>
         </tr>
         {% endfor %}
