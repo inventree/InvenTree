@@ -4,6 +4,7 @@
         <th data-field='reference'>Order Reference</th>
         <th data-field='description'>Description</th>
         <th data-field='status'>Status</th>
+        <th data-field='items'>Items</th>
     </tr>
     {% for order in orders %}
     <tr>
@@ -11,6 +12,7 @@
         <td><a href="{% url 'purchase-order-detail' order.id %}">{{ order }}</a></td>
         <td>{{ order.description }}</td>
         <td>{% include "order/order_status.html" %}</td>
+        <td>{{ order.lines.count }}</td>
     </tr>
     {% endfor %}
 </table>

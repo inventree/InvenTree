@@ -38,3 +38,32 @@ function newSupplierPartFromOrderWizard(e) {
         },
     });
 }
+
+function newPurchaseOrderFromOrderWizard(e) {
+    /* Create a new purchase order directly from an order form.
+     * Launches a secondary modal and (if successful),
+     * back-fills the newly created purchase order.
+     */
+
+    e = e || window.event;
+
+    var src = e.target || e.srcElement;
+
+    var supplier = $(src).attr('supplier-id');
+
+    launchModalForm("/order/purchase-order/new/", {
+        modal: '#modal-form-secondary',
+        data: {
+            supplier: supplier,
+        },
+        success: function(response) {
+            /* A new purchase order has been created! */
+
+            var dropdown = '#id-purchase-order-' + supplier;
+
+            var option = new Option(response.text, response.pk, true, true);
+
+            $('#modal-form').find(dropdown).append(option).trigger('change');
+        },
+    });
+}

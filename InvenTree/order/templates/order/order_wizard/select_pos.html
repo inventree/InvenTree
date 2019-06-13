@@ -42,7 +42,7 @@
                     id='new_po_{{ supplier.id }}'
                     title='Create new purchase order for {{ supplier.name }}'
                     type='button'>
-                    <span onclick='newPurchaseOrderFromWizard()' class='glyphicon glyphicon-small glyphicon-plus'></span>
+                    <span supplier-id='{{ supplier.id }}' onclick='newPurchaseOrderFromOrderWizard()' class='glyphicon glyphicon-small glyphicon-plus'></span>
                 </button>
             </td>
             <td>
