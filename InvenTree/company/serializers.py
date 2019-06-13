@@ -7,10 +7,12 @@ from rest_framework import serializers
 from .models import Company
 from .models import SupplierPart, SupplierPriceBreak
 
+from InvenTree.serializers import InvenTreeModelSerializer
+
 from part.serializers import PartBriefSerializer
 
 
-class CompanyBriefSerializer(serializers.ModelSerializer):
+class CompanyBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Company object (limited detail) """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -24,7 +26,7 @@ class CompanyBriefSerializer(serializers.ModelSerializer):
         ]
 
 
-class CompanySerializer(serializers.ModelSerializer):
+class CompanySerializer(InvenTreeModelSerializer):
     """ Serializer for Company object (full detail) """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -52,7 +54,7 @@ class CompanySerializer(serializers.ModelSerializer):
         ]
 
 
-class SupplierPartSerializer(serializers.ModelSerializer):
+class SupplierPartSerializer(InvenTreeModelSerializer):
     """ Serializer for SupplierPart object """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -92,7 +94,7 @@ class SupplierPartSerializer(serializers.ModelSerializer):
         ]
 
 
-class SupplierPriceBreakSerializer(serializers.ModelSerializer):
+class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
     """ Serializer for SupplierPriceBreak object """
 
     class Meta:

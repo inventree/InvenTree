@@ -8,10 +8,10 @@ from .models import StockItem, StockLocation
 from .models import StockItemTracking
 
 from part.serializers import PartBriefSerializer
-from InvenTree.serializers import UserSerializerBrief
+from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer
 
 
-class LocationBriefSerializer(serializers.ModelSerializer):
+class LocationBriefSerializer(InvenTreeModelSerializer):
     """
     Provides a brief serializer for a StockLocation object
     """
@@ -28,7 +28,7 @@ class LocationBriefSerializer(serializers.ModelSerializer):
         ]
 
 
-class StockItemSerializerBrief(serializers.ModelSerializer):
+class StockItemSerializerBrief(InvenTreeModelSerializer):
     """ Brief serializers for a StockItem """
 
     location_name = serializers.CharField(source='location', read_only=True)
@@ -47,7 +47,7 @@ class StockItemSerializerBrief(serializers.ModelSerializer):
         ]
 
 
-class StockItemSerializer(serializers.ModelSerializer):
+class StockItemSerializer(InvenTreeModelSerializer):
     """ Serializer for a StockItem:
 
     - Includes serialization for the linked part
@@ -106,14 +106,14 @@ class StockItemSerializer(serializers.ModelSerializer):
         ]
 
 
-class StockQuantitySerializer(serializers.ModelSerializer):
+class StockQuantitySerializer(InvenTreeModelSerializer):
 
     class Meta:
         model = StockItem
         fields = ('quantity',)
 
 
-class LocationSerializer(serializers.ModelSerializer):
+class LocationSerializer(InvenTreeModelSerializer):
     """ Detailed information about a stock location
     """
 
@@ -131,7 +131,7 @@ class LocationSerializer(serializers.ModelSerializer):
         ]
 
 
-class StockTrackingSerializer(serializers.ModelSerializer):
+class StockTrackingSerializer(InvenTreeModelSerializer):
     """ Serializer for StockItemTracking model """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
