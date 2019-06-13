@@ -162,6 +162,8 @@ class OrderLineItem(models.Model):
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1, help_text=_('Item quantity'))
 
     reference = models.CharField(max_length=100, blank=True, help_text=_('Line item reference'))
+    
+    notes = models.CharField(max_length=500, blank=True, help_text=_('Line item notes'))
 
 
 class PurchaseOrderLineItem(OrderLineItem):
