@@ -292,6 +292,13 @@
     color: #A11;
 }
 
+.btn-create {
+    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #1A1;
+}
+
 .button-toolbar {
     padding-left: 0px;
 }

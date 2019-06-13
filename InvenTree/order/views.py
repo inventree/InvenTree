@@ -174,6 +174,10 @@ class OrderParts(AjaxView):
 
         suppliers = {}
 
+        for supplier in self.suppliers:
+            supplier.order_items = []
+            suppliers[supplier.name] = supplier
+
         for part in self.parts:
             supplier_part_id = part.order_supplier
 
@@ -184,11 +188,8 @@ class OrderParts(AjaxView):
 
             if not supplier.name in suppliers:
                 supplier.order_items = []
+                supplier.selected_purchase_order = None
                 suppliers[supplier.name] = supplier
-
-                print("Supplier:", supplier.name)
-                for order in supplier.outstanding_purchase_orders():
-                    print("order:", order.reference)
                 
             suppliers[supplier.name].order_items.append(part)
 
@@ -281,22 +282,6 @@ class OrderParts(AjaxView):
         return self.renderJsonResponse(request)
 
     def post(self, request, *args, **kwargs):
-
-        self.request = request
-        form_step = request.POST.get('form_step')
-
-        if form_step == 'select_parts':
-            return self.handlePartSelection()
-        elif form_step == 'assign_orders':
-            return self.handleOrderAssignment()
-        
-        data = {
-            'form_valid': False,
-        }
-
-        return self.renderJsonResponse(request, data=data)
-
-    def handlePartSelection(self):
         """ Handle the POST action for part selection.
 
         - Validates each part / quantity / supplier / etc
@@ -307,16 +292,21 @@ class OrderParts(AjaxView):
         - quantity-<pk> : The quantity to add to the order
         """
 
+        self.request = request
+
         self.parts = []
+        self.suppliers = []
 
         # Any errors for the part selection form?
-        errors = False
+        part_errors = False
+        supplier_errors = False
 
+        # Extract part information from the form
         for item in self.request.POST:
             
-            if item.startswith('supplier-'):
+            if item.startswith('part-supplier-'):
                 
-                pk = item.replace('supplier-', '')
+                pk = item.replace('part-supplier-', '')
                 
                 # Check that the part actually exists
                 try:
@@ -326,7 +316,7 @@ class OrderParts(AjaxView):
                 
                 supplier_part_id = self.request.POST[item]
                 
-                quantity = self.request.POST.get('quantity-' + str(pk), 0)
+                quantity = self.request.POST.get('part-quantity-' + str(pk), 0)
 
                 # Ensure a valid supplier has been passed
                 try:
@@ -337,9 +327,10 @@ class OrderParts(AjaxView):
 
                 # Ensure a valid quantity is passed
                 try:
-                    q = int(quantity)
-                    # Ignore any parts for which the selected quantity is zero
-                    if q <= 0:
+                    quantity = int(quantity)
+
+                    # Eliminate lines where the quantity is zero
+                    if quantity == 0:
                         continue
                 except ValueError:
                     quantity = part.quantity_to_order
@@ -350,16 +341,60 @@ class OrderParts(AjaxView):
                 self.parts.append(part)
 
                 if supplier_part is None:
-                    errors = True
+                    part_errors = True
+
+                elif quantity < 0:
+                    part_errors = True
+
+            elif item.startswith('purchase-order-'):
+                # Which purchase order is selected for a given supplier?
+                pk = item.replace('purchase-order-', '')
+
+                print(item)
+
+                # Check that the Supplier actually exists
+                try:
+                    supplier = Company.objects.get(id=pk)
+                except Company.DoesNotExist:
+                    # Skip this item
+                    continue
+
+                purchase_order_id = self.request.POST[item]
+
+                # Ensure that a valid purchase order has been passed
+                try:
+                    purchase_order = PurchaseOrder.objects.get(pk=purchase_order_id)
+                except (PurchaseOrder.DoesNotExist, ValueError):
+                    purchase_order = None
+
+                supplier.selected_purchase_order = purchase_order.id if purchase_order else None
+
+                self.suppliers.append(supplier)
+
+                if supplier.selected_purchase_order is None:
+                    supplier_errors = True
+
+        form_step = request.POST.get('form_step')
+
+        # Map parts to suppliers
+        self.get_suppliers()
+
+        if form_step == 'select_parts':
+            # No errors? Proceed to PO selection form
+            if part_errors == False:
+                self.ajax_template_name = 'order/order_wizard/select_pos.html'
+
+            else:
+                self.ajax_template_name = 'order/order_wizard/select_parts.html'
+
+        elif form_step == 'select_purchase_orders':
+
+
+            self.ajax_template_name = 'order/order_wizard/select_pos.html'
 
         data = {
             'form_valid': False,
         }
-
-        # No errors? Proceed to PO selection form
-        if errors == False:
-            self.ajax_template_name = 'order/order_wizard/select_pos.html'
-            self.get_suppliers()
 
         return self.renderJsonResponse(self.request, data=data)
 

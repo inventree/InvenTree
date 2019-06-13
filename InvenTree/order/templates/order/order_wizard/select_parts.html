@@ -38,7 +38,7 @@
             <td>
                 <div class='control-group'>
                     <div class='controls'>
-                        <select class='select' id='id_supplier_part_{{ part.id }}' name="supplier-{{ part.id }}">
+                        <select class='select' id='id_supplier_part_{{ part.id }}' name="part-supplier-{{ part.id }}">
                             <option value=''>---------</option>
                             {% for supplier in part.supplier_parts.all %}
                             <option value="{{ supplier.id }}"{% if part.order_supplier == supplier.id %} selected="selected"{% endif %}>{{ supplier }}</option>
@@ -46,14 +46,14 @@
                         </select>
                     </div>
                     {% if not part.order_supplier %}
-                    <br><span class='help-inline'>Select a supplier for <i>{{ part.name }}</i></span>
+                    <span class='help-inline'>Select a supplier for <i>{{ part.name }}</i></span>
                     {% endif %}
                 </div>
             </td>
             <td>
                 <div class='control-group'>
                     <div class='controls'>
-                        <input class='numberinput' type='number' min='0' value='{{ part.order_quantity }}' name='quantity-{{ part.id }}'/>
+                        <input class='numberinput' type='number' min='0' value='{{ part.order_quantity }}' name='part-quantity-{{ part.id }}'/>
                     </div>
                 </div>
             </td>

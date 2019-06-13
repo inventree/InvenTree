@@ -16,11 +16,19 @@
 
     <input type='hidden' name='form_step' value='select_purchase_orders'/>
 
+    {% for supplier in suppliers %}
+        {% for item in supplier.order_items %}
+        <input type='hidden' name='part-supplier-{{ item.id }}' value='{{ item.order_supplier }}'/>
+        <input type='hidden' name='part-quantity-{{ item.id }}' value='{{ item.order_quantity }}'/>
+        {% endfor %}
+    {% endfor %}
+
     <table class='table table-condensed table-striped' id='order-wizard-po-table'>
         <tr>
             <th>Supplier</th>
             <th>Items</th>
             <th>Purchase Order</th>
+            <th></th>
         </tr>
         {% for supplier in suppliers %}
         <tr id='suppier_row_{{ supplier.id }}'>
@@ -34,17 +42,29 @@
                     <div class='controls'>
                         <select
                             class='select'
-                            id='id_purchase_order_{{ supplier.id }}'
-                            name='purchase_order_{{ supplier.id }}'>
+                            id='id-purchase-order-{{ supplier.id }}'
+                            name='purchase-order-{{ supplier.id }}'>
                             <option value=''>---------</option>
                             {% for order in supplier.outstanding_purchase_orders %}
-                            <option value='{{ order.id }}'>
+                            <option value='{{ order.id }}'{% if supplier.selected_purchase_order == order.id %} selected='selected'{% endif %}>
                                 {{ order }}
                             </option>
                             {% endfor %}
                         </select>
                     </div>
+                    {% if not supplier.selected_purchase_order %}
+                    <span class='help-inline'>Select a purchase order for {{ supplier.name }}</span>
+                    {% endif %}
                 </div>
+            </td>
+            <td>
+                <button
+                    class='btn btn-default btn-create'
+                    id='new_po_{{ supplier.id }}'
+                    title='Create new purchase order for {{ supplier.name }}'
+                    type='button'>
+                    <span onclick='newPurchaseOrderFromWizard()' class='glyphicon glyphicon-small glyphicon-plus'></span>
+                </button>
             </td>
         </tr>
         {% endfor %}
