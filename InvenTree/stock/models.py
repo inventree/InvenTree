@@ -142,6 +142,8 @@ class StockItem(models.Model):
         - Quantity must be 1 if the StockItem has a serial number
         """
 
+        print("Trying to clean the StockItem")
+
         # The 'supplier_part' field must point to the same part!
         try:
             if self.supplier_part is not None:
