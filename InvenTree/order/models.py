@@ -148,7 +148,6 @@ class PurchaseOrder(Order):
 
         return data.export(file_format)
 
-
     def get_absolute_url(self):
         return reverse('purchase-order-detail', kwargs={'pk': self.id})
 
