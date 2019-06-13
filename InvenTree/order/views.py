@@ -160,7 +160,7 @@ class OrderParts(AjaxView):
 
         ctx = {}
 
-        ctx['parts'] = sorted(self.parts, key=lambda part: part.order_quantity, reverse=True)
+        ctx['parts'] = sorted(self.parts, key=lambda part: int(part.order_quantity), reverse=True)
 
         return ctx
 
