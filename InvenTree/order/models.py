@@ -177,6 +177,13 @@ class PurchaseOrderLineItem(OrderLineItem):
             ('order', 'part')
         )
 
+    def __str__(self):
+        return "{n} x {part} from {supplier} (for {po})".format(
+            n=self.quantity,
+            part=self.part.SKU if self.part else 'unknown part',
+            supplier=self.order.supplier.name,
+            po=self.order)
+
     order = models.ForeignKey(
         PurchaseOrder, on_delete=models.CASCADE,
         related_name='lines',
