@@ -83,7 +83,9 @@ InvenTree | {{ order }}
         <th data-field='received'>Received</th>
         {% endif %}
         <th data-field='notes'>Note</th>
+        {% if order.status == OrderStatus.PENDING %}
         <th data-field='buttons'></th>
+        {% endif %}
     </tr>
     {% for line in order.lines.all %}
     <tr>
@@ -107,6 +109,7 @@ InvenTree | {{ order }}
         <td>
             {{ line.notes }}
         </td>
+        {% if order.status == OrderStatus.PENDING %}
         <td>
             <div class='btn-group'>
                 <button class='btn btn-default btn-edit' id='edit-line-item-{{ line.id }} title='Edit line item' onclick='editPurchaseOrderLineItem()'>
@@ -117,6 +120,7 @@ InvenTree | {{ order }}
                 </button>
             </div>
         </td>
+        {% endif %}
     </tr>
     {% endfor %}
 </table>

@@ -49,4 +49,3 @@ class EditPurchaseOrderLineItemForm(HelperForm):
             'reference',
             'notes',
         ]
-

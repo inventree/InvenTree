@@ -190,7 +190,7 @@ class OrderParts(AjaxView):
             except SupplierPart.DoesNotExist:
                 continue
 
-            if not supplier.name in suppliers:
+            if supplier.name not in suppliers:
                 supplier.order_items = []
                 supplier.selected_purchase_order = None
                 suppliers[supplier.name] = supplier
@@ -387,7 +387,7 @@ class OrderParts(AjaxView):
 
         if form_step == 'select_parts':
             # No errors? Proceed to PO selection form
-            if part_errors == False:
+            if part_errors is False:
                 self.ajax_template_name = 'order/order_wizard/select_pos.html'
 
             else:
