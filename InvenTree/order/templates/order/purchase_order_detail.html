@@ -64,6 +64,7 @@ InvenTree | {{ order }}
     {% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
     <button type='button' class='btn btn-primary' id='place-order'>Place Order</button>
     {% endif %}
+    <button type='button' class='btn btn-primary' id='export-order' title='Export order to file'>Export</button>
 </div>
 
 <h4>Order Items</h4>
@@ -150,6 +151,10 @@ $("#edit-order").click(function() {
             reload: true,
         }
     );
+});
+
+$("#export-order").click(function() {
+    location.href = "{% url 'purchase-order-export' order.id %}";
 });
 
 {% if order.status == OrderStatus.PENDING %}

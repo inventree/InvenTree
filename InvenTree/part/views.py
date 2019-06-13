@@ -585,10 +585,6 @@ class BomDownload(AjaxView):
     # TODO - This should no longer extend an AjaxView!
 
     model = Part
-    # form_class = BomExportForm
-    # template_name = 'part/bom_export.html'
-    # ajax_form_title = 'Export Bill of Materials'
-    # context_object_name = 'part'
 
     def get(self, request, *args, **kwargs):
 

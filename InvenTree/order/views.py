@@ -5,6 +5,7 @@ Django views for interacting with Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
@@ -20,7 +21,7 @@ from part.models import Part
 from . import forms as order_forms
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import DownloadFile, str2bool
 
 from InvenTree.status_codes import OrderStatus
 
@@ -140,6 +141,28 @@ class PurchaseOrderIssue(AjaxUpdateView):
             order.place_order()
 
         return self.renderJsonResponse(request, form, data)
+
+
+class PurchaseOrderExport(AjaxView):
+    """ File download for a purchase order
+
+    - File format can be optionally passed as a query param e.g. ?format=CSV
+    - Default file format is CSV
+    """
+
+    model = PurchaseOrder
+
+    def get(self, request, *args, **kwargs):
+
+        order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+
+        export_format = request.GET.get('format', 'csv')
+
+        filename = str(order) + '.' + export_format
+
+        filedata = order.export_to_file(format=export_format)
+
+        return DownloadFile(filedata, filename)
 
 
 class OrderParts(AjaxView):

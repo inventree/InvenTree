@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
+import tablib
 from datetime import datetime
 
 from company.models import Company, SupplierPart
@@ -98,6 +99,55 @@ class PurchaseOrder(Order):
         related_name='purchase_orders',
         help_text=_('Company')
     )
+
+    def export_to_file(self, **kwargs):
+        """ Export order information to external file """
+
+        file_format = kwargs.get('format', 'csv').lower()
+
+        data = tablib.Dataset(headers=[
+            'Line',
+            'Part',
+            'Description',
+            'Manufacturer',
+            'MPN',
+            'Order Code',
+            'Quantity',
+            'Received',
+            'Reference',
+            'Notes',
+        ])
+
+        idx = 0
+
+        for item in self.lines.all():
+
+            line = []
+
+            line.append(idx)
+
+            if item.part:
+                line.append(item.part.part.name)
+                line.append(item.part.part.description)
+
+                line.append(item.part.manufacturer)
+                line.append(item.part.MPN)
+                line.append(item.part.SKU)
+
+            else:
+                line += [[] * 5]
+            
+            line.append(item.quantity)
+            line.append(item.received)
+            line.append(item.reference)
+            line.append(item.notes)
+
+            idx += 1
+
+            data.append(line)
+
+        return data.export(file_format)
+
 
     def get_absolute_url(self):
         return reverse('purchase-order-detail', kwargs={'pk': self.id})
