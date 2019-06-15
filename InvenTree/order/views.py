@@ -165,6 +165,34 @@ class PurchaseOrderExport(AjaxView):
         return DownloadFile(filedata, filename)
 
 
+class PurchaseOrderReceive(AjaxView):
+    """ View for receiving parts which are outstanding against a PurchaseOrder.
+
+    Any parts which are outstanding are listed.
+    If all parts are marked as received, the order is closed out.
+
+    """
+
+    ajax_form_title = "Receive Parts"
+    ajax_template_name = "order/receive_parts.html"
+
+    def get_context_data(self):
+
+        ctx = {
+            'order': self.order,
+        }
+
+        return ctx
+
+    def get(self, request, *args, **kwargs):
+
+        self.request = request
+        self.order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+
+        return self.renderJsonResponse(request)
+
+
+
 class OrderParts(AjaxView):
     """ View for adding various SupplierPart items to a Purchase Order.
 
