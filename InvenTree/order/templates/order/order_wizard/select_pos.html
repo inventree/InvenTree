@@ -53,7 +53,7 @@
                             id='id-purchase-order-{{ supplier.id }}'
                             name='purchase-order-{{ supplier.id }}'>
                             <option value=''>---------</option>
-                            {% for order in supplier.outstanding_purchase_orders %}
+                            {% for order in supplier.pending_purchase_orders %}
                             <option value='{{ order.id }}'{% if supplier.selected_purchase_order == order.id %} selected='selected'{% endif %}>
                                 {{ order }}
                             </option>

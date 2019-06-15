@@ -135,6 +135,10 @@ class Company(models.Model):
         """ Return purchase orders which are 'outstanding' """
         return self.purchase_orders.filter(status__in=OrderStatus.OPEN)
 
+    def pending_purchase_orders(self):
+        """ Return purchase orders which are PENDING (not yet issued) """
+        return self.purchase_orders.filter(status=OrderStatus.PENDING)
+
     def closed_purchase_orders(self):
         """ Return purchase orders which are not 'outstanding'
 
