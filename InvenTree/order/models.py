@@ -112,7 +112,8 @@ class PurchaseOrder(Order):
         help_text=_('Company')
     )
 
-    received_by = models.ForeignKey(User,
+    received_by = models.ForeignKey(
+        User,
         on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='+'
@@ -241,7 +242,6 @@ class PurchaseOrder(Order):
                 q=line.receive_quantity,
                 po=str(self))
             )
-
 
         # Update the number of parts received against the particular line item
         line.received += quantity

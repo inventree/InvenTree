@@ -251,7 +251,7 @@ class StockItem(models.Model):
     updated = models.DateField(auto_now=True, null=True)
 
     purchase_order = models.ForeignKey(
-        'order.PurchaseOrder', 
+        'order.PurchaseOrder',
         on_delete=models.SET_NULL,
         related_name='stock_items',
         blank=True, null=True,

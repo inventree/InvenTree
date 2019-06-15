@@ -5,7 +5,6 @@ Django views for interacting with Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView
@@ -252,7 +251,7 @@ class PurchaseOrderReceive(AjaxView):
                     receive = int(receive)
                 except ValueError:
                     # In the case on an invalid input, reset to default
-                    receive = line.remaining() 
+                    receive = line.remaining()
                     errors = True
 
                 if receive < 0:
