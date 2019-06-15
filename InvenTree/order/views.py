@@ -180,6 +180,7 @@ class PurchaseOrderReceive(AjaxView):
 
         ctx = {
             'order': self.order,
+            'lines': self.lines,
         }
 
         return ctx
@@ -188,6 +189,8 @@ class PurchaseOrderReceive(AjaxView):
 
         self.request = request
         self.order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+
+        self.lines = self.order.pending_line_items()
 
         return self.renderJsonResponse(request)
 

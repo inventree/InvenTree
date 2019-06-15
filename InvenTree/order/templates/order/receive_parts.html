@@ -2,9 +2,43 @@
 
 {% block form %}
 
+<h4>Receive parts for {{ order }}</h4>
+
 <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
     {% csrf_token %}
     {% load crispy_forms_tags %}
+
+    <table class='table table-striped'>
+        <tr>
+            <th>Part</th>
+            <th>Order Code</th>
+            <th>On Order</th>
+            <th>Received</th>
+            <th>Receive</th>
+        </tr>
+        {% for line in lines %}
+        <tr>
+            {% if line.part %}
+            <td>
+                {% include "hover_image.html" with image=line.part.part.image hover=False %}
+                {{ line.part.part.full_name }}
+            </td>
+            <td>{{ line.part.SKU }}</td>
+            {% else %}
+            <td colspan='2'>Referenced part has been removed</td>
+            {% endif %}
+            <td>{{ line.quantity }}</td>
+            <td>{{ line.received }}</td>
+            <td>
+                <div class='control-group'>
+                    <div class='controls'>
+                        <input class='numberinput' type='number' min='0' value='{{ line.remaining }}' name='receive-quantity-{{ line.id }}'/>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 </form>
 
 {% endblock %}

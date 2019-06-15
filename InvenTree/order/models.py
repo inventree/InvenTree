@@ -195,6 +195,13 @@ class PurchaseOrder(Order):
 
         line.save()
 
+    def pending_line_items(self):
+        """ Return a list of pending line items for this order.
+        Any line item where 'received' < 'quantity' will be returned.
+        """
+
+        return [line for line in self.lines.all() if line.quantity > line.received]
+
 
 class OrderLineItem(models.Model):
     """ Abstract model for an order line item
@@ -251,3 +258,8 @@ class PurchaseOrderLineItem(OrderLineItem):
     )
 
     received = models.PositiveIntegerField(default=0, help_text=_('Number of items received'))
+
+    def remaining(self):
+        """ Calculate the number of items remaining to be received """
+        r = self.quantity - self.received
+        return max(r, 0)
