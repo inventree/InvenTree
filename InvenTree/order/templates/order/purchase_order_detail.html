@@ -41,16 +41,18 @@ InvenTree | {{ order }}
             </tr>
             <tr>
                 <td>Created</td>
-                <td>{{ order.creation_date }}</td>
-            </tr>
-            <tr>
-                <td>Created By</td>
-                <td>{{ order.created_by }}</td>
+                <td>{{ order.creation_date }}<span class='badge'>{{ order.created_by }}</span></td>
             </tr>
             {% if order.issue_date %}
             <tr>
                 <td>Issued</td>
                 <td>{{ order.issue_date }}</td>
+            </tr>
+            {% endif %}
+            {% if order.status == OrderStatus.COMPLETE %}
+            <tr>
+                <td>Received</td>
+                <td>{{ order.complete_date }}<span class='badge'>{{ order.received_by }}</span></td>
             </tr>
             {% endif %}
         </table>

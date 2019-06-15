@@ -5,6 +5,7 @@ Django views for interacting with Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView
@@ -15,7 +16,7 @@ import logging
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from build.models import Build
 from company.models import Company, SupplierPart
-from stock.models import StockItem
+from stock.models import StockItem, StockLocation
 from part.models import Part
 
 from . import forms as order_forms
@@ -176,24 +177,113 @@ class PurchaseOrderReceive(AjaxView):
     ajax_form_title = "Receive Parts"
     ajax_template_name = "order/receive_parts.html"
 
+    # Where the parts will be going (selected in POST request)
+    destination = None
+
     def get_context_data(self):
 
         ctx = {
             'order': self.order,
             'lines': self.lines,
+            'locations': StockLocation.objects.all(),
+            'destination': self.destination,
         }
 
         return ctx
 
     def get(self, request, *args, **kwargs):
+        """ Respond to a GET request. Determines which parts are outstanding,
+        and presents a list of these parts to the user.
+        """
 
         self.request = request
         self.order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
 
         self.lines = self.order.pending_line_items()
 
+        for line in self.lines:
+            # Pre-fill the remaining quantity
+            line.receive_quantity = line.remaining()
+
         return self.renderJsonResponse(request)
 
+    def post(self, request, *args, **kwargs):
+        """ Respond to a POST request. Data checking and error handling.
+        If the request is valid, new StockItem objects will be made
+        for each received item.
+        """
+
+        self.request = request
+        self.order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
+
+        self.lines = []
+        self.destination = None
+
+        # Extract the destination for received parts
+        if 'receive_location' in request.POST:
+            pk = request.POST['receive_location']
+            try:
+                self.destination = StockLocation.objects.get(id=pk)
+            except (StockLocation.DoesNotExist, ValueError):
+                pass
+
+        errors = self.destination is None
+
+        # Extract information on all submitted line items
+        for item in request.POST:
+            if item.startswith('line-'):
+                pk = item.replace('line-', '')
+
+                try:
+                    line = PurchaseOrderLineItem.objects.get(id=pk)
+                except (PurchaseOrderLineItem.DoesNotExist, ValueError):
+                    continue
+
+                # Ignore a part that doesn't map to a SupplierPart
+                try:
+                    if line.part is None:
+                        continue
+                except SupplierPart.DoesNotExist:
+                    continue
+
+                receive = self.request.POST[item]
+
+                try:
+                    receive = int(receive)
+                except ValueError:
+                    # In the case on an invalid input, reset to default
+                    receive = line.remaining() 
+                    errors = True
+
+                if receive < 0:
+                    receive = 0
+                    errors = True
+
+                line.receive_quantity = receive
+                self.lines.append(line)
+
+        # No errors? Receive the submitted parts!
+        if errors is False:
+            self.receive_parts()
+
+        data = {
+            'form_valid': errors is False,
+            'success': 'Items marked as received',
+        }
+
+        return self.renderJsonResponse(request, data=data)
+
+    def receive_parts(self):
+        """ Called once the form has been validated.
+        Create new stockitems against received parts.
+        """
+
+        for line in self.lines:
+
+            if not line.part:
+                continue
+
+            self.order.receive_line_item(line, self.destination, line.receive_quantity, self.request.user)
 
 
 class OrderParts(AjaxView):

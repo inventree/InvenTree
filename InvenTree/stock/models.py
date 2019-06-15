@@ -96,6 +96,7 @@ class StockItem(models.Model):
         delete_on_deplete: If True, StockItem will be deleted when the stock level gets to zero
         status: Status of this StockItem (ref: InvenTree.status_codes.StockStatus)
         notes: Extra notes field
+        purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
     """
 
@@ -248,6 +249,14 @@ class StockItem(models.Model):
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1)
 
     updated = models.DateField(auto_now=True, null=True)
+
+    purchase_order = models.ForeignKey(
+        'order.PurchaseOrder', 
+        on_delete=models.SET_NULL,
+        related_name='stock_items',
+        blank=True, null=True,
+        help_text='Purchase order for this stock item'
+    )
 
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)
