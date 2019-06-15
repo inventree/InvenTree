@@ -37,7 +37,7 @@ Receive outstanding parts for <b>{{ order }}</b> - <i>{{ order.description }}</i
             <th>Receive</th>
         </tr>
         {% for line in lines %}
-        <tr>
+        <tr id='line_row_{{ line.id }}'>
             {% if line.part %}
             <td>
                 {% include "hover_image.html" with image=line.part.part.image hover=False %}
@@ -55,6 +55,11 @@ Receive outstanding parts for <b>{{ order }}</b> - <i>{{ order.description }}</i
                         <input class='numberinput' type='number' min='0' value='{{ line.receive_quantity }}' name='line-{{ line.id }}'/>
                     </div>
                 </div>
+            </td>
+            <td>
+                <button class='btn btn-default btn-remove' id='del_item_{{ line.id }}' title='Remove line' type='button'>
+                    <span row='line_row_{{ line.id }}' onClick="removeOrderRowFromOrderWizard()" class='glyphicon glyphicon-small glyphicon-remove'></span>
+                </button>
             </td>
         </tr>
         {% endfor %}
