@@ -71,6 +71,12 @@
             <td>{{ item.batch }}</td>
         </tr>
         {% endif %}
+        {% if item.purchase_order %}
+        <tr>
+            <td>Purchase Order</td>
+            <td><a href="{% url 'purchase-order-detail' item.purchase_order.id %}">{{ item.purchase_order }}</a></td>
+        </tr>
+        {% endif %}
         {% if item.customer %}
         <tr>
             <td>Customer</td>

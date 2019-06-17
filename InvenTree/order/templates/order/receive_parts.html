@@ -1,0 +1,69 @@
+{% extends "modal_form.html" %}
+
+{% block form %}
+
+Receive outstanding parts for <b>{{ order }}</b> - <i>{{ order.description }}</i>
+
+<form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+
+    <div class='control-group'>
+        <label class='control-label requiredField'>Location</label>
+        <div class='controls'>
+            <select class='select' name='receive_location'>
+                <option value=''>---------</option>
+                {% for loc in locations %}
+                <option value='{{ loc.id }}' {% if destination.id == loc.id %}selected='selected'{% endif %}>{{ loc.pathstring }} - {{ loc.description }}</option>
+                {% endfor %}
+            </select>
+            {% if not destination %}
+            <span class='help-inline'>Select location to receive parts</span>
+            {% else %}
+            <p class='help-block'>Location of received parts</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <label class='control-label'>Parts</label>
+    <p class='help-block'>Select parts to receive against this order.</p>
+
+    <table class='table table-striped'>
+        <tr>
+            <th>Part</th>
+            <th>Order Code</th>
+            <th>On Order</th>
+            <th>Received</th>
+            <th>Receive</th>
+        </tr>
+        {% for line in lines %}
+        <tr id='line_row_{{ line.id }}'>
+            {% if line.part %}
+            <td>
+                {% include "hover_image.html" with image=line.part.part.image hover=False %}
+                {{ line.part.part.full_name }}
+            </td>
+            <td>{{ line.part.SKU }}</td>
+            {% else %}
+            <td colspan='2'>Referenced part has been removed</td>
+            {% endif %}
+            <td>{{ line.quantity }}</td>
+            <td>{{ line.received }}</td>
+            <td>
+                <div class='control-group'>
+                    <div class='controls'>
+                        <input class='numberinput' type='number' min='0' value='{{ line.receive_quantity }}' name='line-{{ line.id }}'/>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <button class='btn btn-default btn-remove' id='del_item_{{ line.id }}' title='Remove line' type='button'>
+                    <span row='line_row_{{ line.id }}' onClick="removeOrderRowFromOrderWizard()" class='glyphicon glyphicon-small glyphicon-remove'></span>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</form>
+
+{% endblock %}

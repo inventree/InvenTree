@@ -4,7 +4,7 @@ Order model definitions
 
 # -*- coding: utf-8 -*-
 
-from django.db import models
+from django.db import models, transaction
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -14,6 +14,7 @@ from django.utils.translation import ugettext as _
 import tablib
 from datetime import datetime
 
+from stock.models import StockItem
 from company.models import Company, SupplierPart
 
 from InvenTree.status_codes import OrderStatus
@@ -33,6 +34,7 @@ class Order(models.Model):
         creation_date: Automatic date of order creation
         created_by: User who created this order (automatically captured)
         issue_date: Date the order was issued
+        complete_date: Date the order was completed
 
     """
 
@@ -48,6 +50,12 @@ class Order(models.Model):
 
         return " ".join(el)
 
+    def save(self, *args, **kwargs):
+        if not self.creation_date:
+            self.creation_date = datetime.now().date()
+
+        super().save(*args, **kwargs)
+
     class Meta:
         abstract = True
 
@@ -57,7 +65,7 @@ class Order(models.Model):
 
     URL = models.URLField(blank=True, help_text=_('Link to external page'))
 
-    creation_date = models.DateField(auto_now=True, editable=False)
+    creation_date = models.DateField(blank=True, null=True)
 
     status = models.PositiveIntegerField(default=OrderStatus.PENDING, choices=OrderStatus.items(),
                                          help_text='Order status')
@@ -70,6 +78,8 @@ class Order(models.Model):
 
     issue_date = models.DateField(blank=True, null=True)
 
+    complete_date = models.DateField(blank=True, null=True)
+
     notes = models.TextField(blank=True, help_text=_('Order notes'))
 
     def place_order(self):
@@ -80,13 +90,21 @@ class Order(models.Model):
             self.issue_date = datetime.now().date()
             self.save()
 
+    def complete_order(self):
+        """ Marks the order as COMPLETE. Order must be currently PLACED. """
+
+        if self.status == OrderStatus.PLACED:
+            self.status = OrderStatus.COMPLETE
+            self.complete_date = datetime.now().date()
+            self.save()
+
 
 class PurchaseOrder(Order):
     """ A PurchaseOrder represents goods shipped inwards from an external supplier.
 
     Attributes:
         supplier: Reference to the company supplying the goods in the order
-
+        received_by: User that received the goods
     """
 
     ORDER_PREFIX = "PO"
@@ -98,6 +116,13 @@ class PurchaseOrder(Order):
         },
         related_name='purchase_orders',
         help_text=_('Company')
+    )
+
+    received_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        related_name='+'
     )
 
     def export_to_file(self, **kwargs):
@@ -151,6 +176,7 @@ class PurchaseOrder(Order):
     def get_absolute_url(self):
         return reverse('purchase-order-detail', kwargs={'pk': self.id})
 
+    @transaction.atomic
     def add_line_item(self, supplier_part, quantity, group=True, reference=''):
         """ Add a new line item to this purchase order.
         This function will check that:
@@ -194,6 +220,54 @@ class PurchaseOrder(Order):
             reference=reference)
 
         line.save()
+
+    def pending_line_items(self):
+        """ Return a list of pending line items for this order.
+        Any line item where 'received' < 'quantity' will be returned.
+        """
+
+        return [line for line in self.lines.all() if line.quantity > line.received]
+
+    @transaction.atomic
+    def receive_line_item(self, line, location, quantity, user):
+        """ Receive a line item (or partial line item) against this PO
+        """
+
+        if not self.status == OrderStatus.PLACED:
+            raise ValidationError({"status": _("Lines can only be received against an order marked as 'Placed'")})
+
+        try:
+            quantity = int(quantity)
+            if quantity <= 0:
+                raise ValidationError({"quantity": _("Quantity must be greater than zero")})
+        except ValueError:
+            raise ValidationError({"quantity": _("Invalid quantity provided")})
+
+        # Create a new stock item
+        if line.part:
+            stock = StockItem(
+                part=line.part.part,
+                location=location,
+                quantity=quantity,
+                purchase_order=self)
+
+            stock.save()
+
+            # Add a new transaction note to the newly created stock item
+            stock.addTransactionNote("Received items", user, "Received {q} items against order '{po}'".format(
+                q=quantity,
+                po=str(self))
+            )
+
+        # Update the number of parts received against the particular line item
+        line.received += quantity
+        line.save()
+
+        # Has this order been completed?
+        if len(self.pending_line_items()) == 0:
+            
+            self.received_by = user
+            self.complete_order()  # This will save the model
 
 
 class OrderLineItem(models.Model):
@@ -251,3 +325,8 @@ class PurchaseOrderLineItem(OrderLineItem):
     )
 
     received = models.PositiveIntegerField(default=0, help_text=_('Number of items received'))
+
+    def remaining(self):
+        """ Calculate the number of items remaining to be received """
+        r = self.quantity - self.received
+        return max(r, 0)
