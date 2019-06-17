@@ -1,0 +1,43 @@
+# PurchaseOrder and PurchaseOrderLineItem objects for testing
+
+# Ordering some screws from ACME
+- model: order.purchaseorder
+  pk: 1
+  fields:
+    reference: 0001
+    description: "Ordering some screws"
+    supplier: 1
+
+# Ordering some screws from Zerg Corp
+- model: order.purchaseorder
+  pk: 2
+  fields:
+    reference: 0002
+    description: "Ordering some more screws"
+    supplier: 3
+
+# Add some line items against PO 0001
+
+# 100 x ACME0001 (M2x4 LPHS)
+- model: order.purchaseorderlineitem
+  fields:
+    order: 1
+    part: 1
+    quantity: 100
+
+# 250 x ACME0002 (M2x4 LPHS)
+# Partially received (50)
+- model: order.purchaseorderlineitem
+  fields:
+    order: 1
+    part: 2
+    quantity: 250
+    received: 50
+
+# 100 x ZERGLPHS (M2x4 LPHS)
+- model: order.purchaseorderlineitem
+  fields:
+    order: 2
+    part: 3
+    quantity: 100
+    
