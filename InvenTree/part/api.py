@@ -6,6 +6,9 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
+from django.conf import settings
+
+from django.db.models import Sum
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -14,6 +17,8 @@ from rest_framework import generics, permissions
 
 from django.conf.urls import url, include
 from django.urls import reverse
+
+import os
 
 from .models import Part, PartCategory, BomItem, PartStar
 
@@ -98,6 +103,61 @@ class PartList(generics.ListCreateAPIView):
     """
 
     serializer_class = PartSerializer
+
+    def list(self, request, *args, **kwargs):
+        """
+        Instead of using the DRF serialiser to LIST,
+        we serialize the objects manuually.
+        This turns out to be significantly faster.
+        """
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        data = queryset.values(
+            'pk',
+            'category',
+            'image',
+            'name',
+            'IPN',
+            'description',
+            'keywords',
+            'is_template',
+            'URL',
+            'units',
+            'trackable',
+            'assembly',
+            'component',
+            'salable',
+            'active',
+        ).annotate(
+            in_stock=Sum('stock_items__quantity'),
+        )
+
+        # TODO - Annotate total being built
+        # TODO - Annotate total on order
+        # TODO - Annotate 
+
+        # Reduce the number of lookups we need to do for the part categories
+        categories = {}
+
+        for item in data:
+
+            if item['image']:
+                item['image'] = os.path.join(settings.MEDIA_URL, item['image'])
+
+            cat_id = item['category']
+
+            if cat_id:
+                if cat_id not in categories:
+                    categories[cat_id] = PartCategory.objects.get(pk=cat_id).pathstring
+
+                item['category__name'] = categories[cat_id]
+            else:
+                item['category__name'] = None
+
+
+        return Response(data)
+        
 
     def get_queryset(self):
 
