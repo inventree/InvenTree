@@ -76,6 +76,9 @@ class TreeSerializer(views.APIView):
 
         top_count = 0
 
+        # Construct the top-level items
+        top_items = [i for i in items if i.parent is None]
+
         for item in top_items:
             nodes.append(self.itemToJson(item))
             top_count += item.item_count
