@@ -17,6 +17,14 @@ def validate_part_name(value):
             )
 
 
+def validate_tree_name(value):
+    """ Prevent illegal characters in tree item names """
+
+    for c in "!@#$%^&*'\"\\/[]{}<>,|+=~`\"":
+        if c in str(value):
+            raise ValidationError({'name': _('Illegal character in name')})
+
+
 def validate_overage(value):
     """ Validate that a BOM overage string is properly formatted.
 
