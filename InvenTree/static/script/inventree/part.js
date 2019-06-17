@@ -112,16 +112,25 @@ function loadPartTable(table, url, options={}) {
     }
 
     columns.push({
-        field: 'full_name',
+        field: 'name',
         title: 'Part',
         sortable: true,
         formatter: function(value, row, index, field) {
 
-            if (row.is_template) {
-                value = '<i>' + value + '</i>';
+            var name = '';
+
+            if (row.IPN) {
+                name += row.IPN;
+                name += ' | ';
             }
 
-            var display = imageHoverIcon(row.image_url) + renderLink(value, row.url);
+            name += value;
+
+            if (row.is_template) {
+                name = '<i>' + name + '</i>';
+            }
+
+            var display = imageHoverIcon(row.image) + renderLink(name, '/part/' + row.pk + '/');
             
             if (!row.active) {
                 display = display + "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
@@ -146,11 +155,11 @@ function loadPartTable(table, url, options={}) {
     
     columns.push({
         sortable: true,
-        field: 'category_name',
+        field: 'category__name',
         title: 'Category',
         formatter: function(value, row, index, field) {
             if (row.category) {
-                return renderLink(row.category_name, "/part/category/" + row.category + "/");
+                return renderLink(row.category__name, "/part/category/" + row.category + "/");
             }
             else {
                 return '';
@@ -159,13 +168,13 @@ function loadPartTable(table, url, options={}) {
     });
 
     columns.push({
-        field: 'total_stock',
+        field: 'in_stock',
         title: 'Stock',
         searchable: false,
         sortable: true,
         formatter: function(value, row, index, field) {
             if (value) {
-                return renderLink(value, row.url + 'stock/');
+                return renderLink(value, '/part/' + row.pk + '/stock/');
             }
             else {
                 return "<span class='label label-warning'>No Stock</span>";
