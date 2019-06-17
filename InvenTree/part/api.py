@@ -110,8 +110,7 @@ class PartList(generics.ListCreateAPIView):
         if cat_id:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
-                cats = [category.id]
-                cats += [cat for cat in category.getUniqueChildren()]
+                cats = category.getUniqueChildren(include_self=True)
                 parts_list = parts_list.filter(category__in=cats)
             except PartCategory.DoesNotExist:
                 pass

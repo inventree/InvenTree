@@ -80,13 +80,16 @@ class InvenTreeTree(models.Model):
 
         return unique
 
-    def getUniqueChildren(self, unique=None):
+    def getUniqueChildren(self, unique=None, include_self=False):
         """ Return a flat set of all child items that exist under this node.
         If any child items are repeated, the repetitions are omitted.
         """
 
         if unique is None:
             unique = set()
+
+        if include_self:
+            unique.add(self.id)
 
         if self.id in unique:
             return unique
