@@ -32,7 +32,7 @@ test:
 
 coverage:
 	python3 InvenTree/manage.py check
-	coverage run InvenTree/manage.py test build company part stock order
+	coverage run InvenTree/manage.py test build company part stock order InvenTree
 	coverage html
 
 documentation:
