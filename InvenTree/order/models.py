@@ -52,7 +52,7 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.creation_date:
-            self.creation_date = dateimt.now().date()
+            self.creation_date = datetime.now().date()
 
         super().save(*args, **kwargs)
 
@@ -233,6 +233,16 @@ class PurchaseOrder(Order):
         """ Receive a line item (or partial line item) against this PO
         """
 
+        if not self.status == OrderStatus.PLACED:
+            raise ValidationError({"status": _("Lines can only be received against an order marked as 'Placed'")})
+
+        try:
+            quantity = int(quantity)
+            if quantity <= 0:
+                raise ValidationError({"quantity": _("Quantity must be greater than zero")})
+        except ValueError:
+            raise ValidationError({"quantity": _("Invalid quantity provided")})
+
         # Create a new stock item
         if line.part:
             stock = StockItem(
@@ -245,7 +255,7 @@ class PurchaseOrder(Order):
 
             # Add a new transaction note to the newly created stock item
             stock.addTransactionNote("Received items", user, "Received {q} items against order '{po}'".format(
-                q=line.receive_quantity,
+                q=quantity,
                 po=str(self))
             )
 

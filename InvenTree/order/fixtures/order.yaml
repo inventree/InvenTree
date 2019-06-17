@@ -20,6 +20,7 @@
 
 # 100 x ACME0001 (M2x4 LPHS)
 - model: order.purchaseorderlineitem
+  pk: 1
   fields:
     order: 1
     part: 1
@@ -40,4 +41,4 @@
     order: 2
     part: 3
     quantity: 100
-    
+
