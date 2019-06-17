@@ -8,3 +8,4 @@ omit =
     Inventree/InvenTree/middleware.py
     Inventree/InvenTree/utils.py
     Inventree/InvenTree/wsgi.py
+    InvenTree/users/apps.py
