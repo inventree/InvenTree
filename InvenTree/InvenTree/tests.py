@@ -97,7 +97,6 @@ class TestMakeBarcoede(TestCase):
 
 class TestDownloadFile(TestCase):
 
-
     def test_download(self):
         helpers.DownloadFile("hello world", "out.txt")
         helpers.DownloadFile(bytes("hello world".encode("utf8")), "out.bin")
