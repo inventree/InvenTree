@@ -80,7 +80,7 @@ class InvenTreeTree(models.Model):
 
         return unique
 
-    def getUniqueChildren(self, unique=None, include_self=False):
+    def getUniqueChildren(self, unique=None, include_self=True):
         """ Return a flat set of all child items that exist under this node.
         If any child items are repeated, the repetitions are omitted.
         """
@@ -88,13 +88,11 @@ class InvenTreeTree(models.Model):
         if unique is None:
             unique = set()
 
-        if include_self:
-            unique.add(self.id)
-
         if self.id in unique:
             return unique
 
-        unique.add(self.id)
+        if include_self:
+            unique.add(self.id)
 
         # Some magic to get around the limitations of abstract models
         contents = ContentType.objects.get_for_model(type(self))
@@ -185,7 +183,7 @@ class InvenTreeTree(models.Model):
             pass
 
         # Ensure that the new parent is not already a child
-        if self.id in self.getUniqueChildren():
+        if self.id in self.getUniqueChildren(include_self=False):
             raise ValidationError("Category cannot set a child as parent")
 
     def __str__(self):

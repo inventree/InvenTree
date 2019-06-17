@@ -82,10 +82,10 @@ class CategoryTest(TestCase):
         self.assertTrue(self.fasteners.has_parts)
         self.assertFalse(self.transceivers.has_parts)
 
-        self.assertEqual(self.fasteners.partcount, 2)
-        self.assertEqual(self.capacitors.partcount, 1)
+        self.assertEqual(self.fasteners.partcount(), 2)
+        self.assertEqual(self.capacitors.partcount(), 1)
 
-        self.assertEqual(self.electronics.partcount, 3)
+        self.assertEqual(self.electronics.partcount(), 3)
 
     def test_delete(self):
         """ Test that category deletion moves the children properly """
