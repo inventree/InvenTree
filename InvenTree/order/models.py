@@ -50,6 +50,12 @@ class Order(models.Model):
 
         return " ".join(el)
 
+    def save(self, *args, **kwargs):
+        if not self.creation_date:
+            self.creation_date = dateimt.now().date()
+
+        super().save(*args, **kwargs)
+
     class Meta:
         abstract = True
 
@@ -59,7 +65,7 @@ class Order(models.Model):
 
     URL = models.URLField(blank=True, help_text=_('Link to external page'))
 
-    creation_date = models.DateField(auto_now=True, editable=False)
+    creation_date = models.DateField(blank=True, null=True)
 
     status = models.PositiveIntegerField(default=OrderStatus.PENDING, choices=OrderStatus.items(),
                                          help_text='Order status')
