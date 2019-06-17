@@ -49,19 +49,23 @@ class StockLocation(InvenTreeTree):
             }
         )
 
-    @property
-    def stock_item_count(self):
+    def stock_item_count(self, cascade=True):
         """ Return the number of StockItem objects which live in or under this category
         """
 
-        return StockItem.objects.filter(location__in=self.getUniqueChildren()).count()
+        if cascade:
+            query = StockItem.objects.filter(location__in=self.getUniqueChildren())
+        else:
+            query = StockItem.objects.filter(location=self)
+
+        return query.count()
 
     @property
     def item_count(self):
         """ Simply returns the number of stock items in this location.
         Required for tree view serializer.
         """
-        return self.stock_item_count
+        return self.stock_item_count()
 
 
 @receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')

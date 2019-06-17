@@ -62,13 +62,18 @@ class InvenTreeTree(models.Model):
         If any parents are repeated (which would be very bad!), the process is halted
         """
 
-        if unique is None:
-            unique = set()
-        else:
-            unique.add(self.id)
+        item = self
 
-        if self.parent and self.parent.id not in unique:
-            self.parent.getUniqueParents(unique)
+        # Prevent infinite regression
+        max_parents = 500
+
+        unique = set()
+
+        while item.parent and max_parents > 0:
+            max_parents -= 1
+
+            unique.add(item.parent.id)
+            item = item.parent
 
         return unique
 
