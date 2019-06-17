@@ -73,10 +73,12 @@ class PartCategory(InvenTreeTree):
         (including children of child categories)
         """
 
+        cats = [self.id]
+
         if cascade:
-            query = Part.objects.filter(category__in=self.getUniqueChildren())
-        else:
-            query = Part.objects.filter(category=self)
+            cats += [cat for cat in self.getUniqueChildren()]
+
+        query = Part.objects.filter(category__in=cats)
 
         if active:
             query = query.filter(active=True)

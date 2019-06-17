@@ -35,8 +35,6 @@ class PartCategoryTree(TreeSerializer):
         return reverse('part-index')
 
     def get_items(self):
-
-        print("hello world")
         return PartCategory.objects.all().prefetch_related('parts', 'children')
 
 
@@ -112,7 +110,9 @@ class PartList(generics.ListCreateAPIView):
         if cat_id:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
-                parts_list = parts_list.filter(category__in=category.getUniqueChildren())
+                cats = [category.id]
+                cats += [cat for cat in category.getUniqueChildren()]
+                parts_list = parts_list.filter(category__in=cats)
             except PartCategory.DoesNotExist:
                 pass
 

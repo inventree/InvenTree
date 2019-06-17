@@ -52,10 +52,8 @@ class TreeSerializer(views.APIView):
         if item.has_children:
             nodes = []
 
-            """
             for child in item.children.all().order_by('name'):
                 nodes.append(self.itemToJson(child))
-            """
 
             data['nodes'] = nodes
 

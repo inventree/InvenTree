@@ -11,6 +11,8 @@ from rest_framework.exceptions import ValidationError
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from .validators import validate_tree_name
+
 
 class InvenTreeTree(models.Model):
     """ Provides an abstracted self-referencing tree model for data categories.
@@ -31,7 +33,8 @@ class InvenTreeTree(models.Model):
     name = models.CharField(
         blank=False,
         max_length=100,
-        unique=True
+        unique=True,
+        validators=[validate_tree_name]
     )
 
     description = models.CharField(
@@ -104,14 +107,6 @@ class InvenTreeTree(models.Model):
         """ True if there are any children under this item """
         return self.children.count() > 0
 
-    @property
-    def children(self):
-        """ Return the children of this item """
-        contents = ContentType.objects.get_for_model(type(self))
-        childs = contents.get_all_objects_for_this_type(parent=self.id)
-
-        return childs
-
     def getAcceptableParents(self):
         """ Returns a list of acceptable parent items within this model
         Acceptable parents are ones which are not underneath this item.
@@ -164,8 +159,8 @@ class InvenTreeTree(models.Model):
         """
         return '/'.join([item.name for item in self.path])
 
-    def __setattr__(self, attrname, val):
-        """ Custom Attribute Setting function
+    def clean(self):
+        """ Custom cleaning
 
         Parent:
         Setting the parent of an item to its own child results in an infinite loop.
@@ -177,28 +172,18 @@ class InvenTreeTree(models.Model):
         Tree node names are limited to a reduced character set
         """
 
-        if attrname == 'parent_id':
-            # If current ID is None, continue
-            # - This object is just being created
-            if self.id is None:
-                pass
-            # Parent cannot be set to same ID (this would cause looping)
-            elif val == self.id:
-                raise ValidationError("Category cannot set itself as parent")
-            # Null parent is OK
-            elif val is None:
-                pass
-            # Ensure that the new parent is not already a child
-            else:
-                kids = self.getUniqueChildren()
-                if val in kids:
-                    raise ValidationError("Category cannot set a child as parent")
+        super().clean()
 
-        # Prohibit certain characters from tree node names
-        elif attrname == 'name':
-            val = val.translate({ord(c): None for c in "!@#$%^&*'\"\\/[]{}<>,|+=~`"})
+        # Parent cannot be set to same ID (this would cause looping)
+        try:
+            if self.parent.id == self.id:
+               raise ValidationError("Category cannot set itself as parent")
+        except:
+            pass
 
-        super(InvenTreeTree, self).__setattr__(attrname, val)
+        # Ensure that the new parent is not already a child
+        if self.id in self.getUniqueChildren():
+            raise ValidationError("Category cannot set a child as parent")
 
     def __str__(self):
         """ String representation of a category is the full path to that category """

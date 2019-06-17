@@ -38,6 +38,9 @@ class StockCategoryTree(TreeSerializer):
     def root_url(self):
         return reverse('stock-index')
 
+    def get_items(self):
+        return StockLocation.objects.all().prefetch_related('stock_items', 'children')
+
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API detail endpoint for Stock object
