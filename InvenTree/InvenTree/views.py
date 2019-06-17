@@ -59,11 +59,16 @@ class TreeSerializer(views.APIView):
 
         return data
 
-    def get(self, request, *args, **kwargs):
+    def get_items(self):
 
-        top_items = self.model.objects.filter(parent=None).order_by('name')
+        return self.model.objects.all()
+
+    def generate_tree(self, items):
 
         nodes = []
+
+        # Construct the top-level items
+        top_items = [i for i in items if i.parent is None]
 
         top_count = 0
 
@@ -71,7 +76,7 @@ class TreeSerializer(views.APIView):
             nodes.append(self.itemToJson(item))
             top_count += item.item_count
 
-        top = {
+        self.tree = {
             'pk': None,
             'text': self.title,
             'href': self.root_url,
@@ -79,8 +84,15 @@ class TreeSerializer(views.APIView):
             'tags': [top_count],
         }
 
+    def get(self, request, *args, **kwargs):
+        """ Respond to a GET request for the Tree """
+
+        items = self.model.objects.all()
+
+        self.generate_tree(items)
+
         response = {
-            'tree': [top]
+            'tree': [self.tree]
         }
 
         return JsonResponse(response, safe=False)
