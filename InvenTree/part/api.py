@@ -135,7 +135,6 @@ class PartList(generics.ListCreateAPIView):
 
         # TODO - Annotate total being built
         # TODO - Annotate total on order
-        # TODO - Annotate 
 
         # Reduce the number of lookups we need to do for the part categories
         categories = {}
@@ -155,9 +154,7 @@ class PartList(generics.ListCreateAPIView):
             else:
                 item['category__name'] = None
 
-
         return Response(data)
-        
 
     def get_queryset(self):
 

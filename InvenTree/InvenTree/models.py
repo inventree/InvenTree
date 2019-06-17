@@ -180,7 +180,7 @@ class InvenTreeTree(models.Model):
         # Parent cannot be set to same ID (this would cause looping)
         try:
             if self.parent.id == self.id:
-               raise ValidationError("Category cannot set itself as parent")
+                raise ValidationError("Category cannot set itself as parent")
         except:
             pass
 
