@@ -4,6 +4,7 @@ import django.core.exceptions as django_exceptions
 from part.models import Part
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from stock.models import StockLocation
+from company.models import SupplierPart
 
 from InvenTree.status_codes import OrderStatus
 
@@ -24,6 +25,7 @@ class OrderTest(TestCase):
     ]
 
     def test_basics(self):
+        """ Basic tests e.g. repr functions etc """
 
         order = PurchaseOrder.objects.get(pk=1)
 
@@ -50,7 +52,45 @@ class OrderTest(TestCase):
         # Test the total on-order quantity
         self.assertEqual(part.on_order, 400)
 
+    def test_add_items(self):
+        """ Test functions for adding line items to an order """
+
+        order = PurchaseOrder.objects.get(pk=1)
+
+        self.assertEqual(order.status, OrderStatus.PENDING)
+        self.assertEqual(order.lines.count(), 2)
+
+        sku = SupplierPart.objects.get(SKU='ACME-WIDGET')
+        part = sku.part
+
+        # Try to order some invalid things
+        with self.assertRaises(django_exceptions.ValidationError):
+            order.add_line_item(sku, -999)
+
+        with self.assertRaises(django_exceptions.ValidationError):
+            order.add_line_item(sku, 'not a number')
+
+        # Order the part
+        self.assertEqual(part.on_order, 0)
+
+        order.add_line_item(sku, 100)
+
+        self.assertEqual(part.on_order, 100)
+        self.assertEqual(order.lines.count(), 3)
+
+        # Order the same part again (it should be merged)
+        order.add_line_item(sku, 50)
+        self.assertEqual(order.lines.count(), 3)
+        self.assertEqual(part.on_order, 150)
+
+        # Try to order a supplier part from the wrong supplier
+        sku = SupplierPart.objects.get(SKU='ZERG-WIDGET')
+        
+        with self.assertRaises(django_exceptions.ValidationError):
+            order.add_line_item(sku, 99)
+
     def test_receive(self):
+        """ Test order receiving functions """
 
         part = Part.objects.get(name='M2x4 LPHS')
 
@@ -75,6 +115,8 @@ class OrderTest(TestCase):
 
         order.receive_line_item(line, loc, 50, user=None)
 
+        self.assertEqual(line.remaining(), 50)
+
         self.assertEqual(part.on_order, 350)
 
         # Try to order some invalid things
@@ -92,3 +134,13 @@ class OrderTest(TestCase):
 
         self.assertEqual(part.on_order, 100)
         self.assertEqual(order.status, OrderStatus.COMPLETE)
+
+    def test_export(self):
+        """ Test order exporting """
+
+        order = PurchaseOrder.objects.get(pk=1)
+
+        output = order.export_to_file(format='csv')
+
+        self.assertIn('M2x4 LPHS', output)
+        self.assertIn('Line,Part,Description', output)
