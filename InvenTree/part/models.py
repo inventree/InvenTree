@@ -69,13 +69,20 @@ class PartCategory(InvenTreeTree):
         return self.partcount
 
     @property
-    def partcount(self):
+    def partcount(self, cascade=True, active=True):
         """ Return the total part count under this category
         (including children of child categories)
         """
 
-        return len(Part.objects.filter(category__in=self.getUniqueChildren(),
-                                       active=True))
+        if cascade:
+            query = Part.objects.filter(category__in=self.getUniqueChildren())
+        else:
+            query = Part.objects.filter(category=self)
+
+        if active:
+            query = query.filter(active=True)
+
+        return query.count()
 
     @property
     def has_parts(self):

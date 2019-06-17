@@ -34,6 +34,11 @@ class PartCategoryTree(TreeSerializer):
     def root_url(self):
         return reverse('part-index')
 
+    def get_items(self):
+
+        print("hello world")
+        return PartCategory.objects.all().prefetch_related('parts', 'children')
+
 
 class CategoryList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PartCategory objects.
