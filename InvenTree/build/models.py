@@ -110,7 +110,7 @@ class Build(models.Model):
         self.completion_date = datetime.now().date()
         self.completed_by = user
 
-        self.status = self.CANCELLED
+        self.status = BuildStatus.CANCELLED
         self.save()
 
     def getAutoAllocations(self):
