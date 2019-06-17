@@ -4,6 +4,7 @@ omit =
     # Do not run coverage on migration files
     */migrations/*
     InvenTree/manage.py
+    InvenTree/keygen.py
     Inventree/InvenTree/middleware.py
     Inventree/InvenTree/utils.py
     Inventree/InvenTree/wsgi.py
