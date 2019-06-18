@@ -100,8 +100,10 @@ class PartSerializer(InvenTreeModelSerializer):
             'assembly',
             'component',
             'trackable',
+            'purchaseable',
             'salable',
             'active',
+            'virtual',
         ]
 
 
