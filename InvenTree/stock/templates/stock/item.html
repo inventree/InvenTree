@@ -9,31 +9,28 @@
     <p>
         <div class='btn-group'>
             {% include "qr_button.html" %}
+            {% if item.in_stock %}
+            <button type='button' class='btn btn-default btn-glyph' id='stock-add' title='Add to stock'>
+                <span class='glyphicon glyphicon-plus-sign' style='color: #1a1;'/>
+            </button>
+            <button type='button' class='btn btn-default btn-glyph' id='stock-remove' title='Take from stock'>
+                <span class='glyphicon glyphicon-minus-sign' style='color: #a11;'/>
+            </button>
+            <button type='button' class='btn btn-default btn-glyph' id='stock-move' title='Transfer stock'>
+                <span class='glyphicon glyphicon-transfer' style='color: #11a;'/>
+            </button>
+            <button type='button' class='btn btn-default btn-glyph' id='stock-duplicate' title='Duplicate stock item'>
+                <span class='glyphicon glyphicon-duplicate'/>
+            </button>
+            {% endif %}
+            <button type='button' class='btn btn-default btn-glyph' id='stock-edit' title='Edit stock item'>
+                <span class='glyphicon glyphicon-cog'/>
+            </button>
+            <button type='button' class='btn btn-default btn-glyph' id='stock-delete' title='Edit stock item'>
+                <span class='glyphicon glyphicon-trash' style='color: #a11;'/>
+            </button>
         </div>
     </p>
-</div>
-<div class='col-sm-6'>
-    <h3>
-    <div style='float: right;'>
-    <div class="dropdown" style="float: right;">
-        <button class='btn btn-primary' type='button' id='duplicate-item'>Copy Stock Item</button>
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
-        <span class="caret"></span></button>
-        <ul class="dropdown-menu">
-          {% if item.in_stock %}
-          <li><a href="#" id='stock-edit' title='Edit stock item'>Edit stock item</a></li>
-          <hr>
-          <li><a href='#' id='stock-add' title='Add stock'>Add to stock</a></li>
-          <li><a href='#' id='stock-remove' title='Take stock'>Take from stock</a></li>
-          <li><a href='#' id='stock-stocktake' title='Count stock'>Stocktake</a></li>
-          <li><a href="#" id='stock-move' title='Move stock'>Move stock item</a></li>
-          {% endif %}
-          <hr>
-          <li><a href="#" id='stock-delete' title='Delete stock item'>Delete stock item</a></li>
-    </div>
-    </div>
-    </h3>
-</div>
 </div>
 
 <div class='row'>
@@ -91,6 +88,10 @@
         {% endif %}
         {% if item.supplier_part %}
         <tr>
+            <td>Supplier</td>
+            <td><a href="{% url 'company-detail' item.supplier_part.supplier.id %}">{{ item.supplier_part.supplier.name }}</a></td>
+        </tr>
+        <tr>
             <td>Supplier Part</td>
             <td><a href="{% url 'supplier-part-detail' item.supplier_part.id %}">{{ item.supplier_part.SKU }}</a></td>
         </tr>
@@ -134,7 +135,7 @@
 {% block js_ready %}
 {{ block.super }}
 
-    $("#duplicate-item").click(function() {
+    $("#stock-duplicate").click(function() {
         launchModalForm(
             "{% url 'stock-item-create' %}",
             {
