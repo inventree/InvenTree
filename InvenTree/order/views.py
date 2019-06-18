@@ -158,7 +158,11 @@ class PurchaseOrderExport(AjaxView):
 
         export_format = request.GET.get('format', 'csv')
 
-        filename = str(order) + '.' + export_format
+        filename = '{order} - {company}.{fmt}'.format(
+            order=str(order),
+            company=order.supplier.name,
+            fmt=export_format
+        )
 
         filedata = order.export_to_file(format=export_format)
 
