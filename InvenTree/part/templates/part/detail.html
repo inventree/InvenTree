@@ -13,16 +13,16 @@
             <span class="caret"></span></button>
             <ul class="dropdown-menu">
                 {% if part.active %}
-                <li><a href="#" field='edit-part' title='Edit part'>Edit</a></li>
+                <li><a href="#" id='edit-part' title='Edit part'>Edit</a></li>
                 {% if part.purchaseable %}
-                <li><a href='#' field='order-part' title='Order part'>Order</a></li>
+                <li><a href='#' id='order-part' title='Order part'>Order</a></li>
                 {% endif %}
-                <li><a href='#' field='duplicate-part' title='Duplicate Part'>Duplicate</a></li>
+                <li><a href='#' id='duplicate-part' title='Duplicate Part'>Duplicate</a></li>
                 <hr>
-                <li><a href="#" field='deactivate-part' title='Deactivate part'>Deactivate</a></li>
+                <li><a href="#" id='deactivate-part' title='Deactivate part'>Deactivate</a></li>
                 {% else %}
-                <li><a href="#" field='activate-part' title='Activate part'>Activate</a></li>
-                <li><a href='#' field='delete-part' title='Delete part'>Delete</a></li>
+                <li><a href="#" id='activate-part' title='Activate part'>Activate</a></li>
+                <li><a href='#' id='delete-part' title='Delete part'>Delete</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -186,10 +186,11 @@
         data[field] = checked;
 
         // Update the particular field
-        inventreePut('/api/part/{{ part.id }}/',
+        inventreePut("/api/part/{{ part.id }}/",
             data,
             {
                 method: 'PATCH',
+                reloadOnSuccess: true,
             },
         );
     });
