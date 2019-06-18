@@ -6,31 +6,6 @@
 
 <div class='row'>
     <div class='col-sm-6'>
-    </div>
-    <div class='col-sm-6'>
-        <div class="btn-group" style="float: right;">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
-            <span class="caret"></span></button>
-            <ul class="dropdown-menu">
-                {% if part.active %}
-                <li><a href="#" id='edit-part' title='Edit part'>Edit</a></li>
-                {% if part.purchaseable %}
-                <li><a href='#' id='order-part' title='Order part'>Order</a></li>
-                {% endif %}
-                <li><a href='#' id='duplicate-part' title='Duplicate Part'>Duplicate</a></li>
-                <hr>
-                <li><a href="#" id='deactivate-part' title='Deactivate part'>Deactivate</a></li>
-                {% else %}
-                <li><a href="#" id='activate-part' title='Activate part'>Activate</a></li>
-                <li><a href='#' id='delete-part' title='Delete part'>Delete</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div class='row'>
-    <div class='col-sm-6'>
         <h4>Part Details</h4>
     <table class='table table-striped'>
         <tr>
@@ -194,31 +169,6 @@
             },
         );
     });
-    
-    $("#duplicate-part").click(function() {
-        launchModalForm(
-            "{% url 'part-duplicate' part.id %}",
-            {
-                follow: true,
-            }
-        );
-    });
-
-    $("#order-part").click(function() {
-        launchModalForm("/order/purchase-order/order-parts/", {
-            data: {
-                part: {{ part.id }},
-            },
-        });
-    });
-    
-    $("#edit-part").click(function() {
-        launchModalForm(
-                        "{% url 'part-edit' part.id %}",
-                        {
-                            reload: true,
-                        });
-    });
 
     $('#activate-part').click(function() {
         showQuestionDialog(
@@ -264,14 +214,5 @@
             }
         );
     });
-
-
-    $('#delete-part').click(function() {
-        launchModalForm(
-            "{% url 'part-delete' part.id %}",
-            {
-                redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %}
-            });
-    });
-
+    
 {% endblock %}

@@ -446,6 +446,7 @@ class PartDetail(DetailView):
         part = self.get_object()
 
         context['starred'] = part.isStarredBy(self.request.user)
+        context['disabled'] = not part.active
 
         context['OrderStatus'] = OrderStatus
 
