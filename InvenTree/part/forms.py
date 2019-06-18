@@ -102,6 +102,7 @@ class EditPartForm(HelperForm):
             'units',
             'minimum_stock',
             'notes',
+            'active',
         ]
 
 
