@@ -5,19 +5,38 @@
 
 {% include 'part/tabs.html' with tab='orders' %}
 
-<div class='row'>
-    <div class='col-sm-6'>
-        <h4>Open Part Orders</h4>
-    </div>
-    <div class='col-sm-6'>
+<h4>Part Orders</h4>
+<hr>
+
+<div id='button-bar'>
+    <div class='btn-group'>
+        <button class='btn btn-primary' type='button' id='part-order-2' title='Order part'>Order Part</button>
     </div>
 </div>
 
-{% include "order/po_table.html" with orders=part.open_purchase_orders %}
+{% include "order/po_table.html" with orders=part.open_purchase_orders toolbar='#button-bar' %}
 
 {% if part.closed_purchase_orders|length > 0 %}
 <h4>Closed Orders</h4>
 {% include "order/po_table.html" with orders=part.closed_purchase_orders %}
 {% endif %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$("#po-table").bootstrapTable({
+    search: true,
+    sortable: true,
+});
+
+$("#part-order-2").click(function() {
+    launchModalForm("/order/purchase-order/order-parts/", {
+        data: {
+            part: {{ part.id }},
+        },
+    });
+});
 
 {% endblock %}

@@ -158,6 +158,10 @@
 .navigation {
 }
 
+.nav-tabs {
+    margin-bottom: 20px;
+}
+
 .breadcrump {
     margin-bottom: 5px;
 }

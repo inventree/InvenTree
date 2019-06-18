@@ -8,18 +8,16 @@ InvenTree | Purchase Orders
 
 {% block content %}
 
-<div class='row'>
-    <div class='col-sm-6'>
-        <h3>Purchase Orders</h3>
-    </div>
-    <div class='col-sm-6'>
-        <div class='btn-group' style='float: right;'>
-            <button class='btn btn-primary' type='button' id='po-create' title='Create new purchase order'>New Purchase Order</button>
-        </div>
+<h3>Purchase Orders</h3>
+<hr>
+
+<div id='table-buttons'>
+    <div class='btn-group' style='float: right;'>
+        <button class='btn btn-primary' type='button' id='po-create' title='Create new purchase order'>New Purchase Order</button>
     </div>
 </div>
 
-{% include "order/po_table.html" %}
+{% include "order/po_table.html" with toolbar='#table-buttons' %}
 
 {% endblock %}
 
@@ -32,6 +30,10 @@ $("#po-create").click(function() {
             reload: true,
         }
     );
+});
+
+$("#po-table").bootstrapTable({
+    search: true,
 });
 
 {% endblock %}
