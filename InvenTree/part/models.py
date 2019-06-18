@@ -216,6 +216,7 @@ class Part(models.Model):
         purchaseable: Can this part be purchased from suppliers?
         trackable: Trackable parts can have unique serial numbers assigned, etc, etc
         active: Is this part active? Parts are deactivated instead of being deleted
+        virtual: Is this part "virtual"? e.g. a software product or similar
         notes: Additional notes field for this part
     """
 
@@ -376,6 +377,8 @@ class Part(models.Model):
     salable = models.BooleanField(default=False, help_text="Can this part be sold to customers?")
 
     active = models.BooleanField(default=True, help_text='Is this part active?')
+
+    virtual = models.BooleanField(default=False, help_text='Is this a virtual part, such as a software product or license?')
 
     notes = models.TextField(blank=True)
 
