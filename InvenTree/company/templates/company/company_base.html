@@ -25,11 +25,16 @@ InvenTree | Company - {{ company.name }}
               <h4>{{ company.name }}</h4>
               <p>{{ company.description }}</p>
               <div class='btn-group'>
+                  {% if company.is_supplier %}
+                  <button type='button' class='btn btn-default btn-glyph' id='company-order' title='Create purchase order'>
+                      <span class='glyphicon glyphicon-shopping-cart'/>
+                  </button>
+                  {% endif %}
                   <button type='button' class='btn btn-default btn-glyph' id='company-edit' title='Edit company information'>
                       <span class='glyphicon glyphicon-cog'/>
                   </button>
-                  <button type='button' class='btn btn-default btn-glyph' id='company-delete' title='Edit company information'>
-                      <span class='glyphicon glyphicon-trash'/>
+                  <button type='button' class='btn btn-default btn-glyph' id='company-delete' title='Delete company'>
+                      <span class='glyphicon glyphicon-trash' style='color: #a11;'/>
                   </button>
               </div>
           </div>
