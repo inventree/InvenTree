@@ -22,6 +22,14 @@
     color: rgb(13, 245, 25);
 }
 
+.glyphicon-ok {
+    color: #5f5;
+}
+
+.glyphicon-remove {
+    color: #f55;
+}
+
 /* CSS overrides for treeview */
 .expand-icon {
     font-size: 11px;

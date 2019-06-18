@@ -6,7 +6,6 @@
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h4>Part Details</h4>
     </div>
     <div class='col-sm-6'>
         <div class="btn-group" style="float: right;">
@@ -30,10 +29,9 @@
     </div>
 </div>
 
-<hr>
-
 <div class='row'>
     <div class='col-sm-6'>
+        <h4>Part Details</h4>
     <table class='table table-striped'>
         <tr>
             <td><b>Part name</b></td>
@@ -102,37 +100,62 @@
     </table>
     </div>
     <div class='col-sm-6'>
+        <h4>Part Type</h4>
     <table class='table table-striped'>
-        {% if part.assembly %}
         <tr>
-            <td><b>Assembly</b></td>   
-            <td><i>This part can be assembled from other parts</i></td>
+            <td><b>Virtual</b></td>
+            <td>{% include "slide.html" with state=part.virtual field='virtual' %}</td>
+            {% if part.virtual %}
+            <td>Part is virtual (not a physical part)</td>
+            {% else %}
+            <td><i>Part is not a virtual part</i></td>
+            {% endif %}
         </tr>
-        {% endif %}
-        {% if part.component %}
+        <tr>
+            <td><b>Assembly</b></td>
+            <td>{% include "slide.html" with state=part.assembly field='assembly' %}</td>   
+            {% if part.assembly %}
+            <td>Part can be assembled from other parts</td>
+            {% else %}
+            <td><i>Part cannot be assembled from other parts</i></td>
+            {% endif %}
+        </tr>
         <tr>
             <td><b>Component</b></td>
-            <td><i>This part can be used in assemblies</i></td>
+            <td>{% include "slide.html" with state=part.component field='component' %}</td>   
+            {% if part.component %}
+            <td>Part can be used in assemblies</td>
+            {% else %}
+            <td><i>Part cannot be used in assemblies</i></td>
+            {% endif %}
         </tr>
-        {% endif %}
-        {% if part.trackable %}
         <tr>
             <td><b>Trackable</b></td>
-            <td><i>Stock for this part will be tracked by (serial or batch)</i></td>
+            <td>{% include "slide.html" with state=part.trackable field='trackable' %}</td>   
+            {% if part.trackable %}
+            <td>Part stock will be tracked by (serial or batch)</td>
+            {% else %}
+            <td><i>Part stock will not be tracked by</i></td>
+            {% endif %}
         </tr>
-        {% endif %}
-        {% if part.purchaseable %}
         <tr>
             <td><b>Purchaseable</b></td> 
-            <td><i>This part can be purchased from external suppliers</i></td>
+            <td>{% include "slide.html" with state=part.purchaseable field='purchaseable' %}</td>   
+            {% if part.purchaseable %}
+            <td>Part can be purchased from external suppliers</td>
+            {% else %}
+            <td><i>Part can be purchased from external suppliers</i></td>
+            {% endif %}
         </tr>
-        {% endif %}
-        {% if part.salable %}
         <tr>
-            <td><b>Salable</b></td>
-            <td><i>This part can be sold to customers</i></td>
+            <td><b>Sellable</b></td>
+            <td>{% include "slide.html" with state=part.salable field='salable' %}</td>
+            {% if part.salable %}
+            <td>Part can be sold to customers</td>
+            {% else %}
+            <td><i>Part cannot be sold to customers</i></td>
+            {% endif %}
         </tr>
-        {% endif %}
     </table>
     </div>
 </div>
@@ -152,6 +175,25 @@
 
 {% block js_ready %}
     {{ block.super }}
+
+    $(".slidey").change(function() {
+        var field = $(this).attr('field');
+
+        var checked = $(this).prop('checked');
+
+        var data = {};
+
+        data[field] = checked;
+
+        // Update the particular field
+        inventreePut("/api/part/{{ part.id }}/",
+            data,
+            {
+                method: 'PATCH',
+                reloadOnSuccess: true,
+            },
+        );
+    });
     
     $("#duplicate-part").click(function() {
         launchModalForm(
