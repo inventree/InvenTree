@@ -35,3 +35,8 @@ API Code
 --------
 
 Javascript/jQuery code for interacting with the server via the REST API can be found under ``InvenTree/static/script/InvenTree``.
+
+Python interface
+----------------
+
+A Python library for interacting with the InvenTree API is provided on `GitHub <https://github.com/inventree/inventree-python>`_

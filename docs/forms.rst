@@ -42,7 +42,7 @@ Sequence of Events
 #. Client sends the completed form to server via POST
 #. Django backend handles POST request, specifically determines if the form is valid
 #. Return a JSON object containing status of form validity
-  * If the form is valid, return (at minimum) {form_valid: true}. Client will close the modal.
+  * If the form is valid, return (at minimum) ``{form_valid: true}``. Client will close the modal.
   * If the form is invalid, re-render the form and send back to the client. Process repeats
 
 At the end of this process (i.e. after successful processing of the form) the client closes the modal and runs any optional post-processes (depending on the implementation).
