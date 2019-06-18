@@ -24,6 +24,14 @@ InvenTree | Company - {{ company.name }}
             <div class='media-body'>
               <h4>{{ company.name }}</h4>
               <p>{{ company.description }}</p>
+              <div class='btn-group'>
+                  <button type='button' class='btn btn-default btn-glyph' id='company-edit' title='Edit company information'>
+                      <span class='glyphicon glyphicon-cog'/>
+                  </button>
+                  <button type='button' class='btn btn-default btn-glyph' id='company-delete' title='Edit company information'>
+                      <span class='glyphicon glyphicon-trash'/>
+                  </button>
+              </div>
           </div>
       </div>
     </div>
@@ -76,6 +84,22 @@ InvenTree | Company - {{ company.name }}
 {% endblock %}
 
 {% block js_ready %}
+
+    $('#company-edit').click(function() {
+        launchModalForm(
+                        "{% url 'company-edit' company.id %}",
+                        {
+                            reload: true
+                        });
+    });
+
+    $('#company-delete').click(function() {
+        launchModalForm(
+                        "{% url 'company-delete' company.id %}",
+                        {
+                            redirect: "{% url 'company-index' %}"
+                        });
+    });
 
     enableDragAndDrop(
         "#company-thumb",
