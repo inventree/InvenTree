@@ -2,7 +2,9 @@
 
 {% block pre_form_content %}
 
-Are you sure you want to delete part '{{ part.full_name }}'?
+<div class='alert alert-block alert-danger'>
+    Are you sure you want to delete part '<b>{{ part.full_name }}</b>'?
+</div>
 
 {% if part.used_in_count %}
 <hr>

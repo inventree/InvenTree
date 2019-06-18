@@ -4,24 +4,7 @@
 
 {% include 'company/tabs.html' with tab='details' %}
 
-<div class='row'>
-    <div class='col-sm-6'>
-        <h4>Company Details</h4>
-    </div>
-    <div class='col-sm-6'>
-        <h3>
-            <div class="dropdown" style="float: right;">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
-                <span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                  <li><a href="#" id='edit-company' title='Edit company'>Edit</a></li>
-                  <li><a href="#" id='delete-company' title='Delete company'>Delete</a></li>
-                </ul>
-            </div>
-        </h3>
-    </div>
-</div>
-
+<h4>Company Details</h4>
 <hr>
 
 <table class='table table-striped'>
@@ -45,19 +28,5 @@
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
-    $('#edit-company').click(function() {
-        launchModalForm(
-                        "{% url 'company-edit' company.id %}",
-                        {
-                            reload: true
-                        });
-    });
-
-    $('#delete-company').click(function() {
-        launchModalForm(
-                         "{% url 'company-delete' company.id %}",
-                         {
-                             redirect: "{% url 'company-index' %}"
-                         });
-    });
+   
 {% endblock %}
