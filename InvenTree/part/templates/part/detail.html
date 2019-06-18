@@ -6,7 +6,6 @@
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h4>Part Details</h4>
     </div>
     <div class='col-sm-6'>
         <div class="btn-group" style="float: right;">
@@ -30,10 +29,9 @@
     </div>
 </div>
 
-<hr>
-
 <div class='row'>
     <div class='col-sm-6'>
+        <h4>Part Details</h4>
     <table class='table table-striped'>
         <tr>
             <td><b>Part name</b></td>
@@ -102,37 +100,33 @@
     </table>
     </div>
     <div class='col-sm-6'>
+        <h4>Part Type</h4>
     <table class='table table-striped'>
-        {% if part.assembly %}
         <tr>
-            <td><b>Assembly</b></td>   
+            <td><b>Assembly</b></td>
+            <td>{% include "slide.html" with state=part.assembly %}</td>   
             <td><i>This part can be assembled from other parts</i></td>
         </tr>
-        {% endif %}
-        {% if part.component %}
         <tr>
             <td><b>Component</b></td>
+            <td>{% include "slide.html" with state=part.component %}</td>   
             <td><i>This part can be used in assemblies</i></td>
         </tr>
-        {% endif %}
-        {% if part.trackable %}
         <tr>
             <td><b>Trackable</b></td>
+            <td>{% include "slide.html" with state=part.trackable %}</td>   
             <td><i>Stock for this part will be tracked by (serial or batch)</i></td>
         </tr>
-        {% endif %}
-        {% if part.purchaseable %}
         <tr>
             <td><b>Purchaseable</b></td> 
+            <td>{% include "slide.html" with state=part.purchaseable %}</td>   
             <td><i>This part can be purchased from external suppliers</i></td>
         </tr>
-        {% endif %}
-        {% if part.salable %}
         <tr>
-            <td><b>Salable</b></td>
+            <td><b>Sellable</b></td>
+            <td>{% include "slide.html" with state=part.salable %}</td>
             <td><i>This part can be sold to customers</i></td>
         </tr>
-        {% endif %}
     </table>
     </div>
 </div>

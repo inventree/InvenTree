@@ -1,0 +1,8 @@
+<div>
+    <input type="checkbox" data-toggle="toggle" data-on="" data-off="" {% if state %}checked="checked"{% endif %}>
+    {% if state %}
+    <span class='glyphicon glyphicon-small glyphicon-ok'></span>
+    {% else %}
+    <span class='glyphicon glyphicon-small glyphicon-remove'></span>
+    {% endif %}
+</div>
