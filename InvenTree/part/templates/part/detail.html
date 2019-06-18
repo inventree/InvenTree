@@ -103,29 +103,39 @@
         <h4>Part Type</h4>
     <table class='table table-striped'>
         <tr>
+            <td><b>Template</b></td>
+            <td>{% include "slide.html" with state=part.is_template %}</td>
+            <td><i>Part is used as a template for other parts</i></td>
+        </tr>
+        <tr>
+            <td><b>Virtual</b></td>
+            <td>{% include "slide.html" with state=part.virtual %}</td>
+            <td><i>Part is virtual (not a physical part)</i></td>
+        </tr>
+        <tr>
             <td><b>Assembly</b></td>
             <td>{% include "slide.html" with state=part.assembly %}</td>   
-            <td><i>This part can be assembled from other parts</i></td>
+            <td><i>Part can be assembled from other parts</i></td>
         </tr>
         <tr>
             <td><b>Component</b></td>
             <td>{% include "slide.html" with state=part.component %}</td>   
-            <td><i>This part can be used in assemblies</i></td>
+            <td><i>Part can be used in assemblies</i></td>
         </tr>
         <tr>
             <td><b>Trackable</b></td>
             <td>{% include "slide.html" with state=part.trackable %}</td>   
-            <td><i>Stock for this part will be tracked by (serial or batch)</i></td>
+            <td><i>Part stock will be tracked by (serial or batch)</i></td>
         </tr>
         <tr>
             <td><b>Purchaseable</b></td> 
             <td>{% include "slide.html" with state=part.purchaseable %}</td>   
-            <td><i>This part can be purchased from external suppliers</i></td>
+            <td><i>Part can be purchased from external suppliers</i></td>
         </tr>
         <tr>
             <td><b>Sellable</b></td>
             <td>{% include "slide.html" with state=part.salable %}</td>
-            <td><i>This part can be sold to customers</i></td>
+            <td><i>Part can be sold to customers</i></td>
         </tr>
     </table>
     </div>
