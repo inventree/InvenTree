@@ -9,7 +9,19 @@
     <p>{{ location.description }}</p>
     <p>
         <div class='btn-group'>
+            <button class='btn btn-default btn-glyph' id='location-create' title='Create new stock location'>
+                <span class='glyphicon glyphicon-plus'/>
+            </button>
             {% include "qr_button.html" %}
+            <button class='btn btn-default btn-glyph' id='location-count' title='Count stock items'>
+                <span class='glyphicon glyphicon-ok-circle'/>
+            </button>
+            <button class='btn btn-default btn-glyph' id='location-edit' title='Edit stock location'>
+                <span class='glyphicon glyphicon-cog'/>
+            </button>
+            <button class='btn btn-default btn-glyph' id='location-delete' title='Delete stock location'>
+                <span class='glyphicon glyphicon-trash'/>
+            </button>
         </div>
     </p>
     {% else %}
@@ -18,19 +30,6 @@
     {% endif %}
 </div>
 <div class='col-sm-6'>
-    <h3>
-    <div style='float: right;'>
-    <button class='btn btn-success' id='location-create'>New Stock Location</button>
-    {% if location %}
-    <div class="dropdown" style="float: right;">
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
-        <span class="caret"></span></button>
-        <ul class="dropdown-menu">
-          <li><a href="#" id='location-edit' title='Edit stock location'>Edit</a></li>
-          <li><a href="#" id='location-delete' title='Delete stock location'>Delete</a></li>
-        </ul>
-    </div>
-    {% endif %}
 </div>
 </h3>
 </div>
@@ -90,6 +89,18 @@
                          });
         return false;
     });
+
+    {% if location %}
+    $("#location-count").click(function() {
+        launchModalForm("/stock/adjust/", {
+            data: {
+                action: "count",
+                location: {{ location.id }},
+                reload: true,
+            }
+        });
+    });
+    {% endif %}
 
     $('#show-qr-code').click(function() {
         launchModalForm("{% url 'stock-location-qr' location.id %}",

@@ -23,11 +23,19 @@
 }
 
 .glyphicon-ok {
-    color: #5f5;
+    color: #5C5;
 }
 
 .glyphicon-remove {
-    color: #f55;
+    color: #C55;
+}
+
+.glyphicon-trash {
+    color: #C55;
+}
+
+.glyphicon-plus {
+    color: #5C5;
 }
 
 /* CSS overrides for treeview */
