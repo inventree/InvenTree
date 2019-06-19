@@ -121,11 +121,11 @@ InvenTree | {{ order }}
         {% if order.status == OrderStatus.PENDING %}
         <td>
             <div class='btn-group'>
-                <button class='btn btn-default btn-edit' line='{{ line.id }}' id='edit-line-item-{{ line.id }} title='Edit line item' onclick='editPurchaseOrderLineItem()'>
-                    <span url="{% url 'po-line-item-edit' line.id %}" line='{{ line.id }}' class='glyphicon glyphicon-small glyphicon-edit'></span>
+                <button class='btn btn-default btn-glyph' line='{{ line.id }}' id='edit-line-item-{{ line.id }} title='Edit line item' onclick='editPurchaseOrderLineItem()'>
+                    <span url="{% url 'po-line-item-edit' line.id %}" line='{{ line.id }}' class='glyphicon glyphicon-edit'></span>
                 </button>
-                <button class='btn btn-default btn-remove' line='{{ line.id }}' id='remove-line-item-{{ line.id }' title='Remove line item' type='button' onclick='removePurchaseOrderLineItem()'>
-                    <span url="{% url 'po-line-item-delete' line.id %}" line='{{ line.id }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                <button class='btn btn-default btn-glyph' line='{{ line.id }}' id='remove-line-item-{{ line.id }' title='Remove line item' type='button' onclick='removePurchaseOrderLineItem()'>
+                    <span url="{% url 'po-line-item-delete' line.id %}" line='{{ line.id }}' class='glyphicon glyphicon-remove'></span>
                 </button>
             </div>
         </td>
