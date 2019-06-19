@@ -16,6 +16,9 @@
             <button type='button' class='btn btn-default btn-glyph' id='stock-remove' title='Take from stock'>
                 <span class='glyphicon glyphicon-minus-sign' style='color: #a11;'/>
             </button>
+            <button type='button' class='btn btn-default btn-glyph' id='stock-count' title='Count stock'>
+                <span class='glyphicon glyphicon-ok-circle'/>
+            </button>
             <button type='button' class='btn btn-default btn-glyph' id='stock-move' title='Transfer stock'>
                 <span class='glyphicon glyphicon-transfer' style='color: #11a;'/>
             </button>
@@ -27,7 +30,7 @@
                 <span class='glyphicon glyphicon-cog'/>
             </button>
             <button type='button' class='btn btn-default btn-glyph' id='stock-delete' title='Edit stock item'>
-                <span class='glyphicon glyphicon-trash' style='color: #a11;'/>
+                <span class='glyphicon glyphicon-trash'/>
             </button>
         </div>
     </p>
@@ -124,7 +127,7 @@
 
 
 {% if item.has_tracking_info %}
-
+<hr>
 <div id='table-toolbar'>    
     <h4>Stock Tracking Information</h4>
 </div>
@@ -181,7 +184,7 @@
         itemAdjust("move");
     });
 
-    $("#stock-stocktake").click(function() {
+    $("#stock-count").click(function() {
         itemAdjust('count');
     });
 

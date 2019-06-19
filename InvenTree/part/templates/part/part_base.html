@@ -40,34 +40,41 @@
         </h4>   
         <p><i>{{ part.description }}</i></p>
         <p>
-            <div class='btn-group'>
-                <button type='button' class='btn btn-default btn-glyph' id='toggle-starred' title='Star this part'>
-                    <span id='part-star-icon' class='starred-part glyphicon {% if starred %}glyphicon-star{% else %}glyphicon-star-empty{% endif %}'/>
-                </button>
-                {% if part.is_template == False %}
-                {% include "qr_button.html" %}
-                {% if part.active %}
-                <button type='button' class='btn btn-default btn-glyph' id='price-button' title='Show pricing information'>
-                    <span id='part-price-icon' class='part-price glyphicon glyphicon-usd'/>
-                </button>
-                {% if part.purchaseable %}
-                <button type='button' class='btn btn-default btn-glyph' id='part-order' title='Order part'>
-                    <span id='part-order-icon' class='part-order glyphicon glyphicon-shopping-cart'/>
-                </button>
-                {% endif %}
-                {% endif %}
-                {% endif %}
-                <button type='button' class='btn btn-default btn-glyph' id='part-duplicate' title='Duplicate part'>
-                    <span id='part-duplicate-icon' class='part-duplicate glyphicon glyphicon-duplicate'/>
-                </button>
-                <button type='button' class='btn btn-default btn-glyph' id='part-edit' title='Edit part'>
-                    <span id='part-edit-icon' class='glyphicon glyphicon-cog part-cog'/>
-                </button>
-                {% if not part.active %}
-                <button type='button' class='btn btn-default btn-glyph' id='part-delete' title='Delete part'>
-                    <span id='part-delete-icon' class='glyphicon glyphicon-trash' style='color: #a11;'/>
-                </button>
-                {% endif %}
+            <div class='btn-row'>
+                <div class='btn-group'>
+                    <button type='button' class='btn btn-default btn-glyph' id='toggle-starred' title='Star this part'>
+                        <span id='part-star-icon' class='starred-part glyphicon {% if starred %}glyphicon-star{% else %}glyphicon-star-empty{% endif %}'/>
+                    </button>
+                    {% if part.is_template == False %}
+                    {% include "qr_button.html" %}
+                    {% if part.active %}
+                    <button type='button' class='btn btn-default btn-glyph' id='price-button' title='Show pricing information'>
+                        <span id='part-price-icon' class='part-price glyphicon glyphicon-usd'/>
+                    </button>
+                    {% if not part.virtual %}
+                    <button type='button' class='btn btn-default btn-glyph' id='part-count' title='Count part stock'>
+                        <span class='glyphicon glyphicon-ok-circle'/>
+                    </button>
+                    {% endif %}
+                    {% if part.purchaseable %}
+                    <button type='button' class='btn btn-default btn-glyph' id='part-order' title='Order part'>
+                        <span id='part-order-icon' class='part-order glyphicon glyphicon-shopping-cart'/>
+                    </button>
+                    {% endif %}
+                    {% endif %}
+                    {% endif %}
+                    <button type='button' class='btn btn-default btn-glyph' id='part-duplicate' title='Duplicate part'>
+                        <span id='part-duplicate-icon' class='part-duplicate glyphicon glyphicon-duplicate'/>
+                    </button>
+                    <button type='button' class='btn btn-default btn-glyph' id='part-edit' title='Edit part'>
+                        <span id='part-edit-icon' class='glyphicon glyphicon-edit'/>
+                    </button>
+                    {% if not part.active %}
+                    <button type='button' class='btn btn-default btn-glyph' id='part-delete' title='Delete part'>
+                        <span id='part-delete-icon' class='glyphicon glyphicon-trash'/>
+                    </button>
+                    {% endif %}
+                </div>
             </div>
         </p>
         <table class='table table-condensed'>
@@ -169,6 +176,16 @@
                 no_post: true,
             }
         );
+    });
+
+    $("#part-count").click(function() {
+        launchModalForm("/stock/adjust/", {
+            data: {
+                action: "count",
+                part: {{ part.id }},
+                reload: true,
+            }
+        });
     });
 
     $("#price-button").click(function() {
