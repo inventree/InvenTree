@@ -7,11 +7,16 @@
     {% if location %}
     <h3>{{ location.name }}</h3>
     <p>{{ location.description }}</p>
+    {% else %}
+    <h3>Stock</h3>
+    <p>All stock items</p>
+    {% endif %}
     <p>
         <div class='btn-group'>
             <button class='btn btn-default btn-glyph' id='location-create' title='Create new stock location'>
                 <span class='glyphicon glyphicon-plus'/>
             </button>
+            {% if location %}
             {% include "qr_button.html" %}
             <button class='btn btn-default btn-glyph' id='location-count' title='Count stock items'>
                 <span class='glyphicon glyphicon-ok-circle'/>
@@ -22,12 +27,9 @@
             <button class='btn btn-default btn-glyph' id='location-delete' title='Delete stock location'>
                 <span class='glyphicon glyphicon-trash'/>
             </button>
+            {% endif %}
         </div>
     </p>
-    {% else %}
-    <h3>Stock</h3>
-    <p>All stock items</p>
-    {% endif %}
 </div>
 <div class='col-sm-6'>
 </div>
