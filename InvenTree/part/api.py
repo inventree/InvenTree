@@ -119,6 +119,7 @@ class PartList(generics.ListCreateAPIView):
             'image',
             'name',
             'IPN',
+            'revision',
             'description',
             'keywords',
             'is_template',

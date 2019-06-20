@@ -126,6 +126,11 @@ function loadPartTable(table, url, options={}) {
 
             name += value;
 
+            if (row.revision) {
+                name += ' | ';
+                name += row.revision;
+            }
+
             if (row.is_template) {
                 name = '<i>' + name + '</i>';
             }

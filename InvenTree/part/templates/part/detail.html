@@ -13,12 +13,18 @@
     <table class='table table-striped'>
         <tr>
             <td><b>Part name</b></td>
-            <td>{{ part.full_name }}</td>
+            <td>{{ part.name }}</td>
         </tr>
         {% if part.IPN %}
         <tr>
             <td><b>IPN</b></td>
             <td>{{ part.IPN }}</td>
+        </tr>
+        {% endif %}
+        {% if part.revision %}
+        <tr>
+            <td><b>Revision</b></td>
+            <td>{{ part.revision }}</td>
         </tr>
         {% endif %}
         <tr>

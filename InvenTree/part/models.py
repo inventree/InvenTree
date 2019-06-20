@@ -246,6 +246,9 @@ class Part(models.Model):
         
         elements.append(self.name)
 
+        if self.revision:
+            elements.append(self.revision)
+
         return ' | '.join(elements)
 
     def get_absolute_url(self):
@@ -278,13 +281,15 @@ class Part(models.Model):
         try:
             parts = Part.objects.exclude(id=self.id).filter(
                 name__iexact=self.name,
-                IPN__iexact=self.IPN)
+                IPN__iexact=self.IPN,
+                revision__iexact=self.revision)
 
             if parts.exists():
                 msg = _("Part must be unique for name, IPN and revision")
                 raise ValidationError({
                     "name": msg,
                     "IPN": msg,
+                    "revision": msg,
                 })
         except Part.DoesNotExist:
             pass
@@ -324,6 +329,8 @@ class Part(models.Model):
                                  help_text='Part category')
 
     IPN = models.CharField(max_length=100, blank=True, help_text='Internal Part Number')
+
+    revision = models.CharField(max_length=100, blank=True, help_text='Part revision or version number')
 
     URL = models.URLField(blank=True, help_text='Link to extenal URL')
 
@@ -802,6 +809,14 @@ class Part(models.Model):
                 item.part = self
                 item.pk = None
                 item.save()
+
+        # Copy the fields that aren't available in the duplicate form
+        self.salable = other.salable
+        self.assembly = other.assembly
+        self.component = other.component
+        self.purchaseable = other.purchaseable
+        self.trackable = other.trackable
+        self.virtual = other.virtual
 
         self.save()
 
