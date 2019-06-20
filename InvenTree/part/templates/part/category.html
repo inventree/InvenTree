@@ -4,36 +4,35 @@
 {% block content %}
 
 <div class='row'>
-<div class='col-sm-6'>
-    {% if category %}
-    <h3>{{ category.name }}</h3>
-    <p>{{ category.description }}</p>
-    {% if category.default_location %}
-    <p>Default Location: <a href="{% url 'stock-location-detail' category.default-location.id }%">{{ category.default_location }}</a></p>
-    {% endif %}
-    {% else %}
-    <h3>Part Categories</h3>
-    {% endif %}
-</div>
-<div class='col-sm-6'>
-    <h3>
-    <div style='float: right;'>
-    <button class='btn btn-success' id='cat-create'>New Category</button>
-    {% if category %}
-    <div class="dropdown" style="float: right;">
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-            Options
-            <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <li><a href="#" id='cat-edit' title='Edit part category'>Edit</a></li>
-          <li><a href="#" id='cat-delete' title='Delete part category'>Delete</a></li>
-        </ul>
+    <div class='col-sm-6'>
+        {% if category %}
+        <h3>{{ category.name }}</h3>
+        <p>{{ category.description }}</p>
+        {% if category.default_location %}
+        <p>Default Location: <a href="{% url 'stock-location-detail' category.default-location.id }%">{{ category.default_location }}</a></p>
+        {% endif %}
+        {% else %}
+        <h3>Part Categories</h3>
+        <p>All parts</p>
+        {% endif %}
+        <p>
+            <div class='btn-group'>
+                <button class='btn btn-default btn-glyph' id='cat-create' title='Create new part category'>
+                    <span class='glyphicon glyphicon-plus'/>
+                </button>
+                {% if category %}
+                <button class='btn btn-default btn-glyph' id='cat-edit' title='Edit part category'>
+                    <span class='glyphicon glyphicon-cog'/>
+                </button>
+                <button class='btn btn-default btn-glyph' id='cat-delete' title='Delete part category'>
+                    <span class='glyphicon glyphicon-trash'/>
+                </button>
+                {% endif %}
+            </div>
+        </p>
     </div>
-    {% endif %}
+    <div class='col-sm-6'>
     </div>
-    </h3>
-</div>
 </div>
 
 {% if category and category.children.all|length > 0 %}
