@@ -189,8 +189,8 @@ function loadBomTable(table, options) {
     if (options.editable) {
         cols.push({
             formatter: function(value, row, index, field) {
-                var bEdit = "<button title='Edit BOM Item' class='btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='glyphicon glyphicon-edit'/></button>";
-                var bDelt = "<button title='Delete BOM Item' class='btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='glyphicon glyphicon-trash'/></button>";
+                var bEdit = "<button title='Edit BOM Item' class='bom-edit-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='glyphicon glyphicon-edit'/></button>";
+                var bDelt = "<button title='Delete BOM Item' class='bom-delete-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='glyphicon glyphicon-trash'/></button>";
                 
                 return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
             }

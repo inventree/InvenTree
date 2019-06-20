@@ -26,12 +26,12 @@ InvenTree | Company - {{ company.name }}
               <p>{{ company.description }}</p>
               <div class='btn-group'>
                   {% if company.is_supplier %}
-                  <button type='button' class='btn btn-default btn-glyph' id='company-order' title='Create purchase order'>
+                  <button type='button' class='btn btn-default btn-glyph' id='company-order-2' title='Create purchase order'>
                       <span class='glyphicon glyphicon-shopping-cart'/>
                   </button>
                   {% endif %}
                   <button type='button' class='btn btn-default btn-glyph' id='company-edit' title='Edit company information'>
-                      <span class='glyphicon glyphicon-cog'/>
+                      <span class='glyphicon glyphicon-edit'/>
                   </button>
                   <button type='button' class='btn btn-default btn-glyph' id='company-delete' title='Delete company'>
                       <span class='glyphicon glyphicon-trash'/>
@@ -97,6 +97,17 @@ InvenTree | Company - {{ company.name }}
                             reload: true
                         });
     });
+
+    $("#company-order-2").click(function() {
+        launchModalForm("{% url 'purchase-order-create' %}",
+        {
+            data: {
+                supplier: {{ company.id }},
+            },
+            follow: true,
+        });
+    });
+
 
     $('#company-delete').click(function() {
         launchModalForm(
