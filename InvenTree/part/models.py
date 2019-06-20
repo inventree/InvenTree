@@ -203,6 +203,7 @@ class Part(models.Model):
         description: Longer form description of the part
         keywords: Optional keywords for improving part search results
         IPN: Internal part number (optional)
+        revision: Part revision
         is_template: If True, this part is a 'template' part and cannot be instantiated as a StockItem
         URL: Link to an external page with more information about this part (e.g. internal Wiki)
         image: Image of this part
@@ -260,13 +261,30 @@ class Part(models.Model):
             return static('/img/blank_image.png')
 
     def validate_unique(self, exclude=None):
+        """ Validate that a part is 'unique'.
+        Uniqueness is checked across the following (case insensitive) fields:
+
+        * Name
+        * IPN
+        * Revision
+
+        e.g. there can exist multiple parts with the same name, but only if
+        they have a different revision or internal part number.
+
+        """
         super().validate_unique(exclude)
 
         # Part name uniqueness should be case insensitive
         try:
-            if Part.objects.filter(name__iexact=self.name).exclude(id=self.id).exists():
+            parts = Part.objects.exclude(id=self.id).filter(
+                name__iexact=self.name,
+                IPN__iexact=self.IPN)
+
+            if parts.exists():
+                msg = _("Part must be unique for name, IPN and revision")
                 raise ValidationError({
-                    "name": _("A part with this name already exists")
+                    "name": msg,
+                    "IPN": msg,
                 })
         except Part.DoesNotExist:
             pass
@@ -280,8 +298,8 @@ class Part(models.Model):
                 'variant_of': _("Part cannot be a variant of another part if it is already a template"),
             })
 
-    name = models.CharField(max_length=100, blank=False, unique=True,
-                            help_text='Part name (must be unique)',
+    name = models.CharField(max_length=100, blank=False,
+                            help_text='Part name',
                             validators=[validators.validate_part_name]
                             )
 
