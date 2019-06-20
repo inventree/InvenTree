@@ -203,6 +203,7 @@ class Part(models.Model):
         description: Longer form description of the part
         keywords: Optional keywords for improving part search results
         IPN: Internal part number (optional)
+        revision: Part revision
         is_template: If True, this part is a 'template' part and cannot be instantiated as a StockItem
         URL: Link to an external page with more information about this part (e.g. internal Wiki)
         image: Image of this part
@@ -245,6 +246,9 @@ class Part(models.Model):
         
         elements.append(self.name)
 
+        if self.revision:
+            elements.append(self.revision)
+
         return ' | '.join(elements)
 
     def get_absolute_url(self):
@@ -260,13 +264,32 @@ class Part(models.Model):
             return static('/img/blank_image.png')
 
     def validate_unique(self, exclude=None):
+        """ Validate that a part is 'unique'.
+        Uniqueness is checked across the following (case insensitive) fields:
+
+        * Name
+        * IPN
+        * Revision
+
+        e.g. there can exist multiple parts with the same name, but only if
+        they have a different revision or internal part number.
+
+        """
         super().validate_unique(exclude)
 
         # Part name uniqueness should be case insensitive
         try:
-            if Part.objects.filter(name__iexact=self.name).exclude(id=self.id).exists():
+            parts = Part.objects.exclude(id=self.id).filter(
+                name__iexact=self.name,
+                IPN__iexact=self.IPN,
+                revision__iexact=self.revision)
+
+            if parts.exists():
+                msg = _("Part must be unique for name, IPN and revision")
                 raise ValidationError({
-                    "name": _("A part with this name already exists")
+                    "name": msg,
+                    "IPN": msg,
+                    "revision": msg,
                 })
         except Part.DoesNotExist:
             pass
@@ -280,8 +303,8 @@ class Part(models.Model):
                 'variant_of': _("Part cannot be a variant of another part if it is already a template"),
             })
 
-    name = models.CharField(max_length=100, blank=False, unique=True,
-                            help_text='Part name (must be unique)',
+    name = models.CharField(max_length=100, blank=False,
+                            help_text='Part name',
                             validators=[validators.validate_part_name]
                             )
 
@@ -306,6 +329,8 @@ class Part(models.Model):
                                  help_text='Part category')
 
     IPN = models.CharField(max_length=100, blank=True, help_text='Internal Part Number')
+
+    revision = models.CharField(max_length=100, blank=True, help_text='Part revision or version number')
 
     URL = models.URLField(blank=True, help_text='Link to extenal URL')
 
@@ -784,6 +809,14 @@ class Part(models.Model):
                 item.part = self
                 item.pk = None
                 item.save()
+
+        # Copy the fields that aren't available in the duplicate form
+        self.salable = other.salable
+        self.assembly = other.assembly
+        self.component = other.component
+        self.purchaseable = other.purchaseable
+        self.trackable = other.trackable
+        self.virtual = other.virtual
 
         self.save()
 
