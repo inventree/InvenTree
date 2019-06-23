@@ -65,14 +65,15 @@ INSTALLED_APPS = [
     'order.apps.OrderConfig',
 
     # Third part add-ons
-    'django_filters',       # Extended filter functionality
-    'dbbackup',             # Database backup / restore
-    'rest_framework',       # DRF (Django Rest Framework)
-    'corsheaders',          # Cross-origin Resource Sharing for DRF
-    'crispy_forms',         # Improved form rendering
-    'import_export',        # Import / export tables to file
-    'django_cleanup',       # Automatically delete orphaned MEDIA files
-    'qr_code',              # Generate QR codes
+    'django_filters',           # Extended filter functionality
+    'dbbackup',                 # Database backup / restore
+    'rest_framework',           # DRF (Django Rest Framework)
+    'rest_framework.authtoken', # Token authentication for API
+    'corsheaders',              # Cross-origin Resource Sharing for DRF
+    'crispy_forms',             # Improved form rendering
+    'import_export',            # Import / export tables to file
+    'django_cleanup',           # Automatically delete orphaned MEDIA files
+    'qr_code',                  # Generate QR codes
 ]
 
 LOGGING = {
@@ -131,6 +132,11 @@ TEMPLATES = [
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    )
     # 'EXCEPTION_HANDLER': 'InvenTree.utils.api_exception_handler',
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 50,
