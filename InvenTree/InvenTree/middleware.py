@@ -20,10 +20,9 @@ class AuthRequiredMiddleware(object):
 
         response = self.get_response(request)
 
+        # Redirect any unauthorized HTTP requests to the login page
         if not request.user.is_authenticated:
-            print(request.path_info)
-
-            if not request.path_info == reverse_lazy('login'):
+            if not request.path_info == reverse_lazy('login') and not request.path_info.startswith('/api/'):
                 return HttpResponseRedirect(reverse_lazy('login'))
 
         # Code to be executed for each request/response after
