@@ -336,7 +336,7 @@ part_api_urls = [
     url(r'^category/', include(cat_api_urls)),
     url(r'^star/', include(part_star_api_urls)),
 
-    url(r'^(?P<pk>\d+)/', PartDetail.as_view(), name='api-part-detail'),
+    url(r'^(?P<pk>\d+)/?', PartDetail.as_view(), name='api-part-detail'),
 
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]
@@ -344,7 +344,7 @@ part_api_urls = [
 
 bom_api_urls = [
     # BOM Item Detail
-    url('^(?P<pk>\d+)/', BomDetail.as_view(), name='api-bom-detail'),
+    url(r'^(?P<pk>\d+)/?', BomDetail.as_view(), name='api-bom-detail'),
 
     # Catch-all
     url(r'^.*$', BomList.as_view(), name='api-bom-list'),
