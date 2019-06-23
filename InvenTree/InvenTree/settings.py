@@ -65,15 +65,15 @@ INSTALLED_APPS = [
     'order.apps.OrderConfig',
 
     # Third part add-ons
-    'django_filters',           # Extended filter functionality
-    'dbbackup',                 # Database backup / restore
-    'rest_framework',           # DRF (Django Rest Framework)
-    'rest_framework.authtoken', # Token authentication for API
-    'corsheaders',              # Cross-origin Resource Sharing for DRF
-    'crispy_forms',             # Improved form rendering
-    'import_export',            # Import / export tables to file
-    'django_cleanup',           # Automatically delete orphaned MEDIA files
-    'qr_code',                  # Generate QR codes
+    'django_filters',               # Extended filter functionality
+    'dbbackup',                     # Database backup / restore
+    'rest_framework',               # DRF (Django Rest Framework)
+    'rest_framework.authtoken',     # Token authentication for API
+    'corsheaders',                  # Cross-origin Resource Sharing for DRF
+    'crispy_forms',                 # Improved form rendering
+    'import_export',                # Import / export tables to file
+    'django_cleanup',               # Automatically delete orphaned MEDIA files
+    'qr_code',                      # Generate QR codes
 ]
 
 LOGGING = {
