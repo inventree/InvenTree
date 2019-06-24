@@ -31,6 +31,7 @@ from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
 
 from .views import IndexView, SearchView, SettingsView, EditUserView, SetPasswordView
+from .views import InfoView
 
 from users.urls import user_urls
 
@@ -45,6 +46,9 @@ apipatterns = [
 
     # User URLs
     url(r'^user/', include(user_urls)),
+
+    # InvenTree information endpoint
+    url(r'^$', InfoView.as_view(), name='inventree-info'),
 ]
 
 urlpatterns = [
