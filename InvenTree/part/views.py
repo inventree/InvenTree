@@ -194,8 +194,7 @@ class PartSetCategory(AjaxView):
         ctx['category'] = self.category
 
         return ctx
-
-
+        
 
 class MakePartVariant(AjaxCreateView):
     """ View for creating a new variant based on an existing template Part
