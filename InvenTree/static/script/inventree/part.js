@@ -224,4 +224,21 @@ function loadPartTable(table, url, options={}) {
             },
         });
     });
+
+    $("#multi-part-category").click(function() {
+        var selections = $(table).bootstrapTable("getSelections");
+
+        var parts = [];
+
+        selections.forEach(function(item) {
+            parts.push(item.pk);
+        });
+
+        launchModalForm("/part/set-category/", {
+            data: {
+                parts: parts,
+            },
+            reload: true,
+        });
+    });
 }
