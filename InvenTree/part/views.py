@@ -6,7 +6,7 @@ Django views for interacting with Part app
 from __future__ import unicode_literals
 
 from django.shortcuts import get_object_or_404
-
+from django.utils.translation import gettext_lazy as _
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
@@ -124,6 +124,77 @@ class PartAttachmentDelete(AjaxDeleteView):
             'danger': 'Deleted part attachment'
         }
 
+
+class PartSetCategory(AjaxView):
+    """ View for settings the part category for multiple parts at once """
+
+    ajax_template_name = 'part/set_category.html'
+    ajax_form_title = 'Set Part Category'
+
+    category = None
+    parts = []
+    
+    def get(self, request, *args, **kwargs):
+        """ Respond to a GET request to this view """
+
+        self.request = request
+
+        if 'parts[]' in request.GET:
+            self.parts = Part.objects.filter(id__in=request.GET.getlist('parts[]'))
+        else:
+            self.parts = []
+
+        return self.renderJsonResponse(request, context=self.get_context_data())
+
+    def post(self, request, *args, **kwargs):
+        """ Respond to a POST request to this view """
+
+        self.parts = []
+
+        for item in request.POST:
+            if item.startswith('part_id_'):
+                pk = item.replace('part_id_', '')
+
+                try:
+                    part = Part.objects.get(pk=pk)
+                except (Part.DoesNotExist, ValueError):
+                    continue
+
+                self.parts.append(part)
+
+        self.category = None
+
+        if 'part_category' in request.POST:
+            pk = request.POST['part_category']
+
+            try:
+                self.category = PartCategory.objects.get(pk=pk)
+            except (PartCategory.DoesNotExist, ValueError):
+                self.category = None
+
+        valid = self.category is not None
+
+        data = {
+            'form_valid': valid,
+            'success': _('Set category for {n} parts'.format(n=len(self.parts)))
+        }
+
+        if valid:
+            for part in self.parts:
+                part.set_category(self.category)
+
+        return self.renderJsonResponse(request, data=data, context=self.get_context_data())
+
+    def get_context_data(self):
+        """ Return context data for rendering in the form """
+        ctx = {}
+
+        ctx['parts'] = self.parts
+        ctx['categories'] = PartCategory.objects.all()
+        ctx['category'] = self.category
+
+        return ctx
+        
 
 class MakePartVariant(AjaxCreateView):
     """ View for creating a new variant based on an existing template Part

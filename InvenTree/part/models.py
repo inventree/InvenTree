@@ -251,6 +251,23 @@ class Part(models.Model):
 
         return ' | '.join(elements)
 
+    def set_category(self, category):
+
+        if not type(category) == PartCategory:
+            raise ValidationError({
+                'category': _('Invalid object supplied to part.set_category')
+            })
+
+        try:
+            # Already in this category!
+            if category == self.category:
+                return
+        except PartCategory.DoesNotExist:
+            pass
+
+        self.category = category
+        self.save()
+
     def get_absolute_url(self):
         """ Return the web URL for viewing this part """
         return reverse('part-detail', kwargs={'pk': self.id})

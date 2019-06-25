@@ -195,6 +195,18 @@ function modalSubmit(modal, callback) {
 }
 
 
+function removeRowFromModalForm(e) {
+    /* Remove a row from a table in a modal form */
+    e = e || window.event;
+
+    var src = e.target || e.srcElement;
+
+    var row = $(src).attr('row');
+
+    $('#' + row).remove();
+}
+
+
 function renderErrorMessage(xhr) {
     
     var html = '<b>' + xhr.statusText + '</b><br>';

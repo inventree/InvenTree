@@ -82,6 +82,9 @@ part_urls = [
     # Part attachments
     url(r'^attachment/', include(part_attachment_urls)),
 
+    # Change category for multiple parts
+    url(r'^set-category/?', views.PartSetCategory.as_view(), name='part-set-category'),
+
     # Bom Items
     url(r'^bom/(?P<pk>\d+)/', include(part_bom_urls)),
 

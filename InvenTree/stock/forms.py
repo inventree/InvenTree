@@ -66,7 +66,7 @@ class AdjustStockForm(forms.ModelForm):
     destination = forms.ChoiceField(label='Destination', required=True, help_text='Destination stock location')
     note = forms.CharField(label='Notes', required=True, help_text='Add note (required)')
     # transaction = forms.BooleanField(required=False, initial=False, label='Create Transaction', help_text='Create a stock transaction for these parts')
-    confirm = forms.BooleanField(required=False, initial=False, label='Confirm Stock Movement', help_text='Confirm movement of stock items')
+    confirm = forms.BooleanField(required=False, initial=False, label='Confirm stock adjustment', help_text='Confirm movement of stock items')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
