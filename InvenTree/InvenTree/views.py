@@ -19,6 +19,7 @@ from part.models import Part
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .helpers import str2bool
+from .version import inventreeVersion
 
 from rest_framework import views
 
@@ -390,6 +391,21 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
         }
 
         return self.renderJsonResponse(request, form, data=data, context=context)
+
+
+class InfoView(AjaxView):
+    """ Simple JSON endpoint for InvenTree information.
+    Use to confirm that the server is running, etc.
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        data = {
+            'server': 'InvenTree',
+            'version': inventreeVersion()
+        }
+
+        return JsonResponse(data)
 
 
 class EditUserView(AjaxUpdateView):
