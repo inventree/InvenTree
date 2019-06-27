@@ -291,6 +291,7 @@ class StockList(generics.ListCreateAPIView):
             'part',
             'part__IPN',
             'part__name',
+            'part__revision',
             'part__description',
             'part__image',
             'part__category',
