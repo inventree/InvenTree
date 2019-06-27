@@ -54,9 +54,9 @@ class BomUploadManager:
 
     # Fields which are not necessary but can be populated
     USEFUL_HEADERS = [
-        'REFERENCE',
-        'OVERAGE',
-        'NOTES'
+        'Reference',
+        'Overage',
+        'Notes'
     ]
 
     def __init__(self, bom_file, starting_row=2):
@@ -79,14 +79,60 @@ class BomUploadManager:
             raise ValidationError({'bom_file': _('Unsupported file format: {f}'.format(f=ext))})
 
         try:
-            bom_data = tablib.Dataset().load(raw_data)
+            self.data = tablib.Dataset().load(raw_data)
         except tablib.UnsupportedFormat:
             raise ValidationError({'bom_file': _('Error reading BOM file (invalid data)')})
 
         # Now we have BOM data in memory!
 
-        headers = [h.lower() for h in bom_data.headers]
+        self.header_map = {}
 
         for header in self.REQUIRED_HEADERS:
-            if not header.lower() in headers:
+            match = self.get_header(header)
+            if match is None:
                 raise ValidationError({'bom_file': _("Missing required field '{f}'".format(f=header))})
+            else:
+                self.header_map[header] = match
+
+        for header in self.USEFUL_HEADERS:
+            match = self.get_header(header)
+
+            self.header_map[header] = match
+
+        for k,v in self.header_map.items():
+            print(k, '->', v)
+
+    def get_header(self, header_name, threshold=80):
+        """ Retrieve a matching column header from the uploaded file.
+        If there is not an exact match, try to match one that is close.
+        """
+
+        headers = self.data.headers
+
+        # First, try for an exact match
+        for header in headers:
+            if header == header_name:
+                return header
+
+        # Next, try for a case-insensitive match
+        for header in headers:
+            if header.lower() == header_name.lower():
+                return header
+
+        # Finally, look for a close match using fuzzy matching
+
+        matches = []
+
+        for header in headers:
+
+            ratio = fuzz.partial_ratio(header, header_name)
+            if ratio > threshold:
+                matches.append({'header': header, 'match': ratio})
+
+        if len(matches) > 0:
+            matches = sorted(matches, key=lambda item: item['match'], reverse=True)
+
+            # Return the field with the best match
+            return matches[0]['header']
+
+        return None
