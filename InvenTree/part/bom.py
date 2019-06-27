@@ -162,7 +162,10 @@ class BomUploadManager:
         if self.data is None:
             return 0
 
-        return len(self.data) - self.starting_row
+        # Limit the number of BOM lines to be sensible
+        count = min(len(self.data) - self.starting_row, 1000)
+
+        return count
 
     def get_row(self, index):
         """ Retrieve a dict object representing the data row at a particular offset """
