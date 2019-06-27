@@ -63,33 +63,39 @@ function loadBomTable(table, options) {
         }
     );
 
+    // Part reference
+    cols.push({
+        field: 'reference',
+        title: 'Reference',
+        searchable: true,
+        sortable: true,
+    });
+
     // Part quantity
-    cols.push(
-        {
-            field: 'quantity',
-            title: 'Required',
-            searchable: false,
-            sortable: true,
-            formatter: function(value, row, index, field) {
-                var text = value;
+    cols.push({
+        field: 'quantity',
+        title: 'Quantity',
+        searchable: false,
+        sortable: true,
+        formatter: function(value, row, index, field) {
+            var text = value;
 
-                if (row.overage) {
-                    text += "<small> (+" + row.overage + ")    </small>";
-                }
+            if (row.overage) {
+                text += "<small> (+" + row.overage + ")    </small>";
+            }
 
-                return text;
-            },
-            footerFormatter: function(data) {
-                var quantity = 0;
+            return text;
+        },
+        footerFormatter: function(data) {
+            var quantity = 0;
 
-                data.forEach(function(item) {
-                    quantity += item.quantity;
-                });
+            data.forEach(function(item) {
+                quantity += item.quantity;
+            });
 
-                return quantity;
-            },
-        }
-    );
+            return quantity;
+        },
+    });
 
     if (!options.editable) {
         cols.push(

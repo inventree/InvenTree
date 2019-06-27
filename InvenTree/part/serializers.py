@@ -166,6 +166,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'sub_part',
             'sub_part_detail',
             'quantity',
+            'reference',
             'price_range',
             'overage',
             'note',
