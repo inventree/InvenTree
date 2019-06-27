@@ -646,6 +646,8 @@ class BomUpload(AjaxView):
     During these steps, data are passed between the server/client as JSON objects.
     """
 
+    ajax_form_title = 'Upload Bill of Materials'
+
     def get_form(self):
         """ Return the correct form for the given step in the upload process """
 
