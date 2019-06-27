@@ -843,15 +843,19 @@ class Part(models.Model):
             'Part',
             'Description',
             'Quantity',
+            'Overage',
+            'Reference',
             'Note',
         ])
 
-        for it in self.bom_items.all():
+        for it in self.bom_items.all().order_by('id'):
             line = []
 
             line.append(it.sub_part.full_name)
             line.append(it.sub_part.description)
             line.append(it.quantity)
+            line.append(it.overage)
+            line.append(it.reference)
             line.append(it.note)
 
             data.append(line)
@@ -969,6 +973,7 @@ class BomItem(models.Model):
         part: Link to the parent part (the part that will be produced)
         sub_part: Link to the child part (the part that will be consumed)
         quantity: Number of 'sub_parts' consumed to produce one 'part'
+        reference: BOM reference field (e.g. part designators)
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
     """
@@ -1001,8 +1006,10 @@ class BomItem(models.Model):
                                help_text='Estimated build wastage quantity (absolute or percentage)'
                                )
 
+    reference = models.CharField(max_length=500, blank=True, help_text='BOM item reference')
+
     # Note attached to this BOM line item
-    note = models.CharField(max_length=100, blank=True, help_text='BOM item notes')
+    note = models.CharField(max_length=500, blank=True, help_text='BOM item notes')
 
     def clean(self):
         """ Check validity of the BomItem model.
