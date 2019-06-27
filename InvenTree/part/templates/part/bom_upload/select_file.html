@@ -2,9 +2,13 @@
 
 {% block pre_form_content %}
 
+<h4>Step 1 of 3 - Select BOM File</h4>
+
 {{ block.super }}
 
-<p>Select a BOM file to upload for <b>{{ part.name }} - <i>{{ part.description }}</i></b>.</p>
+<p>Select a BOM file to upload for:<br>
+    <b>{{ part.name }} - <i>{{ part.description }}</i></b>
+</p>
 
 <p>The BOM file must contain the required named columns as provided in the <a href="/part/bom_template/">BOM Upload Template</a></a></p>
 
@@ -14,4 +18,8 @@
     <li>Maximum of 1000 lines per BOM</li>
 </ul>
 
+{% endblock %}
+
+{% block form_data %}
+    <input type='hidden' name='form_step' value='select_file'/>
 {% endblock %}

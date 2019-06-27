@@ -39,25 +39,29 @@ class BomValidateForm(HelperForm):
         ]
 
 
-class BomImportForm(HelperForm):
+class BomUploadSelectFile(HelperForm):
     """ Form for importing a BOM. Provides a file input box for upload """
 
     bom_file = forms.FileField(label='BOM file', required=True, help_text="Select BOM file to upload")
-
-    starting_row = forms.IntegerField(
-        required=True,
-        initial=2,
-        help_text='First row containing valid BOM data',
-        validators=[
-            MinValueValidator(1)
-        ]
-    )
 
     class Meta:
         model = Part
         fields = [
             'bom_file',
+        ]
+
+
+class BomUploadSelectFields(HelperForm):
+    """ Form for selecting BOM fields """
+
+    starting_row = forms.IntegerField(required=True, initial=2, help_text='Index of starting row', validators=[MinValueValidator(1)])
+    row_count = forms.IntegerField(required=True, help_text='Number of rows to process', validators=[MinValueValidator(0)])
+
+    class Meta:
+        model = Part
+        fields = [
             'starting_row',
+            'row_count',
         ]
 
 

@@ -650,8 +650,17 @@ class BomUpload(AjaxView, FormMixin):
     """
 
     ajax_form_title = 'Upload Bill of Materials'
-    ajax_template_name = 'part/bom_upload.html'
-    form_class = part_forms.BomImportForm
+    ajax_template_name = 'part/bom_upload/select_file.html'
+
+    def get_form_class(self):
+
+        form_step = self.request.POST.get('form_step', None)
+
+        if form_step == 'select_fields':
+            return part_forms.BomUploadSelectFields
+        else:
+            # Default form is the starting point
+            return part_forms.BomUploadSelectFile
 
     def get_context_data(self):
         ctx  = {
@@ -674,24 +683,54 @@ class BomUpload(AjaxView, FormMixin):
 
         return self.renderJsonResponse(request, self.form)
 
-    def handleBomFileUpload(self, bom_file):
-        
+    def handleBomFileUpload(self):
+
+        bom_file = self.request.FILES.get('bom_file', None)
+
+        manager = None
+        bom_file_valid = False
+
+        if bom_file is None:
+            self.form.errors['bom_file'] = [_('No BOM file provided')]
+        else:
+            # Create a BomUploadManager object - will perform initial data validation
+            # (and raise a ValidationError if there is something wrong with the file)
+            try:
+                manager = BomUploadManager(bom_file)
+                bom_file_valid = True
+            except ValidationError as e:
+                errors = e.error_dict
+
+                for k,v in errors.items():
+                    self.form.errors[k] = v
+
         data = {
-            # TODO - Validate the form if there isn't actually an error!
             'form_valid': False
         }
 
-        # Create a BomUploadManager object - will perform initial data validation
-        # (and raise a ValidationError if there is something wrong with the file)
-        try:
-            manager = BomUploadManager(bom_file, self.form['starting_row'].value())
-        except ValidationError as e:
-            errors = e.error_dict
+        ctx = {}
 
-            for k,v in errors.items():
-                self.form.errors[k] = v
+        if bom_file_valid:
+            # BOM file is valid? Proceed to the next step!
+            form = part_forms.BomUploadSelectFields
+            self.ajax_template_name = 'part/bom_upload/select_fields.html'
+            ctx['bom'] = manager
+        else:
+            form = self.form
 
-        return self.renderJsonResponse(self.request, self.form, data=data)
+        return self.renderJsonResponse(self.request, form, data=data, context=ctx)
+
+    def handleFieldSelection(self):
+
+        data = {
+            'form_valid': False,
+        }
+
+        self.ajax_template_name = 'part/bom_upload/select_fields.html'
+
+        ctx = {}
+
+        return self.renderJsonResponse(self.request, form=self.get_form(), data=data, context=ctx)
 
     def post(self, request, *args, **kwargs):
         """ Perform the various 'POST' requests required.
@@ -703,10 +742,14 @@ class BomUpload(AjaxView, FormMixin):
         self.form = self.get_form()
 
         # Did the user POST a file named bom_file?
-        bom_file = request.FILES.get('bom_file', None)
+        
 
-        if bom_file:
-            return self.handleBomFileUpload(bom_file)
+        form_step = request.POST.get('form_step', None)
+
+        if form_step == 'select_file':
+            return self.handleBomFileUpload()
+        elif form_step == 'select_fields':
+            return self.handleFieldSelection()
 
         data = {
             'form_valid': False,

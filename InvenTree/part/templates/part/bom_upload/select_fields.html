@@ -1,0 +1,38 @@
+{% extends "modal_form.html" %}
+{% load inventree_extras %}
+
+{% block form %}
+
+<h4>Step 2 of 3 - Select BOM Fields</h4>
+
+<form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+
+    {% crispy form %}
+
+    <input type='hidden' name='form_step' value='select_fields'/>
+
+    <table class='table table-striped'>
+        <thead>
+            <tr>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in bom.rows %}
+            <tr>
+                {% for item in row %}
+                <td>
+                    {{ item }}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</form>
+
+<b>BOM Rows: {{ bom.row_count }}</b>
+
+{% endblock %}

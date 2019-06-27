@@ -59,15 +59,8 @@ class BomUploadManager:
         'Notes'
     ]
 
-    def __init__(self, bom_file, starting_row=2):
+    def __init__(self, bom_file):
         """ Initialize the BomUpload class with a user-uploaded file object """
-        try:
-            start = int(starting_row) - 1
-            if start < 0:
-                start = 0
-            self.starting_row = start
-        except ValueError:
-            self.starting_row = 1
         
         self.process(bom_file)
 
@@ -154,6 +147,20 @@ class BomUploadManager:
 
         return None
 
+    
+    def get_headers(self):
+        """ Return a list of headers for the thingy """
+        headers = []
+
+        return headers
+        
+
+    def col_count(self):
+        if self.data is None:
+            return 0
+
+        return len(self.data.headers)
+
     def row_count(self):
         """ Return the number of rows in the file.
         Ignored the top rows as indicated by 'starting row'
@@ -162,15 +169,29 @@ class BomUploadManager:
         if self.data is None:
             return 0
 
-        # Limit the number of BOM lines to be sensible
-        count = min(len(self.data) - self.starting_row, 1000)
+        return len(self.data)
 
-        return count
+    def rows(self):
+        """ Return a list of all rows """
+        rows = []
 
-    def get_row(self, index):
+        for i in range(self.row_count()):
+            row = self.get_row_data(i)
+
+            if row:
+                rows.append(row)
+
+        return rows
+
+    def get_row_data(self, index):
+        """ Retrieve row data at a particular index """
+        if self.data is None or index >= len(self.data):
+            return None
+
+        return self.data[index]
+
+    def get_row_dict(self, index):
         """ Retrieve a dict object representing the data row at a particular offset """
-
-        index += self.starting_row
 
         if self.data is None or index >= len(self.data):
             return None

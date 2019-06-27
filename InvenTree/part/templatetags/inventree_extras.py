@@ -9,6 +9,11 @@ register = template.Library()
 
 
 @register.simple_tag()
+def inrange(n, *args, **kwargs):
+    """ Return range(n) for iterating through a numeric quantity """
+    return range(n)
+
+@register.simple_tag()
 def multiply(x, y, *args, **kwargs):
     """ Multiply two numbers together """
     return x * y
