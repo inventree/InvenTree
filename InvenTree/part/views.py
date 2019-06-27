@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 import tablib
 import os
 
+from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse_lazy
@@ -23,11 +24,12 @@ from .models import match_part_names
 from company.models import SupplierPart
 
 from . import forms as part_forms
+from .bom import  MakeBomTemplate, BomUploadManager
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
 
-from InvenTree.helpers import DownloadFile, str2bool, MakeBomTemplate
+from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.status_codes import OrderStatus
 
 
@@ -679,35 +681,15 @@ class BomUpload(AjaxView, FormMixin):
             'form_valid': False
         }
 
-        # Extract the file format data
-        ext = os.path.splitext(bom_file.name)[-1].lower()
-
-        if ext in ['.csv', '.tsv', ]:
-            # These file formats need string decoding
-            raw_data = bom_file.read().decode('utf-8')
-        elif ext in ['.xls', '.xlsx']:
-            raw_data = bom_file.read()
-        else:
-            self.form.errors['bom_file'] = ['Unsupported file format: ' + ext]
-            return self.renderJsonResponse(self.request, self.form, data)
-
-        # Now try to read the data
+        # Create a BomUploadManager object - will perform initial data validation
+        # (and raise a ValidationError if there is something wrong with the file)
         try:
-            bom_data = tablib.Dataset().load(raw_data)
+            manager = BomUploadManager(bom_file, self.form['starting_row'].value())
+        except ValidationError as e:
+            errors = e.error_dict
 
-            headers = [h.lower() for h in bom_data.headers]
-
-            # Minimal set of required fields
-            for header in ['part', 'quantity', 'reference']:
-                if not header in headers:
-                    self.form.errors['bom_file'] = [_("Missing required field '{f}'".format(f=header))]
-                    break
-
-        except tablib.UnsupportedFormat:
-            valid = False
-            self.form.errors['bom_file'] = [
-                "Error reading '{f}' (Unsupported file format)".format(f=str(bom_file)),
-            ]
+            for k,v in errors.items():
+                self.form.errors[k] = v
 
         return self.renderJsonResponse(self.request, self.form, data=data)
 

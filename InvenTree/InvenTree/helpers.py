@@ -92,33 +92,6 @@ def MakeBarcode(object_type, object_id, object_url, data={}):
     return json.dumps(data, sort_keys=True)
 
 
-def IsValidSpreadsheetFormat(fmt):
-    """ Test if a file format specifier is in the valid list of spreadsheet file formats """
-
-    return fmt.lower() in ['csv', 'xls', 'xlsx', 'tsv']
-
-
-def MakeBomTemplate(fmt):
-    """ Generate a Bill of Materials upload template file (for user download) """
-
-    if not IsValidSpreadsheetFormat(fmt):
-        fmt = 'csv'
-
-    fields = [
-        'Part',
-        'Quantity',
-        'Overage',
-        'Reference',
-        'Notes'
-    ]
-
-    data = tablib.Dataset(headers=fields).export(fmt)
-
-    filename = 'InvenTree_BOM_Template.' + fmt
-
-    return DownloadFile(data, filename)
-
-
 def DownloadFile(data, filename, content_type='application/text'):
     """ Create a dynamic file for the user to download.
     
