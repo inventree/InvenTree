@@ -44,10 +44,20 @@ class BomImportForm(HelperForm):
 
     bom_file = forms.FileField(label='BOM file', required=True, help_text="Select BOM file to upload")
 
+    starting_row = forms.IntegerField(
+        required=True,
+        initial=2,
+        help_text='First row containing valid BOM data',
+        validators=[
+            MinValueValidator(1)
+        ]
+    )
+
     class Meta:
         model = Part
         fields = [
             'bom_file',
+            'starting_row',
         ]
 
 

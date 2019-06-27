@@ -620,7 +620,7 @@ class BomValidate(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context=self.get_context())
 
 
-class BomUpload(AjaxView):
+class BomUpload(AjaxView, FormMixin):
     """ View for uploading a BOM file, and handling BOM data importing.
 
     The BOM upload process is as follows:
@@ -648,14 +648,15 @@ class BomUpload(AjaxView):
     """
 
     ajax_form_title = 'Upload Bill of Materials'
+    ajax_template_name = 'part/bom_upload.html'
+    form_class = part_forms.BomImportForm
 
-    def get_form(self):
-        """ Return the correct form for the given step in the upload process """
+    def get_context_data(self):
+        ctx  = {
+            'part': self.part
+        }
 
-        if 1 or self.request.method == 'GET':
-            form = part_forms.BomImportForm()
-
-        return form
+        return ctx
 
     def get(self, request, *args, **kwargs):
         """ Perform the initial 'GET' request. 
@@ -665,15 +666,13 @@ class BomUpload(AjaxView):
         self.request = request
 
         # A valid Part object must be supplied. This is the 'parent' part for the BOM
-        part = get_object_or_404(Part, pk=self.kwargs['pk'])
+        self.part = get_object_or_404(Part, pk=self.kwargs['pk'])
 
-        form = self.get_form()
+        self.form = self.get_form()
 
-        return self.renderJsonResponse(request, form)
+        return self.renderJsonResponse(request, self.form)
 
     def handleBomFileUpload(self, bom_file):
-
-        form = part_forms.BomImportForm()
         
         data = {
             # TODO - Validate the form if there isn't actually an error!
@@ -689,20 +688,28 @@ class BomUpload(AjaxView):
         elif ext in ['.xls', '.xlsx']:
             raw_data = bom_file.read()
         else:
-            form.errors['bom_file'] = ['Unsupported file format: ' + ext]
-            return self.renderJsonResponse(self.request, form, data)
+            self.form.errors['bom_file'] = ['Unsupported file format: ' + ext]
+            return self.renderJsonResponse(self.request, self.form, data)
 
         # Now try to read the data
         try:
             bom_data = tablib.Dataset().load(raw_data)
-            print(bom_data)
+
+            headers = [h.lower() for h in bom_data.headers]
+
+            # Minimal set of required fields
+            for header in ['part', 'quantity', 'reference']:
+                if not header in headers:
+                    self.form.errors['bom_file'] = [_("Missing required field '{f}'".format(f=header))]
+                    break
+
         except tablib.UnsupportedFormat:
             valid = False
-            form.errors['bom_file'] = [
+            self.form.errors['bom_file'] = [
                 "Error reading '{f}' (Unsupported file format)".format(f=str(bom_file)),
             ]
 
-        return self.renderJsonResponse(self.request, form, data=data)
+        return self.renderJsonResponse(self.request, self.form, data=data)
 
     def post(self, request, *args, **kwargs):
         """ Perform the various 'POST' requests required.
@@ -710,10 +717,11 @@ class BomUpload(AjaxView):
 
         self.request = request
 
+        self.part = get_object_or_404(Part, pk=self.kwargs['pk'])
+        self.form = self.get_form()
+
         # Did the user POST a file named bom_file?
         bom_file = request.FILES.get('bom_file', None)
-
-        form = self.get_form()
 
         if bom_file:
             return self.handleBomFileUpload(bom_file)
@@ -722,7 +730,9 @@ class BomUpload(AjaxView):
             'form_valid': False,
         }
 
-        return self.renderJsonResponse(request, form, data=data)
+        return self.renderJsonResponse(request, self.form, data=data)
+
+
 class BomUploadTemplate(AjaxView):
     """
     Provide a BOM upload template file for download.
@@ -741,8 +751,6 @@ class BomDownload(AjaxView):
     Provide raw download of a BOM file.
     - File format should be passed as a query param e.g. ?format=csv
     """
-
-    # TODO - This should no longer extend an AjaxView!
 
     model = Part
 
