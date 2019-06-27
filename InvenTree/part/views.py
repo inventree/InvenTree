@@ -616,38 +616,6 @@ class BomValidate(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context=self.get_context())
 
 
-class BomExport(AjaxView):
-
-    model = Part
-    ajax_form_title = 'Export BOM'
-    ajax_template_name = 'part/bom_export.html'
-    form_class = part_forms.BomExportForm
-
-    def get_object(self):
-        return get_object_or_404(Part, pk=self.kwargs['pk'])
-
-    def get(self, request, *args, **kwargs):
-        form = self.form_class()
-
-        return self.renderJsonResponse(request, form)
-
-    def post(self, request, *args, **kwargs):
-        """
-        User has now submitted the BOM export data
-        """
-
-        # part = self.get_object()
-
-        return super(AjaxView, self).post(request, *args, **kwargs)
-
-    def get_data(self):
-        return {
-            # 'form_valid': True,
-            # 'redirect': '/'
-            # 'redirect': reverse('bom-download', kwargs={'pk': self.request.GET.get('pk')})
-        }
-
-
 class BomDownload(AjaxView):
     """
     Provide raw download of a BOM file.

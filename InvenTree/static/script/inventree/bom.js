@@ -12,52 +12,6 @@ function reloadBomTable(table, options) {
 }
 
 
-function downloadBom(options = {}) {
-
-    var modal = options.modal || "#modal-form";
-    
-    var content = `
-        <b>Select file format</b><br>
-        <div class='controls'>
-        <select id='bom-format' class='select'>
-            <option value='csv'>CSV</option>
-            <option value='tsv'>TSV</option>
-            <option value='xls'>XLS</option>
-            <option value='xlsx'>XLSX</option>
-            <option value='ods'>ODS</option>
-            <option value='yaml'>YAML</option>
-            <option value='json'>JSON</option>
-            <option value='xml'>XML</option>
-            <option value='html'>HTML</option>
-        </select>
-        </div>
-    `;
-
-    openModal({
-        modal: modal,
-        title: "Export Bill of Materials",
-        submit_text: "Download",
-        close_text: "Cancel",
-    });
-
-    modalSetContent(modal, content);
-
-    modalEnable(modal, true);
-
-    $(modal).on('click', '#modal-form-submit', function() {
-        $(modal).modal('hide');
-
-        var format = $(modal).find('#bom-format :selected').val();
-
-        if (options.url) {
-            var url = options.url + "?format=" + format;
-
-            location.href = url;
-        }
-    });
-}
-
-
 function loadBomTable(table, options) {
     /* Load a BOM table with some configurable options.
      * 
@@ -192,7 +146,7 @@ function loadBomTable(table, options) {
                 var bEdit = "<button title='Edit BOM Item' class='bom-edit-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='glyphicon glyphicon-edit'/></button>";
                 var bDelt = "<button title='Delete BOM Item' class='bom-delete-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='glyphicon glyphicon-trash'/></button>";
                 
-                return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
+                return "<div class='btn-group' role='group'>" + bEdit + bDelt + "</div>";
             }
         });
     }
