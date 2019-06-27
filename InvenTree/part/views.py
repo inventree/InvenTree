@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
+from django.views.generic.edit import FormMixin
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 
@@ -26,7 +27,7 @@ from . import forms as part_forms
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
 
-from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers import DownloadFile, str2bool, MakeBomTemplate
 from InvenTree.status_codes import OrderStatus
 
 
@@ -722,6 +723,17 @@ class BomUpload(AjaxView):
         }
 
         return self.renderJsonResponse(request, form, data=data)
+class BomUploadTemplate(AjaxView):
+    """
+    Provide a BOM upload template file for download.
+    - Generates a template file in the provided format e.g. ?format=csv
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        export_format = request.GET.get('format', 'csv')
+
+        return MakeBomTemplate(export_format)
 
 
 class BomDownload(AjaxView):

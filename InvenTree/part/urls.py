@@ -74,6 +74,9 @@ part_urls = [
     # Create a new BOM item
     url(r'^bom/new/?', views.BomItemCreate.as_view(), name='bom-item-create'),
 
+    # Download a BOM upload template
+    url(r'^bom_template/?', views.BomUploadTemplate.as_view(), name='bom-upload-template'),
+
     # Individual part
     url(r'^(?P<pk>\d+)/', include(part_detail_urls)),
 
