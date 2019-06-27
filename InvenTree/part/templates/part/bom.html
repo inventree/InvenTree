@@ -40,7 +40,7 @@
     {% else %}
     <button class='btn btn-default' type='button' title='Edit BOM' id='edit-bom'><span class='glyphicon glyphicon-edit'></span></button>
     {% if part.is_bom_valid == False %}
-    <button class='btn btn-default' type='button'><span class='glyphicon glyphicon-check'></span></button>
+    <button class='btn btn-default' id='validate-bom' type='button'><span class='glyphicon glyphicon-check'></span></button>
     {% endif %}
     <div class='btn-group' role='group'>
         <div class='dropdown'>
