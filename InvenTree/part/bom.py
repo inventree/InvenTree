@@ -61,12 +61,20 @@ class BomUploadManager:
 
     def __init__(self, bom_file, starting_row=2):
         """ Initialize the BomUpload class with a user-uploaded file object """
-        self.starting_row = starting_row
-        print("Starting on row", starting_row)
+        try:
+            start = int(starting_row) - 1
+            if start < 0:
+                start = 0
+            self.starting_row = start
+        except ValueError:
+            self.starting_row = 1
+        
         self.process(bom_file)
 
     def process(self, bom_file):
         """ Process a BOM file """
+
+        self.data = None
 
         ext = os.path.splitext(bom_file.name)[-1].lower()
 
@@ -88,21 +96,30 @@ class BomUploadManager:
         self.header_map = {}
 
         for header in self.REQUIRED_HEADERS:
-            match = self.get_header(header)
+            match = self.extract_header(header)
             if match is None:
                 raise ValidationError({'bom_file': _("Missing required field '{f}'".format(f=header))})
             else:
                 self.header_map[header] = match
 
         for header in self.USEFUL_HEADERS:
-            match = self.get_header(header)
+            match = self.extract_header(header)
 
             self.header_map[header] = match
 
+        # Now we have mapped data to each header
         for k,v in self.header_map.items():
             print(k, '->', v)
 
-    def get_header(self, header_name, threshold=80):
+    def get_header(self, header_name):
+        """ Returns the matching header name for the internal name """
+
+        if header_name in self.header_map.keys():
+            return self.header_map[header_name]
+        else:
+            return None
+
+    def extract_header(self, header_name, threshold=80):
         """ Retrieve a matching column header from the uploaded file.
         If there is not an exact match, try to match one that is close.
         """
@@ -136,3 +153,23 @@ class BomUploadManager:
             return matches[0]['header']
 
         return None
+
+    def row_count(self):
+        """ Return the number of rows in the file.
+        Ignored the top rows as indicated by 'starting row'
+        """
+
+        if self.data is None:
+            return 0
+
+        return len(self.data) - self.starting_row
+
+    def get_row(self, index):
+        """ Retrieve a dict object representing the data row at a particular offset """
+
+        index += self.starting_row
+
+        if self.data is None or index >= len(self.data):
+            return None
+
+        return self.data.dict[index]
