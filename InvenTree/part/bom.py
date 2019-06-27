@@ -9,7 +9,6 @@ import os
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
-from .models import Part, BomItem
 
 from InvenTree.helpers import DownloadFile
 
@@ -100,10 +99,6 @@ class BomUploadManager:
 
             self.header_map[header] = match
 
-        # Now we have mapped data to each header
-        for k,v in self.header_map.items():
-            print(k, '->', v)
-
     def get_header(self, header_name):
         """ Returns the matching header name for the internal name """
 
@@ -146,14 +141,12 @@ class BomUploadManager:
             return matches[0]['header']
 
         return None
-
     
     def get_headers(self):
         """ Return a list of headers for the thingy """
         headers = []
 
         return headers
-        
 
     def col_count(self):
         if self.data is None:

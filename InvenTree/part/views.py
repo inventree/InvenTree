@@ -5,9 +5,6 @@ Django views for interacting with Part app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import tablib
-import os
-
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
@@ -24,7 +21,7 @@ from .models import match_part_names
 from company.models import SupplierPart
 
 from . import forms as part_forms
-from .bom import  MakeBomTemplate, BomUploadManager
+from .bom import MakeBomTemplate, BomUploadManager
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
@@ -663,14 +660,14 @@ class BomUpload(AjaxView, FormMixin):
             return part_forms.BomUploadSelectFile
 
     def get_context_data(self):
-        ctx  = {
+        ctx = {
             'part': self.part
         }
 
         return ctx
 
     def get(self, request, *args, **kwargs):
-        """ Perform the initial 'GET' request. 
+        """ Perform the initial 'GET' request.
 
         Initially returns a form for file upload """
 
@@ -701,7 +698,7 @@ class BomUpload(AjaxView, FormMixin):
             except ValidationError as e:
                 errors = e.error_dict
 
-                for k,v in errors.items():
+                for k, v in errors.items():
                     self.form.errors[k] = v
 
         data = {
@@ -743,7 +740,6 @@ class BomUpload(AjaxView, FormMixin):
 
         # Did the user POST a file named bom_file?
         
-
         form_step = request.POST.get('form_step', None)
 
         if form_step == 'select_file':

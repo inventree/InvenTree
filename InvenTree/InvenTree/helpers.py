@@ -6,7 +6,6 @@ import io
 import json
 import os.path
 from PIL import Image
-import tablib
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
