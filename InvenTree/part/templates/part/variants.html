@@ -35,6 +35,9 @@
             <td>
                 {% include "hover_image.html" with image=variant.image hover=True %}
                 <a href="{% url 'part-detail' variant.id %}">{{ variant.full_name }}</a>
+                {% if not variant.active %}
+                <span class='label label-warning' style='float: right;'>Inactive</span>
+                {% endif %}
             </td>
             <td>{{ variant.description }}</td>
             <td>{{ variant.total_stock }}</td>
