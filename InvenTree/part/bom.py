@@ -46,13 +46,9 @@ class BomUploadManager:
     """ Class for managing an uploaded BOM file """
 
     # Fields which are absolutely necessary for valid upload
-    REQUIRED_HEADERS = [
+    HEADERS = [
         'Part',
         'Quantity',
-    ]
-
-    # Fields which are not necessary but can be populated
-    USEFUL_HEADERS = [
         'Reference',
         'Overage',
         'Notes'
@@ -83,68 +79,48 @@ class BomUploadManager:
         except tablib.UnsupportedFormat:
             raise ValidationError({'bom_file': _('Error reading BOM file (invalid data)')})
 
-        # Now we have BOM data in memory!
-
-        self.header_map = {}
-
-        for header in self.REQUIRED_HEADERS:
-            match = self.extract_header(header)
-            if match is None:
-                raise ValidationError({'bom_file': _("Missing required field '{f}'".format(f=header))})
-            else:
-                self.header_map[header] = match
-
-        for header in self.USEFUL_HEADERS:
-            match = self.extract_header(header)
-
-            self.header_map[header] = match
-
-    def get_header(self, header_name):
-        """ Returns the matching header name for the internal name """
-
-        if header_name in self.header_map.keys():
-            return self.header_map[header_name]
-        else:
-            return None
-
-    def extract_header(self, header_name, threshold=80):
-        """ Retrieve a matching column header from the uploaded file.
-        If there is not an exact match, try to match one that is close.
+    def guess_headers(self, header, threshold=80):
+        """ Try to match a header (from the file) to a list of known headers
+        
+        Args:
+            header - Header name to look for
+            threshold - Match threshold for fuzzy search
         """
 
-        headers = self.data.headers
+        # Try for an exact match
+        for h in self.HEADERS:
+            if h == header:
+                return h
 
-        # First, try for an exact match
-        for header in headers:
-            if header == header_name:
-                return header
-
-        # Next, try for a case-insensitive match
-        for header in headers:
-            if header.lower() == header_name.lower():
-                return header
+        # Try for a case-insensitive match
+        for h in self.HEADERS:
+            if h.lower() == header.lower():
+                return h
 
         # Finally, look for a close match using fuzzy matching
-
         matches = []
 
-        for header in headers:
-
-            ratio = fuzz.partial_ratio(header, header_name)
+        for h in self.HEADERS:
+            ratio = fuzz.partial_ratio(header, h)
             if ratio > threshold:
-                matches.append({'header': header, 'match': ratio})
+                matches.append({'header': h, 'match': ratio})
 
         if len(matches) > 0:
             matches = sorted(matches, key=lambda item: item['match'], reverse=True)
-
-            # Return the field with the best match
             return matches[0]['header']
 
         return None
+
     
     def get_headers(self):
         """ Return a list of headers for the thingy """
         headers = []
+
+        for header in self.data.headers:
+            headers.append({
+                'name': header,
+                'guess': self.guess_header(header)
+            })
 
         return headers
 

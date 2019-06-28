@@ -21,6 +21,12 @@ def multiply(x, y, *args, **kwargs):
 
 
 @register.simple_tag()
+def add(x, y, *args, **kwargs):
+    """ Add two numbers together """
+    return x + y
+    
+
+@register.simple_tag()
 def part_allocation_count(build, part, *args, **kwargs):
     """ Return the total number of <part> allocated to <build> """
 

@@ -16,11 +16,24 @@
     <table class='table table-striped'>
         <thead>
             <tr>
+                <th>Row</th>
+                {% for col in bom_cols %}
+                <th>
+                    <select class='select' id='id_col_{{ forloop.counter0 }}' name='col_{{ forloop.counter0 }}'>
+                        <option value=''>---------</option>
+                        {% for req in req_cols %}
+                        <option value='{{ req }}'{% if req == col.guess %}selected='selected'{% endif %}>{{ req }}</option>
+                        {% endfor %}
+                    </select>
+                    {{ col.name }}
+                </th>
+                {% endfor %}
             </tr>
         </thead>
         <tbody>
-            {% for row in bom.rows %}
+            {% for row in bom_rows %}
             <tr>
+                <td>{% add forloop.counter 1 %}</td>
                 {% for item in row %}
                 <td>
                     {{ item }}

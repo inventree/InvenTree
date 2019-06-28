@@ -683,6 +683,13 @@ class BomUpload(AjaxView, FormMixin):
         return self.renderJsonResponse(request, self.form)
 
     def handleBomFileUpload(self):
+        """ Process a BOM file upload form.
+        
+        This function validates that the uploaded file was valid,
+        and contains tabulated data that can be extracted.
+        If the file does not satisfy these requirements,
+        the "upload file" form is again shown to the user.
+         """
 
         bom_file = self.request.FILES.get('bom_file', None)
 
@@ -713,13 +720,25 @@ class BomUpload(AjaxView, FormMixin):
             # BOM file is valid? Proceed to the next step!
             form = part_forms.BomUploadSelectFields
             self.ajax_template_name = 'part/bom_upload/select_fields.html'
-            ctx['bom'] = manager
+
+            # Try to guess at the 
+
+            # Provide context to the next form
+            ctx = {
+                'req_cols': BomUploadManager.HEADERS,
+                'bom_cols': manager.get_headers(),
+                'bom_rows': manager.rows(),
+            }
         else:
             form = self.form
 
         return self.renderJsonResponse(self.request, form, data=data, context=ctx)
 
     def handleFieldSelection(self):
+        """ Handle the output of the field selection form.
+        Here the user is presented with the raw data and must select the
+        column names and which rows to process.
+        """
 
         data = {
             'form_valid': False,
@@ -727,7 +746,10 @@ class BomUpload(AjaxView, FormMixin):
 
         self.ajax_template_name = 'part/bom_upload/select_fields.html'
 
-        ctx = {}
+        ctx = {
+            # The headers that we know about
+            'known_headers': BomUploadManager.HEADERS,
+        }
 
         return self.renderJsonResponse(self.request, form=self.get_form(), data=data, context=ctx)
 
