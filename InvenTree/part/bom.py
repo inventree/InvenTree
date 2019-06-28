@@ -46,13 +46,18 @@ class BomUploadManager:
     """ Class for managing an uploaded BOM file """
 
     # Fields which are absolutely necessary for valid upload
-    HEADERS = [
+    REQUIRED_HEADERS = [
         'Part',
-        'Quantity',
+        'Quantity'
+    ]
+    
+    OPTIONAL_HEADERS = [
         'Reference',
         'Overage',
         'Notes'
     ]
+
+    HEADERS = REQUIRED_HEADERS + OPTIONAL_HEADERS
 
     def __init__(self, bom_file):
         """ Initialize the BomUpload class with a user-uploaded file object """

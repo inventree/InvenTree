@@ -5,6 +5,17 @@
 
 <h4>Step 2 of 3 - Select BOM Fields</h4>
 
+{% if missing and missing|length > 0 %}
+<div class='alert alert-danger alert-block' role='alert'>
+    Missing selections for the following columns:
+    <ul>
+        {% for col in missing %}
+        <li>{{ col }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
     {% csrf_token %}
     {% load crispy_forms_tags %}
@@ -25,6 +36,9 @@
                         <option value='{{ req }}'{% if req == col.guess %}selected='selected'{% endif %}>{{ req }}</option>
                         {% endfor %}
                     </select>
+                    {% if col.duplicate %}
+                    <p class='help-inline'>Duplicate column selection</p>
+                    {% endif %}
                     <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                     {{ col.name }}
                 </th>

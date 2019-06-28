@@ -752,13 +752,11 @@ class BomUpload(AjaxView, FormMixin):
 
         for item in self.request.POST:
 
-            print(item)
-
             value = self.request.POST[item]
 
             # Extract the column names
             if item.startswith('col_name_'):
-                col_id = item.replace('col_name_', '')
+                col_id = int(item.replace('col_name_', ''))
                 col_name = value
 
                 column_names[col_id] = col_name
@@ -766,7 +764,7 @@ class BomUpload(AjaxView, FormMixin):
             # Extract the column selections
             if item.startswith('col_select_'):
 
-                col_id = item.replace('col_select_', '')
+                col_id = int(item.replace('col_select_', ''))
                 col_name = value
 
                 column_selections[col_id] = value
@@ -779,17 +777,49 @@ class BomUpload(AjaxView, FormMixin):
                 if len(s) < 4:
                     continue
 
-                row_id = s[1]
-                col_id = s[3]
+                row_id = int(s[1])
+                col_id = int(s[3])
                 
                 if not row_id in row_data:
                     row_data[row_id] = {}
 
                 row_data[row_id][col_id] = value
-                
+
+        col_ids = sorted(column_names.keys())
+
+        headers = []
+
+        for col in col_ids:
+            if col not in column_selections:
+                continue
+
+            header = ({
+                'name': column_names[col],
+                'guess': column_selections[col]
+            })
+
+            # Duplicate guess?
+            guess = column_selections[col]
+
+            if guess:
+                n = list(column_selections.values()).count(column_selections[col])
+                if n > 1:
+                    header['duplicate'] = True
+
+            headers.append(header)
+
+        # Are there any missing columns?
+        missing = []
+
+        for col in BomUploadManager.REQUIRED_HEADERS:
+            if not col in column_selections.values():
+                missing.append(col)
+
         ctx = {
             # The headers that we know about
-            'known_headers': BomUploadManager.HEADERS,
+            'req_cols': BomUploadManager.HEADERS,
+            'bom_cols': headers,
+            'missing': missing,
         }
 
         return self.renderJsonResponse(self.request, form=self.get_form(), data=data, context=ctx)
