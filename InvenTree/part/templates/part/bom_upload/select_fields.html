@@ -25,6 +25,7 @@
                         <option value='{{ req }}'{% if req == col.guess %}selected='selected'{% endif %}>{{ req }}</option>
                         {% endfor %}
                     </select>
+                    <input type='hidden' name='col_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                     {{ col.name }}
                 </th>
                 {% endfor %}
@@ -34,8 +35,9 @@
             {% for row in bom_rows %}
             <tr>
                 <td>{% add forloop.counter 1 %}</td>
-                {% for item in row %}
+                {% for item in row.data %}
                 <td>
+                    <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item }}'/>
                     {{ item }}
                 </td>
                 {% endfor %}

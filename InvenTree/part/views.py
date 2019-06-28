@@ -721,8 +721,6 @@ class BomUpload(AjaxView, FormMixin):
             form = part_forms.BomUploadSelectFields
             self.ajax_template_name = 'part/bom_upload/select_fields.html'
 
-            # Try to guess at the 
-
             # Provide context to the next form
             ctx = {
                 'req_cols': BomUploadManager.HEADERS,

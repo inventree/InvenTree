@@ -79,7 +79,7 @@ class BomUploadManager:
         except tablib.UnsupportedFormat:
             raise ValidationError({'bom_file': _('Error reading BOM file (invalid data)')})
 
-    def guess_headers(self, header, threshold=80):
+    def guess_header(self, header, threshold=80):
         """ Try to match a header (from the file) to a list of known headers
         
         Args:
@@ -145,7 +145,11 @@ class BomUploadManager:
         rows = []
 
         for i in range(self.row_count()):
-            row = self.get_row_data(i)
+
+            row = {
+                'data': self.get_row_data(i),
+                'index': i
+            }
 
             if row:
                 rows.append(row)
