@@ -767,9 +767,6 @@ class BomUpload(AjaxView, FormMixin):
                 col_id = int(item.replace('col_select_', ''))
                 col_name = value
 
-                if value.lower() == 'delete':
-                    continue
-
                 column_selections[col_id] = value
 
             # Extract the row data

@@ -12,6 +12,25 @@ function reloadBomTable(table, options) {
 }
 
 
+function removeColFromBomWizard(e) {
+    /* Remove a column from BOM upload wizard
+     */
+
+    e = e || window.event;
+
+    var src = e.target || e.srcElement;
+
+    // Which column was clicked?
+    var col = $(src).closest('th').index();
+
+    var table = $(src).closest('table');
+
+    table.find('tr').each(function() {
+        this.removeChild(this.cells[col]);
+    });
+}
+
+
 function loadBomTable(table, options) {
     /* Load a BOM table with some configurable options.
      * 

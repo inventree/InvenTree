@@ -7,7 +7,8 @@
 
 {% if missing and missing|length > 0 %}
 <div class='alert alert-danger alert-block' role='alert'>
-    Missing selections for the following columns:
+    Missing selections for the following required columns:
+    <br>
     <ul>
         {% for col in missing %}
         <li>{{ col }}</li>
@@ -30,18 +31,20 @@
                 <th>Row</th>
                 {% for col in bom_cols %}
                 <th>
+                    <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
+                    {{ col.name }}
+                    <button class='btn btn-default btn-remove' id='del_col_{{ forloop.counter0 }}' title='Remove column'>
+                        <span col='col_{{ forloop.counter0 }}' onClick='removeColFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                    </button>
                     <select class='select' id='id_col_{{ forloop.counter0 }}' name='col_select_{{ forloop.counter0 }}'>
-                        <option value=''>---------</option>
-                        {% for req in req_cols %}
-                        <option value='{{ req }}'{% if req == col.guess %}selected='selected'{% endif %}>{{ req }}</option>
-                        {% endfor %}
-                        <option value='Delete'>Delete Column</option>
+                            <option value=''>---------</option>
+                            {% for req in req_cols %}
+                            <option value='{{ req }}'{% if req == col.guess %}selected='selected'{% endif %}>{{ req }}</option>
+                            {% endfor %}
                     </select>
                     {% if col.duplicate %}
                     <p class='help-inline'>Duplicate column selection</p>
                     {% endif %}
-                    <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
-                    {{ col.name }}
                 </th>
                 {% endfor %}
             </tr>
