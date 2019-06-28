@@ -35,6 +35,7 @@
                         {% for req in req_cols %}
                         <option value='{{ req }}'{% if req == col.guess %}selected='selected'{% endif %}>{{ req }}</option>
                         {% endfor %}
+                        <option value='Delete'>Delete Column</option>
                     </select>
                     {% if col.duplicate %}
                     <p class='help-inline'>Duplicate column selection</p>
