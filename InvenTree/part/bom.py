@@ -51,8 +51,14 @@ class BomUploadManager:
         'Quantity'
     ]
     
+    # Fields which would be helpful but are not required
     OPTIONAL_HEADERS = [
         'Reference',
+        'Description',
+        'Category',
+        'Supplier',
+        'Manufacturer',
+        'MPN',
         'Overage',
         'Notes'
     ]

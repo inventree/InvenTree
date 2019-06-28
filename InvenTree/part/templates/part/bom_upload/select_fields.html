@@ -34,7 +34,7 @@
                     <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                     {{ col.name }}
                     <button class='btn btn-default btn-remove' id='del_col_{{ forloop.counter0 }}' title='Remove column'>
-                        <span col='col_{{ forloop.counter0 }}' onClick='removeColFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                        <span col_id='{{ forloop.counter0 }}' onClick='removeColFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
                     </button>
                     <select class='select' id='id_col_{{ forloop.counter0 }}' name='col_select_{{ forloop.counter0 }}'>
                             <option value=''>---------</option>
