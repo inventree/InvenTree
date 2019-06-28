@@ -744,6 +744,49 @@ class BomUpload(AjaxView, FormMixin):
 
         self.ajax_template_name = 'part/bom_upload/select_fields.html'
 
+        # Map the columns 
+        column_names = {}
+        column_selections = {}
+
+        row_data = {}
+
+        for item in self.request.POST:
+
+            print(item)
+
+            value = self.request.POST[item]
+
+            # Extract the column names
+            if item.startswith('col_name_'):
+                col_id = item.replace('col_name_', '')
+                col_name = value
+
+                column_names[col_id] = col_name
+
+            # Extract the column selections
+            if item.startswith('col_select_'):
+
+                col_id = item.replace('col_select_', '')
+                col_name = value
+
+                column_selections[col_id] = value
+
+            # Extract the row data
+            if item.startswith('row_'):
+                # Item should be of the format row_<r>_col_<c>
+                s = item.split('_')
+
+                if len(s) < 4:
+                    continue
+
+                row_id = s[1]
+                col_id = s[3]
+                
+                if not row_id in row_data:
+                    row_data[row_id] = {}
+
+                row_data[row_id][col_id] = value
+                
         ctx = {
             # The headers that we know about
             'known_headers': BomUploadManager.HEADERS,

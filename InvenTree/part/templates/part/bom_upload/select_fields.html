@@ -19,13 +19,13 @@
                 <th>Row</th>
                 {% for col in bom_cols %}
                 <th>
-                    <select class='select' id='id_col_{{ forloop.counter0 }}' name='col_{{ forloop.counter0 }}'>
+                    <select class='select' id='id_col_{{ forloop.counter0 }}' name='col_select_{{ forloop.counter0 }}'>
                         <option value=''>---------</option>
                         {% for req in req_cols %}
                         <option value='{{ req }}'{% if req == col.guess %}selected='selected'{% endif %}>{{ req }}</option>
                         {% endfor %}
                     </select>
-                    <input type='hidden' name='col_{{ forloop.counter0 }}' value='{{ col.name }}'/>
+                    <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                     {{ col.name }}
                 </th>
                 {% endfor %}
