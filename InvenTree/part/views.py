@@ -815,12 +815,27 @@ class BomUpload(AjaxView, FormMixin):
             if not col in column_selections.values():
                 missing.append(col)
 
+        # Re-construct the data table
+        rows = []
+
+        for row_idx in sorted(row_data.keys()):
+            row = row_data[row_idx]
+            items = []
+            for col_idx in sorted(row.keys()):
+                value = row[col_idx]
+                items.append(value)
+
+            rows.append({'index': row_idx, 'data': items})
+
         ctx = {
             # The headers that we know about
             'req_cols': BomUploadManager.HEADERS,
             'bom_cols': headers,
             'missing': missing,
+            'bom_rows': rows,
         }
+
+        print(ctx)
 
         return self.renderJsonResponse(self.request, form=self.get_form(), data=data, context=ctx)
 
