@@ -121,7 +121,6 @@ class BomUploadManager:
             return matches[0]['header']
 
         return None
-
     
     def get_headers(self):
         """ Return a list of headers for the thingy """
@@ -157,13 +156,33 @@ class BomUploadManager:
 
         for i in range(self.row_count()):
 
+            data = [item for item in self.get_row_data(i)]
+
+            # Is the row completely empty? Skip!
+            empty = True
+
+            for idx, item in enumerate(data):
+                if len(str(item).strip()) > 0:
+                    empty = False
+
+                try:
+                    # Excel import casts number-looking-items into floats, which is annoying
+                    if item == int(item) and not str(item) == str(int(item)):
+                        print("converting", item, "to", int(item))
+                        data[idx] = int(item)
+                except ValueError:
+                    pass
+
+            if empty:
+                print("Empty - continuing")
+                continue
+
             row = {
-                'data': self.get_row_data(i),
+                'data': data,
                 'index': i
             }
 
-            if row:
-                rows.append(row)
+            rows.append(row)
 
         return rows
 

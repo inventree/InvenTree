@@ -520,7 +520,6 @@ class PartDetail(DetailView):
         else:
             context['editing_enabled'] = 0
 
-
         context['starred'] = part.isStarredBy(self.request.user)
         context['disabled'] = not part.active
 
@@ -744,7 +743,7 @@ class BomUpload(AjaxView, FormMixin):
 
         self.ajax_template_name = 'part/bom_upload/select_fields.html'
 
-        # Map the columns 
+        # Map the columns
         column_names = {}
         column_selections = {}
 
@@ -780,7 +779,7 @@ class BomUpload(AjaxView, FormMixin):
                 row_id = int(s[1])
                 col_id = int(s[3])
                 
-                if not row_id in row_data:
+                if row_id not in row_data:
                     row_data[row_id] = {}
 
                 row_data[row_id][col_id] = value
@@ -812,7 +811,7 @@ class BomUpload(AjaxView, FormMixin):
         missing = []
 
         for col in BomUploadManager.REQUIRED_HEADERS:
-            if not col in column_selections.values():
+            if col not in column_selections.values():
                 missing.append(col)
 
         # Re-construct the data table
@@ -823,7 +822,7 @@ class BomUpload(AjaxView, FormMixin):
             items = []
             for col_idx in sorted(row.keys()):
 
-                if not col_idx in column_selections.keys():
+                if col_idx not in column_selections.keys():
                     continue
 
                 value = row[col_idx]
