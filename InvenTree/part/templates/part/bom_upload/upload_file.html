@@ -16,6 +16,7 @@
 </div>
 
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
+    <button type="submit" class="save btn btn-default">Upload File</button>
     {% csrf_token %}
     {% load crispy_forms_tags %}
 
@@ -23,7 +24,6 @@
 
     {% crispy form %}
 
-    <button type="submit" class="save btn btn-default">Next</button>
 </form>
 
 {% endblock %}

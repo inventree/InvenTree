@@ -22,6 +22,7 @@
 {% endif %}
 
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
+    <button type="submit" class="save btn btn-default">Submit Selections</button>
     {% csrf_token %}
     {% load crispy_forms_tags %}
 
@@ -83,7 +84,6 @@
         </tbody>
     </table>
 
-    <button type="submit" class="save btn btn-default">Next</button>
 </form>
 
 <b>BOM Rows: {{ bom.row_count }}</b>
