@@ -33,7 +33,7 @@ Run ``make superuser`` to create a superuser account, required for initial syste
 Run Development Server
 ----------------------
 
-Run ``python InvenTree/manage.py runserver`` to launch a development server. This will launch the InvenTree web interface at ``127.0.0.1:8000``. For other options refer to the `django docs <https://docs.djangoproject.com/en/2.2/ref/django-admin/>`_.
+Run ``python3 InvenTree/manage.py runserver`` to launch a development server. This will launch the InvenTree web interface at ``127.0.0.1:8000``. For other options refer to the `django docs <https://docs.djangoproject.com/en/2.2/ref/django-admin/>`_.
 
 Database Migrations
 -------------------
