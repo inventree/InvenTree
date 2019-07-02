@@ -34,7 +34,9 @@
 <div id='button-toolbar' class="btn-group" role="group" aria-label="...">
     {% if editing_enabled %}
     <button class='btn btn-default' type='button' title='Remove selected BOM items' id='bom-item-delete'><span class='glyphicon glyphicon-trash'></span></button>
-    <button class='btn btn-default' type='button' title='Import BOM data' id='bom-upload'><span class='glyphicon glyphicon-open-file'></span></button>
+    <a href="{% url 'upload-bom' part.id %}">
+        <button class='btn btn-default' type='button' title='Import BOM data' id='bom-upload'><span class='glyphicon glyphicon-open-file'></span></button>
+    </a>
     <button class='btn btn-default' type='button' title='New BOM Item' id='bom-item-new'><span class='glyphicon glyphicon-plus'></span></button>
     <button class='btn btn-default' type='button' title='Finish Editing' id='editing-finished'><span class='glyphicon glyphicon-ok'></span></button>
     {% elif part.active %}
@@ -104,12 +106,6 @@
                     },
                 ]
             }
-        );
-    });
-
-    $("#bom-upload").click(function() {
-        launchModalForm(
-            "{% url 'bom-import' part.id %}",
         );
     });
 
