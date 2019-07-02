@@ -8,11 +8,6 @@
 <h4>Upload Bill of Materials</h4>
 <hr>
 
-<p>
-    Select a BOM file to upload for:<br>
-    <b>{{ part.name }} - <i>{{ part.description }}</i></b>
-</p>
-
 <p>The BOM file must contain the required named columns as provided in the <a href="/part/bom_template/">BOM Upload Template</a></a></p>
 
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
@@ -21,8 +16,9 @@
 
     <input type='hidden' name='form_step' value='select_file'/>
 
-    {% crispy form %]
+    {% crispy form %}
 
+    <button type="submit" class="save btn btn-default">Upload</button>
 </form>
 
 {% endblock %}

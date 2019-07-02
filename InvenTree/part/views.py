@@ -8,8 +8,8 @@ from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
-from django.urls import reverse_lazy
-from django.views.generic import DetailView, ListView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import DetailView, ListView, FormView
 from django.views.generic.edit import FormMixin
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
@@ -620,7 +620,7 @@ class BomValidate(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context=self.get_context())
 
 
-class BomUpload(AjaxView, FormMixin):
+class BomUpload(FormView):
     """ View for uploading a BOM file, and handling BOM data importing.
 
     The BOM upload process is as follows:
@@ -647,8 +647,11 @@ class BomUpload(AjaxView, FormMixin):
     During these steps, data are passed between the server/client as JSON objects.
     """
 
-    ajax_form_title = 'Upload Bill of Materials'
-    ajax_template_name = 'part/bom_upload/select_file.html'
+    template_name = 'part/bom_upload/select_file.html'
+
+    def get_success_url(self):
+        part = self.get_object()
+        return reverse('upload-bom', kwargs={'pk': part.id})
 
     def get_form_class(self):
 
@@ -660,10 +663,11 @@ class BomUpload(AjaxView, FormMixin):
             # Default form is the starting point
             return part_forms.BomUploadSelectFile
 
-    def get_context_data(self):
-        ctx = {
-            'part': self.part
-        }
+    def get_context_data(self, *args, **kwargs):
+
+        ctx = super().get_context_data(*args, **kwargs)
+
+        ctx['part'] = self.part
 
         return ctx
 
@@ -679,7 +683,9 @@ class BomUpload(AjaxView, FormMixin):
 
         self.form = self.get_form()
 
-        return self.renderJsonResponse(request, self.form)
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        return self.render_to_response(self.get_context_data(form=form))
 
     def handleBomFileUpload(self):
         """ Process a BOM file upload form.
