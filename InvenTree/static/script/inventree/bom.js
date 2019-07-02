@@ -12,6 +12,37 @@ function reloadBomTable(table, options) {
 }
 
 
+function removeRowFromBomWizard(e) {
+    /* Remove a row from BOM upload wizard
+     */
+
+    e = e || window.event;
+
+    var src = e.target || e.srcElement;
+
+    var table = $(src).closest('table');
+
+    // Which column was clicked?
+    var row = $(src).closest('tr');
+
+    row.remove();
+
+    var rowNum = 1;
+    var colNum = 0;
+
+    table.find('tr').each(function() {
+        
+        colNum++;
+
+        if (colNum >= 3) {
+            var cell = $(this).find('td:eq(1)');
+            cell.text(rowNum++);
+            console.log("Row: " + rowNum);
+        }
+    });
+}
+
+
 function removeColFromBomWizard(e) {
     /* Remove a column from BOM upload wizard
      */

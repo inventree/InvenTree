@@ -32,13 +32,14 @@
     <table class='table table-striped'>
         <thead>
             <tr>
+                <th></th>
                 <th>Row</th>
                 {% for col in bom_columns %}
                 <th>
                     <div>
                         <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                         {{ col.name }}
-                        <button class='btn btn-default btn-remove' id='del_col_{{ forloop.counter0 }}' title='Remove column'>
+                        <button class='btn btn-default btn-remove' id='del_col_{{ forloop.counter0 }}' style='display: inline; float: right;' title='Remove column'>
                             <span col_id='{{ forloop.counter0 }}' onClick='removeColFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
                         </button>
                     </div>
@@ -65,7 +66,12 @@
             </tr>
             {% for row in bom_rows %}
             <tr>
-                <td>{% add forloop.counter 1 %}</td>
+                <td>
+                    <button class='btn btn-default btn-remove' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='Remove row'>
+                        <span row_id='{{ forloop.counter }}' onClick='removeRowFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                    </button>
+                </td>
+                <td>{{ forloop.counter }}</td>
                 {% for item in row.data %}
                 <td>
                     <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item }}'/>
