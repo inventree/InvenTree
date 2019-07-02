@@ -1,5 +1,5 @@
 Django==2.2.2                   # Django package
-psycopg2>=2.8.1                 # PostgreSQL package 
+# psycopg2>=2.8.1               # PostgreSQL package 
 pillow>=5.0.0                   # Image manipulation
 djangorestframework>=3.6.2      # DRF framework
 django-cors-headers>=2.5.3      # CORS headers extension for DRF
