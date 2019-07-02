@@ -27,7 +27,7 @@ part_detail_urls = [
     url(r'^make-variant/', views.MakePartVariant.as_view(), name='make-part-variant'),
     url(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
     
-    url(r'^bom-upload/?', views.BomUpload.as_view(template_name='part/bom_upload/upload_file.html'), name='upload-bom'),
+    url(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
     
     url(r'^variants/?', views.PartDetail.as_view(template_name='part/variants.html'), name='part-variants'),
     url(r'^stock/?', views.PartDetail.as_view(template_name='part/stock.html'), name='part-stock'),

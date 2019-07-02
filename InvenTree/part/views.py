@@ -647,8 +647,8 @@ class BomUpload(FormView):
     During these steps, data are passed between the server/client as JSON objects.
     """
 
-    template_name = 'part/bom_upload/select_file.html'
-
+    template_name='part/bom_upload/upload_file.html'
+    
     def get_success_url(self):
         part = self.get_object()
         return reverse('upload-bom', kwargs={'pk': part.id})
@@ -715,16 +715,9 @@ class BomUpload(FormView):
                 for k, v in errors.items():
                     self.form.errors[k] = v
 
-        data = {
-            'form_valid': False
-        }
-
-        ctx = {}
-
-        if bom_file_valid:
+        if 0 and bom_file_valid:
             # BOM file is valid? Proceed to the next step!
             form = part_forms.BomUploadSelectFields
-            self.ajax_template_name = 'part/bom_upload/select_fields.html'
 
             # Provide context to the next form
             ctx = {
@@ -734,8 +727,9 @@ class BomUpload(FormView):
             }
         else:
             form = self.form
+            form.errors['bom_file'] = [_('no errors')]
 
-        return self.renderJsonResponse(self.request, form, data=data, context=ctx)
+        return self.render_to_response(self.get_context_data(form=form))
 
     def handleFieldSelection(self):
         """ Handle the output of the field selection form.
@@ -855,7 +849,7 @@ class BomUpload(FormView):
         self.request = request
 
         self.part = get_object_or_404(Part, pk=self.kwargs['pk'])
-        self.form = self.get_form()
+        self.form = self.get_form(self.get_form_class())
 
         # Did the user POST a file named bom_file?
         
@@ -866,11 +860,7 @@ class BomUpload(FormView):
         elif form_step == 'select_fields':
             return self.handleFieldSelection()
 
-        data = {
-            'form_valid': False,
-        }
-
-        return self.renderJsonResponse(request, self.form, data=data)
+        return self.render_to_response(self.get_context_data(form=self.form))
 
 
 class BomUploadTemplate(AjaxView):
