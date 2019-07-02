@@ -648,6 +648,13 @@ class BomUpload(FormView):
     """
 
     template_name='part/bom_upload/upload_file.html'
+
+    # Context data passed to the forms (initially empty, extracted from uploaded file)
+    bom_headers = []
+    bom_columns = []
+    bom_rows = []
+    missing_columns = []
+
     
     def get_success_url(self):
         part = self.get_object()
@@ -668,6 +675,10 @@ class BomUpload(FormView):
         ctx = super().get_context_data(*args, **kwargs)
 
         ctx['part'] = self.part
+        ctx['bom_headers'] = self.bom_headers
+        ctx['bom_columns'] = self.bom_columns
+        ctx['bom_rows'] = self.bom_rows
+        ctx['missing_columns'] = self.missing_columns
 
         return ctx
 
@@ -715,21 +726,25 @@ class BomUpload(FormView):
                 for k, v in errors.items():
                     self.form.errors[k] = v
 
-        if 0 and bom_file_valid:
+        if bom_file_valid:
             # BOM file is valid? Proceed to the next step!
             form = part_forms.BomUploadSelectFields
+            self.template_name = 'part/bom_upload/select_fields.html'
 
-            # Provide context to the next form
-            ctx = {
-                'req_cols': BomUploadManager.HEADERS,
-                'bom_cols': manager.get_headers(),
-                'bom_rows': manager.rows(),
-            }
+            self.extractDataFromFile(manager)
         else:
             form = self.form
             form.errors['bom_file'] = [_('no errors')]
 
         return self.render_to_response(self.get_context_data(form=form))
+
+    def extractDataFromFile(self, bom):
+        """ Read data from the BOM file """
+
+        self.bom_headers = bom.HEADERS
+        self.bom_columns = bom.columns()
+        self.bom_rows = bom.rows()
+
 
     def handleFieldSelection(self):
         """ Handle the output of the field selection form.

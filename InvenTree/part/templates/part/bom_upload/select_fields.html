@@ -1,16 +1,20 @@
-{% extends "modal_form.html" %}
+{% extends "part/part_base.html" %}
+{% load static %}
 {% load inventree_extras %}
 
-{% block form %}
+{% block details %}
+{% include "part/tabs.html" with tab='bom' %}
+<h4>Upload Bill of Materials</h4>
 
-<h4>Step 2 of 3 - Select BOM Fields</h4>
+<p>Step 2 - Select Fields</p>
+<hr>
 
 {% if missing and missing|length > 0 %}
 <div class='alert alert-danger alert-block' role='alert'>
     Missing selections for the following required columns:
     <br>
     <ul>
-        {% for col in missing %}
+        {% for col in missing_columns %}
         <li>{{ col }}</li>
         {% endfor %}
     </ul>
@@ -29,7 +33,7 @@
         <thead>
             <tr>
                 <th>Row</th>
-                {% for col in bom_cols %}
+                {% for col in bom_columns %}
                 <th>
                     <div>
                         <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
@@ -45,11 +49,11 @@
         <tbody>
             <tr>
                 <td></td>
-                {% for col in bom_cols %}
+                {% for col in bom_columns %}
                 <td>
                     <select class='select' id='id_col_{{ forloop.counter0 }}' name='col_select_{{ forloop.counter0 }}'>
                             <option value=''>---------</option>
-                            {% for req in req_cols %}
+                            {% for req in bom_headers %}
                             <option value='{{ req }}'{% if req == col.guess %}selected='selected'{% endif %}>{{ req }}</option>
                             {% endfor %}
                     </select>
@@ -73,6 +77,7 @@
         </tbody>
     </table>
 
+    <button type="submit" class="save btn btn-default">Next</button>
 </form>
 
 <b>BOM Rows: {{ bom.row_count }}</b>

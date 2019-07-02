@@ -122,7 +122,7 @@ class BomUploadManager:
 
         return None
     
-    def get_headers(self):
+    def columns(self):
         """ Return a list of headers for the thingy """
         headers = []
 

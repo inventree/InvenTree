@@ -1,5 +1,6 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load inventree_extras %}
 
 {% block details %}
 
@@ -7,6 +8,8 @@
 
 <h4>Upload Bill of Materials</h4>
 <hr>
+
+<p>Step 1 - Select BOM File</p>
 
 <div class='alert alert-info alert-block'>
     <p>The BOM file must contain the required named columns as provided in the <a href="/part/bom_template/">BOM Upload Template</a></a></p>
@@ -20,7 +23,7 @@
 
     {% crispy form %}
 
-    <button type="submit" class="save btn btn-default">Upload</button>
+    <button type="submit" class="save btn btn-default">Next</button>
 </form>
 
 {% endblock %}
