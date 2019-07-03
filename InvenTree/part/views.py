@@ -738,6 +738,35 @@ class BomUpload(FormView):
 
         return self.render_to_response(self.get_context_data(form=form))
 
+
+    def preFillSelections(self):
+        """ Once data columns have been selected,
+        attempt to pre-select the proper data from the database.
+        """
+
+        try:
+            # Index of quantity field
+            q_idx = list(self.column_selections.values()).index('Quantity')
+        except ValueError:
+            q_idx = -1
+
+        for row in self.bom_rows:
+
+            quantity = 0
+
+            if q_idx >= 0:
+                print(row)
+                q_val = row['data'][q_idx]
+                print("row:", row['index'], "q:", q_val)
+
+                try:
+                    quantity = int(q_val)
+                except ValueError:
+                    pass
+
+            row['quantity'] = quantity
+
+
     def extractDataFromFile(self, bom):
         """ Read data from the BOM file """
 
@@ -752,8 +781,8 @@ class BomUpload(FormView):
         """
 
         # Map the columns
-        column_names = {}
-        column_selections = {}
+        self.column_names = {}
+        self.column_selections = {}
 
         row_data = {}
 
@@ -766,7 +795,7 @@ class BomUpload(FormView):
                 col_id = int(item.replace('col_name_', ''))
                 col_name = value
 
-                column_names[col_id] = col_name
+                self.column_names[col_id] = col_name
 
             # Extract the column selections
             if item.startswith('col_select_'):
@@ -774,7 +803,7 @@ class BomUpload(FormView):
                 col_id = int(item.replace('col_select_', ''))
                 col_name = value
 
-                column_selections[col_id] = value
+                self.column_selections[col_id] = value
 
             # Extract the row data
             if item.startswith('row_'):
@@ -792,7 +821,7 @@ class BomUpload(FormView):
 
                 row_data[row_id][col_id] = value
 
-        col_ids = sorted(column_names.keys())
+        col_ids = sorted(self.column_names.keys())
 
         self.bom_columns = []
 
@@ -800,19 +829,19 @@ class BomUpload(FormView):
         duplicates = False
 
         for col in col_ids:
-            if col not in column_selections:
+            if col not in self.column_selections:
                 continue
 
             header = ({
-                'name': column_names[col],
-                'guess': column_selections[col]
+                'name': self.column_names[col],
+                'guess': self.column_selections[col]
             })
 
             # Duplicate guess?
-            guess = column_selections[col]
+            guess = self.   column_selections[col]
 
             if guess:
-                n = list(column_selections.values()).count(column_selections[col])
+                n = list(self.column_selections.values()).count(self.column_selections[col])
                 if n > 1:
                     header['duplicate'] = True
                     duplicates = True
@@ -823,7 +852,7 @@ class BomUpload(FormView):
         self.missing_columns = []
 
         for col in BomUploadManager.REQUIRED_HEADERS:
-            if col not in column_selections.values():
+            if col not in self.column_selections.values():
                 self.missing_columns.append(col)
 
         # Re-construct the data table
@@ -834,7 +863,7 @@ class BomUpload(FormView):
             items = []
             for col_idx in sorted(row.keys()):
 
-                if col_idx not in column_selections.keys():
+                if col_idx not in self.column_selections.keys():
                     continue
 
                 value = row[col_idx]
@@ -847,6 +876,8 @@ class BomUpload(FormView):
         form = part_forms.BomUploadSelectFields
         
         if valid:
+            # Try to extract meaningful data
+            self.preFillSelections()
             form = self.template_name = 'part/bom_upload/select_parts.html' 
         else:
             self.template_name = 'part/bom_upload/select_fields.html'
