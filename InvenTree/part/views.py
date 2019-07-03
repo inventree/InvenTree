@@ -675,7 +675,7 @@ class BomUpload(FormView):
         ctx = super().get_context_data(*args, **kwargs)
 
         ctx['part'] = self.part
-        ctx['bom_headers'] = self.bom_headers
+        ctx['bom_headers'] = BomUploadManager.HEADERS
         ctx['bom_columns'] = self.bom_columns
         ctx['bom_rows'] = self.bom_rows
         ctx['missing_columns'] = self.missing_columns
@@ -741,7 +741,6 @@ class BomUpload(FormView):
     def extractDataFromFile(self, bom):
         """ Read data from the BOM file """
 
-        self.bom_headers = bom.HEADERS
         self.bom_columns = bom.columns()
         self.bom_rows = bom.rows()
 
@@ -751,12 +750,6 @@ class BomUpload(FormView):
         Here the user is presented with the raw data and must select the
         column names and which rows to process.
         """
-
-        data = {
-            'form_valid': False,
-        }
-
-        self.ajax_template_name = 'part/bom_upload/select_fields.html'
 
         # Map the columns
         column_names = {}
@@ -801,7 +794,7 @@ class BomUpload(FormView):
 
         col_ids = sorted(column_names.keys())
 
-        headers = []
+        self.bom_columns = []
 
         for col in col_ids:
             if col not in column_selections:
@@ -820,17 +813,17 @@ class BomUpload(FormView):
                 if n > 1:
                     header['duplicate'] = True
 
-            headers.append(header)
+            self.bom_columns.append(header)
 
         # Are there any missing columns?
-        missing = []
+        self.missing_columns = []
 
         for col in BomUploadManager.REQUIRED_HEADERS:
             if col not in column_selections.values():
-                missing.append(col)
+                self.missing_columns.append(col)
 
         # Re-construct the data table
-        rows = []
+        self.bom_rows = []
 
         for row_idx in sorted(row_data.keys()):
             row = row_data[row_idx]
@@ -843,19 +836,12 @@ class BomUpload(FormView):
                 value = row[col_idx]
                 items.append(value)
 
-            rows.append({'index': row_idx, 'data': items})
+            self.bom_rows.append({'index': row_idx, 'data': items})
 
-        ctx = {
-            # The headers that we know about
-            'req_cols': BomUploadManager.HEADERS,
-            'bom_cols': headers,
-            'missing': missing,
-            'bom_rows': rows,
-        }
+        form = part_forms.BomUploadSelectFields
+        self.template_name = 'part/bom_upload/select_fields.html'
 
-        print(ctx)
-
-        return self.renderJsonResponse(self.request, form=self.get_form(), data=data, context=ctx)
+        return self.render_to_response(self.get_context_data(form=form))
 
     def post(self, request, *args, **kwargs):
         """ Perform the various 'POST' requests required.

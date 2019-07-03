@@ -55,13 +55,11 @@ class BomUploadSelectFields(HelperForm):
     """ Form for selecting BOM fields """
 
     starting_row = forms.IntegerField(required=True, initial=2, help_text='Index of starting row', validators=[MinValueValidator(1)])
-    row_count = forms.IntegerField(required=True, help_text='Number of rows to process', validators=[MinValueValidator(0)])
 
     class Meta:
         model = Part
         fields = [
             'starting_row',
-            'row_count',
         ]
 
 
