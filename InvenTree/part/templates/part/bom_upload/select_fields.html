@@ -9,7 +9,7 @@
 <p>Step 2 - Select Fields</p>
 <hr>
 
-{% if missing and missing|length > 0 %}
+{% if missing_columns and missing_columns|length > 0 %}
 <div class='alert alert-danger alert-block' role='alert'>
     Missing selections for the following required columns:
     <br>
@@ -86,7 +86,5 @@
     </table>
 
 </form>
-
-<b>BOM Rows: {{ bom.row_count }}</b>
 
 {% endblock %}
