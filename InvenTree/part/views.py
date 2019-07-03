@@ -796,6 +796,9 @@ class BomUpload(FormView):
 
         self.bom_columns = []
 
+        # Track any duplicate column selections
+        duplicates = False
+
         for col in col_ids:
             if col not in column_selections:
                 continue
@@ -812,6 +815,7 @@ class BomUpload(FormView):
                 n = list(column_selections.values()).count(column_selections[col])
                 if n > 1:
                     header['duplicate'] = True
+                    duplicates = True
 
             self.bom_columns.append(header)
 
@@ -838,8 +842,14 @@ class BomUpload(FormView):
 
             self.bom_rows.append({'index': row_idx, 'data': items})
 
+        valid = len(self.missing_columns) == 0 and not duplicates
+
         form = part_forms.BomUploadSelectFields
-        self.template_name = 'part/bom_upload/select_fields.html'
+        
+        if valid:
+            form = self.template_name = 'part/bom_upload/select_parts.html' 
+        else:
+            self.template_name = 'part/bom_upload/select_fields.html'
 
         return self.render_to_response(self.get_context_data(form=form))
 
