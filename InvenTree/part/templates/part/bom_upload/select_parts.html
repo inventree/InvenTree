@@ -19,6 +19,7 @@
         <thead>
             <tr>
                 <th></th>
+                <th></th>
                 <th>Row</th>
                 {% for col in bom_columns %}
                 <th>
@@ -33,7 +34,10 @@
                 <td>
                     <button class='btn btn-default btn-remove' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='Remove row'>
                             <span row_id='{{ forloop.counter }}' onClick='removeRowFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
-                        </button>
+                    </button>
+                </td>
+                <td>
+                    <input class='numberinput' type='number' min='1' value='{{ row.quantity }}'/>
                 </td>
                 <td>{{ forloop.counter }}</td>
                 {% for item in row.data %}
