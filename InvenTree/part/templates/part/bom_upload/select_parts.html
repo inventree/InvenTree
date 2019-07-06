@@ -46,8 +46,16 @@
                 <td>{% add row.index 1 %}</td>
                 {% for item in row.data %}
                 <td>
-                    {% if item.column.guess == 'Quantity' %}
+                    {% if item.column.guess == 'Part' %}
+                    <select class='select' id='id_part_{{ row.index }}' name='part_select_{{ row.index }}'>
+                        <option value=''>---------</option>
+                    </select>
+                    <br>
+                    {{ item.cell }}
+                    {% elif item.column.guess == 'Quantity' %}
                     <input class='numberinput' type='number' min='1' value='{{ row.quantity }}'/>
+                    {% elif item.editable %}
+                    <input id='id_edit_{{ item.column.guess }}_{{ row.index }}' name='edit_{{ item.column.guess }}_{{ row.index }}' value='{{ item.cell }}'/>
                     {% else %}
                     {{ item.cell }}
                     {% endif %}

@@ -688,7 +688,8 @@ class BomUpload(FormView):
                 data.append({
                     'cell': item,
                     'idx': idx,
-                    'column': self.bom_columns[idx]
+                    'column': self.bom_columns[idx],
+                    'editable': self.bom_columns[idx].get('guess', None) in BomUploadManager.EDITABLE_HEADERS
                 })
 
             rows.append({

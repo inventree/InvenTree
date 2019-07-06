@@ -63,6 +63,11 @@ class BomUploadManager:
         'Notes'
     ]
 
+    EDITABLE_HEADERS = [
+        'Reference',
+        'Notes'
+    ]
+
     HEADERS = REQUIRED_HEADERS + OPTIONAL_HEADERS
 
     def __init__(self, bom_file):
