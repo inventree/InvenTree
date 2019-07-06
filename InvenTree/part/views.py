@@ -674,10 +674,33 @@ class BomUpload(FormView):
 
         ctx = super().get_context_data(*args, **kwargs)
 
+        # Give each row item access to the column it is in
+        # This provides for much simpler template rendering
+
+        rows = []
+        for row in self.bom_rows:
+            row_data = row['data']
+
+            data = []
+
+            for idx, item in enumerate(row_data):
+
+                data.append({
+                    'cell': item,
+                    'idx': idx,
+                    'column': self.bom_columns[idx]
+                })
+
+            rows.append({
+                'index': row.get('index', -1),
+                'data': data,
+                'quantity': row.get('quantity', None),
+            })
+
         ctx['part'] = self.part
         ctx['bom_headers'] = BomUploadManager.HEADERS
         ctx['bom_columns'] = self.bom_columns
-        ctx['bom_rows'] = self.bom_rows
+        ctx['bom_rows'] = rows
         ctx['missing_columns'] = self.missing_columns
 
         return ctx

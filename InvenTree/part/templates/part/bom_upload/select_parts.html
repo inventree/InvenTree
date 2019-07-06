@@ -1,5 +1,6 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load inventree_extras %}
 
 {% block details %}
 {% include "part/tabs.html" with tab="bom" %}
@@ -23,7 +24,11 @@
                 <th>Row</th>
                 {% for col in bom_columns %}
                 <th>
+                    {% if col.guess %}
+                    {{ col.guess }}
+                    {% else %}
                     {{ col.name }}
+                    {% endif %}
                 </th>
                 {% endfor %}
             </tr>
@@ -37,12 +42,15 @@
                     </button>
                 </td>
                 <td>
-                    <input class='numberinput' type='number' min='1' value='{{ row.quantity }}'/>
                 </td>
-                <td>{{ forloop.counter }}</td>
+                <td>{% add row.index 1 %}</td>
                 {% for item in row.data %}
                 <td>
-                    {{ item }}
+                    {% if item.column.guess == 'Quantity' %}
+                    <input class='numberinput' type='number' min='1' value='{{ row.quantity }}'/>
+                    {% else %}
+                    {{ item.cell }}
+                    {% endif %}
                 </td>
                 {% endfor %}
             </tr>
