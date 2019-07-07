@@ -35,7 +35,7 @@
         </thead>
         <tbody>
             {% for row in bom_rows %}
-            <tr part-description='{{ row.description }}' part-select='#select_part_{{ row.index }}'>
+            <tr part-name='{{ row.part_name }}' part-description='{{ row.description }}' part-select='#select_part_{{ row.index }}'>
                 <td>
                     <button class='btn btn-default btn-remove' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='Remove row'>
                             <span row_id='{{ forloop.counter }}' onClick='removeRowFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>

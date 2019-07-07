@@ -708,6 +708,7 @@ class BomUpload(FormView):
                 # User-input (passed between client and server)
                 'quantity': row.get('quantity', None),
                 'description': row.get('description', ''),
+                'part_name': row.get('part_name', ''),
                 'part': row.get('part', None),
                 'reference': row.get('reference', ''),
                 'notes': row.get('notes', ''),
@@ -799,8 +800,9 @@ class BomUpload(FormView):
 
 
     def preFillSelections(self):
-        """ Once data columns have been selected,
-        attempt to pre-select the proper data from the database.
+        """ Once data columns have been selected, attempt to pre-select the proper data from the database.
+        This function is called once the field selection has been validated.
+        The pre-fill data are then passed through to the part selection form.
         """
 
         q_idx = self.getColumnIndex('Quantity')
@@ -823,13 +825,15 @@ class BomUpload(FormView):
                     pass
 
             if p_idx >= 0:
-                p_val = row['data'][p_idx]
+                part_name = row['data'][p_idx]
+
+                row['part_name'] = part_name
 
                 # Fuzzy match the values and see what happends
                 matches = []
 
                 for part in self.allowed_parts:
-                    ratio = fuzz.partial_ratio(part.name + part.description, p_val)
+                    ratio = fuzz.partial_ratio(part.name + part.description, part_name)
                     matches.append({'part': part, 'match': ratio})
 
                 if len(matches) > 0:
