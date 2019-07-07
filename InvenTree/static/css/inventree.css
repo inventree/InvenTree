@@ -77,6 +77,10 @@
     width: 100%;
 }
 
+.bomselect {
+    max-width: 250px;
+}
+
 /* Part image icons with full-display on mouse hover */
 
 .hover-img-thumb {

@@ -14,6 +14,8 @@ from django.views.generic.edit import FormMixin
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 
+from fuzzywuzzy import fuzz
+
 from .models import PartCategory, Part, PartAttachment
 from .models import BomItem
 from .models import match_part_names
@@ -697,6 +699,7 @@ class BomUpload(FormView):
                 'index': row.get('index', -1),
                 'data': data,
                 'quantity': row.get('quantity', None),
+                'part_options': row.get('part_options', [])
             })
 
         ctx['part'] = self.part
@@ -782,21 +785,40 @@ class BomUpload(FormView):
         except ValueError:
             q_idx = -1
 
+        try:
+            p_idx = list(self.column_selections.values()).index('Part')
+        except ValueError:
+            p_idx = -1
+
         for row in self.bom_rows:
 
             quantity = 0
+            part = None
 
             if q_idx >= 0:
-                print(row)
                 q_val = row['data'][q_idx]
-                print("row:", row['index'], "q:", q_val)
 
                 try:
                     quantity = int(q_val)
                 except ValueError:
                     pass
 
+            if p_idx >= 0:
+                p_val = row['data'][p_idx]
+
+                # Fuzzy match the values and see what happends
+                matches = []
+
+                for part in self.allowed_parts:
+                    ratio = fuzz.partial_ratio(part.name + part.description, p_val)
+                    matches.append({'part': part, 'match': ratio})
+
+                if len(matches) > 0:
+                    matches = sorted(matches, key=lambda item: item['match'], reverse=True)
+
+            row['part'] = part
             row['quantity'] = quantity
+            row['part_options'] = [m['part'] for m in matches]
 
 
     def extractDataFromFile(self, bom):
