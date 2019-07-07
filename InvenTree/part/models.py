@@ -685,7 +685,7 @@ class Part(models.Model):
         - Exclude parts which this part is in the BOM for
         """
 
-        parts = Part.objects.filter(component=True)
+        parts = Part.objects.filter(component=True).exclude(id=self.id)
         parts = parts.exclude(id__in=[part.id for part in self.used_in.all()])
 
         return parts

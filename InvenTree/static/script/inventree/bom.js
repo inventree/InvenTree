@@ -62,6 +62,21 @@ function removeColFromBomWizard(e) {
 }
 
 
+function newPartFromBomWizard(e) {
+    /* Create a new part directly from the BOM wizard.
+     */
+
+    e = e || window.event;
+
+    var src = e.target || e.srcElement;
+
+    launchModalForm('/part/new/', {
+        success: function() {
+        }
+    });
+}
+
+
 function loadBomTable(table, options) {
     /* Load a BOM table with some configurable options.
      * 

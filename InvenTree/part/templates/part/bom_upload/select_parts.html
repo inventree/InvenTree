@@ -47,6 +47,10 @@
                 {% for item in row.data %}
                 <td>
                     {% if item.column.guess == 'Part' %}
+                    <button class='btn btn-default btn-create' id='new_part_row_{{ row.index }}' title='Create new part' type='button'>
+                        <span row_id='{{ row.index }}' class='glyphicon glyphicon-small glyphicon-plus' onClick='newPartFromBomWizard()'/>
+                    </button>
+
                     <select class='select bomselect' id='id_part_{{ row.index }}' name='part_select_{{ row.index }}'>
                         <option value=''>---------</option>
                         {% for part in row.part_options %}
