@@ -70,8 +70,21 @@ function newPartFromBomWizard(e) {
 
     var src = e.target || e.srcElement;
 
+    var row = $(src).closest('tr');
+
     launchModalForm('/part/new/', {
-        success: function() {
+        data: {
+            'description': row.attr('part-description'),
+            'name': row.attr('part-name'),
+        },
+        success: function(response) {
+            /* A new part has been created! Push it as an option.
+             */
+
+            var select = row.attr('part-select');
+
+            var option = new Option(response.text, response.pk, true, true);
+            $(select).append(option).trigger('change');
         }
     });
 }

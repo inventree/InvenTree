@@ -54,13 +54,14 @@ class BomUploadManager:
     # Fields which would be helpful but are not required
     OPTIONAL_HEADERS = [
         'Reference',
+        'Notes',
+        'Overage',
         'Description',
         'Category',
         'Supplier',
         'Manufacturer',
         'MPN',
-        'Overage',
-        'Notes'
+        'IPN',
     ]
 
     EDITABLE_HEADERS = [

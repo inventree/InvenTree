@@ -494,6 +494,11 @@ class PartCreate(AjaxCreateView):
                 initials['keywords'] = category.default_keywords
             except PartCategory.DoesNotExist:
                 pass
+        
+        # Allow initial data to be passed through as arguments
+        for label in ['name', 'IPN', 'description', 'revision', 'keywords']:
+            if label in self.request.GET:
+                initials[label] = self.request.GET.get(label)
 
         return initials
 
@@ -698,8 +703,14 @@ class BomUpload(FormView):
             rows.append({
                 'index': row.get('index', -1),
                 'data': data,
+                'part_options': row.get('part_options', []),
+
+                # User-input (passed between client and server)
                 'quantity': row.get('quantity', None),
-                'part_options': row.get('part_options', [])
+                'description': row.get('description', ''),
+                'part': row.get('part', None),
+                'reference': row.get('reference', ''),
+                'notes': row.get('notes', ''),
             })
 
         ctx['part'] = self.part
@@ -774,21 +785,29 @@ class BomUpload(FormView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+    def getColumnIndex(self, name):
+        """ Return the index of the column with the given name. 
+        It named column is not found, return -1
+        """
+
+        try:
+            idx = list(self.column_selections.values()).index(name)
+        except ValueError:
+            idx = -1
+
+        return idx
+
+
     def preFillSelections(self):
         """ Once data columns have been selected,
         attempt to pre-select the proper data from the database.
         """
 
-        try:
-            # Index of quantity field
-            q_idx = list(self.column_selections.values()).index('Quantity')
-        except ValueError:
-            q_idx = -1
-
-        try:
-            p_idx = list(self.column_selections.values()).index('Part')
-        except ValueError:
-            p_idx = -1
+        q_idx = self.getColumnIndex('Quantity')
+        p_idx = self.getColumnIndex('Part')
+        d_idx = self.getColumnIndex('Description')
+        r_idx = self.getColumnIndex('Reference')
+        n_idx = self.getColumnIndex('Notes')
 
         for row in self.bom_rows:
 
@@ -816,9 +835,19 @@ class BomUpload(FormView):
                 if len(matches) > 0:
                     matches = sorted(matches, key=lambda item: item['match'], reverse=True)
 
+            if d_idx >= 0:
+                row['description'] = row['data'][d_idx]
+
+            if r_idx >= 0:
+                row['reference'] = row['data'][r_idx]
+
+            if n_idx >= 0:
+                row['notes'] = row['data'][n_idx]
+
             row['part'] = part
             row['quantity'] = quantity
             row['part_options'] = [m['part'] for m in matches]
+
 
 
     def extractDataFromFile(self, bom):
