@@ -261,8 +261,12 @@ class StockList(generics.ListCreateAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
-        part_detail = str2bool(self.request.GET.get('part_detail', None))
-        location_detail = str2bool(self.request.GET.get('location_detail', None))
+        try:
+            part_detail = str2bool(self.request.GET.get('part_detail', None))
+            location_detail = str2bool(self.request.GET.get('location_detail', None))
+        except AttributeError:
+            part_detail = None
+            location_detail = None
 
         kwargs['part_detail'] = part_detail
         kwargs['location_detail'] = location_detail

@@ -273,8 +273,12 @@ class BomList(generics.ListCreateAPIView):
     def get_serializer(self, *args, **kwargs):
 
         # Do we wish to include extra detail?
-        part_detail = str2bool(self.request.GET.get('part_detail', None))
-        sub_part_detail = str2bool(self.request.GET.get('sub_part_detail', None))
+        try:
+            part_detail = str2bool(self.request.GET.get('part_detail', None))
+            sub_part_detail = str2bool(self.request.GET.get('sub_part_detail', None))
+        except AttributeError:
+            part_detail = None
+            sub_part_detail = None
 
         kwargs['part_detail'] = part_detail
         kwargs['sub_part_detail'] = sub_part_detail
