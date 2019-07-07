@@ -654,6 +654,7 @@ class BomUpload(FormView):
     bom_columns = []
     bom_rows = []
     missing_columns = []
+    allowed_parts = []
 
     
     def get_success_url(self):
@@ -703,8 +704,15 @@ class BomUpload(FormView):
         ctx['bom_columns'] = self.bom_columns
         ctx['bom_rows'] = rows
         ctx['missing_columns'] = self.missing_columns
+        ctx['allowed_parts_list'] = self.allowed_parts
 
         return ctx
+
+    def getAllowedParts(self):
+        """ Return a queryset of parts which are allowed to be added to this BOM.
+        """
+
+        return self.part.get_allowed_bom_items()
 
     def get(self, request, *args, **kwargs):
         """ Perform the initial 'GET' request.
@@ -915,6 +923,7 @@ class BomUpload(FormView):
         self.request = request
 
         self.part = get_object_or_404(Part, pk=self.kwargs['pk'])
+        self.allowed_parts = self.getAllowedParts()
         self.form = self.get_form(self.get_form_class())
 
         # Did the user POST a file named bom_file?

@@ -678,6 +678,18 @@ class Part(models.Model):
             parts.append(bom.sub_part)
         return parts
 
+    def get_allowed_bom_items(self):
+        """ Return a list of parts which can be added to a BOM for this part.
+
+        - Exclude parts which are not 'component' parts
+        - Exclude parts which this part is in the BOM for
+        """
+
+        parts = Part.objects.filter(component=True)
+        parts = parts.exclude(id__in=[part.id for part in self.used_in.all()])
+
+        return parts
+
     @property
     def supplier_count(self):
         """ Return the number of supplier parts available for this part """

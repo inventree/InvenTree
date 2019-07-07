@@ -49,6 +49,9 @@
                     {% if item.column.guess == 'Part' %}
                     <select class='select' id='id_part_{{ row.index }}' name='part_select_{{ row.index }}'>
                         <option value=''>---------</option>
+                        {% for part in allowed_parts_list %}
+                        <option value='{{ part.id }}'>{{ part.full_name }} - {{ part.description }}</option>
+                        {% endfor %}
                     </select>
                     <br>
                     {{ item.cell }}
