@@ -47,7 +47,7 @@
                 {% for item in row.data %}
                 <td>
                     {% if item.column.guess == 'Part' %}
-                    <select class='select' id='id_part_{{ row.index }}' name='part_select_{{ row.index }}'>
+                    <select class='select bomselect' id='id_part_{{ row.index }}' name='part_select_{{ row.index }}'>
                         <option value=''>---------</option>
                         {% for part in allowed_parts_list %}
                         <option value='{{ part.id }}'>{{ part.full_name }} - {{ part.description }}</option>
@@ -70,5 +70,12 @@
     </table>
 
 </form>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$('.bomselect').select2();
 
 {% endblock %}
