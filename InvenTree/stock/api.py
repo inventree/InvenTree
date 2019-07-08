@@ -57,7 +57,7 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = StockItem.objects.all()
     serializer_class = StockItemSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class StockFilter(FilterSet):
@@ -83,7 +83,7 @@ class StockStocktake(APIView):
     """
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     def post(self, request, *args, **kwargs):
@@ -153,7 +153,7 @@ class StockMove(APIView):
     """ API endpoint for performing stock movements """
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     def post(self, request, *args, **kwargs):
@@ -227,7 +227,7 @@ class StockLocationList(generics.ListCreateAPIView):
     serializer_class = LocationSerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
@@ -390,7 +390,7 @@ class StockList(generics.ListCreateAPIView):
     serializer_class = StockItemSerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
@@ -412,7 +412,7 @@ class StockStocktakeEndpoint(generics.UpdateAPIView):
 
     queryset = StockItem.objects.all()
     serializer_class = StockQuantitySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def update(self, request, *args, **kwargs):
         object = self.get_object()
@@ -434,7 +434,7 @@ class StockTrackingList(generics.ListCreateAPIView):
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockTrackingSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -469,7 +469,7 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = StockLocation.objects.all()
     serializer_class = LocationSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 stock_endpoints = [

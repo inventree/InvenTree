@@ -54,7 +54,7 @@ class CategoryList(generics.ListCreateAPIView):
     serializer_class = CategorySerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
@@ -91,7 +91,7 @@ class PartDetail(generics.RetrieveUpdateAPIView):
     serializer_class = PartSerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
 
@@ -178,7 +178,7 @@ class PartList(generics.ListCreateAPIView):
         return parts_list
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
@@ -243,7 +243,7 @@ class PartStarList(generics.ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
@@ -292,7 +292,7 @@ class BomList(generics.ListCreateAPIView):
         return queryset
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
@@ -314,7 +314,7 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BomItemSerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
 

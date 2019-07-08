@@ -10,19 +10,26 @@ InvenTree | {{ company.name }} - Parts
 <div class='row'>
     <div class='col-sm-6'>
         <h3>Supplier Part</h3>
-        <p><a href="{% url 'company-detail-parts' part.supplier.id %}">{{ part.supplier.name }}</a> - {{ part.SKU }}</p>
+        <div class='btn-row'>
+            <div class='btn-group'>
+                <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='Edit supplier part'>
+                    <span class='glyphicon glyphicon-edit'/>
+                </button>
+                <button type='button' class='btn btn-default btn-glyph' id='delete-part' title='Delete supplier part'>
+                    <span class='glyphicon glyphicon-trash'/>
+                </button>
+            </div>
+        </div>
     </div>
     <div class='col-sm-6'>
-        <h3>
-            <div class="dropdown" style="float: right;">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
-                <span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                  <li><a href="#" id='edit-part' title='Edit supplier part'>Edit</a></li>
-                  <li><a href="#" id='delete-part' title='Delete supplier part'>Delete</a></li>
-                </ul>
-            </div>
-        </h3>
+        <div class='media-left'>
+            <img class='part-thumb'
+            {% if part.part.image %}
+            src='{{ part.part.image.url }}'
+            {% else %}
+            src="{% static 'img/blank_image.png' %}"
+            {% endif %}/>
+        </div>
     </div>
 </div>
 
@@ -30,17 +37,18 @@ InvenTree | {{ company.name }} - Parts
 
 <div class='row'>
 <div class='col-sm-6'>
+    <h4>Supplier Part Details</h4>
     <table class="table table-striped table-condensed">
-        <tr><td>Supplier</td><td><a href="{% url 'company-detail-parts' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
-        <tr><td>SKU</td><td>{{ part.SKU }}</tr></tr>
         <tr>
             <td>Internal Part</td>
             <td>
-        {% if part.part %}
-            <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.full_name }}</a>
-        {% endif %}
+                {% if part.part %}
+                <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.full_name }}</a>
+                {% endif %}
             </td>
         </tr>
+        <tr><td>Supplier</td><td><a href="{% url 'company-detail-parts' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
+        <tr><td>SKU</td><td>{{ part.SKU }}</tr></tr>
     {% if part.URL %}
         <tr><td>URL</td><td><a href="{{ part.URL }}">{{ part.URL }}</a></td></tr>
     {% endif %}
@@ -58,10 +66,8 @@ InvenTree | {{ company.name }} - Parts
 </div>
 
 <div class='col-sm-6'>
+    <h4>Pricing Information</h4>
 <table class="table table-striped table-condensed">
-    <tr>
-        <th colspan='2'>Pricing</th>
-    </tr>
     <tr><td>Order Multiple</td><td>{{ part.multiple }}</td></tr>
     {% if part.base_cost > 0 %}
     <tr><td>Base Price (Flat Fee)</td><td>{{ part.base_cost }}</td></tr>
