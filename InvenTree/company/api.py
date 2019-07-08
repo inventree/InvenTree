@@ -32,7 +32,7 @@ class CompanyList(generics.ListCreateAPIView):
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
@@ -66,7 +66,7 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CompanySerializer
     
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
 
@@ -102,7 +102,7 @@ class SupplierPartList(generics.ListCreateAPIView):
     serializer_class = SupplierPartSerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
@@ -135,7 +135,7 @@ class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = SupplierPart.objects.all()
     serializer_class = SupplierPartSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     read_only_fields = [
     ]
@@ -152,7 +152,7 @@ class SupplierPriceBreakList(generics.ListCreateAPIView):
     serializer_class = SupplierPriceBreakSerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [

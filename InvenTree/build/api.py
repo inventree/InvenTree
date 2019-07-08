@@ -26,7 +26,7 @@ class BuildList(generics.ListCreateAPIView):
     serializer_class = BuildSerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
@@ -47,7 +47,7 @@ class BuildDetail(generics.RetrieveUpdateAPIView):
     serializer_class = BuildSerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
 
@@ -80,7 +80,7 @@ class BuildItemList(generics.ListCreateAPIView):
         return query
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
