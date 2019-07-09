@@ -696,8 +696,7 @@ class BomUpload(FormView):
                 data.append({
                     'cell': item,
                     'idx': idx,
-                    'column': self.bom_columns[idx],
-                    'editable': self.bom_columns[idx].get('guess', None) in BomUploadManager.EDITABLE_HEADERS
+                    'column': self.bom_columns[idx]
                 })
 
             rows.append({
@@ -860,34 +859,47 @@ class BomUpload(FormView):
         self.bom_columns = bom.columns()
         self.bom_rows = bom.rows()
 
+    def getTableDataFromPost(self):
+        """ Extract table cell data from POST request.
+        These data are used to maintain state between sessions.
 
-    def handleFieldSelection(self):
-        """ Handle the output of the field selection form.
-        Here the user is presented with the raw data and must select the
-        column names and which rows to process.
+        Table data keys are as follows:
+
+            col_name_<idx> - Column name at idx as provided in the uploaded file
+            col_guess_<idx> - Column guess at idx as selected in the BOM
+            row_<x>_col<y> - Cell data as provided in the uploaded file
+
         """
 
         # Map the columns
         self.column_names = {}
         self.column_selections = {}
 
-        row_data = {}
+        self.row_data = {}
 
         for item in self.request.POST:
-
             value = self.request.POST[item]
+
+            # Column names as passed as col_name_<idx> where idx is an integer
 
             # Extract the column names
             if item.startswith('col_name_'):
-                col_id = int(item.replace('col_name_', ''))
+                try:
+                    col_id = int(item.replace('col_name_', ''))
+                except ValueError:
+                    continue
                 col_name = value
 
                 self.column_names[col_id] = col_name
 
-            # Extract the column selections
-            if item.startswith('col_select_'):
+            # Extract the column selections (in the 'select fields' view)
+            if item.startswith('col_guess_'):
 
-                col_id = int(item.replace('col_select_', ''))
+                try:
+                    col_id = int(item.replace('col_guess_', ''))
+                except ValueError:
+                    continue
+
                 col_name = value
 
                 self.column_selections[col_id] = value
@@ -900,38 +912,60 @@ class BomUpload(FormView):
                 if len(s) < 4:
                     continue
 
-                row_id = int(s[1])
-                col_id = int(s[3])
+                # Ignore row/col IDs which are not correct numeric values
+                try:
+                    row_id = int(s[1])
+                    col_id = int(s[3])
+                except ValueError:
+                    continue
                 
-                if row_id not in row_data:
-                    row_data[row_id] = {}
+                if row_id not in self.row_data:
+                    self.row_data[row_id] = {}
 
-                row_data[row_id][col_id] = value
+                self.row_data[row_id][col_id] = value
 
-        col_ids = sorted(self.column_names.keys())
+        self.col_ids = sorted(self.column_names.keys())
 
+        # Re-construct the data table
+        self.bom_rows = []
+
+        for row_idx in sorted(self.row_data.keys()):
+            row = self.row_data[row_idx]
+            items = []
+
+            for col_idx in sorted(row.keys()):
+
+                #if col_idx not in self.column_selections.keys():
+                #    continue
+
+                value = row[col_idx]
+                items.append(value)
+
+            self.bom_rows.append({'index': row_idx, 'data': items})
+
+        # Construct the column data
         self.bom_columns = []
 
         # Track any duplicate column selections
-        duplicates = False
+        self.duplicates = False
 
-        for col in col_ids:
-            if col not in self.column_selections:
-                continue
+        for col in self.col_ids:
+
+            if col in self.column_selections:
+                guess = self.column_selections[col]
+            else:
+                guess = None
 
             header = ({
                 'name': self.column_names[col],
-                'guess': self.column_selections[col]
+                'guess': guess
             })
-
-            # Duplicate guess?
-            guess = self.   column_selections[col]
 
             if guess:
                 n = list(self.column_selections.values()).count(self.column_selections[col])
                 if n > 1:
                     header['duplicate'] = True
-                    duplicates = True
+                    self.duplicates = True
 
             self.bom_columns.append(header)
 
@@ -942,34 +976,38 @@ class BomUpload(FormView):
             if col not in self.column_selections.values():
                 self.missing_columns.append(col)
 
-        # Re-construct the data table
-        self.bom_rows = []
 
-        for row_idx in sorted(row_data.keys()):
-            row = row_data[row_idx]
-            items = []
-            for col_idx in sorted(row.keys()):
+    def handleFieldSelection(self):
+        """ Handle the output of the field selection form.
+        Here the user is presented with the raw data and must select the
+        column names and which rows to process.
+        """
 
-                if col_idx not in self.column_selections.keys():
-                    continue
+        # Extract POST data
+        self.getTableDataFromPost()
 
-                value = row[col_idx]
-                items.append(value)
-
-            self.bom_rows.append({'index': row_idx, 'data': items})
-
-        valid = len(self.missing_columns) == 0 and not duplicates
+        valid = len(self.missing_columns) == 0 and not self.duplicates
 
         form = part_forms.BomUploadSelectFields
         
         if valid:
             # Try to extract meaningful data
             self.preFillSelections()
-            form = self.template_name = 'part/bom_upload/select_parts.html' 
+            form = None
+            self.template_name = 'part/bom_upload/select_parts.html' 
         else:
             self.template_name = 'part/bom_upload/select_fields.html'
 
         return self.render_to_response(self.get_context_data(form=form))
+
+    def handlePartSelection(self):
+        
+        # Extract POST data
+        self.getTableDataFromPost()
+
+        self.template_name = 'part/bom_upload/select_parts.html'
+
+        return self.render_to_response(self.get_context_data(form=None))
 
     def post(self, request, *args, **kwargs):
         """ Perform the various 'POST' requests required.
@@ -989,6 +1027,8 @@ class BomUpload(FormView):
             return self.handleBomFileUpload()
         elif form_step == 'select_fields':
             return self.handleFieldSelection()
+        elif form_step == 'select_parts':
+            return self.handlePartSelection()
 
         return self.render_to_response(self.get_context_data(form=self.form))
 

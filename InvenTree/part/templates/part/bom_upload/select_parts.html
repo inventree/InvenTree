@@ -11,6 +11,8 @@
 
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
 
+    <button type="submit" class="save btn btn-default">Submit BOM</button>
+
     {% csrf_token %}
     {% load crispy_forms_tags %}
 
@@ -24,6 +26,8 @@
                 <th>Row</th>
                 {% for col in bom_columns %}
                 <th>
+                    <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
+                    <input type='hidden' name='col_guess_{{ forloop.counter0 }}' value='{{ col.guess }}'/>
                     {% if col.guess %}
                     {{ col.guess }}
                     {% else %}
@@ -69,6 +73,7 @@
                     {% else %}
                     {{ item.cell }}
                     {% endif %}
+                    <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item.cell }}'/>
                 </td>
                 {% endfor %}
             </tr>

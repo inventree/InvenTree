@@ -54,7 +54,7 @@
                 <td></td>
                 {% for col in bom_columns %}
                 <td>
-                    <select class='select' id='id_col_{{ forloop.counter0 }}' name='col_select_{{ forloop.counter0 }}'>
+                    <select class='select' id='id_col_{{ forloop.counter0 }}' name='col_guess_{{ forloop.counter0 }}'>
                             <option value=''>---------</option>
                             {% for req in bom_headers %}
                             <option value='{{ req }}'{% if req == col.guess %}selected='selected'{% endif %}>{{ req }}</option>
