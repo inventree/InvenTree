@@ -63,7 +63,10 @@
                     </select>
                     <i>{{ item.cell }}</i>
                     {% elif item.column.guess == 'Quantity' %}
-                    <input class='numberinput' type='number' min='1' value='{{ row.quantity }}'/>
+                    <input name='quantity_{{ row.index }}' class='numberinput' type='number' min='1' value='{{ row.quantity }}'/>
+                    {% if row.errors.quantity %}
+                    <p class='help-block'>{{ row.errors.quantity }}</p>
+                    {% endif %}
                     {% elif item.column.guess == 'Reference' %}
                     <input name='reference_{{ row.index }}' value='{{ row.reference }}'/>
                     {% elif item.column.guess == 'Notes' %}

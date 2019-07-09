@@ -711,6 +711,7 @@ class BomUpload(FormView):
                 'part': row.get('part', None),
                 'reference': row.get('reference', ''),
                 'notes': row.get('notes', ''),
+                'errors': row.get('errors', ''),
             })
 
         ctx['part'] = self.part
@@ -941,7 +942,11 @@ class BomUpload(FormView):
                 value = row[col_idx]
                 items.append(value)
 
-            self.bom_rows.append({'index': row_idx, 'data': items})
+            self.bom_rows.append({
+                'index': row_idx,
+                'data': items,
+                'errors': {},
+            })
 
         # Construct the column data
         self.bom_columns = []
@@ -1002,12 +1007,52 @@ class BomUpload(FormView):
 
     def handlePartSelection(self):
         
-        # Extract POST data
+        # Extract basic table data from POST request
         self.getTableDataFromPost()
+
+        # Keep track of the parts that have been selected
+        parts = {}
+
+        # Extract other data (part selections, etc)
+        for key in self.request.POST:
+            value = self.request.POST[key]
+
+            # Extract quantity from each row
+            if key.startswith('quantity_'):
+                try:
+                    row_id = int(key.replace('quantity_', ''))
+
+                    row = self.getRowByIndex(row_id)
+
+                    if row is None:
+                        print("No match found for row", row_id)
+                        continue
+
+                    q = 1
+
+                    try:
+                        q = int(value)
+                        if q <= 0:
+                            row['errors']['quantity'] = _('Quantity must be greater than zero')
+                    except ValueError:
+                        row['errors']['quantity'] = _('Enter a valid quantity')
+
+                    row['quantity'] = q
+                     
+                except ValueError:
+                    continue
 
         self.template_name = 'part/bom_upload/select_parts.html'
 
         return self.render_to_response(self.get_context_data(form=None))
+
+    def getRowByIndex(self, idx):
+        
+        for row in self.bom_rows:
+            if row['index'] == idx:
+                return row
+
+        return None
 
     def post(self, request, *args, **kwargs):
         """ Perform the various 'POST' requests required.
