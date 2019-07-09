@@ -55,17 +55,20 @@
                         <span row_id='{{ row.index }}' class='glyphicon glyphicon-small glyphicon-plus' onClick='newPartFromBomWizard()'/>
                     </button>
 
-                    <select class='select bomselect' id='select_part_{{ row.index }}' name='part_select_{{ row.index }}'>
+                    <select class='select bomselect' id='select_part_{{ row.index }}' name='part_{{ row.index }}'>
                         <option value=''>---------</option>
                         {% for part in row.part_options %}
-                        <option value='{{ part.id }}'>{{ part.full_name }} - <i>{{ part.description }}</i></option>
+                        <option value='{{ part.id }}'{% if part.id == row.part.id %} selected='selected'{% endif %}>{{ part.full_name }} - {{ part.description }}</option>
                         {% endfor %}
                     </select>
                     <i>{{ item.cell }}</i>
+                    {% if row.errors.part %}
+                    <p class='help-inline'>{{ row.errors.part }}</p>
+                    {% endif %}
                     {% elif item.column.guess == 'Quantity' %}
                     <input name='quantity_{{ row.index }}' class='numberinput' type='number' min='1' value='{{ row.quantity }}'/>
                     {% if row.errors.quantity %}
-                    <p class='help-block'>{{ row.errors.quantity }}</p>
+                    <p class='help-inline'>{{ row.errors.quantity }}</p>
                     {% endif %}
                     {% elif item.column.guess == 'Reference' %}
                     <input name='reference_{{ row.index }}' value='{{ row.reference }}'/>

@@ -702,7 +702,7 @@ class BomUpload(FormView):
             rows.append({
                 'index': row.get('index', -1),
                 'data': data,
-                'part_options': row.get('part_options', []),
+                'part_options': row.get('part_options', self.allowed_parts),
 
                 # User-input (passed between client and server)
                 'quantity': row.get('quantity', None),
@@ -1025,7 +1025,6 @@ class BomUpload(FormView):
                     row = self.getRowByIndex(row_id)
 
                     if row is None:
-                        print("No match found for row", row_id)
                         continue
 
                     q = 1
@@ -1041,6 +1040,51 @@ class BomUpload(FormView):
                      
                 except ValueError:
                     continue
+
+            # Extract part from each row
+            if key.startswith('part_'):
+                try:
+                    row_id = int(key.replace('part_', ''))
+
+                    row = self.getRowByIndex(row_id)
+
+                    if row is None:
+                        continue
+                except ValueError:
+                    # Row ID non integer value
+                    continue
+
+                try:
+                    part_id = int(value)
+                    part = Part.objects.get(id=part_id)
+                except ValueError:
+                    row['errors']['part'] = _('Select valid part')
+                    continue
+                except Part.DoesNotExist:
+                    row['errors']['part'] = _('Select valid part')
+                    continue
+
+                # Keep track of how many of each part we have seen
+                if part_id in parts:
+                    parts[part_id]['quantity'] += 1
+                    row['errors']['part'] = _('Duplicate part selected')
+                else:
+                    parts[part_id] = {
+                        'part': part,
+                        'quantity': 1,
+                    }
+
+                row['part'] = part
+
+        # Are there any errors after form handling?
+        valid = True
+
+        for row in self.bom_rows:
+            errors = row.get('errors', [])
+
+            if len(errors) > 0:
+                valid = False
+
 
         self.template_name = 'part/bom_upload/select_parts.html'
 
