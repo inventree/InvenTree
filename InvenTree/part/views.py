@@ -1076,6 +1076,19 @@ class BomUpload(FormView):
 
                 row['part'] = part
 
+            # Extract other fields which do not require further validation
+            for field in ['reference', 'notes']:
+                if key.startswith(field + '_'):
+                    try:
+                        row_id = int(key.replace(field + '_', ''))
+                        
+                        row = self.getRowByIndex(row_id)
+
+                        if row:
+                            row[field] = value
+                    except:
+                        continue
+
         # Are there any errors after form handling?
         valid = True
 
