@@ -14,7 +14,6 @@ database setup in this file.
 import os
 import logging
 import tempfile
-import io
 import yaml
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
