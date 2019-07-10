@@ -43,3 +43,8 @@ For further information, refer to the following documentation:
 
 * `Django ALLOWED_HOSTS <https://docs.djangoproject.com/en/2.2/ref/settings/#allowed-hosts>`_
 * `Django CORS headers <https://github.com/OttoYiu/django-cors-headers>`_
+
+Uploaded File Storage
+---------------------
+
+By default, uploaded files are stored in the local direction ``./media``. This directory should be changed based on the particular installation requirements.

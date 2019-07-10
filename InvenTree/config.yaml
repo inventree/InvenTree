@@ -33,5 +33,10 @@ cors:
   # - https://example.com
   # - https://sub.example.com
 
+# MEDIA_ROOT is the local filesystem location for storing uploaded files
+# By default, it is stored in a directory named 'media' local to the InvenTree directory
+# This should be changed for a production installation
+media_root: './media'
+
 # Logging options
 log_queries: False
