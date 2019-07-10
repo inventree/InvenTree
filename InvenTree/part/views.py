@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, FormView
@@ -1092,19 +1093,46 @@ class BomUpload(FormView):
         valid = True
 
         for row in self.bom_rows:
+            # Has a part been selected for the given row?
+            if row.get('part', None) is None:
+                row['errors']['part'] = _('Select a part')
+
+            # Has a quantity been specified?
+            if row.get('quantity', None) is None:
+                row['errors']['quantity'] = _('Specify quantity')
+
             errors = row.get('errors', [])
 
             if len(errors) > 0:
                 valid = False
-
 
         self.template_name = 'part/bom_upload/select_parts.html'
 
         ctx = self.get_context_data(form=None)
 
         if valid:
-            # Save the BOM data
-            pass
+            self.part.clear_bom()
+
+            # Generate new BOM items
+            for row in self.bom_rows:
+                part = row.get('part')
+                quantity = row.get('quantity')
+                reference = row.get('reference')
+                notes = row.get('notes')
+
+                # Create a new BOM item!
+                item = BomItem(
+                    part=self.part,
+                    sub_part=part,
+                    quantity=quantity,
+                    reference=reference,
+                    note=notes
+                )
+
+                item.save()
+
+            # Redirect to the BOM view
+            return HttpResponseRedirect(reverse('part-bom', kwargs={'pk': self.part.id}))
         else:
             ctx['form_errors'] = True
 

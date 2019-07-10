@@ -671,6 +671,13 @@ class Part(models.Model):
 
         self.save()
 
+    @transaction.atomic
+    def clear_bom(self):
+        """ Clear the BOM items for the part (delete all BOM lines).
+        """
+
+        self.bom_items.all().delete()
+
     def required_parts(self):
         """ Return a list of parts required to make this part (list of BOM items) """
         parts = []
