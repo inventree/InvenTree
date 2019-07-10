@@ -33,3 +33,13 @@ By default, InvenTree uses an sqlite database file : ``inventree_db.sqlite3``. T
 **MYSQL:** MySQL database backend is supported with the native Django implemetation.
 
 **POSTGRESQL:** PostgreSQL database backend is supported with the native Django implementation. Note that to use this backend, the ``psycopg2`` Python library must first be installed.
+
+Allowed Hosts / CORS
+--------------------
+
+By default, all hosts are allowed, and CORS requests are enabled from any origin. **This is not secure and should be adjusted for your installation**. These options can be changed in the configuration file.
+
+For further information, refer to the following documentation:
+
+* `Django ALLOWED_HOSTS <https://docs.djangoproject.com/en/2.2/ref/settings/#allowed-hosts>`_
+* `Django CORS headers <https://github.com/OttoYiu/django-cors-headers>`_
