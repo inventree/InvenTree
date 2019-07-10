@@ -11,7 +11,6 @@ from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, FormView
-from django.views.generic.edit import FormMixin
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 
@@ -655,7 +654,7 @@ class BomUpload(FormView):
     During these steps, data are passed between the server/client as JSON objects.
     """
 
-    template_name='part/bom_upload/upload_file.html'
+    template_name = 'part/bom_upload/upload_file.html'
 
     # Context data passed to the forms (initially empty, extracted from uploaded file)
     bom_headers = []
@@ -664,7 +663,6 @@ class BomUpload(FormView):
     missing_columns = []
     allowed_parts = []
 
-    
     def get_success_url(self):
         part = self.get_object()
         return reverse('upload-bom', kwargs={'pk': part.id})
@@ -785,9 +783,8 @@ class BomUpload(FormView):
 
         return self.render_to_response(self.get_context_data(form=form))
 
-
     def getColumnIndex(self, name):
-        """ Return the index of the column with the given name. 
+        """ Return the index of the column with the given name.
         It named column is not found, return -1
         """
 
@@ -797,7 +794,6 @@ class BomUpload(FormView):
             idx = -1
 
         return idx
-
 
     def preFillSelections(self):
         """ Once data columns have been selected, attempt to pre-select the proper data from the database.
@@ -850,8 +846,6 @@ class BomUpload(FormView):
 
             row['quantity'] = quantity
             row['part_options'] = [m['part'] for m in matches]
-
-
 
     def extractDataFromFile(self, bom):
         """ Read data from the BOM file """
@@ -935,9 +929,6 @@ class BomUpload(FormView):
 
             for col_idx in sorted(row.keys()):
 
-                #if col_idx not in self.column_selections.keys():
-                #    continue
-
                 value = row[col_idx]
                 items.append(value)
 
@@ -980,7 +971,6 @@ class BomUpload(FormView):
             if col not in self.column_selections.values():
                 self.missing_columns.append(col)
 
-
     def handleFieldSelection(self):
         """ Handle the output of the field selection form.
         Here the user is presented with the raw data and must select the
@@ -998,7 +988,7 @@ class BomUpload(FormView):
             # Try to extract meaningful data
             self.preFillSelections()
             form = None
-            self.template_name = 'part/bom_upload/select_parts.html' 
+            self.template_name = 'part/bom_upload/select_parts.html'
         else:
             self.template_name = 'part/bom_upload/select_fields.html'
 

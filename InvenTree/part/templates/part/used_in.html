@@ -35,6 +35,7 @@
             {
                 field: 'part_detail',
                 title: 'Part',
+                sortable: true,
                 formatter: function(value, row, index, field) {
                     var html = imageHoverIcon(row.part_detail.image_url) + renderLink(value.full_name, value.url + 'bom/');
 
@@ -48,8 +49,10 @@
             {
                 field: 'part_detail.description',
                 title: 'Description',
+                sortable: true,
             },
             {
+                sortable: true,
                 field: 'quantity',
                 title: 'Uses',
             }
