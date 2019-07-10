@@ -95,6 +95,8 @@ class BomUploadManager:
             self.data = tablib.Dataset().load(raw_data)
         except tablib.UnsupportedFormat:
             raise ValidationError({'bom_file': _('Error reading BOM file (invalid data)')})
+        except tablib.core.InvalidDimensions:
+            raise ValidationError({'bom_file': _('Error reading BOM file (incorrect row size)')})
 
     def guess_header(self, header, threshold=80):
         """ Try to match a header (from the file) to a list of known headers

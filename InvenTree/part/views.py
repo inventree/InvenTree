@@ -782,7 +782,6 @@ class BomUpload(FormView):
             self.extractDataFromFile(manager)
         else:
             form = self.form
-            form.errors['bom_file'] = [_('no errors')]
 
         return self.render_to_response(self.get_context_data(form=form))
 
