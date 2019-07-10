@@ -38,14 +38,24 @@ SECRET_KEY = key_file.read().strip()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.get('debug', True)
 
-ALLOWED_HOSTS = ['*']
+# List of allowed hosts (default = allow all)
+ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
 
-CORS_ORIGIN_WHITELIST = [
-]
+# Cross Origin Resource Sharing (CORS) options
 
-if DEBUG:
-    print("Warning: DEBUG mode is enabled, CORS requests are allowed for any domain")
-    CORS_ORIGIN_ALLOW_ALL = True
+# Only allow CORS access to API
+CORS_URLS_REGEX = r'^/api/.*$'
+
+# Extract CORS options from configuration file
+cors_opt = CONFIG.get('cors', None)
+
+if cors_opt:
+    CORS_ORIGIN_ALLOW_ALL = cors_opt.get('allow_all', False)
+
+    if CORS_ORIGIN_ALLOW_ALL:
+        print("Warning: DEBUG mode is enabled, CORS requests are allowed for any domain")
+    else:
+        CORS_ORIGIN_WHITELIST = cors_opt.get('whitelist', [])
 
 if DEBUG:
     # will output to your console

@@ -16,5 +16,22 @@ database:
 # Set debug to False to run in production mode
 debug: True
 
+# Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
+# A list of strings representing the host/domain names that this Django site can serve.
+# Default behaviour is to allow all hosts (THIS IS NOT SECURE!)
+allowed_hosts:
+  - '*'
+
+# Cross Origin Resource Sharing (CORS) settings (see https://github.com/ottoyiu/django-cors-headers)
+# Following parameters are 
+cors:
+  # CORS_ORIGIN_ALLOW_ALL - If True, the whitelist will not be used and all origins will be accepted. Defaults to False.
+  allow_all: False
+  
+  # CORS_ORIGIN_WHITELIST - A list of origins that are authorized to make cross-site HTTP requests. Defaults to []
+  # whitelist:
+  # - https://example.com
+  # - https://sub.example.com
+
 # Logging options
 log_queries: False
