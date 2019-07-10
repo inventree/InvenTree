@@ -36,7 +36,13 @@
                 field: 'part_detail',
                 title: 'Part',
                 formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.part_detail.image_url) + renderLink(value.full_name, value.url + 'bom/');
+                    var html = imageHoverIcon(row.part_detail.image_url) + renderLink(value.full_name, value.url + 'bom/');
+
+                    if (!row.part_detail.active) {
+                        html += "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
+                    }
+
+                    return html;
                 }
             },
             {

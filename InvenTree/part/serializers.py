@@ -53,6 +53,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'total_stock',
             'available_stock',
             'image_url',
+            'active',
         ]
 
 
