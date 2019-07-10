@@ -40,6 +40,7 @@ secret_key.txt
 # IDE / development files
 .idea/
 *.code-workspace
+.vscode/
 
 # Coverage reports
 .coverage

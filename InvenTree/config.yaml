@@ -1,0 +1,20 @@
+
+# Database backend selection - Configure backend database settings
+# Ref: https://docs.djangoproject.com/en/2.2/ref/settings/#std:setting-DATABASES
+# Specify database parameters below as they appear in the Django docs
+database:
+  ENGINE: django.db.backends.sqlite3
+  NAME: inventree_db.sqlite3
+  
+  # For more complex database installations, further parameters are required
+  # Refer to the django documentation for full list of options
+  # USER: db_username
+  # PASSWORD: db_password
+  # HOST: db_hostname
+  # PORT: db_port
+
+# Set debug to False to run in production mode
+debug: True
+
+# Logging options
+log_queries: False
