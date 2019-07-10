@@ -848,7 +848,6 @@ class BomUpload(FormView):
             if n_idx >= 0:
                 row['notes'] = row['data'][n_idx]
 
-            row['part'] = part
             row['quantity'] = quantity
             row['part_options'] = [m['part'] for m in matches]
 
@@ -1101,7 +1100,15 @@ class BomUpload(FormView):
 
         self.template_name = 'part/bom_upload/select_parts.html'
 
-        return self.render_to_response(self.get_context_data(form=None))
+        ctx = self.get_context_data(form=None)
+
+        if valid:
+            # Save the BOM data
+            pass
+        else:
+            ctx['form_errors'] = True
+
+        return self.render_to_response(ctx)
 
     def getRowByIndex(self, idx):
         
