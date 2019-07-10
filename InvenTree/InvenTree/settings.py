@@ -153,14 +153,15 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'inventree_db.sqlite3'),
     },
-    'postgresql': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'inventree',
-        'USER': 'inventreeuser',
-        'PASSWORD': 'inventree',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
+    # TODO - Uncomment this when postgresql support is re-integrated
+    # 'postgresql': {
+    #    'ENGINE': 'django.db.backends.postgresql',
+    #   'NAME': 'inventree',
+    #   'USER': 'inventreeuser',
+    #   'PASSWORD': 'inventree',
+    #   'HOST': 'localhost',
+    #   'PORT': '',
+    # }
 }
 
 CACHES = {

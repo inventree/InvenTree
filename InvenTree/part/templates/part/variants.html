@@ -24,9 +24,9 @@
 <table class='table table-striped table-condensed' id='variant-table' data-toolbar='#button-toolbar'>
     <thead>
         <tr>
-            <th>Variant</th>
-            <th>Description</th>
-            <th>Stock</th>
+            <th data-sortable='true'>Variant</th>
+            <th data-sortable='true'>Description</th>
+            <th data-sortable='true'>Stock</th>
         </tr>
     </thead>
     <tbody>
@@ -35,6 +35,9 @@
             <td>
                 {% include "hover_image.html" with image=variant.image hover=True %}
                 <a href="{% url 'part-detail' variant.id %}">{{ variant.full_name }}</a>
+                {% if not variant.active %}
+                <span class='label label-warning' style='float: right;'>INACTIVE</span>
+                {% endif %}
             </td>
             <td>{{ variant.description }}</td>
             <td>{{ variant.total_stock }}</td>

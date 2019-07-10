@@ -1,0 +1,29 @@
+{% extends "part/part_base.html" %}
+{% load static %}
+{% load inventree_extras %}
+
+{% block details %}
+
+{% include "part/tabs.html" with tab='bom' %}
+
+<h4>Upload Bill of Materials</h4>
+<hr>
+
+<p>Step 1 - Select BOM File</p>
+
+<div class='alert alert-info alert-block'>
+    <p>The BOM file must contain the required named columns as provided in the <a href="/part/bom_template/">BOM Upload Template</a></a></p>
+</div>
+
+<form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
+    <button type="submit" class="save btn btn-default">Upload File</button>
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+
+    <input type='hidden' name='form_step' value='select_file'/>
+
+    {% crispy form %}
+
+</form>
+
+{% endblock %}

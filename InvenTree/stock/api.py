@@ -57,7 +57,7 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = StockItem.objects.all()
     serializer_class = StockItemSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class StockFilter(FilterSet):
@@ -83,7 +83,7 @@ class StockStocktake(APIView):
     """
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     def post(self, request, *args, **kwargs):
@@ -153,7 +153,7 @@ class StockMove(APIView):
     """ API endpoint for performing stock movements """
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     def post(self, request, *args, **kwargs):
@@ -227,7 +227,7 @@ class StockLocationList(generics.ListCreateAPIView):
     serializer_class = LocationSerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
@@ -261,8 +261,12 @@ class StockList(generics.ListCreateAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
-        part_detail = str2bool(self.request.GET.get('part_detail', None))
-        location_detail = str2bool(self.request.GET.get('location_detail', None))
+        try:
+            part_detail = str2bool(self.request.GET.get('part_detail', None))
+            location_detail = str2bool(self.request.GET.get('location_detail', None))
+        except AttributeError:
+            part_detail = None
+            location_detail = None
 
         kwargs['part_detail'] = part_detail
         kwargs['location_detail'] = location_detail
@@ -291,6 +295,7 @@ class StockList(generics.ListCreateAPIView):
             'part',
             'part__IPN',
             'part__name',
+            'part__revision',
             'part__description',
             'part__image',
             'part__category',
@@ -386,7 +391,7 @@ class StockList(generics.ListCreateAPIView):
     serializer_class = StockItemSerializer
 
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
     ]
 
     filter_backends = [
@@ -408,7 +413,7 @@ class StockStocktakeEndpoint(generics.UpdateAPIView):
 
     queryset = StockItem.objects.all()
     serializer_class = StockQuantitySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def update(self, request, *args, **kwargs):
         object = self.get_object()
@@ -430,7 +435,7 @@ class StockTrackingList(generics.ListCreateAPIView):
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockTrackingSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -465,7 +470,7 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = StockLocation.objects.all()
     serializer_class = LocationSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 stock_endpoints = [

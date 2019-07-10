@@ -37,8 +37,9 @@ InvenTree/media
 # Key file
 secret_key.txt
 
-# Ignore python IDE project configuration
+# IDE / development files
 .idea/
+*.code-workspace
 
 # Coverage reports
 .coverage

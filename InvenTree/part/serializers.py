@@ -53,6 +53,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'total_stock',
             'available_stock',
             'image_url',
+            'active',
         ]
 
 
@@ -166,6 +167,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'sub_part',
             'sub_part_detail',
             'quantity',
+            'reference',
             'price_range',
             'overage',
             'note',
