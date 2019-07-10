@@ -1116,8 +1116,8 @@ class BomUpload(FormView):
             for row in self.bom_rows:
                 part = row.get('part')
                 quantity = row.get('quantity')
-                reference = row.get('reference')
-                notes = row.get('notes')
+                reference = row.get('reference', '')
+                notes = row.get('notes', '')
 
                 # Create a new BOM item!
                 item = BomItem(
