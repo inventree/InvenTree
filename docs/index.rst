@@ -8,6 +8,7 @@ InvenTree Source Documentation
    :hidden:
 
    Getting Started<start>
+   Configuration<config>
    Modal Forms<forms>
    Tables<tables>
    REST API<rest>
