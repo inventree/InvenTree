@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 from InvenTree.forms import HelperForm
 
 from django import forms
+from django.core.validators import MinValueValidator
 
 from .models import Part, PartCategory, PartAttachment
 from .models import BomItem
@@ -38,24 +39,27 @@ class BomValidateForm(HelperForm):
         ]
 
 
-class BomExportForm(HelperForm):
+class BomUploadSelectFile(HelperForm):
+    """ Form for importing a BOM. Provides a file input box for upload """
 
-    # TODO - Define these choices somewhere else, and import them here
-    format_choices = (
-        ('csv', 'CSV'),
-        ('pdf', 'PDF'),
-        ('xml', 'XML'),
-        ('xlsx', 'XLSX'),
-        ('html', 'HTML')
-    )
-
-    # Select export type
-    format = forms.CharField(label='Format', widget=forms.Select(choices=format_choices), required='true', help_text='Select export format')
+    bom_file = forms.FileField(label='BOM file', required=True, help_text="Select BOM file to upload")
 
     class Meta:
         model = Part
         fields = [
-            'format',
+            'bom_file',
+        ]
+
+
+class BomUploadSelectFields(HelperForm):
+    """ Form for selecting BOM fields """
+
+    starting_row = forms.IntegerField(required=True, initial=2, help_text='Index of starting row', validators=[MinValueValidator(1)])
+
+    class Meta:
+        model = Part
+        fields = [
+            'starting_row',
         ]
 
 
@@ -130,6 +134,7 @@ class EditBomItemForm(HelperForm):
             'part',
             'sub_part',
             'quantity',
+            'reference',
             'overage',
             'note'
         ]

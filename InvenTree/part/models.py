@@ -671,11 +671,30 @@ class Part(models.Model):
 
         self.save()
 
+    @transaction.atomic
+    def clear_bom(self):
+        """ Clear the BOM items for the part (delete all BOM lines).
+        """
+
+        self.bom_items.all().delete()
+
     def required_parts(self):
         """ Return a list of parts required to make this part (list of BOM items) """
         parts = []
         for bom in self.bom_items.all().select_related('sub_part'):
             parts.append(bom.sub_part)
+        return parts
+
+    def get_allowed_bom_items(self):
+        """ Return a list of parts which can be added to a BOM for this part.
+
+        - Exclude parts which are not 'component' parts
+        - Exclude parts which this part is in the BOM for
+        """
+
+        parts = Part.objects.filter(component=True).exclude(id=self.id)
+        parts = parts.exclude(id__in=[part.id for part in self.used_in.all()])
+
         return parts
 
     @property
@@ -843,15 +862,19 @@ class Part(models.Model):
             'Part',
             'Description',
             'Quantity',
+            'Overage',
+            'Reference',
             'Note',
         ])
 
-        for it in self.bom_items.all():
+        for it in self.bom_items.all().order_by('id'):
             line = []
 
             line.append(it.sub_part.full_name)
             line.append(it.sub_part.description)
             line.append(it.quantity)
+            line.append(it.overage)
+            line.append(it.reference)
             line.append(it.note)
 
             data.append(line)
@@ -969,6 +992,7 @@ class BomItem(models.Model):
         part: Link to the parent part (the part that will be produced)
         sub_part: Link to the child part (the part that will be consumed)
         quantity: Number of 'sub_parts' consumed to produce one 'part'
+        reference: BOM reference field (e.g. part designators)
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
     """
@@ -982,7 +1006,6 @@ class BomItem(models.Model):
                              help_text='Select parent part',
                              limit_choices_to={
                                  'assembly': True,
-                                 'active': True,
                              })
 
     # A link to the child item (sub-part)
@@ -991,7 +1014,6 @@ class BomItem(models.Model):
                                  help_text='Select part to be used in BOM',
                                  limit_choices_to={
                                      'component': True,
-                                     'active': True
                                  })
 
     # Quantity required
@@ -1001,8 +1023,10 @@ class BomItem(models.Model):
                                help_text='Estimated build wastage quantity (absolute or percentage)'
                                )
 
+    reference = models.CharField(max_length=500, blank=True, help_text='BOM item reference')
+
     # Note attached to this BOM line item
-    note = models.CharField(max_length=100, blank=True, help_text='BOM item notes')
+    note = models.CharField(max_length=500, blank=True, help_text='BOM item notes')
 
     def clean(self):
         """ Check validity of the BomItem model.

@@ -1,0 +1,90 @@
+{% extends "part/part_base.html" %}
+{% load static %}
+{% load inventree_extras %}
+
+{% block details %}
+{% include "part/tabs.html" with tab='bom' %}
+<h4>Upload Bill of Materials</h4>
+
+<p>Step 2 - Select Fields</p>
+<hr>
+
+{% if missing_columns and missing_columns|length > 0 %}
+<div class='alert alert-danger alert-block' role='alert'>
+    Missing selections for the following required columns:
+    <br>
+    <ul>
+        {% for col in missing_columns %}
+        <li>{{ col }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
+    <button type="submit" class="save btn btn-default">Submit Selections</button>
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+
+    {% crispy form %}
+
+    <input type='hidden' name='form_step' value='select_fields'/>
+
+    <table class='table table-striped'>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Row</th>
+                {% for col in bom_columns %}
+                <th>
+                    <div>
+                        <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
+                        {{ col.name }}
+                        <button class='btn btn-default btn-remove' id='del_col_{{ forloop.counter0 }}' style='display: inline; float: right;' title='Remove column'>
+                            <span col_id='{{ forloop.counter0 }}' onClick='removeColFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                        </button>
+                    </div>
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                {% for col in bom_columns %}
+                <td>
+                    <select class='select' id='id_col_{{ forloop.counter0 }}' name='col_guess_{{ forloop.counter0 }}'>
+                            <option value=''>---------</option>
+                            {% for req in bom_headers %}
+                            <option value='{{ req }}'{% if req == col.guess %}selected='selected'{% endif %}>{{ req }}</option>
+                            {% endfor %}
+                    </select>
+                    {% if col.duplicate %}
+                    <p class='help-inline'>Duplicate column selection</p>
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% for row in bom_rows %}
+            <tr>
+                <td>
+                    <button class='btn btn-default btn-remove' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='Remove row'>
+                        <span row_id='{{ forloop.counter }}' onClick='removeRowFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                    </button>
+                </td>
+                <td>{{ forloop.counter }}</td>
+                {% for item in row.data %}
+                <td>
+                    <input type='hidden' name='row_{{ row.index }}_col_{{ forloop.counter0 }}' value='{{ item.cell }}'/>
+                    {{ item.cell }}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</form>
+
+{% endblock %}

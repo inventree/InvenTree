@@ -12,47 +12,79 @@ function reloadBomTable(table, options) {
 }
 
 
-function downloadBom(options = {}) {
+function removeRowFromBomWizard(e) {
+    /* Remove a row from BOM upload wizard
+     */
 
-    var modal = options.modal || "#modal-form";
-    
-    var content = `
-        <b>Select file format</b><br>
-        <div class='controls'>
-        <select id='bom-format' class='select'>
-            <option value='csv'>CSV</option>
-            <option value='tsv'>TSV</option>
-            <option value='xls'>XLS</option>
-            <option value='xlsx'>XLSX</option>
-            <option value='ods'>ODS</option>
-            <option value='yaml'>YAML</option>
-            <option value='json'>JSON</option>
-            <option value='xml'>XML</option>
-            <option value='html'>HTML</option>
-        </select>
-        </div>
-    `;
+    e = e || window.event;
 
-    openModal({
-        modal: modal,
-        title: "Export Bill of Materials",
-        submit_text: "Download",
-        close_text: "Cancel",
+    var src = e.target || e.srcElement;
+
+    var table = $(src).closest('table');
+
+    // Which column was clicked?
+    var row = $(src).closest('tr');
+
+    row.remove();
+
+    var rowNum = 1;
+    var colNum = 0;
+
+    table.find('tr').each(function() {
+        
+        colNum++;
+
+        if (colNum >= 3) {
+            var cell = $(this).find('td:eq(1)');
+            cell.text(rowNum++);
+            console.log("Row: " + rowNum);
+        }
     });
+}
 
-    modalSetContent(modal, content);
 
-    modalEnable(modal, true);
+function removeColFromBomWizard(e) {
+    /* Remove a column from BOM upload wizard
+     */
 
-    $(modal).on('click', '#modal-form-submit', function() {
-        $(modal).modal('hide');
+    e = e || window.event;
 
-        var format = $(modal).find('#bom-format :selected').val();
+    var src = e.target || e.srcElement;
 
-        if (options.url) {
-            var url = options.url + "?format=" + format;
+    // Which column was clicked?
+    var col = $(src).closest('th').index();
 
-            location.href = url;
+    var table = $(src).closest('table');
+
+    table.find('tr').each(function() {
+        this.removeChild(this.cells[col]);
+    });
+}
+
+
+function newPartFromBomWizard(e) {
+    /* Create a new part directly from the BOM wizard.
+     */
+
+    e = e || window.event;
+
+    var src = e.target || e.srcElement;
+
+    var row = $(src).closest('tr');
+
+    launchModalForm('/part/new/', {
+        data: {
+            'description': row.attr('part-description'),
+            'name': row.attr('part-name'),
+        },
+        success: function(response) {
+            /* A new part has been created! Push it as an option.
+             */
+
+            var select = row.attr('part-select');
+
+            var option = new Option(response.text, response.pk, true, true);
+            $(select).append(option).trigger('change');
         }
     });
 }
@@ -78,13 +110,16 @@ function loadBomTable(table, options) {
             title: 'ID',
             visible: false,
         },
-        {
+    ];
+
+    if (options.editable) {
+        cols.push({
             checkbox: true,
             title: 'Select',
             searchable: false,
             sortable: false,
-        },
-    ];
+        });
+    }
 
     // Part column
     cols.push(
@@ -106,33 +141,39 @@ function loadBomTable(table, options) {
         }
     );
 
+    // Part reference
+    cols.push({
+        field: 'reference',
+        title: 'Reference',
+        searchable: true,
+        sortable: true,
+    });
+
     // Part quantity
-    cols.push(
-        {
-            field: 'quantity',
-            title: 'Required',
-            searchable: false,
-            sortable: true,
-            formatter: function(value, row, index, field) {
-                var text = value;
+    cols.push({
+        field: 'quantity',
+        title: 'Quantity',
+        searchable: false,
+        sortable: true,
+        formatter: function(value, row, index, field) {
+            var text = value;
 
-                if (row.overage) {
-                    text += "<small> (+" + row.overage + ")    </small>";
-                }
+            if (row.overage) {
+                text += "<small> (+" + row.overage + ")    </small>";
+            }
 
-                return text;
-            },
-            footerFormatter: function(data) {
-                var quantity = 0;
+            return text;
+        },
+        footerFormatter: function(data) {
+            var quantity = 0;
 
-                data.forEach(function(item) {
-                    quantity += item.quantity;
-                });
+            data.forEach(function(item) {
+                quantity += item.quantity;
+            });
 
-                return quantity;
-            },
-        }
-    );
+            return quantity;
+        },
+    });
 
     if (!options.editable) {
         cols.push(
@@ -192,7 +233,7 @@ function loadBomTable(table, options) {
                 var bEdit = "<button title='Edit BOM Item' class='bom-edit-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='glyphicon glyphicon-edit'/></button>";
                 var bDelt = "<button title='Delete BOM Item' class='bom-delete-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='glyphicon glyphicon-trash'/></button>";
                 
-                return "<div class='btn-group'>" + bEdit + bDelt + "</div>";
+                return "<div class='btn-group' role='group'>" + bEdit + bDelt + "</div>";
             }
         });
     }

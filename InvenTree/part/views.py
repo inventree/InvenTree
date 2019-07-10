@@ -5,12 +5,16 @@ Django views for interacting with Part app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
-from django.urls import reverse_lazy
-from django.views.generic import DetailView, ListView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import DetailView, ListView, FormView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
+
+from fuzzywuzzy import fuzz
 
 from .models import PartCategory, Part, PartAttachment
 from .models import BomItem
@@ -19,6 +23,7 @@ from .models import match_part_names
 from company.models import SupplierPart
 
 from . import forms as part_forms
+from .bom import MakeBomTemplate, BomUploadManager
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
@@ -489,6 +494,11 @@ class PartCreate(AjaxCreateView):
                 initials['keywords'] = category.default_keywords
             except PartCategory.DoesNotExist:
                 pass
+        
+        # Allow initial data to be passed through as arguments
+        for label in ['name', 'IPN', 'description', 'revision', 'keywords']:
+            if label in self.request.GET:
+                initials[label] = self.request.GET.get(label)
 
         return initials
 
@@ -508,13 +518,14 @@ class PartDetail(DetailView):
         - If '?editing=True', set 'editing_enabled' context variable
         """
         context = super(PartDetail, self).get_context_data(**kwargs)
+        
+        part = self.get_object()
 
         if str2bool(self.request.GET.get('edit', '')):
-            context['editing_enabled'] = 1
+            # Allow BOM editing if the part is active
+            context['editing_enabled'] = 1 if part.active else 0
         else:
             context['editing_enabled'] = 0
-
-        part = self.get_object()
 
         context['starred'] = part.isStarredBy(self.request.user)
         context['disabled'] = not part.active
@@ -616,36 +627,549 @@ class BomValidate(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context=self.get_context())
 
 
-class BomExport(AjaxView):
+class BomUpload(FormView):
+    """ View for uploading a BOM file, and handling BOM data importing.
 
-    model = Part
-    ajax_form_title = 'Export BOM'
-    ajax_template_name = 'part/bom_export.html'
-    form_class = part_forms.BomExportForm
+    The BOM upload process is as follows:
 
-    def get_object(self):
-        return get_object_or_404(Part, pk=self.kwargs['pk'])
+    1. (Client) Select and upload BOM file
+    2. (Server) Verify that supplied file is a file compatible with tablib library
+    3. (Server) Introspect data file, try to find sensible columns / values / etc
+    4. (Server) Send suggestions back to the client
+    5. (Client) Makes choices based on suggestions:
+        - Accept automatic matching to parts found in database
+        - Accept suggestions for 'partial' or 'fuzzy' matches
+        - Create new parts in case of parts not being available
+    6. (Client) Sends updated dataset back to server
+    7. (Server) Check POST data for validity, sanity checking, etc.
+    8. (Server) Respond to POST request
+        - If data are valid, proceed to 9.
+        - If data not valid, return to 4.
+    9. (Server) Send confirmation form to user
+        - Display the actions which will occur
+        - Provide final "CONFIRM" button
+    10. (Client) Confirm final changes
+    11. (Server) Apply changes to database, update BOM items.
+
+    During these steps, data are passed between the server/client as JSON objects.
+    """
+
+    template_name = 'part/bom_upload/upload_file.html'
+
+    # Context data passed to the forms (initially empty, extracted from uploaded file)
+    bom_headers = []
+    bom_columns = []
+    bom_rows = []
+    missing_columns = []
+    allowed_parts = []
+
+    def get_success_url(self):
+        part = self.get_object()
+        return reverse('upload-bom', kwargs={'pk': part.id})
+
+    def get_form_class(self):
+
+        form_step = self.request.POST.get('form_step', None)
+
+        if form_step == 'select_fields':
+            return part_forms.BomUploadSelectFields
+        else:
+            # Default form is the starting point
+            return part_forms.BomUploadSelectFile
+
+    def get_context_data(self, *args, **kwargs):
+
+        ctx = super().get_context_data(*args, **kwargs)
+
+        # Give each row item access to the column it is in
+        # This provides for much simpler template rendering
+
+        rows = []
+        for row in self.bom_rows:
+            row_data = row['data']
+
+            data = []
+
+            for idx, item in enumerate(row_data):
+
+                data.append({
+                    'cell': item,
+                    'idx': idx,
+                    'column': self.bom_columns[idx]
+                })
+
+            rows.append({
+                'index': row.get('index', -1),
+                'data': data,
+                'part_options': row.get('part_options', self.allowed_parts),
+
+                # User-input (passed between client and server)
+                'quantity': row.get('quantity', None),
+                'description': row.get('description', ''),
+                'part_name': row.get('part_name', ''),
+                'part': row.get('part', None),
+                'reference': row.get('reference', ''),
+                'notes': row.get('notes', ''),
+                'errors': row.get('errors', ''),
+            })
+
+        ctx['part'] = self.part
+        ctx['bom_headers'] = BomUploadManager.HEADERS
+        ctx['bom_columns'] = self.bom_columns
+        ctx['bom_rows'] = rows
+        ctx['missing_columns'] = self.missing_columns
+        ctx['allowed_parts_list'] = self.allowed_parts
+
+        return ctx
+
+    def getAllowedParts(self):
+        """ Return a queryset of parts which are allowed to be added to this BOM.
+        """
+
+        return self.part.get_allowed_bom_items()
 
     def get(self, request, *args, **kwargs):
-        form = self.form_class()
+        """ Perform the initial 'GET' request.
 
-        return self.renderJsonResponse(request, form)
+        Initially returns a form for file upload """
+
+        self.request = request
+
+        # A valid Part object must be supplied. This is the 'parent' part for the BOM
+        self.part = get_object_or_404(Part, pk=self.kwargs['pk'])
+
+        self.form = self.get_form()
+
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def handleBomFileUpload(self):
+        """ Process a BOM file upload form.
+        
+        This function validates that the uploaded file was valid,
+        and contains tabulated data that can be extracted.
+        If the file does not satisfy these requirements,
+        the "upload file" form is again shown to the user.
+         """
+
+        bom_file = self.request.FILES.get('bom_file', None)
+
+        manager = None
+        bom_file_valid = False
+
+        if bom_file is None:
+            self.form.errors['bom_file'] = [_('No BOM file provided')]
+        else:
+            # Create a BomUploadManager object - will perform initial data validation
+            # (and raise a ValidationError if there is something wrong with the file)
+            try:
+                manager = BomUploadManager(bom_file)
+                bom_file_valid = True
+            except ValidationError as e:
+                errors = e.error_dict
+
+                for k, v in errors.items():
+                    self.form.errors[k] = v
+
+        if bom_file_valid:
+            # BOM file is valid? Proceed to the next step!
+            form = part_forms.BomUploadSelectFields
+            self.template_name = 'part/bom_upload/select_fields.html'
+
+            self.extractDataFromFile(manager)
+        else:
+            form = self.form
+
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def getColumnIndex(self, name):
+        """ Return the index of the column with the given name.
+        It named column is not found, return -1
+        """
+
+        try:
+            idx = list(self.column_selections.values()).index(name)
+        except ValueError:
+            idx = -1
+
+        return idx
+
+    def preFillSelections(self):
+        """ Once data columns have been selected, attempt to pre-select the proper data from the database.
+        This function is called once the field selection has been validated.
+        The pre-fill data are then passed through to the part selection form.
+        """
+
+        q_idx = self.getColumnIndex('Quantity')
+        p_idx = self.getColumnIndex('Part')
+        d_idx = self.getColumnIndex('Description')
+        r_idx = self.getColumnIndex('Reference')
+        n_idx = self.getColumnIndex('Notes')
+
+        for row in self.bom_rows:
+
+            quantity = 0
+            part = None
+
+            if q_idx >= 0:
+                q_val = row['data'][q_idx]
+
+                try:
+                    quantity = int(q_val)
+                except ValueError:
+                    pass
+
+            if p_idx >= 0:
+                part_name = row['data'][p_idx]
+
+                row['part_name'] = part_name
+
+                # Fuzzy match the values and see what happends
+                matches = []
+
+                for part in self.allowed_parts:
+                    ratio = fuzz.partial_ratio(part.name + part.description, part_name)
+                    matches.append({'part': part, 'match': ratio})
+
+                if len(matches) > 0:
+                    matches = sorted(matches, key=lambda item: item['match'], reverse=True)
+
+            if d_idx >= 0:
+                row['description'] = row['data'][d_idx]
+
+            if r_idx >= 0:
+                row['reference'] = row['data'][r_idx]
+
+            if n_idx >= 0:
+                row['notes'] = row['data'][n_idx]
+
+            row['quantity'] = quantity
+            row['part_options'] = [m['part'] for m in matches]
+
+    def extractDataFromFile(self, bom):
+        """ Read data from the BOM file """
+
+        self.bom_columns = bom.columns()
+        self.bom_rows = bom.rows()
+
+    def getTableDataFromPost(self):
+        """ Extract table cell data from POST request.
+        These data are used to maintain state between sessions.
+
+        Table data keys are as follows:
+
+            col_name_<idx> - Column name at idx as provided in the uploaded file
+            col_guess_<idx> - Column guess at idx as selected in the BOM
+            row_<x>_col<y> - Cell data as provided in the uploaded file
+
+        """
+
+        # Map the columns
+        self.column_names = {}
+        self.column_selections = {}
+
+        self.row_data = {}
+
+        for item in self.request.POST:
+            value = self.request.POST[item]
+
+            # Column names as passed as col_name_<idx> where idx is an integer
+
+            # Extract the column names
+            if item.startswith('col_name_'):
+                try:
+                    col_id = int(item.replace('col_name_', ''))
+                except ValueError:
+                    continue
+                col_name = value
+
+                self.column_names[col_id] = col_name
+
+            # Extract the column selections (in the 'select fields' view)
+            if item.startswith('col_guess_'):
+
+                try:
+                    col_id = int(item.replace('col_guess_', ''))
+                except ValueError:
+                    continue
+
+                col_name = value
+
+                self.column_selections[col_id] = value
+
+            # Extract the row data
+            if item.startswith('row_'):
+                # Item should be of the format row_<r>_col_<c>
+                s = item.split('_')
+
+                if len(s) < 4:
+                    continue
+
+                # Ignore row/col IDs which are not correct numeric values
+                try:
+                    row_id = int(s[1])
+                    col_id = int(s[3])
+                except ValueError:
+                    continue
+                
+                if row_id not in self.row_data:
+                    self.row_data[row_id] = {}
+
+                self.row_data[row_id][col_id] = value
+
+        self.col_ids = sorted(self.column_names.keys())
+
+        # Re-construct the data table
+        self.bom_rows = []
+
+        for row_idx in sorted(self.row_data.keys()):
+            row = self.row_data[row_idx]
+            items = []
+
+            for col_idx in sorted(row.keys()):
+
+                value = row[col_idx]
+                items.append(value)
+
+            self.bom_rows.append({
+                'index': row_idx,
+                'data': items,
+                'errors': {},
+            })
+
+        # Construct the column data
+        self.bom_columns = []
+
+        # Track any duplicate column selections
+        self.duplicates = False
+
+        for col in self.col_ids:
+
+            if col in self.column_selections:
+                guess = self.column_selections[col]
+            else:
+                guess = None
+
+            header = ({
+                'name': self.column_names[col],
+                'guess': guess
+            })
+
+            if guess:
+                n = list(self.column_selections.values()).count(self.column_selections[col])
+                if n > 1:
+                    header['duplicate'] = True
+                    self.duplicates = True
+
+            self.bom_columns.append(header)
+
+        # Are there any missing columns?
+        self.missing_columns = []
+
+        for col in BomUploadManager.REQUIRED_HEADERS:
+            if col not in self.column_selections.values():
+                self.missing_columns.append(col)
+
+    def handleFieldSelection(self):
+        """ Handle the output of the field selection form.
+        Here the user is presented with the raw data and must select the
+        column names and which rows to process.
+        """
+
+        # Extract POST data
+        self.getTableDataFromPost()
+
+        valid = len(self.missing_columns) == 0 and not self.duplicates
+
+        form = part_forms.BomUploadSelectFields
+        
+        if valid:
+            # Try to extract meaningful data
+            self.preFillSelections()
+            form = None
+            self.template_name = 'part/bom_upload/select_parts.html'
+        else:
+            self.template_name = 'part/bom_upload/select_fields.html'
+
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def handlePartSelection(self):
+        
+        # Extract basic table data from POST request
+        self.getTableDataFromPost()
+
+        # Keep track of the parts that have been selected
+        parts = {}
+
+        # Extract other data (part selections, etc)
+        for key in self.request.POST:
+            value = self.request.POST[key]
+
+            # Extract quantity from each row
+            if key.startswith('quantity_'):
+                try:
+                    row_id = int(key.replace('quantity_', ''))
+
+                    row = self.getRowByIndex(row_id)
+
+                    if row is None:
+                        continue
+
+                    q = 1
+
+                    try:
+                        q = int(value)
+                        if q <= 0:
+                            row['errors']['quantity'] = _('Quantity must be greater than zero')
+                    except ValueError:
+                        row['errors']['quantity'] = _('Enter a valid quantity')
+
+                    row['quantity'] = q
+                     
+                except ValueError:
+                    continue
+
+            # Extract part from each row
+            if key.startswith('part_'):
+                try:
+                    row_id = int(key.replace('part_', ''))
+
+                    row = self.getRowByIndex(row_id)
+
+                    if row is None:
+                        continue
+                except ValueError:
+                    # Row ID non integer value
+                    continue
+
+                try:
+                    part_id = int(value)
+                    part = Part.objects.get(id=part_id)
+                except ValueError:
+                    row['errors']['part'] = _('Select valid part')
+                    continue
+                except Part.DoesNotExist:
+                    row['errors']['part'] = _('Select valid part')
+                    continue
+
+                # Keep track of how many of each part we have seen
+                if part_id in parts:
+                    parts[part_id]['quantity'] += 1
+                    row['errors']['part'] = _('Duplicate part selected')
+                else:
+                    parts[part_id] = {
+                        'part': part,
+                        'quantity': 1,
+                    }
+
+                row['part'] = part
+
+            # Extract other fields which do not require further validation
+            for field in ['reference', 'notes']:
+                if key.startswith(field + '_'):
+                    try:
+                        row_id = int(key.replace(field + '_', ''))
+                        
+                        row = self.getRowByIndex(row_id)
+
+                        if row:
+                            row[field] = value
+                    except:
+                        continue
+
+        # Are there any errors after form handling?
+        valid = True
+
+        for row in self.bom_rows:
+            # Has a part been selected for the given row?
+            if row.get('part', None) is None:
+                row['errors']['part'] = _('Select a part')
+
+            # Has a quantity been specified?
+            if row.get('quantity', None) is None:
+                row['errors']['quantity'] = _('Specify quantity')
+
+            errors = row.get('errors', [])
+
+            if len(errors) > 0:
+                valid = False
+
+        self.template_name = 'part/bom_upload/select_parts.html'
+
+        ctx = self.get_context_data(form=None)
+
+        if valid:
+            self.part.clear_bom()
+
+            # Generate new BOM items
+            for row in self.bom_rows:
+                part = row.get('part')
+                quantity = row.get('quantity')
+                reference = row.get('reference', '')
+                notes = row.get('notes', '')
+
+                # Create a new BOM item!
+                item = BomItem(
+                    part=self.part,
+                    sub_part=part,
+                    quantity=quantity,
+                    reference=reference,
+                    note=notes
+                )
+
+                item.save()
+
+            # Redirect to the BOM view
+            return HttpResponseRedirect(reverse('part-bom', kwargs={'pk': self.part.id}))
+        else:
+            ctx['form_errors'] = True
+
+        return self.render_to_response(ctx)
+
+    def getRowByIndex(self, idx):
+        
+        for row in self.bom_rows:
+            if row['index'] == idx:
+                return row
+
+        return None
 
     def post(self, request, *args, **kwargs):
+        """ Perform the various 'POST' requests required.
         """
-        User has now submitted the BOM export data
-        """
 
-        # part = self.get_object()
+        self.request = request
 
-        return super(AjaxView, self).post(request, *args, **kwargs)
+        self.part = get_object_or_404(Part, pk=self.kwargs['pk'])
+        self.allowed_parts = self.getAllowedParts()
+        self.form = self.get_form(self.get_form_class())
 
-    def get_data(self):
-        return {
-            # 'form_valid': True,
-            # 'redirect': '/'
-            # 'redirect': reverse('bom-download', kwargs={'pk': self.request.GET.get('pk')})
-        }
+        # Did the user POST a file named bom_file?
+        
+        form_step = request.POST.get('form_step', None)
+
+        if form_step == 'select_file':
+            return self.handleBomFileUpload()
+        elif form_step == 'select_fields':
+            return self.handleFieldSelection()
+        elif form_step == 'select_parts':
+            return self.handlePartSelection()
+
+        return self.render_to_response(self.get_context_data(form=self.form))
+
+
+class BomUploadTemplate(AjaxView):
+    """
+    Provide a BOM upload template file for download.
+    - Generates a template file in the provided format e.g. ?format=csv
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        export_format = request.GET.get('format', 'csv')
+
+        return MakeBomTemplate(export_format)
 
 
 class BomDownload(AjaxView):
@@ -653,8 +1177,6 @@ class BomDownload(AjaxView):
     Provide raw download of a BOM file.
     - File format should be passed as a query param e.g. ?format=csv
     """
-
-    # TODO - This should no longer extend an AjaxView!
 
     model = Part
 
@@ -908,16 +1430,24 @@ class BomItemCreate(AjaxCreateView):
         try:
             part = Part.objects.get(id=part_id)
 
+            # Only allow active parts to be selected
+            query = form.fields['part'].queryset.filter(active=True)
+            form.fields['part'].queryset = query
+
             # Don't allow selection of sub_part objects which are already added to the Bom!
             query = form.fields['sub_part'].queryset
             
             # Don't allow a part to be added to its own BOM
             query = query.exclude(id=part.id)
+            query = query.filter(active=True)
             
             # Eliminate any options that are already in the BOM!
             query = query.exclude(id__in=[item.id for item in part.required_parts()])
             
             form.fields['sub_part'].queryset = query
+
+            form.fields['part'].widget = HiddenInput()
+
         except Part.DoesNotExist:
             pass
 

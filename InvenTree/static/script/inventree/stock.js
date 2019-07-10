@@ -129,6 +129,11 @@ function loadStockTable(table, options) {
                     }
 
                     name += row.part__name;
+
+                    if (row.part__revision) {
+                        name += " | ";
+                        name += row.part__revision;
+                    }
                     
                     return imageHoverIcon(row.part__image) + renderLink(name, '/part/' + row.part + '/stock/');
                 }
