@@ -53,7 +53,7 @@ if cors_opt:
     CORS_ORIGIN_ALLOW_ALL = cors_opt.get('allow_all', False)
 
     if CORS_ORIGIN_ALLOW_ALL:
-        print("Warning: DEBUG mode is enabled, CORS requests are allowed for any domain")
+        print("Warning: CORS requests are allowed for any domain!")
     else:
         CORS_ORIGIN_WHITELIST = cors_opt.get('whitelist', [])
 
@@ -106,7 +106,6 @@ LOGGING = {
     },
 }
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -158,7 +157,7 @@ DATABASES = {}
 if 'database' in CONFIG:
     DATABASES['default'] = CONFIG['database']
 else:
-    print("Warning: Database backend not specified - using default")
+    print("Warning: Database backend not specified - using default (sqlite)")
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'inventree_db.sqlite3'),
@@ -216,7 +215,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    CONFIG.get('static_root', os.path.join(BASE_DIR, 'static')),
 ]
 
 MEDIA_URL = '/media/'
