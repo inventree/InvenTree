@@ -213,8 +213,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = CONFIG.get('static_root', os.path.join(BASE_DIR, 'static'))
+
 STATICFILES_DIRS = [
-    CONFIG.get('static_root', os.path.join(BASE_DIR, 'static')),
+    os.path.join(BASE_DIR, 'InvenTree', 'static'),
 ]
 
 MEDIA_URL = '/media/'
