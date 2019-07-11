@@ -9,6 +9,7 @@ InvenTree Source Documentation
 
    Getting Started<start>
    Configuration<config>
+   Deployment<deploy>
    Modal Forms<forms>
    Tables<tables>
    REST API<rest>
