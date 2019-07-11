@@ -20,7 +20,7 @@ Install Gunicorn
 
 Gunicorn can be installed using PIP:
 
-`pip3 install gunicorn`
+``pip3 install gunicorn``
 
 
 Configure Static Directories
