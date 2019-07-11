@@ -31,8 +31,9 @@ local_settings.py
 # Sphinx files
 docs/_build
 
-# Local media storage (only when running in development mode)
+# Local static and media file storage (only when running in development mode)
 InvenTree/media
+InvenTree/static
 
 # Key file
 secret_key.txt
@@ -40,6 +41,7 @@ secret_key.txt
 # IDE / development files
 .idea/
 *.code-workspace
+.vscode/
 
 # Coverage reports
 .coverage
