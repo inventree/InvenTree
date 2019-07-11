@@ -3,7 +3,7 @@ InvenTree Modal Forms
 
 .. toctree::
    :titlesonly:
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Modal Forms
    :hidden:
 
