@@ -176,13 +176,12 @@ class BomUploadManager:
                 try:
                     # Excel import casts number-looking-items into floats, which is annoying
                     if item == int(item) and not str(item) == str(int(item)):
-                        print("converting", item, "to", int(item))
                         data[idx] = int(item)
                 except ValueError:
                     pass
 
+            # Skip empty rows
             if empty:
-                print("Empty - continuing")
                 continue
 
             row = {

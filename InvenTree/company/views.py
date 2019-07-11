@@ -235,8 +235,6 @@ class PriceBreakCreate(AjaxCreateView):
 
         initials = super(AjaxCreateView, self).get_initial()
 
-        print("GETTING INITIAL DAtA")
-
         initials['part'] = self.get_part()
 
         return initials
