@@ -526,9 +526,9 @@ class StockItemTracking(models.Model):
 
     date = models.DateTimeField(auto_now_add=True, editable=False)
 
-    title = models.CharField(blank=False, max_length=250)
+    title = models.CharField(blank=False, max_length=250, help_text='Tracking entry title')
 
-    notes = models.TextField(blank=True)
+    notes = models.CharField(blank=True, max_length=512, help_text='Entry notes')
 
     URL = models.URLField(blank=True, help_text='Link to external page for further information')
 
