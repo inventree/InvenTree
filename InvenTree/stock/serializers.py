@@ -149,6 +149,7 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
             'date',
             'title',
             'notes',
+            'URL',
             'quantity',
             'user',
             'system',

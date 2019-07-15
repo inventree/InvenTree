@@ -125,18 +125,28 @@
     </div>
 </div>
 
-
-{% if item.has_tracking_info %}
 <hr>
-<div id='table-toolbar'>    
-    <h4>Stock Tracking Information</h4>
+<h4>Stock Tracking Information</h4>
+<div id='table-toolbar'>
+    <div class='btn-group'>
+        <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>New Entry</button>
+    </div>    
 </div>
 <table class='table table-condensed table-striped' id='track-table' data-toolbar='#table-toolbar'>
 </table>
-{% endif %}
+
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
+
+    $("#new-entry").click(function() {
+        launchModalForm(
+            "{% url 'stock-tracking-create' item.id %}",
+            {
+                reload: true,
+            }
+        );
+    }); 
 
     $("#stock-duplicate").click(function() {
         launchModalForm(
@@ -152,11 +162,12 @@
 
     $("#stock-edit").click(function () {
         launchModalForm(
-                        "{% url 'stock-item-edit' item.id %}",
-                        {
-                            reload: true,
-                            submit_text: "Save",
-                        });
+            "{% url 'stock-item-edit' item.id %}",
+            {
+                reload: true,
+                submit_text: "Save",
+            }
+        );
     });
 
     $("#show-qr-code").click(function() {

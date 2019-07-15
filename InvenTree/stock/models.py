@@ -298,7 +298,7 @@ class StockItem(models.Model):
     def has_tracking_info(self):
         return self.tracking_info.count() > 0
 
-    def addTransactionNote(self, title, user, notes='', system=True):
+    def addTransactionNote(self, title, user, notes='', url='', system=True):
         """ Generation a stock transaction note for this item.
 
         Brief automated note detailing a movement or quantity change.
@@ -310,6 +310,7 @@ class StockItem(models.Model):
             quantity=self.quantity,
             date=datetime.now().date(),
             notes=notes,
+            URL=url,
             system=system
         )
 

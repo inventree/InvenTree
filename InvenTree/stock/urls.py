@@ -21,7 +21,17 @@ stock_item_detail_urls = [
     url(r'^delete/?', views.StockItemDelete.as_view(), name='stock-item-delete'),
     url(r'^qr_code/?', views.StockItemQRCode.as_view(), name='stock-item-qr'),
 
+    url(r'^add_tracking/?', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
+
     url('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
+]
+
+stock_tracking_urls = [
+
+    # edit
+
+    # list
+    url('^.*$', views.StockTrackingIndex.as_view(), name='stock-tracking-list')
 ]
 
 stock_urls = [
@@ -32,7 +42,7 @@ stock_urls = [
 
     url(r'^item/new/?', views.StockItemCreate.as_view(), name='stock-item-create'),
 
-    url(r'^track/?', views.StockTrackingIndex.as_view(), name='stock-tracking-list'),
+    url(r'^track/', include(stock_tracking_urls)),
 
     url(r'^adjust/?', views.StockAdjust.as_view(), name='stock-adjust'),
 

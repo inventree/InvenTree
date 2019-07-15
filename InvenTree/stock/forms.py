@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from django import forms
 from InvenTree.forms import HelperForm
 
-from .models import StockLocation, StockItem
+from .models import StockLocation, StockItem, StockItemTracking
 
 
 class EditStockLocationForm(HelperForm):
@@ -101,6 +101,20 @@ class EditStockItemForm(HelperForm):
             'batch',
             'delete_on_deplete',
             'status',
+            'notes',
+            'URL',
+        ]
+
+
+class TrackingEntryForm(HelperForm):
+    """ Form for creating / editing a StockItemTracking object.
+    """
+
+    class Meta:
+        model = StockItemTracking
+
+        fields = [
+            'title',
             'notes',
             'URL',
         ]

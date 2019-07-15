@@ -17,6 +17,7 @@ from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import str2bool
+from datetime import datetime
 
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
@@ -25,6 +26,7 @@ from .forms import EditStockLocationForm
 from .forms import CreateStockItemForm
 from .forms import EditStockItemForm
 from .forms import AdjustStockForm
+from .forms import TrackingEntryForm
 
 
 class StockIndex(ListView):
@@ -588,3 +590,48 @@ class StockTrackingIndex(ListView):
     model = StockItemTracking
     template_name = 'stock/tracking.html'
     context_object_name = 'items'
+
+
+class StockItemTrackingCreate(AjaxCreateView):
+    """ View for creating a new StockItemTracking object.
+    """
+
+    model = StockItemTracking
+    ajax_form_title = "Add Stock Tracking Entry"
+    form_class = TrackingEntryForm
+
+    def post(self, request, *args, **kwargs):
+
+        self.request = request
+        self.form = self.get_form()
+
+        valid = False
+
+        if self.form.is_valid():
+            stock_id = self.kwargs['pk']
+
+            if stock_id:
+                try:
+                    stock_item = StockItem.objects.get(id=stock_id)
+
+                    # Save new tracking information
+                    tracking = self.form.save(commit=False)
+                    tracking.item = stock_item
+                    tracking.user = self.request.user
+                    tracking.quantity = stock_item.quantity
+                    tracking.date=datetime.now().date()
+                    tracking.system = False
+
+                    tracking.save()
+
+                    valid = True
+
+                except (StockItem.DoesNotExist, ValueError):
+                    pass
+
+        data = {
+            'form_valid': valid
+        }
+
+        return self.renderJsonResponse(request, self.form, data=data)
+        
