@@ -275,7 +275,7 @@ function loadStockTrackingTable(table, options) {
             formatter: function(value, row, index, field) {
                 var m = moment(value);
                 if (m.isValid()) {
-                    var html = m.format('dddd MMMM Do YYYY') + '<br>' + m.format('h:mm a');
+                    var html = m.format('dddd MMMM Do YYYY'); // + '<br>' + m.format('h:mm a');
                     return html;
                 }
 

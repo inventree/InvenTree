@@ -592,6 +592,14 @@ class StockTrackingIndex(ListView):
     context_object_name = 'items'
 
 
+class StockItemTrackingEdit(AjaxUpdateView):
+    """ View for editing a StockItemTracking object """
+
+    model = StockItemTracking
+    ajax_form_title = 'Edit Stock Tracking Entry'
+    form_class = TrackingEntryForm
+
+
 class StockItemTrackingCreate(AjaxCreateView):
     """ View for creating a new StockItemTracking object.
     """
@@ -619,7 +627,7 @@ class StockItemTrackingCreate(AjaxCreateView):
                     tracking.item = stock_item
                     tracking.user = self.request.user
                     tracking.quantity = stock_item.quantity
-                    tracking.date=datetime.now().date()
+                    tracking.date = datetime.now().date()
                     tracking.system = False
 
                     tracking.save()
@@ -634,4 +642,3 @@ class StockItemTrackingCreate(AjaxCreateView):
         }
 
         return self.renderJsonResponse(request, self.form, data=data)
-        
