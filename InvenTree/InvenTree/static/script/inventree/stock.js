@@ -275,7 +275,7 @@ function loadStockTrackingTable(table, options) {
             formatter: function(value, row, index, field) {
                 var m = moment(value);
                 if (m.isValid()) {
-                    var html = m.format('dddd MMMM Do YYYY') + '<br>' + m.format('h:mm a');
+                    var html = m.format('dddd MMMM Do YYYY'); // + '<br>' + m.format('h:mm a');
                     return html;
                 }
 
@@ -306,6 +306,10 @@ function loadStockTrackingTable(table, options) {
 
             if (row.notes) {
                 html += "<br><i>" + row.notes + "</i>";
+            }
+
+            if (row.URL) {
+                html += "<br><a href='" + row.URL + "'>" + row.URL + "</a>";
             }
 
             return html;
@@ -339,7 +343,7 @@ function loadStockTrackingTable(table, options) {
         formatter: function(value, row, index, field) {
             // Manually created entries can be edited or deleted
             if (!row.system) {
-                var bEdit = "<button title='Edit tracking entry' class='btn btn-entry-edit btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-edit'/></button>";
+                var bEdit = "<button title='Edit tracking entry' class='btn btn-entry-edit btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/edit/'><span class='glyphicon glyphicon-edit'/></button>";
                 var bDel = "<button title='Delete tracking entry' class='btn btn-entry-delete btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-trash'/></button>";
 
                 return "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
@@ -364,4 +368,12 @@ function loadStockTrackingTable(table, options) {
     if (options.buttons) {
         linkButtonsToSelection(table, options.buttons);
     }
+
+    table.on('click', '.btn-entry-edit', function() {
+        var button = $(this);
+
+        launchModalForm(button.attr('url'), {
+            reload: true,
+        });
+    });
 }
