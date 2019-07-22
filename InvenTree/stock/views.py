@@ -582,6 +582,17 @@ class StockItemDelete(AjaxDeleteView):
     ajax_form_title = 'Delete Stock Item'
 
 
+class StockItemTrackingDelete(AjaxDeleteView):
+    """
+    View to delete a StockItemTracking object
+    Presents a deletion confirmation form to the user
+    """
+
+    model = StockItemTracking
+    ajax_template_name = 'stock/tracking_delete.html'
+    ajax_form_title = 'Delete Stock Tracking Entry'
+
+
 class StockTrackingIndex(ListView):
     """
     StockTrackingIndex provides a page to display StockItemTracking objects

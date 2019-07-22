@@ -344,7 +344,7 @@ function loadStockTrackingTable(table, options) {
             // Manually created entries can be edited or deleted
             if (!row.system) {
                 var bEdit = "<button title='Edit tracking entry' class='btn btn-entry-edit btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/edit/'><span class='glyphicon glyphicon-edit'/></button>";
-                var bDel = "<button title='Delete tracking entry' class='btn btn-entry-delete btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-trash'/></button>";
+                var bDel = "<button title='Delete tracking entry' class='btn btn-entry-delete btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/delete/'><span class='glyphicon glyphicon-trash'/></button>";
 
                 return "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
             } else {
@@ -370,6 +370,14 @@ function loadStockTrackingTable(table, options) {
     }
 
     table.on('click', '.btn-entry-edit', function() {
+        var button = $(this);
+
+        launchModalForm(button.attr('url'), {
+            reload: true,
+        });
+    });
+
+    table.on('click', '.btn-entry-delete', function() {
         var button = $(this);
 
         launchModalForm(button.attr('url'), {
