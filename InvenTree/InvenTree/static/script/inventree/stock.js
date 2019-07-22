@@ -275,7 +275,7 @@ function loadStockTrackingTable(table, options) {
             formatter: function(value, row, index, field) {
                 var m = moment(value);
                 if (m.isValid()) {
-                    var html = m.format('dddd MMMM Do YYYY'); // + '<br>' + m.format('h:mm a');
+                    var html = m.format('dddd MMMM Do YYYY') + '<br>' + m.format('h:mm a');
                     return html;
                 }
 
@@ -308,10 +308,6 @@ function loadStockTrackingTable(table, options) {
                 html += "<br><i>" + row.notes + "</i>";
             }
 
-            if (row.URL) {
-                html += "<br><a href='" + row.URL + "'>" + row.URL + "</a>";
-            }
-
             return html;
         }
     });
@@ -334,6 +330,21 @@ function loadStockTrackingTable(table, options) {
             else
             {
                 return "No user information";
+            }
+        }
+    });
+
+    cols.push({
+        sortable: false,
+        formatter: function(value, row, index, field) {
+            // Manually created entries can be edited or deleted
+            if (!row.system) {
+                var bEdit = "<button title='Edit tracking entry' class='btn btn-entry-edit btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-edit'/></button>";
+                var bDel = "<button title='Delete tracking entry' class='btn btn-entry-delete btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-trash'/></button>";
+
+                return "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
+            } else {
+                return "";
             }
         }
     });
