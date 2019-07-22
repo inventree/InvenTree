@@ -225,7 +225,7 @@ class BuildComplete(AjaxUpdateView):
         build = Build.objects.get(id=self.kwargs['pk'])
 
         context = {}
-        
+
         # Build object
         context['build'] = build
 
@@ -263,21 +263,35 @@ class BuildComplete(AjaxUpdateView):
             except StockLocation.DoesNotExist:
                 form.errors['location'] = ['Invalid location selected']
 
-            valid = False
+            serials = []
 
-            serials = request.POST.get('serial_numbers', '')
+            if build.part.trackable:
+                # A build for a trackable part must specify serial numbers
 
-            try:
-                serials = ExtractSerialNumbers(serials, build.quantity)
+                sn = request.POST.get('serial_numbers', '')
 
-                print(serials)
+                try:
+                    # Exctract a list of provided serial numbers
+                    serials = ExtractSerialNumbers(sn, build.quantity)
 
-            except ValidationError as e:
-                form.errors['serial_numbers'] = e.messages
-                valid = False
+                    existing = []
+
+                    for serial in serials:
+                        if not StockItem.check_serial_number(build.part, serial):
+                            existing.append(serial)
+
+                    if len(existing) > 0:
+                        exists = ",".join([str(x) for x in existing])
+                        form.errors['serial_numbers'] = [_('The following serial numbers already exist: {sn}'.format(sn=exists))]
+                        valid = False
+
+
+                except ValidationError as e:
+                    form.errors['serial_numbers'] = e.messages
+                    valid = False
 
             if valid:
-                build.completeBuild(location, request.user)
+                build.completeBuild(location, serials, request.user)
 
         data = {
             'form_valid': valid,

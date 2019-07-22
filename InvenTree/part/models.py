@@ -280,6 +280,7 @@ class Part(models.Model):
         else:
             return static('/img/blank_image.png')
 
+
     def validate_unique(self, exclude=None):
         """ Validate that a part is 'unique'.
         Uniqueness is checked across the following (case insensitive) fields:

@@ -92,6 +92,7 @@ class StockItem(models.Model):
         location: Where this StockItem is located
         quantity: Number of stocked units
         batch: Batch number for this StockItem
+        serial: Unique serial number for this StockItem
         URL: Optional URL to link to external resource
         updated: Date that this stock item was last updated (auto)
         stocktake_date: Date of last stocktake for this item
@@ -121,6 +122,32 @@ class StockItem(models.Model):
                 system=True
             )
 
+    @classmethod
+    def check_serial_number(cls, part, serial_number):
+        """ Check if a new stock item can be created with the provided part_id
+
+        Args:
+            part: The part to be checked
+        """
+
+        if not part.trackable:
+            return False
+
+        items = StockItem.objects.filter(serial=serial_number)
+
+        # Is this part a variant? If so, check S/N across all sibling variants
+        if part.variant_of is not None:
+            items = items.filter(part__variant_of=part.variant_of)
+        else:
+            items = items.filter(part=part)
+
+        # An existing serial number exists
+        if items.exists():
+            return False
+
+        return True
+
+
     def validate_unique(self, exclude=None):
         super(StockItem, self).validate_unique(exclude)
 
@@ -129,11 +156,18 @@ class StockItem(models.Model):
         # across all variants of the same template part
 
         try:
-            if self.serial is not None and self.part.variant_of is not None:
-                if StockItem.objects.filter(part__variant_of=self.part.variant_of, serial=self.serial).exclude(id=self.id).exists():
-                    raise ValidationError({
-                        'serial': _('A part with this serial number already exists for template part {part}'.format(part=self.part.variant_of))
-                    })
+            if self.serial is not None:
+                # This is a variant part (check S/N across all sibling variants)
+                if self.part.variant_of is not None:
+                    if StockItem.objects.filter(part__variant_of=self.part.variant_of, serial=self.serial).exclude(id=self.id).exists():
+                        raise ValidationError({
+                            'serial': _('A part with this serial number already exists for template part {part}'.format(part=self.part.variant_of))
+                        })
+                else:
+                    if StockItem.objects.filter(serial=self.serial).exclude(id=self.id).exists():
+                        raise ValidationError({
+                            'serial': _('A part with this serial number already exists')
+                        })
         except Part.DoesNotExist:
             pass
 
