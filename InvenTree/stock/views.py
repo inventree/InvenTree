@@ -5,6 +5,7 @@ Django views for interacting with Stock app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.core.exceptions import ValidationError
 from django.views.generic.edit import FormMixin
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
@@ -17,6 +18,8 @@ from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import str2bool
+from InvenTree.helpers import ExtractSerialNumbers
+from datetime import datetime
 
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
@@ -25,6 +28,7 @@ from .forms import EditStockLocationForm
 from .forms import CreateStockItemForm
 from .forms import EditStockItemForm
 from .forms import AdjustStockForm
+from .forms import TrackingEntryForm
 
 
 class StockIndex(ListView):
@@ -474,7 +478,7 @@ class StockItemCreate(AjaxCreateView):
         ForeignKey choices based on other selections
         """
 
-        form = super(AjaxCreateView, self).get_form()
+        form = super().get_form()
 
         # If the user has selected a Part, limit choices for SupplierPart
         if form['part'].value():
@@ -486,10 +490,16 @@ class StockItemCreate(AjaxCreateView):
                 # Hide the 'part' field (as a valid part is selected)
                 form.fields['part'].widget = HiddenInput()
 
+                # trackable parts get special consideration
+                if part.trackable:
+                    form.fields['delete_on_deplete'].widget = HiddenInput()
+                    form.fields['delete_on_deplete'].initial = False
+                else:
+                    form.fields.pop('serial_numbers')
+
                 # If the part is NOT purchaseable, hide the supplier_part field
                 if not part.purchaseable:
                     form.fields['supplier_part'].widget = HiddenInput()
-
                 else:
                     # Pre-select the allowable SupplierPart options
                     parts = form.fields['supplier_part'].queryset
@@ -553,6 +563,87 @@ class StockItemCreate(AjaxCreateView):
 
         return initials
 
+    def post(self, request, *args, **kwargs):
+        """ Handle POST of StockItemCreate form.
+
+        - Manage serial-number valdiation for tracked parts
+        """
+
+        form = self.get_form()
+
+        valid = form.is_valid()
+
+        if valid:
+            part_id = form['part'].value()
+            try:
+                part = Part.objects.get(id=part_id)
+                quantity = int(form['quantity'].value())
+            except (Part.DoesNotExist, ValueError):
+                part = None
+                quantity = 1
+                valid = False
+
+            if part is None:
+                form.errors['part'] = [_('Invalid part selection')]
+            else:
+                # A trackable part must provide serial numbesr
+                if part.trackable:
+                    sn = request.POST.get('serial_numbers', '')
+
+                    try:
+                        serials = ExtractSerialNumbers(sn, quantity)
+
+                        existing = []
+
+                        for serial in serials:
+                            if not StockItem.check_serial_number(part, serial):
+                                existing.append(serial)
+
+                        if len(existing) > 0:
+                            exists = ",".join([str(x) for x in existing])
+                            form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                            valid = False
+
+                        # At this point we have a list of serial numbers which we know are valid,
+                        # and do not currently exist
+                        form.clean()
+
+                        data = form.cleaned_data
+
+                        for serial in serials:
+                            # Create a new stock item for each serial number
+                            item = StockItem(
+                                part=part,
+                                quantity=1,
+                                serial=serial,
+                                supplier_part=data.get('supplier_part'),
+                                location=data.get('location'),
+                                batch=data.get('batch'),
+                                delete_on_deplete=False,
+                                status=data.get('status'),
+                                notes=data.get('notes'),
+                                URL=data.get('URL'),
+                            )
+
+                            item.save()
+
+                    except ValidationError as e:
+                        form.errors['serial_numbers'] = e.messages
+                        valid = False
+
+                else:
+                    # For non-serialized items, simply save the form.
+                    # We need to call _post_clean() here because it is prevented in the form implementation
+                    form.clean()
+                    form._post_clean()
+                    form.save()
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data=data)
+
 
 class StockLocationDelete(AjaxDeleteView):
     """
@@ -580,6 +671,17 @@ class StockItemDelete(AjaxDeleteView):
     ajax_form_title = 'Delete Stock Item'
 
 
+class StockItemTrackingDelete(AjaxDeleteView):
+    """
+    View to delete a StockItemTracking object
+    Presents a deletion confirmation form to the user
+    """
+
+    model = StockItemTracking
+    ajax_template_name = 'stock/tracking_delete.html'
+    ajax_form_title = 'Delete Stock Tracking Entry'
+
+
 class StockTrackingIndex(ListView):
     """
     StockTrackingIndex provides a page to display StockItemTracking objects
@@ -588,3 +690,55 @@ class StockTrackingIndex(ListView):
     model = StockItemTracking
     template_name = 'stock/tracking.html'
     context_object_name = 'items'
+
+
+class StockItemTrackingEdit(AjaxUpdateView):
+    """ View for editing a StockItemTracking object """
+
+    model = StockItemTracking
+    ajax_form_title = 'Edit Stock Tracking Entry'
+    form_class = TrackingEntryForm
+
+
+class StockItemTrackingCreate(AjaxCreateView):
+    """ View for creating a new StockItemTracking object.
+    """
+
+    model = StockItemTracking
+    ajax_form_title = "Add Stock Tracking Entry"
+    form_class = TrackingEntryForm
+
+    def post(self, request, *args, **kwargs):
+
+        self.request = request
+        self.form = self.get_form()
+
+        valid = False
+
+        if self.form.is_valid():
+            stock_id = self.kwargs['pk']
+
+            if stock_id:
+                try:
+                    stock_item = StockItem.objects.get(id=stock_id)
+
+                    # Save new tracking information
+                    tracking = self.form.save(commit=False)
+                    tracking.item = stock_item
+                    tracking.user = self.request.user
+                    tracking.quantity = stock_item.quantity
+                    tracking.date = datetime.now().date()
+                    tracking.system = False
+
+                    tracking.save()
+
+                    valid = True
+
+                except (StockItem.DoesNotExist, ValueError):
+                    pass
+
+        data = {
+            'form_valid': valid
+        }
+
+        return self.renderJsonResponse(request, self.form, data=data)

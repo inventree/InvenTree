@@ -199,7 +199,7 @@ class Build(models.Model):
             build_item.save()
 
     @transaction.atomic
-    def completeBuild(self, location, user):
+    def completeBuild(self, location, serial_numbers, user):
         """ Mark the Build as COMPLETE
 
         - Takes allocated items from stock
@@ -227,19 +227,36 @@ class Build(models.Model):
 
         self.completed_by = user
 
-        # Add stock of the newly created item
-        item = StockItem.objects.create(
-            part=self.part,
-            location=location,
-            quantity=self.quantity,
-            batch=str(self.batch) if self.batch else '',
-            notes='Built {q} on {now}'.format(
-                q=self.quantity,
-                now=str(datetime.now().date())
-            )
+        notes = 'Built {q} on {now}'.format(
+            q=self.quantity,
+            now=str(datetime.now().date())
         )
 
-        item.save()
+        if self.part.trackable:
+            # Add new serial numbers
+            for serial in serial_numbers:
+                item = StockItem.objects.create(
+                    part=self.part,
+                    location=location,
+                    quantity=1,
+                    serial=serial,
+                    batch=str(self.batch) if self.batch else '',
+                    notes=notes
+                )
+
+                item.save()
+
+        else:
+            # Add stock of the newly created item
+            item = StockItem.objects.create(
+                part=self.part,
+                location=location,
+                quantity=self.quantity,
+                batch=str(self.batch) if self.batch else '',
+                notes=notes
+            )
+
+            item.save()
 
         # Finally, mark the build as complete
         self.status = BuildStatus.COMPLETE

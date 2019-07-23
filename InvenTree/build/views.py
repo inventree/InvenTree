@@ -5,6 +5,8 @@ Django views for interacting with Build objects
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
 from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
 
@@ -14,7 +16,7 @@ from . import forms
 from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import str2bool, ExtractSerialNumbers
 from InvenTree.status_codes import BuildStatus
 
 
@@ -182,6 +184,20 @@ class BuildComplete(AjaxUpdateView):
     ajax_form_title = "Complete Build"
     ajax_template_name = "build/complete.html"
 
+    def get_form(self):
+        """ Get the form object.
+
+        If the part is trackable, include a field for serial numbers.
+        """
+        build = self.get_object()
+
+        form = super().get_form()
+
+        if not build.part.trackable:
+            form.fields.pop('serial_numbers')
+
+        return form
+
     def get_initial(self):
         """ Get initial form data for the CompleteBuild form
 
@@ -206,10 +222,11 @@ class BuildComplete(AjaxUpdateView):
         - Build information is required
         """
 
-        build = self.get_object()
+        build = Build.objects.get(id=self.kwargs['pk'])
+
+        context = {}
 
         # Build object
-        context = super(BuildComplete, self).get_context_data(**kwargs).copy()
         context['build'] = build
 
         # Items to be removed from stock
@@ -246,14 +263,40 @@ class BuildComplete(AjaxUpdateView):
             except StockLocation.DoesNotExist:
                 form.errors['location'] = ['Invalid location selected']
 
+            serials = []
+
+            if build.part.trackable:
+                # A build for a trackable part must specify serial numbers
+
+                sn = request.POST.get('serial_numbers', '')
+
+                try:
+                    # Exctract a list of provided serial numbers
+                    serials = ExtractSerialNumbers(sn, build.quantity)
+
+                    existing = []
+
+                    for serial in serials:
+                        if not StockItem.check_serial_number(build.part, serial):
+                            existing.append(serial)
+
+                    if len(existing) > 0:
+                        exists = ",".join([str(x) for x in existing])
+                        form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                        valid = False
+
+                except ValidationError as e:
+                    form.errors['serial_numbers'] = e.messages
+                    valid = False
+
             if valid:
-                build.completeBuild(location, request.user)
+                build.completeBuild(location, serials, request.user)
 
         data = {
             'form_valid': valid,
         }
 
-        return self.renderJsonResponse(request, form, data)
+        return self.renderJsonResponse(request, form, data, context=self.get_context_data())
 
     def get_data(self):
         """ Provide feedback data back to the form """

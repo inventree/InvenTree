@@ -48,11 +48,14 @@ class CompleteBuildForm(HelperForm):
         help_text='Location of completed parts',
     )
 
+    serial_numbers = forms.CharField(label='Serial numbers', help_text='Enter unique serial numbers')
+
     confirm = forms.BooleanField(required=False, help_text='Confirm build submission')
 
     class Meta:
         model = Build
         fields = [
+            'serial_numbers',
             'location',
             'confirm'
         ]
