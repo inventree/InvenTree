@@ -3,12 +3,15 @@ Provides helper functions used throughout the InvenTree project
 """
 
 import io
+import re
 import json
 import os.path
 from PIL import Image
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext as _
 
 
 def TestIfImage(img):
@@ -115,3 +118,74 @@ def DownloadFile(data, filename, content_type='application/text'):
     response['Content-Disposition'] = 'attachment; filename={f}'.format(f=filename)
 
     return response
+
+
+def ExtractSerialNumbers(serials, expected_quantity):
+    """ Attempt to extract serial numbers from an input string.
+    - Serial numbers must be integer values
+    - Serial numbers must be positive
+    - Serial numbers can be split by whitespace / newline / commma chars
+    - Serial numbers can be supplied as an inclusive range using hyphen char e.g. 10-20
+
+    Args:
+        expected_quantity: The number of (unique) serial numbers we expect
+    """
+
+    groups = re.split("[\s,]+", serials)
+
+    numbers = []
+    errors = []
+
+    for group in groups:
+
+        group = group.strip()
+
+        # Hyphen indicates a range of numbers
+        if '-' in group:
+            items = group.split('-')
+
+            if len(items) == 2:
+                a = items[0].strip()
+                b = items[1].strip()
+
+                try:
+                    a = int(a)
+                    b = int(b)
+
+                    if a < b:
+                        for n in range(a, b + 1):
+                            if n in numbers:
+                                errors.append('Duplicate serial: {n}'.format(n=n))
+                            else:
+                                numbers.append(n)
+                    else:
+                        errors.append("Invalid group: {g}".format(g=group))
+
+                except ValueError:
+                    errors.append("Invalid group: {g}".format(g=group))
+                    continue
+            else:
+                errors.append("Invalid group: {g}".format(g=group))
+                continue
+
+        else:
+            try:
+                n = int(group)
+                if n in numbers:
+                    errors.append("Duplicate serial: {n}".format(n=n))
+                else:
+                    numbers.append(n)
+            except ValueError:
+                errors.append("Invalid group: {g}".format(g=group))
+
+    if len(errors) > 0:
+        raise ValidationError(errors)
+
+    if len(numbers) == 0:
+        raise ValidationError(["No serial numbers found"])
+
+    # The number of extracted serial numbers must match the expected quantity
+    if not expected_quantity == len(numbers):
+        raise ValidationError([_("Number of unique serial number ({s}) must match quantity ({q})".format(s=len(numbers), q=expected_quantity))])
+
+    return numbers

@@ -16,12 +16,12 @@
 </p>
 {% endif %}
 
-{% if part.locations.all|length > 0 %}
+{% if part.stock_items.all|length > 0 %}
 <hr>
-<p>There are {{ part.locations.all|length }} stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:
+<p>There are {{ part.stock_items.all|length }} stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:
     <ul class='list-group'>
-        {% for stock in part.locations.all %}
-        <li class='list-group-item'>{{ stock.location.name }} - {{ stock.quantity }} items</li>
+        {% for stock in part.stock_items.all %}
+        <li class='list-group-item'>{{ stock }}</li>
         {% endfor %}
     </ul>
 </p>

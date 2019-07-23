@@ -116,9 +116,9 @@
             <td><b>Trackable</b></td>
             <td>{% include "slide.html" with state=part.trackable field='trackable' %}</td>   
             {% if part.trackable %}
-            <td>Part stock will be tracked by (serial or batch)</td>
+            <td>Part stock is tracked by serial number</td>
             {% else %}
-            <td><i>Part stock will not be tracked by</i></td>
+            <td><i>Part stock is not tracked by serial number</i></td>
             {% endif %}
         </tr>
         <tr>

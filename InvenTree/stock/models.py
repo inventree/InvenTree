@@ -92,6 +92,7 @@ class StockItem(models.Model):
         location: Where this StockItem is located
         quantity: Number of stocked units
         batch: Batch number for this StockItem
+        serial: Unique serial number for this StockItem
         URL: Optional URL to link to external resource
         updated: Date that this stock item was last updated (auto)
         stocktake_date: Date of last stocktake for this item
@@ -121,6 +122,31 @@ class StockItem(models.Model):
                 system=True
             )
 
+    @classmethod
+    def check_serial_number(cls, part, serial_number):
+        """ Check if a new stock item can be created with the provided part_id
+
+        Args:
+            part: The part to be checked
+        """
+
+        if not part.trackable:
+            return False
+
+        items = StockItem.objects.filter(serial=serial_number)
+
+        # Is this part a variant? If so, check S/N across all sibling variants
+        if part.variant_of is not None:
+            items = items.filter(part__variant_of=part.variant_of)
+        else:
+            items = items.filter(part=part)
+
+        # An existing serial number exists
+        if items.exists():
+            return False
+
+        return True
+
     def validate_unique(self, exclude=None):
         super(StockItem, self).validate_unique(exclude)
 
@@ -129,11 +155,18 @@ class StockItem(models.Model):
         # across all variants of the same template part
 
         try:
-            if self.serial is not None and self.part.variant_of is not None:
-                if StockItem.objects.filter(part__variant_of=self.part.variant_of, serial=self.serial).exclude(id=self.id).exists():
-                    raise ValidationError({
-                        'serial': _('A part with this serial number already exists for template part {part}'.format(part=self.part.variant_of))
-                    })
+            if self.serial is not None:
+                # This is a variant part (check S/N across all sibling variants)
+                if self.part.variant_of is not None:
+                    if StockItem.objects.filter(part__variant_of=self.part.variant_of, serial=self.serial).exclude(id=self.id).exists():
+                        raise ValidationError({
+                            'serial': _('A part with this serial number already exists for template part {part}'.format(part=self.part.variant_of))
+                        })
+                else:
+                    if StockItem.objects.filter(serial=self.serial).exclude(id=self.id).exists():
+                        raise ValidationError({
+                            'serial': _('A part with this serial number already exists')
+                        })
         except Part.DoesNotExist:
             pass
 
@@ -158,16 +191,23 @@ class StockItem(models.Model):
 
             if self.part is not None:
                 # A trackable part must have a serial number
-                if self.part.trackable and not self.serial:
-                    raise ValidationError({
-                        'serial': _('Serial number must be set for trackable items')
-                    })
+                if self.part.trackable:
+                    if not self.serial:
+                        raise ValidationError({'serial': _('Serial number must be set for trackable items')})
+
+                    if self.delete_on_deplete:
+                        raise ValidationError({'delete_on_deplete': _("Must be set to False for trackable items")})
+                    
+                    # Serial number cannot be set for items with quantity greater than 1
+                    if not self.quantity == 1:
+                        raise ValidationError({
+                            'quantity': _("Quantity must be set to 1 for item with a serial number"),
+                            'serial': _("Serial number cannot be set if quantity > 1")
+                        })
 
                 # A template part cannot be instantiated as a StockItem
                 if self.part.is_template:
-                    raise ValidationError({
-                        'part': _('Stock item cannot be created for a template Part')
-                    })
+                    raise ValidationError({'part': _('Stock item cannot be created for a template Part')})
 
         except Part.DoesNotExist:
             # This gets thrown if self.supplier_part is null
@@ -177,13 +217,6 @@ class StockItem(models.Model):
         if self.belongs_to and self.belongs_to.pk == self.pk:
             raise ValidationError({
                 'belongs_to': _('Item cannot belong to itself')
-            })
-
-        # Serial number cannot be set for items with quantity greater than 1
-        if not self.quantity == 1 and self.serial:
-            raise ValidationError({
-                'quantity': _("Quantity must be set to 1 for item with a serial number"),
-                'serial': _("Serial number cannot be set if quantity > 1")
             })
 
     def get_absolute_url(self):
@@ -298,7 +331,7 @@ class StockItem(models.Model):
     def has_tracking_info(self):
         return self.tracking_info.count() > 0
 
-    def addTransactionNote(self, title, user, notes='', system=True):
+    def addTransactionNote(self, title, user, notes='', url='', system=True):
         """ Generation a stock transaction note for this item.
 
         Brief automated note detailing a movement or quantity change.
@@ -310,6 +343,7 @@ class StockItem(models.Model):
             quantity=self.quantity,
             date=datetime.now().date(),
             notes=notes,
+            URL=url,
             system=system
         )
 
@@ -494,9 +528,14 @@ class StockItem(models.Model):
         return True
 
     def __str__(self):
-        s = '{n} x {part}'.format(
-            n=self.quantity,
-            part=self.part.full_name)
+        if self.part.trackable and self.serial:
+            s = '{part} #{sn}'.format(
+                part=self.part.full_name,
+                sn=self.serial)
+        else:
+            s = '{n} x {part}'.format(
+                n=self.quantity,
+                part=self.part.full_name)
 
         if self.location:
             s += ' @ {loc}'.format(loc=self.location.name)
@@ -512,6 +551,7 @@ class StockItemTracking(models.Model):
         date: Date that this tracking info was created
         title: Title of this tracking info (generated by system)
         notes: Associated notes (input by user)
+        URL: Optional URL to external page
         user: The user associated with this tracking info
         quantity: The StockItem quantity at this point in time
     """
@@ -525,9 +565,11 @@ class StockItemTracking(models.Model):
 
     date = models.DateTimeField(auto_now_add=True, editable=False)
 
-    title = models.CharField(blank=False, max_length=250)
+    title = models.CharField(blank=False, max_length=250, help_text='Tracking entry title')
 
-    notes = models.TextField(blank=True)
+    notes = models.CharField(blank=True, max_length=512, help_text='Entry notes')
+
+    URL = models.URLField(blank=True, help_text='Link to external page for further information')
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
