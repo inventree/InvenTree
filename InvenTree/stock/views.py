@@ -608,9 +608,12 @@ class StockItemCreate(AjaxCreateView):
                         form.errors['serial_numbers'] = e.messages
                         valid = False
 
-        print("Valid?", valid)
-
-        valid = False
+                else:
+                    # For non-serialized items, simply save the form.
+                    # We need to call _post_clean() here because it is prevented in the form implementation
+                    form.clean()
+                    form._post_clean()
+                    form.save()
 
         print("valid:", valid)
 
