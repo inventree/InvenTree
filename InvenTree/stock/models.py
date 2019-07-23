@@ -147,7 +147,6 @@ class StockItem(models.Model):
 
         return True
 
-
     def validate_unique(self, exclude=None):
         super(StockItem, self).validate_unique(exclude)
 
@@ -192,16 +191,23 @@ class StockItem(models.Model):
 
             if self.part is not None:
                 # A trackable part must have a serial number
-                if self.part.trackable and not self.serial:
-                    raise ValidationError({
-                        'serial': _('Serial number must be set for trackable items')
-                    })
+                if self.part.trackable:
+                    if not self.serial:
+                        raise ValidationError({'serial': _('Serial number must be set for trackable items')})
+
+                    if self.delete_on_deplete:
+                        raise ValidationError({'delete_on_deplete': _("Must be set to False for trackable items")})
+                    
+                    # Serial number cannot be set for items with quantity greater than 1
+                    if not self.quantity == 1:
+                        raise ValidationError({
+                            'quantity': _("Quantity must be set to 1 for item with a serial number"),
+                            'serial': _("Serial number cannot be set if quantity > 1")
+                        })
 
                 # A template part cannot be instantiated as a StockItem
                 if self.part.is_template:
-                    raise ValidationError({
-                        'part': _('Stock item cannot be created for a template Part')
-                    })
+                    raise ValidationError({'part': _('Stock item cannot be created for a template Part')})
 
         except Part.DoesNotExist:
             # This gets thrown if self.supplier_part is null
@@ -211,13 +217,6 @@ class StockItem(models.Model):
         if self.belongs_to and self.belongs_to.pk == self.pk:
             raise ValidationError({
                 'belongs_to': _('Item cannot belong to itself')
-            })
-
-        # Serial number cannot be set for items with quantity greater than 1
-        if not self.quantity == 1 and self.serial:
-            raise ValidationError({
-                'quantity': _("Quantity must be set to 1 for item with a serial number"),
-                'serial': _("Serial number cannot be set if quantity > 1")
             })
 
     def get_absolute_url(self):

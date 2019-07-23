@@ -282,9 +282,8 @@ class BuildComplete(AjaxUpdateView):
 
                     if len(existing) > 0:
                         exists = ",".join([str(x) for x in existing])
-                        form.errors['serial_numbers'] = [_('The following serial numbers already exist: {sn}'.format(sn=exists))]
+                        form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
                         valid = False
-
 
                 except ValidationError as e:
                     form.errors['serial_numbers'] = e.messages

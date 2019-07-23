@@ -6,8 +6,9 @@ Django Forms for interacting with Stock app
 from __future__ import unicode_literals
 
 from django import forms
-from InvenTree.forms import HelperForm
+from django.forms.utils import ErrorDict
 
+from InvenTree.forms import HelperForm
 from .models import StockLocation, StockItem, StockItemTracking
 
 
@@ -26,6 +27,8 @@ class EditStockLocationForm(HelperForm):
 class CreateStockItemForm(HelperForm):
     """ Form for creating a new StockItem """
 
+    serial_numbers = forms.CharField(label='Serial numbers', required=False, help_text='Enter unique serial numbers')
+
     class Meta:
         model = StockItem
         fields = [
@@ -34,12 +37,29 @@ class CreateStockItemForm(HelperForm):
             'location',
             'quantity',
             'batch',
-            'serial',
+            'serial_numbers',
             'delete_on_deplete',
             'status',
             'notes',
             'URL',
         ]
+
+    # Custom clean to prevent complex StockItem.clean() logic from running (yet)
+    def full_clean(self):
+        self._errors = ErrorDict()
+        
+        if not self.is_bound:  # Stop further processing.
+            return
+        
+        self.cleaned_data = {}
+        # If the form is permitted to be empty, and none of the form data has
+        # changed from the initial data, short circuit any validation.
+        if self.empty_permitted and not self.has_changed():
+            return
+        
+        # Don't run _post_clean() as this will run StockItem.clean()
+        self._clean_fields()
+        self._clean_form()
 
 
 class AdjustStockForm(forms.ModelForm):

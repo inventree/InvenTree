@@ -5,6 +5,7 @@ Django views for interacting with Stock app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.core.exceptions import ValidationError
 from django.views.generic.edit import FormMixin
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
@@ -17,6 +18,7 @@ from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import str2bool
+from InvenTree.helpers import ExtractSerialNumbers
 from datetime import datetime
 
 from part.models import Part
@@ -476,7 +478,7 @@ class StockItemCreate(AjaxCreateView):
         ForeignKey choices based on other selections
         """
 
-        form = super(AjaxCreateView, self).get_form()
+        form = super().get_form()
 
         # If the user has selected a Part, limit choices for SupplierPart
         if form['part'].value():
@@ -488,10 +490,16 @@ class StockItemCreate(AjaxCreateView):
                 # Hide the 'part' field (as a valid part is selected)
                 form.fields['part'].widget = HiddenInput()
 
+                # trackable parts get special consideration
+                if part.trackable:
+                    form.fields['delete_on_deplete'].widget = HiddenInput()
+                    form.fields['delete_on_deplete'].initial = False
+                else:
+                    form.fields.pop('serial_numbers')
+
                 # If the part is NOT purchaseable, hide the supplier_part field
                 if not part.purchaseable:
                     form.fields['supplier_part'].widget = HiddenInput()
-
                 else:
                     # Pre-select the allowable SupplierPart options
                     parts = form.fields['supplier_part'].queryset
@@ -554,6 +562,63 @@ class StockItemCreate(AjaxCreateView):
                 pass
 
         return initials
+
+    def post(self, request, *args, **kwargs):
+        """ Handle POST of StockItemCreate form.
+
+        - Manage serial-number valdiation for tracked parts
+        """
+
+        form = self.get_form()
+
+        valid = form.is_valid()
+
+        if valid:
+            part_id = form['part'].value()
+            try:
+                part = Part.objects.get(id=part_id)
+                quantity = int(form['quantity'].value())
+            except (Part.DoesNotExist, ValueError):
+                part = None
+                quantity = 1
+                valid = False
+
+            if part is None:
+                form.errors['part'] = [_('Invalid part selection')]
+            else:
+                # A trackable part must provide serial numbesr
+                if part.trackable:
+                    sn = request.POST.get('serial_numbers', '')
+
+                    try:
+                        serials = ExtractSerialNumbers(sn, quantity)
+
+                        existing = []
+
+                        for serial in serials:
+                            if not StockItem.check_serial_number(part, serial):
+                                existing.append(serial)
+
+                        if len(existing) > 0:
+                            exists = ",".join([str(x) for x in existing])
+                            form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                            valid = False
+
+                    except ValidationError as e:
+                        form.errors['serial_numbers'] = e.messages
+                        valid = False
+
+        print("Valid?", valid)
+
+        valid = False
+
+        print("valid:", valid)
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data=data)
 
 
 class StockLocationDelete(AjaxDeleteView):
