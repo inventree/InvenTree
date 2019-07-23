@@ -528,9 +528,14 @@ class StockItem(models.Model):
         return True
 
     def __str__(self):
-        s = '{n} x {part}'.format(
-            n=self.quantity,
-            part=self.part.full_name)
+        if self.part.trackable and self.serial:
+            s = '{part} #{sn}'.format(
+                part=self.part.full_name,
+                sn=self.serial)
+        else:
+            s = '{n} x {part}'.format(
+                n=self.quantity,
+                part=self.part.full_name)
 
         if self.location:
             s += ' @ {loc}'.format(loc=self.location.name)

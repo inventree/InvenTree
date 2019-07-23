@@ -176,7 +176,7 @@ def ExtractSerialNumbers(serials, expected_quantity):
                 else:
                     numbers.append(n)
             except ValueError:
-                print("Invalid group: {g}".format(g=group))
+                errors.append("Invalid group: {g}".format(g=group))
 
     if len(errors) > 0:
         raise ValidationError(errors)
