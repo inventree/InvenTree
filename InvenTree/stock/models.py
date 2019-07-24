@@ -316,7 +316,15 @@ class StockItem(models.Model):
     infinite = models.BooleanField(default=False)
 
     def can_delete(self):
-        # TODO - Return FALSE if this item cannot be deleted!
+        """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
+
+        - Has a serial number and is tracked
+        - Is installed inside another StockItem
+        """
+
+        if part.trackable and self.serial is not None:
+            return False
+
         return True
 
     @property
@@ -457,7 +465,7 @@ class StockItem(models.Model):
 
         self.quantity = quantity
 
-        if quantity <= 0 and self.delete_on_deplete:
+        if quantity <= 0 and self.delete_on_deplete and self.can_delete():
             self.delete()
             return False
         else:
