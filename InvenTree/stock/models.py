@@ -377,6 +377,8 @@ class StockItem(models.Model):
             quantity=quantity,
             supplier_part=self.supplier_part,
             location=self.location,
+            notes=self.notes,
+            URL=self.URL,
             batch=self.batch,
             delete_on_deplete=self.delete_on_deplete
         )
