@@ -322,7 +322,7 @@ class StockItem(models.Model):
         - Is installed inside another StockItem
         """
 
-        if part.trackable and self.serial is not None:
+        if self.part.trackable and self.serial is not None:
             return False
 
         return True

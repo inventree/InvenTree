@@ -383,8 +383,8 @@ class StockAdjust(AjaxView, FormMixin):
             if item.new_quantity <= 0:
                 continue
             
-            # Do not move to the same location
-            if destination == item.location:
+            # Do not move to the same location (unless the quantity is different)
+            if destination == item.location and item.new_quantity == item.quantity:
                 continue
 
             item.move(destination, note, self.request.user, quantity=int(item.new_quantity))
