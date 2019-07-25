@@ -190,20 +190,21 @@ class StockItem(models.Model):
                                            })
 
             if self.part is not None:
-                # A trackable part must have a serial number
-                if self.part.trackable:
-                    if not self.serial:
-                        raise ValidationError({'serial': _('Serial number must be set for trackable items')})
+                # A part with a serial number MUST have the quantity set to 1
+                if self.serial is not None:
+                    if self.quantity > 1:
+                        raise ValidationError({
+                            'quantity': _('Quantity must be 1 for item with a serial number'),
+                            'serial': _('Serial number cannot be set if quantity greater than 1')
+                        })
+
+                    if self.quantity == 0:
+                        raise ValidationError({
+                            'quantity': _('Quantity must be 1 for item with a serial number')
+                        })
 
                     if self.delete_on_deplete:
-                        raise ValidationError({'delete_on_deplete': _("Must be set to False for trackable items")})
-                    
-                    # Serial number cannot be set for items with quantity greater than 1
-                    if not self.quantity == 1:
-                        raise ValidationError({
-                            'quantity': _("Quantity must be set to 1 for item with a serial number"),
-                            'serial': _("Serial number cannot be set if quantity > 1")
-                        })
+                        raise ValidationError({'delete_on_deplete': _("Must be set to False for item with a serial number")})
 
                 # A template part cannot be instantiated as a StockItem
                 if self.part.is_template:
@@ -422,7 +423,7 @@ class StockItem(models.Model):
         if location is None:
             # TODO - Raise appropriate error (cannot move to blank location)
             return False
-        elif self.location and (location.pk == self.location.pk):
+        elif self.location and (location.pk == self.location.pk) and (quantity == self.quantity):
             # TODO - Raise appropriate error (cannot move to same location)
             return False
 
