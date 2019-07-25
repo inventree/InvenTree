@@ -122,6 +122,11 @@ class StockItem(models.Model):
                 system=True
             )
 
+    @property
+    def serialized(self):
+        """ Return True if this StockItem is serialized """
+        return self.serial is not None and self.quantity == 1
+
     @classmethod
     def check_serial_number(cls, part, serial_number):
         """ Check if a new stock item can be created with the provided part_id
@@ -359,6 +364,14 @@ class StockItem(models.Model):
         track.save()
 
     @transaction.atomic
+    def serializeStock(self, serials, user):
+        """ Split this stock item into unique serial numbers.
+        """
+
+        # TODO
+        pass
+
+    @transaction.atomic
     def splitStock(self, quantity, user):
         """ Split this stock item into two items, in the same location.
         Stock tracking notes for this StockItem will be duplicated,
@@ -371,6 +384,10 @@ class StockItem(models.Model):
             The provided quantity will be subtracted from this item and given to the new one.
             The new item will have a different StockItem ID, while this will remain the same.
         """
+
+        # Do not split a serialized part
+        if self.serialized:
+            return
 
         # Doesn't make sense for a zero quantity
         if quantity <= 0:
@@ -461,6 +478,10 @@ class StockItem(models.Model):
             - False if the StockItem was deleted
         """
 
+        # Do not adjust quantity of a serialized part
+        if self.serialized:
+            return
+
         if quantity < 0:
             quantity = 0
 
@@ -504,6 +525,10 @@ class StockItem(models.Model):
         or by manually adding the items to the stock location
         """
 
+        # Cannot add items to a serialized part
+        if self.serialized:
+            return False
+
         quantity = int(quantity)
 
         # Ignore amounts that do not make sense
@@ -523,6 +548,10 @@ class StockItem(models.Model):
     def take_stock(self, quantity, user, notes=''):
         """ Remove items from stock
         """
+
+        # Cannot remove items from a serialized part
+        if self.serialized:
+            return False
 
         quantity = int(quantity)
 

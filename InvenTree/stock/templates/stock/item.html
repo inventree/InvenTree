@@ -5,11 +5,16 @@
 <div class='row'>
 <div class='col-sm-6'>
     <h3>Stock Item Details</h3>
+    {% if item.serialized %}
+    <p><i>{{ item.part.full_name}} # {{ item.serial }}</i></p>
+    {% else %}
     <p><i>{{ item.quantity }} &times {{ item.part.full_name }}</i></p>
+    {% endif %}
     <p>
         <div class='btn-group'>
             {% include "qr_button.html" %}
             {% if item.in_stock %}
+            {% if not item.serialized %}
             <button type='button' class='btn btn-default btn-glyph' id='stock-add' title='Add to stock'>
                 <span class='glyphicon glyphicon-plus-sign' style='color: #1a1;'/>
             </button>
@@ -19,6 +24,7 @@
             <button type='button' class='btn btn-default btn-glyph' id='stock-count' title='Count stock'>
                 <span class='glyphicon glyphicon-ok-circle'/>
             </button>
+            {% endif %}
             <button type='button' class='btn btn-default btn-glyph' id='stock-move' title='Transfer stock'>
                 <span class='glyphicon glyphicon-transfer' style='color: #11a;'/>
             </button>
@@ -34,6 +40,11 @@
             </button>
         </div>
     </p>
+    {% if item.serialized %}
+    <div class='alert alert-block alert-info'>
+        This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted.
+    </div>
+    {% endif %}
 </div>
 
 <div class='row'>
@@ -54,9 +65,9 @@
             <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
         </tr>
         {% endif %}
-        {% if item.serial %}
+        {% if item.serialized %}
         <tr>
-            <td>Serial</td>
+            <td>Serial Number</td>
             <td>{{ item.serial }}</td>
         </tr>
         {% else %}
