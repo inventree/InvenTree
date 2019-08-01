@@ -16,12 +16,16 @@ migrate:
 	python3 InvenTree/manage.py migrate --run-syncdb
 	python3 InvenTree/manage.py check
 
-install:
+requirements:
 	pip3 install -U -r requirements.txt
+
+secret:
 	python3 InvenTree/keygen.py
 
 superuser:
 	python3 InvenTree/manage.py createsuperuser
+
+install: requirements secret migrate superuser
 
 style:
 	flake8 InvenTree

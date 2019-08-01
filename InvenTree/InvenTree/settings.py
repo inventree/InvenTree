@@ -231,4 +231,6 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 # Settings for dbbsettings app
 DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {'location': tempfile.gettempdir()}
+DBBACKUP_STORAGE_OPTIONS = {
+    'location': CONFIG.get('backup_dir', tempfile.gettempdir()),
+}
