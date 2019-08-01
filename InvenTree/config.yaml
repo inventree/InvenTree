@@ -44,3 +44,7 @@ static_root: './static'
 
 # Logging options
 log_queries: False
+
+# Backup options
+# Set the backup_dir parameter to store backup files in a specific location
+# backup_dir = "/home/me/inventree-backup/"
