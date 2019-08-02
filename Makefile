@@ -46,3 +46,5 @@ documentation:
 backup:
 	python3 InvenTree/manage.py dbbackup
 	python3 InvenTree/manage.py mediabackup
+
+.PHONY: clean migrate requirements secret superuser install style test coverage documentation backup
