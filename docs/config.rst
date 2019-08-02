@@ -48,3 +48,8 @@ Uploaded File Storage
 ---------------------
 
 By default, uploaded files are stored in the local direction ``./media``. This directory should be changed based on the particular installation requirements.
+
+Backup Location
+---------------
+
+The default behaviour of the database backup is to generate backup files for database tables and media files to the user's temporary directory. The target directory can be overridden by setting the *backup_dir* parameter in the config file.

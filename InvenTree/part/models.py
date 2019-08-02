@@ -634,7 +634,8 @@ class Part(models.Model):
         For hash is calculated from the following fields of each BOM item:
 
         - Part.full_name (if the part name changes, the BOM checksum is invalidated)
-        - quantity
+        - Quantity
+        - Reference field
         - Note field
         
         returns a string representation of a hash object which can be compared with a stored value
@@ -647,6 +648,7 @@ class Part(models.Model):
             hash.update(str(item.sub_part.full_name).encode())
             hash.update(str(item.quantity).encode())
             hash.update(str(item.note).encode())
+            hash.update(str(item.reference).encode())
 
         return str(hash.digest())
 

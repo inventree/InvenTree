@@ -24,6 +24,8 @@ which performs the following actions:
 
 * Installs all required Python packages using pip package manager
 * Generates a SECREY_KEY file required for the django authentication framework
+* Performs initial database installation and migrations
+* Prompts user to create a superuser account
 
 Install Configuration
 ---------------------
@@ -34,15 +36,10 @@ The configuration file provides administrators control over various setup option
 
 For further information on installation configuration, refer to the `Configuration <config.html>`_ section.
 
-Superuser Account
------------------
-
-Run ``make superuser`` to create a superuser account, required for initial system login.
-
 Run Development Server
 ----------------------
 
-Run ``python3 InvenTree/manage.py runserver`` to launch a development server. This will launch the InvenTree web interface at ``127.0.0.1:8000``. For other options refer to the `django docs <https://docs.djangoproject.com/en/2.2/ref/django-admin/>`_.
+Run ``python3 InvenTree/manage.py runserver 127.0.0.1:8000`` to launch a development server. This will launch the InvenTree web interface at ``127.0.0.1:8000``. For other options refer to the `django docs <https://docs.djangoproject.com/en/2.2/ref/django-admin/>`_.
 
 Database Migrations
 -------------------
@@ -54,6 +51,10 @@ Development and Testing
 
 Other shorthand functions are provided for the development and testing process:
 
+* ``make requirements`` - Install all required underlying packages using PIP
+* ``make secret`` - Generate the SECRET_KEY file for session validation
+* ``make superuser`` - Create a superuser account
+* ``make backup`` - Backup database tables and media files
 * ``make test`` - Run all unit tests
 * ``make coverage`` - Run all unit tests and generate code coverage report
 * ``make style`` - Check Python codebase against PEP coding standards (using Flake)

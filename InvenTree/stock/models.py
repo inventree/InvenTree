@@ -122,6 +122,11 @@ class StockItem(models.Model):
                 system=True
             )
 
+    @property
+    def serialized(self):
+        """ Return True if this StockItem is serialized """
+        return self.serial is not None and self.quantity == 1
+
     @classmethod
     def check_serial_number(cls, part, serial_number):
         """ Check if a new stock item can be created with the provided part_id
@@ -190,20 +195,21 @@ class StockItem(models.Model):
                                            })
 
             if self.part is not None:
-                # A trackable part must have a serial number
-                if self.part.trackable:
-                    if not self.serial:
-                        raise ValidationError({'serial': _('Serial number must be set for trackable items')})
+                # A part with a serial number MUST have the quantity set to 1
+                if self.serial is not None:
+                    if self.quantity > 1:
+                        raise ValidationError({
+                            'quantity': _('Quantity must be 1 for item with a serial number'),
+                            'serial': _('Serial number cannot be set if quantity greater than 1')
+                        })
+
+                    if self.quantity == 0:
+                        raise ValidationError({
+                            'quantity': _('Quantity must be 1 for item with a serial number')
+                        })
 
                     if self.delete_on_deplete:
-                        raise ValidationError({'delete_on_deplete': _("Must be set to False for trackable items")})
-                    
-                    # Serial number cannot be set for items with quantity greater than 1
-                    if not self.quantity == 1:
-                        raise ValidationError({
-                            'quantity': _("Quantity must be set to 1 for item with a serial number"),
-                            'serial': _("Serial number cannot be set if quantity > 1")
-                        })
+                        raise ValidationError({'delete_on_deplete': _("Must be set to False for item with a serial number")})
 
                 # A template part cannot be instantiated as a StockItem
                 if self.part.is_template:
@@ -316,7 +322,15 @@ class StockItem(models.Model):
     infinite = models.BooleanField(default=False)
 
     def can_delete(self):
-        # TODO - Return FALSE if this item cannot be deleted!
+        """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
+
+        - Has a serial number and is tracked
+        - Is installed inside another StockItem
+        """
+
+        if self.part.trackable and self.serial is not None:
+            return False
+
         return True
 
     @property
@@ -350,6 +364,14 @@ class StockItem(models.Model):
         track.save()
 
     @transaction.atomic
+    def serializeStock(self, serials, user):
+        """ Split this stock item into unique serial numbers.
+        """
+
+        # TODO
+        pass
+
+    @transaction.atomic
     def splitStock(self, quantity, user):
         """ Split this stock item into two items, in the same location.
         Stock tracking notes for this StockItem will be duplicated,
@@ -362,6 +384,10 @@ class StockItem(models.Model):
             The provided quantity will be subtracted from this item and given to the new one.
             The new item will have a different StockItem ID, while this will remain the same.
         """
+
+        # Do not split a serialized part
+        if self.serialized:
+            return
 
         # Doesn't make sense for a zero quantity
         if quantity <= 0:
@@ -377,6 +403,8 @@ class StockItem(models.Model):
             quantity=quantity,
             supplier_part=self.supplier_part,
             location=self.location,
+            notes=self.notes,
+            URL=self.URL,
             batch=self.batch,
             delete_on_deplete=self.delete_on_deplete
         )
@@ -412,7 +440,7 @@ class StockItem(models.Model):
         if location is None:
             # TODO - Raise appropriate error (cannot move to blank location)
             return False
-        elif self.location and (location.pk == self.location.pk):
+        elif self.location and (location.pk == self.location.pk) and (quantity == self.quantity):
             # TODO - Raise appropriate error (cannot move to same location)
             return False
 
@@ -450,12 +478,16 @@ class StockItem(models.Model):
             - False if the StockItem was deleted
         """
 
+        # Do not adjust quantity of a serialized part
+        if self.serialized:
+            return
+
         if quantity < 0:
             quantity = 0
 
         self.quantity = quantity
 
-        if quantity <= 0 and self.delete_on_deplete:
+        if quantity <= 0 and self.delete_on_deplete and self.can_delete():
             self.delete()
             return False
         else:
@@ -493,6 +525,10 @@ class StockItem(models.Model):
         or by manually adding the items to the stock location
         """
 
+        # Cannot add items to a serialized part
+        if self.serialized:
+            return False
+
         quantity = int(quantity)
 
         # Ignore amounts that do not make sense
@@ -512,6 +548,10 @@ class StockItem(models.Model):
     def take_stock(self, quantity, user, notes=''):
         """ Remove items from stock
         """
+
+        # Cannot remove items from a serialized part
+        if self.serialized:
+            return False
 
         quantity = int(quantity)
 
