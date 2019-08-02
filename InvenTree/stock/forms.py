@@ -118,11 +118,12 @@ class EditStockItemForm(HelperForm):
 
         fields = [
             'supplier_part',
+            'serial',
             'batch',
-            'delete_on_deplete',
             'status',
             'notes',
             'URL',
+            'delete_on_deplete',
         ]
 
 
