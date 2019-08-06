@@ -1175,6 +1175,7 @@ class PartExport(AjaxView):
                 continue
 
         headers = [
+            'ID',
             'Name',
             'Description',
             'Category',
@@ -1182,9 +1183,11 @@ class PartExport(AjaxView):
             'IPN',
             'Revision',
             'URL',
+            'Keywords',
             'Notes',
             'Assembly',
             'Component',
+            'Template',
             'Trackable',
             'Salable',
             'Active',
@@ -1213,6 +1216,7 @@ class PartExport(AjaxView):
         for part in parts:
             line = []
 
+            line.append(part.ID)
             line.append(part.name)
             line.append(part.description)
             line.append(str(part.category))
@@ -1220,9 +1224,11 @@ class PartExport(AjaxView):
             line.append(part.IPN)
             line.append(part.revision)
             line.append(part.URL)
+            line.append(part.keywords)
             line.append(part.notes)
             line.append(part.assembly)
             line.append(part.component)
+            line.append(part.template)
             line.append(part.trackable)
             line.append(part.salable)
             line.append(part.active)
