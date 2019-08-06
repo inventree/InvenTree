@@ -14,6 +14,8 @@ from django.views.generic import DetailView, ListView, FormView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 
+import tablib
+
 from fuzzywuzzy import fuzz
 
 from .models import PartCategory, Part, PartAttachment
@@ -1157,6 +1159,89 @@ class BomUpload(FormView):
             return self.handlePartSelection()
 
         return self.render_to_response(self.get_context_data(form=self.form))
+
+
+class PartExport(AjaxView):
+    """ Export a CSV file containing information on multiple parts """
+
+    def get(self, request, *args, **kwargs):
+        part = request.GET.get('parts', '')
+        parts = []
+        
+        for pk in part.split(','):
+            try:
+                parts.append(Part.objects.get(pk=int(pk)))
+            except (Part.DoesNotExist, ValueError):
+                continue
+
+        headers = [
+            'Name',
+            'Description',
+            'Category',
+            'Category ID',
+            'IPN',
+            'Revision',
+            'URL',
+            'Notes',
+            'Assembly',
+            'Component',
+            'Trackable',
+            'Salable',
+            'Active',
+            'Virtual'
+        ]
+
+        # Construct list of suppliers for each part
+        supplier_names = set()
+
+        for part in parts:
+            supplier_parts = part.supplier_parts.all()
+            part.suppliers = {}
+
+            for sp in supplier_parts:
+                name = sp.supplier.name
+                supplier_names.add(name)
+                part.suppliers[name] = sp
+
+        if len(supplier_names) > 0:
+            headers.append('')
+            for name in supplier_names:
+                headers.append(name)
+
+        data = tablib.Dataset(headers=headers)
+
+        for part in parts:
+            line = []
+
+            line.append(part.name)
+            line.append(part.description)
+            line.append(str(part.category))
+            line.append(part.category.pk)
+            line.append(part.IPN)
+            line.append(part.revision)
+            line.append(part.URL)
+            line.append(part.notes)
+            line.append(part.assembly)
+            line.append(part.component)
+            line.append(part.trackable)
+            line.append(part.salable)
+            line.append(part.active)
+            line.append(part.virtual)
+
+            if len(supplier_names) > 0:
+                line.append('')
+
+                for name in supplier_names:
+                    sp = part.suppliers.get(name, None)
+                    if sp:
+                        line.append(sp.SKU)
+                    else:
+                        line.append('')
+
+            data.append(line)
+
+        csv = data.export('csv')
+        return DownloadFile(csv, 'InvenTree_Parts.csv')
 
 
 class BomUploadTemplate(AjaxView):

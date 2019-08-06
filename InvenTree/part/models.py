@@ -858,7 +858,7 @@ class Part(models.Model):
 
         self.save()
 
-    def export_bom(self, **kwargs):
+    def export_bom(self, **kwargs): 
         """ Export Bill of Materials to a spreadsheet file.
         Includes a row for each item in the BOM.
         Also includes extra information such as supplier data.
