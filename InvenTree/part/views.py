@@ -1191,7 +1191,12 @@ class PartExport(AjaxView):
             'Trackable',
             'Salable',
             'Active',
-            'Virtual'
+            'Virtual',
+            'Stock Info',  # Spacer between part data and stock data
+            'In Stock',
+            'Allocated',
+            'Building',
+            'On Order',
         ]
 
         # Construct list of suppliers for each part
@@ -1207,7 +1212,7 @@ class PartExport(AjaxView):
                 part.suppliers[name] = sp
 
         if len(supplier_names) > 0:
-            headers.append('')
+            headers.append('Suppliers')
             for name in supplier_names:
                 headers.append(name)
 
@@ -1216,7 +1221,7 @@ class PartExport(AjaxView):
         for part in parts:
             line = []
 
-            line.append(part.ID)
+            line.append(part.pk)
             line.append(part.name)
             line.append(part.description)
             line.append(str(part.category))
@@ -1228,11 +1233,18 @@ class PartExport(AjaxView):
             line.append(part.notes)
             line.append(part.assembly)
             line.append(part.component)
-            line.append(part.template)
+            line.append(part.is_template)
             line.append(part.trackable)
             line.append(part.salable)
             line.append(part.active)
             line.append(part.virtual)
+
+            # Stock information
+            line.append('')
+            line.append(part.total_stock)
+            line.append(part.allocation_count)
+            line.append(part.quantity_being_built)
+            line.append(part.on_order)
 
             if len(supplier_names) > 0:
                 line.append('')
