@@ -66,3 +66,27 @@ class PartDetailTest(PartViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['editing_enabled'])
 
+
+class PartQRTest(PartViewTestCase):
+    """ Tests for the Part QR Code AJAX view """
+
+    def test_html_redirect(self):
+        # A HTML request for a QR code should be redirected (use an AJAX request instead)
+        response = self.client.get(reverse('part-qr', args=(1,)))
+        self.assertEqual(response.status_code, 302)
+
+    def test_valid_part(self):
+        response = self.client.get(reverse('part-qr', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        
+        data = str(response.content)
+
+        self.assertIn('Part QR Code', data)
+        self.assertIn('<img src=', data)
+
+    def test_invalid_part(self):
+        response = self.client.get(reverse('part-qr', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        data = str(response.content)
+        
+        self.assertIn('Error:', data)
