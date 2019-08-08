@@ -35,6 +35,14 @@ class PartListTest(PartViewTestCase):
         self.assertIn('parts', keys)
         self.assertIn('user', keys)
     
+    def test_export(self):
+        """ Export part data to CSV """
+
+        response = self.client.get(reverse('part-export'), {'parts': '1,2,3,4,5,6,7,8,9,10'}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('streaming_content', dir(response))
+
 
 class PartDetailTest(PartViewTestCase):
 
@@ -67,11 +75,13 @@ class PartDetailTest(PartViewTestCase):
         self.assertTrue(response.context['editing_enabled'])
 
 
+
+
 class PartEditTest(PartViewTestCase):
     """ Tests for Part editing form """
 
     def test_get_edit(self):
-        response = self.client.get(reverse('part-edit', args=(1,)),  HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(reverse('part-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
         keys = response.context.keys()
@@ -103,7 +113,7 @@ class PartAttachmentTests(PartViewTestCase):
 
         # TODO
         pass
-        
+
 
 class PartQRTest(PartViewTestCase):
     """ Tests for the Part QR Code AJAX view """
