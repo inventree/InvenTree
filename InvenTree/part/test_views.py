@@ -77,8 +77,13 @@ class PartDetailTest(PartViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['editing_enabled'])
 
+    def test_bom_download(self):
+        """ Test downloading a BOM for a valid part """
 
-
+        response = self.client.get(reverse('bom-export', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('streaming_content', dir(response))
+    
 
 class PartEditTest(PartViewTestCase):
     """ Tests for Part editing form """
