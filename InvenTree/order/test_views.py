@@ -47,7 +47,7 @@ class POTests(OrderViewTestCase):
         self.assertIn('OrderStatus', keys)
 
     def test_po_create(self):
-        """ Launch forms to create new PurchaseOrder""" 
+        """ Launch forms to create new PurchaseOrder"""
         url = reverse('purchase-order-create')
 
         # Without a supplier ID
@@ -75,4 +75,3 @@ class POTests(OrderViewTestCase):
 
         # Response should be streaming-content (file download)
         self.assertIn('streaming_content', dir(response))
-    
