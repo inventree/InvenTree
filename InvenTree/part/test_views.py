@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 
 from .models import Part
 
+
 class PartViewTestCase(TestCase):
     
     fixtures = [
@@ -142,7 +143,7 @@ class PartAttachmentTests(PartViewTestCase):
         """ test creation of an attachment for an invalid part """
 
         with self.assertRaises(Part.DoesNotExist):
-            response = self.client.get(reverse('part-attachment-create'), {'part': 999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            self.client.get(reverse('part-attachment-create'), {'part': 999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
     def test_edit(self):
         """ test editing an attachment """
