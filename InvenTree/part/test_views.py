@@ -124,6 +124,12 @@ class PartTests(PartViewTestCase):
         response = self.client.get(reverse('part-duplicate', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
+    def test_make_variant(self):
+
+        response = self.client.get(reverse('make-part-variant', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+
 class PartAttachmentTests(PartViewTestCase):
 
     def test_valid_create(self):
