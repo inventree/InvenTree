@@ -83,10 +83,27 @@ class PartEditTest(PartViewTestCase):
         self.assertIn('html_form', data)
         self.assertIn('"title":', data)
 
-    def test_invalid_part(self):
-        response = self.client.get(reverse('part-edit', args=(9999,)),  HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 404)
 
+class PartAttachmentTests(PartViewTestCase):
+
+    def test_valid_create(self):
+        """ test creation of an attachment for a valid part """
+
+        response = self.client.get(reverse('part-attachment-create'), {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+    def test_invalid_create(self):
+        """ test creation of an attachment for an invalid part """
+
+        with self.assertRaises(Part.DoesNotExist):
+            response = self.client.get(reverse('part-attachment-create'), {'part': 999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+    def test_edit(self):
+        """ test editing an attachment """
+
+        # TODO
+        pass
+        
 
 class PartQRTest(PartViewTestCase):
     """ Tests for the Part QR Code AJAX view """
