@@ -85,10 +85,10 @@ class PartDetailTest(PartViewTestCase):
         self.assertIn('streaming_content', dir(response))
     
 
-class PartEditTest(PartViewTestCase):
-    """ Tests for Part editing form """
+class PartTests(PartViewTestCase):
+    """ Tests for Part forms """
 
-    def test_get_edit(self):
+    def test_part_edit(self):
         response = self.client.get(reverse('part-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
@@ -101,6 +101,28 @@ class PartEditTest(PartViewTestCase):
         self.assertIn('html_form', data)
         self.assertIn('"title":', data)
 
+    def test_part_create(self):
+        """ Launch form to create a new part """
+        response = self.client.get(reverse('part-create'), {'category': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+        # And again, with an invalid category
+        response = self.client.get(reverse('part-create'), {'category': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+        # And again, with no category
+        response = self.client.get(reverse('part-create'), {'name': 'Test part'}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+    def test_part_duplicate(self):
+        """ Launch form to duplicate part """
+
+        # First try with an invalid part
+        response = self.client.get(reverse('part-duplicate', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(reverse('part-duplicate', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
 
 class PartAttachmentTests(PartViewTestCase):
 

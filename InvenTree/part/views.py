@@ -295,7 +295,7 @@ class PartDuplicate(AjaxCreateView):
     def get_part_to_copy(self):
         try:
             return Part.objects.get(id=self.kwargs['pk'])
-        except Part.DoesNotExist:
+        except (Part.DoesNotExist, ValueError):
             return None
 
     def get_context_data(self):
@@ -419,7 +419,7 @@ class PartCreate(AjaxCreateView):
         if cat_id:
             try:
                 context['category'] = PartCategory.objects.get(pk=cat_id)
-            except PartCategory.DoesNotExist:
+            except (PartCategory.DoesNotExist, ValueError):
                 pass
 
         return context
@@ -494,7 +494,7 @@ class PartCreate(AjaxCreateView):
                 category = PartCategory.objects.get(pk=self.get_category_id())
                 initials['category'] = category
                 initials['keywords'] = category.default_keywords
-            except PartCategory.DoesNotExist:
+            except (PartCategory.DoesNotExist, ValueError):
                 pass
         
         # Allow initial data to be passed through as arguments
