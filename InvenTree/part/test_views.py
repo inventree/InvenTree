@@ -11,7 +11,10 @@ class PartViewTestCase(TestCase):
     fixtures = [
         'category',
         'part',
+        'bom',
         'location',
+        'company',
+        'supplier_part',
     ]
 
     def setUp(self):
