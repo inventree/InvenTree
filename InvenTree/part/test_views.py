@@ -67,6 +67,27 @@ class PartDetailTest(PartViewTestCase):
         self.assertTrue(response.context['editing_enabled'])
 
 
+class PartEditTest(PartViewTestCase):
+    """ Tests for Part editing form """
+
+    def test_get_edit(self):
+        response = self.client.get(reverse('part-edit', args=(1,)),  HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+        keys = response.context.keys()
+        data = str(response.content)
+
+        self.assertIn('part', keys)
+        self.assertIn('csrf_token', keys)
+
+        self.assertIn('html_form', data)
+        self.assertIn('"title":', data)
+
+    def test_invalid_part(self):
+        response = self.client.get(reverse('part-edit', args=(9999,)),  HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 404)
+
+
 class PartQRTest(PartViewTestCase):
     """ Tests for the Part QR Code AJAX view """
 
