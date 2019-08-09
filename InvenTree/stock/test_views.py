@@ -83,7 +83,7 @@ class StockItemTest(StockViewTestCase):
         url = reverse('stock-adjust')
 
         # Move items
-        response = self.client.get(url, {'stock[]': [1,2,3,4,5], 'action': 'move'}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(url, {'stock[]': [1, 2, 3, 4, 5], 'action': 'move'}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
         # Count part
