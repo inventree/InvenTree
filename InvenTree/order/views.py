@@ -84,7 +84,7 @@ class PurchaseOrderCreate(AjaxCreateView):
             try:
                 supplier = Company.objects.get(id=supplier_id)
                 initials['supplier'] = supplier
-            except Company.DoesNotExist:
+            except (Company.DoesNotExist, ValueError):
                 pass
 
         return initials
