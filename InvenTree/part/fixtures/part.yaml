@@ -58,4 +58,4 @@
     name: 'Bob'
     description: 'Can we build it?'
     assembly: true
-    
+    purchaseable: false

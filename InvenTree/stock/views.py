@@ -168,9 +168,9 @@ class StockAdjust(AjaxView, FormMixin):
         elif 'item' in self.request.GET:
             items = [StockItem.objects.get(id=self.request.GET.get('item'))]
 
-        # Unsupported query
+        # Unsupported query (no items)
         else:
-            items = None
+            items = []
 
         for item in items:
 
