@@ -1,5 +1,6 @@
 from django.test import TestCase
 import django.core.exceptions as django_exceptions
+from django.core.exceptions import ValidationError
 
 from .validators import validate_overage, validate_part_name
 from . import helpers
@@ -100,3 +101,50 @@ class TestDownloadFile(TestCase):
     def test_download(self):
         helpers.DownloadFile("hello world", "out.txt")
         helpers.DownloadFile(bytes("hello world".encode("utf8")), "out.bin")
+
+
+class TestSerialNumberExtraction(TestCase):
+    """ Tests for serial number extraction code """
+
+    def test_simple(self):
+
+        e = helpers.ExtractSerialNumbers
+
+        sn = e("1-5", 5)
+        self.assertEqual(len(sn), 5)
+        for i in range(1, 6):
+            self.assertIn(i, sn)
+
+        sn = e("1, 2, 3, 4, 5", 5)
+        self.assertEqual(len(sn), 5)
+
+        sn = e("1-5, 10-15", 11)
+        self.assertIn(3, sn)
+        self.assertIn(13, sn)
+
+    def test_failures(self):
+
+        e = helpers.ExtractSerialNumbers
+
+        # Test duplicates
+        with self.assertRaises(ValidationError):
+            e("1,2,3,3,3", 5)
+
+        # Test invalid length
+        with self.assertRaises(ValidationError):
+            e("1,2,3", 5)
+
+        # Test empty string
+        with self.assertRaises(ValidationError):
+            e(", , ,", 0)
+
+        # Test incorrect sign in group
+        with self.assertRaises(ValidationError):
+            e("10-2", 8)
+
+        # Test invalid group
+        with self.assertRaises(ValidationError):
+            e("1-5-10", 10)
+
+        with self.assertRaises(ValidationError):
+            e("10, a, 7-70j", 4)
