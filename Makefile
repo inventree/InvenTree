@@ -27,6 +27,11 @@ superuser:
 
 install: requirements secret migrate superuser
 
+mysql:
+	apt-get install mysql-server
+	apt-get install libmysqlclient-dev
+	pip3 install mysqlclient
+
 style:
 	flake8 InvenTree
 
@@ -47,4 +52,4 @@ backup:
 	python3 InvenTree/manage.py dbbackup
 	python3 InvenTree/manage.py mediabackup
 
-.PHONY: clean migrate requirements secret superuser install style test coverage documentation backup
+.PHONY: clean migrate requirements secret superuser install mysql style test coverage documentation backup
