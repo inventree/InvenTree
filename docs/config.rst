@@ -15,7 +15,7 @@ To support install specific settings, a simple configuration file ``config.yaml`
 
 The default configuration file launches a *DEBUG* configuration with a simple SQLITE database backend. This default configuration file is shown below:
 
-.. literalinclude :: ../InvenTree/config.yaml
+.. literalinclude :: ../InvenTree/config_template.yaml
    :language: yaml
    :linenos:
 

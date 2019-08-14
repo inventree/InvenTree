@@ -19,13 +19,13 @@ migrate:
 requirements:
 	pip3 install -U -r requirements.txt
 
-secret:
-	python3 InvenTree/keygen.py
+setup:
+	python3 InvenTree/setup.py
 
 superuser:
 	python3 InvenTree/manage.py createsuperuser
 
-install: requirements secret migrate superuser
+install: requirements setup migrate superuser
 
 mysql:
 	apt-get install mysql-server
@@ -52,4 +52,4 @@ backup:
 	python3 InvenTree/manage.py dbbackup
 	python3 InvenTree/manage.py mediabackup
 
-.PHONY: clean migrate requirements secret superuser install mysql style test coverage documentation backup
+.PHONY: clean migrate requirements setup superuser install mysql style test coverage documentation backup
