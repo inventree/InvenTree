@@ -11,7 +11,7 @@ addons:
 
 before_install:
     - make requirements
-    - make secret
+    - make setup
     - make migrate
 
 script:

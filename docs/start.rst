@@ -52,7 +52,7 @@ Development and Testing
 Other shorthand functions are provided for the development and testing process:
 
 * ``make requirements`` - Install all required underlying packages using PIP
-* ``make secret`` - Generate the SECRET_KEY file for session validation
+* ``make setup`` - Perform one-time setup functions
 * ``make superuser`` - Create a superuser account
 * ``make backup`` - Backup database tables and media files
 * ``make test`` - Run all unit tests
