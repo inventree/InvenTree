@@ -24,9 +24,6 @@
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
     <button type="submit" class="save btn btn-default">Submit Selections</button>
     {% csrf_token %}
-    {% load crispy_forms_tags %}
-
-    {% crispy form %}
 
     <input type='hidden' name='form_step' value='select_fields'/>
 

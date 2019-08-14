@@ -51,18 +51,6 @@ class BomUploadSelectFile(HelperForm):
         ]
 
 
-class BomUploadSelectFields(HelperForm):
-    """ Form for selecting BOM fields """
-
-    starting_row = forms.IntegerField(required=True, initial=2, help_text='Index of starting row', validators=[MinValueValidator(1)])
-
-    class Meta:
-        model = Part
-        fields = [
-            'starting_row',
-        ]
-
-
 class EditPartAttachmentForm(HelperForm):
     """ Form for editing a PartAttachment object """
 
