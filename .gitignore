@@ -35,6 +35,9 @@ docs/_build
 InvenTree/media
 InvenTree/static
 
+# Local config file
+config.yaml
+
 # Key file
 secret_key.txt
 
