@@ -149,9 +149,7 @@ class BomUploadManager:
         return len(self.data.headers)
 
     def row_count(self):
-        """ Return the number of rows in the file.
-        Ignored the top rows as indicated by 'starting row'
-        """
+        """ Return the number of rows in the file. """
 
         if self.data is None:
             return 0

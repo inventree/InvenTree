@@ -671,13 +671,8 @@ class BomUpload(FormView):
 
     def get_form_class(self):
 
-        form_step = self.request.POST.get('form_step', None)
-
-        if form_step == 'select_fields':
-            return part_forms.BomUploadSelectFields
-        else:
-            # Default form is the starting point
-            return part_forms.BomUploadSelectFile
+        # Default form is the starting point
+        return part_forms.BomUploadSelectFile
 
     def get_context_data(self, *args, **kwargs):
 
@@ -776,7 +771,7 @@ class BomUpload(FormView):
 
         if bom_file_valid:
             # BOM file is valid? Proceed to the next step!
-            form = part_forms.BomUploadSelectFields
+            form = None
             self.template_name = 'part/bom_upload/select_fields.html'
 
             self.extractDataFromFile(manager)
@@ -983,18 +978,15 @@ class BomUpload(FormView):
         self.getTableDataFromPost()
 
         valid = len(self.missing_columns) == 0 and not self.duplicates
-
-        form = part_forms.BomUploadSelectFields
         
         if valid:
             # Try to extract meaningful data
             self.preFillSelections()
-            form = None
             self.template_name = 'part/bom_upload/select_parts.html'
         else:
             self.template_name = 'part/bom_upload/select_fields.html'
 
-        return self.render_to_response(self.get_context_data(form=form))
+        return self.render_to_response(self.get_context_data(form=None))
 
     def handlePartSelection(self):
         
