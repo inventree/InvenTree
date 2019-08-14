@@ -11,10 +11,17 @@ database setup in this file.
 
 """
 
+import sys
 import os
 import logging
 import tempfile
 import yaml
+
+
+def eprint(*args, **kwargs):
+    """ Print a warning message to stderr """
+    print(*args, file=sys.stderr, **kwargs)
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,7 +30,7 @@ cfg_filename = os.path.join(BASE_DIR, 'config.yaml')
 
 if not os.path.exists(cfg_filename):
     CONFIG = {}
-    print("Warning: config.yaml not found - using default settings")
+    eprint("Warning: config.yaml not found - using default settings")
 else:
     with open(cfg_filename, 'r') as cfg:
         CONFIG = yaml.safe_load(cfg)
@@ -52,7 +59,7 @@ if cors_opt:
     CORS_ORIGIN_ALLOW_ALL = cors_opt.get('allow_all', False)
 
     if CORS_ORIGIN_ALLOW_ALL:
-        print("Warning: CORS requests are allowed for any domain!")
+        eprint("Warning: CORS requests are allowed for any domain!")
     else:
         CORS_ORIGIN_WHITELIST = cors_opt.get('whitelist', [])
 
@@ -156,7 +163,7 @@ DATABASES = {}
 if 'database' in CONFIG:
     DATABASES['default'] = CONFIG['database']
 else:
-    print("Warning: Database backend not specified - using default (sqlite)")
+    eprint("Warning: Database backend not specified - using default (sqlite)")
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'inventree_db.sqlite3'),

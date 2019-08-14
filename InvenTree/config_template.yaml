@@ -3,15 +3,20 @@
 # Ref: https://docs.djangoproject.com/en/2.2/ref/settings/#std:setting-DATABASES
 # Specify database parameters below as they appear in the Django docs
 database:
+  # Example configuration - sqlite (default)
   ENGINE: django.db.backends.sqlite3
-  NAME: inventree_db.sqlite3
+  NAME: inventree_db.sqlite3 
   
   # For more complex database installations, further parameters are required
   # Refer to the django documentation for full list of options
-  # USER: db_username
-  # PASSWORD: db_password
-  # HOST: db_hostname
-  # PORT: db_port
+  
+  # Example Configuration - MySQL
+  #ENGINE: django.db.backends.mysql
+  #NAME: inventree
+  #USER: inventree
+  #PASSWORD: password
+  #HOST: ''
+  #PORT: ''
 
 # Set debug to False to run in production mode
 debug: True
@@ -36,7 +41,7 @@ cors:
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
 # By default, it is stored in a directory named 'media' local to the InvenTree directory
 # This should be changed for a production installation
-media_root: './media'
+media_root: 'media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
 # By default it is stored in a directory named 'static' local to the InvenTree directory
@@ -47,4 +52,4 @@ log_queries: False
 
 # Backup options
 # Set the backup_dir parameter to store backup files in a specific location
-# backup_dir = "/home/me/inventree-backup/"
+backup_dir: '/mnt/c/Users/Oliver/inventree-backup/'
