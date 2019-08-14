@@ -57,8 +57,8 @@ Receive outstanding parts for <b>{{ order }}</b> - <i>{{ order.description }}</i
                 </div>
             </td>
             <td>
-                <button class='btn btn-default btn-remove' id='del_item_{{ line.id }}' title='Remove line' type='button'>
-                    <span row='line_row_{{ line.id }}' onClick="removeOrderRowFromOrderWizard()" class='glyphicon glyphicon-small glyphicon-remove'></span>
+                <button class='btn btn-default btn-remove' onClick="removeOrderRowFromOrderWizard()" id='del_item_{{ line.id }}' title='Remove line' type='button'>
+                    <span row='line_row_{{ line.id }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
                 </button>
             </td>
         </tr>

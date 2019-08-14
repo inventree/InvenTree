@@ -47,8 +47,8 @@
             {% for row in bom_rows %}
             <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-name='{{ row.part_name }}' part-description='{{ row.description }}' part-select='#select_part_{{ row.index }}'>
                 <td>
-                    <button class='btn btn-default btn-remove' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='Remove row'>
-                            <span row_id='{{ forloop.counter }}' onClick='removeRowFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                    <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='Remove row'>
+                            <span row_id='{{ forloop.counter }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
                     </button>
                 </td>
                 <td>
@@ -57,8 +57,8 @@
                 {% for item in row.data %}
                 <td>
                     {% if item.column.guess == 'Part' %}
-                    <button class='btn btn-default btn-create' id='new_part_row_{{ row.index }}' title='Create new part' type='button'>
-                        <span row_id='{{ row.index }}' class='glyphicon glyphicon-small glyphicon-plus' onClick='newPartFromBomWizard()'/>
+                    <button class='btn btn-default btn-create'  onClick='newPartFromBomWizard()' id='new_part_row_{{ row.index }}' title='Create new part' type='button'>
+                        <span row_id='{{ row.index }}' class='glyphicon glyphicon-small glyphicon-plus'/>
                     </button>
 
                     <select class='select bomselect' id='select_part_{{ row.index }}' name='part_{{ row.index }}'>
