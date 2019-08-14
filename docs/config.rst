@@ -30,7 +30,17 @@ Database options are specified under the *database* heading in the configuration
 By default, InvenTree uses an sqlite database file : ``inventree_db.sqlite3``. This provides a simple, portable database file that is easy to use for debug and testing purposes. 
 
 
-**MYSQL:** MySQL database backend is supported with the native Django implemetation.
+**MYSQL:** MySQL database backend is supported with the native Django implemetation. To run InvenTree with the MySQL backend, a number of extra packages need to be installed:
+
+* mysql-server - *MySQL backend server*
+* libmysqlclient-dev - *Required for connecting to the MySQL database in Python*
+* (pip) mysqlclient - *Python package for communication with MySQL database*
+
+These requirements can be installed from the base directory with the command ``make mysql``.
+
+It is up to the database adminstrator to create a new database to store inventree data, in addition to a username/password to access the data.
+
+The database options then need to be adjusted to communicate the MySQL backend. Refer to the `Django docs <https://docs.djangoproject.com/en/dev/ref/databases/>`_ for further information.
 
 **POSTGRESQL:** PostgreSQL database backend is supported with the native Django implementation. Note that to use this backend, the ``psycopg2`` Python library must first be installed.
 
