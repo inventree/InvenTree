@@ -40,8 +40,8 @@
                     <div>
                         <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                         {{ col.name }}
-                        <button class='btn btn-default btn-remove' id='del_col_{{ forloop.counter0 }}' style='display: inline; float: right;' title='Remove column'>
-                            <span col_id='{{ forloop.counter0 }}' onClick='removeColFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                        <button class='btn btn-default btn-remove' onClick='removeColFromBomWizard()' id='del_col_{{ forloop.counter0 }}' style='display: inline; float: right;' title='Remove column'>
+                            <span col_id='{{ forloop.counter0 }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
                         </button>
                     </div>
                 </th>
@@ -69,8 +69,8 @@
             {% for row in bom_rows %}
             <tr>
                 <td>
-                    <button class='btn btn-default btn-remove' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='Remove row'>
-                        <span row_id='{{ forloop.counter }}' onClick='removeRowFromBomWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                    <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='Remove row'>
+                        <span row_id='{{ forloop.counter }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
                     </button>
                 </td>
                 <td>{{ forloop.counter }}</td>
