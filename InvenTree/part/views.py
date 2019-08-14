@@ -982,7 +982,6 @@ class BomUpload(FormView):
         if valid:
             # Try to extract meaningful data
             self.preFillSelections()
-            form = None
             self.template_name = 'part/bom_upload/select_parts.html'
         else:
             self.template_name = 'part/bom_upload/select_fields.html'

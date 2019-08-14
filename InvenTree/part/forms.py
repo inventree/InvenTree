@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 from InvenTree.forms import HelperForm
 
 from django import forms
-from django.core.validators import MinValueValidator
 
 from .models import Part, PartCategory, PartAttachment
 from .models import BomItem
