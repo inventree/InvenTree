@@ -29,7 +29,7 @@
             <br><span class='help-inline'>{{ item.error }}</span>
             {% endif %}
           </td>
-          <td><button class='btn btn-default btn-remove' id='del-{{ item.id }}' title='Remove item' type='button'><span row='stock-row-{{ item.id }}' onclick='removeStockRow()' class='glyphicon glyphicon-small glyphicon-remove'></span></button></td>
+          <td><button class='btn btn-default btn-remove' onclick='removeStockRow()' id='del-{{ item.id }}' title='Remove item' type='button'><span row='stock-row-{{ item.id }}' class='glyphicon glyphicon-small glyphicon-remove'></span></button></td>
       </tr>
       {% endfor %}
     </table>

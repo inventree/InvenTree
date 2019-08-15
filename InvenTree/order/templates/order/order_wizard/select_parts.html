@@ -36,8 +36,8 @@
                 {{ part.full_name }} <small><i>{{ part.description }}</i></small>
             </td>
             <td>
-                <button class='btn btn-default btn-create' id='new_supplier_part_{{ part.id }}' title='Create new supplier part for {{ part }}' type='button'>
-                    <span part-id='{{ part.id }}' onClick='newSupplierPartFromOrderWizard()' class='glyphicon glyphicon-small glyphicon-plus'></span>
+                <button class='btn btn-default btn-create' onClick='newSupplierPartFromOrderWizard()' id='new_supplier_part_{{ part.id }}' title='Create new supplier part for {{ part }}' type='button'>
+                    <span part-id='{{ part.id }}' class='glyphicon glyphicon-small glyphicon-plus'></span>
                 </button>
             </td>
             <td>
@@ -63,8 +63,8 @@
                 </div>
             </td>
             <td>
-                <button class='btn btn-default btn-remove' id='del_item_{{ part.id }}' title='Remove part' type='button'>
-                    <span row='part_row_{{ part.id }}' onclick='removeOrderRowFromOrderWizard()' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                <button class='btn btn-default btn-remove' onclick='removeOrderRowFromOrderWizard()' id='del_item_{{ part.id }}' title='Remove part' type='button'>
+                    <span row='part_row_{{ part.id }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
                 </button>
             </td>
         </tr>

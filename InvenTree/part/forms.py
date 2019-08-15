@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 from InvenTree.forms import HelperForm
 
 from django import forms
-from django.core.validators import MinValueValidator
 
 from .models import Part, PartCategory, PartAttachment
 from .models import BomItem
@@ -48,18 +47,6 @@ class BomUploadSelectFile(HelperForm):
         model = Part
         fields = [
             'bom_file',
-        ]
-
-
-class BomUploadSelectFields(HelperForm):
-    """ Form for selecting BOM fields """
-
-    starting_row = forms.IntegerField(required=True, initial=2, help_text='Index of starting row', validators=[MinValueValidator(1)])
-
-    class Meta:
-        model = Part
-        fields = [
-            'starting_row',
         ]
 
 
