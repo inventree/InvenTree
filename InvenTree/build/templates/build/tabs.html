@@ -3,6 +3,6 @@
         <a href="{% url 'build-detail' build.id %}">Details</a>
     </li>
     <li{% if tab == 'allocate' %} class='active'{% endif %}>
-        <a href="{% url 'build-allocate' build.id %}">Parts</a>
+        <a href="{% url 'build-allocate' build.id %}">Assign Parts</a>
     </li>
 </ul>
