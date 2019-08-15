@@ -40,6 +40,9 @@ These requirements can be installed from the base directory with the command ``m
 
 It is up to the database adminstrator to create a new database to store inventree data, in addition to a username/password to access the data.
 
+.. important:: MySQL Collation: 
+    When creating the database, the adminstrator must ensure that the collation option is set to *utf8_unicode_520_ci* to ensure that InvenTree features function correctly.
+
 The database options then need to be adjusted to communicate the MySQL backend. Refer to the `Django docs <https://docs.djangoproject.com/en/dev/ref/databases/>`_ for further information.
 
 **POSTGRESQL:** PostgreSQL database backend is supported with the native Django implementation. Note that to use this backend, the ``psycopg2`` Python library must first be installed.
