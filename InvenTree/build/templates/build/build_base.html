@@ -38,6 +38,11 @@ InvenTree | Build - {{ build }}
                                 <span class='glyphicon glyphicon-remove'/>
                             </button>
                             {% endif %}
+                            {% if build.status == BuildStatus.CANCELLED %}
+                            <button type='button' class='btn btn-default btn-glyph' id='build-delete' title='Delete Build'>
+                                <span class='glyphicon glyphicon-trash'/>
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
                 </p>
@@ -108,6 +113,15 @@ InvenTree | Build - {{ build }}
             {
                 reload: true,
                 submit_text: "Complete Build",
+            }
+        );
+    });
+
+    $("#build-delete").on('click', function() {
+        launchModalForm(
+            "{% url 'build-delete' build.id %}",
+            {
+                redirect: "{% url 'build-index' %}",
             }
         );
     });
