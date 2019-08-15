@@ -23,6 +23,25 @@ InvenTree | Build - {{ build }}
             </div>
             <div class='media-body'>
                 <h4>Build Details</h4>
+
+                <p>
+                    <div class='btn-row'>
+                        <div class='btn-group'>
+                            <button type='button' class='btn btn-default btn-glyph' id='build-edit' title='Edit Build'>
+                                <span class='glyphicon glyphicon-edit'/>
+                            </button>
+                            {% if build.is_active %}
+                            <button type='button' class='btn btn-default btn-glyph' id='build-complete' title="Complete Build">
+                                <span class='glyphicon glyphicon-send'/>
+                            </button>
+                            <button type='button' class='btn btn-default btn-glyph' id='build-cancel'>
+                                <span class='glyphicon glyphicon-remove'/>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </p>
+
                 <table class='table table-striped table-condensed'>
                     <tr>
                         <td>{{ build.title }}</td>
@@ -52,23 +71,6 @@ InvenTree | Build - {{ build }}
                 </table>
             </div>
         </div>
-    </div>
-    <div class='col-sm-6'>
-        <h3>
-        <div style='float: right;'>
-        <div class="dropdown" style="float: right;">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
-            <span class="caret"></span></button>
-            <ul class="dropdown-menu">
-                <li><a href='#' id='build-edit' title='Edit build'>Edit build</a></li>
-                {% if build.is_active %}
-                <li><a href='#' id='build-complete' title='Complete Build'>Complete Build</a></li>
-                <li><a href='#' id='build-cancel' title='Cancel build'>Cancel build</a></li>
-                {% endif %}
-            </ul>
-        </div>
-        </div>
-        </h3>
     </div>
 </div>
 
