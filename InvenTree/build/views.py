@@ -518,7 +518,9 @@ class BuildItemCreate(AjaxCreateView):
                 part = Part.objects.get(pk=part_id)
             except Part.DoesNotExist:
                 part = None
-        
+        else:
+            part = None
+
         if build_id:
             try:
                 build = Build.objects.get(pk=build_id)
