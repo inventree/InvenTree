@@ -159,15 +159,27 @@ WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
 DATABASES = {}
 
-# Database backend selection
-if 'database' in CONFIG:
-    DATABASES['default'] = CONFIG['database']
-else:
-    eprint("Warning: Database backend not specified - using default (sqlite)")
+"""
+When running unit tests, enforce usage of sqlite3 database,
+so that the tests can be run in RAM without any setup requirements
+"""
+if 'test' in sys.argv:
+    eprint('Running tests - Using sqlite3 memory database')
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'inventree_db.sqlite3'),
+        'NAME': 'test_db.sqlite3'
     }
+
+# Database backend selection
+else:
+    if 'database' in CONFIG:
+        DATABASES['default'] = CONFIG['database']
+    else:
+        eprint("Warning: Database backend not specified - using default (sqlite)")
+        DATABASES['default'] = {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'inventree_db.sqlite3'),
+        }
 
 CACHES = {
     'default': {
