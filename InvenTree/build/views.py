@@ -397,6 +397,14 @@ class BuildUpdate(AjaxUpdateView):
         }
 
 
+class BuildDelete(AjaxDeleteView):
+    """ View to delete a build """
+
+    model = Build
+    ajax_template_name = 'build/delete_build.html'
+    ajax_form_title = 'Delete Build'
+
+
 class BuildItemDelete(AjaxDeleteView):
     """ View to 'unallocate' a BuildItem.
     Really we are deleting the BuildItem object from the database.
