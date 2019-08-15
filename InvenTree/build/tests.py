@@ -11,7 +11,6 @@ from rest_framework import status
 import json
 
 from .models import Build
-from part.models import Part
 
 from InvenTree.status_codes import BuildStatus
 
@@ -76,7 +75,6 @@ class BuildTestSimple(TestCase):
         build.cancelBuild(self.user)
 
         self.assertEqual(build.status, BuildStatus.CANCELLED)
-
 
 
 class TestBuildAPI(APITestCase):
@@ -199,11 +197,11 @@ class TestBuildViews(TestCase):
         url = reverse('build-item-create')
 
         # Try without a part specified
-        response = self.client.get(url, {'build': 1,}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(url, {'build': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
-        
+
         # Try with an invalid build ID
-        response = self.client.get(url, {'build': 9999,}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(url, {'build': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
         # Try with a valid part specified
