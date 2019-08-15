@@ -1,0 +1,21 @@
+# Construct build objects 
+
+- model: build.build
+  fields:
+    part: 25
+    batch: 'B1'
+    title: 'Building 7 parts'
+    quantity: 7
+    notes: 'Some simple notes'
+    status: 10  # PENDING
+    creation_date: '2019-03-16'
+
+- model: build.build
+  fields:
+    part: 50
+    title: 'Making things'
+    batch: 'B2'
+    status: 40  # COMPLETE
+    quantity: 21
+    notes: 'Some more simple notes'
+    creation_date: '2019-03-16'
