@@ -1033,26 +1033,61 @@ class PartStar(models.Model):
         unique_together = ['part', 'user']
 
 
-class PartParameter(models.Model):
-    """ A PartParameter provides key:value pairs for extra 
+class PartParameterTemplate(models.Model):
+    """ A PartParameterTemplate provides a template for key:value pairs for extra 
     parameters fields/values to be added to a Part.
     This allows users to arbitrarily assign data fields to a Part
     beyond the built-in attributes.
 
     Attributes:
-        part: Link to a Part object
         name: The name (key) of the Parameter [string]
+        units: The units of the Parameter [string]
+    """
+
+    def __str__(self):
+        s = str(self.name)
+        if self.units:
+            s += " ({units})".format(units=self.units)
+        return s
+
+
+    name = models.CharField(max_length=100, help_text='Parameter Name')
+
+    units = models.CharField(max_length=25, help_text='Parameter Units', blank=True)
+
+
+class PartParameter(models.Model):
+    """ A PartParameter is a specific instance of a PartParameterTemplate.
+
+    Attributes:
+        part: Reference to a single Part object
+        template: Reference to a single PartParameterTemplate object
         data: The data (value) of the Parameter [string]
     """
+
+    def __str__(self):
+        return "{part} : {param} = {data}{units}".format(
+            part=str(self.part),
+            param=str(self.template.name),
+            data=str(self.data),
+            units=str(self.template.units)
+        )
+
+    class Meta:
+        # Prevent multiple instances of a parameter for a single part
+        unique_together = ('part', 'template')
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
         related_name='parameters',
         help_text='Parent Part',
     )
 
-    name = models.CharField(max_length=100, help_text='Parameter Name')
+    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE,
+        related_name='instances',
+        help_text='Parameter Template'
+    )
 
-    data = models.CharField(max_length=100, help_text='Parameter Value')
+    data = models.CharField(max_length=500, help_text='Parameter Value')
 
 
 class BomItem(models.Model):

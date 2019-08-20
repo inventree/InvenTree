@@ -4,7 +4,7 @@ from import_export.admin import ImportExportModelAdmin
 from .models import PartCategory, Part
 from .models import PartAttachment, PartStar
 from .models import BomItem
-from .models import PartParameter
+from .models import PartParameterTemplate, PartParameter
 
 
 class PartAdmin(ImportExportModelAdmin):
@@ -31,13 +31,12 @@ class BomItemAdmin(ImportExportModelAdmin):
     list_display = ('part', 'sub_part', 'quantity')
 
 
-"""
 class ParameterTemplateAdmin(admin.ModelAdmin):
-    list_display = ('name', 'units', 'format')
-"""
+    list_display = ('name', 'units')
+
 
 class ParameterAdmin(admin.ModelAdmin):
-    list_display = ('part', 'name', 'data')
+    list_display = ('part', 'template', 'data')
 
 
 admin.site.register(Part, PartAdmin)
@@ -45,4 +44,5 @@ admin.site.register(PartCategory, PartCategoryAdmin)
 admin.site.register(PartAttachment, PartAttachmentAdmin)
 admin.site.register(PartStar, PartStarAdmin)
 admin.site.register(BomItem, BomItemAdmin)
+admin.site.register(PartParameterTemplate, ParameterTemplateAdmin)
 admin.site.register(PartParameter, ParameterAdmin)
