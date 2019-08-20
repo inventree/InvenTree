@@ -1397,6 +1397,14 @@ class PartPricing(AjaxView):
         return self.renderJsonResponse(request, self.form_class(), data=data, context=self.get_pricing(quantity))
 
 
+class PartParameterTemplateCreate(AjaxCreateView):
+    """ View for creating a new PartParameterTemplate """
+
+    model = PartParameterTemplate
+    form_class = part_forms.EditPartParameterTemplateForm
+    ajax_form_title = 'Create Part Parameter Template'
+
+
 class PartParameterCreate(AjaxCreateView):
     """ View for creating a new PartParameter """
 
