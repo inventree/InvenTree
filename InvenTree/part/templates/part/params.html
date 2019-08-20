@@ -7,19 +7,23 @@
 <h4>Part Parameters</h4>
 <hr>
 
-<table>
-<tr>
-    <th>Name</th>
-    <th>Value</th>
-</tr>
+
+<table class='table table-condensed table-striped'>
+    <tr>
+        <th>Name</th>
+        <th>Value</th>
+        <th>Units</th>
+    </tr>
     {% for param in part.get_parameters %}
     <tr>
-        <td>{{ param.name }}</td>
+        <td>{{ param.template.name }}</td>
         <td>{{ param.data }}</td>
+        <td>{{ param.template.units }}</td>
     </tr>
     {% endfor %}
 </table>
-    
+            
+
 {% endblock %}
 
 {% block js_ready %}

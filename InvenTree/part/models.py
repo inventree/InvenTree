@@ -974,7 +974,7 @@ class Part(models.Model):
     def get_parameters(self):
         """ Return all parameters for this part, ordered by name """
 
-        return self.parameters.order_by('name')
+        return self.parameters.order_by('template__name')
 
 
 def attach_file(instance, filename):
