@@ -971,6 +971,11 @@ class Part(models.Model):
 
         return sum([part.on_order() for part in self.supplier_parts.all().prefetch_related('purchase_order_line_items')])
 
+    def get_parameters(self):
+        """ Return all parameters for this part, ordered by name """
+
+        return self.parameters.order_by('name')
+
 
 def attach_file(instance, filename):
     """ Function for storing a file for a PartAttachment
