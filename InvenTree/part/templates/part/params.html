@@ -1,0 +1,28 @@
+{% extends "part/part_base.html" %}
+{% load static %}
+{% block details %}
+
+{% include "part/tabs.html" with tab='params' %}
+
+<h4>Part Parameters</h4>
+<hr>
+
+<table>
+<tr>
+    <th>Name</th>
+    <th>Value</th>
+</tr>
+    {% for param in part.get_parameters %}
+    <tr>
+        <td>{{ param.name }}</td>
+        <td>{{ param.data }}</td>
+    </tr>
+    {% endfor %}
+</table>
+    
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+{% endblock %}
