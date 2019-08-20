@@ -26,7 +26,13 @@
         <tr>
             <td>{{ param.template.name }}</td>
             <td>{{ param.data }}</td>
-            <td>{{ param.template.units }}</td>
+            <td>
+                {{ param.template.units }}
+                <div class='btn-group' style='float: right;'>
+                    <button title='Edit' class='btn btn-default btn-glyph' type='button'><span class='glyphicon glyphicon-edit'/></button>
+                    <button title='Delete' class='btn btn-default btn-glyph' type='button'><span class='glyphicon glyphicon-trash'/></button>
+                </div>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
