@@ -31,11 +31,11 @@ class BomItemAdmin(ImportExportModelAdmin):
     list_display = ('part', 'sub_part', 'quantity')
 
 
-class ParameterTemplateAdmin(admin.ModelAdmin):
+class ParameterTemplateAdmin(ImportExportModelAdmin):
     list_display = ('name', 'units')
 
 
-class ParameterAdmin(admin.ModelAdmin):
+class ParameterAdmin(ImportExportModelAdmin):
     list_display = ('part', 'template', 'data')
 
 
