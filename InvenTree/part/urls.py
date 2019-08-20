@@ -18,6 +18,10 @@ part_attachment_urls = [
     url(r'^(?P<pk>\d+)/delete/?', views.PartAttachmentDelete.as_view(), name='part-attachment-delete'),
 ]
 
+part_parameter_urls = [
+    url('^new/?', views.PartParameterCreate.as_view(), name='part-param-create'),
+]
+
 part_detail_urls = [
     url(r'^edit/?', views.PartEdit.as_view(), name='part-edit'),
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
@@ -90,6 +94,9 @@ part_urls = [
 
     # Part attachments
     url(r'^attachment/', include(part_attachment_urls)),
+
+    # Part parameters
+    url(r'^parameter/', include(part_parameter_urls)),
 
     # Change category for multiple parts
     url(r'^set-category/?', views.PartSetCategory.as_view(), name='part-set-category'),

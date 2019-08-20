@@ -1066,6 +1066,11 @@ class PartParameterTemplate(models.Model):
         except PartParameterTemplate.DoesNotExist:
             pass
 
+    @property
+    def instance_count(self):
+        """ Return the number of instances of this Parameter Template """
+        return self.instances.count()
+
     name = models.CharField(max_length=100, help_text='Parameter Name')
 
     units = models.CharField(max_length=25, help_text='Parameter Units', blank=True)

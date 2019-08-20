@@ -7,20 +7,29 @@
 <h4>Part Parameters</h4>
 <hr>
 
+<div id='button-toolbar'>
+    <div class='button-toolbar container-fluid' style='float: right;'>
+        <button class='btn btn-success' id='param-create'>New Parameter</button>
+    </div>
+</div>
 
-<table class='table table-condensed table-striped'>
-    <tr>
-        <th>Name</th>
-        <th>Value</th>
-        <th>Units</th>
-    </tr>
-    {% for param in part.get_parameters %}
-    <tr>
-        <td>{{ param.template.name }}</td>
-        <td>{{ param.data }}</td>
-        <td>{{ param.template.units }}</td>
-    </tr>
-    {% endfor %}
+<table id='param-table' class='table table-condensed table-striped' data-toolbar='#button-toolbar'>
+    <thead>
+        <tr>
+            <th data-field='name' data-serachable='true'>Name</th>
+            <th data-field='value' data-searchable='true'>Value</th>
+            <th data-field='units' data-searchable='true'>Units</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for param in part.get_parameters %}
+        <tr>
+            <td>{{ param.template.name }}</td>
+            <td>{{ param.data }}</td>
+            <td>{{ param.template.units }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
             
 
@@ -28,5 +37,16 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    $('#param-table').bootstrapTable({
+        search: true,
+        sortable: true,
+    });
+
+    $('#param-create').click(function() {
+        launchModalForm("{% url 'part-param-create' %}?part={{ part.id }}", {
+                reload: true,
+        });
+    });
 
 {% endblock %}

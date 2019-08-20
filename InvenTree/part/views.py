@@ -19,6 +19,7 @@ import tablib
 from fuzzywuzzy import fuzz
 
 from .models import PartCategory, Part, PartAttachment
+from .models import PartParameterTemplate, PartParameter
 from .models import BomItem
 from .models import match_part_names
 
@@ -1394,6 +1395,15 @@ class PartPricing(AjaxView):
         }
 
         return self.renderJsonResponse(request, self.form_class(), data=data, context=self.get_pricing(quantity))
+
+
+class PartParameterCreate(AjaxCreateView):
+    """ View for creating a new PartParameter """
+
+    model = PartParameter
+    form_class = part_forms.EditPartParameterForm
+    ajax_form_title = 'Create Part Parameter'
+
 
 
 class CategoryDetail(DetailView):
