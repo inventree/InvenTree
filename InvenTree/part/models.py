@@ -1028,6 +1028,28 @@ class PartStar(models.Model):
         unique_together = ['part', 'user']
 
 
+class PartParameter(models.Model):
+    """ A PartParameter provides key:value pairs for extra 
+    parameters fields/values to be added to a Part.
+    This allows users to arbitrarily assign data fields to a Part
+    beyond the built-in attributes.
+
+    Attributes:
+        part: Link to a Part object
+        name: The name (key) of the Parameter [string]
+        data: The data (value) of the Parameter [string]
+    """
+
+    part = models.ForeignKey(Part, on_delete=models.CASCADE,
+        related_name='parameters',
+        help_text='Parent Part',
+    )
+
+    name = models.CharField(max_length=100, help_text='Parameter Name')
+
+    data = models.CharField(max_length=100, help_text='Parameter Value')
+
+
 class BomItem(models.Model):
     """ A BomItem links a part to its component items.
     A part can have a BOM (bill of materials) which defines
