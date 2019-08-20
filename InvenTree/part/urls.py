@@ -19,7 +19,7 @@ part_attachment_urls = [
 ]
 
 part_parameter_urls = [
-    url('^new/?', views.PartParameterCreate.as_view(), name='part-param-create'),
+    url('^new/', views.PartParameterCreate.as_view(), name='part-param-create'),
 ]
 
 part_detail_urls = [
