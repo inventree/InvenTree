@@ -1050,6 +1050,21 @@ class PartParameterTemplate(models.Model):
             s += " ({units})".format(units=self.units)
         return s
 
+    def validate_unique(self, exclude=None):
+        """ Ensure that PartParameterTemplates cannot be created with the same name.
+        This test should be case-insensitive (which the unique caveat does not cover).
+        """
+
+        super().validate_unique(exclude)
+
+        try:
+            others = PartParameterTemplate.objects.exclude(id=self.id).filter(name__iexact=self.name)
+
+            if others.exists():
+                msg = _("Parameter template name must be unique")
+                raise ValidationError({"name": msg})
+        except PartParameterTemplate.DoesNotExist:
+            pass
 
     name = models.CharField(max_length=100, help_text='Parameter Name')
 
