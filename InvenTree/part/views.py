@@ -1455,6 +1455,20 @@ class PartParameterCreate(AjaxCreateView):
         return form
 
 
+class PartParameterEdit(AjaxUpdateView):
+    """ View for editing a PartParameter """
+
+    model = PartParameter
+    form_class = part_forms.EditPartParameterForm
+    ajax_form_title = 'Edit Part Parameter'
+
+    def get_form(self):
+
+        form = super().get_form()
+
+        return form
+
+
 class CategoryDetail(DetailView):
     """ Detail view for PartCategory """
     model = PartCategory

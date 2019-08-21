@@ -23,6 +23,7 @@ part_parameter_urls = [
     url('^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
     
     url('^new/', views.PartParameterCreate.as_view(), name='part-param-create'),
+    url('^(?P<pk>\d+)/edit/', views.PartParameterEdit.as_view(), name='part-param-edit'),
 
 ]
 
