@@ -27,15 +27,32 @@ class GetAuthToken(ObtainAuthToken):
     """ Return authentication token for an authenticated user. """
 
     def post(self, request, *args, **kwargs):
+        return self.login(request)
+
+    def delete(self, request):
+        return self.logout(request)
+
+    def login(self, request):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
-        
+
         return Response({
             'token': token.key,
             'pk': user.pk,
             'username': user.username,
             'email': user.email
         })
+
+    def logout(self, request):
+        try:
+            request.user.auth_token.delete()
+        except (AttributeError, ObjectDoesNotExist):
+            pass
+
+        self.logout(request)
+
+        return Response({"success": _("Successfully logged out.")},
+                        status=status.HTTP_200_OK)
