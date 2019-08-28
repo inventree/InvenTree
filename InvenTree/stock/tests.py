@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.db.models import Sum
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 from .models import StockLocation, StockItem, StockItemTracking
 from part.models import Part
@@ -27,6 +29,14 @@ class StockTest(TestCase):
         self.drawer1 = StockLocation.objects.get(name='Drawer_1')
         self.drawer2 = StockLocation.objects.get(name='Drawer_2')
         self.drawer3 = StockLocation.objects.get(name='Drawer_3')
+
+        # Create a user
+        User = get_user_model()
+        User.objects.create_user('username', 'user@email.com', 'password')
+
+        self.client.login(username='username', password='password')
+
+        self.user = User.objects.get(username='username')
 
     def test_loc_count(self):
         self.assertEqual(StockLocation.objects.count(), 7)
@@ -244,3 +254,71 @@ class StockTest(TestCase):
 
         with self.assertRaises(StockItem.DoesNotExist):
             w2 = StockItem.objects.get(pk=101)
+
+    def test_serialize_stock_invalid(self):
+        """
+        Test manual serialization of parts.
+        Each of these tests should fail
+        """
+
+        # Test serialization of non-serializable part
+        item = StockItem.objects.get(pk=1234)
+
+        with self.assertRaises(ValueError):
+            item.serializeStock(5, [1, 2, 3, 4, 5], self.user)
+
+        # Pick a StockItem which can actually be serialized
+        item = StockItem.objects.get(pk=100)
+
+        # Try an invalid quantity
+        with self.assertRaises(ValueError):
+            item.serializeStock("k", [], self.user)
+
+        with self.assertRaises(ValueError):
+            item.serializeStock(-1, [], self.user)
+
+        # Try invalid serial numbers
+        with self.assertRaises(ValueError):
+            item.serializeStock(3, [1, 2, 'k'], self.user)
+
+        with self.assertRaises(ValueError):
+            item.serializeStock(3, "hello", self.user)
+
+    def test_seiralize_stock_valid(self):
+        """ Perform valid stock serializations """
+
+        # There are 10 of these in stock
+        # Item will deplete when deleted
+        item = StockItem.objects.get(pk=100)
+        item.delete_on_deplete = True
+        item.save()
+
+        n = StockItem.objects.filter(part=25).count()
+
+        self.assertEqual(item.quantity, 10)
+
+        item.serializeStock(3, [1, 2, 3], self.user)
+
+        self.assertEqual(item.quantity, 7)
+
+        # Try to serialize again (with same serial numbers)
+        with self.assertRaises(ValidationError):
+            item.serializeStock(3, [1, 2, 3], self.user)
+
+        # Try to serialize too many items
+        with self.assertRaises(ValidationError):
+            item.serializeStock(13, [1, 2, 3], self.user)
+
+        # Serialize some more stock
+        item.serializeStock(5, [6, 7, 8, 9, 10], self.user)
+
+        self.assertEqual(item.quantity, 2)
+
+        # There should be 8 more items now
+        self.assertEqual(StockItem.objects.filter(part=25).count(), n + 8)
+
+        # Serialize the remainder of the stock
+        item.serializeStock(2, [99, 100], self.user)
+
+        # Two more items but the original has been deleted
+        self.assertEqual(StockItem.objects.filter(part=25).count(), n + 9)

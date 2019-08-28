@@ -138,6 +138,12 @@ class StockItem(models.Model):
         if not part.trackable:
             return False
 
+        # Return False if an invalid serial number is supplied
+        try:
+            serial_number = int(serial_number)
+        except ValueError:
+            return False
+
         items = StockItem.objects.filter(serial=serial_number)
 
         # Is this part a variant? If so, check S/N across all sibling variants
@@ -367,12 +373,91 @@ class StockItem(models.Model):
         track.save()
 
     @transaction.atomic
-    def serializeStock(self, serials, user):
+    def serializeStock(self, quantity, serials, user, location=None):
         """ Split this stock item into unique serial numbers.
+
+        - Quantity can be less than or equal to the quantity of the stock item
+        - Number of serial numbers must match the quantity
+        - Provided serial numbers must not already be in use
+
+        Args:
+            quantity: Number of items to serialize (integer)
+            serials: List of serial numbers (list<int>)
+            user: User object associated with action
+            location: If specified, serialized items will be placed in the given location
         """
 
-        # TODO
-        pass
+        # Cannot serialize stock that is already serialized!
+        if self.serialized:
+            return
+
+        # Do not serialize non-trackable parts
+        if not self.part.trackable:
+            raise ValueError({"part": _("Cannot serialize a non-trackable part")})
+
+        # Quantity must be a valid integer value
+        try:
+            quantity = int(quantity)
+        except ValueError:
+            raise ValueError({"quantity": _("Quantity must be integer")})
+
+        if quantity <= 0:
+            raise ValueError({"quantity": _("Quantity must be greater than zero")})
+
+        if quantity > self.quantity:
+            raise ValidationError({"quantity": _("Quantity must not exceed stock quantity")})
+
+        if not type(serials) in [list, tuple]:
+            raise ValueError({"serials": _("Serial numbers must be a list of integers")})
+
+        if any([type(i) is not int for i in serials]):
+            raise ValueError({"serials": _("Serial numbers must be a list of integers")})
+
+        if not quantity == len(serials):
+            raise ValueError({"quantity": _("Quantity does not match serial numbers")})
+
+        # Test if each of the serial numbers are valid
+        existing = []
+
+        for serial in serials:
+            if not StockItem.check_serial_number(self.part, serial):
+                existing.append(serial)
+
+        if len(existing) > 0:
+            raise ValidationError({"serials": _("Serial numbers already exist: ") + str(existing)})
+
+        # Create a new stock item for each unique serial number
+        for serial in serials:
+            
+            # Create a copy of this StockItem
+            new_item = StockItem.objects.get(pk=self.pk)
+            new_item.quantity = 1
+            new_item.serial = serial
+            new_item.pk = None
+
+            if location:
+                new_item.location = location
+
+            new_item.save()
+
+            # Copy entire transaction history
+            new_item.copyHistoryFrom(self)
+
+            # Create a new stock tracking item
+            self.addTransactionNote(_('Add serial number'), user)
+
+        # Remove the equivalent number of items
+        self.take_stock(quantity, user, notes=_('Serialized {n} items'.format(n=quantity)))
+
+    @transaction.atomic
+    def copyHistoryFrom(self, other):
+        """ Copy stock history from another part """
+
+        for item in other.tracking_info.all():
+            
+            item.item = self
+            item.pk = None
+            item.save()
 
     @transaction.atomic
     def splitStock(self, quantity, user):
@@ -413,6 +498,9 @@ class StockItem(models.Model):
         )
 
         new_stock.save()
+
+        # Copy the transaction history
+        new_stock.copyHistoryFrom(self)
 
         # Add a new tracking item for the new stock item
         new_stock.addTransactionNote(

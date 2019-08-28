@@ -43,6 +43,7 @@
     name: 'Widget'
     description: 'A watchamacallit'
     category: 7
+    trackable: true
 
 - model: part.part
   pk: 50
