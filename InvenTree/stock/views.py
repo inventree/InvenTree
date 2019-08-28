@@ -29,6 +29,7 @@ from .forms import CreateStockItemForm
 from .forms import EditStockItemForm
 from .forms import AdjustStockForm
 from .forms import TrackingEntryForm
+from .forms import SerializeStockForm
 
 
 class StockIndex(ListView):
@@ -461,12 +462,84 @@ class StockLocationCreate(AjaxCreateView):
         return initials
 
 
+class StockItemSerialize(AjaxUpdateView):
+    """ View for manually serializing a StockItem """
+
+    model = StockItem
+    ajax_template_name = 'stock/item_serialize.html'
+    ajax_form_title = 'Serialize Stock'
+    form_class = SerializeStockForm
+
+    def get_initial(self):
+
+        initials = super().get_initial().copy()
+
+        item = self.get_object()
+
+        initials['quantity'] = item.quantity
+        initials['destination'] = item.location.pk
+
+        return initials
+
+    def get(self, request, *args, **kwargs):
+        
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+
+        form = self.get_form()
+
+        item = self.get_object()
+
+        quantity = request.POST.get('quantity', None)
+        serials = request.POST.get('serial_numbers', '')
+        dest_id = request.POST.get('destination', None)
+        notes = request.POST.get('note', None)
+        user = request.user
+
+        valid = True
+
+        try:
+            destination = StockLocation.objects.get(pk=dest_id)
+        except (ValueError, StockLocation.DoesNotExist):
+            destination = None
+
+        try:
+            numbers = ExtractSerialNumbers(serials, quantity)
+        except ValidationError as e:
+            form.errors['serial_numbers'] = e.messages
+            valid = False
+        
+        if valid:
+            try:
+                item.serializeStock(quantity, numbers, user, notes=notes, location=destination)
+            except ValidationError as e:
+                messages = e.message_dict
+                
+                for k in messages.keys():
+                    if k in ['quantity', 'destionation', 'serial_numbers']:
+                        form.errors[k] = messages[k]
+                    else:
+                        form.non_field_errors = messages[k]
+
+                valid = False
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data=data)
+
+
 class StockItemCreate(AjaxCreateView):
     """
     View for creating a new StockItem
     Parameters can be pre-filled by passing query items:
     - part: The part of which the new StockItem is an instance
     - location: The location of the new StockItem
+
+    If the parent part is a "tracked" part, provide an option to create uniquely serialized items
+    rather than a bulk quantity of stock items
     """
 
     model = StockItem
@@ -593,46 +666,50 @@ class StockItemCreate(AjaxCreateView):
                 if part.trackable:
                     sn = request.POST.get('serial_numbers', '')
 
-                    try:
-                        serials = ExtractSerialNumbers(sn, quantity)
+                    sn = str(sn).strip()
 
-                        existing = []
+                    # If user has specified a range of serial numbers
+                    if len(sn) > 0:
+                        try:
+                            serials = ExtractSerialNumbers(sn, quantity)
 
-                        for serial in serials:
-                            if not StockItem.check_serial_number(part, serial):
-                                existing.append(serial)
+                            existing = []
 
-                        if len(existing) > 0:
-                            exists = ",".join([str(x) for x in existing])
-                            form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                            for serial in serials:
+                                if not StockItem.check_serial_number(part, serial):
+                                    existing.append(serial)
+
+                            if len(existing) > 0:
+                                exists = ",".join([str(x) for x in existing])
+                                form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                                valid = False
+
+                            # At this point we have a list of serial numbers which we know are valid,
+                            # and do not currently exist
+                            form.clean()
+
+                            data = form.cleaned_data
+
+                            for serial in serials:
+                                # Create a new stock item for each serial number
+                                item = StockItem(
+                                    part=part,
+                                    quantity=1,
+                                    serial=serial,
+                                    supplier_part=data.get('supplier_part'),
+                                    location=data.get('location'),
+                                    batch=data.get('batch'),
+                                    delete_on_deplete=False,
+                                    status=data.get('status'),
+                                    notes=data.get('notes'),
+                                    URL=data.get('URL'),
+                                )
+
+                                item.save()
+
+                        except ValidationError as e:
+                            form.errors['serial_numbers'] = e.messages
                             valid = False
-
-                        # At this point we have a list of serial numbers which we know are valid,
-                        # and do not currently exist
-                        form.clean()
-
-                        data = form.cleaned_data
-
-                        for serial in serials:
-                            # Create a new stock item for each serial number
-                            item = StockItem(
-                                part=part,
-                                quantity=1,
-                                serial=serial,
-                                supplier_part=data.get('supplier_part'),
-                                location=data.get('location'),
-                                batch=data.get('batch'),
-                                delete_on_deplete=False,
-                                status=data.get('status'),
-                                notes=data.get('notes'),
-                                URL=data.get('URL'),
-                            )
-
-                            item.save()
-
-                    except ValidationError as e:
-                        form.errors['serial_numbers'] = e.messages
-                        valid = False
 
                 else:
                     # For non-serialized items, simply save the form.

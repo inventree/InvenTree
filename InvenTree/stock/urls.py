@@ -17,11 +17,12 @@ stock_location_detail_urls = [
 ]
 
 stock_item_detail_urls = [
-    url(r'^edit/?', views.StockItemEdit.as_view(), name='stock-item-edit'),
-    url(r'^delete/?', views.StockItemDelete.as_view(), name='stock-item-delete'),
-    url(r'^qr_code/?', views.StockItemQRCode.as_view(), name='stock-item-qr'),
+    url(r'^edit/', views.StockItemEdit.as_view(), name='stock-item-edit'),
+    url(r'^serialize/', views.StockItemSerialize.as_view(), name='stock-item-serialize'),
+    url(r'^delete/', views.StockItemDelete.as_view(), name='stock-item-delete'),
+    url(r'^qr_code/', views.StockItemQRCode.as_view(), name='stock-item-qr'),
 
-    url(r'^add_tracking/?', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
+    url(r'^add_tracking/', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
 
     url('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
 ]
