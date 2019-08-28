@@ -11,6 +11,7 @@ from django import forms
 
 from .models import Part, PartCategory, PartAttachment
 from .models import BomItem
+from .models import PartParameterTemplate, PartParameter
 
 
 class PartImageForm(HelperForm):
@@ -95,6 +96,29 @@ class EditPartForm(HelperForm):
             'minimum_stock',
             'notes',
             'active',
+        ]
+
+
+class EditPartParameterTemplateForm(HelperForm):
+    """ Form for editing a PartParameterTemplate object """
+
+    class Meta:
+        model = PartParameterTemplate
+        fields = [
+            'name',
+            'units'
+        ]
+
+
+class EditPartParameterForm(HelperForm):
+    """ Form for editing a PartParameter object """
+
+    class Meta:
+        model = PartParameter
+        fields = [
+            'part',
+            'template',
+            'data'
         ]
 
 

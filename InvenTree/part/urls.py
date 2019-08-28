@@ -18,6 +18,16 @@ part_attachment_urls = [
     url(r'^(?P<pk>\d+)/delete/?', views.PartAttachmentDelete.as_view(), name='part-attachment-delete'),
 ]
 
+part_parameter_urls = [
+    
+    url('^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
+    
+    url('^new/', views.PartParameterCreate.as_view(), name='part-param-create'),
+    url('^(?P<pk>\d+)/edit/', views.PartParameterEdit.as_view(), name='part-param-edit'),
+    url('^(?P<pk>\d+)/delete/', views.PartParameterDelete.as_view(), name='part-param-delete'),
+
+]
+
 part_detail_urls = [
     url(r'^edit/?', views.PartEdit.as_view(), name='part-edit'),
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
@@ -29,6 +39,7 @@ part_detail_urls = [
     
     url(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
     
+    url(r'^params/', views.PartDetail.as_view(template_name='part/params.html'), name='part-params'),
     url(r'^variants/?', views.PartDetail.as_view(template_name='part/variants.html'), name='part-variants'),
     url(r'^stock/?', views.PartDetail.as_view(template_name='part/stock.html'), name='part-stock'),
     url(r'^allocation/?', views.PartDetail.as_view(template_name='part/allocation.html'), name='part-allocation'),
@@ -89,6 +100,9 @@ part_urls = [
 
     # Part attachments
     url(r'^attachment/', include(part_attachment_urls)),
+
+    # Part parameters
+    url(r'^parameter/', include(part_parameter_urls)),
 
     # Change category for multiple parts
     url(r'^set-category/?', views.PartSetCategory.as_view(), name='part-set-category'),
