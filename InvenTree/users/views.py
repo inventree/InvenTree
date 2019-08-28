@@ -53,7 +53,7 @@ class GetAuthToken(ObtainAuthToken):
         except (AttributeError, ObjectDoesNotExist):
             pass
 
-        self.logout(request)
+        logout(request)
 
         return Response({"success": _("Successfully logged out.")},
                         status=status.HTTP_200_OK)
