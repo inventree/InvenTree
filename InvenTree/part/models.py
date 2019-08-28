@@ -1034,7 +1034,8 @@ class PartStar(models.Model):
 
 
 class PartParameterTemplate(models.Model):
-    """ A PartParameterTemplate provides a template for key:value pairs for extra 
+    """
+    A PartParameterTemplate provides a template for key:value pairs for extra
     parameters fields/values to be added to a Part.
     This allows users to arbitrarily assign data fields to a Part
     beyond the built-in attributes.
@@ -1077,7 +1078,8 @@ class PartParameterTemplate(models.Model):
 
 
 class PartParameter(models.Model):
-    """ A PartParameter is a specific instance of a PartParameterTemplate.
+    """
+    A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 
     Attributes:
         part: Reference to a single Part object
@@ -1098,14 +1100,9 @@ class PartParameter(models.Model):
         unique_together = ('part', 'template')
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
-        related_name='parameters',
-        help_text='Parent Part',
-    )
+                             related_name='parameters', help_text='Parent Part')
 
-    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE,
-        related_name='instances',
-        help_text='Parameter Template'
-    )
+    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', help_text='Parameter Template')
 
     data = models.CharField(max_length=500, help_text='Parameter Value')
 
