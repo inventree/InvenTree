@@ -24,6 +24,11 @@
             <button type='button' class='btn btn-default btn-glyph' id='stock-count' title='Count stock'>
                 <span class='glyphicon glyphicon-ok-circle'/>
             </button>
+            {% if item.part.trackable %}
+            <button type='button' class='btn btn-default btn-glyph' id='stock-serialize' title='Serialize stock'>
+                <span class='glyphicon glyphicon-th-list'/>
+            </button>
+            {% endif %}
             {% endif %}
             <button type='button' class='btn btn-default btn-glyph' id='stock-move' title='Transfer stock'>
                 <span class='glyphicon glyphicon-transfer' style='color: #11a;'/>
