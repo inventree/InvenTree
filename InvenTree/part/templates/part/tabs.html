@@ -2,6 +2,9 @@
     <li{% ifequal tab 'detail' %} class="active"{% endifequal %}>
         <a href="{% url 'part-detail' part.id %}">Details</a>
     </li>
+    <li{% ifequal tab 'params' %} class='active'{% endifequal %}>
+        <a href="{% url 'part-params' part.id %}">Parameters <span class='badge'>{{ part.parameters.count }}</span></a>
+    </li>
     {% if part.is_template %}
     <li{% ifequal tab 'variants' %} class='active'{% endifequal %}>
         <a href="{% url 'part-variants' part.id %}">Variants <span class='badge'>{{ part.variants.count }}</span></span></a>

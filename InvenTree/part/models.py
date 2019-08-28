@@ -971,6 +971,11 @@ class Part(models.Model):
 
         return sum([part.on_order() for part in self.supplier_parts.all().prefetch_related('purchase_order_line_items')])
 
+    def get_parameters(self):
+        """ Return all parameters for this part, ordered by name """
+
+        return self.parameters.order_by('template__name')
+
 
 def attach_file(instance, filename):
     """ Function for storing a file for a PartAttachment
@@ -1026,6 +1031,81 @@ class PartStar(models.Model):
 
     class Meta:
         unique_together = ['part', 'user']
+
+
+class PartParameterTemplate(models.Model):
+    """
+    A PartParameterTemplate provides a template for key:value pairs for extra
+    parameters fields/values to be added to a Part.
+    This allows users to arbitrarily assign data fields to a Part
+    beyond the built-in attributes.
+
+    Attributes:
+        name: The name (key) of the Parameter [string]
+        units: The units of the Parameter [string]
+    """
+
+    def __str__(self):
+        s = str(self.name)
+        if self.units:
+            s += " ({units})".format(units=self.units)
+        return s
+
+    def validate_unique(self, exclude=None):
+        """ Ensure that PartParameterTemplates cannot be created with the same name.
+        This test should be case-insensitive (which the unique caveat does not cover).
+        """
+
+        super().validate_unique(exclude)
+
+        try:
+            others = PartParameterTemplate.objects.exclude(id=self.id).filter(name__iexact=self.name)
+
+            if others.exists():
+                msg = _("Parameter template name must be unique")
+                raise ValidationError({"name": msg})
+        except PartParameterTemplate.DoesNotExist:
+            pass
+
+    @property
+    def instance_count(self):
+        """ Return the number of instances of this Parameter Template """
+        return self.instances.count()
+
+    name = models.CharField(max_length=100, help_text='Parameter Name')
+
+    units = models.CharField(max_length=25, help_text='Parameter Units', blank=True)
+
+
+class PartParameter(models.Model):
+    """
+    A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
+
+    Attributes:
+        part: Reference to a single Part object
+        template: Reference to a single PartParameterTemplate object
+        data: The data (value) of the Parameter [string]
+    """
+
+    def __str__(self):
+        # String representation of a PartParameter (used in the admin interface)
+        return "{part} : {param} = {data}{units}".format(
+            part=str(self.part),
+            param=str(self.template.name),
+            data=str(self.data),
+            units=str(self.template.units)
+        )
+
+    class Meta:
+        # Prevent multiple instances of a parameter for a single part
+        unique_together = ('part', 'template')
+
+    part = models.ForeignKey(Part, on_delete=models.CASCADE,
+                             related_name='parameters', help_text='Parent Part')
+
+    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', help_text='Parameter Template')
+
+    data = models.CharField(max_length=500, help_text='Parameter Value')
 
 
 class BomItem(models.Model):
