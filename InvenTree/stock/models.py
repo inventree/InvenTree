@@ -204,12 +204,15 @@ class StockItem(models.Model):
                         })
 
                     if self.quantity == 0:
+                        self.quantity = 1
+
+                    elif self.quantity > 1:
                         raise ValidationError({
                             'quantity': _('Quantity must be 1 for item with a serial number')
                         })
 
-                    if self.delete_on_deplete:
-                        raise ValidationError({'delete_on_deplete': _("Must be set to False for item with a serial number")})
+                    # Serial numbered items cannot be deleted on depletion
+                    self.delete_on_deplete = False
 
                 # A template part cannot be instantiated as a StockItem
                 if self.part.is_template:

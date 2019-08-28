@@ -467,6 +467,9 @@ class StockItemCreate(AjaxCreateView):
     Parameters can be pre-filled by passing query items:
     - part: The part of which the new StockItem is an instance
     - location: The location of the new StockItem
+
+    If the parent part is a "tracked" part, provide an option to create uniquely serialized items
+    rather than a bulk quantity of stock items
     """
 
     model = StockItem
