@@ -264,24 +264,24 @@ class StockTest(TestCase):
         # Test serialization of non-serializable part
         item = StockItem.objects.get(pk=1234)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             item.serializeStock(5, [1, 2, 3, 4, 5], self.user)
 
         # Pick a StockItem which can actually be serialized
         item = StockItem.objects.get(pk=100)
 
         # Try an invalid quantity
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             item.serializeStock("k", [], self.user)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             item.serializeStock(-1, [], self.user)
 
         # Try invalid serial numbers
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             item.serializeStock(3, [1, 2, 'k'], self.user)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             item.serializeStock(3, "hello", self.user)
 
     def test_seiralize_stock_valid(self):

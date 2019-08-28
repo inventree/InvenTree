@@ -67,7 +67,7 @@ class SerializeStockForm(forms.ModelForm):
     """ Form for serializing a StockItem. """
 
     destination = forms.ChoiceField(label='Destination', required=True, help_text='Destination for serialized stock (by default, will remain in current location)')
-    serial_numbers = forms.CharField(label='Serial numbers', required=True, help_text='Unique serial numbers (must match quantity)')    
+    serial_numbers = forms.CharField(label='Serial numbers', required=True, help_text='Unique serial numbers (must match quantity)')
     note = forms.CharField(label='Notes', required=False, help_text='Add transaction note (optional)')
 
     def get_location_choices(self):

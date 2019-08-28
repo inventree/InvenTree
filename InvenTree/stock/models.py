@@ -359,6 +359,7 @@ class StockItem(models.Model):
 
         Brief automated note detailing a movement or quantity change.
         """
+        
         track = StockItemTracking.objects.create(
             item=self,
             title=title,
@@ -373,7 +374,7 @@ class StockItem(models.Model):
         track.save()
 
     @transaction.atomic
-    def serializeStock(self, quantity, serials, user, notes=None, location=None):
+    def serializeStock(self, quantity, serials, user, notes='', location=None):
         """ Split this stock item into unique serial numbers.
 
         - Quantity can be less than or equal to the quantity of the stock item
