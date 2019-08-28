@@ -843,7 +843,8 @@ class Part(models.Model):
         # Copy the BOM data
         if kwargs.get('bom', False):
             for item in other.bom_items.all():
-                # Point the item to THIS part
+                # Point the item to THIS part.
+                # Set the pk to None so a new entry is created.
                 item.part = self
                 item.pk = None
                 item.save()

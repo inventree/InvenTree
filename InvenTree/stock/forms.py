@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django import forms
 from django.forms.utils import ErrorDict
+from django.utils.translation import ugettext as _
 
 from InvenTree.forms import HelperForm
 from .models import StockLocation, StockItem, StockItemTracking
@@ -27,7 +28,7 @@ class EditStockLocationForm(HelperForm):
 class CreateStockItemForm(HelperForm):
     """ Form for creating a new StockItem """
 
-    serial_numbers = forms.CharField(label='Serial numbers', required=False, help_text='Enter unique serial numbers')
+    serial_numbers = forms.CharField(label='Serial numbers', required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
 
     class Meta:
         model = StockItem
@@ -60,6 +61,39 @@ class CreateStockItemForm(HelperForm):
         # Don't run _post_clean() as this will run StockItem.clean()
         self._clean_fields()
         self._clean_form()
+
+
+class SerializeStockForm(forms.ModelForm):
+    """ Form for serializing a StockItem. """
+
+    destination = forms.ChoiceField(label='Destination', required=True, help_text='Destination for serialized stock (by default, will remain in current location)')
+    serial_numbers = forms.CharField(label='Serial numbers', required=True, help_text='Unique serial numbers (must match quantity)')
+    note = forms.CharField(label='Notes', required=False, help_text='Add transaction note (optional)')
+
+    def get_location_choices(self):
+        locs = StockLocation.objects.all()
+
+        choices = [(None, '---------')]
+
+        for loc in locs:
+            choices.append((loc.pk, loc.pathstring + ' - ' + loc.description))
+
+        return choices
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['destination'].choices = self.get_location_choices()
+
+    class Meta:
+        model = StockItem
+
+        fields = [
+            'quantity',
+            'serial_numbers',
+            'destination',
+            'note',
+        ]
 
 
 class AdjustStockForm(forms.ModelForm):

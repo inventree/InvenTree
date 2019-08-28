@@ -5,6 +5,8 @@ Django Forms for interacting with Build objects
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext as _
+
 from InvenTree.forms import HelperForm
 from django import forms
 from .models import Build, BuildItem
@@ -31,7 +33,7 @@ class EditBuildForm(HelperForm):
 class ConfirmBuildForm(HelperForm):
     """ Form for auto-allocation of stock to a build """
 
-    confirm = forms.BooleanField(required=False, help_text='Confirm')
+    confirm = forms.BooleanField(required=False, help_text=_('Confirm'))
 
     class Meta:
         model = Build
@@ -48,9 +50,9 @@ class CompleteBuildForm(HelperForm):
         help_text='Location of completed parts',
     )
 
-    serial_numbers = forms.CharField(label='Serial numbers', help_text='Enter unique serial numbers')
+    serial_numbers = forms.CharField(label='Serial numbers', required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
 
-    confirm = forms.BooleanField(required=False, help_text='Confirm build submission')
+    confirm = forms.BooleanField(required=False, help_text=_('Confirm build completion'))
 
     class Meta:
         model = Build

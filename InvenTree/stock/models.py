@@ -138,6 +138,12 @@ class StockItem(models.Model):
         if not part.trackable:
             return False
 
+        # Return False if an invalid serial number is supplied
+        try:
+            serial_number = int(serial_number)
+        except ValueError:
+            return False
+
         items = StockItem.objects.filter(serial=serial_number)
 
         # Is this part a variant? If so, check S/N across all sibling variants
@@ -204,12 +210,15 @@ class StockItem(models.Model):
                         })
 
                     if self.quantity == 0:
+                        self.quantity = 1
+
+                    elif self.quantity > 1:
                         raise ValidationError({
                             'quantity': _('Quantity must be 1 for item with a serial number')
                         })
 
-                    if self.delete_on_deplete:
-                        raise ValidationError({'delete_on_deplete': _("Must be set to False for item with a serial number")})
+                    # Serial numbered items cannot be deleted on depletion
+                    self.delete_on_deplete = False
 
                 # A template part cannot be instantiated as a StockItem
                 if self.part.is_template:
@@ -350,6 +359,7 @@ class StockItem(models.Model):
 
         Brief automated note detailing a movement or quantity change.
         """
+        
         track = StockItemTracking.objects.create(
             item=self,
             title=title,
@@ -364,12 +374,88 @@ class StockItem(models.Model):
         track.save()
 
     @transaction.atomic
-    def serializeStock(self, serials, user):
+    def serializeStock(self, quantity, serials, user, notes='', location=None):
         """ Split this stock item into unique serial numbers.
+
+        - Quantity can be less than or equal to the quantity of the stock item
+        - Number of serial numbers must match the quantity
+        - Provided serial numbers must not already be in use
+
+        Args:
+            quantity: Number of items to serialize (integer)
+            serials: List of serial numbers (list<int>)
+            user: User object associated with action
+            notes: Optional notes for tracking
+            location: If specified, serialized items will be placed in the given location
         """
 
-        # TODO
-        pass
+        # Cannot serialize stock that is already serialized!
+        if self.serialized:
+            return
+
+        # Quantity must be a valid integer value
+        try:
+            quantity = int(quantity)
+        except ValueError:
+            raise ValidationError({"quantity": _("Quantity must be integer")})
+
+        if quantity <= 0:
+            raise ValidationError({"quantity": _("Quantity must be greater than zero")})
+
+        if quantity > self.quantity:
+            raise ValidationError({"quantity": _("Quantity must not exceed available stock quantity ({n})".format(n=self.quantity))})
+
+        if not type(serials) in [list, tuple]:
+            raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
+
+        if any([type(i) is not int for i in serials]):
+            raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
+
+        if not quantity == len(serials):
+            raise ValidationError({"quantity": _("Quantity does not match serial numbers")})
+
+        # Test if each of the serial numbers are valid
+        existing = []
+
+        for serial in serials:
+            if not StockItem.check_serial_number(self.part, serial):
+                existing.append(serial)
+
+        if len(existing) > 0:
+            raise ValidationError({"serial_numbers": _("Serial numbers already exist: ") + str(existing)})
+
+        # Create a new stock item for each unique serial number
+        for serial in serials:
+            
+            # Create a copy of this StockItem
+            new_item = StockItem.objects.get(pk=self.pk)
+            new_item.quantity = 1
+            new_item.serial = serial
+            new_item.pk = None
+
+            if location:
+                new_item.location = location
+
+            new_item.save()
+
+            # Copy entire transaction history
+            new_item.copyHistoryFrom(self)
+
+            # Create a new stock tracking item
+            new_item.addTransactionNote(_('Add serial number'), user, notes=notes)
+
+        # Remove the equivalent number of items
+        self.take_stock(quantity, user, notes=_('Serialized {n} items'.format(n=quantity)))
+
+    @transaction.atomic
+    def copyHistoryFrom(self, other):
+        """ Copy stock history from another part """
+
+        for item in other.tracking_info.all():
+            
+            item.item = self
+            item.pk = None
+            item.save()
 
     @transaction.atomic
     def splitStock(self, quantity, user):
@@ -410,6 +496,9 @@ class StockItem(models.Model):
         )
 
         new_stock.save()
+
+        # Copy the transaction history
+        new_stock.copyHistoryFrom(self)
 
         # Add a new tracking item for the new stock item
         new_stock.addTransactionNote(

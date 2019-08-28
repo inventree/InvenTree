@@ -270,24 +270,28 @@ class BuildComplete(AjaxUpdateView):
 
                 sn = request.POST.get('serial_numbers', '')
 
-                try:
-                    # Exctract a list of provided serial numbers
-                    serials = ExtractSerialNumbers(sn, build.quantity)
+                sn = str(sn).strip()
 
-                    existing = []
+                # If the user has specified serial numbers, check they are valid
+                if len(sn) > 0:
+                    try:
+                        # Exctract a list of provided serial numbers
+                        serials = ExtractSerialNumbers(sn, build.quantity)
 
-                    for serial in serials:
-                        if not StockItem.check_serial_number(build.part, serial):
-                            existing.append(serial)
+                        existing = []
 
-                    if len(existing) > 0:
-                        exists = ",".join([str(x) for x in existing])
-                        form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                        for serial in serials:
+                            if not StockItem.check_serial_number(build.part, serial):
+                                existing.append(serial)
+
+                        if len(existing) > 0:
+                            exists = ",".join([str(x) for x in existing])
+                            form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                            valid = False
+
+                    except ValidationError as e:
+                        form.errors['serial_numbers'] = e.messages
                         valid = False
-
-                except ValidationError as e:
-                    form.errors['serial_numbers'] = e.messages
-                    valid = False
 
             if valid:
                 build.completeBuild(location, serials, request.user)
