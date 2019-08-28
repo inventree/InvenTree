@@ -1,5 +1,6 @@
 from rest_framework import generics, permissions
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from .serializers import UserSerializer
 
 from rest_framework.authtoken.views import ObtainAuthToken
