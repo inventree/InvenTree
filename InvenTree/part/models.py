@@ -1088,6 +1088,7 @@ class PartParameter(models.Model):
     """
 
     def __str__(self):
+        # String representation of a PartParameter (used in the admin interface)
         return "{part} : {param} = {data}{units}".format(
             part=str(self.part),
             param=str(self.template.name),
