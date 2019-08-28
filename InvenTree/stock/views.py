@@ -593,46 +593,50 @@ class StockItemCreate(AjaxCreateView):
                 if part.trackable:
                     sn = request.POST.get('serial_numbers', '')
 
-                    try:
-                        serials = ExtractSerialNumbers(sn, quantity)
+                    sn = str(sn).strip()
 
-                        existing = []
+                    # If user has specified a range of serial numbers
+                    if len(sn) > 0:
+                        try:
+                            serials = ExtractSerialNumbers(sn, quantity)
 
-                        for serial in serials:
-                            if not StockItem.check_serial_number(part, serial):
-                                existing.append(serial)
+                            existing = []
 
-                        if len(existing) > 0:
-                            exists = ",".join([str(x) for x in existing])
-                            form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                            for serial in serials:
+                                if not StockItem.check_serial_number(part, serial):
+                                    existing.append(serial)
+
+                            if len(existing) > 0:
+                                exists = ",".join([str(x) for x in existing])
+                                form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                                valid = False
+
+                            # At this point we have a list of serial numbers which we know are valid,
+                            # and do not currently exist
+                            form.clean()
+
+                            data = form.cleaned_data
+
+                            for serial in serials:
+                                # Create a new stock item for each serial number
+                                item = StockItem(
+                                    part=part,
+                                    quantity=1,
+                                    serial=serial,
+                                    supplier_part=data.get('supplier_part'),
+                                    location=data.get('location'),
+                                    batch=data.get('batch'),
+                                    delete_on_deplete=False,
+                                    status=data.get('status'),
+                                    notes=data.get('notes'),
+                                    URL=data.get('URL'),
+                                )
+
+                                item.save()
+
+                        except ValidationError as e:
+                            form.errors['serial_numbers'] = e.messages
                             valid = False
-
-                        # At this point we have a list of serial numbers which we know are valid,
-                        # and do not currently exist
-                        form.clean()
-
-                        data = form.cleaned_data
-
-                        for serial in serials:
-                            # Create a new stock item for each serial number
-                            item = StockItem(
-                                part=part,
-                                quantity=1,
-                                serial=serial,
-                                supplier_part=data.get('supplier_part'),
-                                location=data.get('location'),
-                                batch=data.get('batch'),
-                                delete_on_deplete=False,
-                                status=data.get('status'),
-                                notes=data.get('notes'),
-                                URL=data.get('URL'),
-                            )
-
-                            item.save()
-
-                    except ValidationError as e:
-                        form.errors['serial_numbers'] = e.messages
-                        valid = False
 
                 else:
                     # For non-serialized items, simply save the form.

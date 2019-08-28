@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django import forms
 from django.forms.utils import ErrorDict
+from django.utils.translation import ugettext as _
 
 from InvenTree.forms import HelperForm
 from .models import StockLocation, StockItem, StockItemTracking
@@ -27,7 +28,7 @@ class EditStockLocationForm(HelperForm):
 class CreateStockItemForm(HelperForm):
     """ Form for creating a new StockItem """
 
-    serial_numbers = forms.CharField(label='Serial numbers', required=False, help_text='Enter unique serial numbers')
+    serial_numbers = forms.CharField(label='Serial numbers', required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
 
     class Meta:
         model = StockItem
