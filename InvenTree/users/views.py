@@ -6,6 +6,7 @@ from .serializers import UserSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework import status
 
 
 class UserDetail(generics.RetrieveAPIView):
@@ -54,4 +55,4 @@ class GetAuthToken(ObtainAuthToken):
             pass
 
         return Response({"success": "Successfully logged out."},
-                        status=status.HTTP_200_OK)
+                        status=status.HTTP_202_ACCEPTED)
