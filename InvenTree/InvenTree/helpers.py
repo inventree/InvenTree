@@ -131,10 +131,20 @@ def ExtractSerialNumbers(serials, expected_quantity):
         expected_quantity: The number of (unique) serial numbers we expect
     """
 
+    serials = serials.strip()
+
     groups = re.split("[\s,]+", serials)
 
     numbers = []
     errors = []
+
+    try:
+        expected_quantity = int(expected_quantity)
+    except ValueError:
+        raise ValidationError([_("Invalid quantity provided")])
+
+    if len(serials) == 0:
+        raise ValidationError([_("Empty serial number string")])
 
     for group in groups:
 
@@ -155,34 +165,34 @@ def ExtractSerialNumbers(serials, expected_quantity):
                     if a < b:
                         for n in range(a, b + 1):
                             if n in numbers:
-                                errors.append('Duplicate serial: {n}'.format(n=n))
+                                errors.append(_('Duplicate serial: {n}'.format(n=n)))
                             else:
                                 numbers.append(n)
                     else:
-                        errors.append("Invalid group: {g}".format(g=group))
+                        errors.append(_("Invalid group: {g}".format(g=group)))
 
                 except ValueError:
-                    errors.append("Invalid group: {g}".format(g=group))
+                    errors.append(_("Invalid group: {g}".format(g=group)))
                     continue
             else:
-                errors.append("Invalid group: {g}".format(g=group))
+                errors.append(_("Invalid group: {g}".format(g=group)))
                 continue
 
         else:
             try:
                 n = int(group)
                 if n in numbers:
-                    errors.append("Duplicate serial: {n}".format(n=n))
+                    errors.append(_("Duplicate serial: {n}".format(n=n)))
                 else:
                     numbers.append(n)
             except ValueError:
-                errors.append("Invalid group: {g}".format(g=group))
+                errors.append(_("Invalid group: {g}".format(g=group)))
 
     if len(errors) > 0:
         raise ValidationError(errors)
 
     if len(numbers) == 0:
-        raise ValidationError(["No serial numbers found"])
+        raise ValidationError([_("No serial numbers found")])
 
     # The number of extracted serial numbers must match the expected quantity
     if not expected_quantity == len(numbers):
