@@ -373,7 +373,7 @@ class StockItem(models.Model):
         track.save()
 
     @transaction.atomic
-    def serializeStock(self, quantity, serials, user, location=None):
+    def serializeStock(self, quantity, serials, user, notes=None, location=None):
         """ Split this stock item into unique serial numbers.
 
         - Quantity can be less than or equal to the quantity of the stock item
@@ -384,6 +384,7 @@ class StockItem(models.Model):
             quantity: Number of items to serialize (integer)
             serials: List of serial numbers (list<int>)
             user: User object associated with action
+            notes: Optional notes for tracking
             location: If specified, serialized items will be placed in the given location
         """
 
@@ -391,30 +392,26 @@ class StockItem(models.Model):
         if self.serialized:
             return
 
-        # Do not serialize non-trackable parts
-        if not self.part.trackable:
-            raise ValueError({"part": _("Cannot serialize a non-trackable part")})
-
         # Quantity must be a valid integer value
         try:
             quantity = int(quantity)
         except ValueError:
-            raise ValueError({"quantity": _("Quantity must be integer")})
+            raise ValidationError({"quantity": _("Quantity must be integer")})
 
         if quantity <= 0:
-            raise ValueError({"quantity": _("Quantity must be greater than zero")})
+            raise ValidationError({"quantity": _("Quantity must be greater than zero")})
 
         if quantity > self.quantity:
-            raise ValidationError({"quantity": _("Quantity must not exceed stock quantity")})
+            raise ValidationError({"quantity": _("Quantity must not exceed available stock quantity ({n})".format(n=self.quantity))})
 
         if not type(serials) in [list, tuple]:
-            raise ValueError({"serials": _("Serial numbers must be a list of integers")})
+            raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
 
         if any([type(i) is not int for i in serials]):
-            raise ValueError({"serials": _("Serial numbers must be a list of integers")})
+            raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
 
         if not quantity == len(serials):
-            raise ValueError({"quantity": _("Quantity does not match serial numbers")})
+            raise ValidationError({"quantity": _("Quantity does not match serial numbers")})
 
         # Test if each of the serial numbers are valid
         existing = []
@@ -424,7 +421,7 @@ class StockItem(models.Model):
                 existing.append(serial)
 
         if len(existing) > 0:
-            raise ValidationError({"serials": _("Serial numbers already exist: ") + str(existing)})
+            raise ValidationError({"serial_numbers": _("Serial numbers already exist: ") + str(existing)})
 
         # Create a new stock item for each unique serial number
         for serial in serials:
@@ -444,7 +441,7 @@ class StockItem(models.Model):
             new_item.copyHistoryFrom(self)
 
             # Create a new stock tracking item
-            self.addTransactionNote(_('Add serial number'), user)
+            new_item.addTransactionNote(_('Add serial number'), user, notes=notes)
 
         # Remove the equivalent number of items
         self.take_stock(quantity, user, notes=_('Serialized {n} items'.format(n=quantity)))

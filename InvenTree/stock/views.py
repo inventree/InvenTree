@@ -489,8 +489,43 @@ class StockItemSerialize(AjaxUpdateView):
 
         form = self.get_form()
 
+        item = self.get_object()
+
+        quantity = request.POST.get('quantity', None)
+        serials = request.POST.get('serial_numbers', '')
+        dest_id = request.POST.get('destination', None)
+        notes = request.POST.get('note', None)
+        user = request.user
+
+        valid = True
+
+        try:
+            destination = StockLocation.objects.get(pk=dest_id)
+        except (ValueError, StockLocation.DoesNotExist):
+            destination = None
+
+        try:
+            numbers = ExtractSerialNumbers(serials, quantity)
+        except ValidationError as e:
+            form.errors['serial_numbers'] = e.messages
+            valid = False
+        
+        if valid:
+            try:
+                item.serializeStock(quantity, numbers, user, notes=notes, location=destination)
+            except ValidationError as e:
+                messages = e.message_dict
+                
+                for k in messages.keys():
+                    if k in ['quantity', 'destionation', 'serial_numbers']:
+                        form.errors[k] = messages[k]
+                    else:
+                        form.non_field_errors = messages[k]
+
+                valid = False
+
         data = {
-            'form_valid': False,
+            'form_valid': valid,
         }
 
         return self.renderJsonResponse(request, form, data=data)
