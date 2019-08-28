@@ -51,8 +51,8 @@ class GetAuthToken(ObtainAuthToken):
     def logout(self, request):
         try:
             request.user.auth_token.delete()
+            return Response({"success": "Successfully logged out."},
+                            status=status.HTTP_202_ACCEPTED)
         except (AttributeError, ObjectDoesNotExist):
-            pass
-
-        return Response({"success": "Successfully logged out."},
-                        status=status.HTTP_202_ACCEPTED)
+            return Response({"error": "Bad request"},
+                            status=status.HTTP_400_BAD_REQUEST)
