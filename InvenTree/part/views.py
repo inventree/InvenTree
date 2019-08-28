@@ -1469,6 +1469,14 @@ class PartParameterEdit(AjaxUpdateView):
         return form
 
 
+class PartParameterDelete(AjaxDeleteView):
+    """ View for deleting a PartParameter """
+
+    model = PartParameter
+    ajax_template_name = 'part/param_delete.html'
+    ajax_form_title = 'Delete Part Parameter'
+    
+
 class CategoryDetail(DetailView):
     """ Detail view for PartCategory """
     model = PartCategory

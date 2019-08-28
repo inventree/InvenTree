@@ -24,6 +24,7 @@ part_parameter_urls = [
     
     url('^new/', views.PartParameterCreate.as_view(), name='part-param-create'),
     url('^(?P<pk>\d+)/edit/', views.PartParameterEdit.as_view(), name='part-param-edit'),
+    url('^(?P<pk>\d+)/delete/', views.PartParameterDelete.as_view(), name='part-param-delete'),
 
 ]
 

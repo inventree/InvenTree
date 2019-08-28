@@ -29,8 +29,8 @@
             <td>
                 {{ param.template.units }}
                 <div class='btn-group' style='float: right;'>
-                    <button title='Edit' class='btn btn-default btn-glyph' type='button'><span class='glyphicon glyphicon-edit'/></button>
-                    <button title='Delete' class='btn btn-default btn-glyph' type='button'><span class='glyphicon glyphicon-trash'/></button>
+                    <button title='Edit' class='btn btn-default btn-glyph param-edit' url="{% url 'part-param-edit' param.id %}" type='button'><span class='glyphicon glyphicon-edit'/></button>
+                    <button title='Delete' class='btn btn-default btn-glyph param-delete' url="{% url 'part-param-delete' param.id %}" type='button'><span class='glyphicon glyphicon-trash'/></button>
                 </div>
             </td>
         </tr>
@@ -58,6 +58,22 @@
                 title: 'Create New Parameter Template',
                 url: "{% url 'part-param-template-create' %}"
             }],
+        });
+    });
+
+    $('.param-edit').click(function() {
+        var button = $(this);
+
+        launchModalForm(button.attr('url'), {
+            reload: true,
+        });
+    });
+
+    $('.param-delete').click(function() {
+        var button = $(this);
+
+        launchModalForm(button.attr('url'), {
+            reload: true,
         });
     });
 
