@@ -29,6 +29,7 @@ from .forms import CreateStockItemForm
 from .forms import EditStockItemForm
 from .forms import AdjustStockForm
 from .forms import TrackingEntryForm
+from .forms import SerializeStockForm
 
 
 class StockIndex(ListView):
@@ -459,6 +460,28 @@ class StockLocationCreate(AjaxCreateView):
                 pass
 
         return initials
+
+
+class StockItemSerialize(AjaxView, FormMixin):
+    """ View for manually serializing a StockItem """
+
+    ajax_template_name = 'stock/item_serialize.html'
+    ajax_form_title = 'Serialize Stock'
+    form_class = SerializeStockForm
+
+    def get(self, request, *args, **kwargs):
+        
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+
+        form = self.get_form()
+
+        data = {
+            'form_valid': False,
+        }
+
+        return self.renderJsonResponse(request, form, data=data)
 
 
 class StockItemCreate(AjaxCreateView):

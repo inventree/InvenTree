@@ -63,6 +63,39 @@ class CreateStockItemForm(HelperForm):
         self._clean_form()
 
 
+class SerializeStockForm(forms.ModelForm):
+    """ Form for serializing a StockItem. """
+
+    destination = forms.ChoiceField(label='Destination', required=True, help_text='Destination for serialized stock (by default, will remain in current location)')
+    serial_numbers = forms.CharField(label='Serial numbers', required=True, help_text='Unique serial numbers')    
+    note = forms.CharField(label='Notes', required=False, help_text='Add transaction note')
+
+    def get_location_choices(self):
+        locs = StockLocation.objects.all()
+
+        choices = [(None, '---------')]
+
+        for loc in locs:
+            choices.append((loc.pk, loc.pathstring + ' - ' + loc.description))
+
+        return choices
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['destination'].choices = self.get_location_choices()
+
+    class Meta:
+        model = StockItem
+
+        fields = [
+            'quantity',
+            'serial_numbers',
+            'destination',
+            'note',
+        ]
+
+
 class AdjustStockForm(forms.ModelForm):
     """ Form for performing simple stock adjustments.
 

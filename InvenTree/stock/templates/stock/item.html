@@ -167,6 +167,15 @@
         );
     }); 
 
+    $("#stock-serialize").click(function() {
+        launchModalForm(
+            "{% url 'stock-item-serialize' item.id %}",
+            {
+                reload: true,
+            }
+        );
+    });
+
     $("#stock-duplicate").click(function() {
         launchModalForm(
             "{% url 'stock-item-create' %}",
