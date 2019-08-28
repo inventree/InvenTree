@@ -462,12 +462,24 @@ class StockLocationCreate(AjaxCreateView):
         return initials
 
 
-class StockItemSerialize(AjaxView, FormMixin):
+class StockItemSerialize(AjaxUpdateView):
     """ View for manually serializing a StockItem """
 
+    model = StockItem
     ajax_template_name = 'stock/item_serialize.html'
     ajax_form_title = 'Serialize Stock'
     form_class = SerializeStockForm
+
+    def get_initial(self):
+
+        initials = super().get_initial().copy()
+
+        item = self.get_object()
+
+        initials['quantity'] = item.quantity
+        initials['destination'] = item.location.pk
+
+        return initials
 
     def get(self, request, *args, **kwargs):
         
