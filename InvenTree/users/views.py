@@ -53,5 +53,5 @@ class GetAuthToken(ObtainAuthToken):
         except (AttributeError, ObjectDoesNotExist):
             pass
 
-        return Response({"success": _("Successfully logged out.")},
+        return Response({"success": "Successfully logged out."},
                         status=status.HTTP_200_OK)
