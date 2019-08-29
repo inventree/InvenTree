@@ -267,6 +267,9 @@ class StockTest(TestCase):
         with self.assertRaises(ValidationError):
             item.serializeStock(5, [1, 2, 3, 4, 5], self.user)
 
+        with self.assertRaises(ValidationError):
+            item.serializeStock(5, [1, 2, 3], self.user)
+
         # Pick a StockItem which can actually be serialized
         item = StockItem.objects.get(pk=100)
 
@@ -284,7 +287,7 @@ class StockTest(TestCase):
         with self.assertRaises(ValidationError):
             item.serializeStock(3, "hello", self.user)
 
-    def test_seiralize_stock_valid(self):
+    def test_serialize_stock_valid(self):
         """ Perform valid stock serializations """
 
         # There are 10 of these in stock
