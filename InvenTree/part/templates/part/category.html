@@ -36,9 +36,9 @@
 </div>
 
 {% if category and category.children.all|length > 0 %}
-{% include "part/subcategories.html" with children=category.children.all collapse_id="children"%}
+{% include "part/subcategories.html" with children=category.children.all collapse_id="categories" %}
 {% elif children|length > 0 %}
-{% include "part/subcategories.html" with children=children %}
+{% include "part/subcategories.html" with children=children collapse_id="categories" %}
 {% endif %}
 <hr>
 
@@ -64,6 +64,18 @@
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
+
+    if (sessionStorage.getItem("inventree-show-part-categories")) {
+        $("#collapse-item-categories").collapse('show');
+    }
+
+    $("#collapse-item-categories").on('shown.bs.collapse', function() {
+        sessionStorage.setItem('inventree-show-part-categories', 1);
+    });
+    
+    $("#collapse-item-categories").on('hidden.bs.collapse', function() {
+        sessionStorage.removeItem('inventree-show-part-categories');
+    });
 
     $("#cat-create").click(function() {
         launchModalForm(
