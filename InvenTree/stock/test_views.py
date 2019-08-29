@@ -159,7 +159,15 @@ class StockItemTest(StockViewTestCase):
         data = json.loads(response.content)
         self.assertTrue(data['form_valid'])
 
+        # Try again to serialize with the same numbers
+        response = self.client.post(url, data_valid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertFalse(data['form_valid'])
+
+        # POST with invalid data
         response = self.client.post(url, data_invalid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertFalse(data['form_valid'])
+

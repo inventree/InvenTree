@@ -518,7 +518,7 @@ class StockItemSerialize(AjaxUpdateView):
                 messages = e.message_dict
                 
                 for k in messages.keys():
-                    if k in ['quantity', 'destionation', 'serial_numbers']:
+                    if k in ['quantity', 'destination', 'serial_numbers']:
                         form.errors[k] = messages[k]
                     else:
                         form.non_field_errors = messages[k]
