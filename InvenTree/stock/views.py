@@ -491,10 +491,10 @@ class StockItemSerialize(AjaxUpdateView):
 
         item = self.get_object()
 
-        quantity = request.POST.get('quantity', None)
+        quantity = request.POST.get('quantity', 0)
         serials = request.POST.get('serial_numbers', '')
         dest_id = request.POST.get('destination', None)
-        notes = request.POST.get('note', None)
+        notes = request.POST.get('note', '')
         user = request.user
 
         valid = True
@@ -509,6 +509,7 @@ class StockItemSerialize(AjaxUpdateView):
         except ValidationError as e:
             form.errors['serial_numbers'] = e.messages
             valid = False
+            numbers = []
         
         if valid:
             try:
@@ -517,7 +518,7 @@ class StockItemSerialize(AjaxUpdateView):
                 messages = e.message_dict
                 
                 for k in messages.keys():
-                    if k in ['quantity', 'destionation', 'serial_numbers']:
+                    if k in ['quantity', 'destination', 'serial_numbers']:
                         form.errors[k] = messages[k]
                     else:
                         form.non_field_errors = messages[k]
