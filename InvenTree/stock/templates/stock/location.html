@@ -54,6 +54,19 @@
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
+
+    if (sessionStorage.getItem("inventree-show-part-locations")) {
+        $("#collapse-item-locations").collapse('show');
+    }
+
+    $("#collapse-item-locations").on('shown.bs.collapse', function() {
+        sessionStorage.setItem('inventree-show-part-locations', 1);
+    });
+
+    $("#collapse-item-locations").on('hidden.bs.collapse', function() {
+        sessionStorage.removeItem('inventree-show-part-locations');
+    });
+
     $('#location-create').click(function () {
         launchModalForm("{% url 'stock-location-create' %}",
                         {
