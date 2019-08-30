@@ -4,6 +4,8 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
+import json
+
 
 class StockViewTestCase(TestCase):
 
@@ -128,3 +130,43 @@ class StockItemTest(StockViewTestCase):
         # Copy from an invalid item, invalid location
         response = self.client.get(reverse('stock-item-create'), {'location': 999, 'copy': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
+
+    def test_serialize_item(self):
+        # Test the serialization view
+
+        url = reverse('stock-item-serialize', args=(100,))
+
+        # GET the form
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+        data_valid = {
+            'quantity': 5,
+            'serial_numbers': '1-5',
+            'destination': 4,
+            'notes': 'Serializing stock test'
+        }
+
+        data_invalid = {
+            'quantity': 4,
+            'serial_numbers': 'dd-23-adf',
+            'destination': 'blorg'
+        }
+        
+        # POST
+        response = self.client.post(url, data_valid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(data['form_valid'])
+
+        # Try again to serialize with the same numbers
+        response = self.client.post(url, data_valid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertFalse(data['form_valid'])
+
+        # POST with invalid data
+        response = self.client.post(url, data_invalid, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertFalse(data['form_valid'])
