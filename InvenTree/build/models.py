@@ -237,6 +237,7 @@ class Build(models.Model):
             for serial in serial_numbers:
                 item = StockItem.objects.create(
                     part=self.part,
+                    build=self,
                     location=location,
                     quantity=1,
                     serial=serial,
@@ -250,6 +251,7 @@ class Build(models.Model):
             # Add stock of the newly created item
             item = StockItem.objects.create(
                 part=self.part,
+                build=self,
                 location=location,
                 quantity=self.quantity,
                 batch=str(self.batch) if self.batch else '',

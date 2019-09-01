@@ -101,6 +101,7 @@ class StockItem(models.Model):
         delete_on_deplete: If True, StockItem will be deleted when the stock level gets to zero
         status: Status of this StockItem (ref: InvenTree.status_codes.StockStatus)
         notes: Extra notes field
+        build: Link to a Build (if this stock item was created from a build)
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
     """
@@ -300,6 +301,13 @@ class StockItem(models.Model):
 
     updated = models.DateField(auto_now=True, null=True)
 
+    build = models.ForeignKey(
+        'build.Build', on_delete=models.SET_NULL,
+        blank=True, null=True,
+        help_text='Build for this stock item',
+        related_name='build_outputs',
+    )
+
     purchase_order = models.ForeignKey(
         'order.PurchaseOrder',
         on_delete=models.SET_NULL,
@@ -484,20 +492,13 @@ class StockItem(models.Model):
             return
 
         # Create a new StockItem object, duplicating relevant fields
-        new_stock = StockItem.objects.create(
-            part=self.part,
-            quantity=quantity,
-            supplier_part=self.supplier_part,
-            location=self.location,
-            notes=self.notes,
-            URL=self.URL,
-            batch=self.batch,
-            delete_on_deplete=self.delete_on_deplete
-        )
-
+        # Nullify the PK so a new record is created
+        new_stock = StockItem.objects.get(pk=self.pk)
+        new_stock.pk = None
+        new_stock.quantity = quantity
         new_stock.save()
 
-        # Copy the transaction history
+        # Copy the transaction history of this part into the new one
         new_stock.copyHistoryFrom(self)
 
         # Add a new tracking item for the new stock item

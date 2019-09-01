@@ -90,6 +90,12 @@
             <td>{{ item.batch }}</td>
         </tr>
         {% endif %}
+        {% if item.build %}
+        <tr>
+            <td>Build</td>
+            <td><a href="{% url 'build-detail' item.build.id %}">{{ item.build }}</a></td>
+        </tr>
+        {% endif %}
         {% if item.purchase_order %}
         <tr>
             <td>Purchase Order</td>
