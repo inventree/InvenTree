@@ -14,6 +14,7 @@ InvenTree Source Documentation
    Tables<tables>
    REST API<rest>
    Backup and Restore<backup>
+   Migrate Data<migrate>
    InvenTree Modules <modules>
    Module Reference<reference>
 
