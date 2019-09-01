@@ -20,10 +20,10 @@ migrate:
 # Install all required packages
 install:
 	pip3 install -U -r requirements.txt
+	python3 InvenTree/setup.py
 
 # Perform initial database setup
 setup:
-	python3 InvenTree/setup.py
 	$(MAKE) migrate
 	$(MAKE) superuser
 
@@ -57,7 +57,7 @@ docreqs:
 	pip3 install -U -r docs/requirements.txt
 
 # Build code docs
-documentation:
+docs:
 	cd docs && make html
 
 # Make database backup
@@ -65,4 +65,4 @@ backup:
 	python3 InvenTree/manage.py dbbackup
 	python3 InvenTree/manage.py mediabackup
 
-.PHONY: clean migrate requirements setup superuser install mysql style test coverage docreqs documentation backup
+.PHONY: clean migrate requirements setup superuser install mysql style test coverage docreqs docs backup

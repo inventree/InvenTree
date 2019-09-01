@@ -13,8 +13,8 @@ database:
   # Example Configuration - MySQL
   #ENGINE: django.db.backends.mysql
   #NAME: inventree
-  #USER: inventree
-  #PASSWORD: password
+  #USER: inventree_username
+  #PASSWORD: inventree_password
   #HOST: ''
   #PORT: ''
 
@@ -52,4 +52,5 @@ log_queries: False
 
 # Backup options
 # Set the backup_dir parameter to store backup files in a specific location
+# If unspecified, the local user's temp directory will be used
 #backup_dir: '/home/inventree/backup/'

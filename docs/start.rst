@@ -11,30 +11,57 @@ To install a complete *development* environment for InvenTree, follow the steps 
 
 A makefile in the root directory provides shortcuts for the installation process, and can also be very useful during development.
 
+Requirements
+------------
+
+To install InvenTree you will need the following:
+
+* python3
+* pip3
+* make
+
 Installation
 ------------
 
+First, download the latest InvenTree source code:
+
+``git clone https://github.com/inventree/inventree/``
+
 InvenTree is a Python/Django application and relies on the pip package manager. All packages required to develop and test InvenTree can be installed via pip. Package requirements can be found in ``requirements.txt``.
 
-To setup the InvenTree environment, run the command:
+To setup the InvenTree environment, *cd into the inventree directory* and run the command:
 
 ``make install``
 
-which performs the following actions:
+which installs all required Python packages using pip package manager. It also creates a (default) database configuration file which needs to be edited to meet user needs before proceeding (see next step below).
 
-* Installs all required Python packages using pip package manager
-* Generates a SECREY_KEY file required for the django authentication framework
-* Performs initial database installation and migrations
-* Prompts user to create a superuser account
+Additionally, this step creates a *SECREY_KEY* file which is used for the django authentication framework. 
 
-Install Configuration
----------------------
+.. important:: 
+    The *SECREY_KEY* file should never be shared or made public. 
 
-InvenTree provides a simple default setup which should work *out of the box* for testing and debug purposes. For installation in production environments, further configuration options are available in the ``config.yaml`` configuration file. 
+Database Configuration
+-----------------------
 
-The configuration file provides administrators control over various setup options without digging into the Django ``settings.py`` script. The default setup uses a sqlite database with *DEBUG* mode enabled.
+Once the required packages are installed, the database configuration must be adjusted to suit your particular needs. InvenTree provides a simple default setup which should work *out of the box* for testing and debug purposes.
+
+As part of the previous *install* step, a configuration file (*config.yaml*) is created. The configuration file provides administrators control over various setup options without digging into the Django ``settings.py`` script. The default setup uses a local sqlite database with *DEBUG* mode enabled.
 
 For further information on installation configuration, refer to the `Configuration <config.html>`_ section.
+
+Initialize Database
+-------------------
+
+Once install settings are correctly configured (in *config.yaml*) run the initial setup script:
+
+``make setup``
+
+which performs the following functions:
+
+* Run initial database migrations, creating the required tables, etc
+* Create initial administrator account
+
+The database should now be installed!
 
 Run Development Server
 ----------------------
@@ -58,4 +85,5 @@ Other shorthand functions are provided for the development and testing process:
 * ``make test`` - Run all unit tests
 * ``make coverage`` - Run all unit tests and generate code coverage report
 * ``make style`` - Check Python codebase against PEP coding standards (using Flake)
-* ``make documentation`` - Generate this documentation
+* ``make docreqs`` - Install the packages required to generate documentation
+* ``make docs`` - Generate this documentation
