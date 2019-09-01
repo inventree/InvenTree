@@ -65,4 +65,4 @@ backup:
 	python3 InvenTree/manage.py dbbackup
 	python3 InvenTree/manage.py mediabackup
 
-.PHONY: clean migrate requirements setup superuser install mysql style test coverage docreqs docs backup
+.PHONY: clean migrate setup superuser install mysql style test coverage docreqs docs backup
