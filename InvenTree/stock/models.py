@@ -494,6 +494,7 @@ class StockItem(models.Model):
         # Create a new StockItem object, duplicating relevant fields
         # Nullify the PK so a new record is created
         new_stock = StockItem.objects.get(pk=self.pk)
+        new_stock.pk = None
         new_stock.quantity = quantity
         new_stock.save()
 
