@@ -14,6 +14,7 @@ migrate:
 	python3 InvenTree/manage.py makemigrations stock
 	python3 InvenTree/manage.py makemigrations build
 	python3 InvenTree/manage.py makemigrations order
+	python3 InvenTree/manage.py migrate
 	python3 InvenTree/manage.py migrate --run-syncdb
 	python3 InvenTree/manage.py check
 
