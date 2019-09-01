@@ -54,14 +54,18 @@ Initialize Database
 
 Once install settings are correctly configured (in *config.yaml*) run the initial setup script:
 
-``make setup``
+``make migrate``
 
-which performs the following functions:
-
-* Run initial database migrations, creating the required tables, etc
-* Create initial administrator account
+which performs the initial database migrations, creating the required tables, etc
 
 The database should now be installed!
+
+Create Admin Account
+--------------------
+
+Create an initial superuser (administrator) account for the InvenTree instance:
+
+``make superuser``
 
 Run Development Server
 ----------------------
