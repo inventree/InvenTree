@@ -22,11 +22,6 @@ install:
 	pip3 install -U -r requirements.txt
 	python3 InvenTree/setup.py
 
-# Perform initial database setup
-setup:
-	$(MAKE) migrate
-	$(MAKE) superuser
-
 # Create a superuser account
 superuser:
 	python3 InvenTree/manage.py createsuperuser
@@ -65,4 +60,4 @@ backup:
 	python3 InvenTree/manage.py dbbackup
 	python3 InvenTree/manage.py mediabackup
 
-.PHONY: clean migrate setup superuser install mysql style test coverage docreqs docs backup
+.PHONY: clean migrate superuser install mysql style test coverage docreqs docs backup
