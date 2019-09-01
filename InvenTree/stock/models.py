@@ -492,20 +492,12 @@ class StockItem(models.Model):
             return
 
         # Create a new StockItem object, duplicating relevant fields
-        new_stock = StockItem.objects.create(
-            part=self.part,
-            quantity=quantity,
-            supplier_part=self.supplier_part,
-            location=self.location,
-            notes=self.notes,
-            URL=self.URL,
-            batch=self.batch,
-            delete_on_deplete=self.delete_on_deplete
-        )
-
+        # Nullify the PK so a new record is created
+        new_stock = StockItem.objects.get(pk=self.pk)
+        new_stock.quantity = quantity
         new_stock.save()
 
-        # Copy the transaction history
+        # Copy the transaction history of this part into the new one
         new_stock.copyHistoryFrom(self)
 
         # Add a new tracking item for the new stock item
