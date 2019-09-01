@@ -44,12 +44,14 @@ coverage:
 	coverage run InvenTree/manage.py test build company part stock order InvenTree
 	coverage html
 
-documentation:
+docreqs:
 	pip3 install -U -r docs/requirements.txt
-	cd docs & make html
+
+documentation:
+	cd docs && make html
 
 backup:
 	python3 InvenTree/manage.py dbbackup
 	python3 InvenTree/manage.py mediabackup
 
-.PHONY: clean migrate requirements setup superuser install mysql style test coverage documentation backup
+.PHONY: clean migrate requirements setup superuser install mysql style test coverage docreqs documentation backup
