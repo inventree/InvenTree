@@ -10,7 +10,7 @@ addons:
         -sqlite3
 
 before_install:
-    - make requirements
+    - make install
     - make setup
     - make migrate
 
