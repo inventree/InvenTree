@@ -17,7 +17,7 @@ Requirements
 To install InvenTree you will need the following:
 
 * python3
-* pip3
+* python3-pip
 * make
 
 Installation
