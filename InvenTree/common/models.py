@@ -33,7 +33,7 @@ class Currency(models.Model):
 
     description = models.CharField(max_length=100, blank=False, help_text=_('Currency Description'))
 
-    value = models.DecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0.00001), MaxValueValidator(100000)], help_text=_('Currency Value'))
+    value = models.DecimalField(default=1.0, max_digits=10, decimal_places=5, validators=[MinValueValidator(0.00001), MaxValueValidator(100000)], help_text=_('Currency Value'))
 
     base = models.BooleanField(default=False, help_text=_('Use this currency as the base currency'))
 
