@@ -32,6 +32,8 @@ class CompanySerializer(InvenTreeModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     part_count = serializers.CharField(read_only=True)
 
+    image = serializers.CharField(source='get_image_url', read_only=True)
+
     class Meta:
         model = Company
         fields = [
