@@ -14,7 +14,7 @@ A makefile in the root directory provides shortcuts for the installation process
 Requirements
 ------------
 
-To install InvenTree you will need the following:
+To install InvenTree you will need the following system components installed:
 
 * python3
 * python3-pip
@@ -45,7 +45,7 @@ Database Configuration
 
 Once the required packages are installed, the database configuration must be adjusted to suit your particular needs. InvenTree provides a simple default setup which should work *out of the box* for testing and debug purposes.
 
-As part of the previous *install* step, a configuration file (*config.yaml*) is created. The configuration file provides administrators control over various setup options without digging into the Django ``settings.py`` script. The default setup uses a local sqlite database with *DEBUG* mode enabled.
+As part of the previous *install* step, a configuration file (``config.yaml``) is created. The configuration file provides administrators control over various setup options without digging into the Django *settings.py* script. The default setup uses a local sqlite database with *DEBUG* mode enabled.
 
 For further information on installation configuration, refer to the `Configuration <config.html>`_ section.
 
