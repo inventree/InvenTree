@@ -19,6 +19,7 @@ from django.conf import settings
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from InvenTree.status_codes import OrderStatus
+from common.models import Currency
 
 
 def rename_company_image(instance, filename):
@@ -310,7 +311,7 @@ class SupplierPart(models.Model):
             # If this price-break quantity is the largest so far, use it!
             if pb.quantity > pb_quantity:
                 pb_quantity = pb.quantity
-                pb_cost = pb.cost
+                pb_cost = pb.get_cost()
 
         if pb_found:
             cost = pb_cost * quantity
@@ -369,6 +370,7 @@ class SupplierPriceBreak(models.Model):
         part: Link to a SupplierPart object that this price break applies to
         quantity: Quantity required for price break
         cost: Cost at specified quantity
+        currency: Reference to the currency of this pricebreak (leave empty for base currency)
     """
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks')
@@ -376,6 +378,18 @@ class SupplierPriceBreak(models.Model):
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
     cost = models.DecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
+
+    currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
+
+    def get_cost(self):
+        """ Return the cost of this price break, converted to the base currency """
+
+        scaler = 1.0
+
+        if self.currency:
+            scaler = self.currency.value
+
+        return self.cost * scaler
 
     class Meta:
         unique_together = ("part", "quantity")
