@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # InvenTree apps
+    'common.apps.CommonConfig',
     'part.apps.PartConfig',
     'stock.apps.StockConfig',
     'company.apps.CompanyConfig',

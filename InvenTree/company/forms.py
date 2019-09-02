@@ -70,5 +70,6 @@ class EditPriceBreakForm(HelperForm):
         fields = [
             'part',
             'quantity',
-            'cost'
+            'cost',
+            'currency',
         ]
