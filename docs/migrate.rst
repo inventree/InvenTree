@@ -31,3 +31,6 @@ Import Data
 The new database should now be correctly initialized with the correct table structures requried to import the data.
 
 ``python3 InvenTree/manage.py loaddata data.json``
+
+.. important:: 
+   If the character encoding of the data file does not exactly match the target database, the import operation may not succeed. In this case, some manual editing of the data file may be required.
