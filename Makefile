@@ -9,6 +9,7 @@ clean:
 
 # Perform database migrations (after schema changes are made)
 migrate:
+	python3 InvenTree/manage.py makemigrations common
 	python3 InvenTree/manage.py makemigrations company
 	python3 InvenTree/manage.py makemigrations part
 	python3 InvenTree/manage.py makemigrations stock
@@ -40,12 +41,12 @@ style:
 # Run unit tests
 test:
 	python3 InvenTree/manage.py check
-	python3 InvenTree/manage.py test build company part stock order
+	python3 InvenTree/manage.py test build common company order part stock 
 
 # Run code coverage
 coverage:
 	python3 InvenTree/manage.py check
-	coverage run InvenTree/manage.py test build company part stock order InvenTree
+	coverage run InvenTree/manage.py test build common company order part stock  InvenTree
 	coverage html
 
 # Install packages required to generate code docs
