@@ -231,16 +231,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
+# Web URL endpoint for served static files
 STATIC_URL = '/static/'
 
+# The filesystem location for served static files
 STATIC_ROOT = CONFIG.get('static_root', os.path.join(BASE_DIR, 'static'))
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'InvenTree', 'static'),
 ]
 
+# Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 
+# The filesystem location for served static files
 MEDIA_ROOT = CONFIG.get('media_root', os.path.join(BASE_DIR, 'media'))
 
 # crispy forms use the bootstrap templates
