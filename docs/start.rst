@@ -35,10 +35,10 @@ To setup the InvenTree environment, *cd into the inventree directory* and run th
 
 which installs all required Python packages using pip package manager. It also creates a (default) database configuration file which needs to be edited to meet user needs before proceeding (see next step below).
 
-Additionally, this step creates a *SECREY_KEY* file which is used for the django authentication framework. 
+Additionally, this step creates a *SECRET_KEY* file which is used for the django authentication framework. 
 
 .. important:: 
-    The *SECREY_KEY* file should never be shared or made public. 
+    The *SECRET_KEY* file should never be shared or made public. 
 
 Database Configuration
 -----------------------
