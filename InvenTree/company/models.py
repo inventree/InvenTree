@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 import os
 
 import math
+from decimal import Decimal
 
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -311,7 +312,8 @@ class SupplierPart(models.Model):
             # If this price-break quantity is the largest so far, use it!
             if pb.quantity > pb_quantity:
                 pb_quantity = pb.quantity
-                pb_cost = pb.get_cost()
+                # Convert everything to base currency
+                pb_cost = pb.converted_cost
 
         if pb_found:
             cost = pb_cost * quantity
@@ -381,10 +383,11 @@ class SupplierPriceBreak(models.Model):
 
     currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
 
-    def get_cost(self):
+    @property
+    def converted_cost(self):
         """ Return the cost of this price break, converted to the base currency """
 
-        scaler = 1.0
+        scaler = Decimal(1.0)
 
         if self.currency:
             scaler = self.currency.value
