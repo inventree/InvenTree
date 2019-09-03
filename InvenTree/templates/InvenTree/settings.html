@@ -8,6 +8,12 @@ InvenTree | Settings
 <h3>InvenTree Settings</h3>
 <hr>
 
+<div class='tab'>
+    <button class='vtab'>User Settings</button>
+    <button class='vtab'>Currency Settings</button>
+    <button class='vtab'></button>
+</div>
+
 <div class='row'>
     <div class='col-sm-6'>
         <h4>User Information</h4>
@@ -21,20 +27,45 @@ InvenTree | Settings
 </div>
 
 
-<table class='table table-striped table-condensed'>
-    <tr>
-        <td>First Name</td>
-        <td>{{ user.first_name }}</td>
-    </tr>
-    <tr>
-        <td>Last Name</td>
-        <td>{{ user.last_name }}</td>
-    </tr>
-    <tr>
-        <td>Email Address</td>
-        <td>{{ user.email }}</td>
-    </tr>
-</table>
+<div class='settings' id='settings-user'>
+    <table class='table table-striped table-condensed'>
+        <tr>
+            <td>First Name</td>
+            <td>{{ user.first_name }}</td>
+        </tr>
+        <tr>
+            <td>Last Name</td>
+            <td>{{ user.last_name }}</td>
+        </tr>
+        <tr>
+            <td>Email Address</td>
+            <td>{{ user.email }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class='settings' id='settings-currency'>
+    <table class='table table-striped table-condensed'>
+        <thead>
+            <tr>
+                <th>Currency</th>
+                <th>Value</th>
+                <th>Default</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+<div class='settings' id='settings-parameters'>
+    <table class='table table-striped table-condensed'>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Units</th>
+            </tr>
+        </thead>
+    </table>
+</div>
 
 {% endblock %}
 
