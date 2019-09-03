@@ -169,7 +169,7 @@ class PartPriceForm(forms.Form):
     currency = forms.ChoiceField(label='Currency', help_text=_('Select currency for price calculation'))
     
     def get_currency_choices(self):
-        """ Create options for Currency """ 
+        """ Create options for Currency """
 
         currencies = Currency.objects.all()
         choices = [(None, '---------')]
