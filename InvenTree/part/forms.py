@@ -8,10 +8,13 @@ from __future__ import unicode_literals
 from InvenTree.forms import HelperForm
 
 from django import forms
+from django.utils.translation import ugettext as _
 
 from .models import Part, PartCategory, PartAttachment
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
+
+from common.models import Currency
 
 
 class PartImageForm(HelperForm):
@@ -30,7 +33,7 @@ class BomValidateForm(HelperForm):
     to confirm that the BOM for this part is valid
     """
 
-    validate = forms.BooleanField(required=False, initial=False, help_text='Confirm that the BOM is correct')
+    validate = forms.BooleanField(required=False, initial=False, help_text=_('Confirm that the BOM is correct'))
 
     class Meta:
         model = Part
@@ -42,7 +45,7 @@ class BomValidateForm(HelperForm):
 class BomUploadSelectFile(HelperForm):
     """ Form for importing a BOM. Provides a file input box for upload """
 
-    bom_file = forms.FileField(label='BOM file', required=True, help_text="Select BOM file to upload")
+    bom_file = forms.FileField(label='BOM file', required=True, help_text=_("Select BOM file to upload"))
 
     class Meta:
         model = Part
@@ -68,12 +71,12 @@ class EditPartForm(HelperForm):
 
     deep_copy = forms.BooleanField(required=False,
                                    initial=True,
-                                   help_text="Perform 'deep copy' which will duplicate all BOM data for this part",
+                                   help_text=_("Perform 'deep copy' which will duplicate all BOM data for this part"),
                                    widget=forms.HiddenInput())
 
     confirm_creation = forms.BooleanField(required=False,
                                           initial=False,
-                                          help_text='Confirm part creation',
+                                          help_text=_('Confirm part creation'),
                                           widget=forms.HiddenInput())
 
     class Meta:
@@ -160,11 +163,30 @@ class PartPriceForm(forms.Form):
     quantity = forms.IntegerField(
         required=True,
         initial=1,
-        help_text='Input quantity for price calculation'
+        help_text=_('Input quantity for price calculation')
     )
+
+    currency = forms.ChoiceField(label='Currency', help_text=_('Select currency for price calculation'))
+    
+    def get_currency_choices(self):
+        """ Create options for Currency """
+
+        currencies = Currency.objects.all()
+        choices = [(None, '---------')]
+
+        for c in currencies:
+            choices.append((c.pk, str(c)))
+
+        return choices
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['currency'].choices = self.get_currency_choices()
 
     class Meta:
         model = Part
         fields = [
-            'quantity'
+            'quantity',
+            'currency',
         ]
