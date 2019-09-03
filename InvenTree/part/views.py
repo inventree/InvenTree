@@ -17,12 +17,14 @@ from django.forms import HiddenInput, CheckboxInput
 import tablib
 
 from fuzzywuzzy import fuzz
+from decimal import Decimal
 
 from .models import PartCategory, Part, PartAttachment
 from .models import PartParameterTemplate, PartParameter
 from .models import BomItem
 from .models import match_part_names
 
+from common.models import Currency
 from company.models import SupplierPart
 
 from . import forms as part_forms
@@ -1325,7 +1327,7 @@ class PartPricing(AjaxView):
         except Part.DoesNotExist:
             return None
 
-    def get_pricing(self, quantity=1):
+    def get_pricing(self, quantity=1, currency=None):
 
         try:
             quantity = int(quantity)
@@ -1335,11 +1337,18 @@ class PartPricing(AjaxView):
         if quantity < 1:
             quantity = 1
 
+        # Currency scaler
+        scaler = Decimal(1.0)
+
+        if currency is not None:
+            scaler = Decimal(currency.value)
+
         part = self.get_part()
         
         ctx = {
             'part': part,
-            'quantity': quantity
+            'quantity': quantity,
+            'currency': currency,
         }
 
         if part is None:
@@ -1351,6 +1360,12 @@ class PartPricing(AjaxView):
 
             if buy_price is not None:
                 min_buy_price, max_buy_price = buy_price
+
+                min_buy_price /= scaler
+                max_buy_price /= scaler
+
+                min_buy_price = round(min_buy_price, 3)
+                max_buy_price = round(max_buy_price, 3)
 
                 if min_buy_price:
                     ctx['min_total_buy_price'] = min_buy_price
@@ -1368,6 +1383,12 @@ class PartPricing(AjaxView):
             if bom_price is not None:
                 min_bom_price, max_bom_price = bom_price
 
+                min_bom_price /= scaler
+                max_bom_price /= scaler
+
+                min_bom_price = round(min_bom_price, 3)
+                max_bom_price = round(max_bom_price, 3)
+
                 if min_bom_price:
                     ctx['min_total_bom_price'] = min_bom_price
                     ctx['min_unit_bom_price'] = min_bom_price / quantity
@@ -1384,17 +1405,28 @@ class PartPricing(AjaxView):
 
     def post(self, request, *args, **kwargs):
 
+        currency = None
+
         try:
             quantity = int(self.request.POST.get('quantity', 1))
         except ValueError:
             quantity = 1
+
+        try:
+            currency_id = int(self.request.POST.get('currency', None))
+
+            if currency_id:
+                currency = Currency.objects.get(pk=currency_id)
+        except (ValueError, Currency.DoesNotExist):
+            pass
+
 
         # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)
         data = {
             'form_valid': False,
         }
 
-        return self.renderJsonResponse(request, self.form_class(), data=data, context=self.get_pricing(quantity))
+        return self.renderJsonResponse(request, self.form_class(), data=data, context=self.get_pricing(quantity, currency))
 
 
 class PartParameterTemplateCreate(AjaxCreateView):
