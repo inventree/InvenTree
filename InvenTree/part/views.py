@@ -1337,6 +1337,13 @@ class PartPricing(AjaxView):
         if quantity < 1:
             quantity = 1
 
+        if currency is None:
+            # No currency selected? Try to select a default one
+            try:
+                currency = Currency.objects.get(base=1)
+            except Currency.DoesNotExist:
+                currency = None
+
         # Currency scaler
         scaler = Decimal(1.0)
 
@@ -1418,8 +1425,7 @@ class PartPricing(AjaxView):
             if currency_id:
                 currency = Currency.objects.get(pk=currency_id)
         except (ValueError, Currency.DoesNotExist):
-            pass
-
+            currency = None
 
         # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)
         data = {
