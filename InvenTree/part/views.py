@@ -84,7 +84,10 @@ class PartAttachmentCreate(AjaxCreateView):
         initials = super(AjaxCreateView, self).get_initial()
 
         # TODO - If the proper part was not sent, return an error message
-        initials['part'] = Part.objects.get(id=self.request.GET.get('part'))
+        try:
+            initials['part'] = Part.objects.get(id=self.request.GET.get('part', None))
+        except (ValueError, Part.DoesNotExist):
+            pass
 
         return initials
 
