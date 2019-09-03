@@ -24,14 +24,14 @@ Pricing information for:<br>
     {% if min_total_buy_price %}
     <tr>
         <td><b>Unit Cost</b></td>
-        <td>Min: {{ min_unit_buy_price }}</td>
-        <td>Max: {{ max_unit_buy_price }}</td>
+        <td>Min: {% include "price.html" with price=min_unit_buy_price %}</td>
+        <td>Max: {% include "price.html" with price=max_unit_buy_price %}</td>
     </tr>
     {% if quantity > 1 %}
     <tr>
         <td><b>Total Cost</b></td>
-        <td>Min: {{ min_total_buy_price }}</td>
-        <td>Max: {{ max_total_buy_price }}</td>
+        <td>Min: {% include "price.html" with price=min_total_buy_price %}</td>
+        <td>Max: {% include "price.html" with price=max_total_buy_price %}</td>
     </tr>
     {% endif %}
     {% else %}
@@ -50,14 +50,14 @@ Pricing information for:<br>
     {% if min_total_bom_price %}
     <tr>
         <td><b>Unit Cost</b></td>
-        <td>Min: {{ min_unit_bom_price }}</td>
-        <td>Max: {{ max_unit_bom_price }}</td>
+        <td>Min: {% include "price.html" with price=min_unit_bom_price %}</td>
+        <td>Max: {% include "price.html" with price=max_unit_bom_price %}</td>
     </tr>
     {% if quantity > 1 %}
     <tr>
         <td><b>Total Cost</b></td>
-        <td>Min: {{ min_total_bom_price }}</td>
-        <td>Max: {{ max_total_bom_price }}</td>
+        <td>Min: {% include "price.html" with price=min_total_bom_price %}</td>
+        <td>Max: {% include "price.html" with price=max_total_bom_price %}</td>
     </tr>
     {% endif %}
     {% if part.has_complete_bom_pricing == False %}
