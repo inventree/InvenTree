@@ -14,10 +14,10 @@ A makefile in the root directory provides shortcuts for the installation process
 Requirements
 ------------
 
-To install InvenTree you will need the following:
+To install InvenTree you will need the following system components installed:
 
 * python3
-* pip3
+* python3-pip
 * make
 
 Installation
@@ -35,17 +35,17 @@ To setup the InvenTree environment, *cd into the inventree directory* and run th
 
 which installs all required Python packages using pip package manager. It also creates a (default) database configuration file which needs to be edited to meet user needs before proceeding (see next step below).
 
-Additionally, this step creates a *SECREY_KEY* file which is used for the django authentication framework. 
+Additionally, this step creates a *SECRET_KEY* file which is used for the django authentication framework. 
 
 .. important:: 
-    The *SECREY_KEY* file should never be shared or made public. 
+    The *SECRET_KEY* file should never be shared or made public. 
 
 Database Configuration
 -----------------------
 
 Once the required packages are installed, the database configuration must be adjusted to suit your particular needs. InvenTree provides a simple default setup which should work *out of the box* for testing and debug purposes.
 
-As part of the previous *install* step, a configuration file (*config.yaml*) is created. The configuration file provides administrators control over various setup options without digging into the Django ``settings.py`` script. The default setup uses a local sqlite database with *DEBUG* mode enabled.
+As part of the previous *install* step, a configuration file (``config.yaml``) is created. The configuration file provides administrators control over various setup options without digging into the Django *settings.py* script. The default setup uses a local sqlite database with *DEBUG* mode enabled.
 
 For further information on installation configuration, refer to the `Configuration <config.html>`_ section.
 
@@ -82,9 +82,10 @@ Development and Testing
 
 Other shorthand functions are provided for the development and testing process:
 
-* ``make requirements`` - Install all required underlying packages using PIP
-* ``make setup`` - Perform one-time setup functions
+* ``make install`` - Install all required underlying packages using PIP
 * ``make superuser`` - Create a superuser account
+* ``make migrate`` - Perform database migrations
+* ``make mysql`` - Install packages required for MySQL database backend
 * ``make backup`` - Backup database tables and media files
 * ``make test`` - Run all unit tests
 * ``make coverage`` - Run all unit tests and generate code coverage report

@@ -9,9 +9,9 @@ InvenTree Configuration
 
 Admin users will need to adjust the InvenTree installation to meet the particular needs of their setup. For example, pointing to the correct database backend, or specifying a list of allowed hosts.
 
-The Django configuration parameters are found in the normal place (``settings.py``). However the settings presented in this file should not be adjusted as they will alter the core behaviour of the InvenTree application.
+The Django configuration parameters are found in the normal place (*settings.py*). However the settings presented in this file should not be adjusted as they will alter the core behaviour of the InvenTree application.
 
-To support install specific settings, a simple configuration file ``config.yaml`` is provided. This configuration file is loaded by ``settings.py`` at runtime. Settings specific to a given install should be adjusted in ``config.yaml``.
+To support install specific settings, a simple configuration file ``config.yaml`` is provided. This configuration file is loaded by **settings.py** at runtime. Settings specific to a given install should be adjusted in ``config.yaml``.
 
 The default configuration file launches a *DEBUG* configuration with a simple SQLITE database backend. This default configuration file is shown below:
 

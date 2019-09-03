@@ -31,7 +31,9 @@ Directories for storing *media* files and *static* files should be specified in 
 Collect Static Files
 --------------------
 
-The required static files must be collected into the specified ``STATIC_ROOT`` directory. Run ``python3 manage.py collectstatic``
+The required static files must be collected into the specified ``STATIC_ROOT`` directory:
+
+``python3 InvenTree/manage.py collectstatic``
 
 Configure Gunicorn
 ------------------
