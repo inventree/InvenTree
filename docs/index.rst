@@ -11,6 +11,7 @@ InvenTree Source Documentation
    Configuration<config>
    Deployment<deploy>
    Migrate Data<migrate>
+   Update InvenTree<update>
    Backup and Restore<backup>
    Modal Forms<forms>
    Tables<tables>
