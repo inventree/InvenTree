@@ -12,7 +12,7 @@ from django.db.models import Sum
 
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework import filters
+from rest_framework import filters, serializers
 from rest_framework import generics, permissions
 
 from django.conf.urls import url, include
@@ -303,7 +303,7 @@ class BomList(generics.ListCreateAPIView):
 
     filter_fields = [
         'part',
-        'sub_part'
+        'sub_part',
     ]
 
 
@@ -316,6 +316,35 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
     ]
+
+
+class BomItemValidate(generics.UpdateAPIView):
+    """ API endpoint for validating a BomItem """
+
+    # Very simple serializers
+    class BomItemValidationSerializer(serializers.Serializer):
+
+        valid = serializers.BooleanField(default=False)
+
+    queryset = BomItem.objects.all()
+    serializer_class = BomItemValidationSerializer
+
+    def update(self, request, *args, **kwargs):
+        """ Perform update request """
+
+        partial = kwargs.pop('partial', False)
+
+        valid = request.data.get('valid', False)
+
+        instance = self.get_object()
+        
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        if type(instance) == BomItem:
+            instance.validate_hash(valid)
+
+        return Response(serializer.data)
 
 
 cat_api_urls = [
@@ -345,10 +374,16 @@ part_api_urls = [
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]
 
+bom_item_urls = [
+
+    url(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),
+
+    url(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
+]
 
 bom_api_urls = [
     # BOM Item Detail
-    url(r'^(?P<pk>\d+)/?', BomDetail.as_view(), name='api-bom-detail'),
+    url(r'^(?P<pk>\d+)/', include(bom_item_urls)),
 
     # Catch-all
     url(r'^.*$', BomList.as_view(), name='api-bom-list'),
