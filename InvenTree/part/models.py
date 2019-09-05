@@ -1176,15 +1176,27 @@ class BomItem(models.Model):
 
         return str(hash.digest())
 
-    def validate_hash(self):
-        """ Mark this item as 'valid' (store the checksum hash) """
+    def validate_hash(self, valid=True):
+        """ Mark this item as 'valid' (store the checksum hash).
+        
+        Args:
+            valid: If true, validate the hash, otherwise invalidate it (default = True)
+        """
 
-        self.checksum = str(self.get_item_hash())
+        if valid:
+            self.checksum = str(self.get_item_hash())
+        else:
+            self.checksum = ''
+
         self.save()
 
     @property
     def is_line_valid(self):
         """ Check if this line item has been validated by the user """
+
+        # Ensure an empty checksum returns False
+        if len(self.checksum) == 0:
+            return False
 
         return self.get_item_hash() == self.checksum
 
