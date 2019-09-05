@@ -117,10 +117,12 @@ class AdjustStockForm(forms.ModelForm):
 
         return choices
 
-    destination = forms.ChoiceField(label='Destination', required=True, help_text='Destination stock location')
+    destination = forms.ChoiceField(label='Destination', required=True, help_text=_('Destination stock location'))
     note = forms.CharField(label='Notes', required=True, help_text='Add note (required)')
     # transaction = forms.BooleanField(required=False, initial=False, label='Create Transaction', help_text='Create a stock transaction for these parts')
-    confirm = forms.BooleanField(required=False, initial=False, label='Confirm stock adjustment', help_text='Confirm movement of stock items')
+    confirm = forms.BooleanField(required=False, initial=False, label='Confirm stock adjustment', help_text=_('Confirm movement of stock items'))
+
+    set_loc = forms.BooleanField(required=False, initial=False, label='Set Default Location', help_text=_('Set the destination as the default location for selected parts'))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

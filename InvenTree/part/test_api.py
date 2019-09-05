@@ -120,7 +120,7 @@ class PartAPITest(APITestCase):
 
     def test_get_bom_detail(self):
         # Get the detail for a single BomItem
-        url = reverse('api-bom-detail', kwargs={'pk': 3})
+        url = reverse('api-bom-item-detail', kwargs={'pk': 3})
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['quantity'], 25)

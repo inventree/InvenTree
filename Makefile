@@ -18,6 +18,7 @@ migrate:
 	python3 InvenTree/manage.py migrate
 	python3 InvenTree/manage.py migrate --run-syncdb
 	python3 InvenTree/manage.py check
+	python3 InvenTree/manage.py collectstatic
 
 # Install all required packages
 install:

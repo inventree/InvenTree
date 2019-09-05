@@ -148,7 +148,15 @@ class StockAdjust(AjaxView, FormMixin):
     stock_items = []
 
     def get_GET_items(self):
-        """ Return list of stock items initally requested using GET """
+        """ Return list of stock items initally requested using GET.
+
+        Items can be retrieved by:
+
+        a) List of stock ID - stock[]=1,2,3,4,5
+        b) Parent part - part=3
+        c) Parent location - location=78
+        d) Single item - item=2
+        """
 
         # Start with all 'in stock' items
         items = StockItem.objects.filter(customer=None, belongs_to=None)
@@ -224,6 +232,7 @@ class StockAdjust(AjaxView, FormMixin):
 
         if not self.stock_action == 'move':
             form.fields.pop('destination')
+            form.fields.pop('set_loc')
 
         return form
 
@@ -257,7 +266,7 @@ class StockAdjust(AjaxView, FormMixin):
 
         self.request = request
 
-        self.stock_action = request.POST.get('stock_action').lower()
+        self.stock_action = request.POST.get('stock_action', 'invalid').lower()
 
         # Update list of stock items
         self.stock_items = self.get_POST_items()
@@ -297,8 +306,9 @@ class StockAdjust(AjaxView, FormMixin):
         }
 
         if valid:
+            result = self.do_action()
 
-            data['success'] = self.do_action()
+            data['success'] = result
 
         return self.renderJsonResponse(request, form, data=data)
 
@@ -308,6 +318,8 @@ class StockAdjust(AjaxView, FormMixin):
         if self.stock_action == 'move':
             destination = None
 
+            set_default_loc = str2bool(self.request.POST.get('set_loc', False))
+
             try:
                 destination = StockLocation.objects.get(id=self.request.POST.get('destination'))
             except StockLocation.DoesNotExist:
@@ -315,7 +327,7 @@ class StockAdjust(AjaxView, FormMixin):
             except ValueError:
                 pass
 
-            return self.do_move(destination)
+            return self.do_move(destination, set_default_loc)
 
         elif self.stock_action == 'add':
             return self.do_add()
@@ -372,7 +384,7 @@ class StockAdjust(AjaxView, FormMixin):
 
         return _("Counted stock for {n} items".format(n=count))
 
-    def do_move(self, destination):
+    def do_move(self, destination, set_loc=None):
         """ Perform actual stock movement """
 
         count = 0
@@ -383,6 +395,11 @@ class StockAdjust(AjaxView, FormMixin):
             # Avoid moving zero quantity
             if item.new_quantity <= 0:
                 continue
+
+            # If we wish to set the destination location to the default one
+            if set_loc:
+                item.part.default_location = destination
+                item.part.save()
             
             # Do not move to the same location (unless the quantity is different)
             if destination == item.location and item.new_quantity == item.quantity:

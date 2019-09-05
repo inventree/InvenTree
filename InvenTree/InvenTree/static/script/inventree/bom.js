@@ -113,13 +113,18 @@ function loadBomTable(table, options) {
     ];
 
     if (options.editable) {
+        
+        /*
+        // TODO - Enable multi-select functionality 
         cols.push({
             checkbox: true,
             title: 'Select',
             searchable: false,
             sortable: false,
         });
+        */
     }
+
 
     // Part column
     cols.push(
@@ -230,10 +235,27 @@ function loadBomTable(table, options) {
     if (options.editable) {
         cols.push({
             formatter: function(value, row, index, field) {
+
+                var bValidate = "<button title='Validate BOM Item' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-check'/></button>";
+                var bValid = "<span class='glyphicon glyphicon-ok'/>";
+
                 var bEdit = "<button title='Edit BOM Item' class='bom-edit-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='glyphicon glyphicon-edit'/></button>";
                 var bDelt = "<button title='Delete BOM Item' class='bom-delete-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='glyphicon glyphicon-trash'/></button>";
                 
-                return "<div class='btn-group' role='group'>" + bEdit + bDelt + "</div>";
+                var html = "<div class='btn-group' role='group'>";
+                
+                html += bEdit;
+                html += bDelt;
+                
+                if (!row.validated) {
+                    html += bValidate;
+                } else {
+                    html += bValid;
+                }
+
+                html += "</div>";
+
+                return html;
             }
         });
     }
@@ -256,6 +278,13 @@ function loadBomTable(table, options) {
     table.bootstrapTable({
         sortable: true,
         search: true,
+        rowStyle: function(row, index) {
+            if (row.validated) {
+                return {classes: 'bomrowvalid'};
+            } else {
+                return {classes: 'bomrowinvalid'};
+            }
+        },
         formatNoMatches: function() { return "No BOM items found"; },
         clickToSelect: true,
         showFooter: true,
@@ -287,6 +316,23 @@ function loadBomTable(table, options) {
                                     reloadBomTable(table);
                                 }
             });
+        });
+
+        table.on('click', '.bom-validate-button', function() {
+            var button = $(this);
+
+            var url = '/api/bom/' + button.attr('pk') + '/validate/';
+
+            inventreePut(
+                url,
+                {
+                    valid: true
+                },
+                {
+                    method: 'PATCH',
+                    reloadOnSuccess: true
+                }
+            );
         });
     }
 }
