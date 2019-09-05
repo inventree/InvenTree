@@ -631,24 +631,15 @@ class Part(models.Model):
         """ Return a checksum hash for the BOM for this part.
         Used to determine if the BOM has changed (and needs to be signed off!)
 
-        For hash is calculated from the following fields of each BOM item:
+        The hash is calculated by hashing each line item in the BOM.
 
-        - Part.full_name (if the part name changes, the BOM checksum is invalidated)
-        - Quantity
-        - Reference field
-        - Note field
-        
         returns a string representation of a hash object which can be compared with a stored value
         """
 
         hash = hashlib.md5(str(self.id).encode())
 
         for item in self.bom_items.all().prefetch_related('sub_part'):
-            hash.update(str(item.sub_part.id).encode())
-            hash.update(str(item.sub_part.full_name).encode())
-            hash.update(str(item.quantity).encode())
-            hash.update(str(item.note).encode())
-            hash.update(str(item.reference).encode())
+            hash.update(str(item.get_item_hash()).encode())
 
         return str(hash.digest())
 
@@ -666,6 +657,10 @@ class Part(models.Model):
         - Calculates and stores the hash for the BOM
         - Saves the current date and the checking user
         """
+
+        # Validate each line item too
+        for item in self.bom_items.all():
+            item.validate_hash()
 
         self.bom_checksum = self.get_bom_hash()
         self.bom_checked_by = user
@@ -1156,6 +1151,42 @@ class BomItem(models.Model):
     note = models.CharField(max_length=500, blank=True, help_text='BOM item notes')
 
     checksum = models.CharField(max_length=128, blank=True, help_text='BOM line checksum')
+
+    def get_item_hash(self):
+        """ Calculate the checksum hash of this BOM line item:
+
+        The hash is calculated from the following fields:
+
+        - Part.full_name (if the part name changes, the BOM checksum is invalidated)
+        - Quantity
+        - Reference field
+        - Note field
+
+        """
+
+        # Seed the hash with the ID of this BOM item
+        hash = hashlib.md5(str(self.id).encode())
+
+        # Update the hash based on line information
+        hash.update(str(self.sub_part.id).encode())
+        hash.update(str(self.sub_part.full_name).encode())
+        hash.update(str(self.quantity).encode())
+        hash.update(str(self.note).encode())
+        hash.update(str(self.reference).encode())
+
+        return str(hash.digest())
+
+    def validate_hash(self):
+        """ Mark this item as 'valid' (store the checksum hash) """
+
+        self.checksum = str(self.get_item_hash())
+        self.save()
+
+    @property
+    def is_line_valid(self):
+        """ Check if this line item has been validated by the user """
+
+        return self.get_item_hash() == self.checksum
 
     def clean(self):
         """ Check validity of the BomItem model.
