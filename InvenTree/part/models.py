@@ -1121,6 +1121,7 @@ class BomItem(models.Model):
         reference: BOM reference field (e.g. part designators)
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
+        checksum: Validation checksum for the particular BOM line item
     """
 
     def get_absolute_url(self):
@@ -1153,6 +1154,8 @@ class BomItem(models.Model):
 
     # Note attached to this BOM line item
     note = models.CharField(max_length=500, blank=True, help_text='BOM item notes')
+
+    checksum = models.CharField(max_length=128, blank=True, help_text='BOM line checksum')
 
     def clean(self):
         """ Check validity of the BomItem model.
