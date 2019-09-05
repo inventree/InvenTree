@@ -81,6 +81,15 @@
     max-width: 250px;
 }
 
+.bomrowvalid {
+    color: #050;
+}
+
+.bomrowinvalid {
+    color: #A00; 
+    font-style: italic;
+}
+
 /* Part image icons with full-display on mouse hover */
 
 .hover-img-thumb {
