@@ -317,5 +317,22 @@ function loadBomTable(table, options) {
                                 }
             });
         });
+
+        table.on('click', '.bom-validate-button', function() {
+            var button = $(this);
+
+            var url = '/api/bom/' + button.attr('pk') + '/validate/';
+
+            inventreePut(
+                url,
+                {
+                    valid: true
+                },
+                {
+                    method: 'PATCH',
+                    reloadOnSuccess: true
+                }
+            );
+        });
     }
 }
