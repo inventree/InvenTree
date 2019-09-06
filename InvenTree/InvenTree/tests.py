@@ -78,7 +78,7 @@ class TestQuoteWrap(TestCase):
         self.assertEqual(helpers.WrapWithQuotes('hello"'), '"hello"')
 
 
-class TestMakeBarcoede(TestCase):
+class TestMakeBarcode(TestCase):
     """ Tests for barcode string creation """
 
     def test_barcode(self):
