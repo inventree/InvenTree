@@ -2,7 +2,9 @@
 
 <div class='container' style='width: 80%;'>
     {% if qr_data %}
-    <img src="{% qr_url_from_text qr_data size='m' error_correction='q' %}" alt="QR Code">
+    <div class='qr-container'>
+        <img class='qr-code' src="{% qr_url_from_text qr_data size='m' image_format='png' error_correction='q' %}" alt="QR Code">
+    </div>
     {% else %}
     <b>Error:</b><br>
     {{ error_msg }}
