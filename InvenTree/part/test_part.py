@@ -44,7 +44,7 @@ class PartTest(TestCase):
         self.assertEqual(self.R1.get_absolute_url(), '/part/3/')
 
     def test_category(self):
-        self.assertEqual(str(self.C1.category), 'Electronics/Capacitors')
+        self.assertEqual(str(self.C1.category), 'Electronics/Capacitors - Capacitors')
 
         orphan = Part.objects.get(name='Orphan')
         self.assertIsNone(orphan.category)

@@ -67,8 +67,8 @@ class CategoryTest(TestCase):
     def test_path_string(self):
         """ Test that the category path string works correctly """
 
-        self.assertEqual(str(self.resistors), 'Electronics/Resistors')
-        self.assertEqual(str(self.transceivers), 'Electronics/IC/Transceivers')
+        self.assertEqual(str(self.resistors), 'Electronics/Resistors - Resistors')
+        self.assertEqual(str(self.transceivers.pathstring), 'Electronics/IC/Transceivers')
 
     def test_url(self):
         """ Test that the PartCategory URL works """
@@ -111,11 +111,11 @@ class CategoryTest(TestCase):
     def test_default_locations(self):
         """ Test traversal for default locations """
 
-        self.assertEqual(str(self.fasteners.default_location), 'Office/Drawer_1')
+        self.assertEqual(str(self.fasteners.default_location), 'Office/Drawer_1 - In my desk')
 
         # Test that parts in this location return the same default location, too
         for p in self.fasteners.children.all():
-            self.assert_equal(p.get_default_location(), 'Office/Drawer_1')
+            self.assert_equal(p.get_default_location().pathstring, 'Office/Drawer_1')
 
         # Any part under electronics should default to 'Home'
         R1 = Part.objects.get(name='R_2K2_0805')
