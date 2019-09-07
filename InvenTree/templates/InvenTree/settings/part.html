@@ -5,5 +5,42 @@
 {% endblock %}
 
 {% block settings %}
+<h4>Part Parameter Templates</h4>
+
+<table class='table table-striped table-condensed' id='param-table'>
+</table>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+    $("#param-table").bootstrapTable({
+        url: "{% url 'api-part-param-template-list' %}",
+        queryParams: {
+            ordering: 'name',
+        },
+        sortable: true,
+        search: true,
+        formatNoMatches: function() { return "No part parameter templates found"; },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                field: 'name',
+                title: 'Name',
+                sortable: 'true',
+            },
+            {
+                field: 'units',
+                title: 'Units',
+                sortable: 'true',
+            },
+
+        ]
+    });
 
 {% endblock %}
