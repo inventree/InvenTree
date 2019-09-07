@@ -1446,6 +1446,21 @@ class PartParameterTemplateCreate(AjaxCreateView):
     ajax_form_title = 'Create Part Parameter Template'
 
 
+class PartParameterTemplateEdit(AjaxUpdateView):
+    """ View for editing a PartParameterTemplate """
+
+    model = PartParameterTemplate
+    form_class = part_forms.EditPartParameterTemplateForm
+    ajax_form_title = 'Edit Part Parameter Template'
+
+
+class PartParameterTemplateDelete(AjaxDeleteView):
+    """ View for deleting an existing PartParameterTemplate """
+
+    model = PartParameterTemplate
+    ajax_form_title = "Delete Part Parameter Template"
+
+
 class PartParameterCreate(AjaxCreateView):
     """ View for creating a new PartParameter """
 

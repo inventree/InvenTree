@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block page_title %}
+InvenTree | Settings
+{% endblock %}
+
+{% block content %}
+<div class='settings-container'>
+
+    <h3>InvenTree Settings</h3>
+    <hr>
+
+    <div class='settings-nav'>
+        {% block tabs %}
+        {% include "InvenTree/settings/tabs.html" %} 
+        {% endblock %}
+    </div>
+    
+    <div class='settings-content'>
+        {% block settings %}
+        {% endblock %}
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block js_load %}
+{{ block.super }}
+{% endblock %}
