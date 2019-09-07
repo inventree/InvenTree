@@ -53,6 +53,16 @@ apipatterns = [
     url(r'^$', InfoView.as_view(), name='inventree-info'),
 ]
 
+settings_urls = [
+
+    url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
+    url(r'^currency/?', SettingsView.as_view(template_name='InvenTree/settings/currency.html'), name='settings-currency'),
+    url(r'^part/?', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
+
+    # Catch any other urls
+    url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/settings.html'), name='settings'),
+]
+
 urlpatterns = [
     url(r'^part/', include(part_urls)),
     url(r'^supplier-part/', include(supplier_part_urls)),
@@ -70,7 +80,7 @@ urlpatterns = [
     url(r'^login/', auth_views.LoginView.as_view(), name='login'),
     url(r'^logout/', auth_views.LogoutView.as_view(template_name='registration/logout.html'), name='logout'),
     
-    url(r'^settings/', SettingsView.as_view(), name='settings'),
+    url(r'^settings/', include(settings_urls)),
 
     url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     url(r'^set-password/', SetPasswordView.as_view(), name='set-password'),

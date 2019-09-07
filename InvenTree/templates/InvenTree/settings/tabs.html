@@ -1,0 +1,11 @@
+<ul class='nav nav-pills nav-stacked'>
+    <li{% ifequal tab 'user' %} class='active'{% endifequal %}>
+        <a href="{% url 'settings-user' %}">User</a>
+    </li>
+    <li{% ifequal tab 'currency' %} class='active'{% endifequal %}>
+        <a href="{% url 'settings-currency' %}">Currency</a>
+    </li>
+    <li{% ifequal tab 'part' %} class='active'{% endifequal %}>
+        <a href="{% url 'settings-part' %}">Part</a>
+    </li>
+</ul>

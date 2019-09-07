@@ -198,6 +198,28 @@
     margin-bottom: 20px;
 }
 
+.settings-container {
+    width: 80%;
+    padding: 15px;
+}
+
+.settings-nav {
+    height: 100%;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    //top: 0;
+    //left: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
+    padding-right: 25px;
+}
+
+.settings-content {
+    margin-left: 175px;
+    padding: 0px 10px;
+}
+
 .breadcrump {
     margin-bottom: 5px;
 }
