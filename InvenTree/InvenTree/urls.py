@@ -60,7 +60,7 @@ settings_urls = [
     url(r'^part/?', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
 
     # Catch any other urls
-    url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/settings.html'), name='settings'),
+    url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings'),
 ]
 
 urlpatterns = [
