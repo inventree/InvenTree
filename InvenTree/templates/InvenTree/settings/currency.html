@@ -15,6 +15,9 @@
 
     $("#currency-table").bootstrapTable({
         url: "{% url 'api-currency-list' %}",
+        queryParams: {
+            ordering: 'suffix'
+        },
         sortable: true,
         search: true,
         formatNoMatches: function() { return "No currencies found"; },
@@ -38,14 +41,17 @@
             {
                 field: 'suffix',
                 title: 'Currency',
+                sortable: true,
             },
             {
                 field: 'description',
                 title: 'Description',
+                sortable: true,
             },
             {
                 field: 'value',
                 title: 'Value',
+                sortable: true,
             }
         ]
     });
