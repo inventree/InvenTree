@@ -88,6 +88,11 @@
         var button = $(this);
         var url = "/common/currency/" + button.attr('pk') + "/delete/";
 
+        launchModalForm(url, {
+            success: function() {
+                $("#currency-table").bootstrapTable('refresh');
+            },
+        });
     });
 
     $("#new-currency").click(function() {
