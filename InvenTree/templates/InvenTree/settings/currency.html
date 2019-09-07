@@ -60,6 +60,13 @@
                 field: 'value',
                 title: 'Value',
                 sortable: true,
+                formatter: function(value, row, index, field) {
+                    if (row.base) {
+                        return "Base Currency";
+                    } else {
+                        return value;
+                    }
+                }
             },
             {
                 formatter: function(value, row, index, field) {

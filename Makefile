@@ -15,10 +15,11 @@ migrate:
 	python3 InvenTree/manage.py makemigrations stock
 	python3 InvenTree/manage.py makemigrations build
 	python3 InvenTree/manage.py makemigrations order
-	python3 InvenTree/manage.py migrate
-	python3 InvenTree/manage.py migrate --run-syncdb
+	python3 InvenTree/manage.py makemigrations
+	cd InvenTree && python3 manage.py migrate
+	cd InvenTree && python3 manage.py migrate --run-syncdb
 	python3 InvenTree/manage.py check
-	python3 InvenTree/manage.py collectstatic
+	cd InvenTree && python3 manage.py collectstatic
 
 # Install all required packages
 install:

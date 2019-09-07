@@ -69,7 +69,7 @@ class Currency(models.Model):
                 cur.save()
 
         # If there are no currencies set as the base currency, set this as base
-        if not Currency.objects.filter(base=True).exists():
+        if not Currency.objects.exclude(pk=self.pk).filter(base=True).exists():
             self.base = True
 
         # If this is the base currency, ensure value is set to unity

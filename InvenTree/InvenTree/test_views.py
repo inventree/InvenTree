@@ -10,13 +10,16 @@ import os
 class ViewTests(TestCase):
     """ Tests for various top-level views """
 
+    username = 'test_user'
+    password = 'test_pass'
+
     def setUp(self):
 
         # Create a user
         User = get_user_model()
-        User.objects.create_user('username', 'user@email.com', 'password')
+        User.objects.create_user(self.username, 'user@email.com', self.password)
 
-        self.client.login(username='username', password='password')
+        self.client.login(username=self.username, password=self.password)
 
     def test_api_doc(self):
         """ Test that the api-doc view works """
