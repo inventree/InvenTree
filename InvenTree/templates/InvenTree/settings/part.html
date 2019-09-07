@@ -76,4 +76,16 @@
         });
     });
 
+    $("#param-table").on('click', '.template-delete', function() {
+        var button = $(this);
+
+        var url = "/part/parameter/template/" + button.attr('pk') + "/delete/";
+        
+        launchModalForm(url, {
+            success: function() {
+                $("#param-table").bootstrapTable('refresh');
+            }
+        });
+    });
+
 {% endblock %}
