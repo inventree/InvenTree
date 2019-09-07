@@ -88,12 +88,12 @@ function loadStockTable(table, options) {
                 data.forEach(function(item) {
                     var batch = item.batch;
 
-                    if (!batch) {
+                    if (!batch || batch == '') {
                         batch = '-';
                     }
 
-                    if (!batches.includes(item.batch)) {
-                        batches.push(item.batch); 
+                    if (!batches.includes(batch)) {
+                        batches.push(batch); 
                     }
                 });
 
