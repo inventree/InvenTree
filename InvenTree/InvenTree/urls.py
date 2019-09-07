@@ -14,11 +14,13 @@ from company.urls import company_urls
 from company.urls import supplier_part_urls
 from company.urls import price_break_urls
 
+from common.urls import common_urls
 from part.urls import part_urls
 from stock.urls import stock_urls
 from build.urls import build_urls
 from order.urls import order_urls
 
+from common.api import common_api_urls
 from part.api import part_api_urls, bom_api_urls
 from company.api import company_api_urls
 from stock.api import stock_api_urls
@@ -39,6 +41,7 @@ from users.urls import user_urls
 admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
+    url(r'^common/', include(common_api_urls)),
     url(r'^part/', include(part_api_urls)),
     url(r'^bom/', include(bom_api_urls)),
     url(r'^company/', include(company_api_urls)),
@@ -53,10 +56,22 @@ apipatterns = [
     url(r'^$', InfoView.as_view(), name='inventree-info'),
 ]
 
+settings_urls = [
+
+    url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
+    url(r'^currency/?', SettingsView.as_view(template_name='InvenTree/settings/currency.html'), name='settings-currency'),
+    url(r'^part/?', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
+
+    # Catch any other urls
+    url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings'),
+]
+
 urlpatterns = [
     url(r'^part/', include(part_urls)),
     url(r'^supplier-part/', include(supplier_part_urls)),
     url(r'^price-break/', include(price_break_urls)),
+
+    url(r'^common/', include(common_urls)),
 
     url(r'^stock/', include(stock_urls)),
 
@@ -70,7 +85,7 @@ urlpatterns = [
     url(r'^login/', auth_views.LoginView.as_view(), name='login'),
     url(r'^logout/', auth_views.LogoutView.as_view(template_name='registration/logout.html'), name='logout'),
     
-    url(r'^settings/', SettingsView.as_view(), name='settings'),
+    url(r'^settings/', include(settings_urls)),
 
     url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     url(r'^set-password/', SetPasswordView.as_view(), name='set-password'),

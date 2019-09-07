@@ -8,6 +8,7 @@ from .models import Part, PartStar
 
 from .models import PartCategory
 from .models import BomItem
+from .models import PartParameter, PartParameterTemplate
 
 from InvenTree.serializers import InvenTreeModelSerializer
 
@@ -173,4 +174,29 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'overage',
             'note',
             'validated',
+        ]
+
+
+class PartParameterSerializer(InvenTreeModelSerializer):
+    """ JSON serializers for the PartParameter model """
+
+    class Meta:
+        model = PartParameter
+        fields = [
+            'pk',
+            'part',
+            'template',
+            'data'
+        ]
+
+
+class PartParameterTemplateSerializer(InvenTreeModelSerializer):
+    """ JSON serializer for the PartParameterTemplate model """
+
+    class Meta:
+        model = PartParameterTemplate
+        fields = [
+            'pk',
+            'name',
+            'units',
         ]
