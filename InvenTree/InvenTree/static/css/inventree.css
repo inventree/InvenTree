@@ -88,6 +88,12 @@
     width: 100%;
 }
 
+.basecurrency {
+    color: #050;
+    font-style: italic;
+    font-weight: bold;
+}
+
 .bomselect {
     max-width: 250px;
 }

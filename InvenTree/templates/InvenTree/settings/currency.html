@@ -6,4 +6,49 @@
 
 {% block settings %}
 
+<table class='table table-striped table-condensed' id='currency-table'/>
+</table>
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+    $("#currency-table").bootstrapTable({
+        url: "{% url 'api-currency-list' %}",
+        sortable: true,
+        search: true,
+        formatNoMatches: function() { return "No currencies found"; },
+        rowStyle: function(row, index) {
+            if (row.base) {
+                return {classes: 'basecurrency'};
+            } else {
+                return {};
+            }
+        },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                field: 'symbol',
+                title: 'Symbol',
+            },
+            {
+                field: 'suffix',
+                title: 'Currency',
+            },
+            {
+                field: 'description',
+                title: 'Description',
+            },
+            {
+                field: 'value',
+                title: 'Value',
+            }
+        ]
+    });
+
+
 {% endblock %}
