@@ -21,10 +21,12 @@ from django.urls import reverse
 import os
 
 from .models import Part, PartCategory, BomItem, PartStar
+from .models import PartParameter, PartParameterTemplate
 
 from .serializers import PartSerializer, BomItemSerializer
 from .serializers import CategorySerializer
 from .serializers import PartStarSerializer
+from .serializers import PartParameterSerializer, PartParameterTemplateSerializer
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool
@@ -261,6 +263,53 @@ class PartStarList(generics.ListCreateAPIView):
     ]
 
 
+class PartParameterTemplateList(generics.ListCreateAPIView):
+    """ API endpoint for accessing a list of PartParameterTemplate objects.
+
+    - GET: Return list of PartParameterTemplate objects
+    - POST: Create a new PartParameterTemplate object
+    """
+
+    queryset = PartParameterTemplate.objects.all()
+    serializer_class = PartParameterTemplateSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    filter_backends = [
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+        'name',
+    ]
+
+
+class PartParameterList(generics.ListCreateAPIView):
+    """ API endpoint for accessing a list of PartParameter objects
+
+    - GET: Return list of PartParameter objects
+    - POST: Create a new PartParameter object
+    """
+
+    queryset = PartParameter.objects.all()
+    serializer_class = PartParameterSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend
+    ]
+
+    filter_fields = [
+        'part',
+        'template',
+    ]
+
+
 class BomList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of BomItem objects.
 
@@ -362,12 +411,18 @@ part_star_api_urls = [
     url(r'^.*$', PartStarList.as_view(), name='api-part-star-list'),
 ]
 
+part_param_api_urls = [
+    url(r'^template/?$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),
+
+    url(r'^.*$', PartParameterList.as_view(), name='api-part-param-list'),
+]
 
 part_api_urls = [
     url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
     url(r'^category/', include(cat_api_urls)),
     url(r'^star/', include(part_star_api_urls)),
+    url(r'^parameter/', include(part_param_api_urls)),
 
     url(r'^(?P<pk>\d+)/?', PartDetail.as_view(), name='api-part-detail'),
 
