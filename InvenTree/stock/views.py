@@ -10,6 +10,7 @@ from django.views.generic.edit import FormMixin
 from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
+from django.urls import reverse
 
 from django.utils.translation import ugettext as _
 
@@ -309,6 +310,19 @@ class StockAdjust(AjaxView, FormMixin):
             result = self.do_action()
 
             data['success'] = result
+
+            # Special case - Single Stock Item
+            # If we deplete the stock item, we MUST redirect to a new view
+            single_item = len(self.stock_items) == 1
+
+            if result and single_item:
+
+                # Was the entire stock taken?
+                item = self.stock_items[0]
+                
+                if item.quantity == 0:
+                    # Instruct the form to redirect
+                    data['url'] = reverse('stock-index')
 
         return self.renderJsonResponse(request, form, data=data)
 
