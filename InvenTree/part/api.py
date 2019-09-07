@@ -412,7 +412,7 @@ part_star_api_urls = [
 ]
 
 part_param_api_urls = [
-    url(r'^template/?$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),
+    url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),
 
     url(r'^.*$', PartParameterList.as_view(), name='api-part-param-list'),
 ]
