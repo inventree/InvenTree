@@ -21,6 +21,8 @@ part_attachment_urls = [
 part_parameter_urls = [
     
     url('^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
+    url('^template/(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='part-param-template-edit'),
+    #url('^template/(?P<pk>\d+)/delete/', views.PartParameterTemplateDelete.as_view(), name='part-param-template-edit'),
     
     url('^new/', views.PartParameterCreate.as_view(), name='part-param-create'),
     url('^(?P<pk>\d+)/edit/', views.PartParameterEdit.as_view(), name='part-param-edit'),

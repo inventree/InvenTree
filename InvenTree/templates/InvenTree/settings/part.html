@@ -43,7 +43,16 @@
                 title: 'Units',
                 sortable: 'true',
             },
+            {
+                formatter: function(value, row, index, field) {
+                    var bEdit = "<button title='Edit Template' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-edit'></span></button>";
+                    var bDel = "<button title='Delete Template' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-trash'></span></button>";
 
+                    var html = "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
+
+                    return html;
+                }
+            }
         ]
     });
 
@@ -52,6 +61,18 @@
             success: function() {
                 $("#param-table").bootstrapTable('refresh');
             },
+        });
+    });
+
+    $("#param-table").on('click', '.template-edit', function() {
+        var button = $(this);
+
+        var url = "/part/parameter/template/" + button.attr('pk') + "/edit/";
+
+        launchModalForm(url, {
+            success: function() {
+                $("#param-table").bootstrapTable('refresh');
+            }
         });
     });
 
