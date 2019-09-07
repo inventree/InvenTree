@@ -8,7 +8,11 @@
 
 <h4>Currencies</h4>
 
-<table class='table table-striped table-condensed' id='currency-table'/>
+<div id='currency-buttons'>
+    <button class='btn btn-success' id='new-currency'>New Currency</button>
+</div>
+
+<table class='table table-striped table-condensed' id='currency-table' data-toolbar='#currency-buttons'>
 </table>
 {% endblock %}
 
@@ -58,5 +62,12 @@
         ]
     });
 
+    $("#new-currency").click(function() {
+        launchModalForm("{% url 'currency-create' %}", {
+            success: function() {
+                $("#currency-table").bootstrapTable('refresh');
+            },
+        });
+    });
 
 {% endblock %}
