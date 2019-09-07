@@ -11,6 +11,13 @@ from django.contrib.auth import get_user_model
 class APITests(APITestCase):
     """ Tests for the InvenTree API """
 
+    fixtures = [
+        'location',
+        'stock',
+        'part',
+        'category',
+    ]
+
     username = 'test_user'
     password = 'test_pass'
 
@@ -29,7 +36,7 @@ class APITests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse('token' in response.data)
-        
+
     def test_get_token_pass(self):
         """ Ensure that a valid user can request an API token """
 
@@ -43,3 +50,18 @@ class APITests(APITestCase):
         self.assertTrue('pk' in response.data)
         self.assertTrue(len(response.data['token']) > 0)
 
+        # Now, use the token to access other data
+        token = response.data['token']
+
+        part_url = reverse('api-part-list')
+
+        # Try to access without a token
+        response = self.client.get(part_url, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        
+        # Now, with the token
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        response = self.client.get(part_url, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
