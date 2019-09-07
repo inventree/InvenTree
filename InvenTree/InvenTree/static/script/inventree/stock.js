@@ -82,6 +82,32 @@ function loadStockTable(table, options) {
                 });
 
                 return stock;
+            } else if (field == 'batch') {
+                var batches = [];
+
+                data.forEach(function(item) {
+                    var batch = item.batch;
+
+                    if (!batch || batch == '') {
+                        batch = '-';
+                    }
+
+                    if (!batches.includes(batch)) {
+                        batches.push(batch); 
+                    }
+                });
+
+                if (batches.length > 1) {
+                    return "" + batches.length + " batches";
+                } else if (batches.length == 1) {
+                    if (batches[0]) {
+                        return batches[0];
+                    } else {
+                        return '-';
+                    }
+                } else {
+                    return '-';
+                }
             } else if (field == 'location__path') {
                 /* Determine how many locations */
                 var locations = [];
@@ -164,6 +190,11 @@ function loadStockTable(table, options) {
                     
                     return text;
                 }
+            },
+            {
+                field: 'batch',
+                title: 'Batch',
+                sortable: true,
             },
             {
                 field: 'location__path',
