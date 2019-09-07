@@ -130,6 +130,7 @@
             <td><i>Part can be purchased from external suppliers</i></td>
             {% endif %}
         </tr>
+        {% if 0 %}
         <tr>
             <td><b>Sellable</b></td>
             <td>{% include "slide.html" with state=part.salable field='salable' %}</td>
@@ -139,6 +140,7 @@
             <td><i>Part cannot be sold to customers</i></td>
             {% endif %}
         </tr>
+        {% endif %}
     </table>
     </div>
 </div>
