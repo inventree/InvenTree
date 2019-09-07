@@ -49,6 +49,10 @@
     <div class='alert alert-block alert-info'>
         This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted.
     </div>
+    {% elif item.delete_on_deplete %}
+    <div class='alert alert-block alert-warning'>
+        This stock item will be automatically deleted when all stock is depleted.
+    </div>
     {% endif %}
 </div>
 
