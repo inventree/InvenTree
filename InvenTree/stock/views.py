@@ -24,6 +24,7 @@ from datetime import datetime
 
 import tablib
 
+from company.models import Company
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
 
@@ -164,32 +165,58 @@ class StockExport(AjaxView):
     def get(self, request, *args, **kwargs):
 
         export_format = request.GET.get('format', 'csv').lower()
-        cascade = str2bool(request.GET.get('cascade', True))
-        location = None
+        
+        # Check if a particular location was specified
         loc_id = request.GET.get('location', None)
-        path = 'All-Locations'
-
+        location = None
+        
         if loc_id:
             try:
                 location = StockLocation.objects.get(pk=loc_id)
-                path = location.pathstring.replace('/', ':')
             except (ValueError, StockLocation.DoesNotExist):
-                location = None
+                pass
+
+        # Check if a particular supplier was specified
+        sup_id = request.GET.get('supplier', None)
+        supplier = None
+
+        if sup_id:
+            try:
+                supplier = Company.objects.get(pk=sup_id)
+            except (ValueError, Company.DoesNotExist):
+                pass
+
+        # Check if a particular part was specified
+        part_id = request.GET.get('part', None)
+        part = None
+
+        if part_id:
+            try:
+                part = Part.objects.get(pk=part_id)
+            except (ValueError, Part.DoesNotExist):
+                pass
 
         if export_format not in GetExportFormats():
             export_format = 'csv'
 
-        filename = 'InvenTree_Stocktake_{loc}_{date}.{fmt}'.format(
-            loc=path,
+        filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
             date=datetime.now().strftime("%d-%b-%Y"),
             fmt=export_format
         )
 
         if location:
+            # CHeck if locations should be cascading
+            cascade = str2bool(request.GET.get('cascade', True))
             stock_items = location.get_stock_items(cascade)
         else:
             cascade = True
             stock_items = StockItem.objects.all()
+
+        if part:
+            stock_items = stock_items.filter(part=part)
+
+        if supplier:
+            stock_items = stock_items.filter(supplier_part__supplier=supplier)
 
         # Filter out stock items that are not 'in stock'
         stock_items = stock_items.filter(customer=None)
@@ -235,8 +262,13 @@ class StockExport(AjaxView):
                 line.append('')
                 line.append('')
 
-            line.append(item.location.pk)
-            line.append(item.location.name)
+            if item.location:
+                line.append(item.location.pk)
+                line.append(item.location.name)
+            else:
+                line.append('')
+                line.append('')
+
             line.append(item.quantity)
             line.append(item.batch)
             line.append(item.serial)

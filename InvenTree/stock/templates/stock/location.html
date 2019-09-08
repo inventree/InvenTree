@@ -68,23 +68,21 @@
     });
 
     $("#stock-export").click(function() {
-        launchModalForm("{% url 'stock-export-options' %}",
-            {
-                submit_text: "Export",
-                success: function(response) {
-                    var url = "{% url 'stock-export' %}";
-                    
-                    url += "?format=" + response.format;
-                    url += "&cascade=" + response.cascade;
-                    
-                    {% if location %}
-                    url += "&location={{ location.id }}";
-                    {% endif %}
+        launchModalForm("{% url 'stock-export-options' %}", {
+            submit_text: "Export",
+            success: function(response) {
+                var url = "{% url 'stock-export' %}";
+                
+                url += "?format=" + response.format;
+                url += "&cascade=" + response.cascade;
+                
+                {% if location %}
+                url += "&location={{ location.id }}";
+                {% endif %}
 
-                    location.href = url;
-                }
+                location.href = url;
             }
-        );
+        });
     });
 
     $('#location-create').click(function () {
