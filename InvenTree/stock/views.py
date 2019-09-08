@@ -176,7 +176,6 @@ class StockExport(AjaxView):
             except (ValueError, StockLocation.DoesNotExist):
                 location = None
 
-
         if export_format not in GetExportFormats():
             export_format = 'csv'
 
@@ -185,7 +184,6 @@ class StockExport(AjaxView):
             date=datetime.now().strftime("%d-%b-%Y"),
             fmt=export_format
         )
-
 
         if location:
             stock_items = location.get_stock_items(cascade)
