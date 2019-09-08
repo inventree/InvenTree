@@ -18,7 +18,7 @@ from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
 
-from InvenTree.helpers import str2bool, DownloadFile
+from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
 from InvenTree.helpers import ExtractSerialNumbers
 from datetime import datetime
 
@@ -177,7 +177,7 @@ class StockExport(AjaxView):
                 location = None
 
 
-        if export_format not in ['csv', 'xls', 'xslx']:
+        if export_format not in GetExportFormats():
             export_format = 'csv'
 
         filename = 'InvenTree_Stocktake_{loc}_{date}.{fmt}'.format(
@@ -203,6 +203,8 @@ class StockExport(AjaxView):
             _('Part ID'),
             _('Part'),
             _('Supplier Part ID'),
+            _('Supplier ID'),
+            _('Supplier'),
             _('Location ID'),
             _('Location'),
             _('Quantity'),
@@ -228,7 +230,11 @@ class StockExport(AjaxView):
 
             if item.supplier_part:
                 line.append(item.supplier_part.pk)
+                line.append(item.supplier_part.supplier.pk)
+                line.append(item.supplier_part.supplier.name)
             else:
+                line.append('')
+                line.append('')
                 line.append('')
 
             line.append(item.location.pk)

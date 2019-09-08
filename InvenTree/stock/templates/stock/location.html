@@ -73,6 +73,7 @@
     $("#location-export").click(function() {
         launchModalForm("{% url 'stock-export-options' %}",
             {
+                submit_text: "Export",
                 success: function(response) {
                     var url = "{% url 'stock-export' %}";
                     

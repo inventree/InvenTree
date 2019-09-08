@@ -9,6 +9,7 @@ from django import forms
 from django.forms.utils import ErrorDict
 from django.utils.translation import ugettext as _
 
+from InvenTree.helpers import GetExportFormats
 from InvenTree.forms import HelperForm
 from .models import StockLocation, StockItem, StockItemTracking
 
@@ -113,11 +114,7 @@ class ExportOptionsForm(HelperForm):
     def get_format_choices(self):
         """ File format choices """
 
-        choices = [
-            ('csv', 'CSV'),
-            ('xls', 'XLS'),
-            ('xlsx', 'XLSX'),
-        ]
+        choices = [(x, x.upper()) for x in GetExportFormats()]
 
         return choices
 
