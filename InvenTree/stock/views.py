@@ -22,6 +22,8 @@ from InvenTree.helpers import str2bool, DownloadFile
 from InvenTree.helpers import ExtractSerialNumbers
 from datetime import datetime
 
+import tablib
+
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
 
@@ -132,7 +134,7 @@ class StockExportOptions(AjaxView):
         self.request = request
 
         fmt = request.POST.get('file_format', 'csv').lower()
-        cascade = str2bool(request.POST.get('include_sublocations', True))
+        cascade = str2bool(request.POST.get('include_sublocations', False))
 
         # Format a URL to redirect to
         url = reverse('stock-export')
@@ -161,6 +163,8 @@ class StockExport(AjaxView):
 
     def get(self, request, *args, **kwargs):
 
+        export_format = request.GET.get('format', 'csv').lower()
+        cascade = str2bool(request.GET.get('cascade', True))
         location = None
         loc_id = request.GET.get('location', None)
         path = 'All-Locations'
@@ -170,9 +174,8 @@ class StockExport(AjaxView):
                 location = StockLocation.objects.get(pk=loc_id)
                 path = location.pathstring.replace('/', ':')
             except (ValueError, StockLocation.DoesNotExist):
-                pass
+                location = None
 
-        export_format = request.GET.get('format', 'csv').lower()
 
         if export_format not in ['csv', 'xls', 'xslx']:
             export_format = 'csv'
@@ -183,7 +186,75 @@ class StockExport(AjaxView):
             fmt=export_format
         )
 
-        filedata = ""
+
+        if location:
+            stock_items = location.get_stock_items(cascade)
+        else:
+            cascade = True
+            stock_items = StockItem.objects.all()
+
+        # Filter out stock items that are not 'in stock'
+        stock_items = stock_items.filter(customer=None)
+        stock_items = stock_items.filter(belongs_to=None)
+
+        # Column headers
+        headers = [
+            _('Stock ID'),
+            _('Part ID'),
+            _('Part'),
+            _('Supplier Part ID'),
+            _('Location ID'),
+            _('Location'),
+            _('Quantity'),
+            _('Batch'),
+            _('Serial'),
+            _('Status'),
+            _('Notes'),
+            _('Review Needed'),
+            _('Last Updated'),
+            _('Last Stocktake'),
+            _('Purchase Order ID'),
+            _('Build ID'),
+        ]
+
+        data = tablib.Dataset(headers=headers)
+
+        for item in stock_items:
+            line = []
+
+            line.append(item.pk)
+            line.append(item.part.pk)
+            line.append(item.part.full_name)
+
+            if item.supplier_part:
+                line.append(item.supplier_part.pk)
+            else:
+                line.append('')
+
+            line.append(item.location.pk)
+            line.append(item.location.name)
+            line.append(item.quantity)
+            line.append(item.batch)
+            line.append(item.serial)
+            line.append(item.status)
+            line.append(item.notes)
+            line.append(item.review_needed)
+            line.append(item.updated)
+            line.append(item.stocktake_date)
+
+            if item.purchase_order:
+                line.append(item.purchase_order.pk)
+            else:
+                line.append('')
+
+            if item.build:
+                line.append(item.build.pk)
+            else:
+                line.append('')
+
+            data.append(line)
+
+        filedata = data.export(export_format)
 
         return DownloadFile(filedata, filename)
 
