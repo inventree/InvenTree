@@ -16,9 +16,6 @@
             <button class='btn btn-default btn-glyph' id='location-create' title='Create new stock location'>
                 <span class='glyphicon glyphicon-plus'/>
             </button>
-            <button class='btn btn-default btn-glyph' id='location-export' title='Export Stock Data'>
-                <span class='glyphicon glyphicon-download-alt'></span>
-            </button>
             {% if location %}
             {% include "qr_button.html" %}
             <button class='btn btn-default btn-glyph' id='location-count' title='Count stock items'>
@@ -70,7 +67,7 @@
         sessionStorage.removeItem('inventree-show-part-locations');
     });
 
-    $("#location-export").click(function() {
+    $("#stock-export").click(function() {
         launchModalForm("{% url 'stock-export-options' %}",
             {
                 submit_text: "Export",
