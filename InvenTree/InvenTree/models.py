@@ -11,10 +11,12 @@ from rest_framework.exceptions import ValidationError
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from mptt.models import MPTTModel, TreeForeignKey
+
 from .validators import validate_tree_name
 
 
-class InvenTreeTree(models.Model):
+class InvenTreeTree(MPTTModel):
     """ Provides an abstracted self-referencing tree model for data categories.
 
     - Each Category has one parent Category, which can be blank (for a top-level Category).
@@ -29,6 +31,9 @@ class InvenTreeTree(models.Model):
     class Meta:
         abstract = True
         unique_together = ('name', 'parent')
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
     name = models.CharField(
         blank=False,
