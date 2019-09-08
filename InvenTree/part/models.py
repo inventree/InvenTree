@@ -25,6 +25,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from mptt.models import TreeForeignKey
+
 from datetime import datetime
 from fuzzywuzzy import fuzz
 import hashlib
@@ -48,7 +50,7 @@ class PartCategory(InvenTreeTree):
         default_keywords: Default keywords for parts created in this category
     """
 
-    default_location = models.ForeignKey(
+    default_location = TreeForeignKey(
         'stock.StockLocation', related_name="default_categories",
         null=True, blank=True,
         on_delete=models.SET_NULL,
@@ -351,10 +353,10 @@ class Part(models.Model):
 
     keywords = models.CharField(max_length=250, blank=True, help_text='Part keywords to improve visibility in search results')
 
-    category = models.ForeignKey(PartCategory, related_name='parts',
-                                 null=True, blank=True,
-                                 on_delete=models.DO_NOTHING,
-                                 help_text='Part category')
+    category = TreeForeignKey(PartCategory, related_name='parts',
+                              null=True, blank=True,
+                              on_delete=models.DO_NOTHING,
+                              help_text='Part category')
 
     IPN = models.CharField(max_length=100, blank=True, help_text='Internal Part Number')
 
@@ -364,10 +366,10 @@ class Part(models.Model):
 
     image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
 
-    default_location = models.ForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
-                                         blank=True, null=True,
-                                         help_text='Where is this item normally stored?',
-                                         related_name='default_parts')
+    default_location = TreeForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
+                                      blank=True, null=True,
+                                      help_text='Where is this item normally stored?',
+                                      related_name='default_parts')
 
     def get_default_location(self):
         """ Get the default location for a Part (may be None).

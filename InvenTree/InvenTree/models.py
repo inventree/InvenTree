@@ -48,11 +48,11 @@ class InvenTreeTree(MPTTModel):
     )
 
     # When a category is deleted, graft the children onto its parent
-    parent = models.ForeignKey('self',
-                               on_delete=models.DO_NOTHING,
-                               blank=True,
-                               null=True,
-                               related_name='children')
+    parent = TreeForeignKey('self',
+                            on_delete=models.DO_NOTHING,
+                            blank=True,
+                            null=True,
+                            related_name='children')
 
     @property
     def item_count(self):

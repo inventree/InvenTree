@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from mptt.models import TreeForeignKey
+
 from datetime import datetime
 from InvenTree import helpers
 
@@ -292,9 +294,9 @@ class StockItem(models.Model):
     supplier_part = models.ForeignKey('company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
                                       help_text='Select a matching supplier part for this stock item')
 
-    location = models.ForeignKey(StockLocation, on_delete=models.DO_NOTHING,
-                                 related_name='stock_items', blank=True, null=True,
-                                 help_text='Where is this stock item located?')
+    location = TreeForeignKey(StockLocation, on_delete=models.DO_NOTHING,
+                              related_name='stock_items', blank=True, null=True,
+                              help_text='Where is this stock item located?')
 
     belongs_to = models.ForeignKey('self', on_delete=models.DO_NOTHING,
                                    related_name='owned_parts', blank=True, null=True,
