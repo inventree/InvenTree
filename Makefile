@@ -8,7 +8,7 @@ clean:
 	rm -f .coverage
 
 # Perform database migrations (after schema changes are made)
-migrate:
+migrate: backup
 	python3 InvenTree/manage.py makemigrations common
 	python3 InvenTree/manage.py makemigrations company
 	python3 InvenTree/manage.py makemigrations part
