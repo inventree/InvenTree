@@ -76,7 +76,6 @@ class StockLocation(InvenTreeTree):
         """
         return self.stock_item_count(cascade) > 0
 
-
     @property
     def item_count(self):
         """ Simply returns the number of stock items in this location.

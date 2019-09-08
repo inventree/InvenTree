@@ -81,7 +81,6 @@ class PartCategory(InvenTreeTree):
 
         return query
 
-
     @property
     def item_count(self):
         return self.partcount()
