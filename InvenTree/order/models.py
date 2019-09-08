@@ -247,6 +247,7 @@ class PurchaseOrder(Order):
         if line.part:
             stock = StockItem(
                 part=line.part.part,
+                supplier_part=line.part,
                 location=location,
                 quantity=quantity,
                 purchase_order=self)

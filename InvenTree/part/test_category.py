@@ -48,7 +48,7 @@ class CategoryTest(TestCase):
     def test_unique_childs(self):
         """ Test the 'unique_children' functionality """
 
-        childs = self.electronics.getUniqueChildren()
+        childs = [item.pk for item in self.electronics.getUniqueChildren()]
 
         self.assertIn(self.transceivers.id, childs)
         self.assertIn(self.ic.id, childs)
@@ -58,7 +58,7 @@ class CategoryTest(TestCase):
     def test_unique_parents(self):
         """ Test the 'unique_parents' functionality """
         
-        parents = self.transceivers.getUniqueParents()
+        parents = [item.pk for item in self.transceivers.getUniqueParents()]
 
         self.assertIn(self.electronics.id, parents)
         self.assertIn(self.ic.id, parents)
@@ -86,6 +86,12 @@ class CategoryTest(TestCase):
         self.assertEqual(self.capacitors.partcount(), 1)
 
         self.assertEqual(self.electronics.partcount(), 3)
+
+        self.assertEqual(self.mechanical.partcount(), 4)
+        self.assertEqual(self.mechanical.partcount(active=True), 3)
+        self.assertEqual(self.mechanical.partcount(False), 2)
+
+        self.assertEqual(self.electronics.item_count, self.electronics.partcount())
 
     def test_delete(self):
         """ Test that category deletion moves the children properly """

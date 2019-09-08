@@ -60,3 +60,7 @@
     description: 'Can we build it?'
     assembly: true
     purchaseable: false
+    category: 7
+    active: False
+    IPN: BOB
+    revision: A2

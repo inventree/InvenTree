@@ -18,10 +18,14 @@ from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
 
-from InvenTree.helpers import str2bool
+from InvenTree.status_codes import StockStatus
+from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
 from InvenTree.helpers import ExtractSerialNumbers
 from datetime import datetime
 
+import tablib
+
+from company.models import Company
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
 
@@ -31,6 +35,7 @@ from .forms import EditStockItemForm
 from .forms import AdjustStockForm
 from .forms import TrackingEntryForm
 from .forms import SerializeStockForm
+from .forms import ExportOptionsForm
 
 
 class StockIndex(ListView):
@@ -117,6 +122,178 @@ class StockLocationQRCode(QRCodeView):
             return loc.format_barcode()
         except StockLocation.DoesNotExist:
             return None
+
+
+class StockExportOptions(AjaxView):
+    """ Form for selecting StockExport options """
+
+    model = StockLocation
+    ajax_form_title = 'Stock Export Options'
+    form_class = ExportOptionsForm
+
+    def post(self, request, *args, **kwargs):
+
+        self.request = request
+
+        fmt = request.POST.get('file_format', 'csv').lower()
+        cascade = str2bool(request.POST.get('include_sublocations', False))
+
+        # Format a URL to redirect to
+        url = reverse('stock-export')
+
+        url += '?format=' + fmt
+        url += '&cascade=' + str(cascade)
+
+        data = {
+            'form_valid': True,
+            'format': fmt,
+            'cascade': cascade
+        }
+
+        return self.renderJsonResponse(self.request, self.form_class(), data=data)
+
+    def get(self, request, *args, **kwargs):
+        return self.renderJsonResponse(request, self.form_class())
+
+
+class StockExport(AjaxView):
+    """ Export stock data from a particular location.
+    Returns a file containing stock information for that location.
+    """
+
+    model = StockItem
+
+    def get(self, request, *args, **kwargs):
+
+        export_format = request.GET.get('format', 'csv').lower()
+        
+        # Check if a particular location was specified
+        loc_id = request.GET.get('location', None)
+        location = None
+        
+        if loc_id:
+            try:
+                location = StockLocation.objects.get(pk=loc_id)
+            except (ValueError, StockLocation.DoesNotExist):
+                pass
+
+        # Check if a particular supplier was specified
+        sup_id = request.GET.get('supplier', None)
+        supplier = None
+
+        if sup_id:
+            try:
+                supplier = Company.objects.get(pk=sup_id)
+            except (ValueError, Company.DoesNotExist):
+                pass
+
+        # Check if a particular part was specified
+        part_id = request.GET.get('part', None)
+        part = None
+
+        if part_id:
+            try:
+                part = Part.objects.get(pk=part_id)
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        if export_format not in GetExportFormats():
+            export_format = 'csv'
+
+        filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
+            date=datetime.now().strftime("%d-%b-%Y"),
+            fmt=export_format
+        )
+
+        if location:
+            # CHeck if locations should be cascading
+            cascade = str2bool(request.GET.get('cascade', True))
+            stock_items = location.get_stock_items(cascade)
+        else:
+            cascade = True
+            stock_items = StockItem.objects.all()
+
+        if part:
+            stock_items = stock_items.filter(part=part)
+
+        if supplier:
+            stock_items = stock_items.filter(supplier_part__supplier=supplier)
+
+        # Filter out stock items that are not 'in stock'
+        stock_items = stock_items.filter(customer=None)
+        stock_items = stock_items.filter(belongs_to=None)
+
+        # Column headers
+        headers = [
+            _('Stock ID'),
+            _('Part ID'),
+            _('Part'),
+            _('Supplier Part ID'),
+            _('Supplier ID'),
+            _('Supplier'),
+            _('Location ID'),
+            _('Location'),
+            _('Quantity'),
+            _('Batch'),
+            _('Serial'),
+            _('Status'),
+            _('Notes'),
+            _('Review Needed'),
+            _('Last Updated'),
+            _('Last Stocktake'),
+            _('Purchase Order ID'),
+            _('Build ID'),
+        ]
+
+        data = tablib.Dataset(headers=headers)
+
+        for item in stock_items:
+            line = []
+
+            line.append(item.pk)
+            line.append(item.part.pk)
+            line.append(item.part.full_name)
+
+            if item.supplier_part:
+                line.append(item.supplier_part.pk)
+                line.append(item.supplier_part.supplier.pk)
+                line.append(item.supplier_part.supplier.name)
+            else:
+                line.append('')
+                line.append('')
+                line.append('')
+
+            if item.location:
+                line.append(item.location.pk)
+                line.append(item.location.name)
+            else:
+                line.append('')
+                line.append('')
+
+            line.append(item.quantity)
+            line.append(item.batch)
+            line.append(item.serial)
+            line.append(StockStatus.label(item.status))
+            line.append(item.notes)
+            line.append(item.review_needed)
+            line.append(item.updated)
+            line.append(item.stocktake_date)
+
+            if item.purchase_order:
+                line.append(item.purchase_order.pk)
+            else:
+                line.append('')
+
+            if item.build:
+                line.append(item.build.pk)
+            else:
+                line.append('')
+
+            data.append(line)
+
+        filedata = data.export(export_format)
+
+        return DownloadFile(filedata, filename)
 
 
 class StockItemQRCode(QRCodeView):

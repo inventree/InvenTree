@@ -25,6 +25,27 @@ InvenTree | {{ order }}
                 {% if order.URL %}
                 <a href="{{ order.URL }}">{{ order.URL }}</a>
                 {% endif %}
+                <p>
+                    <div class='btn-row'>
+                        <div class='btn-group'>
+                            <button type='button' class='btn btn-default btn-glyph' id='edit-order' title='Edit order information'>
+                                <span class='glyphicon glyphicon-edit'></span>
+                            </button>
+                            <button type='button' class='btn btn-default btn-glyph' id='export-order' title='Export order to file'>
+                                <span class='glyphicon glyphicon-download-alt'></span>
+                            </button>
+                            {% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
+                            <button type='button' class='btn btn-default btn-glyph' id='place-order' title='Place order'>
+                                <span class='glyphicon glyphicon-send'></span>
+                            </button>
+                            {% elif order.status == OrderStatus.PLACED %}
+                            <button type='button' class='btn btn-default btn-glyph' id='receive-order' title='Receive items'>
+                                <span class='glyphicon glyphicon-check'></span>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </p>
             </div>
         </div>
     </div>
@@ -65,13 +86,6 @@ InvenTree | {{ order }}
     {% if order.status == OrderStatus.PENDING %}
     <button type='button' class='btn btn-default' id='new-po-line'>Add Line Item</button>
     {% endif %}
-    <button type='button' class='btn btn-primary' id='edit-order'>Edit Order</button>
-    {% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
-    <button type='button' class='btn btn-primary' id='place-order'>Place Order</button>
-    {% elif order.status == OrderStatus.PLACED %}
-    <button type='button' class='btn btn-primary' id='receive-order'>Receive Items</button>
-    {% endif %}
-    <button type='button' class='btn btn-primary' id='export-order' title='Export order to file'>Export</button>
 </div>
 
 <h4>Order Items</h4>

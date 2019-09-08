@@ -3,6 +3,7 @@ pillow>=5.0.0                   # Image manipulation
 djangorestframework>=3.6.2      # DRF framework
 django-cors-headers>=2.5.3      # CORS headers extension for DRF
 django_filter>=1.0.2            # Extended filtering options
+django-mptt>=0.10.0             # Modified Preorder Tree Traversal
 django-dbbackup==3.2.0          # Database backup / restore functionality
 coreapi>=2.3.0                  # API documentation
 pygments>=2.2.0                 # Syntax highlighting

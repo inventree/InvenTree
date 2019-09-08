@@ -10,7 +10,7 @@ class StatusCode:
     @classmethod
     def label(cls, value):
         """ Return the status code label associated with the provided value """
-        return cls.options.get(value, '')
+        return cls.options.get(value, value)
 
 
 class OrderStatus(StatusCode):

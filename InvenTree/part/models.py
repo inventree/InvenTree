@@ -25,6 +25,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from mptt.models import TreeForeignKey
+
 from datetime import datetime
 from fuzzywuzzy import fuzz
 import hashlib
@@ -48,7 +50,7 @@ class PartCategory(InvenTreeTree):
         default_keywords: Default keywords for parts created in this category
     """
 
-    default_location = models.ForeignKey(
+    default_location = TreeForeignKey(
         'stock.StockLocation', related_name="default_categories",
         null=True, blank=True,
         on_delete=models.SET_NULL,
@@ -64,21 +66,31 @@ class PartCategory(InvenTreeTree):
         verbose_name = "Part Category"
         verbose_name_plural = "Part Categories"
 
+    def get_parts(self, cascade=True):
+        """ Return a queryset for all parts under this category.
+
+        args:
+            cascade - If True, also look under subcategories (default = True)
+        """
+
+        if cascade:
+            """ Select any parts which exist in this category or any child categories """
+            query = Part.objects.filter(category__in=self.getUniqueChildren(include_self=True))
+        else:
+            query = Part.objects.filter(category=self.pk)
+
+        return query
+
     @property
     def item_count(self):
         return self.partcount()
 
-    def partcount(self, cascade=True, active=True):
+    def partcount(self, cascade=True, active=False):
         """ Return the total part count under this category
         (including children of child categories)
         """
 
-        cats = [self.id]
-
-        if cascade:
-            cats += [cat for cat in self.getUniqueChildren()]
-
-        query = Part.objects.filter(category__in=cats)
+        query = self.get_parts(cascade=cascade)
 
         if active:
             query = query.filter(active=True)
@@ -88,7 +100,7 @@ class PartCategory(InvenTreeTree):
     @property
     def has_parts(self):
         """ True if there are any parts in this category """
-        return self.parts.count() > 0
+        return self.partcount() > 0
 
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
@@ -253,17 +265,9 @@ class Part(models.Model):
 
     def set_category(self, category):
 
-        if not type(category) == PartCategory:
-            raise ValidationError({
-                'category': _('Invalid object supplied to part.set_category')
-            })
-
-        try:
-            # Already in this category!
-            if category == self.category:
-                return
-        except PartCategory.DoesNotExist:
-            pass
+        # Ignore if the category is already the same
+        if self.category == category:
+            return
 
         self.category = category
         self.save()
@@ -340,10 +344,10 @@ class Part(models.Model):
 
     keywords = models.CharField(max_length=250, blank=True, help_text='Part keywords to improve visibility in search results')
 
-    category = models.ForeignKey(PartCategory, related_name='parts',
-                                 null=True, blank=True,
-                                 on_delete=models.DO_NOTHING,
-                                 help_text='Part category')
+    category = TreeForeignKey(PartCategory, related_name='parts',
+                              null=True, blank=True,
+                              on_delete=models.DO_NOTHING,
+                              help_text='Part category')
 
     IPN = models.CharField(max_length=100, blank=True, help_text='Internal Part Number')
 
@@ -353,10 +357,10 @@ class Part(models.Model):
 
     image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
 
-    default_location = models.ForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
-                                         blank=True, null=True,
-                                         help_text='Where is this item normally stored?',
-                                         related_name='default_parts')
+    default_location = TreeForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
+                                      blank=True, null=True,
+                                      help_text='Where is this item normally stored?',
+                                      related_name='default_parts')
 
     def get_default_location(self):
         """ Get the default location for a Part (may be None).
@@ -370,13 +374,11 @@ class Part(models.Model):
             return self.default_location
         elif self.category:
             # Traverse up the category tree until we find a default location
-            cat = self.category
+            cats = self.category.get_ancestors(ascending=True, include_self=True)
 
-            while cat:
+            for cat in cats:
                 if cat.default_location:
                     return cat.default_location
-                else:
-                    cat = cat.parent
 
         # Default case - no default category found
         return None
@@ -1055,18 +1057,13 @@ class PartParameterTemplate(models.Model):
         super().validate_unique(exclude)
 
         try:
-            others = PartParameterTemplate.objects.exclude(id=self.id).filter(name__iexact=self.name)
+            others = PartParameterTemplate.objects.filter(name__iexact=self.name).exclude(pk=self.pk)
 
             if others.exists():
                 msg = _("Parameter template name must be unique")
                 raise ValidationError({"name": msg})
         except PartParameterTemplate.DoesNotExist:
             pass
-
-    @property
-    def instance_count(self):
-        """ Return the number of instances of this Parameter Template """
-        return self.instances.count()
 
     name = models.CharField(max_length=100, help_text='Parameter Name', unique=True)
 
@@ -1086,7 +1083,7 @@ class PartParameter(models.Model):
     def __str__(self):
         # String representation of a PartParameter (used in the admin interface)
         return "{part} : {param} = {data}{units}".format(
-            part=str(self.part),
+            part=str(self.part.full_name),
             param=str(self.template.name),
             data=str(self.data),
             units=str(self.template.units)
@@ -1096,8 +1093,7 @@ class PartParameter(models.Model):
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE,
-                             related_name='parameters', help_text='Parent Part')
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', help_text='Parent Part')
 
     template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', help_text='Parameter Template')
 
