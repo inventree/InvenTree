@@ -65,59 +65,31 @@ class InvenTreeTree(MPTTModel):
         """
         return 0
 
-    def getUniqueParents(self, unique=None):
+    def getUniqueParents(self):
         """ Return a flat set of all parent items that exist above this node.
         If any parents are repeated (which would be very bad!), the process is halted
         """
 
-        item = self
+        return self.get_ancestors()
 
-        # Prevent infinite regression
-        max_parents = 500
-
-        unique = set()
-
-        while item.parent and max_parents > 0:
-            max_parents -= 1
-
-            unique.add(item.parent.id)
-            item = item.parent
-
-        return unique
-
-    def getUniqueChildren(self, unique=None, include_self=True):
+    def getUniqueChildren(self, include_self=True):
         """ Return a flat set of all child items that exist under this node.
         If any child items are repeated, the repetitions are omitted.
         """
 
-        if unique is None:
-            unique = set()
-
-        if self.id in unique:
-            return unique
-
-        if include_self:
-            unique.add(self.id)
-
-        # Some magic to get around the limitations of abstract models
-        contents = ContentType.objects.get_for_model(type(self))
-        children = contents.get_all_objects_for_this_type(parent=self.id)
-
-        for child in children:
-            child.getUniqueChildren(unique)
-
-        return unique
+        return self.get_descendants(include_self=include_self)
 
     @property
     def has_children(self):
         """ True if there are any children under this item """
-        return self.children.count() > 0
+        return self.getUniqueChildren().count() > 0
 
     def getAcceptableParents(self):
         """ Returns a list of acceptable parent items within this model
         Acceptable parents are ones which are not underneath this item.
         Setting the parent of an item to its own child results in recursion.
         """
+
         contents = ContentType.objects.get_for_model(type(self))
 
         available = contents.get_all_objects_for_this_type()
@@ -141,10 +113,7 @@ class InvenTreeTree(MPTTModel):
             List of category names from the top level to the parent of this category
         """
 
-        if self.parent:
-            return self.parent.parentpath + [self.parent]
-        else:
-            return []
+        return [a for a in self.get_ancestors()]
 
     @property
     def path(self):
