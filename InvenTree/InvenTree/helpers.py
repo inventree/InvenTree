@@ -94,6 +94,18 @@ def MakeBarcode(object_type, object_id, object_url, data={}):
     return json.dumps(data, sort_keys=True)
 
 
+def GetExportFormats():
+    """ Return a list of allowable file formats for exporting data """
+    
+    return [
+        'csv',
+        'tsv',
+        'xls',
+        'xlsx',
+        'json',
+    ]
+
+
 def DownloadFile(data, filename, content_type='application/text'):
     """ Create a dynamic file for the user to download.
     

@@ -47,6 +47,21 @@
         url: "{% url 'api-stock-list' %}",
     });
 
+    $("#stock-export").click(function() {
+        launchModalForm("{% url 'stock-export-options' %}", {
+            submit_text: "Export",
+            success: function(response) {
+                var url = "{% url 'stock-export' %}";
+
+                url += "?format=" + response.format;
+                url += "&cascade=" + response.cascade;
+                url += "&part={{ part.id }}";
+
+                location.href = url;
+            },
+        });
+    });
+
     $('#item-create').click(function () {
         launchModalForm("{% url 'stock-item-create' %}", {
             reload: true,

@@ -76,12 +76,14 @@ function loadStockTable(table, options) {
             }
             else if (field == 'quantity') {
                 var stock = 0;
+                var items = 0;
 
                 data.forEach(function(item) {
                     stock += item.quantity; 
+                    items += 1;
                 });
 
-                return stock;
+                return stock + " (" + items + " items)";
             } else if (field == 'batch') {
                 var batches = [];
 
