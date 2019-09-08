@@ -18,6 +18,7 @@ from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
 
+from InvenTree.status_codes import StockStatus
 from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
 from InvenTree.helpers import ExtractSerialNumbers
 from datetime import datetime
@@ -272,7 +273,7 @@ class StockExport(AjaxView):
             line.append(item.quantity)
             line.append(item.batch)
             line.append(item.serial)
-            line.append(item.status)
+            line.append(StockStatus.label(item.status))
             line.append(item.notes)
             line.append(item.review_needed)
             line.append(item.updated)
