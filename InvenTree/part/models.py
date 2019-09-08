@@ -64,21 +64,32 @@ class PartCategory(InvenTreeTree):
         verbose_name = "Part Category"
         verbose_name_plural = "Part Categories"
 
+    def get_parts(self, cascade=True):
+        """ Return a queryset for all parts under this category.
+
+        args:
+            cascade - If True, also look under subcategories (default = True)
+        """
+
+        if cascade:
+            """ Select any parts which exist in this category or any child categories """
+            query = Part.objects.filter(category__in=self.getUniqueChildren(include_self=True))
+        else:
+            query = Part.objects.filter(category=self.pk)
+
+        return query
+
+
     @property
     def item_count(self):
         return self.partcount()
 
-    def partcount(self, cascade=True, active=True):
+    def partcount(self, cascade=True, active=False):
         """ Return the total part count under this category
         (including children of child categories)
         """
 
-        cats = [self.id]
-
-        if cascade:
-            cats += [cat for cat in self.getUniqueChildren()]
-
-        query = Part.objects.filter(category__in=cats)
+        query = self.get_parts(cascade=cascade)
 
         if active:
             query = query.filter(active=True)
@@ -88,7 +99,7 @@ class PartCategory(InvenTreeTree):
     @property
     def has_parts(self):
         """ True if there are any parts in this category """
-        return self.parts.count() > 0
+        return self.partcount() > 0
 
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')

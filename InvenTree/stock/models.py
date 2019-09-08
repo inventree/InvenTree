@@ -34,9 +34,6 @@ class StockLocation(InvenTreeTree):
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
 
-    def has_items(self):
-        return self.stock_items.count() > 0
-
     def format_barcode(self):
         """ Return a JSON string for formatting a barcode for this StockLocation object """
 
@@ -49,16 +46,34 @@ class StockLocation(InvenTreeTree):
             }
         )
 
+    def get_stock_items(self, cascade=True):
+        """ Return a queryset for all stock items under this category.
+
+        Args:
+            cascade: If True, also look under sublocations (default = True)
+        """
+
+        if cascade:
+            query = StockItem.objects.filter(location__in=self.getUniqueChildren(include_self=True))
+        else:
+            query = StockItem.objects.filter(location=self.pk)
+
+        return query
+
     def stock_item_count(self, cascade=True):
         """ Return the number of StockItem objects which live in or under this category
         """
 
-        if cascade:
-            query = StockItem.objects.filter(location__in=self.getUniqueChildren())
-        else:
-            query = StockItem.objects.filter(location=self)
+        return self.get_stock_items(cascade).count()
 
-        return query.count()
+    def has_items(self, cascade=True):
+        """ Return True if there are StockItems existing in this category.
+
+        Args:
+            cascade: If True, also search an sublocations (default = True)
+        """
+        return self.stock_item_count(cascade) > 0
+
 
     @property
     def item_count(self):
