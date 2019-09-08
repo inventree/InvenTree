@@ -188,12 +188,12 @@ class StockItem(models.Model):
                 if self.part.variant_of is not None:
                     if StockItem.objects.filter(part__variant_of=self.part.variant_of, serial=self.serial).exclude(id=self.id).exists():
                         raise ValidationError({
-                            'serial': _('A part with this serial number already exists for template part {part}'.format(part=self.part.variant_of))
+                            'serial': _('A stock item with this serial number already exists for template part {part}'.format(part=self.part.variant_of))
                         })
                 else:
-                    if StockItem.objects.filter(serial=self.serial).exclude(id=self.id).exists():
+                    if StockItem.objects.filter(part=self.part, serial=self.serial).exclude(id=self.id).exists():
                         raise ValidationError({
-                            'serial': _('A part with this serial number already exists')
+                            'serial': _('A stock item with this serial number already exists')
                         })
         except Part.DoesNotExist:
             pass
