@@ -223,6 +223,9 @@ class StockExport(AjaxView):
         stock_items = stock_items.filter(customer=None)
         stock_items = stock_items.filter(belongs_to=None)
 
+        # Pre-fetch related fields to reduce DB queries
+        stock_items = stock_items.prefetch_related('part', 'supplier_part__supplier', 'location', 'purchase_order', 'build')
+
         # Column headers
         headers = [
             _('Stock ID'),

@@ -5,6 +5,10 @@ from django.core.exceptions import ValidationError
 from .validators import validate_overage, validate_part_name
 from . import helpers
 
+from mptt.exceptions import InvalidMove
+
+from stock.models import StockLocation
+
 
 class ValidatorTest(TestCase):
 
@@ -102,6 +106,54 @@ class TestDownloadFile(TestCase):
         helpers.DownloadFile("hello world", "out.txt")
         helpers.DownloadFile(bytes("hello world".encode("utf8")), "out.bin")
 
+
+class TestMPTT(TestCase):
+    """ Tests for the MPTT tree models """
+
+    fixtures = [
+        'location',
+    ]
+
+    def setUp(self):
+        super().setUp()
+
+        StockLocation.objects.rebuild()
+
+    def test_self_as_parent(self):
+        """ Test that we cannot set self as parent """
+
+        loc = StockLocation.objects.get(pk=4)
+        loc.parent = loc
+
+        with self.assertRaises(InvalidMove):
+            loc.save()
+
+    def test_child_as_parent(self):
+        """ Test that we cannot set a child as parent """
+
+        parent = StockLocation.objects.get(pk=4)
+        child = StockLocation.objects.get(pk=5)
+
+        parent.parent = child
+        
+        with self.assertRaises(InvalidMove):
+            parent.save()
+
+    def test_move(self):
+        """ Move an item to a different tree """
+
+        drawer = StockLocation.objects.get(name='Drawer_1')
+
+        # Record the tree ID
+        tree = drawer.tree_id
+
+        home = StockLocation.objects.get(name='Home')
+
+        drawer.parent = home
+        drawer.save()
+
+        self.assertNotEqual(tree, drawer.tree_id)
+        
 
 class TestSerialNumberExtraction(TestCase):
     """ Tests for serial number extraction code """
