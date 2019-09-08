@@ -330,7 +330,9 @@ function loadBomTable(table, options) {
                 },
                 {
                     method: 'PATCH',
-                    reloadOnSuccess: true
+                    success: function() {
+                        reloadBomTable(table);
+                    }
                 }
             );
         });

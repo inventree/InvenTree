@@ -6,7 +6,11 @@
     name: Electronics
     description: Electronic components
     parent: null
-    default_location: 1  # Home
+    default_location: 1
+    level: 0
+    tree_id: 1
+    lft: 1
+    rght: 12
 
 - model: part.partcategory
   pk: 2
@@ -15,6 +19,10 @@
     description: Resistors
     parent: 1
     default_location: null
+    level: 1
+    tree_id: 1
+    lft: 2
+    rght: 3
 
 - model: part.partcategory
   pk: 3
@@ -23,6 +31,10 @@
     description: Capacitors
     parent: 1
     default_location: null
+    level: 1
+    tree_id: 1
+    lft: 4
+    rght: 5
 
 - model: part.partcategory
   pk: 4
@@ -31,6 +43,10 @@
     description: Integrated Circuits
     parent: 1
     default_location: null
+    level: 1
+    tree_id: 1
+    lft: 6
+    rght: 11
 
 - model: part.partcategory
   pk: 5
@@ -39,6 +55,10 @@
     description: Microcontrollers
     parent: 4
     default_location: null
+    level: 2
+    tree_id: 1
+    lft: 7
+    rght: 8
 
 - model: part.partcategory
   pk: 6
@@ -47,6 +67,10 @@
     description: Communication interfaces
     parent: 4
     default_location: null
+    level: 2
+    tree_id: 1
+    lft: 9
+    rght: 10
 
 - model: part.partcategory
   pk: 7
@@ -54,6 +78,10 @@
     name: Mechanical
     description: Mechanical componenets
     default_location: null
+    level: 0
+    tree_id: 2
+    lft: 1
+    rght: 4
     
 - model: part.partcategory
   pk: 8
@@ -62,3 +90,7 @@
     description: Screws, bolts, etc
     parent: 7
     default_location: 5
+    level: 1
+    tree_id: 2
+    lft: 2
+    rght: 3

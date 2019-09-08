@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from mptt.models import TreeForeignKey
+
 from datetime import datetime
 from InvenTree import helpers
 
@@ -34,9 +36,6 @@ class StockLocation(InvenTreeTree):
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
 
-    def has_items(self):
-        return self.stock_items.count() > 0
-
     def format_barcode(self):
         """ Return a JSON string for formatting a barcode for this StockLocation object """
 
@@ -49,16 +48,33 @@ class StockLocation(InvenTreeTree):
             }
         )
 
+    def get_stock_items(self, cascade=True):
+        """ Return a queryset for all stock items under this category.
+
+        Args:
+            cascade: If True, also look under sublocations (default = True)
+        """
+
+        if cascade:
+            query = StockItem.objects.filter(location__in=self.getUniqueChildren(include_self=True))
+        else:
+            query = StockItem.objects.filter(location=self.pk)
+
+        return query
+
     def stock_item_count(self, cascade=True):
         """ Return the number of StockItem objects which live in or under this category
         """
 
-        if cascade:
-            query = StockItem.objects.filter(location__in=self.getUniqueChildren())
-        else:
-            query = StockItem.objects.filter(location=self)
+        return self.get_stock_items(cascade).count()
 
-        return query.count()
+    def has_items(self, cascade=True):
+        """ Return True if there are StockItems existing in this category.
+
+        Args:
+            cascade: If True, also search an sublocations (default = True)
+        """
+        return self.stock_item_count(cascade) > 0
 
     @property
     def item_count(self):
@@ -277,9 +293,9 @@ class StockItem(models.Model):
     supplier_part = models.ForeignKey('company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
                                       help_text='Select a matching supplier part for this stock item')
 
-    location = models.ForeignKey(StockLocation, on_delete=models.DO_NOTHING,
-                                 related_name='stock_items', blank=True, null=True,
-                                 help_text='Where is this stock item located?')
+    location = TreeForeignKey(StockLocation, on_delete=models.DO_NOTHING,
+                              related_name='stock_items', blank=True, null=True,
+                              help_text='Where is this stock item located?')
 
     belongs_to = models.ForeignKey('self', on_delete=models.DO_NOTHING,
                                    related_name='owned_parts', blank=True, null=True,
