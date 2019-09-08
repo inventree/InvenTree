@@ -31,6 +31,7 @@ from .forms import EditStockItemForm
 from .forms import AdjustStockForm
 from .forms import TrackingEntryForm
 from .forms import SerializeStockForm
+from .forms import ExportOptionsForm
 
 
 class StockIndex(ListView):
@@ -117,6 +118,38 @@ class StockLocationQRCode(QRCodeView):
             return loc.format_barcode()
         except StockLocation.DoesNotExist:
             return None
+
+
+class StockExportOptions(AjaxView):
+    """ Form for selecting StockExport options """
+
+    model = StockLocation
+    ajax_form_title = 'Stock Export Options'
+    form_class = ExportOptionsForm
+
+    def post(self, request, *args, **kwargs):
+
+        self.request = request
+
+        fmt = request.POST.get('file_format', 'csv').lower()
+        cascade = str2bool(request.POST.get('include_sublocations', True))
+
+        # Format a URL to redirect to
+        url = reverse('stock-export')
+
+        url += '?format=' + fmt
+        url += '&cascade=' + str(cascade)
+
+        data = {
+            'form_valid': True,
+            'format': fmt,
+            'cascade': cascade
+        }
+
+        return self.renderJsonResponse(self.request, self.form_class(), data=data)
+
+    def get(self, request, *args, **kwargs):
+        return self.renderJsonResponse(request, self.form_class())
 
 
 class StockExport(AjaxView):

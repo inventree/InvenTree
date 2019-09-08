@@ -96,6 +96,37 @@ class SerializeStockForm(forms.ModelForm):
         ]
 
 
+class ExportOptionsForm(HelperForm):
+    """ Form for selecting stock export options """
+
+    file_format = forms.ChoiceField(label=_('File Format'), help_text=_('Select output file format'))
+
+    include_sublocations = forms.BooleanField(required=False, initial=True, help_text=_("Include stock items in sub locations"))
+
+    class Meta:
+        model = StockLocation
+        fields = [
+            'file_format',
+            'include_sublocations',
+        ]
+
+    def get_format_choices(self):
+        """ File format choices """
+
+        choices = [
+            ('csv', 'CSV'),
+            ('xls', 'XLS'),
+            ('xlsx', 'XLSX'),
+        ]
+
+        return choices
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['file_format'].choices = self.get_format_choices()
+
+
 class AdjustStockForm(forms.ModelForm):
     """ Form for performing simple stock adjustments.
 

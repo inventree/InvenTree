@@ -70,6 +70,25 @@
         sessionStorage.removeItem('inventree-show-part-locations');
     });
 
+    $("#location-export").click(function() {
+        launchModalForm("{% url 'stock-export-options' %}",
+            {
+                success: function(response) {
+                    var url = "{% url 'stock-export' %}";
+                    
+                    url += "?format=" + response.format;
+                    url += "&cascade=" + response.cascade;
+                    
+                    {% if location %}
+                    url += "&location={{ location.id }}";
+                    {% endif %}
+
+                    location.href = url;
+                }
+            }
+        );
+    });
+
     $('#location-create').click(function () {
         launchModalForm("{% url 'stock-location-create' %}",
                         {
