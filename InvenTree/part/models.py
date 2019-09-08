@@ -265,17 +265,9 @@ class Part(models.Model):
 
     def set_category(self, category):
 
-        if not type(category) == PartCategory:
-            raise ValidationError({
-                'category': _('Invalid object supplied to part.set_category')
-            })
-
-        try:
-            # Already in this category!
-            if category == self.category:
-                return
-        except PartCategory.DoesNotExist:
-            pass
+        # Ignore if the category is already the same
+        if self.category == category:
+            return
 
         self.category = category
         self.save()

@@ -19,7 +19,7 @@ class BomItemTest(TestCase):
 
     def test_str(self):
         b = BomItem.objects.get(id=1)
-        self.assertEqual(str(b), '10 x M2x4 LPHS to make Bob')
+        self.assertEqual(str(b), '10 x M2x4 LPHS to make BOB | Bob | A2')
 
     def test_has_bom(self):
         self.assertFalse(self.orphan.has_bom)

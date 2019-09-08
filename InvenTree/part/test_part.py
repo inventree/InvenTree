@@ -8,7 +8,7 @@ from django.test import TestCase
 import os
 
 from .models import Part
-from .models import rename_part_image
+from .models import rename_part_image, match_part_names
 from .templatetags import inventree_extras
 
 
@@ -44,6 +44,10 @@ class PartTest(TestCase):
 
         self.C1 = Part.objects.get(name='C_22N_0805')
 
+    def test_str(self):
+        p = Part.objects.get(pk=100)
+        self.assertEqual(str(p), "BOB | Bob | A2 - Can we build it?")
+
     def test_metadata(self):
         self.assertEqual(self.R1.name, 'R_2K2_0805')
         self.assertEqual(self.R1.get_absolute_url(), '/part/3/')
@@ -75,5 +79,10 @@ class PartTest(TestCase):
         self.assertIn(self.R1.name, barcode)
 
     def test_copy(self):
-
         self.R2.deepCopy(self.R1, image=True, bom=True)
+
+    def test_match_names(self):
+
+        matches = match_part_names('M2x5 LPHS')
+
+        self.assertTrue(len(matches) > 0)
