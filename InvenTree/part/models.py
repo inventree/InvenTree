@@ -382,13 +382,11 @@ class Part(models.Model):
             return self.default_location
         elif self.category:
             # Traverse up the category tree until we find a default location
-            cat = self.category
+            cats = self.category.get_ancestors(ascending=True, include_self=True)
 
-            while cat:
-                if cat.default_location:
+            for cat in cats:
+                if cat.defaul_location:
                     return cat.default_location
-                else:
-                    cat = cat.parent
 
         # Default case - no default category found
         return None
