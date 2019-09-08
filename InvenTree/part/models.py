@@ -385,7 +385,7 @@ class Part(models.Model):
             cats = self.category.get_ancestors(ascending=True, include_self=True)
 
             for cat in cats:
-                if cat.defaul_location:
+                if cat.default_location:
                     return cat.default_location
 
         # Default case - no default category found

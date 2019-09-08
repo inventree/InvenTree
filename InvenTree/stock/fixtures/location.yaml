@@ -5,6 +5,10 @@
   fields:
     name: 'Home'
     description: 'My house'
+    level: 0
+    tree_id: 1
+    lft: 1
+    rght: 6
 
 - model: stock.stocklocation
   pk: 2
@@ -12,6 +16,10 @@
     name: 'Bathroom'
     description: 'Where I keep my bath'
     parent: 1
+    level: 1
+    tree_id: 1
+    lft: 2
+    rght: 3
 
 - model: stock.stocklocation
   pk: 3
@@ -19,12 +27,20 @@
     name: 'Dining Room'
     description: 'A table lives here'
     parent: 1
+    level: 0
+    tree_id: 1
+    lft: 4
+    rght: 5
 
 - model: stock.stocklocation
   pk: 4
   fields:
     name: 'Office'
     description: 'Place of work'
+    level: 0
+    tree_id: 2
+    lft: 1
+    rght: 8
 
 - model: stock.stocklocation
   pk: 5
@@ -32,6 +48,10 @@
     name: 'Drawer_1'
     description: 'In my desk'
     parent: 4
+    level: 0
+    tree_id: 2
+    lft: 2
+    rght: 3
 
 - model: stock.stocklocation
   pk: 6
@@ -39,6 +59,10 @@
     name: 'Drawer_2'
     description: 'Also in my desk'
     parent: 4
+    level: 0
+    tree_id: 2
+    lft: 4
+    rght: 5
     
 - model: stock.stocklocation
   pk: 7
@@ -46,3 +70,7 @@
     name: 'Drawer_3'
     description: 'Again, in my desk'
     parent: 4
+    level: 0
+    tree_id: 2
+    lft: 6
+    rght: 7

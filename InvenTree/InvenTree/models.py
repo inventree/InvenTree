@@ -82,7 +82,7 @@ class InvenTreeTree(MPTTModel):
     @property
     def has_children(self):
         """ True if there are any children under this item """
-        return self.getUniqueChildren().count() > 0
+        return self.getUniqueChildren(include_self=False).count() > 0
 
     def getAcceptableParents(self):
         """ Returns a list of acceptable parent items within this model
@@ -157,7 +157,7 @@ class InvenTreeTree(MPTTModel):
             pass
 
         # Ensure that the new parent is not already a child
-        if self.id in self.getUniqueChildren(include_self=False):
+        if self.pk is not None and self.id in self.getUniqueChildren(include_self=False):
             raise ValidationError("Category cannot set a child as parent")
 
     def __str__(self):

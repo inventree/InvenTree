@@ -48,7 +48,7 @@ class CategoryTest(TestCase):
     def test_unique_childs(self):
         """ Test the 'unique_children' functionality """
 
-        childs = self.electronics.getUniqueChildren()
+        childs = [item.pk for item in self.electronics.getUniqueChildren()]
 
         self.assertIn(self.transceivers.id, childs)
         self.assertIn(self.ic.id, childs)
@@ -58,7 +58,7 @@ class CategoryTest(TestCase):
     def test_unique_parents(self):
         """ Test the 'unique_parents' functionality """
         
-        parents = self.transceivers.getUniqueParents()
+        parents = [item.pk for item in self.transceivers.getUniqueParents()]
 
         self.assertIn(self.electronics.id, parents)
         self.assertIn(self.ic.id, parents)

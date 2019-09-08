@@ -67,15 +67,18 @@ class StockTest(TestCase):
 
         # Move one of the drawers
         self.drawer3.parent = self.home
+        self.drawer3.save()
+
         self.assertNotEqual(self.drawer3.parent, self.office)
         
         self.assertEqual(self.drawer3.pathstring, 'Home/Drawer_3')
 
     def test_children(self):
         self.assertTrue(self.office.has_children)
+
         self.assertFalse(self.drawer2.has_children)
 
-        childs = self.office.getUniqueChildren()
+        childs = [item.pk for item in self.office.getUniqueChildren()]
 
         self.assertIn(self.drawer1.id, childs)
         self.assertIn(self.drawer2.id, childs)
