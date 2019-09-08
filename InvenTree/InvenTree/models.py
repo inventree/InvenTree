@@ -134,32 +134,6 @@ class InvenTreeTree(MPTTModel):
         """
         return '/'.join([item.name for item in self.path])
 
-    def clean(self):
-        """ Custom cleaning
-
-        Parent:
-        Setting the parent of an item to its own child results in an infinite loop.
-        The parent of an item cannot be set to:
-            a) Its own ID
-            b) The ID of any child items that exist underneath it
-
-        Name:
-        Tree node names are limited to a reduced character set
-        """
-
-        super().clean()
-
-        # Parent cannot be set to same ID (this would cause looping)
-        try:
-            if self.parent.id == self.id:
-                raise ValidationError("Category cannot set itself as parent")
-        except:
-            pass
-
-        # Ensure that the new parent is not already a child
-        if self.pk is not None and self.id in self.getUniqueChildren(include_self=False):
-            raise ValidationError("Category cannot set a child as parent")
-
     def __str__(self):
         """ String representation of a category is the full path to that category """
 
