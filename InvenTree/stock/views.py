@@ -18,7 +18,7 @@ from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
 
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import str2bool, DownloadFile
 from InvenTree.helpers import ExtractSerialNumbers
 from datetime import datetime
 
@@ -117,6 +117,42 @@ class StockLocationQRCode(QRCodeView):
             return loc.format_barcode()
         except StockLocation.DoesNotExist:
             return None
+
+
+class StockExport(AjaxView):
+    """ Export stock data from a particular location.
+    Returns a file containing stock information for that location.
+    """
+
+    model = StockItem
+
+    def get(self, request, *args, **kwargs):
+
+        location = None
+        loc_id = request.GET.get('location', None)
+        path = 'All-Locations'
+
+        if loc_id:
+            try:
+                location = StockLocation.objects.get(pk=loc_id)
+                path = location.pathstring.replace('/', ':')
+            except (ValueError, StockLocation.DoesNotExist):
+                pass
+
+        export_format = request.GET.get('format', 'csv').lower()
+
+        if export_format not in ['csv', 'xls', 'xslx']:
+            export_format = 'csv'
+
+        filename = 'InvenTree_Stocktake_{loc}_{date}.{fmt}'.format(
+            loc=path,
+            date=datetime.now().strftime("%d-%b-%Y"),
+            fmt=export_format
+        )
+
+        filedata = ""
+
+        return DownloadFile(filedata, filename)
 
 
 class StockItemQRCode(QRCodeView):
