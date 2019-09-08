@@ -1,0 +1,32 @@
+# Create some PartParameter templtes
+
+- model: part.PartParameterTemplate
+  pk: 1
+  fields:
+    name: Length
+    units: mm
+
+- model: part.PartParameterTemplate
+  pk: 2
+  fields:
+    name: Width
+    units: mm
+
+- model: part.PartParameterTemplate
+  pk: 3
+  fields:
+    name: Thickness
+    units: mm
+
+# And some parameters (requires part.yaml)
+- model: part.PartParameter
+  fields:
+    part: 1
+    template: 1
+    data: 4
+
+- model: part.PartParameter
+  fields:
+    part: 2
+    template: 1
+    data: 12

@@ -1065,18 +1065,13 @@ class PartParameterTemplate(models.Model):
         super().validate_unique(exclude)
 
         try:
-            others = PartParameterTemplate.objects.exclude(id=self.id).filter(name__iexact=self.name)
+            others = PartParameterTemplate.objects.filter(name__iexact=self.name).exclude(pk=self.pk)
 
             if others.exists():
                 msg = _("Parameter template name must be unique")
                 raise ValidationError({"name": msg})
         except PartParameterTemplate.DoesNotExist:
             pass
-
-    @property
-    def instance_count(self):
-        """ Return the number of instances of this Parameter Template """
-        return self.instances.count()
 
     name = models.CharField(max_length=100, help_text='Parameter Name', unique=True)
 
@@ -1096,7 +1091,7 @@ class PartParameter(models.Model):
     def __str__(self):
         # String representation of a PartParameter (used in the admin interface)
         return "{part} : {param} = {data}{units}".format(
-            part=str(self.part),
+            part=str(self.part.full_name),
             param=str(self.template.name),
             data=str(self.data),
             units=str(self.template.units)
@@ -1106,8 +1101,7 @@ class PartParameter(models.Model):
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE,
-                             related_name='parameters', help_text='Parent Part')
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', help_text='Parent Part')
 
     template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', help_text='Parameter Template')
 

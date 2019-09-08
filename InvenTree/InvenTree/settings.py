@@ -58,9 +58,7 @@ cors_opt = CONFIG.get('cors', None)
 if cors_opt:
     CORS_ORIGIN_ALLOW_ALL = cors_opt.get('allow_all', False)
 
-    if CORS_ORIGIN_ALLOW_ALL:
-        eprint("Warning: CORS requests are allowed for any domain!")
-    else:
+    if not CORS_ORIGIN_ALLOW_ALL:
         CORS_ORIGIN_WHITELIST = cors_opt.get('whitelist', [])
 
 if DEBUG:
