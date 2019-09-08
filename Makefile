@@ -7,8 +7,10 @@ clean:
 	rm -rf .tox
 	rm -f .coverage
 
+update: backup migrate
+
 # Perform database migrations (after schema changes are made)
-migrate: backup
+migrate:
 	python3 InvenTree/manage.py makemigrations common
 	python3 InvenTree/manage.py makemigrations company
 	python3 InvenTree/manage.py makemigrations part
@@ -64,4 +66,4 @@ backup:
 	python3 InvenTree/manage.py dbbackup
 	python3 InvenTree/manage.py mediabackup
 
-.PHONY: clean migrate superuser install mysql style test coverage docreqs docs backup
+.PHONY: clean migrate superuser install mysql style test coverage docreqs docs backup update
