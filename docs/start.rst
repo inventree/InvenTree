@@ -87,6 +87,7 @@ Other shorthand functions are provided for the development and testing process:
 * ``make superuser`` - Create a superuser account
 * ``make migrate`` - Perform database migrations
 * ``make mysql`` - Install packages required for MySQL database backend
+* ``make postgresql`` - Install packages required for PostgreSQL database backend
 * ``make backup`` - Backup database tables and media files
 * ``make test`` - Run all unit tests
 * ``make coverage`` - Run all unit tests and generate code coverage report
