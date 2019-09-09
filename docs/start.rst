@@ -83,6 +83,7 @@ Development and Testing
 Other shorthand functions are provided for the development and testing process:
 
 * ``make install`` - Install all required underlying packages using PIP
+* ``make update`` - Update InvenTree installation (after database configuration)
 * ``make superuser`` - Create a superuser account
 * ``make migrate`` - Perform database migrations
 * ``make mysql`` - Install packages required for MySQL database backend
