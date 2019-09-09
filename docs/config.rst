@@ -26,11 +26,11 @@ InvenTree provides support for multiple database backends - any backend supporte
 
 Database options are specified under the *database* heading in the configuration file. Any option available in the Django documentation can be used here - it is passed through transparently to the management scripts.
 
-**SQLITE:**
+**SQLite:**
 By default, InvenTree uses an sqlite database file : ``inventree_db.sqlite3``. This provides a simple, portable database file that is easy to use for debug and testing purposes. 
 
 
-**MYSQL:** MySQL database backend is supported with the native Django implemetation. To run InvenTree with the MySQL backend, a number of extra packages need to be installed:
+**MySQL:** MySQL database backend is supported with the native Django implemetation. To run InvenTree with the MySQL backend, a number of extra packages need to be installed:
 
 * mysql-server - *MySQL backend server*
 * libmysqlclient-dev - *Required for connecting to the MySQL database in Python*
@@ -38,14 +38,25 @@ By default, InvenTree uses an sqlite database file : ``inventree_db.sqlite3``. T
 
 These requirements can be installed from the base directory with the command ``make mysql``.
 
-It is up to the database adminstrator to create a new database to store inventree data, in addition to a username/password to access the data.
+It is then up to the database adminstrator to create a new MySQL database to store inventree data, in addition to a username/password to access the data.
 
 .. important:: MySQL Collation: 
     When creating the MySQL database, the adminstrator must ensure that the collation option is set to *utf8_unicode_520_ci* to ensure that InvenTree features function correctly.
 
-The database options then need to be adjusted to communicate the MySQL backend. Refer to the `Django docs <https://docs.djangoproject.com/en/dev/ref/databases/>`_ for further information.
+The database options (in the ``config.yaml`` file) then need to be adjusted to communicate the MySQL backend. Refer to the `Django docs <https://docs.djangoproject.com/en/dev/ref/databases/>`_ for further information.
 
-**POSTGRESQL:** PostgreSQL database backend is supported with the native Django implementation. Note that to use this backend, the ``psycopg2`` Python library must first be installed.
+**PostgreSQL:** PostgreSQL database backend is supported with the native Django implementation. Note that to use this backend, the following system packages must be installed:
+
+* postgresql
+* postgresql-contrib
+* libpq-dev
+* (pip3) psycopg2
+
+These requirements can be installed from the base directory with the command ``make postgresql``.
+
+It is then up to the database adminstrator to create a new PostgreSQL database to store inventree data, in addition to a username/password to access the data.
+
+The database options (in the ``config.yaml`` file) then need to be adjusted to communicate the PostgreSQL backend. Refer to the `Django docs <https://docs.djangoproject.com/en/dev/ref/databases/>`_ for further information.
 
 Allowed Hosts / CORS
 --------------------

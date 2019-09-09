@@ -34,9 +34,13 @@ superuser:
 
 # Install pre-requisites for mysql setup
 mysql:
-	apt-get install mysql-server
-	apt-get install libmysqlclient-dev
+	apt-get install mysql-server libmysqlclient-dev
 	pip3 install mysqlclient
+
+# Install pre-requisites for postgresql setup
+postgresql:
+	apt-get install postgresql postgresql-contrib libpq-dev
+	pip3 install psycopg2
 
 # Run PEP style checks against source code
 style:
@@ -66,4 +70,4 @@ backup:
 	python3 InvenTree/manage.py dbbackup
 	python3 InvenTree/manage.py mediabackup
 
-.PHONY: clean migrate superuser install mysql style test coverage docreqs docs backup update
+.PHONY: clean migrate superuser install mysql postgresql style test coverage docreqs docs backup update
