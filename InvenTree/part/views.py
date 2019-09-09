@@ -1166,12 +1166,29 @@ class PartExport(AjaxView):
         """ Extract part list from the POST parameters.
         Parts can be supplied as:
         
-        - List of part PK values
         - Part category
+        - List of part PK values
         """
 
-        part_list = Part.objects.all()
+        # Filter by part category
+        cat_id = request.GET.get('category', None)
 
+        print('cat_id:', cat_id)
+
+        part_list = None
+
+        if cat_id is not None:
+            try:
+                category = PartCategory.objects.get(pk=cat_id)
+                part_list = category.get_parts()
+            except (ValueError, PartCategory.DoesNotExist):
+                pass
+
+        # Backup - All parts
+        if part_list is None:
+            part_list = Part.objects.all()
+
+        # Also optionally filter by explicit list of part IDs
         part_ids = request.GET.get('parts', '')
         parts = []
 
@@ -1181,19 +1198,8 @@ class PartExport(AjaxView):
             except ValueError:
                 pass
 
-        # Filter by list of Part IDs
         if len(parts) > 0:
             part_list = part_list.filter(pk__in=parts)
-
-        # Filter by part category
-        cat_id = request.GET.get('category', None)
-
-        if cat_id is not None:
-            try:
-                category = PartCategory.objects.get(cat_id)
-                part_list = part_list.filter(category=category)
-            except (ValueError, PartCategory.DoesNotExist):
-                pass
 
         # Prefetch related fields to reduce DB hits
         part_list = part_list.prefetch_related(
