@@ -1162,15 +1162,59 @@ class BomUpload(FormView):
 class PartExport(AjaxView):
     """ Export a CSV file containing information on multiple parts """
 
-    def get(self, request, *args, **kwargs):
-        part = request.GET.get('parts', '')
-        parts = []
+    def get_parts(self, request):
+        """ Extract part list from the POST parameters.
+        Parts can be supplied as:
         
-        for pk in part.split(','):
+        - Part category
+        - List of part PK values
+        """
+
+        # Filter by part category
+        cat_id = request.GET.get('category', None)
+
+        print('cat_id:', cat_id)
+
+        part_list = None
+
+        if cat_id is not None:
             try:
-                parts.append(Part.objects.get(pk=int(pk)))
-            except (Part.DoesNotExist, ValueError):
-                continue
+                category = PartCategory.objects.get(pk=cat_id)
+                part_list = category.get_parts()
+            except (ValueError, PartCategory.DoesNotExist):
+                pass
+
+        # Backup - All parts
+        if part_list is None:
+            part_list = Part.objects.all()
+
+        # Also optionally filter by explicit list of part IDs
+        part_ids = request.GET.get('parts', '')
+        parts = []
+
+        for pk in part_ids.split(','):
+            try:
+                parts.append(int(pk))
+            except ValueError:
+                pass
+
+        if len(parts) > 0:
+            part_list = part_list.filter(pk__in=parts)
+
+        # Prefetch related fields to reduce DB hits
+        part_list = part_list.prefetch_related(
+            'category',
+            'used_in',
+            'builds',
+            'supplier_parts__purchase_order_line_items',
+            'stock_items__allocations',
+        )
+
+        return part_list
+
+    def get(self, request, *args, **kwargs):
+
+        parts = self.get_parts(request)
 
         headers = [
             'ID',
@@ -1187,10 +1231,16 @@ class PartExport(AjaxView):
             'Component',
             'Template',
             'Trackable',
+            'Purchaseable',
             'Salable',
             'Active',
             'Virtual',
-            'Stock Info',  # Spacer between part data and stock data
+
+            # Part meta-data
+            'Used In',
+
+            # Stock Information
+            'Stock Info',
             'In Stock',
             'Allocated',
             'Building',
@@ -1222,8 +1272,14 @@ class PartExport(AjaxView):
             line.append(part.pk)
             line.append(part.name)
             line.append(part.description)
-            line.append(str(part.category))
-            line.append(part.category.pk)
+
+            if part.category:
+                line.append(str(part.category))
+                line.append(part.category.pk)
+            else:
+                line.append('')
+                line.append('')
+
             line.append(part.IPN)
             line.append(part.revision)
             line.append(part.URL)
@@ -1233,9 +1289,13 @@ class PartExport(AjaxView):
             line.append(part.component)
             line.append(part.is_template)
             line.append(part.trackable)
+            line.append(part.purchaseable)
             line.append(part.salable)
             line.append(part.active)
             line.append(part.virtual)
+
+            # Part meta-data
+            line.append(part.used_in_count)
 
             # Stock information
             line.append('')
@@ -1244,6 +1304,7 @@ class PartExport(AjaxView):
             line.append(part.quantity_being_built)
             line.append(part.on_order)
 
+            # Supplier Information
             if len(supplier_names) > 0:
                 line.append('')
 
