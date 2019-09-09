@@ -1187,6 +1187,7 @@ class PartExport(AjaxView):
             'Component',
             'Template',
             'Trackable',
+            'Purchaseable',
             'Salable',
             'Active',
             'Virtual',
@@ -1233,6 +1234,7 @@ class PartExport(AjaxView):
             line.append(part.component)
             line.append(part.is_template)
             line.append(part.trackable)
+            line.append(part.purchaseable)
             line.append(part.salable)
             line.append(part.active)
             line.append(part.virtual)
