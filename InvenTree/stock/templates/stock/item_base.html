@@ -1,0 +1,248 @@
+{% extends "stock/stock_app_base.html" %}
+{% load static %}
+{% block content %}
+
+<div class='row'>
+    <div class='col-sm-6'>
+        <h3>Stock Item Details</h3>
+        {% if item.serialized %}
+        <p><i>{{ item.part.full_name}} # {{ item.serial }}</i></p>
+        {% else %}
+        <p><i>{{ item.quantity }} &times {{ item.part.full_name }}</i></p>
+        {% endif %}
+        <p>
+            <div class='btn-group'>
+                {% include "qr_button.html" %}
+                {% if item.in_stock %}
+                {% if not item.serialized %}
+                <button type='button' class='btn btn-default btn-glyph' id='stock-add' title='Add to stock'>
+                    <span class='glyphicon glyphicon-plus-sign' style='color: #1a1;'/>
+                </button>
+                <button type='button' class='btn btn-default btn-glyph' id='stock-remove' title='Take from stock'>
+                    <span class='glyphicon glyphicon-minus-sign' style='color: #a11;'/>
+                </button>
+                <button type='button' class='btn btn-default btn-glyph' id='stock-count' title='Count stock'>
+                    <span class='glyphicon glyphicon-ok-circle'/>
+                </button>
+                {% if item.part.trackable %}
+                <button type='button' class='btn btn-default btn-glyph' id='stock-serialize' title='Serialize stock'>
+                    <span class='glyphicon glyphicon-th-list'/>
+                </button>
+                {% endif %}
+                {% endif %}
+                <button type='button' class='btn btn-default btn-glyph' id='stock-move' title='Transfer stock'>
+                    <span class='glyphicon glyphicon-transfer' style='color: #11a;'/>
+                </button>
+                <button type='button' class='btn btn-default btn-glyph' id='stock-duplicate' title='Duplicate stock item'>
+                    <span class='glyphicon glyphicon-duplicate'/>
+                </button>
+                {% endif %}
+                <button type='button' class='btn btn-default btn-glyph' id='stock-edit' title='Edit stock item'>
+                    <span class='glyphicon glyphicon-edit'/>
+                </button>
+                <button type='button' class='btn btn-default btn-glyph' id='stock-delete' title='Edit stock item'>
+                    <span class='glyphicon glyphicon-trash'/>
+                </button>
+            </div>
+        </p>
+        {% if item.serialized %}
+        <div class='alert alert-block alert-info'>
+            This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted.
+        </div>
+        {% elif item.delete_on_deplete %}
+        <div class='alert alert-block alert-warning'>
+            This stock item will be automatically deleted when all stock is depleted.
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class='row'>
+        <div class='col-sm-6'>
+            <table class="table table-striped">
+            <tr>
+                <td>Part</td>
+                <td>
+                    {% include "hover_image.html" with image=item.part.image hover=True %}
+                    <a href="{% url 'part-stock' item.part.id %}">{{ item.part.full_name }}
+                </td>
+            </tr>
+            {% if item.belongs_to %}
+            <tr>
+                <td>Belongs To</td>
+                <td><a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a></td>
+            </tr>
+            {% elif item.location %}
+            <tr>
+                <td>Location</td>
+                <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
+            </tr>
+            {% endif %}
+            {% if item.serialized %}
+            <tr>
+                <td>Serial Number</td>
+                <td>{{ item.serial }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>Quantity</td>
+                <td>{{ item.quantity }}</td>
+            </tr>
+            {% endif %}
+            {% if item.batch %}
+            <tr>
+                <td>Batch</td>
+                <td>{{ item.batch }}</td>
+            </tr>
+            {% endif %}
+            {% if item.build %}
+            <tr>
+                <td>Build</td>
+                <td><a href="{% url 'build-detail' item.build.id %}">{{ item.build }}</a></td>
+            </tr>
+            {% endif %}
+            {% if item.purchase_order %}
+            <tr>
+                <td>Purchase Order</td>
+                <td><a href="{% url 'purchase-order-detail' item.purchase_order.id %}">{{ item.purchase_order }}</a></td>
+            </tr>
+            {% endif %}
+            {% if item.customer %}
+            <tr>
+                <td>Customer</td>
+                <td>{{ item.customer.name }}</td>
+            </tr>
+            {% endif %}
+            {% if item.URL %}
+            <tr>
+                <td>URL</td>
+                <td><a href="{{ item.URL }}">{{ item.URL }}</a></td>
+            </tr>
+            {% endif %}
+            {% if item.supplier_part %}
+            <tr>
+                <td>Supplier</td>
+                <td><a href="{% url 'company-detail' item.supplier_part.supplier.id %}">{{ item.supplier_part.supplier.name }}</a></td>
+            </tr>
+            <tr>
+                <td>Supplier Part</td>
+                <td><a href="{% url 'supplier-part-detail' item.supplier_part.id %}">{{ item.supplier_part.SKU }}</a></td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>Last Updated</td>
+                <td>{{ item.updated }}</td>
+            </tr>
+            <tr>
+                <td>Last Stocktake</td>
+                {% if item.stocktake_date %}
+                <td>{{ item.stocktake_date }} <span class='badge'>{{ item.stocktake_user }}</span></td>
+                {% else %}
+                <td>No stocktake performed</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>Status</td>
+                <td>{{ item.get_status_display }}</td>
+            </tr>
+            {% if item.notes %}
+            <tr>
+                <td>Notes</td>
+                <td>{{ item.notes }}</td>
+            </tr>
+            {% endif %}
+            </table>
+        </div>
+    </div>
+
+<hr>
+<div class='container-fluid'>
+{% block details %}
+<!-- Specific template information goes here -->
+{% endblock %}
+</div>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+    $("#stock-serialize").click(function() {
+        launchModalForm(
+            "{% url 'stock-item-serialize' item.id %}",
+            {
+                reload: true,
+            }
+        );
+    });
+
+    $("#stock-duplicate").click(function() {
+        launchModalForm(
+            "{% url 'stock-item-create' %}",
+            {
+                follow: true,
+                data: {
+                    copy: {{ item.id }},
+                },
+            }
+        );
+    });
+
+    $("#stock-edit").click(function () {
+        launchModalForm(
+            "{% url 'stock-item-edit' item.id %}",
+            {
+                reload: true,
+                submit_text: "Save",
+            }
+        );
+    });
+
+    $("#show-qr-code").click(function() {
+        launchModalForm("{% url 'stock-item-qr' item.id %}",
+        {
+            no_post: true,
+        });
+    });
+
+    {% if item.in_stock %}
+
+    function itemAdjust(action) {
+        launchModalForm("/stock/adjust/", 
+            {
+                data: {
+                    action: action,
+                    item: {{ item.id }},
+                },
+                reload: true,
+                follow: true,
+            }
+        );
+    }
+
+    $("#stock-move").click(function() {
+        itemAdjust("move");
+    });
+
+    $("#stock-count").click(function() {
+        itemAdjust('count');
+    });
+
+    $('#stock-remove').click(function() {
+        itemAdjust('take');
+    });
+
+    $('#stock-add').click(function() {
+        itemAdjust('add');
+    });
+
+    {% endif %}
+
+    $("#stock-delete").click(function () {
+        launchModalForm(
+                        "{% url 'stock-item-delete' item.id %}",
+                        {
+                            redirect: "{% url 'part-stock' item.part.id %}"
+                        });
+    });
+
+{% endblock %}

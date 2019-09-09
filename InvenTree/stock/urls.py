@@ -24,6 +24,8 @@ stock_item_detail_urls = [
 
     url(r'^add_tracking/', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
 
+    # StockItem detail views
+    url(r'^builds/?', views.StockItemDetail.as_view(template_name='stock/item_builds.html'), name='stock-item-builds'),
     url('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
 ]
 

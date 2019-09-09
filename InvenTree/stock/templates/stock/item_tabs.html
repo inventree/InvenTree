@@ -1,0 +1,8 @@
+<ul class='nav nav-tabs'>
+    <li{% ifequal tab 'history' %} class='active'{% endifequal %}>
+        <a href="{% url 'stock-item-detail' item.id %}">History<span class='badge'>{{ item.tracking_info.count }}</span></a>
+    </li>
+    <li{% ifequal tab 'builds' %} class='active'{% endifequal %}>
+        <a href="{% url 'stock-item-builds' item.id %}">Builds</a>
+    </li>
+</ul>
