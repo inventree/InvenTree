@@ -44,6 +44,7 @@
 
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style="float: right;">
+        <button class='btn btn-default' id='part-export' title='Export Part Data'>Export</button>
         <button class='btn btn-success' id='part-create'>New Part</button>
         <div class='dropdown' style='float: right;'>
             <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown">Options<span class='caret'></span></button>
@@ -103,6 +104,13 @@
                             ]
                         });
     })
+
+    $("#part-export").click(function() {
+        
+        var url = "{% url 'part-export' %}?category={{ category.id }}";
+
+        location.href = url;
+    });
 
     $("#part-create").click(function() {
         launchModalForm(
