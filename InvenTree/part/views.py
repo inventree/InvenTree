@@ -1208,7 +1208,7 @@ class PartExport(AjaxView):
             'builds',
             'supplier_parts__purchase_order_line_items',
             'stock_items__allocations',
-            )
+        )
 
         return part_list
 
