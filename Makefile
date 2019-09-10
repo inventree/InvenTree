@@ -47,7 +47,7 @@ test:
 
 # Run code coverage
 coverage:
-	python3 InvenTree/manage.py check
+	cd InvenTree && python3 manage.py check
 	coverage run InvenTree/manage.py test build common company order part stock InvenTree
 	coverage html
 
