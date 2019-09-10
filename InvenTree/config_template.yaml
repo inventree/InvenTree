@@ -5,7 +5,7 @@
 database:
   # Example configuration - sqlite (default)
   ENGINE: django.db.backends.sqlite3
-  NAME: inventree_db.sqlite3 
+  NAME: '../inventree_default_db.sqlite3' 
   
   # For more complex database installations, further parameters are required
   # Refer to the django documentation for full list of options
@@ -41,11 +41,11 @@ cors:
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
 # By default, it is stored in a directory named 'media' local to the InvenTree directory
 # This should be changed for a production installation
-media_root: './media'
+media_root: '../inventree_media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
 # By default it is stored in a directory named 'static' local to the InvenTree directory
-static_root: './static'
+static_root: '../inventree_static'
 
 # Logging options
 log_queries: False
