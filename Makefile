@@ -11,26 +11,20 @@ update: backup install migrate
 
 # Perform database migrations (after schema changes are made)
 migrate:
-	python3 InvenTree/manage.py makemigrations common
-	python3 InvenTree/manage.py makemigrations company
-	python3 InvenTree/manage.py makemigrations part
-	python3 InvenTree/manage.py makemigrations stock
-	python3 InvenTree/manage.py makemigrations build
-	python3 InvenTree/manage.py makemigrations order
-	python3 InvenTree/manage.py makemigrations
+	cd InvenTree && python3 manage.py makemigrations
 	cd InvenTree && python3 manage.py migrate
 	cd InvenTree && python3 manage.py migrate --run-syncdb
-	python3 InvenTree/manage.py check
+	cd InvenTree && python3 manage.py check
 	cd InvenTree && python3 manage.py collectstatic
 
 # Install all required packages
 install:
 	pip3 install -U -r requirements.txt
-	python3 InvenTree/setup.py
+	cd InvenTree && python3 setup.py
 
 # Create a superuser account
 superuser:
-	python3 InvenTree/manage.py createsuperuser
+	cd InvenTree && python3 manage.py createsuperuser
 
 # Install pre-requisites for mysql setup
 mysql:
@@ -48,12 +42,12 @@ style:
 
 # Run unit tests
 test:
-	python3 InvenTree/manage.py check
-	python3 InvenTree/manage.py test build common company order part stock 
+	cd InvenTree && python3 manage.py check
+	cd InvenTree && python3 manage.py test build common company order part stock 
 
 # Run code coverage
 coverage:
-	python3 InvenTree/manage.py check
+	cd InvenTree && python3 manage.py check
 	coverage run InvenTree/manage.py test build common company order part stock InvenTree
 	coverage html
 
@@ -67,7 +61,7 @@ docs:
 
 # Make database backup
 backup:
-	python3 InvenTree/manage.py dbbackup
-	python3 InvenTree/manage.py mediabackup
+	cd InvenTree && python3 manage.py dbbackup
+	cd InvenTree && python3 manage.py mediabackup
 
 .PHONY: clean migrate superuser install mysql postgresql style test coverage docreqs docs backup update
