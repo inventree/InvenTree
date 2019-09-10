@@ -12,6 +12,7 @@ addons:
 before_install:
     - make install
     - make migrate
+    - cd InvenTree && python3 manage.py createsuper --username InvenTreeAdmin --email admin@inventree.com --noinput
 
 script:
     - git ls-files --exclude-standard --others
