@@ -9,6 +9,7 @@
 
 <div id='button-toolbar'>
     <button class="btn btn-success" id='supplier-create'>New Supplier Part</button>
+    {% if 0 %}
     <div id='opt-dropdown' class="dropdown" style='float: right;'>
         <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
             <span class="caret"></span></button>
@@ -16,6 +17,7 @@
                 <li><a href='#' id='supplier-part-delete' title='Delete supplier parts'>Delete</a></li>
             </ul>
     </div>
+    {% endif %}
 </div>
 
 <table class="table table-striped table-condensed" id='supplier-table' data-toolbar='#button-toolbar'>
@@ -58,9 +60,12 @@
             }
         },
         columns: [
+            /*
+            // TODO - Re-enable the checkbox column for performing actions on multiple supplier parts
             {
                 checkbox: true,
             },
+            */
             {
                 sortable: true,
                 field: 'supplier_name',
