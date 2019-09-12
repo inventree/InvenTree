@@ -93,8 +93,8 @@ InvenTree | {{ company.name }} - Parts
                 {{ pb.cost }}
                 {% if pb.currency %}{{ pb.currency.suffix }}{% endif %}
                 <div class='btn-group' style='float: right;'>
-                    <button title='Edit Price Break' class='btn btn-primary pb-edit-button btn-sm' type='button' url="{% url 'price-break-edit' pb.id %}"><span class='glyphicon glyphicon-small glyphicon-edit'></span></button>
-                    <button title='Delete Price Break' class='btn btn-danger pb-delete-button btn-sm' type='button' url="{% url 'price-break-delete' pb.id %}"><span class='glyphicon glyphicon-small glyphicon-trash'></span></button>
+                    <button title='Edit Price Break' class='btn btn-default btn-sm' type='button' url="{% url 'price-break-edit' pb.id %}"><span class='glyphicon glyphicon-edit'></span></button>
+                    <button title='Delete Price Break' class='btn btn-default btn-sm' type='button' url="{% url 'price-break-delete' pb.id %}"><span class='glyphicon glyphicon-trash'></span></button>
                 </div>
             </td>
         </tr>
