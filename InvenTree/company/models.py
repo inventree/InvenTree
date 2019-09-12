@@ -250,7 +250,8 @@ class SupplierPart(models.Model):
     
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Order multiple')
 
-    lead_time = models.DurationField(blank=True, null=True)
+    # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
+    # lead_time = models.DurationField(blank=True, null=True)
 
     @property
     def manufacturer_string(self):
