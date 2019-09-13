@@ -71,6 +71,10 @@ class PartAdmin(ImportExportModelAdmin):
 
     list_display = ('full_name', 'description', 'total_stock', 'category')
 
+    list_filter = ('active', 'assembly', 'is_template', 'virtual')
+
+    search_fields = ('name', 'description', 'category__name', 'category__description', 'IPN')
+
 
 class PartCategoryResource(ModelResource):
     """ Class for managing PartCategory data import/export """
