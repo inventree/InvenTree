@@ -2,11 +2,12 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 
 
-class PurchaseOrderAdmin(admin.ModelAdmin):
+class PurchaseOrderAdmin(ImportExportModelAdmin):
 
     list_display = (
         'reference',
@@ -17,7 +18,7 @@ class PurchaseOrderAdmin(admin.ModelAdmin):
     )
 
 
-class PurchaseOrderLineItemAdmin(admin.ModelAdmin):
+class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
 
     list_display = (
         'order',
