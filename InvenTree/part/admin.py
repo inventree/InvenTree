@@ -52,9 +52,9 @@ class PartCategoryResource(ModelResource):
 
     parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(PartCategory))
 
-    default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
-
     parent_name = Field(attribute='parent__name', readonly=True)
+
+    default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
 
     class Meta:
         model = PartCategory
@@ -70,10 +70,8 @@ class PartCategoryResource(ModelResource):
 
         super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
 
-        print("Rebuilding PartCategory tree")
-        # Rebuild teh PartCategory tree
+        # Rebuild the PartCategory tree(s)
         PartCategory.objects.rebuild()
-        print("Done!")
 
 
 class PartCategoryAdmin(ImportExportModelAdmin):
