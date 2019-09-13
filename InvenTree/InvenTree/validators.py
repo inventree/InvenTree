@@ -22,7 +22,7 @@ def validate_tree_name(value):
 
     for c in "!@#$%^&*'\"\\/[]{}<>,|+=~`\"":
         if c in str(value):
-            raise ValidationError({'name': _('Illegal character in name')})
+            raise ValidationError(_('Illegal character in name ({x})'.format(x=c)))
 
 
 def validate_overage(value):
