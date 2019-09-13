@@ -56,7 +56,7 @@ class CompanySimpleTest(TestCase):
         zerg = Company.objects.get(pk=3)
         
         self.assertTrue(acme.has_parts)
-        self.assertEqual(acme.part_count, 3)
+        self.assertEqual(acme.part_count, 4)
 
         self.assertTrue(appel.has_parts)
         self.assertEqual(appel.part_count, 2)
