@@ -36,6 +36,8 @@ InvenTree/media
 InvenTree/static
 media
 static
+inventree_media
+inventree_static
 
 # Local config file
 config.yaml

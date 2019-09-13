@@ -213,6 +213,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Extra (optional) URL validators
+# See https://docs.djangoproject.com/en/2.2/ref/validators/#django.core.validators.URLValidator
+
+EXTRA_URL_SCHEMES = CONFIG.get('extra_url_schemes', [])
+
+if not type(EXTRA_URL_SCHEMES) in [list]:
+    eprint("Warning: extra_url_schemes not correctly formatted")
+    EXTRA_URL_SCHEMES = []
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

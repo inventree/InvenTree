@@ -34,6 +34,7 @@ import hashlib
 from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree
+from InvenTree.fields import InvenTreeURLField
 
 from InvenTree.status_codes import BuildStatus, StockStatus, OrderStatus
 
@@ -353,7 +354,7 @@ class Part(models.Model):
 
     revision = models.CharField(max_length=100, blank=True, help_text='Part revision or version number')
 
-    URL = models.URLField(blank=True, help_text='Link to extenal URL')
+    URL = InvenTreeURLField(blank=True, help_text='Link to extenal URL')
 
     image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
 
