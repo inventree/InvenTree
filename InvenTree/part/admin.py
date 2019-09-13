@@ -2,35 +2,33 @@ from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin, ImportExportActionModelAdmin
 from import_export.resources import ModelResource
 from import_export.fields import Field
+import import_export.widgets as widgets
 
 from .models import PartCategory, Part
 from .models import PartAttachment, PartStar
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 
+from stock.models import StockLocation
+from company.models import SupplierPart
+
 
 class PartResource(ModelResource):
     """ Class for managing Part model export """
 
     # Constuct some extra fields for export
-    category = Field(attribute='category__pk', column_name='Category')
+    category = Field(attribute='category', widget=widgets.ForeignKeyWidget(PartCategory))
     
-    category_name = Field(attribute='category__name', column_name='Category Name')
+    default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
+
+    category_name = Field(attribute='category__name', readonly=True)
     
-    default_location = Field(attribute='default_location__pk', column_name='Default Location')
-    
-    default_supplier = Field(attribute='default_supplier__pk', column_name='Default Supplier')
-
-    in_stock = Field(attribute='total_stock')
-
-    on_order = Field(attribute='on_order')
-
-    variant_of = Field(attribute='variant_of__pk')
+    variant_of = Field(attribute='variant_of', widget=widgets.ForeignKeyWidget(Part))
 
     class Meta:
         model = Part
         exclude = [
-            'bom_checksum', 'bom_checked_by', 'bom_checked_date'
+            'image', 'bom_checksum', 'bom_checked_by', 'bom_checked_date'
         ]
 
 
