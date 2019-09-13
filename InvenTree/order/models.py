@@ -202,8 +202,8 @@ class PurchaseOrder(Order):
             raise ValidationError({'supplier': _("Part supplier must match PO supplier")})
 
         if group:
-            # Check if there is already a matching line item
-            matches = PurchaseOrderLineItem.objects.filter(part=supplier_part)
+            # Check if there is already a matching line item (for this PO)
+            matches = self.lines.filter(part=supplier_part)
 
             if matches.count() > 0:
                 line = matches.first()
