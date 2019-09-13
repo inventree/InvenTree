@@ -157,7 +157,15 @@ class POTests(OrderViewTestCase):
         data = json.loads(response.content)
         self.assertTrue(data['form_valid'])
 
-        self.assertEqual(n+1, PurchaseOrder.objects.get(pk=1).lines.count())
+        self.assertEqual(n + 1, PurchaseOrder.objects.get(pk=1).lines.count())
 
         line = PurchaseOrderLineItem.objects.get(order=1, part=100)
         self.assertEqual(line.quantity, 45)
+
+    def test_line_item_edit(self):
+        """ Test editing form for PO line item """
+
+        url = reverse('po-line-item-edit', args=(22,))
+
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
