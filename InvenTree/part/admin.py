@@ -69,6 +69,7 @@ class PartCategoryResource(ModelResource):
         PartCategory.objects.rebuild()
         print("Done!")
 
+
 class PartCategoryAdmin(ImportExportModelAdmin):
 
     resource_class = PartCategoryResource
@@ -86,7 +87,23 @@ class PartStarAdmin(admin.ModelAdmin):
     list_display = ('part', 'user')
 
 
+class BomItemResource(ModelResource):
+    """ Class for managing BomItem data import/export """
+
+    part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
+
+    sub_part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
+
+    class Meta:
+        model = BomItem
+        skip_unchanged = True
+        report_skipped = False
+
+
 class BomItemAdmin(ImportExportModelAdmin):
+
+    resource_class = BomItemResource
+
     list_display = ('part', 'sub_part', 'quantity')
 
 
