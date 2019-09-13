@@ -1,5 +1,5 @@
 from django.contrib import admin
-from import_export.admin import ImportExportModelAdmin, ImportExportActionModelAdmin
+from import_export.admin import ImportExportModelAdmin
 from import_export.resources import ModelResource
 from import_export.fields import Field
 import import_export.widgets as widgets
@@ -20,6 +20,8 @@ class PartResource(ModelResource):
     category = Field(attribute='category', widget=widgets.ForeignKeyWidget(PartCategory))
     
     default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
+
+    default_supplirt = Field(attribute='default_supplier', widget=widgets.ForeignKeyWidget(SupplierPart))
 
     category_name = Field(attribute='category__name', readonly=True)
     
