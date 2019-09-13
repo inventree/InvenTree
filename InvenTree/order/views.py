@@ -243,6 +243,11 @@ class PurchaseOrderReceive(AjaxView):
                 except (PurchaseOrderLineItem.DoesNotExist, ValueError):
                     continue
 
+                # Check that line matches the order
+                if not line.order == self.order:
+                    # TODO - Display a non-field error?
+                    continue
+
                 # Ignore a part that doesn't map to a SupplierPart
                 try:
                     if line.part is None:
@@ -277,6 +282,7 @@ class PurchaseOrderReceive(AjaxView):
 
         return self.renderJsonResponse(request, data=data)
 
+    @transaction.atomic
     def receive_parts(self):
         """ Called once the form has been validated.
         Create new stockitems against received parts.

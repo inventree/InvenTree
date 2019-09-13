@@ -137,7 +137,7 @@ class POTests(OrderViewTestCase):
 
         # POST with a part that does not match the purchase order
         post_data['order'] = 1
-        post_data['part'] = 3
+        post_data['part'] = 7
         response = self.client.post(url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         data = json.loads(response.content)
         self.assertFalse(data['form_valid'])
@@ -169,3 +169,18 @@ class POTests(OrderViewTestCase):
 
         response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
+
+
+class TestPOReceive(OrderViewTestCase):
+    """ Tests for receiving a purchase order """
+
+    def setUp(self):
+        super().setUp()
+
+        self.po = PurchaseOrder.objects.get(pk=1)
+        self.url = reverse('purchase-order-receive', args=(1,))
+
+    def test_receive_lines(self):
+        
+        # TODO
+        pass

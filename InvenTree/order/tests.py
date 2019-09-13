@@ -101,7 +101,7 @@ class OrderTest(TestCase):
         loc = StockLocation.objects.get(id=1)
 
         # There should be two lines against this order
-        self.assertEqual(len(order.pending_line_items()), 2)
+        self.assertEqual(len(order.pending_line_items()), 3)
 
         # Should fail, as order is 'PENDING' not 'PLACED"
         self.assertEqual(order.status, OrderStatus.PENDING)
@@ -117,7 +117,7 @@ class OrderTest(TestCase):
 
         self.assertEqual(line.remaining(), 50)
 
-        self.assertEqual(part.on_order, 350)
+        self.assertEqual(part.on_order, 1350)
 
         # Try to order some invalid things
         with self.assertRaises(django_exceptions.ValidationError):

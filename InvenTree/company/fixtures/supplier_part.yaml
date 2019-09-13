@@ -15,6 +15,13 @@
     supplier: 1
     SKU: 'ACME0002'
 
+- model: company.supplierpart
+  pk: 3
+  fields:
+    part: 1
+    supplier: 1
+    SKU: 'ACME0003'
+
 # Widget purchaseable from ACME
 - model: company.supplierpart
   pk: 100
@@ -33,7 +40,7 @@
 
 # M2x4 LPHS from Zerg Corp
 - model: company.supplierpart
-  pk: 3
+  pk: 7
   fields:
     part: 1
     supplier: 3
