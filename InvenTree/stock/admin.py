@@ -48,6 +48,8 @@ class LocationAdmin(ImportExportModelAdmin):
 
     list_display = ('name', 'pathstring', 'description')
 
+    search_fields = ('name', 'description')
+
 
 class StockItemResource(ModelResource):
     """ Class for managing StockItem data import/export """

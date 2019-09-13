@@ -109,6 +109,8 @@ class PartCategoryAdmin(ImportExportModelAdmin):
 
     list_display = ('name', 'pathstring', 'description')
 
+    search_fields = ('name', 'description')
+
 
 class PartAttachmentAdmin(admin.ModelAdmin):
 
@@ -138,6 +140,8 @@ class BomItemAdmin(ImportExportModelAdmin):
     resource_class = BomItemResource
 
     list_display = ('part', 'sub_part', 'quantity')
+
+    search_fields = ('part__name', 'part__description', 'sub_part__name', 'sub_part__description')
 
 
 class ParameterTemplateAdmin(ImportExportModelAdmin):
