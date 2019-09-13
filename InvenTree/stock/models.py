@@ -23,6 +23,7 @@ from InvenTree import helpers
 
 from InvenTree.status_codes import StockStatus
 from InvenTree.models import InvenTreeTree
+from InvenTree.fields import InvenTreeURLField
 
 from part.models import Part
 
@@ -308,7 +309,7 @@ class StockItem(models.Model):
     serial = models.PositiveIntegerField(blank=True, null=True,
                                          help_text='Serial number for this item')
  
-    URL = models.URLField(max_length=125, blank=True)
+    URL = InvenTreeURLField(max_length=125, blank=True)
 
     batch = models.CharField(max_length=100, blank=True, null=True,
                              help_text='Batch code for this stock item')
@@ -715,7 +716,7 @@ class StockItemTracking(models.Model):
 
     notes = models.CharField(blank=True, max_length=512, help_text='Entry notes')
 
-    URL = models.URLField(blank=True, help_text='Link to external page for further information')
+    URL = InvenTreeURLField(blank=True, help_text='Link to external page for further information')
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 

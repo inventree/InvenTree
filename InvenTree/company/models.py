@@ -19,6 +19,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
+from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import OrderStatus
 from common.models import Currency
 
@@ -85,7 +86,7 @@ class Company(models.Model):
     contact = models.CharField(max_length=100,
                                blank=True, help_text='Point of contact')
 
-    URL = models.URLField(blank=True, help_text='Link to external company information')
+    URL = InvenTreeURLField(blank=True, help_text='Link to external company information')
 
     image = models.ImageField(upload_to=rename_company_image, max_length=255, null=True, blank=True)
 
@@ -238,7 +239,7 @@ class SupplierPart(models.Model):
 
     MPN = models.CharField(max_length=100, blank=True, help_text='Manufacturer part number')
 
-    URL = models.URLField(blank=True, help_text='URL for external supplier part link')
+    URL = InvenTreeURLField(blank=True, help_text='URL for external supplier part link')
 
     description = models.CharField(max_length=250, blank=True, help_text='Supplier part description')
 

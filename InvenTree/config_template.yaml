@@ -47,7 +47,16 @@ media_root: '../inventree_media'
 # By default it is stored in a directory named 'static' local to the InvenTree directory
 static_root: '../inventree_static'
 
+# Optional URL schemes to allow in URL fields
+# By default, only the following schemes are allowed: ['http', 'https', 'ftp', 'ftps']
+# Uncomment the lines below to allow extra schemes
+#extra_url_schemes:
+#  - mailto
+#  - git
+#  - ssh
+
 # Logging options
+# If debug mode is enabled, set log_queries to True to show aggregate database queries in the debug console
 log_queries: False
 
 # Backup options
