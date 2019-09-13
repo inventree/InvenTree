@@ -1741,7 +1741,7 @@ class BomItemCreate(AjaxCreateView):
 
             form.fields['part'].widget = HiddenInput()
 
-        except Part.DoesNotExist:
+        except (ValueError, Part.DoesNotExist):
             pass
 
         return form
@@ -1774,6 +1774,46 @@ class BomItemEdit(AjaxUpdateView):
     form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit BOM item'
+
+    def get_form(self):
+        """ Override get_form() method to filter part selection options
+
+        - Do not allow part to be added to its own BOM
+        - Remove any part items that are already in the BOM
+        """
+
+        form = super().get_form()
+
+        part_id = form['part'].value()
+
+        try:
+            part = Part.objects.get(pk=part_id)
+
+            query = form.fields['sub_part'].queryset
+
+            # Reduce the available selection options
+            query = query.exclude(pk=part_id)
+
+            # Eliminate any options that are already in the BOM,
+            # *except* for the item which is already selected
+            try:
+                sub_part_id = int(form['sub_part'].value())
+            except ValueError:
+                sub_part_id = -1
+
+            existing = [item.pk for item in part.required_parts()]
+
+            if sub_part_id in existing:
+                existing.remove(sub_part_id)
+
+            query = query.exclude(id__in=existing)
+
+            form.fields['sub_part'].queryset = query
+
+        except (ValueError, Part.DoesNotExist):
+            pass
+
+        return form
 
 
 class BomItemDelete(AjaxDeleteView):
