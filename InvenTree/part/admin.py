@@ -14,7 +14,7 @@ from company.models import SupplierPart
 
 
 class PartResource(ModelResource):
-    """ Class for managing Part model export """
+    """ Class for managing Part data import/export """
 
     # Constuct some extra fields for export
     category = Field(attribute='category', widget=widgets.ForeignKeyWidget(PartCategory))
@@ -27,8 +27,10 @@ class PartResource(ModelResource):
 
     class Meta:
         model = Part
+        skip_unchanged = True
+        report_skipped = False
         exclude = [
-            'image', 'bom_checksum', 'bom_checked_by', 'bom_checked_date'
+            'bom_checksum', 'bom_checked_by', 'bom_checked_date'
         ]
 
 
