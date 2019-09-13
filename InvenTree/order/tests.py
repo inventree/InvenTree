@@ -47,10 +47,10 @@ class OrderTest(TestCase):
         for supplier in part.supplier_parts.all():
             open_orders += supplier.open_orders()
 
-        self.assertEqual(len(open_orders), 3)
+        self.assertEqual(len(open_orders), 4)
 
         # Test the total on-order quantity
-        self.assertEqual(part.on_order, 400)
+        self.assertEqual(part.on_order, 1400)
 
     def test_add_items(self):
         """ Test functions for adding line items to an order """
@@ -58,7 +58,7 @@ class OrderTest(TestCase):
         order = PurchaseOrder.objects.get(pk=1)
 
         self.assertEqual(order.status, OrderStatus.PENDING)
-        self.assertEqual(order.lines.count(), 2)
+        self.assertEqual(order.lines.count(), 3)
 
         sku = SupplierPart.objects.get(SKU='ACME-WIDGET')
         part = sku.part
@@ -76,11 +76,11 @@ class OrderTest(TestCase):
         order.add_line_item(sku, 100)
 
         self.assertEqual(part.on_order, 100)
-        self.assertEqual(order.lines.count(), 3)
+        self.assertEqual(order.lines.count(), 4)
 
         # Order the same part again (it should be merged)
         order.add_line_item(sku, 50)
-        self.assertEqual(order.lines.count(), 3)
+        self.assertEqual(order.lines.count(), 4)
         self.assertEqual(part.on_order, 150)
 
         # Try to order a supplier part from the wrong supplier
@@ -132,7 +132,12 @@ class OrderTest(TestCase):
         line = PurchaseOrderLineItem.objects.get(id=2)
         order.receive_line_item(line, loc, 2 * line.quantity, user=None)
 
-        self.assertEqual(part.on_order, 100)
+        self.assertEqual(part.on_order, 1100)
+        self.assertEqual(order.status, OrderStatus.PLACED)
+
+        for line in order.pending_line_items():
+            order.receive_line_item(line, loc, line.quantity, user=None)
+
         self.assertEqual(order.status, OrderStatus.COMPLETE)
 
     def test_export(self):
