@@ -20,16 +20,27 @@ from company.models import SupplierPart
 class PartResource(ModelResource):
     """ Class for managing Part data import/export """
 
-    # Constuct some extra fields for export
+    # ForeignKey fields
     category = Field(attribute='category', widget=widgets.ForeignKeyWidget(PartCategory))
     
     default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
 
-    default_supplirt = Field(attribute='default_supplier', widget=widgets.ForeignKeyWidget(SupplierPart))
+    default_supplier = Field(attribute='default_supplier', widget=widgets.ForeignKeyWidget(SupplierPart))
 
     category_name = Field(attribute='category__name', readonly=True)
     
     variant_of = Field(attribute='variant_of', widget=widgets.ForeignKeyWidget(Part))
+
+    # Extra calculated meta-data (readonly)
+    in_stock = Field(attribute='total_stock', readonly=True, widget=widgets.IntegerWidget())
+
+    on_order = Field(attribute='on_order', readonly=True, widget=widgets.IntegerWidget())
+
+    used_in = Field(attribute='used_in_count', readonly=True, widget=widgets.IntegerWidget())
+
+    allocated = Field(attribute='allocation_count', readonly=True, widget=widgets.IntegerWidget())
+
+    building = Field(attribute='quantity_being_built', readonly=True, widget=widgets.IntegerWidget())
 
     class Meta:
         model = Part
@@ -38,6 +49,20 @@ class PartResource(ModelResource):
         exclude = [
             'bom_checksum', 'bom_checked_by', 'bom_checked_date'
         ]
+
+    def get_queryset(self):
+        """ Prefetch related data for quicker access """
+
+        query = super().get_queryset()
+        query = query.prefetch_related(
+            'category',
+            'used_in',
+            'builds',
+            'supplier_parts__purchase_order_line_items',
+            'stock_items__allocations'
+        )
+
+        return query
 
 
 class PartAdmin(ImportExportModelAdmin):
