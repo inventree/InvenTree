@@ -137,6 +137,10 @@ function loadPartTable(table, url, options={}) {
 
             var display = imageHoverIcon(row.image) + renderLink(name, '/part/' + row.pk + '/');
             
+            if (row.is_template) {
+                display = display + "<span class='label label-info' style='float: right;'>TEMPLATE</span>";
+            }
+
             if (!row.active) {
                 display = display + "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
             }

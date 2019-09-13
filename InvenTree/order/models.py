@@ -5,6 +5,7 @@ Order model definitions
 # -*- coding: utf-8 -*-
 
 from django.db import models, transaction
+from django.db.models import F
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -226,7 +227,7 @@ class PurchaseOrder(Order):
         Any line item where 'received' < 'quantity' will be returned.
         """
 
-        return [line for line in self.lines.all() if line.quantity > line.received]
+        return self.lines.filter(quantity__gt=F('received'))
 
     @transaction.atomic
     def receive_line_item(self, line, location, quantity, user):

@@ -243,6 +243,11 @@ class PurchaseOrderReceive(AjaxView):
                 except (PurchaseOrderLineItem.DoesNotExist, ValueError):
                     continue
 
+                # Check that line matches the order
+                if not line.order == self.order:
+                    # TODO - Display a non-field error?
+                    continue
+
                 # Ignore a part that doesn't map to a SupplierPart
                 try:
                     if line.part is None:
@@ -277,6 +282,7 @@ class PurchaseOrderReceive(AjaxView):
 
         return self.renderJsonResponse(request, data=data)
 
+    @transaction.atomic
     def receive_parts(self):
         """ Called once the form has been validated.
         Create new stockitems against received parts.
@@ -611,13 +617,30 @@ class POLineItemCreate(AjaxCreateView):
 
         valid = form.is_valid()
 
+        # Extract the SupplierPart ID from the form
         part_id = form['part'].value()
 
+        # Extract the Order ID from the form
+        order_id = form['order'].value()
+
         try:
-            SupplierPart.objects.get(id=part_id)
+            order = PurchaseOrder.objects.get(id=order_id)
+        except (ValueError, PurchaseOrder.DoesNotExist):
+            order = None
+            form.errors['order'] = [_('Invalid Purchase Order')]
+            valid = False
+
+        try:
+            sp = SupplierPart.objects.get(id=part_id)
+
+            if order is not None:
+                if not sp.supplier == order.supplier:
+                    form.errors['part'] = [_('Supplier must match for Part and Order')]
+                    valid = False
+
         except (SupplierPart.DoesNotExist, ValueError):
             valid = False
-            form.errors['part'] = [_('This field is required')]
+            form.errors['part'] = [_('Invalid SupplierPart selection')]
 
         data = {
             'form_valid': valid,
@@ -638,6 +661,11 @@ class POLineItemCreate(AjaxCreateView):
         """
 
         form = super().get_form()
+
+        # Limit the available to orders to ones that are PENDING
+        query = form.fields['order'].queryset
+        query = query.filter(status=OrderStatus.PENDING)
+        form.fields['order'].queryset = query
 
         order_id = form['order'].value()
 
@@ -660,7 +688,7 @@ class POLineItemCreate(AjaxCreateView):
 
             form.fields['part'].queryset = query
             form.fields['order'].widget = HiddenInput()
-        except PurchaseOrder.DoesNotExist:
+        except (ValueError, PurchaseOrder.DoesNotExist):
             pass
 
         return form
