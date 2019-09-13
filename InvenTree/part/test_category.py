@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 
 from .models import Part, PartCategory
 
@@ -92,6 +93,20 @@ class CategoryTest(TestCase):
         self.assertEqual(self.mechanical.partcount(False), 2)
 
         self.assertEqual(self.electronics.item_count, self.electronics.partcount())
+
+    def test_invalid_name(self):
+        # Test that an illegal character is prohibited in a category name
+
+        cat = PartCategory(name='test/with/illegal/chars', description='Test category', parent=None)
+
+        with self.assertRaises(ValidationError) as err:
+            cat.full_clean()
+            cat.save()
+            
+        self.assertIn('Illegal character in name', str(err.exception.error_dict.get('name')))
+        
+        cat.name = 'good name'
+        cat.save()
 
     def test_delete(self):
         """ Test that category deletion moves the children properly """
