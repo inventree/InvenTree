@@ -7,7 +7,7 @@ clean:
 	rm -rf .tox
 	rm -f .coverage
 
-update: backup install migrate
+update: backup install migrate static
 
 # Perform database migrations (after schema changes are made)
 migrate:
@@ -15,6 +15,9 @@ migrate:
 	cd InvenTree && python3 manage.py migrate
 	cd InvenTree && python3 manage.py migrate --run-syncdb
 	cd InvenTree && python3 manage.py check
+
+# Collect static files into the correct locations
+static:
 	cd InvenTree && python3 manage.py collectstatic
 
 # Install all required packages
@@ -64,4 +67,4 @@ backup:
 	cd InvenTree && python3 manage.py dbbackup
 	cd InvenTree && python3 manage.py mediabackup
 
-.PHONY: clean migrate superuser install mysql postgresql style test coverage docreqs docs backup update
+.PHONY: clean migrate superuser install mysql postgresql static style test coverage docreqs docs backup update
