@@ -70,7 +70,7 @@ Create an initial superuser (administrator) account for the InvenTree instance:
 Run Development Server
 ----------------------
 
-Run ``python3 InvenTree/manage.py runserver 127.0.0.1:8000`` to launch a development server. This will launch the InvenTree web interface at ``127.0.0.1:8000``. For other options refer to the `django docs <https://docs.djangoproject.com/en/2.2/ref/django-admin/>`_.
+Run ``cd InvenTree && python3 manage.py runserver 127.0.0.1:8000`` to launch a development server. This will launch the InvenTree web interface at ``127.0.0.1:8000``. For other options refer to the `django docs <https://docs.djangoproject.com/en/2.2/ref/django-admin/>`_.
 
 Database Migrations
 -------------------
