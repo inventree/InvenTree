@@ -5,6 +5,7 @@ Django views for interacting with Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView
@@ -557,6 +558,7 @@ class OrderParts(AjaxView):
 
         return self.renderJsonResponse(self.request, data=data)
 
+    @transaction.atomic
     def order_items(self):
         """ Add the selected items to the purchase orders. """
 
