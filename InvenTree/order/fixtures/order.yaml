@@ -35,8 +35,16 @@
     quantity: 250
     received: 50
 
+# 1000 x ACME0003
+- model: order.purchaseorderlineitem
+  fields:
+    order: 1
+    part: 3
+    quantity: 1000
+
 # 100 x ZERGLPHS (M2x4 LPHS)
 - model: order.purchaseorderlineitem
+  pk: 22
   fields:
     order: 2
     part: 3
