@@ -11,6 +11,11 @@ import import_export.widgets as widgets
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
 
+from build.models import Build
+from company.models import Company, SupplierPart
+from order.models import PurchaseOrder
+from part.models import Part
+
 
 class LocationResource(ModelResource):
     """ Class for managing StockLocation data import/export """
@@ -44,7 +49,43 @@ class LocationAdmin(ImportExportModelAdmin):
     list_display = ('name', 'pathstring', 'description')
 
 
+class StockItemResource(ModelResource):
+    """ Class for managing StockItem data import/export """
+
+    # Custom manaegrs for ForeignKey fields
+    part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
+
+    part_name = Field(attribute='part__name', readonly=True)
+
+    supplier_part = Field(attribute='supplier_part', widget=widgets.ForeignKeyWidget(SupplierPart))
+
+    location = Field(attribute='location', widget=widgets.ForeignKeyWidget(StockLocation))
+
+    location_name = Field(attribute='location__name', readonly=True)
+
+    belongs_to = Field(attribute='belongs_to', widget=widgets.ForeignKeyWidget(StockItem))
+
+    customer = Field(attribute='customer', widget=widgets.ForeignKeyWidget(Company))
+
+    build = Field(attribute='build', widget=widgets.ForeignKeyWidget(Build))
+
+    purchase_order = Field(attribute='purchase_order', widget=widgets.ForeignKeyWidget(PurchaseOrder))
+
+    # Date management
+    updated = Field(attribute='updated', widget=widgets.DateWidget())
+    
+    stocktake_date = Field(attribute='stocktake_date', widget=widgets.DateWidget())
+
+    class Meta:
+        model = StockItem
+        skip_unchanged = True
+        report_skipped = False
+
+
 class StockItemAdmin(ImportExportModelAdmin):
+
+    resource_class = StockItemResource
+
     list_display = ('part', 'quantity', 'location', 'status', 'updated')
 
 
