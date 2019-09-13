@@ -111,7 +111,27 @@ class ParameterTemplateAdmin(ImportExportModelAdmin):
     list_display = ('name', 'units')
 
 
+class ParameterResource(ModelResource):
+    """ Class for managing PartParameter data import/export """
+
+    part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
+
+    part_name = Field(attribute='part__name', readonly=True)
+
+    template = Field(attribute='template', widget=widgets.ForeignKeyWidget(PartParameterTemplate))
+
+    template_name = Field(attribute='template__name', readonly=True)
+
+    class Meta:
+        model = PartParameter
+        skip_unchanged = True
+        report_skipped = False
+
+
 class ParameterAdmin(ImportExportModelAdmin):
+
+    resource_class = ParameterResource
+
     list_display = ('part', 'template', 'data')
 
 
