@@ -41,7 +41,37 @@ class PartAdmin(ImportExportModelAdmin):
     list_display = ('full_name', 'description', 'total_stock', 'category')
 
 
+class PartCategoryResource(ModelResource):
+    """ Class for managing PartCategory data import/export """
+
+    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(PartCategory))
+
+    default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
+
+    parent_name = Field(attribute='parent__name', readonly=True)
+
+    class Meta:
+        model = PartCategory
+        skip_unchanged = True
+        report_skipped = False
+
+        exclude = [
+            # Exclude MPTT internal model fields
+            'lft', 'rght', 'tree_id', 'level',
+        ]
+
+    def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
+
+        super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
+
+        print("Rebuilding PartCategory tree")
+        # Rebuild teh PartCategory tree
+        PartCategory.objects.rebuild()
+        print("Done!")
+
 class PartCategoryAdmin(ImportExportModelAdmin):
+
+    resource_class = PartCategoryResource
 
     list_display = ('name', 'pathstring', 'description')
 
