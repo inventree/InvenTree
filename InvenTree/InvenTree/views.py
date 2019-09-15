@@ -16,6 +16,7 @@ from django.views.generic import UpdateView, CreateView
 from django.views.generic.base import TemplateView
 
 from part.models import Part
+from common.models import InvenTreeSetting
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .helpers import str2bool
@@ -511,3 +512,11 @@ class SettingsView(TemplateView):
     """
 
     template_name = "InvenTree/settings.html"
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs).copy()
+
+        ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
+
+        return ctx
