@@ -10,13 +10,16 @@ import os
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
-from InvenTree.helpers import DownloadFile
+from InvenTree.helpers import DownloadFile, GetExportFormats
+
+from .admin import BomItemResource
+from .models import BomItem
 
 
 def IsValidBOMFormat(fmt):
     """ Test if a file format specifier is in the valid list of BOM file formats """
 
-    return fmt.strip().lower() in ['csv', 'xls', 'xlsx', 'tsv']
+    return fmt.strip().lower() in GetExportFormats()
 
 
 def MakeBomTemplate(fmt):
@@ -27,20 +30,32 @@ def MakeBomTemplate(fmt):
     if not IsValidBOMFormat(fmt):
         fmt = 'csv'
 
-    fields = [
-        'Part',
-        'Quantity',
-        'Overage',
-        'Reference',
-        'Notes'
-    ]
+    query = BomItem.objects.filter(pk=None)
+    dataset = BomItemResource().export(queryset=query)
 
-    data = tablib.Dataset(headers=fields).export(fmt)
+    data = dataset.export(fmt)
 
     filename = 'InvenTree_BOM_Template.' + fmt
 
     return DownloadFile(data, filename)
 
+
+def ExportBom(part, fmt='csv'):
+    """ Export a BOM (Bill of Materials) for a given part.
+    """
+
+    if not IsValidBOMFormat(fmt):
+        fmt = 'csv'
+
+    bom_items = part.bom_items.all().order_by('id')
+
+    dataset = BomItemResource().export(queryset=bom_items)
+    data = dataset.export(fmt)
+
+    filename = '{n}_BOM.{fmt}'.format(n=part.full_name, fmt=fmt)
+
+    return DownloadFile(data, filename)
+    
 
 class BomUploadManager:
     """ Class for managing an uploaded BOM file """

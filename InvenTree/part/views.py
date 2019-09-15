@@ -14,8 +14,6 @@ from django.views.generic import DetailView, ListView, FormView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 
-import tablib
-
 from fuzzywuzzy import fuzz
 from decimal import Decimal
 
@@ -28,7 +26,9 @@ from common.models import Currency
 from company.models import SupplierPart
 
 from . import forms as part_forms
-from .bom import MakeBomTemplate, BomUploadManager
+from .bom import MakeBomTemplate, BomUploadManager, ExportBom, IsValidBOMFormat
+
+from .admin import PartResource
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
@@ -1216,108 +1216,9 @@ class PartExport(AjaxView):
 
         parts = self.get_parts(request)
 
-        headers = [
-            'ID',
-            'Name',
-            'Description',
-            'Category',
-            'Category ID',
-            'IPN',
-            'Revision',
-            'URL',
-            'Keywords',
-            'Notes',
-            'Assembly',
-            'Component',
-            'Template',
-            'Trackable',
-            'Purchaseable',
-            'Salable',
-            'Active',
-            'Virtual',
+        dataset = PartResource().export(queryset=parts)
 
-            # Part meta-data
-            'Used In',
-
-            # Stock Information
-            'Stock Info',
-            'In Stock',
-            'Allocated',
-            'Building',
-            'On Order',
-        ]
-
-        # Construct list of suppliers for each part
-        supplier_names = set()
-
-        for part in parts:
-            supplier_parts = part.supplier_parts.all()
-            part.suppliers = {}
-
-            for sp in supplier_parts:
-                name = sp.supplier.name
-                supplier_names.add(name)
-                part.suppliers[name] = sp
-
-        if len(supplier_names) > 0:
-            headers.append('Suppliers')
-            for name in supplier_names:
-                headers.append(name)
-
-        data = tablib.Dataset(headers=headers)
-
-        for part in parts:
-            line = []
-
-            line.append(part.pk)
-            line.append(part.name)
-            line.append(part.description)
-
-            if part.category:
-                line.append(str(part.category))
-                line.append(part.category.pk)
-            else:
-                line.append('')
-                line.append('')
-
-            line.append(part.IPN)
-            line.append(part.revision)
-            line.append(part.URL)
-            line.append(part.keywords)
-            line.append(part.notes)
-            line.append(part.assembly)
-            line.append(part.component)
-            line.append(part.is_template)
-            line.append(part.trackable)
-            line.append(part.purchaseable)
-            line.append(part.salable)
-            line.append(part.active)
-            line.append(part.virtual)
-
-            # Part meta-data
-            line.append(part.used_in_count)
-
-            # Stock information
-            line.append('')
-            line.append(part.total_stock)
-            line.append(part.allocation_count)
-            line.append(part.quantity_being_built)
-            line.append(part.on_order)
-
-            # Supplier Information
-            if len(supplier_names) > 0:
-                line.append('')
-
-                for name in supplier_names:
-                    sp = part.suppliers.get(name, None)
-                    if sp:
-                        line.append(sp.SKU)
-                    else:
-                        line.append('')
-
-            data.append(line)
-
-        csv = data.export('csv')
+        csv = dataset.export('csv')
         return DownloadFile(csv, 'InvenTree_Parts.csv')
 
 
@@ -1348,12 +1249,10 @@ class BomDownload(AjaxView):
 
         export_format = request.GET.get('format', 'csv')
 
-        # Placeholder to test file export
-        filename = '"' + part.name + '_BOM.' + export_format + '"'
+        if not IsValidBOMFormat(export_format):
+            export_format = 'csv'
 
-        filedata = part.export_bom(format=export_format)
-
-        return DownloadFile(filedata, filename)
+        return ExportBom(part, fmt=export_format)
 
     def get_data(self):
         return {

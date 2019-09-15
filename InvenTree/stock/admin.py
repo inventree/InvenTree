@@ -28,6 +28,7 @@ class LocationResource(ModelResource):
         model = StockLocation
         skip_unchanged = True
         report_skipped = False
+        clean_model_instances = True
 
         exclude = [
             # Exclude MPTT internal model fields
@@ -57,9 +58,15 @@ class StockItemResource(ModelResource):
     # Custom manaegrs for ForeignKey fields
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
-    part_name = Field(attribute='part__name', readonly=True)
+    part_name = Field(attribute='part__full_ame', readonly=True)
 
     supplier_part = Field(attribute='supplier_part', widget=widgets.ForeignKeyWidget(SupplierPart))
+
+    supplier = Field(attribute='supplier_part__supplier__id', readonly=True)
+
+    supplier_name = Field(attribute='supplier_part__supplier__name', readonly=True)
+
+    status_label = Field(attribute='status_label', readonly=True)
 
     location = Field(attribute='location', widget=widgets.ForeignKeyWidget(StockLocation))
 
@@ -82,6 +89,7 @@ class StockItemResource(ModelResource):
         model = StockItem
         skip_unchanged = True
         report_skipped = False
+        clean_model_instance = True
 
 
 class StockItemAdmin(ImportExportModelAdmin):

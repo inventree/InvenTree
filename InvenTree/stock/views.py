@@ -18,16 +18,15 @@ from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
 
-from InvenTree.status_codes import StockStatus
 from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
 from InvenTree.helpers import ExtractSerialNumbers
 from datetime import datetime
 
-import tablib
-
 from company.models import Company
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
+
+from .admin import StockItemResource
 
 from .forms import EditStockLocationForm
 from .forms import CreateStockItemForm
@@ -226,75 +225,9 @@ class StockExport(AjaxView):
         # Pre-fetch related fields to reduce DB queries
         stock_items = stock_items.prefetch_related('part', 'supplier_part__supplier', 'location', 'purchase_order', 'build')
 
-        # Column headers
-        headers = [
-            _('Stock ID'),
-            _('Part ID'),
-            _('Part'),
-            _('Supplier Part ID'),
-            _('Supplier ID'),
-            _('Supplier'),
-            _('Location ID'),
-            _('Location'),
-            _('Quantity'),
-            _('Batch'),
-            _('Serial'),
-            _('Status'),
-            _('Notes'),
-            _('Review Needed'),
-            _('Last Updated'),
-            _('Last Stocktake'),
-            _('Purchase Order ID'),
-            _('Build ID'),
-        ]
+        dataset = StockItemResource().export(queryset=stock_items)
 
-        data = tablib.Dataset(headers=headers)
-
-        for item in stock_items:
-            line = []
-
-            line.append(item.pk)
-            line.append(item.part.pk)
-            line.append(item.part.full_name)
-
-            if item.supplier_part:
-                line.append(item.supplier_part.pk)
-                line.append(item.supplier_part.supplier.pk)
-                line.append(item.supplier_part.supplier.name)
-            else:
-                line.append('')
-                line.append('')
-                line.append('')
-
-            if item.location:
-                line.append(item.location.pk)
-                line.append(item.location.name)
-            else:
-                line.append('')
-                line.append('')
-
-            line.append(item.quantity)
-            line.append(item.batch)
-            line.append(item.serial)
-            line.append(StockStatus.label(item.status))
-            line.append(item.notes)
-            line.append(item.review_needed)
-            line.append(item.updated)
-            line.append(item.stocktake_date)
-
-            if item.purchase_order:
-                line.append(item.purchase_order.pk)
-            else:
-                line.append('')
-
-            if item.build:
-                line.append(item.build.pk)
-            else:
-                line.append('')
-
-            data.append(line)
-
-        filedata = data.export(export_format)
+        filedata = dataset.export(export_format)
 
         return DownloadFile(filedata, filename)
 
