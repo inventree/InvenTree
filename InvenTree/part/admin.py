@@ -31,6 +31,8 @@ class PartResource(ModelResource):
     
     variant_of = Field(attribute='variant_of', widget=widgets.ForeignKeyWidget(Part))
 
+    suppliers = Field(attribute='supplier_count', readonly=True)
+
     # Extra calculated meta-data (readonly)
     in_stock = Field(attribute='total_stock', readonly=True, widget=widgets.IntegerWidget())
 
