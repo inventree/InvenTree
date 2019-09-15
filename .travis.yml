@@ -15,7 +15,8 @@ before_install:
     - cd InvenTree && python3 manage.py createsuperuser --username InvenTreeAdmin --email admin@inventree.com --noinput && cd ..
 
 script:
-    - git ls-files --exclude-standard --others
+    - cd InvenTree && python3 manage.py makemigrations && cd ..
+    - python3 ci/check_migration_files.py
     - make coverage
     - make style
 
