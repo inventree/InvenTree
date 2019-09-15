@@ -139,13 +139,3 @@ class OrderTest(TestCase):
             order.receive_line_item(line, loc, line.quantity, user=None)
 
         self.assertEqual(order.status, OrderStatus.COMPLETE)
-
-    def test_export(self):
-        """ Test order exporting """
-
-        order = PurchaseOrder.objects.get(pk=1)
-
-        output = order.export_to_file(format='csv')
-
-        self.assertIn('M2x4 LPHS', output)
-        self.assertIn('Line,Part,Description', output)

@@ -14,6 +14,7 @@ from django.forms import HiddenInput
 import logging
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
+from .admin import POLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart
 from stock.models import StockItem, StockLocation
@@ -165,7 +166,9 @@ class PurchaseOrderExport(AjaxView):
             fmt=export_format
         )
 
-        filedata = order.export_to_file(format=export_format)
+        dataset = POLineItemResource().export(queryset=order.lines.all())
+
+        filedata = dataset.export(format=export_format)
 
         return DownloadFile(filedata, filename)
 

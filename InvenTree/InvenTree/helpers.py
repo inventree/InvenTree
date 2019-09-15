@@ -103,6 +103,7 @@ def GetExportFormats():
         'xls',
         'xlsx',
         'json',
+        'yaml',
     ]
 
 

@@ -141,6 +141,11 @@ class StockItem(models.Model):
             )
 
     @property
+    def status_label(self):
+
+        return StockStatus.label(self.status)
+
+    @property
     def serialized(self):
         """ Return True if this StockItem is serialized """
         return self.serial is not None and self.quantity == 1

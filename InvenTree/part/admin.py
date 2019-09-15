@@ -31,6 +31,8 @@ class PartResource(ModelResource):
     
     variant_of = Field(attribute='variant_of', widget=widgets.ForeignKeyWidget(Part))
 
+    suppliers = Field(attribute='supplier_count', readonly=True)
+
     # Extra calculated meta-data (readonly)
     in_stock = Field(attribute='total_stock', readonly=True, widget=widgets.IntegerWidget())
 
@@ -46,6 +48,7 @@ class PartResource(ModelResource):
         model = Part
         skip_unchanged = True
         report_skipped = False
+        clean_model_instances = True
         exclude = [
             'bom_checksum', 'bom_checked_by', 'bom_checked_date'
         ]
@@ -89,6 +92,7 @@ class PartCategoryResource(ModelResource):
         model = PartCategory
         skip_unchanged = True
         report_skipped = False
+        clean_model_instances = True
 
         exclude = [
             # Exclude MPTT internal model fields
@@ -127,12 +131,21 @@ class BomItemResource(ModelResource):
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
-    sub_part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
+    part_name = Field(attribute='part__full_name', readonly=True)
+
+    sub_part = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
+
+    sub_part_name = Field(attribute='sub_part__full_name', readonly=True)
+
+    stock = Field(attribute='sub_part__total_stock', readonly=True)
 
     class Meta:
         model = BomItem
         skip_unchanged = True
         report_skipped = False
+        clean_model_instances = True
+
+        exclude = ('checksum')
 
 
 class BomItemAdmin(ImportExportModelAdmin):
@@ -163,6 +176,7 @@ class ParameterResource(ModelResource):
         model = PartParameter
         skip_unchanged = True
         report_skipped = False
+        clean_model_instance = True
 
 
 class ParameterAdmin(ImportExportModelAdmin):
