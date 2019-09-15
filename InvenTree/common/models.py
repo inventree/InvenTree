@@ -70,7 +70,7 @@ class InvenTreeSetting(models.Model):
 
     b_think = models.CharField(max_length=20, blank=True)
 
-    a_thing = models.CharField(max_length=10, blank=False)
+    a_thing = models.CharField(max_length=10, blank=True)
 
     def validate_unique(self, exclude=None):
         """ Ensure that the key:value pair is unique.
