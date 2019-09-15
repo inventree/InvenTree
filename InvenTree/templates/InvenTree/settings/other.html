@@ -8,4 +8,23 @@
 
 <h4>InvenTree Settings</h4>
 
+<table class='table table-striped table-condensed' id='other-table'>
+    <thead>
+        <tr>
+            <th>Setting</th>
+            <th>Value</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for setting in settings %}
+        <tr>
+            <td>{{ setting.key }}</td>
+            <td>{{ setting.value }}</td>
+            <td>{{ setting.description }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}
