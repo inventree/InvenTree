@@ -68,10 +68,6 @@ class InvenTreeSetting(models.Model):
 
     description = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings description'))
 
-    b_think = models.CharField(max_length=20, blank=True)
-
-    a_thing = models.CharField(max_length=10, blank=True)
-
     def validate_unique(self, exclude=None):
         """ Ensure that the key:value pair is unique.
         In addition to the base validators, this ensures that the 'key'
