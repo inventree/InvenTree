@@ -58,7 +58,7 @@ class StockItemResource(ModelResource):
     # Custom manaegrs for ForeignKey fields
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
-    part_name = Field(attribute='part__name', readonly=True)
+    part_name = Field(attribute='part__full_ame', readonly=True)
 
     supplier_part = Field(attribute='supplier_part', widget=widgets.ForeignKeyWidget(SupplierPart))
 
