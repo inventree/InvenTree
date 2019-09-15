@@ -44,7 +44,7 @@ class InvenTreeSetting(models.Model):
             key: settings key
             value: New value
             user: User object (must be staff member to update a core setting)
-            create: If True, create a new setting if the specified key does not exist 
+            create: If True, create a new setting if the specified key does not exist.
         """
 
         if not user.is_staff:

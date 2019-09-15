@@ -28,3 +28,10 @@
 </table>
 
 {% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+    $("#other-table").bootstrapTable();
+
+{% endblock %}
