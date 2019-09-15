@@ -62,9 +62,11 @@ class InvenTreeSetting(models.Model):
         setting.value = value
         setting.save()
 
-    key = models.CharField(max_length=50, blank=False, unique=True, help_text=_('Settings key'))
+    key = models.CharField(max_length=50, blank=False, unique=True, help_text=_('Settings key (must be unique - case insensitive'))
 
     value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
+
+    description = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings description'))
 
     def validate_unique(self, exclude=None):
         """ Ensure that the key:value pair is unique.
