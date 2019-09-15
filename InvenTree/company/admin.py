@@ -38,7 +38,11 @@ class SupplierPartResource(ModelResource):
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
+    part_name = Field(attribute='part__full_name', readonly=True)
+
     supplier = Field(attribute='supplier', widget=widgets.ForeignKeyWidget(Company))
+
+    supplier_name = Field(attribute='supplier__name', readonly=True)
 
     class Meta:
         model = SupplierPart
@@ -60,6 +64,16 @@ class SupplierPriceBreakResource(ModelResource):
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(SupplierPart))
 
     currency = Field(attribute='currency', widget=widgets.ForeignKeyWidget(Currency))
+
+    supplier_id = Field(attribute='part__supplier__pk', readonly=True)
+
+    supplier_name = Field(attribute='part__supplier__name', readonly=True)
+
+    part_name = Field(attribute='part__part__full_name', readonly=True)
+
+    SKU = Field(attribute='part__SKU', readonly=True)
+
+    MPN = Field(attribute='part__MPN', readonly=True)
 
     class Meta:
         model = SupplierPriceBreak
