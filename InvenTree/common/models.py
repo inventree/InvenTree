@@ -9,6 +9,77 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
+
+
+class InvenTreeSetting(models.Model):
+    """
+    An InvenTreeSetting object is a key:value pair used for storing
+    single values (e.g. one-off settings values).
+
+    The class provides a way of retrieving the value for a particular key,
+    even if that key does not exist.
+    """
+
+    @classmethod
+    def get_setting(cls, key, backup_value=None):
+        """
+        Get the value of a particular setting.
+        If it does not exist, return the backup value (default = None)
+        """
+
+        try:
+            setting = InvenTreeSetting.objects.get(key__iexact=key)
+            return setting.value
+        except InvenTreeSetting.DoesNotExist:
+            return backup_value
+
+    @classmethod
+    def set_setting(cls, key, value, user, create=True):
+        """
+        Set the value of a particular setting.
+        If it does not exist, option to create it.
+
+        Args:
+            key: settings key
+            value: New value
+            user: User object (must be staff member to update a core setting)
+            create: If True, create a new setting if the specified key does not exist 
+        """
+
+        if not user.is_staff:
+            return
+
+        try:
+            setting = InvenTreeSetting.objects.get(key__iexact=key)
+        except InvenTreeSetting.DoesNotExist:
+
+            if create:
+                setting = InvenTreeSetting(key=key)
+            else:
+                return
+            
+        setting.value = value
+        setting.save()
+
+    key = models.CharField(max_length=50, blank=False, unique=True, help_text=_('Settings key'))
+
+    value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
+
+    def validate_unique(self, exclude=None):
+        """ Ensure that the key:value pair is unique.
+        In addition to the base validators, this ensures that the 'key'
+        is unique, using a case-insensitive comparison.
+        """
+
+        super().validate_unique(exclude)
+
+        try:
+            setting = InvenTreeSetting.objects.exclude(id=self.id).filter(key__iexact=self.key)
+            if setting.exists():
+                raise ValidationError({'key': _('Key string must be unique')})
+        except InvenTreeSetting.DoesNotExist:
+            pass
 
 
 class Currency(models.Model):
