@@ -10,13 +10,13 @@ import os
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
-from InvenTree.helpers import DownloadFile
+from InvenTree.helpers import DownloadFile, GetExportFormats
 
 
 def IsValidBOMFormat(fmt):
     """ Test if a file format specifier is in the valid list of BOM file formats """
 
-    return fmt.strip().lower() in ['csv', 'xls', 'xlsx', 'tsv']
+    return fmt.strip().lower() in GetExportFormats()
 
 
 def MakeBomTemplate(fmt):
