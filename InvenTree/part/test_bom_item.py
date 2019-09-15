@@ -32,15 +32,6 @@ class BomItemTest(TestCase):
 
         self.assertIn(self.orphan, parts)
 
-    def test_bom_export(self):
-        parts = self.bob.required_parts()
-
-        data = self.bob.export_bom(format='csv')
-
-        for p in parts:
-            self.assertIn(p.name, data)
-            self.assertIn(p.description, data)
-
     def test_used_in(self):
         self.assertEqual(self.bob.used_in_count, 0)
         self.assertEqual(self.orphan.used_in_count, 1)

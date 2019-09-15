@@ -131,13 +131,21 @@ class BomItemResource(ModelResource):
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
-    sub_part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
+    part_name = Field(attribute='part__name', readonly=True)
+
+    sub_part = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
+
+    sub_part_name = Field(attribute='sub_part__name', readonly=True)
+
+    stock = Field(attribute='sub_part__total_stock', readonly=True)
 
     class Meta:
         model = BomItem
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
+
+        exclude = ('checksum')
 
 
 class BomItemAdmin(ImportExportModelAdmin):

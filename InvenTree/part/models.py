@@ -7,8 +7,6 @@ from __future__ import unicode_literals
 
 import os
 
-import tablib
-
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.urls import reverse
@@ -856,76 +854,6 @@ class Part(models.Model):
         self.virtual = other.virtual
 
         self.save()
-
-    def export_bom(self, **kwargs):
-        """ Export Bill of Materials to a spreadsheet file.
-        Includes a row for each item in the BOM.
-        Also includes extra information such as supplier data.
-        """
-
-        items = self.bom_items.all().order_by('id')
-
-        supplier_names = set()
-
-        headers = [
-            'Part',
-            'Description',
-            'Quantity',
-            'Overage',
-            'Reference',
-            'Note',
-            '',
-            'In Stock',
-        ]
-
-        # Contstruct list of suppliers for each part
-        for item in items:
-            part = item.sub_part
-            supplier_parts = part.supplier_parts.all()
-            item.suppliers = {}
-
-            for sp in supplier_parts:
-                name = sp.supplier.name
-                supplier_names.add(name)
-                item.suppliers[name] = sp
-
-        if len(supplier_names) > 0:
-            headers.append('')
-            for name in supplier_names:
-                headers.append(name)
-
-        data = tablib.Dataset(headers=headers)
-
-        for it in items:
-            line = []
-
-            # Information about each BOM item
-            line.append(it.sub_part.full_name)
-            line.append(it.sub_part.description)
-            line.append(it.quantity)
-            line.append(it.overage)
-            line.append(it.reference)
-            line.append(it.note)
-
-            # Extra information about the part
-            line.append('')
-            line.append(it.sub_part.available_stock)
-
-            if len(supplier_names) > 0:
-                line.append('')  # Blank column separates supplier info
-
-                for name in supplier_names:
-                    sp = it.suppliers.get(name, None)
-                    if sp:
-                        line.append(sp.SKU)
-                    else:
-                        line.append('')
-
-            data.append(line)
-
-        file_format = kwargs.get('format', 'csv').lower()
-
-        return data.export(file_format)
 
     @property
     def attachment_count(self):

@@ -26,7 +26,7 @@ from common.models import Currency
 from company.models import SupplierPart
 
 from . import forms as part_forms
-from .bom import MakeBomTemplate, BomUploadManager
+from .bom import MakeBomTemplate, BomUploadManager, ExportBom, IsValidBOMFormat
 
 from .admin import PartResource
 
@@ -1249,12 +1249,10 @@ class BomDownload(AjaxView):
 
         export_format = request.GET.get('format', 'csv')
 
-        # Placeholder to test file export
-        filename = '"' + part.name + '_BOM.' + export_format + '"'
+        if not IsValidBOMFormat(export_format):
+            export_format = 'csv'
 
-        filedata = part.export_bom(format=export_format)
-
-        return DownloadFile(filedata, filename)
+        return ExportBom(part, fmt=export_format)
 
     def get_data(self):
         return {
