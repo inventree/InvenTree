@@ -23,6 +23,7 @@ class CompanyResource(ModelResource):
         model = Company
         skip_unchanged = True
         report_skipped = False
+        clean_model_instances = True
 
 
 class CompanyAdmin(ImportExportModelAdmin):
@@ -43,6 +44,7 @@ class SupplierPartResource(ModelResource):
         model = SupplierPart
         skip_unchanged = True
         report_skipped = False
+        clean_model_instances = True
 
 
 class SupplierPartAdmin(ImportExportModelAdmin):
@@ -63,6 +65,7 @@ class SupplierPriceBreakResource(ModelResource):
         model = SupplierPriceBreak
         skip_unchanged = True
         report_skipped = False
+        clean_model_instances = True
 
 
 class SupplierPriceBreakAdmin(ImportExportModelAdmin):

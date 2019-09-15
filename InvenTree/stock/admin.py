@@ -28,6 +28,7 @@ class LocationResource(ModelResource):
         model = StockLocation
         skip_unchanged = True
         report_skipped = False
+        clean_model_instances = True
 
         exclude = [
             # Exclude MPTT internal model fields
@@ -86,6 +87,7 @@ class StockItemResource(ModelResource):
         model = StockItem
         skip_unchanged = True
         report_skipped = False
+        clean_model_instance = True
 
 
 class StockItemAdmin(ImportExportModelAdmin):

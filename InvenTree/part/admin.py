@@ -48,6 +48,7 @@ class PartResource(ModelResource):
         model = Part
         skip_unchanged = True
         report_skipped = False
+        clean_model_instances = True
         exclude = [
             'bom_checksum', 'bom_checked_by', 'bom_checked_date'
         ]
@@ -91,6 +92,7 @@ class PartCategoryResource(ModelResource):
         model = PartCategory
         skip_unchanged = True
         report_skipped = False
+        clean_model_instances = True
 
         exclude = [
             # Exclude MPTT internal model fields
@@ -135,6 +137,7 @@ class BomItemResource(ModelResource):
         model = BomItem
         skip_unchanged = True
         report_skipped = False
+        clean_model_instances = True
 
 
 class BomItemAdmin(ImportExportModelAdmin):
@@ -165,6 +168,7 @@ class ParameterResource(ModelResource):
         model = PartParameter
         skip_unchanged = True
         report_skipped = False
+        clean_model_instance = True
 
 
 class ParameterAdmin(ImportExportModelAdmin):
