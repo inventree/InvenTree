@@ -98,11 +98,11 @@
     max-width: 250px;
 }
 
-.bomrowvalid {
+.rowvalid {
     color: #050;
 }
 
-.bomrowinvalid {
+.rowinvalid {
     color: #A00; 
     font-style: italic;
 }
