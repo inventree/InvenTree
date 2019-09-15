@@ -66,6 +66,8 @@ class StockItemResource(ModelResource):
 
     supplier_name = Field(attribute='supplier_part__supplier__name', readonly=True)
 
+    status_label = Field(attribute='status_label', readonly=True)
+
     location = Field(attribute='location', widget=widgets.ForeignKeyWidget(StockLocation))
 
     location_name = Field(attribute='location__name', readonly=True)

@@ -18,12 +18,9 @@ from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
 
-from InvenTree.status_codes import StockStatus
 from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
 from InvenTree.helpers import ExtractSerialNumbers
 from datetime import datetime
-
-import tablib
 
 from company.models import Company
 from part.models import Part

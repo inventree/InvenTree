@@ -14,8 +14,6 @@ from django.views.generic import DetailView, ListView, FormView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 
-import tablib
-
 from fuzzywuzzy import fuzz
 from decimal import Decimal
 
