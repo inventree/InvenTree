@@ -131,11 +131,11 @@ class BomItemResource(ModelResource):
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
-    part_name = Field(attribute='part__name', readonly=True)
+    part_name = Field(attribute='part__full_name', readonly=True)
 
     sub_part = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
 
-    sub_part_name = Field(attribute='sub_part__name', readonly=True)
+    sub_part_name = Field(attribute='sub_part__full_name', readonly=True)
 
     stock = Field(attribute='sub_part__total_stock', readonly=True)
 
