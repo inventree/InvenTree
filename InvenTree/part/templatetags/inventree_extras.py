@@ -46,6 +46,12 @@ def inventree_commit(*args, **kwargs):
 
 
 @register.simple_tag()
-def inventree_github(*args, **kwargs):
+def inventree_github_url(*args, **kwargs):
     """ Return URL for InvenTree github site """
     return "https://github.com/InvenTree"
+
+
+@register.simple_tag()
+def inventree_docs_url(*args, **kwargs):
+    """ Return URL for InvenTree documenation site """
+    return "https://inventree.github.io"
