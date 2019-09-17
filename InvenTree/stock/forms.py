@@ -69,24 +69,11 @@ class CreateStockItemForm(HelperForm):
 class SerializeStockForm(forms.ModelForm):
     """ Form for serializing a StockItem. """
 
-    destination = forms.ChoiceField(label='Destination', required=True, help_text='Destination for serialized stock (by default, will remain in current location)')
+    destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label='Destination', required=True, help_text='Destination for serialized stock (by default, will remain in current location)')
+    
     serial_numbers = forms.CharField(label='Serial numbers', required=True, help_text='Unique serial numbers (must match quantity)')
+    
     note = forms.CharField(label='Notes', required=False, help_text='Add transaction note (optional)')
-
-    def get_location_choices(self):
-        locs = StockLocation.objects.all()
-
-        choices = [(None, '---------')]
-
-        for loc in locs:
-            choices.append((loc.pk, loc.pathstring + ' - ' + loc.description))
-
-        return choices
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['destination'].choices = self.get_location_choices()
 
     class Meta:
         model = StockItem
