@@ -21,7 +21,7 @@
 </thead>
 <tbody>
     {% for item in build.required_parts %}
-    <tr>
+    <tr {% if build.status == BuildStatus.PENDING %}class='{% if item.part.total_stock > item.quantity %}rowvalid{% else %}rowinvalid{% endif %}'{% endif %}>
         <td>
             {% include "hover_image.html" with image=item.part.image hover=True %}
             <a class='hover-icon'a href="{% url 'part-detail' item.part.id %}">{{ item.part.full_name }}</a>

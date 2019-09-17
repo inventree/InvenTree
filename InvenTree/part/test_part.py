@@ -26,7 +26,10 @@ class TemplateTagTest(TestCase):
         self.assertEqual(len(hash), 7)
 
     def test_github(self):
-        self.assertIn('github.com', inventree_extras.inventree_github())
+        self.assertIn('github.com', inventree_extras.inventree_github_url())
+
+    def test_docs(self):
+        self.assertIn('inventree.github.io', inventree_extras.inventree_docs_url())
 
 
 class PartTest(TestCase):

@@ -184,8 +184,8 @@
             data: {
                 action: "count",
                 part: {{ part.id }},
-                reload: true,
-            }
+            },
+            reload: true,
         });
     });
 
@@ -225,10 +225,10 @@
     });
 
     $("#part-order").click(function() {
-        launchModalForm("/order/purchase-order/order-parts/", {
+        launchModalForm("{% url 'order-parts' %}", {
             data: {
                 part: {{ part.id }},
-            },
+            }
         });
     });
 

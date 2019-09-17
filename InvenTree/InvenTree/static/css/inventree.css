@@ -1,3 +1,11 @@
+:root {
+    --primary-color: #335d88;
+    --secondary-color: #b69c80;
+    --highlight-color: #f5efe8;
+    --basic-color: #333;
+}
+
+
 .qr-code {
     max-width: 400px;
     max-height: 400px;
@@ -98,11 +106,11 @@
     max-width: 250px;
 }
 
-.bomrowvalid {
+.rowvalid {
     color: #050;
 }
 
-.bomrowinvalid {
+.rowinvalid {
     color: #A00; 
     font-style: italic;
 }
