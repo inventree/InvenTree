@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
 
+from mptt.fields import TreeNodeChoiceField
 from django import forms
 from django.utils.translation import ugettext as _
 
@@ -64,6 +65,12 @@ class EditPartAttachmentForm(HelperForm):
             'attachment',
             'comment'
         ]
+
+
+class SetPartCategoryForm(forms.Form):
+    """ Form for setting the category of multiple Part objects """
+
+    part_category = TreeNodeChoiceField(queryset=PartCategory.objects.all(), required=True, help_text=_('Select part category'))
 
 
 class EditPartForm(HelperForm):
