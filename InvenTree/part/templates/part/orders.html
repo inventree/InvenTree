@@ -10,7 +10,7 @@
 
 <div id='button-bar'>
     <div class='btn-group'>
-        <button class='btn btn-primary' type='button' id='part-order-2' title='Order part'>Order Part</button>
+        <button class='btn btn-primary' type='button' id='part-order2' title='Order part'>Order Part</button>
     </div>
 </div>
 
@@ -31,11 +31,12 @@ $("#po-table").bootstrapTable({
     sortable: true,
 });
 
-$("#part-order-2").click(function() {
-    launchModalForm("/order/purchase-order/order-parts/", {
+$("#part-order2").click(function() {
+    launchModalForm("{% url 'order-parts' %}", {
         data: {
             part: {{ part.id }},
         },
+        reload: true,
     });
 });
 

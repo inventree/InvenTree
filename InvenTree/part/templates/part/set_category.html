@@ -2,57 +2,41 @@
 
 {% block form %}
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
-    {% csrf_token %}
     {% load crispy_forms_tags %}
-
-    <div class='control-group'>
-        <label class='control-label requiredField'>Location</label>
-        <div class='controls'>
-            <select class='select' name='part_category'>
-                <option value=''>---------</option>
-                {% for cat in categories %}
-                <option value='{{ cat.id }}' {% if category and category.id == cat.id %}selected='selected'{% endif %}>{{ cat.pathstring }} - {{ cat.description }}</option>
-                {% endfor %}
-            </select>
-            {% if category %}
-            <p class='help-block'>Select Part Category</p>
-            {% else %}
-            <p class='help-inline'>Select Part Category</p>
-            {% endif %}
-        </div>
-    </div>
-
+    
     <label class='control-label'>Parts</label>
     <p class='help-block'>Set category for the following parts</p>
-
+    
     <table class='table table-striped'>
         <tr>
             <th>Part</th>
             <th>Description</th>
             <th>Category</th>
             <th>
-        </tr>
-        {% for part in parts %}
-        <tr id='part_row_{{ part.id }}'>
-            <input type='hidden' name='part_id_{{ part.id }}' value='1'/>
-            <td>
-                {% include "hover_image.html" with image=part.image hover=False %}
-                {{ part.full_name }}
-            </td>
-            <td>
-                {{ part.description }}
-            </td>
-            <td>
-                {{ part.category.pathstring }}
-            </td>
-            <td>
-                <button class='btn btn-default btn-remove' onClick='removeRowFromModalForm()' title='Remove part' type='button'>
-                    <span row='part_row_{{ part.id }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
-                </button>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-
-</form>
-{% endblock %}
+            </tr>
+            {% for part in parts %}
+            <tr id='part_row_{{ part.id }}'>
+                <input type='hidden' name='part_id_{{ part.id }}' value='1'/>
+                <td>
+                    {% include "hover_image.html" with image=part.image hover=False %}
+                    {{ part.full_name }}
+                </td>
+                <td>
+                    {{ part.description }}
+                </td>
+                <td>
+                    {{ part.category.pathstring }}
+                </td>
+                <td>
+                    <button class='btn btn-default btn-remove' onClick='removeRowFromModalForm()' title='Remove part' type='button'>
+                        <span row='part_row_{{ part.id }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    
+    {% crispy form %}
+        
+    </form>
+    {% endblock %}

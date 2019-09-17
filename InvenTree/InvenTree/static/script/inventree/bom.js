@@ -280,9 +280,9 @@ function loadBomTable(table, options) {
         search: true,
         rowStyle: function(row, index) {
             if (row.validated) {
-                return {classes: 'bomrowvalid'};
+                return {classes: 'rowvalid'};
             } else {
-                return {classes: 'bomrowinvalid'};
+                return {classes: 'rowinvalid'};
             }
         },
         formatNoMatches: function() { return "No BOM items found"; },
