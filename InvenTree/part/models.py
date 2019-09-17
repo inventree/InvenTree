@@ -1140,6 +1140,8 @@ class BomItem(models.Model):
                 if self.part == self.sub_part:
                     raise ValidationError({'sub_part': _('Part cannot be added to its own Bill of Materials')})
         
+            # TODO - Make sure that there is no recusion
+
             # Test for simple recursion
             for item in self.sub_part.bom_items.all():
                 if self.part == item.sub_part:

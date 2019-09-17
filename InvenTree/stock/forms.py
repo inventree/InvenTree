@@ -9,6 +9,8 @@ from django import forms
 from django.forms.utils import ErrorDict
 from django.utils.translation import ugettext as _
 
+from mptt.fields import TreeNodeChoiceField
+
 from InvenTree.helpers import GetExportFormats
 from InvenTree.forms import HelperForm
 from .models import StockLocation, StockItem, StockItemTracking
@@ -67,24 +69,11 @@ class CreateStockItemForm(HelperForm):
 class SerializeStockForm(forms.ModelForm):
     """ Form for serializing a StockItem. """
 
-    destination = forms.ChoiceField(label='Destination', required=True, help_text='Destination for serialized stock (by default, will remain in current location)')
+    destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label='Destination', required=True, help_text='Destination for serialized stock (by default, will remain in current location)')
+    
     serial_numbers = forms.CharField(label='Serial numbers', required=True, help_text='Unique serial numbers (must match quantity)')
+    
     note = forms.CharField(label='Notes', required=False, help_text='Add transaction note (optional)')
-
-    def get_location_choices(self):
-        locs = StockLocation.objects.all()
-
-        choices = [(None, '---------')]
-
-        for loc in locs:
-            choices.append((loc.pk, loc.pathstring + ' - ' + loc.description))
-
-        return choices
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['destination'].choices = self.get_location_choices()
 
     class Meta:
         model = StockItem
@@ -135,27 +124,15 @@ class AdjustStockForm(forms.ModelForm):
     This form is used for managing stock adjuments for single or multiple stock items.
     """
 
-    def get_location_choices(self):
-        locs = StockLocation.objects.all()
-
-        choices = [(None, '---------')]
-
-        for loc in locs:
-            choices.append((loc.pk, loc.pathstring + ' - ' + loc.description))
-
-        return choices
-
-    destination = forms.ChoiceField(label='Destination', required=True, help_text=_('Destination stock location'))
+    destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label='Destination', required=True, help_text=_('Destination stock location'))
+    
     note = forms.CharField(label='Notes', required=True, help_text='Add note (required)')
+    
     # transaction = forms.BooleanField(required=False, initial=False, label='Create Transaction', help_text='Create a stock transaction for these parts')
+    
     confirm = forms.BooleanField(required=False, initial=False, label='Confirm stock adjustment', help_text=_('Confirm movement of stock items'))
 
     set_loc = forms.BooleanField(required=False, initial=False, label='Set Default Location', help_text=_('Set the destination as the default location for selected parts'))
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        
-        self.fields['destination'].choices = self.get_location_choices()
 
     class Meta:
         model = StockItem

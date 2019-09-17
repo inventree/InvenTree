@@ -13,7 +13,7 @@
     <li{% ifequal tab 'stock' %} class="active"{% endifequal %}>
         <a href="{% url 'part-stock' part.id %}">Stock <span class="badge">{{ part.total_stock }}</span></a>
     </li>
-    {% if part.allocation_count > 0 %}
+    {% if part.component or part.used_in_count > 0 %}
     <li{% ifequal tab 'allocation' %} class="active"{% endifequal %}>
         <a href="{% url 'part-allocation' part.id %}">Allocated <span class="badge">{{ part.allocation_count }}</span></a>
     </li>
