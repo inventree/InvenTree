@@ -6,6 +6,7 @@ Django views for interacting with Part app
 from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
@@ -194,10 +195,14 @@ class PartSetCategory(AjaxUpdateView):
         }
 
         if valid:
-            for part in self.parts:
-                part.set_category(self.category)
+            self.set_category()
 
         return self.renderJsonResponse(request, data=data, form=self.get_form(), context=self.get_context_data())
+
+    @transaction.atomic
+    def set_category(self):
+        for part in self.parts:
+            part.set_category(self.category)
 
     def get_context_data(self):
         """ Return context data for rendering in the form """
