@@ -173,23 +173,7 @@ class PartPriceForm(forms.Form):
         help_text=_('Input quantity for price calculation')
     )
 
-    currency = forms.ChoiceField(label='Currency', help_text=_('Select currency for price calculation'))
-    
-    def get_currency_choices(self):
-        """ Create options for Currency """
-
-        currencies = Currency.objects.all()
-        choices = [(None, '---------')]
-
-        for c in currencies:
-            choices.append((c.pk, str(c)))
-
-        return choices
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['currency'].choices = self.get_currency_choices()
+    currency = forms.ModelChoiceField(queryset=Currency.objects.all(), label='Currency', help_text=_('Select currency for price calculation'))
 
     class Meta:
         model = Part
