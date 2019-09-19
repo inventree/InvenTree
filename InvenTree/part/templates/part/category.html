@@ -67,16 +67,16 @@
 {% block js_ready %}
 {{ block.super }}
 
-    if (sessionStorage.getItem("inventree-show-part-categories")) {
+    if (inventreeLoadInt("show-part-cats") == 1) {
         $("#collapse-item-categories").collapse('show');
     }
 
     $("#collapse-item-categories").on('shown.bs.collapse', function() {
-        sessionStorage.setItem('inventree-show-part-categories', 1);
+        inventreeSave('show-part-cats', 1);
     });
     
     $("#collapse-item-categories").on('hidden.bs.collapse', function() {
-        sessionStorage.removeItem('inventree-show-part-categories');
+        inventreeDel('show-part-cats');
     });
 
     $("#cat-create").click(function() {

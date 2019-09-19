@@ -55,16 +55,16 @@
 {% block js_ready %}
 {{ block.super }}
 
-    if (sessionStorage.getItem("inventree-show-part-locations")) {
+    if (inventreeLoadInt("show-part-locs") == 1) {
         $("#collapse-item-locations").collapse('show');
     }
 
     $("#collapse-item-locations").on('shown.bs.collapse', function() {
-        sessionStorage.setItem('inventree-show-part-locations', 1);
+        inventreeSave('show-part-locs', 1);
     });
 
     $("#collapse-item-locations").on('hidden.bs.collapse', function() {
-        sessionStorage.removeItem('inventree-show-part-locations');
+        inventreeDel('show-part-locs');
     });
 
     $("#stock-export").click(function() {
