@@ -8,9 +8,6 @@
         {% if category %}
         <h3>{{ category.name }}</h3>
         <p>{{ category.description }}</p>
-        {% if category.default_location %}
-        <p>Default Location: <a href="{% url 'stock-location-detail' category.default-location.id }%">{{ category.default_location }}</a></p>
-        {% endif %}
         {% else %}
         <h3>Part Categories</h3>
         <p>All parts</p>
@@ -32,6 +29,31 @@
         </p>
     </div>
     <div class='col-sm-6'>
+        {% if category %}
+        <h3>Category Details</h3>
+        <table class='table table-condensed table-striped'>
+            <tr>
+                <td>Category Path</td>
+                <td>{{ category.pathstring }}</td>
+            </tr>
+            <tr>
+                <td>Category Description</td>
+                <td>{{ category.description }}</td>
+            </tr>
+            {% if category.default_location %}
+            <tr>
+                <td>Default Location</td>
+                <td><a href="{% url 'stock-location-detail' category.default_location.pk %}">{{ category.default_location.pathstring }}</a></td>
+            </tr>
+            {% endif %}
+            {% if category.default_keywords %}
+            <tr>
+                <td>Keywords</td>
+                <td>{{ category.default_keywords }}</td>
+            </tr>
+            {% endif %}
+        </table>
+        {% endif %}
     </div>
 </div>
 
