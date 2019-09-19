@@ -32,6 +32,27 @@
     </p>
 </div>
 <div class='col-sm-6'>
+    {% if location %}
+    <h3>Location Details</h3>
+    <table class='table table-striped table-condensed'>
+        <tr>
+            <td>Location Path</td>
+            <td>{{ location.pathstring }}</td>
+        </tr>
+        <tr>
+            <td>Location Description</td>
+            <td>{{ location.description }}</td>
+        </tr>
+        <tr>
+            <td>Sublocations</td>
+            <td>{{ location.children.count }}</td>
+        </tr>
+        <tr>
+            <td>Stock Items</td>
+            <td>{{ location.item_count }}</td>
+        </tr>
+    </table>
+    {% endif %}
 </div>
 </h3>
 </div>
