@@ -50,6 +50,7 @@
         search: true,
         pagination: true,
         pageSize: 50,
+        pageList: [25, 50, 100, 'all'],
         formatNoMatches: function() { return "No supplier parts found for {{ company.name }}"; },
         queryParams: function(p) {
             return {

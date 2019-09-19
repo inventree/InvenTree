@@ -27,7 +27,8 @@
         sortable: true,
         search: true,
         pagination: true,
-        pageSize: 25,
+        pageSize: 50,
+        pageList: [25, 50, 100, 'all'],
         formatNoMatches: function() { return "No currencies found"; },
         rowStyle: function(row, index) {
             if (row.base) {

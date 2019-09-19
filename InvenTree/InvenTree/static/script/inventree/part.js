@@ -198,7 +198,8 @@ function loadPartTable(table, url, options={}) {
         sortName: 'name',
         method: 'get',
         pagination: true,
-        pageSize: 25,
+        pageSize: 50,
+        pageList: [25, 50, 100, 'all'],
         rememberOrder: true,
         formatNoMatches: function() { return "No parts found"; },
         queryParams: function(p) {

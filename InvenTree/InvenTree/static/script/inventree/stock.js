@@ -47,7 +47,8 @@ function loadStockTable(table, options) {
         search: true,
         method: 'get',
         pagination: true,
-        pageSize: 25,
+        pageSize: 50,
+        pageList: [25, 50, 100, 'all'],
         rememberOrder: true,
         formatNoMatches: function() {
             return 'No stock items matching query';
