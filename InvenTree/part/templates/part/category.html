@@ -52,6 +52,14 @@
                 <td>{{ category.default_keywords }}</td>
             </tr>
             {% endif %}
+            <tr>
+                <td>Subcategories</td>
+                <td>{{ category.children.count }}</td>
+            </tr>
+            <tr>
+                <td>Parts (Including subcategories)</td>
+                <td>{{ category.partcount }}</td>
+            </tr>
         </table>
         {% endif %}
     </div>
