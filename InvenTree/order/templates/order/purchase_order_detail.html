@@ -43,6 +43,11 @@ InvenTree | {{ order }}
                                 <span class='glyphicon glyphicon-check'></span>
                             </button>
                             {% endif %}
+                            {% if order.status == OrderStatus.PENDING or order.status == OrderStatus.PLACED %}
+                            <button type='button' class='btn btn-default btn-glyph' id='cancel-order' title='Cancel order'>
+                                <span class='glyphicon glyphicon-remove'></span>
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
                 </p>
@@ -174,6 +179,12 @@ $("#edit-order").click(function() {
             reload: true,
         }
     );
+});
+
+$("#cancel-order").click(function() {
+    launchModalForm("{% url 'purchase-order-cancel' order.id %}", {
+        reload: true,
+    });
 });
 
 $("#receive-order").click(function() {

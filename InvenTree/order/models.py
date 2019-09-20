@@ -98,6 +98,13 @@ class Order(models.Model):
             self.complete_date = datetime.now().date()
             self.save()
 
+    def cancel_order(self):
+        """ Marks the order as CANCELLED. """
+
+        if self.status in [OrderStatus.PLACED, OrderStatus.PENDING]:
+            self.status = OrderStatus.CANCELLED
+            self.save()
+
 
 class PurchaseOrder(Order):
     """ A PurchaseOrder represents goods shipped inwards from an external supplier.
