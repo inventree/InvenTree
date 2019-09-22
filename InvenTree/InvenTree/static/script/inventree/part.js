@@ -191,7 +191,7 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
-    inventreeTable(table, {
+    $(table).inventreeTable({
         url: url,
         sortName: 'name',
         method: 'get',

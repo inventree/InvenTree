@@ -47,8 +47,7 @@ function isNumeric(n) {
 /* Wrapper function for bootstrapTable.
  * Sets some useful defaults, and manage persistent settings.
  */
-
-function inventreeTable(table, options) {
+$.fn.inventreeTable = function(options) {
 
     var tableName = options.name || 'table';
 
@@ -66,7 +65,7 @@ function inventreeTable(table, options) {
     };
 
     // Standard options for all tables
-    $(table).bootstrapTable(options);
+    this.bootstrapTable(options);
 }
 
 function customGroupSorter(sortName, sortOrder, sortData) {
