@@ -147,14 +147,20 @@ function inventreeSave(name, value) {
     localStorage.setItem(key, value);
 }
 
-function inventreeLoad(name) {
+function inventreeLoad(name, defaultValue) {
     /* 
      * Retrieve a key:value pair from local storage
      */
 
     var key = "inventree-" + name;
 
-    return localStorage.getItem(key);
+    var value = localStorage.getItem(key);
+
+    if (value == null) {
+        return defaultValue;
+    } else {
+        return value;
+    }
 }
 
 function inventreeLoadInt(name) {

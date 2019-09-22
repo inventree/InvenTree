@@ -44,6 +44,31 @@ function isNumeric(n) {
 }
 
 
+/* Wrapper function for bootstrapTable.
+ * Sets some useful defaults, and manage persistent settings.
+ */
+
+function inventreeTable(table, options) {
+
+    var tableName = options.name || 'table';
+
+    var varName = tableName + '-pagesize';
+
+    options.pagination = true;
+    options.pageSize = inventreeLoad(varName, 25);
+    options.pageList = [25, 50, 100, 250, 'all'];
+    options.rememberOrder = true;
+    options.sortable = true;
+    options.search = true;
+
+    options.onPageChange = function(number, size) {
+        inventreeSave(varName, size);
+    };
+
+    // Standard options for all tables
+    $(table).bootstrapTable(options);
+}
+
 function customGroupSorter(sortName, sortOrder, sortData) {
 
     console.log('got here');
