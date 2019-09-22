@@ -191,16 +191,10 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
-    $(table).bootstrapTable({
+    inventreeTable(table, {
         url: url,
-        sortable: true,
-        search: true,
         sortName: 'name',
         method: 'get',
-        pagination: true,
-        pageSize: 50,
-        pageList: [25, 50, 100, 'all'],
-        rememberOrder: true,
         formatNoMatches: function() { return "No parts found"; },
         queryParams: function(p) {
             return  query;
