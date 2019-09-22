@@ -45,11 +45,7 @@
                         });
     });
 
-    $("#part-table").bootstrapTable({
-        sortable: true,
-        search: true,
-        pagination: true,
-        pageSize: 50,
+    $("#part-table").inventreeTable({
         formatNoMatches: function() { return "No supplier parts found for {{ company.name }}"; },
         queryParams: function(p) {
             return {

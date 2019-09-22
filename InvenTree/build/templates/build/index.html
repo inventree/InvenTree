@@ -44,9 +44,7 @@ InvenTree | Build List
                         });
     });
 
-    $(".build-table").bootstrapTable({
-        sortable: true,
-        search: true,
+    $(".build-table").inventreeTable({
         formatNoMatches: function() { return 'No builds found'; },
         columns: [
             {

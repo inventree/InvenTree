@@ -137,3 +137,52 @@ function imageHoverIcon(url) {
 
     return html;
 }
+
+function inventreeSave(name, value) {
+    /*
+     * Save a key:value pair to local storage
+     */
+
+    var key = "inventree-" + name;
+    localStorage.setItem(key, value);
+}
+
+function inventreeLoad(name, defaultValue) {
+    /* 
+     * Retrieve a key:value pair from local storage
+     */
+
+    var key = "inventree-" + name;
+
+    var value = localStorage.getItem(key);
+
+    if (value == null) {
+        return defaultValue;
+    } else {
+        return value;
+    }
+}
+
+function inventreeLoadInt(name) {
+    /*
+     * Retrieve a value from local storage, and attempt to cast to integer
+     */
+
+    var data = inventreeLoad(name);
+
+    return parseInt(data, 10);
+}
+
+function inventreeLoadFloat(name) {
+
+    var data = inventreeLoad(name);
+
+    return parseFloat(data);
+}
+
+function inventreeDel(name) {
+
+    var key = 'inventree-' + name;
+
+    localStorage.removeItem(key);
+}

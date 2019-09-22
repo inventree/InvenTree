@@ -44,9 +44,7 @@
 {% block js_ready %}
 {{ block.super }}
 
-    $('#param-table').bootstrapTable({
-        search: true,
-        sortable: true,
+    $('#param-table').inventreeTable({
     });
 
     $('#param-create').click(function() {
