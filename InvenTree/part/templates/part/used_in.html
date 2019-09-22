@@ -16,9 +16,7 @@
 {% block js_ready %}
 {{ block.super }}
 
-    $("#used-table").bootstrapTable({
-        sortable: true,
-        search: true,
+    $("#used-table").inventreeTable({
         formatNoMatches: function() { return "{{ part.full_name }} is not used to make any other parts"; },
         queryParams: function(p) {
             return {

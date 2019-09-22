@@ -50,9 +50,7 @@
             });
     });
 
-    $("#supplier-table").bootstrapTable({
-        sortable: true,
-        search: true,
+    $("#supplier-table").inventreeTable({
         formatNoMatches: function() { return "No supplier parts available for {{ part.full_name }}"; },
         queryParams: function(p) {
             return {

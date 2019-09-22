@@ -83,7 +83,7 @@ InvenTree | Search Results
     
     onSearchResults('#supplier-part-results-table', '#supplier-part-result-count');
 
-    $("#category-results-table").bootstrapTable({
+    $("#category-results-table").inventreeTable({
         url: "{% url 'api-part-category-list' %}",
         queryParams: {
             search: "{{ query }}",
@@ -103,7 +103,7 @@ InvenTree | Search Results
         ],
     });
 
-    $("#location-results-table").bootstrapTable({
+    $("#location-results-table").inventreeTable({
         url: "{% url 'api-location-list' %}",
         queryParams: {
             search: "{{ query }}",
@@ -134,14 +134,11 @@ InvenTree | Search Results
         }
     );
 
-    $("#company-results-table").bootstrapTable({
+    $("#company-results-table").inventreeTable({
         url: "{% url 'api-company-list' %}",
         queryParams: {
             search: "{{ query }}",
         },
-        pagination: true,
-        pageSize: 25,
-        search: true,
         columns: [
             {
                 field: 'name',
@@ -157,14 +154,11 @@ InvenTree | Search Results
         ]
     });
 
-    $("#supplier-part-results-table").bootstrapTable({
+    $("#supplier-part-results-table").inventreeTable({
         url: "{% url 'api-part-supplier-list' %}",
         queryParams: {
             search: "{{ query }}",
         },
-        pagination: true,
-        pageSize: 25,
-        search: true,
         columns: [
             {
                 field: 'supplier_name',

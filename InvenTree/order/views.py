@@ -112,6 +112,39 @@ class PurchaseOrderEdit(AjaxUpdateView):
         return form
 
 
+class PurchaseOrderCancel(AjaxUpdateView):
+    """ View for cancelling a purchase order """
+
+    model = PurchaseOrder
+    ajax_form_title = 'Cancel Order'
+    ajax_template_name = 'order/order_cancel.html'
+    form_class = order_forms.CancelPurchaseOrderForm
+
+    def post(self, request, *args, **kwargs):
+        """ Mark the PO as 'CANCELLED' """
+
+        order = self.get_object()
+        form = self.get_form()
+
+        confirm = str2bool(request.POST.get('confirm', False))
+
+        valid = False
+
+        if not confirm:
+            form.errors['confirm'] = [_('Confirm order cancellation')]
+        else:
+            valid = True
+
+        data = {
+            'form_valid': valid
+        }
+
+        if valid:
+            order.cancel_order()
+
+        return self.renderJsonResponse(request, form, data)
+
+
 class PurchaseOrderIssue(AjaxUpdateView):
     """ View for changing a purchase order from 'PENDING' to 'ISSUED' """
 

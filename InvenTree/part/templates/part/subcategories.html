@@ -12,7 +12,9 @@
     {% if child.description %}
     <i> - {{ child.description }}</i>
     {% endif %}
-    <span class='badge'>{{ child.partcount }}</span>
+    {% if child.partcount > 0 %}
+    <span class='badge'>{{ child.partcount }} Part{% if child.partcount > 1 %}s{% endif %}</span>
+    {% endif %}
 </li>
 {% endfor %}
 </ul>

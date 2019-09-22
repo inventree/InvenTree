@@ -32,11 +32,7 @@ InvenTree | Supplier List
                         });
     });
 
-    $("#company-table").bootstrapTable({
-        sortable: true,
-        search: true,
-        pagination: true,
-        pageSize: 50,
+    $("#company-table").inventreeTable({
         formatNoMatches: function() { return "No company information found"; },
         columns: [
             {

@@ -26,9 +26,7 @@
 {% block js_ready %}
 {{ block.super }}
 
-$("#po-table").bootstrapTable({
-    search: true,
-    sortable: true,
+$("#po-table").inventreeTable({
 });
 
 $("#part-order2").click(function() {

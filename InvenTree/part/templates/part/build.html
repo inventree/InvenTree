@@ -31,11 +31,7 @@
                         });
     });
 
-    $("#build-table").bootstrapTable({
-        sortable: true,
-        search: true,
-        pagination: true,
-        pageSize: 50,
+    $("#build-table").inventreeTable({
         queryParams: function(p) {
             return {
                 part: {{ part.id }},

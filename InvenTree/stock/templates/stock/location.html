@@ -32,6 +32,27 @@
     </p>
 </div>
 <div class='col-sm-6'>
+    {% if location %}
+    <h3>Location Details</h3>
+    <table class='table table-striped table-condensed'>
+        <tr>
+            <td>Location Path</td>
+            <td>{{ location.pathstring }}</td>
+        </tr>
+        <tr>
+            <td>Location Description</td>
+            <td>{{ location.description }}</td>
+        </tr>
+        <tr>
+            <td>Sublocations</td>
+            <td>{{ location.children.count }}</td>
+        </tr>
+        <tr>
+            <td>Stock Items</td>
+            <td>{{ location.item_count }}</td>
+        </tr>
+    </table>
+    {% endif %}
 </div>
 </h3>
 </div>
@@ -55,16 +76,16 @@
 {% block js_ready %}
 {{ block.super }}
 
-    if (sessionStorage.getItem("inventree-show-part-locations")) {
+    if (inventreeLoadInt("show-part-locs") == 1) {
         $("#collapse-item-locations").collapse('show');
     }
 
     $("#collapse-item-locations").on('shown.bs.collapse', function() {
-        sessionStorage.setItem('inventree-show-part-locations', 1);
+        inventreeSave('show-part-locs', 1);
     });
 
     $("#collapse-item-locations").on('hidden.bs.collapse', function() {
-        sessionStorage.removeItem('inventree-show-part-locations');
+        inventreeDel('show-part-locs');
     });
 
     $("#stock-export").click(function() {

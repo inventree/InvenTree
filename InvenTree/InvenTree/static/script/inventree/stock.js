@@ -42,13 +42,10 @@ function loadStockTable(table, options) {
     
     var params = options.params || {};
 
-    table.bootstrapTable({
-        sortable: true,
-        search: true,
+    console.log('load stock table');
+
+    table.inventreeTable({
         method: 'get',
-        pagination: true,
-        pageSize: 25,
-        rememberOrder: true,
         formatNoMatches: function() {
             return 'No stock items matching query';
         },
@@ -386,15 +383,10 @@ function loadStockTrackingTable(table, options) {
         }
     });
 
-    table.bootstrapTable({
-        sortable: true,
-        search: true,
+    table.inventreeTable({
         method: 'get',
-        rememberOrder: true,
         queryParams: options.params,
         columns: cols,
-        pagination: true,
-        pageSize: 50,
         url: options.url,
     });
 
