@@ -60,6 +60,7 @@ $.fn.inventreeTable = function(options) {
     options.sortable = true;
     options.search = true;
 
+    // Callback to save pagination data
     options.onPageChange = function(number, size) {
         inventreeSave(varName, size);
     };

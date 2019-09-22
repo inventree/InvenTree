@@ -19,16 +19,11 @@
 {% block js_ready %}
 {{ block.super }}
 
-    $("#currency-table").bootstrapTable({
+    $("#currency-table").inventreeTable({
         url: "{% url 'api-currency-list' %}",
         queryParams: {
             ordering: 'suffix'
         },
-        sortable: true,
-        search: true,
-        pagination: true,
-        pageSize: 50,
-        pageList: [25, 50, 100, 'all'],
         formatNoMatches: function() { return "No currencies found"; },
         rowStyle: function(row, index) {
             if (row.base) {

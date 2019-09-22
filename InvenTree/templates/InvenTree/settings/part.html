@@ -19,16 +19,11 @@
 {% block js_ready %}
 {{ block.super }}
 
-    $("#param-table").bootstrapTable({
+    $("#param-table").inventreeTable({
         url: "{% url 'api-part-param-template-list' %}",
         queryParams: {
             ordering: 'name',
         },
-        sortable: true,
-        search: true,
-        pagination: true,
-        pageSize: 50,
-        pageList: [25, 50, 100, 'all'],
         formatNoMatches: function() { return "No part parameter templates found"; },
         columns: [
             {
