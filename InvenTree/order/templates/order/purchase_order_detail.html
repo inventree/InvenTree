@@ -115,7 +115,7 @@ InvenTree | {{ order }}
     </thead>
     <tbody>
     {% for line in order.lines.all %}
-    <tr>
+    <tr{% if order.status == OrderStatus.PLACED %} class={% if line.received < line.quantity %}'rowinvalid'{% else %}'rowvalid'{% endif %}{% endif %}>
         <td>
             {{ forloop.counter }}
         </td>
