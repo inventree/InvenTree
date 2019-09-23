@@ -129,13 +129,15 @@ class StockItem(models.Model):
         else:
             add_note = False
 
+        user = kwargs.pop('user', None)
+
         super(StockItem, self).save(*args, **kwargs)
 
         if add_note:
             # This StockItem is being saved for the first time
             self.addTransactionNote(
                 'Created stock item',
-                None,
+                user,
                 notes="Created new stock item for part '{p}'".format(p=str(self.part)),
                 system=True
             )

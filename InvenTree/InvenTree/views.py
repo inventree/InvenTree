@@ -245,7 +245,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
         pass
 
     def post_save(self, **kwargs):
-        """ 
+        """
         Hook for doing something with the created object after it is saved
         """
         pass

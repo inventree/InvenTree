@@ -792,6 +792,8 @@ class StockItemCreate(AjaxCreateView):
 
         form = self.get_form()
 
+        data = {}
+
         valid = form.is_valid()
 
         if valid:
@@ -850,7 +852,7 @@ class StockItemCreate(AjaxCreateView):
                                     URL=data.get('URL'),
                                 )
 
-                                item.save()
+                                item.save(user=request.user)
 
                         except ValidationError as e:
                             form.errors['serial_numbers'] = e.messages
@@ -861,11 +863,15 @@ class StockItemCreate(AjaxCreateView):
                     # We need to call _post_clean() here because it is prevented in the form implementation
                     form.clean()
                     form._post_clean()
-                    form.save()
+                    
+                    item = form.save(commit=False)
+                    item.save(user=request.user)
 
-        data = {
-            'form_valid': valid,
-        }
+                    data['pk'] = item.pk
+                    data['url'] = item.get_absolute_url()
+                    data['success'] = _("Created new stock item")
+
+        data['form_valid'] = valid
 
         return self.renderJsonResponse(request, form, data=data)
 
