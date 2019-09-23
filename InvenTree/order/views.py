@@ -254,7 +254,6 @@ class PurchaseOrderReceive(AjaxUpdateView):
 
         return lines
 
-
     def get(self, request, *args, **kwargs):
         """ Respond to a GET request. Determines which parts are outstanding,
         and presents a list of these parts to the user.
