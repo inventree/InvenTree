@@ -190,6 +190,14 @@ $("#cancel-order").click(function() {
 $("#receive-order").click(function() {
     launchModalForm("{% url 'purchase-order-receive' order.id %}", {
         reload: true,
+        secondary: [
+            {
+                field: 'location',
+                label: 'New Location',
+                title: 'Create new stock location',
+                url: "{% url 'stock-location-create' %}",
+            },
+        ]
     });
 });
 

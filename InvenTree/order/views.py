@@ -206,7 +206,7 @@ class PurchaseOrderExport(AjaxView):
         return DownloadFile(filedata, filename)
 
 
-class PurchaseOrderReceive(AjaxView):
+class PurchaseOrderReceive(AjaxUpdateView):
     """ View for receiving parts which are outstanding against a PurchaseOrder.
 
     Any parts which are outstanding are listed.
@@ -214,6 +214,7 @@ class PurchaseOrderReceive(AjaxView):
 
     """
 
+    form_class = order_forms.ReceivePurchaseOrderForm
     ajax_form_title = "Receive Parts"
     ajax_template_name = "order/receive_parts.html"
 
@@ -225,8 +226,6 @@ class PurchaseOrderReceive(AjaxView):
         ctx = {
             'order': self.order,
             'lines': self.lines,
-            'locations': StockLocation.objects.all(),
-            'destination': self.destination,
         }
 
         return ctx
@@ -245,7 +244,7 @@ class PurchaseOrderReceive(AjaxView):
             # Pre-fill the remaining quantity
             line.receive_quantity = line.remaining()
 
-        return self.renderJsonResponse(request)
+        return self.renderJsonResponse(request, form=self.get_form())
 
     def post(self, request, *args, **kwargs):
         """ Respond to a POST request. Data checking and error handling.
@@ -260,8 +259,8 @@ class PurchaseOrderReceive(AjaxView):
         self.destination = None
 
         # Extract the destination for received parts
-        if 'receive_location' in request.POST:
-            pk = request.POST['receive_location']
+        if 'location' in request.POST:
+            pk = request.POST['location']
             try:
                 self.destination = StockLocation.objects.get(id=pk)
             except (StockLocation.DoesNotExist, ValueError):
@@ -316,7 +315,7 @@ class PurchaseOrderReceive(AjaxView):
             'success': 'Items marked as received',
         }
 
-        return self.renderJsonResponse(request, data=data)
+        return self.renderJsonResponse(request, data=data, form=self.get_form())
 
     @transaction.atomic
     def receive_parts(self):
