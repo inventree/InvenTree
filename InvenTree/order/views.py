@@ -91,6 +91,12 @@ class PurchaseOrderCreate(AjaxCreateView):
 
         return initials
 
+    def post_save(self, **kwargs):
+        # Record the user who created this purchase order
+
+        self.object.created_by = self.request.user
+        self.object.save()
+
 
 class PurchaseOrderEdit(AjaxUpdateView):
     """ View for editing a PurchaseOrder using a modal form """

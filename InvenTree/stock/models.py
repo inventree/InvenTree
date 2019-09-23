@@ -129,13 +129,17 @@ class StockItem(models.Model):
         else:
             add_note = False
 
+        user = kwargs.pop('user', None)
+        
+        add_note = add_note and kwargs.pop('note', True)
+
         super(StockItem, self).save(*args, **kwargs)
 
         if add_note:
             # This StockItem is being saved for the first time
             self.addTransactionNote(
                 'Created stock item',
-                None,
+                user,
                 notes="Created new stock item for part '{p}'".format(p=str(self.part)),
                 system=True
             )
@@ -466,7 +470,8 @@ class StockItem(models.Model):
             if location:
                 new_item.location = location
 
-            new_item.save()
+            # The item already has a transaction history, don't create a new note
+            new_item.save(user=user, note=False)
 
             # Copy entire transaction history
             new_item.copyHistoryFrom(self)
