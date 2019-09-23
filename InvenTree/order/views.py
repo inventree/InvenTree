@@ -230,6 +230,31 @@ class PurchaseOrderReceive(AjaxUpdateView):
 
         return ctx
 
+    def get_lines(self):
+        """
+        Extract particular line items from the request,
+        or default to *all* pending line items if none are provided
+        """
+
+        lines = None
+
+        if 'line' in self.request.GET:
+            line_id = self.request.GET.get('line')
+
+            try:
+                lines = PurchaseOrderLineItem.objects.filter(pk=line_id)
+            except (PurchaseOrderLineItem.DoesNotExist, ValueError):
+                pass
+
+        # TODO - Option to pass multiple lines?
+
+        # No lines specified - default selection
+        if lines is None:
+            lines = self.order.pending_line_items()
+
+        return lines
+
+
     def get(self, request, *args, **kwargs):
         """ Respond to a GET request. Determines which parts are outstanding,
         and presents a list of these parts to the user.
@@ -238,7 +263,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
         self.request = request
         self.order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
 
-        self.lines = self.order.pending_line_items()
+        self.lines = self.get_lines()
 
         for line in self.lines:
             # Pre-fill the remaining quantity
