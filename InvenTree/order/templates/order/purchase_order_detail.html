@@ -108,14 +108,12 @@ InvenTree | {{ order }}
         <th data-sortable='true'>Received</th>
         {% endif %}
         <th>Note</th>
-        {% if order.status == OrderStatus.PENDING %}
         <th></th>
-        {% endif %}
     </tr>
     </thead>
     <tbody>
     {% for line in order.lines.all %}
-    <tr>
+    <tr{% if order.status == OrderStatus.PLACED %} class={% if line.received < line.quantity %}'rowinvalid'{% else %}'rowvalid'{% endif %}{% endif %}>
         <td>
             {{ forloop.counter }}
         </td>
@@ -137,18 +135,23 @@ InvenTree | {{ order }}
         <td>
             {{ line.notes }}
         </td>
-        {% if order.status == OrderStatus.PENDING %}
         <td>
             <div class='btn-group'>
+                {% if order.status == OrderStatus.PENDING %}
                 <button class='btn btn-default btn-glyph' line='{{ line.id }}' id='edit-line-item-{{ line.id }} title='Edit line item' onclick='editPurchaseOrderLineItem()'>
                     <span url="{% url 'po-line-item-edit' line.id %}" line='{{ line.id }}' class='glyphicon glyphicon-edit'></span>
                 </button>
                 <button class='btn btn-default btn-glyph' line='{{ line.id }}' id='remove-line-item-{{ line.id }' title='Remove line item' type='button' onclick='removePurchaseOrderLineItem()'>
                     <span url="{% url 'po-line-item-delete' line.id %}" line='{{ line.id }}' class='glyphicon glyphicon-remove'></span>
                 </button>
+                {% endif %}
+                {% if order.status == OrderStatus.PLACED and line.received < line.quantity %}
+                <button class='btn btn-default btn-glyph line-receive' pk='{{ line.pk }}' title='Receive item(s)'>
+                    <span class='glyphicon glyphicon-check'></span>
+                </button>
+                {% endif %}
             </div>
         </td>
-        {% endif %}
     </tr>
     {% endfor %}
     </tbody>
@@ -187,9 +190,31 @@ $("#cancel-order").click(function() {
     });
 });
 
+$("#po-lines-table").on('click', ".line-receive", function() {
+
+    var button = $(this);
+
+    console.log('clicked! ' + button.attr('pk'));
+
+    launchModalForm("{% url 'purchase-order-receive' order.id %}", {
+        reload: true,
+        data: {
+            line: button.attr('pk')
+        }
+    });
+});
+
 $("#receive-order").click(function() {
     launchModalForm("{% url 'purchase-order-receive' order.id %}", {
         reload: true,
+        secondary: [
+            {
+                field: 'location',
+                label: 'New Location',
+                title: 'Create new stock location',
+                url: "{% url 'stock-location-create' %}",
+            },
+        ]
     });
 });
 

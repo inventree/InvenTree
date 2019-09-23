@@ -91,6 +91,12 @@ class PurchaseOrderCreate(AjaxCreateView):
 
         return initials
 
+    def post_save(self, **kwargs):
+        # Record the user who created this purchase order
+
+        self.object.created_by = self.request.user
+        self.object.save()
+
 
 class PurchaseOrderEdit(AjaxUpdateView):
     """ View for editing a PurchaseOrder using a modal form """
@@ -206,7 +212,7 @@ class PurchaseOrderExport(AjaxView):
         return DownloadFile(filedata, filename)
 
 
-class PurchaseOrderReceive(AjaxView):
+class PurchaseOrderReceive(AjaxUpdateView):
     """ View for receiving parts which are outstanding against a PurchaseOrder.
 
     Any parts which are outstanding are listed.
@@ -214,6 +220,7 @@ class PurchaseOrderReceive(AjaxView):
 
     """
 
+    form_class = order_forms.ReceivePurchaseOrderForm
     ajax_form_title = "Receive Parts"
     ajax_template_name = "order/receive_parts.html"
 
@@ -225,11 +232,33 @@ class PurchaseOrderReceive(AjaxView):
         ctx = {
             'order': self.order,
             'lines': self.lines,
-            'locations': StockLocation.objects.all(),
-            'destination': self.destination,
         }
 
         return ctx
+
+    def get_lines(self):
+        """
+        Extract particular line items from the request,
+        or default to *all* pending line items if none are provided
+        """
+
+        lines = None
+
+        if 'line' in self.request.GET:
+            line_id = self.request.GET.get('line')
+
+            try:
+                lines = PurchaseOrderLineItem.objects.filter(pk=line_id)
+            except (PurchaseOrderLineItem.DoesNotExist, ValueError):
+                pass
+
+        # TODO - Option to pass multiple lines?
+
+        # No lines specified - default selection
+        if lines is None:
+            lines = self.order.pending_line_items()
+
+        return lines
 
     def get(self, request, *args, **kwargs):
         """ Respond to a GET request. Determines which parts are outstanding,
@@ -239,13 +268,13 @@ class PurchaseOrderReceive(AjaxView):
         self.request = request
         self.order = get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
 
-        self.lines = self.order.pending_line_items()
+        self.lines = self.get_lines()
 
         for line in self.lines:
             # Pre-fill the remaining quantity
             line.receive_quantity = line.remaining()
 
-        return self.renderJsonResponse(request)
+        return self.renderJsonResponse(request, form=self.get_form())
 
     def post(self, request, *args, **kwargs):
         """ Respond to a POST request. Data checking and error handling.
@@ -260,8 +289,8 @@ class PurchaseOrderReceive(AjaxView):
         self.destination = None
 
         # Extract the destination for received parts
-        if 'receive_location' in request.POST:
-            pk = request.POST['receive_location']
+        if 'location' in request.POST:
+            pk = request.POST['location']
             try:
                 self.destination = StockLocation.objects.get(id=pk)
             except (StockLocation.DoesNotExist, ValueError):
@@ -316,7 +345,7 @@ class PurchaseOrderReceive(AjaxView):
             'success': 'Items marked as received',
         }
 
-        return self.renderJsonResponse(request, data=data)
+        return self.renderJsonResponse(request, data=data, form=self.get_form())
 
     @transaction.atomic
     def receive_parts(self):

@@ -8,23 +8,6 @@ Receive outstanding parts for <b>{{ order }}</b> - <i>{{ order.description }}</i
     {% csrf_token %}
     {% load crispy_forms_tags %}
 
-    <div class='control-group'>
-        <label class='control-label requiredField'>Location</label>
-        <div class='controls'>
-            <select class='select' name='receive_location'>
-                <option value=''>---------</option>
-                {% for loc in locations %}
-                <option value='{{ loc.id }}' {% if destination.id == loc.id %}selected='selected'{% endif %}>{{ loc.pathstring }} - {{ loc.description }}</option>
-                {% endfor %}
-            </select>
-            {% if not destination %}
-            <span class='help-inline'>Select location to receive parts</span>
-            {% else %}
-            <p class='help-block'>Location of received parts</p>
-            {% endif %}
-        </div>
-    </div>
-
     <label class='control-label'>Parts</label>
     <p class='help-block'>Select parts to receive against this order.</p>
 
@@ -64,6 +47,8 @@ Receive outstanding parts for <b>{{ order }}</b> - <i>{{ order.description }}</i
         </tr>
         {% endfor %}
     </table>
+
+    {% crispy form %}
 </form>
 
 {% endblock %}

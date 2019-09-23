@@ -238,6 +238,18 @@ class AjaxCreateView(AjaxMixin, CreateView):
     - Handles form validation via AJAX POST requests
     """
 
+    def pre_save(self, **kwargs):
+        """
+        Hook for doing something before the form is validated
+        """
+        pass
+
+    def post_save(self, **kwargs):
+        """
+        Hook for doing something with the created object after it is saved
+        """
+        pass
+
     def get(self, request, *args, **kwargs):
         """ Creates form with initial data, and renders JSON response """
 
@@ -255,26 +267,29 @@ class AjaxCreateView(AjaxMixin, CreateView):
         - Return status info (success / failure)
         """
         self.request = request
-        form = self.get_form()
+        self.form = self.get_form()
 
         # Extra JSON data sent alongside form
         data = {
-            'form_valid': form.is_valid(),
+            'form_valid': self.form.is_valid(),
         }
 
-        if form.is_valid():
-            obj = form.save()
+        if self.form.is_valid():
+
+            self.pre_save()
+            self.object = self.form.save()
+            self.post_save()
 
             # Return the PK of the newly-created object
-            data['pk'] = obj.pk
-            data['text'] = str(obj)
+            data['pk'] = self.object.pk
+            data['text'] = str(object)
 
             try:
-                data['url'] = obj.get_absolute_url()
+                data['url'] = self.object.get_absolute_url()
             except AttributeError:
                 pass
 
-        return self.renderJsonResponse(request, form, data)
+        return self.renderJsonResponse(request, self.form, data)
 
 
 class AjaxUpdateView(AjaxMixin, UpdateView):
