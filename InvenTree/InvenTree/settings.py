@@ -17,6 +17,8 @@ import logging
 import tempfile
 import yaml
 
+from django.utils.translation import gettext_lazy as _
+
 
 def eprint(*args, **kwargs):
     """ Print a warning message to stderr """
@@ -115,6 +117,7 @@ LOGGING = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -225,7 +228,20 @@ if not type(EXTRA_URL_SCHEMES) in [list]:
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = CONFIG.get('language', 'de-ge')
+
+# If a new language translation is supported, it must be added here
+LANGUAGES = [
+    ('en', _('English')),
+    ('de', _('German')),
+    ('fr', _('French')),
+    ('pk', _('Polish')),
+]
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale/'),
+)
+
 
 TIME_ZONE = 'UTC'
 
