@@ -15,6 +15,8 @@ migrate:
 	cd InvenTree && python3 manage.py migrate
 	cd InvenTree && python3 manage.py migrate --run-syncdb
 	cd InvenTree && python3 manage.py check
+	cd InvenTree && python3 manage.py makemessages
+	cd InvenTree && python3 manage.py compilemessages
 
 # Collect static files into the correct locations
 static:
