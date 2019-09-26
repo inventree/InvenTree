@@ -13,9 +13,9 @@ However, powerful business logic works in the background to ensure that stock tr
 
 For InvenTree documentation, refer to the [user documentation](https://inventree.github.io).
 
-## Code Documentation
+## Developer Documentation
 
-For project code documentation, refer to the [developer documentation](http://inventree.readthedocs.io/en/latest/) (auto-generated)
+For site administrator and project code documentation, refer to the [developer documentation](http://inventree.readthedocs.io/en/latest/). This includes auto-generated documentation of the InvenTree python codebase.
 
 ## Getting Started
 

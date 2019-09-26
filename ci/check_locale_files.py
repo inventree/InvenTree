@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import sys
 import subprocess
 
-print("Checking for uncommitted files...")
+print("Checking for uncommitted locale files...")
 
 cmd = ['git', 'status']
 
@@ -17,7 +17,8 @@ out, err = proc.communicate()
 locales = []
 
 for line in str(out.decode()).split('\n'):
-    if 'modified:' in line and '/locale/' in line:
+    # Check for any compiled translation files that have not been committed
+    if 'modified:' in line and '/locale/' in line and 'django.mo' in line:
         locales.append(line)
 
 if len(locales) > 0:
