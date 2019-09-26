@@ -53,6 +53,9 @@ class StockIndex(ListView):
         context['locations'] = locations
         context['items'] = StockItem.objects.all()
 
+        context['loc_count'] = StockLocation.objects.count()
+        context['stock_count'] = StockItem.objects.count()
+
         return context
 
 

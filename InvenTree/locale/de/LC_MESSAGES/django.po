@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-26 00:37+0000\n"
+"POT-Creation-Date: 2019-09-26 23:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -149,7 +149,7 @@ msgstr ""
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 
-#: build/views.py:289 stock/views.py:831
+#: build/views.py:289 stock/views.py:834
 #, python-brace-format
 msgid "The following serial numbers already exist: ({sn})"
 msgstr ""
@@ -459,51 +459,80 @@ msgstr ""
 msgid "Serialized {n} items"
 msgstr ""
 
-#: stock/views.py:396
+#: stock/templates/stock/location.html:37
+msgid "Location Details"
+msgstr ""
+
+#: stock/templates/stock/location.html:40
+msgid "Location Path"
+msgstr ""
+
+#: stock/templates/stock/location.html:44
+msgid "Location Description"
+msgstr ""
+
+#: stock/templates/stock/location.html:48
+msgid "Sublocations"
+msgstr ""
+
+#: stock/templates/stock/location.html:52
+#: stock/templates/stock/location.html:64
+msgid "Stock Items"
+msgstr ""
+
+#: stock/templates/stock/location.html:57
+msgid "Stock Details"
+msgstr ""
+
+#: stock/templates/stock/location.html:60
+msgid "Stock Locations"
+msgstr ""
+
+#: stock/views.py:399
 msgid "Must enter integer value"
 msgstr ""
 
-#: stock/views.py:401
+#: stock/views.py:404
 msgid "Quantity must be positive"
 msgstr ""
 
-#: stock/views.py:408
+#: stock/views.py:411
 #, python-brace-format
 msgid "Quantity must not exceed {x}"
 msgstr ""
 
-#: stock/views.py:416
+#: stock/views.py:419
 msgid "Confirm stock adjustment"
 msgstr ""
 
-#: stock/views.py:484
+#: stock/views.py:487
 #, python-brace-format
 msgid "Added stock to {n} items"
 msgstr ""
 
-#: stock/views.py:499
+#: stock/views.py:502
 #, python-brace-format
 msgid "Removed stock from {n} items"
 msgstr ""
 
-#: stock/views.py:512
+#: stock/views.py:515
 #, python-brace-format
 msgid "Counted stock for {n} items"
 msgstr ""
 
-#: stock/views.py:540
+#: stock/views.py:543
 msgid "No items were moved"
 msgstr ""
 
-#: stock/views.py:543
+#: stock/views.py:546
 #, python-brace-format
 msgid "Moved {n} items to {dest}"
 msgstr ""
 
-#: stock/views.py:810
+#: stock/views.py:813
 msgid "Invalid part selection"
 msgstr ""
 
-#: stock/views.py:872
+#: stock/views.py:875
 msgid "Created new stock item"
 msgstr ""
