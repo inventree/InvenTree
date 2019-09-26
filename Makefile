@@ -25,7 +25,6 @@ static:
 # Install all required packages
 install:
 	pip3 install -U -r requirements.txt
-	apt-get install gettext
 	cd InvenTree && python3 setup.py
 
 # Create a superuser account

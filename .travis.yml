@@ -10,7 +10,9 @@ addons:
         -sqlite3
 
 before_install:
-    - sudo make install
+    - sudo apt-get update
+    - sudo apt-get install gettext
+    - make install
     - make migrate
     - cd InvenTree && python3 manage.py createsuperuser --username InvenTreeAdmin --email admin@inventree.com --noinput && cd ..
 

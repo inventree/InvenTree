@@ -17,8 +17,9 @@ Requirements
 To install InvenTree you will need the following system components installed:
 
 * python3
-* python3-pip
+* python3-pip (pip3)
 * make
+* gettext
 
 Installation
 ------------
