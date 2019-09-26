@@ -39,6 +39,11 @@ postgresql:
 	apt-get install postgresql postgresql-contrib libpq-dev
 	pip3 install psycopg2
 
+# Update translation files
+translate:
+	cd InvenTree && python3 manage.py makemessages
+	cd InvenTree && python3 manage.py compilemessages
+
 # Run PEP style checks against source code
 style:
 	flake8 InvenTree
@@ -67,4 +72,4 @@ backup:
 	cd InvenTree && python3 manage.py dbbackup
 	cd InvenTree && python3 manage.py mediabackup
 
-.PHONY: clean migrate superuser install mysql postgresql static style test coverage docreqs docs backup update
+.PHONY: clean migrate superuser install mysql postgresql translate static style test coverage docreqs docs backup update
