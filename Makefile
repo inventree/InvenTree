@@ -15,8 +15,6 @@ migrate:
 	cd InvenTree && python3 manage.py migrate
 	cd InvenTree && python3 manage.py migrate --run-syncdb
 	cd InvenTree && python3 manage.py check
-	cd InvenTree && python3 manage.py makemessages
-	cd InvenTree && python3 manage.py compilemessages
 
 # Collect static files into the correct locations
 static:
@@ -40,6 +38,11 @@ mysql:
 postgresql:
 	apt-get install postgresql postgresql-contrib libpq-dev
 	pip3 install psycopg2
+
+# Update translation files
+translate:
+	cd InvenTree && python3 manage.py makemessages
+	cd InvenTree && python3 manage.py compilemessages
 
 # Run PEP style checks against source code
 style:
@@ -69,4 +72,4 @@ backup:
 	cd InvenTree && python3 manage.py dbbackup
 	cd InvenTree && python3 manage.py mediabackup
 
-.PHONY: clean migrate superuser install mysql postgresql static style test coverage docreqs docs backup update
+.PHONY: clean migrate superuser install mysql postgresql translate static style test coverage docreqs docs backup update
