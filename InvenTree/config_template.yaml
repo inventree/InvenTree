@@ -18,7 +18,7 @@ database:
   #HOST: ''
   #PORT: ''
 
-# Select default system language (default is 'en_us')
+# Select default system language (default is 'en-us')
 language: en-us
 
 # Set debug to False to run in production mode

@@ -12,6 +12,7 @@ InvenTree Source Documentation
    Deployment<deploy>
    Migrate Data<migrate>
    Update InvenTree<update>
+   Translations<translate>
    Backup and Restore<backup>
    Modal Forms<forms>
    Tables<tables>

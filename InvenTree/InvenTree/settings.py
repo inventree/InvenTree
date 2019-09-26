@@ -228,7 +228,7 @@ if not type(EXTRA_URL_SCHEMES) in [list]:
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = CONFIG.get('language', 'de-ge')
+LANGUAGE_CODE = CONFIG.get('language', 'en-us')
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
