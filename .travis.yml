@@ -21,7 +21,6 @@ script:
     - python3 ci/check_migration_files.py
     - make coverage
     - make translate
-    - python3 ci/check_locale_files.py
     - make style
 
 after_success:
