@@ -56,6 +56,8 @@ class PartIndex(ListView):
         children = PartCategory.objects.filter(parent=None)
 
         context['children'] = children
+        context['category_count'] = PartCategory.objects.count()
+        context['part_count'] = Part.objects.count()
 
         return context
 

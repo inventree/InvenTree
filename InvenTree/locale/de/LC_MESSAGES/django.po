@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-26 23:58+0000\n"
+"POT-Creation-Date: 2019-09-27 00:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -222,7 +222,7 @@ msgstr ""
 msgid "Company"
 msgstr ""
 
-#: order/models.py:156 order/models.py:201 part/views.py:1030
+#: order/models.py:156 order/models.py:201 part/views.py:1032
 #: stock/models.py:437
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -345,32 +345,76 @@ msgstr ""
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
 msgstr ""
 
-#: part/views.py:194
+#: part/templates/part/category.html:13 part/templates/part/category.html:69
+msgid "Part Categories"
+msgstr ""
+
+#: part/templates/part/category.html:14
+msgid "All parts"
+msgstr ""
+
+#: part/templates/part/category.html:34
+msgid "Category Details"
+msgstr ""
+
+#: part/templates/part/category.html:37
+msgid "Category Path"
+msgstr ""
+
+#: part/templates/part/category.html:41
+msgid "Category Description"
+msgstr ""
+
+#: part/templates/part/category.html:46
+msgid "Default Location"
+msgstr ""
+
+#: part/templates/part/category.html:52
+msgid "Keywords"
+msgstr ""
+
+#: part/templates/part/category.html:57
+msgid "Subcategories"
+msgstr ""
+
+#: part/templates/part/category.html:61
+msgid "Parts (Including subcategories)"
+msgstr ""
+
+#: part/templates/part/category.html:66
+msgid "Part Details"
+msgstr ""
+
+#: part/templates/part/category.html:73
+msgid "Parts"
+msgstr ""
+
+#: part/views.py:196
 #, python-brace-format
 msgid "Set category for {n} parts"
 msgstr ""
 
-#: part/views.py:771
+#: part/views.py:773
 msgid "No BOM file provided"
 msgstr ""
 
-#: part/views.py:1032
+#: part/views.py:1034
 msgid "Enter a valid quantity"
 msgstr ""
 
-#: part/views.py:1056 part/views.py:1059
+#: part/views.py:1058 part/views.py:1061
 msgid "Select valid part"
 msgstr ""
 
-#: part/views.py:1065
+#: part/views.py:1067
 msgid "Duplicate part selected"
 msgstr ""
 
-#: part/views.py:1093
+#: part/views.py:1095
 msgid "Select a part"
 msgstr ""
 
-#: part/views.py:1097
+#: part/views.py:1099
 msgid "Specify quantity"
 msgstr ""
 
