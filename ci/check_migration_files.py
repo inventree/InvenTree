@@ -6,6 +6,8 @@ from __future__ import unicode_literals
 import sys
 import subprocess
 
+print("Checking for unstaged migration files...")
+
 cmd = ['git', 'ls-files', '--exclude-standard', '--others']
 
 proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

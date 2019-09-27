@@ -1,0 +1,694 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-09-27 00:12+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: InvenTree/helpers.py:157 order/models.py:158 order/models.py:203
+msgid "Invalid quantity provided"
+msgstr ""
+
+#: InvenTree/helpers.py:160
+msgid "Empty serial number string"
+msgstr ""
+
+#: InvenTree/helpers.py:181 InvenTree/helpers.py:198
+#, python-brace-format
+msgid "Duplicate serial: {n}"
+msgstr ""
+
+#: InvenTree/helpers.py:185 InvenTree/helpers.py:188 InvenTree/helpers.py:191
+#: InvenTree/helpers.py:202
+#, python-brace-format
+msgid "Invalid group: {g}"
+msgstr ""
+
+#: InvenTree/helpers.py:208
+msgid "No serial numbers found"
+msgstr ""
+
+#: InvenTree/helpers.py:212
+#, python-brace-format
+msgid "Number of unique serial number ({s}) must match quantity ({q})"
+msgstr ""
+
+#: InvenTree/settings.py:235
+msgid "English"
+msgstr ""
+
+#: InvenTree/settings.py:236
+msgid "German"
+msgstr ""
+
+#: InvenTree/settings.py:237
+msgid "French"
+msgstr ""
+
+#: InvenTree/settings.py:238
+msgid "Polish"
+msgstr ""
+
+#: InvenTree/status_codes.py:27 InvenTree/status_codes.py:82
+msgid "Pending"
+msgstr ""
+
+#: InvenTree/status_codes.py:28
+msgid "Placed"
+msgstr ""
+
+#: InvenTree/status_codes.py:29 InvenTree/status_codes.py:85
+msgid "Complete"
+msgstr ""
+
+#: InvenTree/status_codes.py:30 InvenTree/status_codes.py:84
+msgid "Cancelled"
+msgstr ""
+
+#: InvenTree/status_codes.py:31 InvenTree/status_codes.py:62
+msgid "Lost"
+msgstr ""
+
+#: InvenTree/status_codes.py:32
+msgid "Returned"
+msgstr ""
+
+#: InvenTree/status_codes.py:58
+msgid "OK"
+msgstr ""
+
+#: InvenTree/status_codes.py:59
+msgid "Attention needed"
+msgstr ""
+
+#: InvenTree/status_codes.py:60
+msgid "Damaged"
+msgstr ""
+
+#: InvenTree/status_codes.py:61
+msgid "Destroyed"
+msgstr ""
+
+#: InvenTree/status_codes.py:83
+msgid "Allocated"
+msgstr ""
+
+#: InvenTree/validators.py:35
+msgid "Invalid character in part name"
+msgstr ""
+
+#: InvenTree/validators.py:44
+#, python-brace-format
+msgid "Illegal character in name ({x})"
+msgstr ""
+
+#: InvenTree/validators.py:63 InvenTree/validators.py:79
+msgid "Overage value must not be negative"
+msgstr ""
+
+#: InvenTree/validators.py:81
+msgid "Overage must not exceed 100%"
+msgstr ""
+
+#: InvenTree/validators.py:88
+msgid "Overage must be an integer value or a percentage"
+msgstr ""
+
+#: build/forms.py:36
+msgid "Confirm"
+msgstr ""
+
+#: build/forms.py:53 stock/forms.py:34
+msgid "Enter unique serial numbers (or leave blank)"
+msgstr ""
+
+#: build/forms.py:55
+msgid "Confirm build completion"
+msgstr ""
+
+#: build/models.py:381
+#, python-brace-format
+msgid "Selected stock item not found in BOM for part '{p}'"
+msgstr ""
+
+#: build/models.py:384
+#, python-brace-format
+msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
+msgstr ""
+
+#: build/views.py:289 stock/views.py:834
+#, python-brace-format
+msgid "The following serial numbers already exist: ({sn})"
+msgstr ""
+
+#: common/models.py:65
+msgid "Settings key (must be unique - case insensitive"
+msgstr ""
+
+#: common/models.py:67
+msgid "Settings value"
+msgstr ""
+
+#: common/models.py:69
+msgid "Settings description"
+msgstr ""
+
+#: common/models.py:82
+msgid "Key string must be unique"
+msgstr ""
+
+#: common/models.py:103
+msgid "Currency Symbol e.g. $"
+msgstr ""
+
+#: common/models.py:105
+msgid "Currency Suffix e.g. AUD"
+msgstr ""
+
+#: common/models.py:107
+msgid "Currency Description"
+msgstr ""
+
+#: common/models.py:109
+msgid "Currency Value"
+msgstr ""
+
+#: common/models.py:111
+msgid "Use this currency as the base currency"
+msgstr ""
+
+#: order/forms.py:21
+msgid "Place order"
+msgstr ""
+
+#: order/forms.py:32
+msgid "Cancel order"
+msgstr ""
+
+#: order/forms.py:43
+msgid "Receive parts to this location"
+msgstr ""
+
+#: order/models.py:62
+msgid "Order reference"
+msgstr ""
+
+#: order/models.py:64
+msgid "Order description"
+msgstr ""
+
+#: order/models.py:66
+msgid "Link to external page"
+msgstr ""
+
+#: order/models.py:83
+msgid "Order notes"
+msgstr ""
+
+#: order/models.py:125
+msgid "Company"
+msgstr ""
+
+#: order/models.py:156 order/models.py:201 part/views.py:1032
+#: stock/models.py:437
+msgid "Quantity must be greater than zero"
+msgstr ""
+
+#: order/models.py:161
+msgid "Part supplier must match PO supplier"
+msgstr ""
+
+#: order/models.py:196
+msgid "Lines can only be received against an order marked as 'Placed'"
+msgstr ""
+
+#: order/models.py:245
+msgid "Item quantity"
+msgstr ""
+
+#: order/models.py:247
+msgid "Line item reference"
+msgstr ""
+
+#: order/models.py:249
+msgid "Line item notes"
+msgstr ""
+
+#: order/models.py:275
+msgid "Purchase Order"
+msgstr ""
+
+#: order/models.py:284
+msgid "Supplier part"
+msgstr ""
+
+#: order/models.py:287
+msgid "Number of items received"
+msgstr ""
+
+#: order/views.py:140
+msgid "Confirm order cancellation"
+msgstr ""
+
+#: order/views.py:173
+msgid "Confirm order placement"
+msgstr ""
+
+#: order/views.py:695
+msgid "Invalid Purchase Order"
+msgstr ""
+
+#: order/views.py:703
+msgid "Supplier must match for Part and Order"
+msgstr ""
+
+#: order/views.py:708
+msgid "Invalid SupplierPart selection"
+msgstr ""
+
+#: part/bom.py:107
+#, python-brace-format
+msgid "Unsupported file format: {f}"
+msgstr ""
+
+#: part/bom.py:112
+msgid "Error reading BOM file (invalid data)"
+msgstr ""
+
+#: part/bom.py:114
+msgid "Error reading BOM file (incorrect row size)"
+msgstr ""
+
+#: part/forms.py:37
+msgid "Confirm that the BOM is correct"
+msgstr ""
+
+#: part/forms.py:49
+msgid "Select BOM file to upload"
+msgstr ""
+
+#: part/forms.py:73
+msgid "Select part category"
+msgstr ""
+
+#: part/forms.py:81
+msgid "Perform 'deep copy' which will duplicate all BOM data for this part"
+msgstr ""
+
+#: part/forms.py:86
+msgid "Confirm part creation"
+msgstr ""
+
+#: part/forms.py:173
+msgid "Input quantity for price calculation"
+msgstr ""
+
+#: part/forms.py:176
+msgid "Select currency for price calculation"
+msgstr ""
+
+#: part/models.py:308
+msgid "Part must be unique for name, IPN and revision"
+msgstr ""
+
+#: part/models.py:322
+msgid "Part cannot be a template part if it is a variant of another part"
+msgstr ""
+
+#: part/models.py:323
+msgid "Part cannot be a variant of another part if it is already a template"
+msgstr ""
+
+#: part/models.py:992
+msgid "Parameter template name must be unique"
+msgstr ""
+
+#: part/models.py:1141
+msgid "Part cannot be added to its own Bill of Materials"
+msgstr ""
+
+#: part/models.py:1148
+#, python-brace-format
+msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
+msgstr ""
+
+#: part/templates/part/category.html:13 part/templates/part/category.html:69
+msgid "Part Categories"
+msgstr ""
+
+#: part/templates/part/category.html:14
+msgid "All parts"
+msgstr ""
+
+#: part/templates/part/category.html:34
+msgid "Category Details"
+msgstr ""
+
+#: part/templates/part/category.html:37
+msgid "Category Path"
+msgstr ""
+
+#: part/templates/part/category.html:41
+msgid "Category Description"
+msgstr ""
+
+#: part/templates/part/category.html:46 part/templates/part/detail.html:63
+msgid "Default Location"
+msgstr ""
+
+#: part/templates/part/category.html:52 part/templates/part/detail.html:43
+msgid "Keywords"
+msgstr ""
+
+#: part/templates/part/category.html:57
+msgid "Subcategories"
+msgstr ""
+
+#: part/templates/part/category.html:61
+msgid "Parts (Including subcategories)"
+msgstr ""
+
+#: part/templates/part/category.html:66 part/templates/part/detail.html:8
+msgid "Part Details"
+msgstr ""
+
+#: part/templates/part/category.html:73
+msgid "Parts"
+msgstr ""
+
+#: part/templates/part/detail.html:16
+msgid "Part name"
+msgstr ""
+
+#: part/templates/part/detail.html:21
+msgid "IPN"
+msgstr ""
+
+#: part/templates/part/detail.html:27
+msgid "Revision"
+msgstr ""
+
+#: part/templates/part/detail.html:32
+msgid "Description"
+msgstr ""
+
+#: part/templates/part/detail.html:37
+msgid "Variant Of"
+msgstr ""
+
+#: part/templates/part/detail.html:49
+msgid "URL"
+msgstr ""
+
+#: part/templates/part/detail.html:54
+msgid "Category"
+msgstr ""
+
+#: part/templates/part/detail.html:69
+msgid "Default Supplier"
+msgstr ""
+
+#: part/templates/part/detail.html:76
+msgid "Units"
+msgstr ""
+
+#: part/templates/part/detail.html:81
+msgid "Minimum Stock"
+msgstr ""
+
+#: part/templates/part/detail.html:90
+msgid "Virtual"
+msgstr ""
+
+#: part/templates/part/detail.html:93
+msgid "Part is virtual (not a physical part)"
+msgstr ""
+
+#: part/templates/part/detail.html:95
+msgid "Part is not a virtual part"
+msgstr ""
+
+#: part/templates/part/detail.html:99
+msgid "Assembly"
+msgstr ""
+
+#: part/templates/part/detail.html:102
+msgid "Part can be assembled from other parts"
+msgstr ""
+
+#: part/templates/part/detail.html:104
+msgid "Part cannot be assembled from other parts"
+msgstr ""
+
+#: part/templates/part/detail.html:108
+msgid "Component"
+msgstr ""
+
+#: part/templates/part/detail.html:111
+msgid "Part can be used in assemblies"
+msgstr ""
+
+#: part/templates/part/detail.html:113
+msgid "Part cannot be used in assemblies"
+msgstr ""
+
+#: part/templates/part/detail.html:117
+msgid "Trackable"
+msgstr ""
+
+#: part/templates/part/detail.html:120
+msgid "Part stock is tracked by serial number"
+msgstr ""
+
+#: part/templates/part/detail.html:122
+msgid "Part stock is not tracked by serial number"
+msgstr ""
+
+#: part/templates/part/detail.html:126
+msgid "Purchaseable"
+msgstr ""
+
+#: part/templates/part/detail.html:129 part/templates/part/detail.html:131
+msgid "Part can be purchased from external suppliers"
+msgstr ""
+
+#: part/templates/part/detail.html:136
+msgid "Sellable"
+msgstr ""
+
+#: part/templates/part/detail.html:139
+msgid "Part can be sold to customers"
+msgstr ""
+
+#: part/templates/part/detail.html:141
+msgid "Part cannot be sold to customers"
+msgstr ""
+
+#: part/templates/part/detail.html:151
+msgid "Notes"
+msgstr ""
+
+#: part/views.py:196
+#, python-brace-format
+msgid "Set category for {n} parts"
+msgstr ""
+
+#: part/views.py:773
+msgid "No BOM file provided"
+msgstr ""
+
+#: part/views.py:1034
+msgid "Enter a valid quantity"
+msgstr ""
+
+#: part/views.py:1058 part/views.py:1061
+msgid "Select valid part"
+msgstr ""
+
+#: part/views.py:1067
+msgid "Duplicate part selected"
+msgstr ""
+
+#: part/views.py:1095
+msgid "Select a part"
+msgstr ""
+
+#: part/views.py:1099
+msgid "Specify quantity"
+msgstr ""
+
+#: stock/forms.py:92
+msgid "File Format"
+msgstr ""
+
+#: stock/forms.py:92
+msgid "Select output file format"
+msgstr ""
+
+#: stock/forms.py:94
+msgid "Include stock items in sub locations"
+msgstr ""
+
+#: stock/forms.py:127
+msgid "Destination stock location"
+msgstr ""
+
+#: stock/forms.py:133
+msgid "Confirm movement of stock items"
+msgstr ""
+
+#: stock/forms.py:135
+msgid "Set the destination as the default location for selected parts"
+msgstr ""
+
+#: stock/models.py:201
+#, python-brace-format
+msgid ""
+"A stock item with this serial number already exists for template part {part}"
+msgstr ""
+
+#: stock/models.py:206
+msgid "A stock item with this serial number already exists"
+msgstr ""
+
+#: stock/models.py:225
+#, python-brace-format
+msgid "Part type ('{pf}') must be {pe}"
+msgstr ""
+
+#: stock/models.py:235 stock/models.py:244
+msgid "Quantity must be 1 for item with a serial number"
+msgstr ""
+
+#: stock/models.py:236
+msgid "Serial number cannot be set if quantity greater than 1"
+msgstr ""
+
+#: stock/models.py:252
+msgid "Stock item cannot be created for a template Part"
+msgstr ""
+
+#: stock/models.py:261
+msgid "Item cannot belong to itself"
+msgstr ""
+
+#: stock/models.py:434
+msgid "Quantity must be integer"
+msgstr ""
+
+#: stock/models.py:440
+#, python-brace-format
+msgid "Quantity must not exceed available stock quantity ({n})"
+msgstr ""
+
+#: stock/models.py:443 stock/models.py:446
+msgid "Serial numbers must be a list of integers"
+msgstr ""
+
+#: stock/models.py:449
+msgid "Quantity does not match serial numbers"
+msgstr ""
+
+#: stock/models.py:459
+msgid "Serial numbers already exist: "
+msgstr ""
+
+#: stock/models.py:480
+msgid "Add serial number"
+msgstr ""
+
+#: stock/models.py:483
+#, python-brace-format
+msgid "Serialized {n} items"
+msgstr ""
+
+#: stock/templates/stock/location.html:37
+msgid "Location Details"
+msgstr ""
+
+#: stock/templates/stock/location.html:40
+msgid "Location Path"
+msgstr ""
+
+#: stock/templates/stock/location.html:44
+msgid "Location Description"
+msgstr ""
+
+#: stock/templates/stock/location.html:48
+msgid "Sublocations"
+msgstr ""
+
+#: stock/templates/stock/location.html:52
+#: stock/templates/stock/location.html:64
+msgid "Stock Items"
+msgstr ""
+
+#: stock/templates/stock/location.html:57
+msgid "Stock Details"
+msgstr ""
+
+#: stock/templates/stock/location.html:60
+msgid "Stock Locations"
+msgstr ""
+
+#: stock/views.py:399
+msgid "Must enter integer value"
+msgstr ""
+
+#: stock/views.py:404
+msgid "Quantity must be positive"
+msgstr ""
+
+#: stock/views.py:411
+#, python-brace-format
+msgid "Quantity must not exceed {x}"
+msgstr ""
+
+#: stock/views.py:419
+msgid "Confirm stock adjustment"
+msgstr ""
+
+#: stock/views.py:487
+#, python-brace-format
+msgid "Added stock to {n} items"
+msgstr ""
+
+#: stock/views.py:502
+#, python-brace-format
+msgid "Removed stock from {n} items"
+msgstr ""
+
+#: stock/views.py:515
+#, python-brace-format
+msgid "Counted stock for {n} items"
+msgstr ""
+
+#: stock/views.py:543
+msgid "No items were moved"
+msgstr ""
+
+#: stock/views.py:546
+#, python-brace-format
+msgid "Moved {n} items to {dest}"
+msgstr ""
+
+#: stock/views.py:813
+msgid "Invalid part selection"
+msgstr ""
+
+#: stock/views.py:875
+msgid "Created new stock item"
+msgstr ""

@@ -17,8 +17,10 @@ Requirements
 To install InvenTree you will need the following system components installed:
 
 * python3
-* python3-pip
+* python3-pip (pip3)
 * make
+
+Each of these programs need to be installed (e.g. using apt or similar) before running the ``make install`` script.
 
 Installation
 ------------
@@ -88,6 +90,7 @@ Other shorthand functions are provided for the development and testing process:
 * ``make migrate`` - Perform database migrations
 * ``make mysql`` - Install packages required for MySQL database backend
 * ``make postgresql`` - Install packages required for PostgreSQL database backend
+* ``make translate`` - Compile language translation files (requires gettext system package)
 * ``make backup`` - Backup database tables and media files
 * ``make test`` - Run all unit tests
 * ``make coverage`` - Run all unit tests and generate code coverage report
