@@ -1,10 +1,11 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load i18n %}
 {% block details  %}
 
 {% include 'part/tabs.html' with tab='detail' %}
 
-<h4>Part Details</h4>
+<h4>{% trans "Part Details" %}</h4>
 
 <hr>
 
@@ -12,45 +13,45 @@
     <div class='col-sm-6'>
     <table class='table table-striped'>
         <tr>
-            <td><b>Part name</b></td>
+            <td><b>{% trans "Part name" %}</b></td>
             <td>{{ part.name }}</td>
         </tr>
         {% if part.IPN %}
         <tr>
-            <td><b>IPN</b></td>
+            <td><b>{% trans "IPN" %}</b></td>
             <td>{{ part.IPN }}</td>
         </tr>
         {% endif %}
         {% if part.revision %}
         <tr>
-            <td><b>Revision</b></td>
+            <td><b>{% trans "Revision" %}</b></td>
             <td>{{ part.revision }}</td>
         </tr>
         {% endif %}
         <tr>
-            <td><b>Description</b></td>
+            <td><b>{% trans "Description" %}</b></td>
             <td>{{ part.description }}</td>
         </tr>
         {% if part.variant_of %}
         <tr>
-            <td><b>Variant Of</b></td>
+            <td><b>{% trans "Variant Of" %}</b></td>
             <td><a href="{% url 'part-detail' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></td>
         </tr>
         {% endif %}
         {% if part.keywords %}
         <tr>
-            <td><b>Keywords</b></td>
+            <td><b>{% trans "Keywords" %}</b></td>
             <td>{{ part.keywords }}</td>
         </tr>
         {% endif %}
         {% if part.URL %}
         <tr>
-            <td><b>URL</b></td>
+            <td><b>{% trans "URL" %}</b></td>
             <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
         </tr>
         {% endif %}
         <tr>
-            <td><b>Category</b></td>
+            <td><b>{% trans "Category" %}</b></td>
             <td>
             {% if part.category %}
                 <a href="{% url 'category-detail' part.category.id %}">{{ part.category.pathstring }}</a>
@@ -59,25 +60,25 @@
         </tr>
         {% if part.default_location %}
         <tr>
-            <td><b>Default Location</b></td>
+            <td><b>{% trans "Default Location" %}</b></td>
             <td><a href="{% url 'stock-location-detail' part.default_location.id %}">{{ part.default_location.pathstring }}</a></td>
         </tr>
         {% endif %}
         {% if part.default_supplier %}
         <tr>
-            <td><b>Default Supplier</b></td>
+            <td><b>{% trans "Default Supplier" %}</b></td>
             <td><a href="{% url 'supplier-part-detail' part.default_supplier.id %}">
                 {{ part.default_supplier.supplier.name }} | {{ part.default_supplier.SKU }}
             </a></td>
         </tr>
         {% endif %}
         <tr>
-            <td><b>Units</b></td>
+            <td><b>{% trans "Units" %}</b></td>
             <td>{{ part.units }}</td>
         </tr>
         {% if part.minimum_stock > 0 %}
         <tr>
-            <td><b>Minimum Stock</b></td>
+            <td><b>{% trans "Minimum Stock" %}</b></td>
             <td>{{ part.minimum_stock }}</td>
         </tr>
         {% endif %}
@@ -86,58 +87,58 @@
     <div class='col-sm-6'>
     <table class='table table-striped'>
         <tr>
-            <td><b>Virtual</b></td>
+            <td><b>{% trans "Virtual" %}</b></td>
             <td>{% include "slide.html" with state=part.virtual field='virtual' %}</td>
             {% if part.virtual %}
-            <td>Part is virtual (not a physical part)</td>
+            <td>{% trans "Part is virtual (not a physical part)" %}</td>
             {% else %}
-            <td><i>Part is not a virtual part</i></td>
+            <td><i>{% trans "Part is not a virtual part" %}</i></td>
             {% endif %}
         </tr>
         <tr>
-            <td><b>Assembly</b></td>
+            <td><b>{% trans "Assembly" %}</b></td>
             <td>{% include "slide.html" with state=part.assembly field='assembly' %}</td>   
             {% if part.assembly %}
-            <td>Part can be assembled from other parts</td>
+            <td>{% trans "Part can be assembled from other parts" %}</td>
             {% else %}
-            <td><i>Part cannot be assembled from other parts</i></td>
+            <td><i>{% trans "Part cannot be assembled from other parts" %}</i></td>
             {% endif %}
         </tr>
         <tr>
-            <td><b>Component</b></td>
+            <td><b>{% trans "Component" %}</b></td>
             <td>{% include "slide.html" with state=part.component field='component' %}</td>   
             {% if part.component %}
-            <td>Part can be used in assemblies</td>
+            <td>{% trans "Part can be used in assemblies" %}</td>
             {% else %}
-            <td><i>Part cannot be used in assemblies</i></td>
+            <td><i>{% trans "Part cannot be used in assemblies" %}</i></td>
             {% endif %}
         </tr>
         <tr>
-            <td><b>Trackable</b></td>
+            <td><b>{% trans "Trackable" %}</b></td>
             <td>{% include "slide.html" with state=part.trackable field='trackable' %}</td>   
             {% if part.trackable %}
-            <td>Part stock is tracked by serial number</td>
+            <td>{% trans "Part stock is tracked by serial number" %}</td>
             {% else %}
-            <td><i>Part stock is not tracked by serial number</i></td>
+            <td><i>{% trans "Part stock is not tracked by serial number" %}</i></td>
             {% endif %}
         </tr>
         <tr>
-            <td><b>Purchaseable</b></td> 
+            <td><b>{% trans "Purchaseable" %}</b></td> 
             <td>{% include "slide.html" with state=part.purchaseable field='purchaseable' %}</td>   
             {% if part.purchaseable %}
-            <td>Part can be purchased from external suppliers</td>
+            <td>{% trans "Part can be purchased from external suppliers" %}</td>
             {% else %}
-            <td><i>Part can be purchased from external suppliers</i></td>
+            <td><i>{% trans "Part can be purchased from external suppliers" %}</i></td>
             {% endif %}
         </tr>
         {% if 0 %}
         <tr>
-            <td><b>Sellable</b></td>
+            <td><b>{% trans "Sellable" %}</b></td>
             <td>{% include "slide.html" with state=part.salable field='salable' %}</td>
             {% if part.salable %}
-            <td>Part can be sold to customers</td>
+            <td>{% trans "Part can be sold to customers" %}</td>
             {% else %}
-            <td><i>Part cannot be sold to customers</i></td>
+            <td><i>{% trans "Part cannot be sold to customers" %}</i></td>
             {% endif %}
         </tr>
         {% endif %}
@@ -147,7 +148,7 @@
 
 {% if part.notes %}
 <div class="panel panel-default">
-  <div class="panel-heading"><b>Notes</b></div>
+  <div class="panel-heading"><b>{% trans "Notes" %}</b></div>
   <div class="panel-body">{{ part.notes }}</div>
 </div>
 {% endif %}
