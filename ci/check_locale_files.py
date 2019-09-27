@@ -18,7 +18,7 @@ locales = []
 
 for line in str(out.decode()).split('\n'):
     # Check for any compiled translation files that have not been committed
-    if 'modified:' in line and '/locale/' in line and 'django.mo' in line:
+    if 'modified:' in line and '/locale/' in line and 'django.po' in line:
         locales.append(line)
 
 if len(locales) > 0:

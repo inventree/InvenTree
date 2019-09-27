@@ -1,5 +1,6 @@
 {% extends "stock/stock_app_base.html" %}
 {% load static %}
+{% load i18n %}
 {% block content %}
 
 <div class='row'>
@@ -33,23 +34,35 @@
 </div>
 <div class='col-sm-6'>
     {% if location %}
-    <h3>Location Details</h3>
+    <h3>{% trans "Location Details" %}</h3>
     <table class='table table-striped table-condensed'>
         <tr>
-            <td>Location Path</td>
+            <td>{% trans "Location Path" %}</td>
             <td>{{ location.pathstring }}</td>
         </tr>
         <tr>
-            <td>Location Description</td>
+            <td>{% trans "Location Description" %}</td>
             <td>{{ location.description }}</td>
         </tr>
         <tr>
-            <td>Sublocations</td>
+            <td>{% trans "Sublocations" %}</td>
             <td>{{ location.children.count }}</td>
         </tr>
         <tr>
-            <td>Stock Items</td>
+            <td>{% trans "Stock Items" %}</td>
             <td>{{ location.item_count }}</td>
+        </tr>
+    </table>
+    {% else %}
+    <h3>{% trans "Stock Details" %}</h3>
+    <table class='table table-striped table-condensed'>
+        <tr>
+            <td>{% trans "Stock Locations" %}</td>
+            <td>{{ loc_count }}</td>
+        </tr>
+        <tr>
+            <td>{% trans "Stock Items" %}</td>
+            <td>{{ stock_count }}</td>
         </tr>
     </table>
     {% endif %}

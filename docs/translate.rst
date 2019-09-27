@@ -11,6 +11,6 @@ InvenTree supports multi-language translation using the `Django Translation Fram
 
 Translation strings are located in the `InvenTree/locales/` directory, and translation files can be easily added here.
 
-To set the default language, change the `langauge` setting in the `config.yaml` settings file.
+To set the default language, change the `language` setting in the `config.yaml` settings file.
 
 To recompile the translation files (after adding new translation strings), run the command ``make translate`` from the root directory.
