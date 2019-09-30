@@ -9,7 +9,6 @@
 
 <div id='button-toolbar'>
     <button class="btn btn-success" id='supplier-create'>New Supplier Part</button>
-    {% if 0 %}
     <div id='opt-dropdown' class="dropdown" style='float: right;'>
         <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
             <span class="caret"></span></button>
@@ -17,7 +16,6 @@
                 <li><a href='#' id='supplier-part-delete' title='Delete supplier parts'>Delete</a></li>
             </ul>
     </div>
-    {% endif %}
 </div>
 
 <table class="table table-striped table-condensed" id='supplier-table' data-toolbar='#button-toolbar'>
@@ -50,6 +48,24 @@
             });
     });
 
+    $("#supplier-part-delete").click(function() {
+        
+        var selections = $("#supplier-table").bootstrapTable("getSelections");
+
+        var parts = [];
+
+        selections.forEach(function(item) {
+            parts.push(item.pk);
+        });
+
+        launchModalForm("{% url 'supplier-part-delete' %}", {
+            data: {
+                parts: parts,
+            },
+            reload: true,
+        });
+    });
+
     $("#supplier-table").inventreeTable({
         formatNoMatches: function() { return "No supplier parts available for {{ part.full_name }}"; },
         queryParams: function(p) {
@@ -58,12 +74,9 @@
             }
         },
         columns: [
-            /*
-            // TODO - Re-enable the checkbox column for performing actions on multiple supplier parts
             {
                 checkbox: true,
             },
-            */
             {
                 sortable: true,
                 field: 'supplier_name',

@@ -12,6 +12,7 @@ from django.forms import HiddenInput
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.status_codes import OrderStatus
+from InvenTree.helpers import str2bool
 
 from .models import Company
 from .models import SupplierPart
@@ -197,12 +198,80 @@ class SupplierPartCreate(AjaxCreateView):
 
 
 class SupplierPartDelete(AjaxDeleteView):
-    """ Delete view for removing a SupplierPart """
-    model = SupplierPart
+    """ Delete view for removing a SupplierPart.
+    
+    SupplierParts can be deleted using a variety of 'selectors'.
+
+    - ?part=<pk> -> Delete a single SupplierPart object
+    - ?parts=[] -> Delete a list of SupplierPart objects
+
+    """
+
     success_url = '/supplier/'
     ajax_template_name = 'company/partdelete.html'
     ajax_form_title = 'Delete Supplier Part'
-    context_object_name = 'supplier_part'
+
+    parts = []
+
+    def get_context_data(self):
+        ctx = {}
+
+        ctx['parts'] = self.parts
+
+        return ctx
+
+    def get_parts(self):
+        """ Determine which SupplierPart object(s) the user wishes to delete.
+        """
+
+        self.parts = []
+
+        # User passes a single SupplierPart ID
+        if 'part' in self.request.GET:
+            try:
+                self.parts.append(SupplierPart.objects.get(pk=self.request.GET.get('part')))
+            except (ValueError, SupplierPart.DoesNotExist):
+                pass
+
+        elif 'parts[]' in self.request.GET:
+
+            part_id_list = self.request.GET.getlist('parts[]')
+
+            self.parts = SupplierPart.objects.filter(id__in=part_id_list)
+
+    def get(self, request, *args, **kwargs):
+        self.request = request
+        self.get_parts()
+
+        return self.renderJsonResponse(request, form=self.get_form())
+
+    def post(self, request, *args, **kwargs):
+        """ Handle the POST action for deleting supplier parts.
+        """
+
+        self.request = request
+        self.parts = []
+
+        for item in self.request.POST:
+            if item.startswith('supplier-part-'):
+                pk = item.replace('supplier-part-', '')
+
+                try:
+                    self.parts.append(SupplierPart.objects.get(pk=pk))
+                except (ValueError, SupplierPart.DoesNotExist):
+                    pass
+
+        confirm = str2bool(self.request.POST.get('confirm_delete', False))
+
+        data = {
+            'form_valid': confirm,
+        }
+
+        if confirm:
+            for part in self.parts:
+                part.delete()
+
+        return self.renderJsonResponse(self.request, data=data, form=self.get_form())
 
 
 class PriceBreakCreate(AjaxCreateView):

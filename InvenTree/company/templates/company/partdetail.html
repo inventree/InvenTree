@@ -130,10 +130,10 @@ InvenTree | {{ company.name }} - Parts
 
     $('#delete-part').click(function() {
         launchModalForm(
-                         "{% url 'supplier-part-delete' part.id %}",
-                         {
-                             redirect: "{% url 'company-index' %}"
-                         }
+            "{% url 'supplier-part-delete' %}?part={{ part.id }}",
+            {
+                redirect: "{% url 'company-detail-parts' part.supplier.id %}"
+            }
         );
     });
 

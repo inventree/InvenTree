@@ -164,6 +164,8 @@ class AjaxMixin(object):
 
         if form:
             context['form'] = form
+        else:
+            context['form'] = None
 
         data['title'] = self.ajax_form_title
 
