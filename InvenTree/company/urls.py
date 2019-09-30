@@ -47,13 +47,14 @@ price_break_urls = [
 
 supplier_part_detail_urls = [
     url(r'edit/?', views.SupplierPartEdit.as_view(), name='supplier-part-edit'),
-    url(r'delete/?', views.SupplierPartDelete.as_view(), name='supplier-part-delete'),
 
     url('^.*$', views.SupplierPartDetail.as_view(), name='supplier-part-detail'),
 ]
 
 supplier_part_urls = [
     url(r'^new/?', views.SupplierPartCreate.as_view(), name='supplier-part-create'),
+
+    url(r'delete/', views.SupplierPartDelete.as_view(), name='supplier-part-delete'),
 
     url(r'^(?P<pk>\d+)/', include(supplier_part_detail_urls)),
 ]

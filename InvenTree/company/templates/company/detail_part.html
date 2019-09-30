@@ -15,6 +15,7 @@
         <span class="caret"></span></button>
         <ul class="dropdown-menu">
             <li><a href='#' id='multi-part-order' title='Order parts'>Order Parts</a></li>
+            <li><a href='#' id='multi-part-delete' title='Delete parts'>Delete Parts</a></li>
         </ul>
     </div>
 </div>
@@ -96,6 +97,23 @@
             },
         ],
         url: "{% url 'api-part-supplier-list' %}"
+    });
+
+    $("#multi-part-delete").click(function() {
+        var selections = $("#part-table").bootstrapTable("getSelections");
+
+        var parts = [];
+
+        selections.forEach(function(item) {
+            parts.push(item.pk);
+        });
+
+        launchModalForm("{% url 'supplier-part-delete' %}", {
+            data: {
+                parts: parts,
+            },
+            reload: true,
+        });
     });
 
     $("#multi-part-order").click(function() {
