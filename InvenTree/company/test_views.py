@@ -29,6 +29,12 @@ class CompanyViewTest(TestCase):
 
         self.client.login(username='username', password='password')
 
+    def test_company_index(self):
+        """ Test the company index """
+
+        response = self.client.get(reverse('company-index'))
+        self.assertEqual(response.status_code, 200)
+
     def test_supplier_part_delete(self):
         """ Test the SupplierPartDelete view """
 
