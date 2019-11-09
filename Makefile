@@ -22,7 +22,7 @@ static:
 
 # Install all required packages
 install:
-	pip3 install -U -r requirements.txt
+	py -3 -m pip install -U -r requirements.txt
 	cd InvenTree && python3 setup.py
 
 # Create a superuser account
@@ -32,12 +32,12 @@ superuser:
 # Install pre-requisites for mysql setup
 mysql:
 	apt-get install mysql-server libmysqlclient-dev
-	pip3 install mysqlclient
+	py -3 -m pip install mysqlclient
 
 # Install pre-requisites for postgresql setup
 postgresql:
 	apt-get install postgresql postgresql-contrib libpq-dev
-	pip3 install psycopg2
+	py -3 -m pip install psycopg2
 
 # Update translation files
 translate:
@@ -61,7 +61,7 @@ coverage:
 
 # Install packages required to generate code docs
 docreqs:
-	pip3 install -U -r docs/requirements.txt
+	py -3 -m pip install -U -r docs/requirements.txt
 
 # Build code docs
 docs:
