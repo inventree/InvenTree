@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-16 09:12+0000\n"
+"POT-Creation-Date: 2019-11-16 09:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -149,7 +149,7 @@ msgstr ""
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 
-#: build/views.py:289 stock/views.py:848
+#: build/views.py:289 stock/views.py:859
 #, python-brace-format
 msgid "The following serial numbers already exist: ({sn})"
 msgstr ""
@@ -227,7 +227,7 @@ msgid "Company"
 msgstr ""
 
 #: order/models.py:156 order/models.py:201 part/views.py:1032
-#: stock/models.py:438
+#: stock/models.py:437
 msgid "Quantity must be greater than zero"
 msgstr ""
 
@@ -558,67 +558,67 @@ msgstr ""
 msgid "Set the destination as the default location for selected parts"
 msgstr ""
 
-#: stock/models.py:202
+#: stock/models.py:201
 #, python-brace-format
 msgid ""
 "A stock item with this serial number already exists for template part {part}"
 msgstr ""
 
-#: stock/models.py:207
+#: stock/models.py:206
 msgid "A stock item with this serial number already exists"
 msgstr ""
 
-#: stock/models.py:226
+#: stock/models.py:225
 #, python-brace-format
 msgid "Part type ('{pf}') must be {pe}"
 msgstr ""
 
-#: stock/models.py:236 stock/models.py:245
+#: stock/models.py:235 stock/models.py:244
 msgid "Quantity must be 1 for item with a serial number"
 msgstr ""
 
-#: stock/models.py:237
+#: stock/models.py:236
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr ""
 
-#: stock/models.py:253
+#: stock/models.py:252
 msgid "Stock item cannot be created for a template Part"
 msgstr ""
 
-#: stock/models.py:262
+#: stock/models.py:261
 msgid "Item cannot belong to itself"
 msgstr ""
 
-#: stock/models.py:361
+#: stock/models.py:360
 msgid "Stock Item Notes"
 msgstr ""
 
-#: stock/models.py:435
+#: stock/models.py:434
 msgid "Quantity must be integer"
 msgstr ""
 
-#: stock/models.py:441
+#: stock/models.py:440
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({n})"
 msgstr ""
 
-#: stock/models.py:444 stock/models.py:447
+#: stock/models.py:443 stock/models.py:446
 msgid "Serial numbers must be a list of integers"
 msgstr ""
 
-#: stock/models.py:450
+#: stock/models.py:449
 msgid "Quantity does not match serial numbers"
 msgstr ""
 
-#: stock/models.py:460
+#: stock/models.py:459
 msgid "Serial numbers already exist: "
 msgstr ""
 
-#: stock/models.py:481
+#: stock/models.py:480
 msgid "Add serial number"
 msgstr ""
 
-#: stock/models.py:484
+#: stock/models.py:483
 #, python-brace-format
 msgid "Serialized {n} items"
 msgstr ""
@@ -643,6 +643,7 @@ msgid "Belongs To"
 msgstr ""
 
 #: stock/templates/stock/item.html:77
+#: stock/templates/stock/stock_adjust.html:16
 msgid "Location"
 msgstr ""
 
@@ -651,6 +652,7 @@ msgid "Serial Number"
 msgstr ""
 
 #: stock/templates/stock/item.html:88
+#: stock/templates/stock/stock_adjust.html:20
 msgid "Quantity"
 msgstr ""
 
@@ -723,71 +725,80 @@ msgstr ""
 msgid "Stock Locations"
 msgstr ""
 
-#: stock/views.py:370
-msgid "Move Stock Items"
-msgstr ""
-
-#: stock/views.py:371
-msgid "Count Stock Items"
-msgstr ""
-
-#: stock/views.py:372
-msgid "Remove From Stock"
+#: stock/templates/stock/stock_adjust.html:15
+msgid "Stock Item"
 msgstr ""
 
 #: stock/views.py:373
-msgid "Add Stock Items"
+msgid "Move Stock Items"
 msgstr ""
 
 #: stock/views.py:374
+msgid "Count Stock Items"
+msgstr ""
+
+#: stock/views.py:375
+msgid "Remove From Stock"
+msgstr ""
+
+#: stock/views.py:376
+msgid "Add Stock Items"
+msgstr ""
+
+#: stock/views.py:377
 msgid "Delete Stock Items"
 msgstr ""
 
-#: stock/views.py:401
+#: stock/views.py:404
 msgid "Must enter integer value"
 msgstr ""
 
-#: stock/views.py:406
+#: stock/views.py:409
 msgid "Quantity must be positive"
 msgstr ""
 
-#: stock/views.py:413
+#: stock/views.py:416
 #, python-brace-format
 msgid "Quantity must not exceed {x}"
 msgstr ""
 
-#: stock/views.py:421
+#: stock/views.py:424
 msgid "Confirm stock adjustment"
 msgstr ""
 
-#: stock/views.py:492
+#: stock/views.py:495
 #, python-brace-format
 msgid "Added stock to {n} items"
 msgstr ""
 
-#: stock/views.py:507
+#: stock/views.py:510
 #, python-brace-format
 msgid "Removed stock from {n} items"
 msgstr ""
 
-#: stock/views.py:520
+#: stock/views.py:523
 #, python-brace-format
 msgid "Counted stock for {n} items"
 msgstr ""
 
-#: stock/views.py:548
+#: stock/views.py:551
 msgid "No items were moved"
 msgstr ""
 
-#: stock/views.py:551
+#: stock/views.py:554
 #, python-brace-format
 msgid "Moved {n} items to {dest}"
 msgstr ""
 
-#: stock/views.py:827
+#: stock/views.py:573
+#, python-brace-format
+msgid "Deleted {n} stock items"
+msgstr ""
+
+#: stock/views.py:838
 msgid "Invalid part selection"
 msgstr ""
 
-#: stock/views.py:889
+#: stock/views.py:900
 msgid "Created new stock item"
 msgstr ""

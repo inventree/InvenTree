@@ -338,9 +338,12 @@ class StockAdjust(AjaxView, FormMixin):
 
         context['stock_items'] = self.stock_items
 
-        context['stock_action'] = self.stock_action
+        context['stock_action'] = self.stock_action.strip().lower()
 
         context['stock_action_title'] = self.stock_action.capitalize()
+
+        # Quantity column will be read-only in some circumstances
+        context['edit_quantity'] = not self.stock_action == 'delete'
 
         return context
 
