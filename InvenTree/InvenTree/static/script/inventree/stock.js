@@ -310,6 +310,18 @@ function loadStockTable(table, options) {
             },
         });
     });
+
+    $("#multi-item-delete").click(function() {
+        var selections = $("#stock-table").bootstrapTable("getSelections");
+
+        var stock = [];
+
+        selections.forEach(function(item) {
+            stock.push(item.pk);
+        });
+
+        stockAdjustment('delete');
+    });
 }
 
 
