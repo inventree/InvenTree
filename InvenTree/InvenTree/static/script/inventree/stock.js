@@ -125,6 +125,28 @@ function loadStockTable(table, options) {
                     // A single location!
                     return renderLink(row.location__path, '/stock/location/' + row.location + '/')
                 }
+            } else if (field == 'notes') {
+                var notes = [];
+
+                data.forEach(function(item) {
+                    var note = item.notes;
+
+                    if (!note || note == '') {
+                        note = '-';
+                    }
+
+                    if (!notes.includes(note)) {
+                        notes.push(note);
+                    }
+                });
+
+                if (notes.length > 1) {
+                    return '...';
+                } else if (notes.length == 1) {
+                    return notes[0] || '-';
+                } else {
+                    return '-';
+                }
             }
             else {
                 return '';
@@ -287,6 +309,18 @@ function loadStockTable(table, options) {
                 stock: stock,
             },
         });
+    });
+
+    $("#multi-item-delete").click(function() {
+        var selections = $("#stock-table").bootstrapTable("getSelections");
+
+        var stock = [];
+
+        selections.forEach(function(item) {
+            stock.push(item.pk);
+        });
+
+        stockAdjustment('delete');
     });
 }
 

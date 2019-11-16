@@ -256,6 +256,7 @@ class StockAdjust(AjaxView, FormMixin):
     - Add items to stock
     - Count items
     - Move stock
+    - Delete stock items
     
     """
 
@@ -337,9 +338,12 @@ class StockAdjust(AjaxView, FormMixin):
 
         context['stock_items'] = self.stock_items
 
-        context['stock_action'] = self.stock_action
+        context['stock_action'] = self.stock_action.strip().lower()
 
         context['stock_action_title'] = self.stock_action.capitalize()
+
+        # Quantity column will be read-only in some circumstances
+        context['edit_quantity'] = not self.stock_action == 'delete'
 
         return context
 
@@ -361,15 +365,16 @@ class StockAdjust(AjaxView, FormMixin):
         self.stock_action = request.GET.get('action', '').lower()
 
         # Pick a default action...
-        if self.stock_action not in ['move', 'count', 'take', 'add']:
+        if self.stock_action not in ['move', 'count', 'take', 'add', 'delete']:
             self.stock_action = 'count'
 
         # Choose the form title based on the action
         titles = {
-            'move': 'Move Stock',
-            'count': 'Count Stock',
-            'take': 'Remove Stock',
-            'add': 'Add Stock'
+            'move': _('Move Stock Items'),
+            'count': _('Count Stock Items'),
+            'take': _('Remove From Stock'),
+            'add': _('Add Stock Items'),
+            'delete': _('Delete Stock Items')
         }
 
         self.ajax_form_title = titles[self.stock_action]
@@ -383,7 +388,7 @@ class StockAdjust(AjaxView, FormMixin):
 
         self.request = request
 
-        self.stock_action = request.POST.get('stock_action', 'invalid').lower()
+        self.stock_action = request.POST.get('stock_action', 'invalid').strip().lower()
 
         # Update list of stock items
         self.stock_items = self.get_POST_items()
@@ -468,6 +473,9 @@ class StockAdjust(AjaxView, FormMixin):
         elif self.stock_action == 'count':
             return self.do_count()
 
+        elif self.stock_action == 'delete':
+            return self.do_delete()
+
         else:
             return 'No action performed'
 
@@ -546,6 +554,23 @@ class StockAdjust(AjaxView, FormMixin):
             return _('Moved {n} items to {dest}'.format(
                 n=count,
                 dest=destination.pathstring))
+
+    def do_delete(self):
+        """ Delete multiple stock items """
+
+        count = 0
+        # note = self.request.POST['note']
+
+        for item in self.stock_items:
+            
+            # TODO - In the future, StockItems should not be 'deleted'
+            # TODO - Instead, they should be marked as "inactive"
+
+            item.delete()
+
+            count += 1
+
+        return _("Deleted {n} stock items".format(n=count))
 
 
 class StockItemEdit(AjaxUpdateView):

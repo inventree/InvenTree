@@ -1,10 +1,11 @@
 {% extends "stock/stock_app_base.html" %}
 {% load static %}
+{% load i18n %}
 {% block content %}
 
 <div class='row'>
 <div class='col-sm-6'>
-    <h3>Stock Item Details</h3>
+    <h3>{% trans "Stock Item Details" %}</h3>
     {% if item.serialized %}
     <p><i>{{ item.part.full_name}} # {{ item.serial }}</i></p>
     {% else %}
@@ -47,11 +48,11 @@
     </p>
     {% if item.serialized %}
     <div class='alert alert-block alert-info'>
-        This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted.
+        {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
     </div>
     {% elif item.delete_on_deplete %}
     <div class='alert alert-block alert-warning'>
-        This stock item will be automatically deleted when all stock is depleted.
+        {% trans "This stock item will be automatically deleted when all stock is depleted." %}
     </div>
     {% endif %}
 </div>
@@ -68,85 +69,85 @@
         </tr>
         {% if item.belongs_to %}
         <tr>
-            <td>Belongs To</td>
+            <td>{% trans "Belongs To" %}</td>
             <td><a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a></td>
         </tr>
         {% elif item.location %}
         <tr>
-            <td>Location</td>
+            <td>{% trans "Location" %}</td>
             <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
         </tr>
         {% endif %}
         {% if item.serialized %}
         <tr>
-            <td>Serial Number</td>
+            <td>{% trans "Serial Number" %}</td>
             <td>{{ item.serial }}</td>
         </tr>
         {% else %}
         <tr>
-            <td>Quantity</td>
+            <td>{% trans "Quantity" %}</td>
             <td>{{ item.quantity }}</td>
         </tr>
         {% endif %}
         {% if item.batch %}
         <tr>
-            <td>Batch</td>
+            <td>{% trans "Batch" %}</td>
             <td>{{ item.batch }}</td>
         </tr>
         {% endif %}
         {% if item.build %}
         <tr>
-            <td>Build</td>
+            <td>{% trans "Build" %}</td>
             <td><a href="{% url 'build-detail' item.build.id %}">{{ item.build }}</a></td>
         </tr>
         {% endif %}
         {% if item.purchase_order %}
         <tr>
-            <td>Purchase Order</td>
+            <td>{% trans "Purchase Order" %}</td>
             <td><a href="{% url 'purchase-order-detail' item.purchase_order.id %}">{{ item.purchase_order }}</a></td>
         </tr>
         {% endif %}
         {% if item.customer %}
         <tr>
-            <td>Customer</td>
+            <td>{% trans "Customer" %}</td>
             <td>{{ item.customer.name }}</td>
         </tr>
         {% endif %}
         {% if item.URL %}
         <tr>
-            <td>URL</td>
+            <td>{% trans "URL" %}</td>
             <td><a href="{{ item.URL }}">{{ item.URL }}</a></td>
         </tr>
         {% endif %}
         {% if item.supplier_part %}
         <tr>
-            <td>Supplier</td>
+            <td>{% trans "Supplier" %}</td>
             <td><a href="{% url 'company-detail' item.supplier_part.supplier.id %}">{{ item.supplier_part.supplier.name }}</a></td>
         </tr>
         <tr>
-            <td>Supplier Part</td>
+            <td>{% trans "Supplier Part" %}</td>
             <td><a href="{% url 'supplier-part-detail' item.supplier_part.id %}">{{ item.supplier_part.SKU }}</a></td>
         </tr>
         {% endif %}
         <tr>
-            <td>Last Updated</td>
+            <td>{% trans "Last Updated" %}</td>
             <td>{{ item.updated }}</td>
         </tr>
         <tr>
-            <td>Last Stocktake</td>
+            <td>{% trans "Last Stocktake" %}</td>
             {% if item.stocktake_date %}
             <td>{{ item.stocktake_date }} <span class='badge'>{{ item.stocktake_user }}</span></td>
             {% else %}
-            <td>No stocktake performed</td>
+            <td>{% trans "No stocktake performed" %}</td>
             {% endif %}
         </tr>
         <tr>
-            <td>Status</td>
+            <td>{% trans "Status" %}</td>
             <td>{{ item.get_status_display }}</td>
         </tr>
         {% if item.notes %}
         <tr>
-            <td>Notes</td>
+            <td>{% trans "Notes" %}</td>
             <td>{{ item.notes }}</td>
         </tr>
         {% endif %}
@@ -155,7 +156,7 @@
 </div>
 
 <hr>
-<h4>Stock Tracking Information</h4>
+<h4>{% trans "Stock Tracking Information" %}</h4>
 <div id='table-toolbar'>
     <div class='btn-group'>
         <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>New Entry</button>
