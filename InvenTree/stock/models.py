@@ -121,7 +121,6 @@ class StockItem(models.Model):
         build: Link to a Build (if this stock item was created from a build)
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
-        active: True (by default) unless the StockItem has been 'deleted'
     """
 
     def save(self, *args, **kwargs):
@@ -364,8 +363,6 @@ class StockItem(models.Model):
     # expected_arrival = models.DateField(null=True, blank=True)
 
     infinite = models.BooleanField(default=False)
-
-    active = models.BooleanField(default=True)
 
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
