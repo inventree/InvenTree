@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-27 00:12+0000\n"
+"POT-Creation-Date: 2019-11-16 09:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -149,7 +149,7 @@ msgstr ""
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 
-#: build/views.py:289 stock/views.py:834
+#: build/views.py:289 stock/views.py:859
 #, python-brace-format
 msgid "The following serial numbers already exist: ({sn})"
 msgstr ""
@@ -188,6 +188,10 @@ msgstr ""
 
 #: common/models.py:111
 msgid "Use this currency as the base currency"
+msgstr ""
+
+#: company/templates/company/partdelete.html:5
+msgid "Are you sure you want to delete the following Supplier Parts?"
 msgstr ""
 
 #: order/forms.py:21
@@ -247,7 +251,7 @@ msgstr ""
 msgid "Line item notes"
 msgstr ""
 
-#: order/models.py:275
+#: order/models.py:275 stock/templates/stock/item.html:106
 msgid "Purchase Order"
 msgstr ""
 
@@ -409,7 +413,7 @@ msgstr ""
 msgid "Variant Of"
 msgstr ""
 
-#: part/templates/part/detail.html:49
+#: part/templates/part/detail.html:49 stock/templates/stock/item.html:118
 msgid "URL"
 msgstr ""
 
@@ -497,7 +501,7 @@ msgstr ""
 msgid "Part cannot be sold to customers"
 msgstr ""
 
-#: part/templates/part/detail.html:151
+#: part/templates/part/detail.html:151 stock/templates/stock/item.html:150
 msgid "Notes"
 msgstr ""
 
@@ -585,6 +589,10 @@ msgstr ""
 msgid "Item cannot belong to itself"
 msgstr ""
 
+#: stock/models.py:360
+msgid "Stock Item Notes"
+msgstr ""
+
 #: stock/models.py:434
 msgid "Quantity must be integer"
 msgstr ""
@@ -613,6 +621,79 @@ msgstr ""
 #: stock/models.py:483
 #, python-brace-format
 msgid "Serialized {n} items"
+msgstr ""
+
+#: stock/templates/stock/item.html:8
+msgid "Stock Item Details"
+msgstr ""
+
+#: stock/templates/stock/item.html:51
+msgid ""
+"This stock item is serialized - it has a unique serial number and the "
+"quantity cannot be adjusted."
+msgstr ""
+
+#: stock/templates/stock/item.html:55
+msgid ""
+"This stock item will be automatically deleted when all stock is depleted."
+msgstr ""
+
+#: stock/templates/stock/item.html:72
+msgid "Belongs To"
+msgstr ""
+
+#: stock/templates/stock/item.html:77
+#: stock/templates/stock/stock_adjust.html:16
+msgid "Location"
+msgstr ""
+
+#: stock/templates/stock/item.html:83
+msgid "Serial Number"
+msgstr ""
+
+#: stock/templates/stock/item.html:88
+#: stock/templates/stock/stock_adjust.html:20
+msgid "Quantity"
+msgstr ""
+
+#: stock/templates/stock/item.html:94
+msgid "Batch"
+msgstr ""
+
+#: stock/templates/stock/item.html:100
+msgid "Build"
+msgstr ""
+
+#: stock/templates/stock/item.html:112
+msgid "Customer"
+msgstr ""
+
+#: stock/templates/stock/item.html:124
+msgid "Supplier"
+msgstr ""
+
+#: stock/templates/stock/item.html:128
+msgid "Supplier Part"
+msgstr ""
+
+#: stock/templates/stock/item.html:133
+msgid "Last Updated"
+msgstr ""
+
+#: stock/templates/stock/item.html:137
+msgid "Last Stocktake"
+msgstr ""
+
+#: stock/templates/stock/item.html:141
+msgid "No stocktake performed"
+msgstr ""
+
+#: stock/templates/stock/item.html:145
+msgid "Status"
+msgstr ""
+
+#: stock/templates/stock/item.html:159
+msgid "Stock Tracking Information"
 msgstr ""
 
 #: stock/templates/stock/location.html:37
@@ -644,51 +725,80 @@ msgstr ""
 msgid "Stock Locations"
 msgstr ""
 
-#: stock/views.py:399
-msgid "Must enter integer value"
+#: stock/templates/stock/stock_adjust.html:15
+msgid "Stock Item"
+msgstr ""
+
+#: stock/views.py:373
+msgid "Move Stock Items"
+msgstr ""
+
+#: stock/views.py:374
+msgid "Count Stock Items"
+msgstr ""
+
+#: stock/views.py:375
+msgid "Remove From Stock"
+msgstr ""
+
+#: stock/views.py:376
+msgid "Add Stock Items"
+msgstr ""
+
+#: stock/views.py:377
+msgid "Delete Stock Items"
 msgstr ""
 
 #: stock/views.py:404
+msgid "Must enter integer value"
+msgstr ""
+
+#: stock/views.py:409
 msgid "Quantity must be positive"
 msgstr ""
 
-#: stock/views.py:411
+#: stock/views.py:416
 #, python-brace-format
 msgid "Quantity must not exceed {x}"
 msgstr ""
 
-#: stock/views.py:419
+#: stock/views.py:424
 msgid "Confirm stock adjustment"
 msgstr ""
 
-#: stock/views.py:487
+#: stock/views.py:495
 #, python-brace-format
 msgid "Added stock to {n} items"
 msgstr ""
 
-#: stock/views.py:502
+#: stock/views.py:510
 #, python-brace-format
 msgid "Removed stock from {n} items"
 msgstr ""
 
-#: stock/views.py:515
+#: stock/views.py:523
 #, python-brace-format
 msgid "Counted stock for {n} items"
 msgstr ""
 
-#: stock/views.py:543
+#: stock/views.py:551
 msgid "No items were moved"
 msgstr ""
 
-#: stock/views.py:546
+#: stock/views.py:554
 #, python-brace-format
 msgid "Moved {n} items to {dest}"
 msgstr ""
 
-#: stock/views.py:813
+#: stock/views.py:573
+#, python-brace-format
+msgid "Deleted {n} stock items"
+msgstr ""
+
+#: stock/views.py:838
 msgid "Invalid part selection"
 msgstr ""
 
-#: stock/views.py:875
+#: stock/views.py:900
 msgid "Created new stock item"
 msgstr ""
