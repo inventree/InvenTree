@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-18 21:41+0000\n"
+"POT-Creation-Date: 2019-11-18 21:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -733,6 +733,46 @@ msgstr ""
 msgid "Item cannot belong to itself"
 msgstr ""
 
+#: stock/models.py:297
+msgid "Base part"
+msgstr ""
+
+#: stock/models.py:304
+msgid "Select a matching supplier part for this stock item"
+msgstr ""
+
+#: stock/models.py:308
+msgid "Where is this stock item located?"
+msgstr ""
+
+#: stock/models.py:312
+msgid "Is this item installed in another item?"
+msgstr ""
+
+#: stock/models.py:316
+msgid "Item assigned to customer?"
+msgstr ""
+
+#: stock/models.py:319
+msgid "Serial number for this item"
+msgstr ""
+
+#: stock/models.py:324
+msgid "Batch code for this stock item"
+msgstr ""
+
+#: stock/models.py:333
+msgid "Build for this stock item"
+msgstr ""
+
+#: stock/models.py:342
+msgid "Purchase order for this stock item"
+msgstr ""
+
+#: stock/models.py:353
+msgid "Delete this Stock Item when stock is depleted"
+msgstr ""
+
 #: stock/models.py:360
 msgid "Stock Item Notes"
 msgstr ""
@@ -765,6 +805,18 @@ msgstr ""
 #: stock/models.py:483
 #, python-brace-format
 msgid "Serialized {n} items"
+msgstr ""
+
+#: stock/models.py:725
+msgid "Tracking entry title"
+msgstr ""
+
+#: stock/models.py:727
+msgid "Entry notes"
+msgstr ""
+
+#: stock/models.py:729
+msgid "Link to external page for further information"
 msgstr ""
 
 #: stock/templates/stock/item.html:8
