@@ -1,12 +1,14 @@
 {% extends "part/part_app_base.html" %}
 
 {% load static %}
+{% load i18n %}
+{% load inventree_extras %}
 
 {% block content %}
 
 {% if part.active == False %}
 <div class='alert alert-danger alert-block'>
-    This part is not active:
+    {% trans "This part is not active" %}"
 </div>
 {% endif %}
 {% if part.is_template %}
@@ -42,13 +44,13 @@
         <p>
             <div class='btn-row'>
                 <div class='btn-group'>
-                    <button type='button' class='btn btn-default btn-glyph' id='toggle-starred' title='Star this part'>
+                    <button type='button' class='btn btn-default btn-glyph' id='toggle-starred' title='{% trans "Star this part" %}'>
                         <span id='part-star-icon' class='starred-part glyphicon {% if starred %}glyphicon-star{% else %}glyphicon-star-empty{% endif %}'/>
                     </button>
                     {% if part.is_template == False %}
                     {% include "qr_button.html" %}
                     {% if part.active %}
-                    <button type='button' class='btn btn-default btn-glyph' id='price-button' title='Show pricing information'>
+                    <button type='button' class='btn btn-default btn-glyph' id='price-button' title='{% trans "Show pricing information" %}'>
                         <span id='part-price-icon' class='part-price glyphicon glyphicon-usd'/>
                     </button>
                     {% if not part.virtual %}
@@ -80,13 +82,13 @@
         <table class='table table-condensed'>
             {% if part.IPN %}
             <tr>
-                <td>IPN</td>
+                <td>{% trans "IPN" %}</td>
                 <td>{{ part.IPN }}</td>
             </tr>
             {% endif %}
             {% if part.URL %}
             <tr>
-                <td>URL</td>
+                <td>{% trans "URL" %}</td>
                 <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
             </tr>
             {% endif %}
@@ -100,25 +102,25 @@
     <table class="table table-striped">
         <tr>
             <td>
-                <h4>Available Stock</h4>
+                <h4>{% trans "Available Stock" %}</h4>
             </td>
-            <td><h4>{{ part.available_stock }} {{ part.units }}</h4></td>
+            <td><h4>{% decimal part.available_stock %} {{ part.units }}</h4></td>
         </tr>
         <tr>
-            <td>In Stock</td>
-            <td>{{ part.total_stock }}</td>
+            <td>{% trans "In Stock" %}</td>
+            <td>{% decimal part.total_stock %}</td>
         </tr>
         {% if not part.is_template %}
         {% if part.allocation_count > 0 %}
         <tr>
-            <td>Allocated</td>
-            <td>{{ part.allocation_count }}</td>
+            <td>{% trans "Allocated" %}</td>
+            <td>{% decimal part.allocation_count %}</td>
         </tr>
         {% endif %}
         {% if part.on_order > 0 %}
         <tr>
-            <td>On Order</td>
-            <td>{{ part.on_order }}</td>
+            <td>{% trans "On Order" %}</td>
+            <td>{% decimal part.on_order %}</td>
         </tr>
         {% endif %}
         {% endif %}
@@ -126,17 +128,17 @@
         {% if part.assembly %}
         <tr>
             <td colspan='2'>
-                <b>Build Status</b>
+                <b>{% trans "Build Status" %}</b>
             </td>
         </tr>
         <tr>
-            <td>Can Build</td>
-            <td>{{ part.can_build }}</td>
+            <td>{% trans "Can Build" %}</td>
+            <td>{% decimal part.can_build %}</td>
         </tr>
         {% if part.quantity_being_built > 0 %}
         <tr>
-            <td>Underway</td>
-            <td>{{ part.quantity_being_built }}</td>
+            <td>{% trans "Underway" %}</td>
+            <td>{% decimal part.quantity_being_built %}</td>
         </tr>
         {% endif %}
         {% endif %}

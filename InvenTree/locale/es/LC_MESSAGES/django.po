@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-18 22:58+0000\n"
+"POT-Creation-Date: 2019-11-18 23:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -104,6 +104,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:83 build/templates/build/allocate_edit.html:28
 #: build/templates/build/allocate_view.html:21
+#: part/templates/part/part_base.html:116 part/templates/part/tabs.html:21
 msgid "Allocated"
 msgstr ""
 
@@ -190,11 +191,12 @@ msgid "Order Parts"
 msgstr ""
 
 #: build/templates/build/allocate_view.html:18
-#: part/templates/part/detail.html:32
+#: part/templates/part/detail.html:33
 msgid "Description"
 msgstr ""
 
 #: build/templates/build/allocate_view.html:22
+#: part/templates/part/part_base.html:122
 msgid "On Order"
 msgstr ""
 
@@ -393,7 +395,7 @@ msgstr ""
 msgid "Part cannot be a variant of another part if it is already a template"
 msgstr ""
 
-#: part/models.py:327 part/templates/part/detail.html:16
+#: part/models.py:327 part/templates/part/detail.html:17
 msgid "Part name"
 msgstr ""
 
@@ -566,11 +568,11 @@ msgstr ""
 msgid "Category Description"
 msgstr ""
 
-#: part/templates/part/category.html:46 part/templates/part/detail.html:63
+#: part/templates/part/category.html:46 part/templates/part/detail.html:64
 msgid "Default Location"
 msgstr ""
 
-#: part/templates/part/category.html:52 part/templates/part/detail.html:43
+#: part/templates/part/category.html:52 part/templates/part/detail.html:44
 msgid "Keywords"
 msgstr ""
 
@@ -582,7 +584,7 @@ msgstr ""
 msgid "Parts (Including subcategories)"
 msgstr ""
 
-#: part/templates/part/category.html:66 part/templates/part/detail.html:8
+#: part/templates/part/category.html:66 part/templates/part/detail.html:9
 msgid "Part Details"
 msgstr ""
 
@@ -590,108 +592,185 @@ msgstr ""
 msgid "Parts"
 msgstr ""
 
-#: part/templates/part/detail.html:21
+#: part/templates/part/detail.html:22 part/templates/part/part_base.html:85
 msgid "IPN"
 msgstr ""
 
-#: part/templates/part/detail.html:27
+#: part/templates/part/detail.html:28
 msgid "Revision"
 msgstr ""
 
-#: part/templates/part/detail.html:37
+#: part/templates/part/detail.html:38
 msgid "Variant Of"
 msgstr ""
 
-#: part/templates/part/detail.html:49 stock/templates/stock/item.html:119
+#: part/templates/part/detail.html:50 part/templates/part/part_base.html:91
+#: stock/templates/stock/item.html:119
 msgid "URL"
 msgstr ""
 
-#: part/templates/part/detail.html:54
+#: part/templates/part/detail.html:55
 msgid "Category"
 msgstr ""
 
-#: part/templates/part/detail.html:69
+#: part/templates/part/detail.html:70
 msgid "Default Supplier"
 msgstr ""
 
-#: part/templates/part/detail.html:76
+#: part/templates/part/detail.html:77
 msgid "Units"
 msgstr ""
 
-#: part/templates/part/detail.html:81
+#: part/templates/part/detail.html:82
 msgid "Minimum Stock"
 msgstr ""
 
-#: part/templates/part/detail.html:90
+#: part/templates/part/detail.html:91
 msgid "Virtual"
 msgstr ""
 
-#: part/templates/part/detail.html:93
+#: part/templates/part/detail.html:94
 msgid "Part is virtual (not a physical part)"
 msgstr ""
 
-#: part/templates/part/detail.html:95
+#: part/templates/part/detail.html:96
 msgid "Part is not a virtual part"
 msgstr ""
 
-#: part/templates/part/detail.html:99
+#: part/templates/part/detail.html:100
 msgid "Assembly"
 msgstr ""
 
-#: part/templates/part/detail.html:102
+#: part/templates/part/detail.html:103
 msgid "Part can be assembled from other parts"
 msgstr ""
 
-#: part/templates/part/detail.html:104
+#: part/templates/part/detail.html:105
 msgid "Part cannot be assembled from other parts"
 msgstr ""
 
-#: part/templates/part/detail.html:108
+#: part/templates/part/detail.html:109
 msgid "Component"
 msgstr ""
 
-#: part/templates/part/detail.html:111
+#: part/templates/part/detail.html:112
 msgid "Part can be used in assemblies"
 msgstr ""
 
-#: part/templates/part/detail.html:113
+#: part/templates/part/detail.html:114
 msgid "Part cannot be used in assemblies"
 msgstr ""
 
-#: part/templates/part/detail.html:117
+#: part/templates/part/detail.html:118
 msgid "Trackable"
 msgstr ""
 
-#: part/templates/part/detail.html:120
+#: part/templates/part/detail.html:121
 msgid "Part stock is tracked by serial number"
 msgstr ""
 
-#: part/templates/part/detail.html:122
+#: part/templates/part/detail.html:123
 msgid "Part stock is not tracked by serial number"
 msgstr ""
 
-#: part/templates/part/detail.html:126
+#: part/templates/part/detail.html:127
 msgid "Purchaseable"
 msgstr ""
 
-#: part/templates/part/detail.html:129 part/templates/part/detail.html:131
+#: part/templates/part/detail.html:130 part/templates/part/detail.html:132
 msgid "Part can be purchased from external suppliers"
 msgstr ""
 
-#: part/templates/part/detail.html:136
+#: part/templates/part/detail.html:137
 msgid "Sellable"
 msgstr ""
 
-#: part/templates/part/detail.html:139
+#: part/templates/part/detail.html:140
 msgid "Part can be sold to customers"
 msgstr ""
 
-#: part/templates/part/detail.html:141
+#: part/templates/part/detail.html:142
 msgid "Part cannot be sold to customers"
 msgstr ""
 
-#: part/templates/part/detail.html:151 stock/templates/stock/item.html:151
+#: part/templates/part/detail.html:152 stock/templates/stock/item.html:151
 msgid "Notes"
+msgstr ""
+
+#: part/templates/part/part_base.html:11
+msgid "This part is not active"
+msgstr ""
+
+#: part/templates/part/part_base.html:47
+msgid "Star this part"
+msgstr ""
+
+#: part/templates/part/part_base.html:53
+msgid "Show pricing information"
+msgstr ""
+
+#: part/templates/part/part_base.html:105
+msgid "Available Stock"
+msgstr ""
+
+#: part/templates/part/part_base.html:110
+msgid "In Stock"
+msgstr ""
+
+#: part/templates/part/part_base.html:131
+msgid "Build Status"
+msgstr ""
+
+#: part/templates/part/part_base.html:135
+msgid "Can Build"
+msgstr ""
+
+#: part/templates/part/part_base.html:140
+msgid "Underway"
+msgstr ""
+
+#: part/templates/part/tabs.html:6
+msgid "Details"
+msgstr ""
+
+#: part/templates/part/tabs.html:9
+msgid "Parameters"
+msgstr ""
+
+#: part/templates/part/tabs.html:13
+msgid "Variants"
+msgstr ""
+
+#: part/templates/part/tabs.html:17
+msgid "Stock"
+msgstr ""
+
+#: part/templates/part/tabs.html:26
+msgid "BOM"
+msgstr ""
+
+#: part/templates/part/tabs.html:28 stock/templates/stock/item.html:101
+msgid "Build"
+msgstr ""
+
+#: part/templates/part/tabs.html:32
+msgid "Used In"
+msgstr ""
+
+#: part/templates/part/tabs.html:37
+msgid "Suppliers"
+msgstr ""
+
+#: part/templates/part/tabs.html:43
+msgid "Purchase Orders"
+msgstr ""
+
+#: part/templates/part/tabs.html:48
+msgid "Tracking"
+msgstr ""
+
+#: part/templates/part/tabs.html:55
+msgid "Attachments"
 msgstr ""
 
 #: part/views.py:196
@@ -899,10 +978,6 @@ msgstr ""
 
 #: stock/templates/stock/item.html:95
 msgid "Batch"
-msgstr ""
-
-#: stock/templates/stock/item.html:101
-msgid "Build"
 msgstr ""
 
 #: stock/templates/stock/item.html:113

@@ -87,7 +87,7 @@
         {% else %}
         <tr>
             <td>{% trans "Quantity" %}</td>
-            <td>{% decimal item.quantity %}</td>
+            <td>{% decimal item.quantity %} {% if item.part.units %}{{ item.part.units }}{% endif %}</td>
         </tr>
         {% endif %}
         {% if item.batch %}
