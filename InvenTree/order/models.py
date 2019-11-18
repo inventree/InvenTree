@@ -17,6 +17,7 @@ from datetime import datetime
 from stock.models import StockItem
 from company.models import Company, SupplierPart
 
+from InvenTree.helpers import decimal2string
 from InvenTree.status_codes import OrderStatus
 
 
@@ -264,7 +265,7 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     def __str__(self):
         return "{n} x {part} from {supplier} (for {po})".format(
-            n=self.quantity,
+            n=decimal2string(self.quantity),
             part=self.part.SKU if self.part else 'unknown part',
             supplier=self.order.supplier.name,
             po=self.order)
