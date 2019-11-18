@@ -20,6 +20,8 @@ from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
 from InvenTree.helpers import ExtractSerialNumbers
+
+from decimal import Decimal
 from datetime import datetime
 
 from company.models import Company
@@ -398,8 +400,9 @@ class StockAdjust(AjaxView, FormMixin):
         valid = form.is_valid()
         
         for item in self.stock_items:
+            
             try:
-                item.new_quantity = int(item.new_quantity)
+                item.new_quantity = Decimal(item.new_quantity)
             except ValueError:
                 item.error = _('Must enter integer value')
                 valid = False

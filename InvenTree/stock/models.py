@@ -18,6 +18,7 @@ from django.dispatch import receiver
 
 from mptt.models import TreeForeignKey
 
+from decimal import Decimal, InvalidOperation
 from datetime import datetime
 from InvenTree import helpers
 
@@ -549,7 +550,10 @@ class StockItem(models.Model):
                 quantity: If provided, override the quantity (default = total stock quantity)
         """
 
-        quantity = int(kwargs.get('quantity', self.quantity))
+        try:
+            quantity = Decimal(kwargs.get('quantity', self.quantity))
+        except InvalidOperation:
+            return False
 
         if quantity <= 0:
             return False
@@ -618,7 +622,10 @@ class StockItem(models.Model):
         record the date of stocktake
         """
 
-        count = int(count)
+        try:
+            count = Decimal(count)
+        except InvalidOperation:
+            return False
 
         if count < 0 or self.infinite:
             return False
@@ -646,7 +653,10 @@ class StockItem(models.Model):
         if self.serialized:
             return False
 
-        quantity = int(quantity)
+        try:
+            quantity = Decimal(quantity)
+        except InvalidOperation:
+            return False
 
         # Ignore amounts that do not make sense
         if quantity <= 0 or self.infinite:
@@ -670,7 +680,10 @@ class StockItem(models.Model):
         if self.serialized:
             return False
 
-        quantity = int(quantity)
+        try:
+            quantity = Decimal(quantity)
+        except InvalidOperation:
+            return False
 
         if quantity <= 0 or self.infinite:
             return False
