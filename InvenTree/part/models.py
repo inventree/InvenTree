@@ -1161,7 +1161,7 @@ class BomItem(models.Model):
         return "{n} x {child} to make {parent}".format(
             parent=self.part.full_name,
             child=self.sub_part.full_name,
-            n=self.quantity)
+            n=helpers.decimal2string(self.quantity))
 
     def get_overage_quantity(self, quantity):
         """ Calculate overage quantity

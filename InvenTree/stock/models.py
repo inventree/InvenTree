@@ -691,7 +691,7 @@ class StockItem(models.Model):
                 sn=self.serial)
         else:
             s = '{n} x {part}'.format(
-                n=self.quantity,
+                n=helpers.decimal2string(self.quantity),
                 part=self.part.full_name)
 
         if self.location:
