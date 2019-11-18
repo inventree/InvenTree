@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-18 23:10+0000\n"
+"POT-Creation-Date: 2019-11-18 23:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -141,6 +141,40 @@ msgstr ""
 msgid "Confirm build completion"
 msgstr ""
 
+#: build/models.py:52
+msgid "Brief description of the build"
+msgstr ""
+
+#: build/models.py:61
+msgid "Select part to build"
+msgstr ""
+
+#: build/models.py:67
+msgid ""
+"Select location to take stock from for this build (leave blank to take from "
+"any stock location)"
+msgstr ""
+
+#: build/models.py:73
+msgid "Number of parts to build"
+msgstr ""
+
+#: build/models.py:79
+msgid "Build status"
+msgstr ""
+
+#: build/models.py:82
+msgid "Batch code for this build output"
+msgstr ""
+
+#: build/models.py:94
+msgid "Link to external URL"
+msgstr ""
+
+#: build/models.py:96
+msgid "Extra build notes"
+msgstr ""
+
 #: build/models.py:381
 #, python-brace-format
 msgid "Selected stock item not found in BOM for part '{p}'"
@@ -149,6 +183,18 @@ msgstr ""
 #: build/models.py:384
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
+msgstr ""
+
+#: build/models.py:402
+msgid "Build to allocate parts"
+msgstr ""
+
+#: build/models.py:409
+msgid "Stock Item to allocate to build"
+msgstr ""
+
+#: build/models.py:417
+msgid "Stock quantity to allocate to build"
 msgstr ""
 
 #: build/templates/build/allocate_edit.html:5
@@ -931,15 +977,15 @@ msgstr ""
 msgid "Serialized {n} items"
 msgstr ""
 
-#: stock/models.py:738
+#: stock/models.py:750
 msgid "Tracking entry title"
 msgstr ""
 
-#: stock/models.py:740
+#: stock/models.py:752
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:742
+#: stock/models.py:754
 msgid "Link to external page for further information"
 msgstr ""
 
