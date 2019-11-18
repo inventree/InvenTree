@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-18 23:29+0000\n"
+"POT-Creation-Date: 2019-11-18 23:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: InvenTree/helpers.py:175 order/models.py:158 order/models.py:203
+#: InvenTree/helpers.py:175 order/models.py:159 order/models.py:204
 msgid "Invalid quantity provided"
 msgstr ""
 
@@ -305,60 +305,60 @@ msgstr ""
 msgid "Receive parts to this location"
 msgstr ""
 
-#: order/models.py:62
+#: order/models.py:63
 msgid "Order reference"
 msgstr ""
 
-#: order/models.py:64
+#: order/models.py:65
 msgid "Order description"
 msgstr ""
 
-#: order/models.py:66
+#: order/models.py:67
 msgid "Link to external page"
 msgstr ""
 
-#: order/models.py:83
+#: order/models.py:84
 msgid "Order notes"
 msgstr ""
 
-#: order/models.py:125
+#: order/models.py:126
 msgid "Company"
 msgstr ""
 
-#: order/models.py:156 order/models.py:201 part/views.py:1032
+#: order/models.py:157 order/models.py:202 part/views.py:1032
 #: stock/models.py:438
 msgid "Quantity must be greater than zero"
 msgstr ""
 
-#: order/models.py:161
+#: order/models.py:162
 msgid "Part supplier must match PO supplier"
 msgstr ""
 
-#: order/models.py:196
+#: order/models.py:197
 msgid "Lines can only be received against an order marked as 'Placed'"
 msgstr ""
 
-#: order/models.py:245
+#: order/models.py:246
 msgid "Item quantity"
 msgstr ""
 
-#: order/models.py:247
+#: order/models.py:248
 msgid "Line item reference"
 msgstr ""
 
-#: order/models.py:249
+#: order/models.py:250
 msgid "Line item notes"
 msgstr ""
 
-#: order/models.py:275 stock/templates/stock/item.html:107
+#: order/models.py:276 stock/templates/stock/item.html:107
 msgid "Purchase Order"
 msgstr ""
 
-#: order/models.py:284
+#: order/models.py:285
 msgid "Supplier part"
 msgstr ""
 
-#: order/models.py:287
+#: order/models.py:288
 msgid "Number of items received"
 msgstr ""
 
