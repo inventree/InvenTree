@@ -517,7 +517,7 @@ class Part(models.Model):
         # Calculate the minimum number of parts that can be built using each sub-part
         for item in self.bom_items.all().prefetch_related('sub_part__stock_items'):
             stock = item.sub_part.available_stock
-            n = int(1.0 * stock / item.quantity)
+            n = int(stock / item.quantity)
 
             if total is None or n < total:
                 total = n
@@ -1064,7 +1064,7 @@ class BomItem(models.Model):
                                  })
 
     # Quantity required
-    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)], help_text='BOM quantity for this BOM item')
+    quantity = models.DecimalField(default=1.0, max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], help_text=_('BOM quantity for this BOM item'))
 
     overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
                                help_text=_('Estimated build wastage quantity (absolute or percentage)')

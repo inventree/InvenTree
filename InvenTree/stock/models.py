@@ -323,7 +323,7 @@ class StockItem(models.Model):
     batch = models.CharField(max_length=100, blank=True, null=True,
                              help_text=_('Batch code for this stock item'))
 
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1)
+    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
 
     updated = models.DateField(auto_now=True, null=True)
 
