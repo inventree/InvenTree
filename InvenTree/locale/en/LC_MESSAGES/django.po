@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-16 09:28+0000\n"
+"POT-Creation-Date: 2019-11-18 21:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -324,6 +324,14 @@ msgstr ""
 msgid "Select currency for price calculation"
 msgstr ""
 
+#: part/models.py:56
+msgid "Default location for parts in this category"
+msgstr ""
+
+#: part/models.py:59
+msgid "Default keywords for parts in this category"
+msgstr ""
+
 #: part/models.py:308
 msgid "Part must be unique for name, IPN and revision"
 msgstr ""
@@ -336,8 +344,148 @@ msgstr ""
 msgid "Part cannot be a variant of another part if it is already a template"
 msgstr ""
 
+#: part/models.py:327 part/templates/part/detail.html:16
+msgid "Part name"
+msgstr ""
+
+#: part/models.py:331
+msgid "Is this part a template part?"
+msgstr ""
+
+#: part/models.py:340
+msgid "Is this part a variant of another part?"
+msgstr ""
+
+#: part/models.py:342
+msgid "Part description"
+msgstr ""
+
+#: part/models.py:344
+msgid "Part keywords to improve visibility in search results"
+msgstr ""
+
+#: part/models.py:349
+msgid "Part category"
+msgstr ""
+
+#: part/models.py:351
+msgid "Internal Part Number"
+msgstr ""
+
+#: part/models.py:353
+msgid "Part revision or version number"
+msgstr ""
+
+#: part/models.py:355
+msgid "Link to extenal URL"
+msgstr ""
+
+#: part/models.py:361
+msgid "Where is this item normally stored?"
+msgstr ""
+
+#: part/models.py:405
+msgid "Default supplier part"
+msgstr ""
+
+#: part/models.py:408
+msgid "Minimum allowed stock level"
+msgstr ""
+
+#: part/models.py:410
+msgid "Stock keeping units for this part"
+msgstr ""
+
+#: part/models.py:412
+msgid "Can this part be built from other parts?"
+msgstr ""
+
+#: part/models.py:414
+msgid "Can this part be used to build other parts?"
+msgstr ""
+
+#: part/models.py:416
+msgid "Does this part have tracking for unique items?"
+msgstr ""
+
+#: part/models.py:418
+msgid "Can this part be purchased from external suppliers?"
+msgstr ""
+
+#: part/models.py:420
+msgid "Can this part be sold to customers?"
+msgstr ""
+
+#: part/models.py:422
+msgid "Is this part active?"
+msgstr ""
+
+#: part/models.py:424
+msgid "Is this a virtual part, such as a software product or license?"
+msgstr ""
+
+#: part/models.py:428
+msgid "Stored BOM checksum"
+msgstr ""
+
+#: part/models.py:935
+msgid "Select file to attach"
+msgstr ""
+
+#: part/models.py:937
+msgid "File comment"
+msgstr ""
+
 #: part/models.py:992
 msgid "Parameter template name must be unique"
+msgstr ""
+
+#: part/models.py:997
+msgid "Parameter Name"
+msgstr ""
+
+#: part/models.py:999
+msgid "Parameter Units"
+msgstr ""
+
+#: part/models.py:1025
+msgid "Parent Part"
+msgstr ""
+
+#: part/models.py:1027
+msgid "Parameter Template"
+msgstr ""
+
+#: part/models.py:1029
+msgid "Parameter Value"
+msgstr ""
+
+#: part/models.py:1053
+msgid "Select parent part"
+msgstr ""
+
+#: part/models.py:1061
+msgid "Select part to be used in BOM"
+msgstr ""
+
+#: part/models.py:1067
+msgid "BOM quantity for this BOM item"
+msgstr ""
+
+#: part/models.py:1070
+msgid "Estimated build wastage quantity (absolute or percentage)"
+msgstr ""
+
+#: part/models.py:1073
+msgid "BOM item reference"
+msgstr ""
+
+#: part/models.py:1076
+msgid "BOM item notes"
+msgstr ""
+
+#: part/models.py:1078
+msgid "BOM line checksum"
 msgstr ""
 
 #: part/models.py:1141
@@ -391,10 +539,6 @@ msgstr ""
 
 #: part/templates/part/category.html:73
 msgid "Parts"
-msgstr ""
-
-#: part/templates/part/detail.html:16
-msgid "Part name"
 msgstr ""
 
 #: part/templates/part/detail.html:21

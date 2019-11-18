@@ -53,10 +53,10 @@ class PartCategory(InvenTreeTree):
         'stock.StockLocation', related_name="default_categories",
         null=True, blank=True,
         on_delete=models.SET_NULL,
-        help_text='Default location for parts in this category'
+        help_text=_('Default location for parts in this category')
     )
 
-    default_keywords = models.CharField(blank=True, max_length=250, help_text='Default keywords for parts in this category')
+    default_keywords = models.CharField(blank=True, max_length=250, help_text=_('Default keywords for parts in this category'))
 
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={'pk': self.id})
@@ -324,11 +324,11 @@ class Part(models.Model):
             })
 
     name = models.CharField(max_length=100, blank=False,
-                            help_text='Part name',
+                            help_text=_('Part name'),
                             validators=[validators.validate_part_name]
                             )
 
-    is_template = models.BooleanField(default=False, help_text='Is this part a template part?')
+    is_template = models.BooleanField(default=False, help_text=_('Is this part a template part?'))
 
     variant_of = models.ForeignKey('part.Part', related_name='variants',
                                    null=True, blank=True,
@@ -337,28 +337,28 @@ class Part(models.Model):
                                        'active': True,
                                    },
                                    on_delete=models.SET_NULL,
-                                   help_text='Is this part a variant of another part?')
+                                   help_text=_('Is this part a variant of another part?'))
 
-    description = models.CharField(max_length=250, blank=False, help_text='Part description')
+    description = models.CharField(max_length=250, blank=False, help_text=_('Part description'))
 
-    keywords = models.CharField(max_length=250, blank=True, help_text='Part keywords to improve visibility in search results')
+    keywords = models.CharField(max_length=250, blank=True, help_text=_('Part keywords to improve visibility in search results'))
 
     category = TreeForeignKey(PartCategory, related_name='parts',
                               null=True, blank=True,
                               on_delete=models.DO_NOTHING,
-                              help_text='Part category')
+                              help_text=_('Part category'))
 
-    IPN = models.CharField(max_length=100, blank=True, help_text='Internal Part Number')
+    IPN = models.CharField(max_length=100, blank=True, help_text=_('Internal Part Number'))
 
-    revision = models.CharField(max_length=100, blank=True, help_text='Part revision or version number')
+    revision = models.CharField(max_length=100, blank=True, help_text=_('Part revision or version number'))
 
-    URL = InvenTreeURLField(blank=True, help_text='Link to extenal URL')
+    URL = InvenTreeURLField(blank=True, help_text=_('Link to extenal URL'))
 
     image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
 
     default_location = TreeForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
                                       blank=True, null=True,
-                                      help_text='Where is this item normally stored?',
+                                      help_text=_('Where is this item normally stored?'),
                                       related_name='default_parts')
 
     def get_default_location(self):
@@ -402,30 +402,30 @@ class Part(models.Model):
     default_supplier = models.ForeignKey(SupplierPart,
                                          on_delete=models.SET_NULL,
                                          blank=True, null=True,
-                                         help_text='Default supplier part',
+                                         help_text=_('Default supplier part'),
                                          related_name='default_parts')
 
-    minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text='Minimum allowed stock level')
+    minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text=_('Minimum allowed stock level'))
 
-    units = models.CharField(max_length=20, default="pcs", blank=True, help_text='Stock keeping units for this part')
+    units = models.CharField(max_length=20, default="pcs", blank=True, help_text=_('Stock keeping units for this part'))
 
-    assembly = models.BooleanField(default=False, verbose_name='Assembly', help_text='Can this part be built from other parts?')
+    assembly = models.BooleanField(default=False, verbose_name='Assembly', help_text=_('Can this part be built from other parts?'))
 
-    component = models.BooleanField(default=True, verbose_name='Component', help_text='Can this part be used to build other parts?')
+    component = models.BooleanField(default=True, verbose_name='Component', help_text=_('Can this part be used to build other parts?'))
 
-    trackable = models.BooleanField(default=False, help_text='Does this part have tracking for unique items?')
+    trackable = models.BooleanField(default=False, help_text=_('Does this part have tracking for unique items?'))
 
-    purchaseable = models.BooleanField(default=True, help_text='Can this part be purchased from external suppliers?')
+    purchaseable = models.BooleanField(default=True, help_text=_('Can this part be purchased from external suppliers?'))
 
-    salable = models.BooleanField(default=False, help_text="Can this part be sold to customers?")
+    salable = models.BooleanField(default=False, help_text=_("Can this part be sold to customers?"))
 
-    active = models.BooleanField(default=True, help_text='Is this part active?')
+    active = models.BooleanField(default=True, help_text=_('Is this part active?'))
 
-    virtual = models.BooleanField(default=False, help_text='Is this a virtual part, such as a software product or license?')
+    virtual = models.BooleanField(default=False, help_text=_('Is this a virtual part, such as a software product or license?'))
 
     notes = models.TextField(blank=True)
 
-    bom_checksum = models.CharField(max_length=128, blank=True, help_text='Stored BOM checksum')
+    bom_checksum = models.CharField(max_length=128, blank=True, help_text=_('Stored BOM checksum'))
 
     bom_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
                                        related_name='boms_checked')
@@ -932,9 +932,9 @@ class PartAttachment(models.Model):
                              related_name='attachments')
 
     attachment = models.FileField(upload_to=attach_file,
-                                  help_text='Select file to attach')
+                                  help_text=_('Select file to attach'))
 
-    comment = models.CharField(max_length=100, help_text='File comment')
+    comment = models.CharField(max_length=100, help_text=_('File comment'))
 
     @property
     def basename(self):
@@ -994,9 +994,9 @@ class PartParameterTemplate(models.Model):
         except PartParameterTemplate.DoesNotExist:
             pass
 
-    name = models.CharField(max_length=100, help_text='Parameter Name', unique=True)
+    name = models.CharField(max_length=100, help_text=_('Parameter Name'), unique=True)
 
-    units = models.CharField(max_length=25, help_text='Parameter Units', blank=True)
+    units = models.CharField(max_length=25, help_text=_('Parameter Units'), blank=True)
 
 
 class PartParameter(models.Model):
@@ -1022,11 +1022,11 @@ class PartParameter(models.Model):
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', help_text='Parent Part')
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', help_text=_('Parent Part'))
 
-    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', help_text='Parameter Template')
+    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', help_text=_('Parameter Template'))
 
-    data = models.CharField(max_length=500, help_text='Parameter Value')
+    data = models.CharField(max_length=500, help_text=_('Parameter Value'))
 
 
 class BomItem(models.Model):
@@ -1050,7 +1050,7 @@ class BomItem(models.Model):
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='bom_items',
-                             help_text='Select parent part',
+                             help_text=_('Select parent part'),
                              limit_choices_to={
                                  'assembly': True,
                              })
@@ -1058,7 +1058,7 @@ class BomItem(models.Model):
     # A link to the child item (sub-part)
     # Each part will get a reverse lookup field 'used_in'
     sub_part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='used_in',
-                                 help_text='Select part to be used in BOM',
+                                 help_text=_('Select part to be used in BOM'),
                                  limit_choices_to={
                                      'component': True,
                                  })
@@ -1067,15 +1067,15 @@ class BomItem(models.Model):
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)], help_text='BOM quantity for this BOM item')
 
     overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
-                               help_text='Estimated build wastage quantity (absolute or percentage)'
+                               help_text=_('Estimated build wastage quantity (absolute or percentage)')
                                )
 
-    reference = models.CharField(max_length=500, blank=True, help_text='BOM item reference')
+    reference = models.CharField(max_length=500, blank=True, help_text=_('BOM item reference'))
 
     # Note attached to this BOM line item
-    note = models.CharField(max_length=500, blank=True, help_text='BOM item notes')
+    note = models.CharField(max_length=500, blank=True, help_text=_('BOM item notes'))
 
-    checksum = models.CharField(max_length=128, blank=True, help_text='BOM line checksum')
+    checksum = models.CharField(max_length=128, blank=True, help_text=_('BOM line checksum'))
 
     def get_item_hash(self):
         """ Calculate the checksum hash of this BOM line item:
