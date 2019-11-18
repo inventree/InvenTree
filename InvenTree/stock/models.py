@@ -616,6 +616,8 @@ class StockItem(models.Model):
         if quantity < 0:
             quantity = 0
 
+        self.quantity = quantity
+
         if quantity == 0 and self.delete_on_deplete and self.can_delete():
             
             # TODO - Do not actually "delete" stock at this point - instead give it a "DELETED" flag
