@@ -407,7 +407,7 @@ class Part(models.Model):
 
     minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text=_('Minimum allowed stock level'))
 
-    units = models.CharField(max_length=20, default="pcs", blank=True, help_text=_('Stock keeping units for this part'))
+    units = models.CharField(max_length=20, default="", blank=True, help_text=_('Stock keeping units for this part'))
 
     assembly = models.BooleanField(default=False, verbose_name='Assembly', help_text=_('Can this part be built from other parts?'))
 

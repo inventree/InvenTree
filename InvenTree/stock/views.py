@@ -546,7 +546,7 @@ class StockAdjust(AjaxView, FormMixin):
             if destination == item.location and item.new_quantity == item.quantity:
                 continue
 
-            item.move(destination, note, self.request.user, quantity=int(item.new_quantity))
+            item.move(destination, note, self.request.user, quantity=item.new_quantity)
 
             count += 1
 

@@ -511,6 +511,11 @@ class StockItem(models.Model):
         if self.serialized:
             return
 
+        try:
+            quantity = Decimal(quantity)
+        except (InvalidOperation, ValueError):
+            return
+
         # Doesn't make sense for a zero quantity
         if quantity <= 0:
             return
@@ -603,12 +608,17 @@ class StockItem(models.Model):
         if self.serialized:
             return
 
+        try:
+            self.quantity = Decimal(quantity)
+        except (InvalidOperation, ValueError):
+            return
+
         if quantity < 0:
             quantity = 0
 
-        self.quantity = quantity
-
-        if quantity <= 0 and self.delete_on_deplete and self.can_delete():
+        if quantity == 0 and self.delete_on_deplete and self.can_delete():
+            
+            # TODO - Do not actually "delete" stock at this point - instead give it a "DELETED" flag
             self.delete()
             return False
         else:
@@ -745,7 +755,7 @@ class StockItemTracking(models.Model):
 
     system = models.BooleanField(default=False)
 
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1)
+    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
 
     # TODO
     # image = models.ImageField(upload_to=func, max_length=255, null=True, blank=True)
