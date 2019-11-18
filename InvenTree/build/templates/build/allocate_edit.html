@@ -1,12 +1,14 @@
+{% load i18n %}
+{% load inventree_extras %}
 
 <div class='row'>
-    <h4>Allocate Stock to Build</h4>
+    <h4>{% trans "Allocate Stock to Build" %}</h4>
     <div class='col-sm-6'>
     </div>
     <div class='col-sm-6'>
         <div class='btn-group' style='float: right;'>
-                <button class='btn btn-primary' type='button' title='Automatic allocation' id='auto-allocate-build'>Auto Allocate</button>
-                <button class='btn btn-warning' type='button' title='Unallocate build stock' id='unallocate-build'>Unallocate</button>
+                <button class='btn btn-primary' type='button' title='Automatic allocation' id='auto-allocate-build'>{% trans "Auto Allocate" %}</button>
+                <button class='btn btn-warning' type='button' title='Unallocate build stock' id='unallocate-build'>{% trans "Unallocate" %}</button>
         </div>
     </div>
 </div>
@@ -14,16 +16,16 @@
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h4>Part</h4>
+        <h4>{% trans "Part" %}</h4>
     </div>
     <div class='col-sm-2'>
-        <h4>Available</h4>
+        <h4>{% trans "Available" %}</h4>
     </div>
     <div class='col-sm-2'>
-        <h4>Required</h4>
+        <h4>{% trans "Required" %}</h4>
     </div>
     <div class='col-sm-2'>
-        <h4>Allocated</h4>
+        <h4>{% trans "Allocated" %}</h4>
     </div>
 </div>
 

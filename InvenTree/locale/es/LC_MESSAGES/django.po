@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-18 22:51+0000\n"
+"POT-Creation-Date: 2019-11-18 22:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -102,7 +102,8 @@ msgstr ""
 msgid "Destroyed"
 msgstr ""
 
-#: InvenTree/status_codes.py:83 build/templates/build/allocate_view.html:21
+#: InvenTree/status_codes.py:83 build/templates/build/allocate_edit.html:28
+#: build/templates/build/allocate_view.html:21
 msgid "Allocated"
 msgstr ""
 
@@ -149,6 +150,33 @@ msgstr ""
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 
+#: build/templates/build/allocate_edit.html:5
+msgid "Allocate Stock to Build"
+msgstr ""
+
+#: build/templates/build/allocate_edit.html:10
+msgid "Auto Allocate"
+msgstr ""
+
+#: build/templates/build/allocate_edit.html:11
+msgid "Unallocate"
+msgstr ""
+
+#: build/templates/build/allocate_edit.html:19
+#: build/templates/build/allocate_view.html:17
+msgid "Part"
+msgstr ""
+
+#: build/templates/build/allocate_edit.html:22
+#: build/templates/build/allocate_view.html:19
+msgid "Available"
+msgstr ""
+
+#: build/templates/build/allocate_edit.html:25
+#: build/templates/build/allocate_view.html:20
+msgid "Required"
+msgstr ""
+
 #: build/templates/build/allocate_view.html:4
 msgid "Required Parts"
 msgstr ""
@@ -161,28 +189,16 @@ msgstr ""
 msgid "Order Parts"
 msgstr ""
 
-#: build/templates/build/allocate_view.html:17
-msgid "Part"
-msgstr ""
-
 #: build/templates/build/allocate_view.html:18
 #: part/templates/part/detail.html:32
 msgid "Description"
-msgstr ""
-
-#: build/templates/build/allocate_view.html:19
-msgid "Available"
-msgstr ""
-
-#: build/templates/build/allocate_view.html:20
-msgid "Required"
 msgstr ""
 
 #: build/templates/build/allocate_view.html:22
 msgid "On Order"
 msgstr ""
 
-#: build/views.py:289 stock/views.py:862
+#: build/views.py:289 stock/views.py:863
 #, python-brace-format
 msgid "The following serial numbers already exist: ({sn})"
 msgstr ""
@@ -954,6 +970,26 @@ msgstr ""
 msgid "Stock Item"
 msgstr ""
 
+#: stock/views.py:96
+msgid "Edit Stock Location"
+msgstr ""
+
+#: stock/views.py:120
+msgid "Stock Location QR code"
+msgstr ""
+
+#: stock/views.py:135
+msgid "Stock Export Options"
+msgstr ""
+
+#: stock/views.py:243
+msgid "Stock Item QR Code"
+msgstr ""
+
+#: stock/views.py:266
+msgid "Adjust Stock"
+msgstr ""
+
 #: stock/views.py:375
 msgid "Move Stock Items"
 msgstr ""
@@ -1020,10 +1056,54 @@ msgstr ""
 msgid "Deleted {n} stock items"
 msgstr ""
 
-#: stock/views.py:841
+#: stock/views.py:588
+msgid "Edit Stock Item"
+msgstr ""
+
+#: stock/views.py:624
+msgid "Create new Stock Location"
+msgstr ""
+
+#: stock/views.py:645
+msgid "Serialize Stock"
+msgstr ""
+
+#: stock/views.py:725
+msgid "Create new Stock Item"
+msgstr ""
+
+#: stock/views.py:789
+msgid "Copy Stock Item"
+msgstr ""
+
+#: stock/views.py:839
+msgid "Invalid quantity"
+msgstr ""
+
+#: stock/views.py:842
 msgid "Invalid part selection"
 msgstr ""
 
-#: stock/views.py:903
+#: stock/views.py:904
 msgid "Created new stock item"
+msgstr ""
+
+#: stock/views.py:921
+msgid "Delete Stock Location"
+msgstr ""
+
+#: stock/views.py:934
+msgid "Delete Stock Item"
+msgstr ""
+
+#: stock/views.py:945
+msgid "Delete Stock Tracking Entry"
+msgstr ""
+
+#: stock/views.py:962
+msgid "Edit Stock Tracking Entry"
+msgstr ""
+
+#: stock/views.py:971
+msgid "Add Stock Tracking Entry"
 msgstr ""
