@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-18 23:21+0000\n"
+"POT-Creation-Date: 2019-11-18 23:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -141,59 +141,59 @@ msgstr ""
 msgid "Confirm build completion"
 msgstr ""
 
-#: build/models.py:52
+#: build/models.py:51
 msgid "Brief description of the build"
 msgstr ""
 
-#: build/models.py:61
+#: build/models.py:60
 msgid "Select part to build"
 msgstr ""
 
-#: build/models.py:67
+#: build/models.py:66
 msgid ""
 "Select location to take stock from for this build (leave blank to take from "
 "any stock location)"
 msgstr ""
 
-#: build/models.py:73
+#: build/models.py:72
 msgid "Number of parts to build"
 msgstr ""
 
-#: build/models.py:79
+#: build/models.py:78
 msgid "Build status"
 msgstr ""
 
-#: build/models.py:82
+#: build/models.py:81
 msgid "Batch code for this build output"
 msgstr ""
 
-#: build/models.py:94
+#: build/models.py:93
 msgid "Link to external URL"
 msgstr ""
 
-#: build/models.py:96
+#: build/models.py:95
 msgid "Extra build notes"
 msgstr ""
 
-#: build/models.py:381
+#: build/models.py:380
 #, python-brace-format
 msgid "Selected stock item not found in BOM for part '{p}'"
 msgstr ""
 
-#: build/models.py:384
+#: build/models.py:383
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 
-#: build/models.py:402
+#: build/models.py:401
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:409
+#: build/models.py:408
 msgid "Stock Item to allocate to build"
 msgstr ""
 
-#: build/models.py:417
+#: build/models.py:416
 msgid "Stock quantity to allocate to build"
 msgstr ""
 
@@ -211,6 +211,7 @@ msgstr ""
 
 #: build/templates/build/allocate_edit.html:19
 #: build/templates/build/allocate_view.html:17
+#: order/templates/order/purchase_order_detail.html:104
 msgid "Part"
 msgstr ""
 
@@ -237,6 +238,7 @@ msgid "Order Parts"
 msgstr ""
 
 #: build/templates/build/allocate_view.html:18
+#: order/templates/order/purchase_order_detail.html:105
 #: part/templates/part/detail.html:33
 msgid "Description"
 msgstr ""
@@ -358,6 +360,60 @@ msgstr ""
 
 #: order/models.py:287
 msgid "Number of items received"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:60
+msgid "Purchase Order Details"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:63
+#: stock/templates/stock/item.html:125
+msgid "Supplier"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:67
+#: stock/templates/stock/item.html:146
+msgid "Status"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:71
+msgid "Created"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:76
+msgid "Issued"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:82
+#: order/templates/order/purchase_order_detail.html:110
+msgid "Received"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:103
+msgid "Line"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:106
+msgid "Order Code"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:107
+msgid "Reference"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:108
+#: stock/templates/stock/item.html:89
+#: stock/templates/stock/stock_adjust.html:20
+msgid "Quantity"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:112
+msgid "Note"
+msgstr ""
+
+#: order/templates/order/purchase_order_detail.html:165
+#: part/templates/part/detail.html:152 stock/templates/stock/item.html:151
+msgid "Notes"
 msgstr ""
 
 #: order/views.py:140
@@ -739,10 +795,6 @@ msgstr ""
 msgid "Part cannot be sold to customers"
 msgstr ""
 
-#: part/templates/part/detail.html:152 stock/templates/stock/item.html:151
-msgid "Notes"
-msgstr ""
-
 #: part/templates/part/part_base.html:11
 msgid "This part is not active"
 msgstr ""
@@ -1017,21 +1069,12 @@ msgstr ""
 msgid "Serial Number"
 msgstr ""
 
-#: stock/templates/stock/item.html:89
-#: stock/templates/stock/stock_adjust.html:20
-msgid "Quantity"
-msgstr ""
-
 #: stock/templates/stock/item.html:95
 msgid "Batch"
 msgstr ""
 
 #: stock/templates/stock/item.html:113
 msgid "Customer"
-msgstr ""
-
-#: stock/templates/stock/item.html:125
-msgid "Supplier"
 msgstr ""
 
 #: stock/templates/stock/item.html:129
@@ -1048,10 +1091,6 @@ msgstr ""
 
 #: stock/templates/stock/item.html:142
 msgid "No stocktake performed"
-msgstr ""
-
-#: stock/templates/stock/item.html:146
-msgid "Status"
 msgstr ""
 
 #: stock/templates/stock/item.html:160

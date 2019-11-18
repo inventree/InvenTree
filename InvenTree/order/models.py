@@ -242,7 +242,7 @@ class OrderLineItem(models.Model):
     class Meta:
         abstract = True
 
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1, help_text=_('Item quantity'))
+    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, help_text=_('Item quantity'))
 
     reference = models.CharField(max_length=100, blank=True, help_text=_('Line item reference'))
     
@@ -284,7 +284,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         help_text=_("Supplier part"),
     )
 
-    received = models.PositiveIntegerField(default=0, help_text=_('Number of items received'))
+    received = models.DecimalField(decimal_places=5, max_digits=15, default=0, help_text=_('Number of items received'))
 
     def remaining(self):
         """ Calculate the number of items remaining to be received """
