@@ -1,22 +1,25 @@
-<h4>Required Parts</h4>
+{% load i18n %}
+{% load inventree_extras %}
+
+<h4>{% trans "Required Parts" %}</h4>
 <hr>
 
 <div id='build-item-toolbar'>
     <div class='btn-group'>
-        <button class='btn btn-primary' type='button' id='btn-allocate' title='Allocate Stock'>Allocate</button>
-        <button class='btn btn-primary' type='button' id='btn-order-parts' title='Order Parts'>Order Parts</button>
+        <button class='btn btn-primary' type='button' id='btn-allocate' title='Allocate Stock'>{% trans "Allocate" %}</button>
+        <button class='btn btn-primary' type='button' id='btn-order-parts' title='Order Parts'>{% trans "Order Parts" %}</button>
     </div>
 </div>
 
 <table class='table table-striped table-condensed' id='build-list' data-sorting='true' data-toolbar='#build-item-toolbar'>
 <thead>
 <tr>
-    <th data-sortable='true'>Part</th>
-    <th>Description</th>
-    <th data-sortable='true'>Available</th>
-    <th data-sortable='true'>Required</th>
-    <th data-sortable='true'>Allocated</th>
-    <th data-sortable='true'>On Order</th>
+    <th data-sortable='true'>{% trans "Part" %}</th>
+    <th>{% trans "Description" %}</th>
+    <th data-sortable='true'>{% trans "Available" %}</th>
+    <th data-sortable='true'>{% trans "Required" %}</th>
+    <th data-sortable='true'>{% trans "Allocated" %}</th>
+    <th data-sortable='true'>{% trans "On Order" %}</th>
 </tr>
 </thead>
 <tbody>
@@ -27,10 +30,10 @@
             <a class='hover-icon'a href="{% url 'part-detail' item.part.id %}">{{ item.part.full_name }}</a>
         </td>
         <td>{{ item.part.description }}</td>
-        <td>{{ item.part.total_stock }}</td>
-        <td>{{ item.quantity }}</td>
+        <td>{% decimal item.part.total_stock %}</td>
+        <td>{% decimal item.quantity %}</td>
         <td>{{ item.allocated }}</td>
-        <td>{{ item.part.on_order }}</td>
+        <td>{% decimal item.part.on_order %}</td>
     </tr>
     {% endfor %}
 </tbody>

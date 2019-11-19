@@ -183,6 +183,11 @@ function loadPartTable(table, url, options={}) {
         sortable: true,
         formatter: function(value, row, index, field) {
             if (value) {
+
+                if (row.units) {
+                    value += ' <i><small>' + row.units + '</small></i>';
+                }
+
                 return renderLink(value, '/part/' + row.pk + '/stock/');
             }
             else {

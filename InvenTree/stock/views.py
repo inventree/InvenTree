@@ -20,6 +20,8 @@ from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
 from InvenTree.helpers import ExtractSerialNumbers
+
+from decimal import Decimal, InvalidOperation
 from datetime import datetime
 
 from company.models import Company
@@ -91,7 +93,7 @@ class StockLocationEdit(AjaxUpdateView):
     form_class = EditStockLocationForm
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Stock Location'
+    ajax_form_title = _('Edit Stock Location')
 
     def get_form(self):
         """ Customize form data for StockLocation editing.
@@ -115,7 +117,7 @@ class StockLocationEdit(AjaxUpdateView):
 class StockLocationQRCode(QRCodeView):
     """ View for displaying a QR code for a StockLocation object """
 
-    ajax_form_title = "Stock Location QR code"
+    ajax_form_title = _("Stock Location QR code")
 
     def get_qr_data(self):
         """ Generate QR code data for the StockLocation """
@@ -130,7 +132,7 @@ class StockExportOptions(AjaxView):
     """ Form for selecting StockExport options """
 
     model = StockLocation
-    ajax_form_title = 'Stock Export Options'
+    ajax_form_title = _('Stock Export Options')
     form_class = ExportOptionsForm
 
     def post(self, request, *args, **kwargs):
@@ -238,7 +240,7 @@ class StockExport(AjaxView):
 class StockItemQRCode(QRCodeView):
     """ View for displaying a QR code for a StockItem object """
 
-    ajax_form_title = "Stock Item QR Code"
+    ajax_form_title = _("Stock Item QR Code")
 
     def get_qr_data(self):
         """ Generate QR code data for the StockItem """
@@ -261,7 +263,7 @@ class StockAdjust(AjaxView, FormMixin):
     """
 
     ajax_template_name = 'stock/stock_adjust.html'
-    ajax_form_title = 'Adjust Stock'
+    ajax_form_title = _('Adjust Stock')
     form_class = AdjustStockForm
     stock_items = []
 
@@ -398,8 +400,9 @@ class StockAdjust(AjaxView, FormMixin):
         valid = form.is_valid()
         
         for item in self.stock_items:
+            
             try:
-                item.new_quantity = int(item.new_quantity)
+                item.new_quantity = Decimal(item.new_quantity)
             except ValueError:
                 item.error = _('Must enter integer value')
                 valid = False
@@ -543,7 +546,7 @@ class StockAdjust(AjaxView, FormMixin):
             if destination == item.location and item.new_quantity == item.quantity:
                 continue
 
-            item.move(destination, note, self.request.user, quantity=int(item.new_quantity))
+            item.move(destination, note, self.request.user, quantity=item.new_quantity)
 
             count += 1
 
@@ -582,7 +585,7 @@ class StockItemEdit(AjaxUpdateView):
     form_class = EditStockItemForm
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Stock Item'
+    ajax_form_title = _('Edit Stock Item')
 
     def get_form(self):
         """ Get form for StockItem editing.
@@ -618,7 +621,7 @@ class StockLocationCreate(AjaxCreateView):
     form_class = EditStockLocationForm
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Create new Stock Location'
+    ajax_form_title = _('Create new Stock Location')
 
     def get_initial(self):
         initials = super(StockLocationCreate, self).get_initial().copy()
@@ -639,7 +642,7 @@ class StockItemSerialize(AjaxUpdateView):
 
     model = StockItem
     ajax_template_name = 'stock/item_serialize.html'
-    ajax_form_title = 'Serialize Stock'
+    ajax_form_title = _('Serialize Stock')
     form_class = SerializeStockForm
 
     def get_initial(self):
@@ -719,7 +722,7 @@ class StockItemCreate(AjaxCreateView):
     form_class = CreateStockItemForm
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Create new Stock Item'
+    ajax_form_title = _('Create new Stock Item')
 
     def get_form(self):
         """ Get form for StockItem creation.
@@ -783,7 +786,7 @@ class StockItemCreate(AjaxCreateView):
             try:
                 original = StockItem.objects.get(pk=item_to_copy)
                 initials = model_to_dict(original)
-                self.ajax_form_title = "Copy Stock Item"
+                self.ajax_form_title = _("Copy Stock Item")
             except StockItem.DoesNotExist:
                 initials = super(StockItemCreate, self).get_initial().copy()
 
@@ -828,11 +831,12 @@ class StockItemCreate(AjaxCreateView):
             part_id = form['part'].value()
             try:
                 part = Part.objects.get(id=part_id)
-                quantity = int(form['quantity'].value())
-            except (Part.DoesNotExist, ValueError):
+                quantity = Decimal(form['quantity'].value())
+            except (Part.DoesNotExist, ValueError, InvalidOperation):
                 part = None
                 quantity = 1
                 valid = False
+                form.errors['quantity'] = [_('Invalid quantity')]
 
             if part is None:
                 form.errors['part'] = [_('Invalid part selection')]
@@ -914,7 +918,7 @@ class StockLocationDelete(AjaxDeleteView):
     success_url = '/stock'
     ajax_template_name = 'stock/location_delete.html'
     context_object_name = 'location'
-    ajax_form_title = 'Delete Stock Location'
+    ajax_form_title = _('Delete Stock Location')
 
 
 class StockItemDelete(AjaxDeleteView):
@@ -927,7 +931,7 @@ class StockItemDelete(AjaxDeleteView):
     success_url = '/stock/'
     ajax_template_name = 'stock/item_delete.html'
     context_object_name = 'item'
-    ajax_form_title = 'Delete Stock Item'
+    ajax_form_title = _('Delete Stock Item')
 
 
 class StockItemTrackingDelete(AjaxDeleteView):
@@ -938,7 +942,7 @@ class StockItemTrackingDelete(AjaxDeleteView):
 
     model = StockItemTracking
     ajax_template_name = 'stock/tracking_delete.html'
-    ajax_form_title = 'Delete Stock Tracking Entry'
+    ajax_form_title = _('Delete Stock Tracking Entry')
 
 
 class StockTrackingIndex(ListView):
@@ -955,7 +959,7 @@ class StockItemTrackingEdit(AjaxUpdateView):
     """ View for editing a StockItemTracking object """
 
     model = StockItemTracking
-    ajax_form_title = 'Edit Stock Tracking Entry'
+    ajax_form_title = _('Edit Stock Tracking Entry')
     form_class = TrackingEntryForm
 
 
@@ -964,7 +968,7 @@ class StockItemTrackingCreate(AjaxCreateView):
     """
 
     model = StockItemTracking
-    ajax_form_title = "Add Stock Tracking Entry"
+    ajax_form_title = _("Add Stock Tracking Entry")
     form_class = TrackingEntryForm
 
     def post(self, request, *args, **kwargs):

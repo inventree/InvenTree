@@ -4,8 +4,16 @@ over and above the built-in Django tags.
 
 from django import template
 from InvenTree import version
+from InvenTree.helpers import decimal2string
 
 register = template.Library()
+
+
+@register.simple_tag()
+def decimal(x, *args, **kwargs):
+    """ Simplified rendering of a decimal number """
+
+    return decimal2string(x)
 
 
 @register.simple_tag()
