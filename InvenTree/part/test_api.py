@@ -123,7 +123,7 @@ class PartAPITest(APITestCase):
         url = reverse('api-bom-item-detail', kwargs={'pk': 3})
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['quantity'], 25)
+        self.assertEqual(int(float(response.data['quantity'])), 25)
 
         # Increase the quantity
         data = response.data
@@ -134,7 +134,7 @@ class PartAPITest(APITestCase):
 
         # Check that the quantity was increased and a note added
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['quantity'], 57)
+        self.assertEqual(int(float(response.data['quantity'])), 57)
         self.assertEqual(response.data['note'], 'Added a note')
 
     def test_add_bom_item(self):

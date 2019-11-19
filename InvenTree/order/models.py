@@ -17,6 +17,7 @@ from datetime import datetime
 from stock.models import StockItem
 from company.models import Company, SupplierPart
 
+from InvenTree.helpers import decimal2string
 from InvenTree.status_codes import OrderStatus
 
 
@@ -242,7 +243,7 @@ class OrderLineItem(models.Model):
     class Meta:
         abstract = True
 
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1, help_text=_('Item quantity'))
+    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, help_text=_('Item quantity'))
 
     reference = models.CharField(max_length=100, blank=True, help_text=_('Line item reference'))
     
@@ -264,7 +265,7 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     def __str__(self):
         return "{n} x {part} from {supplier} (for {po})".format(
-            n=self.quantity,
+            n=decimal2string(self.quantity),
             part=self.part.SKU if self.part else 'unknown part',
             supplier=self.order.supplier.name,
             po=self.order)
@@ -284,7 +285,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         help_text=_("Supplier part"),
     )
 
-    received = models.PositiveIntegerField(default=0, help_text=_('Number of items received'))
+    received = models.DecimalField(decimal_places=5, max_digits=15, default=0, help_text=_('Number of items received'))
 
     def remaining(self):
         """ Calculate the number of items remaining to be received """

@@ -1,5 +1,6 @@
 {% extends "stock/stock_app_base.html" %}
 {% load static %}
+{% load inventree_extras %}
 {% load i18n %}
 {% block content %}
 
@@ -86,7 +87,7 @@
         {% else %}
         <tr>
             <td>{% trans "Quantity" %}</td>
-            <td>{{ item.quantity }}</td>
+            <td>{% decimal item.quantity %} {% if item.part.units %}{{ item.part.units }}{% endif %}</td>
         </tr>
         {% endif %}
         {% if item.batch %}

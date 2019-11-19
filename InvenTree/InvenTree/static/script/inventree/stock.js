@@ -80,6 +80,8 @@ function loadStockTable(table, options) {
                     items += 1;
                 });
 
+                stock = +stock.toFixed(5);
+
                 return stock + " (" + items + " items)";
             } else if (field == 'batch') {
                 var batches = [];
