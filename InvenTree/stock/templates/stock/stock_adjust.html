@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {% block pre_form_content %}
 
 {% endblock %}
@@ -10,9 +12,13 @@
   
   <table class='table table-condensed table-striped' id='stock-table'>
       <tr>
-          <th>Stock Item</th>
-          <th>Location</th>
+          <th>{% trans "Stock Item" %}</th>
+          <th>{% trans "Location" %}</th>
+          {% if edit_quantity %}
           <th>{{ stock_action_title }}</th>
+          {% else %}
+          <th>{% trans "Quantity" %}</th>
+          {% endif %}
           <th></th>
       </tr>
       {% for item in stock_items %}
@@ -21,6 +27,7 @@
             {{ item.part.full_name }} <small><i>{{ item.part.description }}</i></small></td> 
           <td>{{ item.location.pathstring }}</td> 
           <td>
+            {% if edit_quantity %}
             <input class='numberinput'
               min='0'
               {% if stock_action == 'take' or stock_action == 'move' %} max='{{ item.quantity }}' {% endif %}
@@ -28,6 +35,10 @@
             {% if item.error %}
             <br><span class='help-inline'>{{ item.error }}</span>
             {% endif %}
+            {% else %}
+            {{ item.new_quantity }}
+            <input type='hidden' name='stock-id-{{ item.id }}' value='{{ item.new_quantity }}'/>
+            {% endif %}  
           </td>
           <td><button class='btn btn-default btn-remove' onclick='removeStockRow()' id='del-{{ item.id }}' title='Remove item' type='button'><span row='stock-row-{{ item.id }}' class='glyphicon glyphicon-small glyphicon-remove'></span></button></td>
       </tr>

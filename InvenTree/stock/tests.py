@@ -245,7 +245,7 @@ class StockTest(TestCase):
         w1 = StockItem.objects.get(pk=100)
         w2 = StockItem.objects.get(pk=101)
 
-        # Take 25 units from w1
+        # Take 25 units from w1 (there are only 10 in stock)
         w1.take_stock(30, None, notes='Took 30')
 
         # Get from database again

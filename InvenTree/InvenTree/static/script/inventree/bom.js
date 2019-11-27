@@ -163,20 +163,15 @@ function loadBomTable(table, options) {
         formatter: function(value, row, index, field) {
             var text = value;
 
+            // The 'value' is a text string with (potentially) multiple trailing zeros
+            // Let's make it a bit more pretty
+            text = parseFloat(text);
+
             if (row.overage) {
                 text += "<small> (+" + row.overage + ")    </small>";
             }
 
             return text;
-        },
-        footerFormatter: function(data) {
-            var quantity = 0;
-
-            data.forEach(function(item) {
-                quantity += item.quantity;
-            });
-
-            return quantity;
         },
     });
 

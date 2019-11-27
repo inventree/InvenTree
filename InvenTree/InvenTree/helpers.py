@@ -52,6 +52,24 @@ def str2bool(text, test=True):
         return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
 
 
+def decimal2string(d):
+    """
+    Format a Decimal number as a string,
+    stripping out any trailing zeroes or decimal points.
+    Essentially make it look like a whole number if it is one.
+
+    Args:
+        d: A python Decimal object
+
+    Returns:
+        A string representation of the input number
+    """
+
+    s = str(d)
+
+    return s.rstrip("0").rstrip(".")
+
+
 def WrapWithQuotes(text, quote='"'):
     """ Wrap the supplied text with quotes
 

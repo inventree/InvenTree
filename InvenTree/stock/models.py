@@ -18,6 +18,7 @@ from django.dispatch import receiver
 
 from mptt.models import TreeForeignKey
 
+from decimal import Decimal, InvalidOperation
 from datetime import datetime
 from InvenTree import helpers
 
@@ -294,43 +295,43 @@ class StockItem(models.Model):
         )
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
-                             related_name='stock_items', help_text='Base part',
+                             related_name='stock_items', help_text=_('Base part'),
                              limit_choices_to={
                                  'is_template': False,
                                  'active': True,
                              })
 
     supplier_part = models.ForeignKey('company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
-                                      help_text='Select a matching supplier part for this stock item')
+                                      help_text=_('Select a matching supplier part for this stock item'))
 
     location = TreeForeignKey(StockLocation, on_delete=models.DO_NOTHING,
                               related_name='stock_items', blank=True, null=True,
-                              help_text='Where is this stock item located?')
+                              help_text=_('Where is this stock item located?'))
 
     belongs_to = models.ForeignKey('self', on_delete=models.DO_NOTHING,
                                    related_name='owned_parts', blank=True, null=True,
-                                   help_text='Is this item installed in another item?')
+                                   help_text=_('Is this item installed in another item?'))
 
     customer = models.ForeignKey('company.Company', on_delete=models.SET_NULL,
                                  related_name='stockitems', blank=True, null=True,
-                                 help_text='Item assigned to customer?')
+                                 help_text=_('Item assigned to customer?'))
 
     serial = models.PositiveIntegerField(blank=True, null=True,
-                                         help_text='Serial number for this item')
+                                         help_text=_('Serial number for this item'))
  
     URL = InvenTreeURLField(max_length=125, blank=True)
 
     batch = models.CharField(max_length=100, blank=True, null=True,
-                             help_text='Batch code for this stock item')
+                             help_text=_('Batch code for this stock item'))
 
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1)
+    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
 
     updated = models.DateField(auto_now=True, null=True)
 
     build = models.ForeignKey(
         'build.Build', on_delete=models.SET_NULL,
         blank=True, null=True,
-        help_text='Build for this stock item',
+        help_text=_('Build for this stock item'),
         related_name='build_outputs',
     )
 
@@ -339,7 +340,7 @@ class StockItem(models.Model):
         on_delete=models.SET_NULL,
         related_name='stock_items',
         blank=True, null=True,
-        help_text='Purchase order for this stock item'
+        help_text=_('Purchase order for this stock item')
     )
 
     # last time the stock was checked / counted
@@ -350,14 +351,14 @@ class StockItem(models.Model):
 
     review_needed = models.BooleanField(default=False)
 
-    delete_on_deplete = models.BooleanField(default=True, help_text='Delete this Stock Item when stock is depleted')
+    delete_on_deplete = models.BooleanField(default=True, help_text=_('Delete this Stock Item when stock is depleted'))
 
     status = models.PositiveIntegerField(
         default=StockStatus.OK,
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
 
-    notes = models.CharField(max_length=250, blank=True, help_text='Stock Item Notes')
+    notes = models.CharField(max_length=250, blank=True, help_text=_('Stock Item Notes'))
 
     # If stock item is incoming, an (optional) ETA field
     # expected_arrival = models.DateField(null=True, blank=True)
@@ -510,6 +511,11 @@ class StockItem(models.Model):
         if self.serialized:
             return
 
+        try:
+            quantity = Decimal(quantity)
+        except (InvalidOperation, ValueError):
+            return
+
         # Doesn't make sense for a zero quantity
         if quantity <= 0:
             return
@@ -549,7 +555,10 @@ class StockItem(models.Model):
                 quantity: If provided, override the quantity (default = total stock quantity)
         """
 
-        quantity = int(kwargs.get('quantity', self.quantity))
+        try:
+            quantity = Decimal(kwargs.get('quantity', self.quantity))
+        except InvalidOperation:
+            return False
 
         if quantity <= 0:
             return False
@@ -599,12 +608,19 @@ class StockItem(models.Model):
         if self.serialized:
             return
 
+        try:
+            self.quantity = Decimal(quantity)
+        except (InvalidOperation, ValueError):
+            return
+
         if quantity < 0:
             quantity = 0
 
         self.quantity = quantity
 
-        if quantity <= 0 and self.delete_on_deplete and self.can_delete():
+        if quantity == 0 and self.delete_on_deplete and self.can_delete():
+            
+            # TODO - Do not actually "delete" stock at this point - instead give it a "DELETED" flag
             self.delete()
             return False
         else:
@@ -618,7 +634,10 @@ class StockItem(models.Model):
         record the date of stocktake
         """
 
-        count = int(count)
+        try:
+            count = Decimal(count)
+        except InvalidOperation:
+            return False
 
         if count < 0 or self.infinite:
             return False
@@ -646,7 +665,10 @@ class StockItem(models.Model):
         if self.serialized:
             return False
 
-        quantity = int(quantity)
+        try:
+            quantity = Decimal(quantity)
+        except InvalidOperation:
+            return False
 
         # Ignore amounts that do not make sense
         if quantity <= 0 or self.infinite:
@@ -670,7 +692,10 @@ class StockItem(models.Model):
         if self.serialized:
             return False
 
-        quantity = int(quantity)
+        try:
+            quantity = Decimal(quantity)
+        except InvalidOperation:
+            return False
 
         if quantity <= 0 or self.infinite:
             return False
@@ -691,7 +716,7 @@ class StockItem(models.Model):
                 sn=self.serial)
         else:
             s = '{n} x {part}'.format(
-                n=self.quantity,
+                n=helpers.decimal2string(self.quantity),
                 part=self.part.full_name)
 
         if self.location:
@@ -722,17 +747,17 @@ class StockItemTracking(models.Model):
 
     date = models.DateTimeField(auto_now_add=True, editable=False)
 
-    title = models.CharField(blank=False, max_length=250, help_text='Tracking entry title')
+    title = models.CharField(blank=False, max_length=250, help_text=_('Tracking entry title'))
 
-    notes = models.CharField(blank=True, max_length=512, help_text='Entry notes')
+    notes = models.CharField(blank=True, max_length=512, help_text=_('Entry notes'))
 
-    URL = InvenTreeURLField(blank=True, help_text='Link to external page for further information')
+    URL = InvenTreeURLField(blank=True, help_text=_('Link to external page for further information'))
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     system = models.BooleanField(default=False)
 
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1)
+    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
 
     # TODO
     # image = models.ImageField(upload_to=func, max_length=255, null=True, blank=True)

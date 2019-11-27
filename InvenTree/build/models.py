@@ -48,7 +48,7 @@ class Build(models.Model):
     title = models.CharField(
         blank=False,
         max_length=100,
-        help_text='Brief description of the build')
+        help_text=_('Brief description of the build'))
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='builds',
@@ -57,28 +57,28 @@ class Build(models.Model):
                                  'assembly': True,
                                  'active': True
                              },
-                             help_text='Select part to build',
+                             help_text=_('Select part to build'),
                              )
     
     take_from = models.ForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
                                   related_name='sourcing_builds',
                                   null=True, blank=True,
-                                  help_text='Select location to take stock from for this build (leave blank to take from any stock location)'
+                                  help_text=_('Select location to take stock from for this build (leave blank to take from any stock location)')
                                   )
     
     quantity = models.PositiveIntegerField(
         default=1,
         validators=[MinValueValidator(1)],
-        help_text='Number of parts to build'
+        help_text=_('Number of parts to build')
     )
 
     status = models.PositiveIntegerField(default=BuildStatus.PENDING,
                                          choices=BuildStatus.items(),
                                          validators=[MinValueValidator(0)],
-                                         help_text='Build status')
+                                         help_text=_('Build status'))
     
     batch = models.CharField(max_length=100, blank=True, null=True,
-                             help_text='Batch code for this build output')
+                             help_text=_('Batch code for this build output'))
     
     creation_date = models.DateField(auto_now=True, editable=False)
     
@@ -90,10 +90,9 @@ class Build(models.Model):
                                      related_name='builds_completed'
                                      )
     
-    URL = InvenTreeURLField(blank=True, help_text='Link to external URL')
+    URL = InvenTreeURLField(blank=True, help_text=_('Link to external URL'))
 
-    notes = models.TextField(blank=True, help_text='Extra build notes')
-    """ Notes attached to each build output """
+    notes = models.TextField(blank=True, help_text=_('Extra build notes'))
 
     @transaction.atomic
     def cancelBuild(self, user):
@@ -399,18 +398,20 @@ class BuildItem(models.Model):
         Build,
         on_delete=models.CASCADE,
         related_name='allocated_stock',
-        help_text='Build to allocate parts'
+        help_text=_('Build to allocate parts')
     )
 
     stock_item = models.ForeignKey(
         'stock.StockItem',
         on_delete=models.CASCADE,
         related_name='allocations',
-        help_text='Stock Item to allocate to build',
+        help_text=_('Stock Item to allocate to build'),
     )
 
-    quantity = models.PositiveIntegerField(
+    quantity = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
         default=1,
         validators=[MinValueValidator(1)],
-        help_text='Stock quantity to allocate to build'
+        help_text=_('Stock quantity to allocate to build')
     )

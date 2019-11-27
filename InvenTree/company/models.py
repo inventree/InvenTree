@@ -379,7 +379,7 @@ class SupplierPriceBreak(models.Model):
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks')
 
-    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+    quantity = models.DecimalField(max_digits=15, decimal_places=5, default=1, validators=[MinValueValidator(1)])
 
     cost = models.DecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
 
