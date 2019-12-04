@@ -1,19 +1,19 @@
-Django>=2.2.4                   # Django package
-pillow>=5.0.0                   # Image manipulation
-djangorestframework>=3.6.2      # DRF framework
-django-cors-headers>=2.5.3      # CORS headers extension for DRF
-django_filter>=1.0.2            # Extended filtering options
-django-mptt>=0.10.0             # Modified Preorder Tree Traversal
+Django==2.2.4                   # Django package
+pillow==5.0.0                   # Image manipulation
+djangorestframework==3.6.2      # DRF framework
+django-cors-headers==2.5.3      # CORS headers extension for DRF
+django_filter==1.0.2            # Extended filtering options
+django-mptt==0.10.0             # Modified Preorder Tree Traversal
 django-dbbackup==3.2.0          # Database backup / restore functionality
-coreapi>=2.3.0                  # API documentation
-pygments>=2.2.0                 # Syntax highlighting
-tablib>=0.13.0                  # Import / export data files
-django-crispy-forms>=1.7.2      # Form helpers
-django-import-export>=1.0.0     # Data import / export for admin interface
-django-cleanup>=2.1.0           # Manage deletion of old / unused uploaded files
+coreapi==2.3.0                  # API documentation
+pygments==2.2.0                 # Syntax highlighting
+tablib==0.13.0                  # Import / export data files
+django-crispy-forms==1.7.2      # Form helpers
+django-import-export==1.0.0     # Data import / export for admin interface
+django-cleanup==2.1.0           # Manage deletion of old / unused uploaded files
 django-qr-code==1.0.0           # Generate QR codes
 flake8==3.3.0                   # PEP checking
 coverage==4.0.3                 # Unit test coverage
 python-coveralls==2.9.1         # Coveralls linking (for Travis)
-fuzzywuzzy>=0.17.0              # Fuzzy string matching
-python-Levenshtein>=0.12.0      # Required for fuzzywuzzy
+fuzzywuzzy==0.17.0              # Fuzzy string matching
+python-Levenshtein==0.12.0      # Required for fuzzywuzzy
