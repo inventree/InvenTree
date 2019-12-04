@@ -202,7 +202,15 @@ $("#po-lines-table").on('click', ".line-receive", function() {
         reload: true,
         data: {
             line: button.attr('pk')
-        }
+        },
+        secondary: [
+            {
+                field: 'location',
+                label: 'New Location',
+                title: 'Create new stock location',
+                url: "{% url 'stock-location-create' %}",
+            },
+        ]
     });
 });
 
