@@ -188,6 +188,12 @@ class PurchaseOrder(Order):
 
         return self.lines.filter(quantity__gt=F('received'))
 
+    @property
+    def is_complete(self):
+        """ Return True if all line items have been received """
+
+        return self.pending_line_items().count() == 0
+
     @transaction.atomic
     def receive_line_item(self, line, location, quantity, user):
         """ Receive a line item (or partial line item) against this PO

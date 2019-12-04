@@ -27,6 +27,17 @@ class IssuePurchaseOrderForm(HelperForm):
         ]
 
 
+class CompletePurchaseOrderForm(HelperForm):
+
+    confirm = forms.BooleanField(required=False, help_text=_("Mark order as complete"))
+
+    class Meta:
+        model = PurchaseOrder
+        fields = [
+            'confirm',
+        ]
+
+
 class CancelPurchaseOrderForm(HelperForm):
 
     confirm = forms.BooleanField(required=False, help_text=_('Cancel order'))
