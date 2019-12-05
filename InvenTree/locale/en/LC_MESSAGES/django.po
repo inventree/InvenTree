@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-18 23:32+0000\n"
+"POT-Creation-Date: 2019-12-04 23:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: InvenTree/helpers.py:175 order/models.py:159 order/models.py:204
+#: InvenTree/helpers.py:175 order/models.py:159 order/models.py:210
 msgid "Invalid quantity provided"
 msgstr ""
 
@@ -211,7 +211,7 @@ msgstr ""
 
 #: build/templates/build/allocate_edit.html:19
 #: build/templates/build/allocate_view.html:17
-#: order/templates/order/purchase_order_detail.html:104
+#: order/templates/order/purchase_order_detail.html:107
 msgid "Part"
 msgstr ""
 
@@ -238,7 +238,7 @@ msgid "Order Parts"
 msgstr ""
 
 #: build/templates/build/allocate_view.html:18
-#: order/templates/order/purchase_order_detail.html:105
+#: order/templates/order/purchase_order_detail.html:108
 #: part/templates/part/detail.html:33
 msgid "Description"
 msgstr ""
@@ -298,10 +298,14 @@ msgid "Place order"
 msgstr ""
 
 #: order/forms.py:32
-msgid "Cancel order"
+msgid "Mark order as complete"
 msgstr ""
 
 #: order/forms.py:43
+msgid "Cancel order"
+msgstr ""
+
+#: order/forms.py:54
 msgid "Receive parts to this location"
 msgstr ""
 
@@ -325,7 +329,7 @@ msgstr ""
 msgid "Company"
 msgstr ""
 
-#: order/models.py:157 order/models.py:202 part/views.py:1032
+#: order/models.py:157 order/models.py:208 part/views.py:1032
 #: stock/models.py:438
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -334,84 +338,84 @@ msgstr ""
 msgid "Part supplier must match PO supplier"
 msgstr ""
 
-#: order/models.py:197
+#: order/models.py:203
 msgid "Lines can only be received against an order marked as 'Placed'"
 msgstr ""
 
-#: order/models.py:246
+#: order/models.py:252
 msgid "Item quantity"
 msgstr ""
 
-#: order/models.py:248
+#: order/models.py:254
 msgid "Line item reference"
 msgstr ""
 
-#: order/models.py:250
+#: order/models.py:256
 msgid "Line item notes"
 msgstr ""
 
-#: order/models.py:276 stock/templates/stock/item.html:107
+#: order/models.py:282 stock/templates/stock/item.html:107
 msgid "Purchase Order"
 msgstr ""
 
-#: order/models.py:285
+#: order/models.py:291
 msgid "Supplier part"
 msgstr ""
 
-#: order/models.py:288
+#: order/models.py:294
 msgid "Number of items received"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:60
+#: order/templates/order/purchase_order_detail.html:63
 msgid "Purchase Order Details"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:63
+#: order/templates/order/purchase_order_detail.html:66
 #: stock/templates/stock/item.html:125
 msgid "Supplier"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:67
+#: order/templates/order/purchase_order_detail.html:70
 #: stock/templates/stock/item.html:146
 msgid "Status"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:71
+#: order/templates/order/purchase_order_detail.html:74
 msgid "Created"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:76
+#: order/templates/order/purchase_order_detail.html:79
 msgid "Issued"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:82
-#: order/templates/order/purchase_order_detail.html:110
+#: order/templates/order/purchase_order_detail.html:85
+#: order/templates/order/purchase_order_detail.html:113
 msgid "Received"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:103
+#: order/templates/order/purchase_order_detail.html:106
 msgid "Line"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:106
+#: order/templates/order/purchase_order_detail.html:109
 msgid "Order Code"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:107
+#: order/templates/order/purchase_order_detail.html:110
 msgid "Reference"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:108
+#: order/templates/order/purchase_order_detail.html:111
 #: stock/templates/stock/item.html:89
 #: stock/templates/stock/stock_adjust.html:20
 msgid "Quantity"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:112
+#: order/templates/order/purchase_order_detail.html:115
 msgid "Note"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:165
+#: order/templates/order/purchase_order_detail.html:168
 #: part/templates/part/detail.html:152 stock/templates/stock/item.html:151
 msgid "Notes"
 msgstr ""
@@ -424,15 +428,15 @@ msgstr ""
 msgid "Confirm order placement"
 msgstr ""
 
-#: order/views.py:695
+#: order/views.py:731
 msgid "Invalid Purchase Order"
 msgstr ""
 
-#: order/views.py:703
+#: order/views.py:739
 msgid "Supplier must match for Part and Order"
 msgstr ""
 
-#: order/views.py:708
+#: order/views.py:744
 msgid "Invalid SupplierPart selection"
 msgstr ""
 

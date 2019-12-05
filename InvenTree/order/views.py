@@ -184,6 +184,42 @@ class PurchaseOrderIssue(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
+class PurchaseOrderComplete(AjaxUpdateView):
+    """ View for marking a PurchaseOrder as complete.
+    """
+
+    form_class = order_forms.CompletePurchaseOrderForm
+    model = PurchaseOrder
+    ajax_template_name = "order/order_complete.html"
+    ajax_form_title = "Complete Order"
+    context_object_name = 'order'
+
+    def get_context_data(self):
+
+        ctx = {
+            'order': self.get_object(),
+        }
+
+        return ctx
+
+    def post(self, request, *args, **kwargs):
+
+        confirm = str2bool(request.POST.get('confirm', False))
+
+        if confirm:
+            po = self.get_object()
+            po.status = OrderStatus.COMPLETE
+            po.save()
+
+        data = {
+            'form_valid': confirm
+        }
+
+        form = self.get_form()
+
+        return self.renderJsonResponse(request, form, data)
+
+
 class PurchaseOrderExport(AjaxView):
     """ File download for a purchase order
 

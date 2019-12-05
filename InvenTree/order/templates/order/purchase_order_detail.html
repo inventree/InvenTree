@@ -44,6 +44,9 @@ InvenTree | {{ order }}
                             <button type='button' class='btn btn-default btn-glyph' id='receive-order' title='Receive items'>
                                 <span class='glyphicon glyphicon-check'></span>
                             </button>
+                            <button type='button' class='btn btn-default btn-glyph' id='complete-order' title='Mark order as complete'>
+                                <span class='glyphicon glyphicon-ok'></span>
+                            </button>
                             {% endif %}
                             {% if order.status == OrderStatus.PENDING or order.status == OrderStatus.PLACED %}
                             <button type='button' class='btn btn-default btn-glyph' id='cancel-order' title='Cancel order'>
@@ -171,12 +174,14 @@ InvenTree | {{ order }}
 
 {% block js_ready %}
 
+{% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
 $("#place-order").click(function() {
     launchModalForm("{% url 'purchase-order-issue' order.id %}",
     {
         reload: true,
     });
 });
+{% endif %}
 
 $("#edit-order").click(function() {
     launchModalForm("{% url 'purchase-order-edit' order.id %}",
@@ -202,7 +207,15 @@ $("#po-lines-table").on('click', ".line-receive", function() {
         reload: true,
         data: {
             line: button.attr('pk')
-        }
+        },
+        secondary: [
+            {
+                field: 'location',
+                label: 'New Location',
+                title: 'Create new stock location',
+                url: "{% url 'stock-location-create' %}",
+            },
+        ]
     });
 });
 
@@ -217,6 +230,12 @@ $("#receive-order").click(function() {
                 url: "{% url 'stock-location-create' %}",
             },
         ]
+    });
+});
+
+$("#complete-order").click(function() {
+    launchModalForm("{% url 'purchase-order-complete' order.id %}", {
+        reload: true,
     });
 });
 

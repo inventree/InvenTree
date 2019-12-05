@@ -17,7 +17,7 @@ from django.db.models import Sum
 from django.apps import apps
 from django.urls import reverse
 from django.conf import settings
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.conf.urls.static import static
 
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import OrderStatus
