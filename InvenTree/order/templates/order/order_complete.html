@@ -1,0 +1,13 @@
+{% extends "modal_form.html" %}
+
+{% block pre_form_content %}
+
+Mark this order as complete?
+{% if not order.is_complete %}
+<div class='alert alert-warning alert-block'>
+    This order has line items which have not been marked as received.
+    Marking this order as complete will remove these line items.
+</div>
+{% endif %}
+
+{% endblock %}
