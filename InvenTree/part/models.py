@@ -18,7 +18,7 @@ from django.db.models import Sum
 from django.db.models import prefetch_related_objects
 from django.core.validators import MinValueValidator
 
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.conf.urls.static import static
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
