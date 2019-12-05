@@ -9,6 +9,10 @@ env/
 ./build/
 develop-eggs/
 dist/
+bin/
+lib64
+pyvenv.cfg
+share/
 downloads/
 eggs/
 .eggs/

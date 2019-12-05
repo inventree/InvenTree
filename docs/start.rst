@@ -22,6 +22,24 @@ To install InvenTree you will need the following system components installed:
 
 Each of these programs need to be installed (e.g. using apt or similar) before running the ``make install`` script.
 
+Virtual Environment
+-------------------
+
+Installing the required Python packages inside a virtual environment allows a local install separate to the system-wide Python installation. While not strictly necessary, using a virtual environment is highly recommended as it prevents conflicts between the different Python installations.
+
+To configure Inventree inside a virtual environment, ``cd`` into the inventree base directory and run the following commands:
+
+``
+apt-get install python3-venv
+source inventree/bin/activate
+``
+
+This will place the current shell session inside a virtual environment - the terminal should display the ``(inventree)`` prefix.
+
+.. note::
+    Remember to run ``source inventree/bin/activate`` when starting each shell session, before running Inventree commands. This will ensure that the correct environment is being used.
+
+
 Installation
 ------------
 
@@ -58,7 +76,7 @@ Once install settings are correctly configured (in *config.yaml*) run the initia
 
 ``make migrate``
 
-which performs the initial database migrations, creating the required tables, etc
+This performs the initial database migrations, creating the required tables, etc.
 
 The database should now be installed!
 
