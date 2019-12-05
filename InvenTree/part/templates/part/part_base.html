@@ -230,7 +230,8 @@
         launchModalForm("{% url 'order-parts' %}", {
             data: {
                 part: {{ part.id }},
-            }
+            },
+            reload: true,
         });
     });
 
