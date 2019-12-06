@@ -1230,6 +1230,10 @@ class BomItem(models.Model):
 
         pmin, pmax = prange
 
+        # remove trailing zeros
+        pmin = pmin.normalize()
+        pmax = pmax.normalize()
+
         if pmin == pmax:
             return str(pmin)
 
