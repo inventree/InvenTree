@@ -31,6 +31,7 @@ class CompanyList(generics.ListCreateAPIView):
 
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
+    
     permission_classes = [
         permissions.IsAuthenticated,
     ]

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 23:28+0000\n"
+"POT-Creation-Date: 2019-12-09 11:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,47 +62,47 @@ msgstr ""
 msgid "Polish"
 msgstr ""
 
-#: InvenTree/status_codes.py:27 InvenTree/status_codes.py:82
+#: InvenTree/status_codes.py:36 InvenTree/status_codes.py:91
 msgid "Pending"
 msgstr ""
 
-#: InvenTree/status_codes.py:28
+#: InvenTree/status_codes.py:37
 msgid "Placed"
 msgstr ""
 
-#: InvenTree/status_codes.py:29 InvenTree/status_codes.py:85
+#: InvenTree/status_codes.py:38 InvenTree/status_codes.py:94
 msgid "Complete"
 msgstr ""
 
-#: InvenTree/status_codes.py:30 InvenTree/status_codes.py:84
+#: InvenTree/status_codes.py:39 InvenTree/status_codes.py:93
 msgid "Cancelled"
 msgstr ""
 
-#: InvenTree/status_codes.py:31 InvenTree/status_codes.py:62
+#: InvenTree/status_codes.py:40 InvenTree/status_codes.py:71
 msgid "Lost"
 msgstr ""
 
-#: InvenTree/status_codes.py:32
+#: InvenTree/status_codes.py:41
 msgid "Returned"
 msgstr ""
 
-#: InvenTree/status_codes.py:58
+#: InvenTree/status_codes.py:67
 msgid "OK"
 msgstr ""
 
-#: InvenTree/status_codes.py:59
+#: InvenTree/status_codes.py:68
 msgid "Attention needed"
 msgstr ""
 
-#: InvenTree/status_codes.py:60
+#: InvenTree/status_codes.py:69
 msgid "Damaged"
 msgstr ""
 
-#: InvenTree/status_codes.py:61
+#: InvenTree/status_codes.py:70
 msgid "Destroyed"
 msgstr ""
 
-#: InvenTree/status_codes.py:83 build/templates/build/allocate_edit.html:28
+#: InvenTree/status_codes.py:92 build/templates/build/allocate_edit.html:28
 #: build/templates/build/allocate_view.html:21
 #: part/templates/part/part_base.html:116 part/templates/part/tabs.html:21
 msgid "Allocated"
@@ -481,175 +481,175 @@ msgstr ""
 msgid "Select currency for price calculation"
 msgstr ""
 
-#: part/models.py:56
+#: part/models.py:55
 msgid "Default location for parts in this category"
 msgstr ""
 
-#: part/models.py:59
+#: part/models.py:58
 msgid "Default keywords for parts in this category"
 msgstr ""
 
-#: part/models.py:308
+#: part/models.py:307
 msgid "Part must be unique for name, IPN and revision"
 msgstr ""
 
-#: part/models.py:322
+#: part/models.py:321
 msgid "Part cannot be a template part if it is a variant of another part"
 msgstr ""
 
-#: part/models.py:323
+#: part/models.py:322
 msgid "Part cannot be a variant of another part if it is already a template"
 msgstr ""
 
-#: part/models.py:327 part/templates/part/detail.html:17
+#: part/models.py:326 part/templates/part/detail.html:17
 msgid "Part name"
 msgstr ""
 
-#: part/models.py:331
+#: part/models.py:330
 msgid "Is this part a template part?"
 msgstr ""
 
-#: part/models.py:340
+#: part/models.py:339
 msgid "Is this part a variant of another part?"
 msgstr ""
 
-#: part/models.py:342
+#: part/models.py:341
 msgid "Part description"
 msgstr ""
 
-#: part/models.py:344
+#: part/models.py:343
 msgid "Part keywords to improve visibility in search results"
 msgstr ""
 
-#: part/models.py:349
+#: part/models.py:348
 msgid "Part category"
 msgstr ""
 
-#: part/models.py:351
+#: part/models.py:350
 msgid "Internal Part Number"
 msgstr ""
 
-#: part/models.py:353
+#: part/models.py:352
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:355
+#: part/models.py:354
 msgid "Link to extenal URL"
 msgstr ""
 
-#: part/models.py:361
+#: part/models.py:360
 msgid "Where is this item normally stored?"
 msgstr ""
 
-#: part/models.py:405
+#: part/models.py:404
 msgid "Default supplier part"
 msgstr ""
 
-#: part/models.py:408
+#: part/models.py:407
 msgid "Minimum allowed stock level"
 msgstr ""
 
-#: part/models.py:410
+#: part/models.py:409
 msgid "Stock keeping units for this part"
 msgstr ""
 
-#: part/models.py:412
+#: part/models.py:411
 msgid "Can this part be built from other parts?"
 msgstr ""
 
-#: part/models.py:414
+#: part/models.py:413
 msgid "Can this part be used to build other parts?"
 msgstr ""
 
-#: part/models.py:416
+#: part/models.py:415
 msgid "Does this part have tracking for unique items?"
 msgstr ""
 
-#: part/models.py:418
+#: part/models.py:417
 msgid "Can this part be purchased from external suppliers?"
 msgstr ""
 
-#: part/models.py:420
+#: part/models.py:419
 msgid "Can this part be sold to customers?"
 msgstr ""
 
-#: part/models.py:422
+#: part/models.py:421
 msgid "Is this part active?"
 msgstr ""
 
-#: part/models.py:424
+#: part/models.py:423
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr ""
 
-#: part/models.py:428
+#: part/models.py:427
 msgid "Stored BOM checksum"
 msgstr ""
 
-#: part/models.py:935
+#: part/models.py:934
 msgid "Select file to attach"
 msgstr ""
 
-#: part/models.py:937
+#: part/models.py:936
 msgid "File comment"
 msgstr ""
 
-#: part/models.py:992
+#: part/models.py:991
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:997
+#: part/models.py:996
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:999
+#: part/models.py:998
 msgid "Parameter Units"
 msgstr ""
 
-#: part/models.py:1025
+#: part/models.py:1024
 msgid "Parent Part"
 msgstr ""
 
-#: part/models.py:1027
+#: part/models.py:1026
 msgid "Parameter Template"
 msgstr ""
 
-#: part/models.py:1029
+#: part/models.py:1028
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:1053
+#: part/models.py:1052
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:1061
+#: part/models.py:1060
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:1067
+#: part/models.py:1066
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:1070
+#: part/models.py:1069
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:1073
+#: part/models.py:1072
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:1076
+#: part/models.py:1075
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:1078
+#: part/models.py:1077
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:1141
+#: part/models.py:1140
 msgid "Part cannot be added to its own Bill of Materials"
 msgstr ""
 
-#: part/models.py:1148
+#: part/models.py:1147
 #, python-brace-format
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
 msgstr ""

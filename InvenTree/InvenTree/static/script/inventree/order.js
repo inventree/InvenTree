@@ -99,3 +99,95 @@ function removePurchaseOrderLineItem(e) {
         reload: true,
     });
 }
+
+
+function loadPurchaseOrderTable(table, options) {
+    /* Create a purchase-order table */
+
+    table.inventreeTable({
+        url: options.url,
+        formatNoMatches: function() { return "No purchase orders found"; },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                sortable: true,
+                field: 'supplier',
+                title: 'Supplier',
+                formatter: function(value, row, index, field) {
+                    return imageHoverIcon(row.supplier__image) + renderLink(row.supplier__name, '/company/' + value + '/purchase-orders/');
+                }
+            },
+            {
+                sortable: true,
+                field: 'reference',
+                title: 'Reference',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, "/order/purchase-order/" + row.pk + "/");
+                }
+            },  
+            {
+                sortable: true,
+                field: 'creation_date',
+                title: 'Date',
+            },
+            {
+                sortable: true,
+                field: 'description',
+                title: 'Description',
+            },
+            {
+                sortable: true,
+                field: 'status',
+                title: 'Status',
+                formatter: function(value, row, index, field) {
+                    return orderStatusLabel(row.status, row.status_text);
+                }
+            },
+            {
+                sortable: true,
+                field: 'lines',
+                title: 'Items'
+            },
+        ],
+    });
+}
+
+
+function orderStatusLabel(code, label) {
+    /* Render a purchase-order status label. */
+
+    var html = "<span class='label";
+
+    switch (code) {
+    case 10:  // pending   
+        html += " label-info";
+        break;
+    case  20:  // placed
+        html += " label-primary";
+        break;
+    case 30:  // complete
+        html += " label-success";
+        break;
+    case 40:  // cancelled
+    case 50:  // lost
+        html += " label-warning";
+        break;
+    case 60:  // returned
+        html += " label-danger";
+        break;
+    default:
+        break;
+    }
+
+    html += "'>";
+    html += label;
+    html += "</span>";
+
+    console.log(html);
+
+    return html;
+}
