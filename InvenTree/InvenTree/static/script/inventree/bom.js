@@ -282,7 +282,6 @@ function loadBomTable(table, options) {
         },
         formatNoMatches: function() { return "No BOM items found"; },
         clickToSelect: true,
-        showFooter: true,
         queryParams: function(p) {
             return params;
         },

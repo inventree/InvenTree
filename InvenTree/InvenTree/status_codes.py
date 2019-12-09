@@ -12,6 +12,15 @@ class StatusCode:
         """ Return the status code label associated with the provided value """
         return cls.options.get(value, value)
 
+    @classmethod
+    def value(cls, label):
+        """ Return the value associated with the provided label """
+        for k in cls.options.keys():
+            if cls.options[k].lower() == label.lower():
+                return k
+
+        raise ValueError("Label not found")
+
 
 class OrderStatus(StatusCode):
 

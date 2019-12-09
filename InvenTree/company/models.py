@@ -17,7 +17,6 @@ from django.db.models import Sum
 from django.apps import apps
 from django.urls import reverse
 from django.conf import settings
-from django.conf.urls.static import static
 
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import OrderStatus
@@ -110,7 +109,7 @@ class Company(models.Model):
         if self.image:
             return os.path.join(settings.MEDIA_URL, str(self.image.url))
         else:
-            return static('/img/blank_image.png')
+            return os.path.join(settings.STATIC_URL, 'img/blank_image.png')
 
     @property
     def part_count(self):
