@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load i18n %}
 
 {% block page_title %}
 InvenTree | Purchase Orders
@@ -19,6 +20,9 @@ InvenTree | Purchase Orders
 
 {% include "order/po_table.html" with toolbar='#table-buttons' %}
 
+<table class='table table-striped table-condensed po-table' id='purchase-order-table'>
+</table>
+
 {% endblock %}
 
 {% block js_ready %}
@@ -33,6 +37,54 @@ $("#po-create").click(function() {
 });
 
 $("#po-table").inventreeTable({
+});
+
+$("#purchase-order-table").inventreeTable({
+    url: "{% url 'api-po-list' %}",
+    formatNoMatches: function() { return "{% trans "No purchase orders found" %}"; },
+    columns: [
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+        },
+        {
+            sortable: true,
+            field: 'supplier',
+            title: 'Supplier',
+            formatter: function(value, row, index, field) {
+                return imageHoverIcon(row.supplier__image) + renderLink(row.supplier__name, '/company/' + value + '/');
+            }
+        },
+        {
+            sortable: true,
+            field: 'reference',
+            title: 'Reference',
+            formatter: function(value, row, index, field) {
+                return renderLink(value, "/order/purchase-order/" + row.pk + "/");
+            }
+        },  
+        {
+            sortable: true,
+            field: 'creation_date',
+            title: 'Date',
+        },
+        {
+            sortable: true,
+            field: 'description',
+            title: 'Description',
+        },
+        {
+            sortable: true,
+            field: 'status_text',
+            title: 'Status',
+        },
+        {
+            sortable: true,
+            field: 'lines',
+            title: 'Items'
+        },
+    ],
 });
 
 {% endblock %}
