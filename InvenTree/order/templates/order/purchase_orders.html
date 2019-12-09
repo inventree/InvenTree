@@ -37,55 +37,8 @@ $("#po-create").click(function() {
 $("#po-table").inventreeTable({
 });
 
-$("#purchase-order-table").inventreeTable({
+loadPurchaseOrderTable($("#purchase-order-table"), {
     url: "{% url 'api-po-list' %}",
-    formatNoMatches: function() { return "{% trans "No purchase orders found" %}"; },
-    columns: [
-        {
-            field: 'pk',
-            title: 'ID',
-            visible: false,
-        },
-        {
-            sortable: true,
-            field: 'supplier',
-            title: 'Supplier',
-            formatter: function(value, row, index, field) {
-                return imageHoverIcon(row.supplier__image) + renderLink(row.supplier__name, '/company/' + value + '/');
-            }
-        },
-        {
-            sortable: true,
-            field: 'reference',
-            title: 'Reference',
-            formatter: function(value, row, index, field) {
-                return renderLink(value, "/order/purchase-order/" + row.pk + "/");
-            }
-        },  
-        {
-            sortable: true,
-            field: 'creation_date',
-            title: 'Date',
-        },
-        {
-            sortable: true,
-            field: 'description',
-            title: 'Description',
-        },
-        {
-            sortable: true,
-            field: 'status_text',
-            title: 'Status',
-            formatter: function(value, row, index, field) {
-                return orderStatusLabel(row.status, row.status_text);
-            }
-        },
-        {
-            sortable: true,
-            field: 'lines',
-            title: 'Items'
-        },
-    ],
 });
 
 {% endblock %}

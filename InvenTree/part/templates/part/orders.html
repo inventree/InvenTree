@@ -14,19 +14,17 @@
     </div>
 </div>
 
-{% include "order/po_table.html" with orders=part.open_purchase_orders toolbar='#button-bar' %}
+<table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#button-bar'>
+</table>
 
-{% if part.closed_purchase_orders|length > 0 %}
-<h4>Closed Orders</h4>
-{% include "order/po_table.html" with orders=part.closed_purchase_orders %}
-{% endif %}
 
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
 
-$("#po-table").inventreeTable({
+loadPurchaseOrderTable($("#purchase-order-table"), {
+    url: "{% url 'api-po-list' %}?part={{ part.id }}",
 });
 
 $("#part-order2").click(function() {

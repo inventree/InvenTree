@@ -17,6 +17,8 @@ from InvenTree.status_codes import OrderStatus
 
 import os
 
+from part.models import Part
+
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .serializers import POSerializer, POLineItemSerializer
 
@@ -51,6 +53,14 @@ class POList(generics.ListCreateAPIView):
                     queryset = queryset.filter(status=value)
                 except ValueError:
                     pass
+
+        # Attempt to filter by part
+        if 'part' in request.GET:
+            try:
+                part = Part.objects.get(pk=request.GET['part'])
+                queryset = queryset.filter(id__in=[p.id for p in part.purchase_orders()])
+            except (Part.DoesNotExist, ValueError):
+                pass
 
         data = queryset.values(
             'pk',
