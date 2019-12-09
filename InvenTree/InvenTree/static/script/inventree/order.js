@@ -99,3 +99,38 @@ function removePurchaseOrderLineItem(e) {
         reload: true,
     });
 }
+
+function orderStatusLabel(code, label) {
+    /* Render a purchase-order status label. */
+
+    var html = "<span class='label";
+
+    switch (code) {
+    case 10:  // pending   
+        html += " label-info";
+        break;
+    case  20:  // placed
+        html += " label-primary";
+        break;
+    case 30:  // complete
+        html += " label-success";
+        break;
+    case 40:  // cancelled
+    case 50:  // lost
+        html += " label-warning";
+        break;
+    case 60:  // returned
+        html += " label-danger";
+        break;
+    default:
+        break;
+    }
+
+    html += "'>";
+    html += label;
+    html += "</span>";
+
+    console.log(html);
+
+    return html;
+}

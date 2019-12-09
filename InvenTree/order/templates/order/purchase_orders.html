@@ -18,8 +18,6 @@ InvenTree | Purchase Orders
     </div>
 </div>
 
-{% include "order/po_table.html" with toolbar='#table-buttons' %}
-
 <table class='table table-striped table-condensed po-table' id='purchase-order-table'>
 </table>
 
@@ -78,6 +76,9 @@ $("#purchase-order-table").inventreeTable({
             sortable: true,
             field: 'status_text',
             title: 'Status',
+            formatter: function(value, row, index, field) {
+                return orderStatusLabel(row.status, row.status_text);
+            }
         },
         {
             sortable: true,
