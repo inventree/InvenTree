@@ -18,7 +18,6 @@ from django.db.models import Sum
 from django.db.models import prefetch_related_objects
 from django.core.validators import MinValueValidator
 
-from django.conf.urls.static import static
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -281,7 +280,7 @@ class Part(models.Model):
         if self.image:
             return os.path.join(settings.MEDIA_URL, str(self.image.url))
         else:
-            return static('/img/blank_image.png')
+            return os.path.join(settings.STATIC_URL, 'img/blank_image.png')
 
     def validate_unique(self, exclude=None):
         """ Validate that a part is 'unique'.
