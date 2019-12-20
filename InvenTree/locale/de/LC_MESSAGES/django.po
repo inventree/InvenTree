@@ -20,11 +20,11 @@ msgstr ""
 
 #: InvenTree/helpers.py:175 order/models.py:159 order/models.py:210
 msgid "Invalid quantity provided"
-msgstr "keine Gültige Menge"
+msgstr "Keine gültige Menge"
 
 #: InvenTree/helpers.py:178
 msgid "Empty serial number string"
-msgstr "Leere Angabe der Seriennummer"
+msgstr "Keine Seriennummer angegeben"
 
 #: InvenTree/helpers.py:199 InvenTree/helpers.py:216
 #, python-brace-format
@@ -70,7 +70,7 @@ msgstr "Ausstehend"
 
 #: InvenTree/status_codes.py:37
 msgid "Placed"
-msgstr "Plaziert"
+msgstr "Platziert"
 
 #: InvenTree/status_codes.py:38 InvenTree/status_codes.py:94
 msgid "Complete"
@@ -94,7 +94,7 @@ msgstr "OK"
 
 #: InvenTree/status_codes.py:68
 msgid "Attention needed"
-msgstr "benötigt Kontrolle"
+msgstr "erfordert Eingriff"
 
 #: InvenTree/status_codes.py:69
 msgid "Damaged"
@@ -169,11 +169,11 @@ msgstr "Bau-Status"
 
 #: build/models.py:81
 msgid "Batch code for this build output"
-msgstr "Stapel-Code für diese Bau-Ausgabe"
+msgstr "Chargennummer für diese Bau-Ausgabe"
 
 #: build/models.py:93
 msgid "Link to external URL"
-msgstr "Link zu einer Externen URL"
+msgstr "Link zu einer externen URL"
 
 #: build/models.py:95
 msgid "Extra build notes"
@@ -253,7 +253,7 @@ msgstr "Beschreibung"
 #: build/templates/build/allocate_view.html:22
 #: part/templates/part/part_base.html:122
 msgid "On Order"
-msgstr "auf Bestellung"
+msgstr "bestellt"
 
 #: build/views.py:289 stock/views.py:863
 #, python-brace-format
@@ -264,7 +264,7 @@ msgstr "Die folgende Seriennummer existiert bereits: ({sn})"
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 "Einstellungs-Schlüssel (muss einzigartig sein, Groß-/ Kleinschreibung "
-"beachten)"
+"wird nicht beachtet)"
 
 #: common/models.py:67
 msgid "Settings value"
@@ -313,7 +313,7 @@ msgstr "Bestellung als vollständig markieren"
 
 #: order/forms.py:43
 msgid "Cancel order"
-msgstr "Bestellung abbrechen"
+msgstr "Bestellung stornieren"
 
 #: order/forms.py:54
 msgid "Receive parts to this location"
@@ -479,7 +479,7 @@ msgstr "Teilekategorie wählen"
 #: part/forms.py:81
 msgid "Perform 'deep copy' which will duplicate all BOM data for this part"
 msgstr ""
-"\"Deep Copy\" ausführen. Dies wird alle Daten der Stückliste für dieses "
+"Tiefe Kopie ausführen. Dies wird alle Daten der Stückliste für dieses "
 "Teil duplizieren"
 
 #: part/forms.py:86
@@ -598,7 +598,7 @@ msgstr "Ist dieses Teil virtuell, wie zum Beispiel eine Software oder Lizenz?"
 
 #: part/models.py:427
 msgid "Stored BOM checksum"
-msgstr "Kontrollsumme der Stückliste gespeichert"
+msgstr "Prüfsumme der Stückliste gespeichert"
 
 #: part/models.py:934
 msgid "Select file to attach"
@@ -622,7 +622,7 @@ msgstr "Parameter Einheit"
 
 #: part/models.py:1024
 msgid "Parent Part"
-msgstr "Augangsteil"
+msgstr "Ausgangsteil"
 
 #: part/models.py:1026
 msgid "Parameter Template"
@@ -646,11 +646,11 @@ msgstr "Stücklisten-Anzahl für dieses Stücklisten-Teil"
 
 #: part/models.py:1069
 msgid "Estimated build wastage quantity (absolute or percentage)"
-msgstr "Geschätzte Bau-Fehleranzahl (absolut oder prozentual)"
+msgstr "Geschätzter Ausschuss (absolut oder prozentual)"
 
 #: part/models.py:1072
 msgid "BOM item reference"
-msgstr "Position des Objekts auf der Stückliste"
+msgstr "Referenz des Objekts auf der Stückliste"
 
 #: part/models.py:1075
 msgid "BOM item notes"
@@ -658,7 +658,7 @@ msgstr "Notizen zum Stücklisten-Objekt"
 
 #: part/models.py:1077
 msgid "BOM line checksum"
-msgstr "Kontrollsumme der Stückliste"
+msgstr "Prüfsumme der Stückliste"
 
 #: part/models.py:1140
 msgid "Part cannot be added to its own Bill of Materials"
@@ -667,11 +667,11 @@ msgstr "Teil kann nicht zu seiner eigenen Stückliste hinzugefügt werden"
 #: part/models.py:1147
 #, python-brace-format
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
-msgstr "Teil '{p1}' wird in Stückliste für Teil '{p2}' benutzt (Rekursiv)"
+msgstr "Teil '{p1}' wird in Stückliste für Teil '{p2}' benutzt (rekursiv)"
 
 #: part/templates/part/category.html:13 part/templates/part/category.html:69
 msgid "Part Categories"
-msgstr "Teile-Kategorie"
+msgstr "Teile-Kategorien"
 
 #: part/templates/part/category.html:14
 msgid "All parts"
@@ -691,7 +691,7 @@ msgstr "Kategorie-Beschreibung"
 
 #: part/templates/part/category.html:46 part/templates/part/detail.html:64
 msgid "Default Location"
-msgstr "Standard-Standort"
+msgstr "Standard-Lagerort"
 
 #: part/templates/part/category.html:52 part/templates/part/detail.html:44
 msgid "Keywords"
@@ -715,7 +715,7 @@ msgstr "Teile"
 
 #: part/templates/part/detail.html:22 part/templates/part/part_base.html:85
 msgid "IPN"
-msgstr "IPN (Interne Produkt Nummer)"
+msgstr "IPN (Interne Produktnummer)"
 
 #: part/templates/part/detail.html:28
 msgid "Revision"
@@ -752,7 +752,7 @@ msgstr "Virtuell"
 
 #: part/templates/part/detail.html:94
 msgid "Part is virtual (not a physical part)"
-msgstr "Teil ist Virtuell (kein physisches Teil)"
+msgstr "Teil ist virtuell (kein physisches Teil)"
 
 #: part/templates/part/detail.html:96
 msgid "Part is not a virtual part"
@@ -784,7 +784,7 @@ msgstr "Teil kann nicht in Baugruppen benutzt werden"
 
 #: part/templates/part/detail.html:118
 msgid "Trackable"
-msgstr "auffindbar"
+msgstr "nachverfolgbar"
 
 #: part/templates/part/detail.html:121
 msgid "Part stock is tracked by serial number"
@@ -1003,7 +1003,7 @@ msgstr "Seriennummer für dieses Teil"
 
 #: stock/models.py:325
 msgid "Batch code for this stock item"
-msgstr "Stapel-Code für dieses Lagerobjekt"
+msgstr "Losnummer für dieses Lagerobjekt"
 
 #: stock/models.py:334
 #, fuzzy
@@ -1012,7 +1012,7 @@ msgstr "Bau für dieses Lagerobjekt"
 
 #: stock/models.py:343
 msgid "Purchase order for this stock item"
-msgstr "Bestellung für dieses Teil absenden"
+msgstr "Bestellung für dieses Teil"
 
 #: stock/models.py:354
 msgid "Delete this Stock Item when stock is depleted"
@@ -1024,7 +1024,7 @@ msgstr "Lagerobjekt-Notizen"
 
 #: stock/models.py:435
 msgid "Quantity must be integer"
-msgstr "Anzahl muss eine Ganz-Zahl sein"
+msgstr "Anzahl muss eine Ganzzahl sein"
 
 #: stock/models.py:441
 #, python-brace-format
@@ -1033,7 +1033,7 @@ msgstr "Anzahl darf nicht die verfügbare Anzahl überschreiten ({n})"
 
 #: stock/models.py:444 stock/models.py:447
 msgid "Serial numbers must be a list of integers"
-msgstr "Seriennummern muss eine Liste von Ganz-Zahlen sein"
+msgstr "Seriennummern muss eine Liste von Ganzzahlen sein"
 
 #: stock/models.py:450
 msgid "Quantity does not match serial numbers"
@@ -1058,7 +1058,7 @@ msgstr "Name des Eintrags-Trackings"
 
 #: stock/models.py:752
 msgid "Entry notes"
-msgstr "Eingrags-Notizen"
+msgstr "Eintrags-Notizen"
 
 #: stock/models.py:754
 msgid "Link to external page for further information"
@@ -1098,7 +1098,7 @@ msgstr "Seriennummer"
 
 #: stock/templates/stock/item.html:95
 msgid "Batch"
-msgstr "Stapel"
+msgstr "Los"
 
 #: stock/templates/stock/item.html:113
 msgid "Customer"
@@ -1200,7 +1200,7 @@ msgstr "Lagerobjekte löschen"
 
 #: stock/views.py:407
 msgid "Must enter integer value"
-msgstr "Nur Ganzzahl Objekte eingeben"
+msgstr "Nur Ganzzahl eingeben"
 
 #: stock/views.py:412
 msgid "Quantity must be positive"
