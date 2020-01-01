@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 
 from import_export.admin import ImportExportModelAdmin
+from guardian.admin import GuardedModelAdmin
 
 from import_export.resources import ModelResource
 from import_export.fields import Field
@@ -11,7 +12,7 @@ from import_export.fields import Field
 from .models import PurchaseOrder, PurchaseOrderLineItem
 
 
-class PurchaseOrderAdmin(ImportExportModelAdmin):
+class PurchaseOrderAdmin(ImportExportModelAdmin, GuardedModelAdmin):
 
     list_display = (
         'reference',
@@ -40,7 +41,7 @@ class POLineItemResource(ModelResource):
         clean_model_instances = True
 
 
-class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
+class PurchaseOrderLineItemAdmin(ImportExportModelAdmin, GuardedModelAdmin):
 
     resource_class = POLineItemResource
 

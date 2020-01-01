@@ -66,3 +66,6 @@ log_queries: False
 # Set the backup_dir parameter to store backup files in a specific location
 # If unspecified, the local user's temp directory will be used
 #backup_dir: '/home/inventree/backup/'
+
+#anonymous_user_name: AnonymousUser
+#internal_ip: 127.0.0.1

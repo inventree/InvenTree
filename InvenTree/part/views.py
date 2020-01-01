@@ -14,6 +14,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, FormView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
+from guardian.mixins import PermissionRequiredMixin, PermissionListMixin
 
 from fuzzywuzzy import fuzz
 from decimal import Decimal
@@ -38,12 +39,13 @@ from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.status_codes import OrderStatus
 
 
-class PartIndex(ListView):
+class PartIndex(PermissionListMixin, ListView):
     """ View for displaying list of Part objects
     """
     model = Part
     template_name = 'part/category.html'
     context_object_name = 'parts'
+    permission_required = ('part.view_part')
 
     def get_queryset(self):
         return Part.objects.all().select_related('category')
@@ -62,7 +64,7 @@ class PartIndex(ListView):
         return context
 
 
-class PartAttachmentCreate(AjaxCreateView):
+class PartAttachmentCreate(PermissionRequiredMixin, AjaxCreateView):
     """ View for creating a new PartAttachment object
 
     - The view only makes sense if a Part object is passed to it
@@ -71,6 +73,8 @@ class PartAttachmentCreate(AjaxCreateView):
     form_class = part_forms.EditPartAttachmentForm
     ajax_form_title = "Add part attachment"
     ajax_template_name = "modal_form.html"
+    permission_required = ('part.add_partattachment')
+    permission_object = None
 
     def get_data(self):
         return {
@@ -88,7 +92,8 @@ class PartAttachmentCreate(AjaxCreateView):
 
         # TODO - If the proper part was not sent, return an error message
         try:
-            initials['part'] = Part.objects.get(id=self.request.GET.get('part', None))
+            initials['part'] = Part.objects.get(
+                id=self.request.GET.get('part', None))
         except (ValueError, Part.DoesNotExist):
             pass
 
@@ -107,13 +112,14 @@ class PartAttachmentCreate(AjaxCreateView):
         return form
 
 
-class PartAttachmentEdit(AjaxUpdateView):
+class PartAttachmentEdit(PermissionRequiredMixin, AjaxUpdateView):
     """ View for editing a PartAttachment object """
     model = PartAttachment
     form_class = part_forms.EditPartAttachmentForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit attachment'
-    
+    permission_required = ('part.change_partattachment')
+
     def get_data(self):
         return {
             'success': 'Part attachment updated'
@@ -127,13 +133,14 @@ class PartAttachmentEdit(AjaxUpdateView):
         return form
 
 
-class PartAttachmentDelete(AjaxDeleteView):
+class PartAttachmentDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View for deleting a PartAttachment """
 
     model = PartAttachment
     ajax_form_title = "Delete Part Attachment"
     ajax_template_name = "part/attachment_delete.html"
     context_object_name = "attachment"
+    permission_required = ('part.delete_partattachment')
 
     def get_data(self):
         return {
@@ -141,23 +148,26 @@ class PartAttachmentDelete(AjaxDeleteView):
         }
 
 
-class PartSetCategory(AjaxUpdateView):
+class PartSetCategory(PermissionRequiredMixin, AjaxUpdateView):
     """ View for settings the part category for multiple parts at once """
 
     ajax_template_name = 'part/set_category.html'
     ajax_form_title = 'Set Part Category'
     form_class = part_forms.SetPartCategoryForm
+    permission_required = ('part.change_part')
+    permission_object = None
 
     category = None
     parts = []
-    
+
     def get(self, request, *args, **kwargs):
         """ Respond to a GET request to this view """
 
         self.request = request
 
         if 'parts[]' in request.GET:
-            self.parts = Part.objects.filter(id__in=request.GET.getlist('parts[]'))
+            self.parts = Part.objects.filter(
+                id__in=request.GET.getlist('parts[]'))
         else:
             self.parts = []
 
@@ -215,9 +225,9 @@ class PartSetCategory(AjaxUpdateView):
         ctx['category'] = self.category
 
         return ctx
-        
 
-class MakePartVariant(AjaxCreateView):
+
+class MakePartVariant(PermissionRequiredMixin, AjaxCreateView):
     """ View for creating a new variant based on an existing template Part
 
     - Part <pk> is provided in the URL '/part/<pk>/make_variant/'
@@ -230,6 +240,8 @@ class MakePartVariant(AjaxCreateView):
 
     ajax_form_title = 'Create Variant'
     ajax_template_name = 'part/variant_part.html'
+    permission_required = ('part.add_part')
+    permission_object = None
 
     def get_part_template(self):
         return get_object_or_404(Part, id=self.kwargs['pk'])
@@ -288,7 +300,7 @@ class MakePartVariant(AjaxCreateView):
         return initials
 
 
-class PartDuplicate(AjaxCreateView):
+class PartDuplicate(PermissionRequiredMixin, AjaxCreateView):
     """ View for duplicating an existing Part object.
 
     - Part <pk> is provided in the URL '/part/<pk>/copy/'
@@ -300,6 +312,8 @@ class PartDuplicate(AjaxCreateView):
 
     ajax_form_title = "Duplicate Part"
     ajax_template_name = "part/copy_part.html"
+    permission_required = ('part.add_part')
+    permission_object = None
 
     def get_data(self):
         return {
@@ -338,22 +352,24 @@ class PartDuplicate(AjaxCreateView):
         valid = form.is_valid()
 
         name = request.POST.get('name', None)
-        
+
         if name:
             matches = match_part_names(name)
 
             if len(matches) > 0:
                 context['matches'] = matches
-            
+
                 # Enforce display of the checkbox
                 form.fields['confirm_creation'].widget = CheckboxInput()
-                
+
                 # Check if the user has checked the 'confirm_creation' input
-                confirmed = str2bool(request.POST.get('confirm_creation', False))
+                confirmed = str2bool(
+                    request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
-                    
+                    form.errors['confirm_creation'] = [
+                        'Possible matches exist - confirm creation of new part']
+
                     form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
                     valid = False
 
@@ -399,11 +415,11 @@ class PartDuplicate(AjaxCreateView):
         return initials
 
 
-class PartCreate(AjaxCreateView):
+class PartCreate(PermissionRequiredMixin, AjaxCreateView):
     """ View for creating a new Part object.
 
     Options for providing initial conditions:
-    
+
     - Provide a category object as initial data
     """
     model = Part
@@ -411,6 +427,8 @@ class PartCreate(AjaxCreateView):
 
     ajax_form_title = 'Create new part'
     ajax_template_name = 'part/create_part.html'
+    permission_object = None
+    permission_required = ('part.add_part')
 
     def get_data(self):
         return {
@@ -456,24 +474,26 @@ class PartCreate(AjaxCreateView):
         context = {}
 
         valid = form.is_valid()
-        
+
         name = request.POST.get('name', None)
-        
+
         if name:
             matches = match_part_names(name)
 
             if len(matches) > 0:
                 context['matches'] = matches
-            
+
                 # Enforce display of the checkbox
                 form.fields['confirm_creation'].widget = CheckboxInput()
-                
+
                 # Check if the user has checked the 'confirm_creation' input
-                confirmed = str2bool(request.POST.get('confirm_creation', False))
+                confirmed = str2bool(
+                    request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
-                    
+                    form.errors['confirm_creation'] = [
+                        'Possible matches exist - confirm creation of new part']
+
                     form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
                     valid = False
 
@@ -510,7 +530,7 @@ class PartCreate(AjaxCreateView):
                 initials['keywords'] = category.default_keywords
             except (PartCategory.DoesNotExist, ValueError):
                 pass
-        
+
         # Allow initial data to be passed through as arguments
         for label in ['name', 'IPN', 'description', 'revision', 'keywords']:
             if label in self.request.GET:
@@ -519,13 +539,14 @@ class PartCreate(AjaxCreateView):
         return initials
 
 
-class PartDetail(DetailView):
+class PartDetail(PermissionRequiredMixin, DetailView):
     """ Detail view for Part object
     """
 
     context_object_name = 'part'
     queryset = Part.objects.all().select_related('category')
     template_name = 'part/detail.html'
+    permission_required = ('part.view_part')
 
     # Add in some extra context information based on query params
     def get_context_data(self, **kwargs):
@@ -534,7 +555,7 @@ class PartDetail(DetailView):
         - If '?editing=True', set 'editing_enabled' context variable
         """
         context = super(PartDetail, self).get_context_data(**kwargs)
-        
+
         part = self.get_object()
 
         if str2bool(self.request.GET.get('edit', '')):
@@ -542,8 +563,8 @@ class PartDetail(DetailView):
             context['editing_enabled'] = 1 if part.active else 0
         else:
             context['editing_enabled'] = 0
-
-        context['starred'] = part.isStarredBy(self.request.user)
+        if self.request.user.is_authenticated:
+            context['starred'] = part.isStarredBy(self.request.user)
         context['disabled'] = not part.active
 
         context['OrderStatus'] = OrderStatus
@@ -551,9 +572,10 @@ class PartDetail(DetailView):
         return context
 
 
-class PartQRCode(QRCodeView):
+class PartQRCode(PermissionRequiredMixin, QRCodeView):
     """ View for displaying a QR code for a Part object """
 
+    permission_required = ('part.view_part')
     ajax_form_title = "Part QR Code"
 
     def get_qr_data(self):
@@ -566,13 +588,14 @@ class PartQRCode(QRCodeView):
             return None
 
 
-class PartImage(AjaxUpdateView):
+class PartImage(PermissionRequiredMixin, AjaxUpdateView):
     """ View for uploading Part image """
 
     model = Part
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Upload Part Image'
     form_class = part_forms.PartImageForm
+    permission_required = ('part.change_part')
 
     def get_data(self):
         return {
@@ -580,7 +603,7 @@ class PartImage(AjaxUpdateView):
         }
 
 
-class PartEdit(AjaxUpdateView):
+class PartEdit(PermissionRequiredMixin, AjaxUpdateView):
     """ View for editing Part object """
 
     model = Part
@@ -588,6 +611,7 @@ class PartEdit(AjaxUpdateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Part Properties'
     context_object_name = 'part'
+    permission_required = ('part.change_part')
 
     def get_form(self):
         """ Create form for Part editing.
@@ -599,12 +623,13 @@ class PartEdit(AjaxUpdateView):
 
         part = self.get_object()
 
-        form.fields['default_supplier'].queryset = SupplierPart.objects.filter(part=part)
+        form.fields['default_supplier'].queryset = SupplierPart.objects.filter(
+            part=part)
 
         return form
 
 
-class BomValidate(AjaxUpdateView):
+class BomValidate(PermissionRequiredMixin, AjaxUpdateView):
     """ Modal form view for validating a part BOM """
 
     model = Part
@@ -612,6 +637,7 @@ class BomValidate(AjaxUpdateView):
     ajax_template_name = 'part/bom_validate.html'
     context_object_name = 'part'
     form_class = part_forms.BomValidateForm
+    permission_required = ('part.change_bomitem')
 
     def get_context(self):
         return {
@@ -643,7 +669,7 @@ class BomValidate(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context=self.get_context())
 
 
-class BomUpload(FormView):
+class BomUpload(PermissionRequiredMixin, FormView):
     """ View for uploading a BOM file, and handling BOM data importing.
 
     The BOM upload process is as follows:
@@ -671,6 +697,7 @@ class BomUpload(FormView):
     """
 
     template_name = 'part/bom_upload/upload_file.html'
+    permission_required = ('part.add_bomitem')
 
     # Context data passed to the forms (initially empty, extracted from uploaded file)
     bom_headers = []
@@ -757,7 +784,7 @@ class BomUpload(FormView):
 
     def handleBomFileUpload(self):
         """ Process a BOM file upload form.
-        
+
         This function validates that the uploaded file was valid,
         and contains tabulated data that can be extracted.
         If the file does not satisfy these requirements,
@@ -840,11 +867,13 @@ class BomUpload(FormView):
                 matches = []
 
                 for part in self.allowed_parts:
-                    ratio = fuzz.partial_ratio(part.name + part.description, part_name)
+                    ratio = fuzz.partial_ratio(
+                        part.name + part.description, part_name)
                     matches.append({'part': part, 'match': ratio})
 
                 if len(matches) > 0:
-                    matches = sorted(matches, key=lambda item: item['match'], reverse=True)
+                    matches = sorted(
+                        matches, key=lambda item: item['match'], reverse=True)
 
             if d_idx >= 0:
                 row['description'] = row['data'][d_idx]
@@ -923,7 +952,7 @@ class BomUpload(FormView):
                     col_id = int(s[3])
                 except ValueError:
                     continue
-                
+
                 if row_id not in self.row_data:
                     self.row_data[row_id] = {}
 
@@ -968,7 +997,8 @@ class BomUpload(FormView):
             })
 
             if guess:
-                n = list(self.column_selections.values()).count(self.column_selections[col])
+                n = list(self.column_selections.values()).count(
+                    self.column_selections[col])
                 if n > 1:
                     header['duplicate'] = True
                     self.duplicates = True
@@ -992,7 +1022,7 @@ class BomUpload(FormView):
         self.getTableDataFromPost()
 
         valid = len(self.missing_columns) == 0 and not self.duplicates
-        
+
         if valid:
             # Try to extract meaningful data
             self.preFillSelections()
@@ -1003,7 +1033,7 @@ class BomUpload(FormView):
         return self.render_to_response(self.get_context_data(form=None))
 
     def handlePartSelection(self):
-        
+
         # Extract basic table data from POST request
         self.getTableDataFromPost()
 
@@ -1029,12 +1059,13 @@ class BomUpload(FormView):
                     try:
                         q = int(value)
                         if q <= 0:
-                            row['errors']['quantity'] = _('Quantity must be greater than zero')
+                            row['errors']['quantity'] = _(
+                                'Quantity must be greater than zero')
                     except ValueError:
                         row['errors']['quantity'] = _('Enter a valid quantity')
 
                     row['quantity'] = q
-                     
+
                 except ValueError:
                     continue
 
@@ -1078,7 +1109,7 @@ class BomUpload(FormView):
                 if key.startswith(field + '_'):
                     try:
                         row_id = int(key.replace(field + '_', ''))
-                        
+
                         row = self.getRowByIndex(row_id)
 
                         if row:
@@ -1136,7 +1167,7 @@ class BomUpload(FormView):
         return self.render_to_response(ctx)
 
     def getRowByIndex(self, idx):
-        
+
         for row in self.bom_rows:
             if row['index'] == idx:
                 return row
@@ -1154,7 +1185,7 @@ class BomUpload(FormView):
         self.form = self.get_form(self.get_form_class())
 
         # Did the user POST a file named bom_file?
-        
+
         form_step = request.POST.get('form_step', None)
 
         if form_step == 'select_file':
@@ -1167,13 +1198,15 @@ class BomUpload(FormView):
         return self.render_to_response(self.get_context_data(form=self.form))
 
 
-class PartExport(AjaxView):
+class PartExport(PermissionRequiredMixin, AjaxView):
     """ Export a CSV file containing information on multiple parts """
+
+    permission_required = ('part.view_part')
 
     def get_parts(self, request):
         """ Extract part list from the POST parameters.
         Parts can be supplied as:
-        
+
         - Part category
         - List of part PK values
         """
@@ -1230,11 +1263,12 @@ class PartExport(AjaxView):
         return DownloadFile(csv, 'InvenTree_Parts.csv')
 
 
-class BomUploadTemplate(AjaxView):
+class BomUploadTemplate(PermissionRequiredMixin, AjaxView):
     """
     Provide a BOM upload template file for download.
     - Generates a template file in the provided format e.g. ?format=csv
     """
+    permission_required = ('part.change_bomitem')
 
     def get(self, request, *args, **kwargs):
 
@@ -1243,13 +1277,14 @@ class BomUploadTemplate(AjaxView):
         return MakeBomTemplate(export_format)
 
 
-class BomDownload(AjaxView):
+class BomDownload(PermissionRequiredMixin, AjaxView):
     """
     Provide raw download of a BOM file.
     - File format should be passed as a query param e.g. ?format=csv
     """
 
     model = Part
+    permission_required = ('part.view_bomitem')
 
     def get(self, request, *args, **kwargs):
 
@@ -1268,13 +1303,14 @@ class BomDownload(AjaxView):
         }
 
 
-class PartDelete(AjaxDeleteView):
+class PartDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View to delete a Part object """
 
     model = Part
     ajax_template_name = 'part/partial_delete.html'
     ajax_form_title = 'Confirm Part Deletion'
     context_object_name = 'part'
+    permission_required = ('part.delete_part')
 
     success_url = '/part/'
 
@@ -1284,13 +1320,14 @@ class PartDelete(AjaxDeleteView):
         }
 
 
-class PartPricing(AjaxView):
+class PartPricing(PermissionRequiredMixin, AjaxView):
     """ View for inspecting part pricing information """
 
     model = Part
     ajax_template_name = "part/part_pricing.html"
     ajax_form_title = "Part Pricing"
     form_class = part_forms.PartPriceForm
+    permission_required = ('part.view_part')
 
     def get_part(self):
         try:
@@ -1322,7 +1359,7 @@ class PartPricing(AjaxView):
             scaler = Decimal(currency.value)
 
         part = self.get_part()
-        
+
         ctx = {
             'part': part,
             'quantity': quantity,
@@ -1370,7 +1407,7 @@ class PartPricing(AjaxView):
                 if min_bom_price:
                     ctx['min_total_bom_price'] = min_bom_price
                     ctx['min_unit_bom_price'] = min_bom_price / quantity
-                
+
                 if max_bom_price:
                     ctx['max_total_bom_price'] = max_bom_price
                     ctx['max_unit_bom_price'] = max_bom_price / quantity
@@ -1406,35 +1443,41 @@ class PartPricing(AjaxView):
         return self.renderJsonResponse(request, self.form_class(), data=data, context=self.get_pricing(quantity, currency))
 
 
-class PartParameterTemplateCreate(AjaxCreateView):
+class PartParameterTemplateCreate(PermissionRequiredMixin, AjaxCreateView):
     """ View for creating a new PartParameterTemplate """
 
     model = PartParameterTemplate
     form_class = part_forms.EditPartParameterTemplateForm
     ajax_form_title = 'Create Part Parameter Template'
+    permission_required = ('part.add_partparametertemplate')
+    permission_object = None
 
 
-class PartParameterTemplateEdit(AjaxUpdateView):
+class PartParameterTemplateEdit(PermissionRequiredMixin, AjaxUpdateView):
     """ View for editing a PartParameterTemplate """
 
     model = PartParameterTemplate
     form_class = part_forms.EditPartParameterTemplateForm
     ajax_form_title = 'Edit Part Parameter Template'
+    permission_required = ('part.change_partparametertemplate')
 
 
-class PartParameterTemplateDelete(AjaxDeleteView):
+class PartParameterTemplateDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View for deleting an existing PartParameterTemplate """
 
     model = PartParameterTemplate
     ajax_form_title = "Delete Part Parameter Template"
+    permission_required = ('part.delete_partparametertemplate')
 
 
-class PartParameterCreate(AjaxCreateView):
+class PartParameterCreate(PermissionRequiredMixin, AjaxCreateView):
     """ View for creating a new PartParameter """
 
     model = PartParameter
     form_class = part_forms.EditPartParameterForm
     ajax_form_title = 'Create Part Parameter'
+    permission_required = ('part.add_partparameter')
+    permission_object = None
 
     def get_initial(self):
 
@@ -1469,7 +1512,8 @@ class PartParameterCreate(AjaxCreateView):
 
                 query = form.fields['template'].queryset
 
-                query = query.exclude(id__in=[param.template.id for param in part.parameters.all()])
+                query = query.exclude(
+                    id__in=[param.template.id for param in part.parameters.all()])
 
                 form.fields['template'].queryset = query
 
@@ -1479,12 +1523,13 @@ class PartParameterCreate(AjaxCreateView):
         return form
 
 
-class PartParameterEdit(AjaxUpdateView):
+class PartParameterEdit(PermissionRequiredMixin, AjaxUpdateView):
     """ View for editing a PartParameter """
 
     model = PartParameter
     form_class = part_forms.EditPartParameterForm
     ajax_form_title = 'Edit Part Parameter'
+    permission_required = ('part.change_partparameter')
 
     def get_form(self):
 
@@ -1493,28 +1538,31 @@ class PartParameterEdit(AjaxUpdateView):
         return form
 
 
-class PartParameterDelete(AjaxDeleteView):
+class PartParameterDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View for deleting a PartParameter """
 
     model = PartParameter
     ajax_template_name = 'part/param_delete.html'
     ajax_form_title = 'Delete Part Parameter'
-    
+    permission_required = ('part.delete_partparameter')
 
-class CategoryDetail(DetailView):
+
+class CategoryDetail(PermissionRequiredMixin, DetailView):
     """ Detail view for PartCategory """
     model = PartCategory
     context_object_name = 'category'
     queryset = PartCategory.objects.all().prefetch_related('children')
     template_name = 'part/category.html'
+    permission_required = ('part.view_partcategory')
 
 
-class CategoryEdit(AjaxUpdateView):
+class CategoryEdit(PermissionRequiredMixin, AjaxUpdateView):
     """ Update view to edit a PartCategory """
     model = PartCategory
     form_class = part_forms.EditCategoryForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Part Category'
+    permission_required = ('part.change_partcategory')
 
     def get_context_data(self, **kwargs):
         context = super(CategoryEdit, self).get_context_data(**kwargs).copy()
@@ -1531,27 +1579,29 @@ class CategoryEdit(AjaxUpdateView):
 
         Limit the choices for 'parent' field to those which make sense
         """
-        
+
         form = super(AjaxUpdateView, self).get_form()
-        
+
         category = self.get_object()
 
         # Remove any invalid choices for the parent category part
         parent_choices = PartCategory.objects.all()
-        parent_choices = parent_choices.exclude(id__in=category.getUniqueChildren())
+        parent_choices = parent_choices.exclude(
+            id__in=category.getUniqueChildren())
 
         form.fields['parent'].queryset = parent_choices
 
         return form
 
 
-class CategoryDelete(AjaxDeleteView):
+class CategoryDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ Delete view to delete a PartCategory """
     model = PartCategory
     ajax_template_name = 'part/category_delete.html'
     ajax_form_title = 'Delete Part Category'
     context_object_name = 'category'
     success_url = '/part/'
+    permission_required = ('part.delete_partcategory')
 
     def get_data(self):
         return {
@@ -1559,13 +1609,15 @@ class CategoryDelete(AjaxDeleteView):
         }
 
 
-class CategoryCreate(AjaxCreateView):
+class CategoryCreate(PermissionRequiredMixin, AjaxCreateView):
     """ Create view to make a new PartCategory """
     model = PartCategory
     ajax_form_action = reverse_lazy('category-create')
     ajax_form_title = 'Create new part category'
     ajax_template_name = 'modal_form.html'
     form_class = part_forms.EditCategoryForm
+    permission_required = ('part.add_partcategory')
+    permission_object = None
 
     def get_context_data(self, **kwargs):
         """ Add extra context data to template.
@@ -1602,19 +1654,22 @@ class CategoryCreate(AjaxCreateView):
         return initials
 
 
-class BomItemDetail(DetailView):
+class BomItemDetail(PermissionRequiredMixin, DetailView):
     """ Detail view for BomItem """
     context_object_name = 'item'
     queryset = BomItem.objects.all()
     template_name = 'part/bom-detail.html'
+    permission_required = ('part.view_bomitem')
 
 
-class BomItemCreate(AjaxCreateView):
+class BomItemCreate(PermissionRequiredMixin, AjaxCreateView):
     """ Create view for making a new BomItem object """
     model = BomItem
     form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Create BOM item'
+    permission_required = ('part.add_bomitem')
+    permission_object = None
 
     def get_form(self):
         """ Override get_form() method to reduce Part selection options.
@@ -1636,14 +1691,15 @@ class BomItemCreate(AjaxCreateView):
 
             # Don't allow selection of sub_part objects which are already added to the Bom!
             query = form.fields['sub_part'].queryset
-            
+
             # Don't allow a part to be added to its own BOM
             query = query.exclude(id=part.id)
             query = query.filter(active=True)
-            
+
             # Eliminate any options that are already in the BOM!
-            query = query.exclude(id__in=[item.id for item in part.required_parts()])
-            
+            query = query.exclude(
+                id__in=[item.id for item in part.required_parts()])
+
             form.fields['sub_part'].queryset = query
 
             form.fields['part'].widget = HiddenInput()
@@ -1674,13 +1730,14 @@ class BomItemCreate(AjaxCreateView):
         return initials
 
 
-class BomItemEdit(AjaxUpdateView):
+class BomItemEdit(PermissionRequiredMixin, AjaxUpdateView):
     """ Update view for editing BomItem """
 
     model = BomItem
     form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit BOM item'
+    permission_required = ('part.change_bomitem')
 
     def get_form(self):
         """ Override get_form() method to filter part selection options
@@ -1723,9 +1780,10 @@ class BomItemEdit(AjaxUpdateView):
         return form
 
 
-class BomItemDelete(AjaxDeleteView):
+class BomItemDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ Delete view for removing BomItem """
     model = BomItem
     ajax_template_name = 'part/bom-delete.html'
     context_object_name = 'item'
     ajax_form_title = 'Confim BOM item deletion'
+    permission_required = ('part.delete_bomitem')

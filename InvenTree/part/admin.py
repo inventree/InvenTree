@@ -7,6 +7,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.resources import ModelResource
 from import_export.fields import Field
 import import_export.widgets as widgets
+from guardian.admin import GuardedModelAdmin
 
 from .models import PartCategory, Part
 from .models import PartAttachment, PartStar
@@ -21,28 +22,37 @@ class PartResource(ModelResource):
     """ Class for managing Part data import/export """
 
     # ForeignKey fields
-    category = Field(attribute='category', widget=widgets.ForeignKeyWidget(PartCategory))
-    
-    default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
+    category = Field(attribute='category',
+                     widget=widgets.ForeignKeyWidget(PartCategory))
 
-    default_supplier = Field(attribute='default_supplier', widget=widgets.ForeignKeyWidget(SupplierPart))
+    default_location = Field(attribute='default_location',
+                             widget=widgets.ForeignKeyWidget(StockLocation))
+
+    default_supplier = Field(attribute='default_supplier',
+                             widget=widgets.ForeignKeyWidget(SupplierPart))
 
     category_name = Field(attribute='category__name', readonly=True)
-    
-    variant_of = Field(attribute='variant_of', widget=widgets.ForeignKeyWidget(Part))
+
+    variant_of = Field(attribute='variant_of',
+                       widget=widgets.ForeignKeyWidget(Part))
 
     suppliers = Field(attribute='supplier_count', readonly=True)
 
     # Extra calculated meta-data (readonly)
-    in_stock = Field(attribute='total_stock', readonly=True, widget=widgets.IntegerWidget())
+    in_stock = Field(attribute='total_stock', readonly=True,
+                     widget=widgets.IntegerWidget())
 
-    on_order = Field(attribute='on_order', readonly=True, widget=widgets.IntegerWidget())
+    on_order = Field(attribute='on_order', readonly=True,
+                     widget=widgets.IntegerWidget())
 
-    used_in = Field(attribute='used_in_count', readonly=True, widget=widgets.IntegerWidget())
+    used_in = Field(attribute='used_in_count', readonly=True,
+                    widget=widgets.IntegerWidget())
 
-    allocated = Field(attribute='allocation_count', readonly=True, widget=widgets.IntegerWidget())
+    allocated = Field(attribute='allocation_count',
+                      readonly=True, widget=widgets.IntegerWidget())
 
-    building = Field(attribute='quantity_being_built', readonly=True, widget=widgets.IntegerWidget())
+    building = Field(attribute='quantity_being_built',
+                     readonly=True, widget=widgets.IntegerWidget())
 
     class Meta:
         model = Part
@@ -68,7 +78,7 @@ class PartResource(ModelResource):
         return query
 
 
-class PartAdmin(ImportExportModelAdmin):
+class PartAdmin(ImportExportModelAdmin, GuardedModelAdmin):
 
     resource_class = PartResource
 
@@ -76,17 +86,20 @@ class PartAdmin(ImportExportModelAdmin):
 
     list_filter = ('active', 'assembly', 'is_template', 'virtual')
 
-    search_fields = ('name', 'description', 'category__name', 'category__description', 'IPN')
+    search_fields = ('name', 'description', 'category__name',
+                     'category__description', 'IPN')
 
 
 class PartCategoryResource(ModelResource):
     """ Class for managing PartCategory data import/export """
 
-    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(PartCategory))
+    parent = Field(attribute='parent',
+                   widget=widgets.ForeignKeyWidget(PartCategory))
 
     parent_name = Field(attribute='parent__name', readonly=True)
 
-    default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
+    default_location = Field(attribute='default_location',
+                             widget=widgets.ForeignKeyWidget(StockLocation))
 
     class Meta:
         model = PartCategory
@@ -107,7 +120,7 @@ class PartCategoryResource(ModelResource):
         PartCategory.objects.rebuild()
 
 
-class PartCategoryAdmin(ImportExportModelAdmin):
+class PartCategoryAdmin(ImportExportModelAdmin, GuardedModelAdmin):
 
     resource_class = PartCategoryResource
 
@@ -116,12 +129,12 @@ class PartCategoryAdmin(ImportExportModelAdmin):
     search_fields = ('name', 'description')
 
 
-class PartAttachmentAdmin(admin.ModelAdmin):
+class PartAttachmentAdmin(GuardedModelAdmin):
 
     list_display = ('part', 'attachment', 'comment')
 
 
-class PartStarAdmin(admin.ModelAdmin):
+class PartStarAdmin(GuardedModelAdmin):
 
     list_display = ('part', 'user')
 
@@ -133,7 +146,8 @@ class BomItemResource(ModelResource):
 
     part_name = Field(attribute='part__full_name', readonly=True)
 
-    sub_part = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
+    sub_part = Field(attribute='sub_part',
+                     widget=widgets.ForeignKeyWidget(Part))
 
     sub_part_name = Field(attribute='sub_part__full_name', readonly=True)
 
@@ -148,16 +162,17 @@ class BomItemResource(ModelResource):
         exclude = ('checksum')
 
 
-class BomItemAdmin(ImportExportModelAdmin):
+class BomItemAdmin(ImportExportModelAdmin, GuardedModelAdmin):
 
     resource_class = BomItemResource
 
     list_display = ('part', 'sub_part', 'quantity')
 
-    search_fields = ('part__name', 'part__description', 'sub_part__name', 'sub_part__description')
+    search_fields = ('part__name', 'part__description',
+                     'sub_part__name', 'sub_part__description')
 
 
-class ParameterTemplateAdmin(ImportExportModelAdmin):
+class ParameterTemplateAdmin(ImportExportModelAdmin, GuardedModelAdmin):
     list_display = ('name', 'units')
 
 
@@ -168,7 +183,8 @@ class ParameterResource(ModelResource):
 
     part_name = Field(attribute='part__name', readonly=True)
 
-    template = Field(attribute='template', widget=widgets.ForeignKeyWidget(PartParameterTemplate))
+    template = Field(attribute='template',
+                     widget=widgets.ForeignKeyWidget(PartParameterTemplate))
 
     template_name = Field(attribute='template__name', readonly=True)
 
@@ -179,7 +195,7 @@ class ParameterResource(ModelResource):
         clean_model_instance = True
 
 
-class ParameterAdmin(ImportExportModelAdmin):
+class ParameterAdmin(ImportExportModelAdmin, GuardedModelAdmin):
 
     resource_class = ParameterResource
 

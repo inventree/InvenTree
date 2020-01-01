@@ -5,7 +5,7 @@ Provides a JSON API for common components.
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from rest_framework import permissions, generics, filters
+from rest_framework import generics, filters
 
 from django.conf.urls import url
 
@@ -22,10 +22,6 @@ class CurrencyList(generics.ListCreateAPIView):
 
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         filters.OrderingFilter,

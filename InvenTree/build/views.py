@@ -9,6 +9,7 @@ from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
+from guardian.mixins import PermissionRequiredMixin, PermissionListMixin
 
 from part.models import Part
 from .models import Build, BuildItem
@@ -20,12 +21,13 @@ from InvenTree.helpers import str2bool, ExtractSerialNumbers
 from InvenTree.status_codes import BuildStatus
 
 
-class BuildIndex(ListView):
+class BuildIndex(PermissionListMixin, ListView):
     """ View for displaying list of Builds
     """
     model = Build
     template_name = 'build/index.html'
     context_object_name = 'builds'
+    permission_required = ('build.view_build')
 
     def get_queryset(self):
         """ Return all Build objects (order by date, newest first) """
@@ -37,15 +39,18 @@ class BuildIndex(ListView):
 
         context['BuildStatus'] = BuildStatus
 
-        context['active'] = self.get_queryset().filter(status__in=BuildStatus.ACTIVE_CODES)
+        context['active'] = self.get_queryset().filter(
+            status__in=BuildStatus.ACTIVE_CODES)
 
-        context['completed'] = self.get_queryset().filter(status=BuildStatus.COMPLETE)
-        context['cancelled'] = self.get_queryset().filter(status=BuildStatus.CANCELLED)
+        context['completed'] = self.get_queryset().filter(
+            status=BuildStatus.COMPLETE)
+        context['cancelled'] = self.get_queryset().filter(
+            status=BuildStatus.CANCELLED)
 
         return context
 
 
-class BuildCancel(AjaxUpdateView):
+class BuildCancel(PermissionRequiredMixin, AjaxUpdateView):
     """ View to cancel a Build.
     Provides a cancellation information dialog
     """
@@ -55,6 +60,7 @@ class BuildCancel(AjaxUpdateView):
     ajax_form_title = 'Cancel Build'
     context_object_name = 'build'
     form_class = forms.CancelBuildForm
+    permission_required = ('build.change_build')
 
     def post(self, request, *args, **kwargs):
         """ Handle POST request. Mark the build status as CANCELLED """
@@ -81,7 +87,7 @@ class BuildCancel(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data=data)
 
 
-class BuildAutoAllocate(AjaxUpdateView):
+class BuildAutoAllocate(PermissionRequiredMixin, AjaxUpdateView):
     """ View to auto-allocate parts for a build.
     Follows a simple set of rules to automatically allocate StockItem objects.
 
@@ -93,6 +99,7 @@ class BuildAutoAllocate(AjaxUpdateView):
     context_object_name = 'build'
     ajax_form_title = 'Allocate Stock'
     ajax_template_name = 'build/auto_allocate.html'
+    permission_required = ('build.change_build')
 
     def get_context_data(self, *args, **kwargs):
         """ Get the context data for form rendering. """
@@ -136,7 +143,7 @@ class BuildAutoAllocate(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context=self.get_context_data())
 
 
-class BuildUnallocate(AjaxUpdateView):
+class BuildUnallocate(PermissionRequiredMixin, AjaxUpdateView):
     """ View to un-allocate all parts from a build.
 
     Provides a simple confirmation dialog with a BooleanField checkbox.
@@ -146,12 +153,13 @@ class BuildUnallocate(AjaxUpdateView):
     form_class = forms.ConfirmBuildForm
     ajax_form_title = "Unallocate Stock"
     ajax_template_name = "build/unallocate.html"
+    permission_required = ('build.change_build')
 
     def post(self, request, *args, **kwargs):
 
         build = self.get_object()
         form = self.get_form()
-        
+
         confirm = request.POST.get('confirm', False)
 
         valid = False
@@ -170,7 +178,7 @@ class BuildUnallocate(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class BuildComplete(AjaxUpdateView):
+class BuildComplete(PermissionRequiredMixin, AjaxUpdateView):
     """ View to mark a build as Complete.
 
     - Notifies the user of which parts will be removed from stock.
@@ -183,6 +191,7 @@ class BuildComplete(AjaxUpdateView):
     context_object_name = "build"
     ajax_form_title = "Complete Build"
     ajax_template_name = "build/complete.html"
+    permission_required = ('build.change_build')
 
     def get_form(self):
         """ Get the form object.
@@ -203,13 +212,14 @@ class BuildComplete(AjaxUpdateView):
 
         - If the part being built has a default location, pre-select that location
         """
-        
+
         initials = super(BuildComplete, self).get_initial().copy()
 
         build = self.get_object()
         if build.part.default_location is not None:
             try:
-                location = StockLocation.objects.get(pk=build.part.default_location.id)
+                location = StockLocation.objects.get(
+                    pk=build.part.default_location.id)
                 initials['location'] = location
             except StockLocation.DoesNotExist:
                 pass
@@ -234,10 +244,10 @@ class BuildComplete(AjaxUpdateView):
         context['taking'] = taking
 
         return context
-    
+
     def post(self, request, *args, **kwargs):
         """ Handle POST request. Mark the build as COMPLETE
-        
+
         - If the form validation passes, the Build objects completeBuild() method is called
         - Otherwise, the form is passed back to the client
         """
@@ -286,7 +296,8 @@ class BuildComplete(AjaxUpdateView):
 
                         if len(existing) > 0:
                             exists = ",".join([str(x) for x in existing])
-                            form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                            form.errors['serial_numbers'] = [
+                                _('The following serial numbers already exist: ({sn})'.format(sn=exists))]
                             valid = False
 
                     except ValidationError as e:
@@ -309,11 +320,12 @@ class BuildComplete(AjaxUpdateView):
         }
 
 
-class BuildDetail(DetailView):
+class BuildDetail(PermissionRequiredMixin, DetailView):
     """ Detail view of a single Build object. """
     model = Build
     template_name = 'build/detail.html'
     context_object_name = 'build'
+    permission_required = ('build.view_build')
 
     def get_context_data(self, **kwargs):
 
@@ -327,11 +339,12 @@ class BuildDetail(DetailView):
         return ctx
 
 
-class BuildAllocate(DetailView):
+class BuildAllocate(PermissionRequiredMixin, DetailView):
     """ View for allocating parts to a Build """
     model = Build
     context_object_name = 'build'
     template_name = 'build/allocate.html'
+    permission_required = ('build.change_build')
 
     def get_context_data(self, **kwargs):
         """ Provide extra context information for the Build allocation page """
@@ -346,7 +359,8 @@ class BuildAllocate(DetailView):
         context['bom_items'] = bom_items
         context['BuildStatus'] = BuildStatus
 
-        context['bom_price'] = build.part.get_price_info(build.quantity, buy=False)
+        context['bom_price'] = build.part.get_price_info(
+            build.quantity, buy=False)
 
         if str2bool(self.request.GET.get('edit', None)):
             context['editing'] = True
@@ -354,13 +368,15 @@ class BuildAllocate(DetailView):
         return context
 
 
-class BuildCreate(AjaxCreateView):
+class BuildCreate(PermissionRequiredMixin, AjaxCreateView):
     """ View to create a new Build object """
     model = Build
     context_object_name = 'build'
     form_class = forms.EditBuildForm
     ajax_form_title = 'Start new Build'
     ajax_template_name = 'modal_form.html'
+    permission_required = ('build.add_build')
+    permission_object = None
 
     def get_initial(self):
         """ Get initial parameters for Build creation.
@@ -386,14 +402,15 @@ class BuildCreate(AjaxCreateView):
         }
 
 
-class BuildUpdate(AjaxUpdateView):
+class BuildUpdate(PermissionRequiredMixin, AjaxUpdateView):
     """ View for editing a Build object """
-    
+
     model = Build
     form_class = forms.EditBuildForm
     context_object_name = 'build'
     ajax_form_title = 'Edit Build Details'
     ajax_template_name = 'modal_form.html'
+    permission_required = ('build.change_build')
 
     def get_data(self):
         return {
@@ -401,15 +418,16 @@ class BuildUpdate(AjaxUpdateView):
         }
 
 
-class BuildDelete(AjaxDeleteView):
+class BuildDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View to delete a build """
 
     model = Build
     ajax_template_name = 'build/delete_build.html'
     ajax_form_title = 'Delete Build'
+    permission_required = ('build.delete_build')
 
 
-class BuildItemDelete(AjaxDeleteView):
+class BuildItemDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View to 'unallocate' a BuildItem.
     Really we are deleting the BuildItem object from the database.
     """
@@ -418,6 +436,7 @@ class BuildItemDelete(AjaxDeleteView):
     ajax_template_name = 'build/delete_build_item.html'
     ajax_form_title = 'Unallocate Stock'
     context_object_name = 'item'
+    permission_required = ('build.delete_builditem')
 
     def get_data(self):
         return {
@@ -425,13 +444,15 @@ class BuildItemDelete(AjaxDeleteView):
         }
 
 
-class BuildItemCreate(AjaxCreateView):
+class BuildItemCreate(PermissionRequiredMixin, AjaxCreateView):
     """ View for allocating a new part to a build """
 
     model = BuildItem
     form_class = forms.EditBuildItemForm
     ajax_template_name = 'build/create_build_item.html'
     ajax_form_title = 'Allocate new Part'
+    permission_required = ('build.add_builditem')
+    permission_object = None
 
     part = None
     available_stock = None
@@ -469,23 +490,25 @@ class BuildItemCreate(AjaxCreateView):
                 self.part = Part.objects.get(pk=part_id)
 
                 query = form.fields['stock_item'].queryset
-                
+
                 # Only allow StockItem objects which match the current part
                 query = query.filter(part=part_id)
 
                 if build_id is not None:
                     try:
                         build = Build.objects.get(id=build_id)
-                        
+
                         if build.take_from is not None:
                             # Limit query to stock items that are downstream of the 'take_from' location
-                            query = query.filter(location__in=[loc for loc in build.take_from.getUniqueChildren()])
-                            
+                            query = query.filter(
+                                location__in=[loc for loc in build.take_from.getUniqueChildren()])
+
                     except Build.DoesNotExist:
                         pass
 
                     # Exclude StockItem objects which are already allocated to this build and part
-                    query = query.exclude(id__in=[item.stock_item.id for item in BuildItem.objects.filter(build=build_id, stock_item__part=part_id)])
+                    query = query.exclude(id__in=[item.stock_item.id for item in BuildItem.objects.filter(
+                        build=build_id, stock_item__part=part_id)])
 
                 form.fields['stock_item'].queryset = query
 
@@ -541,13 +564,14 @@ class BuildItemCreate(AjaxCreateView):
         return initials
 
 
-class BuildItemEdit(AjaxUpdateView):
+class BuildItemEdit(PermissionRequiredMixin, AjaxUpdateView):
     """ View to edit a BuildItem object """
 
     model = BuildItem
     ajax_template_name = 'modal_form.html'
     form_class = forms.EditBuildItemForm
     ajax_form_title = 'Edit Stock Allocation'
+    permission_required = ('build.change_builditem')
 
     def get_data(self):
         return {
@@ -565,7 +589,7 @@ class BuildItemEdit(AjaxUpdateView):
         form = super(BuildItemEdit, self).get_form()
 
         query = StockItem.objects.all()
-        
+
         if build_item.stock_item:
             part_id = build_item.stock_item.part.id
             query = query.filter(part=part_id)

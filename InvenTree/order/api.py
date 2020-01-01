@@ -6,8 +6,7 @@ JSON API for the Order app
 from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, permissions
-from rest_framework import filters
+from rest_framework import generics, filters
 from rest_framework.response import Response
 
 from django.conf import settings
@@ -58,7 +57,8 @@ class POList(generics.ListCreateAPIView):
         if 'part' in request.GET:
             try:
                 part = Part.objects.get(pk=request.GET['part'])
-                queryset = queryset.filter(id__in=[p.id for p in part.purchase_orders()])
+                queryset = queryset.filter(
+                    id__in=[p.id for p in part.purchase_orders()])
             except (Part.DoesNotExist, ValueError):
                 pass
 
@@ -79,15 +79,12 @@ class POList(generics.ListCreateAPIView):
 
             order = queryset.get(pk=item['pk'])
 
-            item['supplier__image'] = os.path.join(settings.MEDIA_URL, item['supplier__image'])
+            item['supplier__image'] = os.path.join(
+                settings.MEDIA_URL, item['supplier__image'])
             item['status_text'] = OrderStatus.label(item['status'])
             item['lines'] = order.lines.count()
 
         return Response(data)
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -113,10 +110,6 @@ class PODetail(generics.RetrieveUpdateAPIView):
     queryset = PurchaseOrder.objects.all()
     serializer_class = POSerializer
 
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
-
 
 class POLineItemList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PO Line Item objects
@@ -127,10 +120,6 @@ class POLineItemList(generics.ListCreateAPIView):
 
     queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -148,15 +137,12 @@ class POLineItemDetail(generics.RetrieveUpdateAPIView):
     queryset = PurchaseOrderLineItem
     serializer_class = POLineItemSerializer
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
 
 po_api_urls = [
     url(r'^order/(?P<pk>\d+)/?$', PODetail.as_view(), name='api-po-detail'),
     url(r'^order/?$', POList.as_view(), name='api-po-list'),
 
-    url(r'^line/(?P<pk>\d+)/?$', POLineItemDetail.as_view(), name='api-po-line-detail'),
+    url(r'^line/(?P<pk>\d+)/?$', POLineItemDetail.as_view(),
+        name='api-po-line-detail'),
     url(r'^line/?$', POLineItemList.as_view(), name='api-po-line-list'),
 ]

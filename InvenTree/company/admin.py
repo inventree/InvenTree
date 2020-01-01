@@ -7,6 +7,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.resources import ModelResource
 from import_export.fields import Field
 import import_export.widgets as widgets
+from guardian.admin import GuardedModelAdmin
 
 from .models import Company
 from .models import SupplierPart
@@ -26,7 +27,7 @@ class CompanyResource(ModelResource):
         clean_model_instances = True
 
 
-class CompanyAdmin(ImportExportModelAdmin):
+class CompanyAdmin(ImportExportModelAdmin, GuardedModelAdmin):
 
     resource_class = CompanyResource
 
@@ -40,7 +41,8 @@ class SupplierPartResource(ModelResource):
 
     part_name = Field(attribute='part__full_name', readonly=True)
 
-    supplier = Field(attribute='supplier', widget=widgets.ForeignKeyWidget(Company))
+    supplier = Field(attribute='supplier',
+                     widget=widgets.ForeignKeyWidget(Company))
 
     supplier_name = Field(attribute='supplier__name', readonly=True)
 
@@ -51,7 +53,7 @@ class SupplierPartResource(ModelResource):
         clean_model_instances = True
 
 
-class SupplierPartAdmin(ImportExportModelAdmin):
+class SupplierPartAdmin(ImportExportModelAdmin, GuardedModelAdmin):
 
     resource_class = SupplierPartResource
 
@@ -61,9 +63,11 @@ class SupplierPartAdmin(ImportExportModelAdmin):
 class SupplierPriceBreakResource(ModelResource):
     """ Class for managing SupplierPriceBreak data import/export """
 
-    part = Field(attribute='part', widget=widgets.ForeignKeyWidget(SupplierPart))
+    part = Field(attribute='part',
+                 widget=widgets.ForeignKeyWidget(SupplierPart))
 
-    currency = Field(attribute='currency', widget=widgets.ForeignKeyWidget(Currency))
+    currency = Field(attribute='currency',
+                     widget=widgets.ForeignKeyWidget(Currency))
 
     supplier_id = Field(attribute='part__supplier__pk', readonly=True)
 
@@ -82,7 +86,7 @@ class SupplierPriceBreakResource(ModelResource):
         clean_model_instances = True
 
 
-class SupplierPriceBreakAdmin(ImportExportModelAdmin):
+class SupplierPriceBreakAdmin(ImportExportModelAdmin, GuardedModelAdmin):
 
     resource_class = SupplierPriceBreakResource
 

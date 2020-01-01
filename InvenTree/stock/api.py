@@ -27,12 +27,13 @@ import os
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import generics, response, filters, permissions
+from rest_framework import generics, response, filters
 
 
 class StockCategoryTree(TreeSerializer):
     title = 'Stock'
     model = StockLocation
+    queryset = StockLocation.objects.all()
 
     @property
     def root_url(self):
@@ -57,7 +58,6 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = StockItem.objects.all()
     serializer_class = StockItemSerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
 
 class StockFilter(FilterSet):
@@ -65,6 +65,7 @@ class StockFilter(FilterSet):
 
     Allows greater-than / less-than filtering for stock quantity
     """
+    queryset = StockItem.objects.all()
 
     min_stock = NumberFilter(name='quantity', lookup_expr='gte')
     max_stock = NumberFilter(name='quantity', lookup_expr='lte')
@@ -81,44 +82,48 @@ class StockStocktake(APIView):
     - remove: Remove the quantity provided from stock
     - add: Add the quantity provided from stock
     """
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    queryset = StockItem.objects.all()
 
     def post(self, request, *args, **kwargs):
 
         if 'action' not in request.data:
-            raise ValidationError({'action': 'Stocktake action must be provided'})
+            raise ValidationError(
+                {'action': 'Stocktake action must be provided'})
 
         action = request.data['action']
 
         ACTIONS = ['stocktake', 'remove', 'add']
 
         if action not in ACTIONS:
-            raise ValidationError({'action': 'Action must be one of ' + ','.join(ACTIONS)})
+            raise ValidationError(
+                {'action': 'Action must be one of ' + ','.join(ACTIONS)})
 
         elif 'items[]' not in request.data:
-            raise ValidationError({'items[]:' 'Request must contain list of items'})
+            raise ValidationError(
+                {'items[]:' 'Request must contain list of items'})
 
         items = []
 
         # Ensure each entry is valid
         for entry in request.data['items[]']:
             if 'pk' not in entry:
-                raise ValidationError({'pk': 'Each entry must contain pk field'})
+                raise ValidationError(
+                    {'pk': 'Each entry must contain pk field'})
             elif 'quantity' not in entry:
-                raise ValidationError({'quantity': 'Each entry must contain quantity field'})
+                raise ValidationError(
+                    {'quantity': 'Each entry must contain quantity field'})
 
             item = {}
             try:
                 item['item'] = StockItem.objects.get(pk=entry['pk'])
             except StockItem.DoesNotExist:
-                raise ValidationError({'pk': 'No matching StockItem found for pk={pk}'.format(pk=entry['pk'])})
+                raise ValidationError(
+                    {'pk': 'No matching StockItem found for pk={pk}'.format(pk=entry['pk'])})
             try:
                 item['quantity'] = int(entry['quantity'])
             except ValueError:
-                raise ValidationError({'quantity': 'Quantity must be an integer'})
+                raise ValidationError(
+                    {'quantity': 'Quantity must be an integer'})
 
             if item['quantity'] < 0:
                 raise ValidationError({'quantity': 'Quantity must be >= 0'})
@@ -152,16 +157,15 @@ class StockStocktake(APIView):
 class StockMove(APIView):
     """ API endpoint for performing stock movements """
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    queryset = StockItem.objects.all()
 
     def post(self, request, *args, **kwargs):
 
         data = request.data
 
         if 'location' not in data:
-            raise ValidationError({'location': 'Destination must be specified'})
+            raise ValidationError(
+                {'location': 'Destination must be specified'})
 
         try:
             loc_id = int(data.get('location'))
@@ -175,11 +179,12 @@ class StockMove(APIView):
 
         if 'stock' not in data:
             raise ValidationError({'stock': 'Stock list must be specified'})
-        
+
         stock_list = data.get('stock')
 
         if type(stock_list) is not list:
-            raise ValidationError({'stock': 'Stock must be supplied as a list'})
+            raise ValidationError(
+                {'stock': 'Stock must be supplied as a list'})
 
         if 'notes' not in data:
             raise ValidationError({'notes': 'Notes field must be supplied'})
@@ -208,7 +213,8 @@ class StockMove(APIView):
             if quantity is None:
                 quantity = stock.quantity
 
-            stock.move(location, data.get('notes'), request.user, quantity=quantity)
+            stock.move(location, data.get('notes'),
+                       request.user, quantity=quantity)
 
         return Response({'success': 'Moved parts to {loc}'.format(
             loc=str(location)
@@ -225,10 +231,6 @@ class StockLocationList(generics.ListCreateAPIView):
     queryset = StockLocation.objects.all()
 
     serializer_class = LocationSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -263,14 +265,15 @@ class StockList(generics.ListCreateAPIView):
 
         try:
             part_detail = str2bool(self.request.GET.get('part_detail', None))
-            location_detail = str2bool(self.request.GET.get('location_detail', None))
+            location_detail = str2bool(
+                self.request.GET.get('location_detail', None))
         except AttributeError:
             part_detail = None
             location_detail = None
 
         kwargs['part_detail'] = part_detail
         kwargs['location_detail'] = location_detail
-        
+
         kwargs['context'] = self.get_serializer_context()
         return self.serializer_class(*args, **kwargs)
 
@@ -308,14 +311,16 @@ class StockList(generics.ListCreateAPIView):
         locations = {}
 
         for item in data:
-            item['part__image'] = os.path.join(settings.MEDIA_URL, item['part__image'])
+            item['part__image'] = os.path.join(
+                settings.MEDIA_URL, item['part__image'])
 
             loc_id = item['location']
 
             if loc_id:
                 if loc_id not in locations:
-                    locations[loc_id] = StockLocation.objects.get(pk=loc_id).pathstring
-                
+                    locations[loc_id] = StockLocation.objects.get(
+                        pk=loc_id).pathstring
+
                 item['location__path'] = locations[loc_id]
             else:
                 item['location__path'] = None
@@ -342,7 +347,8 @@ class StockList(generics.ListCreateAPIView):
 
                 # If the part is a Template part, select stock items for any "variant" parts under that template
                 if part.is_template:
-                    stock_list = stock_list.filter(part__in=[part.id for part in Part.objects.filter(variant_of=part_id)])
+                    stock_list = stock_list.filter(
+                        part__in=[part.id for part in Part.objects.filter(variant_of=part_id)])
                 else:
                     stock_list = stock_list.filter(part=part_id)
 
@@ -355,8 +361,9 @@ class StockList(generics.ListCreateAPIView):
         if loc_id:
             try:
                 location = StockLocation.objects.get(pk=loc_id)
-                stock_list = stock_list.filter(location__in=location.getUniqueChildren())
-                 
+                stock_list = stock_list.filter(
+                    location__in=location.getUniqueChildren())
+
             except StockLocation.DoesNotExist:
                 pass
 
@@ -366,7 +373,8 @@ class StockList(generics.ListCreateAPIView):
         if cat_id:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
-                stock_list = stock_list.filter(part__category__in=category.getUniqueChildren())
+                stock_list = stock_list.filter(
+                    part__category__in=category.getUniqueChildren())
 
             except PartCategory.DoesNotExist:
                 pass
@@ -390,10 +398,6 @@ class StockList(generics.ListCreateAPIView):
 
     serializer_class = StockItemSerializer
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -413,7 +417,6 @@ class StockStocktakeEndpoint(generics.UpdateAPIView):
 
     queryset = StockItem.objects.all()
     serializer_class = StockQuantitySerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
     def update(self, request, *args, **kwargs):
         object = self.get_object()
@@ -435,7 +438,6 @@ class StockTrackingList(generics.ListCreateAPIView):
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockTrackingSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -470,7 +472,6 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = StockLocation.objects.all()
     serializer_class = LocationSerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
 
 stock_endpoints = [

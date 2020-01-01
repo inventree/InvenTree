@@ -1,33 +1,28 @@
 {% extends "base.html" %}
-
 {% block page_title %}
 InvenTree | Index
 {% endblock %}
-
 {% block content %}
 <h3>InvenTree</h3>
 <hr>
+{% if starred %}
 {% include "InvenTree/starred_parts.html" with collapse_id="starred" %}
-
-{% if to_order %}
+{% elif to_order %}
 {% include "InvenTree/parts_to_order.html" with collapse_id="order" %}
-{% endif %}
-
-{% if to_build %}
+{% elif to_build %}
 {% include "InvenTree/parts_to_build.html" with collapse_id="build" %}
+{% else %}
+<script>
+window.location.replace('/part/');
+</script>
 {% endif %}
-
 {% endblock %}
-
 {% block js_load %}
 {{ block.super }}
 {% endblock %}
-
 {% block js_ready %}
 {{ block.super }}
-
 $("#to-build-table").bootstrapTable();
 $("#to-order-table").bootstrapTable();
 $("#starred-parts-table").bootstrapTable();
-
 {% endblock %}

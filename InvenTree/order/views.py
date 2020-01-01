@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
+from guardian.mixins import PermissionRequiredMixin, PermissionListMixin
 
 import logging
 
@@ -30,12 +31,13 @@ from InvenTree.status_codes import OrderStatus
 logger = logging.getLogger(__name__)
 
 
-class PurchaseOrderIndex(ListView):
+class PurchaseOrderIndex(PermissionListMixin, ListView):
     """ List view for all purchase orders """
 
     model = PurchaseOrder
     template_name = 'order/purchase_orders.html'
     context_object_name = 'orders'
+    permission_required = ('order.view_purchaseorder')
 
     def get_queryset(self):
         """ Retrieve the list of purchase orders,
@@ -53,12 +55,13 @@ class PurchaseOrderIndex(ListView):
         return ctx
 
 
-class PurchaseOrderDetail(DetailView):
+class PurchaseOrderDetail(PermissionRequiredMixin, DetailView):
     """ Detail view for a PurchaseOrder object """
 
     context_object_name = 'order'
     queryset = PurchaseOrder.objects.all().prefetch_related('lines')
     template_name = 'order/purchase_order_detail.html'
+    permission_required = ('order.view_purchaseorder')
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -68,12 +71,14 @@ class PurchaseOrderDetail(DetailView):
         return ctx
 
 
-class PurchaseOrderCreate(AjaxCreateView):
+class PurchaseOrderCreate(PermissionRequiredMixin, AjaxCreateView):
     """ View for creating a new PurchaseOrder object using a modal form """
 
     model = PurchaseOrder
     ajax_form_title = "Create Purchase Order"
     form_class = order_forms.EditPurchaseOrderForm
+    permission_required = ('order.add_purchaseorder')
+    permission_object = None
 
     def get_initial(self):
         initials = super().get_initial().copy()
@@ -98,12 +103,13 @@ class PurchaseOrderCreate(AjaxCreateView):
         self.object.save()
 
 
-class PurchaseOrderEdit(AjaxUpdateView):
+class PurchaseOrderEdit(PermissionRequiredMixin, AjaxUpdateView):
     """ View for editing a PurchaseOrder using a modal form """
 
     model = PurchaseOrder
     ajax_form_title = 'Edit Purchase Order'
     form_class = order_forms.EditPurchaseOrderForm
+    permission_required = ('order.change_purchaseorder')
 
     def get_form(self):
 
@@ -118,13 +124,14 @@ class PurchaseOrderEdit(AjaxUpdateView):
         return form
 
 
-class PurchaseOrderCancel(AjaxUpdateView):
+class PurchaseOrderCancel(PermissionRequiredMixin, AjaxUpdateView):
     """ View for cancelling a purchase order """
 
     model = PurchaseOrder
     ajax_form_title = 'Cancel Order'
     ajax_template_name = 'order/order_cancel.html'
     form_class = order_forms.CancelPurchaseOrderForm
+    permission_required = ('order.change_purchaseorder')
 
     def post(self, request, *args, **kwargs):
         """ Mark the PO as 'CANCELLED' """
@@ -151,13 +158,14 @@ class PurchaseOrderCancel(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class PurchaseOrderIssue(AjaxUpdateView):
+class PurchaseOrderIssue(PermissionRequiredMixin, AjaxUpdateView):
     """ View for changing a purchase order from 'PENDING' to 'ISSUED' """
 
     model = PurchaseOrder
     ajax_form_title = 'Issue Order'
     ajax_template_name = "order/order_issue.html"
     form_class = order_forms.IssuePurchaseOrderForm
+    permission_required = ('order.change_purchaseorder')
 
     def post(self, request, *args, **kwargs):
         """ Mark the purchase order as 'PLACED' """
@@ -184,7 +192,7 @@ class PurchaseOrderIssue(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class PurchaseOrderComplete(AjaxUpdateView):
+class PurchaseOrderComplete(PermissionRequiredMixin, AjaxUpdateView):
     """ View for marking a PurchaseOrder as complete.
     """
 
@@ -193,6 +201,7 @@ class PurchaseOrderComplete(AjaxUpdateView):
     ajax_template_name = "order/order_complete.html"
     ajax_form_title = "Complete Order"
     context_object_name = 'order'
+    permission_required = ('order.change_purchaseorder')
 
     def get_context_data(self):
 
@@ -220,7 +229,7 @@ class PurchaseOrderComplete(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class PurchaseOrderExport(AjaxView):
+class PurchaseOrderExport(PermissionRequiredMixin, AjaxView):
     """ File download for a purchase order
 
     - File format can be optionally passed as a query param e.g. ?format=CSV
@@ -228,6 +237,7 @@ class PurchaseOrderExport(AjaxView):
     """
 
     model = PurchaseOrder
+    permission_required = ('order.view_purchaseorder')
 
     def get(self, request, *args, **kwargs):
 
@@ -248,7 +258,7 @@ class PurchaseOrderExport(AjaxView):
         return DownloadFile(filedata, filename)
 
 
-class PurchaseOrderReceive(AjaxUpdateView):
+class PurchaseOrderReceive(PermissionRequiredMixin, AjaxUpdateView):
     """ View for receiving parts which are outstanding against a PurchaseOrder.
 
     Any parts which are outstanding are listed.
@@ -259,6 +269,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
     form_class = order_forms.ReceivePurchaseOrderForm
     ajax_form_title = "Receive Parts"
     ajax_template_name = "order/receive_parts.html"
+    permission_required = ('order.change_purchaseorder')
 
     # Where the parts will be going (selected in POST request)
     destination = None
@@ -394,10 +405,11 @@ class PurchaseOrderReceive(AjaxUpdateView):
             if not line.part:
                 continue
 
-            self.order.receive_line_item(line, self.destination, line.receive_quantity, self.request.user)
+            self.order.receive_line_item(
+                line, self.destination, line.receive_quantity, self.request.user)
 
 
-class OrderParts(AjaxView):
+class OrderParts(PermissionRequiredMixin, AjaxView):
     """ View for adding various SupplierPart items to a Purchase Order.
 
     SupplierParts can be selected from a variety of 'sources':
@@ -411,6 +423,7 @@ class OrderParts(AjaxView):
 
     ajax_form_title = "Order Parts"
     ajax_template_name = 'order/order_wizard/select_parts.html'
+    permission_required = ('order.change_purchaseorder')
 
     # List of Parts we wish to order
     parts = []
@@ -420,7 +433,8 @@ class OrderParts(AjaxView):
 
         ctx = {}
 
-        ctx['parts'] = sorted(self.parts, key=lambda part: int(part.order_quantity), reverse=True)
+        ctx['parts'] = sorted(self.parts, key=lambda part: int(
+            part.order_quantity), reverse=True)
         ctx['suppliers'] = self.suppliers
 
         return ctx
@@ -441,7 +455,8 @@ class OrderParts(AjaxView):
             supplier_part_id = part.order_supplier
 
             try:
-                supplier = SupplierPart.objects.get(pk=supplier_part_id).supplier
+                supplier = SupplierPart.objects.get(
+                    pk=supplier_part_id).supplier
             except SupplierPart.DoesNotExist:
                 continue
 
@@ -449,7 +464,7 @@ class OrderParts(AjaxView):
                 supplier.order_items = []
                 supplier.selected_purchase_order = None
                 suppliers[supplier.name] = supplier
-                
+
             suppliers[supplier.name].order_items.append(part)
 
         self.suppliers = [suppliers[key] for key in suppliers.keys()]
@@ -467,7 +482,7 @@ class OrderParts(AjaxView):
         if 'stock[]' in self.request.GET:
 
             stock_id_list = self.request.GET.getlist('stock[]')
-            
+
             """ Get a list of all the parts associated with the stock items.
             - Base part must be purchaseable.
             - Return a set of corresponding Part IDs
@@ -565,24 +580,25 @@ class OrderParts(AjaxView):
 
         # Extract part information from the form
         for item in self.request.POST:
-            
+
             if item.startswith('part-supplier-'):
-                
+
                 pk = item.replace('part-supplier-', '')
-                
+
                 # Check that the part actually exists
                 try:
                     part = Part.objects.get(id=pk)
                 except (Part.DoesNotExist, ValueError):
                     continue
-                
+
                 supplier_part_id = self.request.POST[item]
-                
+
                 quantity = self.request.POST.get('part-quantity-' + str(pk), 0)
 
                 # Ensure a valid supplier has been passed
                 try:
-                    supplier_part = SupplierPart.objects.get(id=supplier_part_id)
+                    supplier_part = SupplierPart.objects.get(
+                        id=supplier_part_id)
                 except (SupplierPart.DoesNotExist, ValueError):
                     supplier_part = None
 
@@ -622,7 +638,8 @@ class OrderParts(AjaxView):
 
                 # Ensure that a valid purchase order has been passed
                 try:
-                    purchase_order = PurchaseOrder.objects.get(pk=purchase_order_id)
+                    purchase_order = PurchaseOrder.objects.get(
+                        pk=purchase_order_id)
                 except (PurchaseOrder.DoesNotExist, ValueError):
                     purchase_order = None
 
@@ -673,9 +690,11 @@ class OrderParts(AjaxView):
 
             # Check that the purchase order does actually exist
             try:
-                order = PurchaseOrder.objects.get(pk=supplier.selected_purchase_order)
+                order = PurchaseOrder.objects.get(
+                    pk=supplier.selected_purchase_order)
             except PurchaseOrder.DoesNotExist:
-                logger.critical('Could not add items to purchase order {po} - Order does not exist'.format(po=supplier.selected_purchase_order))
+                logger.critical('Could not add items to purchase order {po} - Order does not exist'.format(
+                    po=supplier.selected_purchase_order))
                 continue
 
             for item in supplier.order_items:
@@ -686,12 +705,14 @@ class OrderParts(AjaxView):
                     if quantity <= 0:
                         continue
                 except ValueError:
-                    logger.warning("Did not add part to purchase order - incorrect quantity")
+                    logger.warning(
+                        "Did not add part to purchase order - incorrect quantity")
                     continue
 
                 # Check that the supplier part does actually exist
                 try:
-                    supplier_part = SupplierPart.objects.get(pk=item.order_supplier)
+                    supplier_part = SupplierPart.objects.get(
+                        pk=item.order_supplier)
                 except SupplierPart.DoesNotExist:
                     logger.critical("Could not add part '{part}' to purchase order - selected supplier part '{sp}' does not exist.".format(
                         part=item,
@@ -701,7 +722,7 @@ class OrderParts(AjaxView):
                 order.add_line_item(supplier_part, quantity)
 
 
-class POLineItemCreate(AjaxCreateView):
+class POLineItemCreate(PermissionRequiredMixin, AjaxCreateView):
     """ AJAX view for creating a new PurchaseOrderLineItem object
     """
 
@@ -709,6 +730,8 @@ class POLineItemCreate(AjaxCreateView):
     context_object_name = 'line'
     form_class = order_forms.EditPurchaseOrderLineItemForm
     ajax_form_title = 'Add Line Item'
+    permission_required = ('order.add_purchaseorderlineitem')
+    permission_object = None
 
     def post(self, request, *arg, **kwargs):
 
@@ -736,7 +759,8 @@ class POLineItemCreate(AjaxCreateView):
 
             if order is not None:
                 if not sp.supplier == order.supplier:
-                    form.errors['part'] = [_('Supplier must match for Part and Order')]
+                    form.errors['part'] = [
+                        _('Supplier must match for Part and Order')]
                     valid = False
 
         except (SupplierPart.DoesNotExist, ValueError):
@@ -754,7 +778,7 @@ class POLineItemCreate(AjaxCreateView):
             data['text'] = str(self.object)
         else:
             self.object = None
-        
+
         return self.renderJsonResponse(request, form, data,)
 
     def get_form(self):
@@ -816,7 +840,7 @@ class POLineItemCreate(AjaxCreateView):
         return initials
 
 
-class POLineItemEdit(AjaxUpdateView):
+class POLineItemEdit(PermissionRequiredMixin, AjaxUpdateView):
     """ View for editing a PurchaseOrderLineItem object in a modal form.
     """
 
@@ -824,6 +848,7 @@ class POLineItemEdit(AjaxUpdateView):
     form_class = order_forms.EditPurchaseOrderLineItemForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = 'Edit Line Item'
+    permission_required = ('order.change_purchaseorderlineitem')
 
     def get_form(self):
         form = super().get_form()
@@ -834,14 +859,15 @@ class POLineItemEdit(AjaxUpdateView):
         return form
 
 
-class POLineItemDelete(AjaxDeleteView):
+class POLineItemDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View for deleting a PurchaseOrderLineItem object in a modal form
     """
 
     model = PurchaseOrderLineItem
     ajax_form_title = 'Delete Line Item'
     ajax_template_name = 'order/po_lineitem_delete.html'
-    
+    permission_required = ('order.delete_purchaseorderlineitem')
+
     def get_data(self):
         return {
             'danger': 'Deleted line item',

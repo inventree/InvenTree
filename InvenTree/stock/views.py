@@ -11,6 +11,7 @@ from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 from django.urls import reverse
+from guardian.mixins import PermissionRequiredMixin, PermissionListMixin
 
 from django.utils.translation import ugettext as _
 
@@ -39,12 +40,13 @@ from .forms import SerializeStockForm
 from .forms import ExportOptionsForm
 
 
-class StockIndex(ListView):
+class StockIndex(PermissionListMixin, ListView):
     """ StockIndex view loads all StockLocation and StockItem object
     """
     model = StockItem
     template_name = 'stock/location.html'
     context_obect_name = 'locations'
+    permission_required = ('stock.view_stockitem')
 
     def get_context_data(self, **kwargs):
         context = super(StockIndex, self).get_context_data(**kwargs).copy()
@@ -61,7 +63,7 @@ class StockIndex(ListView):
         return context
 
 
-class StockLocationDetail(DetailView):
+class StockLocationDetail(PermissionRequiredMixin, DetailView):
     """
     Detailed view of a single StockLocation object
     """
@@ -70,9 +72,10 @@ class StockLocationDetail(DetailView):
     template_name = 'stock/location.html'
     queryset = StockLocation.objects.all()
     model = StockLocation
+    permission_required = ('stock.view_stocklocation')
 
 
-class StockItemDetail(DetailView):
+class StockItemDetail(PermissionRequiredMixin, DetailView):
     """
     Detailed view of a single StockItem object
     """
@@ -81,9 +84,10 @@ class StockItemDetail(DetailView):
     template_name = 'stock/item.html'
     queryset = StockItem.objects.all()
     model = StockItem
+    permission_required = ('stock.view_stockitem')
 
 
-class StockLocationEdit(AjaxUpdateView):
+class StockLocationEdit(PermissionRequiredMixin, AjaxUpdateView):
     """
     View for editing details of a StockLocation.
     This view is used with the EditStockLocationForm to deliver a modal form to the web view
@@ -94,6 +98,7 @@ class StockLocationEdit(AjaxUpdateView):
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Location')
+    permission_required = ('stock.change_stocklocation')
 
     def get_form(self):
         """ Customize form data for StockLocation editing.
@@ -107,17 +112,19 @@ class StockLocationEdit(AjaxUpdateView):
 
         # Remove any invalid choices for the 'parent' field
         parent_choices = StockLocation.objects.all()
-        parent_choices = parent_choices.exclude(id__in=location.getUniqueChildren())
+        parent_choices = parent_choices.exclude(
+            id__in=location.getUniqueChildren())
 
         form.fields['parent'].queryset = parent_choices
 
         return form
 
 
-class StockLocationQRCode(QRCodeView):
+class StockLocationQRCode(PermissionRequiredMixin, QRCodeView):
     """ View for displaying a QR code for a StockLocation object """
 
     ajax_form_title = _("Stock Location QR code")
+    permission_required = ('stock.view_stocklocation')
 
     def get_qr_data(self):
         """ Generate QR code data for the StockLocation """
@@ -128,12 +135,13 @@ class StockLocationQRCode(QRCodeView):
             return None
 
 
-class StockExportOptions(AjaxView):
+class StockExportOptions(PermissionRequiredMixin, AjaxView):
     """ Form for selecting StockExport options """
 
     model = StockLocation
     ajax_form_title = _('Stock Export Options')
     form_class = ExportOptionsForm
+    permission_required = ('stock.view_stocklocation')
 
     def post(self, request, *args, **kwargs):
 
@@ -160,21 +168,22 @@ class StockExportOptions(AjaxView):
         return self.renderJsonResponse(request, self.form_class())
 
 
-class StockExport(AjaxView):
+class StockExport(PermissionRequiredMixin, AjaxView):
     """ Export stock data from a particular location.
     Returns a file containing stock information for that location.
     """
 
     model = StockItem
+    permission_required = ('stock.view_stockitem')
 
     def get(self, request, *args, **kwargs):
 
         export_format = request.GET.get('format', 'csv').lower()
-        
+
         # Check if a particular location was specified
         loc_id = request.GET.get('location', None)
         location = None
-        
+
         if loc_id:
             try:
                 location = StockLocation.objects.get(pk=loc_id)
@@ -228,7 +237,8 @@ class StockExport(AjaxView):
         stock_items = stock_items.filter(belongs_to=None)
 
         # Pre-fetch related fields to reduce DB queries
-        stock_items = stock_items.prefetch_related('part', 'supplier_part__supplier', 'location', 'purchase_order', 'build')
+        stock_items = stock_items.prefetch_related(
+            'part', 'supplier_part__supplier', 'location', 'purchase_order', 'build')
 
         dataset = StockItemResource().export(queryset=stock_items)
 
@@ -237,10 +247,11 @@ class StockExport(AjaxView):
         return DownloadFile(filedata, filename)
 
 
-class StockItemQRCode(QRCodeView):
+class StockItemQRCode(PermissionRequiredMixin, QRCodeView):
     """ View for displaying a QR code for a StockItem object """
 
     ajax_form_title = _("Stock Item QR Code")
+    permission_required = ('stock.view_stockitem')
 
     def get_qr_data(self):
         """ Generate QR code data for the StockItem """
@@ -251,21 +262,22 @@ class StockItemQRCode(QRCodeView):
             return None
 
 
-class StockAdjust(AjaxView, FormMixin):
+class StockAdjust(PermissionRequiredMixin, AjaxView, FormMixin):
     """ View for enacting simple stock adjustments:
-    
+
     - Take items from stock
     - Add items to stock
     - Count items
     - Move stock
     - Delete stock items
-    
+
     """
 
     ajax_template_name = 'stock/stock_adjust.html'
     ajax_form_title = _('Adjust Stock')
     form_class = AdjustStockForm
     stock_items = []
+    permission_required = ('stock.change_stockitem')
 
     def get_GET_items(self):
         """ Return list of stock items initally requested using GET.
@@ -319,7 +331,7 @@ class StockAdjust(AjaxView, FormMixin):
 
         for item in self.request.POST:
             if item.startswith('stock-id-'):
-                
+
                 pk = item.replace('stock-id-', '')
                 q = self.request.POST[item]
 
@@ -380,7 +392,7 @@ class StockAdjust(AjaxView, FormMixin):
         }
 
         self.ajax_form_title = titles[self.stock_action]
-        
+
         # Save list of items!
         self.stock_items = self.get_GET_items()
 
@@ -390,7 +402,8 @@ class StockAdjust(AjaxView, FormMixin):
 
         self.request = request
 
-        self.stock_action = request.POST.get('stock_action', 'invalid').strip().lower()
+        self.stock_action = request.POST.get(
+            'stock_action', 'invalid').strip().lower()
 
         # Update list of stock items
         self.stock_items = self.get_POST_items()
@@ -398,9 +411,9 @@ class StockAdjust(AjaxView, FormMixin):
         form = self.get_form()
 
         valid = form.is_valid()
-        
+
         for item in self.stock_items:
-            
+
             try:
                 item.new_quantity = Decimal(item.new_quantity)
             except ValueError:
@@ -416,7 +429,8 @@ class StockAdjust(AjaxView, FormMixin):
             if self.stock_action in ['move', 'take']:
 
                 if item.new_quantity > item.quantity:
-                    item.error = _('Quantity must not exceed {x}'.format(x=item.quantity))
+                    item.error = _(
+                        'Quantity must not exceed {x}'.format(x=item.quantity))
                     valid = False
                     continue
 
@@ -443,7 +457,7 @@ class StockAdjust(AjaxView, FormMixin):
 
                 # Was the entire stock taken?
                 item = self.stock_items[0]
-                
+
                 if item.quantity == 0:
                     # Instruct the form to redirect
                     data['url'] = reverse('stock-index')
@@ -459,7 +473,8 @@ class StockAdjust(AjaxView, FormMixin):
             set_default_loc = str2bool(self.request.POST.get('set_loc', False))
 
             try:
-                destination = StockLocation.objects.get(id=self.request.POST.get('destination'))
+                destination = StockLocation.objects.get(
+                    id=self.request.POST.get('destination'))
             except StockLocation.DoesNotExist:
                 pass
             except ValueError:
@@ -483,7 +498,7 @@ class StockAdjust(AjaxView, FormMixin):
             return 'No action performed'
 
     def do_add(self):
-        
+
         count = 0
         note = self.request.POST['note']
 
@@ -513,12 +528,12 @@ class StockAdjust(AjaxView, FormMixin):
         return _("Removed stock from {n} items".format(n=count))
 
     def do_count(self):
-        
+
         count = 0
         note = self.request.POST['note']
 
         for item in self.stock_items:
-            
+
             item.stocktake(item.new_quantity, self.request.user, notes=note)
 
             count += 1
@@ -541,18 +556,19 @@ class StockAdjust(AjaxView, FormMixin):
             if set_loc:
                 item.part.default_location = destination
                 item.part.save()
-            
+
             # Do not move to the same location (unless the quantity is different)
             if destination == item.location and item.new_quantity == item.quantity:
                 continue
 
-            item.move(destination, note, self.request.user, quantity=item.new_quantity)
+            item.move(destination, note, self.request.user,
+                      quantity=item.new_quantity)
 
             count += 1
 
         if count == 0:
             return _('No items were moved')
-        
+
         else:
             return _('Moved {n} items to {dest}'.format(
                 n=count,
@@ -565,7 +581,7 @@ class StockAdjust(AjaxView, FormMixin):
         # note = self.request.POST['note']
 
         for item in self.stock_items:
-            
+
             # TODO - In the future, StockItems should not be 'deleted'
             # TODO - Instead, they should be marked as "inactive"
 
@@ -576,7 +592,7 @@ class StockAdjust(AjaxView, FormMixin):
         return _("Deleted {n} stock items".format(n=count))
 
 
-class StockItemEdit(AjaxUpdateView):
+class StockItemEdit(PermissionRequiredMixin, AjaxUpdateView):
     """
     View for editing details of a single StockItem
     """
@@ -586,6 +602,7 @@ class StockItemEdit(AjaxUpdateView):
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Item')
+    permission_required = ('stock.change_stockitem')
 
     def get_form(self):
         """ Get form for StockItem editing.
@@ -611,7 +628,7 @@ class StockItemEdit(AjaxUpdateView):
         return form
 
 
-class StockLocationCreate(AjaxCreateView):
+class StockLocationCreate(PermissionRequiredMixin, AjaxCreateView):
     """
     View for creating a new StockLocation
     A parent location (another StockLocation object) can be passed as a query parameter
@@ -622,6 +639,8 @@ class StockLocationCreate(AjaxCreateView):
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Location')
+    permission_required = ('stock.add_stocklocation')
+    permission_object = None
 
     def get_initial(self):
         initials = super(StockLocationCreate, self).get_initial().copy()
@@ -637,13 +656,14 @@ class StockLocationCreate(AjaxCreateView):
         return initials
 
 
-class StockItemSerialize(AjaxUpdateView):
+class StockItemSerialize(PermissionRequiredMixin, AjaxUpdateView):
     """ View for manually serializing a StockItem """
 
     model = StockItem
     ajax_template_name = 'stock/item_serialize.html'
     ajax_form_title = _('Serialize Stock')
     form_class = SerializeStockForm
+    permission_required = ('stock.view_stockitem')
 
     def get_initial(self):
 
@@ -657,7 +677,7 @@ class StockItemSerialize(AjaxUpdateView):
         return initials
 
     def get(self, request, *args, **kwargs):
-        
+
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -685,13 +705,14 @@ class StockItemSerialize(AjaxUpdateView):
             form.errors['serial_numbers'] = e.messages
             valid = False
             numbers = []
-        
+
         if valid:
             try:
-                item.serializeStock(quantity, numbers, user, notes=notes, location=destination)
+                item.serializeStock(quantity, numbers, user,
+                                    notes=notes, location=destination)
             except ValidationError as e:
                 messages = e.message_dict
-                
+
                 for k in messages.keys():
                     if k in ['quantity', 'destination', 'serial_numbers']:
                         form.errors[k] = messages[k]
@@ -707,7 +728,7 @@ class StockItemSerialize(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data=data)
 
 
-class StockItemCreate(AjaxCreateView):
+class StockItemCreate(PermissionRequiredMixin, AjaxCreateView):
     """
     View for creating a new StockItem
     Parameters can be pre-filled by passing query items:
@@ -723,6 +744,8 @@ class StockItemCreate(AjaxCreateView):
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Item')
+    permission_required = ('stock.add_stockitem')
+    permission_object = None
 
     def get_form(self):
         """ Get form for StockItem creation.
@@ -738,7 +761,7 @@ class StockItemCreate(AjaxCreateView):
 
             try:
                 part = Part.objects.get(id=part_id)
-                
+
                 # Hide the 'part' field (as a valid part is selected)
                 form.fields['part'].widget = HiddenInput()
 
@@ -860,7 +883,8 @@ class StockItemCreate(AjaxCreateView):
 
                             if len(existing) > 0:
                                 exists = ",".join([str(x) for x in existing])
-                                form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                                form.errors['serial_numbers'] = [
+                                    _('The following serial numbers already exist: ({sn})'.format(sn=exists))]
                                 valid = False
 
                             # At this point we have a list of serial numbers which we know are valid,
@@ -895,7 +919,7 @@ class StockItemCreate(AjaxCreateView):
                     # We need to call _post_clean() here because it is prevented in the form implementation
                     form.clean()
                     form._post_clean()
-                    
+
                     item = form.save(commit=False)
                     item.save(user=request.user)
 
@@ -908,7 +932,7 @@ class StockItemCreate(AjaxCreateView):
         return self.renderJsonResponse(request, form, data=data)
 
 
-class StockLocationDelete(AjaxDeleteView):
+class StockLocationDelete(PermissionRequiredMixin, AjaxDeleteView):
     """
     View to delete a StockLocation
     Presents a deletion confirmation form to the user
@@ -919,9 +943,10 @@ class StockLocationDelete(AjaxDeleteView):
     ajax_template_name = 'stock/location_delete.html'
     context_object_name = 'location'
     ajax_form_title = _('Delete Stock Location')
+    permission_required = ('stock.delete_stocklocation')
 
 
-class StockItemDelete(AjaxDeleteView):
+class StockItemDelete(PermissionRequiredMixin, AjaxDeleteView):
     """
     View to delete a StockItem
     Presents a deletion confirmation form to the user
@@ -932,9 +957,10 @@ class StockItemDelete(AjaxDeleteView):
     ajax_template_name = 'stock/item_delete.html'
     context_object_name = 'item'
     ajax_form_title = _('Delete Stock Item')
+    permission_required = ('stock.delete_stockitem')
 
 
-class StockItemTrackingDelete(AjaxDeleteView):
+class StockItemTrackingDelete(PermissionRequiredMixin, AjaxDeleteView):
     """
     View to delete a StockItemTracking object
     Presents a deletion confirmation form to the user
@@ -943,9 +969,10 @@ class StockItemTrackingDelete(AjaxDeleteView):
     model = StockItemTracking
     ajax_template_name = 'stock/tracking_delete.html'
     ajax_form_title = _('Delete Stock Tracking Entry')
+    permission_required = ('stock.delete_stockitemtracking')
 
 
-class StockTrackingIndex(ListView):
+class StockTrackingIndex(PermissionRequiredMixin, ListView):
     """
     StockTrackingIndex provides a page to display StockItemTracking objects
     """
@@ -953,23 +980,27 @@ class StockTrackingIndex(ListView):
     model = StockItemTracking
     template_name = 'stock/tracking.html'
     context_object_name = 'items'
+    permission_required = ('stock.view_stockitemtracking')
 
 
-class StockItemTrackingEdit(AjaxUpdateView):
+class StockItemTrackingEdit(PermissionRequiredMixin, AjaxUpdateView):
     """ View for editing a StockItemTracking object """
 
     model = StockItemTracking
     ajax_form_title = _('Edit Stock Tracking Entry')
     form_class = TrackingEntryForm
+    permission_required = ('stock.change_stockitemtracking')
 
 
-class StockItemTrackingCreate(AjaxCreateView):
+class StockItemTrackingCreate(PermissionRequiredMixin, AjaxCreateView):
     """ View for creating a new StockItemTracking object.
     """
 
     model = StockItemTracking
     ajax_form_title = _("Add Stock Tracking Entry")
     form_class = TrackingEntryForm
+    permission_required = ('stock.add_stockitemtracking')
+    permission_object = None
 
     def post(self, request, *args, **kwargs):
 

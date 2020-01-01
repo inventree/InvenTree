@@ -1,34 +1,9 @@
-from django.shortcuts import HttpResponseRedirect
-from django.urls import reverse_lazy
 from django.db import connection
 import logging
 import time
 import operator
 
 logger = logging.getLogger(__name__)
-
-
-class AuthRequiredMiddleware(object):
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        # Code to be executed for each request before
-        # the view (and later middleware) are called.
-
-        assert hasattr(request, 'user')
-
-        response = self.get_response(request)
-
-        # Redirect any unauthorized HTTP requests to the login page
-        if not request.user.is_authenticated:
-            if not request.path_info == reverse_lazy('login') and not request.path_info.startswith('/api/'):
-                return HttpResponseRedirect(reverse_lazy('login'))
-
-        # Code to be executed for each request/response after
-        # the view is called.
-
-        return response
 
 
 class QueryCountMiddleware(object):

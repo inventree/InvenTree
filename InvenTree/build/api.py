@@ -6,8 +6,7 @@ JSON API for the Build app
 from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
-from rest_framework import generics, permissions
+from rest_framework import filters, generics
 
 from django.conf.urls import url, include
 
@@ -17,17 +16,13 @@ from .serializers import BuildSerializer, BuildItemSerializer
 
 class BuildList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of Build objects.
-    
+
     - GET: Return list of objects (with filters)
     - POST: Create a new Build object
     """
 
     queryset = Build.objects.all()
     serializer_class = BuildSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -46,10 +41,6 @@ class BuildDetail(generics.RetrieveUpdateAPIView):
     queryset = Build.objects.all()
     serializer_class = BuildSerializer
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
 
 class BuildItemList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of BuildItem objects
@@ -57,7 +48,6 @@ class BuildItemList(generics.ListCreateAPIView):
     - GET: Return list of objects
     - POST: Create a new BuildItem object
     """
-
     serializer_class = BuildItemSerializer
 
     def get_queryset(self):
@@ -78,10 +68,6 @@ class BuildItemList(generics.ListCreateAPIView):
             query = query.filter(stock_item__part=part_pk)
 
         return query
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend,

@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions
+from rest_framework import generics
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from .serializers import UserSerializer
@@ -14,7 +14,6 @@ class UserDetail(generics.RetrieveAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
 
 class UserList(generics.ListAPIView):
@@ -22,7 +21,6 @@ class UserList(generics.ListAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
 
 class GetAuthToken(ObtainAuthToken):

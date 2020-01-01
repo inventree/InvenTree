@@ -12,8 +12,8 @@ from django.db.models import Sum
 
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework import filters, serializers
-from rest_framework import generics, permissions
+from rest_framework import filters, serializers, generics
+from rest_framework_guardian import filters as guardian_filters
 
 from django.conf.urls import url, include
 from django.urls import reverse
@@ -36,7 +36,8 @@ class PartCategoryTree(TreeSerializer):
 
     title = "Parts"
     model = PartCategory
-    
+    queryset = PartCategory.objects.all()
+
     @property
     def root_url(self):
         return reverse('part-index')
@@ -55,14 +56,11 @@ class CategoryList(generics.ListCreateAPIView):
     queryset = PartCategory.objects.all()
     serializer_class = CategorySerializer
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -85,16 +83,14 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single PartCategory object """
     serializer_class = CategorySerializer
     queryset = PartCategory.objects.all()
+    filter_backends = [guardian_filters.ObjectPermissionsFilter]
 
 
 class PartDetail(generics.RetrieveUpdateAPIView):
     """ API endpoint for detail view of a single Part object """
     queryset = Part.objects.all()
     serializer_class = PartSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    filter_backends = [guardian_filters.ObjectPermissionsFilter]
 
 
 class PartList(generics.ListCreateAPIView):
@@ -105,6 +101,7 @@ class PartList(generics.ListCreateAPIView):
     """
 
     serializer_class = PartSerializer
+    filter_backends = [guardian_filters.ObjectPermissionsFilter]
 
     def list(self, request, *args, **kwargs):
         """
@@ -151,7 +148,8 @@ class PartList(generics.ListCreateAPIView):
 
             if cat_id:
                 if cat_id not in categories:
-                    categories[cat_id] = PartCategory.objects.get(pk=cat_id).pathstring
+                    categories[cat_id] = PartCategory.objects.get(
+                        pk=cat_id).pathstring
 
                 item['category__name'] = categories[cat_id]
             else:
@@ -170,7 +168,8 @@ class PartList(generics.ListCreateAPIView):
         if cat_id:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
-                parts_list = parts_list.filter(category__in=category.getUniqueChildren())
+                parts_list = parts_list.filter(
+                    category__in=category.getUniqueChildren())
             except PartCategory.DoesNotExist:
                 pass
 
@@ -178,10 +177,6 @@ class PartList(generics.ListCreateAPIView):
         parts_list = self.get_serializer_class().setup_eager_loading(parts_list)
 
         return parts_list
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -219,6 +214,7 @@ class PartStarDetail(generics.RetrieveDestroyAPIView):
 
     queryset = PartStar.objects.all()
     serializer_class = PartStarSerializer
+    filter_backends = [guardian_filters.ObjectPermissionsFilter]
 
 
 class PartStarList(generics.ListCreateAPIView):
@@ -230,6 +226,7 @@ class PartStarList(generics.ListCreateAPIView):
 
     queryset = PartStar.objects.all()
     serializer_class = PartStarSerializer
+    filter_backends = [guardian_filters.ObjectPermissionsFilter]
 
     def create(self, request, *args, **kwargs):
 
@@ -243,10 +240,6 @@ class PartStarList(generics.ListCreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -273,12 +266,9 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
     queryset = PartParameterTemplate.objects.all()
     serializer_class = PartParameterTemplateSerializer
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -296,12 +286,9 @@ class PartParameterList(generics.ListCreateAPIView):
     queryset = PartParameter.objects.all()
     serializer_class = PartParameterSerializer
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
-        DjangoFilterBackend
+        DjangoFilterBackend,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -318,13 +305,15 @@ class BomList(generics.ListCreateAPIView):
     """
 
     serializer_class = BomItemSerializer
-    
+    filter_backends = [guardian_filters.ObjectPermissionsFilter]
+
     def get_serializer(self, *args, **kwargs):
 
         # Do we wish to include extra detail?
         try:
             part_detail = str2bool(self.request.GET.get('part_detail', None))
-            sub_part_detail = str2bool(self.request.GET.get('sub_part_detail', None))
+            sub_part_detail = str2bool(
+                self.request.GET.get('sub_part_detail', None))
         except AttributeError:
             part_detail = None
             sub_part_detail = None
@@ -339,10 +328,6 @@ class BomList(generics.ListCreateAPIView):
         queryset = BomItem.objects.all()
         queryset = self.get_serializer_class().setup_eager_loading(queryset)
         return queryset
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -361,10 +346,7 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = BomItem.objects.all()
     serializer_class = BomItemSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    filter_backends = [guardian_filters.ObjectPermissionsFilter]
 
 
 class BomItemValidate(generics.UpdateAPIView):
@@ -377,6 +359,7 @@ class BomItemValidate(generics.UpdateAPIView):
 
     queryset = BomItem.objects.all()
     serializer_class = BomItemValidationSerializer
+    filter_backends = [guardian_filters.ObjectPermissionsFilter]
 
     def update(self, request, *args, **kwargs):
         """ Perform update request """
@@ -386,8 +369,9 @@ class BomItemValidate(generics.UpdateAPIView):
         valid = request.data.get('valid', False)
 
         instance = self.get_object()
-        
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
         if type(instance) == BomItem:
@@ -398,7 +382,8 @@ class BomItemValidate(generics.UpdateAPIView):
 
 cat_api_urls = [
 
-    url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
+    url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(),
+        name='api-part-category-detail'),
 
     url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
 ]
@@ -412,7 +397,8 @@ part_star_api_urls = [
 ]
 
 part_param_api_urls = [
-    url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),
+    url(r'^template/$', PartParameterTemplateList.as_view(),
+        name='api-part-param-template-list'),
 
     url(r'^.*$', PartParameterList.as_view(), name='api-part-param-list'),
 ]

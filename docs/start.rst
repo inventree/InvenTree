@@ -97,22 +97,3 @@ Database Migrations
 -------------------
 
 Whenever a change is made to the underlying database schema, database migrations must be performed. Call ``make migrate`` to run any outstanding database migrations.
-
-Development and Testing
------------------------
-
-Other shorthand functions are provided for the development and testing process:
-
-* ``make install`` - Install all required underlying packages using PIP
-* ``make update`` - Update InvenTree installation (after database configuration)
-* ``make superuser`` - Create a superuser account
-* ``make migrate`` - Perform database migrations
-* ``make mysql`` - Install packages required for MySQL database backend
-* ``make postgresql`` - Install packages required for PostgreSQL database backend
-* ``make translate`` - Compile language translation files (requires gettext system package)
-* ``make backup`` - Backup database tables and media files
-* ``make test`` - Run all unit tests
-* ``make coverage`` - Run all unit tests and generate code coverage report
-* ``make style`` - Check Python codebase against PEP coding standards (using Flake)
-* ``make docreqs`` - Install the packages required to generate documentation
-* ``make docs`` - Generate this documentation

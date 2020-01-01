@@ -203,7 +203,7 @@ class QRCodeView(AjaxView):
     """
 
     ajax_template_name = "qr_code.html"
-    
+
     def get(self, request, *args, **kwargs):
         self.request = request
         self.pk = self.kwargs['pk']
@@ -212,7 +212,7 @@ class QRCodeView(AjaxView):
     def get_qr_data(self):
         """ Returns the text object to render to a QR code.
         The actual rendering will be handled by the template """
-        
+
         return None
 
     def get_context_data(self):
@@ -220,7 +220,7 @@ class QRCodeView(AjaxView):
 
         Explicity passes the parameter 'qr_data'
         """
-        
+
         context = {}
 
         qr = self.get_qr_data()
@@ -229,7 +229,7 @@ class QRCodeView(AjaxView):
             context['qr_data'] = qr
         else:
             context['error_msg'] = 'Error generating QR code'
-        
+
         return context
 
 
@@ -308,7 +308,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         """
 
         super(UpdateView, self).get(request, *args, **kwargs)
-        
+
         return self.renderJsonResponse(request, self.get_form(), context=self.get_context_data())
 
     def post(self, request, *args, **kwargs):
@@ -400,7 +400,8 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
         if confirmed:
             obj.delete()
         else:
-            form.errors['confirm_delete'] = ['Check box to confirm item deletion']
+            form.errors['confirm_delete'] = [
+                'Check box to confirm item deletion']
             context[self.context_object_name] = self.get_object()
 
         data = {
@@ -455,7 +456,7 @@ class SetPasswordView(AjaxUpdateView):
 
         p1 = request.POST.get('enter_password', '')
         p2 = request.POST.get('confirm_password', '')
-        
+
         if valid:
             # Passwords must match
 
@@ -488,15 +489,17 @@ class IndexView(TemplateView):
 
         context = super(TemplateView, self).get_context_data(**kwargs)
 
-        context['starred'] = [star.part for star in self.request.user.starred_parts.all()]
-
+        if self.request.user.is_authenticated:
+            context['starred'] = [
+                star.part for star in self.request.user.starred_parts.all()]
         # Generate a list of orderable parts which have stock below their minimum values
         # TODO - Is there a less expensive way to get these from the database
-        context['to_order'] = [part for part in Part.objects.filter(purchaseable=True) if part.need_to_restock()]
-    
+            context['to_order'] = [part for part in Part.objects.filter(
+                purchaseable=True) if part.need_to_restock()]
         # Generate a list of assembly parts which have stock below their minimum values
         # TODO - Is there a less expensive way to get these from the database
-        context['to_build'] = [part for part in Part.objects.filter(assembly=True) if part.need_to_restock()]
+            context['to_build'] = [part for part in Part.objects.filter(
+                assembly=True) if part.need_to_restock()]
 
         return context
 

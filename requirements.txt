@@ -1,19 +1,22 @@
-Django==2.2.8                   # Django package
-pillow==6.2.0                   # Image manipulation
-djangorestframework==3.10.3     # DRF framework
-django-cors-headers==3.2.0      # CORS headers extension for DRF
-django_filter==2.2.0            # Extended filtering options
-django-mptt==0.10.0             # Modified Preorder Tree Traversal
-django-dbbackup==3.2.0          # Database backup / restore functionality
-coreapi==2.3.0                  # API documentation
-pygments==2.2.0                 # Syntax highlighting
-tablib==0.13.0                  # Import / export data files
-django-crispy-forms==1.8.1      # Form helpers
-django-import-export==2.0.0     # Data import / export for admin interface
-django-cleanup==4.0.0           # Manage deletion of old / unused uploaded files
-django-qr-code==1.1.0           # Generate QR codes
-flake8==3.3.0                   # PEP checking
-coverage==4.0.3                 # Unit test coverage
-python-coveralls==2.9.1         # Coveralls linking (for Travis)
-fuzzywuzzy==0.17.0              # Fuzzy string matching
-python-Levenshtein==0.12.0      # Required for fuzzywuzzy
+coreapi==2.3.3                      # API documentation
+coverage==5.0.1                     # Unit test coverage
+django-cleanup==4.0.0               # Manage deletion of old / unused uploaded files
+django-cors-headers==3.2.0          # CORS headers extension for DRF
+django-crispy-forms==1.8.1          # Form helpers
+django-dbbackup==3.2.0              # Database backup / restore functionality
+django-guardian==2.1.0              # Object Authentication Backend
+django-import-export==2.0.0         # Data import / export for admin interface
+django-mptt==0.10.0                 # Modified Preorder Tree Traversal
+django-qr-code==1.1.0               # Generate QR codes
+Django==2.2.9                       # Django package
+django_filter==2.2.0                # Extended filtering options
+djangorestframework-guardian==0.3.0 # Integrations for Django REST Framework
+djangorestframework==3.11.0         # DRF framework
+flake8==3.7.9                       # PEP checking
+fuzzywuzzy==0.17.0                  # Fuzzy string matching
+pillow==6.2.1                       # Image manipulation
+pygments==2.5.2                     # Syntax highlighting
+python-coveralls==2.9.3             # Coveralls linking (for Travis)
+python-Levenshtein==0.12.0          # Required for fuzzywuzzy
+tablib==0.14.0                      # Import / export data files
+django-debug-toolbar==2.1.0         # Debugging tool
