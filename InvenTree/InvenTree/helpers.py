@@ -67,7 +67,7 @@ def decimal2string(d):
 
     try:
         # Ensure that the provided string can actually be converted to a float
-        f = float(d)
+        float(d)
     except ValueError:
         # Not a number
         return str(d)
@@ -75,7 +75,7 @@ def decimal2string(d):
     s = str(d)
 
     # Return entire number if there is no decimal place
-    if not '.' in s:
+    if '.' not in s:
         return s
 
     return s.rstrip("0").rstrip(".")
