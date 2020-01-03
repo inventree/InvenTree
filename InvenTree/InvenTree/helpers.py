@@ -65,7 +65,18 @@ def decimal2string(d):
         A string representation of the input number
     """
 
+    try:
+        # Ensure that the provided string can actually be converted to a float
+        float(d)
+    except ValueError:
+        # Not a number
+        return str(d)
+
     s = str(d)
+
+    # Return entire number if there is no decimal place
+    if '.' not in s:
+        return s
 
     return s.rstrip("0").rstrip(".")
 
