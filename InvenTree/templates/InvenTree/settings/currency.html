@@ -3,15 +3,17 @@
 {% block tabs %}
 {% include "InvenTree/settings/tabs.html" with tab='currency' %}
 {% endblock %}
+{% load guardian_tags %}
+{% get_obj_perms request.user for common as "perms" %}
 
 {% block settings %}
 
 <h4>Currencies</h4>
-
+{% if "common.add_currency" in perms %}
 <div id='currency-buttons'>
     <button class='btn btn-success' id='new-currency'>New Currency</button>
 </div>
-
+{% endif %}
 <table class='table table-striped table-condensed' id='currency-table' data-toolbar='#currency-buttons'>
 </table>
 {% endblock %}
@@ -67,8 +69,8 @@
             {
                 formatter: function(value, row, index, field) {
 
-                    var bEdit = "<button title='Edit Currency' class='cur-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-edit'></span></button>";
-                    var bDel = "<button title='Delete Currency' class='cur-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-trash'></span></button>";
+                    var bEdit = "{% if "common.change_currency" in perms %}<button title='Edit Currency' class='cur-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-edit'></span></button>{% endif %}";
+                    var bDel = "{% if "common.delete_currency" in perms %}<button title='Delete Currency' class='cur-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-trash'></span></button>{% endif %}";
 
                     var html = "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
 

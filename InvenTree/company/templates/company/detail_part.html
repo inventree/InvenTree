@@ -1,7 +1,8 @@
 {% extends "company/company_base.html" %}
 {% load static %}
+{% load guardian_tags %}
 {% block details %}
-
+{% get_obj_perms request.user for company as "perms" %}
 {% include 'company/tabs.html' with tab='parts' %}
 
 <h4>Supplier Parts</h4>
@@ -9,7 +10,9 @@
 <hr>
 
 <div id='button-toolbar'>
+    {% if "company.add_supplierpart" in perms %}
     <button class="btn btn-success" id='part-create'>New Supplier Part</button>
+    {% endif %}
     <div class="dropdown" style="float: right;">
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
         <span class="caret"></span></button>

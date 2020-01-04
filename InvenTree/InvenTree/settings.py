@@ -102,8 +102,13 @@ INSTALLED_APPS = [
     'qr_code',                      # Generate QR codes
     'mptt',                         # Modified Preorder Tree Traversal
     'guardian',                     # Object Authentication Backend
-    'debug_toolbar',
 ]
+
+try:
+    import debug_toolbar
+    INSTALLED_APPS += ('debug_toolbar',)
+except ImportError:
+    pass
 
 LOGGING = {
     'version': 1,

@@ -3,7 +3,8 @@
 {% load inventree_extras %}
 {% load i18n %}
 {% block content %}
-
+{% load guardian_tags %}
+{% get_obj_perms request.user for stockitem as "perms" %}
 <div class='row'>
 <div class='col-sm-6'>
     <h3>{% trans "Stock Item Details" %}</h3>
@@ -17,12 +18,14 @@
             {% include "qr_button.html" %}
             {% if item.in_stock %}
             {% if not item.serialized %}
+            {% if "stock.change_stockitem" in perms %}
             <button type='button' class='btn btn-default btn-glyph' id='stock-add' title='Add to stock'>
                 <span class='glyphicon glyphicon-plus-sign' style='color: #1a1;'/>
             </button>
             <button type='button' class='btn btn-default btn-glyph' id='stock-remove' title='Take from stock'>
                 <span class='glyphicon glyphicon-minus-sign' style='color: #a11;'/>
             </button>
+            {% endif %}
             <button type='button' class='btn btn-default btn-glyph' id='stock-count' title='Count stock'>
                 <span class='glyphicon glyphicon-ok-circle'/>
             </button>
@@ -32,19 +35,26 @@
             </button>
             {% endif %}
             {% endif %}
+            {% if "stock.change_stockitem" in perms %}
             <button type='button' class='btn btn-default btn-glyph' id='stock-move' title='Transfer stock'>
                 <span class='glyphicon glyphicon-transfer' style='color: #11a;'/>
             </button>
+            {% endif %}
+            {% if "stock.add_stockitem" in perms %}
             <button type='button' class='btn btn-default btn-glyph' id='stock-duplicate' title='Duplicate stock item'>
                 <span class='glyphicon glyphicon-duplicate'/>
             </button>
             {% endif %}
+            % if "stock.change_stockitem" in perms %}
             <button type='button' class='btn btn-default btn-glyph' id='stock-edit' title='Edit stock item'>
                 <span class='glyphicon glyphicon-edit'/>
             </button>
-            <button type='button' class='btn btn-default btn-glyph' id='stock-delete' title='Edit stock item'>
+            {% endif %}
+            % if "stock.delete_stockitem" in perms %}
+            <button type='button' class='btn btn-default btn-glyph' id='stock-delete' title='Delete stock item'>
                 <span class='glyphicon glyphicon-trash'/>
             </button>
+            {% endif %}
         </div>
     </p>
     {% if item.serialized %}
@@ -160,7 +170,9 @@
 <h4>{% trans "Stock Tracking Information" %}</h4>
 <div id='table-toolbar'>
     <div class='btn-group'>
+        {% if "stock.add_stockitemtracking" in perms %}
         <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>New Entry</button>
+        {% endif %}
     </div>    
 </div>
 <table class='table table-condensed table-striped' id='track-table' data-toolbar='#table-toolbar'>

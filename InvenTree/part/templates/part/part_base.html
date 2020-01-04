@@ -3,8 +3,10 @@
 {% load static %}
 {% load i18n %}
 {% load inventree_extras %}
+{% load guardian_tags %}
 
 {% block content %}
+{% get_obj_perms request.user for part as "perms" %}
 
 {% if part.active == False %}
 <div class='alert alert-danger alert-block'>
@@ -44,9 +46,11 @@
         <p>
             <div class='btn-row'>
                 <div class='btn-group'>
+                    {% if "part.change_partstar" in perms %}
                     <button type='button' class='btn btn-default btn-glyph' id='toggle-starred' title='{% trans "Star this part" %}'>
                         <span id='part-star-icon' class='starred-part glyphicon {% if starred %}glyphicon-star{% else %}glyphicon-star-empty{% endif %}'/>
                     </button>
+                    {% endif %}
                     {% if part.is_template == False %}
                     {% include "qr_button.html" %}
                     {% if part.active %}
@@ -59,22 +63,30 @@
                     </button>
                     {% endif %}
                     {% if part.purchaseable %}
+                    {% if "order.change_purchaseorder" in perms %}
                     <button type='button' class='btn btn-default btn-glyph' id='part-order' title='Order part'>
                         <span id='part-order-icon' class='part-order glyphicon glyphicon-shopping-cart'/>
                     </button>
                     {% endif %}
                     {% endif %}
                     {% endif %}
+                    {% endif %}
+                    {% if "part.add_part" in perms %}
                     <button type='button' class='btn btn-default btn-glyph' id='part-duplicate' title='Duplicate part'>
                         <span id='part-duplicate-icon' class='part-duplicate glyphicon glyphicon-duplicate'/>
                     </button>
+                    {% endif %}
+                    {% if "part.change_part" in perms %}
                     <button type='button' class='btn btn-default btn-glyph' id='part-edit' title='Edit part'>
                         <span id='part-edit-icon' class='glyphicon glyphicon-edit'/>
                     </button>
+                    {% endif %}
                     {% if not part.active %}
+                    {% if "part.delete_part" in perms %}
                     <button type='button' class='btn btn-default btn-glyph' id='part-delete' title='Delete part'>
                         <span id='part-delete-icon' class='glyphicon glyphicon-trash'/>
                     </button>
+                    {% endif %}
                     {% endif %}
                 </div>
             </div>

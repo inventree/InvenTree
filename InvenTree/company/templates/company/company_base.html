@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load guardian_tags %}
 {% load static %}
 
 {% block page_title %}
@@ -7,7 +7,7 @@ InvenTree | Company - {{ company.name }}
 {% endblock %}
 
 {% block content %}
-
+{% get_obj_perms request.user for company as "perms" %}
 <div class="row">
     <div class="col-sm-6">
         <div class="media">
@@ -30,12 +30,16 @@ InvenTree | Company - {{ company.name }}
                       <span class='glyphicon glyphicon-shopping-cart'/>
                   </button>
                   {% endif %}
+                  {% if "company.change_company" in perms %}
                   <button type='button' class='btn btn-default btn-glyph' id='company-edit' title='Edit company information'>
                       <span class='glyphicon glyphicon-edit'/>
                   </button>
+                  {% endif %}
+                  {% if "company.delete_company" in perms %}
                   <button type='button' class='btn btn-default btn-glyph' id='company-delete' title='Delete company'>
                       <span class='glyphicon glyphicon-trash'/>
                   </button>
+                  {% endif %}
               </div>
           </div>
       </div>

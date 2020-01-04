@@ -1,23 +1,28 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load guardian_tags %}
+{% block content %}
 {% block page_title %}
 InvenTree | {{ company.name }} - Parts
 {% endblock %}
 
 {% block content %}
-
+{% get_obj_perms request.user for company as "perms" %}
 <div class='row'>
     <div class='col-sm-6'>
         <h3>Supplier Part</h3>
         <div class='btn-row'>
             <div class='btn-group'>
+                {% if "company.change_supplierpart" in perms %}
                 <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='Edit supplier part'>
                     <span class='glyphicon glyphicon-edit'/>
                 </button>
+                {% endif %}
+                {% if "company.delete_supplierpart" in perms %}
                 <button type='button' class='btn btn-default btn-glyph' id='delete-part' title='Delete supplier part'>
                     <span class='glyphicon glyphicon-trash'/>
                 </button>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -76,7 +81,9 @@ InvenTree | {{ company.name }} - Parts
         <th>Price Breaks</th>
         <th>
             <div style='float: right;'>
+                {% if "company.add_supplierpricebreak" in perms %}
                 <button class='btn btn-primary' id='new-price-break' type='button'>New Price Break</button>
+                {% endif %}
             </div>
         </th>
     </tr>
@@ -93,8 +100,12 @@ InvenTree | {{ company.name }} - Parts
                 {{ pb.cost }}
                 {% if pb.currency %}{{ pb.currency.suffix }}{% endif %}
                 <div class='btn-group' style='float: right;'>
+                    {% if "company.change_supplierpricebreak" in perms %}
                     <button title='Edit Price Break' class='btn btn-default btn-sm pb-edit-button' type='button' url="{% url 'price-break-edit' pb.id %}"><span class='glyphicon glyphicon-edit'></span></button>
+                    {% endif %}
+                    {% if "company.delete_supplierpricebreak" in perms %}
                     <button title='Delete Price Break' class='btn btn-default btn-sm pb-delete-button' type='button' url="{% url 'price-break-delete' pb.id %}"><span class='glyphicon glyphicon-trash'></span></button>
+                    {% endif %}
                 </div>
             </td>
         </tr>

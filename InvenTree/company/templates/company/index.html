@@ -13,7 +13,9 @@ InvenTree | Supplier List
 
 <div id='button-toolbar'>
     <div class='btn-group'>
+        {% if "company.add_companyt" in perms %}
         <button type='button' class="btn btn-success" id='new-company' title='Add new supplier'>New Supplier</button>
+        {% endif %}
     </div>
 </div>
 

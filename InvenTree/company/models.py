@@ -21,6 +21,7 @@ from django.conf import settings
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import OrderStatus
 from common.models import Currency
+from guardian.models import GroupObjectPermissionBase, UserObjectPermissionBase
 
 
 def rename_company_image(instance, filename):
@@ -406,3 +407,11 @@ class SupplierPriceBreak(models.Model):
             mpn=self.part.MPN,
             cost=self.cost,
             quan=self.quantity)
+
+
+class CompanyUserObjectPermission(UserObjectPermissionBase):
+    content_object = models.ForeignKey(Company, on_delete=models.CASCADE)
+
+
+class CompanyGroupObjectPermission(GroupObjectPermissionBase):
+    content_object = models.ForeignKey(Company, on_delete=models.CASCADE)

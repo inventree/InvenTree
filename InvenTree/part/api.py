@@ -37,6 +37,9 @@ class PartCategoryTree(TreeSerializer):
     title = "Parts"
     model = PartCategory
     queryset = PartCategory.objects.all()
+    filter_backends = [
+        guardian_filters.ObjectPermissionsFilter,
+    ]
 
     @property
     def root_url(self):

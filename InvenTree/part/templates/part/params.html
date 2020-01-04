@@ -3,13 +3,16 @@
 {% block details %}
 
 {% include "part/tabs.html" with tab='params' %}
+{% get_obj_perms request.user for part as "perms" %}
 
 <h4>Part Parameters</h4>
 <hr>
 
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
+        {% if "part.add_partparameter" in perms %}
         <button class='btn btn-success' id='param-create'>New Parameter</button>
+        {% endif %}
     </div>
 </div>
 
@@ -29,8 +32,12 @@
             <td>
                 {{ param.template.units }}
                 <div class='btn-group' style='float: right;'>
+                    {% if "part.change_partparameter" in perms %}
                     <button title='Edit' class='btn btn-default btn-glyph param-edit' url="{% url 'part-param-edit' param.id %}" type='button'><span class='glyphicon glyphicon-edit'/></button>
+                    {% endif %}
+                    {% if "part.delete_partparameter" in perms %}
                     <button title='Delete' class='btn btn-default btn-glyph param-delete' url="{% url 'part-param-delete' param.id %}" type='button'><span class='glyphicon glyphicon-trash'/></button>
+                    {% endif %}
                 </div>
             </td>
         </tr>

@@ -1,9 +1,7 @@
 {% extends "part/part_app_base.html" %}
 {% load static %}
 {% load i18n %}
-
 {% block content %}
-
 <div class='row'>
     <div class='col-sm-6'>
         {% if category %}
@@ -15,16 +13,22 @@
         {% endif %}
         <p>
             <div class='btn-group'>
+                {% if "part.add_partcategory" in perms %}
                 <button class='btn btn-default btn-glyph' id='cat-create' title='Create new part category'>
                     <span class='glyphicon glyphicon-plus'/>
                 </button>
+                {% endif %}
                 {% if category %}
+                {% if "part.change_partcategory" in perms %}
                 <button class='btn btn-default btn-glyph' id='cat-edit' title='Edit part category'>
                     <span class='glyphicon glyphicon-edit'/>
                 </button>
+                {% endif %}
+                {% if "part.delete_partcategory" in perms %}
                 <button class='btn btn-default btn-glyph' id='cat-delete' title='Delete part category'>
                     <span class='glyphicon glyphicon-trash'/>
                 </button>
+                {% endif %}
                 {% endif %}
             </div>
         </p>
@@ -88,12 +92,18 @@
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style="float: right;">
         <button class='btn btn-default' id='part-export' title='Export Part Data'>Export</button>
+        {% if "part.add_part" in perms %}
         <button class='btn btn-success' id='part-create'>New Part</button>
+        {% endif %}
         <div class='dropdown' style='float: right;'>
             <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown">Options<span class='caret'></span></button>
             <ul class='dropdown-menu'>
+                {% if "part.change_partcategory" in perms %}
                 <li><a href='#' id='multi-part-category' title='Set category'>Set Category</a></li>
+                {% endif %}
+                {% if "order.change_purchaseorder" in perms %}
                 <li><a href='#' id='multi-part-order' title='Order parts'>Order Parts</a></li>
+                {% endif %}
                 <li><a href='#' id='multi-part-export' title='Export'>Export Data</a></li>
             </ul>
         </div>

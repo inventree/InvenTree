@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% load static %}
-
+{% load guardian_tags %}
 {% block page_title %}
 InvenTree | Build - {{ build }}
 {% endblock %}
 
 {% block content %}
-
+{% get_obj_perms request.user for build as "perms" %}
 <div class='row'>
     <div class='col-sm-6'>
         <div class="media">
@@ -27,6 +27,7 @@ InvenTree | Build - {{ build }}
                 <p>
                     <div class='btn-row'>
                         <div class='btn-group'>
+                            {% if "build.change_build" in perms %}
                             <button type='button' class='btn btn-default btn-glyph' id='build-edit' title='Edit Build'>
                                 <span class='glyphicon glyphicon-edit'/>
                             </button>
@@ -38,7 +39,9 @@ InvenTree | Build - {{ build }}
                                 <span class='glyphicon glyphicon-remove'/>
                             </button>
                             {% endif %}
+                            {% endif %}
                             {% if build.status == BuildStatus.CANCELLED %}
+                            {% if "build.delete_build" in perms %}
                             <button type='button' class='btn btn-default btn-glyph' id='build-delete' title='Delete Build'>
                                 <span class='glyphicon glyphicon-trash'/>
                             </button>
