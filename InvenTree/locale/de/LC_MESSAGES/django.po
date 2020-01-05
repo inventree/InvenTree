@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-05 21:52+0000\n"
+"POT-Creation-Date: 2020-01-05 22:23+0000\n"
 "PO-Revision-Date: 2019-12-19 17:48+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -429,24 +429,42 @@ msgstr "Notiz"
 msgid "Notes"
 msgstr "Notizen"
 
-#: order/views.py:140
+#: order/views.py:141
 msgid "Confirm order cancellation"
 msgstr "Bestell-Stornierung bestätigen"
 
-#: order/views.py:173
+#: order/views.py:174
 msgid "Confirm order placement"
 msgstr "Bestellungstätigung bestätigen"
 
-#: order/views.py:731
+#: order/views.py:328
+#, fuzzy
+#| msgid "Number of items received"
+msgid "Items received"
+msgstr "Empfangene Objekt-Anzahl"
+
+#: order/views.py:342
+msgid "No destination set"
+msgstr ""
+
+#: order/views.py:373
+msgid "Error converting quantity to number"
+msgstr ""
+
+#: order/views.py:379
+msgid "Receive quantity less than zero"
+msgstr ""
+
+#: order/views.py:740
 msgid "Invalid Purchase Order"
 msgstr "Ungültige Bestellung"
 
-#: order/views.py:739
+#: order/views.py:748
 #, fuzzy
 msgid "Supplier must match for Part and Order"
 msgstr "Zulieferer muss zum Teil und zur Bestellung passen"
 
-#: order/views.py:744
+#: order/views.py:753
 msgid "Invalid SupplierPart selection"
 msgstr "Ungültige Wahl des Zulieferer-Teils"
 
