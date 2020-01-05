@@ -12,6 +12,7 @@ from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
 
 import logging
+from decimal import Decimal, InvalidOperation
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .admin import POLineItemResource
@@ -324,6 +325,8 @@ class PurchaseOrderReceive(AjaxUpdateView):
         self.lines = []
         self.destination = None
 
+        msg = _("Items received")
+
         # Extract the destination for received parts
         if 'location' in request.POST:
             pk = request.POST['location']
@@ -332,7 +335,11 @@ class PurchaseOrderReceive(AjaxUpdateView):
             except (StockLocation.DoesNotExist, ValueError):
                 pass
 
-        errors = self.destination is None
+        errors = False
+
+        if self.destination is None:
+            errors = True
+            msg = _("No destination set")
 
         # Extract information on all submitted line items
         for item in request.POST:
@@ -359,15 +366,17 @@ class PurchaseOrderReceive(AjaxUpdateView):
                 receive = self.request.POST[item]
 
                 try:
-                    receive = int(receive)
-                except ValueError:
+                    receive = Decimal(receive)
+                except InvalidOperation:
                     # In the case on an invalid input, reset to default
                     receive = line.remaining()
+                    msg = _("Error converting quantity to number")
                     errors = True
 
                 if receive < 0:
                     receive = 0
                     errors = True
+                    msg = _("Receive quantity less than zero")
 
                 line.receive_quantity = receive
                 self.lines.append(line)
@@ -378,7 +387,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
 
         data = {
             'form_valid': errors is False,
-            'success': 'Items marked as received',
+            'success': msg,
         }
 
         return self.renderJsonResponse(request, data=data, form=self.get_form())
