@@ -212,7 +212,7 @@ class TestPOReceive(OrderViewTestCase):
         post_data = {
         }
 
-        response = self.post(post_data, validate=False)
+        self.post(post_data, validate=False)
 
         # Try with an invalid location
         post_data['location'] = 12345
@@ -241,7 +241,7 @@ class TestPOReceive(OrderViewTestCase):
         # Receive 75 items
         post_data['line-1'] = 75
 
-        response = self.post(post_data, validate=True)
+        self.post(post_data, validate=True)
 
         line = PurchaseOrderLineItem.objects.get(pk=1)
 
