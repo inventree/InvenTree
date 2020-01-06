@@ -381,6 +381,10 @@ class PurchaseOrderReceive(AjaxUpdateView):
                 line.receive_quantity = receive
                 self.lines.append(line)
 
+        if len(self.lines) == 0:
+            msg = _("No lines specified")
+            errors = True
+
         # No errors? Receive the submitted parts!
         if errors is False:
             self.receive_parts()

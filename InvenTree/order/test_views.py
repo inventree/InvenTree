@@ -181,9 +181,77 @@ class TestPOReceive(OrderViewTestCase):
         super().setUp()
 
         self.po = PurchaseOrder.objects.get(pk=1)
+        self.po.status = OrderStatus.PLACED
+        self.po.save()
         self.url = reverse('purchase-order-receive', args=(1,))
+
+    def post(self, data, validate=None):
+
+        response = self.client.post(self.url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        if validate is not None:
+
+            data = json.loads(response.content)
+
+            if validate:
+                self.assertTrue(data['form_valid'])
+            else:
+                self.assertFalse(data['form_valid'])
+
+        return response
+
+    def test_get_dialog(self):
+
+        data = {
+        }
+
+        self.client.get(self.url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
     def test_receive_lines(self):
         
-        # TODO
-        pass
+        post_data = {
+        }
+
+        response = self.post(post_data, validate=False)
+
+        # Try with an invalid location
+        post_data['location'] = 12345
+
+        self.post(post_data, validate=False)
+
+        # Try with a valid location
+        post_data['location'] = 1
+
+        # Should fail due to invalid quantity
+        self.post(post_data, validate=False)
+
+        # Try to receive against an invalid line
+        post_data['line-800'] = 100
+
+        # Remove an invalid quantity of items
+        post_data['line-1'] = '7x5q'
+
+        self.post(post_data, validate=False)
+
+        # Receive negative number
+        post_data['line-1'] = -100
+        
+        self.post(post_data, validate=False)
+
+        # Receive 75 items
+        post_data['line-1'] = 75
+
+        response = self.post(post_data, validate=True)
+
+        line = PurchaseOrderLineItem.objects.get(pk=1)
+
+        self.assertEqual(line.received, 75)
+
+        # Receive 30 more items
+        post_data['line-1'] = 30
+
+        self.post(post_data, validate=True)
+
+        line = PurchaseOrderLineItem.objects.get(pk=1)
+
+        self.assertEqual(line.received, 105)
