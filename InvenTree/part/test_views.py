@@ -198,6 +198,23 @@ class CategoryTest(PartViewTestCase):
         response = self.client.get(reverse('category-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
+    def test_set_category(self):
+        """ Test that the "SetCategory" view works """
+
+        url = reverse('part-set-category')
+
+        response = self.client.get(url, {'parts[]': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+        data = {
+            'part_id_10': True,
+            'part_id_1': True,
+            'part_category': 5
+        }
+
+        response = self.client.post(url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
 
 class BomItemTests(PartViewTestCase):
     """ Tests for BomItem related views """
