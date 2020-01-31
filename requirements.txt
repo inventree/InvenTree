@@ -5,6 +5,7 @@ django-cors-headers==3.2.0      # CORS headers extension for DRF
 django_filter==2.2.0            # Extended filtering options
 django-mptt==0.10.0             # Modified Preorder Tree Traversal
 django-dbbackup==3.2.0          # Database backup / restore functionality
+django-pagedown==2.0.3          # Markdown form fields
 coreapi==2.3.0                  # API documentation
 pygments==2.2.0                 # Syntax highlighting
 tablib==0.13.0                  # Import / export data files

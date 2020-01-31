@@ -101,6 +101,7 @@ INSTALLED_APPS = [
     'django_cleanup',               # Automatically delete orphaned MEDIA files
     'qr_code',                      # Generate QR codes
     'mptt',                         # Modified Preorder Tree Traversal
+    'pagedown.apps.PagedownConfig'  # Markdown forms
 ]
 
 LOGGING = {
