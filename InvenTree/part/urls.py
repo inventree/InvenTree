@@ -52,6 +52,7 @@ part_detail_urls = [
     url(r'^orders/?', views.PartDetail.as_view(template_name='part/orders.html'), name='part-orders'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
+    url(r'^notes/?', views.PartDetail.as_view(template_name='part/notes.html'), name='part-notes'),
     
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 

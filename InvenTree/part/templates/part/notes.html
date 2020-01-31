@@ -1,0 +1,13 @@
+{% extends "part/part_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block details %}
+
+{% include 'part/tabs.html' with tab='notes' %}
+
+<h4>{% trans "Part Notes" %}</h4>
+
+Notes field goes here
+
+{% endblock %}
