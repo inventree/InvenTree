@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-05 22:23+0000\n"
+"POT-Creation-Date: 2020-01-31 09:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,19 +46,19 @@ msgstr ""
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr ""
 
-#: InvenTree/settings.py:235
+#: InvenTree/settings.py:236
 msgid "English"
 msgstr ""
 
-#: InvenTree/settings.py:236
+#: InvenTree/settings.py:237
 msgid "German"
 msgstr ""
 
-#: InvenTree/settings.py:237
+#: InvenTree/settings.py:238
 msgid "French"
 msgstr ""
 
-#: InvenTree/settings.py:238
+#: InvenTree/settings.py:239
 msgid "Polish"
 msgstr ""
 
@@ -416,7 +416,8 @@ msgid "Note"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:168
-#: part/templates/part/detail.html:152 stock/templates/stock/item.html:151
+#: part/templates/part/detail.html:152 part/templates/part/tabs.html:58
+#: stock/templates/stock/item.html:151
 msgid "Notes"
 msgstr ""
 
@@ -444,15 +445,19 @@ msgstr ""
 msgid "Receive quantity less than zero"
 msgstr ""
 
-#: order/views.py:740
+#: order/views.py:385
+msgid "No lines specified"
+msgstr ""
+
+#: order/views.py:744
 msgid "Invalid Purchase Order"
 msgstr ""
 
-#: order/views.py:748
+#: order/views.py:752
 msgid "Supplier must match for Part and Order"
 msgstr ""
 
-#: order/views.py:753
+#: order/views.py:757
 msgid "Invalid SupplierPart selection"
 msgstr ""
 
@@ -469,31 +474,31 @@ msgstr ""
 msgid "Error reading BOM file (incorrect row size)"
 msgstr ""
 
-#: part/forms.py:37
+#: part/forms.py:53
 msgid "Confirm that the BOM is correct"
 msgstr ""
 
-#: part/forms.py:49
+#: part/forms.py:65
 msgid "Select BOM file to upload"
 msgstr ""
 
-#: part/forms.py:73
+#: part/forms.py:89
 msgid "Select part category"
 msgstr ""
 
-#: part/forms.py:81
+#: part/forms.py:97
 msgid "Perform 'deep copy' which will duplicate all BOM data for this part"
 msgstr ""
 
-#: part/forms.py:86
+#: part/forms.py:102
 msgid "Confirm part creation"
 msgstr ""
 
-#: part/forms.py:173
+#: part/forms.py:189
 msgid "Input quantity for price calculation"
 msgstr ""
 
-#: part/forms.py:176
+#: part/forms.py:192
 msgid "Select currency for price calculation"
 msgstr ""
 
@@ -670,6 +675,30 @@ msgstr ""
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
 msgstr ""
 
+#: part/templates/part/attachments.html:8
+msgid "Part Attachments"
+msgstr ""
+
+#: part/templates/part/attachments.html:14
+msgid "Add Attachment"
+msgstr ""
+
+#: part/templates/part/attachments.html:22
+msgid "File"
+msgstr ""
+
+#: part/templates/part/attachments.html:23
+msgid "Comment"
+msgstr ""
+
+#: part/templates/part/attachments.html:34
+msgid "Edit attachment"
+msgstr ""
+
+#: part/templates/part/attachments.html:37
+msgid "Delete attachment"
+msgstr ""
+
 #: part/templates/part/category.html:13 part/templates/part/category.html:69
 msgid "Part Categories"
 msgstr ""
@@ -813,6 +842,10 @@ msgstr ""
 
 #: part/templates/part/detail.html:142
 msgid "Part cannot be sold to customers"
+msgstr ""
+
+#: part/templates/part/notes.html:9
+msgid "Part Notes"
 msgstr ""
 
 #: part/templates/part/part_base.html:11

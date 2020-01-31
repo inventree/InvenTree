@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-05 22:23+0000\n"
+"POT-Creation-Date: 2020-01-31 09:36+0000\n"
 "PO-Revision-Date: 2019-12-19 17:48+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -48,19 +48,19 @@ msgstr ""
 "Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) "
 "übereinstimmen"
 
-#: InvenTree/settings.py:235
+#: InvenTree/settings.py:236
 msgid "English"
 msgstr "Englisch"
 
-#: InvenTree/settings.py:236
+#: InvenTree/settings.py:237
 msgid "German"
 msgstr "Deutsch"
 
-#: InvenTree/settings.py:237
+#: InvenTree/settings.py:238
 msgid "French"
 msgstr "Französisch"
 
-#: InvenTree/settings.py:238
+#: InvenTree/settings.py:239
 msgid "Polish"
 msgstr "Polnisch"
 
@@ -425,7 +425,8 @@ msgid "Note"
 msgstr "Notiz"
 
 #: order/templates/order/purchase_order_detail.html:168
-#: part/templates/part/detail.html:152 stock/templates/stock/item.html:151
+#: part/templates/part/detail.html:152 part/templates/part/tabs.html:58
+#: stock/templates/stock/item.html:151
 msgid "Notes"
 msgstr "Notizen"
 
@@ -455,16 +456,20 @@ msgstr ""
 msgid "Receive quantity less than zero"
 msgstr ""
 
-#: order/views.py:740
+#: order/views.py:385
+msgid "No lines specified"
+msgstr ""
+
+#: order/views.py:744
 msgid "Invalid Purchase Order"
 msgstr "Ungültige Bestellung"
 
-#: order/views.py:748
+#: order/views.py:752
 #, fuzzy
 msgid "Supplier must match for Part and Order"
 msgstr "Zulieferer muss zum Teil und zur Bestellung passen"
 
-#: order/views.py:753
+#: order/views.py:757
 msgid "Invalid SupplierPart selection"
 msgstr "Ungültige Wahl des Zulieferer-Teils"
 
@@ -481,33 +486,33 @@ msgstr "Fehler beim Lesen der Stückliste (ungültige Daten)"
 msgid "Error reading BOM file (incorrect row size)"
 msgstr "Fehler beim Lesen der Stückliste (ungültige Zeilengröße)"
 
-#: part/forms.py:37
+#: part/forms.py:53
 msgid "Confirm that the BOM is correct"
 msgstr "Bestätigen, dass die Stückliste korrekt ist"
 
-#: part/forms.py:49
+#: part/forms.py:65
 msgid "Select BOM file to upload"
 msgstr "Stücklisten-Datei zum Upload auswählen"
 
-#: part/forms.py:73
+#: part/forms.py:89
 msgid "Select part category"
 msgstr "Teilekategorie wählen"
 
-#: part/forms.py:81
+#: part/forms.py:97
 msgid "Perform 'deep copy' which will duplicate all BOM data for this part"
 msgstr ""
 "Tiefe Kopie ausführen. Dies wird alle Daten der Stückliste für dieses Teil "
 "duplizieren"
 
-#: part/forms.py:86
+#: part/forms.py:102
 msgid "Confirm part creation"
 msgstr "Erstellen des Teils bestätigen"
 
-#: part/forms.py:173
+#: part/forms.py:189
 msgid "Input quantity for price calculation"
 msgstr "Eintragsmenge zur Preisberechnung"
 
-#: part/forms.py:176
+#: part/forms.py:192
 msgid "Select currency for price calculation"
 msgstr "Währung zur Preisberechnung wählen"
 
@@ -686,6 +691,40 @@ msgstr "Teil kann nicht zu seiner eigenen Stückliste hinzugefügt werden"
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
 msgstr "Teil '{p1}' wird in Stückliste für Teil '{p2}' benutzt (rekursiv)"
 
+#: part/templates/part/attachments.html:8
+#, fuzzy
+#| msgid "Attachments"
+msgid "Part Attachments"
+msgstr "Anhänge"
+
+#: part/templates/part/attachments.html:14
+#, fuzzy
+#| msgid "Attachments"
+msgid "Add Attachment"
+msgstr "Anhänge"
+
+#: part/templates/part/attachments.html:22
+msgid "File"
+msgstr ""
+
+#: part/templates/part/attachments.html:23
+#, fuzzy
+#| msgid "File comment"
+msgid "Comment"
+msgstr "Datei-Kommentar"
+
+#: part/templates/part/attachments.html:34
+#, fuzzy
+#| msgid "Attachments"
+msgid "Edit attachment"
+msgstr "Anhänge"
+
+#: part/templates/part/attachments.html:37
+#, fuzzy
+#| msgid "Attachments"
+msgid "Delete attachment"
+msgstr "Anhänge"
+
 #: part/templates/part/category.html:13 part/templates/part/category.html:69
 msgid "Part Categories"
 msgstr "Teile-Kategorien"
@@ -830,6 +869,12 @@ msgstr "Teil kann an Kunden verkauft werden"
 #: part/templates/part/detail.html:142
 msgid "Part cannot be sold to customers"
 msgstr "Teil kann nicht an Kunden verkauft werden"
+
+#: part/templates/part/notes.html:9
+#, fuzzy
+#| msgid "Notes"
+msgid "Part Notes"
+msgstr "Notizen"
 
 #: part/templates/part/part_base.html:11
 msgid "This part is not active"
