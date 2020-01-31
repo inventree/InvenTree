@@ -11,27 +11,11 @@ from mptt.fields import TreeNodeChoiceField
 from django import forms
 from django.utils.translation import ugettext as _
 
-from pagedown.widgets import AdminPagedownWidget
-
 from .models import Part, PartCategory, PartAttachment
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 
 from common.models import Currency
-
-
-class PartAdminForm(forms.ModelForm):
-    """ Override default form behaviour for the Part admin interface.
-
-    - Present the 'notes' field as a Markdown-editor
-
-    """
-
-    notes = forms.CharField(widget=AdminPagedownWidget())
-
-    class Meta:
-        model = Part
-        fields = "__all__"
 
 
 class PartImageForm(HelperForm):
@@ -120,7 +104,6 @@ class EditPartForm(HelperForm):
             'default_supplier',
             'units',
             'minimum_stock',
-            'notes',
             'active',
         ]
 

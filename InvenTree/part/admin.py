@@ -8,8 +8,6 @@ from import_export.resources import ModelResource
 from import_export.fields import Field
 import import_export.widgets as widgets
 
-from .forms import PartAdminForm
-
 from .models import PartCategory, Part
 from .models import PartAttachment, PartStar
 from .models import BomItem
@@ -71,9 +69,6 @@ class PartResource(ModelResource):
 
 
 class PartAdmin(ImportExportModelAdmin):
-
-    form = PartAdminForm
-    #fields = "__all__"
     
     resource_class = PartResource
 

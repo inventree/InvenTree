@@ -1,6 +1,7 @@
 {% extends "part/part_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load markdownify %}
 
 {% block details %}
 
@@ -8,6 +9,18 @@
 
 <h4>{% trans "Part Notes" %}</h4>
 
-Notes field goes here
+<div class='panel panel-default'>
+    <div class='panel-body'>
+        {{ part.notes | markdownify }}
+    </div>
+</div>
+
+<form method="post" action="">
+    {% csrf_token %}
+
+    {{ form }}
+</form>
+
+{{ form.media }}
 
 {% endblock %}
