@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-01 12:31+0000\n"
+"POT-Creation-Date: 2020-02-01 12:45+0000\n"
 "PO-Revision-Date: 2019-12-19 17:48+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -385,7 +385,8 @@ msgstr "Standard-Zulieferer?"
 msgid "Supplier part description"
 msgstr "Beschreibung des Teils"
 
-#: company/models.py:248 order/templates/order/purchase_order_detail.html:168
+#: company/models.py:248 company/templates/company/tabs.html:26
+#: order/templates/order/purchase_order_detail.html:168
 #: part/templates/part/tabs.html:58 stock/templates/stock/item.html:151
 msgid "Notes"
 msgstr "Notizen"
@@ -400,10 +401,51 @@ msgstr "Minimal zulässiger Lagerbestand"
 msgid "Part packaging"
 msgstr ""
 
+#: company/templates/company/notes.html:10
+#: company/templates/company/notes.html:27
+#, fuzzy
+#| msgid "Company"
+msgid "Company Notes"
+msgstr "Firma"
+
+#: company/templates/company/notes.html:17 part/templates/part/notes.html:20
+msgid "Save"
+msgstr ""
+
+#: company/templates/company/notes.html:30 part/templates/part/notes.html:32
+#, fuzzy
+#| msgid "Entry notes"
+msgid "Edit notes"
+msgstr "Eintrags-Notizen"
+
 #: company/templates/company/partdelete.html:5
 msgid "Are you sure you want to delete the following Supplier Parts?"
 msgstr ""
 "Sind Sie sicher, dass sie die folgenden Zulieferer-Teile löschen möchten?"
+
+#: company/templates/company/tabs.html:5 part/templates/part/tabs.html:6
+msgid "Details"
+msgstr "Details"
+
+#: company/templates/company/tabs.html:9
+#, fuzzy
+#| msgid "Supplier Part"
+msgid "Supplier Parts"
+msgstr "Zulieferer-Teil"
+
+#: company/templates/company/tabs.html:12 part/templates/part/tabs.html:17
+msgid "Stock"
+msgstr "Lagerbestand"
+
+#: company/templates/company/tabs.html:15 part/templates/part/tabs.html:43
+msgid "Purchase Orders"
+msgstr "Bestellungen"
+
+#: company/templates/company/tabs.html:21
+#, fuzzy
+#| msgid "Purchase Orders"
+msgid "Sales Orders"
+msgstr "Bestellungen"
 
 #: order/forms.py:21
 msgid "Place order"
@@ -971,21 +1013,11 @@ msgstr "Teil kann an Kunden verkauft werden"
 msgid "Part cannot be sold to customers"
 msgstr "Teil kann nicht an Kunden verkauft werden"
 
-#: part/templates/part/notes.html:13 part/templates/part/notes.html:28
+#: part/templates/part/notes.html:13 part/templates/part/notes.html:29
 #, fuzzy
 #| msgid "Notes"
 msgid "Part Notes"
 msgstr "Notizen"
-
-#: part/templates/part/notes.html:19
-msgid "Save"
-msgstr ""
-
-#: part/templates/part/notes.html:31
-#, fuzzy
-#| msgid "Entry notes"
-msgid "Edit notes"
-msgstr "Eintrags-Notizen"
 
 #: part/templates/part/part_base.html:11
 msgid "This part is not active"
@@ -1019,10 +1051,6 @@ msgstr "Herstellbar?"
 msgid "Underway"
 msgstr "unterwegs"
 
-#: part/templates/part/tabs.html:6
-msgid "Details"
-msgstr "Details"
-
 #: part/templates/part/tabs.html:9
 msgid "Parameters"
 msgstr "Parameter"
@@ -1030,10 +1058,6 @@ msgstr "Parameter"
 #: part/templates/part/tabs.html:13
 msgid "Variants"
 msgstr "Varianten"
-
-#: part/templates/part/tabs.html:17
-msgid "Stock"
-msgstr "Lagerbestand"
 
 #: part/templates/part/tabs.html:26
 msgid "BOM"
@@ -1050,10 +1074,6 @@ msgstr "Benutzt in"
 #: part/templates/part/tabs.html:37
 msgid "Suppliers"
 msgstr "Zulieferer"
-
-#: part/templates/part/tabs.html:43
-msgid "Purchase Orders"
-msgstr "Bestellungen"
 
 #: part/templates/part/tabs.html:48
 msgid "Tracking"

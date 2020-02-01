@@ -18,13 +18,6 @@
 </tr>
 </table>
 
-{% if company.notes %}
-<div class="panel panel-default">
-    <div class="panel-heading"><b>Notes</b></div>
-  <div class="panel-body">{{ company.notes }}</div>
-</div>
-{% endif %}
-
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}

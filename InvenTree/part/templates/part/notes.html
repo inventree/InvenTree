@@ -11,6 +11,7 @@
 
 {% if editing %}
 <h4>{% trans "Part Notes" %}</h4>
+<hr>
 <form method='POST'>
     {% csrf_token %}
         
@@ -31,6 +32,7 @@
         <button title='{% trans "Edit notes" %}' class='btn btn-default btn-glyph float-right' id='edit-notes'><span class='glyphicon glyphicon-edit'></span></button>
     </div>
 </div>
+<hr>
 <div class='panel panel-default'>
     <div class='panel-content'>
         {{ part.notes | markdownify }}

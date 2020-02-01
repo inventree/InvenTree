@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-01 12:31+0000\n"
+"POT-Creation-Date: 2020-02-01 12:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -357,7 +357,8 @@ msgstr ""
 msgid "Supplier part description"
 msgstr ""
 
-#: company/models.py:248 order/templates/order/purchase_order_detail.html:168
+#: company/models.py:248 company/templates/company/tabs.html:26
+#: order/templates/order/purchase_order_detail.html:168
 #: part/templates/part/tabs.html:58 stock/templates/stock/item.html:151
 msgid "Notes"
 msgstr ""
@@ -370,8 +371,41 @@ msgstr ""
 msgid "Part packaging"
 msgstr ""
 
+#: company/templates/company/notes.html:10
+#: company/templates/company/notes.html:27
+msgid "Company Notes"
+msgstr ""
+
+#: company/templates/company/notes.html:17 part/templates/part/notes.html:20
+msgid "Save"
+msgstr ""
+
+#: company/templates/company/notes.html:30 part/templates/part/notes.html:32
+msgid "Edit notes"
+msgstr ""
+
 #: company/templates/company/partdelete.html:5
 msgid "Are you sure you want to delete the following Supplier Parts?"
+msgstr ""
+
+#: company/templates/company/tabs.html:5 part/templates/part/tabs.html:6
+msgid "Details"
+msgstr ""
+
+#: company/templates/company/tabs.html:9
+msgid "Supplier Parts"
+msgstr ""
+
+#: company/templates/company/tabs.html:12 part/templates/part/tabs.html:17
+msgid "Stock"
+msgstr ""
+
+#: company/templates/company/tabs.html:15 part/templates/part/tabs.html:43
+msgid "Purchase Orders"
+msgstr ""
+
+#: company/templates/company/tabs.html:21
+msgid "Sales Orders"
 msgstr ""
 
 #: order/forms.py:21
@@ -923,16 +957,8 @@ msgstr ""
 msgid "Part cannot be sold to customers"
 msgstr ""
 
-#: part/templates/part/notes.html:13 part/templates/part/notes.html:28
+#: part/templates/part/notes.html:13 part/templates/part/notes.html:29
 msgid "Part Notes"
-msgstr ""
-
-#: part/templates/part/notes.html:19
-msgid "Save"
-msgstr ""
-
-#: part/templates/part/notes.html:31
-msgid "Edit notes"
 msgstr ""
 
 #: part/templates/part/part_base.html:11
@@ -967,20 +993,12 @@ msgstr ""
 msgid "Underway"
 msgstr ""
 
-#: part/templates/part/tabs.html:6
-msgid "Details"
-msgstr ""
-
 #: part/templates/part/tabs.html:9
 msgid "Parameters"
 msgstr ""
 
 #: part/templates/part/tabs.html:13
 msgid "Variants"
-msgstr ""
-
-#: part/templates/part/tabs.html:17
-msgid "Stock"
 msgstr ""
 
 #: part/templates/part/tabs.html:26
@@ -997,10 +1015,6 @@ msgstr ""
 
 #: part/templates/part/tabs.html:37
 msgid "Suppliers"
-msgstr ""
-
-#: part/templates/part/tabs.html:43
-msgid "Purchase Orders"
 msgstr ""
 
 #: part/templates/part/tabs.html:48
