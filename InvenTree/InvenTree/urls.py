@@ -101,7 +101,7 @@ urlpatterns = [
     url(r'^api/', include(apipatterns)),
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
-    url(r'^md/', include('markdownx.urls')),
+    url(r'^markdownx/', include('markdownx.urls')),
 ]
 
 # Static file access

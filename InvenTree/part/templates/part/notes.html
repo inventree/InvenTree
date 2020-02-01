@@ -1,5 +1,6 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% load i18n %}
 {% load markdownify %}
 
@@ -9,18 +10,26 @@
 
 <h4>{% trans "Part Notes" %}</h4>
 
+{% if editing %}
+
+<form method='POST'>
+    {% csrf_token %}
+
+    {{ form }}
+
+    <input type="submit" value="Update" />
+</form>
+
+{{ form.media }}
+
+{% else %}
+
 <div class='panel panel-default'>
     <div class='panel-body'>
         {{ part.notes | markdownify }}
     </div>
 </div>
 
-<form method="post" action="">
-    {% csrf_token %}
-
-    {{ form }}
-</form>
-
-{{ form.media }}
+{% endif %}
 
 {% endblock %}
