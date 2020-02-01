@@ -328,6 +328,12 @@
     width: 100%;
 }
 
+input[type="submit"] {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
+
 .modal textarea {
     width: 100%;
 }
