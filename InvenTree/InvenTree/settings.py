@@ -17,6 +17,8 @@ import logging
 import tempfile
 import yaml
 
+from datetime import datetime
+
 from django.utils.translation import gettext_lazy as _
 
 
@@ -162,6 +164,9 @@ REST_FRAMEWORK = {
 }
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
+
+# Markdown configuration
+MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
 
 DATABASES = {}
 

@@ -14,10 +14,11 @@
 
 <form method='POST'>
     {% csrf_token %}
-
+    
     {{ form }}
 
-    <input type="submit" value="Update" />
+    <input type="submit" value='{% trans "Save Notes" %}'/>
+    
 </form>
 
 {{ form.media }}
@@ -25,11 +26,23 @@
 {% else %}
 
 <div class='panel panel-default'>
-    <div class='panel-body'>
+    <div class='panel-heading'>
+        {% trans "Notes" %}
+        <button class='btn btn-default' id='edit-notes'>Edit</button>
+    </div>
+    <div class='panel-content'>
         {{ part.notes | markdownify }}
     </div>
 </div>
 
 {% endif %}
+
+{% endblock %}
+
+{% block js_ready %}
+
+$("#edit-notes").click(function() {
+    location.href = "{% url 'part-notes' part.id %}?edit=1";
+});
 
 {% endblock %}
