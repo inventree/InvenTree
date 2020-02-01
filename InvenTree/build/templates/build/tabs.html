@@ -1,8 +1,13 @@
+{% load i18n %}
+
 <ul class='nav nav-tabs'>
     <li{% if tab == 'details' %} class='active'{% endif %}>
-        <a href="{% url 'build-detail' build.id %}">Details</a>
+        <a href="{% url 'build-detail' build.id %}">{% trans "Details" %}</a>
+    </li>
+    <li{% if tab == 'notes' %} class='active'{% endif %}>
+        <a href="{% url 'build-notes' build.id %}">{% trans "Notes" %}</a>
     </li>
     <li{% if tab == 'allocate' %} class='active'{% endif %}>
-        <a href="{% url 'build-allocate' build.id %}">Assign Parts</a>
+        <a href="{% url 'build-allocate' build.id %}">{% trans "Assign Parts" %}</a>
     </li>
 </ul>

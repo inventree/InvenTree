@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-01 12:45+0000\n"
+"POT-Creation-Date: 2020-02-01 12:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -129,71 +129,71 @@ msgstr ""
 msgid "Overage must be an integer value or a percentage"
 msgstr ""
 
-#: build/forms.py:36
+#: build/forms.py:35
 msgid "Confirm"
 msgstr ""
 
-#: build/forms.py:53 stock/forms.py:34
+#: build/forms.py:52 stock/forms.py:34
 msgid "Enter unique serial numbers (or leave blank)"
 msgstr ""
 
-#: build/forms.py:55
+#: build/forms.py:54
 msgid "Confirm build completion"
 msgstr ""
 
-#: build/models.py:51
+#: build/models.py:53
 msgid "Brief description of the build"
 msgstr ""
 
-#: build/models.py:60
+#: build/models.py:62
 msgid "Select part to build"
 msgstr ""
 
-#: build/models.py:66
+#: build/models.py:68
 msgid ""
 "Select location to take stock from for this build (leave blank to take from "
 "any stock location)"
 msgstr ""
 
-#: build/models.py:72
+#: build/models.py:74
 msgid "Number of parts to build"
 msgstr ""
 
-#: build/models.py:78
+#: build/models.py:80
 msgid "Build status"
 msgstr ""
 
-#: build/models.py:81
+#: build/models.py:83
 msgid "Batch code for this build output"
 msgstr ""
 
-#: build/models.py:93
+#: build/models.py:95
 msgid "Link to external URL"
 msgstr ""
 
-#: build/models.py:95
+#: build/models.py:97
 msgid "Extra build notes"
 msgstr ""
 
-#: build/models.py:380
+#: build/models.py:382
 #, python-brace-format
 msgid "Selected stock item not found in BOM for part '{p}'"
 msgstr ""
 
-#: build/models.py:383
+#: build/models.py:385
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 
-#: build/models.py:401
+#: build/models.py:403
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:408
+#: build/models.py:410
 msgid "Stock Item to allocate to build"
 msgstr ""
 
-#: build/models.py:416
+#: build/models.py:418
 msgid "Stock quantity to allocate to build"
 msgstr ""
 
@@ -211,6 +211,7 @@ msgstr ""
 
 #: build/templates/build/allocate_edit.html:19
 #: build/templates/build/allocate_view.html:17
+#: build/templates/build/detail.html:17
 #: order/templates/order/purchase_order_detail.html:107
 msgid "Part"
 msgstr ""
@@ -248,7 +249,96 @@ msgstr ""
 msgid "On Order"
 msgstr ""
 
-#: build/views.py:289 stock/views.py:863
+#: build/templates/build/detail.html:8
+msgid "Build Details"
+msgstr ""
+
+#: build/templates/build/detail.html:14
+msgid "Title"
+msgstr ""
+
+#: build/templates/build/detail.html:20
+#: order/templates/order/purchase_order_detail.html:111
+#: stock/templates/stock/item.html:89
+#: stock/templates/stock/stock_adjust.html:18
+msgid "Quantity"
+msgstr ""
+
+#: build/templates/build/detail.html:23
+msgid "Stock Source"
+msgstr ""
+
+#: build/templates/build/detail.html:28
+msgid "Stock can be taken from any available location."
+msgstr ""
+
+#: build/templates/build/detail.html:33
+#: order/templates/order/purchase_order_detail.html:70
+#: stock/templates/stock/item.html:146
+msgid "Status"
+msgstr ""
+
+#: build/templates/build/detail.html:37 stock/templates/stock/item.html:95
+msgid "Batch"
+msgstr ""
+
+#: build/templates/build/detail.html:42 part/templates/part/detail.html:50
+#: part/templates/part/part_base.html:91 stock/templates/stock/item.html:119
+msgid "URL"
+msgstr ""
+
+#: build/templates/build/detail.html:46
+#: order/templates/order/purchase_order_detail.html:74
+msgid "Created"
+msgstr ""
+
+#: build/templates/build/detail.html:50
+msgid "Enough Parts?"
+msgstr ""
+
+#: build/templates/build/detail.html:53
+msgid "Yes"
+msgstr ""
+
+#: build/templates/build/detail.html:55
+msgid "No"
+msgstr ""
+
+#: build/templates/build/detail.html:62
+msgid "Completed"
+msgstr ""
+
+#: build/templates/build/notes.html:13 build/templates/build/notes.html:30
+msgid "Build Notes"
+msgstr ""
+
+#: build/templates/build/notes.html:20 company/templates/company/notes.html:17
+#: part/templates/part/notes.html:20
+msgid "Save"
+msgstr ""
+
+#: build/templates/build/notes.html:33 company/templates/company/notes.html:30
+#: part/templates/part/notes.html:32
+msgid "Edit notes"
+msgstr ""
+
+#: build/templates/build/tabs.html:5 company/templates/company/tabs.html:5
+#: part/templates/part/tabs.html:6
+msgid "Details"
+msgstr ""
+
+#: build/templates/build/tabs.html:8 company/models.py:248
+#: company/templates/company/tabs.html:26
+#: order/templates/order/purchase_order_detail.html:168
+#: part/templates/part/tabs.html:58 stock/templates/stock/item.html:151
+msgid "Notes"
+msgstr ""
+
+#: build/templates/build/tabs.html:11
+msgid "Assign Parts"
+msgstr ""
+
+#: build/views.py:290 stock/views.py:863
 #, python-brace-format
 msgid "The following serial numbers already exist: ({sn})"
 msgstr ""
@@ -357,12 +447,6 @@ msgstr ""
 msgid "Supplier part description"
 msgstr ""
 
-#: company/models.py:248 company/templates/company/tabs.html:26
-#: order/templates/order/purchase_order_detail.html:168
-#: part/templates/part/tabs.html:58 stock/templates/stock/item.html:151
-msgid "Notes"
-msgstr ""
-
 #: company/models.py:250
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
@@ -376,20 +460,8 @@ msgstr ""
 msgid "Company Notes"
 msgstr ""
 
-#: company/templates/company/notes.html:17 part/templates/part/notes.html:20
-msgid "Save"
-msgstr ""
-
-#: company/templates/company/notes.html:30 part/templates/part/notes.html:32
-msgid "Edit notes"
-msgstr ""
-
 #: company/templates/company/partdelete.html:5
 msgid "Are you sure you want to delete the following Supplier Parts?"
-msgstr ""
-
-#: company/templates/company/tabs.html:5 part/templates/part/tabs.html:6
-msgid "Details"
 msgstr ""
 
 #: company/templates/company/tabs.html:9
@@ -490,15 +562,6 @@ msgstr ""
 msgid "Supplier"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:70
-#: stock/templates/stock/item.html:146
-msgid "Status"
-msgstr ""
-
-#: order/templates/order/purchase_order_detail.html:74
-msgid "Created"
-msgstr ""
-
 #: order/templates/order/purchase_order_detail.html:79
 msgid "Issued"
 msgstr ""
@@ -518,12 +581,6 @@ msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:110
 msgid "Reference"
-msgstr ""
-
-#: order/templates/order/purchase_order_detail.html:111
-#: stock/templates/stock/item.html:89
-#: stock/templates/stock/stock_adjust.html:18
-msgid "Quantity"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:115
@@ -866,11 +923,6 @@ msgstr ""
 
 #: part/templates/part/detail.html:38
 msgid "Variant Of"
-msgstr ""
-
-#: part/templates/part/detail.html:50 part/templates/part/part_base.html:91
-#: stock/templates/stock/item.html:119
-msgid "URL"
 msgstr ""
 
 #: part/templates/part/detail.html:55
@@ -1221,10 +1273,6 @@ msgstr ""
 
 #: stock/templates/stock/item.html:84
 msgid "Serial Number"
-msgstr ""
-
-#: stock/templates/stock/item.html:95
-msgid "Batch"
 msgstr ""
 
 #: stock/templates/stock/item.html:113
