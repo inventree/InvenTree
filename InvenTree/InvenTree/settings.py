@@ -165,8 +165,36 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
-# Markdown configuration
+# Markdownx configuration
+# Ref: https://neutronx.github.io/django-markdownx/customization/
 MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
+
+# Markdownify configuration
+# Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
+
+MARKDOWNIFY_WHITELIST_TAGS = [
+  'a',
+  'abbr',
+  'b',
+  'blockquote',
+  'em',
+  'h1', 'h2', 'h3',
+  'i',
+  'img',
+  'li', 
+  'ol',
+  'p',
+  'strong',
+  'ul'
+]
+
+MARKDOWNIFY_WHITELIST_ATTRS = [
+    'href',
+    'src',
+    'alt',
+]
+
+MARKDOWNIFY_BLEACH = True
 
 DATABASES = {}
 
