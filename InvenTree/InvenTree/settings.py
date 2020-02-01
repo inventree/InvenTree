@@ -173,19 +173,19 @@ MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
 
 MARKDOWNIFY_WHITELIST_TAGS = [
-  'a',
-  'abbr',
-  'b',
-  'blockquote',
-  'em',
-  'h1', 'h2', 'h3',
-  'i',
-  'img',
-  'li', 
-  'ol',
-  'p',
-  'strong',
-  'ul'
+    'a',
+    'abbr',
+    'b',
+    'blockquote',
+    'em',
+    'h1', 'h2', 'h3',
+    'i',
+    'img',
+    'li',
+    'ol',
+    'p',
+    'strong',
+    'ul'
 ]
 
 MARKDOWNIFY_WHITELIST_ATTRS = [
