@@ -531,6 +531,11 @@ class PartNotes(UpdateView):
 
     fields = ['notes']
 
+    def get_success_url(self):
+        """ Return the success URL for this form """
+        
+        return reverse('part-notes', kwargs={'pk': self.get_object().id})
+
     def get_context_data(self, **kwargs):
 
         part = self.get_object()

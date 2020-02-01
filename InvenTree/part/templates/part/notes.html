@@ -15,9 +15,8 @@
 <form method='POST'>
     {% csrf_token %}
     
-    {{ form }}
-
     <input type="submit" value='{% trans "Save Notes" %}'/>
+    {{ form }}
     
 </form>
 
@@ -40,6 +39,7 @@
 {% endblock %}
 
 {% block js_ready %}
+{{ block.super }}
 
 $("#edit-notes").click(function() {
     location.href = "{% url 'part-notes' part.id %}?edit=1";
