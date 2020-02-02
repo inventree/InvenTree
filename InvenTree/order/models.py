@@ -12,6 +12,8 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
+from markdownx.models import MarkdownxField
+
 from datetime import datetime
 
 from stock.models import StockItem
@@ -81,7 +83,7 @@ class Order(models.Model):
 
     complete_date = models.DateField(blank=True, null=True)
 
-    notes = models.TextField(blank=True, help_text=_('Order notes'))
+    notes = MarkdownxField(blank=True, help_text=_('Order notes'))
 
     def place_order(self):
         """ Marks the order as PLACED. Order must be currently PENDING. """

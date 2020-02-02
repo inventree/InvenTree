@@ -7,8 +7,9 @@ from __future__ import unicode_literals
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils.translation import ugettext as _
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, UpdateView
 from django.forms import HiddenInput
 
 import logging
@@ -65,6 +66,28 @@ class PurchaseOrderDetail(DetailView):
         ctx = super().get_context_data(**kwargs)
 
         ctx['OrderStatus'] = OrderStatus
+
+        return ctx
+
+
+class PurchaseOrderNotes(UpdateView):
+    """ View for updating the 'notes' field of a PurchaseOrder """
+
+    context_object_name = 'order'
+    template_name = 'order/order_notes.html'
+    model = PurchaseOrder
+
+    fields = ['notes']
+
+    def get_success_url(self):
+
+        return reverse('purchase-order-notes', kwargs={'pk': self.get_object().id})
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+
+        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
 
         return ctx
 

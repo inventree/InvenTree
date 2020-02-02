@@ -1,104 +1,22 @@
-{% extends "base.html" %}
+{% extends "order/order_base.html" %}
 
+{% load inventree_extras %}
 {% load i18n %}
 {% load static %}
-{% load inventree_extras %}
 
-{% block page_title %}
-InvenTree | {{ order }}
-{% endblock %}
+{% block details %}
 
-{% block content %}
-<div class='row'>
-    <div class='col-sm-6'>
-        <div class='media'>
-            <div class='media-left'>
-                <img class='part-thumb'
-                {% if order.supplier.image %}
-                src="{{ order.supplier.image.url }}"
-                {% else %}
-                src="{% static 'img/blank_image.png' %}"
-                {% endif %}
-                />
-            </div>
-            <div class='media-body'>
-                <h4>{{ order }}</h4>
-                <p>{{ order.description }}</p>
-                {% if order.URL %}
-                <a href="{{ order.URL }}">{{ order.URL }}</a>
-                {% endif %}
-                <p>
-                    <div class='btn-row'>
-                        <div class='btn-group'>
-                            <button type='button' class='btn btn-default btn-glyph' id='edit-order' title='Edit order information'>
-                                <span class='glyphicon glyphicon-edit'></span>
-                            </button>
-                            <button type='button' class='btn btn-default btn-glyph' id='export-order' title='Export order to file'>
-                                <span class='glyphicon glyphicon-download-alt'></span>
-                            </button>
-                            {% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
-                            <button type='button' class='btn btn-default btn-glyph' id='place-order' title='Place order'>
-                                <span class='glyphicon glyphicon-send'></span>
-                            </button>
-                            {% elif order.status == OrderStatus.PLACED %}
-                            <button type='button' class='btn btn-default btn-glyph' id='receive-order' title='Receive items'>
-                                <span class='glyphicon glyphicon-check'></span>
-                            </button>
-                            <button type='button' class='btn btn-default btn-glyph' id='complete-order' title='Mark order as complete'>
-                                <span class='glyphicon glyphicon-ok'></span>
-                            </button>
-                            {% endif %}
-                            {% if order.status == OrderStatus.PENDING or order.status == OrderStatus.PLACED %}
-                            <button type='button' class='btn btn-default btn-glyph' id='cancel-order' title='Cancel order'>
-                                <span class='glyphicon glyphicon-remove'></span>
-                            </button>
-                            {% endif %}
-                        </div>
-                    </div>
-                </p>
-            </div>
-        </div>
-    </div>
-    <div class='col-sm-6'>
-        <h4>{% trans "Purchase Order Details" %}</h4>
-        <table class='table'>
-            <tr>
-                <td>{% trans "Supplier" %}</td>
-                <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier }}</a></td>
-            </tr>
-            <tr>
-                <td>{% trans "Status" %}</td>
-                <td>{% include "order/order_status.html" %}</td>
-            </tr>
-            <tr>
-                <td>{% trans "Created" %}</td>
-                <td>{{ order.creation_date }}<span class='badge'>{{ order.created_by }}</span></td>
-            </tr>
-            {% if order.issue_date %}
-            <tr>
-                <td>{% trans "Issued" %}</td>
-                <td>{{ order.issue_date }}</td>
-            </tr>
-            {% endif %}
-            {% if order.status == OrderStatus.COMPLETE %}
-            <tr>
-                <td>{% trans "Received" %}</td>
-                <td>{{ order.complete_date }}<span class='badge'>{{ order.received_by }}</span></td>
-            </tr>
-            {% endif %}
-        </table>
-    </div>
-</div>
+{% include 'order/tabs.html' with tab='details' %}
 
 <hr>
 
 <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
     {% if order.status == OrderStatus.PENDING %}
-    <button type='button' class='btn btn-default' id='new-po-line'>Add Line Item</button>
+    <button type='button' class='btn btn-default' id='new-po-line'>{% trans "Add Line Item" %}</button>
     {% endif %}
 </div>
 
-<h4>Order Items</h4>
+<h4>{% trans "Order Items" %}</h4>
 
 <table class='table table-striped table-condensed' id='po-lines-table' data-toolbar='#order-toolbar-buttons'>
     <thead>
@@ -162,40 +80,11 @@ InvenTree | {{ order }}
     </tbody>
 </table>
 
-{% if order.notes %}
-<hr>
-<div class='panel panel-default'>
-    <div class='panel-heading'><b>{% trans "Notes" %}</b></div>
-    <div class='panel-body'>{{ order.notes }}</div>
-</div>
-{% endif %}
-
 {% endblock %}
 
 {% block js_ready %}
 
-{% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
-$("#place-order").click(function() {
-    launchModalForm("{% url 'purchase-order-issue' order.id %}",
-    {
-        reload: true,
-    });
-});
-{% endif %}
-
-$("#edit-order").click(function() {
-    launchModalForm("{% url 'purchase-order-edit' order.id %}",
-        {
-            reload: true,
-        }
-    );
-});
-
-$("#cancel-order").click(function() {
-    launchModalForm("{% url 'purchase-order-cancel' order.id %}", {
-        reload: true,
-    });
-});
+{{ block.super }}
 
 $("#po-lines-table").on('click', ".line-receive", function() {
 
