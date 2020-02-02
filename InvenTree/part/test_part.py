@@ -22,8 +22,12 @@ class TemplateTagTest(TestCase):
         self.assertEqual(type(inventree_extras.inventree_version()), str)
 
     def test_hash(self):
-        hash = inventree_extras.inventree_commit()
+        hash = inventree_extras.inventree_commit_hash()
         self.assertEqual(len(hash), 7)
+
+    def test_date(self):
+        d = inventree_extras.inventree_commit_date()
+        self.assertEqual(len(d.split('-')), 3)
 
     def test_github(self):
         self.assertIn('github.com', inventree_extras.inventree_github_url())
