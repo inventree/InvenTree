@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load i18n %}
 
 {% block page_title %}
-InvenTree | Company - {{ company.name }}
+InvenTree | {% trans "Company" %} - {{ company.name }}
 {% endblock %}
 
 {% block content %}
@@ -44,27 +45,27 @@ InvenTree | Company - {{ company.name }}
         <table class="table">
         {% if company.website %}
         <tr>
-            <td>Website</td><td><a href="{{ company.website }}">{{ company.website }}</a></td>
+            <td>{% trans "Website" %}</td><td><a href="{{ company.website }}">{{ company.website }}</a></td>
         </tr>
         {% endif %}
         {% if company.address %}
         <tr>
-            <td>Address</td><td>{{ company.address }}</td>
+            <td>{% trans "Address" %}</td><td>{{ company.address }}</td>
         </tr>
         {% endif %}
         {% if company.phone %}
         <tr>
-            <td>Phone</td><td>{{ company.phone }}</td>
+            <td>{% trans "Phone" %}</td><td>{{ company.phone }}</td>
         </tr>
         {% endif %}
         {% if company.email %}
         <tr>
-            <td>Email</td><td>{{ company.email }}</td>
+            <td>{% trans "Email" %}</td><td>{{ company.email }}</td>
         </tr>
         {% endif %}
         {% if company.contact %}
         <tr>
-            <td>Contact</td><td>{{ company.contact }}</td>
+            <td>{% trans "Contact" %}</td><td>{{ company.contact }}</td>
         </tr>
         {% endif %}
         </table>
