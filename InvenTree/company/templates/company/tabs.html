@@ -1,23 +1,28 @@
+{% load i18n %}
+
 <ul class='nav nav-tabs'>
     <li{% if tab == 'details' %} class='active'{% endif %}>
-        <a href="{% url 'company-detail' company.id %}">Details</a>
+        <a href="{% url 'company-detail' company.id %}">{% trans "Details" %}</a>
     </li>
     {% if company.is_supplier %}
     <li{% if tab == 'parts' %} class='active'{% endif %}>
-        <a href="{% url 'company-detail-parts' company.id %}">Supplier Parts <span class='badge'>{{ company.part_count }}</span></a>
+        <a href="{% url 'company-detail-parts' company.id %}">{% trans "Supplier Parts" %} <span class='badge'>{{ company.part_count }}</span></a>
     </li>
     <li{% if tab == 'stock' %} class='active'{% endif %}>
-        <a href="{% url 'company-detail-stock' company.id %}">Stock <span class='badge'>{{ company.stock_count }}</a>
+        <a href="{% url 'company-detail-stock' company.id %}">{% trans "Stock" %} <span class='badge'>{{ company.stock_count }}</a>
     </li>
     <li{% if tab == 'po' %} class='active'{% endif %}>
-        <a href="{% url 'company-detail-purchase-orders' company.id %}">Purchase Orders <span class='badge'>{{ company.purchase_orders.count }}</span></a>
+        <a href="{% url 'company-detail-purchase-orders' company.id %}">{% trans "Purchase Orders" %} <span class='badge'>{{ company.purchase_orders.count }}</span></a>
     </li>
     {% endif %}
     {% if company.is_customer %}
     {% if 0 %}
     <li{% if tab == 'co' %} class='active'{% endif %}>
-        <a href="#">Sales Orders</a>
+        <a href="#">{% trans "Sales Orders" %}</a>
     </li>
     {% endif %}
     {% endif %}
+    <li{% if tab == 'notes' %} class='active'{% endif %}>
+        <a href="{% url 'company-notes' company.id %}">{% trans "Notes" %}{% if company.notes %} <span class='glyphicon glyphicon-small glyphicon-info-sign'></span>{% endif %}</a>
+    </li>
 </ul>

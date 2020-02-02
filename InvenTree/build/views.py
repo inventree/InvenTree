@@ -7,8 +7,9 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, UpdateView
 from django.forms import HiddenInput
+from django.urls import reverse
 
 from part.models import Part
 from .models import Build, BuildItem
@@ -307,6 +308,28 @@ class BuildComplete(AjaxUpdateView):
         return {
             'info': 'Build marked as COMPLETE'
         }
+
+
+class BuildNotes(UpdateView):
+    """ View for editing the 'notes' field of a Build object.
+    """
+
+    context_object_name = 'build'
+    template_name = 'build/notes.html'
+    model = Build
+
+    fields = ['notes']
+
+    def get_success_url(self):
+        return reverse('build-notes', kwargs={'pk': self.get_object().id})
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+        
+        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
+
+        return ctx
 
 
 class BuildDetail(DetailView):

@@ -6,8 +6,9 @@ Django views for interacting with Company app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, UpdateView
 
+from django.urls import reverse
 from django.forms import HiddenInput
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
@@ -50,6 +51,28 @@ class CompanyIndex(ListView):
             queryset = queryset.filter(is_customer=True)
 
         return queryset
+
+
+class CompanyNotes(UpdateView):
+    """ View for editing the 'notes' field of a Company object.
+    """
+
+    context_object_name = 'company'
+    template_name = 'company/notes.html'
+    model = Company
+
+    fields = ['notes']
+
+    def get_success_url(self):
+        return reverse('company-notes', kwargs={'pk': self.get_object().id})
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+
+        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
+
+        return ctx
 
 
 class CompanyDetail(DetailView):

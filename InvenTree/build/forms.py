@@ -26,7 +26,6 @@ class EditBuildForm(HelperForm):
             'take_from',
             'batch',
             'URL',
-            'notes',
         ]
 
 

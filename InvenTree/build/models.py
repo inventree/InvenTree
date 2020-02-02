@@ -16,6 +16,8 @@ from django.db import models, transaction
 from django.db.models import Sum
 from django.core.validators import MinValueValidator
 
+from markdownx.models import MarkdownxField
+
 from InvenTree.status_codes import BuildStatus
 from InvenTree.fields import InvenTreeURLField
 
@@ -92,7 +94,7 @@ class Build(models.Model):
     
     URL = InvenTreeURLField(blank=True, help_text=_('Link to external URL'))
 
-    notes = models.TextField(blank=True, help_text=_('Extra build notes'))
+    notes = MarkdownxField(blank=True, help_text=_('Extra build notes'))
 
     @transaction.atomic
     def cancelBuild(self, user):

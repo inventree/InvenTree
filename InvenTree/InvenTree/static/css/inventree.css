@@ -5,6 +5,29 @@
     --basic-color: #333;
 }
 
+.markdownx .row {
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #cce;
+    border-radius: 4px;
+}
+
+.markdownx-editor {
+    width: 100%;
+    border: 1px solid #cce;
+    border-radius: 3px;
+    padding: 10px;
+}
+
+.panel-content {
+    padding: 10px;
+}
+
+.markdownx-preview {
+    border: 1px solid #cce;
+    border-radius: 3px;
+    padding: 10px;
+}
 
 .qr-code {
     max-width: 400px;
@@ -303,6 +326,12 @@
 
 .modal input {
     width: 100%;
+}
+
+input[type="submit"] {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
 }
 
 .modal textarea {

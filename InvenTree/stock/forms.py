@@ -162,7 +162,6 @@ class EditStockItemForm(HelperForm):
             'serial',
             'batch',
             'status',
-            'notes',
             'URL',
             'delete_on_deplete',
         ]
