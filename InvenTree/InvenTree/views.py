@@ -566,6 +566,6 @@ class DatabaseStatsView(AjaxView):
         - Most ordered part
         - Most sold part
         - etc etc etc
-        """ 
+        """
 
         return ctx
