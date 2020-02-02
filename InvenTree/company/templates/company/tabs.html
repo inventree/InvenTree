@@ -23,6 +23,6 @@
     {% endif %}
     {% endif %}
     <li{% if tab == 'notes' %} class='active'{% endif %}>
-        <a href="{% url 'company-notes' company.id %}">{% trans "Notes" %}</a>
+        <a href="{% url 'company-notes' company.id %}">{% trans "Notes" %}{% if company.notes %} <span class='glyphicon glyphicon-small glyphicon-info-sign'></span>{% endif %}</a>
     </li>
 </ul>
