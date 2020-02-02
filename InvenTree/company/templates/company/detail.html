@@ -1,19 +1,20 @@
 {% extends "company/company_base.html" %}
 {% load static %}
+{% load i18n %}}
 {% block details %}
 
 {% include 'company/tabs.html' with tab='details' %}
 
-<h4>Company Details</h4>
+<h4>{% trans "Company Details" %}</h4>
 <hr>
 
 <table class='table table-striped'>
 <tr>
-    <td>Customer</td>
+    <td>{% trans "Customer" %}</td>
     <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
 </tr>
 <tr>
-    <td>Supplier</td>
+    <td>{% trans "Supplier" %}</td>
     <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
 </tr>
 </table>

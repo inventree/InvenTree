@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load i18n %}
 
 {% block page_title %}
 InvenTree | Search Results
@@ -8,7 +9,7 @@ InvenTree | Search Results
 
 {% block content %}
 
-<h3>Search Results</h3>
+<h3>{% trans "Search Results" %}</h3>
 
 <div>
 {% include "search_form.html" with query_text=query %}
@@ -18,7 +19,7 @@ InvenTree | Search Results
 <hr>
 
 <div id='no-search-results'>
-    <h4><i>No results found</i></h4>
+    <h4><i>{% trans "No results found" %}</i></h4>
 </div>
 
 {% include "InvenTree/search_part_category.html" with collapse_id="categories" %}
@@ -113,7 +114,7 @@ InvenTree | Search Results
                 field: 'name',
                 title: 'Name',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, '/stock/location/' + row.pk + '/');
+                    return renderLink(row.pathstring, '/stock/location/' + row.pk + '/');
                 },
             },
             {
