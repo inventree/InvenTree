@@ -7,7 +7,7 @@ clean:
 	rm -rf .tox
 	rm -f .coverage
 
-update: backup install migrate static
+update: install migrate static
 
 # Perform database migrations (after schema changes are made)
 migrate:
