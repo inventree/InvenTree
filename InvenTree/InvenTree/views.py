@@ -8,6 +8,7 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponseRedirect
 
@@ -537,3 +538,10 @@ class SettingsView(TemplateView):
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
 
         return ctx
+
+
+class DatabaseStatsView(AjaxView):
+    """ View for displaying database statistics """
+
+    ajax_template_name = "stats.html"
+    ajax_form_title = _("Database Statistics")

@@ -41,6 +41,12 @@ function inventreeDocReady() {
 
         modal.modal('show');
     });
+
+    // Callback to launch the 'Database Stats' window
+    $('#launch-stats').click(function() {
+        launchModalForm("/stats/", {
+        });
+    });
 }
 
 function isFileTransfer(transfer) {
