@@ -33,7 +33,6 @@ Updating the database is as simple as calling the makefile target:
 
 This command performs the following steps:
 
-* Backup database entries and uploaded media files
 * Perform required database schema changes
 * Collect required static files
 
