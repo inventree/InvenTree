@@ -25,6 +25,7 @@ build_detail_urls = [
     url(r'^auto-allocate/?', views.BuildAutoAllocate.as_view(), name='build-auto-allocate'),
     url(r'^unallocate/', views.BuildUnallocate.as_view(), name='build-unallocate'),
 
+    url(r'^notes/', views.BuildNotes.as_view(), name='build-notes'),
     url(r'^.*$', views.BuildDetail.as_view(), name='build-detail'),
 ]
 

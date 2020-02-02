@@ -1,0 +1,56 @@
+{% extends "part/part_base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% load markdownify %}
+
+{% block details %}
+
+{% include 'part/tabs.html' with tab='notes' %}
+
+
+{% if editing %}
+<h4>{% trans "Part Notes" %}</h4>
+<hr>
+<form method='POST'>
+    {% csrf_token %}
+        
+    {{ form }}
+    <hr>
+    <input type="submit" value='{% trans "Save" %}'/>
+    
+</form>
+
+{{ form.media }}
+
+{% else %}
+<div class='row'>
+    <div class='col-sm-6'>
+        <h4>{% trans "Part Notes" %}</h4>
+    </div>
+    <div class='col-sm-6'>
+        <button title='{% trans "Edit notes" %}' class='btn btn-default btn-glyph float-right' id='edit-notes'><span class='glyphicon glyphicon-edit'></span></button>
+    </div>
+</div>
+<hr>
+<div class='panel panel-default'>
+    <div class='panel-content'>
+        {{ part.notes | markdownify }}
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+{% if editing %}
+{% else %}
+$("#edit-notes").click(function() {
+    location.href = "{% url 'part-notes' part.id %}?edit=1";
+});
+{% endif %}
+
+{% endblock %}

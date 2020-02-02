@@ -3,10 +3,8 @@
 
 {% include "part/tabs.html" with tab="allocation" %}
 
-<h3>Part Allocation</h3>
+<h4>Part Allocation</h4>
 
-{% if part.allocated_build_count > 0 %}
-<h4>Allocated to Part Builds</h4>
 <table class='table table-striped table-condensed' id='build-table'>
 <tr>
     <th>Build</th>
@@ -23,7 +21,6 @@
 </tr>
 {% endfor %}
 </table>
-{% endif %}
 
 {% endblock %}
 

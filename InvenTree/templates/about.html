@@ -1,5 +1,6 @@
 {% load static %}
 {% load inventree_extras %}
+{% load i18n %}
 
 <div class='modal fade modal-fixed-footer' tabindex='-1' role='dialog' id='modal-about'>
     <div class='modal-dialog'>
@@ -14,23 +15,26 @@
                 <div>
                     <!--
                     -->
-                    <h4>InvenTree Version Information</h4>
+                    <h4>{% trans "InvenTree Version Information" %}</h4>
                     <table class='table table-striped table-condensed'>
                         <tr>
-                            <td>Version</td><td><a href="https://github.com/inventree/InvenTree/releases">{% inventree_version %}</a></td>
+                            <td>{% trans "Version" %}</td><td><a href="https://github.com/inventree/InvenTree/releases">{% inventree_version %}</a></td>
                         </tr>
                         <tr>
-                            <td>Commit Hash</td><td><a href="https://github.com/inventree/InvenTree/commit/{% inventree_commit %}">{% inventree_commit %}</a></td>
+                            <td>{% trans "Commit Hash" %}</td><td><a href="https://github.com/inventree/InvenTree/commit/{% inventree_commit_hash %}">{% inventree_commit_hash %}</a></td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Commit Date" %}</td><td>{% inventree_commit_date %}</td>
                         </tr>
                         <tr>
                             <td colspan="2"></td>
                         </tr>
                         <tr>
-                            <td>InvenTree Documenation</td>
+                            <td>{% trans "InvenTree Documentation" %}</td>
                             <td><a href="{% inventree_docs_url %}">{% inventree_docs_url %}</a></td>
                         </tr>
                         <tr>
-                            <td>View Code on GitHub</td><td><a href="{% inventree_github_url %}">{% inventree_github_url %}</a></td>
+                            <td>{% trans "View Code on GitHub" %}</td><td><a href="{% inventree_github_url %}">{% inventree_github_url %}</a></td>
                         </tr>
                         <tr>
                             <td></td>

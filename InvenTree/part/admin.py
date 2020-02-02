@@ -69,7 +69,7 @@ class PartResource(ModelResource):
 
 
 class PartAdmin(ImportExportModelAdmin):
-
+    
     resource_class = PartResource
 
     list_display = ('full_name', 'description', 'total_stock', 'category')

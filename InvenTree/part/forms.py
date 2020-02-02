@@ -104,7 +104,6 @@ class EditPartForm(HelperForm):
             'default_supplier',
             'units',
             'minimum_stock',
-            'notes',
             'active',
         ]
 

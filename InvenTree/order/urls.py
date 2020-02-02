@@ -19,6 +19,8 @@ purchase_order_detail_urls = [
 
     url(r'^export/?', views.PurchaseOrderExport.as_view(), name='purchase-order-export'),
 
+    url(r'^notes/', views.PurchaseOrderNotes.as_view(), name='purchase-order-notes'),
+
     url(r'^.*$', views.PurchaseOrderDetail.as_view(), name='purchase-order-detail'),
 ]
 

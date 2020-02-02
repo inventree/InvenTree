@@ -48,9 +48,15 @@ def inventree_version(*args, **kwargs):
 
 
 @register.simple_tag()
-def inventree_commit(*args, **kwargs):
+def inventree_commit_hash(*args, **kwargs):
     """ Return InvenTree git commit hash string """
     return version.inventreeCommitHash()
+
+
+@register.simple_tag()
+def inventree_commit_date(*args, **kwargs):
+    """ Return InvenTree git commit date string """
+    return version.inventreeCommitDate()
 
 
 @register.simple_tag()

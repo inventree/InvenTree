@@ -17,6 +17,8 @@ import logging
 import tempfile
 import yaml
 
+from datetime import datetime
+
 from django.utils.translation import gettext_lazy as _
 
 
@@ -101,6 +103,8 @@ INSTALLED_APPS = [
     'django_cleanup',               # Automatically delete orphaned MEDIA files
     'qr_code',                      # Generate QR codes
     'mptt',                         # Modified Preorder Tree Traversal
+    'markdownx',                    # Markdown editing
+    'markdownify',                  # Markdown template rendering
 ]
 
 LOGGING = {
@@ -160,6 +164,37 @@ REST_FRAMEWORK = {
 }
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
+
+# Markdownx configuration
+# Ref: https://neutronx.github.io/django-markdownx/customization/
+MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
+
+# Markdownify configuration
+# Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
+
+MARKDOWNIFY_WHITELIST_TAGS = [
+    'a',
+    'abbr',
+    'b',
+    'blockquote',
+    'em',
+    'h1', 'h2', 'h3',
+    'i',
+    'img',
+    'li',
+    'ol',
+    'p',
+    'strong',
+    'ul'
+]
+
+MARKDOWNIFY_WHITELIST_ATTRS = [
+    'href',
+    'src',
+    'alt',
+]
+
+MARKDOWNIFY_BLEACH = True
 
 DATABASES = {}
 
