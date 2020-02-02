@@ -1,21 +1,22 @@
 {% extends "company/company_base.html" %}
 {% load static %}
 {% block details %}
+{% load i18n %}
 
 {% include 'company/tabs.html' with tab='parts' %}
 
-<h4>Supplier Parts</h4>
+<h4>{% trans "Supplier Parts" %}</h4>
 
 <hr>
 
 <div id='button-toolbar'>
-    <button class="btn btn-success" id='part-create'>New Supplier Part</button>
+    <button class="btn btn-success" id='part-create'>{% trans "New Supplier Part" %}</button>
     <div class="dropdown" style="float: right;">
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}
         <span class="caret"></span></button>
         <ul class="dropdown-menu">
-            <li><a href='#' id='multi-part-order' title='Order parts'>Order Parts</a></li>
-            <li><a href='#' id='multi-part-delete' title='Delete parts'>Delete Parts</a></li>
+            <li><a href='#' id='multi-part-order' title='Order parts'>{% trans "Order Parts" %}</a></li>
+            <li><a href='#' id='multi-part-delete' title='Delete parts'>{% trans "Delete Parts" %}</a></li>
         </ul>
     </div>
 </div>
@@ -61,7 +62,7 @@
             {
                 sortable: true,
                 field: 'part_detail.full_name',
-                title: 'Part',
+                title: '{% trans "Part" %}',
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.part_detail.image_url) + renderLink(value, '/part/' + row.part + '/suppliers/');
                 }
@@ -69,7 +70,7 @@
             {
                 sortable: true,
                 field: 'SKU',
-                title: 'SKU',
+                title: '{% trans "SKU" %}',
                 formatter: function(value, row, index, field) {
                     return renderLink(value, row.url);
                 }
@@ -77,7 +78,7 @@
             {
                 sortable: true,
                 field: 'manufacturer',
-                title: 'Manufacturer',
+                title: '{% trans "Manufacturer" %}',
             },
             {
                 sortable: true,
@@ -86,7 +87,7 @@
             },
             {
                 field: 'URL',
-                title: 'URL',
+                title: '{% trans "URL" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
                         return renderLink(value, value);

@@ -29,6 +29,8 @@ class InvenTreeTree(MPTTModel):
 
     class Meta:
         abstract = True
+
+        # Names must be unique at any given level in the tree
         unique_together = ('name', 'parent')
 
     class MPTTMeta:
@@ -37,7 +39,6 @@ class InvenTreeTree(MPTTModel):
     name = models.CharField(
         blank=False,
         max_length=100,
-        unique=True,
         validators=[validate_tree_name]
     )
 
