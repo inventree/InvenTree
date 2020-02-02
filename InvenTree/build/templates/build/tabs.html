@@ -5,7 +5,7 @@
         <a href="{% url 'build-detail' build.id %}">{% trans "Details" %}</a>
     </li>
     <li{% if tab == 'notes' %} class='active'{% endif %}>
-        <a href="{% url 'build-notes' build.id %}">{% trans "Notes" %}</a>
+        <a href="{% url 'build-notes' build.id %}">{% trans "Notes" %}{% if build.notes %} <span class='glyphicon glyphicon-small glyphicon-info-sign'></span>{% endif %}</a>
     </li>
     <li{% if tab == 'allocate' %} class='active'{% endif %}>
         <a href="{% url 'build-allocate' build.id %}">{% trans "Assign Parts" %}</a>
