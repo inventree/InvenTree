@@ -349,7 +349,7 @@ class Part(models.Model):
                               on_delete=models.DO_NOTHING,
                               help_text=_('Part category'))
 
-    IPN = models.CharField(max_length=100, blank=True, help_text=_('Internal Part Number'))
+    IPN = models.CharField(max_length=100, blank=True, help_text=_('Internal Part Number'), validators=[validators.validate_part_ipn])
 
     revision = models.CharField(max_length=100, blank=True, help_text=_('Part revision or version number'))
 
