@@ -39,6 +39,7 @@ def validate_part_name(value):
                 _('Invalid character in part name')
             )
 
+
 def validate_part_ipn(value):
     """ Validate the Part IPN against regex rule """
 

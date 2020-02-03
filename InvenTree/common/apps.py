@@ -1,6 +1,8 @@
 from django.apps import AppConfig
 from django.db.utils import OperationalError
 
+import os
+
 import yaml
 
 
@@ -18,7 +20,10 @@ class CommonConfig(AppConfig):
 
         from .models import InvenTreeSetting
 
-        with open('./common/kvp.yaml') as kvp:
+        here = os.path.dirname(os.path.abspath(__file__))
+        settings_file = os.path.join(here, 'kvp.yaml')
+
+        with open(settings_file) as kvp:
             values = yaml.safe_load(kvp)
 
         for value in values:
