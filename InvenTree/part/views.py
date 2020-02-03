@@ -23,7 +23,7 @@ from .models import PartParameterTemplate, PartParameter
 from .models import BomItem
 from .models import match_part_names
 
-from common.models import Currency
+from common.models import Currency, InvenTreeSetting
 from company.models import SupplierPart
 
 from . import forms as part_forms
@@ -395,6 +395,8 @@ class PartDuplicate(AjaxCreateView):
             initials = model_to_dict(part)
         else:
             initials = super(AjaxCreateView, self).get_initial()
+
+        initials['deep_copy'] = str2bool(InvenTreeSetting.get_setting('part_deep_copy', True))
 
         return initials
 
