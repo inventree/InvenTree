@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-02 10:40+0000\n"
+"POT-Creation-Date: 2020-02-03 10:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -108,25 +108,33 @@ msgstr ""
 msgid "Allocated"
 msgstr ""
 
-#: InvenTree/validators.py:35
+#: InvenTree/validators.py:39
 msgid "Invalid character in part name"
 msgstr ""
 
-#: InvenTree/validators.py:44
+#: InvenTree/validators.py:52
+msgid "IPN must match regex pattern"
+msgstr ""
+
+#: InvenTree/validators.py:60
 #, python-brace-format
 msgid "Illegal character in name ({x})"
 msgstr ""
 
-#: InvenTree/validators.py:63 InvenTree/validators.py:79
+#: InvenTree/validators.py:79 InvenTree/validators.py:95
 msgid "Overage value must not be negative"
 msgstr ""
 
-#: InvenTree/validators.py:81
+#: InvenTree/validators.py:97
 msgid "Overage must not exceed 100%"
 msgstr ""
 
-#: InvenTree/validators.py:88
+#: InvenTree/validators.py:104
 msgid "Overage must be an integer value or a percentage"
+msgstr ""
+
+#: InvenTree/views.py:548
+msgid "Database Statistics"
 msgstr ""
 
 #: build/forms.py:35
@@ -352,39 +360,39 @@ msgstr ""
 msgid "The following serial numbers already exist: ({sn})"
 msgstr ""
 
-#: common/models.py:65
+#: common/models.py:69
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
-#: common/models.py:67
+#: common/models.py:71
 msgid "Settings value"
 msgstr ""
 
-#: common/models.py:69
+#: common/models.py:73
 msgid "Settings description"
 msgstr ""
 
-#: common/models.py:82
+#: common/models.py:86
 msgid "Key string must be unique"
 msgstr ""
 
-#: common/models.py:103
+#: common/models.py:107
 msgid "Currency Symbol e.g. $"
 msgstr ""
 
-#: common/models.py:105
+#: common/models.py:109
 msgid "Currency Suffix e.g. AUD"
 msgstr ""
 
-#: common/models.py:107
+#: common/models.py:111
 msgid "Currency Description"
 msgstr ""
 
-#: common/models.py:109
+#: common/models.py:113
 msgid "Currency Value"
 msgstr ""
 
-#: common/models.py:111
+#: common/models.py:115
 msgid "Use this currency as the base currency"
 msgstr ""
 
@@ -562,7 +570,8 @@ msgstr ""
 
 #: company/templates/company/index.html:69
 #: company/templates/company/partdetail.html:6
-#: part/templates/part/category.html:73
+#: part/templates/part/category.html:73 templates/navbar.html:10
+#: templates/stats.html:7 templates/stats.html:10
 msgid "Parts"
 msgstr ""
 
@@ -626,6 +635,7 @@ msgid "No price breaks have been added for this part"
 msgstr ""
 
 #: company/templates/company/tabs.html:12 part/templates/part/tabs.html:17
+#: templates/navbar.html:11
 msgid "Stock"
 msgstr ""
 
@@ -665,7 +675,7 @@ msgstr ""
 msgid "Order notes"
 msgstr ""
 
-#: order/models.py:159 order/models.py:210 part/views.py:1065
+#: order/models.py:159 order/models.py:210 part/views.py:1067
 #: stock/models.py:440
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -1027,6 +1037,7 @@ msgid "Delete attachment"
 msgstr ""
 
 #: part/templates/part/category.html:13 part/templates/part/category.html:69
+#: templates/stats.html:14
 msgid "Part Categories"
 msgstr ""
 
@@ -1211,6 +1222,7 @@ msgid "BOM"
 msgstr ""
 
 #: part/templates/part/tabs.html:28 stock/templates/stock/item_base.html:102
+#: templates/navbar.html:12
 msgid "Build"
 msgstr ""
 
@@ -1218,7 +1230,7 @@ msgstr ""
 msgid "Used In"
 msgstr ""
 
-#: part/templates/part/tabs.html:37
+#: part/templates/part/tabs.html:37 templates/navbar.html:13
 msgid "Suppliers"
 msgstr ""
 
@@ -1235,27 +1247,27 @@ msgstr ""
 msgid "Set category for {n} parts"
 msgstr ""
 
-#: part/views.py:806
+#: part/views.py:808
 msgid "No BOM file provided"
 msgstr ""
 
-#: part/views.py:1067
+#: part/views.py:1069
 msgid "Enter a valid quantity"
 msgstr ""
 
-#: part/views.py:1091 part/views.py:1094
+#: part/views.py:1093 part/views.py:1096
 msgid "Select valid part"
 msgstr ""
 
-#: part/views.py:1100
+#: part/views.py:1102
 msgid "Duplicate part selected"
 msgstr ""
 
-#: part/views.py:1128
+#: part/views.py:1130
 msgid "Select a part"
 msgstr ""
 
-#: part/views.py:1132
+#: part/views.py:1134
 msgid "Specify quantity"
 msgstr ""
 
@@ -1462,7 +1474,8 @@ msgid "Sublocations"
 msgstr ""
 
 #: stock/templates/stock/location.html:52
-#: stock/templates/stock/location.html:64
+#: stock/templates/stock/location.html:64 templates/stats.html:18
+#: templates/stats.html:21
 msgid "Stock Items"
 msgstr ""
 
@@ -1471,7 +1484,7 @@ msgid "Stock Details"
 msgstr ""
 
 #: stock/templates/stock/location.html:60
-#: templates/InvenTree/search_stock_location.html:6
+#: templates/InvenTree/search_stock_location.html:6 templates/stats.html:25
 msgid "Stock Locations"
 msgstr ""
 
@@ -1651,4 +1664,32 @@ msgstr ""
 
 #: templates/about.html:37
 msgid "View Code on GitHub"
+msgstr ""
+
+#: templates/navbar.html:14
+msgid "Orders"
+msgstr ""
+
+#: templates/navbar.html:23
+msgid "Admin"
+msgstr ""
+
+#: templates/navbar.html:26
+msgid "Settings"
+msgstr ""
+
+#: templates/navbar.html:27
+msgid "Logout"
+msgstr ""
+
+#: templates/navbar.html:29
+msgid "Login"
+msgstr ""
+
+#: templates/navbar.html:32
+msgid "About InvenTree"
+msgstr ""
+
+#: templates/navbar.html:33
+msgid "Statistics"
 msgstr ""

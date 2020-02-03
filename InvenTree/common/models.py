@@ -21,6 +21,10 @@ class InvenTreeSetting(models.Model):
     even if that key does not exist.
     """
 
+    class Meta:
+        verbose_name = "InvenTree Setting"
+        verbose_name_plural = "InvenTree Settings"
+
     @classmethod
     def get_setting(cls, key, backup_value=None):
         """

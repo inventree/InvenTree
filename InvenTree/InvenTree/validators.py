@@ -6,6 +6,10 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from common.models import InvenTreeSetting
+
+import re
+
 
 def allowable_url_schemes():
     """ Return the list of allowable URL schemes.
@@ -34,6 +38,18 @@ def validate_part_name(value):
             raise ValidationError(
                 _('Invalid character in part name')
             )
+
+
+def validate_part_ipn(value):
+    """ Validate the Part IPN against regex rule """
+
+    pattern = InvenTreeSetting.get_setting('part_ipn_regex')
+
+    if pattern:
+        match = re.search(pattern, value)
+
+        if match is None:
+            raise ValidationError(_('IPN must match regex pattern') + " '{pat}'".format(pat=pattern))
 
 
 def validate_tree_name(value):
