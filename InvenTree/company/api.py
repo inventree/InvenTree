@@ -150,8 +150,7 @@ class SupplierPriceBreakList(generics.ListCreateAPIView):
 
 supplier_part_api_urls = [
 
-    url(r'^(?P<pk>\d+)/?', SupplierPartDetail.as_view(),
-        name='api-supplier-part-detail'),
+    url(r'^(?P<pk>\d+)/?', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
 
     # Catch anything else
     url(r'^.*$', SupplierPartList.as_view(), name='api-part-supplier-list'),
@@ -162,8 +161,7 @@ company_api_urls = [
 
     url(r'^part/?', include(supplier_part_api_urls)),
 
-    url(r'^price-break/?', SupplierPriceBreakList.as_view(),
-        name='api-part-supplier-price'),
+    url(r'^price-break/?', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
 
     url(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
 

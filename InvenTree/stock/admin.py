@@ -21,8 +21,7 @@ from part.models import Part
 class LocationResource(ModelResource):
     """ Class for managing StockLocation data import/export """
 
-    parent = Field(attribute='parent',
-                   widget=widgets.ForeignKeyWidget(StockLocation))
+    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(StockLocation))
 
     parent_name = Field(attribute='parent__name', readonly=True)
 
@@ -62,37 +61,31 @@ class StockItemResource(ModelResource):
 
     part_name = Field(attribute='part__full_ame', readonly=True)
 
-    supplier_part = Field(attribute='supplier_part',
-                          widget=widgets.ForeignKeyWidget(SupplierPart))
+    supplier_part = Field(attribute='supplier_part', widget=widgets.ForeignKeyWidget(SupplierPart))
 
     supplier = Field(attribute='supplier_part__supplier__id', readonly=True)
 
-    supplier_name = Field(
-        attribute='supplier_part__supplier__name', readonly=True)
+    supplier_name = Field(attribute='supplier_part__supplier__name', readonly=True)
 
     status_label = Field(attribute='status_label', readonly=True)
 
-    location = Field(attribute='location',
-                     widget=widgets.ForeignKeyWidget(StockLocation))
+    location = Field(attribute='location', widget=widgets.ForeignKeyWidget(StockLocation))
 
     location_name = Field(attribute='location__name', readonly=True)
 
-    belongs_to = Field(attribute='belongs_to',
-                       widget=widgets.ForeignKeyWidget(StockItem))
+    belongs_to = Field(attribute='belongs_to', widget=widgets.ForeignKeyWidget(StockItem))
 
-    customer = Field(attribute='customer',
-                     widget=widgets.ForeignKeyWidget(Company))
+    customer = Field(attribute='customer', widget=widgets.ForeignKeyWidget(Company))
 
     build = Field(attribute='build', widget=widgets.ForeignKeyWidget(Build))
 
-    purchase_order = Field(attribute='purchase_order',
-                           widget=widgets.ForeignKeyWidget(PurchaseOrder))
+    purchase_order = Field(attribute='purchase_order', widget=widgets.ForeignKeyWidget(PurchaseOrder))
 
     # Date management
     updated = Field(attribute='updated', widget=widgets.DateWidget())
 
-    stocktake_date = Field(attribute='stocktake_date',
-                           widget=widgets.DateWidget())
+    
+    stocktake_date = Field(attribute='stocktake_date', widget=widgets.DateWidget())
 
     class Meta:
         model = StockItem

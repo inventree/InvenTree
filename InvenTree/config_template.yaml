@@ -68,4 +68,3 @@ log_queries: False
 #backup_dir: '/home/inventree/backup/'
 
 #anonymous_user_name: AnonymousUser
-#internal_ip: 127.0.0.1

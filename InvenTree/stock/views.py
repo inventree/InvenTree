@@ -112,8 +112,7 @@ class StockLocationEdit(PermissionRequiredMixin, AjaxUpdateView):
 
         # Remove any invalid choices for the 'parent' field
         parent_choices = StockLocation.objects.all()
-        parent_choices = parent_choices.exclude(
-            id__in=location.getUniqueChildren())
+        parent_choices = parent_choices.exclude(id__in=location.getUniqueChildren())
 
         form.fields['parent'].queryset = parent_choices
 
@@ -237,8 +236,7 @@ class StockExport(PermissionRequiredMixin, AjaxView):
         stock_items = stock_items.filter(belongs_to=None)
 
         # Pre-fetch related fields to reduce DB queries
-        stock_items = stock_items.prefetch_related(
-            'part', 'supplier_part__supplier', 'location', 'purchase_order', 'build')
+        stock_items = stock_items.prefetch_related('part', 'supplier_part__supplier', 'location', 'purchase_order', 'build')
 
         dataset = StockItemResource().export(queryset=stock_items)
 
@@ -402,8 +400,7 @@ class StockAdjust(PermissionRequiredMixin, AjaxView, FormMixin):
 
         self.request = request
 
-        self.stock_action = request.POST.get(
-            'stock_action', 'invalid').strip().lower()
+        self.stock_action = request.POST.get('stock_action', 'invalid').strip().lower()
 
         # Update list of stock items
         self.stock_items = self.get_POST_items()
@@ -429,8 +426,7 @@ class StockAdjust(PermissionRequiredMixin, AjaxView, FormMixin):
             if self.stock_action in ['move', 'take']:
 
                 if item.new_quantity > item.quantity:
-                    item.error = _(
-                        'Quantity must not exceed {x}'.format(x=item.quantity))
+                    item.error = _('Quantity must not exceed {x}'.format(x=item.quantity))
                     valid = False
                     continue
 
@@ -473,8 +469,7 @@ class StockAdjust(PermissionRequiredMixin, AjaxView, FormMixin):
             set_default_loc = str2bool(self.request.POST.get('set_loc', False))
 
             try:
-                destination = StockLocation.objects.get(
-                    id=self.request.POST.get('destination'))
+                destination = StockLocation.objects.get(id=self.request.POST.get('destination'))
             except StockLocation.DoesNotExist:
                 pass
             except ValueError:
@@ -561,8 +556,7 @@ class StockAdjust(PermissionRequiredMixin, AjaxView, FormMixin):
             if destination == item.location and item.new_quantity == item.quantity:
                 continue
 
-            item.move(destination, note, self.request.user,
-                      quantity=item.new_quantity)
+            item.move(destination, note, self.request.user, quantity=item.new_quantity)
 
             count += 1
 
@@ -708,8 +702,7 @@ class StockItemSerialize(PermissionRequiredMixin, AjaxUpdateView):
 
         if valid:
             try:
-                item.serializeStock(quantity, numbers, user,
-                                    notes=notes, location=destination)
+                item.serializeStock(quantity, numbers, user, notes=notes, location=destination)
             except ValidationError as e:
                 messages = e.message_dict
 
@@ -883,8 +876,7 @@ class StockItemCreate(PermissionRequiredMixin, AjaxCreateView):
 
                             if len(existing) > 0:
                                 exists = ",".join([str(x) for x in existing])
-                                form.errors['serial_numbers'] = [
-                                    _('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                                form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
                                 valid = False
 
                             # At this point we have a list of serial numbers which we know are valid,

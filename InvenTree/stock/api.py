@@ -87,43 +87,36 @@ class StockStocktake(APIView):
     def post(self, request, *args, **kwargs):
 
         if 'action' not in request.data:
-            raise ValidationError(
-                {'action': 'Stocktake action must be provided'})
+            raise ValidationError({'action': 'Stocktake action must be provided'})
 
         action = request.data['action']
 
         ACTIONS = ['stocktake', 'remove', 'add']
 
         if action not in ACTIONS:
-            raise ValidationError(
-                {'action': 'Action must be one of ' + ','.join(ACTIONS)})
+            raise ValidationError({'action': 'Action must be one of ' + ','.join(ACTIONS)})
 
         elif 'items[]' not in request.data:
-            raise ValidationError(
-                {'items[]:' 'Request must contain list of items'})
+            raise ValidationError({'items[]:' 'Request must contain list of items'})
 
         items = []
 
         # Ensure each entry is valid
         for entry in request.data['items[]']:
             if 'pk' not in entry:
-                raise ValidationError(
-                    {'pk': 'Each entry must contain pk field'})
+                raise ValidationError({'pk': 'Each entry must contain pk field'})
             elif 'quantity' not in entry:
-                raise ValidationError(
-                    {'quantity': 'Each entry must contain quantity field'})
+                raise ValidationError({'quantity': 'Each entry must contain quantity field'})
 
             item = {}
             try:
                 item['item'] = StockItem.objects.get(pk=entry['pk'])
             except StockItem.DoesNotExist:
-                raise ValidationError(
-                    {'pk': 'No matching StockItem found for pk={pk}'.format(pk=entry['pk'])})
+                raise ValidationError({'pk': 'No matching StockItem found for pk={pk}'.format(pk=entry['pk'])})
             try:
                 item['quantity'] = int(entry['quantity'])
             except ValueError:
-                raise ValidationError(
-                    {'quantity': 'Quantity must be an integer'})
+                raise ValidationError({'quantity': 'Quantity must be an integer'})
 
             if item['quantity'] < 0:
                 raise ValidationError({'quantity': 'Quantity must be >= 0'})
@@ -164,8 +157,7 @@ class StockMove(APIView):
         data = request.data
 
         if 'location' not in data:
-            raise ValidationError(
-                {'location': 'Destination must be specified'})
+            raise ValidationError({'location': 'Destination must be specified'})
 
         try:
             loc_id = int(data.get('location'))
@@ -183,8 +175,7 @@ class StockMove(APIView):
         stock_list = data.get('stock')
 
         if type(stock_list) is not list:
-            raise ValidationError(
-                {'stock': 'Stock must be supplied as a list'})
+            raise ValidationError({'stock': 'Stock must be supplied as a list'})
 
         if 'notes' not in data:
             raise ValidationError({'notes': 'Notes field must be supplied'})
@@ -213,8 +204,7 @@ class StockMove(APIView):
             if quantity is None:
                 quantity = stock.quantity
 
-            stock.move(location, data.get('notes'),
-                       request.user, quantity=quantity)
+            stock.move(location, data.get('notes'), request.user, quantity=quantity)
 
         return Response({'success': 'Moved parts to {loc}'.format(
             loc=str(location)
@@ -265,8 +255,7 @@ class StockList(generics.ListCreateAPIView):
 
         try:
             part_detail = str2bool(self.request.GET.get('part_detail', None))
-            location_detail = str2bool(
-                self.request.GET.get('location_detail', None))
+            location_detail = str2bool(self.request.GET.get('location_detail', None))
         except AttributeError:
             part_detail = None
             location_detail = None
@@ -311,15 +300,14 @@ class StockList(generics.ListCreateAPIView):
         locations = {}
 
         for item in data:
-            item['part__image'] = os.path.join(
-                settings.MEDIA_URL, item['part__image'])
+            item['part__image'] = os.path.join(settings.MEDIA_URL, item['part__image'])
 
             loc_id = item['location']
 
             if loc_id:
                 if loc_id not in locations:
-                    locations[loc_id] = StockLocation.objects.get(
-                        pk=loc_id).pathstring
+                    locations[loc_id] = StockLocation.objects.get(pk=loc_id).pathstring
+                
 
                 item['location__path'] = locations[loc_id]
             else:
@@ -347,8 +335,7 @@ class StockList(generics.ListCreateAPIView):
 
                 # If the part is a Template part, select stock items for any "variant" parts under that template
                 if part.is_template:
-                    stock_list = stock_list.filter(
-                        part__in=[part.id for part in Part.objects.filter(variant_of=part_id)])
+                    stock_list = stock_list.filter(part__in=[part.id for part in Part.objects.filter(variant_of=part_id)])
                 else:
                     stock_list = stock_list.filter(part=part_id)
 
@@ -361,8 +348,8 @@ class StockList(generics.ListCreateAPIView):
         if loc_id:
             try:
                 location = StockLocation.objects.get(pk=loc_id)
-                stock_list = stock_list.filter(
-                    location__in=location.getUniqueChildren())
+                stock_list = stock_list.filter(location__in=location.getUniqueChildren())
+                 
 
             except StockLocation.DoesNotExist:
                 pass
@@ -373,8 +360,7 @@ class StockList(generics.ListCreateAPIView):
         if cat_id:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
-                stock_list = stock_list.filter(
-                    part__category__in=category.getUniqueChildren())
+                stock_list = stock_list.filter(part__category__in=category.getUniqueChildren())
 
             except PartCategory.DoesNotExist:
                 pass

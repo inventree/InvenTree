@@ -315,8 +315,7 @@ class BomList(generics.ListCreateAPIView):
         # Do we wish to include extra detail?
         try:
             part_detail = str2bool(self.request.GET.get('part_detail', None))
-            sub_part_detail = str2bool(
-                self.request.GET.get('sub_part_detail', None))
+            sub_part_detail = str2bool(self.request.GET.get('sub_part_detail', None))
         except AttributeError:
             part_detail = None
             sub_part_detail = None
@@ -373,8 +372,8 @@ class BomItemValidate(generics.UpdateAPIView):
 
         instance = self.get_object()
 
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=partial)
+        
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
         if type(instance) == BomItem:
@@ -385,8 +384,7 @@ class BomItemValidate(generics.UpdateAPIView):
 
 cat_api_urls = [
 
-    url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(),
-        name='api-part-category-detail'),
+    url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
 
     url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
 ]
@@ -400,8 +398,7 @@ part_star_api_urls = [
 ]
 
 part_param_api_urls = [
-    url(r'^template/$', PartParameterTemplateList.as_view(),
-        name='api-part-param-template-list'),
+    url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),
 
     url(r'^.*$', PartParameterList.as_view(), name='api-part-param-list'),
 ]

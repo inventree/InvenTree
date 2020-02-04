@@ -241,8 +241,7 @@ class SupplierPartDelete(PermissionRequiredMixin, AjaxDeleteView):
         # User passes a single SupplierPart ID
         if 'part' in self.request.GET:
             try:
-                self.parts.append(SupplierPart.objects.get(
-                    pk=self.request.GET.get('part')))
+                self.parts.append(SupplierPart.objects.get(pk=self.request.GET.get('part')))
             except (ValueError, SupplierPart.DoesNotExist):
                 pass
 

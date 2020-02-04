@@ -27,7 +27,6 @@ from InvenTree.models import InvenTreeTree
 from InvenTree.fields import InvenTreeURLField
 
 from part.models import Part
-from guardian.models import GroupObjectPermissionBase, UserObjectPermissionBase
 
 
 class StockLocation(InvenTreeTree):
@@ -767,9 +766,4 @@ class StockItemTracking(models.Model):
     # file = models.FileField()
 
 
-class StockUserObjectPermission(UserObjectPermissionBase):
-    content_object = models.ForeignKey(StockItem, on_delete=models.CASCADE)
 
-
-class StockGroupObjectPermission(GroupObjectPermissionBase):
-    content_object = models.ForeignKey(StockItem, on_delete=models.CASCADE)

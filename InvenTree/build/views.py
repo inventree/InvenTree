@@ -39,13 +39,10 @@ class BuildIndex(PermissionListMixin, ListView):
 
         context['BuildStatus'] = BuildStatus
 
-        context['active'] = self.get_queryset().filter(
-            status__in=BuildStatus.ACTIVE_CODES)
+        context['active'] = self.get_queryset().filter(status__in=BuildStatus.ACTIVE_CODES)
 
-        context['completed'] = self.get_queryset().filter(
-            status=BuildStatus.COMPLETE)
-        context['cancelled'] = self.get_queryset().filter(
-            status=BuildStatus.CANCELLED)
+        context['completed'] = self.get_queryset().filter(status=BuildStatus.COMPLETE)
+        context['cancelled'] = self.get_queryset().filter(status=BuildStatus.CANCELLED)
 
         return context
 
@@ -218,8 +215,7 @@ class BuildComplete(PermissionRequiredMixin, AjaxUpdateView):
         build = self.get_object()
         if build.part.default_location is not None:
             try:
-                location = StockLocation.objects.get(
-                    pk=build.part.default_location.id)
+                location = StockLocation.objects.get(pk=build.part.default_location.id)
                 initials['location'] = location
             except StockLocation.DoesNotExist:
                 pass
@@ -296,8 +292,7 @@ class BuildComplete(PermissionRequiredMixin, AjaxUpdateView):
 
                         if len(existing) > 0:
                             exists = ",".join([str(x) for x in existing])
-                            form.errors['serial_numbers'] = [
-                                _('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                            form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
                             valid = False
 
                     except ValidationError as e:
@@ -359,8 +354,7 @@ class BuildAllocate(PermissionRequiredMixin, DetailView):
         context['bom_items'] = bom_items
         context['BuildStatus'] = BuildStatus
 
-        context['bom_price'] = build.part.get_price_info(
-            build.quantity, buy=False)
+        context['bom_price'] = build.part.get_price_info(build.quantity, buy=False)
 
         if str2bool(self.request.GET.get('edit', None)):
             context['editing'] = True
@@ -500,15 +494,14 @@ class BuildItemCreate(PermissionRequiredMixin, AjaxCreateView):
 
                         if build.take_from is not None:
                             # Limit query to stock items that are downstream of the 'take_from' location
-                            query = query.filter(
-                                location__in=[loc for loc in build.take_from.getUniqueChildren()])
+                            query = query.filter(location__in=[loc for loc in build.take_from.getUniqueChildren()])
+                            
 
                     except Build.DoesNotExist:
                         pass
 
                     # Exclude StockItem objects which are already allocated to this build and part
-                    query = query.exclude(id__in=[item.stock_item.id for item in BuildItem.objects.filter(
-                        build=build_id, stock_item__part=part_id)])
+                    query = query.exclude(id__in=[item.stock_item.id for item in BuildItem.objects.filter(build=build_id, stock_item__part=part_id)])
 
                 form.fields['stock_item'].queryset = query
 

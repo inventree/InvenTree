@@ -21,7 +21,6 @@ from InvenTree.fields import InvenTreeURLField
 
 from stock.models import StockItem
 from part.models import Part, BomItem
-from guardian.models import GroupObjectPermissionBase, UserObjectPermissionBase
 
 
 class Build(models.Model):
@@ -416,11 +415,3 @@ class BuildItem(models.Model):
         validators=[MinValueValidator(1)],
         help_text=_('Stock quantity to allocate to build')
     )
-
-
-class BuildUserObjectPermission(UserObjectPermissionBase):
-    content_object = models.ForeignKey(Build, on_delete=models.CASCADE)
-
-
-class BuildGroupObjectPermission(GroupObjectPermissionBase):
-    content_object = models.ForeignKey(Build, on_delete=models.CASCADE)

@@ -405,8 +405,7 @@ class PurchaseOrderReceive(PermissionRequiredMixin, AjaxUpdateView):
             if not line.part:
                 continue
 
-            self.order.receive_line_item(
-                line, self.destination, line.receive_quantity, self.request.user)
+            self.order.receive_line_item(line, self.destination, line.receive_quantity, self.request.user)
 
 
 class OrderParts(PermissionRequiredMixin, AjaxView):
@@ -433,8 +432,7 @@ class OrderParts(PermissionRequiredMixin, AjaxView):
 
         ctx = {}
 
-        ctx['parts'] = sorted(self.parts, key=lambda part: int(
-            part.order_quantity), reverse=True)
+        ctx['parts'] = sorted(self.parts, key=lambda part: int(part.order_quantity), reverse=True)
         ctx['suppliers'] = self.suppliers
 
         return ctx
@@ -455,8 +453,7 @@ class OrderParts(PermissionRequiredMixin, AjaxView):
             supplier_part_id = part.order_supplier
 
             try:
-                supplier = SupplierPart.objects.get(
-                    pk=supplier_part_id).supplier
+                supplier = SupplierPart.objects.get(pk=supplier_part_id).supplier
             except SupplierPart.DoesNotExist:
                 continue
 
@@ -597,8 +594,7 @@ class OrderParts(PermissionRequiredMixin, AjaxView):
 
                 # Ensure a valid supplier has been passed
                 try:
-                    supplier_part = SupplierPart.objects.get(
-                        id=supplier_part_id)
+                    supplier_part = SupplierPart.objects.get(id=supplier_part_id)
                 except (SupplierPart.DoesNotExist, ValueError):
                     supplier_part = None
 
@@ -638,8 +634,7 @@ class OrderParts(PermissionRequiredMixin, AjaxView):
 
                 # Ensure that a valid purchase order has been passed
                 try:
-                    purchase_order = PurchaseOrder.objects.get(
-                        pk=purchase_order_id)
+                    purchase_order = PurchaseOrder.objects.get(pk=purchase_order_id)
                 except (PurchaseOrder.DoesNotExist, ValueError):
                     purchase_order = None
 
@@ -690,11 +685,9 @@ class OrderParts(PermissionRequiredMixin, AjaxView):
 
             # Check that the purchase order does actually exist
             try:
-                order = PurchaseOrder.objects.get(
-                    pk=supplier.selected_purchase_order)
+                order = PurchaseOrder.objects.get(pk=supplier.selected_purchase_order)
             except PurchaseOrder.DoesNotExist:
-                logger.critical('Could not add items to purchase order {po} - Order does not exist'.format(
-                    po=supplier.selected_purchase_order))
+                logger.critical('Could not add items to purchase order {po} - Order does not exist'.format(po=supplier.selected_purchase_order))
                 continue
 
             for item in supplier.order_items:
@@ -705,14 +698,12 @@ class OrderParts(PermissionRequiredMixin, AjaxView):
                     if quantity <= 0:
                         continue
                 except ValueError:
-                    logger.warning(
-                        "Did not add part to purchase order - incorrect quantity")
+                    logger.warning("Did not add part to purchase order - incorrect quantity")
                     continue
 
                 # Check that the supplier part does actually exist
                 try:
-                    supplier_part = SupplierPart.objects.get(
-                        pk=item.order_supplier)
+                    supplier_part = SupplierPart.objects.get(pk=item.order_supplier)
                 except SupplierPart.DoesNotExist:
                     logger.critical("Could not add part '{part}' to purchase order - selected supplier part '{sp}' does not exist.".format(
                         part=item,
@@ -759,8 +750,7 @@ class POLineItemCreate(PermissionRequiredMixin, AjaxCreateView):
 
             if order is not None:
                 if not sp.supplier == order.supplier:
-                    form.errors['part'] = [
-                        _('Supplier must match for Part and Order')]
+                    form.errors['part'] = [_('Supplier must match for Part and Order')]
                     valid = False
 
         except (SupplierPart.DoesNotExist, ValueError):

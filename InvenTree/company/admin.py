@@ -41,8 +41,7 @@ class SupplierPartResource(ModelResource):
 
     part_name = Field(attribute='part__full_name', readonly=True)
 
-    supplier = Field(attribute='supplier',
-                     widget=widgets.ForeignKeyWidget(Company))
+    supplier = Field(attribute='supplier', widget=widgets.ForeignKeyWidget(Company))
 
     supplier_name = Field(attribute='supplier__name', readonly=True)
 
@@ -63,11 +62,9 @@ class SupplierPartAdmin(ImportExportModelAdmin, GuardedModelAdmin):
 class SupplierPriceBreakResource(ModelResource):
     """ Class for managing SupplierPriceBreak data import/export """
 
-    part = Field(attribute='part',
-                 widget=widgets.ForeignKeyWidget(SupplierPart))
+    part = Field(attribute='part', widget=widgets.ForeignKeyWidget(SupplierPart))
 
-    currency = Field(attribute='currency',
-                     widget=widgets.ForeignKeyWidget(Currency))
+    currency = Field(attribute='currency', widget=widgets.ForeignKeyWidget(Currency))
 
     supplier_id = Field(attribute='part__supplier__pk', readonly=True)
 

@@ -19,7 +19,6 @@ InvenTree Source Documentation
    REST API<rest>
    InvenTree Modules <modules>
    Module Reference<reference>
-   Development<development>
 
 The documentation found here is provided to be useful for developers working on the InvenTree codebase. User documentation can be found on the `InvenTree website <https://inventree.github.io>`_.
 

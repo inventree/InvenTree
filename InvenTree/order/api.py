@@ -57,8 +57,7 @@ class POList(generics.ListCreateAPIView):
         if 'part' in request.GET:
             try:
                 part = Part.objects.get(pk=request.GET['part'])
-                queryset = queryset.filter(
-                    id__in=[p.id for p in part.purchase_orders()])
+                queryset = queryset.filter(id__in=[p.id for p in part.purchase_orders()])
             except (Part.DoesNotExist, ValueError):
                 pass
 
@@ -79,8 +78,7 @@ class POList(generics.ListCreateAPIView):
 
             order = queryset.get(pk=item['pk'])
 
-            item['supplier__image'] = os.path.join(
-                settings.MEDIA_URL, item['supplier__image'])
+            item['supplier__image'] = os.path.join(settings.MEDIA_URL, item['supplier__image'])
             item['status_text'] = OrderStatus.label(item['status'])
             item['lines'] = order.lines.count()
 
@@ -142,7 +140,6 @@ po_api_urls = [
     url(r'^order/(?P<pk>\d+)/?$', PODetail.as_view(), name='api-po-detail'),
     url(r'^order/?$', POList.as_view(), name='api-po-list'),
 
-    url(r'^line/(?P<pk>\d+)/?$', POLineItemDetail.as_view(),
-        name='api-po-line-detail'),
+    url(r'^line/(?P<pk>\d+)/?$', POLineItemDetail.as_view(), name='api-po-line-detail'),
     url(r'^line/?$', POLineItemList.as_view(), name='api-po-line-list'),
 ]

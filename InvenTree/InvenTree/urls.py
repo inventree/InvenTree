@@ -58,14 +58,10 @@ apipatterns = [
 
 settings_urls = [
 
-    url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'),
-        name='settings-user'),
-    url(r'^currency/?', SettingsView.as_view(
-        template_name='InvenTree/settings/currency.html'), name='settings-currency'),
-    url(r'^part/?', SettingsView.as_view(template_name='InvenTree/settings/part.html'),
-        name='settings-part'),
-    url(r'^other/?', SettingsView.as_view(template_name='InvenTree/settings/other.html'),
-        name='settings-other'),
+    url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
+    url(r'^currency/?', SettingsView.as_view(template_name='InvenTree/settings/currency.html'), name='settings-currency'),
+    url(r'^part/?', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
+    url(r'^other/?', SettingsView.as_view(template_name='InvenTree/settings/other.html'), name='settings-other'),
 
     # Catch any other urls
     url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings'),
@@ -88,8 +84,8 @@ urlpatterns = [
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     url(r'^login/', auth_views.LoginView.as_view(), name='login'),
-    url(r'^logout/', auth_views.LogoutView.as_view(
-        template_name='registration/logout.html'), name='logout'),
+    url(r'^logout/', auth_views.LogoutView.as_view(template_name='registration/logout.html'), name='logout'),
+    
 
     url(r'^settings/', include(settings_urls)),
 
@@ -112,15 +108,7 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
     # Media file access
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
-
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns += [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ]
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Send any unknown URLs to the parts page
-urlpatterns += [url(r'^.*$', RedirectView.as_view(url='/index/',
-                                                  permanent=False), name='index')]
+urlpatterns += [url(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]

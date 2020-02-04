@@ -104,11 +104,7 @@ INSTALLED_APPS = [
     'guardian',                     # Object Authentication Backend
 ]
 
-try:
-    import debug_toolbar
-    INSTALLED_APPS += ('debug_toolbar',)
-except ImportError:
-    pass
+
 
 LOGGING = {
     'version': 1,
@@ -136,8 +132,6 @@ MIDDLEWARE = [
 if CONFIG.get('log_queries', False):
     MIDDLEWARE.append('InvenTree.middleware.QueryCountMiddleware')
 
-if CONFIG.get('debug', False):
-    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 AUTHENTICATION_BACKENDS = (
     'guardian.backends.ObjectPermissionBackend',
@@ -171,7 +165,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        'rest_framework.permissions.DjangoObjectPermissions',
     ],
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
@@ -307,32 +301,3 @@ DBBACKUP_STORAGE_OPTIONS = {
 # Set Anonymous User Name
 # https://django-guardian.readthedocs.io/en/stable/configuration.html#anonymous-user-name
 ANONYMOUS_USER_NAME = CONFIG.get('anonymous_user_name', 'None')
-
-# Options for Django Debug Toolbar
-# https://github.com/jazzband/django-debug-toolbar
-if CONFIG.get('debug', True):
-    # Set Internal IPs when debugging
-    # CONFIG.get('internal_ip', '127.0.0.1'),
-    INTERNAL_IPS = ('127.0.0.1',)
-
-    DEBUG_TOOLBAR_PANELS = [
-        'debug_toolbar.panels.versions.VersionsPanel',
-        'debug_toolbar.panels.timer.TimerPanel',
-        'debug_toolbar.panels.settings.SettingsPanel',
-        'debug_toolbar.panels.headers.HeadersPanel',
-        'debug_toolbar.panels.request.RequestPanel',
-        'debug_toolbar.panels.sql.SQLPanel',
-        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-        'debug_toolbar.panels.templates.TemplatesPanel',
-        'debug_toolbar.panels.cache.CachePanel',
-        'debug_toolbar.panels.signals.SignalsPanel',
-        'debug_toolbar.panels.logging.LoggingPanel',
-        'debug_toolbar.panels.redirects.RedirectsPanel',
-        'debug_toolbar.panels.profiling.ProfilingPanel',
-    ]
-
-    DEBUG_TOOLBAR_CONFIG = {
-        'RENDER_PANELS': True,
-        'INTERCEPT_REDIRECTS': False,
-        'SHOW_TOOLBAR_CALLBACK': lambda request: True,
-    }

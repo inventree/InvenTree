@@ -92,8 +92,7 @@ class PartAttachmentCreate(PermissionRequiredMixin, AjaxCreateView):
 
         # TODO - If the proper part was not sent, return an error message
         try:
-            initials['part'] = Part.objects.get(
-                id=self.request.GET.get('part', None))
+            initials['part'] = Part.objects.get(id=self.request.GET.get('part', None))
         except (ValueError, Part.DoesNotExist):
             pass
 
@@ -166,8 +165,7 @@ class PartSetCategory(PermissionRequiredMixin, AjaxUpdateView):
         self.request = request
 
         if 'parts[]' in request.GET:
-            self.parts = Part.objects.filter(
-                id__in=request.GET.getlist('parts[]'))
+            self.parts = Part.objects.filter(id__in=request.GET.getlist('parts[]'))
         else:
             self.parts = []
 
@@ -363,12 +361,11 @@ class PartDuplicate(PermissionRequiredMixin, AjaxCreateView):
                 form.fields['confirm_creation'].widget = CheckboxInput()
 
                 # Check if the user has checked the 'confirm_creation' input
-                confirmed = str2bool(
-                    request.POST.get('confirm_creation', False))
+                confirmed = str2bool(request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = [
-                        'Possible matches exist - confirm creation of new part']
+                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
+                    
 
                     form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
                     valid = False
@@ -487,12 +484,11 @@ class PartCreate(PermissionRequiredMixin, AjaxCreateView):
                 form.fields['confirm_creation'].widget = CheckboxInput()
 
                 # Check if the user has checked the 'confirm_creation' input
-                confirmed = str2bool(
-                    request.POST.get('confirm_creation', False))
+                confirmed = str2bool(request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = [
-                        'Possible matches exist - confirm creation of new part']
+                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
+                    
 
                     form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
                     valid = False
@@ -623,8 +619,7 @@ class PartEdit(PermissionRequiredMixin, AjaxUpdateView):
 
         part = self.get_object()
 
-        form.fields['default_supplier'].queryset = SupplierPart.objects.filter(
-            part=part)
+        form.fields['default_supplier'].queryset = SupplierPart.objects.filter(part=part)
 
         return form
 
@@ -867,13 +862,11 @@ class BomUpload(PermissionRequiredMixin, FormView):
                 matches = []
 
                 for part in self.allowed_parts:
-                    ratio = fuzz.partial_ratio(
-                        part.name + part.description, part_name)
+                    ratio = fuzz.partial_ratio(part.name + part.description, part_name)
                     matches.append({'part': part, 'match': ratio})
 
                 if len(matches) > 0:
-                    matches = sorted(
-                        matches, key=lambda item: item['match'], reverse=True)
+                    matches = sorted(matches, key=lambda item: item['match'], reverse=True)
 
             if d_idx >= 0:
                 row['description'] = row['data'][d_idx]
@@ -997,8 +990,7 @@ class BomUpload(PermissionRequiredMixin, FormView):
             })
 
             if guess:
-                n = list(self.column_selections.values()).count(
-                    self.column_selections[col])
+                n = list(self.column_selections.values()).count(self.column_selections[col])
                 if n > 1:
                     header['duplicate'] = True
                     self.duplicates = True
@@ -1059,8 +1051,7 @@ class BomUpload(PermissionRequiredMixin, FormView):
                     try:
                         q = int(value)
                         if q <= 0:
-                            row['errors']['quantity'] = _(
-                                'Quantity must be greater than zero')
+                            row['errors']['quantity'] = _('Quantity must be greater than zero')
                     except ValueError:
                         row['errors']['quantity'] = _('Enter a valid quantity')
 
@@ -1512,8 +1503,7 @@ class PartParameterCreate(PermissionRequiredMixin, AjaxCreateView):
 
                 query = form.fields['template'].queryset
 
-                query = query.exclude(
-                    id__in=[param.template.id for param in part.parameters.all()])
+                query = query.exclude(id__in=[param.template.id for param in part.parameters.all()])
 
                 form.fields['template'].queryset = query
 
@@ -1586,8 +1576,7 @@ class CategoryEdit(PermissionRequiredMixin, AjaxUpdateView):
 
         # Remove any invalid choices for the parent category part
         parent_choices = PartCategory.objects.all()
-        parent_choices = parent_choices.exclude(
-            id__in=category.getUniqueChildren())
+        parent_choices = parent_choices.exclude(id__in=category.getUniqueChildren())
 
         form.fields['parent'].queryset = parent_choices
 
@@ -1697,8 +1686,8 @@ class BomItemCreate(PermissionRequiredMixin, AjaxCreateView):
             query = query.filter(active=True)
 
             # Eliminate any options that are already in the BOM!
-            query = query.exclude(
-                id__in=[item.id for item in part.required_parts()])
+            query = query.exclude(id__in=[item.id for item in part.required_parts()])
+            
 
             form.fields['sub_part'].queryset = query
 

@@ -37,7 +37,7 @@ from InvenTree.status_codes import BuildStatus, StockStatus, OrderStatus
 
 from company.models import SupplierPart
 
-from guardian.models import GroupObjectPermissionBase, UserObjectPermissionBase
+
 
 
 class PartCategory(InvenTreeTree):
@@ -1240,10 +1240,3 @@ class BomItem(models.Model):
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
 
-
-class PartUserObjectPermission(UserObjectPermissionBase):
-    content_object = models.ForeignKey(Part, on_delete=models.CASCADE)
-
-
-class PartGroupObjectPermission(GroupObjectPermissionBase):
-    content_object = models.ForeignKey(Part, on_delete=models.CASCADE)

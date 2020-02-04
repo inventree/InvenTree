@@ -400,8 +400,7 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
         if confirmed:
             obj.delete()
         else:
-            form.errors['confirm_delete'] = [
-                'Check box to confirm item deletion']
+            form.errors['confirm_delete'] = ['Check box to confirm item deletion']
             context[self.context_object_name] = self.get_object()
 
         data = {
@@ -494,12 +493,11 @@ class IndexView(TemplateView):
                 star.part for star in self.request.user.starred_parts.all()]
         # Generate a list of orderable parts which have stock below their minimum values
         # TODO - Is there a less expensive way to get these from the database
-            context['to_order'] = [part for part in Part.objects.filter(
-                purchaseable=True) if part.need_to_restock()]
+        context['to_order'] = [part for part in Part.objects.filter(purchaseable=True) if part.need_to_restock()]
+    
         # Generate a list of assembly parts which have stock below their minimum values
         # TODO - Is there a less expensive way to get these from the database
-            context['to_build'] = [part for part in Part.objects.filter(
-                assembly=True) if part.need_to_restock()]
+        context['to_build'] = [part for part in Part.objects.filter(assembly=True) if part.need_to_restock()]
 
         return context
 
