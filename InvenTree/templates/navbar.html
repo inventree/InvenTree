@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <nav class="navbar navbar-default navbar-fixed-top">
   <div class="container-fluid">
@@ -7,19 +8,19 @@
     </div>
     <ul class="nav navbar-nav">
       {% if "part.view_part" in perms %}
-      <li><a href="{% url 'part-index' %}">Parts</a></li>
+      <li><a href="{% url 'part-index' %}">{% trans "Parts" %}</a></li>
       {% endif %}
       {% if "stock.view_stockitem" in perms %}
-      <li><a href="{% url 'stock-index' %}">Stock</a></li>
+      <li><a href="{% url 'stock-index' %}">{% trans "Stock" %}</a></li>
       {% endif %}
       {% if "build.view_build" in perms %}
-      <li><a href="{% url 'build-index' %}">Build</a></li>
+      <li><a href="{% url 'build-index' %}">{% trans "Build" %}</a></li>
       {% endif %}
       {% if "company.view_company" in perms %}
-      <li><a href="{% url 'company-index' %}">Suppliers</a></li>
+      <li><a href="{% url 'company-index' %}">{% trans "Suppliers" %}</a></li>
       {% endif %}
       {% if "order.view_purchaseorder" in perms %}
-      <li><a href="{% url 'purchase-order-index' %}">Orders</a></li>
+      <li><a href="{% url 'purchase-order-index' %}">{% trans "Orders" %}</a></li>
       {% endif %}
     </ul>
     <ul class="nav navbar-nav navbar-right">
@@ -29,16 +30,17 @@
           <ul class='dropdown-menu'>
               {% if user.is_authenticated %}
               {% if user.is_staff %}
-              <li><a href="/admin/"><span class="glyphicon glyphicon-edit"></span> Admin</a></li>
+              <li><a href="/admin/"><span class="glyphicon glyphicon-edit"></span> {% trans "Admin" %}</a></li>
               <hr>
               {% endif %}
-              <li><a href="{% url 'settings' %}"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
-              <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+              <li><a href="{% url 'settings' %}"><span class="glyphicon glyphicon-cog"></span> {% trans "Settings" %}</a></li>
+              <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> {% trans "Logout" %}</a></li>
               {% else %}
-              <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+              <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> {% trans "Login" %}</a></li>
               {% endif %}
               <hr>  
-              <li id='launch-about'><a href='#'><span class="glyphicon glyphicon-info-sign"></span> About InvenTree</a></li>
+              <li id='launch-about'><a href='#'><span class="glyphicon glyphicon-info-sign"></span> {% trans "About InvenTree" %}</a></li>
+              <li id='launch-stats'><a href='#'><span class='glyphicon glyphicon-stats'></span> {% trans "Statistics" %}</a></li>
             </ul>
           </li> 
     </ul>

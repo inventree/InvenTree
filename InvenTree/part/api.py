@@ -151,8 +151,7 @@ class PartList(generics.ListCreateAPIView):
 
             if cat_id:
                 if cat_id not in categories:
-                    categories[cat_id] = PartCategory.objects.get(
-                        pk=cat_id).pathstring
+                    categories[cat_id] = PartCategory.objects.get(pk=cat_id).pathstring
 
                 item['category__name'] = categories[cat_id]
             else:
@@ -171,8 +170,7 @@ class PartList(generics.ListCreateAPIView):
         if cat_id:
             try:
                 category = PartCategory.objects.get(pk=cat_id)
-                parts_list = parts_list.filter(
-                    category__in=category.getUniqueChildren())
+                parts_list = parts_list.filter(category__in=category.getUniqueChildren())
             except PartCategory.DoesNotExist:
                 pass
 

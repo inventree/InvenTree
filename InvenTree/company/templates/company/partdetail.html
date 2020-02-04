@@ -1,16 +1,17 @@
 {% extends "base.html" %}
 {% load static %}
 {% load guardian_tags %}
-{% block content %}
+{% load i18n %}
+
 {% block page_title %}
-InvenTree | {{ company.name }} - Parts
+InvenTree | {{ company.name }} - {% trans "Parts" %}
 {% endblock %}
 
 {% block content %}
 {% get_obj_perms request.user for company as "perms" %}
 <div class='row'>
     <div class='col-sm-6'>
-        <h3>Supplier Part</h3>
+        <h3>{% trans "Supplier Part" %}</h3>
         <div class='btn-row'>
             <div class='btn-group'>
                 {% if "company.change_supplierpart" in perms %}
@@ -42,54 +43,54 @@ InvenTree | {{ company.name }} - Parts
 
 <div class='row'>
 <div class='col-sm-6'>
-    <h4>Supplier Part Details</h4>
+    <h4>{% trans "Supplier Part Details" %}</h4>
     <table class="table table-striped table-condensed">
         <tr>
-            <td>Internal Part</td>
+            <td>{% trans "Internal Part" %}</td>
             <td>
                 {% if part.part %}
                 <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.full_name }}</a>
                 {% endif %}
             </td>
         </tr>
-        <tr><td>Supplier</td><td><a href="{% url 'company-detail-parts' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
-        <tr><td>SKU</td><td>{{ part.SKU }}</tr></tr>
+        <tr><td>{% trans "Supplier" %}</td><td><a href="{% url 'company-detail-parts' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
+        <tr><td>{% trans "SKU" %}</td><td>{{ part.SKU }}</tr></tr>
     {% if part.URL %}
-        <tr><td>URL</td><td><a href="{{ part.URL }}">{{ part.URL }}</a></td></tr>
+        <tr><td>{% trans "URL" %}</td><td><a href="{{ part.URL }}">{{ part.URL }}</a></td></tr>
     {% endif %}
     {% if part.description %}
-        <tr><td>Description</td><td>{{ part.description }}</td></tr>
+        <tr><td>{% trans "Description" %}</td><td>{{ part.description }}</td></tr>
     {% endif %}
     {% if part.manufacturer %}
-        <tr><td>Manufacturer</td><td>{{ part.manufacturer }}</td></tr>
-        <tr><td>MPN</td><td>{{ part.MPN }}</td></tr>
+        <tr><td>{% trans "Manufacturer" %}</td><td>{{ part.manufacturer }}</td></tr>
+        <tr><td>{% trans "MPN" %}</td><td>{{ part.MPN }}</td></tr>
     {% endif %}
     {% if part.note %}
-        <tr><td>Note</td><td>{{ part.note }}</td></tr>
+        <tr><td>{% trans "Note" %}</td><td>{{ part.note }}</td></tr>
     {% endif %}
     </table>
 </div>
 
 <div class='col-sm-6'>
-    <h4>Pricing Information</h4>
+    <h4>{% trans "Pricing Information" %}</h4>
 <table class="table table-striped table-condensed">
-    <tr><td>Order Multiple</td><td>{{ part.multiple }}</td></tr>
+    <tr><td>{% trans "Order Multiple" %}</td><td>{{ part.multiple }}</td></tr>
     {% if part.base_cost > 0 %}
-    <tr><td>Base Price (Flat Fee)</td><td>{{ part.base_cost }}</td></tr>
+    <tr><td>{% trans "Base Price (Flat Fee)" %}</td><td>{{ part.base_cost }}</td></tr>
     {% endif %}
     <tr>
-        <th>Price Breaks</th>
+        <th>{% trans "Price Breaks" %}</th>
         <th>
             <div style='float: right;'>
                 {% if "company.add_supplierpricebreak" in perms %}
-                <button class='btn btn-primary' id='new-price-break' type='button'>New Price Break</button>
+                <button class='btn btn-primary' id='new-price-break' type='button'>{% trans "New Price Break" %}</button>
                 {% endif %}
             </div>
         </th>
     </tr>
     <tr>
-        <th>Quantity</th>
-        <th>Price</th>
+        <th>{% trans "Quantity" %}</th>
+        <th>{% trans "Price" %}</th>
     </tr>
     {% if part.price_breaks.all %}
     {% for pb in part.price_breaks.all %}
@@ -113,7 +114,7 @@ InvenTree | {{ company.name }} - Parts
     {% else %}
     <tr>
         <td colspan='2'>
-            <span class='warning-msg'><i>No price breaks have been added for this part</i></span>
+            <span class='warning-msg'><i>{% trans "No price breaks have been added for this part" %}</i></span>
         </td>
     </tr>
     {% endif %}
@@ -123,7 +124,7 @@ InvenTree | {{ company.name }} - Parts
 
 <hr>
 
-<h4>Purchase Orders</h4>
+<h4>{% trans "Purchase Orders" %}</h4>
 {% include "order/po_table.html" with orders=part.purchase_orders %}
 
 {% endblock %}

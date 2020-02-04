@@ -1,15 +1,16 @@
 {% extends "company/company_base.html" %}
 {% load static %}
 {% block details %}
+{% load i18n %}
 
 {% include 'company/tabs.html' with tab='po' %}
 
-<h4>Open Purchase Orders</h4>
+<h4>{% trans "Purchase Orders" %}</h4>
 <hr>
 
 <div id='button-bar'>
     <div class='btn-group'>
-        <button class='btn btn-primary' type='button' id='company-order2' title='Create new purchase order'>New Purchase Order</button>
+        <button class='btn btn-primary' type='button' id='company-order2' title='Create new purchase order'>{% trans "New Purchase Order" %}</button>
     </div>
 </div>
 

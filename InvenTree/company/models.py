@@ -10,6 +10,7 @@ import os
 import math
 from decimal import Decimal
 
+from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Sum
@@ -17,6 +18,8 @@ from django.db.models import Sum
 from django.apps import apps
 from django.urls import reverse
 from django.conf import settings
+
+from markdownx.models import MarkdownxField
 
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import OrderStatus
@@ -68,32 +71,32 @@ class Company(models.Model):
     """
 
     name = models.CharField(max_length=100, blank=False, unique=True,
-                            help_text='Company name')
+                            help_text=_('Company name'))
 
-    description = models.CharField(max_length=500, help_text='Description of the company')
+    description = models.CharField(max_length=500, help_text=_('Description of the company'))
 
-    website = models.URLField(blank=True, help_text='Company website URL')
+    website = models.URLField(blank=True, help_text=_('Company website URL'))
 
     address = models.CharField(max_length=200,
-                               blank=True, help_text='Company address')
+                               blank=True, help_text=_('Company address'))
 
     phone = models.CharField(max_length=50,
-                             blank=True, help_text='Contact phone number')
+                             blank=True, help_text=_('Contact phone number'))
 
-    email = models.EmailField(blank=True, help_text='Contact email address')
+    email = models.EmailField(blank=True, help_text=_('Contact email address'))
 
     contact = models.CharField(max_length=100,
-                               blank=True, help_text='Point of contact')
+                               blank=True, help_text=_('Point of contact'))
 
-    URL = InvenTreeURLField(blank=True, help_text='Link to external company information')
+    URL = InvenTreeURLField(blank=True, help_text=_('Link to external company information'))
 
     image = models.ImageField(upload_to=rename_company_image, max_length=255, null=True, blank=True)
 
-    notes = models.TextField(blank=True)
+    notes = MarkdownxField(blank=True)
 
-    is_customer = models.BooleanField(default=False, help_text='Do you sell items to this company?')
+    is_customer = models.BooleanField(default=False, help_text=_('Do you sell items to this company?'))
 
-    is_supplier = models.BooleanField(default=True, help_text='Do you purchase items from this company?')
+    is_supplier = models.BooleanField(default=True, help_text=_('Do you purchase items from this company?'))
 
     def __str__(self):
         """ Get string representation of a Company """
@@ -223,32 +226,32 @@ class SupplierPart(models.Model):
                                  'purchaseable': True,
                                  'is_template': False,
                              },
-                             help_text='Select part',
+                             help_text=_('Select part'),
                              )
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
                                  related_name='parts',
                                  limit_choices_to={'is_supplier': True},
-                                 help_text='Select supplier',
+                                 help_text=_('Select supplier'),
                                  )
 
-    SKU = models.CharField(max_length=100, help_text='Supplier stock keeping unit')
+    SKU = models.CharField(max_length=100, help_text=_('Supplier stock keeping unit'))
 
-    manufacturer = models.CharField(max_length=100, blank=True, help_text='Manufacturer')
+    manufacturer = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer'))
 
-    MPN = models.CharField(max_length=100, blank=True, help_text='Manufacturer part number')
+    MPN = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer part number'))
 
-    URL = InvenTreeURLField(blank=True, help_text='URL for external supplier part link')
+    URL = InvenTreeURLField(blank=True, help_text=_('URL for external supplier part link'))
 
-    description = models.CharField(max_length=250, blank=True, help_text='Supplier part description')
+    description = models.CharField(max_length=250, blank=True, help_text=_('Supplier part description'))
 
-    note = models.CharField(max_length=100, blank=True, help_text='Notes')
+    note = models.CharField(max_length=100, blank=True, help_text=_('Notes'))
 
-    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text='Minimum charge (e.g. stocking fee)')
+    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text=_('Minimum charge (e.g. stocking fee)'))
 
-    packaging = models.CharField(max_length=50, blank=True, help_text='Part packaging')
+    packaging = models.CharField(max_length=50, blank=True, help_text=_('Part packaging'))
     
-    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Order multiple')
+    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text=('Order multiple'))
 
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
     # lead_time = models.DurationField(blank=True, null=True)

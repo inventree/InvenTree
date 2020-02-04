@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DetailView, ListView, FormView
+from django.views.generic import DetailView, ListView, FormView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from guardian.mixins import PermissionRequiredMixin, PermissionListMixin
@@ -24,7 +24,7 @@ from .models import PartParameterTemplate, PartParameter
 from .models import BomItem
 from .models import match_part_names
 
-from common.models import Currency
+from common.models import Currency, InvenTreeSetting
 from company.models import SupplierPart
 
 from . import forms as part_forms
@@ -409,6 +409,8 @@ class PartDuplicate(PermissionRequiredMixin, AjaxCreateView):
         else:
             initials = super(AjaxCreateView, self).get_initial()
 
+        initials['deep_copy'] = str2bool(InvenTreeSetting.get_setting('part_deep_copy', True))
+
         return initials
 
 
@@ -533,6 +535,39 @@ class PartCreate(PermissionRequiredMixin, AjaxCreateView):
                 initials[label] = self.request.GET.get(label)
 
         return initials
+
+
+class PartNotes(UpdateView):
+    """ View for editing the 'notes' field of a Part object.
+    Presents a live markdown editor.
+    """
+
+    context_object_name = 'part'
+    # form_class = part_forms.EditNotesForm
+    template_name = 'part/notes.html'
+    model = Part
+
+    fields = ['notes']
+
+    def get_success_url(self):
+        """ Return the success URL for this form """
+        
+        return reverse('part-notes', kwargs={'pk': self.get_object().id})
+
+    def get_context_data(self, **kwargs):
+
+        part = self.get_object()
+
+        ctx = super().get_context_data(**kwargs)
+
+        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
+
+        ctx['starred'] = part.isStarredBy(self.request.user)
+        ctx['disabled'] = not part.active
+
+        ctx['OrderStatus'] = OrderStatus
+
+        return ctx
 
 
 class PartDetail(PermissionRequiredMixin, DetailView):

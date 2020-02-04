@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from markdownx.models import MarkdownxField
+
 from mptt.models import TreeForeignKey
 
 from decimal import Decimal, InvalidOperation
@@ -358,7 +360,7 @@ class StockItem(models.Model):
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
 
-    notes = models.CharField(max_length=250, blank=True, help_text=_('Stock Item Notes'))
+    notes = MarkdownxField(blank=True, help_text=_('Stock Item Notes'))
 
     # If stock item is incoming, an (optional) ETA field
     # expected_arrival = models.DateField(null=True, blank=True)

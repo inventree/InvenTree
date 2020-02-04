@@ -1,29 +1,23 @@
 {% extends "company/company_base.html" %}
 {% load static %}
+{% load i18n %}}
 {% block details %}
 
 {% include 'company/tabs.html' with tab='details' %}
 
-<h4>Company Details</h4>
+<h4>{% trans "Company Details" %}</h4>
 <hr>
 
 <table class='table table-striped'>
 <tr>
-    <td>Customer</td>
+    <td>{% trans "Customer" %}</td>
     <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
 </tr>
 <tr>
-    <td>Supplier</td>
+    <td>{% trans "Supplier" %}</td>
     <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
 </tr>
 </table>
-
-{% if company.notes %}
-<div class="panel panel-default">
-    <div class="panel-heading"><b>Notes</b></div>
-  <div class="panel-body">{{ company.notes }}</div>
-</div>
-{% endif %}
 
 {% endblock %}
 {% block js_ready %}

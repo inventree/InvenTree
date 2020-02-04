@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load i18n %}
 
 {% block page_title %}
-InvenTree | Supplier List 
+InvenTree | {% trans "Supplier List" %} 
 {% endblock %}
 
 {% block content %}
 
-<h3>Supplier List</h3>
+<h3>{% trans "Supplier List" %}</h3>
 <hr>
 
 <div id='button-toolbar'>
     <div class='btn-group'>
-        {% if "company.add_companyt" in perms %}
-        <button type='button' class="btn btn-success" id='new-company' title='Add new supplier'>New Supplier</button>
+        {% if "company.add_company" in perms %}
+        <button type='button' class="btn btn-success" id='new-company' title='Add new supplier'>{% trans "New Supplier" %}</button>
         {% endif %}
     </div>
 </div>
@@ -39,12 +40,12 @@ InvenTree | Supplier List
         columns: [
             {
                 field: 'pk',
-                title: 'ID',
+                title: '{% trans "ID" %}',
                 visible: false,
             },
             {
                 field: 'name',
-                title: 'Supplier',
+                title: '{% trans "Supplier" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.image) + renderLink(value, row.url);
@@ -52,12 +53,12 @@ InvenTree | Supplier List
             },
             {
                 field: 'description',
-                title: 'Description',
+                title: '{% trans "Description" %}',
                 sortable: true,
             },
             {
                 field: 'website',
-                title: 'Website',
+                title: '{% trans "Website" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
                         return renderLink(value, value);
@@ -67,7 +68,7 @@ InvenTree | Supplier List
             },
             {
                 field: 'part_count',
-                title: 'Parts',
+                title: '{% trans "Parts" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     return renderLink(value, row.url + 'parts/');

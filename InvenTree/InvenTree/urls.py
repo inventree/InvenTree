@@ -33,7 +33,8 @@ from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
 
-from .views import IndexView, SearchView, SettingsView, EditUserView, SetPasswordView
+from .views import IndexView, SearchView, DatabaseStatsView
+from .views import SettingsView, EditUserView, SetPasswordView
 from .views import InfoView
 
 from users.urls import user_urls
@@ -98,9 +99,12 @@ urlpatterns = [
 
     url(r'^index/', IndexView.as_view(), name='index'),
     url(r'^search/', SearchView.as_view(), name='search'),
+    url(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
     url(r'^api/', include(apipatterns)),
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
+
+    url(r'^markdownx/', include('markdownx.urls')),
 ]
 
 # Static file access

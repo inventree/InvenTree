@@ -6,6 +6,8 @@ from django import template
 from InvenTree import version
 from InvenTree.helpers import decimal2string
 
+from common.models import InvenTreeSetting
+
 register = template.Library()
 
 
@@ -48,9 +50,15 @@ def inventree_version(*args, **kwargs):
 
 
 @register.simple_tag()
-def inventree_commit(*args, **kwargs):
+def inventree_commit_hash(*args, **kwargs):
     """ Return InvenTree git commit hash string """
     return version.inventreeCommitHash()
+
+
+@register.simple_tag()
+def inventree_commit_date(*args, **kwargs):
+    """ Return InvenTree git commit date string """
+    return version.inventreeCommitDate()
 
 
 @register.simple_tag()
@@ -63,3 +71,8 @@ def inventree_github_url(*args, **kwargs):
 def inventree_docs_url(*args, **kwargs):
     """ Return URL for InvenTree documenation site """
     return "https://inventree.github.io"
+
+
+@register.simple_tag()
+def inventree_setting(key, *args, **kwargs):
+    return InvenTreeSetting.get_setting(key)

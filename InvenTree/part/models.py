@@ -22,6 +22,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from markdownx.models import MarkdownxField
+
 from mptt.models import TreeForeignKey
 
 from datetime import datetime
@@ -349,7 +351,7 @@ class Part(models.Model):
                               on_delete=models.DO_NOTHING,
                               help_text=_('Part category'))
 
-    IPN = models.CharField(max_length=100, blank=True, help_text=_('Internal Part Number'))
+    IPN = models.CharField(max_length=100, blank=True, help_text=_('Internal Part Number'), validators=[validators.validate_part_ipn])
 
     revision = models.CharField(max_length=100, blank=True, help_text=_('Part revision or version number'))
 
@@ -424,7 +426,7 @@ class Part(models.Model):
 
     virtual = models.BooleanField(default=False, help_text=_('Is this a virtual part, such as a software product or license?'))
 
-    notes = models.TextField(blank=True)
+    notes = MarkdownxField(help_text=_('Part notes - supports Markdown formatting'))
 
     bom_checksum = models.CharField(max_length=128, blank=True, help_text=_('Stored BOM checksum'))
 

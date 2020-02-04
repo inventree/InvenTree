@@ -7,12 +7,14 @@ from __future__ import unicode_literals
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils.translation import ugettext as _
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, UpdateView
 from django.forms import HiddenInput
 from guardian.mixins import PermissionRequiredMixin, PermissionListMixin
 
 import logging
+from decimal import Decimal, InvalidOperation
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .admin import POLineItemResource
@@ -67,6 +69,28 @@ class PurchaseOrderDetail(PermissionRequiredMixin, DetailView):
         ctx = super().get_context_data(**kwargs)
 
         ctx['OrderStatus'] = OrderStatus
+
+        return ctx
+
+
+class PurchaseOrderNotes(UpdateView):
+    """ View for updating the 'notes' field of a PurchaseOrder """
+
+    context_object_name = 'order'
+    template_name = 'order/order_notes.html'
+    model = PurchaseOrder
+
+    fields = ['notes']
+
+    def get_success_url(self):
+
+        return reverse('purchase-order-notes', kwargs={'pk': self.get_object().id})
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+
+        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
 
         return ctx
 
@@ -335,6 +359,8 @@ class PurchaseOrderReceive(PermissionRequiredMixin, AjaxUpdateView):
         self.lines = []
         self.destination = None
 
+        msg = _("Items received")
+
         # Extract the destination for received parts
         if 'location' in request.POST:
             pk = request.POST['location']
@@ -343,7 +369,11 @@ class PurchaseOrderReceive(PermissionRequiredMixin, AjaxUpdateView):
             except (StockLocation.DoesNotExist, ValueError):
                 pass
 
-        errors = self.destination is None
+        errors = False
+
+        if self.destination is None:
+            errors = True
+            msg = _("No destination set")
 
         # Extract information on all submitted line items
         for item in request.POST:
@@ -370,18 +400,24 @@ class PurchaseOrderReceive(PermissionRequiredMixin, AjaxUpdateView):
                 receive = self.request.POST[item]
 
                 try:
-                    receive = int(receive)
-                except ValueError:
+                    receive = Decimal(receive)
+                except InvalidOperation:
                     # In the case on an invalid input, reset to default
                     receive = line.remaining()
+                    msg = _("Error converting quantity to number")
                     errors = True
 
                 if receive < 0:
                     receive = 0
                     errors = True
+                    msg = _("Receive quantity less than zero")
 
                 line.receive_quantity = receive
                 self.lines.append(line)
+
+        if len(self.lines) == 0:
+            msg = _("No lines specified")
+            errors = True
 
         # No errors? Receive the submitted parts!
         if errors is False:
@@ -389,7 +425,7 @@ class PurchaseOrderReceive(PermissionRequiredMixin, AjaxUpdateView):
 
         data = {
             'form_valid': errors is False,
-            'success': 'Items marked as received',
+            'success': msg,
         }
 
         return self.renderJsonResponse(request, data=data, form=self.get_form())

@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block pre_form_content %}
 
@@ -14,10 +15,9 @@
       <tr>
           <th>{% trans "Stock Item" %}</th>
           <th>{% trans "Location" %}</th>
+          <th>{% trans "Quantity" %}</th>
           {% if edit_quantity %}
           <th>{{ stock_action_title }}</th>
-          {% else %}
-          <th>{% trans "Quantity" %}</th>
           {% endif %}
           <th></th>
       </tr>
@@ -26,6 +26,7 @@
           <td>{% include "hover_image.html" with image=item.part.image hover=True %}
             {{ item.part.full_name }} <small><i>{{ item.part.description }}</i></small></td> 
           <td>{{ item.location.pathstring }}</td> 
+          <td>{% decimal item.quantity %}</td>
           <td>
             {% if edit_quantity %}
             <input class='numberinput'
@@ -36,7 +37,6 @@
             <br><span class='help-inline'>{{ item.error }}</span>
             {% endif %}
             {% else %}
-            {{ item.new_quantity }}
             <input type='hidden' name='stock-id-{{ item.id }}' value='{{ item.new_quantity }}'/>
             {% endif %}  
           </td>
