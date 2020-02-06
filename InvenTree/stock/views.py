@@ -884,28 +884,31 @@ class StockItemCreate(AjaxCreateView):
                                 form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
                                 valid = False
 
-                            # At this point we have a list of serial numbers which we know are valid,
-                            # and do not currently exist
-                            form.clean()
+                            else:
+                                # At this point we have a list of serial numbers which we know are valid,
+                                # and do not currently exist
+                                form.clean()
 
-                            data = form.cleaned_data
+                                form_data = form.cleaned_data
 
-                            for serial in serials:
-                                # Create a new stock item for each serial number
-                                item = StockItem(
-                                    part=part,
-                                    quantity=1,
-                                    serial=serial,
-                                    supplier_part=data.get('supplier_part'),
-                                    location=data.get('location'),
-                                    batch=data.get('batch'),
-                                    delete_on_deplete=False,
-                                    status=data.get('status'),
-                                    notes=data.get('notes'),
-                                    URL=data.get('URL'),
-                                )
+                                for serial in serials:
+                                    # Create a new stock item for each serial number
+                                    item = StockItem(
+                                        part=part,
+                                        quantity=1,
+                                        serial=serial,
+                                        supplier_part=form_data.get('supplier_part'),
+                                        location=form_data.get('location'),
+                                        batch=form_data.get('batch'),
+                                        delete_on_deplete=False,
+                                        status=form_data.get('status'),
+                                        URL=form_data.get('URL'),
+                                    )
 
-                                item.save(user=request.user)
+                                    item.save(user=request.user)
+
+                                data['success'] = _('Created {n} new stock items'.format(n=len(serials)))
+                                valid = True
 
                         except ValidationError as e:
                             form.errors['serial_numbers'] = e.messages
