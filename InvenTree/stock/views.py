@@ -911,7 +911,19 @@ class StockItemCreate(AjaxCreateView):
                             form.errors['serial_numbers'] = e.messages
                             valid = False
 
-                else:
+                    else:
+                        # We have a serialized part, but no serial numbers specified...
+                        form.clean()
+                        form._post_clean()
+
+                        item = form.save(commit=False)
+                        item.save(user=request.user)
+
+                        data['pk'] = item.pk
+                        data['url'] = item.get_absolute_url()
+                        data['success'] = _("Created new stock item")
+
+                else:  # Referenced Part object is not marked as "trackable"
                     # For non-serialized items, simply save the form.
                     # We need to call _post_clean() here because it is prevented in the form implementation
                     form.clean()
