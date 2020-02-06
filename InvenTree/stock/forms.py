@@ -44,7 +44,6 @@ class CreateStockItemForm(HelperForm):
             'serial_numbers',
             'delete_on_deplete',
             'status',
-            'notes',
             'URL',
         ]
 
