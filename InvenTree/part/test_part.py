@@ -23,7 +23,7 @@ class TemplateTagTest(TestCase):
 
     def test_hash(self):
         hash = inventree_extras.inventree_commit_hash()
-        self.assertEqual(len(hash), 7)
+        self.assertGreater(len(hash), 5)
 
     def test_date(self):
         d = inventree_extras.inventree_commit_date()
