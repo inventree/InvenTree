@@ -136,18 +136,9 @@ def rename_part_image(instance, filename):
     """
 
     base = 'part_images'
+    fname = os.path.basename(filename)
 
-    if filename.count('.') > 0:
-        ext = filename.split('.')[-1]
-    else:
-        ext = ''
-
-    fn = 'part_{pk}_img'.format(pk=instance.pk)
-
-    if ext:
-        fn += '.' + ext
-
-    return os.path.join(base, fn)
+    return os.path.join(base, fname)
 
 
 def match_part_names(match, threshold=80, reverse=True, compare_length=False):
@@ -832,10 +823,8 @@ class Part(models.Model):
         # Copy the part image
         if kwargs.get('image', True):
             if other.image:
-                image_file = ContentFile(other.image.read())
-                image_file.name = rename_part_image(self, other.image.url)
-
-                self.image = image_file
+                # Reference the other image from this Part
+                self.image = other.image
 
         # Copy the BOM data
         if kwargs.get('bom', False):
