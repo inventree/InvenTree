@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:28+0000\n"
+"POT-Creation-Date: 2020-02-10 11:09+0000\n"
 "PO-Revision-Date: 2020-02-02 08:07+0100\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -706,7 +706,7 @@ msgstr "Link auf externe Seite"
 msgid "Order notes"
 msgstr "Bestell-Notizen"
 
-#: order/models.py:159 order/models.py:210 part/views.py:1067
+#: order/models.py:159 order/models.py:210 part/views.py:1080
 #: stock/models.py:440
 msgid "Quantity must be greater than zero"
 msgstr "Anzahl muss größer Null sein"
@@ -1277,56 +1277,208 @@ msgstr "Tracking"
 msgid "Attachments"
 msgstr "Anhänge"
 
+#: part/views.py:77
+#, fuzzy
+#| msgid "Add Attachment"
+msgid "Added attachment"
+msgstr "Anhang hinzufügen"
+
+#: part/views.py:119
+#, fuzzy
+#| msgid "Part Attachments"
+msgid "Part attachment updated"
+msgstr "Anhänge"
+
 #: part/views.py:196
 #, python-brace-format
 msgid "Set category for {n} parts"
 msgstr "Kategorie für {n} Teile setzen"
 
-#: part/views.py:808
+#: part/views.py:306
+#, fuzzy
+#| msgid "Supplier part"
+msgid "Copied part"
+msgstr "Zulieferer-Teil"
+
+#: part/views.py:414
+#, fuzzy
+#| msgid "Create new Stock Item"
+msgid "Create new part"
+msgstr "Neues Lagerobjekt hinzufügen"
+
+#: part/views.py:419
+#, fuzzy
+#| msgid "Created new stock item"
+msgid "Created new part"
+msgstr "Neues Lagerobjekt erstellt"
+
+#: part/views.py:609
+msgid "Upload Part Image"
+msgstr ""
+
+#: part/views.py:614
+msgid "Updated part image"
+msgstr ""
+
+#: part/views.py:623
+#, fuzzy
+#| msgid "Select part"
+msgid "Select Part Image"
+msgstr "Teil auswählen"
+
+#: part/views.py:627
+#, fuzzy
+#| msgid "Select part"
+msgid "Selected part image"
+msgstr "Teil auswählen"
+
+#: part/views.py:637
+#, fuzzy
+#| msgid "Edit notes"
+msgid "Edit Part Properties"
+msgstr "Bermerkungen bearbeiten"
+
+#: part/views.py:659
+msgid "Validate BOM"
+msgstr ""
+
+#: part/views.py:821
 msgid "No BOM file provided"
 msgstr "Keine Stückliste angegeben"
 
-#: part/views.py:1069
+#: part/views.py:1082
 msgid "Enter a valid quantity"
 msgstr "Bitte eine gültige Anzahl eingeben"
 
-#: part/views.py:1093 part/views.py:1096
+#: part/views.py:1106 part/views.py:1109
 msgid "Select valid part"
 msgstr "Bitte ein gültiges Teil auswählen"
 
-#: part/views.py:1102
+#: part/views.py:1115
 msgid "Duplicate part selected"
 msgstr "Teil doppelt ausgewählt"
 
-#: part/views.py:1130
+#: part/views.py:1143
 msgid "Select a part"
 msgstr "Teil auswählen"
 
-#: part/views.py:1134
+#: part/views.py:1147
 msgid "Specify quantity"
 msgstr "Anzahl angeben"
 
-#: stock/forms.py:92
+#: part/views.py:1324
+#, fuzzy
+#| msgid "Confirm part creation"
+msgid "Confirm Part Deletion"
+msgstr "Erstellen des Teils bestätigen"
+
+#: part/views.py:1331
+msgid "Part was deleted"
+msgstr ""
+
+#: part/views.py:1340
+#, fuzzy
+#| msgid "Part packaging"
+msgid "Part Pricing"
+msgstr "Teile-Packaging"
+
+#: part/views.py:1462
+#, fuzzy
+#| msgid "Parameter Template"
+msgid "Create Part Parameter Template"
+msgstr "Parameter Vorlage"
+
+#: part/views.py:1470
+#, fuzzy
+#| msgid "Parameter Template"
+msgid "Edit Part Parameter Template"
+msgstr "Parameter Vorlage"
+
+#: part/views.py:1477
+#, fuzzy
+#| msgid "Parameter Template"
+msgid "Delete Part Parameter Template"
+msgstr "Parameter Vorlage"
+
+#: part/views.py:1485
+msgid "Create Part Parameter"
+msgstr ""
+
+#: part/views.py:1535
+#, fuzzy
+#| msgid "Edit attachment"
+msgid "Edit Part Parameter"
+msgstr "Anhang bearbeiten"
+
+#: part/views.py:1549
+#, fuzzy
+#| msgid "Delete attachment"
+msgid "Delete Part Parameter"
+msgstr "Anhang löschen"
+
+#: part/views.py:1565
+#, fuzzy
+#| msgid "Part category"
+msgid "Edit Part Category"
+msgstr "Teile-Kategorie"
+
+#: part/views.py:1600
+#, fuzzy
+#| msgid "Select part category"
+msgid "Delete Part Category"
+msgstr "Teilekategorie wählen"
+
+#: part/views.py:1606
+#, fuzzy
+#| msgid "Part category"
+msgid "Part category was deleted"
+msgstr "Teile-Kategorie"
+
+#: part/views.py:1614
+#, fuzzy
+#| msgid "Select part category"
+msgid "Create new part category"
+msgstr "Teilekategorie wählen"
+
+#: part/views.py:1665
+#, fuzzy
+#| msgid "Created new stock item"
+msgid "Create BOM item"
+msgstr "Neues Lagerobjekt erstellt"
+
+#: part/views.py:1731
+#, fuzzy
+#| msgid "Edit Stock Item"
+msgid "Edit BOM item"
+msgstr "Lagerobjekt bearbeiten"
+
+#: part/views.py:1779
+#, fuzzy
+#| msgid "Confirm build completion"
+msgid "Confim BOM item deletion"
+msgstr "Bau-Fertigstellung bestätigen"
+
+#: stock/forms.py:91
 msgid "File Format"
 msgstr "Dateiformat"
 
-#: stock/forms.py:92
+#: stock/forms.py:91
 msgid "Select output file format"
 msgstr "Ausgabe-Dateiformat auswählen"
 
-#: stock/forms.py:94
+#: stock/forms.py:93
 msgid "Include stock items in sub locations"
 msgstr "Lagerobjekte in untergeordneten Lagerorten einschließen"
 
-#: stock/forms.py:127
+#: stock/forms.py:126
 msgid "Destination stock location"
 msgstr "Ziel-Lagerbestand"
 
-#: stock/forms.py:133
+#: stock/forms.py:132
 msgid "Confirm movement of stock items"
 msgstr "Bewegung der Lagerobjekte bestätigen"
 
-#: stock/forms.py:135
+#: stock/forms.py:134
 msgid "Set the destination as the default location for selected parts"
 msgstr "Setze das Ziel als Standard-Ziel für ausgewählte Teile"
 
@@ -1652,27 +1804,33 @@ msgstr "Ungültige Menge"
 msgid "Invalid part selection"
 msgstr "Ungültige Teileauswahl"
 
-#: stock/views.py:925
+#: stock/views.py:910
+#, fuzzy, python-brace-format
+#| msgid "Created new stock item"
+msgid "Created {n} new stock items"
+msgstr "Neues Lagerobjekt erstellt"
+
+#: stock/views.py:927 stock/views.py:940
 msgid "Created new stock item"
 msgstr "Neues Lagerobjekt erstellt"
 
-#: stock/views.py:942
+#: stock/views.py:957
 msgid "Delete Stock Location"
 msgstr "Standort löschen"
 
-#: stock/views.py:955
+#: stock/views.py:970
 msgid "Delete Stock Item"
 msgstr "Lagerobjekt löschen"
 
-#: stock/views.py:966
+#: stock/views.py:981
 msgid "Delete Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag löschen"
 
-#: stock/views.py:983
+#: stock/views.py:998
 msgid "Edit Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag bearbeiten"
 
-#: stock/views.py:992
+#: stock/views.py:1007
 msgid "Add Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag hinzufügen"
 
