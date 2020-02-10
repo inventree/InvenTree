@@ -229,6 +229,20 @@
     object-fit: contain;
 }
 
+.part-thumb-container:hover .part-thumb-overlay {
+    opacity: 1;
+}
+
+.part-thumb-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: .25s ease;
+    padding: 15px;
+    margin: 5px;
+}
+
 .checkbox {
     margin-left: 20px;
 }
