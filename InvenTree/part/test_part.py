@@ -23,7 +23,7 @@ class TemplateTagTest(TestCase):
 
     def test_hash(self):
         hash = inventree_extras.inventree_commit_hash()
-        self.assertEqual(len(hash), 7)
+        self.assertGreater(len(hash), 5)
 
     def test_date(self):
         d = inventree_extras.inventree_commit_date()
@@ -68,11 +68,8 @@ class PartTest(TestCase):
 
     def test_rename_img(self):
         img = rename_part_image(self.R1, 'hello.png')
-        self.assertEqual(img, os.path.join('part_images', 'part_3_img.png'))
-
-        img = rename_part_image(self.R2, 'test')
-        self.assertEqual(img, os.path.join('part_images', 'part_4_img'))
-
+        self.assertEqual(img, os.path.join('part_images', 'hello.png'))
+        
     def test_stock(self):
         # No stock of any resistors
         res = Part.objects.filter(description__contains='resistor')
