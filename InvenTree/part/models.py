@@ -23,6 +23,8 @@ from django.dispatch import receiver
 
 from markdownx.models import MarkdownxField
 
+from django_cleanup import cleanup
+
 from mptt.models import TreeForeignKey
 
 from datetime import datetime
@@ -191,6 +193,7 @@ def match_part_names(match, threshold=80, reverse=True, compare_length=False):
     return matches
 
 
+@cleanup.ignore
 class Part(models.Model):
     """ The Part object represents an abstract part, the 'concept' of an actual entity.
 
