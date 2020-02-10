@@ -183,6 +183,24 @@
     -webkit-opacity: 10%;
 }
 
+/* grid display for part images */
+
+.table-img-grid tr {
+    display: inline;
+}
+
+.table-img-grid td {
+    padding: 10px;
+    margin: 10px;
+}
+
+.table-img-grid .grid-image {
+
+    height: 128px;
+    width: 128px;
+    object-fit: contain;
+    background: #eee;
+}
 
 .btn-glyph {
     padding-left: 6px;

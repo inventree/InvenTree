@@ -1,0 +1,20 @@
+{% extends "modal_form.html" %}
+
+{% block pre_form_content %}
+
+{{ block.super }}
+
+Select from existing images.
+
+{% endblock %}
+
+{% block form %}
+<form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
+{% csrf_token %}
+{% load crispy_forms_tags %}
+
+<table id='image-select-table' class='table table-striped table-condensed table-img-grid'>
+</table>
+
+</form>
+{% endblock %}

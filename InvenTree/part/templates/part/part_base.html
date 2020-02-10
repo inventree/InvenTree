@@ -28,13 +28,14 @@
     <div class="media">
       <div class="media-left">
         <div class='dropzone' id='part-thumb'>
-                <img class="part-thumb"
+            <img class="part-thumb"
                 {% if part.image %}
                 src="{{ part.image.url }}"
                 {% else %}
                 src="{% static 'img/blank_image.png' %}"
                 {% endif %}/>
         </div>
+        <a href='#' id='part-image-select'>Select Part Image</a>
       </div>
     <div class="media-body">
         <h4>
@@ -163,7 +164,7 @@
 
     enableDragAndDrop(
         '#part-thumb',
-        "{% url 'part-image' part.id %}",
+        "{% url 'part-image-upload' part.id %}",
         {
             label: 'image',
             success: function(data, status, xhr) {
@@ -210,11 +211,38 @@
 
     $("#part-thumb").click(function() {
         launchModalForm(
-                        "{% url 'part-image' part.id %}",
+                        "{% url 'part-image-upload' part.id %}",
                         {
                             reload: true
                         }
                         );
+    });
+
+    function onSelectImage(response) {
+        
+        $("#modal-form").find("#image-select-table").bootstrapTable({
+            pagination: true,
+            pageSize: 25,
+            url: "{% url 'api-part-thumbs' %}",
+            showHeader: false,
+            columns: [
+                {
+                    field: 'image',
+                    title: 'Image',
+                    formatter: function(value, row, index, field) {
+                        return "<img src='/media/" + value + "' class='grid-image'/>"
+                    }
+                }
+            ],
+        });
+    }
+
+    $("#part-image-select").click(function() {
+        launchModalForm("{% url 'part-image-select' part.id %}",
+                        {
+                            reload: true,
+                            after_render: onSelectImage
+                        });
     });
 
     $("#part-edit").click(function() {

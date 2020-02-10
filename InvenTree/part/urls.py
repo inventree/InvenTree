@@ -57,7 +57,8 @@ part_detail_urls = [
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 
     # Normal thumbnail with form
-    url(r'^thumbnail/?', views.PartImage.as_view(), name='part-image'),
+    url(r'^thumbnail/?', views.PartImageUpload.as_view(), name='part-image-upload'),
+    url(r'^thumb-select/?', views.PartImageSelect.as_view(), name='part-image-select'),
 
     # Any other URLs go to the part detail page
     url(r'^.*$', views.PartDetail.as_view(), name='part-detail'),

@@ -601,8 +601,8 @@ class PartQRCode(QRCodeView):
             return None
 
 
-class PartImage(AjaxUpdateView):
-    """ View for uploading Part image """
+class PartImageUpload(AjaxUpdateView):
+    """ View for uploading a new Part image """
 
     model = Part
     ajax_template_name = 'modal_form.html'
@@ -621,6 +621,10 @@ class PartImageSelect(AjaxUpdateView):
     model = Part
     ajax_template_name = 'part/select_image.html'
     ajax_form_title = _('Select Part Image')
+
+    fields = [
+        'image',
+    ]
 
     def get_data(self):
         return {
