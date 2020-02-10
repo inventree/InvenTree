@@ -308,7 +308,10 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 
 # The filesystem location for served static files
-MEDIA_ROOT = CONFIG.get('media_root', os.path.join(BASE_DIR, 'media'))
+MEDIA_ROOT = os.path.abspath(CONFIG.get('media_root', os.path.join(BASE_DIR, 'media')))
+
+if DEBUG:
+    print("MEDIA_ROOT:", MEDIA_ROOT)
 
 # crispy forms use the bootstrap templates
 CRISPY_TEMPLATE_PACK = 'bootstrap'
