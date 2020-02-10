@@ -14,6 +14,9 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, FormView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
+from django.conf import settings
+
+import os
 
 from fuzzywuzzy import fuzz
 from decimal import Decimal
@@ -626,10 +629,32 @@ class PartImageSelect(AjaxUpdateView):
         'image',
     ]
 
-    def get_data(self):
-        return {
-            'success': _('Selected part image')
-        }
+    def post(self, request, *args, **kwargs):
+
+        part = self.get_object()
+        form = self.get_form()
+
+        img = request.POST.get('image', '')
+
+        img = os.path.basename(img)
+
+        data = {}
+
+        if img:
+            img_path = os.path.join(settings.MEDIA_ROOT, 'part_images', img)
+
+            # Ensure that the image already exists
+            if os.path.exists(img_path):
+
+                part.image = os.path.join('part_images', img)
+                part.save()
+
+                data['success'] = _('Updated part image')
+
+        if 'success' not in data:
+            data['error'] = _('Part image not found')
+
+        return self.renderJsonResponse(request, form, data)
 
 
 class PartEdit(AjaxUpdateView):

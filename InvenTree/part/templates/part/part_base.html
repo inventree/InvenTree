@@ -218,14 +218,22 @@
                         );
     });
 
+
     function onSelectImage(response) {
+        // Callback when the image-selection modal form is displayed
+        // Populate the form with image data (requested via AJAX)
         
         $("#modal-form").find("#image-select-table").bootstrapTable({
             pagination: true,
             pageSize: 25,
             url: "{% url 'api-part-thumbs' %}",
             showHeader: false,
+            clickToSelect: true,
+            singleSelect: true,
             columns: [
+                {
+                    checkbox: true,
+                },
                 {
                     field: 'image',
                     title: 'Image',
@@ -234,6 +242,13 @@
                     }
                 }
             ],
+            onCheck: function(row, element) {
+
+                // Update the selected image in the form
+                var ipt = $("#modal-form").find("#image-input");
+                ipt.val(row.image);
+
+            }
         });
     }
 

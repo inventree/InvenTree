@@ -12,7 +12,6 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.conf import settings
 
-from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.db.models import Sum
 from django.db.models import prefetch_related_objects

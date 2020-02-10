@@ -98,20 +98,17 @@ class PartThumbs(generics.ListAPIView):
         # Get all Parts which have an associated image
         queryset = Part.objects.all().exclude(image='')
 
+        # Return the most popular parts first
         data = queryset.values(
             'image',
         ).annotate(count=Count('image')).order_by('-count')
-
-        print("Parts with img:", queryset.count())
-
-        print(data)
 
         return Response(data)
 
 
 class PartDetail(generics.RetrieveUpdateAPIView):
     """ API endpoint for detail view of a single Part object """
-    
+
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartSerializer
 
