@@ -82,7 +82,7 @@ class Build(models.Model):
     batch = models.CharField(max_length=100, blank=True, null=True,
                              help_text=_('Batch code for this build output'))
     
-    creation_date = models.DateField(auto_now=True, editable=False)
+    creation_date = models.DateField(auto_now_add=True, editable=False)
     
     completion_date = models.DateField(null=True, blank=True)
 
