@@ -25,18 +25,7 @@
 
 <div class="row">
 <div class="col-sm-6">
-    <div class="media">
-      <div class="media-left">
-        <div class='dropzone' id='part-thumb'>
-            <img class="part-thumb"
-                {% if part.image %}
-                src="{{ part.image.url }}"
-                {% else %}
-                src="{% static 'img/blank_image.png' %}"
-                {% endif %}/>
-        </div>
-        <a href='#' id='part-image-select'>Select Part Image</a>
-      </div>
+    {% include "part/part_thumb.html" %}
     <div class="media-body">
         <h4>
             {{ part.full_name }}
@@ -209,13 +198,12 @@
         });
     });
 
-    $("#part-thumb").click(function() {
-        launchModalForm(
-                        "{% url 'part-image-upload' part.id %}",
-                        {
-                            reload: true
-                        }
-                        );
+    $("#part-image-upload").click(function() {
+        launchModalForm("{% url 'part-image-upload' part.id %}",
+            {
+                reload: true
+            }
+        );
     });
 
 

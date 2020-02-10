@@ -1,0 +1,20 @@
+{% load static %}
+{% load i18n %}
+
+<div class="media">
+    <div class="media-left">
+      <div class='dropzone' id='part-thumb'>
+          <img class="part-thumb"
+              {% if part.image %}
+              src="{{ part.image.url }}"
+              {% else %}
+              src="{% static 'img/blank_image.png' %}"
+              {% endif %}/>
+      </div>
+      <div class='btn-row'>
+          <div class='btn-group'>
+              <button type='button' class='btn btn-default btn-glyph' title="{% trans 'Select from existing images' %}" id='part-image-select'><span class='glyphicon glyphicon-edit'></span></button>
+              <button type='button' class='btn btn-default btn-glyph' title="{% trans 'Upload new image' %}" id='part-image-upload'><span class='glyphicon glyphicon-upload'></span></button>
+          </div>
+      </div>
+    </div>
