@@ -131,11 +131,13 @@ class BomItemResource(ModelResource):
 
     level = Field(attribute='level', readonly=True)
 
-    part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
+    bom_id = Field(attribute='pk')
+
+    parent_part_id = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
     parent_part_name = Field(attribute='part__full_name', readonly=True)
 
-    id = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
+    sub_part_id = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
 
     sub_part_name = Field(attribute='sub_part__full_name', readonly=True)
 
@@ -147,7 +149,12 @@ class BomItemResource(ModelResource):
         report_skipped = False
         clean_model_instances = True
 
-        exclude = ['checksum', ]
+        exclude = [
+            'checksum',
+            'id',
+            'part',
+            'sub_part',
+        ]
 
 
 class BomItemAdmin(ImportExportModelAdmin):
