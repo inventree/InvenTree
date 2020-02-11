@@ -27,21 +27,24 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
                 field: 'stock_item_detail',
                 title: 'Stock Item',
                 formatter: function(value, row, index, field) {
-                    return '' + value.quantity + ' x ' + value.part_name + ' @ ' + value.location_name;
+                    return '' + parseFloat(value.quantity) + ' x ' + value.part_name + ' @ ' + value.location_name;
                 }
             },
             {
                 field: 'stock_item_detail.quantity',
                 title: 'Available',
+                formatter: function(value, row, index, field) {
+                    return parseFloat(value);
+                }
             },
             {
                 field: 'quantity',
                 title: 'Allocated',
                 formatter: function(value, row, index, field) {
-                    var html = value;
+                    var html = parseFloat(value);
 
-                    var bEdit = "<button class='btn btn-primary item-edit-button btn-sm' type='button' title='Edit stock allocation' url='/build/item/" + row.pk + "/edit/'><span class='glyphicon glyphicon-small glyphicon-edit'></span></button>";
-                    var bDel = "<button class='btn btn-danger item-del-button btn-sm' type='button' title='Delete stock allocation' url='/build/item/" + row.pk + "/delete/'><span class='glyphicon glyphicon-small glyphicon-trash'></span></button>";
+                    var bEdit = "<button class='btn item-edit-button btn-sm' type='button' title='Edit stock allocation' url='/build/item/" + row.pk + "/edit/'><span class='glyphicon glyphicon-small glyphicon-edit'></span></button>";
+                    var bDel = "<button class='btn item-del-button btn-sm' type='button' title='Delete stock allocation' url='/build/item/" + row.pk + "/delete/'><span class='glyphicon glyphicon-small glyphicon-trash'></span></button>";
                     
                     html += "<div class='btn-group' style='float: right;'>" + bEdit + bDel + "</div>";
                     
