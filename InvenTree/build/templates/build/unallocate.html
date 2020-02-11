@@ -1,9 +1,10 @@
 {% extends "modal_form.html" %}
-
+{% load i18n %}
+{% load inventree_extras %}
 {% block pre_form_content %}
 
 {{ block.super }}
 
-Are you sure you wish to unallocate all stock for this build?
+{% trans "Are you sure you wish to unallocate all stock for this build?" %}
 
 {% endblock %}

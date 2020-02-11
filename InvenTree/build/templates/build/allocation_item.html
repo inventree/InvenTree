@@ -15,7 +15,7 @@
 
 {% block collapse_heading %}
     <div class='col-sm-2'>
-        <b>{{ item.sub_part.total_stock }}</b>
+        <b>{% decimal item.sub_part.total_stock %}</b>
     </div>
     <div class='col-sm-2'>
         <b>{% multiply build.quantity item.quantity %}</b>

@@ -53,11 +53,17 @@ def ExportBom(part, fmt='csv', cascade=False):
 
     bom_items = []
 
+    uids = []
+
     def add_items(items, level):
         # Add items at a given layer
         for item in items:
 
             item.level = '-' * level
+
+            # Avoid circular BOM references
+            if item.pk in uids:
+                continue
 
             bom_items.append(item)
 
