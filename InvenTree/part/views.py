@@ -1334,10 +1334,12 @@ class BomDownload(AjaxView):
 
         export_format = request.GET.get('file_format', 'csv')
 
+        cascade = str2bool(request.GET.get('cascade', False))
+
         if not IsValidBOMFormat(export_format):
             export_format = 'csv'
 
-        return ExportBom(part, fmt=export_format)
+        return ExportBom(part, fmt=export_format, cascade=cascade)
 
     def get_data(self):
         return {
@@ -1354,7 +1356,7 @@ class BomExport(AjaxView):
     ajax_form_title = _("Export Bill of Materials")
 
     def get(self, request, *args, **kwargs):
-        return self.renderJsonResponse(request, self.form_class())        
+        return self.renderJsonResponse(request, self.form_class())
 
     def post(self, request, *args, **kwargs):
 
