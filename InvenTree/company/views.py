@@ -149,7 +149,7 @@ class CompanyDelete(AjaxDeleteView):
 class SupplierPartDetail(DetailView):
     """ Detail view for SupplierPart """
     model = SupplierPart
-    template_name = 'company/partdetail.html'
+    template_name = 'company/supplier_part_detail.html'
     context_object_name = 'part'
     queryset = SupplierPart.objects.all()
 
