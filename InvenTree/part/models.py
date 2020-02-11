@@ -35,6 +35,7 @@ from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree
 from InvenTree.fields import InvenTreeURLField
+from InvenTree.helpers import decimal2string
 
 from InvenTree.status_codes import BuildStatus, StockStatus, OrderStatus
 
@@ -1248,5 +1249,9 @@ class BomItem(models.Model):
 
         if pmin == pmax:
             return str(pmin)
+
+        # Convert to better string representation
+        pmin = decimal2string(pmin)
+        pmax = decimal2string(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
