@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block page_title %}
+InvenTree | {% trans "Supplier Part" %}
+{% endblock %}
+
+{% block content %}
+
+<div class='row'>
+    <div class='col-sm-6'>
+        <h3>{% trans "Supplier Part" %}</h3>
+        <div class='btn-row'>
+            <div class='btn-group'>
+                <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='Edit supplier part'>
+                    <span class='glyphicon glyphicon-edit'/>
+                </button>
+                <button type='button' class='btn btn-default btn-glyph' id='delete-part' title='Delete supplier part'>
+                    <span class='glyphicon glyphicon-trash'/>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class='col-sm-6'>
+        <div class='media-left'>
+            <img class='part-thumb'
+            {% if part.part.image %}
+            src='{{ part.part.image.url }}'
+            {% else %}
+            src="{% static 'img/blank_image.png' %}"
+            {% endif %}/>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class='container-fluid'>
+    {% block details %}
+    <!-- Particular SupplierPart page goes here ... -->
+    {% endblock %}
+</div>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$('#edit-part').click(function () {
+    launchModalForm(
+                    "{% url 'supplier-part-edit' part.id %}",
+                    {
+                        reload: true
+                    }
+    );
+});
+
+$('#delete-part').click(function() {
+    launchModalForm(
+        "{% url 'supplier-part-delete' %}?part={{ part.id }}",
+        {
+            redirect: "{% url 'company-detail-parts' part.supplier.id %}"
+        }
+    );
+});
+
+{% endblock %}

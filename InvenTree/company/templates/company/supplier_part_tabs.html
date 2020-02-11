@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<ul class='nav nav-tabs'>
+    <li{% if tab == 'details' %} class='active'{% endif %}>
+        <a href="{% url 'supplier-part-detail' part.id %}">{% trans "Details" %}</a>
+    </li>
+    <li{% if tab == 'pricing' %} class='active'{% endif %}>
+        <a href="{% url 'supplier-part-detail' part.id %}">{% trans "Pricing" %}</a>
+    </li>
+    <li{% if tab == 'stock' %} class='active'{% endif %}>
+        <a href="{% url 'supplier-part-detail' part.id %}">{% trans "Stock" %}</a>
+    </li>
+    <li {% if tab == 'orders' %} class='active'{% endif %}>
+        <a href="{% url 'supplier-part-detail' part.id %}">{% trans "Orders" %}</a>
+    </li>
+    <li {% if tab == 'notes' %} class='active'{% endif %}>
+        <a href="{% url 'supplier-part-detail' part.id %}">{% trans "Notes" %}</a>
+    </li>
+</ul>
