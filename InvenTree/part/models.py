@@ -1243,12 +1243,8 @@ class BomItem(models.Model):
 
         pmin, pmax = prange
 
-        # remove trailing zeros
-        pmin = pmin.normalize()
-        pmax = pmax.normalize()
-
         if pmin == pmax:
-            return str(pmin)
+            return decimal2string(pmin)
 
         # Convert to better string representation
         pmin = decimal2string(pmin)
