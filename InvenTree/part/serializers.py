@@ -65,6 +65,8 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'available_stock',
             'image_url',
             'active',
+            'assembly',
+            'virtual',
         ]
 
 

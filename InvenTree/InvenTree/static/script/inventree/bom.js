@@ -133,7 +133,14 @@ function loadBomTable(table, options) {
             title: 'Part',
             sortable: true,
             formatter: function(value, row, index, field) {
-                return imageHoverIcon(row.sub_part_detail.image_url) + renderLink(row.sub_part_detail.full_name, row.sub_part_detail.url);
+                var html = imageHoverIcon(row.sub_part_detail.image_url) + renderLink(row.sub_part_detail.full_name, row.sub_part_detail.url);
+
+                // Display an extra icon if this part is an assembly
+                if (row.sub_part_detail.assembly) {
+                    html += "<a href='" + row.sub_part_detail.url + "bom'><span class='glyphicon-right glyphicon glyphicon-th-list'></span></a>";
+                }
+
+                return html;
             }
         }
     );
