@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-11 21:11+0000\n"
+"POT-Creation-Date: 2020-02-11 23:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -244,7 +244,7 @@ msgid "Allocate"
 msgstr ""
 
 #: build/templates/build/allocate_view.html:10
-#: company/templates/company/detail_part.html:18
+#: company/templates/company/detail_part.html:18 order/views.py:448
 msgid "Order Parts"
 msgstr ""
 
@@ -496,6 +496,18 @@ msgstr ""
 msgid "Use this currency as the base currency"
 msgstr ""
 
+#: common/views.py:21
+msgid "Create new Currency"
+msgstr ""
+
+#: common/views.py:29
+msgid "Edit Currency"
+msgstr ""
+
+#: common/views.py:36
+msgid "Delete Currency"
+msgstr ""
+
 #: company/models.py:74
 msgid "Company name"
 msgstr ""
@@ -743,6 +755,62 @@ msgstr ""
 msgid "Sales Orders"
 msgstr ""
 
+#: company/views.py:97
+msgid "Update Company Image"
+msgstr ""
+
+#: company/views.py:102
+msgid "Updated company image"
+msgstr ""
+
+#: company/views.py:112
+msgid "Edit Company"
+msgstr ""
+
+#: company/views.py:116
+msgid "Edited company information"
+msgstr ""
+
+#: company/views.py:126
+msgid "Create new Company"
+msgstr ""
+
+#: company/views.py:130
+msgid "Created new company"
+msgstr ""
+
+#: company/views.py:140
+msgid "Delete Company"
+msgstr ""
+
+#: company/views.py:145
+msgid "Company was deleted"
+msgstr ""
+
+#: company/views.py:170
+msgid "Edit Supplier Part"
+msgstr ""
+
+#: company/views.py:179
+msgid "Create new Supplier Part"
+msgstr ""
+
+#: company/views.py:236
+msgid "Delete Supplier Part"
+msgstr ""
+
+#: company/views.py:306
+msgid "Add Price Break"
+msgstr ""
+
+#: company/views.py:341
+msgid "Edit Price Break"
+msgstr ""
+
+#: company/views.py:356
+msgid "Delete Price Break"
+msgstr ""
+
 #: order/forms.py:21
 msgid "Place order"
 msgstr ""
@@ -830,7 +898,7 @@ msgstr ""
 msgid "Order Notes"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:15
+#: order/templates/order/purchase_order_detail.html:15 order/views.py:747
 msgid "Add Line Item"
 msgstr ""
 
@@ -854,12 +922,36 @@ msgstr ""
 msgid "Items"
 msgstr ""
 
+#: order/views.py:99
+msgid "Create Purchase Order"
+msgstr ""
+
+#: order/views.py:129
+msgid "Edit Purchase Order"
+msgstr ""
+
+#: order/views.py:149
+msgid "Cancel Order"
+msgstr ""
+
 #: order/views.py:164
 msgid "Confirm order cancellation"
 msgstr ""
 
+#: order/views.py:182
+msgid "Issue Order"
+msgstr ""
+
 #: order/views.py:197
 msgid "Confirm order placement"
+msgstr ""
+
+#: order/views.py:218
+msgid "Complete Order"
+msgstr ""
+
+#: order/views.py:284
+msgid "Receive Parts"
 msgstr ""
 
 #: order/views.py:351
@@ -894,16 +986,28 @@ msgstr ""
 msgid "Invalid SupplierPart selection"
 msgstr ""
 
-#: part/bom.py:134
+#: order/views.py:862
+msgid "Edit Line Item"
+msgstr ""
+
+#: order/views.py:878
+msgid "Delete Line Item"
+msgstr ""
+
+#: order/views.py:883
+msgid "Deleted line item"
+msgstr ""
+
+#: part/bom.py:140
 #, python-brace-format
 msgid "Unsupported file format: {f}"
 msgstr ""
 
-#: part/bom.py:139
+#: part/bom.py:145
 msgid "Error reading BOM file (invalid data)"
 msgstr ""
 
-#: part/bom.py:141
+#: part/bom.py:147
 msgid "Error reading BOM file (incorrect row size)"
 msgstr ""
 
@@ -951,179 +1055,179 @@ msgstr ""
 msgid "Select currency for price calculation"
 msgstr ""
 
-#: part/models.py:58
+#: part/models.py:59
 msgid "Default location for parts in this category"
 msgstr ""
 
-#: part/models.py:61
+#: part/models.py:62
 msgid "Default keywords for parts in this category"
 msgstr ""
 
-#: part/models.py:322
+#: part/models.py:323
 msgid "Part must be unique for name, IPN and revision"
 msgstr ""
 
-#: part/models.py:336
+#: part/models.py:337
 msgid "Part cannot be a template part if it is a variant of another part"
 msgstr ""
 
-#: part/models.py:337
+#: part/models.py:338
 msgid "Part cannot be a variant of another part if it is already a template"
 msgstr ""
 
-#: part/models.py:341 part/templates/part/detail.html:17
+#: part/models.py:342 part/templates/part/detail.html:17
 msgid "Part name"
 msgstr ""
 
-#: part/models.py:345
+#: part/models.py:346
 msgid "Is this part a template part?"
 msgstr ""
 
-#: part/models.py:354
+#: part/models.py:355
 msgid "Is this part a variant of another part?"
 msgstr ""
 
-#: part/models.py:356
+#: part/models.py:357
 msgid "Part description"
 msgstr ""
 
-#: part/models.py:358
+#: part/models.py:359
 msgid "Part keywords to improve visibility in search results"
 msgstr ""
 
-#: part/models.py:363
+#: part/models.py:364
 msgid "Part category"
 msgstr ""
 
-#: part/models.py:365
+#: part/models.py:366
 msgid "Internal Part Number"
 msgstr ""
 
-#: part/models.py:367
+#: part/models.py:368
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:369
+#: part/models.py:370
 msgid "Link to extenal URL"
 msgstr ""
 
-#: part/models.py:375
+#: part/models.py:376
 msgid "Where is this item normally stored?"
 msgstr ""
 
-#: part/models.py:419
+#: part/models.py:420
 msgid "Default supplier part"
 msgstr ""
 
-#: part/models.py:422
+#: part/models.py:423
 msgid "Minimum allowed stock level"
 msgstr ""
 
-#: part/models.py:424
+#: part/models.py:425
 msgid "Stock keeping units for this part"
 msgstr ""
 
-#: part/models.py:426
+#: part/models.py:427
 msgid "Can this part be built from other parts?"
 msgstr ""
 
-#: part/models.py:428
+#: part/models.py:429
 msgid "Can this part be used to build other parts?"
 msgstr ""
 
-#: part/models.py:430
+#: part/models.py:431
 msgid "Does this part have tracking for unique items?"
 msgstr ""
 
-#: part/models.py:432
+#: part/models.py:433
 msgid "Can this part be purchased from external suppliers?"
 msgstr ""
 
-#: part/models.py:434
+#: part/models.py:435
 msgid "Can this part be sold to customers?"
 msgstr ""
 
-#: part/models.py:436
+#: part/models.py:437
 msgid "Is this part active?"
 msgstr ""
 
-#: part/models.py:438
+#: part/models.py:439
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr ""
 
-#: part/models.py:440
+#: part/models.py:441
 msgid "Part notes - supports Markdown formatting"
 msgstr ""
 
-#: part/models.py:442
+#: part/models.py:443
 msgid "Stored BOM checksum"
 msgstr ""
 
-#: part/models.py:947
+#: part/models.py:948
 msgid "Select file to attach"
 msgstr ""
 
-#: part/models.py:949
+#: part/models.py:950
 msgid "File comment"
 msgstr ""
 
-#: part/models.py:1004
+#: part/models.py:1005
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:1009
+#: part/models.py:1010
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:1011
+#: part/models.py:1012
 msgid "Parameter Units"
 msgstr ""
 
-#: part/models.py:1037
+#: part/models.py:1038
 msgid "Parent Part"
 msgstr ""
 
-#: part/models.py:1039
+#: part/models.py:1040
 msgid "Parameter Template"
 msgstr ""
 
-#: part/models.py:1041
+#: part/models.py:1042
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:1065
+#: part/models.py:1066
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:1073
+#: part/models.py:1074
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:1079
+#: part/models.py:1080
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:1082
+#: part/models.py:1083
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:1085
+#: part/models.py:1086
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:1088
+#: part/models.py:1089
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:1090
+#: part/models.py:1091
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:1153
+#: part/models.py:1154
 msgid "Part cannot be added to its own Bill of Materials"
 msgstr ""
 
-#: part/models.py:1160
+#: part/models.py:1161
 #, python-brace-format
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
 msgstr ""
@@ -1144,7 +1248,7 @@ msgstr ""
 msgid "Comment"
 msgstr ""
 
-#: part/templates/part/attachments.html:34
+#: part/templates/part/attachments.html:34 part/views.py:118
 msgid "Edit attachment"
 msgstr ""
 
@@ -1366,6 +1470,10 @@ msgstr ""
 msgid "Attachments"
 msgstr ""
 
+#: part/views.py:75
+msgid "Add part attachment"
+msgstr ""
+
 #: part/views.py:80
 msgid "Added attachment"
 msgstr ""
@@ -1374,9 +1482,29 @@ msgstr ""
 msgid "Part attachment updated"
 msgstr ""
 
+#: part/views.py:137
+msgid "Delete Part Attachment"
+msgstr ""
+
+#: part/views.py:143
+msgid "Deleted part attachment"
+msgstr ""
+
+#: part/views.py:151
+msgid "Set Part Category"
+msgstr ""
+
 #: part/views.py:199
 #, python-brace-format
 msgid "Set category for {n} parts"
+msgstr ""
+
+#: part/views.py:234
+msgid "Create Variant"
+msgstr ""
+
+#: part/views.py:304
+msgid "Duplicate Part"
 msgstr ""
 
 #: part/views.py:309
@@ -1389,6 +1517,10 @@ msgstr ""
 
 #: part/views.py:422
 msgid "Created new part"
+msgstr ""
+
+#: part/views.py:595
+msgid "Part QR Code"
 msgstr ""
 
 #: part/views.py:612
