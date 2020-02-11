@@ -1332,7 +1332,7 @@ class BomDownload(AjaxView):
 
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
 
-        export_format = request.GET.get('format', 'csv')
+        export_format = request.GET.get('file_format', 'csv')
 
         if not IsValidBOMFormat(export_format):
             export_format = 'csv'
@@ -1343,6 +1343,47 @@ class BomDownload(AjaxView):
         return {
             'info': 'Exported BOM'
         }
+
+
+class BomExport(AjaxView):
+    """ Provide a simple form to allow the user to select BOM download options.
+    """
+
+    model = Part
+    form_class = part_forms.BomExportForm
+    ajax_form_title = _("Export Bill of Materials")
+
+    def get(self, request, *args, **kwargs):
+        return self.renderJsonResponse(request, self.form_class())        
+
+    def post(self, request, *args, **kwargs):
+
+        # Extract POSTed form data
+        fmt = request.POST.get('file_format', 'csv').lower()
+        cascade = str2bool(request.POST.get('cascading', False))
+
+        try:
+            part = Part.objects.get(pk=self.kwargs['pk'])
+        except:
+            part = None
+
+        # Format a URL to redirect to
+        if part:
+            url = reverse('bom-download', kwargs={'pk': part.pk})
+        else:
+            url = ''
+
+        url += '?file_format=' + fmt
+        url += '&cascade=' + str(cascade)
+
+        print("URL:", url)
+
+        data = {
+            'form_valid': part is not None,
+            'url': url,
+        }
+
+        return self.renderJsonResponse(request, self.form_class(), data=data)
 
 
 class PartDelete(AjaxDeleteView):

@@ -6,6 +6,7 @@ Django Forms for interacting with Part objects
 from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
+from InvenTree.helpers import GetExportFormats
 
 from mptt.fields import TreeNodeChoiceField
 from django import forms
@@ -26,6 +27,26 @@ class PartImageForm(HelperForm):
         fields = [
             'image',
         ]
+
+
+class BomExportForm(forms.Form):
+    """ Simple form to let user set BOM export options,
+    before exporting a BOM (bill of materials) file.
+    """
+
+    file_format = forms.ChoiceField(label=_("File Format"), help_text=_("Select output file format"))
+
+    cascading = forms.BooleanField(label=_("Cascading"), required=False, initial=False, help_text=_("Download cascading / multi-level BOM"))
+
+    def get_choices(self):
+        """ BOM export format choices """
+
+        return [(x, x.upper()) for x in GetExportFormats()]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['file_format'].choices = self.get_choices()
 
 
 class BomValidateForm(HelperForm):
