@@ -30,6 +30,16 @@ class CategorySerializer(InvenTreeModelSerializer):
         ]
 
 
+class PartThumbSerializer(serializers.Serializer):
+    """
+    Serializer for the 'image' field of the Part model.
+    Used to serve and display existing Part images.
+    """
+
+    image = serializers.URLField(read_only=True)
+    count = serializers.IntegerField(read_only=True)
+
+
 class PartBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Part (brief detail) """
 

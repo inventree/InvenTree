@@ -14,6 +14,9 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, FormView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
+from django.conf import settings
+
+import os
 
 from fuzzywuzzy import fuzz
 from decimal import Decimal
@@ -74,7 +77,7 @@ class PartAttachmentCreate(AjaxCreateView):
 
     def get_data(self):
         return {
-            'success': 'Added attachment'
+            'success': _('Added attachment')
         }
 
     def get_initial(self):
@@ -116,7 +119,7 @@ class PartAttachmentEdit(AjaxUpdateView):
     
     def get_data(self):
         return {
-            'success': 'Part attachment updated'
+            'success': _('Part attachment updated')
         }
 
     def get_form(self):
@@ -303,7 +306,7 @@ class PartDuplicate(AjaxCreateView):
 
     def get_data(self):
         return {
-            'success': 'Copied part'
+            'success': _('Copied part')
         }
 
     def get_part_to_copy(self):
@@ -411,12 +414,12 @@ class PartCreate(AjaxCreateView):
     model = Part
     form_class = part_forms.EditPartForm
 
-    ajax_form_title = 'Create new part'
+    ajax_form_title = _('Create new part')
     ajax_template_name = 'part/create_part.html'
 
     def get_data(self):
         return {
-            'success': "Created new part",
+            'success': _("Created new part"),
         }
 
     def get_category_id(self):
@@ -601,18 +604,57 @@ class PartQRCode(QRCodeView):
             return None
 
 
-class PartImage(AjaxUpdateView):
-    """ View for uploading Part image """
+class PartImageUpload(AjaxUpdateView):
+    """ View for uploading a new Part image """
 
     model = Part
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Upload Part Image'
+    ajax_form_title = _('Upload Part Image')
     form_class = part_forms.PartImageForm
 
     def get_data(self):
         return {
-            'success': 'Updated part image',
+            'success': _('Updated part image'),
         }
+
+
+class PartImageSelect(AjaxUpdateView):
+    """ View for selecting Part image from existing images. """
+
+    model = Part
+    ajax_template_name = 'part/select_image.html'
+    ajax_form_title = _('Select Part Image')
+
+    fields = [
+        'image',
+    ]
+
+    def post(self, request, *args, **kwargs):
+
+        part = self.get_object()
+        form = self.get_form()
+
+        img = request.POST.get('image', '')
+
+        img = os.path.basename(img)
+
+        data = {}
+
+        if img:
+            img_path = os.path.join(settings.MEDIA_ROOT, 'part_images', img)
+
+            # Ensure that the image already exists
+            if os.path.exists(img_path):
+
+                part.image = os.path.join('part_images', img)
+                part.save()
+
+                data['success'] = _('Updated part image')
+
+        if 'success' not in data:
+            data['error'] = _('Part image not found')
+
+        return self.renderJsonResponse(request, form, data)
 
 
 class PartEdit(AjaxUpdateView):
@@ -621,7 +663,7 @@ class PartEdit(AjaxUpdateView):
     model = Part
     form_class = part_forms.EditPartForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Part Properties'
+    ajax_form_title = _('Edit Part Properties')
     context_object_name = 'part'
 
     def get_form(self):
@@ -643,7 +685,7 @@ class BomValidate(AjaxUpdateView):
     """ Modal form view for validating a part BOM """
 
     model = Part
-    ajax_form_title = "Validate BOM"
+    ajax_form_title = _("Validate BOM")
     ajax_template_name = 'part/bom_validate.html'
     context_object_name = 'part'
     form_class = part_forms.BomValidateForm
@@ -1308,14 +1350,14 @@ class PartDelete(AjaxDeleteView):
 
     model = Part
     ajax_template_name = 'part/partial_delete.html'
-    ajax_form_title = 'Confirm Part Deletion'
+    ajax_form_title = _('Confirm Part Deletion')
     context_object_name = 'part'
 
     success_url = '/part/'
 
     def get_data(self):
         return {
-            'danger': 'Part was deleted',
+            'danger': _('Part was deleted'),
         }
 
 
@@ -1324,7 +1366,7 @@ class PartPricing(AjaxView):
 
     model = Part
     ajax_template_name = "part/part_pricing.html"
-    ajax_form_title = "Part Pricing"
+    ajax_form_title = _("Part Pricing")
     form_class = part_forms.PartPriceForm
 
     def get_part(self):
@@ -1446,7 +1488,7 @@ class PartParameterTemplateCreate(AjaxCreateView):
 
     model = PartParameterTemplate
     form_class = part_forms.EditPartParameterTemplateForm
-    ajax_form_title = 'Create Part Parameter Template'
+    ajax_form_title = _('Create Part Parameter Template')
 
 
 class PartParameterTemplateEdit(AjaxUpdateView):
@@ -1454,14 +1496,14 @@ class PartParameterTemplateEdit(AjaxUpdateView):
 
     model = PartParameterTemplate
     form_class = part_forms.EditPartParameterTemplateForm
-    ajax_form_title = 'Edit Part Parameter Template'
+    ajax_form_title = _('Edit Part Parameter Template')
 
 
 class PartParameterTemplateDelete(AjaxDeleteView):
     """ View for deleting an existing PartParameterTemplate """
 
     model = PartParameterTemplate
-    ajax_form_title = "Delete Part Parameter Template"
+    ajax_form_title = _("Delete Part Parameter Template")
 
 
 class PartParameterCreate(AjaxCreateView):
@@ -1469,7 +1511,7 @@ class PartParameterCreate(AjaxCreateView):
 
     model = PartParameter
     form_class = part_forms.EditPartParameterForm
-    ajax_form_title = 'Create Part Parameter'
+    ajax_form_title = _('Create Part Parameter')
 
     def get_initial(self):
 
@@ -1519,7 +1561,7 @@ class PartParameterEdit(AjaxUpdateView):
 
     model = PartParameter
     form_class = part_forms.EditPartParameterForm
-    ajax_form_title = 'Edit Part Parameter'
+    ajax_form_title = _('Edit Part Parameter')
 
     def get_form(self):
 
@@ -1533,7 +1575,7 @@ class PartParameterDelete(AjaxDeleteView):
 
     model = PartParameter
     ajax_template_name = 'part/param_delete.html'
-    ajax_form_title = 'Delete Part Parameter'
+    ajax_form_title = _('Delete Part Parameter')
     
 
 class CategoryDetail(DetailView):
@@ -1549,7 +1591,7 @@ class CategoryEdit(AjaxUpdateView):
     model = PartCategory
     form_class = part_forms.EditCategoryForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Part Category'
+    ajax_form_title = _('Edit Part Category')
 
     def get_context_data(self, **kwargs):
         context = super(CategoryEdit, self).get_context_data(**kwargs).copy()
@@ -1584,13 +1626,13 @@ class CategoryDelete(AjaxDeleteView):
     """ Delete view to delete a PartCategory """
     model = PartCategory
     ajax_template_name = 'part/category_delete.html'
-    ajax_form_title = 'Delete Part Category'
+    ajax_form_title = _('Delete Part Category')
     context_object_name = 'category'
     success_url = '/part/'
 
     def get_data(self):
         return {
-            'danger': 'Part category was deleted',
+            'danger': _('Part category was deleted'),
         }
 
 
@@ -1598,7 +1640,7 @@ class CategoryCreate(AjaxCreateView):
     """ Create view to make a new PartCategory """
     model = PartCategory
     ajax_form_action = reverse_lazy('category-create')
-    ajax_form_title = 'Create new part category'
+    ajax_form_title = _('Create new part category')
     ajax_template_name = 'modal_form.html'
     form_class = part_forms.EditCategoryForm
 
@@ -1649,7 +1691,7 @@ class BomItemCreate(AjaxCreateView):
     model = BomItem
     form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Create BOM item'
+    ajax_form_title = _('Create BOM item')
 
     def get_form(self):
         """ Override get_form() method to reduce Part selection options.
@@ -1715,7 +1757,7 @@ class BomItemEdit(AjaxUpdateView):
     model = BomItem
     form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit BOM item'
+    ajax_form_title = _('Edit BOM item')
 
     def get_form(self):
         """ Override get_form() method to filter part selection options
@@ -1763,4 +1805,4 @@ class BomItemDelete(AjaxDeleteView):
     model = BomItem
     ajax_template_name = 'part/bom-delete.html'
     context_object_name = 'item'
-    ajax_form_title = 'Confim BOM item deletion'
+    ajax_form_title = _('Confim BOM item deletion')

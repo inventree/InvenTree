@@ -12,7 +12,6 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.conf import settings
 
-from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.db.models import Sum
 from django.db.models import prefetch_related_objects
@@ -23,6 +22,8 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from markdownx.models import MarkdownxField
+
+from django_cleanup import cleanup
 
 from mptt.models import TreeForeignKey
 
@@ -136,18 +137,9 @@ def rename_part_image(instance, filename):
     """
 
     base = 'part_images'
+    fname = os.path.basename(filename)
 
-    if filename.count('.') > 0:
-        ext = filename.split('.')[-1]
-    else:
-        ext = ''
-
-    fn = 'part_{pk}_img'.format(pk=instance.pk)
-
-    if ext:
-        fn += '.' + ext
-
-    return os.path.join(base, fn)
+    return os.path.join(base, fname)
 
 
 def match_part_names(match, threshold=80, reverse=True, compare_length=False):
@@ -201,6 +193,7 @@ def match_part_names(match, threshold=80, reverse=True, compare_length=False):
     return matches
 
 
+@cleanup.ignore
 class Part(models.Model):
     """ The Part object represents an abstract part, the 'concept' of an actual entity.
 
@@ -236,6 +229,26 @@ class Part(models.Model):
     class Meta:
         verbose_name = "Part"
         verbose_name_plural = "Parts"
+
+    def save(self, *args, **kwargs):
+        """
+        Overrides the save() function for the Part model.
+        If the part image has been updated,
+        then check if the "old" (previous) image is still used by another part.
+        If not, it is considered "orphaned" and will be deleted.
+        """
+
+        if self.pk:
+            previous = Part.objects.get(pk=self.pk)
+
+            if previous.image and not self.image == previous.image:
+                # Are there any (other) parts which reference the image?
+                n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
+
+                if n_refs == 0:
+                    previous.image.delete(save=False)
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return "{n} - {d}".format(n=self.full_name, d=self.description)
@@ -832,10 +845,8 @@ class Part(models.Model):
         # Copy the part image
         if kwargs.get('image', True):
             if other.image:
-                image_file = ContentFile(other.image.read())
-                image_file.name = rename_part_image(self, other.image.url)
-
-                self.image = image_file
+                # Reference the other image from this Part
+                self.image = other.image
 
         # Copy the BOM data
         if kwargs.get('bom', False):

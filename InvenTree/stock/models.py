@@ -360,7 +360,7 @@ class StockItem(models.Model):
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
 
-    notes = MarkdownxField(blank=True, help_text=_('Stock Item Notes'))
+    notes = MarkdownxField(blank=True, null=True, help_text=_('Stock Item Notes'))
 
     # If stock item is incoming, an (optional) ETA field
     # expected_arrival = models.DateField(null=True, blank=True)
