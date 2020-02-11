@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:28+0000\n"
+"POT-Creation-Date: 2020-02-10 11:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -675,7 +675,7 @@ msgstr ""
 msgid "Order notes"
 msgstr ""
 
-#: order/models.py:159 order/models.py:210 part/views.py:1067
+#: order/models.py:159 order/models.py:210 part/views.py:1080
 #: stock/models.py:440
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -1242,56 +1242,164 @@ msgstr ""
 msgid "Attachments"
 msgstr ""
 
+#: part/views.py:77
+msgid "Added attachment"
+msgstr ""
+
+#: part/views.py:119
+msgid "Part attachment updated"
+msgstr ""
+
 #: part/views.py:196
 #, python-brace-format
 msgid "Set category for {n} parts"
 msgstr ""
 
-#: part/views.py:808
+#: part/views.py:306
+msgid "Copied part"
+msgstr ""
+
+#: part/views.py:414
+msgid "Create new part"
+msgstr ""
+
+#: part/views.py:419
+msgid "Created new part"
+msgstr ""
+
+#: part/views.py:609
+msgid "Upload Part Image"
+msgstr ""
+
+#: part/views.py:614
+msgid "Updated part image"
+msgstr ""
+
+#: part/views.py:623
+msgid "Select Part Image"
+msgstr ""
+
+#: part/views.py:627
+msgid "Selected part image"
+msgstr ""
+
+#: part/views.py:637
+msgid "Edit Part Properties"
+msgstr ""
+
+#: part/views.py:659
+msgid "Validate BOM"
+msgstr ""
+
+#: part/views.py:821
 msgid "No BOM file provided"
 msgstr ""
 
-#: part/views.py:1069
+#: part/views.py:1082
 msgid "Enter a valid quantity"
 msgstr ""
 
-#: part/views.py:1093 part/views.py:1096
+#: part/views.py:1106 part/views.py:1109
 msgid "Select valid part"
 msgstr ""
 
-#: part/views.py:1102
+#: part/views.py:1115
 msgid "Duplicate part selected"
 msgstr ""
 
-#: part/views.py:1130
+#: part/views.py:1143
 msgid "Select a part"
 msgstr ""
 
-#: part/views.py:1134
+#: part/views.py:1147
 msgid "Specify quantity"
 msgstr ""
 
-#: stock/forms.py:92
+#: part/views.py:1324
+msgid "Confirm Part Deletion"
+msgstr ""
+
+#: part/views.py:1331
+msgid "Part was deleted"
+msgstr ""
+
+#: part/views.py:1340
+msgid "Part Pricing"
+msgstr ""
+
+#: part/views.py:1462
+msgid "Create Part Parameter Template"
+msgstr ""
+
+#: part/views.py:1470
+msgid "Edit Part Parameter Template"
+msgstr ""
+
+#: part/views.py:1477
+msgid "Delete Part Parameter Template"
+msgstr ""
+
+#: part/views.py:1485
+msgid "Create Part Parameter"
+msgstr ""
+
+#: part/views.py:1535
+msgid "Edit Part Parameter"
+msgstr ""
+
+#: part/views.py:1549
+msgid "Delete Part Parameter"
+msgstr ""
+
+#: part/views.py:1565
+msgid "Edit Part Category"
+msgstr ""
+
+#: part/views.py:1600
+msgid "Delete Part Category"
+msgstr ""
+
+#: part/views.py:1606
+msgid "Part category was deleted"
+msgstr ""
+
+#: part/views.py:1614
+msgid "Create new part category"
+msgstr ""
+
+#: part/views.py:1665
+msgid "Create BOM item"
+msgstr ""
+
+#: part/views.py:1731
+msgid "Edit BOM item"
+msgstr ""
+
+#: part/views.py:1779
+msgid "Confim BOM item deletion"
+msgstr ""
+
+#: stock/forms.py:91
 msgid "File Format"
 msgstr ""
 
-#: stock/forms.py:92
+#: stock/forms.py:91
 msgid "Select output file format"
 msgstr ""
 
-#: stock/forms.py:94
+#: stock/forms.py:93
 msgid "Include stock items in sub locations"
 msgstr ""
 
-#: stock/forms.py:127
+#: stock/forms.py:126
 msgid "Destination stock location"
 msgstr ""
 
-#: stock/forms.py:133
+#: stock/forms.py:132
 msgid "Confirm movement of stock items"
 msgstr ""
 
-#: stock/forms.py:135
+#: stock/forms.py:134
 msgid "Set the destination as the default location for selected parts"
 msgstr ""
 
@@ -1610,27 +1718,32 @@ msgstr ""
 msgid "Invalid part selection"
 msgstr ""
 
-#: stock/views.py:925
+#: stock/views.py:910
+#, python-brace-format
+msgid "Created {n} new stock items"
+msgstr ""
+
+#: stock/views.py:927 stock/views.py:940
 msgid "Created new stock item"
 msgstr ""
 
-#: stock/views.py:942
+#: stock/views.py:957
 msgid "Delete Stock Location"
 msgstr ""
 
-#: stock/views.py:955
+#: stock/views.py:970
 msgid "Delete Stock Item"
 msgstr ""
 
-#: stock/views.py:966
+#: stock/views.py:981
 msgid "Delete Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:983
+#: stock/views.py:998
 msgid "Edit Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:992
+#: stock/views.py:1007
 msgid "Add Stock Tracking Entry"
 msgstr ""
 

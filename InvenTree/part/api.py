@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 
-from django.db.models import Sum
+from django.db.models import Sum, Count
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -23,10 +23,7 @@ import os
 from .models import Part, PartCategory, BomItem, PartStar
 from .models import PartParameter, PartParameterTemplate
 
-from .serializers import PartSerializer, BomItemSerializer
-from .serializers import CategorySerializer
-from .serializers import PartStarSerializer
-from .serializers import PartParameterSerializer, PartParameterTemplateSerializer
+from . import serializers as part_serializers
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool
@@ -53,7 +50,7 @@ class CategoryList(generics.ListCreateAPIView):
     """
 
     queryset = PartCategory.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = part_serializers.CategorySerializer
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -83,14 +80,37 @@ class CategoryList(generics.ListCreateAPIView):
 
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single PartCategory object """
-    serializer_class = CategorySerializer
+    serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+
+class PartThumbs(generics.ListAPIView):
+    """ API endpoint for retrieving information on available Part thumbnails """
+
+    serializer_class = part_serializers.PartThumbSerializer
+
+    def list(self, reguest, *args, **kwargs):
+        """
+        Serialize the available Part images.
+        - Images may be used for multiple parts!
+        """
+
+        # Get all Parts which have an associated image
+        queryset = Part.objects.all().exclude(image='')
+
+        # Return the most popular parts first
+        data = queryset.values(
+            'image',
+        ).annotate(count=Count('image')).order_by('-count')
+
+        return Response(data)
 
 
 class PartDetail(generics.RetrieveUpdateAPIView):
     """ API endpoint for detail view of a single Part object """
+
     queryset = Part.objects.all()
-    serializer_class = PartSerializer
+    serializer_class = part_serializers.PartSerializer
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -104,12 +124,12 @@ class PartList(generics.ListCreateAPIView):
     - POST: Create a new Part object
     """
 
-    serializer_class = PartSerializer
+    serializer_class = part_serializers.PartSerializer
 
     def list(self, request, *args, **kwargs):
         """
         Instead of using the DRF serialiser to LIST,
-        we serialize the objects manuually.
+        we serialize the objects manually.
         This turns out to be significantly faster.
         """
 
@@ -218,7 +238,7 @@ class PartStarDetail(generics.RetrieveDestroyAPIView):
     """ API endpoint for viewing or removing a PartStar object """
 
     queryset = PartStar.objects.all()
-    serializer_class = PartStarSerializer
+    serializer_class = part_serializers.PartStarSerializer
 
 
 class PartStarList(generics.ListCreateAPIView):
@@ -229,7 +249,7 @@ class PartStarList(generics.ListCreateAPIView):
     """
 
     queryset = PartStar.objects.all()
-    serializer_class = PartStarSerializer
+    serializer_class = part_serializers.PartStarSerializer
 
     def create(self, request, *args, **kwargs):
 
@@ -271,7 +291,7 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
     """
 
     queryset = PartParameterTemplate.objects.all()
-    serializer_class = PartParameterTemplateSerializer
+    serializer_class = part_serializers.PartParameterTemplateSerializer
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -294,7 +314,7 @@ class PartParameterList(generics.ListCreateAPIView):
     """
 
     queryset = PartParameter.objects.all()
-    serializer_class = PartParameterSerializer
+    serializer_class = part_serializers.PartParameterSerializer
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -317,7 +337,7 @@ class BomList(generics.ListCreateAPIView):
     - POST: Create a new BomItem object
     """
 
-    serializer_class = BomItemSerializer
+    serializer_class = part_serializers.BomItemSerializer
     
     def get_serializer(self, *args, **kwargs):
 
@@ -360,7 +380,7 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single BomItem object """
 
     queryset = BomItem.objects.all()
-    serializer_class = BomItemSerializer
+    serializer_class = part_serializers.BomItemSerializer
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -423,6 +443,8 @@ part_api_urls = [
     url(r'^category/', include(cat_api_urls)),
     url(r'^star/', include(part_star_api_urls)),
     url(r'^parameter/', include(part_param_api_urls)),
+
+    url(r'^thumbs/', PartThumbs.as_view(), name='api-part-thumbs'),
 
     url(r'^(?P<pk>\d+)/?', PartDetail.as_view(), name='api-part-detail'),
 
