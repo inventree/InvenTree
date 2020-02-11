@@ -129,15 +129,17 @@ class PartStarAdmin(admin.ModelAdmin):
 class BomItemResource(ModelResource):
     """ Class for managing BomItem data import/export """
 
+    level = Field(attribute='level', readonly=True)
+
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
-    part_name = Field(attribute='part__full_name', readonly=True)
+    parent_part_name = Field(attribute='part__full_name', readonly=True)
 
-    sub_part = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
+    id = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
 
     sub_part_name = Field(attribute='sub_part__full_name', readonly=True)
 
-    stock = Field(attribute='sub_part__total_stock', readonly=True)
+    sub_assembly = Field(attribute='sub_part__assembly', readonly=True)
 
     class Meta:
         model = BomItem
@@ -145,7 +147,7 @@ class BomItemResource(ModelResource):
         report_skipped = False
         clean_model_instances = True
 
-        exclude = ('checksum')
+        exclude = ['checksum', ]
 
 
 class BomItemAdmin(ImportExportModelAdmin):

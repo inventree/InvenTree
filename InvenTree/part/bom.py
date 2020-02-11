@@ -40,16 +40,43 @@ def MakeBomTemplate(fmt):
     return DownloadFile(data, filename)
 
 
-def ExportBom(part, fmt='csv'):
+def ExportBom(part, fmt='csv', cascade=False):
     """ Export a BOM (Bill of Materials) for a given part.
+
+    Args:
+        fmt: File format (default = 'csv')
+        cascade: If True, multi-level BOM output is supported. Otherwise, a flat top-level-only BOM is exported.
     """
 
     if not IsValidBOMFormat(fmt):
         fmt = 'csv'
 
-    bom_items = part.bom_items.all().order_by('id')
+    bom_items = []
 
-    dataset = BomItemResource().export(queryset=bom_items)
+    def add_items(items, level):
+        # Add items at a given layer
+        for item in items:
+
+            item.level = '-' * level
+
+            bom_items.append(item)
+
+            if item.sub_part.assembly:
+                add_items(item.sub_part.bom_items.all().order_by('id'), level + 1)
+        
+    if cascade:
+        # Cascading (multi-level) BOM
+
+        # Start with the top level
+        items_to_process = part.bom_items.all().order_by('id')
+
+        add_items(items_to_process, 1)
+
+    else:
+        # No cascading needed - just the top-level items
+        bom_items = [item for item in part.bom_items.all().order_by('id')]
+
+    dataset = BomItemResource().export(queryset=bom_items, cascade=cascade)
     data = dataset.export(fmt)
 
     filename = '{n}_BOM.{fmt}'.format(n=part.full_name, fmt=fmt)

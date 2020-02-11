@@ -44,16 +44,7 @@
     {% if part.is_bom_valid == False %}
     <button class='btn btn-default' id='validate-bom' type='button'><span class='glyphicon glyphicon-check'></span></button>
     {% endif %}
-    <div class='btn-group' role='group'>
-        <div class='dropdown'>
-            <button title='Export BOM' class='btn btn-default dropdown-toggle' data-toggle='dropdown' type='button'><span class='glyphicon glyphicon-download-alt'></span></button>
-            <ul class='dropdown-menu'>
-                <li><a href='#' class='download-bom' format='csv'>CSV</a></li>
-                <li><a href='#' class='download-bom' format='xlsx'>XLSX</a></li>
-                <li><a href='#' class='download-bom' format='json'>JSON</a></li>
-            </ul>
-        </div>
-    </div>
+    <button title='Export BOM' class='btn btn-default' id='download-bom' type='button'><span class='glyphicon glyphicon-download-alt'></span></button>
     {% endif %}
 </div>
 
@@ -119,8 +110,14 @@
         location.href = "{% url 'part-bom' part.id %}?edit=1";
     });
 
-    $(".download-bom").click(function () {
-        location.href = "{% url 'bom-export' part.id %}?format=" + $(this).attr('format');
+    $("#download-bom").click(function () {
+        launchModalForm("{% url 'bom-export' part.id %}",
+            {
+                success: function(response) {
+                    location.href = response.url;
+                },
+            }
+        );
     });
 
     {% endif %}

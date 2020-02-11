@@ -52,6 +52,10 @@
     font-size: 12px;
 }
 
+.glyphicon-right {
+    float: right;
+}
+
 .starred-part {
     color: #ffbb00;
 }
