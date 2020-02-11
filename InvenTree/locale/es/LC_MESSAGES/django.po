@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 11:09+0000\n"
+"POT-Creation-Date: 2020-02-11 21:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -104,7 +104,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:92 build/templates/build/allocate_edit.html:28
 #: build/templates/build/allocate_view.html:21
-#: part/templates/part/part_base.html:116 part/templates/part/tabs.html:21
+#: part/templates/part/part_base.html:106 part/templates/part/tabs.html:21
 msgid "Allocated"
 msgstr ""
 
@@ -149,59 +149,59 @@ msgstr ""
 msgid "Confirm build completion"
 msgstr ""
 
-#: build/models.py:53
+#: build/models.py:54
 msgid "Brief description of the build"
 msgstr ""
 
-#: build/models.py:62
+#: build/models.py:63
 msgid "Select part to build"
 msgstr ""
 
-#: build/models.py:68
+#: build/models.py:69
 msgid ""
 "Select location to take stock from for this build (leave blank to take from "
 "any stock location)"
 msgstr ""
 
-#: build/models.py:74
+#: build/models.py:75
 msgid "Number of parts to build"
 msgstr ""
 
-#: build/models.py:80
+#: build/models.py:81
 msgid "Build status"
 msgstr ""
 
-#: build/models.py:83
+#: build/models.py:84
 msgid "Batch code for this build output"
 msgstr ""
 
-#: build/models.py:95
+#: build/models.py:96
 msgid "Link to external URL"
 msgstr ""
 
-#: build/models.py:97
+#: build/models.py:98
 msgid "Extra build notes"
 msgstr ""
 
-#: build/models.py:382
+#: build/models.py:383
 #, python-brace-format
 msgid "Selected stock item not found in BOM for part '{p}'"
 msgstr ""
 
-#: build/models.py:385
+#: build/models.py:386
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 
-#: build/models.py:403
+#: build/models.py:404
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:410
+#: build/models.py:411
 msgid "Stock Item to allocate to build"
 msgstr ""
 
-#: build/models.py:418
+#: build/models.py:419
 msgid "Stock quantity to allocate to build"
 msgstr ""
 
@@ -257,8 +257,12 @@ msgid "Description"
 msgstr ""
 
 #: build/templates/build/allocate_view.html:22
-#: part/templates/part/part_base.html:122
+#: part/templates/part/part_base.html:112
 msgid "On Order"
+msgstr ""
+
+#: build/templates/build/delete_build_item.html:6
+msgid "Are you sure you want to unallocate these parts?"
 msgstr ""
 
 #: build/templates/build/detail.html:8
@@ -298,7 +302,7 @@ msgstr ""
 #: build/templates/build/detail.html:42
 #: company/templates/company/detail_part.html:90
 #: company/templates/company/partdetail.html:54
-#: part/templates/part/detail.html:50 part/templates/part/part_base.html:91
+#: part/templates/part/detail.html:50 part/templates/part/part_base.html:81
 #: stock/templates/stock/item_base.html:120
 msgid "URL"
 msgstr ""
@@ -355,9 +359,105 @@ msgstr ""
 msgid "Assign Parts"
 msgstr ""
 
+#: build/templates/build/unallocate.html:8
+msgid "Are you sure you wish to unallocate all stock for this build?"
+msgstr ""
+
+#: build/views.py:56
+msgid "Cancel Build"
+msgstr ""
+
+#: build/views.py:74
+msgid "Confirm build cancellation"
+msgstr ""
+
+#: build/views.py:79
+msgid "Build was cancelled"
+msgstr ""
+
+#: build/views.py:95
+msgid "Allocate Stock"
+msgstr ""
+
+#: build/views.py:108
+msgid "No matching build found"
+msgstr ""
+
+#: build/views.py:127
+msgid "Confirm stock allocation"
+msgstr ""
+
+#: build/views.py:128
+msgid "Check the confirmation box at the bottom of the list"
+msgstr ""
+
+#: build/views.py:148 build/views.py:442
+msgid "Unallocate Stock"
+msgstr ""
+
+#: build/views.py:161
+msgid "Confirm unallocation of build stock"
+msgstr ""
+
+#: build/views.py:162
+msgid "Check the confirmation box"
+msgstr ""
+
+#: build/views.py:185
+msgid "Complete Build"
+msgstr ""
+
+#: build/views.py:258
+msgid "Confirm completion of build"
+msgstr ""
+
+#: build/views.py:265
+msgid "Invalid location selected"
+msgstr ""
+
 #: build/views.py:290 stock/views.py:884
 #, python-brace-format
 msgid "The following serial numbers already exist: ({sn})"
+msgstr ""
+
+#: build/views.py:309
+msgid "Build marked as COMPLETE"
+msgstr ""
+
+#: build/views.py:385
+msgid "Start new Build"
+msgstr ""
+
+#: build/views.py:408
+msgid "Created new build"
+msgstr ""
+
+#: build/views.py:418
+msgid "Edit Build Details"
+msgstr ""
+
+#: build/views.py:423
+msgid "Edited build"
+msgstr ""
+
+#: build/views.py:432
+msgid "Delete Build"
+msgstr ""
+
+#: build/views.py:447
+msgid "Removed parts from build allocation"
+msgstr ""
+
+#: build/views.py:457
+msgid "Allocate new Part"
+msgstr ""
+
+#: build/views.py:573
+msgid "Edit Stock Allocation"
+msgstr ""
+
+#: build/views.py:577
+msgid "Updated Build Item"
 msgstr ""
 
 #: common/models.py:69
@@ -675,7 +775,7 @@ msgstr ""
 msgid "Order notes"
 msgstr ""
 
-#: order/models.py:159 order/models.py:210 part/views.py:1080
+#: order/models.py:159 order/models.py:210 part/views.py:1109
 #: stock/models.py:440
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -794,220 +894,236 @@ msgstr ""
 msgid "Invalid SupplierPart selection"
 msgstr ""
 
-#: part/bom.py:107
+#: part/bom.py:134
 #, python-brace-format
 msgid "Unsupported file format: {f}"
 msgstr ""
 
-#: part/bom.py:112
+#: part/bom.py:139
 msgid "Error reading BOM file (invalid data)"
 msgstr ""
 
-#: part/bom.py:114
+#: part/bom.py:141
 msgid "Error reading BOM file (incorrect row size)"
 msgstr ""
 
-#: part/forms.py:37
+#: part/forms.py:37 stock/forms.py:91
+msgid "File Format"
+msgstr ""
+
+#: part/forms.py:37 stock/forms.py:91
+msgid "Select output file format"
+msgstr ""
+
+#: part/forms.py:39
+msgid "Cascading"
+msgstr ""
+
+#: part/forms.py:39
+msgid "Download cascading / multi-level BOM"
+msgstr ""
+
+#: part/forms.py:58
 msgid "Confirm that the BOM is correct"
 msgstr ""
 
-#: part/forms.py:49
+#: part/forms.py:70
 msgid "Select BOM file to upload"
 msgstr ""
 
-#: part/forms.py:73
+#: part/forms.py:94
 msgid "Select part category"
 msgstr ""
 
-#: part/forms.py:81
+#: part/forms.py:102
 msgid "Perform 'deep copy' which will duplicate all BOM data for this part"
 msgstr ""
 
-#: part/forms.py:86
+#: part/forms.py:107
 msgid "Confirm part creation"
 msgstr ""
 
-#: part/forms.py:172
+#: part/forms.py:193
 msgid "Input quantity for price calculation"
 msgstr ""
 
-#: part/forms.py:175
+#: part/forms.py:196
 msgid "Select currency for price calculation"
 msgstr ""
 
-#: part/models.py:57
+#: part/models.py:58
 msgid "Default location for parts in this category"
 msgstr ""
 
-#: part/models.py:60
+#: part/models.py:61
 msgid "Default keywords for parts in this category"
 msgstr ""
 
-#: part/models.py:309
+#: part/models.py:322
 msgid "Part must be unique for name, IPN and revision"
 msgstr ""
 
-#: part/models.py:323
+#: part/models.py:336
 msgid "Part cannot be a template part if it is a variant of another part"
 msgstr ""
 
-#: part/models.py:324
+#: part/models.py:337
 msgid "Part cannot be a variant of another part if it is already a template"
 msgstr ""
 
-#: part/models.py:328 part/templates/part/detail.html:17
+#: part/models.py:341 part/templates/part/detail.html:17
 msgid "Part name"
 msgstr ""
 
-#: part/models.py:332
+#: part/models.py:345
 msgid "Is this part a template part?"
 msgstr ""
 
-#: part/models.py:341
+#: part/models.py:354
 msgid "Is this part a variant of another part?"
 msgstr ""
 
-#: part/models.py:343
+#: part/models.py:356
 msgid "Part description"
 msgstr ""
 
-#: part/models.py:345
+#: part/models.py:358
 msgid "Part keywords to improve visibility in search results"
 msgstr ""
 
-#: part/models.py:350
+#: part/models.py:363
 msgid "Part category"
 msgstr ""
 
-#: part/models.py:352
+#: part/models.py:365
 msgid "Internal Part Number"
 msgstr ""
 
-#: part/models.py:354
+#: part/models.py:367
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:356
+#: part/models.py:369
 msgid "Link to extenal URL"
 msgstr ""
 
-#: part/models.py:362
+#: part/models.py:375
 msgid "Where is this item normally stored?"
 msgstr ""
 
-#: part/models.py:406
+#: part/models.py:419
 msgid "Default supplier part"
 msgstr ""
 
-#: part/models.py:409
+#: part/models.py:422
 msgid "Minimum allowed stock level"
 msgstr ""
 
-#: part/models.py:411
+#: part/models.py:424
 msgid "Stock keeping units for this part"
 msgstr ""
 
-#: part/models.py:413
+#: part/models.py:426
 msgid "Can this part be built from other parts?"
 msgstr ""
 
-#: part/models.py:415
+#: part/models.py:428
 msgid "Can this part be used to build other parts?"
 msgstr ""
 
-#: part/models.py:417
+#: part/models.py:430
 msgid "Does this part have tracking for unique items?"
 msgstr ""
 
-#: part/models.py:419
+#: part/models.py:432
 msgid "Can this part be purchased from external suppliers?"
 msgstr ""
 
-#: part/models.py:421
+#: part/models.py:434
 msgid "Can this part be sold to customers?"
 msgstr ""
 
-#: part/models.py:423
+#: part/models.py:436
 msgid "Is this part active?"
 msgstr ""
 
-#: part/models.py:425
+#: part/models.py:438
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr ""
 
-#: part/models.py:427
+#: part/models.py:440
 msgid "Part notes - supports Markdown formatting"
 msgstr ""
 
-#: part/models.py:429
+#: part/models.py:442
 msgid "Stored BOM checksum"
 msgstr ""
 
-#: part/models.py:936
+#: part/models.py:947
 msgid "Select file to attach"
 msgstr ""
 
-#: part/models.py:938
+#: part/models.py:949
 msgid "File comment"
 msgstr ""
 
-#: part/models.py:993
+#: part/models.py:1004
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:998
+#: part/models.py:1009
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:1000
+#: part/models.py:1011
 msgid "Parameter Units"
 msgstr ""
 
-#: part/models.py:1026
+#: part/models.py:1037
 msgid "Parent Part"
 msgstr ""
 
-#: part/models.py:1028
+#: part/models.py:1039
 msgid "Parameter Template"
 msgstr ""
 
-#: part/models.py:1030
+#: part/models.py:1041
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:1054
+#: part/models.py:1065
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:1062
+#: part/models.py:1073
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:1068
+#: part/models.py:1079
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:1071
+#: part/models.py:1082
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:1074
+#: part/models.py:1085
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:1077
+#: part/models.py:1088
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:1079
+#: part/models.py:1090
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:1142
+#: part/models.py:1153
 msgid "Part cannot be added to its own Bill of Materials"
 msgstr ""
 
-#: part/models.py:1149
+#: part/models.py:1160
 #, python-brace-format
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
 msgstr ""
@@ -1077,7 +1193,7 @@ msgstr ""
 msgid "Part Details"
 msgstr ""
 
-#: part/templates/part/detail.html:22 part/templates/part/part_base.html:85
+#: part/templates/part/detail.html:22 part/templates/part/part_base.html:75
 msgid "IPN"
 msgstr ""
 
@@ -1181,32 +1297,40 @@ msgstr ""
 msgid "This part is not active"
 msgstr ""
 
-#: part/templates/part/part_base.html:47
+#: part/templates/part/part_base.html:37
 msgid "Star this part"
 msgstr ""
 
-#: part/templates/part/part_base.html:53
+#: part/templates/part/part_base.html:43
 msgid "Show pricing information"
 msgstr ""
 
-#: part/templates/part/part_base.html:105
+#: part/templates/part/part_base.html:95
 msgid "Available Stock"
 msgstr ""
 
-#: part/templates/part/part_base.html:110
+#: part/templates/part/part_base.html:100
 msgid "In Stock"
 msgstr ""
 
-#: part/templates/part/part_base.html:131
+#: part/templates/part/part_base.html:121
 msgid "Build Status"
 msgstr ""
 
-#: part/templates/part/part_base.html:135
+#: part/templates/part/part_base.html:125
 msgid "Can Build"
 msgstr ""
 
-#: part/templates/part/part_base.html:140
+#: part/templates/part/part_base.html:130
 msgid "Underway"
+msgstr ""
+
+#: part/templates/part/part_thumb.html:16
+msgid "Select from existing images"
+msgstr ""
+
+#: part/templates/part/part_thumb.html:17
+msgid "Upload new image"
 msgstr ""
 
 #: part/templates/part/tabs.html:9
@@ -1242,149 +1366,145 @@ msgstr ""
 msgid "Attachments"
 msgstr ""
 
-#: part/views.py:77
+#: part/views.py:80
 msgid "Added attachment"
 msgstr ""
 
-#: part/views.py:119
+#: part/views.py:122
 msgid "Part attachment updated"
 msgstr ""
 
-#: part/views.py:196
+#: part/views.py:199
 #, python-brace-format
 msgid "Set category for {n} parts"
 msgstr ""
 
-#: part/views.py:306
+#: part/views.py:309
 msgid "Copied part"
 msgstr ""
 
-#: part/views.py:414
+#: part/views.py:417
 msgid "Create new part"
 msgstr ""
 
-#: part/views.py:419
+#: part/views.py:422
 msgid "Created new part"
 msgstr ""
 
-#: part/views.py:609
+#: part/views.py:612
 msgid "Upload Part Image"
 msgstr ""
 
-#: part/views.py:614
+#: part/views.py:617 part/views.py:652
 msgid "Updated part image"
 msgstr ""
 
-#: part/views.py:623
+#: part/views.py:626
 msgid "Select Part Image"
 msgstr ""
 
-#: part/views.py:627
-msgid "Selected part image"
+#: part/views.py:655
+msgid "Part image not found"
 msgstr ""
 
-#: part/views.py:637
+#: part/views.py:666
 msgid "Edit Part Properties"
 msgstr ""
 
-#: part/views.py:659
+#: part/views.py:688
 msgid "Validate BOM"
 msgstr ""
 
-#: part/views.py:821
+#: part/views.py:850
 msgid "No BOM file provided"
 msgstr ""
 
-#: part/views.py:1082
+#: part/views.py:1111
 msgid "Enter a valid quantity"
 msgstr ""
 
-#: part/views.py:1106 part/views.py:1109
+#: part/views.py:1135 part/views.py:1138
 msgid "Select valid part"
 msgstr ""
 
-#: part/views.py:1115
+#: part/views.py:1144
 msgid "Duplicate part selected"
 msgstr ""
 
-#: part/views.py:1143
+#: part/views.py:1172
 msgid "Select a part"
 msgstr ""
 
-#: part/views.py:1147
+#: part/views.py:1176
 msgid "Specify quantity"
 msgstr ""
 
-#: part/views.py:1324
+#: part/views.py:1356
+msgid "Export Bill of Materials"
+msgstr ""
+
+#: part/views.py:1396
 msgid "Confirm Part Deletion"
 msgstr ""
 
-#: part/views.py:1331
+#: part/views.py:1403
 msgid "Part was deleted"
 msgstr ""
 
-#: part/views.py:1340
+#: part/views.py:1412
 msgid "Part Pricing"
 msgstr ""
 
-#: part/views.py:1462
+#: part/views.py:1534
 msgid "Create Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1470
+#: part/views.py:1542
 msgid "Edit Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1477
+#: part/views.py:1549
 msgid "Delete Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1485
+#: part/views.py:1557
 msgid "Create Part Parameter"
 msgstr ""
 
-#: part/views.py:1535
+#: part/views.py:1607
 msgid "Edit Part Parameter"
 msgstr ""
 
-#: part/views.py:1549
+#: part/views.py:1621
 msgid "Delete Part Parameter"
 msgstr ""
 
-#: part/views.py:1565
+#: part/views.py:1637
 msgid "Edit Part Category"
 msgstr ""
 
-#: part/views.py:1600
+#: part/views.py:1672
 msgid "Delete Part Category"
 msgstr ""
 
-#: part/views.py:1606
+#: part/views.py:1678
 msgid "Part category was deleted"
 msgstr ""
 
-#: part/views.py:1614
+#: part/views.py:1686
 msgid "Create new part category"
 msgstr ""
 
-#: part/views.py:1665
+#: part/views.py:1737
 msgid "Create BOM item"
 msgstr ""
 
-#: part/views.py:1731
+#: part/views.py:1803
 msgid "Edit BOM item"
 msgstr ""
 
-#: part/views.py:1779
+#: part/views.py:1851
 msgid "Confim BOM item deletion"
-msgstr ""
-
-#: stock/forms.py:91
-msgid "File Format"
-msgstr ""
-
-#: stock/forms.py:91
-msgid "Select output file format"
 msgstr ""
 
 #: stock/forms.py:93

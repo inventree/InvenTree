@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 11:09+0000\n"
+"POT-Creation-Date: 2020-02-11 21:11+0000\n"
 "PO-Revision-Date: 2020-02-02 08:07+0100\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -105,7 +105,7 @@ msgstr "Zerstört"
 
 #: InvenTree/status_codes.py:92 build/templates/build/allocate_edit.html:28
 #: build/templates/build/allocate_view.html:21
-#: part/templates/part/part_base.html:116 part/templates/part/tabs.html:21
+#: part/templates/part/part_base.html:106 part/templates/part/tabs.html:21
 msgid "Allocated"
 msgstr "Zugeordnet"
 
@@ -150,15 +150,15 @@ msgstr "Eindeutige Seriennummern eingeben (oder leer lassen)"
 msgid "Confirm build completion"
 msgstr "Bau-Fertigstellung bestätigen"
 
-#: build/models.py:53
+#: build/models.py:54
 msgid "Brief description of the build"
 msgstr "Kurze Beschreibung des Baus"
 
-#: build/models.py:62
+#: build/models.py:63
 msgid "Select part to build"
 msgstr "Teil für den Bau wählen"
 
-#: build/models.py:68
+#: build/models.py:69
 msgid ""
 "Select location to take stock from for this build (leave blank to take from "
 "any stock location)"
@@ -166,46 +166,46 @@ msgstr ""
 "Lager-Entnahmestandort für diesen Bau wählen (oder leer lassen für einen "
 "beliebigen Lager-Standort)"
 
-#: build/models.py:74
+#: build/models.py:75
 msgid "Number of parts to build"
 msgstr "Anzahl der zu bauenden Teile"
 
-#: build/models.py:80
+#: build/models.py:81
 msgid "Build status"
 msgstr "Bau-Status"
 
-#: build/models.py:83
+#: build/models.py:84
 msgid "Batch code for this build output"
 msgstr "Chargennummer für diese Bau-Ausgabe"
 
-#: build/models.py:95
+#: build/models.py:96
 msgid "Link to external URL"
 msgstr "Link zu einer externen URL"
 
-#: build/models.py:97
+#: build/models.py:98
 msgid "Extra build notes"
 msgstr "Notizen für den Bau"
 
-#: build/models.py:382
+#: build/models.py:383
 #, python-brace-format
 msgid "Selected stock item not found in BOM for part '{p}'"
 msgstr "Ausgewähltes Lagerobjekt nicht in BOM für Teil '{p}' gefunden"
 
-#: build/models.py:385
+#: build/models.py:386
 #, python-brace-format
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 "zugewiesene Anzahl ({n}) darf nicht die verfügbare ({q}) Anzahl überschreiten"
 
-#: build/models.py:403
+#: build/models.py:404
 msgid "Build to allocate parts"
 msgstr "Bau starten um Teile zuzuweisen"
 
-#: build/models.py:410
+#: build/models.py:411
 msgid "Stock Item to allocate to build"
 msgstr "Lagerobjekt dem Bau zuweisen"
 
-#: build/models.py:418
+#: build/models.py:419
 msgid "Stock quantity to allocate to build"
 msgstr "Lagerobjekt-Anzahl dem Bau zuweisen"
 
@@ -261,9 +261,16 @@ msgid "Description"
 msgstr "Beschreibung"
 
 #: build/templates/build/allocate_view.html:22
-#: part/templates/part/part_base.html:122
+#: part/templates/part/part_base.html:112
 msgid "On Order"
 msgstr "bestellt"
+
+#: build/templates/build/delete_build_item.html:6
+#, fuzzy
+#| msgid "Are you sure you want to delete the following Supplier Parts?"
+msgid "Are you sure you want to unallocate these parts?"
+msgstr ""
+"Sind Sie sicher, dass sie die folgenden Zulieferer-Teile löschen möchten?"
 
 #: build/templates/build/detail.html:8
 msgid "Build Details"
@@ -302,7 +309,7 @@ msgstr "Los"
 #: build/templates/build/detail.html:42
 #: company/templates/company/detail_part.html:90
 #: company/templates/company/partdetail.html:54
-#: part/templates/part/detail.html:50 part/templates/part/part_base.html:91
+#: part/templates/part/detail.html:50 part/templates/part/part_base.html:81
 #: stock/templates/stock/item_base.html:120
 msgid "URL"
 msgstr "URL"
@@ -359,10 +366,134 @@ msgstr "Notizen"
 msgid "Assign Parts"
 msgstr "Teile zuweisen"
 
+#: build/templates/build/unallocate.html:8
+msgid "Are you sure you wish to unallocate all stock for this build?"
+msgstr ""
+
+#: build/views.py:56
+#, fuzzy
+#| msgid "Can Build"
+msgid "Cancel Build"
+msgstr "Herstellbar?"
+
+#: build/views.py:74
+#, fuzzy
+#| msgid "Confirm order cancellation"
+msgid "Confirm build cancellation"
+msgstr "Bestell-Stornierung bestätigen"
+
+#: build/views.py:79
+msgid "Build was cancelled"
+msgstr ""
+
+#: build/views.py:95
+#, fuzzy
+#| msgid "Allocate Stock to Build"
+msgid "Allocate Stock"
+msgstr "Lagerbestand dem Bau zuweisen"
+
+#: build/views.py:108
+msgid "No matching build found"
+msgstr ""
+
+#: build/views.py:127
+#, fuzzy
+#| msgid "Confirm order cancellation"
+msgid "Confirm stock allocation"
+msgstr "Bestell-Stornierung bestätigen"
+
+#: build/views.py:128
+msgid "Check the confirmation box at the bottom of the list"
+msgstr ""
+
+#: build/views.py:148 build/views.py:442
+#, fuzzy
+#| msgid "Unallocate"
+msgid "Unallocate Stock"
+msgstr "Zuweisung aufheben"
+
+#: build/views.py:161
+msgid "Confirm unallocation of build stock"
+msgstr ""
+
+#: build/views.py:162
+msgid "Check the confirmation box"
+msgstr ""
+
+#: build/views.py:185
+#, fuzzy
+#| msgid "Completed"
+msgid "Complete Build"
+msgstr "Fertig"
+
+#: build/views.py:258
+#, fuzzy
+#| msgid "Confirm build completion"
+msgid "Confirm completion of build"
+msgstr "Bau-Fertigstellung bestätigen"
+
+#: build/views.py:265
+#, fuzzy
+#| msgid "Invalid part selection"
+msgid "Invalid location selected"
+msgstr "Ungültige Teileauswahl"
+
 #: build/views.py:290 stock/views.py:884
 #, python-brace-format
 msgid "The following serial numbers already exist: ({sn})"
 msgstr "Die folgende Seriennummer existiert bereits: ({sn})"
+
+#: build/views.py:309
+msgid "Build marked as COMPLETE"
+msgstr ""
+
+#: build/views.py:385
+#, fuzzy
+#| msgid "Can Build"
+msgid "Start new Build"
+msgstr "Herstellbar?"
+
+#: build/views.py:408
+#, fuzzy
+#| msgid "Created new stock item"
+msgid "Created new build"
+msgstr "Neues Lagerobjekt erstellt"
+
+#: build/views.py:418
+#, fuzzy
+#| msgid "Build Details"
+msgid "Edit Build Details"
+msgstr "Bau-Status"
+
+#: build/views.py:423
+msgid "Edited build"
+msgstr ""
+
+#: build/views.py:432
+msgid "Delete Build"
+msgstr ""
+
+#: build/views.py:447
+#, fuzzy
+#| msgid "Receive parts to this location"
+msgid "Removed parts from build allocation"
+msgstr "Teile in diesen Ort empfangen"
+
+#: build/views.py:457
+#, fuzzy
+#| msgid "Create new Stock Item"
+msgid "Allocate new Part"
+msgstr "Neues Lagerobjekt hinzufügen"
+
+#: build/views.py:573
+#, fuzzy
+#| msgid "Edit Stock Location"
+msgid "Edit Stock Allocation"
+msgstr "Lagerobjekt-Standort bearbeiten"
+
+#: build/views.py:577
+msgid "Updated Build Item"
+msgstr ""
 
 #: common/models.py:69
 msgid "Settings key (must be unique - case insensitive"
@@ -706,7 +837,7 @@ msgstr "Link auf externe Seite"
 msgid "Order notes"
 msgstr "Bestell-Notizen"
 
-#: order/models.py:159 order/models.py:210 part/views.py:1080
+#: order/models.py:159 order/models.py:210 part/views.py:1109
 #: stock/models.py:440
 msgid "Quantity must be greater than zero"
 msgstr "Anzahl muss größer Null sein"
@@ -825,224 +956,240 @@ msgstr "Zulieferer muss zum Teil und zur Bestellung passen"
 msgid "Invalid SupplierPart selection"
 msgstr "Ungültige Wahl des Zulieferer-Teils"
 
-#: part/bom.py:107
+#: part/bom.py:134
 #, python-brace-format
 msgid "Unsupported file format: {f}"
 msgstr "Nicht unterstütztes Dateiformat: {f}"
 
-#: part/bom.py:112
+#: part/bom.py:139
 msgid "Error reading BOM file (invalid data)"
 msgstr "Fehler beim Lesen der Stückliste (ungültige Daten)"
 
-#: part/bom.py:114
+#: part/bom.py:141
 msgid "Error reading BOM file (incorrect row size)"
 msgstr "Fehler beim Lesen der Stückliste (ungültige Zeilengröße)"
 
-#: part/forms.py:37
+#: part/forms.py:37 stock/forms.py:91
+msgid "File Format"
+msgstr "Dateiformat"
+
+#: part/forms.py:37 stock/forms.py:91
+msgid "Select output file format"
+msgstr "Ausgabe-Dateiformat auswählen"
+
+#: part/forms.py:39
+msgid "Cascading"
+msgstr ""
+
+#: part/forms.py:39
+msgid "Download cascading / multi-level BOM"
+msgstr ""
+
+#: part/forms.py:58
 msgid "Confirm that the BOM is correct"
 msgstr "Bestätigen, dass die Stückliste korrekt ist"
 
-#: part/forms.py:49
+#: part/forms.py:70
 msgid "Select BOM file to upload"
 msgstr "Stücklisten-Datei zum Upload auswählen"
 
-#: part/forms.py:73
+#: part/forms.py:94
 msgid "Select part category"
 msgstr "Teilekategorie wählen"
 
-#: part/forms.py:81
+#: part/forms.py:102
 msgid "Perform 'deep copy' which will duplicate all BOM data for this part"
 msgstr ""
 "Tiefe Kopie ausführen. Dies wird alle Daten der Stückliste für dieses Teil "
 "duplizieren"
 
-#: part/forms.py:86
+#: part/forms.py:107
 msgid "Confirm part creation"
 msgstr "Erstellen des Teils bestätigen"
 
-#: part/forms.py:172
+#: part/forms.py:193
 msgid "Input quantity for price calculation"
 msgstr "Eintragsmenge zur Preisberechnung"
 
-#: part/forms.py:175
+#: part/forms.py:196
 msgid "Select currency for price calculation"
 msgstr "Währung zur Preisberechnung wählen"
 
-#: part/models.py:57
+#: part/models.py:58
 msgid "Default location for parts in this category"
 msgstr "Standard-Standort für Teile dieser Kategorie"
 
-#: part/models.py:60
+#: part/models.py:61
 msgid "Default keywords for parts in this category"
 msgstr "Standard-Stichworte für Teile dieser Kategorie"
 
-#: part/models.py:309
+#: part/models.py:322
 msgid "Part must be unique for name, IPN and revision"
 msgstr "Namen, Teile- und Revisionsnummern müssen eindeutig sein"
 
-#: part/models.py:323
+#: part/models.py:336
 msgid "Part cannot be a template part if it is a variant of another part"
 msgstr "Teil kann keine Vorlage sein wenn es Variante eines anderen Teils ist"
 
-#: part/models.py:324
+#: part/models.py:337
 msgid "Part cannot be a variant of another part if it is already a template"
 msgstr ""
 "Teil kann keine Variante eines anderen Teils sein wenn es bereits eine "
 "Vorlage ist"
 
-#: part/models.py:328 part/templates/part/detail.html:17
+#: part/models.py:341 part/templates/part/detail.html:17
 msgid "Part name"
 msgstr "Name des Teils"
 
-#: part/models.py:332
+#: part/models.py:345
 msgid "Is this part a template part?"
 msgstr "Ist dieses Teil eine Vorlage?"
 
-#: part/models.py:341
+#: part/models.py:354
 msgid "Is this part a variant of another part?"
 msgstr "Ist dieses Teil eine Variante eines anderen Teils?"
 
-#: part/models.py:343
+#: part/models.py:356
 msgid "Part description"
 msgstr "Beschreibung des Teils"
 
-#: part/models.py:345
+#: part/models.py:358
 msgid "Part keywords to improve visibility in search results"
 msgstr "Schlüsselworte um die Sichtbarkeit in Suchergebnissen zu verbessern"
 
-#: part/models.py:350
+#: part/models.py:363
 msgid "Part category"
 msgstr "Teile-Kategorie"
 
-#: part/models.py:352
+#: part/models.py:365
 msgid "Internal Part Number"
 msgstr "Interne Teilenummer"
 
-#: part/models.py:354
+#: part/models.py:367
 msgid "Part revision or version number"
 msgstr "Revisions- oder Versionsnummer"
 
-#: part/models.py:356
+#: part/models.py:369
 msgid "Link to extenal URL"
 msgstr "Link zu einer Externen URL"
 
-#: part/models.py:362
+#: part/models.py:375
 msgid "Where is this item normally stored?"
 msgstr "Wo wird dieses Teil normalerweise gelagert?"
 
-#: part/models.py:406
+#: part/models.py:419
 msgid "Default supplier part"
 msgstr "Standard-Zulieferer?"
 
-#: part/models.py:409
+#: part/models.py:422
 msgid "Minimum allowed stock level"
 msgstr "Minimal zulässiger Lagerbestand"
 
-#: part/models.py:411
+#: part/models.py:424
 msgid "Stock keeping units for this part"
 msgstr "Stock Keeping Units (SKU) für dieses Teil"
 
-#: part/models.py:413
+#: part/models.py:426
 msgid "Can this part be built from other parts?"
 msgstr "Kann dieses Teil aus anderen Teilen angefertigt werden?"
 
-#: part/models.py:415
+#: part/models.py:428
 msgid "Can this part be used to build other parts?"
 msgstr "Kann dieses Teil zum Bau von anderen genutzt werden?"
 
-#: part/models.py:417
+#: part/models.py:430
 msgid "Does this part have tracking for unique items?"
 msgstr "Hat dieses Teil Tracking für einzelne Objekte?"
 
-#: part/models.py:419
+#: part/models.py:432
 msgid "Can this part be purchased from external suppliers?"
 msgstr "Kann dieses Teil von externen Zulieferern gekauft werden?"
 
-#: part/models.py:421
+#: part/models.py:434
 msgid "Can this part be sold to customers?"
 msgstr "Kann dieses Teil an Kunden verkauft werden?"
 
-#: part/models.py:423
+#: part/models.py:436
 msgid "Is this part active?"
 msgstr "Ist dieses Teil aktiv?"
 
-#: part/models.py:425
+#: part/models.py:438
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr "Ist dieses Teil virtuell, wie zum Beispiel eine Software oder Lizenz?"
 
-#: part/models.py:427
+#: part/models.py:440
 msgid "Part notes - supports Markdown formatting"
 msgstr "Bemerkungen - unterstüzt Markdown-Formatierung"
 
-#: part/models.py:429
+#: part/models.py:442
 msgid "Stored BOM checksum"
 msgstr "Prüfsumme der Stückliste gespeichert"
 
-#: part/models.py:936
+#: part/models.py:947
 msgid "Select file to attach"
 msgstr "Datei zum Anhängen auswählen"
 
-#: part/models.py:938
+#: part/models.py:949
 msgid "File comment"
 msgstr "Datei-Kommentar"
 
-#: part/models.py:993
+#: part/models.py:1004
 msgid "Parameter template name must be unique"
 msgstr "Vorlagen-Name des Parameters muss eindeutig sein"
 
-#: part/models.py:998
+#: part/models.py:1009
 msgid "Parameter Name"
 msgstr "Name des Parameters"
 
-#: part/models.py:1000
+#: part/models.py:1011
 msgid "Parameter Units"
 msgstr "Parameter Einheit"
 
-#: part/models.py:1026
+#: part/models.py:1037
 msgid "Parent Part"
 msgstr "Ausgangsteil"
 
-#: part/models.py:1028
+#: part/models.py:1039
 msgid "Parameter Template"
 msgstr "Parameter Vorlage"
 
-#: part/models.py:1030
+#: part/models.py:1041
 msgid "Parameter Value"
 msgstr "Parameter Wert"
 
-#: part/models.py:1054
+#: part/models.py:1065
 msgid "Select parent part"
 msgstr "Ausgangsteil auswählen"
 
-#: part/models.py:1062
+#: part/models.py:1073
 msgid "Select part to be used in BOM"
 msgstr "Teil für die Nutzung in der Stückliste auswählen"
 
-#: part/models.py:1068
+#: part/models.py:1079
 msgid "BOM quantity for this BOM item"
 msgstr "Stücklisten-Anzahl für dieses Stücklisten-Teil"
 
-#: part/models.py:1071
+#: part/models.py:1082
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr "Geschätzter Ausschuss (absolut oder prozentual)"
 
-#: part/models.py:1074
+#: part/models.py:1085
 msgid "BOM item reference"
 msgstr "Referenz des Objekts auf der Stückliste"
 
-#: part/models.py:1077
+#: part/models.py:1088
 msgid "BOM item notes"
 msgstr "Notizen zum Stücklisten-Objekt"
 
-#: part/models.py:1079
+#: part/models.py:1090
 msgid "BOM line checksum"
 msgstr "Prüfsumme der Stückliste"
 
-#: part/models.py:1142
+#: part/models.py:1153
 msgid "Part cannot be added to its own Bill of Materials"
 msgstr "Teil kann nicht zu seiner eigenen Stückliste hinzugefügt werden"
 
-#: part/models.py:1149
+#: part/models.py:1160
 #, python-brace-format
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
 msgstr "Teil '{p1}' wird in Stückliste für Teil '{p2}' benutzt (rekursiv)"
@@ -1112,7 +1259,7 @@ msgstr "Teile (inklusive Unter-Kategorien)"
 msgid "Part Details"
 msgstr "Teile-Details"
 
-#: part/templates/part/detail.html:22 part/templates/part/part_base.html:85
+#: part/templates/part/detail.html:22 part/templates/part/part_base.html:75
 msgid "IPN"
 msgstr "IPN (Interne Produktnummer)"
 
@@ -1216,33 +1363,43 @@ msgstr "Teil-Bemerkungen"
 msgid "This part is not active"
 msgstr "Dieses Teil ist nicht aktiv"
 
-#: part/templates/part/part_base.html:47
+#: part/templates/part/part_base.html:37
 msgid "Star this part"
 msgstr "Teil favorisieren"
 
-#: part/templates/part/part_base.html:53
+#: part/templates/part/part_base.html:43
 msgid "Show pricing information"
 msgstr "Kosteninformationen ansehen"
 
-#: part/templates/part/part_base.html:105
+#: part/templates/part/part_base.html:95
 msgid "Available Stock"
 msgstr "Verfügbarer Lagerbestand"
 
-#: part/templates/part/part_base.html:110
+#: part/templates/part/part_base.html:100
 msgid "In Stock"
 msgstr "Auf Lager"
 
-#: part/templates/part/part_base.html:131
+#: part/templates/part/part_base.html:121
 msgid "Build Status"
 msgstr "Bau-Status"
 
-#: part/templates/part/part_base.html:135
+#: part/templates/part/part_base.html:125
 msgid "Can Build"
 msgstr "Herstellbar?"
 
-#: part/templates/part/part_base.html:140
+#: part/templates/part/part_base.html:130
 msgid "Underway"
 msgstr "unterwegs"
+
+#: part/templates/part/part_thumb.html:16
+#, fuzzy
+#| msgid "Select part"
+msgid "Select from existing images"
+msgstr "Teil auswählen"
+
+#: part/templates/part/part_thumb.html:17
+msgid "Upload new image"
+msgstr ""
 
 #: part/templates/part/tabs.html:9
 msgid "Parameters"
@@ -1277,194 +1434,188 @@ msgstr "Tracking"
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: part/views.py:77
+#: part/views.py:80
 #, fuzzy
 #| msgid "Add Attachment"
 msgid "Added attachment"
 msgstr "Anhang hinzufügen"
 
-#: part/views.py:119
+#: part/views.py:122
 #, fuzzy
 #| msgid "Part Attachments"
 msgid "Part attachment updated"
 msgstr "Anhänge"
 
-#: part/views.py:196
+#: part/views.py:199
 #, python-brace-format
 msgid "Set category for {n} parts"
 msgstr "Kategorie für {n} Teile setzen"
 
-#: part/views.py:306
+#: part/views.py:309
 #, fuzzy
 #| msgid "Supplier part"
 msgid "Copied part"
 msgstr "Zulieferer-Teil"
 
-#: part/views.py:414
+#: part/views.py:417
 #, fuzzy
 #| msgid "Create new Stock Item"
 msgid "Create new part"
 msgstr "Neues Lagerobjekt hinzufügen"
 
-#: part/views.py:419
+#: part/views.py:422
 #, fuzzy
 #| msgid "Created new stock item"
 msgid "Created new part"
 msgstr "Neues Lagerobjekt erstellt"
 
-#: part/views.py:609
+#: part/views.py:612
 msgid "Upload Part Image"
 msgstr ""
 
-#: part/views.py:614
+#: part/views.py:617 part/views.py:652
 msgid "Updated part image"
 msgstr ""
 
-#: part/views.py:623
+#: part/views.py:626
 #, fuzzy
 #| msgid "Select part"
 msgid "Select Part Image"
 msgstr "Teil auswählen"
 
-#: part/views.py:627
-#, fuzzy
-#| msgid "Select part"
-msgid "Selected part image"
-msgstr "Teil auswählen"
+#: part/views.py:655
+msgid "Part image not found"
+msgstr ""
 
-#: part/views.py:637
+#: part/views.py:666
 #, fuzzy
 #| msgid "Edit notes"
 msgid "Edit Part Properties"
 msgstr "Bermerkungen bearbeiten"
 
-#: part/views.py:659
+#: part/views.py:688
 msgid "Validate BOM"
 msgstr ""
 
-#: part/views.py:821
+#: part/views.py:850
 msgid "No BOM file provided"
 msgstr "Keine Stückliste angegeben"
 
-#: part/views.py:1082
+#: part/views.py:1111
 msgid "Enter a valid quantity"
 msgstr "Bitte eine gültige Anzahl eingeben"
 
-#: part/views.py:1106 part/views.py:1109
+#: part/views.py:1135 part/views.py:1138
 msgid "Select valid part"
 msgstr "Bitte ein gültiges Teil auswählen"
 
-#: part/views.py:1115
+#: part/views.py:1144
 msgid "Duplicate part selected"
 msgstr "Teil doppelt ausgewählt"
 
-#: part/views.py:1143
+#: part/views.py:1172
 msgid "Select a part"
 msgstr "Teil auswählen"
 
-#: part/views.py:1147
+#: part/views.py:1176
 msgid "Specify quantity"
 msgstr "Anzahl angeben"
 
-#: part/views.py:1324
+#: part/views.py:1356
+msgid "Export Bill of Materials"
+msgstr ""
+
+#: part/views.py:1396
 #, fuzzy
 #| msgid "Confirm part creation"
 msgid "Confirm Part Deletion"
 msgstr "Erstellen des Teils bestätigen"
 
-#: part/views.py:1331
+#: part/views.py:1403
 msgid "Part was deleted"
 msgstr ""
 
-#: part/views.py:1340
+#: part/views.py:1412
 #, fuzzy
 #| msgid "Part packaging"
 msgid "Part Pricing"
 msgstr "Teile-Packaging"
 
-#: part/views.py:1462
+#: part/views.py:1534
 #, fuzzy
 #| msgid "Parameter Template"
 msgid "Create Part Parameter Template"
 msgstr "Parameter Vorlage"
 
-#: part/views.py:1470
+#: part/views.py:1542
 #, fuzzy
 #| msgid "Parameter Template"
 msgid "Edit Part Parameter Template"
 msgstr "Parameter Vorlage"
 
-#: part/views.py:1477
+#: part/views.py:1549
 #, fuzzy
 #| msgid "Parameter Template"
 msgid "Delete Part Parameter Template"
 msgstr "Parameter Vorlage"
 
-#: part/views.py:1485
+#: part/views.py:1557
 msgid "Create Part Parameter"
 msgstr ""
 
-#: part/views.py:1535
+#: part/views.py:1607
 #, fuzzy
 #| msgid "Edit attachment"
 msgid "Edit Part Parameter"
 msgstr "Anhang bearbeiten"
 
-#: part/views.py:1549
+#: part/views.py:1621
 #, fuzzy
 #| msgid "Delete attachment"
 msgid "Delete Part Parameter"
 msgstr "Anhang löschen"
 
-#: part/views.py:1565
+#: part/views.py:1637
 #, fuzzy
 #| msgid "Part category"
 msgid "Edit Part Category"
 msgstr "Teile-Kategorie"
 
-#: part/views.py:1600
+#: part/views.py:1672
 #, fuzzy
 #| msgid "Select part category"
 msgid "Delete Part Category"
 msgstr "Teilekategorie wählen"
 
-#: part/views.py:1606
+#: part/views.py:1678
 #, fuzzy
 #| msgid "Part category"
 msgid "Part category was deleted"
 msgstr "Teile-Kategorie"
 
-#: part/views.py:1614
+#: part/views.py:1686
 #, fuzzy
 #| msgid "Select part category"
 msgid "Create new part category"
 msgstr "Teilekategorie wählen"
 
-#: part/views.py:1665
+#: part/views.py:1737
 #, fuzzy
 #| msgid "Created new stock item"
 msgid "Create BOM item"
 msgstr "Neues Lagerobjekt erstellt"
 
-#: part/views.py:1731
+#: part/views.py:1803
 #, fuzzy
 #| msgid "Edit Stock Item"
 msgid "Edit BOM item"
 msgstr "Lagerobjekt bearbeiten"
 
-#: part/views.py:1779
+#: part/views.py:1851
 #, fuzzy
 #| msgid "Confirm build completion"
 msgid "Confim BOM item deletion"
 msgstr "Bau-Fertigstellung bestätigen"
-
-#: stock/forms.py:91
-msgid "File Format"
-msgstr "Dateiformat"
-
-#: stock/forms.py:91
-msgid "Select output file format"
-msgstr "Ausgabe-Dateiformat auswählen"
 
 #: stock/forms.py:93
 msgid "Include stock items in sub locations"
