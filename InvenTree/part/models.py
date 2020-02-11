@@ -230,6 +230,26 @@ class Part(models.Model):
         verbose_name = "Part"
         verbose_name_plural = "Parts"
 
+    def save(self, *args, **kwargs):
+        """
+        Overrides the save() function for the Part model.
+        If the part image has been updated,
+        then check if the "old" (previous) image is still used by another part.
+        If not, it is considered "orphaned" and will be deleted.
+        """
+
+        if self.pk:
+            previous = Part.objects.get(pk=self.pk)
+
+            if previous.image and not self.image == previous.image:
+                # Are there any (other) parts which reference the image?
+                n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
+
+                if n_refs == 0:
+                    previous.image.delete(save=False)
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return "{n} - {d}".format(n=self.full_name, d=self.description)
 
