@@ -1,5 +1,6 @@
 function updateAllocationTotal(id, count, required) {
     
+    count = parseFloat(count);
     
     $('#allocation-total-'+id).html(count);
     
