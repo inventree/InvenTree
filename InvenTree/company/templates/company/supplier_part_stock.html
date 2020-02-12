@@ -1,0 +1,72 @@
+{% extends "company/supplier_part_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block details %}
+
+{% include "company/supplier_part_tabs.html" with tab='stock' %}
+
+<hr>
+
+<h4>{% trans "Supplier Part Stock" %}</h4>
+
+{% include "stock_table.html" %}
+
+{% endblock %}
+
+{% block js_load %}
+{{ block.super }}
+<script type='text/javascript' src="{% static 'script/inventree/stock.js' %}"></script>
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+    loadStockTable($("#stock-table"), {
+        params: {
+            supplier_part: {{ part.id }},
+            location_detail: true,
+            part_detail: true,
+        },
+        groupByField: 'location',
+        buttons: ['#stock-options'],
+        url: "{% url 'api-stock-list' %}",
+    });
+
+    $("#stock-export").click(function() {
+        launchModalForm("{% url 'stock-export-options' %}", {
+            submit_text: '{% trans "Export" %}',
+            success: function(response) {
+                var url = "{% url 'stock-export' %}";
+
+                url += "?format=" + response.format;
+                url += "&cascade=" + response.cascade;
+                url += "&supplier_part={{ part.id }}";
+
+                location.href = url;
+            },
+        });
+    });
+
+    $("#item-create").click(function() {
+        launchModalForm("{% url 'stock-item-create' %}", {
+            reload: true,
+            data: {
+                part: {{ part.part.id }},
+                supplier_part: {{ part.id }},
+            },
+            secondary: [
+                {
+                    field: 'location',
+                    label: '{% trans "New Location" %}',
+                    title: '{% trans "Create New Location" %}',
+                    url: "{% url 'stock-location-create' %}",
+                }
+            ]
+        });
+
+        return false;
+    });
+
+
+{% endblock %}
