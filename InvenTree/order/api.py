@@ -18,6 +18,7 @@ from InvenTree.status_codes import OrderStatus
 import os
 
 from part.models import Part
+from company.models import SupplierPart
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .serializers import POSerializer, POLineItemSerializer
@@ -60,6 +61,14 @@ class POList(generics.ListCreateAPIView):
                 part = Part.objects.get(pk=request.GET['part'])
                 queryset = queryset.filter(id__in=[p.id for p in part.purchase_orders()])
             except (Part.DoesNotExist, ValueError):
+                pass
+
+        # Attempt to filter by supplier part
+        if 'supplier_part' in request.GET:
+            try:
+                supplier_part = SupplierPart.objects.get(pk=request.GET['supplier_part'])
+                queryset = queryset.filter(id__in=[p.id for p in supplier_part.purchase_orders()])
+            except (ValueError, SupplierPart.DoesNotExist):
                 pass
 
         data = queryset.values(

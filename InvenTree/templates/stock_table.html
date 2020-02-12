@@ -3,9 +3,7 @@
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
         <button class='btn btn-default' id='stock-export' title='Export Stock Information'>{% trans "Export" %}</button>
-        {% if 1 or not part or part.is_template == False %}
         <button class="btn btn-success" id='item-create'>{% trans "New Stock Item" %}</button>
-        {% endif %}
         <div class="dropdown" style='float: right;'>
             <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
             <ul class="dropdown-menu">
