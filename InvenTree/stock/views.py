@@ -830,6 +830,11 @@ class StockItemCreate(AjaxCreateView):
 
         part_id = self.request.GET.get('part', None)
         loc_id = self.request.GET.get('location', None)
+        sup_part_id = self.request.GET.get('supplier_part', None)
+
+        part = None
+        location = None
+        supplier_part = None
 
         # Part field has been specified
         if part_id:
@@ -838,14 +843,27 @@ class StockItemCreate(AjaxCreateView):
                 initials['part'] = part
                 initials['location'] = part.get_default_location()
                 initials['supplier_part'] = part.default_supplier
-            except Part.DoesNotExist:
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        # SupplierPart field has been specified
+        # It must match the Part, if that has been supplied
+        if sup_part_id:
+            try:
+                supplier_part = SupplierPart.objects.get(pk=sup_part_id)
+
+                if part is None or supplier_part.part == part:
+                    initials['supplier_part'] = supplier_part
+
+            except (ValueError, SupplierPart.DoesNotExist):
                 pass
 
         # Location has been specified
         if loc_id:
             try:
-                initials['location'] = StockLocation.objects.get(pk=loc_id)
-            except StockLocation.DoesNotExist:
+                location = StockLocation.objects.get(pk=loc_id)
+                initials['location'] = location
+            except (ValueError, StockLocation.DoesNotExist):
                 pass
 
         return initials

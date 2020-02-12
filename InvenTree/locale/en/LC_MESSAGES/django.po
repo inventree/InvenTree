@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-11 23:25+0000\n"
+"POT-Creation-Date: 2020-02-12 00:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -250,7 +250,7 @@ msgstr ""
 
 #: build/templates/build/allocate_view.html:18
 #: company/templates/company/index.html:54
-#: company/templates/company/partdetail.html:57
+#: company/templates/company/supplier_part_detail.html:27
 #: order/templates/order/purchase_order_detail.html:26
 #: part/templates/part/detail.html:33
 msgid "Description"
@@ -274,7 +274,7 @@ msgid "Title"
 msgstr ""
 
 #: build/templates/build/detail.html:20
-#: company/templates/company/partdetail.html:85
+#: company/templates/company/supplier_part_pricing.html:27
 #: order/templates/order/purchase_order_detail.html:29
 #: stock/templates/stock/item_base.html:90
 #: stock/templates/stock/stock_adjust.html:18
@@ -301,7 +301,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:42
 #: company/templates/company/detail_part.html:90
-#: company/templates/company/partdetail.html:54
+#: company/templates/company/supplier_part_detail.html:24
 #: part/templates/part/detail.html:50 part/templates/part/part_base.html:81
 #: stock/templates/stock/item_base.html:120
 msgid "URL"
@@ -344,8 +344,9 @@ msgstr ""
 msgid "Edit notes"
 msgstr ""
 
-#: build/templates/build/tabs.html:5 company/templates/company/tabs.html:5
-#: part/templates/part/tabs.html:6
+#: build/templates/build/tabs.html:5
+#: company/templates/company/supplier_part_tabs.html:5
+#: company/templates/company/tabs.html:5 part/templates/part/tabs.html:6
 msgid "Details"
 msgstr ""
 
@@ -415,7 +416,7 @@ msgstr ""
 msgid "Invalid location selected"
 msgstr ""
 
-#: build/views.py:290 stock/views.py:884
+#: build/views.py:290 stock/views.py:916
 #, python-brace-format
 msgid "The following serial numbers already exist: ({sn})"
 msgstr ""
@@ -561,7 +562,7 @@ msgid "Supplier stock keeping unit"
 msgstr ""
 
 #: company/models.py:240 company/templates/company/detail_part.html:81
-#: company/templates/company/partdetail.html:60
+#: company/templates/company/supplier_part_detail.html:30
 msgid "Manufacturer"
 msgstr ""
 
@@ -621,7 +622,7 @@ msgstr ""
 
 #: company/templates/company/detail.html:17
 #: company/templates/company/index.html:46
-#: company/templates/company/partdetail.html:51
+#: company/templates/company/supplier_part_detail.html:21
 #: order/templates/order/order_base.html:67
 #: stock/templates/stock/item_base.html:126
 msgid "Supplier"
@@ -633,10 +634,11 @@ msgid "Supplier Parts"
 msgstr ""
 
 #: company/templates/company/detail_part.html:13
+#: part/templates/part/stock.html:81
 msgid "New Supplier Part"
 msgstr ""
 
-#: company/templates/company/detail_part.html:15
+#: company/templates/company/detail_part.html:15 templates/stock_table.html:10
 msgid "Options"
 msgstr ""
 
@@ -645,12 +647,11 @@ msgid "Delete Parts"
 msgstr ""
 
 #: company/templates/company/detail_part.html:73
-#: company/templates/company/partdetail.html:52
+#: company/templates/company/supplier_part_detail.html:22
 msgid "SKU"
 msgstr ""
 
 #: company/templates/company/detail_purchase_orders.html:8
-#: company/templates/company/partdetail.html:116
 #: company/templates/company/tabs.html:15 part/templates/part/tabs.html:43
 msgid "Purchase Orders"
 msgstr ""
@@ -664,6 +665,8 @@ msgid "Supplier Stock"
 msgstr ""
 
 #: company/templates/company/detail_stock.html:33
+#: company/templates/company/supplier_part_stock.html:38
+#: part/templates/part/stock.html:53 templates/stock_table.html:5
 msgid "Export"
 msgstr ""
 
@@ -680,10 +683,8 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: company/templates/company/index.html:69
-#: company/templates/company/partdetail.html:6
-#: part/templates/part/category.html:73 templates/navbar.html:10
-#: templates/stats.html:7 templates/stats.html:10
+#: company/templates/company/index.html:69 part/templates/part/category.html:73
+#: templates/navbar.html:10 templates/stats.html:7 templates/stats.html:10
 msgid "Parts"
 msgstr ""
 
@@ -696,59 +697,88 @@ msgstr ""
 msgid "Are you sure you want to delete the following Supplier Parts?"
 msgstr ""
 
-#: company/templates/company/partdetail.html:13
+#: company/templates/company/supplier_part_base.html:6
+#: company/templates/company/supplier_part_base.html:13
 #: stock/templates/stock/item_base.html:130
 msgid "Supplier Part"
 msgstr ""
 
-#: company/templates/company/partdetail.html:41
+#: company/templates/company/supplier_part_detail.html:11
 msgid "Supplier Part Details"
 msgstr ""
 
-#: company/templates/company/partdetail.html:44
+#: company/templates/company/supplier_part_detail.html:14
 msgid "Internal Part"
 msgstr ""
 
-#: company/templates/company/partdetail.html:61
+#: company/templates/company/supplier_part_detail.html:31
 msgid "MPN"
 msgstr ""
 
-#: company/templates/company/partdetail.html:64
+#: company/templates/company/supplier_part_detail.html:34
 #: order/templates/order/purchase_order_detail.html:33
 msgid "Note"
 msgstr ""
 
-#: company/templates/company/partdetail.html:70
+#: company/templates/company/supplier_part_orders.html:11
+msgid "Supplier Part Orders"
+msgstr ""
+
+#: company/templates/company/supplier_part_pricing.html:12
 msgid "Pricing Information"
 msgstr ""
 
-#: company/templates/company/partdetail.html:72
+#: company/templates/company/supplier_part_pricing.html:14
 msgid "Order Multiple"
 msgstr ""
 
-#: company/templates/company/partdetail.html:74
+#: company/templates/company/supplier_part_pricing.html:16
 msgid "Base Price (Flat Fee)"
 msgstr ""
 
-#: company/templates/company/partdetail.html:77
+#: company/templates/company/supplier_part_pricing.html:19
 msgid "Price Breaks"
 msgstr ""
 
-#: company/templates/company/partdetail.html:80
+#: company/templates/company/supplier_part_pricing.html:22
 msgid "New Price Break"
 msgstr ""
 
-#: company/templates/company/partdetail.html:86
+#: company/templates/company/supplier_part_pricing.html:28
 msgid "Price"
 msgstr ""
 
-#: company/templates/company/partdetail.html:106
+#: company/templates/company/supplier_part_pricing.html:48
 msgid "No price breaks have been added for this part"
 msgstr ""
 
+#: company/templates/company/supplier_part_stock.html:11
+msgid "Supplier Part Stock"
+msgstr ""
+
+#: company/templates/company/supplier_part_stock.html:61
+#: part/templates/part/stock.html:90
+msgid "New Location"
+msgstr ""
+
+#: company/templates/company/supplier_part_stock.html:62
+#: part/templates/part/stock.html:91
+msgid "Create New Location"
+msgstr ""
+
+#: company/templates/company/supplier_part_tabs.html:8
+msgid "Pricing"
+msgstr ""
+
+#: company/templates/company/supplier_part_tabs.html:11
 #: company/templates/company/tabs.html:12 part/templates/part/tabs.html:17
 #: templates/navbar.html:11
 msgid "Stock"
+msgstr ""
+
+#: company/templates/company/supplier_part_tabs.html:14
+#: templates/navbar.html:14
+msgid "Orders"
 msgstr ""
 
 #: company/templates/company/tabs.html:21
@@ -791,7 +821,7 @@ msgstr ""
 msgid "Edit Supplier Part"
 msgstr ""
 
-#: company/views.py:179
+#: company/views.py:179 part/templates/part/stock.html:82
 msgid "Create new Supplier Part"
 msgstr ""
 
@@ -1437,6 +1467,14 @@ msgstr ""
 msgid "Upload new image"
 msgstr ""
 
+#: part/templates/part/stock.html:75
+msgid "New Part"
+msgstr ""
+
+#: part/templates/part/stock.html:76
+msgid "Create New Part"
+msgstr ""
+
 #: part/templates/part/tabs.html:9
 msgid "Parameters"
 msgstr ""
@@ -1868,134 +1906,134 @@ msgstr ""
 msgid "Stock Export Options"
 msgstr ""
 
-#: stock/views.py:264
+#: stock/views.py:278
 msgid "Stock Item QR Code"
 msgstr ""
 
-#: stock/views.py:287
+#: stock/views.py:301
 msgid "Adjust Stock"
 msgstr ""
 
-#: stock/views.py:396
+#: stock/views.py:410
 msgid "Move Stock Items"
 msgstr ""
 
-#: stock/views.py:397
+#: stock/views.py:411
 msgid "Count Stock Items"
 msgstr ""
 
-#: stock/views.py:398
+#: stock/views.py:412
 msgid "Remove From Stock"
 msgstr ""
 
-#: stock/views.py:399
+#: stock/views.py:413
 msgid "Add Stock Items"
 msgstr ""
 
-#: stock/views.py:400
+#: stock/views.py:414
 msgid "Delete Stock Items"
 msgstr ""
 
-#: stock/views.py:428
+#: stock/views.py:442
 msgid "Must enter integer value"
 msgstr ""
 
-#: stock/views.py:433
+#: stock/views.py:447
 msgid "Quantity must be positive"
 msgstr ""
 
-#: stock/views.py:440
+#: stock/views.py:454
 #, python-brace-format
 msgid "Quantity must not exceed {x}"
 msgstr ""
 
-#: stock/views.py:448
+#: stock/views.py:462
 msgid "Confirm stock adjustment"
 msgstr ""
 
-#: stock/views.py:519
+#: stock/views.py:533
 #, python-brace-format
 msgid "Added stock to {n} items"
 msgstr ""
 
-#: stock/views.py:534
+#: stock/views.py:548
 #, python-brace-format
 msgid "Removed stock from {n} items"
 msgstr ""
 
-#: stock/views.py:547
+#: stock/views.py:561
 #, python-brace-format
 msgid "Counted stock for {n} items"
 msgstr ""
 
-#: stock/views.py:575
+#: stock/views.py:589
 msgid "No items were moved"
 msgstr ""
 
-#: stock/views.py:578
+#: stock/views.py:592
 #, python-brace-format
 msgid "Moved {n} items to {dest}"
 msgstr ""
 
-#: stock/views.py:597
+#: stock/views.py:611
 #, python-brace-format
 msgid "Deleted {n} stock items"
 msgstr ""
 
-#: stock/views.py:609
+#: stock/views.py:623
 msgid "Edit Stock Item"
 msgstr ""
 
-#: stock/views.py:645
+#: stock/views.py:659
 msgid "Create new Stock Location"
 msgstr ""
 
-#: stock/views.py:666
+#: stock/views.py:680
 msgid "Serialize Stock"
 msgstr ""
 
-#: stock/views.py:746
+#: stock/views.py:760
 msgid "Create new Stock Item"
 msgstr ""
 
-#: stock/views.py:810
+#: stock/views.py:824
 msgid "Copy Stock Item"
 msgstr ""
 
-#: stock/views.py:860
+#: stock/views.py:892
 msgid "Invalid quantity"
 msgstr ""
 
-#: stock/views.py:863
+#: stock/views.py:895
 msgid "Invalid part selection"
 msgstr ""
 
-#: stock/views.py:910
+#: stock/views.py:942
 #, python-brace-format
 msgid "Created {n} new stock items"
 msgstr ""
 
-#: stock/views.py:927 stock/views.py:940
+#: stock/views.py:959 stock/views.py:972
 msgid "Created new stock item"
 msgstr ""
 
-#: stock/views.py:957
+#: stock/views.py:989
 msgid "Delete Stock Location"
 msgstr ""
 
-#: stock/views.py:970
+#: stock/views.py:1002
 msgid "Delete Stock Item"
 msgstr ""
 
-#: stock/views.py:981
+#: stock/views.py:1013
 msgid "Delete Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:998
+#: stock/views.py:1030
 msgid "Edit Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:1007
+#: stock/views.py:1039
 msgid "Add Stock Tracking Entry"
 msgstr ""
 
@@ -2031,10 +2069,6 @@ msgstr ""
 msgid "View Code on GitHub"
 msgstr ""
 
-#: templates/navbar.html:14
-msgid "Orders"
-msgstr ""
-
 #: templates/navbar.html:23
 msgid "Admin"
 msgstr ""
@@ -2057,4 +2091,32 @@ msgstr ""
 
 #: templates/navbar.html:33
 msgid "Statistics"
+msgstr ""
+
+#: templates/stock_table.html:7
+msgid "New Stock Item"
+msgstr ""
+
+#: templates/stock_table.html:12
+msgid "Add stock"
+msgstr ""
+
+#: templates/stock_table.html:13
+msgid "Remove stock"
+msgstr ""
+
+#: templates/stock_table.html:14
+msgid "Count stock"
+msgstr ""
+
+#: templates/stock_table.html:15
+msgid "Move stock"
+msgstr ""
+
+#: templates/stock_table.html:16
+msgid "Order stock"
+msgstr ""
+
+#: templates/stock_table.html:17
+msgid "Delete Stock"
 msgstr ""

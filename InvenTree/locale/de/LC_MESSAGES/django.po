@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-11 23:25+0000\n"
+"POT-Creation-Date: 2020-02-12 00:31+0000\n"
 "PO-Revision-Date: 2020-02-02 08:07+0100\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -254,7 +254,7 @@ msgstr "Teile bestellen"
 
 #: build/templates/build/allocate_view.html:18
 #: company/templates/company/index.html:54
-#: company/templates/company/partdetail.html:57
+#: company/templates/company/supplier_part_detail.html:27
 #: order/templates/order/purchase_order_detail.html:26
 #: part/templates/part/detail.html:33
 msgid "Description"
@@ -281,7 +281,7 @@ msgid "Title"
 msgstr "Titel"
 
 #: build/templates/build/detail.html:20
-#: company/templates/company/partdetail.html:85
+#: company/templates/company/supplier_part_pricing.html:27
 #: order/templates/order/purchase_order_detail.html:29
 #: stock/templates/stock/item_base.html:90
 #: stock/templates/stock/stock_adjust.html:18
@@ -308,7 +308,7 @@ msgstr "Los"
 
 #: build/templates/build/detail.html:42
 #: company/templates/company/detail_part.html:90
-#: company/templates/company/partdetail.html:54
+#: company/templates/company/supplier_part_detail.html:24
 #: part/templates/part/detail.html:50 part/templates/part/part_base.html:81
 #: stock/templates/stock/item_base.html:120
 msgid "URL"
@@ -351,8 +351,9 @@ msgstr "Speichern"
 msgid "Edit notes"
 msgstr "Bermerkungen bearbeiten"
 
-#: build/templates/build/tabs.html:5 company/templates/company/tabs.html:5
-#: part/templates/part/tabs.html:6
+#: build/templates/build/tabs.html:5
+#: company/templates/company/supplier_part_tabs.html:5
+#: company/templates/company/tabs.html:5 part/templates/part/tabs.html:6
 msgid "Details"
 msgstr "Details"
 
@@ -438,7 +439,7 @@ msgstr "Bau-Fertigstellung bestätigen"
 msgid "Invalid location selected"
 msgstr "Ungültige Teileauswahl"
 
-#: build/views.py:290 stock/views.py:884
+#: build/views.py:290 stock/views.py:916
 #, python-brace-format
 msgid "The following serial numbers already exist: ({sn})"
 msgstr "Die folgende Seriennummer existiert bereits: ({sn})"
@@ -600,7 +601,7 @@ msgid "Supplier stock keeping unit"
 msgstr "Stock Keeping Units (SKU) des Zulieferers"
 
 #: company/models.py:240 company/templates/company/detail_part.html:81
-#: company/templates/company/partdetail.html:60
+#: company/templates/company/supplier_part_detail.html:30
 msgid "Manufacturer"
 msgstr "Hersteller"
 
@@ -662,7 +663,7 @@ msgstr "Kunde"
 
 #: company/templates/company/detail.html:17
 #: company/templates/company/index.html:46
-#: company/templates/company/partdetail.html:51
+#: company/templates/company/supplier_part_detail.html:21
 #: order/templates/order/order_base.html:67
 #: stock/templates/stock/item_base.html:126
 msgid "Supplier"
@@ -674,12 +675,13 @@ msgid "Supplier Parts"
 msgstr "Zulieferer-Teile"
 
 #: company/templates/company/detail_part.html:13
+#: part/templates/part/stock.html:81
 #, fuzzy
 #| msgid "Supplier Part"
 msgid "New Supplier Part"
 msgstr "Zulieferer-Teil"
 
-#: company/templates/company/detail_part.html:15
+#: company/templates/company/detail_part.html:15 templates/stock_table.html:10
 msgid "Options"
 msgstr ""
 
@@ -690,12 +692,11 @@ msgid "Delete Parts"
 msgstr "Anhang löschen"
 
 #: company/templates/company/detail_part.html:73
-#: company/templates/company/partdetail.html:52
+#: company/templates/company/supplier_part_detail.html:22
 msgid "SKU"
 msgstr ""
 
 #: company/templates/company/detail_purchase_orders.html:8
-#: company/templates/company/partdetail.html:116
 #: company/templates/company/tabs.html:15 part/templates/part/tabs.html:43
 msgid "Purchase Orders"
 msgstr "Bestellungen"
@@ -713,6 +714,8 @@ msgid "Supplier Stock"
 msgstr "Zulieferer-Teil"
 
 #: company/templates/company/detail_stock.html:33
+#: company/templates/company/supplier_part_stock.html:38
+#: part/templates/part/stock.html:53 templates/stock_table.html:5
 msgid "Export"
 msgstr ""
 
@@ -733,10 +736,8 @@ msgstr "Zulieferer"
 msgid "ID"
 msgstr ""
 
-#: company/templates/company/index.html:69
-#: company/templates/company/partdetail.html:6
-#: part/templates/part/category.html:73 templates/navbar.html:10
-#: templates/stats.html:7 templates/stats.html:10
+#: company/templates/company/index.html:69 part/templates/part/category.html:73
+#: templates/navbar.html:10 templates/stats.html:7 templates/stats.html:10
 msgid "Parts"
 msgstr "Teile"
 
@@ -750,70 +751,111 @@ msgid "Are you sure you want to delete the following Supplier Parts?"
 msgstr ""
 "Sind Sie sicher, dass sie die folgenden Zulieferer-Teile löschen möchten?"
 
-#: company/templates/company/partdetail.html:13
+#: company/templates/company/supplier_part_base.html:6
+#: company/templates/company/supplier_part_base.html:13
 #: stock/templates/stock/item_base.html:130
 msgid "Supplier Part"
 msgstr "Zulieferer-Teil"
 
-#: company/templates/company/partdetail.html:41
+#: company/templates/company/supplier_part_detail.html:11
 #, fuzzy
 #| msgid "Supplier Parts"
 msgid "Supplier Part Details"
 msgstr "Zulieferer-Teile"
 
-#: company/templates/company/partdetail.html:44
+#: company/templates/company/supplier_part_detail.html:14
 #, fuzzy
 #| msgid "Internal Part Number"
 msgid "Internal Part"
 msgstr "Interne Teilenummer"
 
-#: company/templates/company/partdetail.html:61
+#: company/templates/company/supplier_part_detail.html:31
 #, fuzzy
 #| msgid "IPN"
 msgid "MPN"
 msgstr "IPN (Interne Produktnummer)"
 
-#: company/templates/company/partdetail.html:64
+#: company/templates/company/supplier_part_detail.html:34
 #: order/templates/order/purchase_order_detail.html:33
 msgid "Note"
 msgstr "Notiz"
 
-#: company/templates/company/partdetail.html:70
+#: company/templates/company/supplier_part_orders.html:11
+#, fuzzy
+#| msgid "Supplier Parts"
+msgid "Supplier Part Orders"
+msgstr "Zulieferer-Teile"
+
+#: company/templates/company/supplier_part_pricing.html:12
 #, fuzzy
 #| msgid "Show pricing information"
 msgid "Pricing Information"
 msgstr "Kosteninformationen ansehen"
 
-#: company/templates/company/partdetail.html:72
+#: company/templates/company/supplier_part_pricing.html:14
 #, fuzzy
 #| msgid "Order notes"
 msgid "Order Multiple"
 msgstr "Bestell-Notizen"
 
-#: company/templates/company/partdetail.html:74
+#: company/templates/company/supplier_part_pricing.html:16
 msgid "Base Price (Flat Fee)"
 msgstr ""
 
-#: company/templates/company/partdetail.html:77
+#: company/templates/company/supplier_part_pricing.html:19
 msgid "Price Breaks"
 msgstr ""
 
-#: company/templates/company/partdetail.html:80
+#: company/templates/company/supplier_part_pricing.html:22
 msgid "New Price Break"
 msgstr ""
 
-#: company/templates/company/partdetail.html:86
+#: company/templates/company/supplier_part_pricing.html:28
 msgid "Price"
 msgstr ""
 
-#: company/templates/company/partdetail.html:106
+#: company/templates/company/supplier_part_pricing.html:48
 msgid "No price breaks have been added for this part"
 msgstr ""
 
+#: company/templates/company/supplier_part_stock.html:11
+#, fuzzy
+#| msgid "Supplier part"
+msgid "Supplier Part Stock"
+msgstr "Zulieferer-Teil"
+
+#: company/templates/company/supplier_part_stock.html:61
+#: part/templates/part/stock.html:90
+#, fuzzy
+#| msgid "Location"
+msgid "New Location"
+msgstr "Standort"
+
+#: company/templates/company/supplier_part_stock.html:62
+#: part/templates/part/stock.html:91
+#, fuzzy
+#| msgid "Create new Stock Location"
+msgid "Create New Location"
+msgstr "Neuen Lager-Standort erstellen"
+
+#: company/templates/company/supplier_part_tabs.html:8
+#, fuzzy
+#| msgid "Part packaging"
+msgid "Pricing"
+msgstr "Teile-Packaging"
+
+#: company/templates/company/supplier_part_tabs.html:11
 #: company/templates/company/tabs.html:12 part/templates/part/tabs.html:17
 #: templates/navbar.html:11
 msgid "Stock"
 msgstr "Lagerbestand"
+
+#: company/templates/company/supplier_part_tabs.html:14
+#: templates/navbar.html:14
+#, fuzzy
+#| msgid "On Order"
+msgid "Orders"
+msgstr "bestellt"
 
 #: company/templates/company/tabs.html:21
 msgid "Sales Orders"
@@ -871,7 +913,7 @@ msgstr "Firmenadresse"
 msgid "Edit Supplier Part"
 msgstr "Zulieferer-Teil"
 
-#: company/views.py:179
+#: company/views.py:179 part/templates/part/stock.html:82
 #, fuzzy
 #| msgid "Supplier Part"
 msgid "Create new Supplier Part"
@@ -1547,6 +1589,18 @@ msgstr "Teil auswählen"
 msgid "Upload new image"
 msgstr ""
 
+#: part/templates/part/stock.html:75
+#, fuzzy
+#| msgid "Part"
+msgid "New Part"
+msgstr "Teil"
+
+#: part/templates/part/stock.html:76
+#, fuzzy
+#| msgid "Create new Stock Item"
+msgid "Create New Part"
+msgstr "Neues Lagerobjekt hinzufügen"
+
 #: part/templates/part/tabs.html:9
 msgid "Parameters"
 msgstr "Parameter"
@@ -2041,135 +2095,135 @@ msgstr "QR-Code für diesen Standort"
 msgid "Stock Export Options"
 msgstr "Lagerbestandsexportoptionen"
 
-#: stock/views.py:264
+#: stock/views.py:278
 msgid "Stock Item QR Code"
 msgstr "Lagerobjekt-QR-Code"
 
-#: stock/views.py:287
+#: stock/views.py:301
 msgid "Adjust Stock"
 msgstr "Lagerbestand anpassen"
 
-#: stock/views.py:396
+#: stock/views.py:410
 msgid "Move Stock Items"
 msgstr "Lagerobjekte bewegen"
 
-#: stock/views.py:397
+#: stock/views.py:411
 msgid "Count Stock Items"
 msgstr "Lagerobjekte zählen"
 
-#: stock/views.py:398
+#: stock/views.py:412
 msgid "Remove From Stock"
 msgstr "Aus Lagerbestand entfernen"
 
-#: stock/views.py:399
+#: stock/views.py:413
 msgid "Add Stock Items"
 msgstr "Lagerobjekte hinzufügen"
 
-#: stock/views.py:400
+#: stock/views.py:414
 msgid "Delete Stock Items"
 msgstr "Lagerobjekte löschen"
 
-#: stock/views.py:428
+#: stock/views.py:442
 msgid "Must enter integer value"
 msgstr "Nur Ganzzahl eingeben"
 
-#: stock/views.py:433
+#: stock/views.py:447
 msgid "Quantity must be positive"
 msgstr "Anzahl muss positiv sein"
 
-#: stock/views.py:440
+#: stock/views.py:454
 #, python-brace-format
 msgid "Quantity must not exceed {x}"
 msgstr "Anzahl darf {x} nicht überschreiten"
 
-#: stock/views.py:448
+#: stock/views.py:462
 msgid "Confirm stock adjustment"
 msgstr "Bestands-Anpassung bestätigen"
 
-#: stock/views.py:519
+#: stock/views.py:533
 #, python-brace-format
 msgid "Added stock to {n} items"
 msgstr "Vorrat zu {n} Lagerobjekten hinzugefügt"
 
-#: stock/views.py:534
+#: stock/views.py:548
 #, python-brace-format
 msgid "Removed stock from {n} items"
 msgstr "Vorrat von {n} Lagerobjekten entfernt"
 
-#: stock/views.py:547
+#: stock/views.py:561
 #, python-brace-format
 msgid "Counted stock for {n} items"
 msgstr "Bestand für {n} Objekte erfasst"
 
-#: stock/views.py:575
+#: stock/views.py:589
 msgid "No items were moved"
 msgstr "Keine Lagerobjekte wurden bewegt"
 
-#: stock/views.py:578
+#: stock/views.py:592
 #, python-brace-format
 msgid "Moved {n} items to {dest}"
 msgstr "{n} Teile nach {dest} bewegt"
 
-#: stock/views.py:597
+#: stock/views.py:611
 #, python-brace-format
 msgid "Deleted {n} stock items"
 msgstr "{n} Teile im Lager gelöscht"
 
-#: stock/views.py:609
+#: stock/views.py:623
 msgid "Edit Stock Item"
 msgstr "Lagerobjekt bearbeiten"
 
-#: stock/views.py:645
+#: stock/views.py:659
 msgid "Create new Stock Location"
 msgstr "Neuen Lager-Standort erstellen"
 
-#: stock/views.py:666
+#: stock/views.py:680
 msgid "Serialize Stock"
 msgstr "Lagerbestand erfassen"
 
-#: stock/views.py:746
+#: stock/views.py:760
 msgid "Create new Stock Item"
 msgstr "Neues Lagerobjekt hinzufügen"
 
-#: stock/views.py:810
+#: stock/views.py:824
 msgid "Copy Stock Item"
 msgstr "Lagerobjekt kopieren"
 
-#: stock/views.py:860
+#: stock/views.py:892
 msgid "Invalid quantity"
 msgstr "Ungültige Menge"
 
-#: stock/views.py:863
+#: stock/views.py:895
 msgid "Invalid part selection"
 msgstr "Ungültige Teileauswahl"
 
-#: stock/views.py:910
+#: stock/views.py:942
 #, fuzzy, python-brace-format
 #| msgid "Created new stock item"
 msgid "Created {n} new stock items"
 msgstr "Neues Lagerobjekt erstellt"
 
-#: stock/views.py:927 stock/views.py:940
+#: stock/views.py:959 stock/views.py:972
 msgid "Created new stock item"
 msgstr "Neues Lagerobjekt erstellt"
 
-#: stock/views.py:957
+#: stock/views.py:989
 msgid "Delete Stock Location"
 msgstr "Standort löschen"
 
-#: stock/views.py:970
+#: stock/views.py:1002
 msgid "Delete Stock Item"
 msgstr "Lagerobjekt löschen"
 
-#: stock/views.py:981
+#: stock/views.py:1013
 msgid "Delete Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag löschen"
 
-#: stock/views.py:998
+#: stock/views.py:1030
 msgid "Edit Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag bearbeiten"
 
-#: stock/views.py:1007
+#: stock/views.py:1039
 msgid "Add Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag hinzufügen"
 
@@ -2207,12 +2261,6 @@ msgstr "InvenTree-Dokumentation"
 msgid "View Code on GitHub"
 msgstr "Code auf GitHub ansehen"
 
-#: templates/navbar.html:14
-#, fuzzy
-#| msgid "On Order"
-msgid "Orders"
-msgstr "bestellt"
-
 #: templates/navbar.html:23
 msgid "Admin"
 msgstr ""
@@ -2240,3 +2288,45 @@ msgstr ""
 #| msgid "Status"
 msgid "Statistics"
 msgstr "Status"
+
+#: templates/stock_table.html:7
+#, fuzzy
+#| msgid "Stock Item"
+msgid "New Stock Item"
+msgstr "Lagerobjekt"
+
+#: templates/stock_table.html:12
+#, fuzzy
+#| msgid "Add Stock Items"
+msgid "Add stock"
+msgstr "Lagerobjekte hinzufügen"
+
+#: templates/stock_table.html:13
+#, fuzzy
+#| msgid "Remove From Stock"
+msgid "Remove stock"
+msgstr "Aus Lagerbestand entfernen"
+
+#: templates/stock_table.html:14
+#, fuzzy
+#| msgid "Count Stock Items"
+msgid "Count stock"
+msgstr "Lagerobjekte zählen"
+
+#: templates/stock_table.html:15
+#, fuzzy
+#| msgid "Move Stock Items"
+msgid "Move stock"
+msgstr "Lagerobjekte bewegen"
+
+#: templates/stock_table.html:16
+#, fuzzy
+#| msgid "On Order"
+msgid "Order stock"
+msgstr "bestellt"
+
+#: templates/stock_table.html:17
+#, fuzzy
+#| msgid "Delete Stock Item"
+msgid "Delete Stock"
+msgstr "Lagerobjekt löschen"
