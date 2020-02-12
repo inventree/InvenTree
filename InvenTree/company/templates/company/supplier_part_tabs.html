@@ -8,12 +8,9 @@
         <a href="{% url 'supplier-part-pricing' part.id %}">{% trans "Pricing" %}</a>
     </li>
     <li{% if tab == 'stock' %} class='active'{% endif %}>
-        <a href="{% url 'supplier-part-detail' part.id %}">{% trans "Stock" %}</a>
+        <a href="{% url 'supplier-part-stock' part.id %}">{% trans "Stock" %}</a>
     </li>
     <li {% if tab == 'orders' %} class='active'{% endif %}>
-        <a href="{% url 'supplier-part-detail' part.id %}">{% trans "Orders" %}</a>
-    </li>
-    <li {% if tab == 'notes' %} class='active'{% endif %}>
-        <a href="{% url 'supplier-part-detail' part.id %}">{% trans "Notes" %}</a>
+        <a href="{% url 'supplier-part-orders' part.id %}">{% trans "Orders" %}</a>
     </li>
 </ul>

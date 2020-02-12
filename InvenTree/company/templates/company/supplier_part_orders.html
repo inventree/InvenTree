@@ -1,0 +1,19 @@
+{% extends "company/supplier_part_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block details %}
+
+{% include "company/supplier_part_tabs.html" with tab='orders' %}
+
+<hr>
+
+<h4>{% trans "Supplier Part Orders" %}</h4>
+
+{% include "order/po_table.html" with orders=part.purchase_orders %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+{% endblock %}
