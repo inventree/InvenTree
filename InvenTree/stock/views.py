@@ -24,7 +24,7 @@ from InvenTree.helpers import ExtractSerialNumbers
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
 
-from company.models import Company
+from company.models import Company, SupplierPart
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
 
@@ -212,6 +212,16 @@ class StockExport(AjaxView):
             except (ValueError, Company.DoesNotExist):
                 pass
 
+        # Check if a particular supplier_part was specified
+        sup_part_id = request.GET.get('supplier_part', None)
+        supplier_part = None
+
+        if sup_part_id:
+            try:
+                supplier_part = SupplierPart.objects.get(pk=sup_part_id)
+            except (ValueError, SupplierPart.DoesNotExist):
+                pass
+
         # Check if a particular part was specified
         part_id = request.GET.get('part', None)
         part = None
@@ -244,7 +254,11 @@ class StockExport(AjaxView):
         if supplier:
             stock_items = stock_items.filter(supplier_part__supplier=supplier)
 
+        if supplier_part:
+            stock_items = stock_items.filter(supplier_part=supplier_part)
+
         # Filter out stock items that are not 'in stock'
+        # TODO - This might need some more thought in the future...
         stock_items = stock_items.filter(customer=None)
         stock_items = stock_items.filter(belongs_to=None)
 
