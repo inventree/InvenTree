@@ -301,6 +301,7 @@ class StockList(generics.ListCreateAPIView):
             'part__category',
             'part__category__name',
             'part__category__description',
+            'supplier_part',
         )
 
         # Reduce the number of lookups we need to do for categories
@@ -371,7 +372,13 @@ class StockList(generics.ListCreateAPIView):
             except PartCategory.DoesNotExist:
                 pass
 
-        # Filter by supplier
+        # Filter by supplier_part ID
+        supplier_part_id = self.request.query_params.get('supplier_part', None)
+
+        if supplier_part_id:
+            stock_list = stock_list.filter(supplier_part=supplier_part_id)
+
+        # Filter by supplier ID
         supplier_id = self.request.query_params.get('supplier', None)
 
         if supplier_id:

@@ -27,7 +27,7 @@ def inrange(n, *args, **kwargs):
 @register.simple_tag()
 def multiply(x, y, *args, **kwargs):
     """ Multiply two numbers together """
-    return x * y
+    return decimal2string(x * y)
 
 
 @register.simple_tag()
@@ -40,7 +40,7 @@ def add(x, y, *args, **kwargs):
 def part_allocation_count(build, part, *args, **kwargs):
     """ Return the total number of <part> allocated to <build> """
 
-    return build.getAllocatedQuantity(part)
+    return decimal2string(build.getAllocatedQuantity(part))
 
 
 @register.simple_tag()

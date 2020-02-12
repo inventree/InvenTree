@@ -53,6 +53,9 @@
                 sortable: true,
                 field: 'quantity',
                 title: 'Uses',
+                formatter: function(value, row, index, field) {
+                    return parseFloat(value);
+                },
             }
 
         ],

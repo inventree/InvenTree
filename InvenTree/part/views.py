@@ -72,7 +72,7 @@ class PartAttachmentCreate(AjaxCreateView):
     """
     model = PartAttachment
     form_class = part_forms.EditPartAttachmentForm
-    ajax_form_title = "Add part attachment"
+    ajax_form_title = _("Add part attachment")
     ajax_template_name = "modal_form.html"
 
     def get_data(self):
@@ -115,7 +115,7 @@ class PartAttachmentEdit(AjaxUpdateView):
     model = PartAttachment
     form_class = part_forms.EditPartAttachmentForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit attachment'
+    ajax_form_title = _('Edit attachment')
     
     def get_data(self):
         return {
@@ -134,13 +134,13 @@ class PartAttachmentDelete(AjaxDeleteView):
     """ View for deleting a PartAttachment """
 
     model = PartAttachment
-    ajax_form_title = "Delete Part Attachment"
+    ajax_form_title = _("Delete Part Attachment")
     ajax_template_name = "part/attachment_delete.html"
     context_object_name = "attachment"
 
     def get_data(self):
         return {
-            'danger': 'Deleted part attachment'
+            'danger': _('Deleted part attachment')
         }
 
 
@@ -148,7 +148,7 @@ class PartSetCategory(AjaxUpdateView):
     """ View for settings the part category for multiple parts at once """
 
     ajax_template_name = 'part/set_category.html'
-    ajax_form_title = 'Set Part Category'
+    ajax_form_title = _('Set Part Category')
     form_class = part_forms.SetPartCategoryForm
 
     category = None
@@ -231,7 +231,7 @@ class MakePartVariant(AjaxCreateView):
     model = Part
     form_class = part_forms.EditPartForm
 
-    ajax_form_title = 'Create Variant'
+    ajax_form_title = _('Create Variant')
     ajax_template_name = 'part/variant_part.html'
 
     def get_part_template(self):
@@ -301,7 +301,7 @@ class PartDuplicate(AjaxCreateView):
     model = Part
     form_class = part_forms.EditPartForm
 
-    ajax_form_title = "Duplicate Part"
+    ajax_form_title = _("Duplicate Part")
     ajax_template_name = "part/copy_part.html"
 
     def get_data(self):
@@ -592,7 +592,7 @@ class PartDetail(DetailView):
 class PartQRCode(QRCodeView):
     """ View for displaying a QR code for a Part object """
 
-    ajax_form_title = "Part QR Code"
+    ajax_form_title = _("Part QR Code")
 
     def get_qr_data(self):
         """ Generate QR code data for the Part """

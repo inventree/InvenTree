@@ -1,6 +1,7 @@
 # Tests for the Part model
 
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
 from django.test import TestCase
@@ -16,7 +17,7 @@ class TemplateTagTest(TestCase):
     """ Tests for the custom template tag code """
 
     def test_multiply(self):
-        self.assertEqual(inventree_extras.multiply(3, 5), 15)
+        self.assertEqual(int(inventree_extras.multiply(3, 5)), 15)
 
     def test_version(self):
         self.assertEqual(type(inventree_extras.inventree_version()), str)

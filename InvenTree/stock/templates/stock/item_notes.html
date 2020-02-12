@@ -35,7 +35,9 @@
 <hr>
 <div class='panel panel-default'>
     <div class='panel-content'>
+        {% if item.notes %}
         {{ item.notes | markdownify }}
+        {% endif %}
     </div>
 </div>
 

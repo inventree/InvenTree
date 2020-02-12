@@ -96,7 +96,7 @@ class PurchaseOrderCreate(AjaxCreateView):
     """ View for creating a new PurchaseOrder object using a modal form """
 
     model = PurchaseOrder
-    ajax_form_title = "Create Purchase Order"
+    ajax_form_title = _("Create Purchase Order")
     form_class = order_forms.EditPurchaseOrderForm
 
     def get_initial(self):
@@ -126,7 +126,7 @@ class PurchaseOrderEdit(AjaxUpdateView):
     """ View for editing a PurchaseOrder using a modal form """
 
     model = PurchaseOrder
-    ajax_form_title = 'Edit Purchase Order'
+    ajax_form_title = _('Edit Purchase Order')
     form_class = order_forms.EditPurchaseOrderForm
 
     def get_form(self):
@@ -146,7 +146,7 @@ class PurchaseOrderCancel(AjaxUpdateView):
     """ View for cancelling a purchase order """
 
     model = PurchaseOrder
-    ajax_form_title = 'Cancel Order'
+    ajax_form_title = _('Cancel Order')
     ajax_template_name = 'order/order_cancel.html'
     form_class = order_forms.CancelPurchaseOrderForm
 
@@ -179,7 +179,7 @@ class PurchaseOrderIssue(AjaxUpdateView):
     """ View for changing a purchase order from 'PENDING' to 'ISSUED' """
 
     model = PurchaseOrder
-    ajax_form_title = 'Issue Order'
+    ajax_form_title = _('Issue Order')
     ajax_template_name = "order/order_issue.html"
     form_class = order_forms.IssuePurchaseOrderForm
 
@@ -215,7 +215,7 @@ class PurchaseOrderComplete(AjaxUpdateView):
     form_class = order_forms.CompletePurchaseOrderForm
     model = PurchaseOrder
     ajax_template_name = "order/order_complete.html"
-    ajax_form_title = "Complete Order"
+    ajax_form_title = _("Complete Order")
     context_object_name = 'order'
 
     def get_context_data(self):
@@ -281,7 +281,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
     """
 
     form_class = order_forms.ReceivePurchaseOrderForm
-    ajax_form_title = "Receive Parts"
+    ajax_form_title = _("Receive Parts")
     ajax_template_name = "order/receive_parts.html"
 
     # Where the parts will be going (selected in POST request)
@@ -445,7 +445,7 @@ class OrderParts(AjaxView):
 
     """
 
-    ajax_form_title = "Order Parts"
+    ajax_form_title = _("Order Parts")
     ajax_template_name = 'order/order_wizard/select_parts.html'
 
     # List of Parts we wish to order
@@ -744,7 +744,7 @@ class POLineItemCreate(AjaxCreateView):
     model = PurchaseOrderLineItem
     context_object_name = 'line'
     form_class = order_forms.EditPurchaseOrderLineItemForm
-    ajax_form_title = 'Add Line Item'
+    ajax_form_title = _('Add Line Item')
 
     def post(self, request, *arg, **kwargs):
 
@@ -859,7 +859,7 @@ class POLineItemEdit(AjaxUpdateView):
     model = PurchaseOrderLineItem
     form_class = order_forms.EditPurchaseOrderLineItemForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Line Item'
+    ajax_form_title = _('Edit Line Item')
 
     def get_form(self):
         form = super().get_form()
@@ -875,10 +875,10 @@ class POLineItemDelete(AjaxDeleteView):
     """
 
     model = PurchaseOrderLineItem
-    ajax_form_title = 'Delete Line Item'
+    ajax_form_title = _('Delete Line Item')
     ajax_template_name = 'order/po_lineitem_delete.html'
     
     def get_data(self):
         return {
-            'danger': 'Deleted line item',
+            'danger': _('Deleted line item'),
         }
