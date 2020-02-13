@@ -33,7 +33,8 @@ part_parameter_urls = [
 part_detail_urls = [
     url(r'^edit/?', views.PartEdit.as_view(), name='part-edit'),
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
-    url(r'^bom-export/?', views.BomDownload.as_view(), name='bom-export'),
+    url(r'^bom-export/?', views.BomExport.as_view(), name='bom-export'),
+    url(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
     url(r'^validate-bom/', views.BomValidate.as_view(), name='bom-validate'),
     url(r'^duplicate/', views.PartDuplicate.as_view(), name='part-duplicate'),
     url(r'^make-variant/', views.MakePartVariant.as_view(), name='make-part-variant'),
@@ -57,7 +58,8 @@ part_detail_urls = [
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 
     # Normal thumbnail with form
-    url(r'^thumbnail/?', views.PartImage.as_view(), name='part-image'),
+    url(r'^thumbnail/?', views.PartImageUpload.as_view(), name='part-image-upload'),
+    url(r'^thumb-select/?', views.PartImageSelect.as_view(), name='part-image-select'),
 
     # Any other URLs go to the part detail page
     url(r'^.*$', views.PartDetail.as_view(), name='part-detail'),

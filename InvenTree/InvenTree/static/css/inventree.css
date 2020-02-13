@@ -52,6 +52,10 @@
     font-size: 12px;
 }
 
+.glyphicon-right {
+    float: right;
+}
+
 .starred-part {
     color: #ffbb00;
 }
@@ -183,6 +187,24 @@
     -webkit-opacity: 10%;
 }
 
+/* grid display for part images */
+
+.table-img-grid tr {
+    display: inline;
+}
+
+.table-img-grid td {
+    padding: 10px;
+    margin: 10px;
+}
+
+.table-img-grid .grid-image {
+
+    height: 128px;
+    width: 128px;
+    object-fit: contain;
+    background: #eee;
+}
 
 .btn-glyph {
     padding-left: 6px;
@@ -209,6 +231,20 @@
     margin: 2px;
     padding: 3px;
     object-fit: contain;
+}
+
+.part-thumb-container:hover .part-thumb-overlay {
+    opacity: 1;
+}
+
+.part-thumb-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: .25s ease;
+    padding: 15px;
+    margin: 5px;
 }
 
 .checkbox {

@@ -385,6 +385,9 @@ function loadStockTrackingTable(table, options) {
     cols.push({
         field: 'quantity',
         title: 'Quantity',
+        formatter: function(value, row, index, field) {
+            return parseFloat(value);
+        },
     });
 
     cols.push({

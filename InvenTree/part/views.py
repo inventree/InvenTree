@@ -15,6 +15,9 @@ from django.views.generic import DetailView, ListView, FormView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from guardian.mixins import PermissionRequiredMixin, PermissionListMixin
+from django.conf import settings
+
+import os
 
 from fuzzywuzzy import fuzz
 from decimal import Decimal
@@ -71,14 +74,14 @@ class PartAttachmentCreate(PermissionRequiredMixin, AjaxCreateView):
     """
     model = PartAttachment
     form_class = part_forms.EditPartAttachmentForm
-    ajax_form_title = "Add part attachment"
+    ajax_form_title = _("Add part attachment")
     ajax_template_name = "modal_form.html"
     permission_required = ('part.add_partattachment')
     permission_object = None
 
     def get_data(self):
         return {
-            'success': 'Added attachment'
+            'success': _('Added attachment')
         }
 
     def get_initial(self):
@@ -116,12 +119,12 @@ class PartAttachmentEdit(PermissionRequiredMixin, AjaxUpdateView):
     model = PartAttachment
     form_class = part_forms.EditPartAttachmentForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit attachment'
+    ajax_form_title = _('Edit attachment')
     permission_required = ('part.change_partattachment')
 
     def get_data(self):
         return {
-            'success': 'Part attachment updated'
+            'success': _('Part attachment updated')
         }
 
     def get_form(self):
@@ -136,14 +139,14 @@ class PartAttachmentDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View for deleting a PartAttachment """
 
     model = PartAttachment
-    ajax_form_title = "Delete Part Attachment"
+    ajax_form_title = _("Delete Part Attachment")
     ajax_template_name = "part/attachment_delete.html"
     context_object_name = "attachment"
     permission_required = ('part.delete_partattachment')
 
     def get_data(self):
         return {
-            'danger': 'Deleted part attachment'
+            'danger': _('Deleted part attachment')
         }
 
 
@@ -151,7 +154,7 @@ class PartSetCategory(PermissionRequiredMixin, AjaxUpdateView):
     """ View for settings the part category for multiple parts at once """
 
     ajax_template_name = 'part/set_category.html'
-    ajax_form_title = 'Set Part Category'
+    ajax_form_title = _('Set Part Category')
     form_class = part_forms.SetPartCategoryForm
     permission_required = ('part.change_part')
     permission_object = None
@@ -236,7 +239,7 @@ class MakePartVariant(PermissionRequiredMixin, AjaxCreateView):
     model = Part
     form_class = part_forms.EditPartForm
 
-    ajax_form_title = 'Create Variant'
+    ajax_form_title = _('Create Variant')
     ajax_template_name = 'part/variant_part.html'
     permission_required = ('part.add_part')
     permission_object = None
@@ -308,14 +311,14 @@ class PartDuplicate(PermissionRequiredMixin, AjaxCreateView):
     model = Part
     form_class = part_forms.EditPartForm
 
-    ajax_form_title = "Duplicate Part"
+    ajax_form_title = _("Duplicate Part")
     ajax_template_name = "part/copy_part.html"
     permission_required = ('part.add_part')
     permission_object = None
 
     def get_data(self):
         return {
-            'success': 'Copied part'
+            'success': _('Copied part')
         }
 
     def get_part_to_copy(self):
@@ -424,14 +427,14 @@ class PartCreate(PermissionRequiredMixin, AjaxCreateView):
     model = Part
     form_class = part_forms.EditPartForm
 
-    ajax_form_title = 'Create new part'
+    ajax_form_title = _('Create new part')
     ajax_template_name = 'part/create_part.html'
     permission_object = None
     permission_required = ('part.add_part')
 
     def get_data(self):
         return {
-            'success': "Created new part",
+            'success': _("Created new part"),
         }
 
     def get_category_id(self):
@@ -607,7 +610,7 @@ class PartQRCode(PermissionRequiredMixin, QRCodeView):
     """ View for displaying a QR code for a Part object """
 
     permission_required = ('part.view_part')
-    ajax_form_title = "Part QR Code"
+    ajax_form_title = _("Part QR Code")
 
     def get_qr_data(self):
         """ Generate QR code data for the Part """
@@ -619,19 +622,59 @@ class PartQRCode(PermissionRequiredMixin, QRCodeView):
             return None
 
 
-class PartImage(PermissionRequiredMixin, AjaxUpdateView):
-    """ View for uploading Part image """
+class PartImageUpload(PermissionRequiredMixin, AjaxUpdateView):
+    """ View for uploading a new Part image """
 
     model = Part
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Upload Part Image'
+    ajax_form_title = _('Upload Part Image')
     form_class = part_forms.PartImageForm
     permission_required = ('part.change_part')
 
     def get_data(self):
         return {
-            'success': 'Updated part image',
+            'success': _('Updated part image'),
         }
+
+
+class PartImageSelect(PermissionRequiredMixin, AjaxUpdateView):
+    """ View for selecting Part image from existing images. """
+
+    model = Part
+    ajax_template_name = 'part/select_image.html'
+    ajax_form_title = _('Select Part Image')
+    permission_required = ('part.change_part')
+
+    fields = [
+        'image',
+    ]
+
+    def post(self, request, *args, **kwargs):
+
+        part = self.get_object()
+        form = self.get_form()
+
+        img = request.POST.get('image', '')
+
+        img = os.path.basename(img)
+
+        data = {}
+
+        if img:
+            img_path = os.path.join(settings.MEDIA_ROOT, 'part_images', img)
+
+            # Ensure that the image already exists
+            if os.path.exists(img_path):
+
+                part.image = os.path.join('part_images', img)
+                part.save()
+
+                data['success'] = _('Updated part image')
+
+        if 'success' not in data:
+            data['error'] = _('Part image not found')
+
+        return self.renderJsonResponse(request, form, data)
 
 
 class PartEdit(PermissionRequiredMixin, AjaxUpdateView):
@@ -640,7 +683,7 @@ class PartEdit(PermissionRequiredMixin, AjaxUpdateView):
     model = Part
     form_class = part_forms.EditPartForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Part Properties'
+    ajax_form_title = _('Edit Part Properties')
     context_object_name = 'part'
     permission_required = ('part.change_part')
 
@@ -663,7 +706,7 @@ class BomValidate(PermissionRequiredMixin, AjaxUpdateView):
     """ Modal form view for validating a part BOM """
 
     model = Part
-    ajax_form_title = "Validate BOM"
+    ajax_form_title = _("Validate BOM")
     ajax_template_name = 'part/bom_validate.html'
     context_object_name = 'part'
     form_class = part_forms.BomValidateForm
@@ -1316,12 +1359,14 @@ class BomDownload(PermissionRequiredMixin, AjaxView):
 
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
 
-        export_format = request.GET.get('format', 'csv')
+        export_format = request.GET.get('file_format', 'csv')
+
+        cascade = str2bool(request.GET.get('cascade', False))
 
         if not IsValidBOMFormat(export_format):
             export_format = 'csv'
 
-        return ExportBom(part, fmt=export_format)
+        return ExportBom(part, fmt=export_format, cascade=cascade)
 
     def get_data(self):
         return {
@@ -1329,12 +1374,53 @@ class BomDownload(PermissionRequiredMixin, AjaxView):
         }
 
 
+class BomExport(AjaxView):
+    """ Provide a simple form to allow the user to select BOM download options.
+    """
+
+    model = Part
+    form_class = part_forms.BomExportForm
+    ajax_form_title = _("Export Bill of Materials")
+
+    def get(self, request, *args, **kwargs):
+        return self.renderJsonResponse(request, self.form_class())
+
+    def post(self, request, *args, **kwargs):
+
+        # Extract POSTed form data
+        fmt = request.POST.get('file_format', 'csv').lower()
+        cascade = str2bool(request.POST.get('cascading', False))
+
+        try:
+            part = Part.objects.get(pk=self.kwargs['pk'])
+        except:
+            part = None
+
+        # Format a URL to redirect to
+        if part:
+            url = reverse('bom-download', kwargs={'pk': part.pk})
+        else:
+            url = ''
+
+        url += '?file_format=' + fmt
+        url += '&cascade=' + str(cascade)
+
+        print("URL:", url)
+
+        data = {
+            'form_valid': part is not None,
+            'url': url,
+        }
+
+        return self.renderJsonResponse(request, self.form_class(), data=data)
+
+
 class PartDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View to delete a Part object """
 
     model = Part
     ajax_template_name = 'part/partial_delete.html'
-    ajax_form_title = 'Confirm Part Deletion'
+    ajax_form_title = _('Confirm Part Deletion')
     context_object_name = 'part'
     permission_required = ('part.delete_part')
 
@@ -1342,7 +1428,7 @@ class PartDelete(PermissionRequiredMixin, AjaxDeleteView):
 
     def get_data(self):
         return {
-            'danger': 'Part was deleted',
+            'danger': _('Part was deleted'),
         }
 
 
@@ -1351,7 +1437,7 @@ class PartPricing(PermissionRequiredMixin, AjaxView):
 
     model = Part
     ajax_template_name = "part/part_pricing.html"
-    ajax_form_title = "Part Pricing"
+    ajax_form_title = _("Part Pricing")
     form_class = part_forms.PartPriceForm
     permission_required = ('part.view_part')
 
@@ -1474,7 +1560,7 @@ class PartParameterTemplateCreate(PermissionRequiredMixin, AjaxCreateView):
 
     model = PartParameterTemplate
     form_class = part_forms.EditPartParameterTemplateForm
-    ajax_form_title = 'Create Part Parameter Template'
+    ajax_form_title = _('Create Part Parameter Template')
     permission_required = ('part.add_partparametertemplate')
     permission_object = None
 
@@ -1484,7 +1570,7 @@ class PartParameterTemplateEdit(PermissionRequiredMixin, AjaxUpdateView):
 
     model = PartParameterTemplate
     form_class = part_forms.EditPartParameterTemplateForm
-    ajax_form_title = 'Edit Part Parameter Template'
+    ajax_form_title = _('Edit Part Parameter Template')
     permission_required = ('part.change_partparametertemplate')
 
 
@@ -1492,7 +1578,7 @@ class PartParameterTemplateDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View for deleting an existing PartParameterTemplate """
 
     model = PartParameterTemplate
-    ajax_form_title = "Delete Part Parameter Template"
+    ajax_form_title = _("Delete Part Parameter Template")
     permission_required = ('part.delete_partparametertemplate')
 
 
@@ -1501,7 +1587,7 @@ class PartParameterCreate(PermissionRequiredMixin, AjaxCreateView):
 
     model = PartParameter
     form_class = part_forms.EditPartParameterForm
-    ajax_form_title = 'Create Part Parameter'
+    ajax_form_title = _('Create Part Parameter')
     permission_required = ('part.add_partparameter')
     permission_object = None
 
@@ -1553,7 +1639,7 @@ class PartParameterEdit(PermissionRequiredMixin, AjaxUpdateView):
 
     model = PartParameter
     form_class = part_forms.EditPartParameterForm
-    ajax_form_title = 'Edit Part Parameter'
+    ajax_form_title = _('Edit Part Parameter')
     permission_required = ('part.change_partparameter')
 
     def get_form(self):
@@ -1568,7 +1654,7 @@ class PartParameterDelete(PermissionRequiredMixin, AjaxDeleteView):
 
     model = PartParameter
     ajax_template_name = 'part/param_delete.html'
-    ajax_form_title = 'Delete Part Parameter'
+    ajax_form_title = _('Delete Part Parameter')
     permission_required = ('part.delete_partparameter')
 
 
@@ -1586,7 +1672,7 @@ class CategoryEdit(PermissionRequiredMixin, AjaxUpdateView):
     model = PartCategory
     form_class = part_forms.EditCategoryForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Part Category'
+    ajax_form_title = _('Edit Part Category')
     permission_required = ('part.change_partcategory')
 
     def get_context_data(self, **kwargs):
@@ -1622,14 +1708,14 @@ class CategoryDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ Delete view to delete a PartCategory """
     model = PartCategory
     ajax_template_name = 'part/category_delete.html'
-    ajax_form_title = 'Delete Part Category'
+    ajax_form_title = _('Delete Part Category')
     context_object_name = 'category'
     success_url = '/part/'
     permission_required = ('part.delete_partcategory')
 
     def get_data(self):
         return {
-            'danger': 'Part category was deleted',
+            'danger': _('Part category was deleted'),
         }
 
 
@@ -1637,7 +1723,7 @@ class CategoryCreate(PermissionRequiredMixin, AjaxCreateView):
     """ Create view to make a new PartCategory """
     model = PartCategory
     ajax_form_action = reverse_lazy('category-create')
-    ajax_form_title = 'Create new part category'
+    ajax_form_title = _('Create new part category')
     ajax_template_name = 'modal_form.html'
     form_class = part_forms.EditCategoryForm
     permission_required = ('part.add_partcategory')
@@ -1691,7 +1777,7 @@ class BomItemCreate(PermissionRequiredMixin, AjaxCreateView):
     model = BomItem
     form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Create BOM item'
+    ajax_form_title = _('Create BOM item')
     permission_required = ('part.add_bomitem')
     permission_object = None
 
@@ -1760,7 +1846,7 @@ class BomItemEdit(PermissionRequiredMixin, AjaxUpdateView):
     model = BomItem
     form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit BOM item'
+    ajax_form_title = _('Edit BOM item')
     permission_required = ('part.change_bomitem')
 
     def get_form(self):
@@ -1809,5 +1895,5 @@ class BomItemDelete(PermissionRequiredMixin, AjaxDeleteView):
     model = BomItem
     ajax_template_name = 'part/bom-delete.html'
     context_object_name = 'item'
-    ajax_form_title = 'Confim BOM item deletion'
+    ajax_form_title = _('Confim BOM item deletion')
     permission_required = ('part.delete_bomitem')

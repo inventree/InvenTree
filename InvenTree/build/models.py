@@ -20,6 +20,7 @@ from markdownx.models import MarkdownxField
 
 from InvenTree.status_codes import BuildStatus
 from InvenTree.fields import InvenTreeURLField
+from InvenTree.helpers import decimal2string
 
 from stock.models import StockItem
 from part.models import Part, BomItem
@@ -42,7 +43,7 @@ class Build(models.Model):
     """
 
     def __str__(self):
-        return "Build {q} x {part}".format(q=self.quantity, part=str(self.part))
+        return "Build {q} x {part}".format(q=decimal2string(self.quantity), part=str(self.part))
 
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.id})
@@ -82,7 +83,7 @@ class Build(models.Model):
     batch = models.CharField(max_length=100, blank=True, null=True,
                              help_text=_('Batch code for this build output'))
     
-    creation_date = models.DateField(auto_now=True, editable=False)
+    creation_date = models.DateField(auto_now_add=True, editable=False)
     
     completion_date = models.DateField(null=True, blank=True)
 

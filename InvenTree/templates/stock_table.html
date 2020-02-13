@@ -1,33 +1,33 @@
+{% load i18n %}
+
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
         {% if "stock.view_stockitem" in perms %}
-        <button class='btn btn-default' id='stock-export' title='Export Stock Information'>Export</button>
+        <button class='btn btn-default' id='stock-export' title='Export Stock Information'>{% trans "Export" %}</button>
         {% endif %}
-        {% if not part or part.is_template == False %}
         {% if "stock.add_stockitem" in perms %}
-        <button class="btn btn-success" id='item-create'>New Stock Item</button>
-        {% endif %}
+        <button class="btn btn-success" id='item-create'>{% trans "New Stock Item" %}</button>
         {% endif %}
         <div class="dropdown" style='float: right;'>
-            <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options<span class="caret"></span></button>
+            <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
             <ul class="dropdown-menu">
                 {% if "stock.change_stockitem" in perms %}
-                <li><a href="#" id='multi-item-add' title='Add to selected stock items'>Add stock</a></li>
+                <li><a href="#" id='multi-item-add' title='Add to selected stock items'>{% trans "Add stock" %}</a></li>
                 {% endif %}
                 {% if "stock.change_stockitem" in perms %}
-                <li><a href="#" id='multi-item-remove' title='Remove from selected stock items'>Remove stock</a></li>
+                <li><a href="#" id='multi-item-remove' title='Remove from selected stock items'>{% trans "Remove stock" %}</a></li>
                 {% endif %}
                 {% if "stock.view_stockitem" in perms %}
-                <li><a href="#" id='multi-item-stocktake' title='Stocktake selected stock items'>Count stock</a></li>
+                <li><a href="#" id='multi-item-stocktake' title='Stocktake selected stock items'>{% trans "Count stock" %}</a></li>
                 {% endif %}
                 {% if "stock.change_stocklocation" in perms %}
-                <li><a href='#' id='multi-item-move' title='Move selected stock items'>Move stock</a></li>
+                <li><a href='#' id='multi-item-move' title='Move selected stock items'>{% trans "Move stock" %}</a></li>
                 {% endif %}
                 {% if "order.change_purchaseorder" in perms %}
-                <li><a href='#' id='multi-item-order' title='Order selected items'>Order stock</a></li>
+                <li><a href='#' id='multi-item-order' title='Order selected items'>{% trans "Order stock" %}</a></li>
                 {% endif %}
                 {% if "stock.delete_stockitem" in perms %}
-                <li><a href='#' id='multi-item-delete' title='Delete selected items'>Delete Stock</a></li>
+                <li><a href='#' id='multi-item-delete' title='Delete selected items'>{% trans "Delete Stock" %}</a></li>
                 {% endif %}
             </ul>
         </div>

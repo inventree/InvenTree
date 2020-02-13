@@ -55,7 +55,7 @@ class BuildCancel(PermissionRequiredMixin, AjaxUpdateView):
 
     model = Build
     ajax_template_name = 'build/cancel.html'
-    ajax_form_title = 'Cancel Build'
+    ajax_form_title = _('Cancel Build')
     context_object_name = 'build'
     form_class = forms.CancelBuildForm
     permission_required = ('build.change_build')
@@ -74,12 +74,12 @@ class BuildCancel(PermissionRequiredMixin, AjaxUpdateView):
         if confirm:
             build.cancelBuild(request.user)
         else:
-            form.errors['confirm_cancel'] = ['Confirm build cancellation']
+            form.errors['confirm_cancel'] = [_('Confirm build cancellation')]
             valid = False
 
         data = {
             'form_valid': valid,
-            'danger': 'Build was cancelled'
+            'danger': _('Build was cancelled')
         }
 
         return self.renderJsonResponse(request, form, data=data)
@@ -95,7 +95,7 @@ class BuildAutoAllocate(PermissionRequiredMixin, AjaxUpdateView):
     model = Build
     form_class = forms.ConfirmBuildForm
     context_object_name = 'build'
-    ajax_form_title = 'Allocate Stock'
+    ajax_form_title = _('Allocate Stock')
     ajax_template_name = 'build/auto_allocate.html'
     permission_required = ('build.change_build')
 
@@ -109,7 +109,7 @@ class BuildAutoAllocate(PermissionRequiredMixin, AjaxUpdateView):
             context['build'] = build
             context['allocations'] = build.getAutoAllocations()
         except Build.DoesNotExist:
-            context['error'] = 'No matching build found'
+            context['error'] = _('No matching build found')
 
         return context
 
@@ -128,8 +128,8 @@ class BuildAutoAllocate(PermissionRequiredMixin, AjaxUpdateView):
         valid = False
 
         if confirm is False:
-            form.errors['confirm'] = ['Confirm stock allocation']
-            form.non_field_errors = 'Check the confirmation box at the bottom of the list'
+            form.errors['confirm'] = [_('Confirm stock allocation')]
+            form.non_field_errors = _('Check the confirmation box at the bottom of the list')
         else:
             build.autoAllocate()
             valid = True
@@ -149,7 +149,7 @@ class BuildUnallocate(PermissionRequiredMixin, AjaxUpdateView):
 
     model = Build
     form_class = forms.ConfirmBuildForm
-    ajax_form_title = "Unallocate Stock"
+    ajax_form_title = _("Unallocate Stock")
     ajax_template_name = "build/unallocate.html"
     permission_required = ('build.change_build')
 
@@ -163,8 +163,8 @@ class BuildUnallocate(PermissionRequiredMixin, AjaxUpdateView):
         valid = False
 
         if confirm is False:
-            form.errors['confirm'] = ['Confirm unallocation of build stock']
-            form.non_field_errors = 'Check the confirmation box'
+            form.errors['confirm'] = [_('Confirm unallocation of build stock')]
+            form.non_field_errors = _('Check the confirmation box')
         else:
             build.unallocateStock()
             valid = True
@@ -187,7 +187,7 @@ class BuildComplete(PermissionRequiredMixin, AjaxUpdateView):
     model = Build
     form_class = forms.CompleteBuildForm
     context_object_name = "build"
-    ajax_form_title = "Complete Build"
+    ajax_form_title = _("Complete Build")
     ajax_template_name = "build/complete.html"
     permission_required = ('build.change_build')
 
@@ -261,14 +261,14 @@ class BuildComplete(PermissionRequiredMixin, AjaxUpdateView):
 
         if confirm is False:
             form.errors['confirm'] = [
-                'Confirm completion of build',
+                _('Confirm completion of build'),
             ]
         else:
             try:
                 location = StockLocation.objects.get(id=loc_id)
                 valid = True
             except StockLocation.DoesNotExist:
-                form.errors['location'] = ['Invalid location selected']
+                form.errors['location'] = [_('Invalid location selected')]
 
             serials = []
 
@@ -312,7 +312,7 @@ class BuildComplete(PermissionRequiredMixin, AjaxUpdateView):
     def get_data(self):
         """ Provide feedback data back to the form """
         return {
-            'info': 'Build marked as COMPLETE'
+            'info': _('Build marked as COMPLETE')
         }
 
 
@@ -391,7 +391,7 @@ class BuildCreate(PermissionRequiredMixin, AjaxCreateView):
     model = Build
     context_object_name = 'build'
     form_class = forms.EditBuildForm
-    ajax_form_title = 'Start new Build'
+    ajax_form_title = _('Start new Build')
     ajax_template_name = 'modal_form.html'
     permission_required = ('build.add_build')
     permission_object = None
@@ -416,7 +416,7 @@ class BuildCreate(PermissionRequiredMixin, AjaxCreateView):
 
     def get_data(self):
         return {
-            'success': 'Created new build',
+            'success': _('Created new build'),
         }
 
 
@@ -426,13 +426,13 @@ class BuildUpdate(PermissionRequiredMixin, AjaxUpdateView):
     model = Build
     form_class = forms.EditBuildForm
     context_object_name = 'build'
-    ajax_form_title = 'Edit Build Details'
+    ajax_form_title = _('Edit Build Details')
     ajax_template_name = 'modal_form.html'
     permission_required = ('build.change_build')
 
     def get_data(self):
         return {
-            'info': 'Edited build',
+            'info': _('Edited build'),
         }
 
 
@@ -441,8 +441,9 @@ class BuildDelete(PermissionRequiredMixin, AjaxDeleteView):
 
     model = Build
     ajax_template_name = 'build/delete_build.html'
-    ajax_form_title = 'Delete Build'
+    ajax_form_title = _('Delete Build')
     permission_required = ('build.delete_build')
+
 
 
 class BuildItemDelete(PermissionRequiredMixin, AjaxDeleteView):
@@ -452,13 +453,13 @@ class BuildItemDelete(PermissionRequiredMixin, AjaxDeleteView):
 
     model = BuildItem
     ajax_template_name = 'build/delete_build_item.html'
-    ajax_form_title = 'Unallocate Stock'
+    ajax_form_title = _('Unallocate Stock')
     context_object_name = 'item'
     permission_required = ('build.delete_builditem')
 
     def get_data(self):
         return {
-            'danger': 'Removed parts from build allocation'
+            'danger': _('Removed parts from build allocation')
         }
 
 
@@ -468,7 +469,7 @@ class BuildItemCreate(PermissionRequiredMixin, AjaxCreateView):
     model = BuildItem
     form_class = forms.EditBuildItemForm
     ajax_template_name = 'build/create_build_item.html'
-    ajax_form_title = 'Allocate new Part'
+    ajax_form_title = _('Allocate new Part')
     permission_required = ('build.add_builditem')
     permission_object = None
 
@@ -587,12 +588,12 @@ class BuildItemEdit(PermissionRequiredMixin, AjaxUpdateView):
     model = BuildItem
     ajax_template_name = 'modal_form.html'
     form_class = forms.EditBuildItemForm
-    ajax_form_title = 'Edit Stock Allocation'
+    ajax_form_title = _('Edit Stock Allocation')
     permission_required = ('build.change_builditem')
 
     def get_data(self):
         return {
-            'info': 'Updated Build Item',
+            'info': _('Updated Build Item'),
         }
 
     def get_form(self):

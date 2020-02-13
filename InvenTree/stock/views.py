@@ -25,7 +25,7 @@ from InvenTree.helpers import ExtractSerialNumbers
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
 
-from company.models import Company
+from company.models import Company, SupplierPart
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
 
@@ -220,6 +220,16 @@ class StockExport(PermissionRequiredMixin, AjaxView):
             except (ValueError, Company.DoesNotExist):
                 pass
 
+        # Check if a particular supplier_part was specified
+        sup_part_id = request.GET.get('supplier_part', None)
+        supplier_part = None
+
+        if sup_part_id:
+            try:
+                supplier_part = SupplierPart.objects.get(pk=sup_part_id)
+            except (ValueError, SupplierPart.DoesNotExist):
+                pass
+
         # Check if a particular part was specified
         part_id = request.GET.get('part', None)
         part = None
@@ -252,7 +262,11 @@ class StockExport(PermissionRequiredMixin, AjaxView):
         if supplier:
             stock_items = stock_items.filter(supplier_part__supplier=supplier)
 
+        if supplier_part:
+            stock_items = stock_items.filter(supplier_part=supplier_part)
+
         # Filter out stock items that are not 'in stock'
+        # TODO - This might need some more thought in the future...
         stock_items = stock_items.filter(customer=None)
         stock_items = stock_items.filter(belongs_to=None)
 
@@ -832,6 +846,11 @@ class StockItemCreate(PermissionRequiredMixin, AjaxCreateView):
 
         part_id = self.request.GET.get('part', None)
         loc_id = self.request.GET.get('location', None)
+        sup_part_id = self.request.GET.get('supplier_part', None)
+
+        part = None
+        location = None
+        supplier_part = None
 
         # Part field has been specified
         if part_id:
@@ -840,14 +859,27 @@ class StockItemCreate(PermissionRequiredMixin, AjaxCreateView):
                 initials['part'] = part
                 initials['location'] = part.get_default_location()
                 initials['supplier_part'] = part.default_supplier
-            except Part.DoesNotExist:
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        # SupplierPart field has been specified
+        # It must match the Part, if that has been supplied
+        if sup_part_id:
+            try:
+                supplier_part = SupplierPart.objects.get(pk=sup_part_id)
+
+                if part is None or supplier_part.part == part:
+                    initials['supplier_part'] = supplier_part
+
+            except (ValueError, SupplierPart.DoesNotExist):
                 pass
 
         # Location has been specified
         if loc_id:
             try:
-                initials['location'] = StockLocation.objects.get(pk=loc_id)
-            except StockLocation.DoesNotExist:
+                location = StockLocation.objects.get(pk=loc_id)
+                initials['location'] = location
+            except (ValueError, StockLocation.DoesNotExist):
                 pass
 
         return initials
@@ -900,34 +932,49 @@ class StockItemCreate(PermissionRequiredMixin, AjaxCreateView):
                                 form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
                                 valid = False
 
-                            # At this point we have a list of serial numbers which we know are valid,
-                            # and do not currently exist
-                            form.clean()
+                            else:
+                                # At this point we have a list of serial numbers which we know are valid,
+                                # and do not currently exist
+                                form.clean()
 
-                            data = form.cleaned_data
+                                form_data = form.cleaned_data
 
-                            for serial in serials:
-                                # Create a new stock item for each serial number
-                                item = StockItem(
-                                    part=part,
-                                    quantity=1,
-                                    serial=serial,
-                                    supplier_part=data.get('supplier_part'),
-                                    location=data.get('location'),
-                                    batch=data.get('batch'),
-                                    delete_on_deplete=False,
-                                    status=data.get('status'),
-                                    notes=data.get('notes'),
-                                    URL=data.get('URL'),
-                                )
+                                for serial in serials:
+                                    # Create a new stock item for each serial number
+                                    item = StockItem(
+                                        part=part,
+                                        quantity=1,
+                                        serial=serial,
+                                        supplier_part=form_data.get('supplier_part'),
+                                        location=form_data.get('location'),
+                                        batch=form_data.get('batch'),
+                                        delete_on_deplete=False,
+                                        status=form_data.get('status'),
+                                        URL=form_data.get('URL'),
+                                    )
 
-                                item.save(user=request.user)
+                                    item.save(user=request.user)
+
+                                data['success'] = _('Created {n} new stock items'.format(n=len(serials)))
+                                valid = True
 
                         except ValidationError as e:
                             form.errors['serial_numbers'] = e.messages
                             valid = False
 
-                else:
+                    else:
+                        # We have a serialized part, but no serial numbers specified...
+                        form.clean()
+                        form._post_clean()
+
+                        item = form.save(commit=False)
+                        item.save(user=request.user)
+
+                        data['pk'] = item.pk
+                        data['url'] = item.get_absolute_url()
+                        data['success'] = _("Created new stock item")
+
+                else:  # Referenced Part object is not marked as "trackable"
                     # For non-serialized items, simply save the form.
                     # We need to call _post_clean() here because it is prevented in the form implementation
                     form.clean()

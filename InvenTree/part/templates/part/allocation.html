@@ -39,6 +39,9 @@
             {
                 title: 'Allocated',
                 sortable: false,
+                formatter: function(value, row, index, field) {
+                    return parseFloat(value);
+                },
             },
             {
                 title: 'Status',

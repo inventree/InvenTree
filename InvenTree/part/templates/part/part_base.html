@@ -27,17 +27,7 @@
 
 <div class="row">
 <div class="col-sm-6">
-    <div class="media">
-      <div class="media-left">
-        <div class='dropzone' id='part-thumb'>
-                <img class="part-thumb"
-                {% if part.image %}
-                src="{{ part.image.url }}"
-                {% else %}
-                src="{% static 'img/blank_image.png' %}"
-                {% endif %}/>
-        </div>
-      </div>
+    {% include "part/part_thumb.html" %}
     <div class="media-body">
         <h4>
             {{ part.full_name }}
@@ -175,7 +165,7 @@
 
     enableDragAndDrop(
         '#part-thumb',
-        "{% url 'part-image' part.id %}",
+        "{% url 'part-image-upload' part.id %}",
         {
             label: 'image',
             success: function(data, status, xhr) {
@@ -220,13 +210,54 @@
         });
     });
 
-    $("#part-thumb").click(function() {
-        launchModalForm(
-                        "{% url 'part-image' part.id %}",
+    $("#part-image-upload").click(function() {
+        launchModalForm("{% url 'part-image-upload' part.id %}",
+            {
+                reload: true
+            }
+        );
+    });
+
+
+    function onSelectImage(response) {
+        // Callback when the image-selection modal form is displayed
+        // Populate the form with image data (requested via AJAX)
+        
+        $("#modal-form").find("#image-select-table").bootstrapTable({
+            pagination: true,
+            pageSize: 25,
+            url: "{% url 'api-part-thumbs' %}",
+            showHeader: false,
+            clickToSelect: true,
+            singleSelect: true,
+            columns: [
+                {
+                    checkbox: true,
+                },
+                {
+                    field: 'image',
+                    title: 'Image',
+                    formatter: function(value, row, index, field) {
+                        return "<img src='/media/" + value + "' class='grid-image'/>"
+                    }
+                }
+            ],
+            onCheck: function(row, element) {
+
+                // Update the selected image in the form
+                var ipt = $("#modal-form").find("#image-input");
+                ipt.val(row.image);
+
+            }
+        });
+    }
+
+    $("#part-image-select").click(function() {
+        launchModalForm("{% url 'part-image-select' part.id %}",
                         {
-                            reload: true
-                        }
-                        );
+                            reload: true,
+                            after_render: onSelectImage
+                        });
     });
 
     $("#part-edit").click(function() {

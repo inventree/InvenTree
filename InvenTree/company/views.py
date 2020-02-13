@@ -6,6 +6,7 @@ Django views for interacting with Company app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView, UpdateView
 
 from django.urls import reverse
@@ -96,13 +97,13 @@ class CompanyImage(PermissionRequiredMixin, AjaxUpdateView):
     """ View for uploading an image for the Company """
     model = Company
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Update Company Image'
+    ajax_form_title = _('Update Company Image')
     form_class = CompanyImageForm
     permission_required = ('company.change_company')
 
     def get_data(self):
         return {
-            'success': 'Updated company image',
+            'success': _('Updated company image'),
         }
 
 
@@ -112,12 +113,12 @@ class CompanyEdit(PermissionRequiredMixin, AjaxUpdateView):
     form_class = EditCompanyForm
     context_object_name = 'company'
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Company'
+    ajax_form_title = _('Edit Company')
     permission_required = ('company.change_company')
 
     def get_data(self):
         return {
-            'info': 'Edited company information',
+            'info': _('Edited company information'),
         }
 
 
@@ -127,13 +128,13 @@ class CompanyCreate(PermissionRequiredMixin, AjaxCreateView):
     context_object_name = 'company'
     form_class = EditCompanyForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = "Create new Company"
+    ajax_form_title = _("Create new Company")
     permission_required = ('company.add_company')
     permission_object = None
 
     def get_data(self):
         return {
-            'success': "Created new company",
+            'success': _("Created new company"),
         }
 
 
@@ -143,20 +144,20 @@ class CompanyDelete(PermissionRequiredMixin, AjaxDeleteView):
     model = Company
     success_url = '/company/'
     ajax_template_name = 'company/delete.html'
-    ajax_form_title = 'Delete Company'
+    ajax_form_title = _('Delete Company')
     context_object_name = 'company'
     permission_required = ('company.delete_company')
 
     def get_data(self):
         return {
-            'danger': 'Company was deleted',
+            'danger': _('Company was deleted'),
         }
 
 
 class SupplierPartDetail(PermissionRequiredMixin, DetailView):
     """ Detail view for SupplierPart """
     model = SupplierPart
-    template_name = 'company/partdetail.html'
+    template_name = 'company/supplier_part_detail.html'
     context_object_name = 'part'
     permission_required = ('company.view_supplierpart')
     queryset = SupplierPart.objects.all()
@@ -175,7 +176,7 @@ class SupplierPartEdit(PermissionRequiredMixin, AjaxUpdateView):
     context_object_name = 'part'
     form_class = EditSupplierPartForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Supplier Part'
+    ajax_form_title = _('Edit Supplier Part')
     permission_required = ('company.change_supplierpart')
 
 
@@ -185,7 +186,7 @@ class SupplierPartCreate(PermissionRequiredMixin, AjaxCreateView):
     model = SupplierPart
     form_class = EditSupplierPartForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Create new Supplier Part'
+    ajax_form_title = _('Create new Supplier Part')
     context_object_name = 'part'
     permission_required = ('company.add_supplierpart')
     permission_object = None
@@ -244,7 +245,7 @@ class SupplierPartDelete(PermissionRequiredMixin, AjaxDeleteView):
 
     success_url = '/supplier/'
     ajax_template_name = 'company/partdelete.html'
-    ajax_form_title = 'Delete Supplier Part'
+    ajax_form_title = _('Delete Supplier Part')
     permission_required = ('company.delete_supplierpart')
 
     parts = []
@@ -315,7 +316,7 @@ class PriceBreakCreate(PermissionRequiredMixin, AjaxCreateView):
 
     model = SupplierPriceBreak
     form_class = EditPriceBreakForm
-    ajax_form_title = 'Add Price Break'
+    ajax_form_title = _('Add Price Break')
     ajax_template_name = 'modal_form.html'
     permission_required = ('company.add_supplierpricebreak')
     permission_object = None
@@ -352,7 +353,7 @@ class PriceBreakEdit(PermissionRequiredMixin, AjaxUpdateView):
 
     model = SupplierPriceBreak
     form_class = EditPriceBreakForm
-    ajax_form_title = 'Edit Price Break'
+    ajax_form_title = _('Edit Price Break')
     ajax_template_name = 'modal_form.html'
     permission_required = ('company.change_supplierpricebreak')
 
@@ -368,6 +369,6 @@ class PriceBreakDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View for deleting a supplier price break """
 
     model = SupplierPriceBreak
-    ajax_form_title = "Delete Price Break"
+    ajax_form_title = _("Delete Price Break")
     ajax_template_name = 'modal_delete_form.html'
     permission_required = ('company.delete_supplierpricebreak')
