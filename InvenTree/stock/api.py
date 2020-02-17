@@ -260,6 +260,8 @@ class StockList(generics.ListCreateAPIView):
         - ancestor: Filter by an 'ancestor' StockItem
     """
 
+    queryset = StockItem.objects.all()
+
     def get_serializer(self, *args, **kwargs):
 
         try:
@@ -334,7 +336,9 @@ class StockList(generics.ListCreateAPIView):
         """
 
         # Start with all objects
-        stock_list = StockItem.objects.filter(customer=None, belongs_to=None)
+        stock_list = super(StockList, self).get_queryset()
+        
+        stock_list = stock_list.filter(customer=None, belongs_to=None)
 
         # Does the client wish to filter by the Part ID?
         part_id = self.request.query_params.get('part', None)
@@ -426,6 +430,7 @@ class StockList(generics.ListCreateAPIView):
         'supplier_part',
         'customer',
         'belongs_to',
+        'build',
         # 'status' TODO - There are some issues filtering based on an enumeration field
     ]
 

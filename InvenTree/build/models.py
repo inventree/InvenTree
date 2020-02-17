@@ -97,6 +97,10 @@ class Build(models.Model):
 
     notes = MarkdownxField(blank=True, help_text=_('Extra build notes'))
 
+    @property
+    def output_count(self):
+        return self.build_outputs.count()
+
     @transaction.atomic
     def cancelBuild(self, user):
         """ Mark the Build as CANCELLED
@@ -235,7 +239,7 @@ class Build(models.Model):
             now=str(datetime.now().date())
         )
 
-        if self.part.trackable:
+        if self.part.trackable and serial_numbers:
             # Add new serial numbers
             for serial in serial_numbers:
                 item = StockItem.objects.create(
