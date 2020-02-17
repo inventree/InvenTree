@@ -615,10 +615,11 @@ class StockItem(MPTTModel):
 
         self.location = location
 
-        self.addTransactionNote(msg,
-                                user,
-                                notes=notes,
-                                system=True)
+        self.addTransactionNote(
+            msg,
+            user,
+            notes=notes,
+            system=True)
 
         self.save()
 
