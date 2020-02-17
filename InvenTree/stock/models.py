@@ -552,7 +552,13 @@ class StockItem(MPTTModel):
         new_stock.pk = None
         new_stock.parent = self
         new_stock.quantity = quantity
-        new_stock.location = location
+
+        # Move to the new location if specified, otherwise use current location
+        if location:
+            new_stock.location = location
+        else:
+            new_stock.location = self.location
+
         new_stock.save()
 
         # Copy the transaction history of this part into the new one
@@ -606,7 +612,7 @@ class StockItem(MPTTModel):
             # Split the existing StockItem in two
             self.splitStock(quantity, location, user)
 
-            return
+            return True
 
         msg = "Moved to {loc}".format(loc=str(location))
 
@@ -755,6 +761,23 @@ class StockItem(MPTTModel):
             s += ' @ {loc}'.format(loc=self.location.name)
 
         return s
+
+
+@receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
+def before_delete_stock_item(sender, instance, using, **kwargs):
+    """ Receives pre_delete signal from StockItem object.
+
+    Before a StockItem is deleted, ensure that each child object is updated,
+    to point to the new parent item.
+    """
+
+    # Update each StockItem parent field
+    for child in instance.children.all():
+        child.parent = instance.parent
+        child.save()
+
+    # Rebuild the MPTT tree
+    StockItem.objects.rebuild()
 
 
 class StockItemTracking(models.Model):

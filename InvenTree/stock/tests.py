@@ -156,7 +156,9 @@ class StockTest(TestCase):
 
         # Move 6 of the units
         self.assertTrue(w1.move(self.diningroom, 'Moved', None, quantity=6))
-        self.assertEqual(w1.quantity, 6)
+
+        # There should be 4 remaining
+        self.assertEqual(w1.quantity, 4)
 
         # There should also be a new object still in drawer3
         self.assertEqual(StockItem.objects.filter(part=25).count(), 4)
@@ -175,17 +177,17 @@ class StockTest(TestCase):
         N = StockItem.objects.filter(part=3).count()
 
         stock = StockItem.objects.get(id=1234)
-        stock.splitStock(1000, None)
+        stock.splitStock(1000, None, self.user)
         self.assertEqual(stock.quantity, 234)
 
         # There should be a new stock item too!
         self.assertEqual(StockItem.objects.filter(part=3).count(), N + 1)
 
         # Try to split a negative quantity
-        stock.splitStock(-10, None)
+        stock.splitStock(-10, None, self.user)
         self.assertEqual(StockItem.objects.filter(part=3).count(), N + 1)
 
-        stock.splitStock(stock.quantity, None)
+        stock.splitStock(stock.quantity, None, self.user)
         self.assertEqual(StockItem.objects.filter(part=3).count(), N + 1)
 
     def test_stocktake(self):
