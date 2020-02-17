@@ -487,6 +487,7 @@ class StockItem(MPTTModel):
             new_item.quantity = 1
             new_item.serial = serial
             new_item.pk = None
+            new_item.parent = self
 
             if location:
                 new_item.location = location
