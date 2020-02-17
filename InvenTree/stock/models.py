@@ -386,6 +386,13 @@ class StockItem(MPTTModel):
         return True
 
     @property
+    def child_count(self):
+        """ Return the number of 'child' items associated with this StockItem.
+        A child item is one which has been split from this one.
+        """
+        return self.get_descendants(include_self=False).count()
+
+    @property
     def in_stock(self):
 
         if self.belongs_to or self.customer:
