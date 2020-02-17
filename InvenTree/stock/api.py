@@ -258,6 +258,7 @@ class StockList(generics.ListCreateAPIView):
         - category: Filter by parts belonging to a certain category
         - supplier: Filter by supplier
         - ancestor: Filter by an 'ancestor' StockItem
+        - status: Filter by the StockItem status
     """
 
     queryset = StockItem.objects.all()
@@ -391,6 +392,12 @@ class StockList(generics.ListCreateAPIView):
             except (ValueError, PartCategory.DoesNotExist):
                 pass
 
+        # Filter by StockItem status
+        status = self.request.query_params.get('status', None)
+
+        if status:
+            stock_list = stock_list.filter(status=status)
+
         # Filter by supplier_part ID
         supplier_part_id = self.request.query_params.get('supplier_part', None)
 
@@ -430,8 +437,7 @@ class StockList(generics.ListCreateAPIView):
         'supplier_part',
         'customer',
         'belongs_to',
-        'build',
-        # 'status' TODO - There are some issues filtering based on an enumeration field
+        'build'
     ]
 
 
