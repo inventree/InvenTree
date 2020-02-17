@@ -35,7 +35,7 @@ To configure Inventree inside a virtual environment, ``cd`` into the inventree b
 
 ``source inventree-env/bin/activate``
 
-This will place the current shell session inside a virtual environment - the terminal should display the ``(inventree)`` prefix.
+This will place the current shell session inside a virtual environment - the terminal should display the ``(inventree-env)`` prefix.
 
 .. note::
     Remember to run ``source inventree-env/bin/activate`` when starting each shell session, before running Inventree commands. This will ensure that the correct environment is being used.
