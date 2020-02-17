@@ -515,13 +515,14 @@ class StockItem(MPTTModel):
             item.save()
 
     @transaction.atomic
-    def splitStock(self, quantity, user):
+    def splitStock(self, quantity, location, user):
         """ Split this stock item into two items, in the same location.
         Stock tracking notes for this StockItem will be duplicated,
         and added to the new StockItem.
 
         Args:
             quantity: Number of stock items to remove from this entity, and pass to the next
+            location: Where to move the new StockItem to
 
         Notes:
             The provided quantity will be subtracted from this item and given to the new one.
@@ -551,6 +552,7 @@ class StockItem(MPTTModel):
         new_stock.pk = None
         new_stock.parent = self
         new_stock.quantity = quantity
+        new_stock.location = location
         new_stock.save()
 
         # Copy the transaction history of this part into the new one
@@ -568,6 +570,11 @@ class StockItem(MPTTModel):
     @transaction.atomic
     def move(self, location, notes, user, **kwargs):
         """ Move part to a new location.
+
+        If less than the available quantity is to be moved,
+        a new StockItem is created, with the defined quantity,
+        and that new StockItem is moved.
+        The quantity is also subtracted from the existing StockItem.
 
         Args:
             location: Destination location (cannot be null)
@@ -596,8 +603,10 @@ class StockItem(MPTTModel):
         if quantity < self.quantity:
             # We need to split the stock!
 
-            # Leave behind certain quantity
-            self.splitStock(self.quantity - quantity, user)
+            # Split the existing StockItem in two
+            self.splitStock(quantity, location, user)
+
+            return
 
         msg = "Moved to {loc}".format(loc=str(location))
 
