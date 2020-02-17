@@ -43,14 +43,20 @@
                 <button type='button' class='btn btn-default btn-glyph' id='stock-edit' title='Edit stock item'>
                     <span class='glyphicon glyphicon-edit'/>
                 </button>
+                {% if item.can_delete %}
                 <button type='button' class='btn btn-default btn-glyph' id='stock-delete' title='Edit stock item'>
                     <span class='glyphicon glyphicon-trash'/>
                 </button>
+                {% endif %}
             </div>
         </p>
         {% if item.serialized %}
         <div class='alert alert-block alert-info'>
             {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
+        </div>
+        {% elif item.child_count > 0 %}
+        <div class='alert alert-block alert-warning'>
+            {% trans "This stock item cannot be deleted as it has child items" %}
         </div>
         {% elif item.delete_on_deplete %}
         <div class='alert alert-block alert-warning'>

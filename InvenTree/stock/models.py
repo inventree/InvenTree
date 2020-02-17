@@ -376,9 +376,13 @@ class StockItem(MPTTModel):
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
 
+        - Has child StockItems
         - Has a serial number and is tracked
         - Is installed inside another StockItem
         """
+
+        if self.child_count > 0:
+            return False
 
         if self.part.trackable and self.serial is not None:
             return False
