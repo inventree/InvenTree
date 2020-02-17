@@ -12,6 +12,7 @@ from django.conf.urls import url, include
 
 from .models import Build, BuildItem
 from .serializers import BuildSerializer, BuildItemSerializer
+from rest_framework_guardian import filters as guardian_filters
 
 
 class BuildList(generics.ListCreateAPIView):
@@ -28,6 +29,7 @@ class BuildList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -40,6 +42,9 @@ class BuildDetail(generics.RetrieveUpdateAPIView):
 
     queryset = Build.objects.all()
     serializer_class = BuildSerializer
+    filter_backends = [
+        guardian_filters.ObjectPermissionsFilter,
+    ]
 
 
 class BuildItemList(generics.ListCreateAPIView):
@@ -49,6 +54,9 @@ class BuildItemList(generics.ListCreateAPIView):
     - POST: Create a new BuildItem object
     """
     serializer_class = BuildItemSerializer
+    filter_backends = [
+        guardian_filters.ObjectPermissionsFilter,
+    ]
 
     def get_queryset(self):
         """ Override the queryset method,
@@ -71,6 +79,7 @@ class BuildItemList(generics.ListCreateAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [

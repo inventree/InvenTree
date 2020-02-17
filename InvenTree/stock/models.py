@@ -766,6 +766,3 @@ class StockItemTracking(models.Model):
 
     # TODO
     # file = models.FileField()
-
-
-

@@ -28,6 +28,7 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, response, filters
+from rest_framework_guardian import filters as guardian_filters
 
 
 class StockCategoryTree(TreeSerializer):
@@ -226,6 +227,7 @@ class StockLocationList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -308,8 +310,6 @@ class StockList(generics.ListCreateAPIView):
             if loc_id:
                 if loc_id not in locations:
                     locations[loc_id] = StockLocation.objects.get(pk=loc_id).pathstring
-                
-
                 item['location__path'] = locations[loc_id]
             else:
                 item['location__path'] = None
@@ -350,8 +350,6 @@ class StockList(generics.ListCreateAPIView):
             try:
                 location = StockLocation.objects.get(pk=loc_id)
                 stock_list = stock_list.filter(location__in=location.getUniqueChildren())
-                 
-
             except StockLocation.DoesNotExist:
                 pass
 
@@ -395,6 +393,7 @@ class StockList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -436,6 +435,7 @@ class StockTrackingList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [

@@ -175,7 +175,7 @@ def ExtractSerialNumbers(serials, expected_quantity):
 
     serials = serials.strip()
 
-    groups = re.split("[\s,]+", serials)
+    groups = re.split(r"[\s,]+", serials)
 
     numbers = []
     errors = []

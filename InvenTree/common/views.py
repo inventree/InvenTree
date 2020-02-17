@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
-from guardian.mixins import PermissionRequiredMixin, PermissionListMixin
+from guardian.mixins import PermissionRequiredMixin
 
 from . import models
 from . import forms

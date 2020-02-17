@@ -7,20 +7,23 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
+from guardian.mixins import PermissionRequiredMixin, PermissionListMixin
 
 
-class UserDetail(generics.RetrieveAPIView):
+class UserDetail(generics.RetrieveAPIView, PermissionRequiredMixin):
     """ Detail endpoint for a single user """
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_required = ('auth.view_user')
 
 
-class UserList(generics.ListAPIView):
+class UserList(generics.ListAPIView, PermissionListMixin):
     """ List endpoint for detail on all users """
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_required = ('auth.view_user')
 
 
 class GetAuthToken(ObtainAuthToken):

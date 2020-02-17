@@ -13,7 +13,7 @@ from django.conf.urls import url, include
 from . import views
 
 part_attachment_urls = [
-    url('^new/?', views.PartAttachmentCreate.as_view(), name='part-attachment-create'),
+    url(r'^new/?', views.PartAttachmentCreate.as_view(), name='part-attachment-create'),
     url(r'^(?P<pk>\d+)/edit/?', views.PartAttachmentEdit.as_view(), name='part-attachment-edit'),
     url(r'^(?P<pk>\d+)/delete/?', views.PartAttachmentDelete.as_view(), name='part-attachment-delete'),
 ]
@@ -21,12 +21,12 @@ part_attachment_urls = [
 part_parameter_urls = [
     
     url('^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
-    url('^template/(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='part-param-template-edit'),
-    url('^template/(?P<pk>\d+)/delete/', views.PartParameterTemplateDelete.as_view(), name='part-param-template-edit'),
+    url(r'^template/(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='part-param-template-edit'),
+    url(r'^template/(?P<pk>\d+)/delete/', views.PartParameterTemplateDelete.as_view(), name='part-param-template-edit'),
     
     url('^new/', views.PartParameterCreate.as_view(), name='part-param-create'),
-    url('^(?P<pk>\d+)/edit/', views.PartParameterEdit.as_view(), name='part-param-edit'),
-    url('^(?P<pk>\d+)/delete/', views.PartParameterDelete.as_view(), name='part-param-delete'),
+    url(r'^(?P<pk>\d+)/edit/', views.PartParameterEdit.as_view(), name='part-param-edit'),
+    url(r'^(?P<pk>\d+)/delete/', views.PartParameterDelete.as_view(), name='part-param-delete'),
 
 ]
 

@@ -4,8 +4,6 @@
 {% load inventree_extras %}
 {% load i18n %}
 {% block details %}
-{% load guardian_tags %}
-{% get_obj_perms request.user for stockitem as "perms" %}
 
 {% include "stock/tabs.html" with tab="tracking" %}
 

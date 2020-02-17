@@ -21,6 +21,7 @@ from company.models import SupplierPart
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .serializers import POSerializer, POLineItemSerializer
+from rest_framework_guardian import filters as guardian_filters
 
 
 class POList(generics.ListCreateAPIView):
@@ -32,6 +33,9 @@ class POList(generics.ListCreateAPIView):
 
     queryset = PurchaseOrder.objects.all()
     serializer_class = POSerializer
+    filter_backends = [
+        guardian_filters.ObjectPermissionsFilter,
+    ]
 
     def list(self, request, *args, **kwargs):
 
@@ -97,6 +101,7 @@ class POList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -116,6 +121,9 @@ class PODetail(generics.RetrieveUpdateAPIView):
 
     queryset = PurchaseOrder.objects.all()
     serializer_class = POSerializer
+    filter_backends = [
+        guardian_filters.ObjectPermissionsFilter,
+    ]
 
 
 class POLineItemList(generics.ListCreateAPIView):
@@ -130,6 +138,7 @@ class POLineItemList(generics.ListCreateAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -143,6 +152,9 @@ class POLineItemDetail(generics.RetrieveUpdateAPIView):
 
     queryset = PurchaseOrderLineItem
     serializer_class = POLineItemSerializer
+    filter_backends = [
+        guardian_filters.ObjectPermissionsFilter,
+    ]
 
 
 po_api_urls = [

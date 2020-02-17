@@ -1,8 +1,6 @@
 {% extends "company/company_base.html" %}
 {% load static %}
-{% load guardian_tags %}
 {% block details %}
-{% get_obj_perms request.user for company as "perms" %}
 {% load i18n %}
 
 {% include 'company/tabs.html' with tab='parts' %}

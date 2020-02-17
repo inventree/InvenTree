@@ -108,8 +108,6 @@ INSTALLED_APPS = [
     'guardian',                     # Object Authentication Backend
 ]
 
-
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -138,8 +136,8 @@ if CONFIG.get('log_queries', False):
 
 
 AUTHENTICATION_BACKENDS = (
-    'guardian.backends.ObjectPermissionBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
 )
 
 ROOT_URLCONF = 'InvenTree.urls'
@@ -169,7 +167,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoObjectPermissions',
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ],
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }

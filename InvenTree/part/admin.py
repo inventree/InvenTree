@@ -30,7 +30,6 @@ class PartResource(ModelResource):
 
     category_name = Field(attribute='category__name', readonly=True)
 
-    
     variant_of = Field(attribute='variant_of', widget=widgets.ForeignKeyWidget(Part))
 
     suppliers = Field(attribute='supplier_count', readonly=True)

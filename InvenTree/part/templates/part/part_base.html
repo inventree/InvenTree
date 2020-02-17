@@ -3,10 +3,8 @@
 {% load static %}
 {% load i18n %}
 {% load inventree_extras %}
-{% load guardian_tags %}
 
 {% block content %}
-{% get_obj_perms request.user for part as "perms" %}
 
 {% if part.active == False %}
 <div class='alert alert-danger alert-block'>
@@ -297,5 +295,4 @@
         );
     });
     {% endif %}
-
 {% endblock %}

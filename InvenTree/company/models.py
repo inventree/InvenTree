@@ -409,4 +409,3 @@ class SupplierPriceBreak(models.Model):
             mpn=self.part.MPN,
             cost=self.cost,
             quan=self.quantity)
-

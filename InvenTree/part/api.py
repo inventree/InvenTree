@@ -124,7 +124,6 @@ class PartList(generics.ListCreateAPIView):
     """
 
     serializer_class = part_serializers.PartSerializer
-    filter_backends = [guardian_filters.ObjectPermissionsFilter]
 
     def list(self, request, *args, **kwargs):
         """
@@ -203,6 +202,7 @@ class PartList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -264,7 +264,8 @@ class PartStarList(generics.ListCreateAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter
+        filters.SearchFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -326,7 +327,6 @@ class BomList(generics.ListCreateAPIView):
     """
 
     serializer_class = part_serializers.BomItemSerializer
-    filter_backends = [guardian_filters.ObjectPermissionsFilter]
 
     def get_serializer(self, *args, **kwargs):
 
@@ -353,6 +353,7 @@ class BomList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -390,7 +391,6 @@ class BomItemValidate(generics.UpdateAPIView):
 
         instance = self.get_object()
 
-        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load guardian_tags %}
 {% load static %}
 {% load i18n %}
 
@@ -8,7 +7,6 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
 {% endblock %}
 
 {% block content %}
-{% get_obj_perms request.user for company as "perms" %}
 <div class="row">
     <div class="col-sm-6">
         <div class="media">

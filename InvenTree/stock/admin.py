@@ -84,7 +84,6 @@ class StockItemResource(ModelResource):
     # Date management
     updated = Field(attribute='updated', widget=widgets.DateWidget())
 
-    
     stocktake_date = Field(attribute='stocktake_date', widget=widgets.DateWidget())
 
     class Meta:

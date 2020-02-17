@@ -40,6 +40,7 @@ from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.status_codes import OrderStatus
+from guardian.shortcuts import assign_perm
 
 
 class PartIndex(PermissionListMixin, ListView):
@@ -368,7 +369,6 @@ class PartDuplicate(PermissionRequiredMixin, AjaxCreateView):
 
                 if not confirmed:
                     form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
-                    
 
                     form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
                     valid = False
@@ -493,7 +493,6 @@ class PartCreate(PermissionRequiredMixin, AjaxCreateView):
 
                 if not confirmed:
                     form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
-                    
 
                     form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
                     valid = False
@@ -513,6 +512,10 @@ class PartCreate(PermissionRequiredMixin, AjaxCreateView):
                 data['url'] = part.get_absolute_url()
             except AttributeError:
                 pass
+
+            assign_perm('part.view_part', self.request.user, part)
+            assign_perm('part.change_part', self.request.user, part)
+            assign_perm('part.delete_part', self.request.user, part)
 
         return self.renderJsonResponse(request, form, data, context=context)
 
@@ -1808,7 +1811,6 @@ class BomItemCreate(PermissionRequiredMixin, AjaxCreateView):
 
             # Eliminate any options that are already in the BOM!
             query = query.exclude(id__in=[item.id for item in part.required_parts()])
-            
 
             form.fields['sub_part'].queryset = query
 

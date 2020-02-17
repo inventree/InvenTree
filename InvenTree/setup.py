@@ -36,12 +36,10 @@ def generate_key(length=50):
 
 if __name__ == '__main__':
 
-    
     parser = argparse.ArgumentParser(description='Generate Django SECRET_KEY file')
     parser.add_argument('--force', '-f', help='Override existing files', action='store_true')
     parser.add_argument('--dummy', '-d', help='Dummy run (do not create any files)', action='store_true')
     
-
     args = parser.parse_args()
 
     # Places to store files

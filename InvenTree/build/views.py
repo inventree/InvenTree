@@ -316,7 +316,6 @@ class BuildComplete(PermissionRequiredMixin, AjaxUpdateView):
         }
 
 
-
 class BuildNotes(UpdateView):
     """ View for editing the 'notes' field of a Build object.
     """
@@ -445,7 +444,6 @@ class BuildDelete(PermissionRequiredMixin, AjaxDeleteView):
     permission_required = ('build.delete_build')
 
 
-
 class BuildItemDelete(PermissionRequiredMixin, AjaxDeleteView):
     """ View to 'unallocate' a BuildItem.
     Really we are deleting the BuildItem object from the database.
@@ -520,8 +518,6 @@ class BuildItemCreate(PermissionRequiredMixin, AjaxCreateView):
                         if build.take_from is not None:
                             # Limit query to stock items that are downstream of the 'take_from' location
                             query = query.filter(location__in=[loc for loc in build.take_from.getUniqueChildren()])
-                            
-
                     except Build.DoesNotExist:
                         pass
 

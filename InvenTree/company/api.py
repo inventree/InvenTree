@@ -18,6 +18,7 @@ from .models import SupplierPart, SupplierPriceBreak
 
 from .serializers import CompanySerializer
 from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
+from rest_framework_guardian import filters as guardian_filters
 
 
 class CompanyList(generics.ListCreateAPIView):
@@ -36,6 +37,7 @@ class CompanyList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -61,6 +63,9 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
+    filter_backends = [
+        guardian_filters.ObjectPermissionsFilter,
+    ]
 
 
 class SupplierPartList(generics.ListCreateAPIView):
@@ -78,6 +83,9 @@ class SupplierPartList(generics.ListCreateAPIView):
         'part__builds',
         'supplier',
         'pricebreaks')
+    filter_backends = [
+        guardian_filters.ObjectPermissionsFilter,
+    ]
 
     def get_serializer(self, *args, **kwargs):
 
@@ -98,6 +106,7 @@ class SupplierPartList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [
@@ -127,6 +136,9 @@ class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     read_only_fields = [
     ]
+    filter_backends = [
+        guardian_filters.ObjectPermissionsFilter,
+    ]
 
 
 class SupplierPriceBreakList(generics.ListCreateAPIView):
@@ -141,6 +153,7 @@ class SupplierPriceBreakList(generics.ListCreateAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
+        guardian_filters.ObjectPermissionsFilter,
     ]
 
     filter_fields = [

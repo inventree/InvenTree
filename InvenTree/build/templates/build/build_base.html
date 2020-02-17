@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 
 {% load static %}
-{% load guardian_tags %}
 {% block page_title %}
 InvenTree | Build - {{ build }}
 {% endblock %}
 
 {% block content %}
-{% get_obj_perms request.user for build as "perms" %}
 <div class='row'>
     <div class='col-sm-6'>
         <div class="media">

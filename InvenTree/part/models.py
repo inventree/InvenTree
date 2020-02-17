@@ -42,8 +42,6 @@ from InvenTree.status_codes import BuildStatus, StockStatus, OrderStatus
 from company.models import SupplierPart
 
 
-
-
 class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
 
@@ -1253,4 +1251,3 @@ class BomItem(models.Model):
         pmax = decimal2string(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
-
