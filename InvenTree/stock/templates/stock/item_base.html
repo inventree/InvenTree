@@ -57,7 +57,12 @@
             {% trans "This stock item will be automatically deleted when all stock is depleted." %}
         </div>
         {% endif %}
-    </div>
+        {% if item.parent %}
+        <div class='alert alert-block alert-info'>
+            {% trans "This stock item has been split from " %}<a href="{% url 'stock-item-detail' item.parent.id %}">{{ item.parent }}</a>
+        </div>
+        {% endif %}
+        </div>
     
     <div class='row'>
         <div class='col-sm-6'>

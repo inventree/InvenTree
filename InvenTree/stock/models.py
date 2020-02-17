@@ -18,7 +18,7 @@ from django.dispatch import receiver
 
 from markdownx.models import MarkdownxField
 
-from mptt.models import TreeForeignKey
+from mptt.models import MPTTModel, TreeForeignKey
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
@@ -102,11 +102,12 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
         child.save()
 
 
-class StockItem(models.Model):
+class StockItem(MPTTModel):
     """
     A StockItem object represents a quantity of physical instances of a part.
     
     Attributes:
+        parent: Link to another StockItem from which this StockItem was created
         part: Link to the master abstract part that this StockItem is an instance of
         supplier_part: Link to a specific SupplierPart (optional)
         location: Where this StockItem is located
@@ -295,6 +296,11 @@ class StockItem(models.Model):
                 'part_name': self.part.full_name
             }
         )
+
+    parent = TreeForeignKey('self',
+                            on_delete=models.DO_NOTHING,
+                            blank=True, null=True,
+                            related_name='children')
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='stock_items', help_text=_('Base part'),
@@ -530,6 +536,7 @@ class StockItem(models.Model):
         # Nullify the PK so a new record is created
         new_stock = StockItem.objects.get(pk=self.pk)
         new_stock.pk = None
+        new_stock.parent = self
         new_stock.quantity = quantity
         new_stock.save()
 
