@@ -1,0 +1,25 @@
+[tool.isort]
+multi_line_output=3
+include_trailing_comma='True'
+force_grid_wrap=0
+use_parentheses='True'
+line_length=88
+skip_glob='.git,__pycache__,*/migrations/*,*/lib/*,*/bin/*'
+known_first_party='InvenTree'
+known_django='django'
+sections='FUTURE,STDLIB,DJANGO,THIRDPARTY,FIRSTPARTY,LOCALFOLDER'
+default_section='THIRDPARTY'
+
+[tool.black]
+exclude ='''
+(
+  /(
+    | \.git
+    | \inventree-env
+    | __pycache__
+    | migrations
+    | lib
+    | bin
+  )/
+)
+'''

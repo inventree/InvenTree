@@ -46,6 +46,8 @@ translate:
 
 # Run PEP style checks against source code
 style:
+	isort -y
+	black .
 	flake8 InvenTree
 
 # Run unit tests
