@@ -59,7 +59,7 @@
         {% endif %}
         {% if item.parent %}
         <div class='alert alert-block alert-info'>
-            {% trans "This stock item has been split from " %}<a href="{% url 'stock-item-detail' item.parent.id %}">{{ item.parent }}</a>
+            {% trans "This stock item was split from " %}<a href="{% url 'stock-item-detail' item.parent.id %}">{{ item.parent }}</a>
         </div>
         {% endif %}
         </div>

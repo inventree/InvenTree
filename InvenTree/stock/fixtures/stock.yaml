@@ -7,6 +7,10 @@
     location: 3
     batch: 'B123'
     quantity: 4000
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
 
 # 5,000 screws in the bathroom
 - model: stock.stockitem
@@ -14,6 +18,10 @@
     part: 1
     location: 2
     quantity: 5000
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
 
 # 1234 2K2 resistors in 'Drawer_1'
 - model: stock.stockitem
@@ -22,6 +30,10 @@
     part: 3
     location: 5
     quantity: 1234
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
 
 # Some widgets in drawer 3
 - model: stock.stockitem
@@ -31,6 +43,10 @@
     location: 7
     quantity: 10
     delete_on_deplete: False
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
 
 - model: stock.stockitem
   pk: 101
@@ -38,6 +54,10 @@
     part: 25
     location: 7
     quantity: 5
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
 
 - model: stock.stockitem
   pk: 102
@@ -45,3 +65,7 @@
     part: 25
     location: 7
     quantity: 3
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0

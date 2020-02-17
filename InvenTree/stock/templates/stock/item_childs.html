@@ -1,0 +1,42 @@
+{% extends "stock/item_base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block details %}
+
+{% include "stock/tabs.html" with tab='children' %}
+
+<hr>
+
+<h4>{% trans "Child Stock Items" %}</h4>
+
+{% if item.child_count > 0 %}
+{% include "stock_table.html" %}
+{% else %}
+<div class='alert alert-block alert-info'>
+    {% trans "This stock item does not have any child items" %}
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+{% if item.child_count > 0 %}
+loadStockTable($("#stock-table"), {
+    params: {
+        location_detail: true,
+        part_details: true,
+        ancestor: {{ item.id }},
+    },
+    groupByField: 'location',
+    buttons: [
+        '#stock-options',
+    ],
+    url: "{% url 'api-stock-list' %}",
+});
+{% endif %}
+
+{% endblock %}

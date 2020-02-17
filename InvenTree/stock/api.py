@@ -257,6 +257,7 @@ class StockList(generics.ListCreateAPIView):
         - location: Filter stock by location
         - category: Filter by parts belonging to a certain category
         - supplier: Filter by supplier
+        - ancestor: Filter by an 'ancestor' StockItem
     """
 
     def get_serializer(self, *args, **kwargs):
@@ -284,6 +285,7 @@ class StockList(generics.ListCreateAPIView):
 
         data = queryset.values(
             'pk',
+            'parent',
             'quantity',
             'serial',
             'batch',
@@ -347,7 +349,20 @@ class StockList(generics.ListCreateAPIView):
                 else:
                     stock_list = stock_list.filter(part=part_id)
 
-            except Part.DoesNotExist:
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        # Does the client wish to filter by the 'ancestor'?
+        anc_id = self.request.query_params.get('ancestor', None)
+
+        if anc_id:
+            try:
+                ancestor = StockItem.objects.get(pk=anc_id)
+
+                # Only allow items which are descendants of the specified StockItem
+                stock_list = stock_list.filter(id__in=[item.pk for item in ancestor.children.all()])
+
+            except (ValueError, Part.DoesNotExist):
                 pass
 
         # Does the client wish to filter by stock location?
@@ -358,7 +373,7 @@ class StockList(generics.ListCreateAPIView):
                 location = StockLocation.objects.get(pk=loc_id)
                 stock_list = stock_list.filter(location__in=location.getUniqueChildren())
                  
-            except StockLocation.DoesNotExist:
+            except (ValueError, StockLocation.DoesNotExist):
                 pass
 
         # Does the client wish to filter by part category?
@@ -369,7 +384,7 @@ class StockList(generics.ListCreateAPIView):
                 category = PartCategory.objects.get(pk=cat_id)
                 stock_list = stock_list.filter(part__category__in=category.getUniqueChildren())
 
-            except PartCategory.DoesNotExist:
+            except (ValueError, PartCategory.DoesNotExist):
                 pass
 
         # Filter by supplier_part ID

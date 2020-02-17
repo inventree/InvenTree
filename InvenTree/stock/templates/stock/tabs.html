@@ -4,6 +4,9 @@
     <li{% ifequal tab 'tracking' %} class='active'{% endifequal %}>
         <a href="{% url 'stock-item-detail' item.id %}">{% trans "Tracking" %}</a>
     </li>
+    <li{% ifequal tab 'children' %} class='active'{% endifequal %}>
+        <a href="{% url 'stock-item-children' item.id %}">{% trans "Children" %}{% if item.child_count > 0 %}<span class='badge'>{{ item.child_count }}</span>{% endif %}</a>
+    </li>
     {% if 0 %}
     <!-- These tabs are to be implemented in the future -->
     <li{% ifequal tab 'builds' %} class='active'{% endifequal %}>
