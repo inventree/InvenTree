@@ -251,7 +251,11 @@ class StockList(generics.ListCreateAPIView):
         - location: Filter stock by location
         - category: Filter by parts belonging to a certain category
         - supplier: Filter by supplier
+        - ancestor: Filter by an 'ancestor' StockItem
+        - status: Filter by the StockItem status
     """
+
+    queryset = StockItem.objects.all()
 
     def get_serializer(self, *args, **kwargs):
 
@@ -278,6 +282,7 @@ class StockList(generics.ListCreateAPIView):
 
         data = queryset.values(
             'pk',
+            'parent',
             'quantity',
             'serial',
             'batch',
@@ -325,7 +330,9 @@ class StockList(generics.ListCreateAPIView):
         """
 
         # Start with all objects
-        stock_list = StockItem.objects.filter(customer=None, belongs_to=None)
+        stock_list = super(StockList, self).get_queryset()
+        
+        stock_list = stock_list.filter(customer=None, belongs_to=None)
 
         # Does the client wish to filter by the Part ID?
         part_id = self.request.query_params.get('part', None)
@@ -340,7 +347,20 @@ class StockList(generics.ListCreateAPIView):
                 else:
                     stock_list = stock_list.filter(part=part_id)
 
-            except Part.DoesNotExist:
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        # Does the client wish to filter by the 'ancestor'?
+        anc_id = self.request.query_params.get('ancestor', None)
+
+        if anc_id:
+            try:
+                ancestor = StockItem.objects.get(pk=anc_id)
+
+                # Only allow items which are descendants of the specified StockItem
+                stock_list = stock_list.filter(id__in=[item.pk for item in ancestor.children.all()])
+
+            except (ValueError, Part.DoesNotExist):
                 pass
 
         # Does the client wish to filter by stock location?
@@ -350,7 +370,8 @@ class StockList(generics.ListCreateAPIView):
             try:
                 location = StockLocation.objects.get(pk=loc_id)
                 stock_list = stock_list.filter(location__in=location.getUniqueChildren())
-            except StockLocation.DoesNotExist:
+                 
+            except (ValueError, StockLocation.DoesNotExist):
                 pass
 
         # Does the client wish to filter by part category?
@@ -361,8 +382,14 @@ class StockList(generics.ListCreateAPIView):
                 category = PartCategory.objects.get(pk=cat_id)
                 stock_list = stock_list.filter(part__category__in=category.getUniqueChildren())
 
-            except PartCategory.DoesNotExist:
+            except (ValueError, PartCategory.DoesNotExist):
                 pass
+
+        # Filter by StockItem status
+        status = self.request.query_params.get('status', None)
+
+        if status:
+            stock_list = stock_list.filter(status=status)
 
         # Filter by supplier_part ID
         supplier_part_id = self.request.query_params.get('supplier_part', None)
@@ -400,7 +427,7 @@ class StockList(generics.ListCreateAPIView):
         'supplier_part',
         'customer',
         'belongs_to',
-        # 'status' TODO - There are some issues filtering based on an enumeration field
+        'build'
     ]
 
 

@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from django.db.utils import OperationalError
+from django.db.utils import OperationalError, ProgrammingError
 
 import os
 
@@ -43,6 +43,6 @@ class CommonConfig(AppConfig):
                     setting.save()
 
                     print("Creating new key: '{k}' = '{v}'".format(k=key, v=default))
-            except OperationalError:
+            except (OperationalError, ProgrammingError):
                 # Migrations have not yet been applied - table does not exist
                 break

@@ -18,7 +18,7 @@ from django.dispatch import receiver
 
 from markdownx.models import MarkdownxField
 
-from mptt.models import TreeForeignKey
+from mptt.models import MPTTModel, TreeForeignKey
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
@@ -102,11 +102,12 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
         child.save()
 
 
-class StockItem(models.Model):
+class StockItem(MPTTModel):
     """
     A StockItem object represents a quantity of physical instances of a part.
     
     Attributes:
+        parent: Link to another StockItem from which this StockItem was created
         part: Link to the master abstract part that this StockItem is an instance of
         supplier_part: Link to a specific SupplierPart (optional)
         location: Where this StockItem is located
@@ -296,6 +297,11 @@ class StockItem(models.Model):
             }
         )
 
+    parent = TreeForeignKey('self',
+                            on_delete=models.DO_NOTHING,
+                            blank=True, null=True,
+                            related_name='children')
+
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='stock_items', help_text=_('Base part'),
                              limit_choices_to={
@@ -370,14 +376,30 @@ class StockItem(models.Model):
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
 
+        - Has child StockItems
         - Has a serial number and is tracked
         - Is installed inside another StockItem
         """
+
+        if self.child_count > 0:
+            return False
 
         if self.part.trackable and self.serial is not None:
             return False
 
         return True
+
+    @property
+    def children(self):
+        """ Return a list of the child items which have been split from this stock item """
+        return self.get_descendants(include_self=False)
+
+    @property
+    def child_count(self):
+        """ Return the number of 'child' items associated with this StockItem.
+        A child item is one which has been split from this one.
+        """
+        return self.children.count()
 
     @property
     def in_stock(self):
@@ -469,6 +491,7 @@ class StockItem(models.Model):
             new_item.quantity = 1
             new_item.serial = serial
             new_item.pk = None
+            new_item.parent = self
 
             if location:
                 new_item.location = location
@@ -496,13 +519,14 @@ class StockItem(models.Model):
             item.save()
 
     @transaction.atomic
-    def splitStock(self, quantity, user):
+    def splitStock(self, quantity, location, user):
         """ Split this stock item into two items, in the same location.
         Stock tracking notes for this StockItem will be duplicated,
         and added to the new StockItem.
 
         Args:
             quantity: Number of stock items to remove from this entity, and pass to the next
+            location: Where to move the new StockItem to
 
         Notes:
             The provided quantity will be subtracted from this item and given to the new one.
@@ -530,7 +554,15 @@ class StockItem(models.Model):
         # Nullify the PK so a new record is created
         new_stock = StockItem.objects.get(pk=self.pk)
         new_stock.pk = None
+        new_stock.parent = self
         new_stock.quantity = quantity
+
+        # Move to the new location if specified, otherwise use current location
+        if location:
+            new_stock.location = location
+        else:
+            new_stock.location = self.location
+
         new_stock.save()
 
         # Copy the transaction history of this part into the new one
@@ -548,6 +580,11 @@ class StockItem(models.Model):
     @transaction.atomic
     def move(self, location, notes, user, **kwargs):
         """ Move part to a new location.
+
+        If less than the available quantity is to be moved,
+        a new StockItem is created, with the defined quantity,
+        and that new StockItem is moved.
+        The quantity is also subtracted from the existing StockItem.
 
         Args:
             location: Destination location (cannot be null)
@@ -576,8 +613,10 @@ class StockItem(models.Model):
         if quantity < self.quantity:
             # We need to split the stock!
 
-            # Leave behind certain quantity
-            self.splitStock(self.quantity - quantity, user)
+            # Split the existing StockItem in two
+            self.splitStock(quantity, location, user)
+
+            return True
 
         msg = "Moved to {loc}".format(loc=str(location))
 
@@ -586,10 +625,11 @@ class StockItem(models.Model):
 
         self.location = location
 
-        self.addTransactionNote(msg,
-                                user,
-                                notes=notes,
-                                system=True)
+        self.addTransactionNote(
+            msg,
+            user,
+            notes=notes,
+            system=True)
 
         self.save()
 
@@ -725,6 +765,23 @@ class StockItem(models.Model):
             s += ' @ {loc}'.format(loc=self.location.name)
 
         return s
+
+
+@receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
+def before_delete_stock_item(sender, instance, using, **kwargs):
+    """ Receives pre_delete signal from StockItem object.
+
+    Before a StockItem is deleted, ensure that each child object is updated,
+    to point to the new parent item.
+    """
+
+    # Update each StockItem parent field
+    for child in instance.children.all():
+        child.parent = instance.parent
+        child.save()
+
+    # Rebuild the MPTT tree
+    StockItem.objects.rebuild()
 
 
 class StockItemTracking(models.Model):
