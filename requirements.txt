@@ -1,4 +1,4 @@
-Django==2.2.10                   # Django package
+Django==2.2.9                   # Django package
 pillow==6.2.0                   # Image manipulation
 djangorestframework==3.10.3     # DRF framework
 django-cors-headers==3.2.0      # CORS headers extension for DRF
