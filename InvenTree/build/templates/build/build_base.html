@@ -90,6 +90,10 @@ InvenTree | Build - {{ build }}
 
 {% endblock %}
 
+{% block js_load %}
+<script type='text/javascript' src="{% static 'script/inventree/stock.js' %}"></script>
+{% endblock %}
+
 {% block js_ready %}
 
     $("#build-edit").click(function () {

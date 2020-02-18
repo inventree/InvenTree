@@ -85,6 +85,13 @@ class StockItemResource(ModelResource):
     
     stocktake_date = Field(attribute='stocktake_date', widget=widgets.DateWidget())
 
+    def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
+
+        super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
+
+        # Rebuild the StockItem tree(s)
+        StockItem.objects.rebuild()
+
     class Meta:
         model = StockItem
         skip_unchanged = True
