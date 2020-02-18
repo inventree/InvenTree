@@ -327,6 +327,3 @@ class StockTest(TestCase):
 
         # Serialize the remainder of the stock
         item.serializeStock(2, [99, 100], self.user)
-
-        # Two more items but the original has been deleted
-        self.assertEqual(StockItem.objects.filter(part=25).count(), n + 9)
