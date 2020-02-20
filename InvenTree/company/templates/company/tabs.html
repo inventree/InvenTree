@@ -8,12 +8,16 @@
     <li{% if tab == 'parts' %} class='active'{% endif %}>
         <a href="{% url 'company-detail-parts' company.id %}">{% trans "Supplier Parts" %} <span class='badge'>{{ company.part_count }}</span></a>
     </li>
+    {% if "stock.view_stockitem" in perms %}
     <li{% if tab == 'stock' %} class='active'{% endif %}>
         <a href="{% url 'company-detail-stock' company.id %}">{% trans "Stock" %} <span class='badge'>{{ company.stock_count }}</a>
     </li>
+    {% endif %}
+    {% if "order.view_purchaseorder" in perms %}
     <li{% if tab == 'po' %} class='active'{% endif %}>
         <a href="{% url 'company-detail-purchase-orders' company.id %}">{% trans "Purchase Orders" %} <span class='badge'>{{ company.purchase_orders.count }}</span></a>
     </li>
+    {% endif %}
     {% endif %}
     {% if company.is_customer %}
     {% if 0 %}

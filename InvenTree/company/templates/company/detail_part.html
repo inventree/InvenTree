@@ -17,8 +17,12 @@
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}
         <span class="caret"></span></button>
         <ul class="dropdown-menu">
+            {% if "order.add_purchaseorder" in perms %}
             <li><a href='#' id='multi-part-order' title='Order parts'>{% trans "Order Parts" %}</a></li>
+            {% endif %}
+            {% if "company.delete_supplierpart" in perms %}
             <li><a href='#' id='multi-part-delete' title='Delete parts'>{% trans "Delete Parts" %}</a></li>
+            {% endif %}
         </ul>
     </div>
 </div>

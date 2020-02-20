@@ -18,7 +18,7 @@ from django.db.models import prefetch_related_objects
 from django.core.validators import MinValueValidator
 
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver
 
 from markdownx.models import MarkdownxField
@@ -40,6 +40,9 @@ from InvenTree.helpers import decimal2string
 from InvenTree.status_codes import BuildStatus, StockStatus, OrderStatus
 
 from company.models import SupplierPart
+
+from guardian.shortcuts import assign_perm
+from django.contrib.auth.models import Group
 
 
 class PartCategory(InvenTreeTree):
@@ -1251,3 +1254,59 @@ class BomItem(models.Model):
         pmax = decimal2string(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
+
+
+@receiver(post_save, sender=PartCategory, dispatch_uid='part_category_permission_save')
+def part_category_post_save(sender, instance, **kwargs):
+    if kwargs.get('created', True):
+        obj = PartCategory.objects.get(pk=instance.id)
+        group = Group.objects.get(name="view")
+        assign_perm('part.view_partcategory', group, obj)
+
+
+@receiver(post_save, sender=Part, dispatch_uid='part_permission_save')
+def part_post_save(sender, instance, **kwargs):
+    if kwargs.get('created', True):
+        obj = Part.objects.get(pk=instance.id)
+        group = Group.objects.get(name="view")
+        assign_perm('part.view_part', group, obj)
+
+
+@receiver(post_save, sender=PartAttachment, dispatch_uid='part_attachment_permission_save')
+def part_attachment_post_save(sender, instance, **kwargs):
+    if kwargs.get('created', True):
+        obj = PartAttachment.objects.get(pk=instance.id)
+        group = Group.objects.get(name="view")
+        assign_perm('part.view_partattachment', group, obj)
+
+
+@receiver(post_save, sender=PartParameterTemplate, dispatch_uid='part_param_template_permission_save')
+def part_param_template_post_save(sender, instance, **kwargs):
+    if kwargs.get('created', True):
+        obj = PartParameterTemplate.objects.get(pk=instance.id)
+        group = Group.objects.get(name="view")
+        assign_perm('part.view_partparametertemplate', group, obj)
+
+
+@receiver(post_save, sender=PartParameter, dispatch_uid='part_param_permission_save')
+def part_param_post_save(sender, instance, **kwargs):
+    if kwargs.get('created', True):
+        obj = PartParameter.objects.get(pk=instance.id)
+        group = Group.objects.get(name="view")
+        assign_perm('part.view_partparameter', group, obj)
+
+
+@receiver(post_save, sender=BomItem, dispatch_uid='bom_item_permission_save')
+def bom_item_post_save(sender, instance, **kwargs):
+    if kwargs.get('created', True):
+        obj = BomItem.objects.get(pk=instance.id)
+        group = Group.objects.get(name="view")
+        assign_perm('part.view_bomitem', group, obj)
+
+
+@receiver(post_save, sender=SupplierPart, dispatch_uid='supplier_part_permission_save')
+def supplier_part_post_save(sender, instance, **kwargs):
+    if kwargs.get('created', True):
+        obj = SupplierPart.objects.get(pk=instance.id)
+        group = Group.objects.get(name="view")
+        assign_perm('company.view_supplierpart', group, obj)

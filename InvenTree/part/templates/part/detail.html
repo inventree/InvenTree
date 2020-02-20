@@ -89,7 +89,9 @@
     <table class='table table-striped'>
         <tr>
             <td><b>{% trans "Virtual" %}</b></td>
+            {% if "part.change_part" in perms %}
             <td>{% include "slide.html" with state=part.virtual field='virtual' %}</td>
+            {% endif %}
             {% if part.virtual %}
             <td>{% trans "Part is virtual (not a physical part)" %}</td>
             {% else %}
@@ -98,7 +100,9 @@
         </tr>
         <tr>
             <td><b>{% trans "Assembly" %}</b></td>
+            {% if "part.change_part" in perms %}
             <td>{% include "slide.html" with state=part.assembly field='assembly' %}</td>   
+            {% endif %}
             {% if part.assembly %}
             <td>{% trans "Part can be assembled from other parts" %}</td>
             {% else %}
@@ -107,7 +111,9 @@
         </tr>
         <tr>
             <td><b>{% trans "Component" %}</b></td>
+            {% if "part.change_part" in perms %}
             <td>{% include "slide.html" with state=part.component field='component' %}</td>   
+            {% endif %}
             {% if part.component %}
             <td>{% trans "Part can be used in assemblies" %}</td>
             {% else %}
@@ -116,7 +122,9 @@
         </tr>
         <tr>
             <td><b>{% trans "Trackable" %}</b></td>
+            {% if "part.change_part" in perms %}
             <td>{% include "slide.html" with state=part.trackable field='trackable' %}</td>   
+            {% endif %}
             {% if part.trackable %}
             <td>{% trans "Part stock is tracked by serial number" %}</td>
             {% else %}
@@ -125,7 +133,9 @@
         </tr>
         <tr>
             <td><b>{% trans "Purchaseable" %}</b></td> 
+            {% if "part.change_part" in perms %}
             <td>{% include "slide.html" with state=part.purchaseable field='purchaseable' %}</td>   
+            {% endif %}
             {% if part.purchaseable %}
             <td>{% trans "Part can be purchased from external suppliers" %}</td>
             {% else %}
@@ -135,7 +145,9 @@
         {% if 0 %}
         <tr>
             <td><b>{% trans "Sellable" %}</b></td>
+            {% if "part.change_part" in perms %}
             <td>{% include "slide.html" with state=part.salable field='salable' %}</td>
+            {% endif %}
             {% if part.salable %}
             <td>{% trans "Part can be sold to customers" %}</td>
             {% else %}

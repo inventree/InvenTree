@@ -27,7 +27,9 @@
             <h4>{% trans "Company Notes" %}</h4>
         </div>
         <div class='col-sm-6'>
+            {% if "company.change_company" in perms %}
             <button title='{% trans "Edit notes" %}' class='btn btn-default btn-glyph float-right' id='edit-notes'><span class='glyphicon glyphicon-edit'></span></button>
+            {% endif %}
         </div>
     </div>
     <hr>

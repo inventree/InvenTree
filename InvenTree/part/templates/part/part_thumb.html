@@ -13,8 +13,10 @@
       </div>
       <div class='btn-row part-thumb-overlay'>
           <div class='btn-group'>
+              {% if "part.change_part" in perms %}
               <button type='button' class='btn btn-default btn-glyph' title="{% trans 'Select from existing images' %}" id='part-image-select'><span class='glyphicon glyphicon-th'></span></button>
               <button type='button' class='btn btn-default btn-glyph' title="{% trans 'Upload new image' %}" id='part-image-upload'><span class='glyphicon glyphicon-upload'></span></button>
+              {% endif %}
           </div>
       </div>
     </div>

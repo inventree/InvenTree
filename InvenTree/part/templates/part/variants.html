@@ -16,7 +16,9 @@
 <div id='button-toolbar'>
     <div class='btn-group'>
         {% if part.is_template and part.active %}
+        {% if "part.add_part" in perms %}
         <button class='btn btn-success' id='new-variant' title='Create new variant'>New Variant</button>
+        {% endif %}
         {% endif %}
     </div>
 </div>

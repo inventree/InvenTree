@@ -40,15 +40,21 @@
                     </button>
                     {% endif %}
                     {% if part.is_template == False %}
+                    {% if "part.change_part" in perms %}
                     {% include "qr_button.html" %}
+                    {% endif %}
                     {% if part.active %}
+                    {% if "part.change_part" in perms %}
                     <button type='button' class='btn btn-default btn-glyph' id='price-button' title='{% trans "Show pricing information" %}'>
                         <span id='part-price-icon' class='part-price glyphicon glyphicon-usd'/>
                     </button>
+                    {% endif %}
                     {% if not part.virtual %}
+                    {% if "stock.view_stockitem" in perms %}
                     <button type='button' class='btn btn-default btn-glyph' id='part-count' title='Count part stock'>
                         <span class='glyphicon glyphicon-ok-circle'/>
                     </button>
+                    {% endif %}
                     {% endif %}
                     {% if part.purchaseable %}
                     {% if "order.change_purchaseorder" in perms %}

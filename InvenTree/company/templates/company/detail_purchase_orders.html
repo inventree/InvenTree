@@ -10,7 +10,9 @@
 
 <div id='button-bar'>
     <div class='btn-group'>
+        {% if "order.add_purchaseorder" in perms %}
         <button class='btn btn-primary' type='button' id='company-order2' title='Create new purchase order'>{% trans "New Purchase Order" %}</button>
+        {% endif %}
     </div>
 </div>
 

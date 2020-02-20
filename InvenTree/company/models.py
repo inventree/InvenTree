@@ -25,6 +25,11 @@ from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import OrderStatus
 from common.models import Currency
 
+from guardian.shortcuts import assign_perm
+from django.contrib.auth.models import Group
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 def rename_company_image(instance, filename):
     """ Function to rename a company image after upload
@@ -409,3 +414,11 @@ class SupplierPriceBreak(models.Model):
             mpn=self.part.MPN,
             cost=self.cost,
             quan=self.quantity)
+
+
+@receiver(post_save, sender=Company, dispatch_uid='company_permission_save')
+def company_post_save(sender, instance, **kwargs):
+    if kwargs.get('created', True):
+        obj = Company.objects.get(pk=instance.id)
+        group = Group.objects.get(name="view")
+        assign_perm('company.view_company', group, obj)

@@ -40,7 +40,6 @@ from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.status_codes import OrderStatus
-from guardian.shortcuts import assign_perm
 
 
 class PartIndex(PermissionListMixin, ListView):
@@ -395,7 +394,6 @@ class PartDuplicate(PermissionRequiredMixin, AjaxCreateView):
                 data['url'] = part.get_absolute_url()
             except AttributeError:
                 pass
-
         if valid:
             pass
 
@@ -513,10 +511,6 @@ class PartCreate(PermissionRequiredMixin, AjaxCreateView):
             except AttributeError:
                 pass
 
-            assign_perm('part.view_part', self.request.user, part)
-            assign_perm('part.change_part', self.request.user, part)
-            assign_perm('part.delete_part', self.request.user, part)
-
         return self.renderJsonResponse(request, form, data, context=context)
 
     def get_initial(self):
@@ -543,7 +537,7 @@ class PartCreate(PermissionRequiredMixin, AjaxCreateView):
         return initials
 
 
-class PartNotes(UpdateView):
+class PartNotes(PermissionRequiredMixin, UpdateView):
     """ View for editing the 'notes' field of a Part object.
     Presents a live markdown editor.
     """
@@ -552,6 +546,7 @@ class PartNotes(UpdateView):
     # form_class = part_forms.EditNotesForm
     template_name = 'part/notes.html'
     model = Part
+    permission_required = ('part.view_part')
 
     fields = ['notes']
 
@@ -567,8 +562,8 @@ class PartNotes(UpdateView):
         ctx = super().get_context_data(**kwargs)
 
         ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
-
-        ctx['starred'] = part.isStarredBy(self.request.user)
+        if self.request.user.is_authenticated:
+            ctx['starred'] = part.isStarredBy(self.request.user)
         ctx['disabled'] = not part.active
 
         ctx['OrderStatus'] = OrderStatus
@@ -673,7 +668,6 @@ class PartImageSelect(PermissionRequiredMixin, AjaxUpdateView):
                 part.save()
 
                 data['success'] = _('Updated part image')
-
         if 'success' not in data:
             data['error'] = _('Part image not found')
 
@@ -1377,13 +1371,14 @@ class BomDownload(PermissionRequiredMixin, AjaxView):
         }
 
 
-class BomExport(AjaxView):
+class BomExport(PermissionRequiredMixin, AjaxView):
     """ Provide a simple form to allow the user to select BOM download options.
     """
 
     model = Part
     form_class = part_forms.BomExportForm
     ajax_form_title = _("Export Bill of Materials")
+    permission_required = ('part.view_bomitem')
 
     def get(self, request, *args, **kwargs):
         return self.renderJsonResponse(request, self.form_class())

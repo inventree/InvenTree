@@ -25,9 +25,11 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
               <p>{{ company.description }}</p>
               <div class='btn-group'>
                   {% if company.is_supplier %}
+                  {% if "order.add_purchaseorder" in perms %}
                   <button type='button' class='btn btn-default btn-glyph' id='company-order-2' title='Create purchase order'>
                       <span class='glyphicon glyphicon-shopping-cart'/>
                   </button>
+                  {% endif %}
                   {% endif %}
                   {% if "company.change_company" in perms %}
                   <button type='button' class='btn btn-default btn-glyph' id='company-edit' title='Edit company information'>

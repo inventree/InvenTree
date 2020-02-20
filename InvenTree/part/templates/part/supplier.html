@@ -8,13 +8,17 @@
 <hr>
 
 <div id='button-toolbar'>
+    {% if "company.add_supplierpart" in perms %}
     <button class="btn btn-success" id='supplier-create'>New Supplier Part</button>
+    {% endif %}
     <div id='opt-dropdown' class="dropdown" style='float: right;'>
+        {% if "company.delete_supplierpart" in perms %}
         <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
             <span class="caret"></span></button>
             <ul class="dropdown-menu">
                 <li><a href='#' id='supplier-part-delete' title='Delete supplier parts'>Delete</a></li>
             </ul>
+            {% endif %}
     </div>
 </div>
 

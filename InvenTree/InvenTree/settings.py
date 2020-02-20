@@ -337,3 +337,4 @@ DBBACKUP_STORAGE_OPTIONS = {
 # Set Anonymous User Name
 # https://django-guardian.readthedocs.io/en/stable/configuration.html#anonymous-user-name
 ANONYMOUS_USER_NAME = CONFIG.get('anonymous_user_name', 'None')
+GUARDIAN_AUTO_PREFETCH = True
