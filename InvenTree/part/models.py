@@ -438,7 +438,7 @@ class Part(models.Model):
 
     virtual = models.BooleanField(default=False, help_text=_('Is this a virtual part, such as a software product or license?'))
 
-    notes = MarkdownxField(help_text=_('Part notes - supports Markdown formatting'))
+    notes = MarkdownxField(blank=True, help_text=_('Part notes - supports Markdown formatting'))
 
     bom_checksum = models.CharField(max_length=128, blank=True, help_text=_('Stored BOM checksum'))
 
