@@ -27,6 +27,7 @@ from django_cleanup import cleanup
 
 from mptt.models import TreeForeignKey
 
+from decimal import Decimal
 from datetime import datetime
 from fuzzywuzzy import fuzz
 import hashlib
@@ -1207,6 +1208,9 @@ class BomItem(models.Model):
                     percent = 1
                 if percent < 0:
                     percent = 0
+
+                # Must be represented as a decimal
+                percent = Decimal(percent)
 
                 return int(percent * quantity)
 
