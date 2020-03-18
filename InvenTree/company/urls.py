@@ -53,7 +53,7 @@ supplier_part_detail_urls = [
     url(r'^orders/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_orders.html'), name='supplier-part-orders'),
     url(r'^stock/', views.SupplierPartDetail.as_view(template_name='company/supplier_part_stock.html'), name='supplier-part-stock'),
 
-    url('^.*$', views.SupplierPartDetail.as_view(), name='supplier-part-detail'),
+    url('^.*$', views.SupplierPartDetail.as_view(template_name='company/supplier_part_pricing.html'), name='supplier-part-detail'),
 ]
 
 supplier_part_urls = [

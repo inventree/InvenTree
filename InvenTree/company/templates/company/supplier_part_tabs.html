@@ -1,9 +1,6 @@
 {% load i18n %}
 
 <ul class='nav nav-tabs'>
-    <li{% if tab == 'details' %} class='active'{% endif %}>
-        <a href="{% url 'supplier-part-detail' part.id %}">{% trans "Details" %}</a>
-    </li>
     <li{% if tab == 'pricing' %} class='active'{% endif %}>
         <a href="{% url 'supplier-part-pricing' part.id %}">{% trans "Pricing" %}</a>
     </li>
