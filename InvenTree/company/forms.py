@@ -6,6 +6,7 @@ Django Forms for interacting with Company app
 from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
+from InvenTree.fields import RoundingDecimalFormField
 
 from .models import Company
 from .models import SupplierPart
@@ -63,6 +64,10 @@ class EditSupplierPartForm(HelperForm):
 
 class EditPriceBreakForm(HelperForm):
     """ Form for creating / editing a supplier price break """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    cost = RoundingDecimalFormField(max_digits=10, decimal_places=5)
 
     class Meta:
         model = SupplierPriceBreak
