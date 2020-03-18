@@ -21,18 +21,48 @@ InvenTree | {% trans "Supplier Part" %}
                 </button>
             </div>
         </div>
-    </div>
-    <div class='col-sm-6'>
         <div class='media-left'>
-            <img class='part-thumb'
-            {% if part.part.image %}
-            src='{{ part.part.image.url }}'
-            {% else %}
-            src="{% static 'img/blank_image.png' %}"
-            {% endif %}/>
+                <img class='part-thumb'
+                {% if part.part.image %}
+                src='{{ part.part.image.url }}'
+                {% else %}
+                src="{% static 'img/blank_image.png' %}"
+                {% endif %}/>
         </div>
     </div>
+    <div class='col-sm-6'>
+        <h4>{% trans "Supplier Part Details" %}</h4>
+        <table class="table table-striped table-condensed">
+                <tr>
+                    <td>{% trans "Internal Part" %}</td>
+                    <td>
+                        {% if part.part %}
+                        <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.full_name }}</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr><td>{% trans "Supplier" %}</td><td><a href="{% url 'company-detail-parts' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
+                <tr><td>{% trans "SKU" %}</td><td>{{ part.SKU }}</tr></tr>
+            {% if part.URL %}
+                <tr><td>{% trans "URL" %}</td><td><a href="{{ part.URL }}">{{ part.URL }}</a></td></tr>
+            {% endif %}
+            {% if part.description %}
+                <tr><td>{% trans "Description" %}</td><td>{{ part.description }}</td></tr>
+            {% endif %}
+            {% if part.manufacturer %}
+                <tr><td>{% trans "Manufacturer" %}</td><td>{{ part.manufacturer }}</td></tr>
+                <tr><td>{% trans "MPN" %}</td><td>{{ part.MPN }}</td></tr>
+            {% endif %}
+            {% if part.note %}
+                <tr><td>{% trans "Note" %}</td><td>{{ part.note }}</td></tr>
+            {% endif %}
+        </table>
+    </div>
 </div>
+
+
+
+
 
 <hr>
 

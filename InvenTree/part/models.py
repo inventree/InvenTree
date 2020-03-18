@@ -1198,9 +1198,9 @@ class BomItem(models.Model):
 
         overage = str(self.overage).strip()
 
-        # Is the overage an integer value?
+        # Is the overage a numerical value?
         try:
-            ovg = int(overage)
+            ovg = float(overage)
 
             if ovg < 0:
                 ovg = 0
@@ -1223,7 +1223,7 @@ class BomItem(models.Model):
                 # Must be represented as a decimal
                 percent = Decimal(percent)
 
-                return int(percent * quantity)
+                return float(percent * quantity)
 
             except ValueError:
                 pass
@@ -1245,7 +1245,12 @@ class BomItem(models.Model):
         # Base quantity requirement
         base_quantity = self.quantity * build_quantity
 
-        return base_quantity + self.get_overage_quantity(base_quantity)
+        # Overage requiremet
+        ovrg_quantity = self.get_overage_quantity(base_quantity)
+
+        required = float(base_quantity) + float(ovrg_quantity)
+
+        return required
 
     @property
     def price_range(self):
