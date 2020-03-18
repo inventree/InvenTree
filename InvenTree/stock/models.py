@@ -307,6 +307,7 @@ class StockItem(MPTTModel):
                              limit_choices_to={
                                  'is_template': False,
                                  'active': True,
+                                 'virtual': False
                              })
 
     supplier_part = models.ForeignKey('company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
