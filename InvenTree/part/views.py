@@ -366,7 +366,10 @@ class PartDuplicate(AjaxCreateView):
 
         if valid:
             # Create the new Part
-            part = form.save()
+            part = form.save(commit=False)
+
+            part.creation_user = request.user
+            part.save()
 
             data['pk'] = part.pk
             data['text'] = str(part)
@@ -488,7 +491,12 @@ class PartCreate(AjaxCreateView):
 
         if valid:
             # Create the new Part
-            part = form.save()
+            part = form.save(commit=False)
+
+            # Record the user who created this part
+            part.creation_user = request.user
+
+            part.save()
 
             data['pk'] = part.pk
             data['text'] = str(part)
