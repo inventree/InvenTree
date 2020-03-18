@@ -18,7 +18,7 @@
         <b>{% decimal item.sub_part.total_stock %}</b>
     </div>
     <div class='col-sm-2'>
-        <b>{% multiply build.quantity item.quantity %}</b>
+        <b>{% multiply build.quantity item.quantity %}{% if item.overage %} (+ {{ item.overage }}){% endif %}</b>
     </div>
     <div class='col-sm-2'>
         <b><span id='allocation-total-{{ item.sub_part.id }}'>{% part_allocation_count build item.sub_part %}</span></b>
