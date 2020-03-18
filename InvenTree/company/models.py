@@ -21,7 +21,7 @@ from django.conf import settings
 
 from markdownx.models import MarkdownxField
 
-from InvenTree.fields import InvenTreeURLField
+from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from InvenTree.status_codes import OrderStatus
 from common.models import Currency
 
@@ -381,9 +381,9 @@ class SupplierPriceBreak(models.Model):
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks')
 
-    quantity = models.DecimalField(max_digits=15, decimal_places=5, default=1, validators=[MinValueValidator(1)])
+    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, default=1, validators=[MinValueValidator(1)])
 
-    cost = models.DecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
+    cost = RoundingDecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
 
     currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
 
