@@ -8,6 +8,8 @@ from .validators import allowable_url_schemes
 from django.forms.fields import URLField as FormURLField
 from django.db import models as models
 from django.core import validators
+from django import forms
+from decimal import Decimal
 
 
 class InvenTreeURLFormField(FormURLField):
@@ -25,3 +27,33 @@ class InvenTreeURLField(models.URLField):
         return super().formfield(**{
             'form_class': InvenTreeURLFormField
         })
+
+
+def round_decimal(value, places):
+    """
+    Round value to the specified number of places.
+    """
+
+    if value is not None:
+        # see https://docs.python.org/2/library/decimal.html#decimal.Decimal.quantize for options
+        return value.quantize(Decimal(10) ** -places)
+    return value
+
+
+class RoundingDecimalFormField(forms.DecimalField):
+    def to_python(self, value):
+        value = super(RoundingDecimalFormField, self).to_python(value)
+        return round_decimal(value, self.decimal_places)
+
+
+class RoundingDecimalField(models.DecimalField):
+    def to_python(self, value):
+        value = super(RoundingDecimalField, self).to_python(value)
+        return round_decimal(value, self.decimal_places)
+
+    def formfield(self, **kwargs):
+        defaults = {
+            'form_class': RoundingDecimalFormField
+        }
+        defaults.update(kwargs)
+        return super(RoundingDecimalField, self).formfield(**kwargs)

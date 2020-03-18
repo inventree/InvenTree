@@ -71,7 +71,7 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
         var count = 0;
 
         for (var i = 0; i < results.length; i++) {
-            count += results[i].quantity;
+            count += parseFloat(results[i].quantity);
         }
 
         updateAllocationTotal(part_id, count, required);
