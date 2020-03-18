@@ -38,7 +38,7 @@ from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDelete
 from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import DownloadFile, str2bool
-from InvenTree.status_codes import OrderStatus
+from InvenTree.status_codes import OrderStatus, BuildStatus
 
 
 class PartIndex(ListView):
@@ -593,6 +593,7 @@ class PartDetail(DetailView):
         context['disabled'] = not part.active
 
         context['OrderStatus'] = OrderStatus
+        context['BuildStatus'] = BuildStatus
 
         return context
 
