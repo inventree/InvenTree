@@ -83,6 +83,22 @@
             <td>{{ part.minimum_stock }}</td>
         </tr>
         {% endif %}
+        <tr>
+            <td><b>{% trans "Creation Date" %}</b></td>
+            <td>{{ part.creation_date }}</td>
+        </tr>
+        {% if part.creation_user %}
+        <tr>
+            <td><b>{% trans "Created By" %}</b></td>
+            <td>{{ part.creation_user }}</td>
+        </tr>
+        {% endif %}
+        {% if part.responsible %}
+        <tr>
+            <td><b>{% trans "Responsible User" %}</b></td>
+            <td>{{ part.responsible }}</td> 
+        </tr>
+        {% endif %}
     </table>
     </div>
     <div class='col-sm-6'>

@@ -226,6 +226,9 @@ class Part(models.Model):
         active: Is this part active? Parts are deactivated instead of being deleted
         virtual: Is this part "virtual"? e.g. a software product or similar
         notes: Additional notes field for this part
+        creation_date: Date that this part was added to the database
+        creation_user: User who added this part to the database
+        responsible: User who is responsible for this part (optional)
     """
 
     class Meta:
@@ -447,6 +450,12 @@ class Part(models.Model):
                                        related_name='boms_checked')
 
     bom_checked_date = models.DateField(blank=True, null=True)
+
+    creation_date = models.DateField(auto_now_add=True, editable=False, blank=True, null=True)
+
+    creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='parts_created')
+
+    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='parts_responible')
 
     def format_barcode(self):
         """ Return a JSON string for formatting a barcode for this Part object """
