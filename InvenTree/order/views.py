@@ -113,6 +113,41 @@ class PurchaseOrderAttachmentCreate(AjaxCreateView):
         return form
 
 
+class PurchaseOrderAttachmentEdit(AjaxUpdateView):
+    """ View for editing a PurchaseOrderAttachment object """
+
+    model = PurchaseOrderAttachment
+    form_class = order_forms.EditPurchaseOrderAttachmentForm
+    ajax_form_title = _("Edit Attachment")
+
+    def get_data(self):
+        return {
+            'success': _('Attachment updated')
+        }
+
+    def get_form(self):
+        form = super(AjaxUpdateView, self).get_form()
+
+        # Hide the 'order' field
+        form.fields['order'].widget = HiddenInput()
+
+        return form
+
+
+class PurchaseOrderAttachmentDelete(AjaxDeleteView):
+    """ View for deleting a PurchaseOrderAttachment """
+
+    model = PurchaseOrderAttachment
+    ajax_form_title = _("Delete Attachment")
+    ajax_template_name = "order/po_delete.html"
+    context_object_name = "attachment"
+
+    def get_data(self):
+        return {
+            "danger": _("Deleted attachment")
+        }
+
+
 class PurchaseOrderNotes(UpdateView):
     """ View for updating the 'notes' field of a PurchaseOrder """
 

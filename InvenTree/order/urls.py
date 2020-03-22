@@ -11,7 +11,8 @@ from . import views
 
 purchase_order_attachment_urls = [
     url(r'^new/', views.PurchaseOrderAttachmentCreate.as_view(), name='po-attachment-create'),
-    #url(r'^(?P<pk>\d+)/edit/', views.PurchaseOrderAttachmentEdit.as_view(), name='po-attachment-edit'),
+    url(r'^(?P<pk>\d+)/edit/', views.PurchaseOrderAttachmentEdit.as_view(), name='po-attachment-edit'),
+    url(r'^(?P<pk>\d+)/delete/', views.PurchaseOrderAttachmentDelete.as_view(), name='po-attachment-delete'),
 ]
 
 purchase_order_detail_urls = [

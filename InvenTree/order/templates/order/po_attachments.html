@@ -33,10 +33,10 @@
             <td>{{ attachment.comment }}</td>
             <td>
                 <div class='btn-group' style='float: right;'>    
-                    <button type='button' class='btn btn-default btn-glyph attachment-edit-button' url="{% url 'part-attachment-edit' attachment.id %}" data-toggle='tooltip' title='{% trans "Edit attachment" %}'>
+                    <button type='button' class='btn btn-default btn-glyph attachment-edit-button' url="{% url 'po-attachment-edit' attachment.id %}" data-toggle='tooltip' title='{% trans "Edit attachment" %}'>
                         <span class='glyphicon glyphicon-edit'/>
                     </button>
-                    <button type='button' class='btn btn-default btn-glyph attachment-delete-button' url="{% url 'part-attachment-delete' attachment.id %}" data-toggle='tooltip' title='{% trans "Delete attachment" %}'>
+                    <button type='button' class='btn btn-default btn-glyph attachment-delete-button' url="{% url 'po-attachment-delete' attachment.id %}" data-toggle='tooltip' title='{% trans "Delete attachment" %}'>
                         <span class='glyphicon glyphicon-trash'/>
                     </button>
                 </div>
@@ -62,13 +62,17 @@ $("#new-attachment").click(function() {
 $("#attachment-table").on('click', '.attachment-edit-button', function() {
     var button = $(this);
 
-    // TODO
+    launchModalForm(button.attr('url'), {
+        reload: true,
+    });
 });
 
 $("#attachment-table").on('click', '.attachment-delete-button', function() {
     var button = $(this);
 
-    // TODO
+    launchModalForm(button.attr('url'), {
+        reload: true,
+    });
 });
 
 $("#attachment-table").inventreeTable({
