@@ -21,6 +21,7 @@ purchase_order_detail_urls = [
 
     url(r'^notes/', views.PurchaseOrderNotes.as_view(), name='purchase-order-notes'),
 
+    url(r'^attachments/', views.PurchaseOrderDetail.as_view(template_name='order/po_attachments.html'), name='purchase-order-attachments'),
     url(r'^.*$', views.PurchaseOrderDetail.as_view(), name='purchase-order-detail'),
 ]
 

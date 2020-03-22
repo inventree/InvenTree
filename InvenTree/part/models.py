@@ -942,6 +942,9 @@ def attach_file(instance, filename):
 
 
 class PartAttachment(InvenTreeAttachment):
+    """
+    Model for storing file attachments against a Part object
+    """
     
     def getSubdir(self):
         return os.path.join("part_files", str(self.part.id))

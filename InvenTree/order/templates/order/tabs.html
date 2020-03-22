@@ -4,6 +4,9 @@
     <li{% ifequal tab 'details' %} class='active'{% endifequal %}>
         <a href="{% url 'purchase-order-detail' order.id %}">{% trans "Items" %}</a>
     </li>
+    <li{% if tab == 'attachments' %} class='active'{% endif %}>
+        <a href="{% url 'purchase-order-attachments' order.id %}">{% trans "Attachments" %}</a>
+    </li>
     <li{% ifequal tab 'notes' %} class='active'{% endifequal %}>
         <a href="{% url 'purchase-order-notes' order.id %}">{% trans "Notes" %}{% if order.notes %} <span class='glyphicon glyphicon-small glyphicon-info-sign'></span>{% endif %}</a>
     </li>

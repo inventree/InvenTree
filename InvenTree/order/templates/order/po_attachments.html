@@ -1,0 +1,73 @@
+{% extends "order/order_base.html" %}
+
+{% load inventree_extras %}
+{% load i18n %}
+{% load static %}
+
+{% block details %}
+
+{% include 'order/tabs.html' with tab='attachments' %}
+
+<h4>{% trans "Purchase Order Attachments" %}
+
+<hr>
+
+<div id='attachment-buttons'>
+    <div class='btn-group'>
+        <button type='button' class='btn btn-success' id='new-attachment'>{% trans "Add Attachment" %}</button>
+    </div>
+</div>
+
+<table class='table table-striped table-condensed' data-toolbar='#attachment-buttons' id='attachment-table'>
+    <thead>
+        <tr>
+            <th data-field='file' data-searchable='true'>{% trans "File" %}</th>
+            <th data-field='comment' data-searchable='true'>{% trans "Comment" %}</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for attachment in order.attachments.all %}
+        <tr>
+            <td><a href='/media/{{ attachment.attachment }}'>{{ attachment.basename }}</a></td>
+            <td>{{ attachment.comment }}</td>
+            <td>
+                <div class='btn-group' style='float: right;'>    
+                    <button type='button' class='btn btn-default btn-glyph attachment-edit-button' url="{% url 'part-attachment-edit' attachment.id %}" data-toggle='tooltip' title='{% trans "Edit attachment" %}'>
+                        <span class='glyphicon glyphicon-edit'/>
+                    </button>
+                    <button type='button' class='btn btn-default btn-glyph attachment-delete-button' url="{% url 'part-attachment-delete' attachment.id %}" data-toggle='tooltip' title='{% trans "Delete attachment" %}'>
+                        <span class='glyphicon glyphicon-trash'/>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$("#new-attachment").click(function() {
+    
+});
+
+$("#attachment-table").on('click', '.attachment-edit-button', function() {
+    var button = $(this);
+
+    // TODO
+});
+
+$("#attachment-table").on('click', '.attachment-delete-button', function() {
+    var button = $(this);
+
+    // TODO
+});
+
+$("#attachment-table").inventreeTable({
+});
+
+{% endblock %}
