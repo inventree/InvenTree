@@ -17,5 +17,4 @@ django-qr-code==1.1.0           # Generate QR codes
 flake8==3.3.0                   # PEP checking
 coverage==4.0.3                 # Unit test coverage
 python-coveralls==2.9.1         # Coveralls linking (for Travis)
-fuzzywuzzy==0.17.0              # Fuzzy string matching
-python-Levenshtein==0.12.0      # Required for fuzzywuzzy
+rapidfuzz==0.2.1                # Fuzzy string matching
