@@ -3,7 +3,7 @@ Functionality for Bill of Material (BOM) management.
 Primarily BOM upload tools.
 """
 
-from fuzzywuzzy import fuzz
+from rapidfuzz import fuzz
 import tablib
 import os
 

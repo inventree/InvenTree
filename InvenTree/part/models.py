@@ -29,7 +29,7 @@ from mptt.models import TreeForeignKey
 
 from decimal import Decimal
 from datetime import datetime
-from fuzzywuzzy import fuzz
+from rapidfuzz import fuzz
 import hashlib
 
 from InvenTree import helpers
