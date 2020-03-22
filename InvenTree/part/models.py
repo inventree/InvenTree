@@ -34,7 +34,7 @@ import hashlib
 
 from InvenTree import helpers
 from InvenTree import validators
-from InvenTree.models import InvenTreeTree
+from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string
 
@@ -941,27 +941,13 @@ def attach_file(instance, filename):
     return os.path.join('part_files', str(instance.part.id), filename)
 
 
-class PartAttachment(models.Model):
-    """ A PartAttachment links a file to a part
-    Parts can have multiple files such as datasheets, etc
-
-    Attributes:
-        part: Link to a Part object
-        attachment: File
-        comment: String descriptor for the attachment
-    """
+class PartAttachment(InvenTreeAttachment):
+    
+    def getSubdir(self):
+        return os.path.join("part_files", str(self.part.id))
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='attachments')
-
-    attachment = models.FileField(upload_to=attach_file,
-                                  help_text=_('Select file to attach'))
-
-    comment = models.CharField(max_length=100, help_text=_('File comment'))
-
-    @property
-    def basename(self):
-        return os.path.basename(self.attachment.name)
 
 
 class PartStar(models.Model):
