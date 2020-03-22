@@ -14,6 +14,7 @@ from django.utils.translation import ugettext as _
 
 from markdownx.models import MarkdownxField
 
+import os
 from datetime import datetime
 
 from stock.models import StockItem
@@ -21,6 +22,7 @@ from company.models import Company, SupplierPart
 
 from InvenTree.helpers import decimal2string
 from InvenTree.status_codes import OrderStatus
+from InvenTree.models import InvenTreeAttachment
 
 
 class Order(models.Model):
@@ -237,6 +239,17 @@ class PurchaseOrder(Order):
             
             self.received_by = user
             self.complete_order()  # This will save the model
+
+
+class PurchaseOrderAttachment(InvenTreeAttachment):
+    """
+    Model for storing file attachments against a PurchaseOrder object
+    """
+
+    def getSubdir(self):
+        return os.path.join("po_files", str(self.order.id))
+
+    order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name="attachments")
 
 
 class OrderLineItem(models.Model):
