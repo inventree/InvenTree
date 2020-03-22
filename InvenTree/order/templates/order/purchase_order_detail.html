@@ -92,7 +92,7 @@ $("#po-lines-table").on('click', ".line-receive", function() {
 
     console.log('clicked! ' + button.attr('pk'));
 
-    launchModalForm("{% url 'purchase-order-receive' order.id %}", {
+    launchModalForm("{% url 'po-receive' order.id %}", {
         reload: true,
         data: {
             line: button.attr('pk')
@@ -109,7 +109,7 @@ $("#po-lines-table").on('click', ".line-receive", function() {
 });
 
 $("#receive-order").click(function() {
-    launchModalForm("{% url 'purchase-order-receive' order.id %}", {
+    launchModalForm("{% url 'po-receive' order.id %}", {
         reload: true,
         secondary: [
             {
@@ -123,13 +123,13 @@ $("#receive-order").click(function() {
 });
 
 $("#complete-order").click(function() {
-    launchModalForm("{% url 'purchase-order-complete' order.id %}", {
+    launchModalForm("{% url 'po-complete' order.id %}", {
         reload: true,
     });
 });
 
 $("#export-order").click(function() {
-    location.href = "{% url 'purchase-order-export' order.id %}";
+    location.href = "{% url 'po-export' order.id %}";
 });
 
 {% if order.status == OrderStatus.PENDING %}

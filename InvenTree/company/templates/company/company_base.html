@@ -100,7 +100,7 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
     });
 
     $("#company-order-2").click(function() {
-        launchModalForm("{% url 'purchase-order-create' %}",
+        launchModalForm("{% url 'po-create' %}",
         {
             data: {
                 supplier: {{ company.id }},
