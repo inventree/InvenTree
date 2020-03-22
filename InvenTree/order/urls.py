@@ -9,6 +9,10 @@ from django.conf.urls import url, include
 
 from . import views
 
+purchase_order_attachment_urls = [
+    url(r'^new/', views.PurchaseOrderAttachmentCreate.as_view(), name='purchase-order-attachment-create'),
+]
+
 purchase_order_detail_urls = [
 
     url(r'^cancel/?', views.PurchaseOrderCancel.as_view(), name='purchase-order-cancel'),
@@ -48,6 +52,8 @@ purchase_order_urls = [
     url(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),
 
     url(r'^line/', include(po_line_urls)),
+
+    url(r'^attachments/', include(purchase_order_attachment_urls)),
 
     # Display complete list of purchase orders
     url(r'^.*$', views.PurchaseOrderIndex.as_view(), name='purchase-order-index'),

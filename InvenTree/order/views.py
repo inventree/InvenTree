@@ -15,7 +15,7 @@ from django.forms import HiddenInput
 import logging
 from decimal import Decimal, InvalidOperation
 
-from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
 from .admin import POLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart
@@ -68,6 +68,49 @@ class PurchaseOrderDetail(DetailView):
         ctx['OrderStatus'] = OrderStatus
 
         return ctx
+
+
+class PurchaseOrderAttachmentCreate(AjaxCreateView):
+    """
+    View for creating a new PurchaseOrderAtt
+    """
+
+    model = PurchaseOrderAttachment
+    form_class = order_forms.EditPurchaseOrderAttachmentForm
+    ajax_form_title = _("Add Purchase Order Attachment")
+    ajax_template_name = "modal_form.html"
+
+    def get_data(self):
+        return {
+            "success": _("Added attachment")
+        }
+
+    def get_initial(self):
+        """
+        Get initial data for creating a new PurchaseOrderAttachment object.
+
+        - Client must request this form with a parent PurchaseOrder in midn.
+        - e.g. ?order=<pk>
+        """
+
+        initials = super(AjaxCreateView, self).get_initial()
+
+        initials["order"] = PurchaseOrder.objects.get(id=self.request.GET.get('order', -1))
+
+        return initials
+
+    def get_form(self):
+        """
+        Create a form to upload a new PurchaseOrderAttachment
+
+        - Hide the 'order' field
+        """
+
+        form = super(AjaxCreateView, self).get_form()
+
+        form.fields['order'].widget = HiddenInput()
+
+        return form
 
 
 class PurchaseOrderNotes(UpdateView):

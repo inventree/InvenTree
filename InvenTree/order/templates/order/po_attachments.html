@@ -52,7 +52,11 @@
 {{ block.super }}
 
 $("#new-attachment").click(function() {
-    
+    launchModalForm("{% url 'purchase-order-attachment-create' %}?order={{ order.id }}",
+        {
+            reload: true,
+        }
+    );
 });
 
 $("#attachment-table").on('click', '.attachment-edit-button', function() {
