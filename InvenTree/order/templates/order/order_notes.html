@@ -50,7 +50,7 @@
 {% if editing %}
 {% else %}
 $("#edit-notes").click(function() {
-    location.href = "{% url 'purchase-order-notes' order.id %}?edit=1";
+    location.href = "{% url 'po-notes' order.id %}?edit=1";
 });
 {% endif %}
 

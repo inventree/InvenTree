@@ -107,7 +107,7 @@ InvenTree | {{ order }}
 
 {% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
 $("#place-order").click(function() {
-    launchModalForm("{% url 'purchase-order-issue' order.id %}",
+    launchModalForm("{% url 'po-issue' order.id %}",
     {
         reload: true,
     });
@@ -115,7 +115,7 @@ $("#place-order").click(function() {
 {% endif %}
 
 $("#edit-order").click(function() {
-    launchModalForm("{% url 'purchase-order-edit' order.id %}",
+    launchModalForm("{% url 'po-edit' order.id %}",
         {
             reload: true,
         }
@@ -123,7 +123,7 @@ $("#edit-order").click(function() {
 });
 
 $("#cancel-order").click(function() {
-    launchModalForm("{% url 'purchase-order-cancel' order.id %}", {
+    launchModalForm("{% url 'po-cancel' order.id %}", {
         reload: true,
     });
 });

@@ -21,6 +21,6 @@ For site administrator and project code documentation, refer to the [developer d
 
 Refer to the [getting started guide](https://inventree.readthedocs.io/en/latest/start.html) for installation and setup instructions.
 
-### Third Party
+## Third Party Extensions
 
 [InvenTree Docker](https://github.com/Zeigren/inventree-docker) - A docker build for InvenTree by [Zeigren](https://github.com/Zeigren)

@@ -28,7 +28,7 @@
 
 
     function newOrder() {
-        launchModalForm("{% url 'purchase-order-create' %}",
+        launchModalForm("{% url 'po-create' %}",
         {
             data: {
                 supplier: {{ company.id }},

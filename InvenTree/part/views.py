@@ -112,6 +112,7 @@ class PartAttachmentCreate(AjaxCreateView):
 
 class PartAttachmentEdit(AjaxUpdateView):
     """ View for editing a PartAttachment object """
+    
     model = PartAttachment
     form_class = part_forms.EditPartAttachmentForm
     ajax_template_name = 'modal_form.html'

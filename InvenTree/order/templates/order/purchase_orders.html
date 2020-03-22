@@ -18,7 +18,7 @@ InvenTree | Purchase Orders
     </div>
 </div>
 
-<table class='table table-striped table-condensed po-table' id='purchase-order-table'>
+<table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='purchase-order-table'>
 </table>
 
 {% endblock %}
@@ -27,7 +27,7 @@ InvenTree | Purchase Orders
 {{ block.super }}
 
 $("#po-create").click(function() {
-    launchModalForm("{% url 'purchase-order-create' %}",
+    launchModalForm("{% url 'po-create' %}",
         {
             follow: true,
         }
