@@ -40,7 +40,7 @@ class OrderViewTestCase(TestCase):
 class OrderListTest(OrderViewTestCase):
 
     def test_order_list(self):
-        response = self.client.get(reverse('purchase-order-index'))
+        response = self.client.get(reverse('po-index'))
 
         self.assertEqual(response.status_code, 200)
 
@@ -50,14 +50,14 @@ class POTests(OrderViewTestCase):
 
     def test_detail_view(self):
         """ Retrieve PO detail view """
-        response = self.client.get(reverse('purchase-order-detail', args=(1,)))
+        response = self.client.get(reverse('po-detail', args=(1,)))
         self.assertEqual(response.status_code, 200)
         keys = response.context.keys()
         self.assertIn('OrderStatus', keys)
 
     def test_po_create(self):
         """ Launch forms to create new PurchaseOrder"""
-        url = reverse('purchase-order-create')
+        url = reverse('po-create')
 
         # Without a supplier ID
         response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -74,13 +74,13 @@ class POTests(OrderViewTestCase):
     def test_po_edit(self):
         """ Launch form to edit a PurchaseOrder """
 
-        response = self.client.get(reverse('purchase-order-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(reverse('po-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
     def test_po_export(self):
         """ Export PurchaseOrder """
 
-        response = self.client.get(reverse('purchase-order-export', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(reverse('po-export', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         # Response should be streaming-content (file download)
         self.assertIn('streaming_content', dir(response))
@@ -88,7 +88,7 @@ class POTests(OrderViewTestCase):
     def test_po_issue(self):
         """ Test PurchaseOrderIssue view """
 
-        url = reverse('purchase-order-issue', args=(1,))
+        url = reverse('po-issue', args=(1,))
 
         order = PurchaseOrder.objects.get(pk=1)
         self.assertEqual(order.status, OrderStatus.PENDING)
@@ -183,7 +183,7 @@ class TestPOReceive(OrderViewTestCase):
         self.po = PurchaseOrder.objects.get(pk=1)
         self.po.status = OrderStatus.PLACED
         self.po.save()
-        self.url = reverse('purchase-order-receive', args=(1,))
+        self.url = reverse('po-receive', args=(1,))
 
     def post(self, data, validate=None):
 

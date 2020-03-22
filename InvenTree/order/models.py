@@ -138,7 +138,7 @@ class PurchaseOrder(Order):
     )
 
     def get_absolute_url(self):
-        return reverse('purchase-order-detail', kwargs={'pk': self.id})
+        return reverse('po-detail', kwargs={'pk': self.id})
 
     @transaction.atomic
     def add_line_item(self, supplier_part, quantity, group=True, reference=''):
