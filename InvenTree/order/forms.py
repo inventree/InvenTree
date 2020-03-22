@@ -13,7 +13,7 @@ from mptt.fields import TreeNodeChoiceField
 from InvenTree.forms import HelperForm
 
 from stock.models import StockLocation
-from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
 
 
 class IssuePurchaseOrderForm(HelperForm):
@@ -71,6 +71,18 @@ class EditPurchaseOrderForm(HelperForm):
             'description',
             'URL',
             'notes'
+        ]
+
+
+class EditPurchaseOrderAttachmentForm(HelperForm):
+    """ Form for editing a PurchaseOrderAttachment object """
+
+    class Meta:
+        model = PurchaseOrderAttachment
+        fields = [
+            'order',
+            'attachment',
+            'comment'
         ]
 
 
