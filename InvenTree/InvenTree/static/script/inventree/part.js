@@ -196,6 +196,9 @@ function loadPartTable(table, url, options={}) {
             } else if (row.on_order) {
                 value = "<span class='label label-primary'>On Order : " + row.on_order + "</span>";
                 link = "orders";
+            } else if (row.building) {
+                value = "<span class='label label-info'>Building : " + row.building + "</span>";
+                link = "builds";
             } else {
                 value ="<span class='label label-warning'>No Stock</span>";
             }
