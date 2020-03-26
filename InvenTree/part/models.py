@@ -925,14 +925,20 @@ class Part(models.Model):
         """ Return the total number of items on order for this part. """
 
         orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=OrderStatus.OPEN).aggregate(
-            quantity=Sum('purchase_order_line_items__quantity'))
+            quantity=Sum('purchase_order_line_items__quantity'),
+            received=Sum('purchase_order_line_items__received')
+        )
 
         quantity = orders['quantity']
+        received = orders['received']
 
         if quantity is None:
             quantity = 0
 
-        return quantity
+        if received is None:
+            received = 0
+
+        return quantity - received
 
     def get_parameters(self):
         """ Return all parameters for this part, ordered by name """
