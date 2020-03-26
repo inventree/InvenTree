@@ -181,9 +181,7 @@ function loadPartTable(table, url, options={}) {
         title: 'Stock',
         searchable: false,
         sortable: true,
-        formatter: function(value, row, index, field) {
-            console.log("On order:", row.on_order);
-            
+        formatter: function(value, row, index, field) {            
             var html = "";
             var link = "stock";
 
