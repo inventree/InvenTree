@@ -182,17 +182,27 @@ function loadPartTable(table, url, options={}) {
         searchable: false,
         sortable: true,
         formatter: function(value, row, index, field) {
+            console.log("On order:", row.on_order);
+            
+            var html = "";
+            var link = "stock";
+
             if (value) {
 
                 if (row.units) {
                     value += ' <i><small>' + row.units + '</small></i>';
                 }
 
-                return renderLink(value, '/part/' + row.pk + '/stock/');
+                html = value;
+
+            } else if (row.on_order) {
+                value = "<span class='label label-primary'>On Order : " + row.on_order + "</span>";
+                link = "orders";
+            } else {
+                value ="<span class='label label-warning'>No Stock</span>";
             }
-            else {
-                return "<span class='label label-warning'>No Stock</span>";
-            }
+            
+            return renderLink(value, '/part/' + row.pk + "/" + link + "/");
         }
     });
 
