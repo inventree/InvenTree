@@ -569,7 +569,12 @@ class Part(models.Model):
         """ Return the current number of parts currently being built
         """
 
-        return sum([b.quantity for b in self.active_builds])
+        quantity = self.active_builds.aggregate(quantity=Sum('quantity'))['quantity']
+
+        if quantity is None:
+            quantity = 0
+
+        return quantity
 
     @property
     def build_allocation(self):

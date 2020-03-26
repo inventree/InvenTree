@@ -25,7 +25,7 @@ from .models import PartParameter, PartParameterTemplate
 
 from . import serializers as part_serializers
 
-from InvenTree.status_codes import OrderStatus, StockStatus
+from InvenTree.status_codes import OrderStatus, StockStatus, BuildStatus
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool
 
@@ -162,6 +162,9 @@ class PartList(generics.ListCreateAPIView):
         # "on_order" items should only sum orders which are currently outstanding
         order_filter = Q(supplier_parts__purchase_order_line_items__order__status__in=OrderStatus.OPEN)
 
+        # "building" should only reference builds which are active
+        build_filter = Q(builds__status__in=BuildStatus.ACTIVE_CODES)
+
         # Set of fields we wish to serialize
         data = queryset.values(
             'pk',
@@ -183,10 +186,9 @@ class PartList(generics.ListCreateAPIView):
         ).annotate(
             # Quantity of items which are "in stock"
             in_stock=Sum('stock_items__quantity', filter=stock_filter),
-            on_order=Sum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter)
+            on_order=Sum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter),
+            building=Sum('builds__quantity', filter=build_filter),
         )
-
-        # TODO - Annotate total being built
 
         # Reduce the number of lookups we need to do for the part categories
         categories = {}
