@@ -919,7 +919,15 @@ class Part(models.Model):
     def on_order(self):
         """ Return the total number of items on order for this part. """
 
-        return sum([part.on_order() for part in self.supplier_parts.all().prefetch_related('purchase_order_line_items')])
+        orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=OrderStatus.OPEN).aggregate(
+            quantity=Sum('purchase_order_line_items__quantity'))
+
+        quantity = orders['quantity']
+
+        if quantity is None:
+            quantity = 0
+
+        return quantity
 
     def get_parameters(self):
         """ Return all parameters for this part, ordered by name """
