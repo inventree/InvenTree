@@ -172,6 +172,7 @@ class PartList(generics.ListCreateAPIView):
             'active',
         ).annotate(
             in_stock=Sum('stock_items__quantity'),
+            on_order=Sum('supplier_parts__purchase_order_line_items__quantity'),
         )
 
         # TODO - Annotate total being built
