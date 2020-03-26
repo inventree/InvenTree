@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 
-from django.db.models import Sum, Count
+from django.db.models import Q, Sum, Count
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -25,6 +25,7 @@ from .models import PartParameter, PartParameterTemplate
 
 from . import serializers as part_serializers
 
+from InvenTree.status_codes import OrderStatus, StockStatus, BuildStatus
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool
 
@@ -153,6 +154,18 @@ class PartList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
+        # Filters for annotations
+
+        # "in_stock" count should only sum stock items which are "in stock"
+        stock_filter = Q(stock_items__status__in=StockStatus.AVAILABLE_CODES)
+
+        # "on_order" items should only sum orders which are currently outstanding
+        order_filter = Q(supplier_parts__purchase_order_line_items__order__status__in=OrderStatus.OPEN)
+
+        # "building" should only reference builds which are active
+        build_filter = Q(builds__status__in=BuildStatus.ACTIVE_CODES)
+
+        # Set of fields we wish to serialize
         data = queryset.values(
             'pk',
             'category',
@@ -171,12 +184,11 @@ class PartList(generics.ListCreateAPIView):
             'salable',
             'active',
         ).annotate(
-            in_stock=Sum('stock_items__quantity'),
-            on_order=Sum('supplier_parts__purchase_order_line_items__quantity'),
+            # Quantity of items which are "in stock"
+            in_stock=Sum('stock_items__quantity', filter=stock_filter),
+            on_order=Sum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter),
+            building=Sum('builds__quantity', filter=build_filter),
         )
-
-        # TODO - Annotate total being built
-        # TODO - Annotate total on order
 
         # Reduce the number of lookups we need to do for the part categories
         categories = {}

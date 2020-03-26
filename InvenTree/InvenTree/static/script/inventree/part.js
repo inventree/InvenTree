@@ -181,9 +181,7 @@ function loadPartTable(table, url, options={}) {
         title: 'Stock',
         searchable: false,
         sortable: true,
-        formatter: function(value, row, index, field) {
-            console.log("On order:", row.on_order);
-            
+        formatter: function(value, row, index, field) {            
             var html = "";
             var link = "stock";
 
@@ -198,6 +196,9 @@ function loadPartTable(table, url, options={}) {
             } else if (row.on_order) {
                 value = "<span class='label label-primary'>On Order : " + row.on_order + "</span>";
                 link = "orders";
+            } else if (row.building) {
+                value = "<span class='label label-info'>Building : " + row.building + "</span>";
+                link = "builds";
             } else {
                 value ="<span class='label label-warning'>No Stock</span>";
             }
