@@ -18,7 +18,7 @@ from django.conf import settings
 
 import os
 
-from fuzzywuzzy import fuzz
+from rapidfuzz import fuzz
 from decimal import Decimal
 
 from .models import PartCategory, Part, PartAttachment

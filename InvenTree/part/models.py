@@ -29,7 +29,7 @@ from mptt.models import TreeForeignKey
 
 from decimal import Decimal
 from datetime import datetime
-from fuzzywuzzy import fuzz
+from rapidfuzz import fuzz
 import hashlib
 
 from InvenTree import helpers
@@ -569,7 +569,12 @@ class Part(models.Model):
         """ Return the current number of parts currently being built
         """
 
-        return sum([b.quantity for b in self.active_builds])
+        quantity = self.active_builds.aggregate(quantity=Sum('quantity'))['quantity']
+
+        if quantity is None:
+            quantity = 0
+
+        return quantity
 
     @property
     def build_allocation(self):
@@ -919,7 +924,21 @@ class Part(models.Model):
     def on_order(self):
         """ Return the total number of items on order for this part. """
 
-        return sum([part.on_order() for part in self.supplier_parts.all().prefetch_related('purchase_order_line_items')])
+        orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=OrderStatus.OPEN).aggregate(
+            quantity=Sum('purchase_order_line_items__quantity'),
+            received=Sum('purchase_order_line_items__received')
+        )
+
+        quantity = orders['quantity']
+        received = orders['received']
+
+        if quantity is None:
+            quantity = 0
+
+        if received is None:
+            received = 0
+
+        return quantity - received
 
     def get_parameters(self):
         """ Return all parameters for this part, ordered by name """

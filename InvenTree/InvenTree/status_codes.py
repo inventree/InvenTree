@@ -71,11 +71,17 @@ class StockStatus(StatusCode):
         LOST: _("Lost"),
     }
 
-    # The following codes correspond to parts that are 'available'
+    # The following codes correspond to parts that are 'available' or 'in stock'
     AVAILABLE_CODES = [
         OK,
         ATTENTION,
-        DAMAGED
+        DAMAGED,
+    ]
+
+    # The following codes correspond to parts that are 'unavailable'
+    UNAVAILABLE_CODES = [
+        DESTROYED,
+        LOST,
     ]
 
 

@@ -130,9 +130,10 @@ class OrderTest(TestCase):
         order.receive_line_item(line, loc, 50, user=None)
 
         line = PurchaseOrderLineItem.objects.get(id=2)
-        order.receive_line_item(line, loc, 2 * line.quantity, user=None)
 
-        self.assertEqual(part.on_order, 1100)
+        order.receive_line_item(line, loc, 500, user=None)
+
+        self.assertEqual(part.on_order, 800)
         self.assertEqual(order.status, OrderStatus.PLACED)
 
         for line in order.pending_line_items():
