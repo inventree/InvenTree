@@ -178,6 +178,7 @@ class PartList(generics.ListCreateAPIView):
             'is_template',
             'URL',
             'units',
+            'minimum_stock',
             'trackable',
             'assembly',
             'component',
