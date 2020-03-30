@@ -182,7 +182,6 @@ function loadPartTable(table, url, options={}) {
         searchable: false,
         sortable: true,
         formatter: function(value, row, index, field) {            
-            var html = "";
             var link = "stock";
             
             if (value) {
@@ -190,22 +189,20 @@ function loadPartTable(table, url, options={}) {
 
                 // Is stock "low" (below the 'minimum_stock' quantity)?
                 if (row.minimum_stock && row.minimum_stock > value) {
-                    value = "<span class='label label-warning'>Low stock : " + row.in_stock + "</span>";
+                    value += "<span class='label label-right label-warning'>Low stock</span>";
                 }
-
-                html = value;
 
             } else if (row.on_order) {
                 // There is no stock available, but stock is on order
-                value = "<span class='label label-primary'>On Order : " + row.on_order + "</span>";
+                value = "0<span class='label label-right label-primary'>On Order : " + row.on_order + "</span>";
                 link = "orders";
             } else if (row.building) {
                 // There is no stock available, but stock is being built
-                value = "<span class='label label-info'>Building : " + row.building + "</span>";
+                value = "0<span class='label label-right label-info'>Building : " + row.building + "</span>";
                 link = "builds";
             } else {
                 // There is no stock available
-                value ="<span class='label label-danger'>No Stock</span>";
+                value = "0<span class='label label-right label-danger'>No Stock</span>";
             }
             
             return renderLink(value, '/part/' + row.pk + "/" + link + "/");

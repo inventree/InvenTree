@@ -112,6 +112,10 @@
     font-size: 100%;
 }
 
+.label-right {
+    float: right;
+}
+
 /* Bootstrap table overrides */
 
 .stock-sub-group td {
