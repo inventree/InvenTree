@@ -57,6 +57,31 @@
             {
                 field: 'status',
                 title: 'Status',
+                formatter: function(value, row, index, field) {
+
+                    var color = '';
+
+                    switch (value) {
+                    case 10:    // Pending
+                        color = 'label-info';
+                        break;
+                    case 20: // Allocated
+                        color = 'label-primary';
+                        break;
+                    case 30: // Cancelled
+                        color = 'label-danger';
+                        break;
+                    case 40: // Complete
+                        color = 'label-success';
+                        break;
+                    default:
+                        break;
+                    }
+
+                    var html = "<span class='label " + color + " label-large'>" + row.status_text + "</span>";
+
+                    return html;
+                }
             },
             {
                 field: 'completion_date',
