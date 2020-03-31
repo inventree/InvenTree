@@ -20,6 +20,7 @@ from datetime import datetime
 from stock.models import StockItem
 from company.models import Company, SupplierPart
 
+from InvenTree.fields import RoundingDecimalField
 from InvenTree.helpers import decimal2string
 from InvenTree.status_codes import OrderStatus
 from InvenTree.models import InvenTreeAttachment
@@ -264,7 +265,7 @@ class OrderLineItem(models.Model):
     class Meta:
         abstract = True
 
-    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, help_text=_('Item quantity'))
+    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, help_text=_('Item quantity'))
 
     reference = models.CharField(max_length=100, blank=True, help_text=_('Line item reference'))
     
