@@ -16,6 +16,8 @@ from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.status_codes import OrderStatus
 from InvenTree.helpers import str2bool
 
+from common.models import Currency
+
 from .models import Company
 from .models import SupplierPart
 from .models import SupplierPriceBreak
@@ -329,6 +331,13 @@ class PriceBreakCreate(AjaxCreateView):
         initials = super(AjaxCreateView, self).get_initial()
 
         initials['part'] = self.get_part()
+
+        # Pre-select the default currency
+        try:
+            base = Currency.objects.get(base=True)
+            initials['currency'] = base
+        except Currency.DoesNotExist:
+            pass
 
         return initials
 
