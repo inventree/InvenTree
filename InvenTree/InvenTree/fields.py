@@ -52,7 +52,10 @@ class RoundingDecimalFormField(forms.DecimalField):
         Why? It looks nice!
         """
 
-        return value.normalize()
+        if type(value) == Decimal:
+            return value.normalize()
+        else:
+            return value
 
 
 class RoundingDecimalField(models.DecimalField):
