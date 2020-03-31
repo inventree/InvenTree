@@ -1,18 +1,21 @@
 {% extends "modal_form.html" %}
 
+{% load inventree_extras %}
+{% load i18n %}
+
 {% block form %}
 
 <h4>
-    Step 1 of 2 - Select Part Suppliers
+    {% trans "Step 1 of 2 - Select Part Suppliers" %}
 </h4>
 
 {% if parts|length > 0 %}
 <div class='alert alert-info alert-block' role='alert'>
-    Select suppliers for {{ parts|length }} parts.
+    {% trans "Select suppliers." %}
 </div>
 {% else %}
 <div class='alert alert-warning alert-block' role='alert'>
-    No purchaseable parts selected.
+    {% trans "No purchaseable parts selected." %}
 </div>
 {% endif %}
 
@@ -24,9 +27,9 @@
 
     <table class='table table-condensed table-striped' id='order-wizard-part-table'>
         <tr>
-            <th>Part</th>
-            <th colspan='2'>Select Supplier</th>
-            <th>Quantity</th>
+            <th>{% trans "Part" %}</th>
+            <th colspan='2'>{% trans "Select Supplier" %}</th>
+            <th>{% trans "Quantity" %}</th>
             <th></th>
         </tr>
         {% for part in parts %}
@@ -51,14 +54,14 @@
                         </select>
                     </div>
                     {% if not part.order_supplier %}
-                    <span class='help-inline'>Select a supplier for <i>{{ part.name }}</i></span>
+                    <span class='help-inline'>{% trans "Select a supplier for" %} <i>{{ part.name }}</i></span>
                     {% endif %}
                 </div>
             </td>
             <td>
                 <div class='control-group'>
                     <div class='controls'>
-                        <input class='numberinput' type='number' min='0' value='{{ part.order_quantity }}' name='part-quantity-{{ part.id }}'/>
+                        <input class='numberinput' type='number' min='0' value='{% decimal part.order_quantity %}' name='part-quantity-{{ part.id }}'/>
                     </div>
                 </div>
             </td>

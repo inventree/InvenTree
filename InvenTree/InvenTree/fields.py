@@ -43,7 +43,19 @@ def round_decimal(value, places):
 class RoundingDecimalFormField(forms.DecimalField):
     def to_python(self, value):
         value = super(RoundingDecimalFormField, self).to_python(value)
-        return round_decimal(value, self.decimal_places)
+        value = round_decimal(value, self.decimal_places)
+        return value
+
+    def prepare_value(self, value):
+        """
+        Override the 'prepare_value' method, to remove trailing zeros when displaying.
+        Why? It looks nice!
+        """
+
+        if type(value) == Decimal:
+            return value.normalize()
+        else:
+            return value
 
 
 class RoundingDecimalField(models.DecimalField):

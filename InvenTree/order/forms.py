@@ -11,6 +11,7 @@ from django.utils.translation import ugettext as _
 from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.forms import HelperForm
+from InvenTree.fields import RoundingDecimalFormField
 
 from stock.models import StockLocation
 from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
@@ -70,7 +71,6 @@ class EditPurchaseOrderForm(HelperForm):
             'supplier',
             'description',
             'URL',
-            'notes'
         ]
 
 
@@ -88,6 +88,8 @@ class EditPurchaseOrderAttachmentForm(HelperForm):
 
 class EditPurchaseOrderLineItemForm(HelperForm):
     """ Form for editing a PurchaseOrderLineItem object """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
 
     class Meta:
         model = PurchaseOrderLineItem
