@@ -95,6 +95,10 @@ function loadPartTable(table, url, options={}) {
         query.active = true;
     }
 
+    // Include sub-category search
+    // TODO - Make this user-configurable!
+    query.cascade = true;
+
     var columns = [
         {
             field: 'pk',
