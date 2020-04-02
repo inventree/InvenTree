@@ -27,7 +27,7 @@ from . import serializers as part_serializers
 
 from InvenTree.status_codes import OrderStatus, StockStatus, BuildStatus
 from InvenTree.views import TreeSerializer
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import str2bool, isNull
 
 
 class PartCategoryTree(TreeSerializer):
@@ -69,15 +69,16 @@ class CategoryList(generics.ListCreateAPIView):
 
         if cat_id is not None:
             
-            # Integer id?
-            try:
-                cat_id = int(cat_id)
-                queryset = queryset.filter(parent=cat_id)
-            except ValueError:
-                
-                # Look for top-level categories?
-                if str(cat_id).lower() in ['top', 'null', 'none', 'false', '-1']:
-                    queryset = queryset.filter(parent=None)
+            # Look for top-level categories
+            if isNull(cat_id):
+                queryset = queryset.filter(parent=None)
+            
+            else:
+                try:
+                    cat_id = int(cat_id)
+                    queryset = queryset.filter(parent=cat_id)
+                except ValueError:
+                    pass
 
         return queryset
 
