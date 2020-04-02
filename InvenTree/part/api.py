@@ -57,6 +57,30 @@ class CategoryList(generics.ListCreateAPIView):
         permissions.IsAuthenticated,
     ]
 
+    def get_queryset(self):
+        """
+        Custom filtering:
+        - Allow filtering by "null" parent to retrieve top-level part categories
+        """
+
+        cat_id = self.request.query_params.get('parent', None)
+
+        queryset = super().get_queryset()
+
+        if cat_id is not None:
+            
+            # Integer id?
+            try:
+                cat_id = int(cat_id)
+                queryset = queryset.filter(parent=cat_id)
+            except ValueError:
+                
+                # Look for top-level categories?
+                if str(cat_id).lower() in ['top', 'null', 'none', 'false', '-1']:
+                    queryset = queryset.filter(parent=None)
+
+        return queryset
+
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -64,7 +88,6 @@ class CategoryList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'parent',
     ]
 
     ordering_fields = [
