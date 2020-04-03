@@ -42,6 +42,10 @@ function loadStockTable(table, options) {
     
     var params = options.params || {};
 
+    // Enforce 'cascade' option
+    // TODO - Make this user-configurable?
+    params.cascade = true;
+
     console.log('load stock table');
 
     table.inventreeTable({

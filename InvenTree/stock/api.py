@@ -396,13 +396,24 @@ class StockList(generics.ListCreateAPIView):
         # Does the client wish to filter by stock location?
         loc_id = self.request.query_params.get('location', None)
 
-        if loc_id:
-            try:
-                location = StockLocation.objects.get(pk=loc_id)
-                stock_list = stock_list.filter(location__in=location.getUniqueChildren())
-                 
-            except (ValueError, StockLocation.DoesNotExist):
-                pass
+        cascade = str2bool(self.request.query_params.get('cascade', False))
+
+        if loc_id is not None:
+
+            # Filter by 'null' location (i.e. top-level items)
+            if isNull(loc_id):
+                stock_list = stock_list.filter(location=None)
+            else:
+                try:
+                    # If '?cascade=true' then include items which exist in sub-locations
+                    if cascade:
+                        location = StockLocation.objects.get(pk=loc_id)
+                        stock_list = stock_list.filter(location__in=location.getUniqueChildren())
+                    else:
+                        stock_list = stock_list.filter(location=loc_id)
+                    
+                except (ValueError, StockLocation.DoesNotExist):
+                    pass
 
         # Does the client wish to filter by part category?
         cat_id = self.request.query_params.get('category', None)
