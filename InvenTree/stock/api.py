@@ -19,7 +19,7 @@ from .serializers import LocationSerializer
 from .serializers import StockTrackingSerializer
 
 from InvenTree.views import TreeSerializer
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import str2bool, isNull
 from InvenTree.status_codes import StockStatus
 
 import os
@@ -223,8 +223,32 @@ class StockLocationList(generics.ListCreateAPIView):
     """
 
     queryset = StockLocation.objects.all()
-
     serializer_class = LocationSerializer
+
+    def get_queryset(self):
+        """
+        Custom filtering:
+        - Allow filtering by "null" parent to retrieve top-level stock locations
+        """
+
+        queryset = super().get_queryset()
+
+        loc_id = self.request.query_params.get('parent', None)
+
+        if loc_id is not None:
+
+            # Look for top-level locations
+            if isNull(loc_id):
+                queryset = queryset.filter(parent=None)
+            
+            else:
+                try:
+                    loc_id = int(loc_id)
+                    queryset = queryset.filter(parent=loc_id)
+                except ValueError:
+                    pass
+            
+        return queryset
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -237,7 +261,6 @@ class StockLocationList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'parent',
     ]
 
     search_fields = [
@@ -373,13 +396,24 @@ class StockList(generics.ListCreateAPIView):
         # Does the client wish to filter by stock location?
         loc_id = self.request.query_params.get('location', None)
 
-        if loc_id:
-            try:
-                location = StockLocation.objects.get(pk=loc_id)
-                stock_list = stock_list.filter(location__in=location.getUniqueChildren())
-                 
-            except (ValueError, StockLocation.DoesNotExist):
-                pass
+        cascade = str2bool(self.request.query_params.get('cascade', False))
+
+        if loc_id is not None:
+
+            # Filter by 'null' location (i.e. top-level items)
+            if isNull(loc_id):
+                stock_list = stock_list.filter(location=None)
+            else:
+                try:
+                    # If '?cascade=true' then include items which exist in sub-locations
+                    if cascade:
+                        location = StockLocation.objects.get(pk=loc_id)
+                        stock_list = stock_list.filter(location__in=location.getUniqueChildren())
+                    else:
+                        stock_list = stock_list.filter(location=loc_id)
+                    
+                except (ValueError, StockLocation.DoesNotExist):
+                    pass
 
         # Does the client wish to filter by part category?
         cat_id = self.request.query_params.get('category', None)
@@ -511,13 +545,13 @@ stock_endpoints = [
 ]
 
 location_endpoints = [
-    url(r'^$', LocationDetail.as_view(), name='api-location-detail'),
+    url(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
+
+    url(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
 ]
 
 stock_api_urls = [
-    url(r'location/?', StockLocationList.as_view(), name='api-location-list'),
-
-    url(r'location/(?P<pk>\d+)/', include(location_endpoints)),
+    url(r'location/', include(location_endpoints)),
 
     # These JSON endpoints have been replaced (for now) with server-side form rendering - 02/06/2019
     # url(r'stocktake/?', StockStocktake.as_view(), name='api-stock-stocktake'),

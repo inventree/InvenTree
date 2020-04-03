@@ -18,6 +18,8 @@ class CategorySerializer(InvenTreeModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
+    parts = serializers.IntegerField(source='item_count', read_only=True)
+
     class Meta:
         model = PartCategory
         fields = [
@@ -27,6 +29,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'pathstring',
             'url',
             'parent',
+            'parts',
         ]
 
 
