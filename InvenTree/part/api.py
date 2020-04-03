@@ -27,7 +27,7 @@ from . import serializers as part_serializers
 
 from InvenTree.status_codes import OrderStatus, StockStatus, BuildStatus
 from InvenTree.views import TreeSerializer
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import str2bool, isNull
 
 
 class PartCategoryTree(TreeSerializer):
@@ -57,6 +57,31 @@ class CategoryList(generics.ListCreateAPIView):
         permissions.IsAuthenticated,
     ]
 
+    def get_queryset(self):
+        """
+        Custom filtering:
+        - Allow filtering by "null" parent to retrieve top-level part categories
+        """
+
+        cat_id = self.request.query_params.get('parent', None)
+
+        queryset = super().get_queryset()
+
+        if cat_id is not None:
+            
+            # Look for top-level categories
+            if isNull(cat_id):
+                queryset = queryset.filter(parent=None)
+            
+            else:
+                try:
+                    cat_id = int(cat_id)
+                    queryset = queryset.filter(parent=cat_id)
+                except ValueError:
+                    pass
+
+        return queryset
+
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -64,7 +89,6 @@ class CategoryList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'parent',
     ]
 
     ordering_fields = [
@@ -219,12 +243,25 @@ class PartList(generics.ListCreateAPIView):
         # Start with all objects
         parts_list = Part.objects.all()
 
-        if cat_id:
-            try:
-                category = PartCategory.objects.get(pk=cat_id)
-                parts_list = parts_list.filter(category__in=category.getUniqueChildren())
-            except PartCategory.DoesNotExist:
-                pass
+        cascade = str2bool(self.request.query_params.get('cascade', False))
+
+        if cat_id is not None:
+
+            if isNull(cat_id):
+                parts_list = parts_list.filter(category=None)
+            else:
+                try:
+                    cat_id = int(cat_id)
+                    category = PartCategory.objects.get(pk=cat_id)
+
+                    # If '?cascade=true' then include parts which exist in sub-categories
+                    if cascade:
+                        parts_list = parts_list.filter(category__in=category.getUniqueChildren())
+                    # Just return parts directly in the requested category
+                    else:
+                        parts_list = parts_list.filter(category=cat_id)
+                except (ValueError, PartCategory.DoesNotExist):
+                    pass
 
         # Ensure that related models are pre-loaded to reduce DB trips
         parts_list = self.get_serializer_class().setup_eager_loading(parts_list)

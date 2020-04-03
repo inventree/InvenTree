@@ -119,6 +119,8 @@ class LocationSerializer(InvenTreeModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
+    items = serializers.IntegerField(source='item_count', read_only=True)
+
     class Meta:
         model = StockLocation
         fields = [
@@ -127,7 +129,8 @@ class LocationSerializer(InvenTreeModelSerializer):
             'name',
             'description',
             'parent',
-            'pathstring'
+            'pathstring',
+            'items',
         ]
 
 

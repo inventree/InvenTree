@@ -52,6 +52,21 @@ def str2bool(text, test=True):
         return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
 
 
+def isNull(text):
+    """
+    Test if a string 'looks' like a null value.
+    This is useful for querying the API against a null key.
+    
+    Args:
+        text: Input text
+    
+    Returns:
+        True if the text looks like a null value
+    """
+
+    return str(text).strip().lower() in ['top', 'null', 'none', 'empty', 'false', '-1']
+
+
 def decimal2string(d):
     """
     Format a Decimal number as a string,
