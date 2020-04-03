@@ -545,13 +545,13 @@ stock_endpoints = [
 ]
 
 location_endpoints = [
-    url(r'^$', LocationDetail.as_view(), name='api-location-detail'),
+    url(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
+
+    url(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
 ]
 
 stock_api_urls = [
-    url(r'location/?', StockLocationList.as_view(), name='api-location-list'),
-
-    url(r'location/(?P<pk>\d+)/', include(location_endpoints)),
+    url(r'location/', include(location_endpoints)),
 
     # These JSON endpoints have been replaced (for now) with server-side form rendering - 02/06/2019
     # url(r'stocktake/?', StockStocktake.as_view(), name='api-stock-stocktake'),
