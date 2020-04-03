@@ -103,7 +103,7 @@ class PartAPITest(APITestCase):
         If provided, parts are provided for ANY child category (recursive)
         """
         url = reverse('api-part-list')
-        data = {'category': 1}
+        data = {'category': 1, 'cascade': True}
 
         # Now request to include child categories
         response = self.client.get(url, data, format='json')
