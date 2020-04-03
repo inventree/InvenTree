@@ -19,7 +19,7 @@ from .serializers import LocationSerializer
 from .serializers import StockTrackingSerializer
 
 from InvenTree.views import TreeSerializer
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import str2bool, isNull
 from InvenTree.status_codes import StockStatus
 
 import os
@@ -223,8 +223,32 @@ class StockLocationList(generics.ListCreateAPIView):
     """
 
     queryset = StockLocation.objects.all()
-
     serializer_class = LocationSerializer
+
+    def get_queryset(self):
+        """
+        Custom filtering:
+        - Allow filtering by "null" parent to retrieve top-level stock locations
+        """
+
+        queryset = super().get_queryset()
+
+        loc_id = self.request.query_params.get('parent', None)
+
+        if loc_id is not None:
+
+            # Look for top-level locations
+            if isNull(loc_id):
+                queryset = queryset.filter(parent=None)
+            
+            else:
+                try:
+                    loc_id = int(loc_id)
+                    queryset = queryset.filter(parent=loc_id)
+                except ValueError:
+                    pass
+            
+        return queryset
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -237,7 +261,6 @@ class StockLocationList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'parent',
     ]
 
     search_fields = [
