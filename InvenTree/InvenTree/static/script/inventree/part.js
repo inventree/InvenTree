@@ -139,7 +139,7 @@ function loadPartTable(table, url, options={}) {
                 name = '<i>' + name + '</i>';
             }
 
-            var display = imageHoverIcon(row.image) + renderLink(name, '/part/' + row.pk + '/');
+            var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
             
             if (row.is_template) {
                 display = display + "<span class='label label-info' style='float: right;'>TEMPLATE</span>";

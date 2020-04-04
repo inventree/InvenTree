@@ -27,6 +27,8 @@ from django_cleanup import cleanup
 
 from mptt.models import TreeForeignKey
 
+from stdimage.models import StdImageField
+
 from decimal import Decimal
 from datetime import datetime
 from rapidfuzz import fuzz
@@ -302,6 +304,16 @@ class Part(models.Model):
         else:
             return os.path.join(settings.STATIC_URL, 'img/blank_image.png')
 
+    def get_thumbnail_url(self):
+        """
+        Return the URL of the image thumbnail for this part
+        """
+
+        if self.image:
+            return os.path.join(settings.MEDIA_URL, str(self.image.thumbnail.url))
+        else:
+            return os.path.join(settings.STATIC_URL, 'img/blank_image.thumbnail.png')
+
     def validate_unique(self, exclude=None):
         """ Validate that a part is 'unique'.
         Uniqueness is checked across the following (case insensitive) fields:
@@ -373,7 +385,13 @@ class Part(models.Model):
 
     URL = InvenTreeURLField(blank=True, help_text=_('Link to extenal URL'))
 
-    image = models.ImageField(upload_to=rename_part_image, max_length=255, null=True, blank=True)
+    image = StdImageField(
+        upload_to=rename_part_image,
+        null=True,
+        blank=True,
+        variations={'thumbnail': (128, 128)},
+        delete_orphans=True,
+    )
 
     default_location = TreeForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
                                       blank=True, null=True,
