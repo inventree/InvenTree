@@ -4,7 +4,7 @@ Provides information on the current InvenTree version
 
 import subprocess
 
-INVENTREE_SW_VERSION = "0.0.9"
+INVENTREE_SW_VERSION = "0.0.10"
 
 
 def inventreeVersion():
