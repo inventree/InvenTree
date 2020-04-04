@@ -390,8 +390,8 @@ class Part(models.Model):
         null=True,
         blank=True,
         variations={'thumbnail': (128, 128)},
-        delete_orphans=True
-        )
+        delete_orphans=True,
+    )
 
     default_location = TreeForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
                                       blank=True, null=True,
