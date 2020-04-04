@@ -304,6 +304,16 @@ class Part(models.Model):
         else:
             return os.path.join(settings.STATIC_URL, 'img/blank_image.png')
 
+    def get_thumbnail_url(self):
+        """
+        Return the URL of the image thumbnail for this part
+        """
+
+        if self.image:
+            return os.path.join(settings.MEDIA_URL, str(self.image.thumbnail.url))
+        else:
+            return os.path.join(settings.STATIC_URL, 'img/blank_image.thumbnail.png')
+
     def validate_unique(self, exclude=None):
         """ Validate that a part is 'unique'.
         Uniqueness is checked across the following (case insensitive) fields:
@@ -379,7 +389,7 @@ class Part(models.Model):
         upload_to=rename_part_image,
         null=True,
         blank=True,
-        variations={'thumbnail': (200, 200)},
+        variations={'thumbnail': (128, 128)},
         delete_orphans=True
         )
 
