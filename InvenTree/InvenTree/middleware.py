@@ -63,7 +63,7 @@ class AuthRequiredMiddleware(object):
 
             # No authorization was found for the request
             if not authorized:
-                if not request.path_info == reverse_lazy('login') and not request.path_info == '/api/':
+                if not request.path_info == reverse_lazy('login') and not request.path_info.startswith('/api/'):
                     return HttpResponseRedirect(reverse_lazy('login'))
 
         # Code to be executed for each request/response after
