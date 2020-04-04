@@ -70,7 +70,7 @@ function loadStockTable(table, options) {
 
                 name += row.part__name;
 
-                return imageHoverIcon(row.part__image) + name + ' <i>(' + data.length + ' items)</i>';
+                return imageHoverIcon(row.part__thumbnail) + name + ' <i>(' + data.length + ' items)</i>';
             }
             else if (field == 'part__description') {
                 return row.part__description;
@@ -188,7 +188,7 @@ function loadStockTable(table, options) {
                         name += row.part__revision;
                     }
                     
-                    return imageHoverIcon(row.part__image) + renderLink(name, '/part/' + row.part + '/stock/');
+                    return imageHoverIcon(row.part__thumbnail) + renderLink(name, '/part/' + row.part + '/stock/');
                 }
             },
             {

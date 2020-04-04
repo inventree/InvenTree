@@ -337,7 +337,17 @@ class StockList(generics.ListCreateAPIView):
         locations = {}
 
         for item in data:
-            item['part__image'] = os.path.join(settings.MEDIA_URL, item['part__image'])
+
+            img = item['part__image']
+
+            # Use the thumbnail image instead
+            fn, ext = os.path.splitext(img)
+
+            thumb = "{fn}.thumbnail{ext}".format(fn=fn, ext=ext)
+
+            item['part__thumbnail'] = os.path.join(settings.MEDIA_URL, thumb)
+
+            del item['part__image']
 
             loc_id = item['location']
 
