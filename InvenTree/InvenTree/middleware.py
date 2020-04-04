@@ -5,6 +5,8 @@ import logging
 import time
 import operator
 
+from rest_framework.authtoken.models import Token
+
 logger = logging.getLogger(__name__)
 
 
@@ -20,10 +22,49 @@ class AuthRequiredMiddleware(object):
 
         response = self.get_response(request)
 
-        # Redirect any unauthorized HTTP requests to the login page
         if not request.user.is_authenticated:
-            if not request.path_info == reverse_lazy('login') and not request.path_info.startswith('/api/'):
-                return HttpResponseRedirect(reverse_lazy('login'))
+            """
+            Normally, a web-based session would use csrftoken based authentication.
+            However when running an external application (e.g. the InvenTree app),
+            we wish to use token-based auth to grab media files.
+
+            So, we will allow token-based authentication but ONLY for the /media/ directory.
+
+            What problem is this solving?
+            - The InvenTree mobile app does not use csrf token auth
+            - Token auth is used by the Django REST framework, but that is under the /api/ endpoint
+            - Media files (e.g. Part images) are required to be served to the app
+            - We do not want to make /media/ files accessible without login!
+
+            There is PROBABLY a better way of going about this?
+            a) Allow token-based authentication against a user?
+            b) Serve /media/ files in a duplicate location e.g. /api/media/ ?
+            c) Is there a "standard" way of solving this problem?
+
+            My [google|stackoverflow]-fu has failed me. So this hack has been created.
+            """
+
+            authorized = False
+
+            if 'Authorization' in request.headers.keys():
+                auth = request.headers['Authorization'].strip()
+
+                if auth.startswith('Token') and len(auth.split()) == 2:
+                    token = auth.split()[1]
+
+                    # Does the provided token match a valid user?
+                    if Token.objects.filter(key=token).exists():
+
+                        allowed = ['/media/', '/static/']
+
+                        # Only allow token-auth for /media/ or /static/ dirs!
+                        if any([request.path_info.startswith(a) for a in allowed]):
+                            authorized = True
+
+            # No authorization was found for the request
+            if not authorized:
+                if not request.path_info == reverse_lazy('login') and not request.path_info.startswith('/api/'):
+                    return HttpResponseRedirect(reverse_lazy('login'))
 
         # Code to be executed for each request/response after
         # the view is called.
@@ -37,6 +78,8 @@ class QueryCountMiddleware(object):
     and the total time taken for each request (with a
     status code of 200). It does not currently support
     multi-db setups.
+
+    To enable this middleware, set 'log_queries: True' in the local InvenTree config file.
 
     Reference: https://www.dabapps.com/blog/logging-sql-queries-django-13/
     """

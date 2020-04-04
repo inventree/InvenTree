@@ -221,7 +221,17 @@ class PartList(generics.ListCreateAPIView):
         for item in data:
 
             if item['image']:
-                item['image'] = os.path.join(settings.MEDIA_URL, item['image'])
+                img = item['image']
+
+                # Use the 'thumbnail' image here instead of the full-size image
+                # Note: The full-size image is used when requesting the /api/part/<x>/ endpoint
+                fn, ext = os.path.splitext(img)
+
+                thumb = "{fn}.thumbnail{ext}".format(fn=fn, ext=ext)
+
+                item['thumbnail'] = os.path.join(settings.MEDIA_URL, thumb)
+
+                del item['image']
 
             cat_id = item['category']
 
