@@ -59,6 +59,8 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     part_name = serializers.CharField(source='get_part_name', read_only=True)
 
+    part_image = serializers.CharField(source='part__image', read_only=True)
+
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
 
@@ -81,8 +83,9 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'pk',
             'url',
             'part',
-            'part_name',
             'part_detail',
+            'part_name',
+            'part_image',
             'supplier_part',
             'location',
             'location_detail',

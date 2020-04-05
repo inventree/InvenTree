@@ -59,6 +59,18 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = StockItemSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get_serializer(self, *args, **kwargs):
+
+        part_detail = str2bool(self.request.GET.get('part_detail', False))
+        loc_detail = str2bool(self.request.GET.get('location_detail', False))
+
+        kwargs['part_detail'] = part_detail
+        kwargs['location_detail'] = loc_detail
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
 
 class StockFilter(FilterSet):
     """ FilterSet for advanced stock filtering.
