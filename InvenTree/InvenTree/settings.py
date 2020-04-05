@@ -311,7 +311,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.abspath(CONFIG.get('media_root', os.path.join(BASE_DIR, 'media')))
 
 if DEBUG:
+    print("InvenTree running in DEBUG mode")
     print("MEDIA_ROOT:", MEDIA_ROOT)
+    print("STATIC_ROOT:", STATIC_ROOT)
 
 # crispy forms use the bootstrap templates
 CRISPY_TEMPLATE_PACK = 'bootstrap'
