@@ -1,14 +1,14 @@
 {% extends "base.html" %}
-
 {% load static %}
+{% load i18n %}
 
 {% block page_title %}
 {% if part %}
-InvenTree | Part - {{ part.full_name }}
+InvenTree | {% trans "Part" %} - {{ part.full_name }}
 {% elif category %}
-InvenTree | Part Category - {{ category }}
+InvenTree | {% trans "Part Category" %} - {{ category }}
 {% else %}
-InvenTree | Part List
+InvenTree | {% trans "Part List" %}
 {% endif %}
 {% endblock %}
 
@@ -36,10 +36,10 @@ InvenTree | Part List
 {{ block.super }}
 
     loadTree("{% url 'api-part-tree' %}",
-            "#part-tree",
-            {
-                name: 'part',
-            }
+        "#part-tree",
+        {
+            name: 'part',
+        }
     );
 
     $("#toggle-part-tree").click(function() {
