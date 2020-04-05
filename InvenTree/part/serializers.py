@@ -104,7 +104,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'allocated_stock',
             'assembly',
             'bom_items',
-            'building', 
+            'building',
             'category',
             'category_name',
             'component',
