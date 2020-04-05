@@ -78,12 +78,16 @@ class PartSerializer(InvenTreeModelSerializer):
     Used when displaying all details of a single component.
     """
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-    image = serializers.CharField(source='get_image_url', read_only=True)
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    allocated_stock = serializers.FloatField(source='allocation_count', read_only=True)
+    bom_items = serializers.IntegerField(source='bom_count', read_only=True)
+    building = serializers.FloatField(source='quantity_being_built', read_only=False)
     category_name = serializers.CharField(source='category_path', read_only=True)
-
-    allocated_stock = serializers.IntegerField(source='allocation_count', read_only=True)
+    image = serializers.CharField(source='get_image_url', read_only=True)
+    on_order = serializers.FloatField(read_only=True)
+    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    link = serializers.CharField(source='URL')
+    used_in = serializers.IntegerField(source='used_in_count', read_only=True)
 
     @staticmethod
     def setup_eager_loading(queryset):
@@ -97,31 +101,34 @@ class PartSerializer(InvenTreeModelSerializer):
         model = Part
         partial = True
         fields = [
-            'pk',
-            'url',  # Link to the part detail page
+            'active',
+            'allocated_stock',
+            'assembly',
+            'bom_items',
+            'building',
             'category',
             'category_name',
-            'image',
-            'thumbnail',
+            'component',
+            'description',
             'full_name',
-            'name',
+            'image',
             'IPN',
             'is_template',
-            'variant_of',
-            'description',
             'keywords',
-            'URL',
-            'total_stock',
-            'allocated_stock',
+            'link',
+            'name',
+            'notes',
             'on_order',
-            'units',
-            'trackable',
-            'assembly',
-            'component',
-            'trackable',
+            'pk',
             'purchaseable',
             'salable',
-            'active',
+            'thumbnail',
+            'trackable',
+            'total_stock',
+            'units',
+            'used_in',
+            'url',  # Link to the part detail page
+            'variant_of',
             'virtual',
         ]
 

@@ -243,6 +243,12 @@ class PartList(generics.ListCreateAPIView):
             else:
                 item['category__name'] = None
 
+            # Rename "URL" to "link" to distinguish from lower-case "url",
+            # which is the web address of the item itself
+            if 'URL' in item.keys():
+                item['link'] = item['URL']
+                del item['URL']
+
         return Response(data)
 
     def get_queryset(self):

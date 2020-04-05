@@ -34,42 +34,50 @@
         <h3>{% trans "Category Details" %}</h3>
         <table class='table table-condensed table-striped'>
             <tr>
+                <td><span class='fas fa-sitemap'></span></td>
                 <td>{% trans "Category Path" %}</td>
                 <td>{{ category.pathstring }}</td>
             </tr>
             <tr>
+                <td><span class='fas fa-info-circle'></span></td>
                 <td>{% trans "Category Description" %}</td>
                 <td>{{ category.description }}</td>
             </tr>
             {% if category.default_location %}
             <tr>
+                <td><span class='fas fa-map-marker-alt'></span></td>
                 <td>{% trans "Default Location" %}</td>
                 <td><a href="{% url 'stock-location-detail' category.default_location.pk %}">{{ category.default_location.pathstring }}</a></td>
             </tr>
             {% endif %}
             {% if category.default_keywords %}
             <tr>
+                <td><span class='fas fa-key'></span></td>
                 <td>{% trans "Keywords" %}</td>
                 <td>{{ category.default_keywords }}</td>
             </tr>
             {% endif %}
             <tr>
+                <td><span class='fas fa-sitemap'></span></td>
                 <td>{% trans "Subcategories" %}</td>
                 <td>{{ category.children.count }}</td>
             </tr>
             <tr>
+                <td><span class='fas fa-shapes'></span></td>
                 <td>{% trans "Parts (Including subcategories)" %}</td>
                 <td>{{ category.partcount }}</td>
             </tr>
         </table>
         {% else %}
-        <h3>{% trans "Part Details" %}</h3>
+        <h3>{% trans "Category Details" %}</h3>
         <table class='table table-striped table-condensed'>
             <tr>
+                <td><span class='fas fa-sitemap'></span></td>
                 <td>{% trans "Part Categories" %}</td>
                 <td>{{ category_count }}</td>
             </tr>
             <tr>
+                <td><span class='fas fa-shapes'></span></td>
                 <td>{% trans "Parts" %}</td>
                 <td>{{ part_count }}</td>
             </tr>

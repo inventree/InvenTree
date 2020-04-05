@@ -44,9 +44,20 @@
     float: left;
 }
 
+.navbar-nav > li {
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-color: #eee;
+}
+
+.icon-header {
+    margin-right: 10px;
+}
+
 .glyphicon {
     font-size: 18px;
 }
+
 
 .glyphicon-small {
     font-size: 12px;
