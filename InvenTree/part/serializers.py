@@ -83,7 +83,11 @@ class PartSerializer(InvenTreeModelSerializer):
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
     category_name = serializers.CharField(source='category_path', read_only=True)
 
-    allocated_stock = serializers.IntegerField(source='allocation_count', read_only=True)
+    allocated_stock = serializers.FloatField(source='allocation_count', read_only=True)
+
+    on_order = serializers.FloatField(read_only=True)
+
+    building = serializers.FloatField(source='quantity_being_built', read_only=False)
 
     @staticmethod
     def setup_eager_loading(queryset):
@@ -114,6 +118,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'total_stock',
             'allocated_stock',
             'on_order',
+            'building', 
             'units',
             'trackable',
             'assembly',
