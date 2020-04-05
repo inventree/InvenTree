@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-05 10:40+0000\n"
+"POT-Creation-Date: 2020-04-05 10:55+0000\n"
 "PO-Revision-Date: 2020-02-02 08:07+0100\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -1590,13 +1590,13 @@ msgstr "Revision"
 msgid "Variant Of"
 msgstr "Variante von"
 
-#: part/templates/part/detail.html:57
-msgid "Link"
-msgstr ""
-
-#: part/templates/part/detail.html:63
+#: part/templates/part/detail.html:56
 msgid "Category"
 msgstr "Kategorie"
+
+#: part/templates/part/detail.html:66
+msgid "Link"
+msgstr ""
 
 #: part/templates/part/detail.html:80
 msgid "Default Supplier"
@@ -2423,7 +2423,7 @@ msgstr "Lagerbestands-Tracking-Eintrag bearbeiten"
 msgid "Add Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag hinzufügen"
 
-#: templates/InvenTree/search.html:12
+#: templates/InvenTree/search.html:7 templates/InvenTree/search.html:12
 msgid "Search Results"
 msgstr ""
 
@@ -2484,6 +2484,10 @@ msgstr ""
 #| msgid "Status"
 msgid "Statistics"
 msgstr "Status"
+
+#: templates/search_form.html:6
+msgid "Search"
+msgstr ""
 
 #: templates/stock_table.html:8
 #, fuzzy

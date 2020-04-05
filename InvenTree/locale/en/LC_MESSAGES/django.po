@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-05 10:40+0000\n"
+"POT-Creation-Date: 2020-04-05 10:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1439,12 +1439,12 @@ msgstr ""
 msgid "Variant Of"
 msgstr ""
 
-#: part/templates/part/detail.html:57
-msgid "Link"
+#: part/templates/part/detail.html:56
+msgid "Category"
 msgstr ""
 
-#: part/templates/part/detail.html:63
-msgid "Category"
+#: part/templates/part/detail.html:66
+msgid "Link"
 msgstr ""
 
 #: part/templates/part/detail.html:80
@@ -2186,7 +2186,7 @@ msgstr ""
 msgid "Add Stock Tracking Entry"
 msgstr ""
 
-#: templates/InvenTree/search.html:12
+#: templates/InvenTree/search.html:7 templates/InvenTree/search.html:12
 msgid "Search Results"
 msgstr ""
 
@@ -2240,6 +2240,10 @@ msgstr ""
 
 #: templates/navbar.html:33
 msgid "Statistics"
+msgstr ""
+
+#: templates/search_form.html:6
+msgid "Search"
 msgstr ""
 
 #: templates/stock_table.html:8
