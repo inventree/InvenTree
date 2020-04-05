@@ -225,11 +225,17 @@ class PartList(generics.ListCreateAPIView):
 
                 # Use the 'thumbnail' image here instead of the full-size image
                 # Note: The full-size image is used when requesting the /api/part/<x>/ endpoint
-                fn, ext = os.path.splitext(img)
 
-                thumb = "{fn}.thumbnail{ext}".format(fn=fn, ext=ext)
+                if img:
+                    fn, ext = os.path.splitext(img)
 
-                item['thumbnail'] = os.path.join(settings.MEDIA_URL, thumb)
+                    thumb = "{fn}.thumbnail{ext}".format(fn=fn, ext=ext)
+
+                    thumb = os.path.join(settings.MEDIA_URL, thumb)
+                else:
+                    thumb = ''
+
+                item['thumbnail'] = thumb
 
                 del item['image']
 
