@@ -340,12 +340,17 @@ class StockList(generics.ListCreateAPIView):
 
             img = item['part__image']
 
-            # Use the thumbnail image instead
-            fn, ext = os.path.splitext(img)
+            if img:
+                # Use the thumbnail image instead
+                fn, ext = os.path.splitext(img)
 
-            thumb = "{fn}.thumbnail{ext}".format(fn=fn, ext=ext)
+                thumb = "{fn}.thumbnail{ext}".format(fn=fn, ext=ext)
 
-            item['part__thumbnail'] = os.path.join(settings.MEDIA_URL, thumb)
+                thumb = os.path.join(settings.MEDIA_URL, thumb)
+            else:
+                thumb = ''
+
+            item['part__thumbnail'] = thumb
 
             del item['part__image']
 
