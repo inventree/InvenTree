@@ -37,18 +37,22 @@
     <h3>{% trans "Location Details" %}</h3>
     <table class='table table-striped table-condensed'>
         <tr>
+            <td><span class='fas fa-sitemap'></span></td>
             <td>{% trans "Location Path" %}</td>
             <td>{{ location.pathstring }}</td>
         </tr>
         <tr>
+            <td><span class='fas fa-info-circle'></span></td>
             <td>{% trans "Location Description" %}</td>
             <td>{{ location.description }}</td>
         </tr>
         <tr>
+            <td><span class='fas fa-map-marker-alt'></span></td>
             <td>{% trans "Sublocations" %}</td>
             <td>{{ location.children.count }}</td>
         </tr>
         <tr>
+            <td><span class='fas fa-boxes'></span></td>
             <td>{% trans "Stock Items" %}</td>
             <td>{{ location.item_count }}</td>
         </tr>
@@ -57,10 +61,12 @@
     <h3>{% trans "Stock Details" %}</h3>
     <table class='table table-striped table-condensed'>
         <tr>
+            <td><span class='fas fa-map-marker-alt'></span></td>
             <td>{% trans "Stock Locations" %}</td>
             <td>{{ loc_count }}</td>
         </tr>
         <tr>
+            <td><span class='fas fa-boxes'></span></td>
             <td>{% trans "Stock Items" %}</td>
             <td>{{ stock_count }}</td>
         </tr>
