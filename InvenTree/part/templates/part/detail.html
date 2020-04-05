@@ -33,7 +33,7 @@
         </tr>
         {% endif %}
         <tr>
-            <td></td>
+            <td><span class='fas fa-info-circle'></span></td>
             <td><b>{% trans "Description" %}</b></td>
             <td>{{ part.description }}</td>
         </tr>
@@ -46,11 +46,20 @@
         {% endif %}
         {% if part.keywords %}
         <tr>
-            <td></td>
+            <td><span class='fas fa-key'></span></td>
             <td><b>{% trans "Keywords" %}</b></td>
             <td>{{ part.keywords }}</td>
         </tr>
         {% endif %}
+        <tr>
+            <td><span class='fas fa-sitemap'></span></td>
+            <td><b>{% trans "Category" %}</b></td>
+            <td>
+                {% if part.category %}
+                <a href="{% url 'category-detail' part.category.id %}">{{ part.category.pathstring }}</a>
+                {% endif %}
+            </td>
+        </tr>
         {% if part.URL %}
         <tr>
             <td><span class='fas fa-link'></span></td>
@@ -58,15 +67,6 @@
             <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
         </tr>
         {% endif %}
-        <tr>
-            <td></td>
-            <td><b>{% trans "Category" %}</b></td>
-            <td>
-            {% if part.category %}
-                <a href="{% url 'category-detail' part.category.id %}">{{ part.category.pathstring }}</a>
-            {% endif %}
-            </td>
-        </tr>
         {% if part.default_location %}
         <tr>
             <td><span class='fas fa-map-marker-alt'></span></td>
@@ -90,7 +90,7 @@
         </tr>
         {% if part.minimum_stock > 0 %}
         <tr>
-            <td></td>
+            <td><span class='fas fa-greater-than-equal'></span></td>
             <td><b>{% trans "Minimum Stock" %}</b></td>
             <td>{{ part.minimum_stock }}</td>
         </tr>
