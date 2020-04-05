@@ -16,21 +16,21 @@
     <ul class="nav navbar-nav navbar-right">
         {% include "search_form.html" %}
         <li class='dropdown'>
-          <a class='dropdown-toggle' data-toggle='dropdown' href="#"><span class="glyphicon glyphicon-user"></span> <b>{{ user.get_username }}</b></a>
+          <a class='dropdown-toggle' data-toggle='dropdown' href="#"><span class="fas fa-user"></span> <b>{{ user.get_username }}</b></a>
           <ul class='dropdown-menu'>
               {% if user.is_authenticated %}
               {% if user.is_staff %}
-              <li><a href="/admin/"><span class="glyphicon glyphicon-edit"></span> {% trans "Admin" %}</a></li>
+              <li><a href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
               <hr>
               {% endif %}
-              <li><a href="{% url 'settings' %}"><span class="glyphicon glyphicon-cog"></span> {% trans "Settings" %}</a></li>
-              <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> {% trans "Logout" %}</a></li>
+              <li><a href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
+              <li><a href="{% url 'logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
               {% else %}
-              <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> {% trans "Login" %}</a></li>
+              <li><a href="{% url 'login' %}"><span class="fas fa-sign-in-alt"></span> {% trans "Login" %}</a></li>
               {% endif %}
               <hr>  
-              <li id='launch-about'><a href='#'><span class="glyphicon glyphicon-info-sign"></span> {% trans "About InvenTree" %}</a></li>
-              <li id='launch-stats'><a href='#'><span class='glyphicon glyphicon-stats'></span> {% trans "Statistics" %}</a></li>
+              <li id='launch-about'><a href='#'><span class="fas fa-info-circle"></span> {% trans "About InvenTree" %}</a></li>
+              <li id='launch-stats'><a href='#'><span class='fas fa-chart-pie'></span> {% trans "Statistics" %}</a></li>
             </ul>
           </li> 
     </ul>
