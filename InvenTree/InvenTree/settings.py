@@ -298,7 +298,7 @@ DATE_INPUT_FORMATS = [
 STATIC_URL = '/static/'
 
 # The filesystem location for served static files
-STATIC_ROOT = CONFIG.get('static_root', os.path.join(BASE_DIR, 'static'))
+STATIC_ROOT = os.path.abspath(CONFIG.get('static_root', os.path.join(BASE_DIR, 'static')))
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'InvenTree', 'static'),
