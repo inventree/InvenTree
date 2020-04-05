@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-31 10:33+0000\n"
+"POT-Creation-Date: 2020-04-05 10:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,30 +18,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: InvenTree/helpers.py:186 order/models.py:164 order/models.py:215
+#: InvenTree/helpers.py:201 order/models.py:164 order/models.py:215
 msgid "Invalid quantity provided"
 msgstr ""
 
-#: InvenTree/helpers.py:189
+#: InvenTree/helpers.py:204
 msgid "Empty serial number string"
 msgstr ""
 
-#: InvenTree/helpers.py:210 InvenTree/helpers.py:227
+#: InvenTree/helpers.py:225 InvenTree/helpers.py:242
 #, python-brace-format
 msgid "Duplicate serial: {n}"
 msgstr ""
 
-#: InvenTree/helpers.py:214 InvenTree/helpers.py:217 InvenTree/helpers.py:220
-#: InvenTree/helpers.py:231
+#: InvenTree/helpers.py:229 InvenTree/helpers.py:232 InvenTree/helpers.py:235
+#: InvenTree/helpers.py:246
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:237
+#: InvenTree/helpers.py:252
 msgid "No serial numbers found"
 msgstr ""
 
-#: InvenTree/helpers.py:241
+#: InvenTree/helpers.py:256
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr ""
@@ -231,6 +231,7 @@ msgstr ""
 #: company/templates/company/detail_part.html:65
 #: order/templates/order/order_wizard/select_parts.html:30
 #: order/templates/order/purchase_order_detail.html:25
+#: part/templates/part/part_app_base.html:7
 msgid "Part"
 msgstr ""
 
@@ -262,7 +263,7 @@ msgstr ""
 #: company/templates/company/supplier_part_base.html:50
 #: company/templates/company/supplier_part_detail.html:27
 #: order/templates/order/purchase_order_detail.html:26
-#: part/templates/part/detail.html:33
+#: part/templates/part/detail.html:37
 msgid "Description"
 msgstr ""
 
@@ -319,7 +320,7 @@ msgstr ""
 #: company/templates/company/detail_part.html:90
 #: company/templates/company/supplier_part_base.html:47
 #: company/templates/company/supplier_part_detail.html:24
-#: part/templates/part/detail.html:50 part/templates/part/part_base.html:81
+#: part/templates/part/part_base.html:81
 #: stock/templates/stock/item_base.html:131
 msgid "URL"
 msgstr ""
@@ -707,7 +708,7 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: company/templates/company/index.html:69 part/templates/part/category.html:73
+#: company/templates/company/index.html:69 part/templates/part/category.html:81
 #: templates/navbar.html:10 templates/stats.html:7 templates/stats.html:10
 msgid "Parts"
 msgstr ""
@@ -813,59 +814,59 @@ msgstr ""
 msgid "Sales Orders"
 msgstr ""
 
-#: company/views.py:97
+#: company/views.py:99
 msgid "Update Company Image"
 msgstr ""
 
-#: company/views.py:102
+#: company/views.py:104
 msgid "Updated company image"
 msgstr ""
 
-#: company/views.py:112
+#: company/views.py:114
 msgid "Edit Company"
 msgstr ""
 
-#: company/views.py:116
+#: company/views.py:118
 msgid "Edited company information"
 msgstr ""
 
-#: company/views.py:126
+#: company/views.py:128
 msgid "Create new Company"
 msgstr ""
 
-#: company/views.py:130
+#: company/views.py:132
 msgid "Created new company"
 msgstr ""
 
-#: company/views.py:140
+#: company/views.py:142
 msgid "Delete Company"
 msgstr ""
 
-#: company/views.py:145
+#: company/views.py:147
 msgid "Company was deleted"
 msgstr ""
 
-#: company/views.py:170
+#: company/views.py:172
 msgid "Edit Supplier Part"
 msgstr ""
 
-#: company/views.py:179 part/templates/part/stock.html:82
+#: company/views.py:181 part/templates/part/stock.html:82
 msgid "Create new Supplier Part"
 msgstr ""
 
-#: company/views.py:236
+#: company/views.py:238
 msgid "Delete Supplier Part"
 msgstr ""
 
-#: company/views.py:306
+#: company/views.py:308
 msgid "Add Price Break"
 msgstr ""
 
-#: company/views.py:341
+#: company/views.py:350
 msgid "Edit Price Break"
 msgstr ""
 
-#: company/views.py:356
+#: company/views.py:365
 msgid "Delete Price Break"
 msgstr ""
 
@@ -1212,171 +1213,171 @@ msgstr ""
 msgid "Select currency for price calculation"
 msgstr ""
 
-#: part/models.py:60
+#: part/models.py:62
 msgid "Default location for parts in this category"
 msgstr ""
 
-#: part/models.py:63
+#: part/models.py:65
 msgid "Default keywords for parts in this category"
 msgstr ""
 
-#: part/models.py:327
+#: part/models.py:339
 msgid "Part must be unique for name, IPN and revision"
 msgstr ""
 
-#: part/models.py:341
+#: part/models.py:353
 msgid "Part cannot be a template part if it is a variant of another part"
 msgstr ""
 
-#: part/models.py:342
+#: part/models.py:354
 msgid "Part cannot be a variant of another part if it is already a template"
 msgstr ""
 
-#: part/models.py:346 part/templates/part/detail.html:17
+#: part/models.py:358 part/templates/part/detail.html:18
 msgid "Part name"
 msgstr ""
 
-#: part/models.py:350
+#: part/models.py:362
 msgid "Is this part a template part?"
 msgstr ""
 
-#: part/models.py:359
+#: part/models.py:371
 msgid "Is this part a variant of another part?"
 msgstr ""
 
-#: part/models.py:361
+#: part/models.py:373
 msgid "Part description"
 msgstr ""
 
-#: part/models.py:363
+#: part/models.py:375
 msgid "Part keywords to improve visibility in search results"
 msgstr ""
 
-#: part/models.py:368
+#: part/models.py:380
 msgid "Part category"
 msgstr ""
 
-#: part/models.py:370
+#: part/models.py:382
 msgid "Internal Part Number"
 msgstr ""
 
-#: part/models.py:372
+#: part/models.py:384
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:374
+#: part/models.py:386
 msgid "Link to extenal URL"
 msgstr ""
 
-#: part/models.py:380
+#: part/models.py:398
 msgid "Where is this item normally stored?"
 msgstr ""
 
-#: part/models.py:424
+#: part/models.py:442
 msgid "Default supplier part"
 msgstr ""
 
-#: part/models.py:427
+#: part/models.py:445
 msgid "Minimum allowed stock level"
 msgstr ""
 
-#: part/models.py:429
+#: part/models.py:447
 msgid "Stock keeping units for this part"
 msgstr ""
 
-#: part/models.py:431
+#: part/models.py:449
 msgid "Can this part be built from other parts?"
 msgstr ""
 
-#: part/models.py:433
+#: part/models.py:451
 msgid "Can this part be used to build other parts?"
 msgstr ""
 
-#: part/models.py:435
+#: part/models.py:453
 msgid "Does this part have tracking for unique items?"
 msgstr ""
 
-#: part/models.py:437
+#: part/models.py:455
 msgid "Can this part be purchased from external suppliers?"
 msgstr ""
 
-#: part/models.py:439
+#: part/models.py:457
 msgid "Can this part be sold to customers?"
 msgstr ""
 
-#: part/models.py:441
+#: part/models.py:459
 msgid "Is this part active?"
 msgstr ""
 
-#: part/models.py:443
+#: part/models.py:461
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr ""
 
-#: part/models.py:445
+#: part/models.py:463
 msgid "Part notes - supports Markdown formatting"
 msgstr ""
 
-#: part/models.py:447
+#: part/models.py:465
 msgid "Stored BOM checksum"
 msgstr ""
 
-#: part/models.py:1023
+#: part/models.py:1041
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:1028
+#: part/models.py:1046
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:1030
+#: part/models.py:1048
 msgid "Parameter Units"
 msgstr ""
 
-#: part/models.py:1056
+#: part/models.py:1074
 msgid "Parent Part"
 msgstr ""
 
-#: part/models.py:1058
+#: part/models.py:1076
 msgid "Parameter Template"
 msgstr ""
 
-#: part/models.py:1060
+#: part/models.py:1078
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:1084
+#: part/models.py:1102
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:1093
+#: part/models.py:1111
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:1100
+#: part/models.py:1118
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:1103
+#: part/models.py:1121
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:1106
+#: part/models.py:1124
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:1109
+#: part/models.py:1127
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:1111
+#: part/models.py:1129
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:1174
+#: part/models.py:1192
 msgid "Part cannot be added to its own Bill of Materials"
 msgstr ""
 
-#: part/models.py:1181
+#: part/models.py:1199
 #, python-brace-format
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
 msgstr ""
@@ -1385,7 +1386,7 @@ msgstr ""
 msgid "Part Attachments"
 msgstr ""
 
-#: part/templates/part/category.html:13 part/templates/part/category.html:69
+#: part/templates/part/category.html:13 part/templates/part/category.html:76
 #: templates/stats.html:14
 msgid "Part Categories"
 msgstr ""
@@ -1394,148 +1395,160 @@ msgstr ""
 msgid "All parts"
 msgstr ""
 
-#: part/templates/part/category.html:34
+#: part/templates/part/category.html:34 part/templates/part/category.html:72
 msgid "Category Details"
 msgstr ""
 
-#: part/templates/part/category.html:37
+#: part/templates/part/category.html:38
 msgid "Category Path"
 msgstr ""
 
-#: part/templates/part/category.html:41
+#: part/templates/part/category.html:43
 msgid "Category Description"
 msgstr ""
 
-#: part/templates/part/category.html:46 part/templates/part/detail.html:64
+#: part/templates/part/category.html:49 part/templates/part/detail.html:73
 msgid "Default Location"
 msgstr ""
 
-#: part/templates/part/category.html:52 part/templates/part/detail.html:44
+#: part/templates/part/category.html:56 part/templates/part/detail.html:50
 msgid "Keywords"
 msgstr ""
 
-#: part/templates/part/category.html:57
+#: part/templates/part/category.html:62
 msgid "Subcategories"
 msgstr ""
 
-#: part/templates/part/category.html:61
+#: part/templates/part/category.html:67
 msgid "Parts (Including subcategories)"
 msgstr ""
 
-#: part/templates/part/category.html:66 part/templates/part/detail.html:9
+#: part/templates/part/detail.html:9
 msgid "Part Details"
 msgstr ""
 
-#: part/templates/part/detail.html:22 part/templates/part/part_base.html:75
+#: part/templates/part/detail.html:24 part/templates/part/part_base.html:75
 msgid "IPN"
 msgstr ""
 
-#: part/templates/part/detail.html:28
+#: part/templates/part/detail.html:31
 msgid "Revision"
 msgstr ""
 
-#: part/templates/part/detail.html:38
+#: part/templates/part/detail.html:43
 msgid "Variant Of"
 msgstr ""
 
-#: part/templates/part/detail.html:55
+#: part/templates/part/detail.html:56
 msgid "Category"
 msgstr ""
 
-#: part/templates/part/detail.html:70
+#: part/templates/part/detail.html:66
+msgid "Link"
+msgstr ""
+
+#: part/templates/part/detail.html:80
 msgid "Default Supplier"
 msgstr ""
 
-#: part/templates/part/detail.html:77
+#: part/templates/part/detail.html:88
 msgid "Units"
 msgstr ""
 
-#: part/templates/part/detail.html:82
+#: part/templates/part/detail.html:94
 msgid "Minimum Stock"
 msgstr ""
 
-#: part/templates/part/detail.html:87
+#: part/templates/part/detail.html:100
 msgid "Creation Date"
 msgstr ""
 
-#: part/templates/part/detail.html:92
+#: part/templates/part/detail.html:106
 msgid "Created By"
 msgstr ""
 
-#: part/templates/part/detail.html:98
+#: part/templates/part/detail.html:113
 msgid "Responsible User"
 msgstr ""
 
-#: part/templates/part/detail.html:107
+#: part/templates/part/detail.html:122
 msgid "Virtual"
 msgstr ""
 
-#: part/templates/part/detail.html:110
+#: part/templates/part/detail.html:125
 msgid "Part is virtual (not a physical part)"
 msgstr ""
 
-#: part/templates/part/detail.html:112
+#: part/templates/part/detail.html:127
 msgid "Part is not a virtual part"
 msgstr ""
 
-#: part/templates/part/detail.html:116
+#: part/templates/part/detail.html:131
 msgid "Assembly"
 msgstr ""
 
-#: part/templates/part/detail.html:119
+#: part/templates/part/detail.html:134
 msgid "Part can be assembled from other parts"
 msgstr ""
 
-#: part/templates/part/detail.html:121
+#: part/templates/part/detail.html:136
 msgid "Part cannot be assembled from other parts"
 msgstr ""
 
-#: part/templates/part/detail.html:125
+#: part/templates/part/detail.html:140
 msgid "Component"
 msgstr ""
 
-#: part/templates/part/detail.html:128
+#: part/templates/part/detail.html:143
 msgid "Part can be used in assemblies"
 msgstr ""
 
-#: part/templates/part/detail.html:130
+#: part/templates/part/detail.html:145
 msgid "Part cannot be used in assemblies"
 msgstr ""
 
-#: part/templates/part/detail.html:134
+#: part/templates/part/detail.html:149
 msgid "Trackable"
 msgstr ""
 
-#: part/templates/part/detail.html:137
+#: part/templates/part/detail.html:152
 msgid "Part stock is tracked by serial number"
 msgstr ""
 
-#: part/templates/part/detail.html:139
+#: part/templates/part/detail.html:154
 msgid "Part stock is not tracked by serial number"
 msgstr ""
 
-#: part/templates/part/detail.html:143
+#: part/templates/part/detail.html:158
 msgid "Purchaseable"
 msgstr ""
 
-#: part/templates/part/detail.html:146 part/templates/part/detail.html:148
+#: part/templates/part/detail.html:161 part/templates/part/detail.html:163
 msgid "Part can be purchased from external suppliers"
 msgstr ""
 
-#: part/templates/part/detail.html:153
+#: part/templates/part/detail.html:168
 msgid "Sellable"
 msgstr ""
 
-#: part/templates/part/detail.html:156
+#: part/templates/part/detail.html:171
 msgid "Part can be sold to customers"
 msgstr ""
 
-#: part/templates/part/detail.html:158
+#: part/templates/part/detail.html:173
 msgid "Part cannot be sold to customers"
 msgstr ""
 
 #: part/templates/part/notes.html:13 part/templates/part/notes.html:29
 msgid "Part Notes"
+msgstr ""
+
+#: part/templates/part/part_app_base.html:9
+msgid "Part Category"
+msgstr ""
+
+#: part/templates/part/part_app_base.html:11
+msgid "Part List"
 msgstr ""
 
 #: part/templates/part/part_base.html:11
@@ -1986,35 +1999,40 @@ msgstr ""
 msgid "Location Details"
 msgstr ""
 
-#: stock/templates/stock/location.html:40
+#: stock/templates/stock/location.html:41
 msgid "Location Path"
 msgstr ""
 
-#: stock/templates/stock/location.html:44
+#: stock/templates/stock/location.html:46
 msgid "Location Description"
 msgstr ""
 
-#: stock/templates/stock/location.html:48
+#: stock/templates/stock/location.html:51
 msgid "Sublocations"
 msgstr ""
 
-#: stock/templates/stock/location.html:52
-#: stock/templates/stock/location.html:64 templates/stats.html:18
+#: stock/templates/stock/location.html:56
+#: stock/templates/stock/location.html:70 templates/stats.html:18
 #: templates/stats.html:21
 msgid "Stock Items"
 msgstr ""
 
-#: stock/templates/stock/location.html:57
+#: stock/templates/stock/location.html:61
 msgid "Stock Details"
 msgstr ""
 
-#: stock/templates/stock/location.html:60
+#: stock/templates/stock/location.html:65
 #: templates/InvenTree/search_stock_location.html:6 templates/stats.html:25
 msgid "Stock Locations"
 msgstr ""
 
 #: stock/templates/stock/stock_adjust.html:16
+#: stock/templates/stock/stock_app_base.html:7
 msgid "Stock Item"
+msgstr ""
+
+#: stock/templates/stock/stock_app_base.html:9
+msgid "Stock Location"
 msgstr ""
 
 #: stock/templates/stock/tabs.html:8
@@ -2168,7 +2186,7 @@ msgstr ""
 msgid "Add Stock Tracking Entry"
 msgstr ""
 
-#: templates/InvenTree/search.html:12
+#: templates/InvenTree/search.html:7 templates/InvenTree/search.html:12
 msgid "Search Results"
 msgstr ""
 
@@ -2222,6 +2240,10 @@ msgstr ""
 
 #: templates/navbar.html:33
 msgid "Statistics"
+msgstr ""
+
+#: templates/search_form.html:6
+msgid "Search"
 msgstr ""
 
 #: templates/stock_table.html:8

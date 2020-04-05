@@ -14,59 +14,69 @@
     <div class='col-sm-6'>
     <table class='table table-striped'>
         <tr>
+            <td></td>
             <td><b>{% trans "Part name" %}</b></td>
             <td>{{ part.name }}</td>
         </tr>
         {% if part.IPN %}
         <tr>
+            <td></td>
             <td><b>{% trans "IPN" %}</b></td>
             <td>{{ part.IPN }}</td>
         </tr>
         {% endif %}
         {% if part.revision %}
         <tr>
+            <td></td>
             <td><b>{% trans "Revision" %}</b></td>
             <td>{{ part.revision }}</td>
         </tr>
         {% endif %}
         <tr>
+            <td><span class='fas fa-info-circle'></span></td>
             <td><b>{% trans "Description" %}</b></td>
             <td>{{ part.description }}</td>
         </tr>
         {% if part.variant_of %}
         <tr>
+            <td></td>
             <td><b>{% trans "Variant Of" %}</b></td>
             <td><a href="{% url 'part-detail' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></td>
         </tr>
         {% endif %}
         {% if part.keywords %}
         <tr>
+            <td><span class='fas fa-key'></span></td>
             <td><b>{% trans "Keywords" %}</b></td>
             <td>{{ part.keywords }}</td>
         </tr>
         {% endif %}
+        <tr>
+            <td><span class='fas fa-sitemap'></span></td>
+            <td><b>{% trans "Category" %}</b></td>
+            <td>
+                {% if part.category %}
+                <a href="{% url 'category-detail' part.category.id %}">{{ part.category.pathstring }}</a>
+                {% endif %}
+            </td>
+        </tr>
         {% if part.URL %}
         <tr>
-            <td><b>{% trans "URL" %}</b></td>
+            <td><span class='fas fa-link'></span></td>
+            <td><b>{% trans "Link" %}</b></td>
             <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
         </tr>
         {% endif %}
-        <tr>
-            <td><b>{% trans "Category" %}</b></td>
-            <td>
-            {% if part.category %}
-                <a href="{% url 'category-detail' part.category.id %}">{{ part.category.pathstring }}</a>
-            {% endif %}
-            </td>
-        </tr>
         {% if part.default_location %}
         <tr>
+            <td><span class='fas fa-map-marker-alt'></span></td>
             <td><b>{% trans "Default Location" %}</b></td>
             <td><a href="{% url 'stock-location-detail' part.default_location.id %}">{{ part.default_location.pathstring }}</a></td>
         </tr>
         {% endif %}
         {% if part.default_supplier %}
         <tr>
+            <td></td>
             <td><b>{% trans "Default Supplier" %}</b></td>
             <td><a href="{% url 'supplier-part-detail' part.default_supplier.id %}">
                 {{ part.default_supplier.supplier.name }} | {{ part.default_supplier.SKU }}
@@ -74,27 +84,32 @@
         </tr>
         {% endif %}
         <tr>
+            <td></td>
             <td><b>{% trans "Units" %}</b></td>
             <td>{{ part.units }}</td>
         </tr>
         {% if part.minimum_stock > 0 %}
         <tr>
+            <td><span class='fas fa-greater-than-equal'></span></td>
             <td><b>{% trans "Minimum Stock" %}</b></td>
             <td>{{ part.minimum_stock }}</td>
         </tr>
         {% endif %}
         <tr>
+            <td><span class='fas fa-calendar-alt'></span></td>
             <td><b>{% trans "Creation Date" %}</b></td>
             <td>{{ part.creation_date }}</td>
         </tr>
         {% if part.creation_user %}
         <tr>
+            <td><span class='fas fa-user'></span></td>
             <td><b>{% trans "Created By" %}</b></td>
             <td>{{ part.creation_user }}</td>
         </tr>
         {% endif %}
         {% if part.responsible %}
         <tr>
+            <td><span class='fas fa-user'>d</span></td>
             <td><b>{% trans "Responsible User" %}</b></td>
             <td>{{ part.responsible }}</td> 
         </tr>
