@@ -47,7 +47,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Part (brief detail) """
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
-    image_url = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     @staticmethod
     def setup_eager_loading(queryset):
@@ -66,7 +66,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'description',
             'total_stock',
             'available_stock',
-            'image_url',
+            'thumbnail',
             'active',
             'assembly',
             'virtual',
