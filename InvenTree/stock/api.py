@@ -61,11 +61,15 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
-        part_detail = str2bool(self.request.GET.get('part_detail', False))
-        loc_detail = str2bool(self.request.GET.get('location_detail', False))
+        try:
+            kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', False))
+        except AttributeError:
+            pass
 
-        kwargs['part_detail'] = part_detail
-        kwargs['location_detail'] = loc_detail
+        try:
+            kwargs['location_detail'] = str2bool(self.request.GET.get('location_detail', False))
+        except AttributeError:
+            pass
 
         kwargs['context'] = self.get_serializer_context()
 

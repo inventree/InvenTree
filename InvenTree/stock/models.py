@@ -427,7 +427,7 @@ class StockItem(MPTTModel):
             quantity=self.quantity,
             date=datetime.now().date(),
             notes=notes,
-            URL=url,
+            link=url,
             system=system
         )
 
