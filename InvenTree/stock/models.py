@@ -411,8 +411,12 @@ class StockItem(MPTTModel):
         return True
 
     @property
+    def tracking_info_count(self):
+        return self.tracking_info.count()
+
+    @property
     def has_tracking_info(self):
-        return self.tracking_info.count() > 0
+        return self.tracking_info_count > 0
 
     def addTransactionNote(self, title, user, notes='', url='', system=True):
         """ Generation a stock transaction note for this item.

@@ -71,6 +71,11 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         except AttributeError:
             pass
 
+        try:
+            kwargs['supplier_detail'] = str2bool(self.request.GET.get('supplier_detail', False))
+        except AttributeError:
+            pass
+
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
