@@ -329,6 +329,7 @@ class StockList(generics.ListCreateAPIView):
             'batch',
             'status',
             'notes',
+            'link',
             'location',
             'location__name',
             'location__description',

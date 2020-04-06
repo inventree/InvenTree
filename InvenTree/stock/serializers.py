@@ -80,22 +80,23 @@ class StockItemSerializer(InvenTreeModelSerializer):
     class Meta:
         model = StockItem
         fields = [
-            'pk',
-            'url',
+            'batch',
+            'in_stock',
+            'link',
+            'location',
+            'location_detail',
+            'notes',
             'part',
             'part_detail',
             'part_name',
             'part_image',
-            'supplier_part',
-            'location',
-            'location_detail',
-            'in_stock',
+            'pk',
             'quantity',
             'serial',
-            'batch',
+            'supplier_part',
             'status',
             'status_text',
-            'notes',
+            'url',
         ]
 
         """ These fields are read-only in this context.
@@ -155,7 +156,7 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
             'date',
             'title',
             'notes',
-            'URL',
+            'link',
             'quantity',
             'user',
             'system',

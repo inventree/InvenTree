@@ -42,9 +42,9 @@ class CreateStockItemForm(HelperForm):
             'quantity',
             'batch',
             'serial_numbers',
+            'link',
             'delete_on_deplete',
             'status',
-            'URL',
         ]
 
     # Custom clean to prevent complex StockItem.clean() logic from running (yet)
@@ -161,7 +161,7 @@ class EditStockItemForm(HelperForm):
             'serial',
             'batch',
             'status',
-            'URL',
+            'link',
             'delete_on_deplete',
         ]
 
@@ -176,5 +176,5 @@ class TrackingEntryForm(HelperForm):
         fields = [
             'title',
             'notes',
-            'URL',
+            'link',
         ]
