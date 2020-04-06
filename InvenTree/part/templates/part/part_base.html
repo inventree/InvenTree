@@ -72,14 +72,16 @@
         <table class='table table-condensed'>
             {% if part.IPN %}
             <tr>
+                <td></td>
                 <td>{% trans "IPN" %}</td>
                 <td>{{ part.IPN }}</td>
             </tr>
             {% endif %}
-            {% if part.URL %}
+            {% if part.link %}
             <tr>
-                <td>{% trans "URL" %}</td>
-                <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
+                <td><span class='fas fa-link'></span></td>
+                <td>{% trans "External Link" %}</td>
+                <td><a href="{{ part.link }}">{{ part.link }}</a></td>
             </tr>
             {% endif %}
             <tr>
