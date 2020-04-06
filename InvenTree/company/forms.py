@@ -53,7 +53,7 @@ class EditSupplierPartForm(HelperForm):
             'description',
             'manufacturer',
             'MPN',
-            'URL',
+            'link',
             'note',
             'base_cost',
             'multiple',

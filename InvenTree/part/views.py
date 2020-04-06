@@ -1388,8 +1388,6 @@ class BomExport(AjaxView):
         url += '?file_format=' + fmt
         url += '&cascade=' + str(cascade)
 
-        print("URL:", url)
-
         data = {
             'form_valid': part is not None,
             'url': url,

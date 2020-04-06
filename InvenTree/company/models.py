@@ -63,7 +63,7 @@ class Company(models.Model):
         address: Postal address
         phone: contact phone number
         email: contact email address
-        URL: Secondary URL e.g. for link to internal Wiki page
+        link: Secondary URL e.g. for link to internal Wiki page
         image: Company image / logo
         notes: Extra notes about the company
         is_customer: boolean value, is this company a customer
@@ -88,7 +88,7 @@ class Company(models.Model):
     contact = models.CharField(max_length=100,
                                blank=True, help_text=_('Point of contact'))
 
-    URL = InvenTreeURLField(blank=True, help_text=_('Link to external company information'))
+    link = InvenTreeURLField(blank=True, help_text=_('Link to external company information'))
 
     image = models.ImageField(upload_to=rename_company_image, max_length=255, null=True, blank=True)
 
@@ -202,7 +202,7 @@ class SupplierPart(models.Model):
         SKU: Stock keeping unit (supplier part number)
         manufacturer: Manufacturer name
         MPN: Manufacture part number
-        URL: Link to external website for this part
+        link: Link to external website for this part
         description: Descriptive notes field
         note: Longer form note field
         base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
@@ -241,7 +241,7 @@ class SupplierPart(models.Model):
 
     MPN = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer part number'))
 
-    URL = InvenTreeURLField(blank=True, help_text=_('URL for external supplier part link'))
+    link = InvenTreeURLField(blank=True, help_text=_('URL for external supplier part link'))
 
     description = models.CharField(max_length=250, blank=True, help_text=_('Supplier part description'))
 

@@ -70,7 +70,7 @@ class EditPurchaseOrderForm(HelperForm):
             'reference',
             'supplier',
             'description',
-            'URL',
+            'link',
         ]
 
 

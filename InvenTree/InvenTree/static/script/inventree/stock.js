@@ -378,8 +378,8 @@ function loadStockTrackingTable(table, options) {
                 html += "<br><i>" + row.notes + "</i>";
             }
 
-            if (row.URL) {
-                html += "<br><a href='" + row.URL + "'>" + row.URL + "</a>";
+            if (row.link) {
+                html += "<br><a href='" + row.link + "'>" + row.link + "</a>";
             }
 
             return html;

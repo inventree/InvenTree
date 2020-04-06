@@ -214,7 +214,7 @@ class Part(models.Model):
         IPN: Internal part number (optional)
         revision: Part revision
         is_template: If True, this part is a 'template' part and cannot be instantiated as a StockItem
-        URL: Link to an external page with more information about this part (e.g. internal Wiki)
+        link: Link to an external page with more information about this part (e.g. internal Wiki)
         image: Image of this part
         default_location: Where the item is normally stored (may be null)
         default_supplier: The default SupplierPart which should be used to procure and stock this part
@@ -383,7 +383,7 @@ class Part(models.Model):
 
     revision = models.CharField(max_length=100, blank=True, help_text=_('Part revision or version number'))
 
-    URL = InvenTreeURLField(blank=True, help_text=_('Link to extenal URL'))
+    link = InvenTreeURLField(blank=True, help_text=_('Link to extenal URL'))
 
     image = StdImageField(
         upload_to=rename_part_image,

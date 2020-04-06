@@ -60,11 +60,11 @@
                 {% endif %}
             </td>
         </tr>
-        {% if part.URL %}
+        {% if part.link %}
         <tr>
             <td><span class='fas fa-link'></span></td>
-            <td><b>{% trans "Link" %}</b></td>
-            <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
+            <td><b>{% trans "External Link" %}</b></td>
+            <td><a href="{{ part.link }}">{{ part.link }}</a></td>
         </tr>
         {% endif %}
         {% if part.default_location %}

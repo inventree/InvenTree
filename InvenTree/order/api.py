@@ -78,7 +78,7 @@ class POList(generics.ListCreateAPIView):
             'supplier__image',
             'reference',
             'description',
-            'URL',
+            'link',
             'status',
             'notes',
             'creation_date',

@@ -934,7 +934,7 @@ class StockItemCreate(AjaxCreateView):
                                         batch=form_data.get('batch'),
                                         delete_on_deplete=False,
                                         status=form_data.get('status'),
-                                        URL=form_data.get('URL'),
+                                        link=form_data.get('link'),
                                     )
 
                                     item.save(user=request.user)

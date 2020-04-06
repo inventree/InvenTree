@@ -30,7 +30,9 @@ class BuildSerializer(InvenTreeModelSerializer):
             'quantity',
             'status',
             'status_text',
-            'notes']
+            'notes',
+            'link',
+        ]
 
         read_only_fields = [
             'status',

@@ -21,7 +21,7 @@ class POSerializer(InvenTreeModelSerializer):
             'supplier',
             'reference',
             'description',
-            'URL',
+            'link',
             'status',
             'notes',
         ]

@@ -25,7 +25,7 @@ class EditBuildForm(HelperForm):
             'quantity',
             'take_from',
             'batch',
-            'URL',
+            'link',
         ]
 
 

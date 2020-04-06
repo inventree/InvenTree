@@ -200,7 +200,7 @@ class PartList(generics.ListCreateAPIView):
             'description',
             'keywords',
             'is_template',
-            'URL',
+            'link',
             'units',
             'minimum_stock',
             'trackable',
@@ -248,12 +248,6 @@ class PartList(generics.ListCreateAPIView):
                 item['category__name'] = categories[cat_id]
             else:
                 item['category__name'] = None
-
-            # Rename "URL" to "link" to distinguish from lower-case "url",
-            # which is the web address of the item itself
-            if 'URL' in item.keys():
-                item['link'] = item['URL']
-                del item['URL']
 
         return Response(data)
 
