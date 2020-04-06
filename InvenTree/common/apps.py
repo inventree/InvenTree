@@ -61,16 +61,20 @@ class CommonConfig(AppConfig):
         # See note above
         from .models import InvenTreeSetting
 
-        if not InvenTreeSetting.objects.filter(key='InstanceName').exists():
+        try:
+            if not InvenTreeSetting.objects.filter(key='InstanceName').exists():
 
-            val = uuid.uuid4().hex
+                val = uuid.uuid4().hex
 
-            print("No 'InstanceName' found - generating random name '{n}'".format(n=val))
+                print("No 'InstanceName' found - generating random name '{n}'".format(n=val))
 
-            name = InvenTreeSetting(
-                key="InstanceName",
-                value=val,
-                description="Instance name for this InvenTree database installation."
-            )
+                name = InvenTreeSetting(
+                    key="InstanceName",
+                    value=val,
+                    description="Instance name for this InvenTree database installation."
+                )
 
-            name.save()
+                name.save()
+        except (OperationalError, ProgrammingError):
+            # Migrations have not yet been applied - table does not exist
+            pass
