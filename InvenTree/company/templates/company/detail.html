@@ -9,14 +9,18 @@
 <hr>
 
 <table class='table table-striped'>
-<tr>
-    <td>{% trans "Customer" %}</td>
-    <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
-</tr>
-<tr>
-    <td>{% trans "Supplier" %}</td>
-    <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
-</tr>
+    <col width='25'>
+    <col>
+    <tr>
+        <td><span class='fas fa-user-tag'></span></td>
+        <td>{% trans "Customer" %}</td>
+        <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-industry'></span></td>
+        <td>{% trans "Supplier" %}</td>
+        <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
+    </tr>
 </table>
 
 {% endblock %}
