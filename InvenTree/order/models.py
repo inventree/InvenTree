@@ -69,7 +69,7 @@ class Order(models.Model):
 
     description = models.CharField(max_length=250, help_text=_('Order description'))
 
-    URL = models.URLField(blank=True, help_text=_('Link to external page'))
+    link = models.URLField(blank=True, help_text=_('Link to external page'))
 
     creation_date = models.DateField(blank=True, null=True)
 

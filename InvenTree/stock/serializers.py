@@ -59,6 +59,8 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     part_name = serializers.CharField(source='get_part_name', read_only=True)
 
+    part_image = serializers.CharField(source='part__image', read_only=True)
+
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
 
@@ -78,21 +80,23 @@ class StockItemSerializer(InvenTreeModelSerializer):
     class Meta:
         model = StockItem
         fields = [
-            'pk',
-            'url',
-            'part',
-            'part_name',
-            'part_detail',
-            'supplier_part',
+            'batch',
+            'in_stock',
+            'link',
             'location',
             'location_detail',
-            'in_stock',
+            'notes',
+            'part',
+            'part_detail',
+            'part_name',
+            'part_image',
+            'pk',
             'quantity',
             'serial',
-            'batch',
+            'supplier_part',
             'status',
             'status_text',
-            'notes',
+            'url',
         ]
 
         """ These fields are read-only in this context.
@@ -152,7 +156,7 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
             'date',
             'title',
             'notes',
-            'URL',
+            'link',
             'quantity',
             'user',
             'system',

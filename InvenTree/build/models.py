@@ -38,7 +38,7 @@ class Build(models.Model):
         batch: Batch code transferred to build parts (optional)
         creation_date: Date the build was created (auto)
         completion_date: Date the build was completed
-        URL: External URL for extra information
+        link: External URL for extra information
         notes: Text notes
     """
 
@@ -94,7 +94,7 @@ class Build(models.Model):
                                      related_name='builds_completed'
                                      )
     
-    URL = InvenTreeURLField(blank=True, help_text=_('Link to external URL'))
+    link = InvenTreeURLField(blank=True, help_text=_('Link to external URL'))
 
     notes = MarkdownxField(blank=True, help_text=_('Extra build notes'))
 

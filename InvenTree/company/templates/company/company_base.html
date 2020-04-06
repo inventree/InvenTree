@@ -45,27 +45,37 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
         <table class="table">
         {% if company.website %}
         <tr>
-            <td>{% trans "Website" %}</td><td><a href="{{ company.website }}">{{ company.website }}</a></td>
+            <td><span class='fas fa-link'></span></td>
+            <td>{% trans "Website" %}</td>
+            <td><a href="{{ company.website }}">{{ company.website }}</a></td>
         </tr>
         {% endif %}
         {% if company.address %}
         <tr>
-            <td>{% trans "Address" %}</td><td>{{ company.address }}</td>
+            <td><span class='fas fa-map-marked-alt'></span></td>
+            <td>{% trans "Address" %}</td>
+            <td>{{ company.address }}</td>
         </tr>
         {% endif %}
         {% if company.phone %}
         <tr>
-            <td>{% trans "Phone" %}</td><td>{{ company.phone }}</td>
+            <td><span class='fas fa-phone'></span></td>
+            <td>{% trans "Phone" %}</td>
+            <td>{{ company.phone }}</td>
         </tr>
         {% endif %}
         {% if company.email %}
         <tr>
-            <td>{% trans "Email" %}</td><td>{{ company.email }}</td>
+            <td><span class='fas fa-at'></span></td>
+            <td>{% trans "Email" %}</td>
+            <td>{{ company.email }}</td>
         </tr>
         {% endif %}
         {% if company.contact %}
         <tr>
-            <td>{% trans "Contact" %}</td><td>{{ company.contact }}</td>
+            <td><span class='fas fa-user'></span></td>
+            <td>{% trans "Contact" %}</td>
+            <td>{{ company.contact }}</td>
         </tr>
         {% endif %}
         </table>

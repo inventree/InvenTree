@@ -200,7 +200,7 @@ class PartList(generics.ListCreateAPIView):
             'description',
             'keywords',
             'is_template',
-            'URL',
+            'link',
             'units',
             'minimum_stock',
             'trackable',
@@ -225,11 +225,17 @@ class PartList(generics.ListCreateAPIView):
 
                 # Use the 'thumbnail' image here instead of the full-size image
                 # Note: The full-size image is used when requesting the /api/part/<x>/ endpoint
-                fn, ext = os.path.splitext(img)
 
-                thumb = "{fn}.thumbnail{ext}".format(fn=fn, ext=ext)
+                if img:
+                    fn, ext = os.path.splitext(img)
 
-                item['thumbnail'] = os.path.join(settings.MEDIA_URL, thumb)
+                    thumb = "{fn}.thumbnail{ext}".format(fn=fn, ext=ext)
+
+                    thumb = os.path.join(settings.MEDIA_URL, thumb)
+                else:
+                    thumb = ''
+
+                item['thumbnail'] = thumb
 
                 del item['image']
 
@@ -242,12 +248,6 @@ class PartList(generics.ListCreateAPIView):
                 item['category__name'] = categories[cat_id]
             else:
                 item['category__name'] = None
-
-            # Rename "URL" to "link" to distinguish from lower-case "url",
-            # which is the web address of the item itself
-            if 'URL' in item.keys():
-                item['link'] = item['URL']
-                del item['URL']
 
         return Response(data)
 

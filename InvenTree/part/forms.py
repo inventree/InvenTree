@@ -120,7 +120,7 @@ class EditPartForm(HelperForm):
             'keywords',
             'variant_of',
             'is_template',
-            'URL',
+            'link',
             'default_location',
             'default_supplier',
             'units',

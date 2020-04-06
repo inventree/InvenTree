@@ -9,6 +9,7 @@
     notes: 'Some simple notes'
     status: 10  # PENDING
     creation_date: '2019-03-16'
+    link: http://www.google.com
 
 - model: build.build
   fields:
