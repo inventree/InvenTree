@@ -115,20 +115,20 @@ function loadPurchaseOrderTable(table, options) {
             },
             {
                 sortable: true,
+                field: 'reference',
+                title: 'Purchase Order',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, "/order/purchase-order/" + row.pk + "/");
+                }
+            },  
+            {
+                sortable: true,
                 field: 'supplier',
                 title: 'Supplier',
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.supplier__image) + renderLink(row.supplier__name, '/company/' + value + '/purchase-orders/');
                 }
             },
-            {
-                sortable: true,
-                field: 'reference',
-                title: 'Reference',
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, "/order/purchase-order/" + row.pk + "/");
-                }
-            },  
             {
                 sortable: true,
                 field: 'creation_date',
