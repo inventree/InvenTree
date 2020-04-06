@@ -6,6 +6,7 @@
     name: 'M2x4 LPHS'
     description: 'M2x4 low profile head screw'
     category: 8
+    link: www.acme.com/parts/m2x4lphs
 
 - model: part.part
   pk: 2
