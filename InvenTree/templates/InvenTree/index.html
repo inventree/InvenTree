@@ -24,10 +24,16 @@ InvenTree | Index
 {% endblock %}
 
 {% block js_ready %}
+
+console.log("abcde?");
+
 {{ block.super }}
 
-$("#to-build-table").bootstrapTable();
-$("#to-order-table").bootstrapTable();
-$("#starred-parts-table").bootstrapTable();
+//TODO: These calls to bootstrapTable() are failing, for some reason?
+//$("#to-build-table").bootstrapTable();
+//$("#to-order-table").bootstrapTable();
+//$("#starred-parts-table").bootstrapTable();
+
+console.log("Got to here...");
 
 {% endblock %}

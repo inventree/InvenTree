@@ -22,7 +22,7 @@ from common.models import InvenTreeSetting
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .helpers import str2bool
-from .version import inventreeVersion
+from .version import inventreeVersion, inventreeInstanceName
 
 from rest_framework import views
 
@@ -422,7 +422,8 @@ class InfoView(AjaxView):
 
         data = {
             'server': 'InvenTree',
-            'version': inventreeVersion()
+            'version': inventreeVersion(),
+            'instance': inventreeInstanceName(),
         }
 
         return JsonResponse(data)
