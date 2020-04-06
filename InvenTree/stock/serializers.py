@@ -8,6 +8,7 @@ from .models import StockItem, StockLocation
 from .models import StockItemTracking
 
 from part.serializers import PartBriefSerializer
+from company.serializers import SupplierPartSerializer
 from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer
 
 
@@ -61,13 +62,17 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     part_image = serializers.CharField(source='part__image', read_only=True)
 
+    tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True)
+    
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
+    supplier_detail = SupplierPartSerializer(source='supplier_part', many=False, read_only=True)
 
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
         location_detail = kwargs.pop('location_detail', False)
+        supplier_detail = kwargs.pop('supplier_detail', False)
 
         super(StockItemSerializer, self).__init__(*args, **kwargs)
 
@@ -76,6 +81,9 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
         if location_detail is not True:
             self.fields.pop('location_detail')
+
+        if supplier_detail is not True:
+            self.fields.pop('supplier_detail')
 
     class Meta:
         model = StockItem
@@ -94,8 +102,10 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'quantity',
             'serial',
             'supplier_part',
+            'supplier_detail',
             'status',
             'status_text',
+            'tracking_items',
             'url',
         ]
 
