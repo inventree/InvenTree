@@ -47,7 +47,7 @@ class CompanySerializer(InvenTreeModelSerializer):
             'address',
             'email',
             'contact',
-            'URL',
+            'link',
             'image',
             'notes',
             'is_customer',
@@ -91,7 +91,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'manufacturer',
             'description',
             'MPN',
-            'URL',
+            'link',
             'pricing',
         ]
 
