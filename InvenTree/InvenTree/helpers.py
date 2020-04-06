@@ -13,6 +13,8 @@ from django.http import StreamingHttpResponse
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
+from .version import inventreeVersion, inventreeInstanceName
+
 
 def TestIfImage(img):
     """ Test if an image file is indeed an image """
@@ -134,6 +136,8 @@ def MakeBarcode(object_type, object_id, object_url, data={}):
     data['id'] = object_id
     data['url'] = object_url
     data['tool'] = 'InvenTree'
+    data['instance'] = inventreeInstanceName()
+    data['version'] = inventreeVersion()
 
     return json.dumps(data, sort_keys=True)
 

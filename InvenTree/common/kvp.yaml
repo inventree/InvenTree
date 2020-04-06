@@ -4,6 +4,9 @@
 # Note: The description strings provided here will be translatable,
 #       so ensure that any translations are provided as appropriate.
 
+# TODO: Update the formatting here to include logical separators e.g. double-underscore
+# TODO: This is so when there are enough options, we will be able to display them as a tree 
+
 - key: 'part_ipn_regex'
   default: ''
   description: 'Format string for internal part number'
