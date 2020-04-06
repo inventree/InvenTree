@@ -26,8 +26,6 @@ class PartConfig(AppConfig):
             for part in Part.objects.all():
                 if part.image:
                     url = part.image.thumbnail.name
-                    #if url.startswith('/'):
-                    #    url = url[1:]
                     loc = os.path.join(settings.MEDIA_ROOT, url)
                     if not os.path.exists(loc):
                         print("InvenTree: Generating thumbnail for Part '{p}'".format(p=part.name))
