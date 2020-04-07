@@ -17,7 +17,6 @@ from django.db.models import Sum
 
 from django.apps import apps
 from django.urls import reverse
-from django.conf import settings
 
 from markdownx.models import MarkdownxField
 

@@ -10,7 +10,6 @@ import os
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.urls import reverse
-from django.conf import settings
 
 from django.db import models, transaction
 from django.db.models import Sum
@@ -313,7 +312,7 @@ class Part(models.Model):
             return helpers.getMediaUrl(self.image.thumbnail.url)
         else:
             return helpers.getBlankThumbnail()
-            
+
     def validate_unique(self, exclude=None):
         """ Validate that a part is 'unique'.
         Uniqueness is checked across the following (case insensitive) fields:

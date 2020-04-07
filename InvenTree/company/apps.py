@@ -6,6 +6,7 @@ from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
 from django.conf import settings
 
+
 class CompanyConfig(AppConfig):
     name = 'company'
 
@@ -33,4 +34,3 @@ class CompanyConfig(AppConfig):
                         company.image.render_variations(replace=False)
         except (OperationalError, ProgrammingError):
             print("Could not generate Company thumbnails")
-    
