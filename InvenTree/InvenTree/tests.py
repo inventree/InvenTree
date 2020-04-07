@@ -54,13 +54,6 @@ class ValidatorTest(TestCase):
 class TestHelpers(TestCase):
     """ Tests for InvenTree helper functions """
 
-    def test_is_image(self):
-        img = os.path.abspath(os.path.join(STATIC_ROOT, 'img/blank_image.png'))
-        self.assertTrue(helpers.TestIfImage(img))
-
-        css = os.path.abspath(os.path.join(STATIC_ROOT, 'css/inventree.css'))
-        self.assertFalse(helpers.TestIfImage(css))
-
     def test_image_url(self):
         """ Test if a filename looks like an image """
 
