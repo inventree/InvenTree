@@ -122,6 +122,14 @@ class Company(models.Model):
         else:
             return os.path.join(settings.STATIC_URL, 'img/blank_image.png')
 
+    def get_thumbnail_url(self):
+        """ Return the URL for the thumbnail image for this Company """
+
+        if self.image:
+            return os.path.join(settings.MEDIA_URL, str(self.image.thumbnail.url))
+        else:
+            return os.path.join(settings.STATIC_URL, 'img/blank_image.thumbnail.png')
+
     @property
     def part_count(self):
         """ The number of parts supplied by this company """
