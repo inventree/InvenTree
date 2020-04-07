@@ -1,13 +1,10 @@
 
-import os
-
 from django.test import TestCase
 import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
 
 from .validators import validate_overage, validate_part_name
 from . import helpers
-from .settings import STATIC_ROOT
 
 from mptt.exceptions import InvalidMove
 
