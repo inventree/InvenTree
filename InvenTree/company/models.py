@@ -96,7 +96,7 @@ class Company(models.Model):
         upload_to=rename_company_image,
         null=True,
         blank=True,
-        variations={'thumnbnail': (128, 128)},
+        variations={'thumbnail': (128, 128)},
         delete_orphans=True,
     )
 
