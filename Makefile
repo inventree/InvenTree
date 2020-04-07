@@ -56,7 +56,7 @@ test:
 # Run code coverage
 coverage:
 	cd InvenTree && python3 manage.py check
-	coverage run InvenTree/manage.py test build common company order part stock InvenTree
+	cd InvenTree && coverage run manage.py test build common company order part stock InvenTree
 	coverage html
 
 # Install packages required to generate code docs
