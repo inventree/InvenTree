@@ -21,6 +21,8 @@ from django.conf import settings
 
 from markdownx.models import MarkdownxField
 
+from stdimage.models import StdImageField
+
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from InvenTree.status_codes import OrderStatus
 from common.models import Currency
@@ -90,7 +92,13 @@ class Company(models.Model):
 
     link = InvenTreeURLField(blank=True, help_text=_('Link to external company information'))
 
-    image = models.ImageField(upload_to=rename_company_image, max_length=255, null=True, blank=True)
+    image = StdImageField(
+        upload_to=rename_company_image,
+        null=True,
+        blank=True,
+        variations={'thumnbnail': (128, 128)},
+        delete_orphans=True,
+    )
 
     notes = MarkdownxField(blank=True)
 
