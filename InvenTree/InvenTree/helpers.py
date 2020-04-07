@@ -101,7 +101,7 @@ def isNull(text):
         True if the text looks like a null value
     """
 
-    return str(text).strip().lower() in ['top', 'null', 'none', 'empty', 'false', '-1']
+    return str(text).strip().lower() in ['top', 'null', 'none', 'empty', 'false', '-1', '']
 
 
 def decimal2string(d):

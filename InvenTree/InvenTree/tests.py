@@ -72,6 +72,24 @@ class TestHelpers(TestCase):
             self.assertFalse(helpers.str2bool(s))
             self.assertFalse(helpers.str2bool(s, test=False))
 
+    def test_isnull(self):
+
+        for s in ['null', 'none', '', '-1', 'false']:
+            self.assertTrue(helpers.isNull(s))
+
+        for s in ['yes', 'frog', 'llama', 'true']:
+            self.assertFalse(helpers.isNull(s))
+
+    def testStaticUrl(self):
+
+        self.assertEqual(helpers.getStaticUrl('test.jpg'), '/static/test.jpg')
+        self.assertEqual(helpers.getBlankImage(), '/static/img/blank_image.png')
+        self.assertEqual(helpers.getBlankThumbnail(), '/static/img/blank_image.thumbnail.png')
+
+    def testMediaUrl(self):
+
+        self.assertEqual(helpers.getMediaUrl('xx/yy.png'), '/media/xx/yy.png')
+
 
 class TestQuoteWrap(TestCase):
     """ Tests for string wrapping """
