@@ -32,7 +32,7 @@ class CompanySerializer(InvenTreeModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     part_count = serializers.CharField(read_only=True)
 
-    image = serializers.CharField(source='get_image_url', read_only=True)
+    image = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     class Meta:
         model = Company
@@ -64,7 +64,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     supplier_name = serializers.CharField(source='supplier.name', read_only=True)
-    supplier_logo = serializers.CharField(source='supplier.get_image_url', read_only=True)
+    supplier_logo = serializers.CharField(source='supplier.get_thumbnail_url', read_only=True)
 
     pricing = serializers.CharField(source='unit_pricing', read_only=True)
 

@@ -11,7 +11,7 @@
         {% if item.serialized %}
         <p><i>{{ item.part.full_name}} # {{ item.serial }}</i></p>
         {% else %}
-        <p><i>{{ item.quantity }} &times {{ item.part.full_name }}</i></p>
+        <p><i>{% decimal item.quantity %} &times {{ item.part.full_name }}</i></p>
         {% endif %}
         <p>
             <div class='btn-group'>
