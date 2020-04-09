@@ -63,3 +63,40 @@ class StockItemTest(APITestCase):
     def test_get_stock_list(self):
         response = self.client.get(self.list_url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class StocktakeTest(APITestCase):
+    """
+    Series of tests for the Stocktake API
+    """
+
+    def setUp(self):
+        User = get_user_model()
+        User.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.client.login(username='testuser', password='password')
+
+    def doPost(self, data={}):
+        url = reverse('api-stock-stocktake')
+        response  = self.client.post(url, data=data, format='json')
+
+        return response
+
+    def test_action(self):
+
+        data = {}
+
+        # POST without any action
+        response = self.doPost(data)
+        self.assertContains(response, "action must be provided", status_code=status.HTTP_400_BAD_REQUEST)
+
+        data['action'] = 'fake'
+
+        # POST with an invalid action
+        response = self.doPost(data)
+        self.assertContains(response, "must be one of", status_code=status.HTTP_400_BAD_REQUEST)
+
+        data['action'] = 'count'
+
+        # POST with a valid action
+        response = self.doPost(data)
+        self.assertContains(response, "must contain list", status_code=status.HTTP_400_BAD_REQUEST)
