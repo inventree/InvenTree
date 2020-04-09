@@ -214,69 +214,36 @@ class StockRemove(StockAdjust):
         return Response({"success": "Removed stock for {n} items".format(n=n)})
 
 
-class StockTransfer(APIView):
-    """ API endpoint for performing stock movements """
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+class StockTransfer(StockAdjust):
+    """
+    API endpoint for performing stock movements
+    """
 
     def post(self, request, *args, **kwargs):
 
+        self.get_items(request)
+
         data = request.data
 
-        if 'location' not in data:
-            raise ValidationError({'location': 'Destination must be specified'})
-
         try:
-            loc_id = int(data.get('location'))
-        except ValueError:
-            raise ValidationError({'location': 'Integer ID required'})
+            location = StockLocation.objects.get(pk=data.get('location', None))
+        except (ValueError, StockLocation.DoesNotExist):
+            raise ValidationError({'location': 'Valid location must be specified'})
 
-        try:
-            location = StockLocation.objects.get(pk=loc_id)
-        except StockLocation.DoesNotExist:
-            raise ValidationError({'location': 'Location does not exist'})
+        n = 0
 
-        if 'stock' not in data:
-            raise ValidationError({'stock': 'Stock list must be specified'})
-        
-        stock_list = data.get('stock')
+        for item in self.items:
 
-        if type(stock_list) is not list:
-            raise ValidationError({'stock': 'Stock must be supplied as a list'})
+            # If quantity is not specified, move the entire stock
+            if item['quantity'] in [0, None]:
+                item['quantity'] = item['item'].quantity
 
-        if 'notes' not in data:
-            raise ValidationError({'notes': 'Notes field must be supplied'})
+            if item['item'].move(location, self.notes, request.user, quantity=item['quantity']):
+                n += 1
 
-        for item in stock_list:
-            try:
-                stock_id = int(item['pk'])
-                if 'quantity' in item:
-                    quantity = int(item['quantity'])
-                else:
-                    # If quantity not supplied, we'll move the entire stock
-                    quantity = None
-            except ValueError:
-                # Ignore this one
-                continue
-
-            # Ignore a zero quantity movement
-            if quantity <= 0:
-                continue
-
-            try:
-                stock = StockItem.objects.get(pk=stock_id)
-            except StockItem.DoesNotExist:
-                continue
-
-            if quantity is None:
-                quantity = stock.quantity
-
-            stock.move(location, data.get('notes'), request.user, quantity=quantity)
-
-        return Response({'success': 'Moved parts to {loc}'.format(
-            loc=str(location)
+        return Response({'success': 'Moved {n} parts to {loc}'.format(
+            n=n,
+            loc=str(location),
         )})
 
 
@@ -622,7 +589,7 @@ stock_api_urls = [
     url(r'count/?', StockCount.as_view(), name='api-stock-count'),
     url(r'add/?', StockAdd.as_view(), name='api-stock-add'),
     url(r'remove/?', StockRemove.as_view(), name='api-stock-remove'),
-    # url(r'transfer/?', StockTransfer.as_view(), name='api-stock-transfer'),
+    url(r'transfer/?', StockTransfer.as_view(), name='api-stock-transfer'),
 
     url(r'track/?', StockTrackingList.as_view(), name='api-stock-track'),
 

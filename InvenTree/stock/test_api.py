@@ -154,3 +154,28 @@ class StocktakeTest(APITestCase):
 
             response = self.doPost(url, data)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_transfer(self):
+        """
+        Test stock transfers
+        """
+
+        data = {
+            'item': {
+                'pk': 1234,
+                'quantity': 10,
+            },
+            'location': 1,
+            'notes': "Moving to a new location"
+        }
+
+        url = reverse('api-stock-transfer')
+
+        response = self.doPost(url, data)
+        self.assertContains(response, "Moved 1 parts to", status_code=status.HTTP_200_OK)
+
+        # Now try one which will fail due to a bad location
+        data['location'] = 'not a location'
+
+        response = self.doPost(url, data)
+        self.assertContains(response, 'Valid location must be specified', status_code=status.HTTP_400_BAD_REQUEST)
