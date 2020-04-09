@@ -14,7 +14,7 @@ from .models import StockItemTracking
 
 from part.models import Part, PartCategory
 
-from .serializers import StockItemSerializer, StockQuantitySerializer
+from .serializers import StockItemSerializer
 from .serializers import LocationSerializer
 from .serializers import StockTrackingSerializer
 
@@ -23,11 +23,12 @@ from InvenTree.helpers import str2bool, isNull
 from InvenTree.status_codes import StockStatus
 
 import os
+from decimal import Decimal, InvalidOperation
 
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import generics, response, filters, permissions
+from rest_framework import generics, filters, permissions
 
 
 class StockCategoryTree(TreeSerializer):
@@ -95,60 +96,74 @@ class StockFilter(FilterSet):
         fields = ['quantity', 'part', 'location']
 
 
-class StockStocktake(APIView):
-    """ Stocktake API endpoint provides stock update of multiple items simultaneously.
-    The 'action' field tells the type of stock action to perform:
-    - count: Count the stock item(s)
-    - remove: Remove the quantity provided from stock
-    - add: Add the quantity provided from stock
+class StockAdjust(APIView):
+    """
+    A generic class for handling stocktake actions.
+
+    Subclasses exist for:
+    
+    - StockCount: count stock items
+    - StockAdd: add stock items
+    - StockRemove: remove stock items
+    - StockTransfer: transfer stock items
     """
 
     permission_classes = [
         permissions.IsAuthenticated,
     ]
 
+    def get_items(self, request):
+        """
+        Return a list of items posted to the endpoint.
+        Will raise validation errors if the items are not
+        correctly formatted.
+        """
+
+        _items = []
+
+        if 'item' in request.data:
+            _items = [request.data['item']]
+        elif 'items' in request.data:
+            _items = request.data['items']
+        else:
+            raise ValidationError({'items': 'Request must contain list of stock items'})
+
+        # List of validated items
+        self.items = []
+
+        for entry in _items:
+
+            try:
+                item = StockItem.objects.get(pk=entry.get('pk', None))
+            except (ValueError, StockItem.DoesNotExist):
+                raise ValidationError({'pk': 'Each entry must contain a valid pk field'})
+
+            try:
+                quantity = Decimal(str(entry.get('quantity', None)))
+            except (ValueError, TypeError, InvalidOperation):
+                raise ValidationError({'quantity': 'Each entry must contain a valid quantity field'})
+
+            if quantity <= 0:
+                raise ValidationError({'quantity': 'Quantity field must be greater than zero'})
+
+            self.items.append({
+                'item': item,
+                'quantity': quantity
+            })
+
+        self.notes = str(request.POST.get('notes', ''))
+
+
+class StockCount(StockAdjust):
+    """
+    Endpoint for counting stock (performing a stocktake).
+    """
+    
     def post(self, request, *args, **kwargs):
 
-        if 'action' not in request.data:
-            raise ValidationError({'action': 'Stocktake action must be provided'})
+        self.get_items(request)
 
-        action = request.data['action']
-
-        ACTIONS = ['count', 'remove', 'add']
-
-        if action not in ACTIONS:
-            raise ValidationError({'action': 'Action must be one of ' + ','.join(ACTIONS)})
-
-        elif 'items[]' not in request.data:
-            raise ValidationError({'items[]:' 'Request must contain list of items'})
-
-        items = []
-
-        # Ensure each entry is valid
-        for entry in request.data['items[]']:
-            if 'pk' not in entry:
-                raise ValidationError({'pk': 'Each entry must contain pk field'})
-            elif 'quantity' not in entry:
-                raise ValidationError({'quantity': 'Each entry must contain quantity field'})
-
-            item = {}
-            try:
-                item['item'] = StockItem.objects.get(pk=entry['pk'])
-            except StockItem.DoesNotExist:
-                raise ValidationError({'pk': 'No matching StockItem found for pk={pk}'.format(pk=entry['pk'])})
-            try:
-                item['quantity'] = int(entry['quantity'])
-            except ValueError:
-                raise ValidationError({'quantity': 'Quantity must be an integer'})
-
-            if item['quantity'] < 0:
-                raise ValidationError({'quantity': 'Quantity must be >= 0'})
-
-            items.append(item)
-
-        # Stocktake notes
-        notes = ''
-
+        """
         if 'notes' in request.data:
             notes = request.data['notes']
 
@@ -166,8 +181,39 @@ class StockStocktake(APIView):
             elif action == u'add':
                 if item['item'].add_stock(quantity, request.user, notes=notes):
                     n += 1
+        """
+
+        n = 0
 
         return Response({'success': 'Updated stock for {n} items'.format(n=n)})
+
+
+class StockAdd(StockAdjust):
+    """
+    Endpoint for adding stock
+    """
+
+    def post(self, request, *args, **kwargs):
+
+        self.get_items(request)
+
+        n = 0
+
+        return Response({"success": "Added stock for {n} items".format(n=n)})
+
+
+class StockRemove(StockAdjust):
+    """
+    Endpoint for removing stock.
+    """
+
+    def post(self, request, *args, **kwargs):
+
+        self.get_items(request)
+        
+        n = 0
+
+        return Response({"success": "Added stock for {n} items".format(n=n)})
 
 
 class StockTransfer(APIView):
@@ -575,7 +621,9 @@ stock_api_urls = [
     url(r'location/', include(location_endpoints)),
 
     # These JSON endpoints have been replaced (for now) with server-side form rendering - 02/06/2019
-    url(r'stocktake/?', StockStocktake.as_view(), name='api-stock-stocktake'),
+    url(r'count/?', StockCount.as_view(), name='api-stock-count'),
+    url(r'add/?', StockAdd.as_view(), name='api-stock-add'),
+    url(r'remove/?', StockRemove.as_view(), name='api-stock-remove'),
     # url(r'transfer/?', StockTransfer.as_view(), name='api-stock-transfer'),
 
     url(r'track/?', StockTrackingList.as_view(), name='api-stock-track'),

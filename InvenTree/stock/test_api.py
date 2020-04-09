@@ -70,33 +70,76 @@ class StocktakeTest(APITestCase):
     Series of tests for the Stocktake API
     """
 
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+    ]
+
     def setUp(self):
         User = get_user_model()
         User.objects.create_user('testuser', 'test@testing.com', 'password')
         self.client.login(username='testuser', password='password')
 
-    def doPost(self, data={}):
-        url = reverse('api-stock-stocktake')
+    def doPost(self, url, data={}):
         response  = self.client.post(url, data=data, format='json')
 
         return response
 
     def test_action(self):
+        """
+        Test each stocktake action endpoint,
+        for validation
+        """
 
-        data = {}
+        for endpoint in ['api-stock-count', 'api-stock-add', 'api-stock-remove']:
 
-        # POST without any action
-        response = self.doPost(data)
-        self.assertContains(response, "action must be provided", status_code=status.HTTP_400_BAD_REQUEST)
+            url = reverse(endpoint)
 
-        data['action'] = 'fake'
+            data = {}
 
-        # POST with an invalid action
-        response = self.doPost(data)
-        self.assertContains(response, "must be one of", status_code=status.HTTP_400_BAD_REQUEST)
+            # POST with a valid action
+            response = self.doPost(url, data)
+            self.assertContains(response, "must contain list", status_code=status.HTTP_400_BAD_REQUEST)
 
-        data['action'] = 'count'
+            data['items'] = [{
+                'no': 'aa'
+            }]
 
-        # POST with a valid action
-        response = self.doPost(data)
-        self.assertContains(response, "must contain list", status_code=status.HTTP_400_BAD_REQUEST)
+            # POST without a PK
+            response = self.doPost(url, data)
+            self.assertContains(response, 'must contain a valid pk', status_code=status.HTTP_400_BAD_REQUEST)
+
+            # POST with a PK but no quantity
+            data['items'] = [{
+                'pk': 10
+            }]
+            
+            response = self.doPost(url, data)
+            self.assertContains(response, 'must contain a valid pk', status_code=status.HTTP_400_BAD_REQUEST)
+
+            data['items'] = [{
+                'pk': 1234
+            }]
+
+            response = self.doPost(url, data)
+            self.assertContains(response, 'must contain a valid quantity', status_code=status.HTTP_400_BAD_REQUEST)
+
+            data['items'] = [{
+                'pk': 1234,
+                'quantity': '10x0d'
+            }]
+
+            response = self.doPost(url, data)
+            self.assertContains(response, 'must contain a valid quantity', status_code=status.HTTP_400_BAD_REQUEST)
+            
+            data['items'] = [{
+                'pk': 1234,
+                'quantity': "-1.234"
+            }]
+            
+            response = self.doPost(url, data)
+            self.assertContains(response, 'must be greater than zero', status_code=status.HTTP_400_BAD_REQUEST)
