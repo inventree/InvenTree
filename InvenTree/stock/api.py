@@ -133,8 +133,12 @@ class StockAdjust(APIView):
 
         for entry in _items:
 
+            if not type(entry) == dict:
+                raise ValidationError({'error': 'Improperly formatted data'})
+
             try:
-                item = StockItem.objects.get(pk=entry.get('pk', None))
+                pk = entry.get('pk', None)
+                item = StockItem.objects.get(pk=pk)
             except (ValueError, StockItem.DoesNotExist):
                 raise ValidationError({'pk': 'Each entry must contain a valid pk field'})
 
@@ -143,8 +147,8 @@ class StockAdjust(APIView):
             except (ValueError, TypeError, InvalidOperation):
                 raise ValidationError({'quantity': 'Each entry must contain a valid quantity field'})
 
-            if quantity <= 0:
-                raise ValidationError({'quantity': 'Quantity field must be greater than zero'})
+            if quantity < 0:
+                raise ValidationError({'quantity': 'Quantity field must not be less than zero'})
 
             self.items.append({
                 'item': item,

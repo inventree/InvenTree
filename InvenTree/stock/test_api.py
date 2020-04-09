@@ -142,4 +142,15 @@ class StocktakeTest(APITestCase):
             }]
             
             response = self.doPost(url, data)
-            self.assertContains(response, 'must be greater than zero', status_code=status.HTTP_400_BAD_REQUEST)
+            self.assertContains(response, 'must not be less than zero', status_code=status.HTTP_400_BAD_REQUEST)
+
+            # Test with a single item
+            data = {
+                'item': {
+                    'pk': 1234,
+                    'quantity': '10',
+                }
+            }
+
+            response = self.doPost(url, data)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
