@@ -85,7 +85,7 @@ class StocktakeTest(APITestCase):
         self.client.login(username='testuser', password='password')
 
     def doPost(self, url, data={}):
-        response  = self.client.post(url, data=data, format='json')
+        response = self.client.post(url, data=data, format='json')
 
         return response
 

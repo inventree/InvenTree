@@ -163,27 +163,12 @@ class StockCount(StockAdjust):
 
         self.get_items(request)
 
-        """
-        if 'notes' in request.data:
-            notes = request.data['notes']
-
         n = 0
 
-        for item in items:
-            quantity = int(item['quantity'])
+        for item in self.items:
 
-            if action == u'count':
-                if item['item'].stocktake(quantity, request.user, notes=notes):
-                    n += 1
-            elif action == u'remove':
-                if item['item'].take_stock(quantity, request.user, notes=notes):
-                    n += 1
-            elif action == u'add':
-                if item['item'].add_stock(quantity, request.user, notes=notes):
-                    n += 1
-        """
-
-        n = 0
+            if item['item'].stocktake(item['quantity'], request.user, notes=self.notes):
+                n += 1
 
         return Response({'success': 'Updated stock for {n} items'.format(n=n)})
 
@@ -199,6 +184,10 @@ class StockAdd(StockAdjust):
 
         n = 0
 
+        for item in self.items:
+            if item['item'].add_stock(item['quantity'], request.user, notes=self.notes):
+                n += 1
+
         return Response({"success": "Added stock for {n} items".format(n=n)})
 
 
@@ -213,7 +202,12 @@ class StockRemove(StockAdjust):
         
         n = 0
 
-        return Response({"success": "Added stock for {n} items".format(n=n)})
+        for item in self.items:
+
+            if item['item'].take_stock(item['quantity'], request.user, notes=self.notes):
+                n += 1
+
+        return Response({"success": "Removed stock for {n} items".format(n=n)})
 
 
 class StockTransfer(APIView):
