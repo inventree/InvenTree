@@ -10,7 +10,6 @@ import os
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.urls import reverse
-from django.conf import settings
 
 from django.db import models, transaction
 from django.db.models import Sum
@@ -300,9 +299,9 @@ class Part(models.Model):
         """ Return the URL of the image for this part """
 
         if self.image:
-            return os.path.join(settings.MEDIA_URL, str(self.image.url))
+            return helpers.getMediaUrl(self.image.url)
         else:
-            return os.path.join(settings.STATIC_URL, 'img/blank_image.png')
+            return helpers.getBlankImage()
 
     def get_thumbnail_url(self):
         """
@@ -310,9 +309,9 @@ class Part(models.Model):
         """
 
         if self.image:
-            return os.path.join(settings.MEDIA_URL, str(self.image.thumbnail.url))
+            return helpers.getMediaUrl(self.image.thumbnail.url)
         else:
-            return os.path.join(settings.STATIC_URL, 'img/blank_image.thumbnail.png')
+            return helpers.getBlankThumbnail()
 
     def validate_unique(self, exclude=None):
         """ Validate that a part is 'unique'.

@@ -63,3 +63,119 @@ class StockItemTest(APITestCase):
     def test_get_stock_list(self):
         response = self.client.get(self.list_url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class StocktakeTest(APITestCase):
+    """
+    Series of tests for the Stocktake API
+    """
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+    ]
+
+    def setUp(self):
+        User = get_user_model()
+        User.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.client.login(username='testuser', password='password')
+
+    def doPost(self, url, data={}):
+        response = self.client.post(url, data=data, format='json')
+
+        return response
+
+    def test_action(self):
+        """
+        Test each stocktake action endpoint,
+        for validation
+        """
+
+        for endpoint in ['api-stock-count', 'api-stock-add', 'api-stock-remove']:
+
+            url = reverse(endpoint)
+
+            data = {}
+
+            # POST with a valid action
+            response = self.doPost(url, data)
+            self.assertContains(response, "must contain list", status_code=status.HTTP_400_BAD_REQUEST)
+
+            data['items'] = [{
+                'no': 'aa'
+            }]
+
+            # POST without a PK
+            response = self.doPost(url, data)
+            self.assertContains(response, 'must contain a valid pk', status_code=status.HTTP_400_BAD_REQUEST)
+
+            # POST with a PK but no quantity
+            data['items'] = [{
+                'pk': 10
+            }]
+            
+            response = self.doPost(url, data)
+            self.assertContains(response, 'must contain a valid pk', status_code=status.HTTP_400_BAD_REQUEST)
+
+            data['items'] = [{
+                'pk': 1234
+            }]
+
+            response = self.doPost(url, data)
+            self.assertContains(response, 'must contain a valid quantity', status_code=status.HTTP_400_BAD_REQUEST)
+
+            data['items'] = [{
+                'pk': 1234,
+                'quantity': '10x0d'
+            }]
+
+            response = self.doPost(url, data)
+            self.assertContains(response, 'must contain a valid quantity', status_code=status.HTTP_400_BAD_REQUEST)
+            
+            data['items'] = [{
+                'pk': 1234,
+                'quantity': "-1.234"
+            }]
+            
+            response = self.doPost(url, data)
+            self.assertContains(response, 'must not be less than zero', status_code=status.HTTP_400_BAD_REQUEST)
+
+            # Test with a single item
+            data = {
+                'item': {
+                    'pk': 1234,
+                    'quantity': '10',
+                }
+            }
+
+            response = self.doPost(url, data)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_transfer(self):
+        """
+        Test stock transfers
+        """
+
+        data = {
+            'item': {
+                'pk': 1234,
+                'quantity': 10,
+            },
+            'location': 1,
+            'notes': "Moving to a new location"
+        }
+
+        url = reverse('api-stock-transfer')
+
+        response = self.doPost(url, data)
+        self.assertContains(response, "Moved 1 parts to", status_code=status.HTTP_200_OK)
+
+        # Now try one which will fail due to a bad location
+        data['location'] = 'not a location'
+
+        response = self.doPost(url, data)
+        self.assertContains(response, 'Valid location must be specified', status_code=status.HTTP_400_BAD_REQUEST)

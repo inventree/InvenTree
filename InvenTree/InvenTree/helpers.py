@@ -14,6 +14,41 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 from .version import inventreeVersion, inventreeInstanceName
+from .settings import MEDIA_URL, STATIC_URL
+
+
+def getMediaUrl(filename):
+    """
+    Return the qualified access path for the given file,
+    under the media directory.
+    """
+
+    return os.path.join(MEDIA_URL, str(filename))
+
+
+def getStaticUrl(filename):
+    """
+    Return the qualified access path for the given file,
+    under the static media directory.
+    """
+
+    return os.path.join(STATIC_URL, str(filename))
+
+
+def getBlankImage():
+    """
+    Return the qualified path for the 'blank image' placeholder.
+    """
+
+    return getStaticUrl("img/blank_image.png")
+
+
+def getBlankThumbnail():
+    """
+    Return the qualified path for the 'blank image' thumbnail placeholder.
+    """
+
+    return getStaticUrl("img/blank_image.thumbnail.png")
 
 
 def TestIfImage(img):
@@ -66,7 +101,7 @@ def isNull(text):
         True if the text looks like a null value
     """
 
-    return str(text).strip().lower() in ['top', 'null', 'none', 'empty', 'false', '-1']
+    return str(text).strip().lower() in ['top', 'null', 'none', 'empty', 'false', '-1', '']
 
 
 def decimal2string(d):

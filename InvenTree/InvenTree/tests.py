@@ -1,3 +1,4 @@
+
 from django.test import TestCase
 import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
@@ -6,6 +7,8 @@ from .validators import validate_overage, validate_part_name
 from . import helpers
 
 from mptt.exceptions import InvalidMove
+
+from decimal import Decimal
 
 from stock.models import StockLocation
 
@@ -71,6 +74,29 @@ class TestHelpers(TestCase):
         for s in ['wombat', '', 'xxxx']:
             self.assertFalse(helpers.str2bool(s))
             self.assertFalse(helpers.str2bool(s, test=False))
+
+    def test_isnull(self):
+
+        for s in ['null', 'none', '', '-1', 'false']:
+            self.assertTrue(helpers.isNull(s))
+
+        for s in ['yes', 'frog', 'llama', 'true']:
+            self.assertFalse(helpers.isNull(s))
+
+    def testStaticUrl(self):
+
+        self.assertEqual(helpers.getStaticUrl('test.jpg'), '/static/test.jpg')
+        self.assertEqual(helpers.getBlankImage(), '/static/img/blank_image.png')
+        self.assertEqual(helpers.getBlankThumbnail(), '/static/img/blank_image.thumbnail.png')
+
+    def testMediaUrl(self):
+
+        self.assertEqual(helpers.getMediaUrl('xx/yy.png'), '/media/xx/yy.png')
+
+    def testDecimal2String(self):
+        
+        self.assertEqual(helpers.decimal2string(Decimal('1.2345000')), '1.2345')
+        self.assertEqual(helpers.decimal2string('test'), 'test')
 
 
 class TestQuoteWrap(TestCase):

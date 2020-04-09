@@ -17,10 +17,12 @@ from django.db.models import Sum
 
 from django.apps import apps
 from django.urls import reverse
-from django.conf import settings
 
 from markdownx.models import MarkdownxField
 
+from stdimage.models import StdImageField
+
+from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from InvenTree.status_codes import OrderStatus
 from common.models import Currency
@@ -90,7 +92,13 @@ class Company(models.Model):
 
     link = InvenTreeURLField(blank=True, help_text=_('Link to external company information'))
 
-    image = models.ImageField(upload_to=rename_company_image, max_length=255, null=True, blank=True)
+    image = StdImageField(
+        upload_to=rename_company_image,
+        null=True,
+        blank=True,
+        variations={'thumbnail': (128, 128)},
+        delete_orphans=True,
+    )
 
     notes = MarkdownxField(blank=True)
 
@@ -110,10 +118,18 @@ class Company(models.Model):
         """ Return the URL of the image for this company """
 
         if self.image:
-            return os.path.join(settings.MEDIA_URL, str(self.image.url))
+            return getMediaUrl(self.image.url)
         else:
-            return os.path.join(settings.STATIC_URL, 'img/blank_image.png')
+            return getBlankImage()
 
+    def get_thumbnail_url(self):
+        """ Return the URL for the thumbnail image for this Company """
+
+        if self.image:
+            return getMediaUrl(self.image.thumbnail.url)
+        else:
+            return getBlankThumbnail()
+            
     @property
     def part_count(self):
         """ The number of parts supplied by this company """
