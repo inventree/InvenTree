@@ -98,7 +98,7 @@ class StockFilter(FilterSet):
 class StockStocktake(APIView):
     """ Stocktake API endpoint provides stock update of multiple items simultaneously.
     The 'action' field tells the type of stock action to perform:
-    - stocktake: Count the stock item(s)
+    - count: Count the stock item(s)
     - remove: Remove the quantity provided from stock
     - add: Add the quantity provided from stock
     """
@@ -114,7 +114,7 @@ class StockStocktake(APIView):
 
         action = request.data['action']
 
-        ACTIONS = ['stocktake', 'remove', 'add']
+        ACTIONS = ['count', 'remove', 'add']
 
         if action not in ACTIONS:
             raise ValidationError({'action': 'Action must be one of ' + ','.join(ACTIONS)})
@@ -157,7 +157,7 @@ class StockStocktake(APIView):
         for item in items:
             quantity = int(item['quantity'])
 
-            if action == u'stocktake':
+            if action == u'count':
                 if item['item'].stocktake(quantity, request.user, notes=notes):
                     n += 1
             elif action == u'remove':
@@ -170,7 +170,7 @@ class StockStocktake(APIView):
         return Response({'success': 'Updated stock for {n} items'.format(n=n)})
 
 
-class StockMove(APIView):
+class StockTransfer(APIView):
     """ API endpoint for performing stock movements """
 
     permission_classes = [
@@ -512,22 +512,6 @@ class StockList(generics.ListCreateAPIView):
     ]
 
 
-class StockStocktakeEndpoint(generics.UpdateAPIView):
-    """ API endpoint for performing stocktake """
-
-    queryset = StockItem.objects.all()
-    serializer_class = StockQuantitySerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def update(self, request, *args, **kwargs):
-        object = self.get_object()
-        object.stocktake(request.data['quantity'], request.user)
-
-        serializer = self.get_serializer(object)
-
-        return response.Response(serializer.data)
-
-
 class StockTrackingList(generics.ListCreateAPIView):
     """ API endpoint for list view of StockItemTracking objects.
 
@@ -591,8 +575,8 @@ stock_api_urls = [
     url(r'location/', include(location_endpoints)),
 
     # These JSON endpoints have been replaced (for now) with server-side form rendering - 02/06/2019
-    # url(r'stocktake/?', StockStocktake.as_view(), name='api-stock-stocktake'),
-    # url(r'move/?', StockMove.as_view(), name='api-stock-move'),
+    url(r'stocktake/?', StockStocktake.as_view(), name='api-stock-stocktake'),
+    # url(r'transfer/?', StockTransfer.as_view(), name='api-stock-transfer'),
 
     url(r'track/?', StockTrackingList.as_view(), name='api-stock-track'),
 
