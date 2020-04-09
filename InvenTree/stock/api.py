@@ -151,7 +151,7 @@ class StockAdjust(APIView):
                 'quantity': quantity
             })
 
-        self.notes = str(request.POST.get('notes', ''))
+        self.notes = str(request.data.get('notes', ''))
 
 
 class StockCount(StockAdjust):
