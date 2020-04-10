@@ -15,10 +15,17 @@ function getStockLocations(filters={}, options={}) {
 }
 
 // A map of available filters for the stock table
-function getStockFilterOptions() {
+function getAvailableStockFilters() {
     return {
         'cascade': {
             'type': 'bool',
+            'description': 'Include stock in sublocations',
+            'title': 'sublocations',
+        },
+        'active': {
+            'type': 'bool',
+            'title': 'part active',
+            'description': 'Show stock for active parts',
         },
         'status': {
             'options': {
@@ -28,6 +35,7 @@ function getStockFilterOptions() {
                 'DESTROYED': 60,
                 'LOST': 70
             },
+            'description': 'Stock status',
         }
     };
 }
@@ -35,10 +43,10 @@ function getStockFilterOptions() {
 
 function loadStockFilters() {
     // Load the stock table filters from session-storage
-    var filterstring = inventreeLoad("stockfilters", "cascade=true&loc=1");
+    var filterstring = inventreeLoad("stockfilters", "cascade=true");
 
     if (filterstring.length == 0) {
-        filterstring = 'cascade=true&test=1&location=10&status=50';
+        filterstring = 'cascade=true&status=60';
     }
 
     var split = filterstring.split("&");
@@ -91,9 +99,80 @@ function removeStockFilter(key) {
     return filters;
 }
 
+function addStockFilter(key, value) {
+    var filters = loadStockFilters();
+
+    filters[key] = value;
+
+    saveStockFilters(filters);
+
+    return filters;
+}
+
 function createStockFilter() {
     // TODO
     console.log("create stock filter");
+
+    var html = `<select id='filter-tag' name='tag'>`;
+
+    var available = getAvailableStockFilters();
+
+    var filters = loadStockFilters();
+
+    for (var key in available) {
+        // Ignore any keys that are already used..
+        if (key in filters) continue;
+
+        html += `<option value='${key}'>${available[key].title || key}</option>`;
+    }
+
+    html += `</select>`;
+
+    // Add in a (blank) selection for filter value
+    html += `<select id='filter-value' name='value'></select>`;
+
+    html += `<button class='btn btn-default' id='filter-make'>Add</Button>`;
+
+    var div = $("#add-new-filter");
+
+    div.html(html);
+
+    div.find("#filter-make").click(function() {
+        var tag = div.find("#filter-tag").val();
+        var val = div.find("#filter-value").val();
+
+        console.log(tag + " -> " + val);
+
+        addStockFilter(tag, val);
+    });
+
+    div.find('#filter-tag').on('change', function() {
+        console.log(this.value);
+
+        // Select the filter
+        var filter = available[this.value];
+
+        var list = div.find('#filter-value');
+
+        list.empty();
+
+        if ('type' in filter) {
+            if (filter.type == 'bool') {
+
+                list.append(`<option value='1'>True</option>`);
+                list.append(`<option value='0'>False</option>`);
+            }
+        } else if ('options' in filter) {
+            for (var opt in filter.options) {
+
+                list.append(`<option value='${filter.options[opt]}'>${opt}</option>`);
+            }
+        }
+
+        console.log("...");
+    });
+
+    console.log('done');
 }
 
 function clearStockFilters() {
