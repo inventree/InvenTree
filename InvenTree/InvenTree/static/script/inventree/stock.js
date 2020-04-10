@@ -14,6 +14,48 @@ function getStockLocations(filters={}, options={}) {
     return inventreeGet('/api/stock/location/', filters, options)
 }
 
+function loadStockFilters() {
+    // Load the stock table filters from session-storage
+    var filterstring = inventreeLoad("stockfilters", "cascade=true&loc=1");
+
+    var split = filterstring.split("&");
+
+    var filters = {};
+
+    console.log("Loaded stock filters: " + filterstring);
+
+    split.forEach(function(item, index) {
+        var f = item.split('=');
+
+        if (f.length == 2) {
+            filters[f[0]] = f[1];
+        } else {
+            console.log("Improperly formatted filter: " + item);
+        }
+    });
+
+    return filters;
+}
+
+
+function saveStockFilters(filters) {
+    // Save the stock table filters to session storage
+
+    var strings = [];
+
+    for (var key in filters) {
+        strings.push(key + "=" + filters[key]);
+    }
+
+    var filterstring = strings.join('&');
+
+    console.log("Saving stock filters: " + filterstring);
+
+    inventreeSave("stockfilters", filterstring);
+}
+
+
+
 /* Functions for interacting with stock management forms
  */
 
@@ -40,19 +82,23 @@ function loadStockTable(table, options) {
      *  buttons - Which buttons to link to stock selection callbacks
      */
     
+    // List of user-params which override the default filters
     var params = options.params || {};
 
-    // Enforce 'cascade' option
-    // TODO - Make this user-configurable?
-    params.cascade = true;
+    var filters = loadStockFilters();
 
-    console.log('load stock table');
+    // Override the default values, or add new ones
+    for (var key in params) {
+        filters[key] = params[key];
+    }
 
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
             return 'No stock items matching query';
         },
+        url: options.url,
+        queryParams: filters,
         customSort: customGroupSorter,
         groupBy: true,
         groupByField: options.groupByField || 'part',
@@ -241,8 +287,6 @@ function loadStockTable(table, options) {
                 title: 'Notes',
             }
         ],
-        url: options.url,
-        queryParams: params,
     });
 
     if (options.buttons) {
