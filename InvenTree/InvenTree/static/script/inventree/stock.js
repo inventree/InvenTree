@@ -359,9 +359,6 @@ function loadStockTable(table, options) {
         linkButtonsToSelection(table, options.buttons);
     }
 
-    // Display the filters
-    updateStockFilterList(filterListElement);
-
     function stockAdjustment(action) {
         var items = $("#stock-table").bootstrapTable("getSelections");
 

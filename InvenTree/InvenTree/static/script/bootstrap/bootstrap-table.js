@@ -3272,10 +3272,7 @@
       }, {
         key: 'getOptions',
         value: function getOptions() {
-          // deep copy and remove data
-          var options = JSON.parse(JSON.stringify(this.options));
-          delete options.data;
-          return options;
+         return this.options;
         }
       }, {
         key: 'getSelections',
