@@ -91,14 +91,27 @@ function removeStockFilter(key) {
     return filters;
 }
 
+function createStockFilter() {
+    // TODO
+    console.log("create stock filter");
+}
 
-function updateStockFilterList(filterListElement, filters, table, params) {
+function clearStockFilters() {
+    // TODO
+    console.log("clear stock filters");
+}
+
+function updateStockFilterList(filterListElement, table) {
+
+    var filters = loadStockFilters();
 
     for (var key in filters) {
         $(filterListElement).append(`<li>${key} = ${filters[key]}<span filter-tag='${key}' class='close'>x</span></li>` );
     }
 
-    $(filterListElement).find(".close").click(function() {
+    // Whenever the callback is called, pass the original parameters through
+
+    $(filterListElement).find(".close").click(function(event) {
         var element = $(this);
 
         var tag = element.attr('filter-tag');
@@ -108,12 +121,12 @@ function updateStockFilterList(filterListElement, filters, table, params) {
 
         var filters = removeStockFilter(tag);
 
-        updateStockFilterList(filterListElement, filters);
+        reloadStockTable(table, filters);
 
-        // TODO - Reload data in table?
+        // Call this function again to re-update the filterss
+        updateStockFilterList(filterListElement, table);
+
     });
-
-    console.log("done");
 }
 
 
@@ -130,6 +143,40 @@ function removeStockRow(e) {
 
     $('#' + row).remove();
 }
+
+
+function reloadStockTable(table, filters) {
+    /* Reload the stock table.
+     * 
+     * 'original' is the original query params provided to the 
+     * 'loadStockTable' function.
+     * These override any user-configured filters.
+     */
+
+
+    // Override the queryParams for the table
+    var options = table.bootstrapTable('getOptions');
+
+    var params = {};
+    
+    var filters = loadStockFilters();
+    
+    for (var key in filters) {
+        params[key] = filters[key];
+    }
+    
+    // Original parameters will override
+    for (var key in options.original) {
+        params[key] = options.original[key];
+    }
+
+    options.queryParams = params;
+    
+    table.bootstrapTable('refreshOptions', options);
+    table.bootstrapTable('refresh');
+}
+
+
 
 function loadStockTable(table, options) {
     /* Load data into a stock table with adjustable options.
@@ -151,7 +198,25 @@ function loadStockTable(table, options) {
 
     var filters = loadStockFilters();
 
-    updateStockFilterList(filterListElement, filters, table, params);
+    var original = {};
+
+    for (var key in params) {
+        original[key] = params[key];
+    }
+
+    // Record a copy of the original query params
+    // It will be required if the table is refreshed
+    //options.original = original;
+
+    updateStockFilterList(filterListElement, table);
+
+    $("#filter-add").click(function() {
+        createStockFilter();
+    });
+
+    $("#filter-clear").click(function() {
+        clearStockFilters();
+    });
 
     // Override the default values, or add new ones
     for (var key in params) {
@@ -167,6 +232,7 @@ function loadStockTable(table, options) {
         queryParams: filters,
         customSort: customGroupSorter,
         groupBy: true,
+        original: original,
         groupByField: options.groupByField || 'part',
         groupByFormatter: function(field, id, data) {
 
