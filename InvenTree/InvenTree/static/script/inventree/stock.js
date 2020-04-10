@@ -14,9 +14,32 @@ function getStockLocations(filters={}, options={}) {
     return inventreeGet('/api/stock/location/', filters, options)
 }
 
+// A map of available filters for the stock table
+function getStockFilterOptions() {
+    return {
+        'cascade': {
+            'type': 'bool',
+        },
+        'status': {
+            'options': {
+                'OK': 10,
+                'ATTENTION': 50,
+                'DAMAGED': 55,
+                'DESTROYED': 60,
+                'LOST': 70
+            },
+        }
+    };
+}
+
+
 function loadStockFilters() {
     // Load the stock table filters from session-storage
     var filterstring = inventreeLoad("stockfilters", "cascade=true&loc=1");
+
+    if (filterstring.length == 0) {
+        filterstring = 'cascade=true&test=1&location=10&status=50';
+    }
 
     var split = filterstring.split("&");
 
@@ -25,12 +48,15 @@ function loadStockFilters() {
     console.log("Loaded stock filters: " + filterstring);
 
     split.forEach(function(item, index) {
-        var f = item.split('=');
 
-        if (f.length == 2) {
-            filters[f[0]] = f[1];
-        } else {
-            console.log("Improperly formatted filter: " + item);
+        if (item.length > 0) {
+            var f = item.split('=');
+
+            if (f.length == 2) {
+                filters[f[0]] = f[1];
+            } else {
+                console.log("Improperly formatted filter: " + item);
+            }
         }
     });
 
@@ -54,6 +80,41 @@ function saveStockFilters(filters) {
     inventreeSave("stockfilters", filterstring);
 }
 
+function removeStockFilter(key) {
+    
+    var filters = loadStockFilters();
+
+    delete filters[key];
+
+    saveStockFilters(filters);
+
+    return filters;
+}
+
+
+function updateStockFilterList(filterListElement, filters, table, params) {
+
+    for (var key in filters) {
+        $(filterListElement).append(`<li>${key} = ${filters[key]}<span filter-tag='${key}' class='close'>x</span></li>` );
+    }
+
+    $(filterListElement).find(".close").click(function() {
+        var element = $(this);
+
+        var tag = element.attr('filter-tag');
+
+        // Clear out any existing elements
+        $(filterListElement).empty();
+
+        var filters = removeStockFilter(tag);
+
+        updateStockFilterList(filterListElement, filters);
+
+        // TODO - Reload data in table?
+    });
+
+    console.log("done");
+}
 
 
 /* Functions for interacting with stock management forms
@@ -80,12 +141,17 @@ function loadStockTable(table, options) {
      *  params - query params for augmenting stock data request
      *  groupByField - Column for grouping stock items
      *  buttons - Which buttons to link to stock selection callbacks
+     *  filterList - <ul> element where filters are displayed
      */
     
     // List of user-params which override the default filters
     var params = options.params || {};
 
+    var filterListElement = options.filterList || "#stock-filter-list";
+
     var filters = loadStockFilters();
+
+    updateStockFilterList(filterListElement, filters, table, params);
 
     // Override the default values, or add new ones
     for (var key in params) {
@@ -292,6 +358,9 @@ function loadStockTable(table, options) {
     if (options.buttons) {
         linkButtonsToSelection(table, options.buttons);
     }
+
+    // Display the filters
+    updateStockFilterList(filterListElement);
 
     function stockAdjustment(action) {
         var items = $("#stock-table").bootstrapTable("getSelections");

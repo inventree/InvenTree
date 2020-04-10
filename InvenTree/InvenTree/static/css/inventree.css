@@ -157,6 +157,62 @@
     font-style: italic;
 }
 
+.dropdown {
+    padding-left: 1px;
+    margin-left: 1px;
+}
+
+/* Styles for table buttons and filtering */
+.button-toolbar .btn {
+    margin-left: 1px;
+    margin-right: 1px;
+}
+
+.filters {
+    display: inline-block;
+    *display: inline;
+    border: 1px solid #555;
+    border-radius: 3px;
+    padding: 3px;
+    margin-bottom: 1px;
+    margin-top: 1px;
+    vertical-align: middle;
+}
+
+.filter-list {
+    margin: 1px;
+    padding: 1px;
+}
+
+.filter-list .close {
+    cursor: pointer;
+    right: 0%;
+    padding-right: 2px;
+    padding-left: 2px;
+    transform: translate(0%, -25%);
+}
+  
+.filter-list .close:hover {background: #bbb;}
+
+.filter-list > li {
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: 1px solid;
+    border-color: #aaa;
+    border-radius: 3px;
+    background: #eee;
+    margin: 1px;
+}
+
+.filter-list > li:hover {
+    background: #ddd;
+}
+
 /* Part image icons with full-display on mouse hover */
 
 .hover-img-thumb {
