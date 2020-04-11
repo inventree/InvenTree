@@ -216,8 +216,9 @@ function generateFilterInput(tableKey, filterKey) {
         // Return a 'select' input with the available values
         html = `<select class='form-control' id='${id}' name='value'>`;
 
-        for (var opt in options) {
-            html += `<option value='${options[opt]}'>${opt}</option>`;
+        for (var key in options) {
+            option = options[key];
+            html += `<option value='${key}'>${option.value}</option>`;
         }
 
         html += `</select>`;
@@ -368,7 +369,6 @@ function getFilterOptionValue(tableKey, filterKey, valueKey) {
 
     var filter = getFilterSettings(tableKey, filterKey);
 
-
     var value = String(valueKey);
 
     // Lookup for boolean options
@@ -381,11 +381,10 @@ function getFilterOptionValue(tableKey, filterKey, valueKey) {
 
     // Iterate through a list of options
     if ('options' in filter) {
-        for (var option in filter.options) {
-            var v = String(filter.options[option]);
+        for (var key in filter.options) {
 
-            if (v == valueKey) {
-                return option;
+            if (key == valueKey) {
+                return filter.options[key].value;
             }
         }
 

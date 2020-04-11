@@ -7,6 +7,8 @@ class StatusCode:
     This is used to map a set of integer values to text.
     """
 
+    labels = {}
+
     @classmethod
     def list(cls):
         """
@@ -16,10 +18,18 @@ class StatusCode:
         codes = []
 
         for key in cls.options.keys():
-            codes.append({
+
+            opt = {
                 'key': key,
                 'value': cls.options[key]
-            })
+            }
+
+            label = cls.labels.get(key)
+
+            if label:
+                opt['label'] = label
+
+            codes.append(opt)
 
         return codes
 
@@ -61,6 +71,15 @@ class OrderStatus(StatusCode):
         RETURNED: _("Returned"),
     }
 
+    labels = {
+        PENDING: "primary",
+        PLACED: "primary",
+        COMPLETE: "success",
+        CANCELLED: "danger",
+        LOST: "warning",
+        RETURNED: "warning",
+    }
+
     # Open orders
     OPEN = [
         PENDING,
@@ -91,6 +110,12 @@ class StockStatus(StatusCode):
         LOST: _("Lost"),
     }
 
+    labels = {
+        OK: 'success',
+        ATTENTION: 'warning',
+        DAMAGED: 'danger',
+    }
+
     # The following codes correspond to parts that are 'available' or 'in stock'
     AVAILABLE_CODES = [
         OK,
@@ -118,6 +143,13 @@ class BuildStatus(StatusCode):
         ALLOCATED: _("Allocated"),
         CANCELLED: _("Cancelled"),
         COMPLETE: _("Complete"),
+    }
+
+    labels = {
+        PENDING: 'primary',
+        ALLOCATED: 'info',
+        COMPLETE: 'success',
+        CANCELLED: 'danger',
     }
 
     ACTIVE_CODES = [

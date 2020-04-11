@@ -50,12 +50,17 @@ function loadBuildTable(table, options) {
                 sortable: true,
             },
             {
-                field: 'status_text',
+                field: 'status',
                 title: 'Status',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return buildStatusDisplay(value);
+                },
             },
             {
                 field: 'creation_date',
                 title: 'Created',
+                sortable: true,
             },
         ],
     });

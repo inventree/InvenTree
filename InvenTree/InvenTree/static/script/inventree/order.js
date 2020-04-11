@@ -187,7 +187,5 @@ function orderStatusLabel(code, label) {
     html += label;
     html += "</span>";
 
-    console.log(html);
-
     return html;
 }

@@ -5,6 +5,11 @@
 
 <script type='text/javascript'>
 
+{% include "status_codes.html" with label='stock' options=stock_status_codes %}
+{% include "status_codes.html" with label='build' options=build_status_codes %}
+{% include "status_codes.html" with label='order' options=order_status_codes %}
+
+
 function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
@@ -23,10 +28,7 @@ function getAvailableTableFilters(tableKey) {
                 description: '{% trans "Show stock for active parts" %}',
             },
             'status': {
-                options: {
-                    {% for opt in stock_status_codes %}'{{ opt.value }}': '{{ opt.key }}',
-                    {% endfor %}
-                },
+                options: stockCodes,
                 title: '{% trans "Stock status" %}',
                 description: '{% trans "Stock status" %}',
             },
@@ -38,10 +40,7 @@ function getAvailableTableFilters(tableKey) {
         return {
             status: {
                 title: '{% trans "Build status" %}',
-                options: {
-                    {% for opt in build_status_codes %}'{{ opt.value }}': '{{ opt.key }}',
-                    {% endfor %}
-                },
+                options: buildCodes,
             },
 
         };
@@ -52,10 +51,7 @@ function getAvailableTableFilters(tableKey) {
         return {
             status: {
                 title: '{% trans "Order status" %}',
-                options: {
-                    {% for opt in order_status_codes %}'{{ opt.value }}': '{{ opt.key }}',
-                    {% endfor %}
-                },
+                options: orderCodes,
             },
         };
     }
