@@ -16,6 +16,7 @@ function defaultFilters() {
     return {
         stock: "cascade=1",
         build: "",
+        parts: "cascade=1",
     };
 }
 
@@ -308,12 +309,15 @@ function setupFilterList(tableKey, table, target) {
                 var tag = element.find(`#filter-tag-${tableKey}`).val();
                 var val = element.find(`#filter-value-${tableKey}`).val();
 
-                var filters = addTableFilter(tableKey, tag, val);
+                // Only add the new filter if it is not empty!
+                if (tag && tag.length > 0) {
+                    var filters = addTableFilter(tableKey, tag, val);
+                    reloadTable(table, filters);
+                    
+                    // Run this function again
+                    setupFilterList(tableKey, table, target);
+                }
 
-                reloadTable(table, filters);
-
-                // Run this function again
-                setupFilterList(tableKey, table, target);
             });
         } else {
             addClicked = false;

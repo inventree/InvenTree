@@ -106,7 +106,7 @@ function loadPurchaseOrderTable(table, options) {
 
     var params = options.params || {};
 
-    var filters = loadTableFilters("build");
+    var filters = loadTableFilters("order");
 
     for (var key in params) {
         filters[key] = params[key];
