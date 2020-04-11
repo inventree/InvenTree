@@ -78,10 +78,10 @@ InvenTree | Build - {{ build }}
                         {% if bom_price %}
                         {{ bom_price }}
                         {% if build.part.has_complete_bom_pricing == False %}
-                        <br><span class='warning-msg'><i>BOM pricing is incomplete</i></span>
+                        <br><span class='warning-msg'><i>{"% trans "BOM pricing is incomplete" %}</i></span>
                         {% endif %}
                         {% else %}
-                        <span class='warning-msg'><i>No pricing information</i></span>
+                        <span class='warning-msg'><i>{% trans "No pricing information" %}</i></span>
                         {% endif %}
                     </td>
                 </tr>
