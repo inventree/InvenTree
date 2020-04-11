@@ -140,11 +140,11 @@ function loadPartTable(table, url, options={}) {
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
             
             if (row.is_template) {
-                display = display + `<span class='fas fa-clone label-right' title='Template part'></span>`;
+                display += `<span class='fas fa-clone label-right' title='Template part'></span>`;
             }
             
             if (row.assembly) {
-                display = display + `<span class='fas fa-tools label-right' title='Assembled part'></span>`;
+                display += `<span class='fas fa-tools label-right' title='Assembled part'></span>`;
             }
 
             /*
@@ -154,7 +154,7 @@ function loadPartTable(table, url, options={}) {
             */
             
             if (!row.active) {
-                display = display + `<span class='fas fa-times label-right' title='Inactive part'></span>`;
+                display += `<span class='label label-warning label-right'>INACTIVE</span>`; 
             }
             return display; 
         }
