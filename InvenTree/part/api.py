@@ -8,7 +8,8 @@ from __future__ import unicode_literals
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 
-from django.db.models import Q, Sum, Count
+from django.db.models import Q, F, Sum, Count
+from django.db.models.functions import Coalesce
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -19,6 +20,7 @@ from django.conf.urls import url, include
 from django.urls import reverse
 
 import os
+from decimal import Decimal
 
 from .models import Part, PartCategory, BomItem, PartStar
 from .models import PartParameter, PartParameterTemplate
@@ -210,13 +212,12 @@ class PartList(generics.ListCreateAPIView):
             'active',
         ).annotate(
             # Quantity of items which are "in stock"
-            in_stock=Sum('stock_items__quantity', filter=stock_filter),
+            in_stock=Coalesce(Sum('stock_items__quantity', filter=stock_filter), Decimal(0)),
             on_order=Sum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter),
             building=Sum('builds__quantity', filter=build_filter),
         )
 
-        # If we are filtering by 'has_stock' status, 
-        # Check if the 'has_stock' quantity is zero
+        # If we are filtering by 'has_stock' status
         has_stock = self.request.query_params.get('has_stock', None)
 
         if has_stock is not None:
@@ -224,11 +225,25 @@ class PartList(generics.ListCreateAPIView):
 
             if has_stock:
                 # Filter items which have a non-null 'in_stock' quantity above zero
-                data = data.exclude(in_stock=None)
                 data = data.filter(in_stock__gt=0)
             else:
                 # Filter items which a null or zero 'in_stock' quantity
-                data = data.filter(Q(in_stock__lte=0) | Q(in_stock=None))
+                data = data.filter(Q(in_stock__lte=0))
+
+        # If we are filtering by 'low_stock' status
+        low_stock = self.request.query_params.get('low_stock', None)
+
+        if low_stock is not None:
+            low_stock = str2bool(low_stock)
+
+            if low_stock:
+                # Ignore any parts which do not have a specified 'minimum_stock' level
+                data = data.exclude(minimum_stock=0)
+                # Filter items which have an 'in_stock' level lower than 'minimum_stock'
+                data = data.filter(Q(in_stock__lt=F('minimum_stock')))
+            else:
+                # Filter items which have an 'in_stock' level higher than 'minimum_stock'
+                data = data.filter(Q(in_stock__gte=F('minimum_stock')))
 
         # Reduce the number of lookups we need to do for the part categories
         categories = {}

@@ -75,8 +75,12 @@ function getAvailableTableFilters(tableKey) {
             },
             has_stock: {
                 type: 'bool',
-                title: '{% trans "Stock Available" %}'
+                title: '{% trans "Stock available" %}'
             },
+            low_stock: {
+                type: 'bool',
+                title: '{% trans "Low stock" %}',
+            }
         };
     }
 
