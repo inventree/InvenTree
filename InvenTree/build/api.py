@@ -41,6 +41,22 @@ class BuildList(generics.ListCreateAPIView):
         'part',
     ]
 
+    def get_queryset(self):
+        """
+        Override the queryset filtering,
+        as some of the fields don't natively play nicely with DRF
+        """
+
+        build_list = super().get_queryset()
+
+        # Filter by build status?
+        status = self.request.query_params.get('status', None)
+
+        if status is not None:
+            build_list = build_list.filter(status=status)
+
+        return build_list
+
     def get_serializer(self, *args, **kwargs):
 
         try:
