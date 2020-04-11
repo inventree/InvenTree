@@ -55,7 +55,10 @@ function updateStockFilterList(filterListElement, table) {
     var filters = loadTableFilters("stock");
 
     for (var key in filters) {
-        $(filterListElement).append(`<li>${key} = ${filters[key]}<span filter-tag-stock='${key}' class='close'>x</span></li>` );
+
+        var value = getFilterOptionValue("stock", key, filters[key]);
+
+        $(filterListElement).append(`<li>${key} = ${value}<span filter-tag-stock='${key}' class='close'>x</span></li>` );
     }
 
     // Whenever the callback is called, pass the original parameters through

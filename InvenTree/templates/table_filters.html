@@ -7,6 +7,8 @@
 
 function getAvailableTableFilters(tableKey) {
 
+    tableKey = tableKey.toLowerCase();
+
     // Filters for the "Stock" table
     if (tableKey == 'stock') {
         return {
@@ -25,12 +27,29 @@ function getAvailableTableFilters(tableKey) {
                     {% for opt in stock_status_codes %}'{{ opt.value }}': '{{ opt.key }}',
                     {% endfor %}
                 },
-                'title': 'Stock status',
-                'description': 'Stock status',
+                'title': '{% trans "Stock status" %}',
+                'description': '{% trans "Stock status" %}',
             },
-            'test': {
-                title: 'A test parameter',
-            },
+        };
+    }
+
+    // Filters for the "Build" table
+    if (tableKey == 'build') {
+        return {
+
+        };
+    }
+
+    // Filters for the "Order" table
+    if (tableKey == "order") {
+        return {
+
+        };
+    }
+
+    // Filters fro the "Parts" table
+    if (tableKey == "parts") {
+        return {
         };
     }
 

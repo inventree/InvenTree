@@ -233,7 +233,8 @@ function getFilterDescription(tableKey, filterKey) {
  */
 function getFilterOptionValue(tableKey, filterKey, valueKey) {
 
-    var filter = getFilterOption(tableKey, filterKey);
+    var filter = getFilterSettings(tableKey, filterKey);
+
 
     var value = String(valueKey);
 
