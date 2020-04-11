@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -116,7 +117,10 @@ InvenTree
 {% block js_load %}
 {% endblock %}
 
+{% include "table_filters.html" %}
+
 <script type='text/javascript'>
+
 $(document).ready(function () {
 {% block js_ready %}
 {% endblock %}
@@ -125,6 +129,7 @@ $(document).ready(function () {
     
     showCachedAlerts();
 });
+
 </script>
 
 {% block js %}

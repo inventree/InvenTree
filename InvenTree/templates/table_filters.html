@@ -1,0 +1,40 @@
+{% load i18n %}
+{% load inventree_extras %}
+
+<script type='text/javascript'>
+
+{% load_status_codes %}
+
+function getAvailableTableFilters(tableKey) {
+
+    // Filters for the "Stock" table
+    if (tableKey == 'stock') {
+        return {
+            'cascade': {
+                'type': 'bool',
+                'description': '{% trans "Include stock in sublocations" %}',
+                'title': '{% trans "Include sublocations" %}',
+            },
+            'active': {
+                'type': 'bool',
+                'title': '{% trans "Active parts" %}',
+                'description': '{% trans "Show stock for active parts" %}',
+            },
+            'status': {
+                'options': {
+                    {% for opt in stock_status_codes %}'{{ opt.value }}': '{{ opt.key }}',
+                    {% endfor %}
+                },
+                'title': 'Stock status',
+                'description': 'Stock status',
+            },
+            'test': {
+                title: 'A test parameter',
+            },
+        };
+    }
+
+    // Finally, no matching key
+    return {};
+}
+</script>

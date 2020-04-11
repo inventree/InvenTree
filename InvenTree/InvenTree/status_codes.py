@@ -2,6 +2,26 @@ from django.utils.translation import ugettext as _
 
 
 class StatusCode:
+    """
+    Base class for representing a set of StatusCodes.
+    This is used to map a set of integer values to text.
+    """
+
+    @classmethod
+    def list(cls):
+        """
+        Return the StatusCode options as a list of mapped key / value items
+        """
+
+        codes = []
+
+        for key in cls.options.keys():
+            codes.append({
+                'key': key,
+                'value': cls.options[key]
+            })
+
+        return codes
 
     @classmethod
     def items(cls):

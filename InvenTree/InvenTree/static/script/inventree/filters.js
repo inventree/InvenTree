@@ -97,51 +97,6 @@ function addTableFilter(tableKey, filterKey, filterValue) {
 }
 
 
-/**
- * Return the custom filtering options available for a particular table
- * 
- * @param {*} tableKey - string key lookup for the table
- */
-function getAvailableTableFilters(tableKey) {
-
-    tableKey = tableKey.toLowerCase();
-
-    // Filters for the "Stock" table
-    if (tableKey == 'stock') {
-        return {
-            'cascade': {
-                'type': 'bool',
-                'description': 'Include stock in sublocations',
-                'title': 'Include sublocations',
-            },
-            'active': {
-                'type': 'bool',
-                'title': 'Acitve parts',
-                'description': 'Show stock for active parts',
-            },
-            'status': {
-                'options': {
-                    'OK': 10,
-                    'ATTENTION': 50,
-                    'DAMAGED': 55,
-                    'DESTROYED': 60,
-                    'LOST': 70
-                },
-                'title': 'Stock status',
-                'description': 'Stock status',
-            },
-            'test': {
-                title: 'A test parameter',
-            },
-        };
-    }
-
-
-    // Finally, no matching key
-    return {};
-}
-
-
 /*
  * Return a list of the "available" filters for a given table key.
  * A filter is "available" if it is not already being used to filter the table.
@@ -248,7 +203,7 @@ function generateFilterInput(tableKey, filterKey) {
 
         html += `</select>`;
     }
-    
+
     return html;
 }
 
