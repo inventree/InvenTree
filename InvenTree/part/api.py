@@ -225,8 +225,8 @@ class PartList(generics.ListCreateAPIView):
         ).annotate(
             # Quantity of items which are "in stock"
             in_stock=Coalesce(Sum('stock_items__quantity', filter=stock_filter), Decimal(0)),
-            on_order=Sum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter),
-            building=Sum('builds__quantity', filter=build_filter),
+            on_order=Coalesce(Sum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter), Decimal(0)),
+            building=Coalesce(Sum('builds__quantity', filter=build_filter), Decimal(0)),
         )
 
         # If we are filtering by 'has_stock' status
