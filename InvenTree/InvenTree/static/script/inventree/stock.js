@@ -14,78 +14,17 @@ function getStockLocations(filters={}, options={}) {
     return inventreeGet('/api/stock/location/', filters, options)
 }
 
-// A map of available filters for the stock table
-function getAvailableStockFilters() {
-    return {
-        'cascade': {
-            'type': 'bool',
-            'description': 'Include stock in sublocations',
-            'title': 'sublocations',
-        },
-        'active': {
-            'type': 'bool',
-            'title': 'part active',
-            'description': 'Show stock for active parts',
-        },
-        'status': {
-            'options': {
-                'OK': 10,
-                'ATTENTION': 50,
-                'DAMAGED': 55,
-                'DESTROYED': 60,
-                'LOST': 70
-            },
-            'description': 'Stock status',
-        }
-    };
-}
-
 
 function loadStockFilters() {
-    // Load the stock table filters from session-storage
-    var filterstring = inventreeLoad("stockfilters", "cascade=true");
 
-    if (filterstring.length == 0) {
-        filterstring = 'cascade=true&status=60';
-    }
-
-    var split = filterstring.split("&");
-
-    var filters = {};
-
-    console.log("Loaded stock filters: " + filterstring);
-
-    split.forEach(function(item, index) {
-
-        if (item.length > 0) {
-            var f = item.split('=');
-
-            if (f.length == 2) {
-                filters[f[0]] = f[1];
-            } else {
-                console.log("Improperly formatted filter: " + item);
-            }
-        }
-    });
-
-    return filters;
+    return loadTableFilters("stock", "cascade=true");
 }
 
 
 function saveStockFilters(filters) {
     // Save the stock table filters to session storage
 
-    var strings = [];
-
-    for (var key in filters) {
-        strings.push(key + "=" + filters[key]);
-    }
-
-    var filterstring = strings.join('&');
-
-    console.log("Saving stock filters: " + filterstring);
-
-    inventreeSave("stockfilters", filterstring);
+    saveTableFilters("stock", filters);
 }
 
 function removeStockFilter(key) {
@@ -115,7 +54,7 @@ function createStockFilter() {
 
     var html = `<select id='filter-tag' name='tag'>`;
 
-    var available = getAvailableStockFilters();
+    var available = getFilterOptions("stock");
 
     var filters = loadStockFilters();
 
