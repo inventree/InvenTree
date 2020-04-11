@@ -1,3 +1,77 @@
+function loadBuildTable(table, options) {
+
+    var params = options.params || {};
+
+    var filters = loadTableFilters("build");
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList("build", table);
+
+    table.inventreeTable({
+        method: 'get',
+        formatNoMatches: function() {
+            return "No builds matching query";
+        },
+        url: options.url,
+        queryParams: filters,
+        groupBy: false,
+        original: params,
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID', 
+                visible: false,
+            },
+            {
+                field: 'title',
+                title: 'Build',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, '/build/' + row.pk + '/');
+                }
+            },
+            {
+                field: 'part',
+                title: 'Part',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+
+                    var name = row.part_detail.full_name;
+
+                    return imageHoverIcon(row.part_detail.thumbnail) + renderLink(name, '/part/' + row.part + '/');
+                }
+            },
+            {
+                field: 'quantity',
+                title: 'Quantity',
+                sortable: true,
+            },
+            {
+                field: 'status',
+                title: 'Status',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return buildStatusDisplay(value);
+                },
+            },
+            {
+                field: 'creation_date',
+                title: 'Created',
+                sortable: true,
+            },
+            {
+                field: 'completion_date',
+                title: 'Completed',
+                sortable: true,
+            },
+        ],
+    });
+}
+
+
 function updateAllocationTotal(id, count, required) {
     
     count = parseFloat(count);

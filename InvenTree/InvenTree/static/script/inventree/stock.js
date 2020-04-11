@@ -14,6 +14,7 @@ function getStockLocations(filters={}, options={}) {
     return inventreeGet('/api/stock/location/', filters, options)
 }
 
+
 /* Functions for interacting with stock management forms
  */
 
@@ -28,6 +29,7 @@ function removeStockRow(e) {
     $('#' + row).remove();
 }
 
+
 function loadStockTable(table, options) {
     /* Load data into a stock table with adjustable options.
      * Fetches data (via AJAX) and loads into a bootstrap table.
@@ -38,23 +40,39 @@ function loadStockTable(table, options) {
      *  params - query params for augmenting stock data request
      *  groupByField - Column for grouping stock items
      *  buttons - Which buttons to link to stock selection callbacks
+     *  filterList - <ul> element where filters are displayed
      */
     
+    // List of user-params which override the default filters
     var params = options.params || {};
 
-    // Enforce 'cascade' option
-    // TODO - Make this user-configurable?
-    params.cascade = true;
+    var filterListElement = options.filterList || "#filter-list-stock";
 
-    console.log('load stock table');
+    var filters = loadTableFilters("stock");
+
+    var original = {};
+
+    for (var key in params) {
+        original[key] = params[key];
+    }
+
+    setupFilterList("stock", table, filterListElement);
+
+    // Override the default values, or add new ones
+    for (var key in params) {
+        filters[key] = params[key];
+    }
 
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
             return 'No stock items matching query';
         },
+        url: options.url,
+        queryParams: filters,
         customSort: customGroupSorter,
         groupBy: true,
+        original: original,
         groupByField: options.groupByField || 'part',
         groupByFormatter: function(field, id, data) {
 
@@ -87,6 +105,29 @@ function loadStockTable(table, options) {
                 stock = +stock.toFixed(5);
 
                 return stock + " (" + items + " items)";
+            } else if (field == 'status') {
+                var statii = [];
+
+                data.forEach(function(item) {
+                    var status = String(item.status);
+
+                    if (!status || status == '') {
+                        status = '-';
+                    }
+
+                    if (!statii.includes(status)) {
+                        statii.push(status);
+                    }
+                });
+
+                // Multiple status codes
+                if (statii.length > 1) {
+                    return "-";
+                } else if (statii.length == 1) {
+                    return stockStatusDisplay(statii[0]);
+                } else {
+                    return "-";
+                }
             } else if (field == 'batch') {
                 var batches = [];
 
@@ -211,12 +252,16 @@ function loadStockTable(table, options) {
 
                     var text = renderLink(val, '/stock/item/' + row.pk + '/');
                     
-                    if (row.status_text != 'OK') {
-                        text = text + "<span class='badge'>" + row.status_text + "</span>";
-                    }
-                    
                     return text;
                 }
+            },
+            {
+                field: 'status',
+                title: 'Status',
+                sortable: 'true',
+                formatter: function(value, row, index, field) {
+                    return stockStatusDisplay(value);
+                },
             },
             {
                 field: 'batch',
@@ -241,8 +286,6 @@ function loadStockTable(table, options) {
                 title: 'Notes',
             }
         ],
-        url: options.url,
-        queryParams: params,
     });
 
     if (options.buttons) {

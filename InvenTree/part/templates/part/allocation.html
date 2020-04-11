@@ -1,5 +1,6 @@
 {% extends "part/part_base.html" %}
 {% block details %}
+{% load status_codes %}
 
 {% include "part/tabs.html" with tab="allocation" %}
 
@@ -17,7 +18,7 @@
     <td><a href="{% url 'build-detail' allocation.build.id %}">{{ allocation.build.title }}</a></td>
     <td>{{ allocation.build.quantity }} &times <a href="{% url 'part-detail' allocation.build.part.id %}">{{ allocation.build.part.full_name }}</a></td>
     <td>{{ allocation.quantity }}</td>
-    <td>{% include "build_status.html" with build=allocation.build %}</td>
+    <td>{% build_status allocation.build.status %}</td>
 </tr>
 {% endfor %}
 </table>

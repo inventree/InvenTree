@@ -143,9 +143,7 @@ class TestBuildViews(TestCase):
 
         content = str(response.content)
 
-        # Content should contain build titles
-        for build in Build.objects.all():
-            self.assertIn(build.title, content)
+        self.assertIn("Part Builds", content)
 
     def test_build_detail(self):
         """ Test the detail view for a Build object """

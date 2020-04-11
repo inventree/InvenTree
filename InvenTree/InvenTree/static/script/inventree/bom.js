@@ -133,11 +133,11 @@ function loadBomTable(table, options) {
             title: 'Part',
             sortable: true,
             formatter: function(value, row, index, field) {
-                var html = imageHoverIcon(row.sub_part_detail.image_url) + renderLink(row.sub_part_detail.full_name, row.sub_part_detail.url);
+                var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, row.sub_part_detail.url);
 
                 // Display an extra icon if this part is an assembly
                 if (row.sub_part_detail.assembly) {
-                    html += "<a href='" + row.sub_part_detail.url + "bom'><span class='glyphicon-right glyphicon glyphicon-th-list'></span></a>";
+                    html += "<a href='" + row.sub_part_detail.url + "bom'><span title='Open subassembly' class='fas fa-stream label-right'></span></a>";
                 }
 
                 return html;

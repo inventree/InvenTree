@@ -8,18 +8,19 @@
 
 {% if part.active == False %}
 <div class='alert alert-danger alert-block'>
-    {% trans "This part is not active" %}"
+    {% trans "This part is not active" %}
 </div>
 {% endif %}
 {% if part.is_template %}
 <div class='alert alert-info alert-block'>
-    This part is a <i>template part</i>.<br>
-    It is not a <i>real</i> part, but real parts can be based on this template.
+    {% trans "This part is a template part." %}
+    <br>
+    {% trans "It is not a real part, but real parts can be based on this template." %}
 </div>
 {% endif %}
 {% if part.variant_of %}
 <div class='alert alert-info alert-block'>
-    This part is a variant of <b><a href="{% url 'part-detail' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></b>
+    {% trans "This part is a variant of" %} <b><a href="{% url 'part-detail' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></b>
 </div>
 {% endif %}
 
@@ -93,25 +94,30 @@
 </div>
 <div class="col-sm-6">
     <table class="table table-striped">
+        <col width='25'>
         <tr>
+            <td><span class='fas fa-boxes'></span></td>
             <td>
                 <h4>{% trans "Available Stock" %}</h4>
             </td>
             <td><h4>{% decimal part.available_stock %} {{ part.units }}</h4></td>
         </tr>
         <tr>
+            <td><span class='fas fa-map-marker-alt'></span></td>
             <td>{% trans "In Stock" %}</td>
             <td>{% include "part/stock_count.html" %}</td>
         </tr>
         {% if not part.is_template %}
         {% if part.allocation_count > 0 %}
         <tr>
+            <td><span class='fas fa-dolly'></span></td>
             <td>{% trans "Allocated" %}</td>
             <td>{% decimal part.allocation_count %}</td>
         </tr>
         {% endif %}
         {% if part.on_order > 0 %}
         <tr>
+            <td><span class='fas fa-shopping-cart'></span></td>
             <td>{% trans "On Order" %}</td>
             <td>{% decimal part.on_order %}</td>
         </tr>
@@ -120,16 +126,19 @@
         {% if not part.is_template %}
         {% if part.assembly %}
         <tr>
+            <td><span class='fas fa-tools'></span></td>
             <td colspan='2'>
                 <b>{% trans "Build Status" %}</b>
             </td>
         </tr>
         <tr>
+            <td></td>
             <td>{% trans "Can Build" %}</td>
             <td>{% decimal part.can_build %}</td>
         </tr>
         {% if part.quantity_being_built > 0 %}
         <tr>
+            <td></td>
             <td>{% trans "Underway" %}</td>
             <td>{% decimal part.quantity_being_built %}</td>
         </tr>

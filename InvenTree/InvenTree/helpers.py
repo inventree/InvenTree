@@ -8,6 +8,8 @@ import json
 import os.path
 from PIL import Image
 
+from decimal import Decimal
+
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
 from django.core.exceptions import ValidationError
@@ -104,6 +106,20 @@ def isNull(text):
     return str(text).strip().lower() in ['top', 'null', 'none', 'empty', 'false', '-1', '']
 
 
+def normalize(d):
+    """
+    Normalize a decimal number, and remove exponential formatting.
+    """
+
+    if type(d) is not Decimal:
+        d = Decimal(d)
+
+    d = d.normalize()
+    
+    # Ref: https://docs.python.org/3/library/decimal.html
+    return d.quantize(Decimal(1)) if d == d.to_integral() else d.normalize()
+
+
 def decimal2string(d):
     """
     Format a Decimal number as a string,
@@ -116,6 +132,9 @@ def decimal2string(d):
     Returns:
         A string representation of the input number
     """
+
+    if type(d) is Decimal:
+        d = normalize(d)
 
     try:
         # Ensure that the provided string can actually be converted to a float
