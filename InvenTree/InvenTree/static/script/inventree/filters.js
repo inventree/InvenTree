@@ -98,6 +98,16 @@ function addTableFilter(tableKey, filterKey, filterValue) {
 
 
 /*
+ * Clear all the custom filters for a given table
+ */
+function clearTableFilters(tableKey) {
+    saveTableFilters(tableKey, {});
+
+    return {};
+}
+
+
+/*
  * Return a list of the "available" filters for a given table key.
  * A filter is "available" if it is not already being used to filter the table.
  * Once a filter is selected, it will not be returned here.
@@ -205,6 +215,103 @@ function generateFilterInput(tableKey, filterKey) {
     }
 
     return html;
+}
+
+
+/**
+ * Configure a filter list for a given table
+ * 
+ * @param {*} tableKey - string lookup key for filter settings
+ * @param {*} table - bootstrapTable element to update
+ * @param {*} target - name of target element on page
+ */
+function setupFilterList(tableKey, table, target) {
+
+    if (!target || target.length == 0) {
+        target = '#filter-list-" + tableKey';
+    }
+
+    var tag = `filter-tag-${tableKey}`;
+    var add = `filter-add-${tableKey}`;
+    var clear = `filter-clear-${tableKey}`;
+    var make = `filter-make-${tableKey}`;
+
+    console.log(`Refilling filter list: ${tableKey}`);
+
+    var filters = loadTableFilters(tableKey);
+
+    var element = $(target);
+
+    element.empty();
+
+    element.append(`<button class='btn btn-default' id='${add}'>Add filter</button>`);
+    element.append(`<button class='btn btn-default' id='${clear}'>Clear filters</button>`);
+
+    for (var key in filters) {
+        var value = getFilterOptionValue(tableKey, key, filters[key]);
+        var title = getFilterTitle(tableKey, key);
+
+        element.append(`<li>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></li>`);
+    }
+
+    // Add a callback for adding a new filter
+    element.find(`#${add}`).click(function() {
+
+        var html = '<div>';
+
+        html += generateAvailableFilterList(tableKey);
+        html += generateFilterInput(tableKey);
+
+        html += `<button class='btn btn-default' id='${make}'>Add</button>`;
+
+        html += '</div>';
+
+        element.append(html);
+
+        // Add a callback for when the filter tag selection is changed
+        element.find(`#filter-tag-${tableKey}`).on('change', function() {
+            var list = element.find(`#filter-value-${tableKey}`);
+
+            list.replaceWith(generateFilterInput(tableKey, this.value));
+        });
+
+        // Add a callback for when the new filter is created
+        element.find(`#filter-make-${tableKey}`).click(function() {
+            var tag = element.find(`#filter-tag-${tableKey}`).val();
+            var val = element.find(`#filter-value-${tableKey}`).val();
+
+            var filters = addTableFilter(tableKey, tag, val);
+
+            reloadStockTable(table, filters);
+
+            // Run this function again
+            setupFilterList(tableKey, table, target);
+        });
+
+    });
+
+    // Add a callback for clearing all the filters
+    element.find(`#${clear}`).click(function() {
+        var filters = clearTableFilters(tableKey);
+        
+        reloadStockTable(table, filters);
+
+        setupFilterList(tableKey, table, target);
+    });
+
+    // Add callback for deleting each filter
+    element.find(".close").click(function(event) {
+        var me = $(this);
+
+        var filter = me.attr(`filter-tag-${tableKey}`);
+
+        var filters = removeTableFilter(tableKey, filter);
+
+        reloadStockTable(table, filters);
+
+        // Run this function again!
+        setupFilterList(tableKey, table, target);
+    });
 }
 
 

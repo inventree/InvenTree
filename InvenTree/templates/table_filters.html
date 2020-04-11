@@ -1,9 +1,9 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-<script type='text/javascript'>
-
 {% load_status_codes %}
+
+<script type='text/javascript'>
 
 function getAvailableTableFilters(tableKey) {
 
@@ -12,23 +12,23 @@ function getAvailableTableFilters(tableKey) {
     // Filters for the "Stock" table
     if (tableKey == 'stock') {
         return {
-            'cascade': {
-                'type': 'bool',
-                'description': '{% trans "Include stock in sublocations" %}',
-                'title': '{% trans "Include sublocations" %}',
+            cascade: {
+                type: 'bool',
+                description: '{% trans "Include stock in sublocations" %}',
+                title: '{% trans "Include sublocations" %}',
             },
-            'active': {
-                'type': 'bool',
-                'title': '{% trans "Active parts" %}',
-                'description': '{% trans "Show stock for active parts" %}',
+            active: {
+                type: 'bool',
+                title: '{% trans "Active parts" %}',
+                description: '{% trans "Show stock for active parts" %}',
             },
             'status': {
-                'options': {
+                options: {
                     {% for opt in stock_status_codes %}'{{ opt.value }}': '{{ opt.key }}',
                     {% endfor %}
                 },
-                'title': '{% trans "Stock status" %}',
-                'description': '{% trans "Stock status" %}',
+                title: '{% trans "Stock status" %}',
+                description: '{% trans "Stock status" %}',
             },
         };
     }
@@ -36,6 +36,13 @@ function getAvailableTableFilters(tableKey) {
     // Filters for the "Build" table
     if (tableKey == 'build') {
         return {
+            status: {
+                title: '{% trans "Build status" %}',
+                options: {
+                    {% for opt in build_status_codes %}'{{ opt.value }}': '{{ opt.key }}',
+                    {% endfor %}
+                },
+            },
 
         };
     }
@@ -43,11 +50,17 @@ function getAvailableTableFilters(tableKey) {
     // Filters for the "Order" table
     if (tableKey == "order") {
         return {
-
+            status: {
+                title: '{% trans "Order status" %}',
+                options: {
+                    {% for opt in order_status_codes %}'{{ opt.value }}': '{{ opt.key }}',
+                    {% endfor %}
+                },
+            },
         };
     }
 
-    // Filters fro the "Parts" table
+    // Filters for the "Parts" table
     if (tableKey == "parts") {
         return {
         };

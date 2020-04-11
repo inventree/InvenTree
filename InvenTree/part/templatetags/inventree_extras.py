@@ -14,6 +14,9 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def load_status_codes(context):
+    """
+    Make the various StatusCodes available to the page context
+    """
 
     context['order_status_codes'] = OrderStatus.list()
     context['stock_status_codes'] = StockStatus.list()

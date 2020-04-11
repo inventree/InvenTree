@@ -15,73 +15,6 @@ function getStockLocations(filters={}, options={}) {
 }
 
 
-function createStockFilter() {
-
-    var html = generateAvailableFilterList("stock");
-
-    // Add in a (blank) selection for filter value
-    html += generateFilterInput("stock" );
-    //html += `<div id='filter-value' name='value'></select>`;
-
-    html += `<button class='btn btn-default' id='filter-make'>Add</Button>`;
-
-    var div = $("#add-new-filter");
-
-    div.html(html);
-
-    div.find("#filter-make").click(function() {
-        var tag = div.find("#filter-tag-stock").val();
-        var val = div.find("#filter-value-stock").val();
-
-        addTableFilter("stock", tag, val);
-    });
-
-    div.find('#filter-tag-stock').on('change', function() {
-
-        var list = div.find('#filter-value-stock');
-
-        list.replaceWith(generateFilterInput("stock", this.value));
-    });
-
-}
-
-function clearStockFilters() {
-    // TODO
-    console.log("clear stock filters");
-}
-
-function updateStockFilterList(filterListElement, table) {
-
-    var filters = loadTableFilters("stock");
-
-    for (var key in filters) {
-
-        var value = getFilterOptionValue("stock", key, filters[key]);
-
-        $(filterListElement).append(`<li>${key} = ${value}<span filter-tag-stock='${key}' class='close'>x</span></li>` );
-    }
-
-    // Whenever the callback is called, pass the original parameters through
-
-    $(filterListElement).find(".close").click(function(event) {
-        var element = $(this);
-
-        var tag = element.attr('filter-tag-stock');
-
-        // Clear out any existing elements
-        $(filterListElement).empty();
-
-        var filters = removeTableFilter("stock", tag);
-
-        reloadStockTable(table, filters);
-
-        // Call this function again to re-update the filterss
-        updateStockFilterList(filterListElement, table);
-
-    });
-}
-
-
 /* Functions for interacting with stock management forms
  */
 
@@ -160,7 +93,7 @@ function loadStockTable(table, options) {
     // It will be required if the table is refreshed
     //options.original = original;
 
-    updateStockFilterList(filterListElement, table);
+    setupFilterList("stock", table, filterListElement);
 
     $("#filter-add").click(function() {
         createStockFilter();
