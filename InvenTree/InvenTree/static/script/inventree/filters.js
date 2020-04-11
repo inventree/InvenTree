@@ -185,7 +185,7 @@ function generateAvailableFilterList(tableKey) {
     
     var id = 'filter-tag-' + tableKey.toLowerCase();
 
-    var html = `<select class='form-control' id='${id}' name='tag'>`;
+    var html = `<select class='form-control filter-input' id='${id}' name='tag'>`;
     
     html += `<option value=''>Select filter</option>`;
 
@@ -209,7 +209,7 @@ function generateFilterInput(tableKey, filterKey) {
 
     if (filterKey == null || filterKey.length == 0) {
         // Return an 'empty' element
-        return `<div id='${id}'></div>`;
+        return `<div class='filter-input' id='${id}'></div>`;
     }
 
     var options = getFilterOptionList(tableKey, filterKey);
@@ -218,10 +218,10 @@ function generateFilterInput(tableKey, filterKey) {
 
     // A 'null' options list means that a simple text-input dialog should be used
     if (options == null) {
-        html = `<input class='form-control' id='${id}' name='value'></input>`;
+        html = `<input class='form-control filter-input' id='${id}' name='value'></input>`;
     } else {
         // Return a 'select' input with the available values
-        html = `<select class='form-control' id='${id}' name='value'>`;
+        html = `<select class='form-control filter-input' id='${id}' name='value'>`;
 
         for (var key in options) {
             option = options[key];
@@ -286,14 +286,16 @@ function setupFilterList(tableKey, table, target) {
 
             addClicked = true;
 
-            var html = '<div>';
+            var html = '';
+            
+            //`<div class='filter-input'>`;
 
             html += generateAvailableFilterList(tableKey);
             html += generateFilterInput(tableKey);
 
-            html += `<button class='btn btn-default' id='${make}'>Add</button>`;
+            html += `<button title='Create filter' class='btn btn-default filter-tag' id='${make}'><span class='fas fa-plus'></span></button>`;
 
-            html += '</div>';
+            //html += '</div>';
 
             element.append(html);
 
