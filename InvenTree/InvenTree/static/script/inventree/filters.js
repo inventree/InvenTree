@@ -17,7 +17,7 @@
  * 
  * @param {*} tableKey - string key lookup for the table
  */
-function getFilterOptions(tableKey) {
+function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
 
@@ -50,6 +50,59 @@ function getFilterOptions(tableKey) {
 
     // Finally, no matching key
     return {};
+}
+
+
+/*
+ * Return a list of the "available" filters for a given table key.
+ * A filter is "available" if it is not already being used to filter the table.
+ * Once a filter is selected, it will not be returned here.
+ */
+function getRemainingTableFilters(tableKey) {
+
+    var filters = loadTableFilters(tableKey, '');
+
+    var remaining = getAvailableTableFilters(tableKey);
+
+    for (var key in filters) {
+        // Delete the filter if it is already in use
+        delete remaining[key];
+    }
+
+    return remaining;
+}
+
+
+
+/*
+ * Return the filter settings for a given table and key combination.
+ * Return empty object if the combination does not exist.
+ */
+function getFilterSettings(tableKey, filterKey) {
+
+    return getAvailableTableFilters(tableKey)[filterKey] || {};
+}
+
+
+/*
+ * Return a set of key:value options for the given filter.
+ * If no options are specified (e.g. for a number field),
+ * then a null object is returned.
+ */
+function getFilterOptionList(tableKey, filterKey) {
+
+    var settings = getFilterSettings(tableKey, filterKey);
+
+    if (settings.type == 'bool') {
+        return {
+            'true': '1',
+            'false': '0',
+        };
+    } else if ('options' in settings) {
+        return settings.options;
+    }
+
+    return null;
 }
 
 
@@ -108,3 +161,89 @@ function saveTableFilters(tableKey, filters) {
 
     inventreeSave(lookup, filterstring);
 }
+
+
+/*
+ * Remove a named filter parameter
+ */
+function removeTableFilter(tableKey, filterKey) {
+
+    var filters = loadTableFilters(tableKey, '');
+
+    delete filters[filterKey];
+
+    saveTableFilters(tableKey, filters);
+
+    // Return a copy of the updated filters
+    return filters;
+}
+
+
+function addTableFilter(tableKey, filterKey, filterValue) {
+
+    var filters = loadTableFilters(tableKey, '');
+
+    filters[filterKey] = filterValue;
+
+    saveTableFilters(tableKey, filters);
+
+    // Return a copy of the updated filters
+    return filters;
+}
+
+
+/**
+ * Return the pretty title for the given table and filter selection.
+ * If no title is provided, default to the key value.
+ * 
+ */
+function getFilterTitle(tableKey, filterKey) {
+    var settings = getFilterSettings(tableKey, filterKey);
+    return settings.title || filterKey;
+}
+
+
+/*
+ * Return a description for the given table and filter selection.
+ */
+function getFilterDescription(tableKey, filterKey) {
+    var settings = getFilterSettings(tableKey, filterKey);
+    return settings.description || filterKey;
+}
+
+
+/*
+ * Return the display value for a particular option
+ */
+function getFilterOptionValue(tableKey, filterKey, valueKey) {
+
+    var filter = getFilterOption(tableKey, filterKey);
+
+    var value = String(valueKey);
+
+    // Lookup for boolean options
+    if (filter.type == 'bool') {
+        if (value == '1') return 'true';
+        if (value == '0') return 'false';
+
+        return value;
+    }
+
+    // Iterate through a list of options
+    if ('options' in filter) {
+        for (var option in filter.options) {
+            var v = String(filter.options[option]);
+
+            if (v == valueKey) {
+                return option;
+            }
+        }
+
+        // Could not find a match
+        return value;
+    }
+
+    // Cannot map to a display string - return the original text
+    return value;
+}
+
