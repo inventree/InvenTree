@@ -30,21 +30,21 @@
 
     $("#part-create").click(function () {
         launchModalForm(
-                        "{% url 'supplier-part-create' %}",
-                        {
-                            data: {
-                                supplier: {{ company.id }}
-                            },
-                            reload: true,
-                            secondary: [
-                                {
-                                    field: 'part',
-                                    label: 'New Part',
-                                    title: 'Create New Part',
-                                    url: "{% url 'part-create' %}"
-                                },
-                            ]
-                        });
+            "{% url 'supplier-part-create' %}",
+            {
+                data: {
+                    supplier: {{ company.id }}
+                },
+                reload: true,
+                secondary: [
+                    {
+                        field: 'part',
+                        label: 'New Part',
+                        title: 'Create New Part',
+                        url: "{% url 'part-create' %}"
+                    },
+                ]
+            });
     });
 
     $("#part-table").inventreeTable({
@@ -64,7 +64,22 @@
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
                 formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, '/part/' + row.part + '/suppliers/');
+
+                    var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, '/part/' + row.part + '/suppliers/');
+
+                    if (row.part_detail.is_template) {
+                        html += `<span class='fas fa-clone label-right' title='Template part'></span>`;
+                    }
+
+                    if (row.part_detail.assembly) {
+                        html += `<span class='fas fa-tools label-right' title='Assembled part'></span>`;
+                    }
+
+                    if (!row.part_detail.active) {
+                        html += `<span class='label label-warning label-right'>INACTIVE</span>`;
+                    }
+
+                    return html;
                 }
             },
             {
