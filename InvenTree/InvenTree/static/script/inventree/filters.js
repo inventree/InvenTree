@@ -242,17 +242,18 @@ function setupFilterList(tableKey, table, target) {
 
     var element = $(target);
 
+    // One blank slate, please
     element.empty();
-
-    element.append(`<button class='btn btn-default' id='${add}'>Add filter</button>`);
-    element.append(`<button class='btn btn-default' id='${clear}'>Clear filters</button>`);
 
     for (var key in filters) {
         var value = getFilterOptionValue(tableKey, key, filters[key]);
         var title = getFilterTitle(tableKey, key);
-
-        element.append(`<li>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></li>`);
+        
+        element.append(`<div class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
     }
+
+    element.append(`<button class='btn btn-default' id='${add}'>Add filter</button>`);
+    element.append(`<button class='btn btn-default' id='${clear}'>Clear filters</button>`);
 
     // Add a callback for adding a new filter
     element.find(`#${add}`).click(function() {

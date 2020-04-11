@@ -168,7 +168,7 @@
     margin-right: 1px;
 }
 
-.filters {
+.filter-list {
     display: inline-block;
     *display: inline;
     border: 1px solid #555;
@@ -177,9 +177,6 @@
     margin-bottom: 1px;
     margin-top: 1px;
     vertical-align: middle;
-}
-
-.filter-list {
     margin: 1px;
     padding: 1px;
 }
@@ -194,7 +191,7 @@
   
 .filter-list .close:hover {background: #bbb;}
 
-.filter-list > li {
+.filter-tag {
     display: inline-block;
     *display: inline;
     zoom: 1;

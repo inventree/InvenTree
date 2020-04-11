@@ -79,7 +79,7 @@ function loadStockTable(table, options) {
     // List of user-params which override the default filters
     var params = options.params || {};
 
-    var filterListElement = options.filterList || "#stock-filter-list";
+    var filterListElement = options.filterList || "#filter-list-stock";
 
     var filters = loadTableFilters("stock");
 
