@@ -215,6 +215,21 @@ class PartList(generics.ListCreateAPIView):
             building=Sum('builds__quantity', filter=build_filter),
         )
 
+        # If we are filtering by 'has_stock' status, 
+        # Check if the 'has_stock' quantity is zero
+        has_stock = self.request.query_params.get('has_stock', None)
+
+        if has_stock is not None:
+            has_stock = str2bool(has_stock)
+
+            if has_stock:
+                # Filter items which have a non-null 'in_stock' quantity above zero
+                data = data.exclude(in_stock=None)
+                data = data.filter(in_stock__gt=0)
+            else:
+                # Filter items which a null or zero 'in_stock' quantity
+                data = data.filter(Q(in_stock__lte=0) | Q(in_stock=None))
+
         # Reduce the number of lookups we need to do for the part categories
         categories = {}
 

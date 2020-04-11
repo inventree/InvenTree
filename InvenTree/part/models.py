@@ -659,7 +659,7 @@ class Part(models.Model):
         if total:
             return total
         else:
-            return 0
+            return Decimal(0)
 
     @property
     def has_bom(self):

@@ -59,6 +59,24 @@ function getAvailableTableFilters(tableKey) {
     // Filters for the "Parts" table
     if (tableKey == "parts") {
         return {
+            cascade: {
+                type: 'bool',
+                title: '{% trans "Include subcategories" %}',
+                description: '{% trans "Include parts in subcategories" %}',
+            },
+            active: {
+                type: 'bool',
+                title: '{% trans "Active" %}',
+                description: '{% trans "Show active parts" %}',
+            },
+            is_template: {
+                type: 'bool',
+                title: '{% trans "Template" %}',
+            },
+            has_stock: {
+                type: 'bool',
+                title: '{% trans "Stock Available" %}'
+            },
         };
     }
 

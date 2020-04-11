@@ -87,17 +87,15 @@ function loadPartTable(table, url, options={}) {
      *      buttons: If provided, link buttons to selection status of this table
      */
 
-    // Default query params
-    query = options.query;
-    
-    if (!options.allowInactive) {
-        // Only display active parts
-        query.active = true;
+    var params = options.parms || {};
+
+    var filters = loadTableFilters("parts");
+
+    for (var key in params) {
+        filters[key] = params[key];
     }
 
-    // Include sub-category search
-    // TODO - Make this user-configurable!
-    query.cascade = true;
+    setupFilterList("parts", $(table));
 
     var columns = [
         {
@@ -217,10 +215,10 @@ function loadPartTable(table, url, options={}) {
         url: url,
         sortName: 'name',
         method: 'get',
+        queryParams: filters,
+        groupBy: false,
+        original: params,
         formatNoMatches: function() { return "No parts found"; },
-        queryParams: function(p) {
-            return  query;
-        },
         columns: columns,
     });
 
