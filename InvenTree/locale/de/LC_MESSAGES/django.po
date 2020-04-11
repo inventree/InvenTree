@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 14:32+0000\n"
+"POT-Creation-Date: 2020-04-11 14:40+0000\n"
 "PO-Revision-Date: 2020-02-02 08:07+0100\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -113,7 +113,7 @@ msgstr "Zerstört"
 
 #: InvenTree/status_codes.py:163 build/templates/build/allocate_edit.html:28
 #: build/templates/build/allocate_view.html:21
-#: part/templates/part/part_base.html:109 part/templates/part/tabs.html:21
+#: part/templates/part/part_base.html:113 part/templates/part/tabs.html:21
 msgid "Allocated"
 msgstr "Zugeordnet"
 
@@ -272,7 +272,7 @@ msgid "Description"
 msgstr "Beschreibung"
 
 #: build/templates/build/allocate_view.html:22
-#: part/templates/part/part_base.html:115
+#: part/templates/part/part_base.html:120
 msgid "On Order"
 msgstr "bestellt"
 
@@ -310,6 +310,10 @@ msgstr "Status"
 
 #: build/templates/build/build_base.html:76
 msgid "BOM Price"
+msgstr ""
+
+#: build/templates/build/build_base.html:81
+msgid "BOM pricing is incomplete"
 msgstr ""
 
 #: build/templates/build/build_base.html:84
@@ -1744,23 +1748,23 @@ msgstr "Teil favorisieren"
 msgid "Show pricing information"
 msgstr "Kosteninformationen ansehen"
 
-#: part/templates/part/part_base.html:98
+#: part/templates/part/part_base.html:100
 msgid "Available Stock"
 msgstr "Verfügbarer Lagerbestand"
 
-#: part/templates/part/part_base.html:103
+#: part/templates/part/part_base.html:106
 msgid "In Stock"
 msgstr "Auf Lager"
 
-#: part/templates/part/part_base.html:124
+#: part/templates/part/part_base.html:130
 msgid "Build Status"
 msgstr "Bau-Status"
 
-#: part/templates/part/part_base.html:128
+#: part/templates/part/part_base.html:135
 msgid "Can Build"
 msgstr "Herstellbar?"
 
-#: part/templates/part/part_base.html:133
+#: part/templates/part/part_base.html:141
 msgid "Underway"
 msgstr "unterwegs"
 
