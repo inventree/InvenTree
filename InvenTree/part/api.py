@@ -157,6 +157,10 @@ class PartList(generics.ListCreateAPIView):
         - variant_of: Filter by variant_of Part reference
         - assembly: Filter by assembly field
         - component: Filter by component field
+        - trackable: Filter by trackable field
+        - purchaseable: Filter by purcahseable field
+        - salable: Filter by salable field
+        - active: Filter by active field
     """
 
     serializer_class = part_serializers.PartSerializer
