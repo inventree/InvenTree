@@ -23,6 +23,8 @@ function createStockFilter() {
 
     var available = getRemainingTableFilters("stock");
 
+    html += `<option value=''>Select filter</option>`;
+
     for (var key in available) {
 
         var title = getFilterTitle("stock", key);
