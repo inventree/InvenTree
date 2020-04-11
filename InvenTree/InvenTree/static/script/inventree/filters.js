@@ -169,7 +169,7 @@ function generateAvailableFilterList(tableKey) {
     
     var id = 'filter-tag-' + tableKey.toLowerCase();
 
-    var html = `<select id='${id}' name='tag'>`;
+    var html = `<select class='form-control' id='${id}' name='tag'>`;
     
     html += `<option value=''>Select filter</option>`;
 
@@ -202,10 +202,10 @@ function generateFilterInput(tableKey, filterKey) {
 
     // A 'null' options list means that a simple text-input dialog should be used
     if (options == null) {
-        html = `<input id='${id}' name='value'></input>`;
+        html = `<input class='form-control' id='${id}' name='value'></input>`;
     } else {
         // Return a 'select' input with the available values
-        html = `<select id='${id}' name='value'>`;
+        html = `<select class='form-control' id='${id}' name='value'>`;
 
         for (var opt in options) {
             html += `<option value='${options[opt]}'>${opt}</option>`;
@@ -227,6 +227,8 @@ function generateFilterInput(tableKey, filterKey) {
  */
 function setupFilterList(tableKey, table, target) {
 
+    var addClicked = false;
+
     if (!target || target.length == 0) {
         target = '#filter-list-" + tableKey';
     }
@@ -236,14 +238,22 @@ function setupFilterList(tableKey, table, target) {
     var clear = `filter-clear-${tableKey}`;
     var make = `filter-make-${tableKey}`;
 
-    console.log(`Refilling filter list: ${tableKey}`);
+    console.log(`Generating filter list: ${tableKey}`);
 
     var filters = loadTableFilters(tableKey);
+
+    console.log("Filters: " + filters.count);
 
     var element = $(target);
 
     // One blank slate, please
     element.empty();
+
+    element.append(`<button id='${add}' title='Add new filter' class='btn btn-default filter-tag'><span class='fas fa-filter'></span></button>`);
+
+    if (Object.keys(filters).length > 0) {
+        element.append(`<button id='${clear}' title='Clear all filters' class='btn btn-default filter-tag'><span class='fas fa-trash-alt'></span></button>`);
+    }
 
     for (var key in filters) {
         var value = getFilterOptionValue(tableKey, key, filters[key]);
@@ -252,42 +262,48 @@ function setupFilterList(tableKey, table, target) {
         element.append(`<div class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
     }
 
-    element.append(`<button class='btn btn-default' id='${add}'>Add filter</button>`);
-    element.append(`<button class='btn btn-default' id='${clear}'>Clear filters</button>`);
-
     // Add a callback for adding a new filter
-    element.find(`#${add}`).click(function() {
+    element.find(`#${add}`).click(function clicked() {
 
-        var html = '<div>';
+        if (!addClicked) {
 
-        html += generateAvailableFilterList(tableKey);
-        html += generateFilterInput(tableKey);
+            addClicked = true;
 
-        html += `<button class='btn btn-default' id='${make}'>Add</button>`;
+            var html = '<div>';
 
-        html += '</div>';
+            html += generateAvailableFilterList(tableKey);
+            html += generateFilterInput(tableKey);
 
-        element.append(html);
+            html += `<button class='btn btn-default' id='${make}'>Add</button>`;
 
-        // Add a callback for when the filter tag selection is changed
-        element.find(`#filter-tag-${tableKey}`).on('change', function() {
-            var list = element.find(`#filter-value-${tableKey}`);
+            html += '</div>';
 
-            list.replaceWith(generateFilterInput(tableKey, this.value));
-        });
+            element.append(html);
 
-        // Add a callback for when the new filter is created
-        element.find(`#filter-make-${tableKey}`).click(function() {
-            var tag = element.find(`#filter-tag-${tableKey}`).val();
-            var val = element.find(`#filter-value-${tableKey}`).val();
+            // Add a callback for when the filter tag selection is changed
+            element.find(`#filter-tag-${tableKey}`).on('change', function() {
+                var list = element.find(`#filter-value-${tableKey}`);
 
-            var filters = addTableFilter(tableKey, tag, val);
+                list.replaceWith(generateFilterInput(tableKey, this.value));
+            });
 
-            reloadStockTable(table, filters);
+            // Add a callback for when the new filter is created
+            element.find(`#filter-make-${tableKey}`).click(function() {
+                var tag = element.find(`#filter-tag-${tableKey}`).val();
+                var val = element.find(`#filter-value-${tableKey}`).val();
 
-            // Run this function again
+                var filters = addTableFilter(tableKey, tag, val);
+
+                reloadStockTable(table, filters);
+
+                // Run this function again
+                setupFilterList(tableKey, table, target);
+            });
+        } else {
+            addClicked = false;
+
             setupFilterList(tableKey, table, target);
-        });
+        }
 
     });
 

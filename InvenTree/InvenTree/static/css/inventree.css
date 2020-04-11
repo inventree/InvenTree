@@ -171,14 +171,13 @@
 .filter-list {
     display: inline-block;
     *display: inline;
-    border: 1px solid #555;
-    border-radius: 3px;
-    padding: 3px;
     margin-bottom: 1px;
     margin-top: 1px;
     vertical-align: middle;
     margin: 1px;
-    padding: 1px;
+    padding: 2px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
 }
 
 .filter-list .close {
@@ -199,14 +198,15 @@
     padding-right: 3px;
     padding-top: 2px;
     padding-bottom: 2px;
-    border: 1px solid;
-    border-color: #aaa;
+    border: 1px solid #aaa;
     border-radius: 3px;
     background: #eee;
     margin: 1px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
-.filter-list > li:hover {
+.filter-tag:hover {
     background: #ddd;
 }
 
