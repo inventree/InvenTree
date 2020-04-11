@@ -112,11 +112,11 @@ function getAvailableTableFilters(tableKey) {
             'cascade': {
                 'type': 'bool',
                 'description': 'Include stock in sublocations',
-                'title': 'sublocations',
+                'title': 'Include sublocations',
             },
             'active': {
                 'type': 'bool',
-                'title': 'part active',
+                'title': 'Acitve parts',
                 'description': 'Show stock for active parts',
             },
             'status': {
@@ -127,8 +127,12 @@ function getAvailableTableFilters(tableKey) {
                     'DESTROYED': 60,
                     'LOST': 70
                 },
+                'title': 'Stock status',
                 'description': 'Stock status',
-            }
+            },
+            'test': {
+                title: 'A test parameter',
+            },
         };
     }
 
@@ -191,7 +195,62 @@ function getFilterOptionList(tableKey, filterKey) {
 }
 
 
+/*
+ * Generate a list of <option> tags for the given table.
+ */
+function generateAvailableFilterList(tableKey) {
 
+    var remaining = getRemainingTableFilters(tableKey);
+    
+    var id = 'filter-tag-' + tableKey.toLowerCase();
+
+    var html = `<select id='${id}' name='tag'>`;
+    
+    html += `<option value=''>Select filter</option>`;
+
+    for (var opt in remaining) {
+        var title = getFilterTitle(tableKey, opt);
+        html += `<option value='${opt}'>${title}</option>`;
+    }
+
+    html += `</select>`;
+
+    return html;
+}
+
+
+/*
+ * Generate an input for setting the value of a given filter.
+ */
+function generateFilterInput(tableKey, filterKey) {
+
+    var id = 'filter-value-' + tableKey.toLowerCase();
+
+    if (filterKey == null || filterKey.length == 0) {
+        // Return an 'empty' element
+        return `<div id='${id}'></div>`;
+    }
+
+    var options = getFilterOptionList(tableKey, filterKey);
+
+    var html = '';
+
+    // A 'null' options list means that a simple text-input dialog should be used
+    if (options == null) {
+        html = `<input id='${id}' name='value'></input>`;
+    } else {
+        // Return a 'select' input with the available values
+        html = `<select id='${id}' name='value'>`;
+
+        for (var opt in options) {
+            html += `<option value='${options[opt]}'>${opt}</option>`;
+        }
+
+        html += `</select>`;
+    }
+    
+    return html;
+}
 
 
 /**

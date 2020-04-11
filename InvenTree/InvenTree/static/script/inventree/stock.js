@@ -16,26 +16,12 @@ function getStockLocations(filters={}, options={}) {
 
 
 function createStockFilter() {
-    // TODO
-    console.log("create stock filter");
 
-    var html = `<select id='filter-tag' name='tag'>`;
-
-    var available = getRemainingTableFilters("stock");
-
-    html += `<option value=''>Select filter</option>`;
-
-    for (var key in available) {
-
-        var title = getFilterTitle("stock", key);
-
-        html += `<option value='${key}'>${title}</option>`;
-    }
-
-    html += `</select>`;
+    var html = generateAvailableFilterList("stock");
 
     // Add in a (blank) selection for filter value
-    html += `<select id='filter-value' name='value'></select>`;
+    html += generateFilterInput("stock" );
+    //html += `<div id='filter-value' name='value'></select>`;
 
     html += `<button class='btn btn-default' id='filter-make'>Add</Button>`;
 
@@ -44,28 +30,19 @@ function createStockFilter() {
     div.html(html);
 
     div.find("#filter-make").click(function() {
-        var tag = div.find("#filter-tag").val();
-        var val = div.find("#filter-value").val();
+        var tag = div.find("#filter-tag-stock").val();
+        var val = div.find("#filter-value-stock").val();
 
         addTableFilter("stock", tag, val);
     });
 
-    div.find('#filter-tag').on('change', function() {
+    div.find('#filter-tag-stock').on('change', function() {
 
-        // Select the filter
-        var filter = available[this.value];
+        var list = div.find('#filter-value-stock');
 
-        var list = div.find('#filter-value');
-
-        list.empty();
-
-        // Make options
-        var options = getFilterOptionList("stock", this.value);
-
-        for (var option in options) {
-            list.append(`<option value='${options[option]}'>${option}</option>`);
-        }
+        list.replaceWith(generateFilterInput("stock", this.value));
     });
+
 }
 
 function clearStockFilters() {
@@ -78,7 +55,7 @@ function updateStockFilterList(filterListElement, table) {
     var filters = loadTableFilters("stock");
 
     for (var key in filters) {
-        $(filterListElement).append(`<li>${key} = ${filters[key]}<span filter-tag='${key}' class='close'>x</span></li>` );
+        $(filterListElement).append(`<li>${key} = ${filters[key]}<span filter-tag-stock='${key}' class='close'>x</span></li>` );
     }
 
     // Whenever the callback is called, pass the original parameters through
@@ -86,7 +63,7 @@ function updateStockFilterList(filterListElement, table) {
     $(filterListElement).find(".close").click(function(event) {
         var element = $(this);
 
-        var tag = element.attr('filter-tag');
+        var tag = element.attr('filter-tag-stock');
 
         // Clear out any existing elements
         $(filterListElement).empty();
