@@ -125,6 +125,8 @@
 
 .label-right {
     float: right;
+    margin-left: 3px;
+    margin-right: 3px;
 }
 
 /* Bootstrap table overrides */

@@ -140,11 +140,15 @@ function loadPartTable(table, url, options={}) {
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
             
             if (row.is_template) {
-                display = display + "<span class='label label-info' style='float: right;'>TEMPLATE</span>";
+                display = display + `<span class='fas fa-clone label-right' title='Template part'></span>`;
             }
-
+            
+            if (row.assembly) {
+                display = display + `<span class='fas fa-tools label-right' title='Assembled part'></span>`;
+            }
+            
             if (!row.active) {
-                display = display + "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
+                display = display + `<span class='fas fa-times label-right' title='Inactive part'></span>`;
             }
             return display; 
         }
@@ -173,7 +177,7 @@ function loadPartTable(table, url, options={}) {
                 return renderLink(row.category__name, "/part/category/" + row.category + "/");
             }
             else {
-                return '';
+                return 'No category';
             }
         }   
     });
