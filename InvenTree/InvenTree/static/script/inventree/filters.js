@@ -11,6 +11,91 @@
  * 
  */
 
+/**
+ * Load table filters for the given table from session storage
+ * 
+ * @param tableKey - String key for the particular table
+ * @param defaults - Default filters for this table e.g. 'cascade=1&location=5'
+ */
+function loadTableFilters(tableKey, defaults) {
+
+    var lookup = "table-filters-" + tableKey.toLowerCase();
+
+    var filterstring = inventreeLoad(lookup, defaults);
+
+    var filters = {};
+
+    console.log(`Loaded filters for table '${tableKey}' - ${filterstring}`);
+
+    filterstring.split("&").forEach(function(item, index) {
+        item = item.trim();
+
+        if (item.length > 0) {
+            var f = item.split('=');
+
+            if (f.length == 2) {
+                filters[f[0]] = f[1];
+            } else {
+                console.log(`Improperly formatted filter: ${item}`);
+            }
+        }
+    });
+
+    return filters;
+}
+
+
+/**
+ * Save table filters to session storage
+ * 
+ * @param {*} tableKey - string key for the given table
+ * @param {*} filters - object of string:string pairs
+ */
+function saveTableFilters(tableKey, filters) {
+    var lookup = "table-filters-" + tableKey.toLowerCase();
+
+    var strings = [];
+
+    for (var key in filters) {
+        strings.push(`${key.trim()}=${String(filters[key]).trim()}`);
+    }
+
+    var filterstring = strings.join('&');
+
+    console.log(`Saving filters for table '${tableKey}' - ${filterstring}`);
+
+    inventreeSave(lookup, filterstring);
+}
+
+
+/*
+ * Remove a named filter parameter
+ */
+function removeTableFilter(tableKey, filterKey) {
+
+    var filters = loadTableFilters(tableKey, '');
+
+    delete filters[filterKey];
+
+    saveTableFilters(tableKey, filters);
+
+    // Return a copy of the updated filters
+    return filters;
+}
+
+
+function addTableFilter(tableKey, filterKey, filterValue) {
+
+    var filters = loadTableFilters(tableKey, '');
+
+    filters[filterKey] = filterValue;
+
+    saveTableFilters(tableKey, filters);
+
+    // Return a copy of the updated filters
+    return filters;
+}
+
 
 /**
  * Return the custom filtering options available for a particular table
@@ -106,90 +191,7 @@ function getFilterOptionList(tableKey, filterKey) {
 }
 
 
-/**
- * Load table filters for the given table from session storage
- * 
- * @param tableKey - String key for the particular table
- * @param defaults - Default filters for this table e.g. 'cascade=1&location=5'
- */
-function loadTableFilters(tableKey, defaults) {
 
-    var lookup = "table-filters-" + tableKey.toLowerCase();
-
-    var filterstring = inventreeLoad(lookup, defaults);
-
-    var filters = {};
-
-    console.log(`Loaded filters for table '${tableKey}' - ${filterstring}`);
-
-    filterstring.split("&").forEach(function(item, index) {
-        item = item.trim();
-
-        if (item.length > 0) {
-            var f = item.split('=');
-
-            if (f.length == 2) {
-                filters[f[0]] = f[1];
-            } else {
-                console.log(`Improperly formatted filter: ${item}`);
-            }
-        }
-    });
-
-    return filters;
-}
-
-
-/**
- * Save table filters to session storage
- * 
- * @param {*} tableKey - string key for the given table
- * @param {*} filters - object of string:string pairs
- */
-function saveTableFilters(tableKey, filters) {
-    var lookup = "table-filters-" + tableKey.toLowerCase();
-
-    var strings = [];
-
-    for (var key in filters) {
-        strings.push(`${key.trim()}=${String(filters[key]).trim()}`);
-    }
-
-    var filterstring = strings.join('&');
-
-    console.log(`Saving filters for table '${tableKey}' - ${filterstring}`);
-
-    inventreeSave(lookup, filterstring);
-}
-
-
-/*
- * Remove a named filter parameter
- */
-function removeTableFilter(tableKey, filterKey) {
-
-    var filters = loadTableFilters(tableKey, '');
-
-    delete filters[filterKey];
-
-    saveTableFilters(tableKey, filters);
-
-    // Return a copy of the updated filters
-    return filters;
-}
-
-
-function addTableFilter(tableKey, filterKey, filterValue) {
-
-    var filters = loadTableFilters(tableKey, '');
-
-    filters[filterKey] = filterValue;
-
-    saveTableFilters(tableKey, filters);
-
-    // Return a copy of the updated filters
-    return filters;
-}
 
 
 /**

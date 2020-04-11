@@ -25,7 +25,9 @@ function createStockFilter() {
 
     for (var key in available) {
 
-        html += `<option value='${key}'>${available[key].title || key}</option>`;
+        var title = getFilterTitle("stock", key);
+
+        html += `<option value='${key}'>${title}</option>`;
     }
 
     html += `</select>`;
