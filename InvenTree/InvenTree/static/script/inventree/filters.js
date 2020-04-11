@@ -158,8 +158,14 @@ function getFilterOptionList(tableKey, filterKey) {
 
     if (settings.type == 'bool') {
         return {
-            'true': '1',
-            'false': '0',
+            '1': {
+                key: '1',
+                value: 'true',
+            },
+            '0': {
+                key: '0',
+                value: 'false',
+            },
         };
     } else if ('options' in settings) {
         return settings.options;

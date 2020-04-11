@@ -105,6 +105,29 @@ function loadStockTable(table, options) {
                 stock = +stock.toFixed(5);
 
                 return stock + " (" + items + " items)";
+            } else if (field == 'status') {
+                var statii = [];
+
+                data.forEach(function(item) {
+                    var status = String(item.status);
+
+                    if (!status || status == '') {
+                        status = '-';
+                    }
+
+                    if (!statii.includes(status)) {
+                        statii.push(status);
+                    }
+                });
+
+                // Multiple status codes
+                if (statii.length > 1) {
+                    return "-";
+                } else if (statii.length == 1) {
+                    return stockStatusDisplay(statii[0]);
+                } else {
+                    return "-";
+                }
             } else if (field == 'batch') {
                 var batches = [];
 
@@ -229,12 +252,16 @@ function loadStockTable(table, options) {
 
                     var text = renderLink(val, '/stock/item/' + row.pk + '/');
                     
-                    if (row.status_text != 'OK') {
-                        text = text + "<span class='badge'>" + row.status_text + "</span>";
-                    }
-                    
                     return text;
                 }
+            },
+            {
+                field: 'status',
+                title: 'Status',
+                sortable: 'true',
+                formatter: function(value, row, index, field) {
+                    return stockStatusDisplay(value);
+                },
             },
             {
                 field: 'batch',
