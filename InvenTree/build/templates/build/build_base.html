@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load i18n %}
+{% load status_codes %}
 
 {% block page_title %}
 InvenTree | Build - {{ build }}
@@ -23,7 +25,6 @@ InvenTree | Build - {{ build }}
             </div>
             <div class='media-body'>
                 <h4>Build Details</h4>
-
                 <p>
                     <div class='btn-row'>
                         <div class='btn-group'>
@@ -50,7 +51,7 @@ InvenTree | Build - {{ build }}
                 <table class='table table-striped table-condensed'>
                     <tr>
                         <td>{{ build.title }}</td>
-                        <td>{% include "build_status.html" with build=build %}</td>
+                        <td>{% build_status build.status %}</td>
                     </tr>
                     <tr>
                         <td>Part</td>

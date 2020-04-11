@@ -10,6 +10,26 @@ class StatusCode:
     labels = {}
 
     @classmethod
+    def render(cls, key):
+        """
+        Render the value as a label.
+        """
+
+        print("Rendering:", key, cls.options)
+
+        # If the key cannot be found, pass it back
+        if key not in cls.options.keys():
+            return key
+        
+        value = cls.options.get(key, key)
+        label = cls.labels.get(key, None)
+
+        if label:
+            return "<span class='label label-{label}'>{value}</span>".format(label=label, value=value)
+        else:
+            return value
+
+    @classmethod
     def list(cls):
         """
         Return the StatusCode options as a list of mapped key / value items

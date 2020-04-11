@@ -7,23 +7,8 @@ from InvenTree import version
 from InvenTree.helpers import decimal2string
 
 from common.models import InvenTreeSetting
-from InvenTree.status_codes import OrderStatus, StockStatus, BuildStatus
 
 register = template.Library()
-
-
-@register.simple_tag(takes_context=True)
-def load_status_codes(context):
-    """
-    Make the various StatusCodes available to the page context
-    """
-
-    context['order_status_codes'] = OrderStatus.list()
-    context['stock_status_codes'] = StockStatus.list()
-    context['build_status_codes'] = BuildStatus.list()
-
-    # Need to return something as the result is rendered to the page
-    return ''
 
 
 @register.simple_tag()

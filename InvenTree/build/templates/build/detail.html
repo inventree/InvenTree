@@ -2,6 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% block details %}
+{% load status_codes %}
 
 {% include "build/tabs.html" with tab='details' %}
 
@@ -39,7 +40,7 @@
 <tr>
     <td><span class='fas fa-info'></span></td>
     <td>{% trans "Status" %}</td>
-    <td>{% include "build_status.html" with build=build %}</td>
+    <td>{% build_status build.status %}</td>
 </tr>
 {% if build.batch %}
 <tr>
