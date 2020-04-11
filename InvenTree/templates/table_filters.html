@@ -1,0 +1,98 @@
+{% load i18n %}
+{% load status_codes %}
+
+{% load_status_codes %}
+
+<script type='text/javascript'>
+
+{% include "status_codes.html" with label='stock' options=stock_status_codes %}
+{% include "status_codes.html" with label='build' options=build_status_codes %}
+{% include "status_codes.html" with label='order' options=order_status_codes %}
+
+
+function getAvailableTableFilters(tableKey) {
+
+    tableKey = tableKey.toLowerCase();
+
+    // Filters for the "Stock" table
+    if (tableKey == 'stock') {
+        return {
+            cascade: {
+                type: 'bool',
+                title: '{% trans "Include sublocations" %}',
+                description: '{% trans "Include stock in sublocations" %}',
+            },
+            active: {
+                type: 'bool',
+                title: '{% trans "Active parts" %}',
+                description: '{% trans "Show stock for active parts" %}',
+            },
+            'status': {
+                options: stockCodes,
+                title: '{% trans "Stock status" %}',
+                description: '{% trans "Stock status" %}',
+            },
+        };
+    }
+
+    // Filters for the "Build" table
+    if (tableKey == 'build') {
+        return {
+            status: {
+                title: '{% trans "Build status" %}',
+                options: buildCodes,
+            },
+
+        };
+    }
+
+    // Filters for the "Order" table
+    if (tableKey == "order") {
+        return {
+            status: {
+                title: '{% trans "Order status" %}',
+                options: orderCodes,
+            },
+        };
+    }
+
+    // Filters for the "Parts" table
+    if (tableKey == "parts") {
+        return {
+            cascade: {
+                type: 'bool',
+                title: '{% trans "Include subcategories" %}',
+                description: '{% trans "Include parts in subcategories" %}',
+            },
+            active: {
+                type: 'bool',
+                title: '{% trans "Active" %}',
+                description: '{% trans "Show active parts" %}',
+            },
+            is_template: {
+                type: 'bool',
+                title: '{% trans "Template" %}',
+            },
+            has_stock: {
+                type: 'bool',
+                title: '{% trans "Stock available" %}'
+            },
+            low_stock: {
+                type: 'bool',
+                title: '{% trans "Low stock" %}',
+            },
+            assembly: {
+                type: 'bool',
+                title: '{% trans "Assembly" %}',
+            },
+            component: {
+                type: 'bool',
+                title: '{% trans "Component" %}',
+            },
+        };
+    }
+
+    // Finally, no matching key
+    return {};
+}
+</script>

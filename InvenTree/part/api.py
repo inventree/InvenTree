@@ -8,7 +8,8 @@ from __future__ import unicode_literals
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 
-from django.db.models import Q, Sum, Count
+from django.db.models import Q, F, Sum, Count
+from django.db.models.functions import Coalesce
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -19,6 +20,7 @@ from django.conf.urls import url, include
 from django.urls import reverse
 
 import os
+from decimal import Decimal
 
 from .models import Part, PartCategory, BomItem, PartStar
 from .models import PartParameter, PartParameterTemplate
@@ -147,6 +149,18 @@ class PartList(generics.ListCreateAPIView):
 
     - GET: Return list of objects
     - POST: Create a new Part object
+
+    The Part object list can be filtered by:
+        - category: Filter by PartCategory reference
+        - cascade: If true, include parts from sub-categories
+        - is_template: Is the part a template part?
+        - variant_of: Filter by variant_of Part reference
+        - assembly: Filter by assembly field
+        - component: Filter by component field
+        - trackable: Filter by trackable field
+        - purchaseable: Filter by purcahseable field
+        - salable: Filter by salable field
+        - active: Filter by active field
     """
 
     serializer_class = part_serializers.PartSerializer
@@ -210,10 +224,38 @@ class PartList(generics.ListCreateAPIView):
             'active',
         ).annotate(
             # Quantity of items which are "in stock"
-            in_stock=Sum('stock_items__quantity', filter=stock_filter),
-            on_order=Sum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter),
-            building=Sum('builds__quantity', filter=build_filter),
+            in_stock=Coalesce(Sum('stock_items__quantity', filter=stock_filter), Decimal(0)),
+            on_order=Coalesce(Sum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter), Decimal(0)),
+            building=Coalesce(Sum('builds__quantity', filter=build_filter), Decimal(0)),
         )
+
+        # If we are filtering by 'has_stock' status
+        has_stock = self.request.query_params.get('has_stock', None)
+
+        if has_stock is not None:
+            has_stock = str2bool(has_stock)
+
+            if has_stock:
+                # Filter items which have a non-null 'in_stock' quantity above zero
+                data = data.filter(in_stock__gt=0)
+            else:
+                # Filter items which a null or zero 'in_stock' quantity
+                data = data.filter(Q(in_stock__lte=0))
+
+        # If we are filtering by 'low_stock' status
+        low_stock = self.request.query_params.get('low_stock', None)
+
+        if low_stock is not None:
+            low_stock = str2bool(low_stock)
+
+            if low_stock:
+                # Ignore any parts which do not have a specified 'minimum_stock' level
+                data = data.exclude(minimum_stock=0)
+                # Filter items which have an 'in_stock' level lower than 'minimum_stock'
+                data = data.filter(Q(in_stock__lt=F('minimum_stock')))
+            else:
+                # Filter items which have an 'in_stock' level higher than 'minimum_stock'
+                data = data.filter(Q(in_stock__gte=F('minimum_stock')))
 
         # Reduce the number of lookups we need to do for the part categories
         categories = {}
@@ -261,23 +303,23 @@ class PartList(generics.ListCreateAPIView):
 
         cascade = str2bool(self.request.query_params.get('cascade', False))
 
-        if cat_id is not None:
-
-            if isNull(cat_id):
+        if cat_id is None:
+            # Top-level parts
+            if not cascade:
                 parts_list = parts_list.filter(category=None)
-            else:
-                try:
-                    cat_id = int(cat_id)
-                    category = PartCategory.objects.get(pk=cat_id)
 
-                    # If '?cascade=true' then include parts which exist in sub-categories
-                    if cascade:
-                        parts_list = parts_list.filter(category__in=category.getUniqueChildren())
-                    # Just return parts directly in the requested category
-                    else:
-                        parts_list = parts_list.filter(category=cat_id)
-                except (ValueError, PartCategory.DoesNotExist):
-                    pass
+        else:
+            try:
+                category = PartCategory.objects.get(pk=cat_id)
+
+                # If '?cascade=true' then include parts which exist in sub-categories
+                if cascade:
+                    parts_list = parts_list.filter(category__in=category.getUniqueChildren())
+                # Just return parts directly in the requested category
+                else:
+                    parts_list = parts_list.filter(category=cat_id)
+            except (ValueError, PartCategory.DoesNotExist):
+                pass
 
         # Ensure that related models are pre-loaded to reduce DB trips
         parts_list = self.get_serializer_class().setup_eager_loading(parts_list)
@@ -443,6 +485,19 @@ class BomList(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = BomItem.objects.all()
         queryset = self.get_serializer_class().setup_eager_loading(queryset)
+
+        # Filter by part?
+        part = self.request.query_params.get('part', None)
+
+        if part is not None:
+            queryset = queryset.filter(part=part)
+        
+        # Filter by sub-part?
+        sub_part = self.request.query_params.get('sub_part', None)
+
+        if sub_part is not None:
+            queryset = queryset.filter(sub_part=sub_part)
+
         return queryset
 
     permission_classes = [
@@ -456,8 +511,6 @@ class BomList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'part',
-        'sub_part',
     ]
 
 

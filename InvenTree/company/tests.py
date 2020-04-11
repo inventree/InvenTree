@@ -96,8 +96,8 @@ class CompanySimpleTest(TestCase):
     def test_part_pricing(self):
         m2x4 = Part.objects.get(name='M2x4 LPHS')
 
-        self.assertEqual(m2x4.get_price_info(10), "70.00000 - 75.00000")
-        self.assertEqual(m2x4.get_price_info(100), "125.00000 - 350.00000")
+        self.assertEqual(m2x4.get_price_info(10), "70 - 75")
+        self.assertEqual(m2x4.get_price_info(100), "125 - 350")
 
         pmin, pmax = m2x4.get_price_range(5)
         self.assertEqual(pmin, 35)

@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load static %}
 {% load inventree_extras %}
+{% load status_codes %}
 
 {% block page_title %}
 InvenTree | {{ order }}
@@ -69,7 +70,7 @@ InvenTree | {{ order }}
             <tr>
                 <td><span class='fas fa-info'></span></td>
                 <td>{% trans "Status" %}</td>
-                <td>{% include "order/order_status.html" %}</td>
+                <td>{% order_status order.status %}</td>
             </tr>
             {% if order.link %}
             <tr>

@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -102,7 +103,9 @@ InvenTree
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/bom.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/inventree/filters.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/tables.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/inventree/build.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/modals.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/order.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
@@ -115,7 +118,10 @@ InvenTree
 {% block js_load %}
 {% endblock %}
 
+{% include "table_filters.html" %}
+
 <script type='text/javascript'>
+
 $(document).ready(function () {
 {% block js_ready %}
 {% endblock %}
@@ -124,6 +130,7 @@ $(document).ready(function () {
     
     showCachedAlerts();
 });
+
 </script>
 
 {% block js %}

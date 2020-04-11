@@ -44,6 +44,42 @@ function isNumeric(n) {
 }
 
 
+/*
+ * Reload a table which has already been made into a bootstrap table.
+ * New filters can be optionally provided, to change the query params.
+ */
+function reloadTable(table, filters) {
+
+    // Simply perform a refresh
+    if (filters == null) {
+        table.bootstrapTable('refresh');
+        return;
+    }
+
+    // More complex refresh with new filters supplied
+    var options = table.bootstrapTable('getOptions');
+
+    // Construct a new list of filters to use for the query
+    var params = {};
+
+    for (var key in filters) {
+        params[key] = filters[key];
+    }
+
+    // Original query params will override
+    if (options.original != null) {
+        for (var key in options.original) {
+            params[key] = options.original[key];
+        }
+    }
+
+    options.queryParams = params;
+
+    table.bootstrapTable('refreshOptions', options);
+    table.bootstrapTable('refresh');
+}
+
+
 /* Wrapper function for bootstrapTable.
  * Sets some useful defaults, and manage persistent settings.
  */

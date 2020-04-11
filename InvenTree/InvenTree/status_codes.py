@@ -2,6 +2,56 @@ from django.utils.translation import ugettext as _
 
 
 class StatusCode:
+    """
+    Base class for representing a set of StatusCodes.
+    This is used to map a set of integer values to text.
+    """
+
+    labels = {}
+
+    @classmethod
+    def render(cls, key):
+        """
+        Render the value as a label.
+        """
+
+        print("Rendering:", key, cls.options)
+
+        # If the key cannot be found, pass it back
+        if key not in cls.options.keys():
+            return key
+        
+        value = cls.options.get(key, key)
+        label = cls.labels.get(key, None)
+
+        if label:
+            return "<span class='label label-{label}'>{value}</span>".format(label=label, value=value)
+        else:
+            return value
+
+    @classmethod
+    def list(cls):
+        """
+        Return the StatusCode options as a list of mapped key / value items
+        """
+
+        codes = []
+
+        for key in cls.options.keys():
+
+            opt = {
+                'key': key,
+                'value': cls.options[key]
+            }
+
+            label = cls.labels.get(key)
+
+            if label:
+                opt['label'] = label
+
+            codes.append(opt)
+
+        return codes
 
     @classmethod
     def items(cls):
@@ -41,6 +91,15 @@ class OrderStatus(StatusCode):
         RETURNED: _("Returned"),
     }
 
+    labels = {
+        PENDING: "primary",
+        PLACED: "primary",
+        COMPLETE: "success",
+        CANCELLED: "danger",
+        LOST: "warning",
+        RETURNED: "warning",
+    }
+
     # Open orders
     OPEN = [
         PENDING,
@@ -71,6 +130,12 @@ class StockStatus(StatusCode):
         LOST: _("Lost"),
     }
 
+    labels = {
+        OK: 'success',
+        ATTENTION: 'warning',
+        DAMAGED: 'danger',
+    }
+
     # The following codes correspond to parts that are 'available' or 'in stock'
     AVAILABLE_CODES = [
         OK,
@@ -98,6 +163,13 @@ class BuildStatus(StatusCode):
         ALLOCATED: _("Allocated"),
         CANCELLED: _("Cancelled"),
         COMPLETE: _("Complete"),
+    }
+
+    labels = {
+        PENDING: 'primary',
+        ALLOCATED: 'info',
+        COMPLETE: 'success',
+        CANCELLED: 'danger',
     }
 
     ACTIVE_CODES = [

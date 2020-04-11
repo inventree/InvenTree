@@ -6,7 +6,7 @@
         {% if read_only %}
         {% else %}
         <button class="btn btn-success" id='item-create'>{% trans "New Stock Item" %}</button>
-        <div class="dropdown" style='float: right;'>
+        <div class="btn dropdown">
             <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
             <ul class="dropdown-menu">
                 <li><a href="#" id='multi-item-add' title='Add to selected stock items'>{% trans "Add stock" %}</a></li>
@@ -18,6 +18,9 @@
             </ul>
         </div>
         {% endif %}
+        <div class='filter-list' id='filter-list-stock'>
+            <!-- An empty div in which the filter list will be constructed -->
+        </div>
     </div>
 </div>
 

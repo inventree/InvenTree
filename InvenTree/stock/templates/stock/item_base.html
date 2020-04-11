@@ -1,6 +1,7 @@
 {% extends "stock/stock_app_base.html" %}
 {% load static %}
 {% load inventree_extras %}
+{% load status_codes %}
 {% load i18n %}
 {% block content %}
 
@@ -172,7 +173,7 @@
             <tr>
                 <td><span class='fas fa-info'></span></td>
                 <td>{% trans "Status" %}</td>
-                <td>{{ item.get_status_display }}</td>
+                <td>{% stock_status item.status %}</td>
             </tr>
             </table>
         </div>

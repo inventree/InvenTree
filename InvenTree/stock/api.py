@@ -410,7 +410,15 @@ class StockList(generics.ListCreateAPIView):
         # Start with all objects
         stock_list = super(StockList, self).get_queryset()
         
+        # Filter out parts which are not actually "in stock"
         stock_list = stock_list.filter(customer=None, belongs_to=None)
+
+        # Do we wish to filter by "active parts"
+        active = self.request.query_params.get('active', None)
+
+        if active is not None:
+            active = str2bool(active)
+            stock_list = stock_list.filter(part__active=active)
 
         # Does the client wish to filter by the Part ID?
         part_id = self.request.query_params.get('part', None)

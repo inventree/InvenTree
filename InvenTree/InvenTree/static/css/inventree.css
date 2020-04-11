@@ -125,6 +125,8 @@
 
 .label-right {
     float: right;
+    margin-left: 3px;
+    margin-right: 3px;
 }
 
 /* Bootstrap table overrides */
@@ -155,6 +157,66 @@
 .rowinvalid {
     color: #A00; 
     font-style: italic;
+}
+
+.dropdown {
+    padding-left: 1px;
+    margin-left: 1px;
+}
+
+/* Styles for table buttons and filtering */
+.button-toolbar .btn {
+    margin-left: 1px;
+    margin-right: 1px;
+}
+
+.filter-list {
+    display: inline-block;
+    *display: inline;
+    margin-bottom: 1px;
+    margin-top: 1px;
+    vertical-align: middle;
+    margin: 1px;
+    padding: 2px;
+    background: #eee;
+    border: 1px solid #eee;
+    border-radius: 3px;
+}
+
+.filter-list .close {
+    cursor: pointer;
+    right: 0%;
+    padding-right: 2px;
+    padding-left: 2px;
+    transform: translate(0%, -25%);
+}
+  
+.filter-list .close:hover {background: #bbb;}
+
+.filter-tag {
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    background: #eee;
+    margin: 1px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.filter-input {
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+}
+
+.filter-tag:hover {
+    background: #ddd;
 }
 
 /* Part image icons with full-display on mouse hover */

@@ -87,17 +87,15 @@ function loadPartTable(table, url, options={}) {
      *      buttons: If provided, link buttons to selection status of this table
      */
 
-    // Default query params
-    query = options.query;
-    
-    if (!options.allowInactive) {
-        // Only display active parts
-        query.active = true;
+    var params = options.parms || {};
+
+    var filters = loadTableFilters("parts");
+
+    for (var key in params) {
+        filters[key] = params[key];
     }
 
-    // Include sub-category search
-    // TODO - Make this user-configurable!
-    query.cascade = true;
+    setupFilterList("parts", $(table));
 
     var columns = [
         {
@@ -142,11 +140,21 @@ function loadPartTable(table, url, options={}) {
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
             
             if (row.is_template) {
-                display = display + "<span class='label label-info' style='float: right;'>TEMPLATE</span>";
+                display += `<span class='fas fa-clone label-right' title='Template part'></span>`;
+            }
+            
+            if (row.assembly) {
+                display += `<span class='fas fa-tools label-right' title='Assembled part'></span>`;
             }
 
+            /*
+            if (row.component) {
+                display = display + `<span class='fas fa-cogs label-right' title='Component part'></span>`;
+            }
+            */
+            
             if (!row.active) {
-                display = display + "<span class='label label-warning' style='float: right;'>INACTIVE</span>";
+                display += `<span class='label label-warning label-right'>INACTIVE</span>`; 
             }
             return display; 
         }
@@ -175,7 +183,7 @@ function loadPartTable(table, url, options={}) {
                 return renderLink(row.category__name, "/part/category/" + row.category + "/");
             }
             else {
-                return '';
+                return 'No category';
             }
         }   
     });
@@ -217,10 +225,10 @@ function loadPartTable(table, url, options={}) {
         url: url,
         sortName: 'name',
         method: 'get',
+        queryParams: filters,
+        groupBy: false,
+        original: params,
         formatNoMatches: function() { return "No parts found"; },
-        queryParams: function(p) {
-            return  query;
-        },
         columns: columns,
     });
 

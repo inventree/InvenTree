@@ -11,6 +11,8 @@ from rest_framework import generics, permissions
 
 from django.conf.urls import url, include
 
+from InvenTree.helpers import str2bool
+
 from .models import Build, BuildItem
 from .serializers import BuildSerializer, BuildItemSerializer
 
@@ -36,8 +38,40 @@ class BuildList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'part',
     ]
+
+    def get_queryset(self):
+        """
+        Override the queryset filtering,
+        as some of the fields don't natively play nicely with DRF
+        """
+
+        build_list = super().get_queryset()
+
+        # Filter by part
+        part = self.request.query_params.get('part', None)
+
+        if part is not None:
+            build_list = build_list.filter(part=part)
+
+        # Filter by build status?
+        status = self.request.query_params.get('status', None)
+
+        if status is not None:
+            build_list = build_list.filter(status=status)
+
+        return build_list
+
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            part_detail = str2bool(self.request.GET.get('part_detail', None))
+        except AttributeError:
+            part_detail = None
+
+        kwargs['part_detail'] = part_detail
+
+        return self.serializer_class(*args, **kwargs)
 
 
 class BuildDetail(generics.RetrieveUpdateAPIView):
