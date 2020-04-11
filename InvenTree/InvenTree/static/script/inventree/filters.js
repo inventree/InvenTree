@@ -11,21 +11,30 @@
  * 
  */
 
+
+function defaultFilters() {
+    return {
+        stock: "cascade=1",
+        build: "",
+    };
+}
+
+
 /**
  * Load table filters for the given table from session storage
  * 
  * @param tableKey - String key for the particular table
  * @param defaults - Default filters for this table e.g. 'cascade=1&location=5'
  */
-function loadTableFilters(tableKey, defaults) {
+function loadTableFilters(tableKey) {
 
     var lookup = "table-filters-" + tableKey.toLowerCase();
+
+    var defaults = defaultFilters()[tableKey] || '';
 
     var filterstring = inventreeLoad(lookup, defaults);
 
     var filters = {};
-
-    console.log(`Loaded filters for table '${tableKey}' - ${filterstring}`);
 
     filterstring.split("&").forEach(function(item, index) {
         item = item.trim();
@@ -73,7 +82,7 @@ function saveTableFilters(tableKey, filters) {
  */
 function removeTableFilter(tableKey, filterKey) {
 
-    var filters = loadTableFilters(tableKey, '');
+    var filters = loadTableFilters(tableKey);
 
     delete filters[filterKey];
 
@@ -86,7 +95,7 @@ function removeTableFilter(tableKey, filterKey) {
 
 function addTableFilter(tableKey, filterKey, filterValue) {
 
-    var filters = loadTableFilters(tableKey, '');
+    var filters = loadTableFilters(tableKey);
 
     filters[filterKey] = filterValue;
 
@@ -114,7 +123,7 @@ function clearTableFilters(tableKey) {
  */
 function getRemainingTableFilters(tableKey) {
 
-    var filters = loadTableFilters(tableKey, '');
+    var filters = loadTableFilters(tableKey);
 
     var remaining = getAvailableTableFilters(tableKey);
 

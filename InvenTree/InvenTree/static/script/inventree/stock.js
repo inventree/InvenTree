@@ -56,19 +56,7 @@ function loadStockTable(table, options) {
         original[key] = params[key];
     }
 
-    // Record a copy of the original query params
-    // It will be required if the table is refreshed
-    //options.original = original;
-
     setupFilterList("stock", table, filterListElement);
-
-    $("#filter-add").click(function() {
-        createStockFilter();
-    });
-
-    $("#filter-clear").click(function() {
-        clearStockFilters();
-    });
 
     // Override the default values, or add new ones
     for (var key in params) {

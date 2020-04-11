@@ -1,3 +1,53 @@
+function loadBuildTable(table, options) {
+
+    var params = options.params || {};
+
+    var filters = loadTableFilters("build");
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    table.inventreeTable({
+        method: 'get',
+        formatNoMatches: function() {
+            return "No builds matching query";
+        },
+        url: options.url,
+        queryParams: filters,
+        groupBy: false,
+        original: params,
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID', 
+                visible: false,
+            },
+            {
+                field: 'title',
+                title: 'Build',
+            },
+            {
+                field: 'part',
+                title: 'Part',
+            },
+            {
+                field: 'quantity',
+                title: 'Quantity',
+            },
+            {
+                field: 'status_text',
+                title: 'Status',
+            },
+            {
+                field: 'creation_date',
+                title: 'Created',
+            },
+        ],
+    });
+}
+
+
 function updateAllocationTotal(id, count, required) {
     
     count = parseFloat(count);

@@ -23,6 +23,9 @@ InvenTree | Build List
 
 <hr>
 
+<table class='table table-striped table-condensed' id='build-table'>
+</table>
+
 {% include "build/build_list.html" with builds=active title="Active Builds" completed=False collapse_id='active' %}
 
 {% include "build/build_list.html" with builds=completed completed=True title="Completed Builds" collapse_id="complete" %}
@@ -42,6 +45,10 @@ InvenTree | Build List
                         {
                             follow: true
                         });
+    });
+
+    loadBuildTable($("#build-table"), {
+        url: "{% url 'api-build-list' %}"
     });
 
     $(".build-table").inventreeTable({
