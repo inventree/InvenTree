@@ -37,7 +37,7 @@ from InvenTree import helpers
 from InvenTree import validators
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2string
+from InvenTree.helpers import decimal2string, normalize
 
 from InvenTree.status_codes import BuildStatus, StockStatus, OrderStatus
 
@@ -781,8 +781,8 @@ class Part(models.Model):
         if min_price == max_price:
             return min_price
 
-        min_price = min_price.normalize()
-        max_price = max_price.normalize()
+        min_price = normalize(min_price)
+        max_price = normalize(max_price)
 
         return "{a} - {b}".format(a=min_price, b=max_price)
 
@@ -807,8 +807,8 @@ class Part(models.Model):
         if min_price is None or max_price is None:
             return None
 
-        min_price = min_price.normalize()
-        max_price = max_price.normalize()
+        min_price = normalize(min_price)
+        max_price = normalize(max_price)
 
         return (min_price, max_price)
 
@@ -843,8 +843,8 @@ class Part(models.Model):
         if min_price is None or max_price is None:
             return None
 
-        min_price = min_price.normalize()
-        max_price = max_price.normalize()
+        min_price = normalize(min_price)
+        max_price = normalize(max_price)
 
         return (min_price, max_price)
 
