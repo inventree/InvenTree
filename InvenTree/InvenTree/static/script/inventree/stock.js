@@ -15,52 +15,15 @@ function getStockLocations(filters={}, options={}) {
 }
 
 
-function loadStockFilters() {
-
-    return loadTableFilters("stock", "cascade=true");
-}
-
-
-function saveStockFilters(filters) {
-    // Save the stock table filters to session storage
-
-    saveTableFilters("stock", filters);
-}
-
-function removeStockFilter(key) {
-    
-    var filters = loadStockFilters();
-
-    delete filters[key];
-
-    saveStockFilters(filters);
-
-    return filters;
-}
-
-function addStockFilter(key, value) {
-    var filters = loadStockFilters();
-
-    filters[key] = value;
-
-    saveStockFilters(filters);
-
-    return filters;
-}
-
 function createStockFilter() {
     // TODO
     console.log("create stock filter");
 
     var html = `<select id='filter-tag' name='tag'>`;
 
-    var available = getFilterOptions("stock");
-
-    var filters = loadStockFilters();
+    var available = getRemainingTableFilters("stock");
 
     for (var key in available) {
-        // Ignore any keys that are already used..
-        if (key in filters) continue;
 
         html += `<option value='${key}'>${available[key].title || key}</option>`;
     }
@@ -80,13 +43,10 @@ function createStockFilter() {
         var tag = div.find("#filter-tag").val();
         var val = div.find("#filter-value").val();
 
-        console.log(tag + " -> " + val);
-
-        addStockFilter(tag, val);
+        addTableFilter("stock", tag, val);
     });
 
     div.find('#filter-tag').on('change', function() {
-        console.log(this.value);
 
         // Select the filter
         var filter = available[this.value];
@@ -95,23 +55,13 @@ function createStockFilter() {
 
         list.empty();
 
-        if ('type' in filter) {
-            if (filter.type == 'bool') {
+        // Make options
+        var options = getFilterOptionList("stock", this.value);
 
-                list.append(`<option value='1'>True</option>`);
-                list.append(`<option value='0'>False</option>`);
-            }
-        } else if ('options' in filter) {
-            for (var opt in filter.options) {
-
-                list.append(`<option value='${filter.options[opt]}'>${opt}</option>`);
-            }
+        for (var option in options) {
+            list.append(`<option value='${options[option]}'>${option}</option>`);
         }
-
-        console.log("...");
     });
-
-    console.log('done');
 }
 
 function clearStockFilters() {
@@ -121,7 +71,7 @@ function clearStockFilters() {
 
 function updateStockFilterList(filterListElement, table) {
 
-    var filters = loadStockFilters();
+    var filters = loadTableFilters("stock");
 
     for (var key in filters) {
         $(filterListElement).append(`<li>${key} = ${filters[key]}<span filter-tag='${key}' class='close'>x</span></li>` );
@@ -137,7 +87,7 @@ function updateStockFilterList(filterListElement, table) {
         // Clear out any existing elements
         $(filterListElement).empty();
 
-        var filters = removeStockFilter(tag);
+        var filters = removeTableFilter("stock", tag);
 
         reloadStockTable(table, filters);
 
@@ -177,7 +127,7 @@ function reloadStockTable(table, filters) {
 
     var params = {};
     
-    var filters = loadStockFilters();
+    var filters = loadTableFilters("stock");
     
     for (var key in filters) {
         params[key] = filters[key];
@@ -214,7 +164,7 @@ function loadStockTable(table, options) {
 
     var filterListElement = options.filterList || "#stock-filter-list";
 
-    var filters = loadStockFilters();
+    var filters = loadTableFilters("stock");
 
     var original = {};
 
