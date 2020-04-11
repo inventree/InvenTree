@@ -781,6 +781,9 @@ class Part(models.Model):
         if min_price == max_price:
             return min_price
 
+        min_price = min_price.normalize()
+        max_price = max_price.normalize()
+
         return "{a} - {b}".format(a=min_price, b=max_price)
 
     def get_supplier_price_range(self, quantity=1):
@@ -803,6 +806,9 @@ class Part(models.Model):
 
         if min_price is None or max_price is None:
             return None
+
+        min_price = min_price.normalize()
+        max_price = max_price.normalize()
 
         return (min_price, max_price)
 
@@ -836,6 +842,9 @@ class Part(models.Model):
 
         if min_price is None or max_price is None:
             return None
+
+        min_price = min_price.normalize()
+        max_price = max_price.normalize()
 
         return (min_price, max_price)
 
