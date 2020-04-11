@@ -238,8 +238,8 @@ function setupFilterList(tableKey, table, target) {
 
     var addClicked = false;
 
-    if (!target || target.length == 0) {
-        target = '#filter-list-" + tableKey';
+    if (target == null || target.length == 0) {
+        target = `#filter-list-${tableKey}`;
     }
 
     var tag = `filter-tag-${tableKey}`;

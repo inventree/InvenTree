@@ -11,6 +11,8 @@ from rest_framework import generics, permissions
 
 from django.conf.urls import url, include
 
+from InvenTree.helpers import str2bool
+
 from .models import Build, BuildItem
 from .serializers import BuildSerializer, BuildItemSerializer
 
@@ -38,6 +40,17 @@ class BuildList(generics.ListCreateAPIView):
     filter_fields = [
         'part',
     ]
+
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            part_detail = str2bool(self.request.GET.get('part_detail', None))
+        except AttributeError:
+            part_detail = None
+
+        kwargs['part_detail'] = part_detail
+
+        return self.serializer_class(*args, **kwargs)
 
 
 class BuildDetail(generics.RetrieveUpdateAPIView):

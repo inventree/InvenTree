@@ -10,6 +10,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 from stock.serializers import StockItemSerializerBrief
 
 from .models import Build, BuildItem
+from part.serializers import PartBriefSerializer
 
 
 class BuildSerializer(InvenTreeModelSerializer):
@@ -17,6 +18,16 @@ class BuildSerializer(InvenTreeModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     status_text = serializers.CharField(source='get_status_display', read_only=True)
+
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+
+    def __init__(self, *args, **kwargs):
+        part_detail = kwargs.pop('part_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if part_detail is not True:
+            self.fields.pop('part_detail')
 
     class Meta:
         model = Build
@@ -27,6 +38,7 @@ class BuildSerializer(InvenTreeModelSerializer):
             'creation_date',
             'completion_date',
             'part',
+            'part_detail',
             'quantity',
             'status',
             'status_text',
