@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 14:40+0000\n"
+"POT-Creation-Date: 2020-04-11 15:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,30 +18,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: InvenTree/helpers.py:240 order/models.py:164 order/models.py:215
+#: InvenTree/helpers.py:259 order/models.py:164 order/models.py:215
 msgid "Invalid quantity provided"
 msgstr ""
 
-#: InvenTree/helpers.py:243
+#: InvenTree/helpers.py:262
 msgid "Empty serial number string"
 msgstr ""
 
-#: InvenTree/helpers.py:264 InvenTree/helpers.py:281
+#: InvenTree/helpers.py:283 InvenTree/helpers.py:300
 #, python-brace-format
 msgid "Duplicate serial: {n}"
 msgstr ""
 
-#: InvenTree/helpers.py:268 InvenTree/helpers.py:271 InvenTree/helpers.py:274
-#: InvenTree/helpers.py:285
+#: InvenTree/helpers.py:287 InvenTree/helpers.py:290 InvenTree/helpers.py:293
+#: InvenTree/helpers.py:304
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr ""
 
-#: InvenTree/helpers.py:291
+#: InvenTree/helpers.py:310
 msgid "No serial numbers found"
 msgstr ""
 
-#: InvenTree/helpers.py:295
+#: InvenTree/helpers.py:314
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr ""
@@ -112,7 +112,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:163 build/templates/build/allocate_edit.html:28
 #: build/templates/build/allocate_view.html:21
-#: part/templates/part/part_base.html:113 part/templates/part/tabs.html:21
+#: part/templates/part/part_base.html:114 part/templates/part/tabs.html:21
 msgid "Allocated"
 msgstr ""
 
@@ -268,7 +268,7 @@ msgid "Description"
 msgstr ""
 
 #: build/templates/build/allocate_view.html:22
-#: part/templates/part/part_base.html:120
+#: part/templates/part/part_base.html:121
 msgid "On Order"
 msgstr ""
 
@@ -342,7 +342,7 @@ msgstr ""
 #: build/templates/build/detail.html:55
 #: company/templates/company/supplier_part_base.html:47
 #: company/templates/company/supplier_part_detail.html:24
-#: part/templates/part/detail.html:67 part/templates/part/part_base.html:84
+#: part/templates/part/detail.html:67 part/templates/part/part_base.html:85
 #: stock/templates/stock/item_base.html:143
 msgid "External Link"
 msgstr ""
@@ -604,7 +604,7 @@ msgstr ""
 msgid "Supplier stock keeping unit"
 msgstr ""
 
-#: company/models.py:256 company/templates/company/detail_part.html:81
+#: company/models.py:256 company/templates/company/detail_part.html:96
 #: company/templates/company/supplier_part_base.html:53
 #: company/templates/company/supplier_part_detail.html:30
 msgid "Manufacturer"
@@ -692,13 +692,13 @@ msgstr ""
 msgid "Delete Parts"
 msgstr ""
 
-#: company/templates/company/detail_part.html:73
+#: company/templates/company/detail_part.html:88
 #: company/templates/company/supplier_part_base.html:45
 #: company/templates/company/supplier_part_detail.html:22
 msgid "SKU"
 msgstr ""
 
-#: company/templates/company/detail_part.html:90
+#: company/templates/company/detail_part.html:105
 msgid "Link"
 msgstr ""
 
@@ -1453,7 +1453,7 @@ msgstr ""
 msgid "Part Details"
 msgstr ""
 
-#: part/templates/part/detail.html:25 part/templates/part/part_base.html:77
+#: part/templates/part/detail.html:25 part/templates/part/part_base.html:78
 msgid "IPN"
 msgstr ""
 
@@ -1577,31 +1577,43 @@ msgstr ""
 msgid "This part is not active"
 msgstr ""
 
-#: part/templates/part/part_base.html:37
+#: part/templates/part/part_base.html:16
+msgid "This part is a template part."
+msgstr ""
+
+#: part/templates/part/part_base.html:18
+msgid "It is not a real part, but real parts can be based on this template."
+msgstr ""
+
+#: part/templates/part/part_base.html:23
+msgid "This part is a variant of"
+msgstr ""
+
+#: part/templates/part/part_base.html:38
 msgid "Star this part"
 msgstr ""
 
-#: part/templates/part/part_base.html:43
+#: part/templates/part/part_base.html:44
 msgid "Show pricing information"
 msgstr ""
 
-#: part/templates/part/part_base.html:100
+#: part/templates/part/part_base.html:101
 msgid "Available Stock"
 msgstr ""
 
-#: part/templates/part/part_base.html:106
+#: part/templates/part/part_base.html:107
 msgid "In Stock"
 msgstr ""
 
-#: part/templates/part/part_base.html:130
+#: part/templates/part/part_base.html:131
 msgid "Build Status"
 msgstr ""
 
-#: part/templates/part/part_base.html:135
+#: part/templates/part/part_base.html:136
 msgid "Can Build"
 msgstr ""
 
-#: part/templates/part/part_base.html:141
+#: part/templates/part/part_base.html:142
 msgid "Underway"
 msgstr ""
 
