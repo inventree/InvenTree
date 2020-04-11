@@ -146,6 +146,12 @@ function loadPartTable(table, url, options={}) {
             if (row.assembly) {
                 display = display + `<span class='fas fa-tools label-right' title='Assembled part'></span>`;
             }
+
+            /*
+            if (row.component) {
+                display = display + `<span class='fas fa-cogs label-right' title='Component part'></span>`;
+            }
+            */
             
             if (!row.active) {
                 display = display + `<span class='fas fa-times label-right' title='Inactive part'></span>`;

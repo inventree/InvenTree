@@ -156,6 +156,7 @@ class PartList(generics.ListCreateAPIView):
         - is_template: Is the part a template part?
         - variant_of: Filter by variant_of Part reference
         - assembly: Filter by assembly field
+        - component: Filter by component field
     """
 
     serializer_class = part_serializers.PartSerializer
