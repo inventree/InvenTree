@@ -64,7 +64,7 @@
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
                 formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.part_detail.image_url) + renderLink(value, '/part/' + row.part + '/suppliers/');
+                    return imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, '/part/' + row.part + '/suppliers/');
                 }
             },
             {

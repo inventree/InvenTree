@@ -62,6 +62,11 @@ function loadBuildTable(table, options) {
                 title: 'Created',
                 sortable: true,
             },
+            {
+                field: 'completion_date',
+                title: 'Completed',
+                sortable: true,
+            },
         ],
     });
 }
