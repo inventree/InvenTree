@@ -104,8 +104,21 @@ function removePurchaseOrderLineItem(e) {
 function loadPurchaseOrderTable(table, options) {
     /* Create a purchase-order table */
 
+    var params = options.params || {};
+
+    var filters = loadTableFilters("build");
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList("order", table);
+
     table.inventreeTable({
         url: options.url,
+        queryParams: filters,
+        groupBy: false,
+        original: params,
         formatNoMatches: function() { return "No purchase orders found"; },
         columns: [
             {
@@ -144,7 +157,7 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'status',
                 title: 'Status',
                 formatter: function(value, row, index, field) {
-                    return orderStatusLabel(row.status, row.status_text);
+                    return orderStatusDisplay(row.status, row.status_text);
                 }
             },
             {
@@ -154,38 +167,4 @@ function loadPurchaseOrderTable(table, options) {
             },
         ],
     });
-}
-
-
-function orderStatusLabel(code, label) {
-    /* Render a purchase-order status label. */
-
-    var html = "<span class='label";
-
-    switch (code) {
-    case 10:  // pending   
-        html += " label-info";
-        break;
-    case  20:  // placed
-        html += " label-primary";
-        break;
-    case 30:  // complete
-        html += " label-success";
-        break;
-    case 40:  // cancelled
-    case 50:  // lost
-        html += " label-warning";
-        break;
-    case 60:  // returned
-        html += " label-danger";
-        break;
-    default:
-        break;
-    }
-
-    html += "'>";
-    html += label;
-    html += "</span>";
-
-    return html;
 }
