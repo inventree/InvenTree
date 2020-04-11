@@ -485,6 +485,19 @@ class BomList(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = BomItem.objects.all()
         queryset = self.get_serializer_class().setup_eager_loading(queryset)
+
+        # Filter by part?
+        part = self.request.query_params.get('part', None)
+
+        if part is not None:
+            queryset = queryset.filter(part=part)
+        
+        # Filter by sub-part?
+        sub_part = self.request.query_params.get('sub_part', None)
+
+        if sub_part is not None:
+            queryset = queryset.filter(sub_part=sub_part)
+
         return queryset
 
     permission_classes = [
@@ -498,8 +511,6 @@ class BomList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'part',
-        'sub_part',
     ]
 
 
