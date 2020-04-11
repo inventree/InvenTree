@@ -30,39 +30,6 @@ function removeStockRow(e) {
 }
 
 
-function reloadStockTable(table, filters) {
-    /* Reload the stock table.
-     * 
-     * 'original' is the original query params provided to the 
-     * 'loadStockTable' function.
-     * These override any user-configured filters.
-     */
-
-
-    // Override the queryParams for the table
-    var options = table.bootstrapTable('getOptions');
-
-    var params = {};
-    
-    var filters = loadTableFilters("stock");
-    
-    for (var key in filters) {
-        params[key] = filters[key];
-    }
-    
-    // Original parameters will override
-    for (var key in options.original) {
-        params[key] = options.original[key];
-    }
-
-    options.queryParams = params;
-    
-    table.bootstrapTable('refreshOptions', options);
-    table.bootstrapTable('refresh');
-}
-
-
-
 function loadStockTable(table, options) {
     /* Load data into a stock table with adjustable options.
      * Fetches data (via AJAX) and loads into a bootstrap table.

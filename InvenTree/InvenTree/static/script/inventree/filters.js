@@ -294,7 +294,7 @@ function setupFilterList(tableKey, table, target) {
 
                 var filters = addTableFilter(tableKey, tag, val);
 
-                reloadStockTable(table, filters);
+                reloadTable(table, filters);
 
                 // Run this function again
                 setupFilterList(tableKey, table, target);
@@ -311,7 +311,7 @@ function setupFilterList(tableKey, table, target) {
     element.find(`#${clear}`).click(function() {
         var filters = clearTableFilters(tableKey);
         
-        reloadStockTable(table, filters);
+        reloadTable(table, filters);
 
         setupFilterList(tableKey, table, target);
     });
@@ -324,7 +324,7 @@ function setupFilterList(tableKey, table, target) {
 
         var filters = removeTableFilter(tableKey, filter);
 
-        reloadStockTable(table, filters);
+        reloadTable(table, filters);
 
         // Run this function again!
         setupFilterList(tableKey, table, target);
