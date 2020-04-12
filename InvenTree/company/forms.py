@@ -26,8 +26,9 @@ class EditCompanyForm(HelperForm):
             'phone',
             'email',
             'contact',
-            'is_customer',
             'is_supplier',
+            'is_manufacturer',
+            'is_customer',
         ]
 
 
