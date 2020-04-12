@@ -56,7 +56,12 @@ def rename_company_image(instance, filename):
 
 class Company(models.Model):
     """ A Company object represents an external company.
-    It may be a supplier or a customer (or both).
+    It may be a supplier or a customer or a manufacturer (or a combination)
+
+    - A supplier is a company from which parts can be purchased
+    - A customer is a company to which parts can be sold
+    - A manufacturer is a company which manufactures a raw good (they may or may not be a "supplier" also)
+
 
     Attributes:
         name: Brief name of the company
@@ -70,6 +75,7 @@ class Company(models.Model):
         notes: Extra notes about the company
         is_customer: boolean value, is this company a customer
         is_supplier: boolean value, is this company a supplier
+        is_manufacturer: boolean value, is this company a manufacturer
     """
 
     name = models.CharField(max_length=100, blank=False, unique=True,
@@ -105,6 +111,8 @@ class Company(models.Model):
     is_customer = models.BooleanField(default=False, help_text=_('Do you sell items to this company?'))
 
     is_supplier = models.BooleanField(default=True, help_text=_('Do you purchase items from this company?'))
+
+    is_manufacturer = models.BooleanField(default=True, help_text=_('Does this company manufacture parts?'))
 
     def __str__(self):
         """ Get string representation of a Company """
