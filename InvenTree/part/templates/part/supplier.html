@@ -66,58 +66,18 @@
         });
     });
 
-    $("#supplier-table").inventreeTable({
-        formatNoMatches: function() { return "No supplier parts available for {{ part.full_name }}"; },
-        queryParams: function(p) {
-            return {
-                part: {{ part.id }}
-            }
-        },
-        columns: [
-            {
-                checkbox: true,
+    loadSupplierPartTable(
+        "#supplier-table",
+        "{% url 'api-supplier-part-list' %}",
+        {
+            params: {
+                part: {{ part.id }},
+                part_detail: true,
+                supplier_detail: true,
+                manufacturer_detail: true,
             },
-            {
-                sortable: true,
-                field: 'supplier_name',
-                title: 'Supplier',
-                formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.supplier_logo) + renderLink(value, '/company/' + row.supplier + '/');
-                }
-            },
-            {
-                sortable: true,
-                field: 'SKU',
-                title: 'SKU',
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url);
-                }
-            },
-            {
-                sortable: true,
-                field: 'manufacturer',
-                title: 'Manufacturer',
-            },
-            {
-                sortable: true,
-                field: 'MPN',
-                title: 'MPN',
-            },
-            {
-                sortable: true,
-                field: 'pricing',
-                title: 'Price',
-                formatter: function(value, row, index, field) {
-                    if (value) {
-                        return value;
-                    } else {
-                        return "<span class='warning-msg'><i>No pricing available</i></span>";
-                    }
-                },
-            }
-        ],
-        url: "{% url 'api-part-supplier-list' %}"
-    });
+        }
+    );
 
     linkButtonsToSelection($("#supplier-table"), ['#supplier-part-options'])
 

@@ -25,7 +25,7 @@
 {% block js_ready %}
 {{ block.super }}
 
-    loadPurchaseOrderTable($("#purchase-order-table"), {
+    loadPurchaseOrderTable("#purchase-order-table", {
         url: "{% url 'api-po-list' %}?supplier={{ company.id }}",
     });
 
@@ -46,9 +46,6 @@
 
     $("#company-order2").click(function() {
         newOrder();
-    });
-
-    $(".po-table").inventreeTable({
     });
 
 {% endblock %}

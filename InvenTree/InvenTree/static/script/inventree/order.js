@@ -114,7 +114,7 @@ function loadPurchaseOrderTable(table, options) {
 
     setupFilterList("order", table);
 
-    table.inventreeTable({
+    $(table).inventreeTable({
         url: options.url,
         queryParams: filters,
         groupBy: false,

@@ -8,6 +8,7 @@ from django_filters import NumberFilter
 from django.conf import settings
 from django.conf.urls import url, include
 from django.urls import reverse
+from django.db.models import Q
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
@@ -494,11 +495,23 @@ class StockList(generics.ListCreateAPIView):
         if supplier_part_id:
             stock_list = stock_list.filter(supplier_part=supplier_part_id)
 
-        # Filter by supplier ID
-        supplier_id = self.request.query_params.get('supplier', None)
+        # Filter by company (either manufacturer or supplier)
+        company = self.request.query_params.get('company', None)
 
-        if supplier_id:
-            stock_list = stock_list.filter(supplier_part__supplier=supplier_id)
+        if company is not None:
+            stock_list = stock_list.filter(Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer=company))
+
+        # Filter by supplier
+        supplier = self.request.query_params.get('supplier', None)
+
+        if supplier is not None:
+            stock_list = stock_list.filter(supplier_part__supplier=supplier)
+
+        # Filter by manufacturer
+        manufacturer = self.request.query_params.get('manufacturer', None)
+
+        if manufacturer is not None:
+            stock_list = stock_list.filter(supplier_part__manufacturer=manufacturer)
 
         # Also ensure that we pre-fecth all the related items
         stock_list = stock_list.prefetch_related(

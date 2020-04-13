@@ -47,73 +47,18 @@
             });
     });
 
-    $("#part-table").inventreeTable({
-        formatNoMatches: function() { return "No supplier parts found for {{ company.name }}"; },
-        queryParams: function(p) {
-            return {
-                supplier: {{ company.id }},
+    loadSupplierPartTable(
+        "#part-table",
+        "{% url 'api-supplier-part-list' %}",
+        {
+            params: {
                 part_detail: true,
-            }
-        },
-        columns: [
-            {
-                checkbox: true,
+                supplier_detail: true,
+                manufacturer_detail: true,
+                company: {{ company.id }},
             },
-            {
-                sortable: true,
-                field: 'part_detail.full_name',
-                title: '{% trans "Part" %}',
-                formatter: function(value, row, index, field) {
-
-                    var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, '/part/' + row.part + '/suppliers/');
-
-                    if (row.part_detail.is_template) {
-                        html += `<span class='fas fa-clone label-right' title='Template part'></span>`;
-                    }
-
-                    if (row.part_detail.assembly) {
-                        html += `<span class='fas fa-tools label-right' title='Assembled part'></span>`;
-                    }
-
-                    if (!row.part_detail.active) {
-                        html += `<span class='label label-warning label-right'>INACTIVE</span>`;
-                    }
-
-                    return html;
-                }
-            },
-            {
-                sortable: true,
-                field: 'SKU',
-                title: '{% trans "SKU" %}',
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url);
-                }
-            },
-            {
-                sortable: true,
-                field: 'manufacturer',
-                title: '{% trans "Manufacturer" %}',
-            },
-            {
-                sortable: true,
-                field: 'MPN',
-                title: 'MPN',
-            },
-            {
-                field: 'link',
-                title: '{% trans "Link" %}',
-                formatter: function(value, row, index, field) {
-                    if (value) {
-                        return renderLink(value, value);
-                    } else {
-                        return '';
-                    }
-                }
-            },
-        ],
-        url: "{% url 'api-part-supplier-list' %}"
-    });
+        }
+    );
 
     $("#multi-part-delete").click(function() {
         var selections = $("#part-table").bootstrapTable("getSelections");

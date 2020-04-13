@@ -39,6 +39,56 @@ class CompanyIndex(ListView):
     context_object_name = 'companies'
     paginate_by = 50
 
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+
+        # Provide custom context data to the template,
+        # based on the URL we use to access this page
+
+        lookup = {
+            reverse('supplier-index'): {
+                'title': _('Suppliers'),
+                'button_text': _('New Supplier'),
+                'filters': {'is_supplier': 'true'},
+                'create_url': reverse('supplier-create'),
+            },
+            reverse('manufacturer-index'): {
+                'title': _('Manufacturers'),
+                'button_text': _('New Manufacturer'),
+                'filters': {'is_manufacturer': 'true'},
+                'create_url': reverse('manufacturer-create'),
+            },
+            reverse('customer-index'): {
+                'title': _('Customers'),
+                'button_text': _('New Customer'),
+                'filters': {'is_customer': 'true'},
+                'create_url': reverse('customer-create'),
+            }
+        }
+
+        default = {
+            'title': _('Companies'),
+            'button_text': _('New Company'),
+            'filters': {},
+            'create_url': reverse('company-create'),
+        }
+
+        context = None
+
+        for item in lookup:
+            if self.request.path == item:
+                context = lookup[item]
+                break
+        
+        if context is None:
+            context = default
+
+        for key, value in context.items():
+            ctx[key] = value
+
+        return ctx
+
     def get_queryset(self):
         """ Retrieve the Company queryset based on HTTP request parameters.
 
@@ -125,7 +175,44 @@ class CompanyCreate(AjaxCreateView):
     context_object_name = 'company'
     form_class = EditCompanyForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = _("Create new Company")
+
+    def get_form_title(self):
+
+        url = self.request.path
+
+        if url == reverse('supplier-create'):
+            return _("Create new Supplier")
+        
+        if url == reverse('manufacturer-create'):
+            return _('Create new Manufacturer')
+
+        if url == reverse('customer-create'):
+            return _('Create new Customer')
+
+        return _('Create new Company')
+
+    def get_initial(self):
+        """ Initial values for the form data """
+        initials = super().get_initial().copy()
+
+        url = self.request.path
+
+        if url == reverse('supplier-create'):
+            initials['is_supplier'] = True
+            initials['is_customer'] = False
+            initials['is_manufacturer'] = False
+        
+        elif url == reverse('manufacturer-create'):
+            initials['is_manufacturer'] = True
+            initials['is_supplier'] = True
+            initials['is_customer'] = False
+
+        elif url == reverse('customer-create'):
+            initials['is_customer'] = True
+            initials['is_manufacturer'] = False
+            initials['is_supplier'] = False
+
+        return initials
 
     def get_data(self):
         return {
