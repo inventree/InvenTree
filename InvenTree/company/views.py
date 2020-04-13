@@ -39,6 +39,37 @@ class CompanyIndex(ListView):
     context_object_name = 'companies'
     paginate_by = 50
 
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+
+        url = self.request.path
+
+        print(url)
+        print(reverse('supplier-index'))
+        print(reverse('manufacturer-index'))
+        print(reverse('customer-index'))
+
+        if url == reverse('supplier-index'):
+            ctx["title"] = _("Suppliers")
+            ctx['new_button_text'] = _("New Supplier")
+            ctx["filters"] = {"is_supplier": "true"}
+        elif url == reverse('manufacturer-index'):
+            ctx["title"] = _("Manufacturers")
+            ctx['new_button_text'] = _("New Manufacturer")
+            ctx["filters"] = {"is_manufacturer": "true"}
+        elif url == reverse('customer-index'):
+            ctx["title"] = _("Customers")
+            ctx['new_button_text'] = _("New Customer")
+            ctx["filters"] = {"is_customer": "true"}
+        else:
+            ctx["title"] = _("Companies")
+            ctx["new_button_text"] = _("New Company")
+            ctx["filters"] = {}
+
+        return ctx
+
+
     def get_queryset(self):
         """ Retrieve the Company queryset based on HTTP request parameters.
 
