@@ -43,29 +43,50 @@ class CompanyIndex(ListView):
 
         ctx = super().get_context_data(**kwargs)
 
-        url = self.request.path
+        # Provide custom context data to the template,
+        # based on the URL we use to access this page
 
-        print(url)
-        print(reverse('supplier-index'))
-        print(reverse('manufacturer-index'))
-        print(reverse('customer-index'))
+        lookup = {
+            reverse('supplier-index'): {
+                'title': _('Suppliers'),
+                'button_text': _('New Supplier'),
+                'filters': {'is_supplier': 'true'},
+                'create_url': reverse('supplier-create'),
+            },
+            reverse('manufacturer-index'): {
+                'title': _('Manufacturers'),
+                'button_text': _('New Manufacturer'),
+                'filters': {'is_manufacturer': 'true'},
+                'create_url': reverse('manufacturer-create'),
+            },
+            reverse('customer-index'): {
+                'title': _('Customers'),
+                'button_text': _('New Customer'),
+                'filters': {'is_customer': 'true'},
+                'create_url': reverse('customer-create'),
+            }
+        }
 
-        if url == reverse('supplier-index'):
-            ctx["title"] = _("Suppliers")
-            ctx['new_button_text'] = _("New Supplier")
-            ctx["filters"] = {"is_supplier": "true"}
-        elif url == reverse('manufacturer-index'):
-            ctx["title"] = _("Manufacturers")
-            ctx['new_button_text'] = _("New Manufacturer")
-            ctx["filters"] = {"is_manufacturer": "true"}
-        elif url == reverse('customer-index'):
-            ctx["title"] = _("Customers")
-            ctx['new_button_text'] = _("New Customer")
-            ctx["filters"] = {"is_customer": "true"}
-        else:
-            ctx["title"] = _("Companies")
-            ctx["new_button_text"] = _("New Company")
-            ctx["filters"] = {}
+        default = {
+            'title': _('Companies'),
+            'button_text': _('New Company'),
+            'filters': {},
+            'create_url': reverse('company-create'),
+        }
+
+        context = None
+
+        for item in lookup:
+            print(self.request.path, item)
+            if self.request.path == item:
+                context = lookup[item]
+                break
+        
+        if context is None:
+            context = default
+
+        for key,value in context.items():
+            ctx[key] = value
 
         return ctx
 
@@ -156,7 +177,44 @@ class CompanyCreate(AjaxCreateView):
     context_object_name = 'company'
     form_class = EditCompanyForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = _("Create new Company")
+
+    def get_form_title(self):
+
+        url = self.request.path
+
+        if url == reverse('supplier-create'):
+            return _("Create new Supplier")
+        
+        if url == reverse('manufacturer-create'):
+            return _('Create new Manufacturer')
+
+        if url == reverse('customer-create'):
+            return _('Create new Customer')
+
+        return _('Create new Company')
+
+    def get_initial(self):
+        """ Initial values for the form data """
+        initials = super().get_initial().copy()
+
+        url = self.request.path
+
+        if url == reverse('supplier-create'):
+            initials['is_supplier'] = True
+            initials['is_customer'] = False
+            initials['is_manufacturer'] = False
+        
+        elif url == reverse('manufacturer-create'):
+            initials['is_manufacturer'] = True
+            initials['is_supplier'] = True
+            initials['is_customer'] = False
+
+        elif url == reverse('customer-create'):
+            initials['is_customer'] = True
+            initials['is_manufacturer'] = False
+            initials['is_supplier'] = False
+
+        return initials
 
     def get_data(self):
         return {

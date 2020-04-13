@@ -115,8 +115,11 @@ class AjaxMixin(object):
     # (this can be overridden by a child class)
     ajax_template_name = 'modal_form.html'
 
-    ajax_form_action = ''
     ajax_form_title = ''
+
+    def get_form_title(self):
+        """ Default implementation - return the ajax_form_title variable """
+        return self.ajax_form_title
 
     def get_param(self, name, method='GET'):
         """ Get a request query parameter value from URL e.g. ?part=3
@@ -169,7 +172,7 @@ class AjaxMixin(object):
         else:
             context['form'] = None
 
-        data['title'] = self.ajax_form_title
+        data['title'] = self.get_form_title()
 
         data['html_form'] = render_to_string(
             self.ajax_template_name,

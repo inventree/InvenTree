@@ -14,7 +14,7 @@ InvenTree | {% trans "Supplier List" %}
 
 <div id='button-toolbar'>
     <div class='btn-group'>
-        <button type='button' class="btn btn-success" id='new-company'>{{ new_button_text }}</button>
+        <button type='button' class="btn btn-success" id='new-company'>{{ button_text }}</button>
     </div>
 </div>
 
@@ -26,11 +26,9 @@ InvenTree | {% trans "Supplier List" %}
 {% block js_ready %}
 {{ block.super }}
     $('#new-company').click(function () {
-        launchModalForm(
-                        "{% url 'company-create' %}",
-                        {
-                            follow: true
-                        });
+        launchModalForm("{{ create_url }}", {
+            follow: true
+        });
     });
 
     loadCompanyTable("#company-table", "{% url 'api-company-list' %}",
