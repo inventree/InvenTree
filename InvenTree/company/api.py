@@ -115,7 +115,8 @@ class SupplierPartList(generics.ListCreateAPIView):
 
     filter_fields = [
         'part',
-        'supplier'
+        'supplier',
+        'manufacturer',
     ]
 
     search_fields = [
