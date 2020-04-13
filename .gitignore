@@ -32,6 +32,7 @@ var/
 local_settings.py
 *.sqlite3
 *.backup
+*.old
 
 # Sphinx files
 docs/_build

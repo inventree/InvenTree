@@ -230,7 +230,6 @@ def associate_manufacturers(apps, schema_editor):
     print("against possible companies.")
     print("This process requires user input.")
     print("")
-    print("To cancel this mapping process, press Ctrl-C in the terminal.")
     print("Note: This process MUST be completed to migrate the database.")
     print("---------------------------------------")
     print("")
