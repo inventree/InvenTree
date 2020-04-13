@@ -29,6 +29,9 @@ company_detail_urls = [
 
 company_urls = [
 
+    url(r'new/supplier/', views.CompanyCreate.as_view(), name='supplier-create'),
+    url(r'new/manufacturer/', views.CompanyCreate.as_view(), name='manufacturer-create'),
+    url(r'new/customer/', views.CompanyCreate.as_view(), name='customer-create'),
     url(r'new/?', views.CompanyCreate.as_view(), name='company-create'),
 
     url(r'^(?P<pk>\d+)/', include(company_detail_urls)),
