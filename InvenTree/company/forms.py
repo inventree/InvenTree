@@ -53,14 +53,12 @@ class EditSupplierPartForm(HelperForm):
             'SKU',
             'description',
             'manufacturer',
-            'manufacturer_name',
             'MPN',
             'link',
             'note',
             'base_cost',
             'multiple',
             'packaging',
-            # 'lead_time'
         ]
 
 

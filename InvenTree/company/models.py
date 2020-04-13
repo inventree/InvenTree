@@ -293,8 +293,6 @@ class SupplierPart(models.Model):
         null=True, blank=True
     )
 
-    manufacturer_name = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer'))
-
     MPN = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer part number'))
 
     link = InvenTreeURLField(blank=True, help_text=_('URL for external supplier part link'))
