@@ -83,5 +83,5 @@ class APITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_barcode(self):
-
-        url = reverse('api-barcode-view')
+        # TODO - Complete this
+        pass
