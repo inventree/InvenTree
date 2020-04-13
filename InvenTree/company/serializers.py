@@ -49,9 +49,10 @@ class CompanySerializer(InvenTreeModelSerializer):
             'contact',
             'link',
             'image',
-            'notes',
             'is_customer',
+            'is_manufacturer',
             'is_supplier',
+            'notes',
             'part_count'
         ]
 

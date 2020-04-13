@@ -112,7 +112,7 @@ class Company(models.Model):
 
     is_supplier = models.BooleanField(default=True, help_text=_('Do you purchase items from this company?'))
 
-    is_manufacturer = models.BooleanField(default=True, help_text=_('Does this company manufacture parts?'))
+    is_manufacturer = models.BooleanField(default=False, help_text=_('Does this company manufacture parts?'))
 
     def __str__(self):
         """ Get string representation of a Company """
