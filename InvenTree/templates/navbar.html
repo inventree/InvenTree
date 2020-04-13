@@ -13,9 +13,15 @@
       <li class='nav navbar-nav'>
         <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-shopping-cart icon-header'></span>{% trans "Buy" %}</a>
         <ul class='dropdown-menu'>
-          <li><a href="{% url 'company-index' %}"><span class='fas fa-building icon-header'></span>{% trans "Suppliers" %}</a></li>
-          <li><a href="{% url 'company-index' %}"><span class='fas fa-industry icon-header'></span>{% trans "Manufacturers" %}</a></li>
+          <li><a href="{% url 'supplier-index' %}"><span class='fas fa-building icon-header'></span>{% trans "Suppliers" %}</a></li>
+          <li><a href="{% url 'manufacturer-index' %}"><span class='fas fa-industry icon-header'></span>{% trans "Manufacturers" %}</a></li>
           <li><a href="{% url 'po-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
+        </ul>
+      </li>
+      <li class='nav navbar-nav'>
+        <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-truck icon-header'></span>{% trans "Sell" %}</a>
+        <ul class='dropdown-menu'>
+          <li><a href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
         </ul>
       </li>
     </ul>

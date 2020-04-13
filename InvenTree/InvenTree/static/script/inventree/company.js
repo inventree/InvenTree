@@ -40,7 +40,7 @@ function loadCompanyTable(table, url, options={}) {
                     var html = imageHoverIcon(row.image) + renderLink(value, row.url);
 
                     if (row.is_customer) {
-                        html += `<span title='Customer' class='fas fa-user label-right'></span>`;
+                        html += `<span title='Customer' class='fas fa-user-tie label-right'></span>`;
                     }
                     
                     if (row.is_manufacturer) {

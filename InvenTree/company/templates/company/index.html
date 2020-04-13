@@ -9,12 +9,12 @@ InvenTree | {% trans "Supplier List" %}
 
 {% block content %}
 
-<h3>{% trans "Supplier List" %}</h3>
+<h3>{{ title }}</h3>
 <hr>
 
 <div id='button-toolbar'>
     <div class='btn-group'>
-        <button type='button' class="btn btn-success" id='new-company' title='Add new supplier'>{% trans "New Supplier" %}</button>
+        <button type='button' class="btn btn-success" id='new-company'>{{ new_button_text }}</button>
     </div>
 </div>
 
@@ -35,6 +35,9 @@ InvenTree | {% trans "Supplier List" %}
 
     loadCompanyTable("#company-table", "{% url 'api-company-list' %}",
         {
+            params: {
+                {% for key,value in filters.items %}{{ key }}: "{{ value }}",{% endfor %}
+            }
         }
     );
 

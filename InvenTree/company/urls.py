@@ -33,10 +33,12 @@ company_urls = [
 
     url(r'^(?P<pk>\d+)/', include(company_detail_urls)),
 
-    url(r'', views.CompanyIndex.as_view(), name='company-index'),
+    url(r'suppliers/', views.CompanyIndex.as_view(), name='supplier-index'),
+    url(r'manufacturers/', views.CompanyIndex.as_view(), name='manufacturer-index'),
+    url(r'customers/', views.CompanyIndex.as_view(), name='customer-index'),
 
     # Redirect any other patterns to the 'company' index which displays all companies
-    url(r'^.*$', RedirectView.as_view(url='', permanent=False), name='company-index'),
+    url(r'^.*$', views.CompanyIndex.as_view(), name='company-index'),
 ]
 
 price_break_urls = [
