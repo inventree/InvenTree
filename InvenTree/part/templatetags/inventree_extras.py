@@ -70,7 +70,7 @@ def inventree_commit_date(*args, **kwargs):
 @register.simple_tag()
 def inventree_github_url(*args, **kwargs):
     """ Return URL for InvenTree github site """
-    return "https://github.com/InvenTree"
+    return "https://github.com/InvenTree/InvenTree/"
 
 
 @register.simple_tag()
