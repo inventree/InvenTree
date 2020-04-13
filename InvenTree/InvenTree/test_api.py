@@ -36,8 +36,12 @@ class APITests(APITestCase):
 
         response = self.client.get(url, format='json')
 
-        print(response)
-        print(dir(response))
+        data = response.json()
+        self.assertIn('server', data)
+        self.assertIn('version', data)
+        self.assertIn('instance', data)
+
+        self.assertEquals('InvenTree', data['server'])
 
     def test_get_token_fail(self):
         """ Ensure that an invalid user cannot get a token """
