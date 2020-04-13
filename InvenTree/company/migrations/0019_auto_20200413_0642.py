@@ -21,6 +21,12 @@ def reverse_association(apps, schema_editor):
     into the 'manufacturer_name' field.
     """
 
+    # Exit if there are no SupplierPart objects
+    # This crucial otherwise the unit test suite fails!
+    if SupplierPart.objects.count() == 0:
+        print("No SupplierPart objects - skipping")
+        return
+
     print("Reversing migration for manufacturer association")
 
     try:
@@ -48,6 +54,12 @@ def associate_manufacturers(apps, schema_editor):
 
     It uses fuzzy pattern matching to help the user out as much as possible.
     """
+
+    # Exit if there are no SupplierPart objects
+    # This crucial otherwise the unit test suite fails!
+    if SupplierPart.objects.count() == 0:
+        print("No SupplierPart objects - skipping")
+        return
 
     # Link a 'manufacturer_name' to a 'Company'
     links = {}
