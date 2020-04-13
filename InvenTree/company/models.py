@@ -13,7 +13,7 @@ from decimal import Decimal
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Q
 
 from django.apps import apps
 from django.urls import reverse
@@ -140,26 +140,44 @@ class Company(models.Model):
             return getBlankThumbnail()
             
     @property
-    def part_count(self):
+    def manufactured_part_count(self):
+        """ The number of parts manufactured by this company """
+        return self.manufactured_parts.count()
+
+    @property
+    def has_manufactured_parts(self):
+        return self.manufactured_part_count > 0
+
+    @property
+    def supplied_part_count(self):
         """ The number of parts supplied by this company """
+        return self.supplied_parts.count()
+
+    @property
+    def has_supplied_parts(self):
+        """ Return True if this company supplies any parts """
+        return self.supplied_part_count > 0
+
+    @property
+    def parts(self):
+        """ Return SupplierPart objects which are supplied or manufactured by this company """
+        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer=self.id))
+
+    @property
+    def part_count(self):
+        """ The number of parts manufactured (or supplied) by this Company """
         return self.parts.count()
 
     @property
-    def has_parts(self):
-        """ Return True if this company supplies any parts """
-        return self.part_count > 0
-
-    @property
     def stock_items(self):
-        """ Return a list of all stock items supplied by this company """
+        """ Return a list of all stock items supplied or manufactured by this company """
         stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(supplier_part__supplier=self.id).all()
+        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer=self.id)).all()
 
     @property
     def stock_count(self):
-        """ Return the number of stock items supplied by this company """
-        stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(supplier_part__supplier=self.id).count()
+        """ Return the number of stock items supplied or manufactured by this company """
+        return self.stock_items.count()
 
     def outstanding_purchase_orders(self):
         """ Return purchase orders which are 'outstanding' """
@@ -255,7 +273,7 @@ class SupplierPart(models.Model):
                              )
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
-                                 related_name='parts',
+                                 related_name='supplied_parts',
                                  limit_choices_to={'is_supplier': True},
                                  help_text=_('Select supplier'),
                                  )

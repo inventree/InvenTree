@@ -19,8 +19,9 @@
     loadStockTable($('#stock-table'), {
         url: "{% url 'api-stock-list' %}",
         params: {
-            supplier: {{ company.id }},
+            company: {{ company.id }},
             part_detail: true,
+            supplier_detail: true,
             location_detail: true,
         },
         buttons: [

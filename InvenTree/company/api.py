@@ -81,12 +81,19 @@ class SupplierPartList(generics.ListCreateAPIView):
 
     queryset = SupplierPart.objects.all().prefetch_related(
         'part',
-        'part__category',
-        'part__stock_items',
-        'part__bom_items',
-        'part__builds',
         'supplier',
-        'pricebreaks')
+        'manufacturer'
+    )
+
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+
+        # Filter by EITHER manufacturer or supplier
+        company = self.request.query_params.get('company', None)
+
+        if company is not None:
+            queryset = queryset.filter(Q(manufacturer=company) | Q(supplier=company))
 
     def get_serializer(self, *args, **kwargs):
 
