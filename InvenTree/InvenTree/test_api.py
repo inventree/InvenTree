@@ -27,6 +27,18 @@ class APITests(APITestCase):
         User = get_user_model()
         User.objects.create_user(self.username, 'user@email.com', self.password)
 
+    def test_info_view(self):
+        """
+        Test that we can read the 'info-view' endpoint.
+        """
+
+        url = reverse('api-inventree-info')
+
+        response = self.client.get(url, format='json')
+
+        print(response)
+        print(dir(response))
+
     def test_get_token_fail(self):
         """ Ensure that an invalid user cannot get a token """
 
@@ -65,3 +77,7 @@ class APITests(APITestCase):
         response = self.client.get(part_url, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_barcode(self):
+
+        url = reverse('api-barcode-view')

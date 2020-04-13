@@ -35,7 +35,8 @@ from rest_framework.documentation import include_docs_urls
 
 from .views import IndexView, SearchView, DatabaseStatsView
 from .views import SettingsView, EditUserView, SetPasswordView
-from .views import InfoView
+
+from .api import InfoView, BarcodeScanView
 
 from users.urls import user_urls
 
@@ -53,8 +54,11 @@ apipatterns = [
     # User URLs
     url(r'^user/', include(user_urls)),
 
+    # Barcode scanning endpoint
+    url(r'^barcode/', BarcodeScanView.as_view(), name='api-barcode-scan'),
+
     # InvenTree information endpoint
-    url(r'^$', InfoView.as_view(), name='inventree-info'),
+    url(r'^$', InfoView.as_view(), name='api-inventree-info'),
 ]
 
 settings_urls = [
