@@ -26,8 +26,9 @@ class EditCompanyForm(HelperForm):
             'phone',
             'email',
             'contact',
-            'is_customer',
             'is_supplier',
+            'is_manufacturer',
+            'is_customer',
         ]
 
 
@@ -58,7 +59,6 @@ class EditSupplierPartForm(HelperForm):
             'base_cost',
             'multiple',
             'packaging',
-            # 'lead_time'
         ]
 
 

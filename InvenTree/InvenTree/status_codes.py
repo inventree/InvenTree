@@ -15,8 +15,6 @@ class StatusCode:
         Render the value as a label.
         """
 
-        print("Rendering:", key, cls.options)
-
         # If the key cannot be found, pass it back
         if key not in cls.options.keys():
             return key

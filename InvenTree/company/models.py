@@ -13,7 +13,7 @@ from decimal import Decimal
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Q
 
 from django.apps import apps
 from django.urls import reverse
@@ -23,6 +23,7 @@ from markdownx.models import MarkdownxField
 from stdimage.models import StdImageField
 
 from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
+from InvenTree.helpers import normalize
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from InvenTree.status_codes import OrderStatus
 from common.models import Currency
@@ -56,7 +57,12 @@ def rename_company_image(instance, filename):
 
 class Company(models.Model):
     """ A Company object represents an external company.
-    It may be a supplier or a customer (or both).
+    It may be a supplier or a customer or a manufacturer (or a combination)
+
+    - A supplier is a company from which parts can be purchased
+    - A customer is a company to which parts can be sold
+    - A manufacturer is a company which manufactures a raw good (they may or may not be a "supplier" also)
+
 
     Attributes:
         name: Brief name of the company
@@ -70,6 +76,7 @@ class Company(models.Model):
         notes: Extra notes about the company
         is_customer: boolean value, is this company a customer
         is_supplier: boolean value, is this company a supplier
+        is_manufacturer: boolean value, is this company a manufacturer
     """
 
     name = models.CharField(max_length=100, blank=False, unique=True,
@@ -106,6 +113,8 @@ class Company(models.Model):
 
     is_supplier = models.BooleanField(default=True, help_text=_('Do you purchase items from this company?'))
 
+    is_manufacturer = models.BooleanField(default=False, help_text=_('Does this company manufacture parts?'))
+
     def __str__(self):
         """ Get string representation of a Company """
         return "{n} - {d}".format(n=self.name, d=self.description)
@@ -131,26 +140,48 @@ class Company(models.Model):
             return getBlankThumbnail()
             
     @property
-    def part_count(self):
+    def manufactured_part_count(self):
+        """ The number of parts manufactured by this company """
+        return self.manufactured_parts.count()
+
+    @property
+    def has_manufactured_parts(self):
+        return self.manufactured_part_count > 0
+
+    @property
+    def supplied_part_count(self):
         """ The number of parts supplied by this company """
+        return self.supplied_parts.count()
+
+    @property
+    def has_supplied_parts(self):
+        """ Return True if this company supplies any parts """
+        return self.supplied_part_count > 0
+
+    @property
+    def parts(self):
+        """ Return SupplierPart objects which are supplied or manufactured by this company """
+        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer=self.id))
+
+    @property
+    def part_count(self):
+        """ The number of parts manufactured (or supplied) by this Company """
         return self.parts.count()
 
     @property
     def has_parts(self):
-        """ Return True if this company supplies any parts """
         return self.part_count > 0
 
     @property
     def stock_items(self):
-        """ Return a list of all stock items supplied by this company """
+        """ Return a list of all stock items supplied or manufactured by this company """
         stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(supplier_part__supplier=self.id).all()
+        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer=self.id)).all()
 
     @property
     def stock_count(self):
-        """ Return the number of stock items supplied by this company """
-        stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(supplier_part__supplier=self.id).count()
+        """ Return the number of stock items supplied or manufactured by this company """
+        return self.stock_items.count()
 
     def outstanding_purchase_orders(self):
         """ Return purchase orders which are 'outstanding' """
@@ -216,7 +247,7 @@ class SupplierPart(models.Model):
         part: Link to the master Part
         supplier: Company that supplies this SupplierPart object
         SKU: Stock keeping unit (supplier part number)
-        manufacturer: Manufacturer name
+        manufacturer: Company that manufactures the SupplierPart (leave blank if it is the sample as the Supplier!)
         MPN: Manufacture part number
         link: Link to external website for this part
         description: Descriptive notes field
@@ -246,14 +277,21 @@ class SupplierPart(models.Model):
                              )
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
-                                 related_name='parts',
+                                 related_name='supplied_parts',
                                  limit_choices_to={'is_supplier': True},
                                  help_text=_('Select supplier'),
                                  )
 
     SKU = models.CharField(max_length=100, help_text=_('Supplier stock keeping unit'))
 
-    manufacturer = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer'))
+    manufacturer = models.ForeignKey(
+        Company,
+        on_delete=models.SET_NULL,
+        related_name='manufactured_parts',
+        limit_choices_to={'is_manufacturer': True},
+        help_text=_('Select manufacturer'),
+        null=True, blank=True
+    )
 
     MPN = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer part number'))
 
@@ -281,7 +319,7 @@ class SupplierPart(models.Model):
         items = []
 
         if self.manufacturer:
-            items.append(self.manufacturer)
+            items.append(self.manufacturer.name)
         if self.MPN:
             items.append(self.MPN)
 
@@ -337,7 +375,7 @@ class SupplierPart(models.Model):
 
         if pb_found:
             cost = pb_cost * quantity
-            return cost + self.base_cost
+            return normalize(cost + self.base_cost)
         else:
             return None
 
