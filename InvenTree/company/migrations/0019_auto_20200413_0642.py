@@ -29,17 +29,41 @@ def reverse_association(apps, schema_editor):
 
     print("Reversing migration for manufacturer association")
 
-    try:
-        for part in SupplierPart.objects.all():
-            if part.manufacturer is not None:
-                part.manufacturer_name = part.manufacturer.name
-                
-                part.save()
+    for part in SupplierPart.objects.all():
 
-    except (OperationalError, ProgrammingError):
-        # An exception might be called if the database is empty
-        pass
+        print("Checking part [{pk}]:".format(pk=part.pk))
 
+        cursor = connection.cursor()
+
+        # Grab the manufacturer ID from the part
+        response = cursor.execute('SELECT manufacturer_id FROM part_supplierpart WHERE id={ID};'.format(ID=part.id))
+
+        manufacturer_id = None
+
+        row = response.fetchone()
+
+        if len(row) > 0:
+            try:
+                manufacturer_id = int(row[0])
+            except (TypeError, ValueError):
+                pass
+
+        if manufacturer_id is None:
+            print(" - Manufacturer ID not set: Skipping")
+            continue
+
+        print(" - Manufacturer ID: [{id}]".format(id=manufacturer_id))
+
+        # Now extract the "name" for the manufacturer
+        response = cursor.execute('SELECT name from company_company where id={ID};'.format(ID=manufacturer_id))
+        
+        row = response.fetchone()
+
+        name = row[0]
+
+        print(" - Manufacturer name: '{name}'".format(name=name))
+
+        response = cursor.execute("UPDATE part_supplierpart SET manufacturer_name='{name}' WHERE id={ID};".format(name=name, ID=part.id))
 
 def associate_manufacturers(apps, schema_editor):
     """
