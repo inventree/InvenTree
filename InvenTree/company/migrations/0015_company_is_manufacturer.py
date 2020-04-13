@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='company',
             name='is_manufacturer',
-            field=models.BooleanField(default=True, help_text='Does this company manufacture parts?'),
+            field=models.BooleanField(default=False, help_text='Does this company manufacture parts?'),
         ),
     ]

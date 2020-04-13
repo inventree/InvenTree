@@ -265,7 +265,7 @@ class SupplierPart(models.Model):
         related_name='manufactured_parts',
         limit_choices_to={'is_manufacturer': True},
         help_text=_('Select manufacturer'),
-        null=True, blank=True,
+        null=True, blank=True
     )
 
     manufacturer_name = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer'))
@@ -296,7 +296,7 @@ class SupplierPart(models.Model):
         items = []
 
         if self.manufacturer:
-            items.append(self.manufacturer)
+            items.append(self.manufacturer.name)
         if self.MPN:
             items.append(self.MPN)
 
