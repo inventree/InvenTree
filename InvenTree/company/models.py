@@ -224,7 +224,7 @@ class SupplierPart(models.Model):
         part: Link to the master Part
         supplier: Company that supplies this SupplierPart object
         SKU: Stock keeping unit (supplier part number)
-        manufacturer: Manufacturer name
+        manufacturer: Company that manufactures the SupplierPart (leave blank if it is the sample as the Supplier!)
         MPN: Manufacture part number
         link: Link to external website for this part
         description: Descriptive notes field
@@ -261,7 +261,14 @@ class SupplierPart(models.Model):
 
     SKU = models.CharField(max_length=100, help_text=_('Supplier stock keeping unit'))
 
-    manufacturer = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer'))
+    manufacturer = models.ForeignKey(Company, on_delete=models.SET_NULL,
+        related_name='manufactured_parts',
+        limit_choices_to={'is_manufacturer': True},
+        help_text=_('Select manufacturer'),
+        null=True, blank=True,
+    )
+
+    manufacturer_name = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer'))
 
     MPN = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer part number'))
 
