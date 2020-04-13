@@ -228,8 +228,10 @@ function loadStockTable(table, options) {
                         name += " | ";
                         name += row.part__revision;
                     }
+
+                    var url = `/supplier-part/${row.supplier_part}/`;
                     
-                    return imageHoverIcon(row.part__thumbnail) + renderLink(name, '/part/' + row.part + '/stock/');
+                    return imageHoverIcon(row.part__thumbnail) + renderLink(name, url);
                 }
             },
             {
