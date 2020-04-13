@@ -17,6 +17,7 @@ function defaultFilters() {
         stock: "cascade=1",
         build: "",
         parts: "cascade=1",
+        company: "",
     };
 }
 
