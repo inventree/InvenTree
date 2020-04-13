@@ -53,6 +53,8 @@
             return {
                 supplier: {{ company.id }},
                 part_detail: true,
+                supplier_detail: true,
+                manufacturer_detail: true,
             }
         },
         columns: [
@@ -94,6 +96,16 @@
                 sortable: true,
                 field: 'manufacturer',
                 title: '{% trans "Manufacturer" %}',
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        var name = row.manufacturer_detail.name;
+                        var html = imageHoverIcon(row.manufacturer_detail.image) + renderLink(name, '/company/' + value + '/');
+
+                        return html;
+                    } else {
+                        return "-";
+                    }
+                }
             },
             {
                 sortable: true,
