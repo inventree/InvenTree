@@ -1268,8 +1268,6 @@ class PartExport(AjaxView):
         # Filter by part category
         cat_id = request.GET.get('category', None)
 
-        print('cat_id:', cat_id)
-
         part_list = None
 
         if cat_id is not None:

@@ -169,6 +169,10 @@ class Company(models.Model):
         return self.parts.count()
 
     @property
+    def has_parts(self):
+        return self.part_count > 0
+
+    @property
     def stock_items(self):
         """ Return a list of all stock items supplied or manufactured by this company """
         stock = apps.get_model('stock', 'StockItem')
