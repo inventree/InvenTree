@@ -69,14 +69,6 @@ function loadCompanyTable(table, url, options={}) {
                     return '';
                 }
             },
-            {
-                field: 'part_count',
-                title: 'Parts',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url + 'parts/');
-                }
-            },
         ],
     });
 }

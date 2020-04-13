@@ -56,13 +56,13 @@ class CompanySimpleTest(TestCase):
         zerg = Company.objects.get(pk=3)
         
         self.assertTrue(acme.has_parts)
-        self.assertEqual(acme.part_count, 4)
+        self.assertEqual(acme.supplied_part_count, 4)
 
         self.assertTrue(appel.has_parts)
-        self.assertEqual(appel.part_count, 2)
+        self.assertEqual(appel.supplied_part_count, 2)
 
         self.assertTrue(zerg.has_parts)
-        self.assertEqual(zerg.part_count, 1)
+        self.assertEqual(zerg.supplied_part_count, 1)
 
     def test_price_breaks(self):
         
