@@ -1,15 +1,15 @@
 {% extends "collapse.html" %}
+
+{% load i18n %}
+
 {% block collapse_title %}
 <span class='fas fa-star icon-header'></span>
-Starred Parts<span class='badge'>{{ starred | length }}</span>
-{% endblock %}
-
-{% block collapse_heading %}
-You have {{ starred | length }} favourite parts
+{% trans "Starred Parts" %}<span class='badge' id='starred-parts-count'>0</span>
 {% endblock %}
 
 {% block collapse_content %}
 
-{% include "required_part_table.html" with parts=starred table_id="starred-parts-table" %}
+<table class='table tabe-striped table-condensed' id='starred-parts-table'>
+</table>
 
 {% endblock %}

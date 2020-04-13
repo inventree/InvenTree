@@ -301,7 +301,9 @@ class PartList(generics.ListCreateAPIView):
         return Response(data)
 
     def get_queryset(self):
-
+        """
+        Implement custom filtering for the Part list API
+        """
 
         # Start with all objects
         parts_list = Part.objects.all()
