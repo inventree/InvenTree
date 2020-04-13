@@ -273,10 +273,6 @@ class SupplierPartCreate(AjaxCreateView):
         Hide some fields if they are not appropriate in context
         """
         form = super(AjaxCreateView, self).get_form()
-        
-        if form.initial.get('supplier', None):
-            # Hide the supplier field
-            form.fields['supplier'].widget = HiddenInput()
 
         if form.initial.get('part', None):
             # Hide the part field
@@ -292,20 +288,27 @@ class SupplierPartCreate(AjaxCreateView):
         """
         initials = super(SupplierPartCreate, self).get_initial().copy()
 
+        manufacturer_id = self.get_param('manufacturer')
         supplier_id = self.get_param('supplier')
         part_id = self.get_param('part')
 
         if supplier_id:
             try:
                 initials['supplier'] = Company.objects.get(pk=supplier_id)
-            except Company.DoesNotExist:
-                initials['supplier'] = None
+            except (ValueError, Company.DoesNotExist):
+                pass
+
+        if manufacturer_id:
+            try:
+                initials['manufacturer'] = Company.objects.get(pk=manufacturer_id)
+            except (ValueError, Company.DoesNotExist):
+                pass
         
         if part_id:
             try:
                 initials['part'] = Part.objects.get(pk=part_id)
-            except Part.DoesNotExist:
-                initials['part'] = None
+            except (ValueError, Part.DoesNotExist):
+                pass
         
         return initials
 

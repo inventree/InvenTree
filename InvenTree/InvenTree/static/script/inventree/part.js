@@ -87,7 +87,7 @@ function loadPartTable(table, url, options={}) {
      *      buttons: If provided, link buttons to selection status of this table
      */
 
-    var params = options.parms || {};
+    var params = options.params || {};
 
     var filters = loadTableFilters("parts");
 
@@ -145,6 +145,10 @@ function loadPartTable(table, url, options={}) {
             
             if (row.assembly) {
                 display += `<span class='fas fa-tools label-right' title='Assembled part'></span>`;
+            }
+
+            if (row.starred) {
+                display += `<span class='fas fa-star label-right' title='Starred part'></span>`;
             }
 
             /*

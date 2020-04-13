@@ -153,6 +153,7 @@ class PartList(generics.ListCreateAPIView):
     The Part object list can be filtered by:
         - category: Filter by PartCategory reference
         - cascade: If true, include parts from sub-categories
+        - starred: Is the part "starred" by the current user?
         - is_template: Is the part a template part?
         - variant_of: Filter by variant_of Part reference
         - assembly: Filter by assembly field
@@ -257,12 +258,18 @@ class PartList(generics.ListCreateAPIView):
                 # Filter items which have an 'in_stock' level higher than 'minimum_stock'
                 data = data.filter(Q(in_stock__gte=F('minimum_stock')))
 
+        # Get a list of the parts that this user has starred
+        starred_parts = [star.part.pk for star in self.request.user.starred_parts.all()]
+
         # Reduce the number of lookups we need to do for the part categories
         categories = {}
 
         for item in data:
 
             if item['image']:
+                # Is this part 'starred' for the current user?
+                item['starred'] = item['pk'] in starred_parts
+
                 img = item['image']
 
                 # Use the 'thumbnail' image here instead of the full-size image
@@ -294,32 +301,53 @@ class PartList(generics.ListCreateAPIView):
         return Response(data)
 
     def get_queryset(self):
-
-        # Does the user wish to filter by category?
-        cat_id = self.request.query_params.get('category', None)
+        """
+        Implement custom filtering for the Part list API
+        """
 
         # Start with all objects
         parts_list = Part.objects.all()
 
-        cascade = str2bool(self.request.query_params.get('cascade', False))
+        # Filter by 'starred' parts?
+        starred = str2bool(self.request.query_params.get('starred', None))
+
+        if starred is not None:
+            starred_parts = [star.part.pk for star in self.request.user.starred_parts.all()]
+
+            if starred:
+                parts_list = parts_list.filter(pk__in=starred_parts)
+            else:
+                parts_list = parts_list.exclude(pk__in=starred_parts)
+
+        cascade = str2bool(self.request.query_params.get('cascade', None))
+        
+        # Does the user wish to filter by category?
+        cat_id = self.request.query_params.get('category', None)
 
         if cat_id is None:
-            # Top-level parts
-            if not cascade:
-                parts_list = parts_list.filter(category=None)
-
+            # No category filtering if category is not specified
+            pass
+        
         else:
-            try:
-                category = PartCategory.objects.get(pk=cat_id)
+            # Category has been specified!
+            if isNull(cat_id):
+                # A 'null' category is the top-level category
+                if cascade is False:
+                    # Do not cascade, only list parts in the top-level category
+                    parts_list = parts_list.filter(category=None)
 
-                # If '?cascade=true' then include parts which exist in sub-categories
-                if cascade:
-                    parts_list = parts_list.filter(category__in=category.getUniqueChildren())
-                # Just return parts directly in the requested category
-                else:
-                    parts_list = parts_list.filter(category=cat_id)
-            except (ValueError, PartCategory.DoesNotExist):
-                pass
+            else:
+                try:
+                    category = PartCategory.objects.get(pk=cat_id)
+
+                    # If '?cascade=true' then include parts which exist in sub-categories
+                    if cascade:
+                        parts_list = parts_list.filter(category__in=category.getUniqueChildren())
+                    # Just return parts directly in the requested category
+                    else:
+                        parts_list = parts_list.filter(category=cat_id)
+                except (ValueError, PartCategory.DoesNotExist):
+                    pass
 
         # Ensure that related models are pre-loaded to reduce DB trips
         parts_list = self.get_serializer_class().setup_eager_loading(parts_list)
