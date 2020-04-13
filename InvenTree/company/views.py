@@ -77,7 +77,6 @@ class CompanyIndex(ListView):
         context = None
 
         for item in lookup:
-            print(self.request.path, item)
             if self.request.path == item:
                 context = lookup[item]
                 break
