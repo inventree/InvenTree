@@ -129,6 +129,22 @@ function loadSupplierPartTable(table, url, options) {
             },
             {
                 sortable: true,
+                field: 'supplier',
+                title: "Supplier",
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        var name = row.supplier_detail.name;
+                        var url = `/company/${value}/`; 
+                        var html = imageHoverIcon(row.supplier_detail.image) + renderLink(name, url);
+
+                        return html;
+                    } else {
+                        return "-";
+                    }
+                },
+            },
+            {
+                sortable: true,
                 field: 'SKU',
                 title: "Supplier Part",
                 formatter: function(value, row, index, field) {
@@ -138,11 +154,12 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'manufacturer',
-                title: '"Manufacturer"',
+                title: 'Manufacturer',
                 formatter: function(value, row, index, field) {
                     if (value) {
                         var name = row.manufacturer_detail.name;
-                        var html = imageHoverIcon(row.manufacturer_detail.image) + renderLink(name, '/company/' + value + '/');
+                        var url = `/company/${value}/`;
+                        var html = imageHoverIcon(row.manufacturer_detail.image) + renderLink(name, url);
 
                         return html;
                     } else {
