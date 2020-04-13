@@ -23,6 +23,7 @@ from markdownx.models import MarkdownxField
 from stdimage.models import StdImageField
 
 from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
+from InvenTree.helpers import normalize
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from InvenTree.status_codes import OrderStatus
 from common.models import Currency
@@ -352,7 +353,7 @@ class SupplierPart(models.Model):
 
         if pb_found:
             cost = pb_cost * quantity
-            return cost + self.base_cost
+            return normalize(cost + self.base_cost)
         else:
             return None
 

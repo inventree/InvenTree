@@ -91,12 +91,10 @@ class SupplierPartList(generics.ListCreateAPIView):
     def get_serializer(self, *args, **kwargs):
 
         # Do we wish to include extra detail?
-        try:
-            part_detail = str2bool(self.request.GET.get('part_detail', None))
-        except AttributeError:
-            part_detail = None
-
-        kwargs['part_detail'] = part_detail
+        kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', None))
+        kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', None))
+        kwargs['manufacturer_detail'] = str2bool(self.request.query_params.get('manufacturer_detail', None))
+        
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
