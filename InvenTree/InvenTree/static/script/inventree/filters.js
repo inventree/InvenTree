@@ -73,8 +73,6 @@ function saveTableFilters(tableKey, filters) {
 
     var filterstring = strings.join('&');
 
-    console.log(`Saving filters for table '${tableKey}' - ${filterstring}`);
-
     inventreeSave(lookup, filterstring);
 }
 
@@ -256,11 +254,7 @@ function setupFilterList(tableKey, table, target) {
     var clear = `filter-clear-${tableKey}`;
     var make = `filter-make-${tableKey}`;
 
-    console.log(`Generating filter list: ${tableKey}`);
-
     var filters = loadTableFilters(tableKey);
-
-    console.log("Filters: " + filters.count);
 
     var element = $(target);
 
