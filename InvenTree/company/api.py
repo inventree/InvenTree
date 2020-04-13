@@ -43,9 +43,10 @@ class CompanyList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'name',
         'is_customer',
+        'is_manufacturer',
         'is_supplier',
+        'name',
     ]
 
     search_fields = [

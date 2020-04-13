@@ -35,7 +35,7 @@ company_urls = [
 
     url(r'', views.CompanyIndex.as_view(), name='company-index'),
 
-    # Redirect any other patterns
+    # Redirect any other patterns to the 'company' index which displays all companies
     url(r'^.*$', RedirectView.as_view(url='', permanent=False), name='company-index'),
 ]
 

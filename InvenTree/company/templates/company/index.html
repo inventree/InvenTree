@@ -46,7 +46,21 @@ InvenTree | {% trans "Supplier List" %}
                 title: '{% trans "Supplier" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.image) + renderLink(value, row.url);
+                    var html = imageHoverIcon(row.image) + renderLink(value, row.url);
+
+                    if (row.is_customer) {
+                        html += `<span title='Customer' class='fas fa-user label-right'></span>`;
+                    }
+                    
+                    if (row.is_manufacturer) {
+                        html += `<span title='Manufacturer' class='fas fa-industry label-right'></span>`;
+                    }
+                    
+                    if (row.is_supplier) {
+                        html += `<span title='Supplier' class='fas fa-building label-right'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {
