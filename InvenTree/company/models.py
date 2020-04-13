@@ -280,7 +280,9 @@ class SupplierPart(models.Model):
 
     SKU = models.CharField(max_length=100, help_text=_('Supplier stock keeping unit'))
 
-    manufacturer = models.ForeignKey(Company, on_delete=models.SET_NULL,
+    manufacturer = models.ForeignKey(
+        Company,
+        on_delete=models.SET_NULL,
         related_name='manufactured_parts',
         limit_choices_to={'is_manufacturer': True},
         help_text=_('Select manufacturer'),
