@@ -121,7 +121,7 @@ class SupplierPartList(generics.ListCreateAPIView):
     search_fields = [
         'SKU',
         'supplier__name',
-        'manufacturer',
+        'manufacturer_name',
         'description',
         'MPN',
     ]

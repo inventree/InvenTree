@@ -90,6 +90,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'supplier_logo',
             'SKU',
             'manufacturer',
+            'manufacturer_name',
             'description',
             'MPN',
             'link',
