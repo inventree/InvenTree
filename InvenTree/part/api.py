@@ -258,12 +258,18 @@ class PartList(generics.ListCreateAPIView):
                 # Filter items which have an 'in_stock' level higher than 'minimum_stock'
                 data = data.filter(Q(in_stock__gte=F('minimum_stock')))
 
+        # Get a list of the parts that this user has starred
+        starred_parts = [star.part.pk for star in self.request.user.starred_parts.all()]
+
         # Reduce the number of lookups we need to do for the part categories
         categories = {}
 
         for item in data:
 
             if item['image']:
+                # Is this part 'starred' for the current user?
+                item['starred'] = item['pk'] in starred_parts
+
                 img = item['image']
 
                 # Use the 'thumbnail' image here instead of the full-size image
