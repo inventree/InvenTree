@@ -3,7 +3,7 @@
 import os
 from rapidfuzz import fuzz
 
-from django.db import migrations
+from django.db import migrations, connection
 from company.models import Company, SupplierPart
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -54,6 +54,29 @@ def associate_manufacturers(apps, schema_editor):
 
     It uses fuzzy pattern matching to help the user out as much as possible.
     """
+    
+    def get_manufacturer_name(part_id):
+        """
+        THIS IS CRITICAL!
+
+        Once the pythonic representation of the model has removed the 'manufacturer_name' field,
+        it is NOT ACCESSIBLE by calling SupplierPart.manufacturer_name.
+
+        However, as long as the migrations are applied in order, then the table DOES have a field called 'manufacturer_name'.
+
+        So, we just need to request it using dirty SQL.
+        """
+
+        query = "SELECT manufacturer_name from part_supplierpart where id={ID};".format(ID=part_id)
+
+        cursor = connection.cursor()
+        response = cursor.execute(query)
+        row = response.fetchone()
+
+        if len(row) > 0:
+            return row[0]
+        return ''
+
 
     # Exit if there are no SupplierPart objects
     # This crucial otherwise the unit test suite fails!
@@ -140,7 +163,7 @@ def associate_manufacturers(apps, schema_editor):
 
     def map_part_to_manufacturer(part, idx, total):
 
-        name = str(part.manufacturer_name)
+        name = get_manufacturer_name(part.id)
 
         # Skip empty names
         if not name or len(name) == 0:
@@ -209,6 +232,8 @@ def associate_manufacturers(apps, schema_editor):
                         print(" -> Linked '{n}' to manufacturer '{m}'".format(n=name, m=company_name))
 
                         return
+                    else:
+                        print("Please select a valid option")
 
             except ValueError:
                 # User has typed in a custom name!
