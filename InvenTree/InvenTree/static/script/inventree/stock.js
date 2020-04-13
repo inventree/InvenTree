@@ -229,7 +229,13 @@ function loadStockTable(table, options) {
                         name += row.part__revision;
                     }
 
-                    var url = `/supplier-part/${row.supplier_part}/`;
+                    var url = '';
+
+                    if (row.supplier_part) {
+                        url = `/supplier-part/${row.supplier_part}/`;
+                    } else {
+                        url = `/part/${row.part}/`;
+                    }
                     
                     return imageHoverIcon(row.part__thumbnail) + renderLink(name, url);
                 }
