@@ -37,10 +37,7 @@ $("#po-create").click(function() {
     );
 });
 
-$("#po-table").inventreeTable({
-});
-
-loadPurchaseOrderTable($("#purchase-order-table"), {
+loadPurchaseOrderTable("#purchase-order-table", {
     url: "{% url 'api-po-list' %}",
 });
 
