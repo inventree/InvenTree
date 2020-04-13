@@ -85,11 +85,10 @@ class CompanyIndex(ListView):
         if context is None:
             context = default
 
-        for key,value in context.items():
+        for key, value in context.items():
             ctx[key] = value
 
         return ctx
-
 
     def get_queryset(self):
         """ Retrieve the Company queryset based on HTTP request parameters.
