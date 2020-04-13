@@ -87,7 +87,7 @@ function loadPartTable(table, url, options={}) {
      *      buttons: If provided, link buttons to selection status of this table
      */
 
-    var params = options.parms || {};
+    var params = options.params || {};
 
     var filters = loadTableFilters("parts");
 

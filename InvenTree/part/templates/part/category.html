@@ -200,11 +200,11 @@
     {% if category %}
     $("#cat-edit").click(function () {
         launchModalForm(
-                        "{% url 'category-edit' category.id %}",
-                        {
-                            reload: true
-                        },
-                       );
+            "{% url 'category-edit' category.id %}",
+            {
+                reload: true
+            },
+        );
         return false;
     });
 
@@ -227,9 +227,9 @@
         "#part-table",
         "{% url 'api-part-list' %}",
         {
-            query: {
-                {% if category %}
-                category: {{ category.id }},
+            params: {
+                {% if category %}category: {{ category.id }},
+                {% else %}category: "null",
                 {% endif %}
             },
             buttons: ['#part-options'],
