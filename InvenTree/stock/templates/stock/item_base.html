@@ -85,7 +85,7 @@
             </tr>
             {% if item.belongs_to %}
             <tr>
-                <td></td>
+                <td><span class='fas fa-box'></span></td>
                 <td>{% trans "Belongs To" %}</td>
                 <td><a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a></td>
             </tr>
@@ -94,6 +94,13 @@
                 <td><span class='fas fa-map-marker-alt'></span></td>
                 <td>{% trans "Location" %}</td>
                 <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
+            </tr>
+            {% endif %}
+            {% if item.uid %}
+            <tr>
+                <td><span class='fas fa-fingerprint'></span></td>
+                <td>{% trans "Unique Identifier" %}</td>
+                <td>{{ item.uid }}</td>
             </tr>
             {% endif %}
             {% if item.serialized %}
