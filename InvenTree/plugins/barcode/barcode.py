@@ -8,6 +8,9 @@ class BarcodePlugin(plugin.InvenTreePlugin):
     The BarcodePlugin class is the base class for any barcode plugin.
     """
 
+    def __init__(self):
+        plugin.InvenTreePlugin.__init__(self)
+
     def validate_barcode(self, barcode_data):
         """
         Default implementation returns False
@@ -21,5 +24,19 @@ class BarcodePlugin(plugin.InvenTreePlugin):
 
         return None
 
-    def __init__(self):
-        plugin.InvenTreePlugin.__init__(self)
+    def render_part(self, part):
+        return {
+            'id': part.id,
+            'name': part.full_name,
+        }
+
+    def render_stock_location(self, loc):
+        return {
+            "id": loc.id
+        }
+
+    def render_stock_item(self, item):
+
+        return {
+            "id": item.id,
+        }

@@ -76,7 +76,8 @@ class BarcodeScanView(APIView):
                     response = plugin.decode_barcode(barcode_data)
                     
                     if type(response) is dict:
-                        response['success'] = _('Barcode successfully decoded')
+                        if 'success' not in response.keys() and 'error' not in response.keys():
+                            response['success'] = _('Barcode successfully decoded')
                     else:
                         response = {
                             'error': _('Barcode plugin returned incorrect response')
