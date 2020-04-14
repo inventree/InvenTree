@@ -5,6 +5,8 @@ Main JSON interface views
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import json
+
 from django.utils.translation import ugettext as _
 from django.http import JsonResponse
 
@@ -52,19 +54,33 @@ class BarcodeScanView(APIView):
 
     def post(self, request, *args, **kwargs):
 
-        response = None
+        response = {}
 
-        barcode_data = request.data
+        barcode_data = request.data.get('barcode', None)
 
         print("Barcode data:")
         print(barcode_data)
 
-        if type(barcode_data) is not dict:
-            response = {
-                'error': _('Barcode data could not be parsed'),
-            }
+        valid_data = False
+
+        if barcode_data is None:
+            response['error'] = _('No barcode data provided')
+
+        elif type(barcode_data) is dict:
+            valid_data = True
+
+        elif type(barcode_data) is str:
+            # Attempt to decode the barcode into a JSON object
+            try:
+                barcode_data = json.loads(barcode_data)
+                valid_data = True
+            except json.JSONDecodeError:
+                response['error'] = _('Barcode is not a JSON object')
 
         else:
+            response['error'] = _('Barcode data is unknown format')
+
+        if valid_data:
             # Look for a barcode plugin that knows how to handle the data
             for plugin_class in barcode_plugins:
 
@@ -89,7 +105,7 @@ class BarcodeScanView(APIView):
 
                     break
 
-        if response is None:
+        if 'error' not in response and 'success' not in response:
             response = {
                 'error': _('Unknown barcode format'),
             }
