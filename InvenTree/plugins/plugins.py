@@ -8,6 +8,10 @@ import pkgutil
 import plugins.barcode as barcode
 from plugins.barcode.barcode import BarcodePlugin
 
+# Action plugins
+import plugins.action as action
+from plugins.action.action import ActionPlugin
+
 
 def iter_namespace(pkg):
 
@@ -16,7 +20,7 @@ def iter_namespace(pkg):
 
 def get_modules(pkg):
     # Return all modules in a given package
-    return [importlib.import_module(name) for finder, name, ispkg in iter_namespace(barcode)]
+    return [importlib.import_module(name) for finder, name, ispkg in iter_namespace(pkg)]
 
 
 def get_classes(module):
@@ -41,7 +45,7 @@ def get_plugins(pkg, baseclass):
         # Iterate through each class in the module
         for item in get_classes(mod):
             plugin = item[1]
-            if plugin.__class__ is type(baseclass) and plugin.PLUGIN_NAME:
+            if issubclass(plugin, baseclass) and plugin.PLUGIN_NAME:
                 plugins.append(plugin)
 
     return plugins
@@ -52,6 +56,8 @@ def load_barcode_plugins():
     Return a list of all registered barcode plugins
     """
 
+    print("Loading barcode plugins")
+
     plugins = get_plugins(barcode, BarcodePlugin)
 
     if len(plugins) > 0:
@@ -59,5 +65,23 @@ def load_barcode_plugins():
 
         for bp in plugins:
             print(" - {bp}".format(bp=bp.PLUGIN_NAME))
+
+    return plugins
+
+
+def load_action_plugins():
+    """
+    Return a list of all registered action plugins
+    """
+
+    print("Loading action plugins")
+
+    plugins = get_plugins(action, ActionPlugin)
+
+    if len(plugins) > 0:
+        print("Discovered {n} action plugins:".format(n=len(plugins)))
+
+        for ap in plugins:
+            print(" - {ap}".format(ap=ap.PLUGIN_NAME))
 
     return plugins
