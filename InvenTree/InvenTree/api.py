@@ -85,6 +85,7 @@ class BarcodeScanView(APIView):
                         }
 
                     response['plugin'] = plugin.get_name()
+                    response['hash'] = plugin.hash()
 
                     break
 
