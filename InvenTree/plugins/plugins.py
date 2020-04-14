@@ -48,5 +48,8 @@ def get_plugins(pkg, baseclass):
 
 
 def load_barcode_plugins():
+    """
+    Return a list of all registered barcode plugins
+    """
 
     return get_plugins(barcode, BarcodePlugin)
