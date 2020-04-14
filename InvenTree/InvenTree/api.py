@@ -5,8 +5,6 @@ Main JSON interface views
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
-
 from django.utils.translation import ugettext as _
 from django.http import JsonResponse
 
@@ -61,49 +59,32 @@ class BarcodeScanView(APIView):
         print("Barcode data:")
         print(barcode_data)
 
-        valid_data = False
-
         if barcode_data is None:
             response['error'] = _('No barcode data provided')
 
-        elif type(barcode_data) is dict:
-            valid_data = True
+        # Look for a barcode plugin that knows how to handle the data
+        for plugin_class in barcode_plugins:
 
-        elif type(barcode_data) is str:
-            # Attempt to decode the barcode into a JSON object
-            try:
-                barcode_data = json.loads(barcode_data)
-                valid_data = True
-            except json.JSONDecodeError:
-                response['error'] = _('Barcode is not a JSON object')
+            # Instantiate the plugin with the provided plugin data
+            plugin = plugin_class(barcode_data)
 
-        else:
-            response['error'] = _('Barcode data is unknown format')
+            if plugin.validate():
+                
+                # Plugin should return a dict response
+                response = plugin.decode()
+                
+                if type(response) is dict:
+                    if 'success' not in response.keys() and 'error' not in response.keys():
+                        response['success'] = _('Barcode successfully decoded')
+                else:
+                    response = {
+                        'error': _('Barcode plugin returned incorrect response')
+                    }
 
-        if valid_data:
-            # Look for a barcode plugin that knows how to handle the data
-            for plugin_class in barcode_plugins:
+                response['plugin'] = plugin.get_name()
+                response['hash'] = plugin.hash()
 
-                # Instantiate the plugin with the provided plugin data
-                plugin = plugin_class(barcode_data)
-
-                if plugin.validate():
-                    
-                    # Plugin should return a dict response
-                    response = plugin.decode()
-                    
-                    if type(response) is dict:
-                        if 'success' not in response.keys() and 'error' not in response.keys():
-                            response['success'] = _('Barcode successfully decoded')
-                    else:
-                        response = {
-                            'error': _('Barcode plugin returned incorrect response')
-                        }
-
-                    response['plugin'] = plugin.get_name()
-                    response['hash'] = plugin.hash()
-
-                    break
+                break
 
         if 'error' not in response and 'success' not in response:
             response = {

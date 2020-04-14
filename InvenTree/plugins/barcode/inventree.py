@@ -11,6 +11,8 @@ references model objects actually exist in the database.
 
 # -*- coding: utf-8 -*-
 
+import json
+
 from . import barcode
 
 from stock.models import StockItem, StockLocation
@@ -33,6 +35,17 @@ class InvenTreeBarcodePlugin(barcode.BarcodePlugin):
         }
 
         """
+
+        # The data must either be dict or be able to dictified
+        if type(self.data) is dict:
+            pass
+        elif type(self.data) is str:
+            try:
+                self.data = json.loads(self.data)
+            except json.JSONDecodeError:
+                return False
+        else:
+            return False
 
         for key in ['tool', 'version']:
             if key not in self.data.keys():
