@@ -39,6 +39,7 @@ class StockItemSerializerBrief(InvenTreeModelSerializer):
         model = StockItem
         fields = [
             'pk',
+            'uid',
             'part',
             'part_name',
             'supplier_part',
@@ -106,6 +107,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'status',
             'status_text',
             'tracking_items',
+            'uid',
             'url',
         ]
 

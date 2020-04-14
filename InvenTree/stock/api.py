@@ -344,6 +344,7 @@ class StockList(generics.ListCreateAPIView):
 
         data = queryset.values(
             'pk',
+            'uid',
             'parent',
             'quantity',
             'serial',
@@ -540,7 +541,7 @@ class StockList(generics.ListCreateAPIView):
         'supplier_part',
         'customer',
         'belongs_to',
-        'build'
+        'build',
     ]
 
 
