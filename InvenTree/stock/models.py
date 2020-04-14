@@ -44,11 +44,11 @@ class StockLocation(InvenTreeTree):
         """ Return a JSON string for formatting a barcode for this StockLocation object """
 
         return helpers.MakeBarcode(
-            'StockLocation',
-            self.id,
-            reverse('api-location-detail', kwargs={'pk': self.id}),
+            'stocklocation',
             {
-                'name': self.name,
+                "id": self.id,
+                "name": self.name,
+                "url": reverse('api-location-detail', kwargs={'pk': self.id}),
             }
         )
 
@@ -288,12 +288,10 @@ class StockItem(MPTTModel):
         """
 
         return helpers.MakeBarcode(
-            'StockItem',
-            self.id,
-            reverse('api-stock-detail', kwargs={'pk': self.id}),
+            "stockitem",
             {
-                'part_id': self.part.id,
-                'part_name': self.part.full_name
+                "id": self.id,
+                "url": reverse('api-stock-detail', kwargs={'pk': self.id}),
             }
         )
 

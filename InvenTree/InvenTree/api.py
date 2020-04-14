@@ -5,7 +5,9 @@ Main JSON interface views
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext as _
 from django.http import JsonResponse
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,6 +15,11 @@ from .views import AjaxView
 from .version import inventreeVersion, inventreeInstanceName
 
 from plugins import plugins as inventree_plugins
+
+# Load barcode plugins
+print("INFO: Loading plugins")
+
+barcode_plugins = inventree_plugins.load_barcode_plugins()
 
 
 class InfoView(AjaxView):
@@ -45,19 +52,46 @@ class BarcodeScanView(APIView):
 
     def post(self, request, *args, **kwargs):
 
-        data = {
-            'barcode': 'Hello world',
-        }
+        response = None
 
-        plugins = inventree_plugins.load_barcode_plugins()
+        barcode_data = request.data
 
-        for plugin in plugins:
-            print("Testing plugin:", plugin.PLUGIN_NAME)
-            if plugin().validate_barcode(request.data):
-                print("success!")
+        print("Barcode data:")
+        print(barcode_data)
 
-        return Response({
-            'success': 'OK',
-            'data': data,
-            'post': request.data,
-        })
+        if type(barcode_data) is not dict:
+            response = {
+                'error': _('Barcode data could not be parsed'),
+            }
+
+        else:
+            # Look for a barcode plugin that knows how to handle the data
+            for plugin_class in barcode_plugins:
+
+                plugin = plugin_class()
+
+                if plugin.validate_barcode(barcode_data):
+                    
+                    # Plugin should return a dict response
+                    response = plugin.decode_barcode(barcode_data)
+                    
+                    if type(response) is dict:
+                        response['success'] = _('Barcode successfully decoded')
+                    else:
+                        response = {
+                            'error': _('Barcode plugin returned incorrect response')
+                        }
+
+                    response['plugin'] = plugin.get_name()
+
+                    break
+
+        if response is None:
+            response = {
+                'error': _('Unknown barcode format'),
+            }
+
+        # Include the original barcode data
+        response['barcode_data'] = barcode_data
+
+        return Response(response)

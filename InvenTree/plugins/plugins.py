@@ -52,4 +52,12 @@ def load_barcode_plugins():
     Return a list of all registered barcode plugins
     """
 
-    return get_plugins(barcode, BarcodePlugin)
+    plugins = get_plugins(barcode, BarcodePlugin)
+
+    if len(plugins) > 0:
+        print("Discovered {n} barcode plugins:".format(n=len(plugins)))
+
+        for bp in plugins:
+            print(" - {bp}".format(bp=bp.PLUGIN_NAME))
+
+    return plugins

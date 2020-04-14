@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import plugins.plugin as plugin
 
-class BarcodePlugin:
+
+class BarcodePlugin(plugin.InvenTreePlugin):
     """
     The BarcodePlugin class is the base class for any barcode plugin.
     """
-
-    # Override this for each actual plugin
-    PLUGIN_NAME = ''
 
     def validate_barcode(self, barcode_data):
         """
@@ -15,5 +14,12 @@ class BarcodePlugin:
         """
         return False
 
+    def decode_barcode(self, barcode_data):
+        """
+        Decode the barcode, and craft a response
+        """
+
+        return None
+
     def __init__(self):
-        pass
+        plugin.InvenTreePlugin.__init__(self)
