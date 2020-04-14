@@ -8,16 +8,27 @@ class BarcodePlugin(plugin.InvenTreePlugin):
     The BarcodePlugin class is the base class for any barcode plugin.
     """
 
-    def __init__(self):
+    def __init__(self, barcode_data):
         plugin.InvenTreePlugin.__init__(self)
 
-    def validate_barcode(self, barcode_data):
+        self.data = barcode_data
+
+    def hash(self):
+        """
+        Calculate a hash for the barcode data.
+        This is supposed to uniquely identify the barcode contents,
+        at least within the bardcode sub-type.
+        """
+
+        return ""
+
+    def validate(self):
         """
         Default implementation returns False
         """
         return False
 
-    def decode_barcode(self, barcode_data):
+    def decode(self):
         """
         Decode the barcode, and craft a response
         """

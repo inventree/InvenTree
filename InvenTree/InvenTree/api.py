@@ -68,12 +68,13 @@ class BarcodeScanView(APIView):
             # Look for a barcode plugin that knows how to handle the data
             for plugin_class in barcode_plugins:
 
-                plugin = plugin_class()
+                # Instantiate the plugin with the provided plugin data
+                plugin = plugin_class(barcode_data)
 
-                if plugin.validate_barcode(barcode_data):
+                if plugin.validate():
                     
                     # Plugin should return a dict response
-                    response = plugin.decode_barcode(barcode_data)
+                    response = plugin.decode()
                     
                     if type(response) is dict:
                         if 'success' not in response.keys() and 'error' not in response.keys():

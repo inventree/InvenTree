@@ -12,7 +12,7 @@ class InvenTreeBarcodePlugin(barcode.BarcodePlugin):
 
     PLUGIN_NAME = "InvenTreeBarcodePlugin"
 
-    def validate_barcode(self, barcode_data):
+    def validate(self):
         """
         An "InvenTree" barcode must include the following tags:
 
@@ -24,20 +24,20 @@ class InvenTreeBarcodePlugin(barcode.BarcodePlugin):
         """
 
         for key in ['tool', 'version']:
-            if key not in barcode_data.keys():
+            if key not in self.data.keys():
                 return False
 
-        if not barcode_data['tool'] == 'InvenTree':
+        if not self.data['tool'] == 'InvenTree':
             return False
 
         return True
 
-    def decode_barcode(self, barcode_data):
+    def decode(self):
 
         response = {}
         
-        if 'part' in barcode_data.keys():
-            id = barcode_data['part'].get('id', None)
+        if 'part' in self.data.keys():
+            id = self.data['part'].get('id', None)
 
             try:
                 part = Part.objects.get(id=id)
@@ -45,8 +45,8 @@ class InvenTreeBarcodePlugin(barcode.BarcodePlugin):
             except (ValueError, Part.DoesNotExist):
                 response['error'] = _('Part does not exist')
 
-        elif 'stocklocation' in barcode_data.keys():
-            id = barcode_data['stocklocation'].get('id', None)
+        elif 'stocklocation' in self.data.keys():
+            id = self.data['stocklocation'].get('id', None)
 
             try:
                 loc = StockLocation.objects.get(id=id)
@@ -54,9 +54,9 @@ class InvenTreeBarcodePlugin(barcode.BarcodePlugin):
             except (ValueError, StockLocation.DoesNotExist):
                 response['error'] = _('StockLocation does not exist')
 
-        elif 'stockitem' in barcode_data.keys():
+        elif 'stockitem' in self.data.keys():
             
-            id = barcode_data['stockitem'].get('id', None)
+            id = self.data['stockitem'].get('id', None)
 
             try:
                 item = StockItem.objects.get(id=id)
