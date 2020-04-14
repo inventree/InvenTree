@@ -61,30 +61,30 @@ class BarcodeScanView(APIView):
 
         if barcode_data is None:
             response['error'] = _('No barcode data provided')
+        else:
+            # Look for a barcode plugin that knows how to handle the data
+            for plugin_class in barcode_plugins:
 
-        # Look for a barcode plugin that knows how to handle the data
-        for plugin_class in barcode_plugins:
+                # Instantiate the plugin with the provided plugin data
+                plugin = plugin_class(barcode_data)
 
-            # Instantiate the plugin with the provided plugin data
-            plugin = plugin_class(barcode_data)
+                if plugin.validate():
+                    
+                    # Plugin should return a dict response
+                    response = plugin.decode()
+                    
+                    if type(response) is dict:
+                        if 'success' not in response.keys() and 'error' not in response.keys():
+                            response['success'] = _('Barcode successfully decoded')
+                    else:
+                        response = {
+                            'error': _('Barcode plugin returned incorrect response')
+                        }
 
-            if plugin.validate():
-                
-                # Plugin should return a dict response
-                response = plugin.decode()
-                
-                if type(response) is dict:
-                    if 'success' not in response.keys() and 'error' not in response.keys():
-                        response['success'] = _('Barcode successfully decoded')
-                else:
-                    response = {
-                        'error': _('Barcode plugin returned incorrect response')
-                    }
+                    response['plugin'] = plugin.get_name()
+                    response['hash'] = plugin.hash()
 
-                response['plugin'] = plugin.get_name()
-                response['hash'] = plugin.hash()
-
-                break
+                    break
 
         if 'error' not in response and 'success' not in response:
             response = {
