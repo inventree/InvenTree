@@ -123,7 +123,7 @@ class BarcodePluginView(APIView):
                             'error': _('Barcode plugin returned incorrect response')
                         }
 
-                    response['plugin'] = plugin.get_name()
+                    response['plugin'] = plugin.plugin_name()
                     response['hash'] = plugin.hash()
 
                     break
