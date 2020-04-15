@@ -96,6 +96,8 @@ class PartSerializer(InvenTreeModelSerializer):
         queryset = queryset.prefetch_related('builds')
         return queryset
 
+    # TODO - Include a 'category_detail' field which serializers the category object
+
     class Meta:
         model = Part
         partial = True

@@ -71,7 +71,7 @@ class ActionPluginView(APIView):
 
         # If we got to here, no matching action was found
         return Response({
-            'error': _("No matching action found for"),
+            'error': _("No matching action found"),
             "action": action,
         })
 
@@ -135,5 +135,8 @@ class BarcodePluginView(APIView):
 
         # Include the original barcode data
         response['barcode_data'] = barcode_data
+
+        print("Response:")
+        print(response)
 
         return Response(response)

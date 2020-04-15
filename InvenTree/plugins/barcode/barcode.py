@@ -2,6 +2,11 @@
 
 import hashlib
 
+from rest_framework.renderers import JSONRenderer
+
+from stock.serializers import StockItemSerializer, LocationSerializer
+from part.serializers import PartSerializer
+
 import plugins.plugin as plugin
 
 
@@ -46,18 +51,31 @@ class BarcodePlugin(plugin.InvenTreePlugin):
         return None
 
     def render_part(self, part):
-        return {
-            'id': part.id,
-            'name': part.full_name,
-        }
+        """
+        Render a Part object to JSON
+        Use the existing serializer to do this.
+        """
+
+        serializer = PartSerializer(part)
+
+        return serializer.data
 
     def render_stock_location(self, loc):
-        return {
-            "id": loc.id
-        }
+        """
+        Render a StockLocation object to JSON
+        Use the existing serializer to do this.
+        """
+
+        serializer = LocationSerializer(loc)
+
+        return serializer.data
 
     def render_stock_item(self, item):
+        """
+        Render a StockItem object to JSON.
+        Use the existing serializer to do this
+        """
 
-        return {
-            "id": item.id,
-        }
+        serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_detail=True)
+
+        return serializer.data
