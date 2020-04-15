@@ -74,6 +74,7 @@ class POList(generics.ListCreateAPIView):
         data = queryset.values(
             'pk',
             'supplier',
+            'supplier_reference',
             'supplier__name',
             'supplier__image',
             'reference',
