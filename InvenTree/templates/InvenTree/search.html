@@ -127,7 +127,7 @@ InvenTree | {% trans "Search Results" %}
     loadPartTable("#part-results-table",
         "{% url 'api-part-list' %}",
         {
-            query: {
+            params: {
                 search: "{{ query }}",
             },
             allowInactive: true,
@@ -137,7 +137,7 @@ InvenTree | {% trans "Search Results" %}
 
     loadCompanyTable('#company-results-table', "{% url 'api-company-list' %}", {
         params: {
-            serach: "{{ query }}",
+            search: "{{ query }}",
         }
     });
 
