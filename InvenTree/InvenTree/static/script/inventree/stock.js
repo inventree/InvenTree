@@ -41,6 +41,7 @@ function loadStockTable(table, options) {
      *  groupByField - Column for grouping stock items
      *  buttons - Which buttons to link to stock selection callbacks
      *  filterList - <ul> element where filters are displayed
+     *  disableFilters: If true, disable custom filters
      */
     
     // List of user-params which override the default filters
@@ -48,7 +49,11 @@ function loadStockTable(table, options) {
 
     var filterListElement = options.filterList || "#filter-list-stock";
 
-    var filters = loadTableFilters("stock");
+    var filters = {};
+    
+    if (!options.disableFilters) {
+        filters = loadTableFilters("stock");
+    }
 
     var original = {};
 
