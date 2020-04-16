@@ -81,15 +81,19 @@ function loadPartTable(table, url, options={}) {
      *  - table: HTML reference to the table
      *  - url: Base URL for API query
      *  - options: object containing following (optional) fields
-     *      allowInactive: If true, allow display of inactive parts
      *      checkbox: Show the checkbox column
      *      query: extra query params for API request
      *      buttons: If provided, link buttons to selection status of this table
+     *      disableFilters: If true, disable custom filters
      */
 
     var params = options.params || {};
 
-    var filters = loadTableFilters("parts");
+    var filters = {};
+    
+    if (!options.disableFilters) {
+        filters = loadTableFilters("parts");
+    }
 
     for (var key in params) {
         filters[key] = params[key];
