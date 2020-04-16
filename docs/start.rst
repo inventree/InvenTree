@@ -22,7 +22,7 @@ To install InvenTree you will need the following system components installed:
 * g++
 * make
 
-Each of these programs need to be installed (e.g. using apt or similar) before running the ``make install`` scriptm e.g.
+Each of these programs need to be installed (e.g. using apt or similar) before running the ``make install`` script:
 
 ```
 sudo apt-get install python3 python3-dev python3-pip g++ make
