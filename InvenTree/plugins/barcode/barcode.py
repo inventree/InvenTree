@@ -2,8 +2,6 @@
 
 import hashlib
 
-from rest_framework.renderers import JSONRenderer
-
 from stock.serializers import StockItemSerializer, LocationSerializer
 from part.serializers import PartSerializer
 
