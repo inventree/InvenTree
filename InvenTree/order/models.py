@@ -119,7 +119,7 @@ class PurchaseOrder(Order):
         supplier: Reference to the company supplying the goods in the order
         received_by: User that received the goods
     """
-
+    
     ORDER_PREFIX = "PO"
 
     supplier = models.ForeignKey(
@@ -130,6 +130,8 @@ class PurchaseOrder(Order):
         related_name='purchase_orders',
         help_text=_('Company')
     )
+
+    supplier_reference = models.CharField(max_length=64, blank=True, help_text=_("Supplier order reference"))
 
     received_by = models.ForeignKey(
         User,

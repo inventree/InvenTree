@@ -63,15 +63,27 @@ InvenTree | {{ order }}
         <table class='table'>
             <col width='25'>
             <tr>
-                <td><span class='fas fa-industry'></span></td>
-                <td>{% trans "Supplier" %}</td>
-                <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier }}</a></td>
+                <td><span class='fas fa-hashtag'></span></td>
+                <td>{% trans "Order Reference" %}</td>
+                <td>{{ order.reference }}</td>
             </tr>
             <tr>
                 <td><span class='fas fa-info'></span></td>
-                <td>{% trans "Status" %}</td>
+                <td>{% trans "Order Status" %}</td>
                 <td>{% order_status order.status %}</td>
             </tr>
+            <tr>
+                <td><span class='fas fa-building'></span></td>
+                <td>{% trans "Supplier" %}</td>
+                <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a></td>
+            </tr>
+            {% if order.supplier_reference %}
+            <tr>
+                <td><span class='fas fa-hashtag'></span></td>
+                <td>{% trans "Supplier Reference" %}</td>
+                <td>{{ order.supplier_reference }}</td>
+            </tr>
+            {% endif %}
             {% if order.link %}
             <tr>
                 <td><span class='fas fa-link'></span></td>

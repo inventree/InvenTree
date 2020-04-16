@@ -113,15 +113,15 @@ class TestMakeBarcode(TestCase):
 
     def test_barcode(self):
 
-        data = {
-            'animal': 'cat',
-            'legs': 3,
-            'noise': 'purr'
-        }
+        bc = helpers.MakeBarcode(
+            "part",
+            {
+                "id": 3,
+                "url": "www.google.com",
+            }
+        )
 
-        bc = helpers.MakeBarcode("part", 3, "www.google.com", data)
-
-        self.assertIn('animal', bc)
+        self.assertIn('part', bc)
         self.assertIn('tool', bc)
         self.assertIn('"tool": "InvenTree"', bc)
 
