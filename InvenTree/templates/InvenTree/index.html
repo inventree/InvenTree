@@ -9,13 +9,7 @@ InvenTree | Index
 <hr>
 {% include "InvenTree/starred_parts.html" with collapse_id="starred" %}
 
-{% if to_order %}
-{% include "InvenTree/parts_to_order.html" with collapse_id="order" %}
-{% endif %}
-
-{% if to_build %}
-{% include "InvenTree/parts_to_build.html" with collapse_id="build" %}
-{% endif %}
+{% include "InvenTree/low_stock.html" with collapse_id="order" %}
 
 {% endblock %}
 
@@ -25,15 +19,31 @@ InvenTree | Index
 
 {% block js_ready %}
 
-console.log("abcde?");
-
 {{ block.super }}
 
-//TODO: These calls to bootstrapTable() are failing, for some reason?
-//$("#to-build-table").bootstrapTable();
-//$("#to-order-table").bootstrapTable();
-//$("#starred-parts-table").bootstrapTable();
+loadPartTable("#starred-parts-table", "{% url 'api-part-list' %}", {
+    params: {
+        "starred": true,
+    }
+});
 
-console.log("Got to here...");
+loadPartTable("#low-stock-table", "{% url 'api-part-list' %}", {
+    params: {
+        "low_stock": true,
+    }
+});
+
+$("#starred-parts-table").on('load-success.bs.table', function() {
+    var count = $("#starred-parts-table").bootstrapTable('getData').length;
+
+    $("#starred-parts-count").html(count);
+});
+
+$("#low-stock-table").on('load-success.bs.table', function() {
+    var count = $("#low-stock-table").bootstrapTable('getData').length;
+
+    $("#low-stock-count").html(count);
+});
+
 
 {% endblock %}

@@ -3,7 +3,7 @@
 import os
 from rapidfuzz import fuzz
 
-from django.db import migrations
+from django.db import migrations, connection
 from company.models import Company, SupplierPart
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -29,17 +29,41 @@ def reverse_association(apps, schema_editor):
 
     print("Reversing migration for manufacturer association")
 
-    try:
-        for part in SupplierPart.objects.all():
-            if part.manufacturer is not None:
-                part.manufacturer_name = part.manufacturer.name
-                
-                part.save()
+    for part in SupplierPart.objects.all():
 
-    except (OperationalError, ProgrammingError):
-        # An exception might be called if the database is empty
-        pass
+        print("Checking part [{pk}]:".format(pk=part.pk))
 
+        cursor = connection.cursor()
+
+        # Grab the manufacturer ID from the part
+        response = cursor.execute('SELECT manufacturer_id FROM part_supplierpart WHERE id={ID};'.format(ID=part.id))
+
+        manufacturer_id = None
+
+        row = response.fetchone()
+
+        if len(row) > 0:
+            try:
+                manufacturer_id = int(row[0])
+            except (TypeError, ValueError):
+                pass
+
+        if manufacturer_id is None:
+            print(" - Manufacturer ID not set: Skipping")
+            continue
+
+        print(" - Manufacturer ID: [{id}]".format(id=manufacturer_id))
+
+        # Now extract the "name" for the manufacturer
+        response = cursor.execute('SELECT name from company_company where id={ID};'.format(ID=manufacturer_id))
+        
+        row = response.fetchone()
+
+        name = row[0]
+
+        print(" - Manufacturer name: '{name}'".format(name=name))
+
+        response = cursor.execute("UPDATE part_supplierpart SET manufacturer_name='{name}' WHERE id={ID};".format(name=name, ID=part.id))
 
 def associate_manufacturers(apps, schema_editor):
     """
@@ -54,6 +78,29 @@ def associate_manufacturers(apps, schema_editor):
 
     It uses fuzzy pattern matching to help the user out as much as possible.
     """
+    
+    def get_manufacturer_name(part_id):
+        """
+        THIS IS CRITICAL!
+
+        Once the pythonic representation of the model has removed the 'manufacturer_name' field,
+        it is NOT ACCESSIBLE by calling SupplierPart.manufacturer_name.
+
+        However, as long as the migrations are applied in order, then the table DOES have a field called 'manufacturer_name'.
+
+        So, we just need to request it using dirty SQL.
+        """
+
+        query = "SELECT manufacturer_name from part_supplierpart where id={ID};".format(ID=part_id)
+
+        cursor = connection.cursor()
+        response = cursor.execute(query)
+        row = response.fetchone()
+
+        if len(row) > 0:
+            return row[0]
+        return ''
+
 
     # Exit if there are no SupplierPart objects
     # This crucial otherwise the unit test suite fails!
@@ -70,23 +117,19 @@ def associate_manufacturers(apps, schema_editor):
     for company in Company.objects.all():
         companies[company.name] = company
 
-    # List of parts which will need saving
-    parts = []
-
-
     def link_part(part, name):
         """ Attempt to link Part to an existing Company """
 
         # Matches a company name directly
         if name in companies.keys():
-            print(" -> '{n}' maps to existing manufacturer".format(n=name))
+            print(" - Part[{pk}]: '{n}' maps to existing manufacturer".format(pk=part.pk, n=name))
             part.manufacturer = companies[name]
             part.save()
             return True
 
         # Have we already mapped this 
         if name in links.keys():
-            print(" -> Mapped '{n}' -> '{c}'".format(n=name, c=links[name].name))
+            print(" - Part[{pk}]: Mapped '{n}' - '{c}'".format(pk=part.pk, n=name, c=links[name].name))
             part.manufacturer = links[name]
             part.save()
             return True
@@ -100,22 +143,21 @@ def associate_manufacturers(apps, schema_editor):
         company = Company(name=company_name, description=company_name, is_manufacturer=True)
 
         company.is_manufacturer = True
+        
+        # Save the company BEFORE we associate the part, otherwise the PK does not exist
+        company.save()
 
         # Map both names to the same company
         links[input_name] = company
         links[company_name] = company
 
         companies[company_name] = company
-
-        # Save the company BEFORE we associate the part, otherwise the PK does not exist
-        company.save()
         
+        print(" - Part[{pk}]: Created new manufacturer: '{name}'".format(pk=part.pk, name=company_name))
+
         # Save the manufacturer reference link
         part.manufacturer = company
         part.save()
-
-        print(" -> Created new manufacturer: '{name}'".format(name=company_name))
-
 
     def find_matches(text, threshold=65):
         """
@@ -140,10 +182,11 @@ def associate_manufacturers(apps, schema_editor):
 
     def map_part_to_manufacturer(part, idx, total):
 
-        name = str(part.manufacturer_name)
+        name = get_manufacturer_name(part.id)
 
         # Skip empty names
         if not name or len(name) == 0:
+            print(" - Part[{pk}]: No manufacturer_name provided, skipping".format(pk=part.pk))
             return
 
         # Can be linked to an existing manufacturer
@@ -157,7 +200,7 @@ def associate_manufacturers(apps, schema_editor):
 
         # Present a list of options
         print("----------------------------------")
-        print("Checking part {idx} of {total}".format(idx=idx+1, total=total))
+        print("Checking part [{pk}] ({idx} of {total})".format(pk=part.pk, idx=idx+1, total=total))
         print("Manufacturer name: '{n}'".format(n=name))
         print("----------------------------------")
         print("Select an option from the list below:")
@@ -170,9 +213,8 @@ def associate_manufacturers(apps, schema_editor):
 
         print("")
         print("OR - Type a new custom manufacturer name")
-            
 
-        while (1):
+        while True:
             response = str(input("> ")).strip()
 
             # Attempt to parse user response as an integer
@@ -185,7 +227,7 @@ def associate_manufacturers(apps, schema_editor):
                     create_manufacturer(part, name, name)
                     return
 
-                # Options 1) -> n) select an existing manufacturer
+                # Options 1) - n) select an existing manufacturer
                 else:
                     n = n - 1
 
@@ -206,9 +248,11 @@ def associate_manufacturers(apps, schema_editor):
                         links[name] = company
                         links[company_name] = company
 
-                        print(" -> Linked '{n}' to manufacturer '{m}'".format(n=name, m=company_name))
+                        print(" - Part[{pk}]: Linked '{n}' to manufacturer '{m}'".format(pk=part.pk, n=name, m=company_name))
 
                         return
+                    else:
+                        print("Please select a valid option")
 
             except ValueError:
                 # User has typed in a custom name!
@@ -256,11 +300,10 @@ def associate_manufacturers(apps, schema_editor):
     for idx, part in enumerate(SupplierPart.objects.all()):
 
         if part.manufacturer is not None:
-            print(" -> Part '{p}' already has a manufacturer associated (skipping)".format(p=part))
+            print(" - Part '{p}' already has a manufacturer associated (skipping)".format(p=part))
             continue
 
         map_part_to_manufacturer(part, idx, part_count)
-        parts.append(part)
 
     print("Done!")
 

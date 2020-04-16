@@ -44,11 +44,11 @@ class StockLocation(InvenTreeTree):
         """ Return a JSON string for formatting a barcode for this StockLocation object """
 
         return helpers.MakeBarcode(
-            'StockLocation',
-            self.id,
-            reverse('api-location-detail', kwargs={'pk': self.id}),
+            'stocklocation',
             {
-                'name': self.name,
+                "id": self.id,
+                "name": self.name,
+                "url": reverse('api-location-detail', kwargs={'pk': self.id}),
             }
         )
 
@@ -108,6 +108,7 @@ class StockItem(MPTTModel):
     
     Attributes:
         parent: Link to another StockItem from which this StockItem was created
+        uid: Field containing a unique-id which is mapped to a third-party identifier (e.g. a barcode)
         part: Link to the master abstract part that this StockItem is an instance of
         supplier_part: Link to a specific SupplierPart (optional)
         location: Where this StockItem is located
@@ -288,14 +289,14 @@ class StockItem(MPTTModel):
         """
 
         return helpers.MakeBarcode(
-            'StockItem',
-            self.id,
-            reverse('api-stock-detail', kwargs={'pk': self.id}),
+            "stockitem",
             {
-                'part_id': self.part.id,
-                'part_name': self.part.full_name
+                "id": self.id,
+                "url": reverse('api-stock-detail', kwargs={'pk': self.id}),
             }
         )
+
+    uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
 
     parent = TreeForeignKey('self',
                             on_delete=models.DO_NOTHING,

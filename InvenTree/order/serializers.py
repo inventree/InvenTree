@@ -19,6 +19,7 @@ class POSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'supplier',
+            'supplier_reference',
             'reference',
             'description',
             'link',

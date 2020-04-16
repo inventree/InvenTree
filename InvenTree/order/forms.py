@@ -69,6 +69,7 @@ class EditPurchaseOrderForm(HelperForm):
         fields = [
             'reference',
             'supplier',
+            'supplier_reference',
             'description',
             'link',
         ]

@@ -478,11 +478,11 @@ class Part(models.Model):
         """ Return a JSON string for formatting a barcode for this Part object """
 
         return helpers.MakeBarcode(
-            "Part",
-            self.id,
-            reverse('api-part-detail', kwargs={'pk': self.id}),
+            "part",
             {
-                'name': self.name,
+                "id": self.id,
+                "name": self.full_name,
+                "url": reverse('api-part-detail', kwargs={'pk': self.id}),
             }
         )
 

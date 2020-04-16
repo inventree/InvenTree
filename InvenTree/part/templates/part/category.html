@@ -137,29 +137,30 @@
 
     $("#cat-create").click(function() {
         launchModalForm(
-                        "{% url 'category-create' %}",
-                        {
-                            follow: true,
-                            {% if category %}
-                            data: {
-                                category: {{ category.id }}
-                            },
-                            {% endif %}
-                            secondary: [
-                                {
-                                    field: 'default_location',
-                                    label: 'New Location',
-                                    title: 'Create new location',
-                                    url: "{% url 'stock-location-create' %}",
-                                },
-                                {
-                                    field: 'parent',
-                                    label: 'New Category',
-                                    title: 'Create new category',
-                                    url: "{% url 'category-create' %}",
-                                },
-                            ]
-                        });
+            "{% url 'category-create' %}",
+            {
+                follow: true,
+                {% if category %}
+                data: {
+                    category: {{ category.id }}
+                },
+                {% endif %}
+                secondary: [
+                    {
+                        field: 'default_location',
+                        label: 'New Location',
+                        title: 'Create new location',
+                        url: "{% url 'stock-location-create' %}",
+                    },
+                    {
+                        field: 'parent',
+                        label: 'New Category',
+                        title: 'Create new category',
+                        url: "{% url 'category-create' %}",
+                    },
+                ]
+            }
+        );
     })
 
     $("#part-export").click(function() {
@@ -200,11 +201,11 @@
     {% if category %}
     $("#cat-edit").click(function () {
         launchModalForm(
-                        "{% url 'category-edit' category.id %}",
-                        {
-                            reload: true
-                        },
-                       );
+            "{% url 'category-edit' category.id %}",
+            {
+                reload: true
+            },
+        );
         return false;
     });
 
@@ -227,9 +228,9 @@
         "#part-table",
         "{% url 'api-part-list' %}",
         {
-            query: {
-                {% if category %}
-                category: {{ category.id }},
+            params: {
+                {% if category %}category: {{ category.id }},
+                {% else %}category: "null",
                 {% endif %}
             },
             buttons: ['#part-options'],

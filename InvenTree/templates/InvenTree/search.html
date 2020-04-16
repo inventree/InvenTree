@@ -104,6 +104,7 @@ InvenTree | {% trans "Search Results" %}
         ],
     });
 
+
     $("#location-results-table").inventreeTable({
         url: "{% url 'api-location-list' %}",
         queryParams: {
@@ -124,20 +125,22 @@ InvenTree | {% trans "Search Results" %}
         ],
     });
 
+
     loadPartTable("#part-results-table",
         "{% url 'api-part-list' %}",
         {
-            query: {
+            params: {
                 search: "{{ query }}",
             },
-            allowInactive: true,
             checkbox: false,
+            disableFilters: true,
         }
     );
+    
 
     loadCompanyTable('#company-results-table', "{% url 'api-company-list' %}", {
         params: {
-            serach: "{{ query }}",
+            search: "{{ query }}",
         }
     });
 
@@ -153,5 +156,5 @@ InvenTree | {% trans "Search Results" %}
             },
         }
     );
-    
+
 {% endblock %}
