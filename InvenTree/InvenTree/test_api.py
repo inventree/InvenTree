@@ -27,6 +27,18 @@ class APITests(APITestCase):
         User = get_user_model()
         User.objects.create_user(self.username, 'user@email.com', self.password)
 
+    def get_token(self):
+        token_url = reverse('api-token')
+
+        # POST to retreive a token
+        response = self.client.post(token_url, format='json', data={'username': self.username, 'password': self.password})
+        
+        token = response.data['token']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+
+        self.token = token
+
     def test_info_view(self):
         """
         Test that we can read the 'info-view' endpoint.
@@ -83,5 +95,22 @@ class APITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_barcode(self):
-        # TODO - Complete this
-        pass
+        """ Test the barcode endpoint """
+
+        url = reverse('api-barcode-plugin')
+
+        self.get_token()
+
+        data = {
+            'barcode': {
+                'asdlaksdfalsdkfsa;fdlkasd;'
+            },
+        }
+
+        response = self.client.post(url, format='json', data=data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIn('error', response.data)
+        self.assertIn('barcode_data', response.data)
+        self.assertEqual(response.data['error'], 'Unknown barcode format')
