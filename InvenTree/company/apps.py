@@ -31,6 +31,11 @@ class CompanyConfig(AppConfig):
 
                     if not os.path.exists(loc):
                         print("InvenTree: Generating thumbnail for Company '{c}'".format(c=company.name))
-                        company.image.render_variations(replace=False)
+                        try:
+                            company.image.render_variations(replace=False)
+                        except FileNotFoundError:
+                            print("Image file missing")
+                            company.image = None
+                            company.save()
         except (OperationalError, ProgrammingError):
             print("Could not generate Company thumbnails")

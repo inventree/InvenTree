@@ -30,6 +30,11 @@ class PartConfig(AppConfig):
                     
                     if not os.path.exists(loc):
                         print("InvenTree: Generating thumbnail for Part '{p}'".format(p=part.name))
-                        part.image.render_variations(replace=False)
+                        try:
+                            part.image.render_variations(replace=False)
+                        except FileNotFoundError:
+                            print("Image file missing")
+                            part.image = None
+                            part.save()
         except (OperationalError, ProgrammingError):
             print("Could not generate Part thumbnails")
