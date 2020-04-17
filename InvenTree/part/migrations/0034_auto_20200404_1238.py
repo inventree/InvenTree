@@ -16,7 +16,14 @@ def create_thumbnails(apps, schema_editor):
         for part in Part.objects.all():
             # Render thumbnail for each existing Part 
             if part.image:
-                part.image.render_variations()
+                try:
+                    part.image.render_variations()
+                except FileNotFoundError:
+                    print("Missing image:", part.image())
+                    # The image is missing, so clear the field
+                    part.image = None
+                    part.save()
+                    
     except (OperationalError, ProgrammingError):
         # Migrations have not yet been applied - table does not exist
         print("Could not generate Part thumbnails")
