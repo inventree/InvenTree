@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from .serializers import UserSerializer
 
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
@@ -25,28 +25,32 @@ class UserList(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class GetAuthToken(ObtainAuthToken):
+class GetAuthToken(APIView):
     """ Return authentication token for an authenticated user. """
 
-    def post(self, request, *args, **kwargs):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get(self, request, *args, **kwargs):
         return self.login(request)
 
     def delete(self, request):
         return self.logout(request)
 
     def login(self, request):
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
 
-        return Response({
-            'token': token.key,
-            'pk': user.pk,
-            'username': user.username,
-            'email': user.email
-        })
+        if request.user.is_authenticated:
+            # Get the user token (or create one if it does not exist)
+            token, created = Token.objects.get_or_create(user=request.user)
+            return Response({
+                'token': token.key,
+            })
+
+        else:
+            return Response({
+                'error': 'User not authenticated',
+            })
 
     def logout(self, request):
         try:

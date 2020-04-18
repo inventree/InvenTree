@@ -4,8 +4,9 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 from django.urls import reverse
-
 from django.contrib.auth import get_user_model
+
+from base64 import b64encode
 
 
 class APITests(APITestCase):
@@ -21,23 +22,47 @@ class APITests(APITestCase):
     username = 'test_user'
     password = 'test_pass'
 
+    token = None
+
     def setUp(self):
 
         # Create a user (but do not log in!)
         User = get_user_model()
         User.objects.create_user(self.username, 'user@email.com', self.password)
 
-    def get_token(self):
+    def basicAuth(self):
+        # Use basic authentication
+
+        authstring = bytes("{u}:{p}".format(u=self.username, p=self.password), "ascii")
+
+        # Use "basic" auth by default
+        auth = b64encode(authstring).decode("ascii")
+        self.client.credentials(HTTP_AUTHORIZATION="Basic {auth}".format(auth=auth))
+
+    def tokenAuth(self):
+
+        self.basicAuth()
         token_url = reverse('api-token')
+        response = self.client.get(token_url, format='json', data={})
 
-        # POST to retreive a token
-        response = self.client.post(token_url, format='json', data={'username': self.username, 'password': self.password})
-        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('token', response.data)
+
         token = response.data['token']
-
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-
         self.token = token
+
+    def token_failure(self):
+        # Test token endpoint without basic auth
+        url = reverse('api-token')
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIsNone(self.token)
+
+    def token_success(self):
+
+        self.tokenAuth()
+        self.assertIsNotNone(self.token)
 
     def test_info_view(self):
         """
@@ -55,51 +80,18 @@ class APITests(APITestCase):
 
         self.assertEquals('InvenTree', data['server'])
 
-    def test_get_token_fail(self):
-        """ Ensure that an invalid user cannot get a token """
-
-        token_url = reverse('api-token')
-
-        response = self.client.post(token_url, format='json', data={'username': 'bad', 'password': 'also_bad'})
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertFalse('token' in response.data)
-
-    def test_get_token_pass(self):
-        """ Ensure that a valid user can request an API token """
-
-        token_url = reverse('api-token')
-
-        # POST to retreive a token
-        response = self.client.post(token_url, format='json', data={'username': self.username, 'password': self.password})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue('token' in response.data)
-        self.assertTrue('pk' in response.data)
-        self.assertTrue(len(response.data['token']) > 0)
-
-        # Now, use the token to access other data
-        token = response.data['token']
-
-        part_url = reverse('api-part-list')
-
-        # Try to access without a token
-        response = self.client.get(part_url, format='json')
+    def test_barcode_fail(self):
+        # Test barcode endpoint without auth
+        response = self.client.post(reverse('api-barcode-plugin'), format='json')
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        
-        # Now, with the token
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.get(part_url, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_barcode(self):
         """ Test the barcode endpoint """
 
-        url = reverse('api-barcode-plugin')
+        self.tokenAuth()
 
-        self.get_token()
+        url = reverse('api-barcode-plugin')
 
         data = {
             'barcode': {
