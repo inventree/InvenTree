@@ -42,12 +42,12 @@ cors:
   # - https://sub.example.com
 
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
-# By default, it is stored in a directory named 'media' local to the InvenTree directory
+# By default, it is stored in a directory named 'inventree_media' local to the InvenTree directory
 # This should be changed for a production installation
 media_root: '../inventree_media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
-# By default it is stored in a directory named 'static' local to the InvenTree directory
+# By default it is stored in a directory named 'inventree_static' local to the InvenTree directory
 static_root: '../inventree_static'
 
 # Optional URL schemes to allow in URL fields
