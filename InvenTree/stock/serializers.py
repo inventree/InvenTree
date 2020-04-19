@@ -7,6 +7,7 @@ from rest_framework import serializers
 from .models import StockItem, StockLocation
 from .models import StockItemTracking
 
+from company.serializers import SupplierPartSerializer
 from part.serializers import PartBriefSerializer
 from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer
 
@@ -78,13 +79,14 @@ class StockItemSerializer(InvenTreeModelSerializer):
         performing database queries as efficiently as possible.
         """
 
-        # TODO
-        pass
+        # TODO - Add custom annotated fields
+        return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
     
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
+    supplier_part_detail = SupplierPartSerializer(source='supplier_part', many=False, read_only=True)
 
     tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True)
 
@@ -92,6 +94,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
         part_detail = kwargs.pop('part_detail', False)
         location_detail = kwargs.pop('location_detail', False)
+        supplier_part_detail = kwargs.pop('supplier_part_detail', False)
 
         super(StockItemSerializer, self).__init__(*args, **kwargs)
 
@@ -100,6 +103,9 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
         if location_detail is not True:
             self.fields.pop('location_detail')
+
+        if supplier_part_detail is not True:
+            self.fields.pop('supplier_part_detail')
 
     class Meta:
         model = StockItem
@@ -116,6 +122,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'quantity',
             'serial',
             'supplier_part',
+            'supplier_part_detail',
             'status',
             'status_text',
             'tracking_items',
