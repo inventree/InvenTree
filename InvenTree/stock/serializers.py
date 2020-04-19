@@ -8,7 +8,6 @@ from .models import StockItem, StockLocation
 from .models import StockItemTracking
 
 from part.serializers import PartBriefSerializer
-from company.serializers import SupplierPartSerializer
 from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer
 
 
@@ -56,24 +55,43 @@ class StockItemSerializer(InvenTreeModelSerializer):
     - Includes serialization for the item location
     """
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    @staticmethod
+    def prefetch_queryset(queryset):
+        """
+        Prefetch related database tables,
+        to reduce database hits.
+        """
+
+        return queryset.prefetch_related(
+            'supplier_part',
+            'supplier_part__supplier',
+            'supplier_part__manufacturer',
+            'location',
+            'part',
+            'tracking_info',
+        )
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add some extra annotations to the queryset,
+        performing database queries as efficiently as possible.
+        """
+
+        # TODO
+        pass
+
     status_text = serializers.CharField(source='get_status_display', read_only=True)
-
-    part_name = serializers.CharField(source='get_part_name', read_only=True)
-
-    part_image = serializers.CharField(source='part__image', read_only=True)
-
-    tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True)
     
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
-    supplier_detail = SupplierPartSerializer(source='supplier_part', many=False, read_only=True)
+
+    tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True)
 
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
         location_detail = kwargs.pop('location_detail', False)
-        supplier_detail = kwargs.pop('supplier_detail', False)
 
         super(StockItemSerializer, self).__init__(*args, **kwargs)
 
@@ -82,9 +100,6 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
         if location_detail is not True:
             self.fields.pop('location_detail')
-
-        if supplier_detail is not True:
-            self.fields.pop('supplier_detail')
 
     class Meta:
         model = StockItem
@@ -97,18 +112,14 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'notes',
             'part',
             'part_detail',
-            'part_name',
-            'part_image',
             'pk',
             'quantity',
             'serial',
             'supplier_part',
-            'supplier_detail',
             'status',
             'status_text',
             'tracking_items',
             'uid',
-            'url',
         ]
 
         """ These fields are read-only in this context.

@@ -6,10 +6,8 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
-from django.conf import settings
 
-from django.db.models import Q, F, Sum, Count
-from django.db.models.functions import Coalesce
+from django.db.models import Q, F, Count
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -19,15 +17,11 @@ from rest_framework import generics, permissions
 from django.conf.urls import url, include
 from django.urls import reverse
 
-import os
-from decimal import Decimal
-
 from .models import Part, PartCategory, BomItem, PartStar
 from .models import PartParameter, PartParameterTemplate
 
 from . import serializers as part_serializers
 
-from InvenTree.status_codes import OrderStatus, StockStatus, BuildStatus
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 
@@ -125,6 +119,8 @@ class PartThumbs(generics.ListAPIView):
         # Get all Parts which have an associated image
         queryset = Part.objects.all().exclude(image='')
 
+        # TODO - We should return the thumbnails here, not the full image!
+
         # Return the most popular parts first
         data = queryset.values(
             'image',
@@ -166,6 +162,31 @@ class PartList(generics.ListCreateAPIView):
 
     serializer_class = part_serializers.PartSerializer
 
+    queryset = Part.objects.all()
+
+    starred_parts = None
+
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            cat_detail = str2bool(self.request.query_params.get('category_detail', False))
+        except AttributeError:
+            cat_detail = None
+
+        # Ensure the request context is passed through
+        kwargs['context'] = self.get_serializer_context()
+
+        kwargs['category_detail'] = cat_detail
+
+        # Pass a list of "starred" parts fo the current user to the serializer
+        # We do this to reduce the number of database queries required!
+        if self.starred_parts is None and self.request is not None:
+            self.starred_parts = [star.part for star in self.request.user.starred_parts.all()]
+
+        kwargs['starred_parts'] = self.starred_parts
+
+        return self.serializer_class(*args, **kwargs)
+
     def create(self, request, *args, **kwargs):
         """ Override the default 'create' behaviour:
         We wish to save the user who created this part!
@@ -184,129 +205,20 @@ class PartList(generics.ListCreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def list(self, request, *args, **kwargs):
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.PartSerializer.prefetch_queryset(queryset)
+
+        return queryset
+
+    def filter_queryset(self, queryset):
         """
-        Instead of using the DRF serialiser to LIST,
-        we serialize the objects manually.
-        This turns out to be significantly faster.
-        """
-
-        queryset = self.filter_queryset(self.get_queryset())
-
-        # Filters for annotations
-
-        # "in_stock" count should only sum stock items which are "in stock"
-        stock_filter = Q(stock_items__status__in=StockStatus.AVAILABLE_CODES)
-
-        # "on_order" items should only sum orders which are currently outstanding
-        order_filter = Q(supplier_parts__purchase_order_line_items__order__status__in=OrderStatus.OPEN)
-
-        # "building" should only reference builds which are active
-        build_filter = Q(builds__status__in=BuildStatus.ACTIVE_CODES)
-
-        # Set of fields we wish to serialize
-        data = queryset.values(
-            'pk',
-            'category',
-            'image',
-            'name',
-            'IPN',
-            'revision',
-            'description',
-            'keywords',
-            'is_template',
-            'link',
-            'units',
-            'minimum_stock',
-            'trackable',
-            'assembly',
-            'component',
-            'salable',
-            'active',
-        ).annotate(
-            # Quantity of items which are "in stock"
-            in_stock=Coalesce(Sum('stock_items__quantity', filter=stock_filter), Decimal(0)),
-            on_order=Coalesce(Sum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter), Decimal(0)),
-            building=Coalesce(Sum('builds__quantity', filter=build_filter), Decimal(0)),
-        )
-
-        # If we are filtering by 'has_stock' status
-        has_stock = self.request.query_params.get('has_stock', None)
-
-        if has_stock is not None:
-            has_stock = str2bool(has_stock)
-
-            if has_stock:
-                # Filter items which have a non-null 'in_stock' quantity above zero
-                data = data.filter(in_stock__gt=0)
-            else:
-                # Filter items which a null or zero 'in_stock' quantity
-                data = data.filter(Q(in_stock__lte=0))
-
-        # If we are filtering by 'low_stock' status
-        low_stock = self.request.query_params.get('low_stock', None)
-
-        if low_stock is not None:
-            low_stock = str2bool(low_stock)
-
-            if low_stock:
-                # Ignore any parts which do not have a specified 'minimum_stock' level
-                data = data.exclude(minimum_stock=0)
-                # Filter items which have an 'in_stock' level lower than 'minimum_stock'
-                data = data.filter(Q(in_stock__lt=F('minimum_stock')))
-            else:
-                # Filter items which have an 'in_stock' level higher than 'minimum_stock'
-                data = data.filter(Q(in_stock__gte=F('minimum_stock')))
-
-        # Get a list of the parts that this user has starred
-        starred_parts = [star.part.pk for star in self.request.user.starred_parts.all()]
-
-        # Reduce the number of lookups we need to do for the part categories
-        categories = {}
-
-        for item in data:
-
-            if item['image']:
-                # Is this part 'starred' for the current user?
-                item['starred'] = item['pk'] in starred_parts
-
-                img = item['image']
-
-                # Use the 'thumbnail' image here instead of the full-size image
-                # Note: The full-size image is used when requesting the /api/part/<x>/ endpoint
-
-                if img:
-                    fn, ext = os.path.splitext(img)
-
-                    thumb = "{fn}.thumbnail{ext}".format(fn=fn, ext=ext)
-
-                    thumb = os.path.join(settings.MEDIA_URL, thumb)
-                else:
-                    thumb = ''
-
-                item['thumbnail'] = thumb
-
-                del item['image']
-
-            cat_id = item['category']
-
-            if cat_id:
-                if cat_id not in categories:
-                    categories[cat_id] = PartCategory.objects.get(pk=cat_id).pathstring
-
-                item['category__name'] = categories[cat_id]
-            else:
-                item['category__name'] = None
-
-        return Response(data)
-
-    def get_queryset(self):
-        """
-        Implement custom filtering for the Part list API
+        Perform custom filtering of the queryset
         """
 
-        # Start with all objects
-        parts_list = Part.objects.all()
+        # Perform basic filtering
+        queryset = super().filter_queryset(queryset)
 
         # Filter by 'starred' parts?
         starred = str2bool(self.request.query_params.get('starred', None))
@@ -315,12 +227,13 @@ class PartList(generics.ListCreateAPIView):
             starred_parts = [star.part.pk for star in self.request.user.starred_parts.all()]
 
             if starred:
-                parts_list = parts_list.filter(pk__in=starred_parts)
+                queryset = queryset.filter(pk__in=starred_parts)
             else:
-                parts_list = parts_list.exclude(pk__in=starred_parts)
+                queryset = queryset.exclude(pk__in=starred_parts)
 
+        # Cascade?
         cascade = str2bool(self.request.query_params.get('cascade', None))
-        
+
         # Does the user wish to filter by category?
         cat_id = self.request.query_params.get('category', None)
 
@@ -334,7 +247,7 @@ class PartList(generics.ListCreateAPIView):
                 # A 'null' category is the top-level category
                 if cascade is False:
                     # Do not cascade, only list parts in the top-level category
-                    parts_list = parts_list.filter(category=None)
+                    queryset = queryset.filter(category=None)
 
             else:
                 try:
@@ -342,17 +255,43 @@ class PartList(generics.ListCreateAPIView):
 
                     # If '?cascade=true' then include parts which exist in sub-categories
                     if cascade:
-                        parts_list = parts_list.filter(category__in=category.getUniqueChildren())
+                        queryset = queryset.filter(category__in=category.getUniqueChildren())
                     # Just return parts directly in the requested category
                     else:
-                        parts_list = parts_list.filter(category=cat_id)
+                        queryset = queryset.filter(category=cat_id)
                 except (ValueError, PartCategory.DoesNotExist):
                     pass
 
-        # Ensure that related models are pre-loaded to reduce DB trips
-        parts_list = self.get_serializer_class().setup_eager_loading(parts_list)
+        # Annotate calculated data to the queryset
+        # (This will be used for further filtering)
+        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
-        return parts_list
+        # Filter by whether the part has stock
+        has_stock = self.request.query_params.get("has_stock", None)
+        if has_stock is not None:
+            has_stock = str2bool(has_stock)
+
+            if has_stock:
+                queryset = queryset.filter(Q(in_stock__gt=0))
+            else:
+                queryset = queryset.filter(Q(in_stock__lte=0))
+
+        # If we are filtering by 'low_stock' status
+        low_stock = self.request.query_params.get('low_stock', None)
+
+        if low_stock is not None:
+            low_stock = str2bool(low_stock)
+
+            if low_stock:
+                # Ignore any parts which do not have a specified 'minimum_stock' level
+                queryset = queryset.exclude(minimum_stock=0)
+                # Filter items which have an 'in_stock' level lower than 'minimum_stock'
+                queryset = queryset.filter(Q(in_stock__lt=F('minimum_stock')))
+            else:
+                # Filter items which have an 'in_stock' level higher than 'minimum_stock'
+                queryset = queryset.filter(Q(in_stock__gte=F('minimum_stock')))
+
+        return queryset
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -379,6 +318,7 @@ class PartList(generics.ListCreateAPIView):
         'name',
     ]
 
+    # Default ordering
     ordering = 'name'
 
     search_fields = [
@@ -507,7 +447,9 @@ class BomList(generics.ListCreateAPIView):
         kwargs['part_detail'] = part_detail
         kwargs['sub_part_detail'] = sub_part_detail
 
+        # Ensure the request context is passed through!
         kwargs['context'] = self.get_serializer_context()
+        
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self):

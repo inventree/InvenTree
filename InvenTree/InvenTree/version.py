@@ -4,8 +4,9 @@ Provides information on the current InvenTree version
 
 import subprocess
 from common.models import InvenTreeSetting
+import django
 
-INVENTREE_SW_VERSION = "0.0.11_pre"
+INVENTREE_SW_VERSION = "0.0.12 pre"
 
 
 def inventreeInstanceName():
@@ -16,6 +17,11 @@ def inventreeInstanceName():
 def inventreeVersion():
     """ Returns the InvenTree version string """
     return INVENTREE_SW_VERSION
+
+
+def inventreeDjangoVersion():
+    """ Return the version of Django library """
+    return django.get_version()
 
 
 def inventreeCommitHash():
