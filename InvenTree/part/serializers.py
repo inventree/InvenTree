@@ -84,8 +84,29 @@ class PartSerializer(InvenTreeModelSerializer):
     Used when displaying all details of a single component.
     """
 
+    def __init__(self, *args, **kwargs):
+        """
+        Custom initialization method for PartSerializer,
+        so that we can optionally pass extra fields based on the query.
+        """
+
+        self.starred_parts = kwargs.pop('starred_parts', [])
+
+        category_detail = kwargs.pop('category_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if category_detail is not True:
+            self.fields.pop('category_detail')
+
+
     @staticmethod
     def prefetch_queryset(queryset):
+        """
+        Prefetch related database tables,
+        to reduce database hits.
+        """
+
         return queryset.prefetch_related(
             'category',
             'stock_items',
@@ -93,7 +114,10 @@ class PartSerializer(InvenTreeModelSerializer):
             'builds',
             'supplier_parts',
             'supplier_parts__purchase_order_line_items',
-            'supplier_parts__purcahes_order_line_items__order'
+            'supplier_parts__purcahes_order_line_items__order',
+            'starred_users',
+            'starred_user__user',
+            'starred_user__part',
         )
 
     @staticmethod
@@ -141,33 +165,40 @@ class PartSerializer(InvenTreeModelSerializer):
         
         return queryset
 
+    def get_starred(self, part):
+        """
+        Return "true" if the part is starred by the current user.
+        """
+
+        return part in self.starred_parts
+
+    # Extra detail for the category
+    category_detail = CategorySerializer(source='category', many=False, read_only=True)
+
+    # Calculated fields
     in_stock = serializers.FloatField(read_only=True)
     ordering = serializers.FloatField(read_only=True)
     building = serializers.FloatField(read_only=True)
 
-    #allocated_stock = serializers.FloatField(source='allocation_count', read_only=True)
-    #bom_items = serializers.IntegerField(source='bom_count', read_only=True)
-    #building = serializers.FloatField(source='quantity_being_built', read_only=False)
-    #category_name = serializers.CharField(source='category_path', read_only=True)
     image = serializers.CharField(source='get_image_url', read_only=True)
-    #on_order = serializers.FloatField(read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-    #used_in = serializers.IntegerField(source='used_in_count', read_only=True)
+    starred = serializers.SerializerMethodField()
 
-    # TODO - Include a 'category_detail' field which serializers the category object
+    # TODO - Include annotation for the following fields:
+    # allocated_stock = serializers.FloatField(source='allocation_count', read_only=True)
+    # bom_items = serializers.IntegerField(source='bom_count', read_only=True)
+    # used_in = serializers.IntegerField(source='used_in_count', read_only=True)
 
     class Meta:
         model = Part
         partial = True
         fields = [
             'active',
-            #'allocated_stock',
+            # 'allocated_stock',
             'assembly',
-            #'bom_items',
-            #'building',
+            # 'bom_items',
             'category',
-            #'category_name',
+            'category_detail',
             'component',
             'description',
             'full_name',
@@ -179,18 +210,18 @@ class PartSerializer(InvenTreeModelSerializer):
             'is_template',
             'keywords',
             'link',
+            'minimum_stock',
             'name',
             'notes',
-            #'on_order',
             'pk',
             'purchaseable',
+            'revision',
             'salable',
+            'starred',
             'thumbnail',
             'trackable',
-            #'total_stock',
             'units',
-            #'used_in',
-            'url',  # Link to the part detail page
+            # 'used_in',
             'variant_of',
             'virtual',
         ]
