@@ -6,10 +6,8 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
-from django.conf import settings
 
-from django.db.models import Q, F, Sum, Count
-from django.db.models.functions import Coalesce
+from django.db.models import Q, F, Count
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -19,15 +17,11 @@ from rest_framework import generics, permissions
 from django.conf.urls import url, include
 from django.urls import reverse
 
-import os
-from decimal import Decimal
-
 from .models import Part, PartCategory, BomItem, PartStar
 from .models import PartParameter, PartParameterTemplate
 
 from . import serializers as part_serializers
 
-from InvenTree.status_codes import OrderStatus, StockStatus, BuildStatus
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 
@@ -125,6 +119,8 @@ class PartThumbs(generics.ListAPIView):
         # Get all Parts which have an associated image
         queryset = Part.objects.all().exclude(image='')
 
+        # TODO - We should return the thumbnails here, not the full image!
+
         # Return the most popular parts first
         data = queryset.values(
             'image',
@@ -208,7 +204,6 @@ class PartList(generics.ListCreateAPIView):
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
 
     def filter_queryset(self, queryset):
         """

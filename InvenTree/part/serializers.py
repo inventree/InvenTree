@@ -12,7 +12,7 @@ from .models import PartParameter, PartParameterTemplate
 
 from decimal import Decimal
 
-from django.db.models import Q, F, Sum, Count
+from django.db.models import Q, Sum
 from django.db.models.functions import Coalesce
 
 from InvenTree.status_codes import StockStatus, OrderStatus, BuildStatus
@@ -99,7 +99,6 @@ class PartSerializer(InvenTreeModelSerializer):
         if category_detail is not True:
             self.fields.pop('category_detail')
 
-
     @staticmethod
     def prefetch_queryset(queryset):
         """
@@ -123,7 +122,7 @@ class PartSerializer(InvenTreeModelSerializer):
     @staticmethod
     def annotate_queryset(queryset):
         """
-        Add some extra annotations to the queryset, 
+        Add some extra annotations to the queryset,
         performing database queries as efficiently as possible,
         to reduce database trips.
         """
