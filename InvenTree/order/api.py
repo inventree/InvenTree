@@ -14,6 +14,7 @@ from django.conf import settings
 from django.conf.urls import url
 
 from InvenTree.status_codes import OrderStatus
+from InvenTree.helpers import str2bool
 
 import os
 
@@ -34,66 +35,67 @@ class POList(generics.ListCreateAPIView):
     queryset = PurchaseOrder.objects.all()
     serializer_class = POSerializer
 
-    def list(self, request, *args, **kwargs):
+    def get_serializer(self, *args, **kwargs):
 
-        queryset = self.get_queryset().prefetch_related('supplier', 'lines')
+        try:
+            kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', False))
+        except AttributeError:
+            pass
 
-        queryset = self.filter_queryset(queryset)
+        # Ensure the request context is passed through
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'supplier',
+            'lines',
+        )
+
+        queryset = POSerializer.annotate_queryset(queryset)
+
+        return queryset
+
+
+    def filter_queryset(self, queryset):
+
+        # Perform basic filtering
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
 
         # Special filtering for 'status' field
-        if 'status' in request.GET:
-            status = request.GET['status']
+        status = params.get('status', None)
 
+        if status is not None:
             # First attempt to filter by integer value
-            try:
-                status = int(status)
-                queryset = queryset.filter(status=status)
-            except ValueError:
-                try:
-                    value = OrderStatus.value(status)
-                    queryset = queryset.filter(status=value)
-                except ValueError:
-                    pass
+            queryset = queryset.filter(status=status)
 
         # Attempt to filter by part
-        if 'part' in request.GET:
+        part = params.get('part', None)
+
+        if part is not None:
             try:
-                part = Part.objects.get(pk=request.GET['part'])
+                part = Part.objects.get(pk=part)
                 queryset = queryset.filter(id__in=[p.id for p in part.purchase_orders()])
             except (Part.DoesNotExist, ValueError):
                 pass
 
         # Attempt to filter by supplier part
-        if 'supplier_part' in request.GET:
+        supplier_part = params.get('supplier_part', None)
+
+        if supplier_part is not None:
             try:
-                supplier_part = SupplierPart.objects.get(pk=request.GET['supplier_part'])
+                supplier_part = SupplierPart.objects.get(pk=supplier_part)
                 queryset = queryset.filter(id__in=[p.id for p in supplier_part.purchase_orders()])
             except (ValueError, SupplierPart.DoesNotExist):
                 pass
 
-        data = queryset.values(
-            'pk',
-            'supplier',
-            'supplier_reference',
-            'supplier__name',
-            'supplier__image',
-            'reference',
-            'description',
-            'link',
-            'status',
-            'notes',
-            'creation_date',
-        )
-
-        for item in data:
-
-            order = queryset.get(pk=item['pk'])
-
-            item['supplier__image'] = os.path.join(settings.MEDIA_URL, item['supplier__image'])
-            item['status_text'] = OrderStatus.label(item['status'])
-            item['lines'] = order.lines.count()
-
-        return Response(data)
+        return queryset
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -122,6 +124,31 @@ class PODetail(generics.RetrieveUpdateAPIView):
 
     queryset = PurchaseOrder.objects.all()
     serializer_class = POSerializer
+
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', False))
+        except AttributeError:
+            pass
+
+        # Ensure the request context is passed through
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'supplier',
+            'lines',
+        )
+
+        queryset = POSerializer.annotate_queryset(queryset)
+
+        return queryset
 
     permission_classes = [
         permissions.IsAuthenticated
