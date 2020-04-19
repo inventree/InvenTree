@@ -48,6 +48,9 @@ class POSerializer(InvenTreeModelSerializer):
         
         fields = [
             'pk',
+            'issue_date',
+            'complete_date',
+            'creation_date',
             'description',
             'line_items',
             'link',
