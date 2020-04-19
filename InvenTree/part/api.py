@@ -166,6 +166,8 @@ class PartList(generics.ListCreateAPIView):
 
     serializer_class = part_serializers.PartSerializer
 
+    queryset = Part.objects.all()
+
     def create(self, request, *args, **kwargs):
         """ Override the default 'create' behaviour:
         We wish to save the user who created this part!
@@ -184,7 +186,89 @@ class PartList(generics.ListCreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def list(self, request, *args, **kwargs):
+
+    def filter_queryset(self, queryset):
+        """
+        Perform custom filtering of the queryset
+        """
+
+        # Perform basic filtering
+        queryset = super().filter_queryset(queryset)
+
+        # Filter by 'starred' parts?
+        starred = str2bool(self.request.query_params.get('starred', None))
+
+        if starred is not None:
+            starred_parts = [star.part.pk for star in self.request.user.starred_parts.all()]
+
+            if starred:
+                queryset = queryset.filter(pk__in=starred_parts)
+            else:
+                queryset = queryset.exclude(pk__in=starred_parts)
+
+        # Cascade?
+        cascade = str2bool(self.request.query_params.get('cascade', None))
+
+        # Does the user wish to filter by category?
+        cat_id = self.request.query_params.get('category', None)
+
+        if cat_id is None:
+            # No category filtering if category is not specified
+            pass
+        
+        else:
+            # Category has been specified!
+            if isNull(cat_id):
+                # A 'null' category is the top-level category
+                if cascade is False:
+                    # Do not cascade, only list parts in the top-level category
+                    queryset = queryset.filter(category=None)
+
+            else:
+                try:
+                    category = PartCategory.objects.get(pk=cat_id)
+
+                    # If '?cascade=true' then include parts which exist in sub-categories
+                    if cascade:
+                        queryset = queryset.filter(category__in=category.getUniqueChildren())
+                    # Just return parts directly in the requested category
+                    else:
+                        queryset = queryset.filter(category=cat_id)
+                except (ValueError, PartCategory.DoesNotExist):
+                    pass
+
+        # Annotate calculated data to the queryset
+        # (This will be used for further filtering)
+        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
+
+        # Filter by whether the part has stock
+        has_stock = self.request.query_params.get("has_stock", None)
+        if has_stock is not None:
+            has_stock = str2bool(has_stock)
+
+            if has_stock:
+                queryset = queryset.filter(Q(in_stock__gt=0))
+            else:
+                queryset = queryset.filter(Q(in_stock_lte=0))
+
+        # If we are filtering by 'low_stock' status
+        low_stock = self.request.query_params.get('low_stock', None)
+
+        if low_stock is not None:
+            low_stock = str2bool(low_stock)
+
+            if low_stock:
+                # Ignore any parts which do not have a specified 'minimum_stock' level
+                queryset = queryset.exclude(minimum_stock=0)
+                # Filter items which have an 'in_stock' level lower than 'minimum_stock'
+                queryset = queryset.filter(Q(in_stock__lt=F('minimum_stock')))
+            else:
+                # Filter items which have an 'in_stock' level higher than 'minimum_stock'
+                queryset = queryset.filter(Q(in_stock__gte=F('minimum_stock')))
+
+        return queryset
+
+    def dolist(self, request, *args, **kwargs):
         """
         Instead of using the DRF serialiser to LIST,
         we serialize the objects manually.
@@ -193,10 +277,11 @@ class PartList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        # Filters for annotations
+        queryset = part_serializers.PartSerializer.prefetch_queryset(queryset)
 
-        # "in_stock" count should only sum stock items which are "in stock"
-        stock_filter = Q(stock_items__status__in=StockStatus.AVAILABLE_CODES)
+        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
+
+        # Filters for annotations
 
         # "on_order" items should only sum orders which are currently outstanding
         order_filter = Q(supplier_parts__purchase_order_line_items__order__status__in=OrderStatus.OPEN)
@@ -225,9 +310,9 @@ class PartList(generics.ListCreateAPIView):
             'active',
         ).annotate(
             # Quantity of items which are "in stock"
-            in_stock=Coalesce(Sum('stock_items__quantity', filter=stock_filter), Decimal(0)),
-            on_order=Coalesce(Sum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter), Decimal(0)),
-            building=Coalesce(Sum('builds__quantity', filter=build_filter), Decimal(0)),
+            in_stock=Coalesce(Sum('stock_items__quantity'), Decimal(0)) #, filter=stock_filter), Decimal(0)),
+            #on_order=Coalesce(Sum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter), Decimal(0)),
+            #building=Coalesce(Sum('builds__quantity', filter=build_filter), Decimal(0)),
         )
 
         # If we are filtering by 'has_stock' status
@@ -299,60 +384,6 @@ class PartList(generics.ListCreateAPIView):
                 item['category__name'] = None
 
         return Response(data)
-
-    def get_queryset(self):
-        """
-        Implement custom filtering for the Part list API
-        """
-
-        # Start with all objects
-        parts_list = Part.objects.all()
-
-        # Filter by 'starred' parts?
-        starred = str2bool(self.request.query_params.get('starred', None))
-
-        if starred is not None:
-            starred_parts = [star.part.pk for star in self.request.user.starred_parts.all()]
-
-            if starred:
-                parts_list = parts_list.filter(pk__in=starred_parts)
-            else:
-                parts_list = parts_list.exclude(pk__in=starred_parts)
-
-        cascade = str2bool(self.request.query_params.get('cascade', None))
-        
-        # Does the user wish to filter by category?
-        cat_id = self.request.query_params.get('category', None)
-
-        if cat_id is None:
-            # No category filtering if category is not specified
-            pass
-        
-        else:
-            # Category has been specified!
-            if isNull(cat_id):
-                # A 'null' category is the top-level category
-                if cascade is False:
-                    # Do not cascade, only list parts in the top-level category
-                    parts_list = parts_list.filter(category=None)
-
-            else:
-                try:
-                    category = PartCategory.objects.get(pk=cat_id)
-
-                    # If '?cascade=true' then include parts which exist in sub-categories
-                    if cascade:
-                        parts_list = parts_list.filter(category__in=category.getUniqueChildren())
-                    # Just return parts directly in the requested category
-                    else:
-                        parts_list = parts_list.filter(category=cat_id)
-                except (ValueError, PartCategory.DoesNotExist):
-                    pass
-
-        # Ensure that related models are pre-loaded to reduce DB trips
-        parts_list = self.get_serializer_class().setup_eager_loading(parts_list)
-
-        return parts_list
 
     permission_classes = [
         permissions.IsAuthenticated,
