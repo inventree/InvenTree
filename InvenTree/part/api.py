@@ -134,11 +134,40 @@ class PartDetail(generics.RetrieveUpdateAPIView):
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartSerializer
+    
+    starred_parts = None
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = part_serializers.PartSerializer.prefetch_queryset(queryset)
+        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
+        return queryset
 
     permission_classes = [
         permissions.IsAuthenticated,
     ]
 
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            cat_detail = str2bool(self.request.query_params.get('category_detail', False))
+        except AttributeError:
+            cat_detail = None
+
+        # Ensure the request context is passed through
+        kwargs['context'] = self.get_serializer_context()
+
+        kwargs['category_detail'] = cat_detail
+
+        # Pass a list of "starred" parts fo the current user to the serializer
+        # We do this to reduce the number of database queries required!
+        if self.starred_parts is None and self.request is not None:
+            self.starred_parts = [star.part for star in self.request.user.starred_parts.all()]
+
+        kwargs['starred_parts'] = self.starred_parts
+
+        return self.serializer_class(*args, **kwargs)
 
 class PartList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of Part objects
