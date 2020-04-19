@@ -169,6 +169,7 @@ class PartDetail(generics.RetrieveUpdateAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
+
 class PartList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of Part objects
 
