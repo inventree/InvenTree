@@ -56,6 +56,12 @@ def inventree_version(*args, **kwargs):
 
 
 @register.simple_tag()
+def django_version(*args, **kwargs):
+    """ Return Django version string """
+    return version.inventreeDjangoVersion()
+
+
+@register.simple_tag()
 def inventree_commit_hash(*args, **kwargs):
     """ Return InvenTree git commit hash string """
     return version.inventreeCommitHash()

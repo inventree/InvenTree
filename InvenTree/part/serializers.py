@@ -10,6 +10,12 @@ from .models import PartCategory
 from .models import BomItem
 from .models import PartParameter, PartParameterTemplate
 
+from decimal import Decimal
+
+from django.db.models import Q, Sum
+from django.db.models.functions import Coalesce
+
+from InvenTree.status_codes import StockStatus, OrderStatus, BuildStatus
 from InvenTree.serializers import InvenTreeModelSerializer
 
 
@@ -48,14 +54,6 @@ class PartBriefSerializer(InvenTreeModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
-
-    @staticmethod
-    def setup_eager_loading(queryset):
-        queryset = queryset.prefetch_related('category')
-        queryset = queryset.prefetch_related('stock_items')
-        queryset = queryset.prefetch_related('bom_items')
-        queryset = queryset.prefetch_related('builds')
-        return queryset
     
     class Meta:
         model = Part
@@ -64,8 +62,6 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'url',
             'full_name',
             'description',
-            'total_stock',
-            'available_stock',
             'thumbnail',
             'active',
             'assembly',
@@ -78,57 +74,140 @@ class PartSerializer(InvenTreeModelSerializer):
     Used when displaying all details of a single component.
     """
 
-    allocated_stock = serializers.FloatField(source='allocation_count', read_only=True)
-    bom_items = serializers.IntegerField(source='bom_count', read_only=True)
-    building = serializers.FloatField(source='quantity_being_built', read_only=False)
-    category_name = serializers.CharField(source='category_path', read_only=True)
-    image = serializers.CharField(source='get_image_url', read_only=True)
-    on_order = serializers.FloatField(read_only=True)
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-    used_in = serializers.IntegerField(source='used_in_count', read_only=True)
+    def __init__(self, *args, **kwargs):
+        """
+        Custom initialization method for PartSerializer,
+        so that we can optionally pass extra fields based on the query.
+        """
+
+        self.starred_parts = kwargs.pop('starred_parts', [])
+
+        category_detail = kwargs.pop('category_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if category_detail is not True:
+            self.fields.pop('category_detail')
 
     @staticmethod
-    def setup_eager_loading(queryset):
-        queryset = queryset.prefetch_related('category')
-        queryset = queryset.prefetch_related('stock_items')
-        queryset = queryset.prefetch_related('bom_items')
-        queryset = queryset.prefetch_related('builds')
+    def prefetch_queryset(queryset):
+        """
+        Prefetch related database tables,
+        to reduce database hits.
+        """
+
+        return queryset.prefetch_related(
+            'category',
+            'stock_items',
+            'bom_items',
+            'builds',
+            'supplier_parts',
+            'supplier_parts__purchase_order_line_items',
+            'supplier_parts__purchase_order_line_items__order',
+        )
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add some extra annotations to the queryset,
+        performing database queries as efficiently as possible,
+        to reduce database trips.
+        """
+
+        # Filter to limit stock items to "available"
+        stock_filter = Q(stock_items__status__in=StockStatus.AVAILABLE_CODES)
+
+        # Filter to limit orders to "open"
+        order_filter = Q(supplier_parts__purchase_order_line_items__order__status__in=OrderStatus.OPEN)
+
+        # Filter to limit builds to "active"
+        build_filter = Q(builds__status__in=BuildStatus.ACTIVE_CODES)
+
+        # Annotate the number total stock count
+        queryset = queryset.annotate(
+            in_stock=Coalesce(Sum('stock_items__quantity', filter=stock_filter, distinct=True), Decimal(0))
+        )
+
+        # Annotate the number of parts "on order"
+        # Total "on order" parts = "Quantity" - "Received" for each active purchase order
+        queryset = queryset.annotate(
+            ordering=Coalesce(Sum(
+                'supplier_parts__purchase_order_line_items__quantity',
+                filter=order_filter,
+                distinct=True
+            ), Decimal(0)) - Coalesce(Sum(
+                'supplier_parts__purchase_order_line_items__received',
+                filter=order_filter,
+                distinct=True
+            ), Decimal(0))
+        )
+
+        # Annotate number of parts being build
+        queryset = queryset.annotate(
+            building=Coalesce(
+                Sum('builds__quantity', filter=build_filter, distinct=True), Decimal(0)
+            )
+        )
+        
         return queryset
 
-    # TODO - Include a 'category_detail' field which serializers the category object
+    def get_starred(self, part):
+        """
+        Return "true" if the part is starred by the current user.
+        """
+
+        return part in self.starred_parts
+
+    # Extra detail for the category
+    category_detail = CategorySerializer(source='category', many=False, read_only=True)
+
+    # Calculated fields
+    in_stock = serializers.FloatField(read_only=True)
+    ordering = serializers.FloatField(read_only=True)
+    building = serializers.FloatField(read_only=True)
+
+    image = serializers.CharField(source='get_image_url', read_only=True)
+    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    starred = serializers.SerializerMethodField()
+
+    # TODO - Include annotation for the following fields:
+    # allocated_stock = serializers.FloatField(source='allocation_count', read_only=True)
+    # bom_items = serializers.IntegerField(source='bom_count', read_only=True)
+    # used_in = serializers.IntegerField(source='used_in_count', read_only=True)
 
     class Meta:
         model = Part
         partial = True
         fields = [
             'active',
-            'allocated_stock',
+            # 'allocated_stock',
             'assembly',
-            'bom_items',
-            'building',
+            # 'bom_items',
             'category',
-            'category_name',
+            'category_detail',
             'component',
             'description',
             'full_name',
             'image',
+            'in_stock',
+            'ordering',
+            'building',
             'IPN',
             'is_template',
             'keywords',
             'link',
+            'minimum_stock',
             'name',
             'notes',
-            'on_order',
             'pk',
             'purchaseable',
+            'revision',
             'salable',
+            'starred',
             'thumbnail',
             'trackable',
-            'total_stock',
             'units',
-            'used_in',
-            'url',  # Link to the part detail page
+            # 'used_in',
             'variant_of',
             'virtual',
         ]

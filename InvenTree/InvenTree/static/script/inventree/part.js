@@ -87,6 +87,9 @@ function loadPartTable(table, url, options={}) {
      *      disableFilters: If true, disable custom filters
      */
 
+    // Ensure category detail is included
+    options.params['category_detail'] = true;
+
     var params = options.params || {};
 
     var filters = {};
@@ -184,11 +187,11 @@ function loadPartTable(table, url, options={}) {
     
     columns.push({
         sortable: true,
-        field: 'category__name',
+        field: 'category_detail',
         title: 'Category',
         formatter: function(value, row, index, field) {
             if (row.category) {
-                return renderLink(row.category__name, "/part/category/" + row.category + "/");
+                return renderLink(value.pathstring, "/part/category/" + row.category + "/");
             }
             else {
                 return 'No category';
