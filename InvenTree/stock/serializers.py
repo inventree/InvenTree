@@ -77,13 +77,11 @@ class StockItemSerializer(InvenTreeModelSerializer):
     
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
-    supplier_part_detail = SupplierPartSerializer(source='supplier_part', many=False, read_only=True)
 
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
         location_detail = kwargs.pop('location_detail', False)
-        supplier_detail = kwargs.pop('supplier_detail', False)
 
         super(StockItemSerializer, self).__init__(*args, **kwargs)
 
@@ -92,9 +90,6 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
         if location_detail is not True:
             self.fields.pop('location_detail')
-
-        if supplier_detail is not True:
-            self.fields.pop('supplier_part_detail')
 
     class Meta:
         model = StockItem
@@ -111,12 +106,9 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'quantity',
             'serial',
             'supplier_part',
-            'supplier_part_detail',
             'status',
             'status_text',
-            #'tracking_items',
             'uid',
-            #'url',
         ]
 
         """ These fields are read-only in this context.

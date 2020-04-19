@@ -54,14 +54,6 @@ class PartBriefSerializer(InvenTreeModelSerializer):
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
-
-    @staticmethod
-    def setup_eager_loading(queryset):
-        queryset = queryset.prefetch_related('category')
-        queryset = queryset.prefetch_related('stock_items')
-        queryset = queryset.prefetch_related('bom_items')
-        queryset = queryset.prefetch_related('builds')
-        return queryset
     
     class Meta:
         model = Part
@@ -70,8 +62,6 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'url',
             'full_name',
             'description',
-            'total_stock',
-            'available_stock',
             'thumbnail',
             'active',
             'assembly',
