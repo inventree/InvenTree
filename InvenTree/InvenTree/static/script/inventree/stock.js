@@ -43,8 +43,11 @@ function loadStockTable(table, options) {
      *  filterList - <ul> element where filters are displayed
      *  disableFilters: If true, disable custom filters
      */
-    
+
     // List of user-params which override the default filters
+
+    options.params['part_detail'] = true;
+
     var params = options.params || {};
 
     var filterListElement = options.filterList || "#filter-list-stock";
@@ -83,27 +86,21 @@ function loadStockTable(table, options) {
 
             var row = data[0];
 
-            if (field == 'part__name') {
+            if (field == 'part_name') {
 
-                var name = row.part__IPN;
+                var name = row.part_detail.full_name;
 
-                if (name) {
-                    name += ' | ';
-                }
-
-                name += row.part__name;
-
-                return imageHoverIcon(row.part__thumbnail) + name + ' <i>(' + data.length + ' items)</i>';
+                return imageHoverIcon(row.part_detail.thumbnail) + name + ' <i>(' + data.length + ' items)</i>';
             }
-            else if (field == 'part__description') {
-                return row.part__description;
+            else if (field == 'part_description') {
+                return row.part_detail.description;
             }
             else if (field == 'quantity') {
                 var stock = 0;
                 var items = 0;
 
                 data.forEach(function(item) {
-                    stock += item.quantity; 
+                    stock += parseFloat(item.quantity); 
                     items += 1;
                 });
 
@@ -216,25 +213,14 @@ function loadStockTable(table, options) {
                 visible: false,
             },
             {
-                field: 'part__name',
+                field: 'part_name',
                 title: 'Part',
                 sortable: true,
                 formatter: function(value, row, index, field) {
 
-                    var name = row.part__IPN;
-
-                    if (name) {
-                        name += ' | ';
-                    }
-
-                    name += row.part__name;
-
-                    if (row.part__revision) {
-                        name += " | ";
-                        name += row.part__revision;
-                    }
-
                     var url = '';
+                    var thumb = row.part_detail.thumbnail;
+                    var name = row.part_detail.full_name;
 
                     if (row.supplier_part) {
                         url = `/supplier-part/${row.supplier_part}/`;
@@ -242,13 +228,16 @@ function loadStockTable(table, options) {
                         url = `/part/${row.part}/`;
                     }
                     
-                    return imageHoverIcon(row.part__thumbnail) + renderLink(name, url);
+                    return imageHoverIcon(thumb) + renderLink(name, url);
                 }
             },
             {
-                field: 'part__description',
+                field: 'part_description',
                 title: 'Description',
                 sortable: true,
+                formatter: function(value, row, index, field) {
+                    return row.part_detail.description;
+                }
             },
             {
                 field: 'quantity',
@@ -256,11 +245,13 @@ function loadStockTable(table, options) {
                 sortable: true,
                 formatter: function(value, row, index, field) {
 
-                    var val = value;
+                    var val = parseFloat(value);
 
                     // If there is a single unit with a serial number, use the serial number
                     if (row.serial && row.quantity == 1) {
                         val = '# ' + row.serial;
+                    } else {
+                        val = +val.toFixed(5);
                     }
 
                     var text = renderLink(val, '/stock/item/' + row.pk + '/');
@@ -282,7 +273,7 @@ function loadStockTable(table, options) {
                 sortable: true,
             },
             {
-                field: 'location__path',
+                field: 'location_detail.pathstring',
                 title: 'Location',
                 sortable: true,
                 formatter: function(value, row, index, field) {
