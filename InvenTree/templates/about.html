@@ -26,6 +26,10 @@
                             <td>{% trans "InvenTree Version" %}</td><td><a href="https://github.com/inventree/InvenTree/releases">{% inventree_version %}</a></td>
                         </tr>
                         <tr>
+                            <td><span class='fas fa-hashtag'></span></td>
+                            <td>{% trans "Django Version" %}</td><td><a href="https://www.djangoproject.com/">{% django_version %}</a></td>
+                        </tr>
+                        <tr>
                             <td><span class='fas fa-code-branch'></span></td>
                             <td>{% trans "Commit Hash" %}</td><td><a href="https://github.com/inventree/InvenTree/commit/{% inventree_commit_hash %}">{% inventree_commit_hash %}</a></td>
                         </tr>
@@ -45,7 +49,7 @@
                         <tr>
                             <td><span class='fas fa-exclamation-circle'></span></td>
                             <td>{% trans "Submit Bug Report" %}</td>
-                            <td><a href='{% inventree_github_url %}/issues'>{% inventree_github_url %}/issues</a></td>
+                            <td><a href='{% inventree_github_url %}/issues'>{% inventree_github_url %}issues</a></td>
                         </tr>
                     </table>
 
