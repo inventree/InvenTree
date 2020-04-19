@@ -205,6 +205,13 @@ class PartList(generics.ListCreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.PartSerializer.prefetch_queryset(queryset)
+
+        return queryset
+
     def filter_queryset(self, queryset):
         """
         Perform custom filtering of the queryset

@@ -113,10 +113,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'builds',
             'supplier_parts',
             'supplier_parts__purchase_order_line_items',
-            'supplier_parts__purcahes_order_line_items__order',
-            'starred_users',
-            'starred_user__user',
-            'starred_user__part',
+            'supplier_parts__purchase_order_line_items__order',
         )
 
     @staticmethod

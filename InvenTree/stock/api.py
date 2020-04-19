@@ -317,100 +317,44 @@ class StockList(generics.ListCreateAPIView):
         - status: Filter by the StockItem status
     """
 
+    serializer_class = StockItemSerializer
+
     queryset = StockItem.objects.all()
 
     def get_serializer(self, *args, **kwargs):
 
         try:
-            part_detail = str2bool(self.request.GET.get('part_detail', None))
-            location_detail = str2bool(self.request.GET.get('location_detail', None))
+            part_detail = str2bool(self.request.query_params.get('part_detail', None))
+            location_detail = str2bool(self.request.query_params.get('location_detail', None))
+            supplier_part_detail = str2bool(self.request.query_params.get('supplier_part_detail', None))
         except AttributeError:
             part_detail = None
             location_detail = None
+            supplier_part_detail = None
 
         kwargs['part_detail'] = part_detail
         kwargs['location_detail'] = location_detail
         
+        # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
+
         return self.serializer_class(*args, **kwargs)
 
-    def list(self, request, *args, **kwargs):
+    # TODO - Override the 'create' method for this view, 
+    # to allow the user to be recorded when a new StockItem object is created
 
-        queryset = self.filter_queryset(self.get_queryset())
+    def get_queryset(self, *args, **kwargs):
 
-        # Instead of using the DRF serializer to LIST,
-        # we will serialize the objects manually.
-        # This is significantly faster
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = StockItemSerializer.prefetch_queryset(queryset)
 
-        data = queryset.values(
-            'pk',
-            'uid',
-            'parent',
-            'quantity',
-            'serial',
-            'batch',
-            'status',
-            'notes',
-            'link',
-            'location',
-            'location__name',
-            'location__description',
-            'part',
-            'part__IPN',
-            'part__name',
-            'part__revision',
-            'part__description',
-            'part__image',
-            'part__category',
-            'part__category__name',
-            'part__category__description',
-            'supplier_part',
-        )
+        return queryset
 
-        # Reduce the number of lookups we need to do for categories
-        # Cache location lookups for this query
-        locations = {}
 
-        for item in data:
-
-            img = item['part__image']
-
-            if img:
-                # Use the thumbnail image instead
-                fn, ext = os.path.splitext(img)
-
-                thumb = "{fn}.thumbnail{ext}".format(fn=fn, ext=ext)
-
-                thumb = os.path.join(settings.MEDIA_URL, thumb)
-            else:
-                thumb = ''
-
-            item['part__thumbnail'] = thumb
-
-            del item['part__image']
-
-            loc_id = item['location']
-
-            if loc_id:
-                if loc_id not in locations:
-                    locations[loc_id] = StockLocation.objects.get(pk=loc_id).pathstring
-                
-                item['location__path'] = locations[loc_id]
-            else:
-                item['location__path'] = None
-
-            item['status_text'] = StockStatus.label(item['status'])
-
-        return Response(data)
-
-    def get_queryset(self):
-        """
-        If the query includes a particular location,
-        we may wish to also request stock items from all child locations.
-        """
+    def filter_queryset(self, queryset):
 
         # Start with all objects
-        stock_list = super(StockList, self).get_queryset()
+        stock_list = super().filter_queryset(queryset)
         
         # Filter out parts which are not actually "in stock"
         stock_list = stock_list.filter(customer=None, belongs_to=None)
