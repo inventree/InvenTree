@@ -8,7 +8,6 @@ from .models import StockItem, StockLocation
 from .models import StockItemTracking
 
 from part.serializers import PartBriefSerializer
-from company.serializers import SupplierPartSerializer
 from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer
 
 
@@ -72,8 +71,6 @@ class StockItemSerializer(InvenTreeModelSerializer):
         )
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
-
-    #tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True)
     
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)

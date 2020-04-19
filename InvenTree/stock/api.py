@@ -5,7 +5,6 @@ JSON API for the Stock app
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
-from django.conf import settings
 from django.conf.urls import url, include
 from django.urls import reverse
 from django.db.models import Q
@@ -21,9 +20,7 @@ from .serializers import StockTrackingSerializer
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
-from InvenTree.status_codes import StockStatus
 
-import os
 from decimal import Decimal, InvalidOperation
 
 from rest_framework.serializers import ValidationError
@@ -326,11 +323,9 @@ class StockList(generics.ListCreateAPIView):
         try:
             part_detail = str2bool(self.request.query_params.get('part_detail', None))
             location_detail = str2bool(self.request.query_params.get('location_detail', None))
-            supplier_part_detail = str2bool(self.request.query_params.get('supplier_part_detail', None))
         except AttributeError:
             part_detail = None
             location_detail = None
-            supplier_part_detail = None
 
         kwargs['part_detail'] = part_detail
         kwargs['location_detail'] = location_detail
@@ -340,7 +335,7 @@ class StockList(generics.ListCreateAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
-    # TODO - Override the 'create' method for this view, 
+    # TODO - Override the 'create' method for this view,
     # to allow the user to be recorded when a new StockItem object is created
 
     def get_queryset(self, *args, **kwargs):
@@ -349,7 +344,6 @@ class StockList(generics.ListCreateAPIView):
         queryset = StockItemSerializer.prefetch_queryset(queryset)
 
         return queryset
-
 
     def filter_queryset(self, queryset):
 
