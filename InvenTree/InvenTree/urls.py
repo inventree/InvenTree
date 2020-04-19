@@ -8,7 +8,7 @@ Passes URL lookup downstream to each app as required.
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from qr_code import urls as qr_code_urls
+#from qr_code import urls as qr_code_urls
 
 from company.urls import company_urls
 from company.urls import supplier_part_urls
@@ -99,7 +99,7 @@ urlpatterns = [
 
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
 
-    url(r'^qr_code/', include(qr_code_urls, namespace='qr_code')),
+    #url(r'^qr_code/', include(qr_code_urls, namespace='qr_code')),
 
     url(r'^index/', IndexView.as_view(), name='index'),
     url(r'^search/', SearchView.as_view(), name='search'),

@@ -101,7 +101,7 @@ INSTALLED_APPS = [
     'crispy_forms',                 # Improved form rendering
     'import_export',                # Import / export tables to file
     'django_cleanup',               # Automatically delete orphaned MEDIA files
-    'qr_code',                      # Generate QR codes
+    #'qr_code',                      # Generate QR codes
     'mptt',                         # Modified Preorder Tree Traversal
     'markdownx',                    # Markdown editing
     'markdownify',                  # Markdown template rendering
