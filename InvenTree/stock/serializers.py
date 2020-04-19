@@ -67,13 +67,26 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'supplier_part__supplier',
             'supplier_part__manufacturer',
             'location',
-            'part'
+            'part',
+            'tracking_info',
         )
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add some extra annotations to the queryset,
+        performing database queries as efficiently as possible.
+        """
+
+        # TODO
+        pass
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
     
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
+
+    tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True)
 
     def __init__(self, *args, **kwargs):
 
@@ -105,6 +118,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'supplier_part',
             'status',
             'status_text',
+            'tracking_items',
             'uid',
         ]
 
