@@ -58,20 +58,28 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = StockItemSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = StockItemSerializer.prefetch_queryset(queryset)
+        queryset = StockItemSerializer.annotate_queryset(queryset)
+
+        return queryset
+
     def get_serializer(self, *args, **kwargs):
 
         try:
-            kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', False))
+            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', False))
         except AttributeError:
             pass
 
         try:
-            kwargs['location_detail'] = str2bool(self.request.GET.get('location_detail', False))
+            kwargs['location_detail'] = str2bool(self.request.query_params.get('location_detail', False))
         except AttributeError:
             pass
 
         try:
-            kwargs['supplier_detail'] = str2bool(self.request.GET.get('supplier_detail', False))
+            kwargs['supplier_part_detail'] = str2bool(self.request.query_params.get('supplier_detail', False))
         except AttributeError:
             pass
 
@@ -321,14 +329,19 @@ class StockList(generics.ListCreateAPIView):
     def get_serializer(self, *args, **kwargs):
 
         try:
-            part_detail = str2bool(self.request.query_params.get('part_detail', None))
-            location_detail = str2bool(self.request.query_params.get('location_detail', None))
+            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', None))
         except AttributeError:
-            part_detail = None
-            location_detail = None
+            pass
 
-        kwargs['part_detail'] = part_detail
-        kwargs['location_detail'] = location_detail
+        try:
+            kwargs['location_detail'] = str2bool(self.request.query_params.get('location_detail', None))
+        except AttributeError:
+            pass
+
+        try:
+            kwargs['supplier_part_detail'] = str2bool(self.request.query_params.get('supplier_part_detail', None))
+        except AttributeError:
+            pass
         
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()

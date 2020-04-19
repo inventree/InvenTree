@@ -104,21 +104,23 @@ function removePurchaseOrderLineItem(e) {
 function loadPurchaseOrderTable(table, options) {
     /* Create a purchase-order table */
 
-    var params = options.params || {};
+    options.params = options.params || {};
+
+    options.params['supplier_detail'] = true;
 
     var filters = loadTableFilters("order");
 
-    for (var key in params) {
-        filters[key] = params[key];
+    for (var key in options.params) {
+        filters[key] = options.params[key];
     }
 
-    setupFilterList("order", table);
+    setupFilterList("order", $(table));
 
     $(table).inventreeTable({
         url: options.url,
         queryParams: filters,
         groupBy: false,
-        original: params,
+        original: options.params,
         formatNoMatches: function() { return "No purchase orders found"; },
         columns: [
             {
@@ -131,15 +133,15 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'reference',
                 title: 'Purchase Order',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, "/order/purchase-order/" + row.pk + "/");
+                    return renderLink(value, `/order/purchase-order/${row.pk}/`);
                 }
             },  
             {
                 sortable: true,
-                field: 'supplier',
+                field: 'supplier_detail',
                 title: 'Supplier',
                 formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.supplier__image) + renderLink(row.supplier__name, '/company/' + value + '/purchase-orders/');
+                    return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/purchase-orders/`);
                 }
             },
             {
@@ -162,7 +164,7 @@ function loadPurchaseOrderTable(table, options) {
             },
             {
                 sortable: true,
-                field: 'lines',
+                field: 'line_items',
                 title: 'Items'
             },
         ],
