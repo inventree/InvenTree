@@ -16,6 +16,7 @@ import logging
 from decimal import Decimal, InvalidOperation
 
 from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
+from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
 from .admin import POLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart
@@ -53,6 +54,13 @@ class PurchaseOrderIndex(ListView):
         ctx['OrderStatus'] = OrderStatus
 
         return ctx
+
+
+class SalesOrderIndex(ListView):
+
+    model = SalesOrder
+    template_name = 'order/sales_orders.html'
+    context_object_name = 'orders'
 
 
 class PurchaseOrderDetail(DetailView):

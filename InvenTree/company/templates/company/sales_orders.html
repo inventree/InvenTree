@@ -27,7 +27,10 @@
 {{ block.super }}
 
     loadSalesOrderTable("#sales-order-table", {
-        url: "{% url 'api-so-list' %}?customer={{ company.id }}",
+        url: "{% url 'api-so-list' %}",
+        params: {
+            customer: {{ company.id }},
+        }
     });
 
 

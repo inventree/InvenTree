@@ -27,7 +27,10 @@
 {{ block.super }}
 
     loadPurchaseOrderTable("#purchase-order-table", {
-        url: "{% url 'api-po-list' %}?supplier={{ company.id }}",
+        url: "{% url 'api-po-list' %}",
+        params: {
+            supplier: company.id,
+        }
     });
 
 

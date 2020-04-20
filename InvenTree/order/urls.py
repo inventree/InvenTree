@@ -61,6 +61,11 @@ purchase_order_urls = [
     url(r'^.*$', views.PurchaseOrderIndex.as_view(), name='po-index'),
 ]
 
+sales_order_urls = [
+    url(r'^.*$', views.SalesOrderIndex.as_view(), name='so-index'),
+]
+
 order_urls = [
     url(r'^purchase-order/', include(purchase_order_urls)),
+    url(r'^sales-order/', include(sales_order_urls)),
 ]
