@@ -20,7 +20,7 @@ from .models import PurchaseOrder, PurchaseOrderLineItem
 from .serializers import POSerializer, POLineItemSerializer
 
 from .models import SalesOrder, SalesOrderLineItem
-from .serializers import SalseOrderSerializer
+from .serializers import SalseOrderSerializer, SOLineItemSerializer
 
 
 class POList(generics.ListCreateAPIView):
@@ -153,7 +153,7 @@ class PODetail(generics.RetrieveUpdateAPIView):
 
 
 class POLineItemList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of PO Line Item objects
+    """ API endpoint for accessing a list of POLineItem objects
 
     - GET: Return a list of PO Line Item objects
     - POST: Create a new PurchaseOrderLineItem object
@@ -293,7 +293,33 @@ class SODetail(generics.RetrieveUpdateAPIView):
         return queryset
 
     permission_classes = [permissions.IsAuthenticated]
-        
+
+
+class SOLineItemList(generics.ListCreateAPIView):
+    """
+    API endpoint for accessing a list of SalesOrderLineItem objects.
+    """
+
+    queryset = SalesOrderLineItem.objects.all()
+    serializer_class = SOLineItemSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    filter_backends = [DjangoFilterBackend]
+
+    filter_fields = [
+        'order',
+    ]
+
+
+class SOLineItemDetail(generics.RetrieveUpdateAPIView):
+    """ API endpoint for detail view of a SalesOrderLineItem object """
+
+    queryset = SalesOrderLineItem.objects.all()
+    serializer_class = SOLineItemSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
+
 
 order_api_urls = [
     # API endpoints for purchase orders
@@ -307,4 +333,8 @@ order_api_urls = [
     # API endpoints for sales ordesr
     url(r'^so/(?P<pk>\d+)/$', SODetail.as_view(), name='api-so-detail'),
     url(r'^so/$', SOList.as_view(), name='api-so-list'),
+
+    # API endpoints for sales order line items
+    url(r'^so-line/(?P<pk>\d+)/$', SOLineItemDetail.as_view(), name='api-so-line-detail'),
+    url(r'^so-line/$', SOLineItemList.as_view(), name='api-so-line-list'),
 ]

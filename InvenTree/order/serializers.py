@@ -140,3 +140,18 @@ class SalseOrderSerializer(InvenTreeModelSerializer):
             'reference',
             'status'
         ]
+
+
+class SOLineItemSerializer(InvenTreeModelSerializer):
+    """ Serializer for a SalesOrderLineItem object """
+
+    class Meta:
+        model = SalesOrderLineItem
+
+        fields = [
+            'pk',
+            'quantity',
+            'reference',
+            'notes',
+            'order',
+        ]
