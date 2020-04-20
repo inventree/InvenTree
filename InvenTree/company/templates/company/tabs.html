@@ -18,11 +18,9 @@
     </li>
     {% endif %}
     {% if company.is_customer %}
-    {% if 0 %}
     <li{% if tab == 'co' %} class='active'{% endif %}>
-        <a href="#">{% trans "Sales Orders" %}</a>
+        <a href="{% url 'company-detail-sales-orders' company.id %}">{% trans "Sales Orders" %} <span class='badge'>{{ company.sales_orders.count }}</span></a>
     </li>
-    {% endif %}
     {% endif %}
     <li{% if tab == 'notes' %} class='active'{% endif %}>
         <a href="{% url 'company-notes' company.id %}">{% trans "Notes" %}{% if company.notes %} <span class='glyphicon glyphicon-small glyphicon-info-sign'></span>{% endif %}</a>

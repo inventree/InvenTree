@@ -1,0 +1,12 @@
+{% extends "company/company_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block details %}
+
+{% include 'company/tabs.html' with tab='co' %}
+
+<h4>{% trans "Sales Orders" %}</h4>
+<hr>
+
+{% endblock %}
