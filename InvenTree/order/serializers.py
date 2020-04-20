@@ -124,6 +124,7 @@ class SalseOrderSerializer(InvenTreeModelSerializer):
             'issue_date',
             'complete_date',
             'creation_date',
+            'description',
             'line_items',
             'link',
             'reference',
