@@ -9,6 +9,7 @@ from import_export.resources import ModelResource
 from import_export.fields import Field
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import SalesOrder, SalesOrderLineItem
 
 
 class PurchaseOrderAdmin(ImportExportModelAdmin):
@@ -19,6 +20,17 @@ class PurchaseOrderAdmin(ImportExportModelAdmin):
         'status',
         'description',
         'creation_date'
+    )
+
+
+class SalesOrderAdmin(ImportExportModelAdmin):
+
+    list_display = (
+        'reference',
+        'customer',
+        'status',
+        'description',
+        'creation_date',
     )
 
 
@@ -40,6 +52,16 @@ class POLineItemResource(ModelResource):
         clean_model_instances = True
 
 
+class SOLineItemResource(ModelResource):
+    """ Class for managing import / export of SOLineItem data """
+
+    class Meta:
+        model = SalesOrderLineItem
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+
+
 class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
 
     resource_class = POLineItemResource
@@ -52,5 +74,19 @@ class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
     )
 
 
+class SalesOrderLineItemAdmin(ImportExportModelAdmin):
+
+    resource_class = SOLineItemResource
+
+    list_display = (
+        'order',
+        'quantity',
+        'reference'
+    )
+
+
 admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
 admin.site.register(PurchaseOrderLineItem, PurchaseOrderLineItemAdmin)
+
+admin.site.register(SalesOrder, SalesOrderAdmin)
+admin.site.register(SalesOrderLineItem, SalesOrderLineItemAdmin)
