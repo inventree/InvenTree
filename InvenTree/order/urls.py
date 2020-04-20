@@ -65,6 +65,13 @@ so_line_urls = [
     url(r'^new/', views.SOLineItemCreate.as_view(), name='so-line-item-create'),
 ]
 
+sales_order_attachment_urls = [
+    url(r'^new/', views.SalesOrderAttachmentCreate.as_view(), name='so-attachment-create'),
+    url(r'^(?P<pk>\d+)/edit/', views.SalesOrderAttachmentEdit.as_view(), name='so-attachment-edit'),
+    url(r'^(?P<pk>\d+)/delete/', views.SalesOrderAttachmentDelete.as_view(), name='so-attachment-delete'),
+
+]
+
 sales_order_detail_urls = [
 
     url(r'^edit/', views.SalesOrderEdit.as_view(), name='so-edit'),
@@ -80,6 +87,8 @@ sales_order_urls = [
     url(r'^new/', views.SalesOrderCreate.as_view(), name='so-create'),
 
     url(r'^line/', include(so_line_urls)),
+
+    url(r'^attachments/', include(sales_order_attachment_urls)),
 
     # Display detail view for a single SalesOrder
     url(r'^(?P<pk>\d+)/', include(sales_order_detail_urls)),

@@ -33,10 +33,10 @@
             <td>{{ attachment.comment }}</td>
             <td>
                 <div class='btn-group' style='float: right;'>    
-                    <button type='button' class='btn btn-default btn-glyph attachment-edit-button' url="{% url 'po-attachment-edit' attachment.id %}" data-toggle='tooltip' title='{% trans "Edit attachment" %}'>
+                    <button type='button' class='btn btn-default btn-glyph attachment-edit-button' url="{% url 'so-attachment-edit' attachment.id %}" data-toggle='tooltip' title='{% trans "Edit attachment" %}'>
                         <span class='glyphicon glyphicon-edit'/>
                     </button>
-                    <button type='button' class='btn btn-default btn-glyph attachment-delete-button' url="{% url 'po-attachment-delete' attachment.id %}" data-toggle='tooltip' title='{% trans "Delete attachment" %}'>
+                    <button type='button' class='btn btn-default btn-glyph attachment-delete-button' url="{% url 'so-attachment-delete' attachment.id %}" data-toggle='tooltip' title='{% trans "Delete attachment" %}'>
                         <span class='glyphicon glyphicon-trash'/>
                     </button>
                 </div>
@@ -52,7 +52,7 @@
 {{ block.super }}
 
 $("#new-attachment").click(function() {
-    launchModalForm("{% url 'po-attachment-create' %}?order={{ order.id }}",
+    launchModalForm("{% url 'so-attachment-create' %}?order={{ order.id }}",
         {
             reload: true,
         }

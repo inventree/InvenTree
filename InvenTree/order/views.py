@@ -129,6 +129,34 @@ class PurchaseOrderAttachmentCreate(AjaxCreateView):
         return form
 
 
+class SalesOrderAttachmentCreate(AjaxCreateView):
+    """ View for creating a new SalesOrderAttachment """
+
+    model = SalesOrderAttachment
+    form_class = order_forms.EditSalesOrderAttachmentForm
+    ajax_form_title = _('Add Sales Order Attachment')
+
+    def get_data(self):
+        return {
+            'success': _('Added attachment')
+        }
+
+    def get_initial(self):
+        initials = super().get_initial().copy()
+
+        initials['order'] = SalesOrder.objects.get(id=self.request.GET.get('order', None))
+
+        return initials
+
+    def get_form(self):
+        """ Hide the 'order' field """
+
+        form = super().get_form()
+        form.fields['order'].widget = HiddenInput()
+
+        return form
+
+
 class PurchaseOrderAttachmentEdit(AjaxUpdateView):
     """ View for editing a PurchaseOrderAttachment object """
 
@@ -150,12 +178,46 @@ class PurchaseOrderAttachmentEdit(AjaxUpdateView):
         return form
 
 
+class SalesOrderAttachmentEdit(AjaxUpdateView):
+    """ View for editing a SalesOrderAttachment object """
+
+    model = SalesOrderAttachment
+    form_class = order_forms.EditSalesOrderAttachmentForm
+    ajax_form_title = _("Edit Attachment")
+
+    def get_data(self):
+        return {
+            'success': _('Attachment updated')
+        }
+
+    def get_form(self):
+        form = super().get_form()
+
+        form.fields['order'].widget = HiddenInput()
+
+        return form
+
+
 class PurchaseOrderAttachmentDelete(AjaxDeleteView):
     """ View for deleting a PurchaseOrderAttachment """
 
     model = PurchaseOrderAttachment
     ajax_form_title = _("Delete Attachment")
-    ajax_template_name = "order/po_delete.html"
+    ajax_template_name = "order/delete_attachment.html"
+    context_object_name = "attachment"
+
+    def get_data(self):
+        return {
+            "danger": _("Deleted attachment")
+        }
+
+
+class SalesOrderAttachmentDelete(AjaxDeleteView):
+    """ View for deleting a SalesOrderAttachment """
+
+    model = SalesOrderAttachment
+    ajax_form_title = _("Delete Attachment")
+    ajax_template_name = "order/delete_attachment.html"
     context_object_name = "attachment"
 
     def get_data(self):
