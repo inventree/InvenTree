@@ -257,7 +257,7 @@ class SalesOrder(Order):
     customer = models.ForeignKey(Company,
         on_delete=models.SET_NULL,
         null=True,
-        limit_choices_to={'is_supplier', True},
+        limit_choices_to={'is_customer': True},
         related_name='sales_orders',
         help_text=_("Customer"),
     )

@@ -19,9 +19,12 @@ from company.models import SupplierPart
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .serializers import POSerializer, POLineItemSerializer
 
+from .models import SalesOrder, SalesOrderLineItem
+from .serializers import SalseOrderSerializer
+
 
 class POList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of Order objects
+    """ API endpoint for accessing a list of PurchaseOrder objects
 
     - GET: Return list of PO objects (with filters)
     - POST: Create a new PurchaseOrder object
@@ -184,10 +187,124 @@ class POLineItemDetail(generics.RetrieveUpdateAPIView):
     ]
 
 
-po_api_urls = [
-    url(r'^order/(?P<pk>\d+)/?$', PODetail.as_view(), name='api-po-detail'),
-    url(r'^order/?$', POList.as_view(), name='api-po-list'),
+class SOList(generics.ListCreateAPIView):
+    """
+    API endpoint for accessing a list of SalesOrder objects.
 
-    url(r'^line/(?P<pk>\d+)/?$', POLineItemDetail.as_view(), name='api-po-line-detail'),
-    url(r'^line/?$', POLineItemList.as_view(), name='api-po-line-list'),
+    - GET: Return list of SO objects (with filters)
+    - POST: Create a new SalesOrder
+    """
+
+    queryset = SalesOrder.objects.all()
+    serializer_class = SalseOrderSerializer
+
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            kwargs['customer_detail'] = str2bool(self.request.query_params.get('customer_detail', False))
+        except AttributeError:
+            pass
+
+        # Ensure the context is passed through to the serializer
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'customer',
+            'lines'
+        )
+
+        queryset = SalseOrderSerializer.annotate_queryset(queryset)
+
+        return queryset
+
+    def filter_queryset(self, queryset):
+        """
+        Perform custom filtering operations on the SalesOrder queryset.
+        """
+
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        status = params.get('status', None)
+
+        if status is not None:
+            queryset = queryset.filter(status=status)
+
+        # TODO - Filter by part / stockitem / etc
+
+        return queryset
+
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+        'customer',
+    ]
+
+    ordering_fields = [
+        'creation_date',
+        'reference'
+    ]
+
+    ordering = '-creation_date'
+
+
+class SODetail(generics.RetrieveUpdateAPIView):
+    """
+    API endpoint for detail view of a SalesOrder object.
+    """
+
+    queryset = SalesOrder.objects.all()
+    serializer_class = SalseOrderSerializer
+
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            kwargs['customer_detail'] = str2bool(self.request.query_params.get('customer_detail', False))
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related('customer', 'lines')
+
+        queryset = SalseOrderSerializer.annotate_queryset(queryset)
+
+        return queryset
+
+    permission_classes = [permissions.IsAuthenticated]
+        
+
+order_api_urls = [
+    # API endpoints for purchase orders
+    url(r'^po/(?P<pk>\d+)/$', PODetail.as_view(), name='api-po-detail'),
+    url(r'^po/$', POList.as_view(), name='api-po-list'),
+
+    # API endpoints for purchase order line items
+    url(r'^po-line/(?P<pk>\d+)/$', POLineItemDetail.as_view(), name='api-po-line-detail'),
+    url(r'^po-line/$', POLineItemList.as_view(), name='api-po-line-list'),
+
+    # API endpoints for sales ordesr
+    url(r'^so/(?P<pk>\d+)/$', SODetail.as_view(), name='api-so-detail'),
+    url(r'^so/$', SOList.as_view(), name='api-so-list'),
 ]

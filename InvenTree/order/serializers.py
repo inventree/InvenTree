@@ -13,10 +13,11 @@ from InvenTree.serializers import InvenTreeModelSerializer
 from company.serializers import CompanyBriefSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import SalesOrder, SalesOrderLineItem
 
 
 class POSerializer(InvenTreeModelSerializer):
-    """ Serializes an Order object """
+    """ Serializer for a PurchaseOrder object """
 
     def __init__(self, *args, **kwargs):
 
@@ -82,4 +83,59 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'order',
             'part',
             'received',
+        ]
+
+
+class SalseOrderSerializer(InvenTreeModelSerializer):
+    """
+    Serializers for the SalesOrder object
+    """
+
+    def __init__(self, *args, **kwargs):
+
+        customer_detail = kwargs.pop('customer_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if customer_detail is not True:
+            self.fields.pop('customer_detail')
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add extra information to the queryset
+        """
+
+        return queryset.annotate(
+            line_items=Count('lines'),
+        )
+
+    customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
+
+    line_items = serializers.IntegerField(read_only=True)
+
+    status_text = serializers.CharField(source='get_status_display', read_only=True)
+
+    class Meta:
+        model = SalesOrder
+
+        fields = [
+            'pk',
+            'issue_date',
+            'complete_date',
+            'creation_date',
+            'line_items',
+            'link',
+            'reference',
+            'customer',
+            'customer_detail',
+            'customer_reference',
+            'status',
+            'status_text',
+            'notes',
+        ]
+
+        read_only_fields = [
+            'reference',
+            'status'
         ]
