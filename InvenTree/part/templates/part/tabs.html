@@ -43,6 +43,11 @@
         <a href="{% url 'part-orders' part.id %}">{% trans "Purchase Orders" %} <span class='badge'>{{ part.purchase_orders|length }}</span></a>
     </li>
     {% endif %}
+    {% if part.salable %}
+    <li{% ifequal tab 'sales-orders' %} class='active'{% endifequal %}>
+        <a href="{% url 'part-sales-orders' part.id %}">{% trans "Sales Orders" %} <span class='badge'>{{ part.sales_orders|length }}</span></a>
+    </li>
+    {% endif %}
     {% if part.trackable and 0 %}
     <li{% ifequal tab 'track' %} class="active"{% endifequal %}>
         <a href="{% url 'part-track' part.id %}">{% trans "Tracking" %}

@@ -370,5 +370,5 @@ class SalesOrderLineItem(OrderLineItem):
 
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', help_text=_('Sales Order'))
 
-    part = models.ForeignKey(Part, on_delete=models.SET_NULL, related_name='sales_orders', null=True, help_text=_('Part'), limit_choices_to={'salable': True})
+    part = models.ForeignKey(Part, on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, help_text=_('Part'), limit_choices_to={'salable': True})
 

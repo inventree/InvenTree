@@ -924,6 +924,17 @@ class Part(models.Model):
 
         return n
 
+    def sales_orders(self):
+        """ Return a list of sales orders which reference this part """
+
+        orders = []
+
+        for line in self.sales_order_line_items.all().prefetch_related('order'):
+            if line.order not in orders:
+                orders.append(line.order)
+
+        return orders
+
     def purchase_orders(self):
         """ Return a list of purchase orders which reference this part """
 
