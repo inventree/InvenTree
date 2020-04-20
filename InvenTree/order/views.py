@@ -265,6 +265,24 @@ class PurchaseOrderEdit(AjaxUpdateView):
         return form
 
 
+class SalesOrderEdit(AjaxUpdateView):
+    """ View for editing a SalesOrder """
+
+    model = SalesOrder
+    ajax_form_title = _('Edit Sales Order')
+    form_class = order_forms.EditSalesOrderForm
+
+    def get_form(self):
+        form = super().get_form()
+
+        order = self.get_object()
+
+        # Prevent user from editing customer
+        form.fields['customer'].widget = HiddenInput()
+
+        return form
+
+
 class PurchaseOrderCancel(AjaxUpdateView):
     """ View for cancelling a purchase order """
 

@@ -107,4 +107,10 @@ InvenTree | {% trans "Sales Order" %}
 {% block js_ready %}
 {{ block.super }}
 
+$("#edit-order").click(function() {
+    launchModalForm("{% url 'so-edit' order.id %}", {
+        reload: true,
+    });
+});
+
 {% endblock %}

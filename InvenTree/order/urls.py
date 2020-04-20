@@ -17,13 +17,13 @@ purchase_order_attachment_urls = [
 
 purchase_order_detail_urls = [
 
-    url(r'^cancel/?', views.PurchaseOrderCancel.as_view(), name='po-cancel'),
-    url(r'^edit/?', views.PurchaseOrderEdit.as_view(), name='po-edit'),
-    url(r'^issue/?', views.PurchaseOrderIssue.as_view(), name='po-issue'),
-    url(r'^receive/?', views.PurchaseOrderReceive.as_view(), name='po-receive'),
-    url(r'^complete/?', views.PurchaseOrderComplete.as_view(), name='po-complete'),
+    url(r'^cancel/', views.PurchaseOrderCancel.as_view(), name='po-cancel'),
+    url(r'^edit/', views.PurchaseOrderEdit.as_view(), name='po-edit'),
+    url(r'^issue/', views.PurchaseOrderIssue.as_view(), name='po-issue'),
+    url(r'^receive/', views.PurchaseOrderReceive.as_view(), name='po-receive'),
+    url(r'^complete/', views.PurchaseOrderComplete.as_view(), name='po-complete'),
 
-    url(r'^export/?', views.PurchaseOrderExport.as_view(), name='po-export'),
+    url(r'^export/', views.PurchaseOrderExport.as_view(), name='po-export'),
 
     url(r'^notes/', views.PurchaseOrderNotes.as_view(), name='po-notes'),
 
@@ -62,6 +62,8 @@ purchase_order_urls = [
 ]
 
 sales_order_detail_urls = [
+
+    url(r'^edit/', views.SalesOrderEdit.as_view(), name='so-edit'),
 
     url(r'^.*$', views.SalesOrderDetail.as_view(), name='so-detail'),
 ]
