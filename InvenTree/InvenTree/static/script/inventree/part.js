@@ -158,6 +158,10 @@ function loadPartTable(table, url, options={}) {
                 display += `<span class='fas fa-star label-right' title='Starred part'></span>`;
             }
 
+            if (row.salable) {
+                display += `<span class='fas fa-dollar-sign label-right' title='Salable part'></span>`;
+            }
+
             /*
             if (row.component) {
                 display = display + `<span class='fas fa-cogs label-right' title='Component part'></span>`;

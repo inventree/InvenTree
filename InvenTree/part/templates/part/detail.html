@@ -164,9 +164,8 @@
             <td><i>{% trans "Part can be purchased from external suppliers" %}</i></td>
             {% endif %}
         </tr>
-        {% if 0 %}
         <tr>
-            <td><b>{% trans "Sellable" %}</b></td>
+            <td><b>{% trans "Salable" %}</b></td>
             <td>{% include "slide.html" with state=part.salable field='salable' %}</td>
             {% if part.salable %}
             <td>{% trans "Part can be sold to customers" %}</td>
@@ -174,7 +173,6 @@
             <td><i>{% trans "Part cannot be sold to customers" %}</i></td>
             {% endif %}
         </tr>
-        {% endif %}
     </table>
     </div>
 </div>
