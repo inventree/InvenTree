@@ -117,3 +117,19 @@ class EditPurchaseOrderLineItemForm(HelperForm):
             'reference',
             'notes',
         ]
+
+
+class EditSalesOrderLineItemForm(HelperForm):
+    """ Form for editing a SalesOrderLineItem object """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    class Meta:
+        model = SalesOrderLineItem
+        fields = [
+            'order',
+            'part',
+            'quantity',
+            'reference',
+            'notes'
+        ]

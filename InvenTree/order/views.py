@@ -1008,7 +1008,47 @@ class POLineItemCreate(AjaxCreateView):
                 order = PurchaseOrder.objects.get(id=order_id)
                 initials['order'] = order
 
-            except PurchaseOrder.DoesNotExist:
+            except (PurchaseOrder.DoesNotExist, ValueError):
+                pass
+
+        return initials
+
+
+class SOLineItemCreate(AjaxCreateView):
+    """ Ajax view for creating a new SalesOrderLineItem object """
+
+    model = SalesOrderLineItem
+    context_order_name = 'line'
+    form_class = order_forms.EditSalesOrderLineItemForm
+    ajax_form_title = _('Add Line Item')
+
+    def get_initial(self):
+        """
+        Extract initial data for this line item:
+
+        Options:
+            order: The SalesOrder object
+            part: The Part object
+        """
+
+        initials = super().get_initial().copy()
+
+        order_id = self.request.GET.get('order', None)
+        part_id = self.request.GET.get('part', None)
+
+        if order_id:
+            try:
+                order = SalesOrder.objects.get(id=order_id)
+                initials['order'] = order
+            except (SalesOrder.DoesNotExist, ValueError):
+                pass
+
+        if part_id:
+            try:
+                part = Part.objects.get(id=part_id)
+                if part.salable:
+                    initials['part'] = part
+            except (Part.DoesNotExist, ValueError):
                 pass
 
         return initials

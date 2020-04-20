@@ -124,6 +124,9 @@ class PurchaseOrder(Order):
     
     ORDER_PREFIX = "PO"
 
+    def __str__(self):
+        return "PO {ref} - {company}".format(ref=self.reference, company=self.supplier.name)
+
     supplier = models.ForeignKey(
         Company, on_delete=models.CASCADE,
         limit_choices_to={
@@ -254,6 +257,9 @@ class SalesOrder(Order):
         customer: Reference to the company receiving the goods in the order
         customer_reference: Optional field for customer order reference code
     """
+
+    def __str__(self):
+        return "SO {ref} - {company}".format(ref=self.reference, company=self.customer.name)
 
     def get_absolute_url(self):
         return reverse('so-detail', kwargs={'pk': self.id})

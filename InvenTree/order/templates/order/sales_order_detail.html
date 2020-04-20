@@ -14,9 +14,7 @@
 <h4>{% trans "Sales Order Items" %}</h4>
 
 <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-    {% if order.status == OrderStatus.PENDING %}
-    <button type='button' class='btn btn-default' id='new-po-line'>{% trans "Add Line Item" %}</button>
-    {% endif %}
+    <button type='button' class='btn btn-default' id='new-so-line'>{% trans "Add Line Item" %}</button>
 </div>
 
 <table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
@@ -27,6 +25,17 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+$("#new-so-line").click(function() {
+    launchModalForm("{% url 'so-line-item-create' %}", {
+        reload: true,
+        data: {
+            order: {{ order.id }},
+        },
+        secondary: [
+        ]
+    });
+});
 
 $("#so-lines-table").inventreeTable({
     formatNoMatches: function() { return "No matching line items"; },
