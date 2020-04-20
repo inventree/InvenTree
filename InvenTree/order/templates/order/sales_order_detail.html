@@ -51,6 +51,12 @@ $("#so-lines-table").inventreeTable({
             visible: false,
         },
         {
+            title: 'Line',
+            formatter: function(value, row, index, field) {
+                return index + 1;
+            },
+        },
+        {
             sortable: true,
             field: 'part',
             title: 'Part',
