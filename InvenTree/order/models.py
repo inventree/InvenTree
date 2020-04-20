@@ -19,6 +19,7 @@ from datetime import datetime
 
 from stock.models import StockItem
 from company.models import Company, SupplierPart
+from part.models import Part
 
 from InvenTree.fields import RoundingDecimalField
 from InvenTree.helpers import decimal2string
@@ -355,8 +356,13 @@ class PurchaseOrderLineItem(OrderLineItem):
 class SalesOrderLineItem(OrderLineItem):
     """
     Model for a single LineItem in a SalesOrder
+
+    Attributes:
+        order: Link to the SalesOrder that this line item belongs to
+        part: Link to a Part object (may be null)
     """
 
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', help_text=_('Sales Order'))
 
-    # TODO - Add link for part items
+    part = models.ForeignKey(Part, on_delete=models.SET_NULL, related_name='sales_orders', null=True, help_text=_('Part'), limit_choices_to={'salable': True})
+
