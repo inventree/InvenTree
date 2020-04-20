@@ -181,7 +181,28 @@ class PurchaseOrderNotes(UpdateView):
 
         ctx = super().get_context_data(**kwargs)
 
-        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
+        ctx['editing'] = str2bool(self.request.GET.get('edit', False))
+
+        return ctx
+
+
+class SalesOrderNotes(UpdateView):
+    """ View for editing the 'notes' field of a SalesORder """
+
+    context_object_name = 'order'
+    template_name = 'order/sales_order_notes.html'
+    model = SalesOrder
+
+    fields = ['notes']
+
+    def get_success_url(self):
+        return reverse('so-notes', kwargs={'pk': self.get_object().pk})
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+
+        ctx['editing'] = str2bool(self.request.GET.get('edit', False))
 
         return ctx
 
