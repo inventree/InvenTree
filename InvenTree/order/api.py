@@ -237,7 +237,16 @@ class SOList(generics.ListCreateAPIView):
         if status is not None:
             queryset = queryset.filter(status=status)
 
-        # TODO - Filter by part / stockitem / etc
+        # Filter by "Part"
+        # Only return SalesOrder which have LineItem referencing the part
+        part = params.get('part', None)
+
+        if part is not None:
+            try:
+                part = Part.objects.get(pk=part)
+                queryset = queryset.filter(id__in=[so.id for so in part.sales_orders()])
+            except (Part.DoesNotExist, ValueError):
+                pass
 
         return queryset
 
