@@ -117,6 +117,7 @@ class PurchaseOrder(Order):
 
     Attributes:
         supplier: Reference to the company supplying the goods in the order
+        supplier_reference: Optional field for supplier order reference code
         received_by: User that received the goods
     """
     
@@ -128,10 +129,10 @@ class PurchaseOrder(Order):
             'is_supplier': True,
         },
         related_name='purchase_orders',
-        help_text=_('Company')
+        help_text=_('Supplier')
     )
 
-    supplier_reference = models.CharField(max_length=64, blank=True, help_text=_("Supplier order reference"))
+    supplier_reference = models.CharField(max_length=64, blank=True, help_text=_("Supplier order reference code"))
 
     received_by = models.ForeignKey(
         User,
@@ -244,6 +245,26 @@ class PurchaseOrder(Order):
             self.complete_order()  # This will save the model
 
 
+class SalesOrder(Order):
+    """
+    A SalesOrder represents a list of goods shipped outwards to a customer.
+
+    Attributes:
+        customer: Reference to the company receiving the goods in the order
+        customer_reference: Optional field for customer order reference code
+    """
+
+    customer = models.ForeignKey(Company,
+        on_delete=models.SET_NULL,
+        null=True,
+        limit_choices_to={'is_supplier', True},
+        related_name='sales_orders',
+        help_text=_("Customer"),
+    )
+
+    customer_reference = models.CharField(max_length=64, blank=True, help_text=_("Customer order reference code"))
+
+
 class PurchaseOrderAttachment(InvenTreeAttachment):
     """
     Model for storing file attachments against a PurchaseOrder object
@@ -253,6 +274,17 @@ class PurchaseOrderAttachment(InvenTreeAttachment):
         return os.path.join("po_files", str(self.order.id))
 
     order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name="attachments")
+
+
+class SalesOrderAttachment(InvenTreeAttachment):
+    """
+    Model for storing file attachments against a SalesOrder object
+    """
+
+    def getSubDir(self):
+        return os.path.join("so_files", str(self.order.id))
+
+    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='attachments')
 
 
 class OrderLineItem(models.Model):
@@ -315,3 +347,13 @@ class PurchaseOrderLineItem(OrderLineItem):
         """ Calculate the number of items remaining to be received """
         r = self.quantity - self.received
         return max(r, 0)
+
+
+class SalesOrderLineItem(OrderLineItem):
+    """
+    Model for a single LineItem in a SalesOrder
+    """
+
+    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', help_text=_('Sales Order'))
+
+    # TODO - Add link for part items
