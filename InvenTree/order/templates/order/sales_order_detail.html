@@ -1,0 +1,19 @@
+{% extends "order/sales_order_base.html" %}
+
+{% load inventree_extras %}
+{% load status_codes %}
+{% load i18n %}
+{% load static %}
+
+{% block details %}
+
+{% include 'order/so_tabs.html' with tab='details' %}
+
+<hr>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+{% endblock %}

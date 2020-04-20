@@ -61,7 +61,17 @@ purchase_order_urls = [
     url(r'^.*$', views.PurchaseOrderIndex.as_view(), name='po-index'),
 ]
 
+sales_order_detail_urls = [
+
+    url(r'^.*$', views.SalesOrderDetail.as_view(), name='so-detail'),
+]
+
 sales_order_urls = [
+
+    # Display detail view for a single SalesOrder
+    url(r'^(?P<pk>\d+)/', include(sales_order_detail_urls)),
+
+    # Display list of all sales orders
     url(r'^.*$', views.SalesOrderIndex.as_view(), name='so-index'),
 ]
 

@@ -6,18 +6,19 @@
 {% load status_codes %}
 
 {% block page_title %}
-InvenTree | {% trans "Purchase Order" %}
+InvenTree | {% trans "Sales Order" %}
 {% endblock %}
 
 {% block content %}
+
 
 <div class='row'>
     <div class='col-sm-6'>
         <div class='media'>
             <div class='media-left'>
                 <img class='part-thumb'
-                {% if order.supplier.image %}
-                src="{{ order.supplier.image.url }}"
+                {% if order.customer.image %}
+                src="{{ order.customer.image.url }}"
                 {% else %}
                 src="{% static 'img/blank_image.png' %}"
                 {% endif %}
@@ -32,26 +33,6 @@ InvenTree | {% trans "Purchase Order" %}
                             <button type='button' class='btn btn-default btn-glyph' id='edit-order' title='Edit order information'>
                                 <span class='glyphicon glyphicon-edit'></span>
                             </button>
-                            <button type='button' class='btn btn-default btn-glyph' id='export-order' title='Export order to file'>
-                                <span class='glyphicon glyphicon-download-alt'></span>
-                            </button>
-                            {% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
-                            <button type='button' class='btn btn-default btn-glyph' id='place-order' title='Place order'>
-                                <span class='glyphicon glyphicon-send'></span>
-                            </button>
-                            {% elif order.status == OrderStatus.PLACED %}
-                            <button type='button' class='btn btn-default btn-glyph' id='receive-order' title='Receive items'>
-                                <span class='glyphicon glyphicon-check'></span>
-                            </button>
-                            <button type='button' class='btn btn-default btn-glyph' id='complete-order' title='Mark order as complete'>
-                                <span class='glyphicon glyphicon-ok'></span>
-                            </button>
-                            {% endif %}
-                            {% if order.status == OrderStatus.PENDING or order.status == OrderStatus.PLACED %}
-                            <button type='button' class='btn btn-default btn-glyph' id='cancel-order' title='Cancel order'>
-                                <span class='glyphicon glyphicon-remove'></span>
-                            </button>
-                            {% endif %}
                         </div>
                     </div>
                 </p>
@@ -59,7 +40,7 @@ InvenTree | {% trans "Purchase Order" %}
         </div>
     </div>
     <div class='col-sm-6'>
-        <h4>{% trans "Purchase Order Details" %}</h4>
+        <h4>{% trans "Sales Order Details" %}</h4>
         <table class='table'>
             <col width='25'>
             <tr>
@@ -74,14 +55,14 @@ InvenTree | {% trans "Purchase Order" %}
             </tr>
             <tr>
                 <td><span class='fas fa-building'></span></td>
-                <td>{% trans "Supplier" %}</td>
-                <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a></td>
+                <td>{% trans "Customer" %}</td>
+                <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a></td>
             </tr>
-            {% if order.supplier_reference %}
+            {% if order.customer_reference %}
             <tr>
                 <td><span class='fas fa-hashtag'></span></td>
-                <td>{% trans "Supplier Reference" %}</td>
-                <td>{{ order.supplier_reference }}</td>
+                <td>{% trans "Customer Reference" %}</td>
+                <td>{{ order.customer_reference }}</td>
             </tr>
             {% endif %}
             {% if order.link %}
@@ -116,40 +97,14 @@ InvenTree | {% trans "Purchase Order" %}
 
 <hr>
 <div class='container-fluid'>
-{% block details %}
-
-<!-- Specific order details to go here -->
-
-{% endblock %}
+    {% block details %}
+    <!-- sales order details go here -->
+    {% endblock %}
 </div>
 
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
-
-{% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
-$("#place-order").click(function() {
-    launchModalForm("{% url 'po-issue' order.id %}",
-    {
-        reload: true,
-    });
-});
-{% endif %}
-
-$("#edit-order").click(function() {
-    launchModalForm("{% url 'po-edit' order.id %}",
-        {
-            reload: true,
-        }
-    );
-});
-
-$("#cancel-order").click(function() {
-    launchModalForm("{% url 'po-cancel' order.id %}", {
-        reload: true,
-    });
-});
-
 
 {% endblock %}

@@ -78,6 +78,14 @@ class PurchaseOrderDetail(DetailView):
         return ctx
 
 
+class SalesOrderDetail(DetailView):
+    """ Detail view for a SalesOrder object """
+
+    context_object_name = 'order'
+    queryset = SalesOrder.objects.all().prefetch_related('lines')
+    template_name = 'order/sales_order_detail.html'
+
+
 class PurchaseOrderAttachmentCreate(AjaxCreateView):
     """
     View for creating a new PurchaseOrderAtt
