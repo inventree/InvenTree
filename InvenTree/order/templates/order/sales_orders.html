@@ -33,4 +33,12 @@ loadSalesOrderTable("#sales-order-table", {
     url: "{% url 'api-so-list' %}",
 });
 
+$("#so-create").click(function() {
+    launchModalForm("{% url 'so-create' %}",
+        {
+            follow: true,
+        }
+    );
+});
+
 {% endblock %}

@@ -216,6 +216,35 @@ class PurchaseOrderCreate(AjaxCreateView):
         self.object.save()
 
 
+class SalesOrderCreate(AjaxCreateView):
+    """ View for creating a new SalesOrder object """
+
+    model = SalesOrder
+    ajax_form_title = _("Create Sales Order")
+    form_class = order_forms.EditSalesOrderForm
+
+    def get_initial(self):
+        initials = super().get_initial().copy()
+
+        initials['status'] = OrderStatus.PENDING
+
+        customer_id = self.request.GET.get('customer', None)
+
+        if customer_id is not None:
+            try:
+                customer = Company.objects.get(id=customer_id)
+                initials['customer'] = customer
+            except (Company.DoesNotExist, ValueError):
+                pass
+
+        return initials
+
+    def post_save(self, **kwargs):
+        # Record the user who created this sales order
+        self.object.created_by = self.request.user
+        self.object.save()
+
+
 class PurchaseOrderEdit(AjaxUpdateView):
     """ View for editing a PurchaseOrder using a modal form """
 

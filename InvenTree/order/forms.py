@@ -15,6 +15,7 @@ from InvenTree.fields import RoundingDecimalFormField
 
 from stock.models import StockLocation
 from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
+from .models import SalesOrder, SalesOrderLineItem
 
 
 class IssuePurchaseOrderForm(HelperForm):
@@ -73,6 +74,21 @@ class EditPurchaseOrderForm(HelperForm):
             'description',
             'link',
         ]
+
+
+class EditSalesOrderForm(HelperForm):
+    """ Form for editing a SalesOrder object """
+
+    class Meta:
+        model = SalesOrder
+        fields = [
+            'reference',
+            'customer',
+            'customer_reference',
+            'description',
+            'link'
+        ]
+
 
 
 class EditPurchaseOrderAttachmentForm(HelperForm):

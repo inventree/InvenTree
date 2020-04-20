@@ -68,6 +68,8 @@ sales_order_detail_urls = [
 
 sales_order_urls = [
 
+    url(r'^new/', views.SalesOrderCreate.as_view(), name='so-create'),
+
     # Display detail view for a single SalesOrder
     url(r'^(?P<pk>\d+)/', include(sales_order_detail_urls)),
 

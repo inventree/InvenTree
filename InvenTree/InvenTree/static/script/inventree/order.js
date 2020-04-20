@@ -145,6 +145,11 @@ function loadPurchaseOrderTable(table, options) {
                 }
             },
             {
+                field: 'supplier_reference',
+                title: 'Supplier Reference',
+                sortable: true,
+            },
+            {
                 sortable: true,
                 field: 'description',
                 title: 'Description',
@@ -211,6 +216,11 @@ function loadSalesOrderTable(table, options) {
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.customer_detail.image) + renderLink(row.customer_detail.name, `/company/${row.customer}/sales-orders/`);
                 }
+            },
+            {
+                field: 'customer_reference',
+                title: 'Customer Reference',
+                sotrable: true,
             },
             {
                 sortable: true,

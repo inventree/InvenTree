@@ -254,6 +254,9 @@ class SalesOrder(Order):
         customer_reference: Optional field for customer order reference code
     """
 
+    def get_absolute_url(self):
+        return reverse('so-detail', kwargs={'pk': self.id})
+
     customer = models.ForeignKey(Company,
         on_delete=models.SET_NULL,
         null=True,
