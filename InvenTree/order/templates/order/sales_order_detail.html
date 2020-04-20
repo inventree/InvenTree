@@ -11,9 +11,51 @@
 
 <hr>
 
+<h4>{% trans "Sales Order Items" %}</h4>
+
+<div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
+    {% if order.status == OrderStatus.PENDING %}
+    <button type='button' class='btn btn-default' id='new-po-line'>{% trans "Add Line Item" %}</button>
+    {% endif %}
+</div>
+
+<table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
+
+</table>
+
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
+
+$("#so-lines-table").inventreeTable({
+    formatNoMatches: function() { return "No matching line items"; },
+    queryParams: {
+        order: {{ order.id }},
+    },
+    url: "{% url 'api-so-line-list' %}",
+    columns: [
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+        },
+        {
+            field: 'reference',
+            title: 'Reference'
+        },
+        {
+            field: 'quantity',
+            title: 'Quantity',
+            formatter: function(value, row, index, field) {
+                return +parseFloat(value).toFixed(5);
+            }
+        },
+        {
+            field: 'notes',
+            title: 'Notes',
+        },
+    ],
+    });
 
 {% endblock %}
