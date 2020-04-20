@@ -61,6 +61,10 @@ purchase_order_urls = [
     url(r'^.*$', views.PurchaseOrderIndex.as_view(), name='po-index'),
 ]
 
+so_line_urls = [
+    url(r'^new/', views.SOLineItemCreate.as_view(), name='so-line-item-create'),
+]
+
 sales_order_detail_urls = [
 
     url(r'^edit/', views.SalesOrderEdit.as_view(), name='so-edit'),
@@ -74,6 +78,8 @@ sales_order_detail_urls = [
 sales_order_urls = [
 
     url(r'^new/', views.SalesOrderCreate.as_view(), name='so-create'),
+
+    url(r'^line/', include(so_line_urls)),
 
     # Display detail view for a single SalesOrder
     url(r'^(?P<pk>\d+)/', include(sales_order_detail_urls)),

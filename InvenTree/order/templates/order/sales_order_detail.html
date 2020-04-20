@@ -32,6 +32,7 @@ $("#so-lines-table").inventreeTable({
     formatNoMatches: function() { return "No matching line items"; },
     queryParams: {
         order: {{ order.id }},
+        part_detail: true,
     },
     url: "{% url 'api-so-line-list' %}",
     columns: [
@@ -39,6 +40,18 @@ $("#so-lines-table").inventreeTable({
             field: 'pk',
             title: 'ID',
             visible: false,
+        },
+        {
+            sortable: true,
+            field: 'part',
+            title: 'Part',
+            formatter: function(value, row, index, field) {
+                if (row.part) {
+                    return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${value}/`);
+                } else {
+                    return '-';
+                }
+            }
         },
         {
             sortable: true,

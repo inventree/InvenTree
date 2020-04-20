@@ -20,7 +20,7 @@ from .models import PurchaseOrder, PurchaseOrderLineItem
 from .serializers import POSerializer, POLineItemSerializer
 
 from .models import SalesOrder, SalesOrderLineItem
-from .serializers import SalseOrderSerializer, SOLineItemSerializer
+from .serializers import SalesOrderSerializer, SOLineItemSerializer
 
 
 class POList(generics.ListCreateAPIView):
@@ -196,7 +196,7 @@ class SOList(generics.ListCreateAPIView):
     """
 
     queryset = SalesOrder.objects.all()
-    serializer_class = SalseOrderSerializer
+    serializer_class = SalesOrderSerializer
 
     def get_serializer(self, *args, **kwargs):
 
@@ -219,7 +219,7 @@ class SOList(generics.ListCreateAPIView):
             'lines'
         )
 
-        queryset = SalseOrderSerializer.annotate_queryset(queryset)
+        queryset = SalesOrderSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -269,7 +269,7 @@ class SODetail(generics.RetrieveUpdateAPIView):
     """
 
     queryset = SalesOrder.objects.all()
-    serializer_class = SalseOrderSerializer
+    serializer_class = SalesOrderSerializer
 
     def get_serializer(self, *args, **kwargs):
 
@@ -288,7 +288,7 @@ class SODetail(generics.RetrieveUpdateAPIView):
 
         queryset = queryset.prefetch_related('customer', 'lines')
 
-        queryset = SalseOrderSerializer.annotate_queryset(queryset)
+        queryset = SalesOrderSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -302,6 +302,32 @@ class SOLineItemList(generics.ListCreateAPIView):
 
     queryset = SalesOrderLineItem.objects.all()
     serializer_class = SOLineItemSerializer
+
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', False))
+        except AttributeError:
+            pass
+
+        try:
+            kwargs['order_detail'] = str2bool(self.request.query_params.get('order_detail', False))
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        return queryset.prefetch_related(
+            'part',
+            'part__stock_items',
+            'order',
+        )
 
     permission_classes = [permissions.IsAuthenticated]
 

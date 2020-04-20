@@ -11,6 +11,7 @@ from django.db.models import Count
 
 from InvenTree.serializers import InvenTreeModelSerializer
 from company.serializers import CompanyBriefSerializer
+from part.serializers import PartBriefSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
@@ -86,7 +87,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class SalseOrderSerializer(InvenTreeModelSerializer):
+class SalesOrderSerializer(InvenTreeModelSerializer):
     """
     Serializers for the SalesOrder object
     """
@@ -145,6 +146,22 @@ class SalseOrderSerializer(InvenTreeModelSerializer):
 class SOLineItemSerializer(InvenTreeModelSerializer):
     """ Serializer for a SalesOrderLineItem object """
 
+    def __init__(self, *args, **kwargs):
+
+        part_detail = kwargs.pop('part_detail', False)
+        order_detail = kwargs.pop('order_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if part_detail is not True:
+            self.fields.pop('part_detail')
+
+        if order_detail is not True:
+            self.fields.pop('order_detail')
+
+    order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+
     class Meta:
         model = SalesOrderLineItem
 
@@ -154,4 +171,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'reference',
             'notes',
             'order',
+            'order_detail',
+            'part',
+            'part_detail',
         ]

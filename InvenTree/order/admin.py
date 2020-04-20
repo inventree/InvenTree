@@ -80,6 +80,7 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
 
     list_display = (
         'order',
+        'part',
         'quantity',
         'reference'
     )
