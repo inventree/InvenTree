@@ -824,6 +824,11 @@ class Part(models.Model):
         max_price = None
 
         for item in self.bom_items.all().select_related('sub_part'):
+
+            if item.sub_part.pk == self.pk:
+                print("Warning: Item contains itself in BOM")
+                continue
+
             prices = item.sub_part.get_price_range(quantity * item.quantity)
 
             if prices is None:
