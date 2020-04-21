@@ -1,104 +1,87 @@
-{% extends "base.html" %}
+{% extends "two_column.html" %}
 
 {% load static %}
 {% load i18n %}
 {% load status_codes %}
 
 {% block page_title %}
-InvenTree | Build - {{ build }}
+InvenTree | {% trans "Build" %} - {{ build }}
 {% endblock %}
 
-{% block content %}
+{% block thumbnail %}
+<img class="part-thumb"
+{% if build.part.image %}
+src="{{ build.part.image.url }}"
+{% else %}
+src="{% static 'img/blank_image.png' %}"
+{% endif %}/>
+{% endblock %}
 
-<div class='row'>
-    <div class='col-sm-6'>
-        <div class="media">
-            <div class="media-left">
-                <div class='dropzone' id='part-thumb'>
-                    <img class="part-thumb"
-                    {% if build.part.image %}
-                    src="{{ build.part.image.url }}"
-                    {% else %}
-                    src="{% static 'img/blank_image.png' %}"
-                    {% endif %}/>
-                </div>
-            </div>
-            <div class='media-body'>
-                <h4>{% trans "Build" %}</h4>
-                <div class='btn-row'>
-                    <div class='btn-group'>
-                        <button type='button' class='btn btn-default btn-glyph' id='build-edit' title='Edit Build'>
-                            <span class='glyphicon glyphicon-edit'/>
-                        </button>
-                        {% if build.is_active %}
-                        <button type='button' class='btn btn-default btn-glyph' id='build-complete' title="Complete Build">
-                            <span class='glyphicon glyphicon-send'/>
-                        </button>
-                        <button type='button' class='btn btn-default btn-glyph' id='build-cancel' title='Cancel Build'>
-                            <span class='glyphicon glyphicon-remove'/>
-                        </button>
-                        {% endif %}
-                        {% if build.status == BuildStatus.CANCELLED %}
-                        <button type='button' class='btn btn-default btn-glyph' id='build-delete' title='Delete Build'>
-                            <span class='glyphicon glyphicon-trash'/>
-                        </button>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class='col-sm-6'>
-        <h4>{% trans "Build Details" %}</h4>
-            <table class='table table-striped table-condensed'>
-                <tr>
-                    <td></td>
-                    <td>{% trans "Build Title" %}</td>
-                    <td>{{ build.title }}</td>
-                </tr>
-                <tr>
-                    <td><span class='fas fa-shapes'></span></td>
-                    <td>Part</td>
-                    <td><a href="{% url 'part-detail' build.part.id %}">{{ build.part.full_name }}</a></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>{% trans "Quantity" %}</td>
-                    <td>{{ build.quantity }}</td>
-                </tr>
-                <tr>
-                    <td><span class='fas fa-info'></span></td>
-                    <td>{% trans "Status" %}</td>
-                    <td>{% build_status build.status %}</td>
-                </tr>
-                <tr>
-                    <td><span class='fas fa-dollar-sign'></span></td>
-                    <td>{% trans "BOM Price" %}</td>
-                    <td>
-                        {% if bom_price %}
-                        {{ bom_price }}
-                        {% if build.part.has_complete_bom_pricing == False %}
-                        <br><span class='warning-msg'><i>{% trans "BOM pricing is incomplete" %}</i></span>
-                        {% endif %}
-                        {% else %}
-                        <span class='warning-msg'><i>{% trans "No pricing information" %}</i></span>
-                        {% endif %}
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
-</div>
-
+{% block page_data %}
+<h3>{% trans "Build" %}</h3>
 <hr>
-
-<div class='container-fluid'>
-{% block details %}
-
+<h4>{{ build.quantity }} x {{ build.part.full_name }}</h4>
+<div class='btn-row'>
+    <div class='btn-group'>
+        <button type='button' class='btn btn-default btn-glyph' id='build-edit' title='Edit Build'>
+            <span class='glyphicon glyphicon-edit'/>
+        </button>
+        {% if build.is_active %}
+        <button type='button' class='btn btn-default btn-glyph' id='build-complete' title="Complete Build">
+            <span class='glyphicon glyphicon-send'/>
+        </button>
+        <button type='button' class='btn btn-default btn-glyph' id='build-cancel' title='Cancel Build'>
+            <span class='glyphicon glyphicon-remove'/>
+        </button>
+        {% endif %}
+        {% if build.status == BuildStatus.CANCELLED %}
+        <button type='button' class='btn btn-default btn-glyph' id='build-delete' title='Delete Build'>
+            <span class='glyphicon glyphicon-trash'/>
+        </button>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
 
-</div>
+{% block page_details %}
 
+<h4>{% trans "Build Details" %}</h4>
+<table class='table table-striped table-condensed'>
+    <tr>
+        <td></td>
+        <td>{% trans "Build Title" %}</td>
+        <td>{{ build.title }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-shapes'></span></td>
+        <td>Part</td>
+        <td><a href="{% url 'part-detail' build.part.id %}">{{ build.part.full_name }}</a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>{% trans "Quantity" %}</td>
+        <td>{{ build.quantity }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-info'></span></td>
+        <td>{% trans "Status" %}</td>
+        <td>{% build_status build.status %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-dollar-sign'></span></td>
+        <td>{% trans "BOM Price" %}</td>
+        <td>
+            {% if bom_price %}
+            {{ bom_price }}
+            {% if build.part.has_complete_bom_pricing == False %}
+            <br><span class='warning-msg'><i>{% trans "BOM pricing is incomplete" %}</i></span>
+            {% endif %}
+            {% else %}
+            <span class='warning-msg'><i>{% trans "No pricing information" %}</i></span>
+            {% endif %}
+        </td>
+    </tr>
+</table>
 {% endblock %}
 
 {% block js_load %}
