@@ -156,7 +156,30 @@ $("#so-lines-table").inventreeTable({
         {
             field: 'buttons',
             formatter: function(value, row, index, field) {
-                return '-';
+
+                var html = '';
+
+                var pk = row.pk;
+
+                if (row.part) {
+                    var part = row.part_detail;
+
+                    html = `<div class='btn-group float-right' role='group'>`;
+
+                    html += makeIconButton('fa-plus', `button-add-${pk}`);
+                        
+                    if (part.purchaseable) {
+                        html += makeIconButton('fa-shopping-cart', `button-buy-${pk}`);
+                    }
+                        
+                    if (part.assembly) {
+                        html += makeIconButton('fa-tools', `button-build-${pk}`);
+                    }
+                    
+                    html += `</div>`;
+                }
+
+                return html;
             }
         },
     ],

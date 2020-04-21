@@ -78,6 +78,22 @@ function getImageUrlFromTransfer(transfer) {
     return url;
 }
 
+function makeIconButton(icon, id, opts) {
+    // Construct an 'icon button' using the fontawesome set
+
+    var options = opts || {};
+
+    var title = options.title || '';
+
+    var html = '';
+    
+    html += `<button id='${id}' class='btn btn-default btn-glyph' title='${title}'>`;
+    html += `<span class='fas ${icon}'></span>`;
+    html += `</button>`;
+
+    return html;
+}
+
 function makeProgressBar(value, maximum, opts) {
     /*
      * Render a progessbar!

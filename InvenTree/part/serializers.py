@@ -65,6 +65,8 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'thumbnail',
             'active',
             'assembly',
+            'purchaseable',
+            'salable',
             'virtual',
         ]
 
