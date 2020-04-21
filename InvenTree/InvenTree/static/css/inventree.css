@@ -29,6 +29,39 @@
     padding: 10px;
 }
 
+/* Progress bars */
+
+.progress-bar {
+    height: 25px;
+    background: #eee;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 100%;
+    position: relative;
+}
+
+.progress-bar-value {
+    color: #000;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    left: 0px;
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.progress-bar-inner {
+    height: 23px;
+    width: 20%;
+    text-align: center;
+    vertical-align: middle;
+    background: #3a3;
+    opacity: 40%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
 .qr-code {
     max-width: 400px;
     max-height: 400px;

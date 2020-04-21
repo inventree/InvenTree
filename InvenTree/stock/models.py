@@ -126,6 +126,7 @@ class StockItem(MPTTModel):
         build: Link to a Build (if this stock item was created from a build)
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
+        sales_order: Link to a SalesOrderLineItem (if this stockitem has been allocated to a sales order)
     """
 
     def save(self, *args, **kwargs):
@@ -352,6 +353,12 @@ class StockItem(MPTTModel):
         blank=True, null=True,
         help_text=_('Purchase order for this stock item')
     )
+
+    sales_order = models.ForeignKey(
+        'order.SalesOrderLineItem',
+        on_delete=models.SET_NULL,
+        related_name='stock_items',
+        null=True)
 
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)

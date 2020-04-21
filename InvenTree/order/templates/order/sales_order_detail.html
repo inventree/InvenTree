@@ -51,14 +51,6 @@ $("#so-lines-table").inventreeTable({
             visible: false,
         },
         {
-            field: 'line',
-            title: 'Line',
-            formatter: function(value, row, index, field) {
-                return index + 1;
-            },
-            width: 50,
-        },
-        {
             sortable: true,
             field: 'part',
             title: 'Part',
@@ -80,7 +72,12 @@ $("#so-lines-table").inventreeTable({
             field: 'quantity',
             title: 'Quantity',
             formatter: function(value, row, index, field) {
-                return +parseFloat(value).toFixed(5);
+                return `
+                <div class='progress-bar'>
+                    <div class='progress-bar progress-bar-inner' style='width: 50%;'></div>
+                    <div class='progress-bar-value'>${row.allocated} / ${row.quantity}</div>
+                </div>
+                `;
             }
         },
         {

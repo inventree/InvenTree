@@ -383,19 +383,3 @@ class SalesOrderLineItem(OrderLineItem):
         query = self.stock_items.aggregate(allocated=Coalesce(Sum('stock_item__quantity'), Decimal(0)))
 
         return query['allocated']
-
-
-class SalesOrderLineItemStockAssociation(models.Model):
-    """
-    Associates StockItem objects with a SalesOrderLineItem.
-    This model is used to match stock items with a sales order,
-    for the purpose of sale / packing / shipping etc.
-
-    Attributes:
-        line: ForeignKey link to a SalesOrderLineItem object -> A single SalesOrderLineItem can have multiple associated StockItem objects
-        stock: OneToOne link to a StockItem object -> A StockItem object can only be mapped to a single SalesOrderLineItem
-    """
-
-    line = models.ForeignKey(SalesOrderLineItem, on_delete=models.CASCADE, related_name='stock_items')
-
-    stock_item = models.OneToOneField(StockItem, on_delete=models.CASCADE, related_name='sales_order')
