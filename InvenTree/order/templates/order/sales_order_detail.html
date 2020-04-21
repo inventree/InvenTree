@@ -72,12 +72,7 @@ $("#so-lines-table").inventreeTable({
             field: 'quantity',
             title: 'Quantity',
             formatter: function(value, row, index, field) {
-                return `
-                <div class='progress-bar'>
-                    <div class='progress-bar progress-bar-inner' style='width: 50%;'></div>
-                    <div class='progress-bar-value'>${row.allocated} / ${row.quantity}</div>
-                </div>
-                `;
+                return makeProgressBar(row.allocated, row.quantity);
             }
         },
         {

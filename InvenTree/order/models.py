@@ -19,9 +19,7 @@ import os
 from datetime import datetime
 from decimal import Decimal
 
-from stock.models import StockItem
 from company.models import Company, SupplierPart
-from part.models import Part
 
 from InvenTree.fields import RoundingDecimalField
 from InvenTree.helpers import decimal2string
@@ -372,7 +370,7 @@ class SalesOrderLineItem(OrderLineItem):
 
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', help_text=_('Sales Order'))
 
-    part = models.ForeignKey(Part, on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, help_text=_('Part'), limit_choices_to={'salable': True})
+    part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, help_text=_('Part'), limit_choices_to={'salable': True})
 
     def allocated_quantity(self):
         """ Return the total stock quantity allocated to this LineItem.
@@ -380,6 +378,6 @@ class SalesOrderLineItem(OrderLineItem):
         This is a summation of the quantity of each attached StockItem
         """
 
-        query = self.stock_items.aggregate(allocated=Coalesce(Sum('stock_item__quantity'), Decimal(0)))
+        query = self.stock_items.aggregate(allocated=Coalesce(Sum('quantity'), Decimal(0)))
 
         return query['allocated']

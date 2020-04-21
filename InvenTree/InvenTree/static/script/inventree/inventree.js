@@ -78,6 +78,33 @@ function getImageUrlFromTransfer(transfer) {
     return url;
 }
 
+function makeProgressBar(value, maximum, opts) {
+    /*
+     * Render a progessbar!
+     * 
+     * @param value is the current value of the progress bar
+     * @param maximum is the maximum value of the progress bar
+     */
+
+    var options = opts || {};
+
+    value = parseFloat(value);
+    maximum = parseFloat(maximum);
+
+    var percent = parseInt(value / maximum * 100);
+
+    if (percent > 100) {
+        percent = 100;
+    }
+
+    return `
+        <div class='progress-bar'>
+            <div class='progress-bar progress-bar-inner' style='width: ${percent}%;'></div>
+            <div class='progress-bar-value'>${value} / ${maximum}</div>
+        </div>
+    `;
+}
+
 
 function enableDragAndDrop(element, url, options) {
     /* Enable drag-and-drop file uploading for a given element.

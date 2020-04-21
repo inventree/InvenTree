@@ -29,6 +29,7 @@ from InvenTree.models import InvenTreeTree
 from InvenTree.fields import InvenTreeURLField
 
 from part.models import Part
+from order.models import PurchaseOrder, SalesOrderLineItem
 
 
 class StockLocation(InvenTreeTree):
@@ -262,6 +263,20 @@ class StockItem(MPTTModel):
             # TODO - Find a test than can be perfomed...
             pass
 
+        try:
+            # If this StockItem is assigned to a SalesOrderLineItem,
+            # the "Part" that the line item references is the same as the part that THIS references
+            if self.sales_order is not None:
+
+                if self.sales_order.part == None:
+                    raise ValidationError({'sales_order': _('Stock item cannot be assigned to a LineItem which does not reference a part')})
+                
+                if not self.sales_order.part == self.part:
+                    raise ValidationError({'sales_order': _('Stock item does not reference the same part object as the LineItem')})
+
+        except SalesOrderLineItem.DoesNotExist:
+            pass
+
         if self.belongs_to and self.belongs_to.pk == self.pk:
             raise ValidationError({
                 'belongs_to': _('Item cannot belong to itself')
@@ -347,7 +362,7 @@ class StockItem(MPTTModel):
     )
 
     purchase_order = models.ForeignKey(
-        'order.PurchaseOrder',
+        PurchaseOrder,
         on_delete=models.SET_NULL,
         related_name='stock_items',
         blank=True, null=True,
@@ -355,7 +370,7 @@ class StockItem(MPTTModel):
     )
 
     sales_order = models.ForeignKey(
-        'order.SalesOrderLineItem',
+        SalesOrderLineItem,
         on_delete=models.SET_NULL,
         related_name='stock_items',
         null=True)
