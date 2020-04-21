@@ -19,6 +19,7 @@ import os
 from datetime import datetime
 from decimal import Decimal
 
+from stock import models as stock_models
 from company.models import Company, SupplierPart
 
 from InvenTree.fields import RoundingDecimalField
@@ -223,7 +224,7 @@ class PurchaseOrder(Order):
 
         # Create a new stock item
         if line.part:
-            stock = StockItem(
+            stock = stock_models.StockItem(
                 part=line.part.part,
                 supplier_part=line.part,
                 location=location,
@@ -264,7 +265,8 @@ class SalesOrder(Order):
     def get_absolute_url(self):
         return reverse('so-detail', kwargs={'pk': self.id})
 
-    customer = models.ForeignKey(Company,
+    customer = models.ForeignKey(
+        Company,
         on_delete=models.SET_NULL,
         null=True,
         limit_choices_to={'is_customer': True},

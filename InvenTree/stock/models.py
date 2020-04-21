@@ -268,7 +268,7 @@ class StockItem(MPTTModel):
             # the "Part" that the line item references is the same as the part that THIS references
             if self.sales_order_line is not None:
 
-                if self.sales_order_line.part == None:
+                if self.sales_order_line.part is None:
                     raise ValidationError({'sales_order_line': _('Stock item cannot be assigned to a LineItem which does not reference a part')})
                 
                 if not self.sales_order_line.part == self.part:

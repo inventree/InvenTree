@@ -90,7 +90,6 @@ class EditSalesOrderForm(HelperForm):
         ]
 
 
-
 class EditPurchaseOrderAttachmentForm(HelperForm):
     """ Form for editing a PurchaseOrderAttachment object """
 

@@ -358,8 +358,6 @@ class SalesOrderEdit(AjaxUpdateView):
     def get_form(self):
         form = super().get_form()
 
-        order = self.get_object()
-
         # Prevent user from editing customer
         form.fields['customer'].widget = HiddenInput()
 
