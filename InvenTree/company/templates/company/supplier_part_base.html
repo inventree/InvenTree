@@ -10,24 +10,28 @@ InvenTree | {% trans "Supplier Part" %}
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h3>{% trans "Supplier Part" %}</h3>
-        <div class='btn-row'>
-            <div class='btn-group'>
-                <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='Edit supplier part'>
-                    <span class='glyphicon glyphicon-edit'/>
-                </button>
-                <button type='button' class='btn btn-default btn-glyph' id='delete-part' title='Delete supplier part'>
-                    <span class='glyphicon glyphicon-trash'/>
-                </button>
-            </div>
-        </div>
-        <div class='media-left'>
+        <div class='media'>
+            <div class='media-left'>
                 <img class='part-thumb'
                 {% if part.part.image %}
                 src='{{ part.part.image.url }}'
                 {% else %}
                 src="{% static 'img/blank_image.png' %}"
                 {% endif %}/>
+            </div>
+            <div class='media-body'>
+                <h3>{% trans "Supplier Part" %}</h3>
+                <div class='btn-row'>
+                    <div class='btn-group'>
+                        <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='Edit supplier part'>
+                            <span class='glyphicon glyphicon-edit'/>
+                        </button>
+                        <button type='button' class='btn btn-default btn-glyph' id='delete-part' title='Delete supplier part'>
+                            <span class='glyphicon glyphicon-trash'/>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class='col-sm-6'>
@@ -45,6 +49,7 @@ InvenTree | {% trans "Supplier Part" %}
                 </tr>
                 {% if part.description %}
                 <tr>
+                    <td></td>
                     <td>{% trans "Description" %}</td>
                     <td>{{ part.description }}</td>
                 </tr>
