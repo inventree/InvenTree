@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "two_column.html" %}
 
 {% load static %}
 {% load i18n %}
@@ -7,100 +7,79 @@
 InvenTree | {% trans "Company" %} - {{ company.name }}
 {% endblock %}
 
-{% block content %}
-
-<div class="row">
-    <div class="col-sm-6">
-        <div class="media">
-            <div class='media-left'>
-                <div class='dropzone' id='company-thumb'>
-                    <img class="part-thumb"
-                    {% if company.image %}
-                    src="{{ company.image.url }}"
-                    {% else %}
-                    src="{% static 'img/blank_image.png' %}"
-                    {% endif %}/>
-                </div>
-            </div>
-            <div class='media-body'>
-              <h3>{{ company.name }}</h3>
-              <p>{{ company.description }}</p>
-              <div class='btn-group'>
-                  {% if company.is_supplier %}
-                  <button type='button' class='btn btn-default btn-glyph' id='company-order-2' title='Create purchase order'>
-                      <span class='glyphicon glyphicon-shopping-cart'/>
-                  </button>
-                  {% endif %}
-                  <button type='button' class='btn btn-default btn-glyph' id='company-edit' title='Edit company information'>
-                      <span class='glyphicon glyphicon-edit'/>
-                  </button>
-                  <button type='button' class='btn btn-default btn-glyph' id='company-delete' title='Delete company'>
-                      <span class='glyphicon glyphicon-trash'/>
-                  </button>
-              </div>
-          </div>
-      </div>
-    </div>
-    <div class="col-sm-6">
-        <table class="table">
-            <col width='25'>
-        {% if company.website %}
-        <tr>
-            <td><span class='fas fa-globe'></span></td>
-            <td>{% trans "Website" %}</td>
-            <td><a href="{{ company.website }}">{{ company.website }}</a></td>
-        </tr>
-        {% endif %}
-        {% if company.address %}
-        <tr>
-            <td><span class='fas fa-map-marked-alt'></span></td>
-            <td>{% trans "Address" %}</td>
-            <td>{{ company.address }}</td>
-        </tr>
-        {% endif %}
-        {% if company.phone %}
-        <tr>
-            <td><span class='fas fa-phone'></span></td>
-            <td>{% trans "Phone" %}</td>
-            <td>{{ company.phone }}</td>
-        </tr>
-        {% endif %}
-        {% if company.email %}
-        <tr>
-            <td><span class='fas fa-at'></span></td>
-            <td>{% trans "Email" %}</td>
-            <td>{{ company.email }}</td>
-        </tr>
-        {% endif %}
-        {% if company.contact %}
-        <tr>
-            <td><span class='fas fa-user'></span></td>
-            <td>{% trans "Contact" %}</td>
-            <td>{{ company.contact }}</td>
-        </tr>
-        {% endif %}
-        </table>
-    </div>
+{% block thumbnail %}
+<div class='dropzone' id='company-thumb'>
+    <img class="part-thumb"
+    {% if company.image %}
+    src="{{ company.image.url }}"
+    {% else %}
+    src="{% static 'img/blank_image.png' %}"
+    {% endif %}/>
 </div>
-
-<hr>
-
-<div class='container-fluid'>
-
-{% block details %}
-
 {% endblock %}
 
+{% block page_data %}
+<h3>{{ company.name }}</h3>
+<p>{{ company.description }}</p>
+<div class='btn-group'>
+    {% if company.is_supplier %}
+    <button type='button' class='btn btn-default btn-glyph' id='company-order-2' title='Create purchase order'>
+        <span class='glyphicon glyphicon-shopping-cart'/>
+    </button>
+    {% endif %}
+    <button type='button' class='btn btn-default btn-glyph' id='company-edit' title='Edit company information'>
+        <span class='glyphicon glyphicon-edit'/>
+    </button>
+    <button type='button' class='btn btn-default btn-glyph' id='company-delete' title='Delete company'>
+        <span class='glyphicon glyphicon-trash'/>
+    </button>
 </div>
-
 {% endblock %}
 
-{% block js_load %}
-{{ block.super }}
-<script type='text/javascript' src="{% static 'script/inventree/stock.js' %}"></script>
+{% block page_details %}
+<h4>{% trans "Company Details" %}</h4>
+<table class="table">
+    <col width='25'>
+{% if company.website %}
+<tr>
+    <td><span class='fas fa-globe'></span></td>
+    <td>{% trans "Website" %}</td>
+    <td><a href="{{ company.website }}">{{ company.website }}</a></td>
+</tr>
+{% endif %}
+{% if company.address %}
+<tr>
+    <td><span class='fas fa-map-marked-alt'></span></td>
+    <td>{% trans "Address" %}</td>
+    <td>{{ company.address }}</td>
+</tr>
+{% endif %}
+{% if company.phone %}
+<tr>
+    <td><span class='fas fa-phone'></span></td>
+    <td>{% trans "Phone" %}</td>
+    <td>{{ company.phone }}</td>
+</tr>
+{% endif %}
+{% if company.email %}
+<tr>
+    <td><span class='fas fa-at'></span></td>
+    <td>{% trans "Email" %}</td>
+    <td>{{ company.email }}</td>
+</tr>
+{% endif %}
+{% if company.contact %}
+<tr>
+    <td><span class='fas fa-user'></span></td>
+    <td>{% trans "Contact" %}</td>
+    <td>{{ company.contact }}</td>
+</tr>
+{% endif %}
+</table>
 {% endblock %}
 
 {% block js_ready %}
+{{ block.super }}
 
     $('#company-edit').click(function() {
         launchModalForm(
