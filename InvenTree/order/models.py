@@ -291,7 +291,7 @@ class SalesOrderAttachment(InvenTreeAttachment):
     Model for storing file attachments against a SalesOrder object
     """
 
-    def getSubDir(self):
+    def getSubdir(self):
         return os.path.join("so_files", str(self.order.id))
 
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='attachments')
@@ -372,3 +372,18 @@ class SalesOrderLineItem(OrderLineItem):
 
     part = models.ForeignKey(Part, on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, help_text=_('Part'), limit_choices_to={'salable': True})
 
+
+class SalesOrderLineItemStockAssociation(models.Model):
+    """
+    Associates StockItem objects with a SalesOrderLineItem.
+    This model is used to match stock items with a sales order,
+    for the purpose of sale / packing / shipping etc.
+
+    Attributes:
+        line: ForeignKey link to a SalesOrderLineItem object -> A single SalesOrderLineItem can have multiple associated StockItem objects
+        stock: OneToOne link to a StockItem object -> A StockItem object can only be mapped to a single SalesOrderLineItem
+    """
+
+    line = models.ForeignKey(SalesOrderLineItem, on_delete=models.CASCADE, related_name='stock_items')
+
+    stock_item = models.OneToOneField(StockItem, on_delete=models.CASCADE, related_name='sales_order')
