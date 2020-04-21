@@ -19,7 +19,9 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
 {% endblock %}
 
 {% block page_data %}
-<h3>{{ company.name }}</h3>
+<h3>{% trans "Company" %}</h3>
+<hr>
+<h4>{{ company.name }}</h4>
 <p>{{ company.description }}</p>
 <div class='btn-group'>
     {% if company.is_supplier %}

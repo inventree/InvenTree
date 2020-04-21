@@ -3,9 +3,7 @@
 {% load i18n %}
 
 {% block page_title %}
-{% if item %}
-InvenTree | {% trans "Stock Item" %} - {{ item }}
-{% elif location %}
+{% if location %}
 InvenTree | {% trans "Stock Location" %} - {{ location }}
 {% else %}
 InvenTree | Stock
