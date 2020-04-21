@@ -266,13 +266,13 @@ class StockItem(MPTTModel):
         try:
             # If this StockItem is assigned to a SalesOrderLineItem,
             # the "Part" that the line item references is the same as the part that THIS references
-            if self.sales_order is not None:
+            if self.sales_order_line is not None:
 
-                if self.sales_order.part == None:
-                    raise ValidationError({'sales_order': _('Stock item cannot be assigned to a LineItem which does not reference a part')})
+                if self.sales_order_line.part == None:
+                    raise ValidationError({'sales_order_line': _('Stock item cannot be assigned to a LineItem which does not reference a part')})
                 
-                if not self.sales_order.part == self.part:
-                    raise ValidationError({'sales_order': _('Stock item does not reference the same part object as the LineItem')})
+                if not self.sales_order_line.part == self.part:
+                    raise ValidationError({'sales_order_line': _('Stock item does not reference the same part object as the LineItem')})
 
         except SalesOrderLineItem.DoesNotExist:
             pass
@@ -369,7 +369,7 @@ class StockItem(MPTTModel):
         help_text=_('Purchase order for this stock item')
     )
 
-    sales_order = models.ForeignKey(
+    sales_order_line = models.ForeignKey(
         SalesOrderLineItem,
         on_delete=models.SET_NULL,
         related_name='stock_items',

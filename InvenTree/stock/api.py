@@ -12,6 +12,7 @@ from django.db.models import Q
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
 
+from order.models import SalesOrder
 from part.models import Part, PartCategory
 
 from .serializers import StockItemSerializer
@@ -387,7 +388,7 @@ class StockList(generics.ListCreateAPIView):
                     stock_list = stock_list.filter(part=part_id)
 
             except (ValueError, Part.DoesNotExist):
-                pass
+                raise ValidationError({"part": "Invalid Part ID specified"})
 
         # Does the client wish to filter by the 'ancestor'?
         anc_id = self.request.query_params.get('ancestor', None)
@@ -400,7 +401,7 @@ class StockList(generics.ListCreateAPIView):
                 stock_list = stock_list.filter(id__in=[item.pk for item in ancestor.children.all()])
 
             except (ValueError, Part.DoesNotExist):
-                pass
+                raise ValidationError({"ancestor": "Invalid ancestor ID specified"})
 
         # Does the client wish to filter by stock location?
         loc_id = self.request.query_params.get('location', None)
@@ -433,7 +434,7 @@ class StockList(generics.ListCreateAPIView):
                 stock_list = stock_list.filter(part__category__in=category.getUniqueChildren())
 
             except (ValueError, PartCategory.DoesNotExist):
-                pass
+                raise ValidationError({"category": "Invalid category id specified"})
 
         # Filter by StockItem status
         status = self.request.query_params.get('status', None)
@@ -465,10 +466,22 @@ class StockList(generics.ListCreateAPIView):
         if manufacturer is not None:
             stock_list = stock_list.filter(supplier_part__manufacturer=manufacturer)
 
+        # Filter by sales order
+        sales_order = self.request.query_params.get('sales_order', None)
+
+        if sales_order is not None:
+            try:
+                sales_order = SalesOrder.objects.get(pk=sales_order)
+                lines = [line.pk for line in sales_order.lines.all()]
+                stock_list = stock_list.filter(sales_order_line__in=lines)
+            except (SalesOrder.DoesNotExist, ValueError):
+                raise ValidationError({'sales_order': 'Invalid SalesOrder object specified'})
+
         # Also ensure that we pre-fecth all the related items
         stock_list = stock_list.prefetch_related(
             'part',
             'part__category',
+            'sales_order_line__order',
             'location'
         )
 
@@ -493,6 +506,7 @@ class StockList(generics.ListCreateAPIView):
         'customer',
         'belongs_to',
         'build',
+        'sales_order_line'
     ]
 
 
