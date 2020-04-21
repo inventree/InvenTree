@@ -158,6 +158,15 @@
     background-color: #ebf4f4;
 }
 
+.sub-table {
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
+.detail-icon .glyphicon {
+    color: #98d296;
+}
+
 /* Force select2 elements in modal forms to be full width */
 .select-full-width {
     width: 100%;

@@ -233,9 +233,11 @@ class PartStarSerializer(InvenTreeModelSerializer):
 class BomItemSerializer(InvenTreeModelSerializer):
     """ Serializer for BomItem object """
 
+    price_range = serializers.CharField(read_only=True)
+    
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
-    price_range = serializers.CharField(read_only=True)
+
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
 
     def __init__(self, *args, **kwargs):

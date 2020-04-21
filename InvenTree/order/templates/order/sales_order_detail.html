@@ -44,6 +44,67 @@ $("#so-lines-table").inventreeTable({
         part_detail: true,
     },
     url: "{% url 'api-so-line-list' %}",
+    detailView: true,
+    detailFilter: function(index, row) {
+        return row.allocated > 0;
+    },
+    detailFormatter: function(index, row, element) {
+        inventreeGet("{% url 'api-stock-list' %}",
+            {
+                location_detail: true,
+                sales_order_line: row.pk,
+            },
+            {
+                success: function(response) {
+
+                    var html = `<div class='sub-table'><table class='table table-striped table-condensed' id='allocation-table-${row.pk}'></table></div>`;
+
+                    element.html(html);
+
+                    $(`#allocation-table-${row.pk}`).bootstrapTable({
+                        data: response,
+                        showHeader: false,
+                        columns: [
+                        {
+                            width: '50%',
+                            field: 'quantity',
+                            title: 'Quantity',
+                            formatter: function(value, row, index, field) {
+                                var html = '';
+                                if (row.serial && row.quantity == 1) {
+                                    html = `Serial Number: ${row.serial}`;
+                                } else {
+                                    html = `Quantity: ${row.quantity}`;
+                                }
+
+                                return renderLink(html, `/stock/item/${row.pk}/`);
+                            },
+                        },
+                        {
+                            field: 'location',
+                            title: 'Location',
+                            formatter: function(value, row, index, field) {
+                                return renderLink(row.location_detail.pathstring, `/stock/location/${row.location}/`);
+                            },
+                        },
+                        {
+                            field: 'buttons',
+                            title: 'Actions',
+                            formatter: function(value, row, index, field) {
+                                return '';
+                            },
+                        },
+                        ],
+                    });
+                },
+                error: function(response) {
+                    console.log("An error!");
+                },
+            }
+        );
+
+        return "{% trans 'Loading data' %}";
+    },
     columns: [
         {
             field: 'pk',
@@ -73,11 +134,28 @@ $("#so-lines-table").inventreeTable({
             title: 'Quantity',
             formatter: function(value, row, index, field) {
                 return makeProgressBar(row.allocated, row.quantity);
+            },
+            sorter: function(valA, valB, rowA, rowB) {
+                
+                if (rowA.allocated == 0 && rowB.allocated == 0) {
+                    return (rowA.quantity > rowB.quantity) ? 1 : -1;
+                }
+                
+                var progressA = rowA.allocated / rowA.quantity;
+                var progressB = rowB.allocated / rowA.quantity;
+
+                return (progressA < progressB) ? 1 : -1;
             }
         },
         {
             field: 'notes',
             title: 'Notes',
+        },
+        {
+            field: 'buttons',
+            formatter: function(value, row, index, field) {
+                return '-';
+            }
         },
     ],
     });

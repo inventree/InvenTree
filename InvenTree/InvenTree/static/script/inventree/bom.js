@@ -221,7 +221,6 @@ function loadBomTable(table, options) {
                 }
             }
         });
-
     }
     
     // Part notes
