@@ -162,11 +162,15 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
+    quantity = serializers.FloatField()
+    allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
+
     class Meta:
         model = SalesOrderLineItem
 
         fields = [
             'pk',
+            'allocated',
             'quantity',
             'reference',
             'notes',

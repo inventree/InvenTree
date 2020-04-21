@@ -5,7 +5,8 @@ Order model definitions
 # -*- coding: utf-8 -*-
 
 from django.db import models, transaction
-from django.db.models import F
+from django.db.models import F, Sum
+from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -16,6 +17,7 @@ from markdownx.models import MarkdownxField
 
 import os
 from datetime import datetime
+from decimal import Decimal
 
 from stock.models import StockItem
 from company.models import Company, SupplierPart
@@ -371,6 +373,16 @@ class SalesOrderLineItem(OrderLineItem):
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', help_text=_('Sales Order'))
 
     part = models.ForeignKey(Part, on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, help_text=_('Part'), limit_choices_to={'salable': True})
+
+    def allocated_quantity(self):
+        """ Return the total stock quantity allocated to this LineItem.
+
+        This is a summation of the quantity of each attached StockItem
+        """
+
+        query = self.stock_items.aggregate(allocated=Coalesce(Sum('stock_item__quantity'), Decimal(0)))
+
+        return query['allocated']
 
 
 class SalesOrderLineItemStockAssociation(models.Model):
