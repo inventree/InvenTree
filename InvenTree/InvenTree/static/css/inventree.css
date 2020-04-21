@@ -31,35 +31,24 @@
 
 /* Progress bars */
 
-.progress-bar {
-    height: 25px;
-    background: #eee;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    width: 100%;
+.progress {
     position: relative;
+    width: 100%;
 }
 
-.progress-bar-value {
-    color: #000;
-    position: absolute;
-    top: 0px;
+.progress-bar {
+    opacity: 50%;
+}
+
+.progress-value {
     width: 100%;
+    color: #333;
+    position: absolute;
+    text-align: center;
+    top: 0px;
     left: 0px;
     font-weight: bold;
     font-size: 110%;
-}
-
-.progress-bar-inner {
-    height: 23px;
-    width: 20%;
-    text-align: center;
-    vertical-align: middle;
-    background: #3a3;
-    opacity: 40%;
-    position: absolute;
-    top: 0px;
-    left: 0px;
 }
 
 .qr-code {

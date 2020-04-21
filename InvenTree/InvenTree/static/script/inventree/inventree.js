@@ -98,10 +98,10 @@ function makeProgressBar(value, maximum, opts) {
     }
 
     return `
-        <div class='progress-bar'>
-            <div class='progress-bar progress-bar-inner' style='width: ${percent}%;'></div>
-            <div class='progress-bar-value'>${value} / ${maximum}</div>
-        </div>
+    <div class='progress'>
+        <div class='progress-bar' role='progressbar' aria-valuenow='${percent}' aria-valuemin='0' aria-valuemax='100' style='width:${percent}%'></div>
+        <div class='progress-value'>${value} / ${maximum}</div>
+    </div>
     `;
 }
 
