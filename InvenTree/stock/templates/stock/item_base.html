@@ -5,6 +5,12 @@
 {% load i18n %}
 {% block content %}
 
+{% if item.sales_order %}
+<div class='alert alert-block alert-info'>
+    {% trans "This stock item is allocated to " %}
+    <a href="{% url 'so-detail' item.sales_order.order.id %}"><b>{{ item.sales_order.order }}</b></a>
+</div>
+{% endif %}
 
 <div class='row'>
     <div class='col-sm-6'>
