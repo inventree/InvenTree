@@ -482,4 +482,3 @@ class SalesOrderAllocation(models.Model):
             return self.item.location.pathstring
         else:
             return ""
-    

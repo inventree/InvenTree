@@ -19,8 +19,8 @@ from company.models import SupplierPart
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .serializers import POSerializer, POLineItemSerializer
 
-from .models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
-from .serializers import SalesOrderSerializer, SOLineItemSerializer, SalesOrderAllocationSerializer
+from .models import SalesOrder, SalesOrderLineItem
+from .serializers import SalesOrderSerializer, SOLineItemSerializer
 
 
 class POList(generics.ListCreateAPIView):

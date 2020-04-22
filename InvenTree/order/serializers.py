@@ -12,7 +12,6 @@ from django.db.models import Count
 from InvenTree.serializers import InvenTreeModelSerializer
 from company.serializers import CompanyBriefSerializer
 from part.serializers import PartBriefSerializer
-from stock.serializers import StockItemSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem

@@ -1227,7 +1227,7 @@ class SalesOrderAllocationCreate(AjaxCreateView):
             # Hide the 'line' field
             form.fields['line'].widget = HiddenInput()
         
-        except KeyError: # (ValueError, SalesOrderLineItem.DoesNotExist):
+        except (ValueError, SalesOrderLineItem.DoesNotExist):
             pass
         
         return form
