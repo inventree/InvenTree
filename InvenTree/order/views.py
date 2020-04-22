@@ -1163,6 +1163,18 @@ class POLineItemDelete(AjaxDeleteView):
         }
 
 
+class SOLineItemDelete(AjaxDeleteView):
+
+    model = SalesOrderLineItem
+    ajax_form_title = _("Delete Line Item")
+    ajax_template_name = "order/so_lineitem_delete.html"
+
+    def get_data(self):
+        return {
+            'danger': _('Deleted line item'),
+        }
+
+
 class SalesOrderAllocationCreate(AjaxCreateView):
     """ View for creating a new SalesOrderAllocation """
 

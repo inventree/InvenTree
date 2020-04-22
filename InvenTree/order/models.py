@@ -463,9 +463,10 @@ class SalesOrderAllocation(models.Model):
         on_delete=models.CASCADE,
         related_name='sales_order_allocations',
         limit_choices_to={'part__salable': True},
+        help_text=_('Select stock item to allocate')
     )
 
-    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
+    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, help_text=_('Enter stock allocation quantity'))
 
     def get_allocated(self):
         """ String representation of the allocated quantity """

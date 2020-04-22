@@ -65,7 +65,8 @@ purchase_order_urls = [
 so_line_urls = [
     url(r'^new/', views.SOLineItemCreate.as_view(), name='so-line-item-create'),
     url(r'^(?P<pk>\d+)/', include([
-        url(r'^edit/', views.SOLineItemEdit.as_view(), name='so-line-item-edit')
+        url(r'^edit/', views.SOLineItemEdit.as_view(), name='so-line-item-edit'),
+        url(r'^delete/', views.SOLineItemDelete.as_view(), name='so-line-item-delete'),
     ])),
 ]
 

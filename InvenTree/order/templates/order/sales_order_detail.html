@@ -156,6 +156,8 @@ $("#so-lines-table").inventreeTable({
                 }
                 
                 html += makeIconButton('fa-edit', 'button-edit', pk, '{% trans "Edit line item" %}');
+                html += makeIconButton('fa-trash-alt', 'button-delete', pk, '{% trans "Delete line item " %}');
+
                 html += `</div>`;
 
                 return html;
@@ -181,12 +183,17 @@ $("#so-lines-table").on('load-success.bs.table', function() {
         launchModalForm(`/order/sales-order/line/${pk}/edit/`, {
             success: reloadTable,
         });
-        console.log("clicked!");
+    });
+
+    table.find(".button-delete").click(function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm(`/order/sales-order/line/${pk}/delete/`, {
+            reload: true,
+        });
     });
 
     table.find(".button-add").click(function() {
-        console.log("add");
-
         var pk = $(this).attr('pk');
 
         launchModalForm(`/order/sales-order/allocation/new/`, {
@@ -199,13 +206,9 @@ $("#so-lines-table").on('load-success.bs.table', function() {
     });
 
     table.find(".button-build").click(function() {
-        console.log("build");
-
-        var pk = $(this).attr('pk');
     });
 
     table.find(".button-buy").click(function() {
-        console.log("buy");
     });
 
 });
