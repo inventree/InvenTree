@@ -92,7 +92,8 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True)
 
-    allocated = serializers.BooleanField(source='is_allocated', read_only=True)
+    quantity = serializers.FloatField()
+    allocated = serializers.FloatField(source='allocation_count', read_only=True)
 
     def __init__(self, *args, **kwargs):
 
