@@ -451,3 +451,13 @@ class SalesOrderAllocation(models.Model):
     )
 
     quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
+
+    def get_location(self):
+        return self.item.location.id if self.item.location else None
+
+    def get_location_path(self):
+        if self.item.location:
+            return self.item.location.pathstring
+        else:
+            return ""
+    

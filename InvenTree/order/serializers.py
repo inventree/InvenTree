@@ -12,9 +12,11 @@ from django.db.models import Count
 from InvenTree.serializers import InvenTreeModelSerializer
 from company.serializers import CompanyBriefSerializer
 from part.serializers import PartBriefSerializer
+from stock.serializers import StockItemSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
+from .models import SalesOrderAllocation
 
 
 class POSerializer(InvenTreeModelSerializer):
@@ -143,6 +145,28 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
         ]
 
 
+class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for the SalesOrderAllocation model.
+    This includes some fields from the related model objects.
+    """
+
+    location_path = serializers.CharField(source='get_location_path')
+    location_id = serializers.IntegerField(source='get_location')
+
+    class Meta:
+        model = SalesOrderAllocation
+
+        fields = [
+            'pk',
+            'line',
+            'location_id',
+            'location_path',
+            'quantity',
+            'item',
+        ]
+
+
 class SOLineItemSerializer(InvenTreeModelSerializer):
     """ Serializer for a SalesOrderLineItem object """
 
@@ -150,6 +174,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
 
         part_detail = kwargs.pop('part_detail', False)
         order_detail = kwargs.pop('order_detail', False)
+        allocations = kwargs.pop('allocations', False)
 
         super().__init__(*args, **kwargs)
 
@@ -159,8 +184,12 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
         if order_detail is not True:
             self.fields.pop('order_detail')
 
+        if allocations is not True:
+            self.fields.pop('allocations')
+            
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    allocations = SalesOrderAllocationSerializer(many=True, read_only=True)
 
     quantity = serializers.FloatField()
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
@@ -171,6 +200,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'allocated',
+            'allocations',
             'quantity',
             'reference',
             'notes',

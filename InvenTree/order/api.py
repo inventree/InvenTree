@@ -19,8 +19,8 @@ from company.models import SupplierPart
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .serializers import POSerializer, POLineItemSerializer
 
-from .models import SalesOrder, SalesOrderLineItem
-from .serializers import SalesOrderSerializer, SOLineItemSerializer
+from .models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
+from .serializers import SalesOrderSerializer, SOLineItemSerializer, SalesOrderAllocationSerializer
 
 
 class POList(generics.ListCreateAPIView):
@@ -324,6 +324,11 @@ class SOLineItemList(generics.ListCreateAPIView):
         except AttributeError:
             pass
 
+        try:
+            kwargs['allocations'] = str2bool(self.request.query_params.get('allocations', False))
+        except AttributeError:
+            pass
+
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
@@ -345,6 +350,7 @@ class SOLineItemList(generics.ListCreateAPIView):
 
     filter_fields = [
         'order',
+        'part',
     ]
 
 
