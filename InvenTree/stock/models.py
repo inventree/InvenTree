@@ -11,6 +11,8 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from django.db import models, transaction
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
@@ -29,7 +31,7 @@ from InvenTree.models import InvenTreeTree
 from InvenTree.fields import InvenTreeURLField
 
 from part.models import Part
-from order.models import PurchaseOrder, SalesOrder
+from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
 
 
 class StockLocation(InvenTreeTree):
@@ -391,7 +393,39 @@ class StockItem(MPTTModel):
         # TODO - For now this only checks if the StockItem is allocated to a SalesOrder
         # TODO - In future, once the "build" is working better, check this too
 
-        return self.sales_order_line is not None
+        if self.allocations.count() > 0:
+            return True
+
+        if self.sales_order_allocations.count() > 0:
+            return True
+
+        return False
+
+    def build_allocation_count(self):
+        """
+        Return the total quantity allocated to builds
+        """
+
+        query = self.allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['q']
+
+    def sales_order_allocation_count(self):
+        """
+        Return the total quantity allocated to SalesOrders
+        """
+
+        query = self.sales_order_allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['q']
+
+    def allocation_count(self):
+        """
+        Return the total quantity allocated to builds or orders
+        """
+
+        return self.build_allocation_count() + self.sales_order_allocation_count()
+
 
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:

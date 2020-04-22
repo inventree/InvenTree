@@ -393,6 +393,15 @@ class BuildItem(models.Model):
                     q=self.stock_item.quantity
                 ))]
 
+            if self.stock_item.quantity - self.stock_item.allocation_count() < self.quantity:
+                errors['quantity'] = _('StockItem is over-allocated')
+
+            if self.quantity <= 0:
+                errors['quantity'] = _('Allocation quantity must be greater than zero')
+
+            if self.stock_item.serial and not self.quantity == 1:
+                errors['quantity'] = _('Quantity must be 1 for serialized stock')
+
         except StockItem.DoesNotExist:
             pass
 

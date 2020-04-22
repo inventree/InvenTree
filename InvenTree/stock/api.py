@@ -374,10 +374,12 @@ class StockList(generics.ListCreateAPIView):
             allocated = str2bool(allocated)
 
             if allocated:
-                stock_list = stock_list.exclude(Q(sales_order_line=None))
+                # Filter StockItem with either build allocations or sales order allocations
+                stock_list = stock_list.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False))
             else:
-                stock_list = stock_list.filter(Q(sales_order_line=None))
-
+                # Filter StockItem without build allocations or sales order allocations
+                stock_list = stock_list.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
+                
         # Do we wish to filter by "active parts"
         active = self.request.query_params.get('active', None)
 
@@ -477,22 +479,10 @@ class StockList(generics.ListCreateAPIView):
         if manufacturer is not None:
             stock_list = stock_list.filter(supplier_part__manufacturer=manufacturer)
 
-        # Filter by sales order
-        sales_order = self.request.query_params.get('sales_order', None)
-
-        if sales_order is not None:
-            try:
-                sales_order = SalesOrder.objects.get(pk=sales_order)
-                lines = [line.pk for line in sales_order.lines.all()]
-                stock_list = stock_list.filter(sales_order_line__in=lines)
-            except (SalesOrder.DoesNotExist, ValueError):
-                raise ValidationError({'sales_order': 'Invalid SalesOrder object specified'})
-
         # Also ensure that we pre-fecth all the related items
         stock_list = stock_list.prefetch_related(
             'part',
             'part__category',
-            'sales_order_line__order',
             'location'
         )
 
@@ -517,7 +507,7 @@ class StockList(generics.ListCreateAPIView):
         'customer',
         'belongs_to',
         'build',
-        'sales_order_line'
+        'sales_order',
     ]
 
 

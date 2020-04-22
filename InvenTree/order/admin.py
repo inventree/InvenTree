@@ -10,7 +10,7 @@ from import_export.fields import Field
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
-
+from .models import SalesOrderAllocation
 
 class PurchaseOrderAdmin(ImportExportModelAdmin):
 
@@ -86,8 +86,19 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
     )
 
 
+class SalesOrderAllocationAdmin(ImportExportModelAdmin):
+
+    list_display = (
+        'line',
+        'item',
+        'quantity'
+    )
+
+
 admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
 admin.site.register(PurchaseOrderLineItem, PurchaseOrderLineItemAdmin)
 
 admin.site.register(SalesOrder, SalesOrderAdmin)
 admin.site.register(SalesOrderLineItem, SalesOrderLineItemAdmin)
+
+admin.site.register(SalesOrderAllocation, SalesOrderAllocationAdmin)

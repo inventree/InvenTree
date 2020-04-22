@@ -15,12 +15,19 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% block pre_content %}
 {% include 'stock/loc_link.html' with location=item.location %}
 
-{% if item.sales_order_line %}
+{% for allocation in item.sales_order_allocations.all %}
 <div class='alert alert-block alert-info'>
     {% trans "This stock item is allocated to Sales Order" %}
-    <a href="{% url 'so-detail' item.sales_order_line.order.id %}"><b>{{ item.sales_order_line.order }}</b></a>
+    <a href="{% url 'so-detail' allocation.line.order.id %}"><b>{{ allcation.line.order }}</b></a>
 </div>
-{% endif %}
+{% endfor %}
+
+{% for allocation in item.allocations.all %}
+<div class='alert alert-block alert-info'>
+    {% trans "This stock item is allocated to Build" %}
+    <a href="{% url 'build-detail' allocation.build.id %}"><b>{{ allocation.build }}</b></a>
+</div>
+{% endfor %}
 
 {% if item.serialized %}
 <div class='alert alert-block alert-info'>

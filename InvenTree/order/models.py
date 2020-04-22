@@ -398,8 +398,55 @@ class SalesOrderAllocation(models.Model):
 
     """
 
+    class Meta:
+        unique_together = [
+            # Cannot allocate any given StockItem to the same line more than once
+            ('line', 'item'),
+        ]
+
+    def clean(self):
+        """
+        Validate the SalesOrderAllocation object:
+
+        - Cannot allocate stock to a line item without a part reference
+        - The referenced part must match the part associated with the line item
+        - Allocated quantity cannot exceed the quantity of the stock item
+        - Allocation quantity must be "1" if the StockItem is serialized
+        - Allocation quantity cannot be zero
+        """
+
+        super().clean()
+
+        errors = {}
+
+        try:
+            if not self.line.part == self.item.part:
+                errors['item'] = _('Cannot allocate stock item to a line with a different part')
+        except Part.DoesNotExist:
+            errors['line'] = _('Cannot allocate stock to a line without a part')
+
+        if self.quantity > self.item.quantity:
+            errors['quantity'] = _('Allocation quantity cannot exceed stock quantity')
+
+        if self.item.quantity - self.item.allocation_count() < self.quantity:
+            errors['quantity'] = _('StockItem is over-allocated')
+
+        if self.quantity <= 0:
+            errors['quantity'] = _('Allocation quantity must be greater than zero')
+
+        if self.item.serial and not self.quantity == 1:
+            errors['quantity'] = _('Quantity must be 1 for serialized stock item')
+
+        if len(errors) > 0:
+            raise ValidationError(errors)
+
     line = models.ForeignKey(SalesOrderLineItem, on_delete=models.CASCADE, related_name='allocations')
 
-    item = models.OneToOneField('stock.StockItem', on_delete=models.CASCADE, related_name='sales_order_allocation')
+    item = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.CASCADE,
+        related_name='sales_order_allocations',
+        limit_choices_to={'part__salable': True},
+    )
 
     quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
