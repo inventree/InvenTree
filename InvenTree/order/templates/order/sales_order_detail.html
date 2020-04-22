@@ -45,6 +45,7 @@ $("#so-lines-table").inventreeTable({
         allocations: true,
     },
     url: "{% url 'api-so-line-list' %}",
+    detailViewByClick: true,
     detailView: true,
     detailFilter: function(index, row) {
         return row.allocated > 0;
@@ -174,11 +175,11 @@ $("#so-lines-table").inventreeTable({
                     var part = row.part_detail;
 
                     if (part.purchaseable) {
-                        html += makeIconButton('fa-shopping-cart', 'button-buy', pk, '{% trans "Buy parts" %}');
+                        html += makeIconButton('fa-shopping-cart', 'button-buy', row.part, '{% trans "Buy parts" %}');
                     }
                     
                     if (part.assembly) {
-                        html += makeIconButton('fa-tools', 'button-build', pk, '{% trans "Build parts" %}');
+                        html += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build parts" %}');
                     }
                     
                     html += makeIconButton('fa-plus', 'button-add', pk, '{% trans "Allocate parts" %}');
@@ -235,9 +236,24 @@ $("#so-lines-table").on('load-success.bs.table', function() {
     });
 
     table.find(".button-build").click(function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm(`/build/new/`, {
+            follow: true,
+            data: {
+                part: pk,
+            },
+        });
     });
 
     table.find(".button-buy").click(function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm("{% url 'order-parts' %}", {
+            data: {
+                parts: [pk],
+            },
+        });
     });
 
 });
