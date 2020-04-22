@@ -55,7 +55,11 @@ $("#so-lines-table").inventreeTable({
 
         element.html(html);
 
-        $(`#allocation-table-${row.pk}`).bootstrapTable({
+        var lineItem = row;
+        
+        var table = $(`#allocation-table-${row.pk}`);
+
+        table.bootstrapTable({
             data: row.allocations,
             showHeader: false,
             columns: [
@@ -64,7 +68,7 @@ $("#so-lines-table").inventreeTable({
                 field: 'allocated',
                 title: 'Quantity',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, `/stock/item/${row.pk}/`);
+                    return renderLink(value, `/stock/item/${row.item}/`);
                 },
             },
             {
@@ -78,10 +82,36 @@ $("#so-lines-table").inventreeTable({
                 field: 'buttons',
                 title: 'Actions',
                 formatter: function(value, row, index, field) {
-                    return '';
+
+                    var html = "<div class='btn-group float-right' role='group'>";
+                    var pk = row.pk;
+
+                    html += makeIconButton('fa-edit', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
+                    html += makeIconButton('fa-trash-alt', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
+
+                    html += "</div>";
+
+                    return html;
                 },
             },
             ],
+        });
+
+        table.find(".button-allocation-edit").click(function() {
+    
+            var pk = $(this).attr('pk');
+    
+            launchModalForm(`/order/sales-order/allocation/${pk}/edit/`, {
+                success: reloadTable,
+            });
+        });
+    
+        table.find(".button-allocation-delete").click(function() {
+            var pk = $(this).attr('pk');
+
+            launchModalForm(`/order/sales-order/allocation/${pk}/delete/`, {
+                success: reloadTable, 
+            });
         });
     },
     columns: [
@@ -202,7 +232,6 @@ $("#so-lines-table").on('load-success.bs.table', function() {
                 line: pk,
             },
         });
-
     });
 
     table.find(".button-build").click(function() {

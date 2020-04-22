@@ -1248,6 +1248,7 @@ class SalesOrderAllocationCreate(AjaxCreateView):
 class SalesOrderAllocationEdit(AjaxUpdateView):
 
     model = SalesOrderAllocation
+    form_class = order_forms.EditSalesOrderAllocationForm
     ajax_form_title = _('Edit Allocation Quantity')
 
     def get_form(self):
@@ -1258,3 +1259,9 @@ class SalesOrderAllocationEdit(AjaxUpdateView):
         form.fields.pop('line')
 
         return form
+
+
+class SalesOrderAllocationDelete(AjaxDeleteView):
+
+    model = SalesOrderAllocation
+    ajax_form_title = _("Remove allocation")

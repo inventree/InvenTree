@@ -325,6 +325,12 @@
     padding-bottom: 2px;
 }
 
+.btn-large {
+    font-size: 150%;
+    align-content: center;
+    vertical-align: middle;
+}
+
 .badge {
     float: right;
     background-color: #777;
