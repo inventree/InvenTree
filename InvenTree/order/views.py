@@ -17,6 +17,7 @@ from decimal import Decimal, InvalidOperation
 
 from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
+from .models import SalesOrderAllocation
 from .admin import POLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart
@@ -1114,6 +1115,22 @@ class SOLineItemCreate(AjaxCreateView):
         return initials
 
 
+class SOLineItemEdit(AjaxUpdateView):
+    """ View for editing a SalesOrderLineItem """
+
+    model = SalesOrderLineItem
+    form_class = order_forms.EditSalesOrderLineItemForm
+    ajax_form_title = _('Edit Line Item')
+
+    def get_form(self):
+        form = super().get_form()
+
+        form.fields.pop('order')
+        form.fields.pop('part')
+
+        return form
+
+
 class POLineItemEdit(AjaxUpdateView):
     """ View for editing a PurchaseOrderLineItem object in a modal form.
     """
@@ -1144,3 +1161,51 @@ class POLineItemDelete(AjaxDeleteView):
         return {
             'danger': _('Deleted line item'),
         }
+
+
+class SalesOrderAllocationCreate(AjaxCreateView):
+    """ View for creating a new SalesOrderAllocation """
+
+    model = SalesOrderAllocation
+    form_class = order_forms.EditSalesOrderAllocationForm
+    ajax_form_title = _('Allocate Stock to Order')
+
+    def get_initial(self):
+        initials = super().get_initial().copy()
+
+        line = self.request.GET.get('line', None)
+
+        if line is not None:
+            initials['line'] = SalesOrderLineItem.objects.get(pk=line)
+        
+        return initials
+
+    def get_form(self):
+        
+        form = super().get_form()
+
+        line_id = form['line'].value()
+
+        # If a line item has been specified, reduce the queryset for the stockitem accordingly
+        try:
+            line = SalesOrderLineItem.objects.get(pk=line_id)
+
+            queryset = form.fields['item'].queryset
+
+            # Ensure the part reference matches
+            queryset = queryset.filter(part=line.part)
+
+            # Exclude StockItem which are already allocated to this order
+            allocated = [allocation.item.pk for allocation in line.allocations.all()]
+
+            queryset = queryset.exclude(pk__in=allocated)
+
+            form.fields['item'].queryset = queryset
+
+            # Hide the 'line' field
+            form.fields['line'].widget = HiddenInput()
+        
+        except KeyError: # (ValueError, SalesOrderLineItem.DoesNotExist):
+            pass
+        
+        return form

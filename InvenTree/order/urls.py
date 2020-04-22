@@ -61,8 +61,12 @@ purchase_order_urls = [
     url(r'^.*$', views.PurchaseOrderIndex.as_view(), name='po-index'),
 ]
 
+
 so_line_urls = [
     url(r'^new/', views.SOLineItemCreate.as_view(), name='so-line-item-create'),
+    url(r'^(?P<pk>\d+)/', include([
+        url(r'^edit/', views.SOLineItemEdit.as_view(), name='so-line-item-edit')
+    ])),
 ]
 
 sales_order_attachment_urls = [
@@ -87,6 +91,11 @@ sales_order_urls = [
     url(r'^new/', views.SalesOrderCreate.as_view(), name='so-create'),
 
     url(r'^line/', include(so_line_urls)),
+
+    # URLs for sales order allocations
+    url(r'^allocation/', include([
+        url(r'^new/', views.SalesOrderAllocationCreate.as_view(), name='so-allocation-create'),
+    ])),
 
     url(r'^attachments/', include(sales_order_attachment_urls)),
 

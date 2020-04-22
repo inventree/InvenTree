@@ -78,16 +78,16 @@ function getImageUrlFromTransfer(transfer) {
     return url;
 }
 
-function makeIconButton(icon, id, opts) {
+function makeIconButton(icon, cls, pk, title) {
     // Construct an 'icon button' using the fontawesome set
 
-    var options = opts || {};
+    var classes = `btn btn-default btn-glyph ${cls}`;
 
-    var title = options.title || '';
+    var id = `${cls}-${pk}`;
 
     var html = '';
     
-    html += `<button id='${id}' class='btn btn-default btn-glyph' title='${title}'>`;
+    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}'>`;
     html += `<span class='fas ${icon}'></span>`;
     html += `</button>`;
 

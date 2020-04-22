@@ -16,6 +16,7 @@ from InvenTree.fields import RoundingDecimalFormField
 from stock.models import StockLocation
 from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
+from .models import SalesOrderAllocation
 
 
 class IssuePurchaseOrderForm(HelperForm):
@@ -144,3 +145,16 @@ class EditSalesOrderLineItemForm(HelperForm):
             'reference',
             'notes'
         ]
+
+
+class EditSalesOrderAllocationForm(HelperForm):
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    class Meta:
+        model = SalesOrderAllocation
+
+        fields = [
+            'line',
+            'item',
+            'quantity']

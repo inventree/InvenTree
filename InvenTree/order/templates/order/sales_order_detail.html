@@ -136,32 +136,78 @@ $("#so-lines-table").inventreeTable({
             field: 'buttons',
             formatter: function(value, row, index, field) {
 
-                var html = '';
+                var html = `<div class='btn-group float-right' role='group'>`;
 
                 var pk = row.pk;
 
                 if (row.part) {
                     var part = row.part_detail;
 
-                    html = `<div class='btn-group float-right' role='group'>`;
-
-                    html += makeIconButton('fa-plus', `button-add-${pk}`);
-                        
                     if (part.purchaseable) {
-                        html += makeIconButton('fa-shopping-cart', `button-buy-${pk}`);
-                    }
-                        
-                    if (part.assembly) {
-                        html += makeIconButton('fa-tools', `button-build-${pk}`);
+                        html += makeIconButton('fa-shopping-cart', 'button-buy', pk, '{% trans "Buy parts" %}');
                     }
                     
-                    html += `</div>`;
+                    if (part.assembly) {
+                        html += makeIconButton('fa-tools', 'button-build', pk, '{% trans "Build parts" %}');
+                    }
+                    
+                    html += makeIconButton('fa-plus', 'button-add', pk, '{% trans "Allocate parts" %}');
+                    
                 }
+                
+                html += makeIconButton('fa-edit', 'button-edit', pk, '{% trans "Edit line item" %}');
+                html += `</div>`;
 
                 return html;
             }
         },
     ],
+});
+
+function reloadTable() {
+    $("#so-lines-table").bootstrapTable("refresh");
+}
+
+// Called when the table is loaded
+$("#so-lines-table").on('load-success.bs.table', function() {
+
+    var table = $(this);
+
+    // Set up callbacks for the row buttons
+    table.find(".button-edit").click(function() {
+
+        var pk = $(this).attr('pk');
+
+        launchModalForm(`/order/sales-order/line/${pk}/edit/`, {
+            success: reloadTable,
+        });
+        console.log("clicked!");
     });
+
+    table.find(".button-add").click(function() {
+        console.log("add");
+
+        var pk = $(this).attr('pk');
+
+        launchModalForm(`/order/sales-order/allocation/new/`, {
+            reload: table,
+            data: {
+                line: pk,
+            },
+        });
+
+    });
+
+    table.find(".button-build").click(function() {
+        console.log("build");
+
+        var pk = $(this).attr('pk');
+    });
+
+    table.find(".button-buy").click(function() {
+        console.log("buy");
+    });
+
+});
 
 {% endblock %}
