@@ -12,6 +12,7 @@ from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
 
+
 class PurchaseOrderAdmin(ImportExportModelAdmin):
 
     list_display = (

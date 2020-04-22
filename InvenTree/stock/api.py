@@ -12,7 +12,6 @@ from django.db.models import Q
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
 
-from order.models import SalesOrder
 from part.models import Part, PartCategory
 
 from .serializers import StockItemSerializer

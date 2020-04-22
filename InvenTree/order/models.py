@@ -19,6 +19,7 @@ import os
 from datetime import datetime
 from decimal import Decimal
 
+from part.models import Part
 from stock import models as stock_models
 from company.models import Company, SupplierPart
 

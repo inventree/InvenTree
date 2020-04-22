@@ -31,7 +31,7 @@ from InvenTree.models import InvenTreeTree
 from InvenTree.fields import InvenTreeURLField
 
 from part.models import Part
-from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
+from order.models import PurchaseOrder, SalesOrder
 
 
 class StockLocation(InvenTreeTree):
@@ -425,7 +425,6 @@ class StockItem(MPTTModel):
         """
 
         return self.build_allocation_count() + self.sales_order_allocation_count()
-
 
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
