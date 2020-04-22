@@ -452,6 +452,13 @@ class SalesOrderAllocation(models.Model):
 
     quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
 
+    def get_allocated(self):
+        """ String representation of the allocated quantity """
+        if self.item.serial and self.quantity == 1:
+            return "# {sn}".format(sn=self.item.serial)
+        else:
+            return self.quantity
+
     def get_location(self):
         return self.item.location.id if self.item.location else None
 

@@ -341,6 +341,7 @@ class SOLineItemList(generics.ListCreateAPIView):
             'part',
             'part__stock_items',
             'allocations',
+            'allocations__item__location',
             'order',
         )
 

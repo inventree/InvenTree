@@ -42,6 +42,7 @@ $("#so-lines-table").inventreeTable({
     queryParams: {
         order: {{ order.id }},
         part_detail: true,
+        allocations: true,
     },
     url: "{% url 'api-so-line-list' %}",
     detailView: true,
@@ -49,61 +50,39 @@ $("#so-lines-table").inventreeTable({
         return row.allocated > 0;
     },
     detailFormatter: function(index, row, element) {
-        inventreeGet("{% url 'api-stock-list' %}",
+
+        var html = `<div class='sub-table'><table class='table table-striped table-condensed' id='allocation-table-${row.pk}'></table></div>`;
+
+        element.html(html);
+
+        $(`#allocation-table-${row.pk}`).bootstrapTable({
+            data: row.allocations,
+            showHeader: false,
+            columns: [
             {
-                location_detail: true,
-                sales_order_line: row.pk,
+                width: '50%',
+                field: 'allocated',
+                title: 'Quantity',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, `/stock/item/${row.pk}/`);
+                },
             },
             {
-                success: function(response) {
-
-                    var html = `<div class='sub-table'><table class='table table-striped table-condensed' id='allocation-table-${row.pk}'></table></div>`;
-
-                    element.html(html);
-
-                    $(`#allocation-table-${row.pk}`).bootstrapTable({
-                        data: response,
-                        showHeader: false,
-                        columns: [
-                        {
-                            width: '50%',
-                            field: 'quantity',
-                            title: 'Quantity',
-                            formatter: function(value, row, index, field) {
-                                var html = '';
-                                if (row.serial && row.quantity == 1) {
-                                    html = `Serial Number: ${row.serial}`;
-                                } else {
-                                    html = `Quantity: ${row.quantity}`;
-                                }
-
-                                return renderLink(html, `/stock/item/${row.pk}/`);
-                            },
-                        },
-                        {
-                            field: 'location',
-                            title: 'Location',
-                            formatter: function(value, row, index, field) {
-                                return renderLink(row.location_detail.pathstring, `/stock/location/${row.location}/`);
-                            },
-                        },
-                        {
-                            field: 'buttons',
-                            title: 'Actions',
-                            formatter: function(value, row, index, field) {
-                                return '';
-                            },
-                        },
-                        ],
-                    });
+                field: 'location_id',
+                title: 'Location',
+                formatter: function(value, row, index, field) {
+                    return renderLink(row.location_path, `/stock/location/${row.location_id}/`);
                 },
-                error: function(response) {
-                    console.log("An error!");
+            },
+            {
+                field: 'buttons',
+                title: 'Actions',
+                formatter: function(value, row, index, field) {
+                    return '';
                 },
-            }
-        );
-
-        return "{% trans 'Loading data' %}";
+            },
+            ],
+        });
     },
     columns: [
         {
