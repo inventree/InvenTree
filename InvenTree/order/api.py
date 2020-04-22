@@ -335,7 +335,7 @@ class SOLineItemList(generics.ListCreateAPIView):
         return queryset.prefetch_related(
             'part',
             'part__stock_items',
-            'stock_items',
+            'allocations',
             'order',
         )
 

@@ -380,6 +380,26 @@ class SalesOrderLineItem(OrderLineItem):
         This is a summation of the quantity of each attached StockItem
         """
 
-        query = self.stock_items.aggregate(allocated=Coalesce(Sum('quantity'), Decimal(0)))
+        query = self.allocations.aggregate(allocated=Coalesce(Sum('quantity'), Decimal(0)))
 
         return query['allocated']
+
+
+class SalesOrderAllocation(models.Model):
+    """
+    This model is used to 'allocate' stock items to a SalesOrder.
+    Items that are "allocated" to a SalesOrder are not yet "attached" to the order,
+    but they will be once the order is fulfilled.
+
+    Attributes:
+        line: SalesOrderLineItem reference
+        item: StockItem reference
+        quantity: Quantity to take from the StockItem
+
+    """
+
+    line = models.ForeignKey(SalesOrderLineItem, on_delete=models.CASCADE, related_name='allocations')
+
+    item = models.OneToOneField('stock.StockItem', on_delete=models.CASCADE, related_name='sales_order_allocation')
+
+    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
