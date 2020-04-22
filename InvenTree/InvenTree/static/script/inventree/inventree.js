@@ -116,7 +116,9 @@ function makeProgressBar(value, maximum, opts) {
     var extraclass = '';
 
     if (value > maximum) {
-        extraclass='progress-bar-exceed';
+        extraclass='progress-bar-over';
+    } else if (value < maximum) {
+        extraclass = 'progress-bar-under';
     }
 
     var id = opts.id || 'progress-bar';

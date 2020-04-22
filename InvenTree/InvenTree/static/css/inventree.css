@@ -40,10 +40,15 @@
 
 .progress-bar {
     opacity: 60%;
+    background: #2aa02a;
 }
 
-.progress-bar-exceed {
+.progress-bar-under {
     background: #eeaa33;
+}
+
+.progress-bar-over {
+    background: #337ab7;
 }
 
 .progress-value {
