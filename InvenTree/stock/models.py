@@ -397,6 +397,16 @@ class StockItem(MPTTModel):
 
     infinite = models.BooleanField(default=False)
 
+    def is_allocated(self):
+        """
+        Return True if this StockItem is allocated to a SalesOrder or a Build
+        """
+
+        # TODO - For now this only checks if the StockItem is allocated to a SalesOrder
+        # TODO - In future, once the "build" is working better, check this too
+
+        return self.sales_order_line is not None
+
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
 

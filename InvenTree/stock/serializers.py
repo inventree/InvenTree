@@ -90,6 +90,8 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True)
 
+    allocated = serializers.BooleanField(source='is_allocated', read_only=True)
+
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
@@ -110,6 +112,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
     class Meta:
         model = StockItem
         fields = [
+            'allocated',
             'batch',
             'in_stock',
             'link',

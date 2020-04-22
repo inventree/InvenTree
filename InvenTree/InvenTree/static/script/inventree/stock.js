@@ -228,8 +228,14 @@ function loadStockTable(table, options) {
                     } else {
                         url = `/part/${row.part}/`;
                     }
+
+                    html = imageHoverIcon(thumb) + renderLink(name, url);
+
+                    if (row.allocated) {
+                        html += `<span class='fas fa-bookmark label-right' title='StockItem has been allocated'></span>`;
+                    }
                     
-                    return imageHoverIcon(thumb) + renderLink(name, url);
+                    return html;
                 }
             },
             {

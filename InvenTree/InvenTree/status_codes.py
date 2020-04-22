@@ -119,6 +119,13 @@ class StockStatus(StatusCode):
     DAMAGED = 55  # Item is damaged
     DESTROYED = 60  # Item is destroyed
     LOST = 70  # Item has been lost
+    RETURNED = 85  # Item has been returned from a customer
+
+    # Any stock code above 100 means that the stock item is not "in stock"
+    # This can be used as a quick check for filtering
+    NOT_IN_STOCK = 100
+
+    SHIPPED = 110  # Item has been shipped to a customer
 
     options = {
         OK: _("OK"),
@@ -126,12 +133,15 @@ class StockStatus(StatusCode):
         DAMAGED: _("Damaged"),
         DESTROYED: _("Destroyed"),
         LOST: _("Lost"),
+        SHIPPED: _("Shipped"),
+        RETURNED: _("Returned"),
     }
 
     labels = {
         OK: 'success',
         ATTENTION: 'warning',
         DAMAGED: 'danger',
+        DESTROYED: 'danger',
     }
 
     # The following codes correspond to parts that are 'available' or 'in stock'
@@ -139,12 +149,14 @@ class StockStatus(StatusCode):
         OK,
         ATTENTION,
         DAMAGED,
+        RETURNED,
     ]
 
     # The following codes correspond to parts that are 'unavailable'
     UNAVAILABLE_CODES = [
         DESTROYED,
         LOST,
+        SHIPPED,
     ]
 
 

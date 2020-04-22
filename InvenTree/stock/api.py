@@ -367,6 +367,17 @@ class StockList(generics.ListCreateAPIView):
         # Filter out parts which are not actually "in stock"
         stock_list = stock_list.filter(customer=None, belongs_to=None)
 
+        # Filter by 'allocated' patrs?
+        allocated = self.request.query_params.get('allocated', None)
+
+        if allocated is not None:
+            allocated = str2bool(allocated)
+
+            if allocated:
+                stock_list = stock_list.exclude(Q(sales_order_line=None))
+            else:
+                stock_list = stock_list.filter(Q(sales_order_line=None))
+
         # Do we wish to filter by "active parts"
         active = self.request.query_params.get('active', None)
 

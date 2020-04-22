@@ -27,10 +27,15 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Active parts" %}',
                 description: '{% trans "Show stock for active parts" %}',
             },
-            'status': {
+            status: {
                 options: stockCodes,
                 title: '{% trans "Stock status" %}',
                 description: '{% trans "Stock status" %}',
+            },
+            allocated: {
+                type: 'bool',
+                title: '{% trans "Is allocated" %}',
+                description: '{% trans "Item has been alloacted" %}',
             },
         };
     }
