@@ -373,7 +373,7 @@ class StockItem(MPTTModel):
         SalesOrderLineItem,
         on_delete=models.SET_NULL,
         related_name='stock_items',
-        null=True)
+        null=True, blank=True)
 
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)
