@@ -113,11 +113,17 @@ function makeProgressBar(value, maximum, opts) {
         percent = 100;
     }
 
+    var extraclass = '';
+
+    if (value > maximum) {
+        extraclass='progress-bar-exceed';
+    }
+
     var id = opts.id || 'progress-bar';
 
     return `
     <div id='${id}' class='progress'>
-        <div class='progress-bar' role='progressbar' aria-valuenow='${percent}' aria-valuemin='0' aria-valuemax='100' style='width:${percent}%'></div>
+        <div class='progress-bar ${extraclass}' role='progressbar' aria-valuenow='${percent}' aria-valuemin='0' aria-valuemax='100' style='width:${percent}%'></div>
         <div class='progress-value'>${value} / ${maximum}</div>
     </div>
     `;

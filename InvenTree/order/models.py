@@ -24,7 +24,7 @@ from stock import models as stock_models
 from company.models import Company, SupplierPart
 
 from InvenTree.fields import RoundingDecimalField
-from InvenTree.helpers import decimal2string
+from InvenTree.helpers import decimal2string, normalize
 from InvenTree.status_codes import OrderStatus
 from InvenTree.models import InvenTreeAttachment
 
@@ -277,6 +277,15 @@ class SalesOrder(Order):
 
     customer_reference = models.CharField(max_length=64, blank=True, help_text=_("Customer order reference code"))
 
+    def is_fully_allocated(self):
+        """ Return True if all line items are fully allocated """
+
+        for line in self.lines.all():
+            if not line.is_fully_allocated():
+                return False
+            
+        return True
+
 
 class PurchaseOrderAttachment(InvenTreeAttachment):
     """
@@ -385,6 +394,12 @@ class SalesOrderLineItem(OrderLineItem):
 
         return query['allocated']
 
+    def is_fully_allocated(self):
+        return self.allocated_quantity() >= self.quantity
+
+    def is_over_allocated(self):
+        return self.allocated_quantity() > self.quantity
+
 
 class SalesOrderAllocation(models.Model):
     """
@@ -457,7 +472,7 @@ class SalesOrderAllocation(models.Model):
         if self.item.serial and self.quantity == 1:
             return "# {sn}".format(sn=self.item.serial)
         else:
-            return self.quantity
+            return normalize(self.quantity)
 
     def get_location(self):
         return self.item.location.id if self.item.location else None

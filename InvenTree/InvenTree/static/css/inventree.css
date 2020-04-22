@@ -42,6 +42,10 @@
     opacity: 60%;
 }
 
+.progress-bar-exceed {
+    background: #eeaa33;
+}
+
 .progress-value {
     width: 100%;
     color: #333;

@@ -1173,11 +1173,33 @@ class SalesOrderAllocationCreate(AjaxCreateView):
     def get_initial(self):
         initials = super().get_initial().copy()
 
-        line = self.request.GET.get('line', None)
+        line_id = self.request.GET.get('line', None)
 
-        if line is not None:
-            initials['line'] = SalesOrderLineItem.objects.get(pk=line)
+        if line_id is not None:
+            line = SalesOrderLineItem.objects.get(pk=line_id)
+
+            initials['line'] = line
+
+            # Search for matching stock items, pre-fill if there is only one
+            items = StockItem.objects.filter(part=line.part)
+
+            quantity = line.quantity - line.allocated_quantity()
+            
+            if quantity < 0:
+                quantity = 0
         
+            if items.count() == 1:
+                item = items.first()
+                initials['item'] = item
+
+                # Reduce the quantity IF there is not enough stock
+                qmax = item.quantity - item.allocation_count()
+
+                if qmax < quantity:
+                    quantity = qmax
+
+            initials['quantity'] = quantity
+
         return initials
 
     def get_form(self):
@@ -1208,4 +1230,19 @@ class SalesOrderAllocationCreate(AjaxCreateView):
         except KeyError: # (ValueError, SalesOrderLineItem.DoesNotExist):
             pass
         
+        return form
+
+
+class SalesOrderAllocationEdit(AjaxUpdateView):
+
+    model = SalesOrderAllocation
+    ajax_form_title = _('Edit Allocation Quantity')
+
+    def get_form(self):
+        form = super().get_form()
+
+        # Prevent the user from editing particular fields
+        form.fields.pop('item')
+        form.fields.pop('line')
+
         return form

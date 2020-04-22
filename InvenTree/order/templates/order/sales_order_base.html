@@ -9,6 +9,14 @@
 InvenTree | {% trans "Sales Order" %}
 {% endblock %}
 
+{% block pre_content %}
+{% if not order.is_fully_allocated %}
+<div class='alert alert-block alert-danger'>
+    {% trans "This SalesOrder has not been fully allocated" %}
+</div>
+{% endif %}
+{% endblock %}
+
 {% block thumbnail %}
 <img class='part-thumb'
 {% if order.customer.image %}

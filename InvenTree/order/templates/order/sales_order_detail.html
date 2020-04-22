@@ -190,7 +190,7 @@ $("#so-lines-table").on('load-success.bs.table', function() {
         var pk = $(this).attr('pk');
 
         launchModalForm(`/order/sales-order/allocation/new/`, {
-            reload: table,
+            success: reloadTable,
             data: {
                 line: pk,
             },

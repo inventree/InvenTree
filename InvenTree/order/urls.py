@@ -95,6 +95,9 @@ sales_order_urls = [
     # URLs for sales order allocations
     url(r'^allocation/', include([
         url(r'^new/', views.SalesOrderAllocationCreate.as_view(), name='so-allocation-create'),
+        url(r'(?P<pk>\d+)/', include([
+            url(r'^edit/', views.SalesOrderAllocationEdit.as_view(), name='so-allocation-edit'),
+        ])),
     ])),
 
     url(r'^attachments/', include(sales_order_attachment_urls)),
