@@ -289,6 +289,10 @@ class SalesOrder(Order):
         related_name='+'
     )
 
+    @property
+    def is_pending(self):
+        return self.status == SalesOrderStatus.PENDING
+
     def is_fully_allocated(self):
         """ Return True if all line items are fully allocated """
 
@@ -296,6 +300,42 @@ class SalesOrder(Order):
             if not line.is_fully_allocated():
                 return False
             
+        return True
+
+    @transaction.atomic
+    def ship_order(self, user):
+        """ Mark this order as 'shipped' """
+
+        if not self.status == SalesOrderStatus.PENDING:
+            return False
+
+        # Ensure the order status is marked as "Shipped"
+        self.status = SalesOrderStatus.SHIPPED
+        self.shipment_date = datetime.now().date()
+        self.shipped_by = user
+        self.save()
+
+        return True
+
+    @transaction.atomic
+    def cancel_order(self):
+        """
+        Cancel this order (only if it is "pending")
+
+        - Mark the order as 'cancelled'
+        - Delete any StockItems which have been allocated
+        """
+
+        if not self.status == SalesOrderStatus.PENDING:
+            return False
+
+        self.status = SalesOrderStatus.CANCELLED
+        self.save()
+
+        for line in self.lines.all():
+            for allocation in line.allocations.all():
+                allocation.delete()
+
         return True
 
 
