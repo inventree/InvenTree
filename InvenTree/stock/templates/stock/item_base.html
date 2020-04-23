@@ -63,38 +63,38 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% endif %}
 </h4>
 
-<div class='btn-group'>
+<div class='btn-group action-buttons'>
     {% include "qr_button.html" %}
     {% if item.in_stock %}
     {% if not item.serialized %}
-    <button type='button' class='btn btn-default btn-glyph' id='stock-add' title='Add to stock'>
-        <span class='glyphicon glyphicon-plus-sign' style='color: #1a1;'/>
+    <button type='button' class='btn btn-default' id='stock-add' title='Add to stock'>
+        <span class='fas fa-plus-circle' style='color: #1a1;'/>
     </button>
-    <button type='button' class='btn btn-default btn-glyph' id='stock-remove' title='Take from stock'>
-        <span class='glyphicon glyphicon-minus-sign' style='color: #a11;'/>
+    <button type='button' class='btn btn-default' id='stock-remove' title='Take from stock'>
+        <span class='fas fa-minus-circle' style='color: #a11;'/>
     </button>
-    <button type='button' class='btn btn-default btn-glyph' id='stock-count' title='Count stock'>
-        <span class='glyphicon glyphicon-ok-circle'/>
+    <button type='button' class='btn btn-default' id='stock-count' title='Count stock'>
+        <span class='fas fa-clipboard-list'/>
     </button>
     {% if item.part.trackable %}
-    <button type='button' class='btn btn-default btn-glyph' id='stock-serialize' title='Serialize stock'>
-        <span class='glyphicon glyphicon-th-list'/>
+    <button type='button' class='btn btn-default' id='stock-serialize' title='Serialize stock'>
+        <span class='fas fa-hashtag'/>
     </button>
     {% endif %}
     {% endif %}
-    <button type='button' class='btn btn-default btn-glyph' id='stock-move' title='Transfer stock'>
-        <span class='glyphicon glyphicon-transfer' style='color: #11a;'/>
+    <button type='button' class='btn btn-default' id='stock-move' title='Transfer stock'>
+        <span class='fas fa-exchange-alt icon-blue'/>
     </button>
-    <button type='button' class='btn btn-default btn-glyph' id='stock-duplicate' title='Duplicate stock item'>
-        <span class='glyphicon glyphicon-duplicate'/>
+    <button type='button' class='btn btn-default' id='stock-duplicate' title='Duplicate stock item'>
+        <span class='fas fa-copy'/>
     </button>
     {% endif %}
-    <button type='button' class='btn btn-default btn-glyph' id='stock-edit' title='Edit stock item'>
-        <span class='glyphicon glyphicon-edit'/>
+    <button type='button' class='btn btn-default' id='stock-edit' title='Edit stock item'>
+        <span class='fas fa-edit'/>
     </button>
     {% if item.can_delete %}
-    <button type='button' class='btn btn-default btn-glyph' id='stock-delete' title='Edit stock item'>
-        <span class='glyphicon glyphicon-trash'/>
+    <button type='button' class='btn btn-default' id='stock-delete' title='Edit stock item'>
+        <span class='fas fa-trash-alt icon-red'/>
     </button>
     {% endif %}
 </div>

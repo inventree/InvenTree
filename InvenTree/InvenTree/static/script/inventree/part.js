@@ -50,7 +50,7 @@ function toggleStar(options) {
                         {
                             method: 'POST',
                             success: function(response, status) {
-                                $(options.button).removeClass('glyphicon-star-empty').addClass('glyphicon-star');
+                                $(options.button).addClass('icon-yellow');
                             },
                         }
                     );
@@ -64,7 +64,7 @@ function toggleStar(options) {
                         {
                             method: 'DELETE',
                             success: function(response, status) {
-                                $(options.button).removeClass('glyphicon-star').addClass('glyphicon-star-empty');
+                                $(options.button).removeClass('icon-yellow');
                             },
                         }
                     );

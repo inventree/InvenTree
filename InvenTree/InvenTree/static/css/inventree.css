@@ -111,24 +111,20 @@
     color: rgb(13, 245, 25);
 }
 
-.glyphicon-ok {
-    color: #5C5;
+.icon-red {
+    color: #c55;
 }
 
-.glyphicon-ok-circle {
+.icon-green {
+    color: #5c5;
+}
+
+.icon-blue {
     color: #55c;
 }
 
-.glyphicon-remove {
-    color: #C55;
-}
-
-.glyphicon-trash {
-    color: #C55;
-}
-
-.glyphicon-plus {
-    color: #5C5;
+.icon-yellow {
+    color: #CC2;
 }
 
 /* CSS overrides for treeview */
@@ -330,11 +326,15 @@
     padding-bottom: 2px;
 }
 
-.btn-large {
-    font-size: 150%;
+.action-buttons .btn {
+    font-size: 175%;
     align-content: center;
     vertical-align: middle;
-}
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 3px;
+    padding-bottom: 2px;
+};
 
 .badge {
     float: right;

@@ -33,11 +33,11 @@ src="{% static 'img/blank_image.png' %}"
 <h4>{{ order }}</h4>
 <p>{{ order.description }}</p>
 <div class='btn-row'>
-    <div class='btn-group'>
-        <button type='button' class='btn btn-default btn-glyph btn-large' id='edit-order' title='Edit order information'>
+    <div class='btn-group action-buttons'>
+        <button type='button' class='btn btn-default' id='edit-order' title='Edit order information'>
             <span class='fas fa-edit'></span>
         </button>
-        <button type='button' class='btn btn-default btn-glyph btn-large' id='packing-list' title='{% trans "Packing List" %}'>
+        <button type='button' class='btn btn-default' id='packing-list' title='{% trans "Packing List" %}'>
             <span class='fas fa-clipboard-list'></span>
         </button>
     </div>

@@ -26,27 +26,27 @@ src="{% static 'img/blank_image.png' %}"
 <p>{{ order.description }}</p>
 <p>
     <div class='btn-row'>
-        <div class='btn-group'>
-            <button type='button' class='btn btn-default btn-glyph btn-large' id='edit-order' title='Edit order information'>
+        <div class='btn-group action-buttons'>
+            <button type='button' class='btn btn-default' id='edit-order' title='Edit order information'>
                 <span class='fas fa-edit'></span>
             </button>
-            <button type='button' class='btn btn-default btn-glyph btn-large' id='export-order' title='Export order to file'>
+            <button type='button' class='btn btn-default' id='export-order' title='Export order to file'>
                 <span class='fas fa-file-download'></span>
             </button>
             {% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
-            <button type='button' class='btn btn-default btn-glyph btn-large' id='place-order' title='Place order'>
+            <button type='button' class='btn btn-default' id='place-order' title='Place order'>
                 <span class='fas fa-paper-plane'></span>
             </button>
             {% elif order.status == OrderStatus.PLACED %}
-            <button type='button' class='btn btn-default btn-glyph btn-large' id='receive-order' title='Receive items'>
+            <button type='button' class='btn btn-default' id='receive-order' title='Receive items'>
                 <span class='fas fa-clipboard-check'></span>
             </button>
-            <button type='button' class='btn btn-default btn-glyph btn-large' id='complete-order' title='Mark order as complete'>
+            <button type='button' class='btn btn-default' id='complete-order' title='Mark order as complete'>
                 <span class='fas fa-check-circle'></span>
             </button>
             {% endif %}
             {% if order.status == OrderStatus.PENDING or order.status == OrderStatus.PLACED %}
-            <button type='button' class='btn btn-default btn-glyph btn-large' id='cancel-order' title='Cancel order'>
+            <button type='button' class='btn btn-default' id='cancel-order' title='Cancel order'>
                 <span class='fas fa-times-circle'></span>
             </button>
             {% endif %}
