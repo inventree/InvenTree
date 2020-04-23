@@ -73,10 +73,16 @@ settings_urls = [
     url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings'),
 ]
 
+dynamic_javascript_urls = [
+]
+
 urlpatterns = [
     url(r'^part/', include(part_urls)),
     url(r'^supplier-part/', include(supplier_part_urls)),
     url(r'^price-break/', include(price_break_urls)),
+
+    # "Dynamic" javascript files which are rendered using InvenTree templating.
+    url(r'^dynamic/', include(dynamic_javascript_urls)),
 
     url(r'^common/', include(common_urls)),
 

@@ -9,12 +9,6 @@ from django.conf.urls import url, include
 
 from . import views
 
-purchase_order_attachment_urls = [
-    url(r'^new/', views.PurchaseOrderAttachmentCreate.as_view(), name='po-attachment-create'),
-    url(r'^(?P<pk>\d+)/edit/', views.PurchaseOrderAttachmentEdit.as_view(), name='po-attachment-edit'),
-    url(r'^(?P<pk>\d+)/delete/', views.PurchaseOrderAttachmentDelete.as_view(), name='po-attachment-delete'),
-]
-
 purchase_order_detail_urls = [
 
     url(r'^cancel/', views.PurchaseOrderCancel.as_view(), name='po-cancel'),
@@ -31,19 +25,6 @@ purchase_order_detail_urls = [
     url(r'^.*$', views.PurchaseOrderDetail.as_view(), name='po-detail'),
 ]
 
-po_line_item_detail_urls = [
-    
-    url(r'^edit/', views.POLineItemEdit.as_view(), name='po-line-item-edit'),
-    url(r'^delete/', views.POLineItemDelete.as_view(), name='po-line-item-delete'),
-]
-
-po_line_urls = [
-
-    url(r'^new/', views.POLineItemCreate.as_view(), name='po-line-item-create'),
-
-    url(r'^(?P<pk>\d+)/', include(po_line_item_detail_urls)),
-]
-
 purchase_order_urls = [
 
     url(r'^new/', views.PurchaseOrderCreate.as_view(), name='po-create'),
@@ -53,28 +34,22 @@ purchase_order_urls = [
     # Display detail view for a single purchase order
     url(r'^(?P<pk>\d+)/', include(purchase_order_detail_urls)),
 
-    url(r'^line/', include(po_line_urls)),
+    url(r'^line/', include([
+        url(r'^new/', views.POLineItemCreate.as_view(), name='po-line-item-create'),
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'^edit/', views.POLineItemEdit.as_view(), name='po-line-item-edit'),
+            url(r'^delete/', views.POLineItemDelete.as_view(), name='po-line-item-delete'),
+        ])),
+    ])),
 
-    url(r'^attachments/', include(purchase_order_attachment_urls)),
+    url(r'^attachments/', include([
+        url(r'^new/', views.PurchaseOrderAttachmentCreate.as_view(), name='po-attachment-create'),
+        url(r'^(?P<pk>\d+)/edit/', views.PurchaseOrderAttachmentEdit.as_view(), name='po-attachment-edit'),
+        url(r'^(?P<pk>\d+)/delete/', views.PurchaseOrderAttachmentDelete.as_view(), name='po-attachment-delete'),
+    ])),
 
     # Display complete list of purchase orders
     url(r'^.*$', views.PurchaseOrderIndex.as_view(), name='po-index'),
-]
-
-
-so_line_urls = [
-    url(r'^new/', views.SOLineItemCreate.as_view(), name='so-line-item-create'),
-    url(r'^(?P<pk>\d+)/', include([
-        url(r'^edit/', views.SOLineItemEdit.as_view(), name='so-line-item-edit'),
-        url(r'^delete/', views.SOLineItemDelete.as_view(), name='so-line-item-delete'),
-    ])),
-]
-
-sales_order_attachment_urls = [
-    url(r'^new/', views.SalesOrderAttachmentCreate.as_view(), name='so-attachment-create'),
-    url(r'^(?P<pk>\d+)/edit/', views.SalesOrderAttachmentEdit.as_view(), name='so-attachment-edit'),
-    url(r'^(?P<pk>\d+)/delete/', views.SalesOrderAttachmentDelete.as_view(), name='so-attachment-delete'),
-
 ]
 
 sales_order_detail_urls = [
@@ -91,7 +66,13 @@ sales_order_urls = [
 
     url(r'^new/', views.SalesOrderCreate.as_view(), name='so-create'),
 
-    url(r'^line/', include(so_line_urls)),
+    url(r'^line/', include([
+        url(r'^new/', views.SOLineItemCreate.as_view(), name='so-line-item-create'),
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'^edit/', views.SOLineItemEdit.as_view(), name='so-line-item-edit'),
+            url(r'^delete/', views.SOLineItemDelete.as_view(), name='so-line-item-delete'),
+        ])),
+    ])),
 
     # URLs for sales order allocations
     url(r'^allocation/', include([
@@ -102,7 +83,11 @@ sales_order_urls = [
         ])),
     ])),
 
-    url(r'^attachments/', include(sales_order_attachment_urls)),
+    url(r'^attachments/', include([
+        url(r'^new/', views.SalesOrderAttachmentCreate.as_view(), name='so-attachment-create'),
+        url(r'^(?P<pk>\d+)/edit/', views.SalesOrderAttachmentEdit.as_view(), name='so-attachment-edit'),
+        url(r'^(?P<pk>\d+)/delete/', views.SalesOrderAttachmentDelete.as_view(), name='so-attachment-delete'),
+    ])),
 
     # Display detail view for a single SalesOrder
     url(r'^(?P<pk>\d+)/', include(sales_order_detail_urls)),
