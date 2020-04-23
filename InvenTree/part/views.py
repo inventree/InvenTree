@@ -38,7 +38,6 @@ from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDelete
 from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import DownloadFile, str2bool
-from InvenTree.status_codes import PurchaseOrderStatus, BuildStatus
 
 
 class PartIndex(ListView):

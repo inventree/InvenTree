@@ -30,7 +30,16 @@ def build_status(key, *args, **kwargs):
     return mark_safe(BuildStatus.render(key))
 
 
-@register.simple_tag
-def sales_order_codes(*args, **kwargs):
-    print("doing")
-    return "hello world"
+@register.simple_tag(takes_context=True)
+def load_status_codes(context):
+    """
+    Make the various StatusCodes available to the page context
+    """
+
+    context['purchase_order_status_codes'] = PurchaseOrderStatus.list()
+    context['sales_order_status_codes'] = SalesOrderStatus.list()
+    context['stock_status_codes'] = StockStatus.list()
+    context['build_status_codes'] = BuildStatus.list()
+
+    # Need to return something as the result is rendered to the page
+    return ''

@@ -140,6 +140,7 @@ class SalesOrderStatus(StatusCode):
         RETURNED: "warning",
     }
 
+
 class StockStatus(StatusCode):
 
     OK = 10  # Item is OK

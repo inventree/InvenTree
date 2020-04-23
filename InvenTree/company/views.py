@@ -13,7 +13,6 @@ from django.urls import reverse
 from django.forms import HiddenInput
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
-from InvenTree.status_codes import PurchaseOrderStatus
 from InvenTree.helpers import str2bool
 
 from common.models import Currency

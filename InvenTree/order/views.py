@@ -412,7 +412,7 @@ class SalesOrderCancel(AjaxUpdateView):
         valid = False
 
         if not confirm:
-            forms.errors['confirm'] = [_('Confirm order cancellation')]
+            form.errors['confirm'] = [_('Confirm order cancellation')]
         else:
             valid = True
 
