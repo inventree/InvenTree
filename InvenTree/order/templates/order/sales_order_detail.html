@@ -45,6 +45,7 @@ $("#so-lines-table").inventreeTable({
         allocations: true,
     },
     url: "{% url 'api-so-line-list' %}",
+    onPostBody: setupCallbacks,
     detailViewByClick: true,
     detailView: true,
     detailFilter: function(index, row) {
@@ -201,10 +202,9 @@ function reloadTable() {
     $("#so-lines-table").bootstrapTable("refresh");
 }
 
-// Called when the table is loaded
-$("#so-lines-table").on('load-success.bs.table', function() {
+function setupCallbacks(table) {
 
-    var table = $(this);
+    var table = $("#so-lines-table");
 
     // Set up callbacks for the row buttons
     table.find(".button-edit").click(function() {
@@ -255,7 +255,6 @@ $("#so-lines-table").on('load-success.bs.table', function() {
             },
         });
     });
-
-});
+}
 
 {% endblock %}
