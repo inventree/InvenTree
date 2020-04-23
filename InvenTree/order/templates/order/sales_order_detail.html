@@ -143,6 +143,11 @@ $("#so-lines-table").inventreeTable({
             sortable: true,
             field: 'quantity',
             title: 'Quantity',
+        },
+        {
+            sortable: true,
+            field: 'allocated',
+            title: 'Allocated',
             formatter: function(value, row, index, field) {
                 return makeProgressBar(row.allocated, row.quantity, {
                     id: `order-line-progress-${row.pk}`,
