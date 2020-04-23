@@ -25,7 +25,7 @@ from company.models import Company, SupplierPart
 
 from InvenTree.fields import RoundingDecimalField
 from InvenTree.helpers import decimal2string, normalize
-from InvenTree.status_codes import OrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 from InvenTree.models import InvenTreeAttachment
 
 
@@ -76,9 +76,6 @@ class Order(models.Model):
 
     creation_date = models.DateField(blank=True, null=True)
 
-    status = models.PositiveIntegerField(default=OrderStatus.PENDING, choices=OrderStatus.items(),
-                                         help_text='Order status')
-
     created_by = models.ForeignKey(User,
                                    on_delete=models.SET_NULL,
                                    blank=True, null=True,
@@ -90,29 +87,6 @@ class Order(models.Model):
     complete_date = models.DateField(blank=True, null=True)
 
     notes = MarkdownxField(blank=True, help_text=_('Order notes'))
-
-    def place_order(self):
-        """ Marks the order as PLACED. Order must be currently PENDING. """
-
-        if self.status == OrderStatus.PENDING:
-            self.status = OrderStatus.PLACED
-            self.issue_date = datetime.now().date()
-            self.save()
-
-    def complete_order(self):
-        """ Marks the order as COMPLETE. Order must be currently PLACED. """
-
-        if self.status == OrderStatus.PLACED:
-            self.status = OrderStatus.COMPLETE
-            self.complete_date = datetime.now().date()
-            self.save()
-
-    def cancel_order(self):
-        """ Marks the order as CANCELLED. """
-
-        if self.status in [OrderStatus.PLACED, OrderStatus.PENDING]:
-            self.status = OrderStatus.CANCELLED
-            self.save()
 
 
 class PurchaseOrder(Order):
@@ -128,6 +102,9 @@ class PurchaseOrder(Order):
 
     def __str__(self):
         return "PO {ref} - {company}".format(ref=self.reference, company=self.supplier.name)
+
+    status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING, choices=PurchaseOrderStatus.items(),
+                                         help_text='Purchase order status')
 
     supplier = models.ForeignKey(
         Company, on_delete=models.CASCADE,
@@ -195,6 +172,29 @@ class PurchaseOrder(Order):
 
         line.save()
 
+    def place_order(self):
+        """ Marks the PurchaseOrder as PLACED. Order must be currently PENDING. """
+
+        if self.status == PurchaseOrderStatus.PENDING:
+            self.status = PurchaseOrderStatus.PLACED
+            self.issue_date = datetime.now().date()
+            self.save()
+
+    def complete_order(self):
+        """ Marks the PurchaseOrder as COMPLETE. Order must be currently PLACED. """
+
+        if self.status == PurchaseOrderStatus.PLACED:
+            self.status = PurchaseOrderStatus.COMPLETE
+            self.complete_date = datetime.now().date()
+            self.save()
+
+    def cancel_order(self):
+        """ Marks the PurchaseOrder as CANCELLED. """
+
+        if self.status in [PurchaseOrderStatus.PLACED, PurchaseOrderStatus.PENDING]:
+            self.status = PurchaseOrderStatus.CANCELLED
+            self.save()
+
     def pending_line_items(self):
         """ Return a list of pending line items for this order.
         Any line item where 'received' < 'quantity' will be returned.
@@ -213,7 +213,7 @@ class PurchaseOrder(Order):
         """ Receive a line item (or partial line item) against this PO
         """
 
-        if not self.status == OrderStatus.PLACED:
+        if not self.status == PurchaseOrderStatus.PLACED:
             raise ValidationError({"status": _("Lines can only be received against an order marked as 'Placed'")})
 
         try:
@@ -274,6 +274,9 @@ class SalesOrder(Order):
         related_name='sales_orders',
         help_text=_("Customer"),
     )
+
+    status = models.PositiveIntegerField(default=SalesOrderStatus.PENDING, choices=SalesOrderStatus.items(),
+                                         help_text='Purchase order status')
 
     customer_reference = models.CharField(max_length=64, blank=True, help_text=_("Customer order reference code"))
 

@@ -15,7 +15,7 @@ from decimal import Decimal
 from django.db.models import Q, Sum
 from django.db.models.functions import Coalesce
 
-from InvenTree.status_codes import StockStatus, OrderStatus, BuildStatus
+from InvenTree.status_codes import StockStatus, PurchaseOrderStatus, BuildStatus
 from InvenTree.serializers import InvenTreeModelSerializer
 
 
@@ -120,7 +120,7 @@ class PartSerializer(InvenTreeModelSerializer):
         stock_filter = Q(stock_items__status__in=StockStatus.AVAILABLE_CODES)
 
         # Filter to limit orders to "open"
-        order_filter = Q(supplier_parts__purchase_order_line_items__order__status__in=OrderStatus.OPEN)
+        order_filter = Q(supplier_parts__purchase_order_line_items__order__status__in=PurchaseOrderStatus.OPEN)
 
         # Filter to limit builds to "active"
         build_filter = Q(builds__status__in=BuildStatus.ACTIVE_CODES)

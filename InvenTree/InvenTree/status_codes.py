@@ -70,11 +70,14 @@ class StatusCode:
         raise ValueError("Label not found")
 
 
-class OrderStatus(StatusCode):
+class PurchaseOrderStatus(StatusCode):
+    """
+    Defines a set of status codes for a PurchaseOrder
+    """
 
     # Order status codes
     PENDING = 10  # Order is pending (not yet placed)
-    PLACED = 20  # Order has been placed
+    PLACED = 20  # Order has been placed with supplier
     COMPLETE = 30  # Order has been completed
     CANCELLED = 40  # Order was cancelled
     LOST = 50  # Order was lost
@@ -111,6 +114,31 @@ class OrderStatus(StatusCode):
         RETURNED
     ]
 
+
+class SalesOrderStatus(StatusCode):
+    """ Defines a set of status codes for a SalesOrder """
+
+    PENDING = 10  # Order is pending
+    SHIPPED = 20  # Order has been shipped to customer
+    CANCELLED = 40  # Order has been cancelled
+    LOST = 50  # Order was lost
+    RETURNED = 60  # Order was returned
+
+    options = {
+        PENDING: _("Pending"),
+        SHIPPED: _("Shipped"),
+        CANCELLED: _("Cancelled"),
+        LOST: _("Lost"),
+        RETURNED: _("Returned"),
+    }
+
+    labels = {
+        PENDING: "primary",
+        SHIPPED: "success",
+        CANCELLED: "danger",
+        LOST: "warning",
+        RETURNED: "warning",
+    }
 
 class StockStatus(StatusCode):
 

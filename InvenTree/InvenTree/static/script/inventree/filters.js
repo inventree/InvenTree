@@ -18,6 +18,8 @@ function defaultFilters() {
         build: "",
         parts: "cascade=1",
         company: "",
+        salesorder: "",
+        purchaseorder: "",
     };
 }
 
@@ -258,6 +260,8 @@ function setupFilterList(tableKey, table, target) {
 
     var element = $(target);
 
+    console.log(tableKey + " - " + element);
+
     // One blank slate, please
     element.empty();
 
@@ -297,6 +301,8 @@ function setupFilterList(tableKey, table, target) {
             // Add a callback for when the filter tag selection is changed
             element.find(`#filter-tag-${tableKey}`).on('change', function() {
                 var list = element.find(`#filter-value-${tableKey}`);
+
+                console.log('index was changed!');
 
                 list.replaceWith(generateFilterInput(tableKey, this.value));
             });

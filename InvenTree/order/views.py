@@ -29,7 +29,7 @@ from . import forms as order_forms
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import DownloadFile, str2bool
 
-from InvenTree.status_codes import OrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus
 
 logger = logging.getLogger(__name__)
 
@@ -52,8 +52,6 @@ class PurchaseOrderIndex(ListView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ctx['OrderStatus'] = OrderStatus
-
         return ctx
 
 
@@ -73,8 +71,6 @@ class PurchaseOrderDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-
-        ctx['OrderStatus'] = OrderStatus
 
         return ctx
 
@@ -280,7 +276,7 @@ class PurchaseOrderCreate(AjaxCreateView):
     def get_initial(self):
         initials = super().get_initial().copy()
 
-        initials['status'] = OrderStatus.PENDING
+        initials['status'] = PurchaseOrderStatus.PENDING
 
         supplier_id = self.request.GET.get('supplier', None)
 
@@ -310,7 +306,7 @@ class SalesOrderCreate(AjaxCreateView):
     def get_initial(self):
         initials = super().get_initial().copy()
 
-        initials['status'] = OrderStatus.PENDING
+        initials['status'] = PurchaseOrderStatus.PENDING
 
         customer_id = self.request.GET.get('customer', None)
 
@@ -343,7 +339,7 @@ class PurchaseOrderEdit(AjaxUpdateView):
         order = self.get_object()
 
         # Prevent user from editing supplier if there are already lines in the order
-        if order.lines.count() > 0 or not order.status == OrderStatus.PENDING:
+        if order.lines.count() > 0 or not order.status == PurchaseOrderStatus.PENDING:
             form.fields['supplier'].widget = HiddenInput()
 
         return form
@@ -455,7 +451,7 @@ class PurchaseOrderComplete(AjaxUpdateView):
 
         if confirm:
             po = self.get_object()
-            po.status = OrderStatus.COMPLETE
+            po.status = PurchaseOrderStatus.COMPLETE
             po.save()
 
         data = {
@@ -1024,7 +1020,7 @@ class POLineItemCreate(AjaxCreateView):
 
         # Limit the available to orders to ones that are PENDING
         query = form.fields['order'].queryset
-        query = query.filter(status=OrderStatus.PENDING)
+        query = query.filter(status=PurchaseOrderStatus.PENDING)
         form.fields['order'].queryset = query
 
         order_id = form['order'].value()

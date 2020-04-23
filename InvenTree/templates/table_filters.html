@@ -7,7 +7,8 @@
 
 {% include "status_codes.html" with label='stock' options=stock_status_codes %}
 {% include "status_codes.html" with label='build' options=build_status_codes %}
-{% include "status_codes.html" with label='order' options=order_status_codes %}
+{% include "status_codes.html" with label='purchaseOrder' options=purchase_order_status_codes %}
+{% include "status_codes.html" with label='salesOrder' options=sales_order_status_codes %}
 
 
 function getAvailableTableFilters(tableKey) {
@@ -52,11 +53,20 @@ function getAvailableTableFilters(tableKey) {
     }
 
     // Filters for the "Order" table
-    if (tableKey == "order") {
+    if (tableKey == "purchaseorder") {
         return {
             status: {
                 title: '{% trans "Order status" %}',
-                options: orderCodes,
+                options: purchaseOrderCodes,
+            },
+        };
+    }
+
+    if (tableKey == "salesorder") {
+        return {
+            status: {
+                title: '{% trans "Order status" %}',
+                options: salesOrderCodes,
             },
         };
     }

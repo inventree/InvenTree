@@ -25,7 +25,7 @@ from stdimage.models import StdImageField
 from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
 from InvenTree.helpers import normalize
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
-from InvenTree.status_codes import OrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus
 from common.models import Currency
 
 
@@ -185,11 +185,11 @@ class Company(models.Model):
 
     def outstanding_purchase_orders(self):
         """ Return purchase orders which are 'outstanding' """
-        return self.purchase_orders.filter(status__in=OrderStatus.OPEN)
+        return self.purchase_orders.filter(status__in=PurchaseOrderStatus.OPEN)
 
     def pending_purchase_orders(self):
         """ Return purchase orders which are PENDING (not yet issued) """
-        return self.purchase_orders.filter(status=OrderStatus.PENDING)
+        return self.purchase_orders.filter(status=PurchaseOrderStatus.PENDING)
 
     def closed_purchase_orders(self):
         """ Return purchase orders which are not 'outstanding'
@@ -199,15 +199,15 @@ class Company(models.Model):
         - Returned
         """
 
-        return self.purchase_orders.exclude(status__in=OrderStatus.OPEN)
+        return self.purchase_orders.exclude(status__in=PurchaseOrderStatus.OPEN)
 
     def complete_purchase_orders(self):
-        return self.purchase_orders.filter(status=OrderStatus.COMPLETE)
+        return self.purchase_orders.filter(status=PurchaseOrderStatus.COMPLETE)
 
     def failed_purchase_orders(self):
         """ Return any purchase orders which were not successful """
 
-        return self.purchase_orders.filter(status__in=OrderStatus.FAILED)
+        return self.purchase_orders.filter(status__in=PurchaseOrderStatus.FAILED)
 
 
 class Contact(models.Model):
@@ -384,7 +384,7 @@ class SupplierPart(models.Model):
         limited to purchase orders that are open / outstanding.
         """
 
-        return self.purchase_order_line_items.prefetch_related('order').filter(order__status__in=OrderStatus.OPEN)
+        return self.purchase_order_line_items.prefetch_related('order').filter(order__status__in=PurchaseOrderStatus.OPEN)
 
     def on_order(self):
         """ Return the total quantity of items currently on order.

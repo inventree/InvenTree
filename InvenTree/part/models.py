@@ -39,7 +39,7 @@ from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize
 
-from InvenTree.status_codes import BuildStatus, StockStatus, OrderStatus
+from InvenTree.status_codes import BuildStatus, StockStatus, PurchaseOrderStatus
 
 from company.models import SupplierPart
 
@@ -955,18 +955,18 @@ class Part(models.Model):
     def open_purchase_orders(self):
         """ Return a list of open purchase orders against this part """
 
-        return [order for order in self.purchase_orders() if order.status in OrderStatus.OPEN]
+        return [order for order in self.purchase_orders() if order.status in PurchaseOrderStatus.OPEN]
 
     def closed_purchase_orders(self):
         """ Return a list of closed purchase orders against this part """
 
-        return [order for order in self.purchase_orders() if order.status not in OrderStatus.OPEN]
+        return [order for order in self.purchase_orders() if order.status not in PurchaseOrderStatus.OPEN]
 
     @property
     def on_order(self):
         """ Return the total number of items on order for this part. """
 
-        orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=OrderStatus.OPEN).aggregate(
+        orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=PurchaseOrderStatus.OPEN).aggregate(
             quantity=Sum('purchase_order_line_items__quantity'),
             received=Sum('purchase_order_line_items__received')
         )

@@ -108,13 +108,13 @@ function loadPurchaseOrderTable(table, options) {
 
     options.params['supplier_detail'] = true;
 
-    var filters = loadTableFilters("order");
+    var filters = loadTableFilters("purchaseorder");
 
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
 
-    setupFilterList("order", $(table));
+    setupFilterList("purchaseorder", $(table));
 
     $(table).inventreeTable({
         url: options.url,
@@ -159,7 +159,7 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'status',
                 title: 'Status',
                 formatter: function(value, row, index, field) {
-                    return orderStatusDisplay(row.status, row.status_text);
+                    return purchaseOrderStatusDisplay(row.status, row.status_text);
                 }
             },
             {
@@ -181,13 +181,13 @@ function loadSalesOrderTable(table, options) {
     options.params = options.params || {};
     options.params['customer_detail'] = true;
 
-    var filters = loadTableFilters("table");
+    var filters = loadTableFilters("salesorder");
 
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
 
-    setupFilterList("order", $(table));
+    setupFilterList("salesorder", $(table));
 
     $(table).inventreeTable({
         url: options.url,
@@ -232,7 +232,7 @@ function loadSalesOrderTable(table, options) {
                 field: 'status',
                 title: 'Status',
                 formatter: function(value, row, index, field) {
-                    return orderStatusDisplay(row.status, row.status_text);
+                    return salesOrderStatusDisplay(row.status, row.status_text);
                 }
             },
             {

@@ -6,7 +6,7 @@ from .models import PurchaseOrder, PurchaseOrderLineItem
 from stock.models import StockLocation
 from company.models import SupplierPart
 
-from InvenTree.status_codes import OrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus
 
 
 class OrderTest(TestCase):
@@ -57,7 +57,7 @@ class OrderTest(TestCase):
 
         order = PurchaseOrder.objects.get(pk=1)
 
-        self.assertEqual(order.status, OrderStatus.PENDING)
+        self.assertEqual(order.status, PurchaseOrderStatus.PENDING)
         self.assertEqual(order.lines.count(), 3)
 
         sku = SupplierPart.objects.get(SKU='ACME-WIDGET')
@@ -104,14 +104,14 @@ class OrderTest(TestCase):
         self.assertEqual(len(order.pending_line_items()), 3)
 
         # Should fail, as order is 'PENDING' not 'PLACED"
-        self.assertEqual(order.status, OrderStatus.PENDING)
+        self.assertEqual(order.status, PurchaseOrderStatus.PENDING)
 
         with self.assertRaises(django_exceptions.ValidationError):
             order.receive_line_item(line, loc, 50, user=None)
 
         order.place_order()
 
-        self.assertEqual(order.status, OrderStatus.PLACED)
+        self.assertEqual(order.status, PurchaseOrderStatus.PLACED)
 
         order.receive_line_item(line, loc, 50, user=None)
 
@@ -134,9 +134,9 @@ class OrderTest(TestCase):
         order.receive_line_item(line, loc, 500, user=None)
 
         self.assertEqual(part.on_order, 800)
-        self.assertEqual(order.status, OrderStatus.PLACED)
+        self.assertEqual(order.status, PurchaseOrderStatus.PLACED)
 
         for line in order.pending_line_items():
             order.receive_line_item(line, loc, line.quantity, user=None)
 
-        self.assertEqual(order.status, OrderStatus.COMPLETE)
+        self.assertEqual(order.status, PurchaseOrderStatus.COMPLETE)
