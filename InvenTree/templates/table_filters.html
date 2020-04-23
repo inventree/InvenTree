@@ -1,14 +1,12 @@
 {% load i18n %}
 {% load status_codes %}
 
-{% load_status_codes %}
-
 <script type='text/javascript'>
 
-{% include "status_codes.html" with label='stock' options=stock_status_codes %}
-{% include "status_codes.html" with label='build' options=build_status_codes %}
-{% include "status_codes.html" with label='purchaseOrder' options=purchase_order_status_codes %}
-{% include "status_codes.html" with label='salesOrder' options=sales_order_status_codes %}
+{% include "status_codes.html" with label='stock' options=StockStatus.list %}
+{% include "status_codes.html" with label='build' options=BuildStatus.list %}
+{% include "status_codes.html" with label='purchaseOrder' options=PurchaseOrderStatus.list %}
+{% include "status_codes.html" with label='salesOrder' options=SalesOrderStatus.list %}
 
 
 function getAvailableTableFilters(tableKey) {

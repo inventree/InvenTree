@@ -210,7 +210,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
-        <td>{% stock_status item.status %}</td>
+        <td>{% stock_status_label item.status %}</td>
     </tr>
 </table>
 {% endblock %}
