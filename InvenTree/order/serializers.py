@@ -123,8 +123,7 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
 
         fields = [
             'pk',
-            'issue_date',
-            'complete_date',
+            'shipment_date',
             'creation_date',
             'description',
             'line_items',

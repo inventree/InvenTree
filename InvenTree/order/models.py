@@ -82,10 +82,6 @@ class Order(models.Model):
                                    related_name='+'
                                    )
 
-    issue_date = models.DateField(blank=True, null=True)
-
-    complete_date = models.DateField(blank=True, null=True)
-
     notes = MarkdownxField(blank=True, help_text=_('Order notes'))
 
 
@@ -123,6 +119,10 @@ class PurchaseOrder(Order):
         blank=True, null=True,
         related_name='+'
     )
+
+    issue_date = models.DateField(blank=True, null=True)
+
+    complete_date = models.DateField(blank=True, null=True)
 
     def get_absolute_url(self):
         return reverse('po-detail', kwargs={'pk': self.id})
@@ -279,6 +279,15 @@ class SalesOrder(Order):
                                          help_text='Purchase order status')
 
     customer_reference = models.CharField(max_length=64, blank=True, help_text=_("Customer order reference code"))
+
+    shipment_date = models.DateField(blank=True, null=True)
+
+    shipped_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        related_name='+'
+    )
 
     def is_fully_allocated(self):
         """ Return True if all line items are fully allocated """
