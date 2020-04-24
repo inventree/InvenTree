@@ -52,14 +52,12 @@ class PartThumbSerializer(serializers.Serializer):
 class PartBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Part (brief detail) """
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
     
     class Meta:
         model = Part
         fields = [
             'pk',
-            'url',
             'full_name',
             'description',
             'thumbnail',

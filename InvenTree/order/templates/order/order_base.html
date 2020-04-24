@@ -28,16 +28,16 @@ src="{% static 'img/blank_image.png' %}"
     <div class='btn-row'>
         <div class='btn-group action-buttons'>
             <button type='button' class='btn btn-default' id='edit-order' title='Edit order information'>
-                <span class='fas fa-edit'></span>
+                <span class='fas fa-edit icon-green'></span>
             </button>
             <button type='button' class='btn btn-default' id='export-order' title='Export order to file'>
                 <span class='fas fa-file-download'></span>
             </button>
-            {% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
+            {% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}
             <button type='button' class='btn btn-default' id='place-order' title='Place order'>
-                <span class='fas fa-paper-plane'></span>
+                <span class='fas fa-paper-plane icon-blue'></span>
             </button>
-            {% elif order.status == OrderStatus.PLACED %}
+            {% elif order.status == PurchaseOrderStatus.PLACED %}
             <button type='button' class='btn btn-default' id='receive-order' title='Receive items'>
                 <span class='fas fa-clipboard-check'></span>
             </button>
@@ -45,9 +45,9 @@ src="{% static 'img/blank_image.png' %}"
                 <span class='fas fa-check-circle'></span>
             </button>
             {% endif %}
-            {% if order.status == OrderStatus.PENDING or order.status == OrderStatus.PLACED %}
+            {% if order.status == PurchaseOrderStatus.PENDING or order.status == PurchaseOrderStatus.PLACED %}
             <button type='button' class='btn btn-default' id='cancel-order' title='Cancel order'>
-                <span class='fas fa-times-circle'></span>
+                <span class='fas fa-times-circle icon-red'></span>
             </button>
             {% endif %}
         </div>
@@ -100,7 +100,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.issue_date }}</td>
     </tr>
     {% endif %}
-    {% if order.status == OrderStatus.COMPLETE %}
+    {% if order.status == PurchaseOrderStatus.COMPLETE %}
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Received" %}</td>
@@ -113,7 +113,7 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
-{% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
+{% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}
 $("#place-order").click(function() {
     launchModalForm("{% url 'po-issue' order.id %}",
     {

@@ -99,7 +99,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.shipment_date }}<span class='badge'>{{ order.shipped_by }}</span></td>
     </tr>
     {% endif %}
-    {% if order.status == OrderStatus.COMPLETE %}
+    {% if order.status == PurchaseOrderStatus.COMPLETE %}
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Received" %}</td>

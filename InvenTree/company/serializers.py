@@ -64,14 +64,10 @@ class CompanySerializer(InvenTreeModelSerializer):
 class SupplierPartSerializer(InvenTreeModelSerializer):
     """ Serializer for SupplierPart object """
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
     manufacturer_detail = CompanyBriefSerializer(source='manufacturer', many=False, read_only=True)
-
-    pricing = serializers.CharField(source='unit_pricing', read_only=True)
 
     def __init__(self, *args, **kwargs):
 
@@ -94,7 +90,6 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         model = SupplierPart
         fields = [
             'pk',
-            'url',
             'part',
             'part_detail',
             'supplier',
@@ -105,7 +100,6 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'description',
             'MPN',
             'link',
-            'pricing',
         ]
 
 

@@ -417,6 +417,10 @@ class PurchaseOrderLineItem(OrderLineItem):
         help_text=_('Purchase Order')
     )
 
+    def get_base_part(self):
+        """ Return the base-part for the line item """
+        return self.part.part
+    
     # TODO - Function callback for when the SupplierPart is deleted?
 
     part = models.ForeignKey(

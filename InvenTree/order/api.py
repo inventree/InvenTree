@@ -162,6 +162,17 @@ class POLineItemList(generics.ListCreateAPIView):
     queryset = PurchaseOrderLineItem.objects.all()
     serializer_class = POLineItemSerializer
 
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', False))
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
     permission_classes = [
         permissions.IsAuthenticated,
     ]

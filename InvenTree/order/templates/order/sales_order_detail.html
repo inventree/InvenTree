@@ -160,8 +160,8 @@ $("#so-lines-table").inventreeTable({
                     return (rowA.quantity > rowB.quantity) ? 1 : -1;
                 }
                 
-                var progressA = rowA.allocated / rowA.quantity;
-                var progressB = rowB.allocated / rowA.quantity;
+                var progressA = parseFloat(rowA.allocated) / rowA.quantity;
+                var progressB = parseFloat(rowB.allocated) / rowB.quantity;
 
                 return (progressA < progressB) ? 1 : -1;
             }
@@ -204,7 +204,7 @@ $("#so-lines-table").inventreeTable({
     ],
 });
 
-function setupCallbacks(table) {
+function setupCallbacks() {
 
     var table = $("#so-lines-table");
 

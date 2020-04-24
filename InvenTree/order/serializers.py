@@ -10,7 +10,7 @@ from rest_framework import serializers
 from django.db.models import Count
 
 from InvenTree.serializers import InvenTreeModelSerializer
-from company.serializers import CompanyBriefSerializer
+from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 from part.serializers import PartBriefSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
@@ -74,6 +74,22 @@ class POSerializer(InvenTreeModelSerializer):
 
 class POLineItemSerializer(InvenTreeModelSerializer):
 
+    def __init__(self, *args, **kwargs):
+
+        part_detail = kwargs.pop('part_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if part_detail is not True:
+            self.fields.pop('part_detail')
+            self.fields.pop('supplier_part_detail')
+
+    quantity = serializers.FloatField()
+    received = serializers.FloatField()
+    
+    part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
+    supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
+    
     class Meta:
         model = PurchaseOrderLineItem
 
@@ -84,6 +100,8 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'notes',
             'order',
             'part',
+            'part_detail',
+            'supplier_part_detail',
             'received',
         ]
 
