@@ -731,7 +731,7 @@ class StockItemSerialize(AjaxUpdateView):
                     if k in ['quantity', 'destination', 'serial_numbers']:
                         form.errors[k] = messages[k]
                     else:
-                        form.non_field_errors = messages[k]
+                        form.non_field_errors = [messages[k]]
 
                 valid = False
 

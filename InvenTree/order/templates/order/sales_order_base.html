@@ -124,4 +124,10 @@ $("#cancel-order").click(function() {
     });
 });
 
+$("#ship-order").click(function() {
+    launchModalForm("{% url 'so-ship' order.id %}", {
+        reload: true,
+    });
+});
+
 {% endblock %}

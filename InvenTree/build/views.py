@@ -125,7 +125,7 @@ class BuildAutoAllocate(AjaxUpdateView):
 
         if confirm is False:
             form.errors['confirm'] = [_('Confirm stock allocation')]
-            form.non_field_errors = _('Check the confirmation box at the bottom of the list')
+            form.non_field_errors = [_('Check the confirmation box at the bottom of the list')]
         else:
             build.autoAllocate()
             valid = True
@@ -159,7 +159,7 @@ class BuildUnallocate(AjaxUpdateView):
 
         if confirm is False:
             form.errors['confirm'] = [_('Confirm unallocation of build stock')]
-            form.non_field_errors = _('Check the confirmation box')
+            form.non_field_errors = [_('Check the confirmation box')]
         else:
             build.unallocateStock()
             valid = True

@@ -23,9 +23,13 @@
 {% block js_ready %}
 {{ block.super }}
 
+function reloadTable() {
+    $("#so-lines-table").bootstrapTable("refresh");
+}
+
 $("#new-so-line").click(function() {
     launchModalForm("{% url 'so-line-item-create' %}", {
-        reload: true,
+        success: reloadTable,
         data: {
             order: {{ order.id }},
         },
@@ -199,10 +203,6 @@ $("#so-lines-table").inventreeTable({
         },
     ],
 });
-
-function reloadTable() {
-    $("#so-lines-table").bootstrapTable("refresh");
-}
 
 function setupCallbacks(table) {
 

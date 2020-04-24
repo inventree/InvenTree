@@ -302,9 +302,20 @@ class SalesOrder(Order):
             
         return True
 
+    def is_over_allocated(self):
+        """ Return true if any lines in the order are over-allocated """
+
+        for line in self.lines.all():
+            if line.is_over_allocated():
+                return True
+
+        return False
+
     @transaction.atomic
     def ship_order(self, user):
         """ Mark this order as 'shipped' """
+
+        return False
 
         if not self.status == SalesOrderStatus.PENDING:
             return False
@@ -447,6 +458,10 @@ class SalesOrderLineItem(OrderLineItem):
         return query['allocated']
 
     def is_fully_allocated(self):
+        print("Line:", self.pk)
+        print("Allocated:", self.allocated_quantity())
+        print("Quantity:", self.quantity)
+
         return self.allocated_quantity() >= self.quantity
 
     def is_over_allocated(self):

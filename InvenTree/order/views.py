@@ -416,12 +416,15 @@ class SalesOrderCancel(AjaxUpdateView):
         else:
             valid = True
 
+
+        if valid:
+            if not order.cancel_order():
+                form.non_field_errors = [_('Could not cancel order')]
+                valid = False
+
         data = {
             'form_valid': valid,
         }
-
-        if valid:
-            order.cancel_order()
 
         return self.renderJsonResponse(request, form, data)
 
@@ -491,6 +494,47 @@ class PurchaseOrderComplete(AjaxUpdateView):
         }
 
         form = self.get_form()
+
+        return self.renderJsonResponse(request, form, data)
+
+
+
+class SalesOrderShip(AjaxUpdateView):
+    """ View for 'shipping' a SalesOrder """
+    form_class = order_forms.ShipSalesOrderForm
+    model = SalesOrder
+    context_object_name = 'order'
+    ajax_template_name = 'order/sales_order_ship.html'
+    ajax_form_title = _('Ship Order')
+    
+    def context_data(self):
+        ctx = super().get_context_data()
+        ctx['order'] = self.get_object()
+
+        return ctx
+
+    def post(self, request, *args, **kwargs):
+
+        order = self.get_object()
+        form = self.get_form()
+
+        confirm = str2bool(request.POST.get('confirm', False))
+        
+        valid = False
+
+        if not confirm:
+            form.errors['confirm'] = [_('Confirm order shipment')]
+        else:
+            valid = True
+
+        if valid:
+            if not order.ship_order(request.user):
+                form.non_field_errors = [_('Could not ship order')]
+                valid = False
+
+        data = {
+            'form_valid': valid,
+        }
 
         return self.renderJsonResponse(request, form, data)
 
@@ -1111,6 +1155,18 @@ class SOLineItemCreate(AjaxCreateView):
     form_class = order_forms.EditSalesOrderLineItemForm
     ajax_form_title = _('Add Line Item')
 
+    def get_form(self, *args, **kwargs):
+
+        form = super().get_form(*args, **kwargs)
+
+        # If the order is specified, hide the widget
+        order_id = form['order'].value()
+
+        if SalesOrder.objects.filter(id=order_id).exists():
+            form.fields['order'].widget = HiddenInput()
+
+        return form
+
     def get_initial(self):
         """
         Extract initial data for this line item:
@@ -1293,3 +1349,5 @@ class SalesOrderAllocationDelete(AjaxDeleteView):
 
     model = SalesOrderAllocation
     ajax_form_title = _("Remove allocation")
+    context_object_name = 'allocation'
+    ajax_template_name = "order/so_allocation_delete.html"

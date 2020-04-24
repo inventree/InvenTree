@@ -63,6 +63,17 @@ class CancelSalesOrderForm(HelperForm):
         ]
         
 
+class ShipSalesOrderForm(HelperForm):
+
+    confirm = forms.BooleanField(required=False, help_text=_('Ship order'))
+
+    class Meta:
+        model = SalesOrder
+        fields = [
+            'confirm',
+        ]
+
+
 class ReceivePurchaseOrderForm(HelperForm):
 
     location = TreeNodeChoiceField(queryset=StockLocation.objects.all(), required=True, help_text=_('Receive parts to this location'))
