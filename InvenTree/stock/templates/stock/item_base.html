@@ -15,6 +15,12 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% block pre_content %}
 {% include 'stock/loc_link.html' with location=item.location %}
 
+{% if item.customer %}
+<div class='alert alert-block alert-info'>
+    {% trans "This stock item has been sent to" %} <b><a href="{% url 'company-detail-sales-orders' item.customer.id %}">{{ item.customer.name }}</a></b>
+</div>
+{% endif %}
+
 {% for allocation in item.sales_order_allocations.all %}
 <div class='alert alert-block alert-info'>
     {% trans "This stock item is allocated to Sales Order" %} <a href="{% url 'so-detail' allocation.line.order.id %}"><b>#{{ allocation.line.order.reference }}</b></a> ({% trans "Quantity" %}: {% decimal allocation.quantity %})

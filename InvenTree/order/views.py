@@ -504,16 +504,14 @@ class SalesOrderShip(AjaxUpdateView):
     context_object_name = 'order'
     ajax_template_name = 'order/sales_order_ship.html'
     ajax_form_title = _('Ship Order')
-    
-    def context_data(self):
-        ctx = super().get_context_data()
-        ctx['order'] = self.get_object()
-
-        return ctx
 
     def post(self, request, *args, **kwargs):
 
+        self.request = request
+
         order = self.get_object()
+        self.object = order
+        
         form = self.get_form()
 
         confirm = str2bool(request.POST.get('confirm', False))
@@ -534,7 +532,11 @@ class SalesOrderShip(AjaxUpdateView):
             'form_valid': valid,
         }
 
-        return self.renderJsonResponse(request, form, data)
+        context = self.get_context_data()
+
+        context['order'] = order
+
+        return self.renderJsonResponse(request, form, data, context)
 
 
 class PurchaseOrderExport(AjaxView):

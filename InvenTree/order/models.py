@@ -315,10 +315,15 @@ class SalesOrder(Order):
     def ship_order(self, user):
         """ Mark this order as 'shipped' """
 
-        return False
 
+        # The order can only be 'shipped' if the current status is PENDING
         if not self.status == SalesOrderStatus.PENDING:
-            return False
+            raise ValidationError({'status': _("SalesOrder cannot be shipped as it is not currently pending")})
+
+        # Complete the allocation for each allocated StockItem
+        for line in self.lines.all():
+            for allocation in line.allocations.all():
+                allocation.complete_allocation(user)    
 
         # Ensure the order status is marked as "Shipped"
         self.status = SalesOrderStatus.SHIPPED
@@ -552,3 +557,30 @@ class SalesOrderAllocation(models.Model):
             return self.item.location.pathstring
         else:
             return ""
+
+    def complete_allocation(self, user):
+        """
+        Complete this allocation (called when the parent SalesOrder is marked as "shipped"):
+
+        - Determine if the referenced StockItem needs to be "split" (if allocated quantity != stock quantity)
+        - Mark the StockItem as belonging to the Customer (this will remove it from stock)
+        """
+
+        item = self.item
+
+        # If the allocated quantity is less than the amount available,
+        # then split the stock item into two lots
+        if item.quantity > self.quantity:
+
+            # Grab a copy of the new stock item (which will keep track of its "parent")
+            item = item.splitStock(self.quantity, None, user)
+
+        # Assign the StockItem to the SalesOrder customer
+        item.customer = self.line.order.customer
+
+        # Clear the location
+        item.location = None
+
+        item.save()
+
+        print("Finalizing allocation for: " + str(self.item))

@@ -48,6 +48,7 @@ function loadStockTable(table, options) {
 
     options.params['part_detail'] = true;
     options.params['location_detail'] = true;
+    options.params['in_stock'] = true;
 
     var params = options.params || {};
 

@@ -634,6 +634,8 @@ class StockItem(MPTTModel):
         # Remove the specified quantity from THIS stock item
         self.take_stock(quantity, user, 'Split {n} items into new stock item'.format(n=quantity))
 
+        # Return a copy of the "new" stock item
+
     @transaction.atomic
     def move(self, location, notes, user, **kwargs):
         """ Move part to a new location.
@@ -655,6 +657,9 @@ class StockItem(MPTTModel):
             quantity = Decimal(kwargs.get('quantity', self.quantity))
         except InvalidOperation:
             return False
+
+        if not self.in_stock:
+            raise ValidationError(_("StockItem cannot be moved as it is not in stock"))
 
         if quantity <= 0:
             return False

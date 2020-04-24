@@ -363,8 +363,17 @@ class StockList(generics.ListCreateAPIView):
         # Start with all objects
         stock_list = super().filter_queryset(queryset)
         
-        # Filter out parts which are not actually "in stock"
-        stock_list = stock_list.filter(customer=None, belongs_to=None)
+        in_stock = self.request.query_params.get('in_stock', None)
+
+        if in_stock is not None:
+            in_stock = str2bool(in_stock)
+
+            if in_stock:
+                # Filter out parts which are not actually "in stock"
+                stock_list = stock_list.filter(customer=None, belongs_to=None)
+            else:
+                # Only show parts which are not in stock
+                stock_list = stock_list.exclude(customer=None, belongs_to=None)
 
         # Filter by 'allocated' patrs?
         allocated = self.request.query_params.get('allocated', None)
@@ -418,7 +427,7 @@ class StockList(generics.ListCreateAPIView):
         # Does the client wish to filter by stock location?
         loc_id = self.request.query_params.get('location', None)
 
-        cascade = str2bool(self.request.query_params.get('cascade', False))
+        cascade = str2bool(self.request.query_params.get('cascade', True))
 
         if loc_id is not None:
 
