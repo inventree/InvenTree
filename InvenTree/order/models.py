@@ -458,13 +458,11 @@ class SalesOrderLineItem(OrderLineItem):
         return query['allocated']
 
     def is_fully_allocated(self):
-        print("Line:", self.pk)
-        print("Allocated:", self.allocated_quantity())
-        print("Quantity:", self.quantity)
-
+        """ Return True if this line item is fully allocated """
         return self.allocated_quantity() >= self.quantity
 
     def is_over_allocated(self):
+        """ Return True if this line item is over allocated """
         return self.allocated_quantity() > self.quantity
 
 

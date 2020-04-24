@@ -416,7 +416,6 @@ class SalesOrderCancel(AjaxUpdateView):
         else:
             valid = True
 
-
         if valid:
             if not order.cancel_order():
                 form.non_field_errors = [_('Could not cancel order')]
@@ -496,7 +495,6 @@ class PurchaseOrderComplete(AjaxUpdateView):
         form = self.get_form()
 
         return self.renderJsonResponse(request, form, data)
-
 
 
 class SalesOrderShip(AjaxUpdateView):
