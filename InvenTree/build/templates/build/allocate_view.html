@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-<h4>{% trans "Required Parts" %}</h4>
+<h4>{% trans "Allocated Parts" %}</h4>
 <hr>
 
 <div id='build-item-toolbar'>
@@ -11,7 +11,9 @@
     </div>
 </div>
 
-<table class='table table-striped table-condensed' id='build-list' data-sorting='true' data-toolbar='#build-item-toolbar'>
+<table class='table table-striped table-condensed' id='build-item-list' data-toolbar='#build-item-toolbar'></table>
+
+<table class='table table-striped table-condensed' id='build-list' data-sorting='true'>
 <thead>
 <tr>
     <th data-sortable='true'>{% trans "Part" %}</th>

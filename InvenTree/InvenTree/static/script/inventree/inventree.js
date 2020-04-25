@@ -121,7 +121,7 @@ function makeProgressBar(value, maximum, opts) {
         extraclass = 'progress-bar-under';
     }
 
-    var id = opts.id || 'progress-bar';
+    var id = options.id || 'progress-bar';
 
     return `
     <div id='${id}' class='progress'>

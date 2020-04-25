@@ -1,5 +1,6 @@
 {% extends "build/build_base.html" %}
 {% load static %}
+{% load i18n %}
 {% load inventree_extras %}
 
 {% block page_title %}
@@ -26,6 +27,141 @@ InvenTree | Allocate Parts
 
 {% block js_ready %}
 {{ block.super }}
+
+    var buildTable = $("#build-item-list");
+
+    buildTable.inventreeTable({
+        uniqueId: 'sub_part',
+        url: "{% url 'api-bom-list' %}",
+        formatNoMatches: function() { return "{% trans 'No BOM items found' %}"; },
+        onLoadSuccess: function(tableData) {
+            // Once the BOM data are loaded, request allocation data for the build
+            inventreeGet('/api/build/item/', {
+                build: {{ build.id }},
+                },
+                {
+                    success: function(data) {
+
+                        // Iterate through the returned data, and group by "part"
+                        var allocations = {};
+
+                        data.forEach(function(item) {
+
+                            // Group allocations by referenced 'part'
+                            var part = item.part;
+                            var key = parseInt(part);
+                            
+                            if (!(key in allocations)) {
+                                allocations[key] = new Array();
+                            }
+
+                            // Add the allocation to the list
+                            allocations[key].push(item);
+                        });
+
+                        for (var key in allocations) {
+   
+                            // Select the associated row in the table
+                            var tableRow = buildTable.bootstrapTable('getRowByUniqueId', key);
+
+                            // Set the allocations for the row
+                            tableRow.allocations = allocations[key];
+
+                            // And push the updated row back into the main table
+                            buildTable.bootstrapTable('updateByUniqueId', key, tableRow, true);
+                        }
+                    }
+                },
+            );
+        },
+        queryParams: {
+            part: {{ build.part.id }},
+            sub_part_detail: 1,
+        },
+        columns: [
+            {
+                field: 'id',
+                visible: false,
+            },
+            {
+                sortable: true,
+                field: 'sub_part',
+                title: '{% trans "Part" %}',
+                formatter: function(value, row, index, field) {
+                    return imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, `/part/${row.sub_part}/`);
+                },
+            },
+            {
+                sortable: true,
+                field: 'sub_part_detail.description',
+                title: '{% trans "Description" %}',
+            },
+            {
+                sortable: true,
+                field: 'reference',
+                title: '{% trans "Reference" %}',
+            },
+            {
+                sortable: true,
+                field: 'quantity',
+                title: '{% trans "Required" %}',
+                formatter: function(value, row) {
+                    return value * {{ build.quantity }};
+                },
+            },
+            {
+                sortable: true,
+                field: 'allocated',
+                title: '{% trans "Allocated" %}',
+                formatter: function(value, row) {
+                    var progress = value || 0;
+
+                    return makeProgressBar(progress, row.quantity * {{ build.quantity }});
+                },
+                sorter: function(valA, valB, rowA, rowB) {
+
+                    var aA = rowA.allocated || 0;
+                    var aB = rowB.allocated || 0;
+                
+                    var qA = rowA.quantity * {{ build.quantity }};
+                    var qB = rowB.quantity * {{ build.quantity }};
+
+                    if (aA == 0 && aB == 0) {
+                        return (qA > qB) ? 1 : -1;
+                    }
+                    
+                    var progressA = parseFloat(aA) / qA;
+                    var progressB = parseFloat(aB) / qB;
+    
+                    return (progressA < progressB) ? 1 : -1;
+                }
+            },
+            {
+                field: 'buttons',
+                formatter: function(value, row, index, field) {
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+                    var pk = row.sub_part;
+
+                    {% if build.status == BuildStatus.PENDING %}
+                    if (row.sub_part_detail.purchaseable) {
+                        html += makeIconButton('fa-shopping-cart', 'button-buy', pk, '{% trans "Buy parts" %}');
+                    }
+
+                    if (row.sub_part.assembly) {
+                        html += makeIconButton('fa-tools', 'button-build', pk, '{% trans "Build parts" %}');
+                    }
+
+                    html += makeIconButton('fa-plus', 'button-add', pk, '{% trans "Allocate stock" %}');
+                    {% endif %}
+                    
+                    html += '</div>';
+
+                    return html;
+                },
+            }
+        ],
+    });
 
     {% if editing %}
 

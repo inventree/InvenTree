@@ -1,4 +1,5 @@
 function loadBuildTable(table, options) {
+    // Display a table of Build objects
 
     var params = options.params || {};
 

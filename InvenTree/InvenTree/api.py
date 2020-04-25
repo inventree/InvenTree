@@ -137,7 +137,4 @@ class BarcodePluginView(APIView):
         # Include the original barcode data
         response['barcode_data'] = barcode_data
 
-        print("Response:")
-        print(response)
-
         return Response(response)

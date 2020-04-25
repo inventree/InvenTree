@@ -234,6 +234,8 @@ class BomItemSerializer(InvenTreeModelSerializer):
     """ Serializer for BomItem object """
 
     price_range = serializers.CharField(read_only=True)
+
+    quantity = serializers.FloatField()
     
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)

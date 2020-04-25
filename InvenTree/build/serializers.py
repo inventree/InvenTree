@@ -21,6 +21,8 @@ class BuildSerializer(InvenTreeModelSerializer):
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
+    quantity = serializers.FloatField()
+
     def __init__(self, *args, **kwargs):
         part_detail = kwargs.pop('part_detail', False)
 
@@ -62,6 +64,8 @@ class BuildItemSerializer(InvenTreeModelSerializer):
     part_name = serializers.CharField(source='stock_item.part.full_name', read_only=True)
     part_image = serializers.CharField(source='stock_item.part.image', read_only=True)
     stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
+
+    quantity = serializers.FloatField()
 
     class Meta:
         model = BuildItem
