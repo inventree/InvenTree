@@ -13,8 +13,9 @@ InvenTree | Allocate Parts
 
 <div id='build-item-toolbar'>
     <div class='btn-group'>
-        <button class='btn btn-primary' type='button' id='btn-allocate' title='Allocate Stock'>{% trans "Allocate" %}</button>
         <button class='btn btn-primary' type='button' id='btn-order-parts' title='Order Parts'>{% trans "Order Parts" %}</button>
+        {% if 0 %}<button class='btn btn-primary' type='button' id='btn-allocate' title='Allocate Stock'>{% trans "Allocate" %}</button>{% endif %}
+        <button class='btn btn-danger' type='button' id='btn-unallocate' title='Unallocate Stock'>{% trans "Unallocate" %}</button>
     </div>
 </div>
     
@@ -317,21 +318,7 @@ InvenTree | Allocate Parts
         ],
     });
 
-    {% if editing %}
-
-    {% for bom_item in bom_items.all %}
-
-    loadAllocationTable(
-        $("#allocate-table-id-{{ bom_item.sub_part.id }}"),
-        {{ bom_item.sub_part.id }},
-        "{{ bom_item.sub_part.full_name }}",
-        "{% url 'api-build-item-list' %}?build={{ build.id }}&part={{ bom_item.sub_part.id }}",
-        {% multiply build.quantity bom_item.quantity %},
-        $("#new-item-{{ bom_item.sub_part.id }}")
-    );
-
-    {% endfor %}
-
+    {% if 0 %}
     $("#auto-allocate-build").on('click', function() {
         launchModalForm(
             "{% url 'build-auto-allocate' build.id %}",
@@ -340,23 +327,15 @@ InvenTree | Allocate Parts
             }
         );
     });
+    {% endif %}
 
-    $('#unallocate-build').on('click', function() {
+    $('#btn-unallocate').on('click', function() {
         launchModalForm(
             "{% url 'build-unallocate' build.id %}",
             {
                 reload: true,
             }
         );
-    });
-
-    {% else %}
-
-    $("#build-list").inventreeTable({
-    });
-
-    $("#btn-allocate").click(function() {
-        location.href = "{% url 'build-allocate' build.id %}?edit=1";
     });
 
     $("#btn-order-parts").click(function() {
@@ -366,7 +345,5 @@ InvenTree | Allocate Parts
             },
         });
     });
-
-    {% endif %}
 
 {% endblock %}
