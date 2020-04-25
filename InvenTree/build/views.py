@@ -393,13 +393,13 @@ class BuildCreate(AjaxCreateView):
 
         initials = super(BuildCreate, self).get_initial().copy()
 
-        part_id = self.request.GET.get('part', None)
+        # User has provided a Part ID
+        initials['part'] = self.request.GET.get('part', None)
 
-        if part_id:
-            try:
-                initials['part'] = Part.objects.get(pk=part_id)
-            except Part.DoesNotExist:
-                pass
+        # User has provided a SalesOrder ID
+        initials['sales_order'] = self.request.GET.get('sales_order', None)
+
+        initials['quantity'] = self.request.GET.get('quantity', 1)
 
         return initials
 

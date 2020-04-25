@@ -38,6 +38,8 @@ class BuildList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
+        'part',
+        'sales_order',
     ]
 
     def get_queryset(self):
@@ -47,12 +49,6 @@ class BuildList(generics.ListCreateAPIView):
         """
 
         build_list = super().get_queryset()
-
-        # Filter by part
-        part = self.request.query_params.get('part', None)
-
-        if part is not None:
-            build_list = build_list.filter(part=part)
 
         # Filter by build status?
         status = self.request.query_params.get('status', None)

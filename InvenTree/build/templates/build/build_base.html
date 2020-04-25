@@ -8,6 +8,14 @@
 InvenTree | {% trans "Build" %} - {{ build }}
 {% endblock %}
 
+{% block pre_content %}
+{% if build.sales_order %}
+<div class='alert alert-block alert-info'>
+    {% trans "This build is allocated to Sales Order" %} <b><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></b>
+</div>
+{% endif %}
+{% endblock %}
+
 {% block thumbnail %}
 <img class="part-thumb"
 {% if build.part.image %}
@@ -54,7 +62,7 @@ src="{% static 'img/blank_image.png' %}"
     </tr>
     <tr>
         <td><span class='fas fa-shapes'></span></td>
-        <td>Part</td>
+        <td>{% trans "Part" %}</td>
         <td><a href="{% url 'part-detail' build.part.id %}">{{ build.part.full_name }}</a></td>
     </tr>
     <tr>
@@ -67,6 +75,13 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Status" %}</td>
         <td>{% build_status_label build.status %}</td>
     </tr>
+    {% if build.sales_order %}
+    <tr>
+        <td><span class='fas fa-dolly'></span></td>
+        <td>{% trans "Sales Order" %}</td>
+        <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></td>
+    </tr>
+    {% endif %}
     <tr>
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "BOM Price" %}</td>

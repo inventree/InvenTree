@@ -33,6 +33,7 @@ class Build(models.Model):
         part: The part to be built (from component BOM items)
         title: Brief title describing the build (required)
         quantity: Number of units to be built
+        sales_order: References to a SalesOrder object for which this Build is required (e.g. the output of this build will be used to fulfil a sales order)
         take_from: Location to take stock from to make this build (if blank, can take from anywhere)
         status: Build status code
         batch: Batch code transferred to build parts (optional)
@@ -51,24 +52,37 @@ class Build(models.Model):
     title = models.CharField(
         blank=False,
         max_length=100,
-        help_text=_('Brief description of the build'))
+        help_text=_('Brief description of the build')
+    )
 
-    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
-                             related_name='builds',
-                             limit_choices_to={
-                                 'is_template': False,
-                                 'assembly': True,
-                                 'active': True,
-                                 'virtual': False,
-                             },
-                             help_text=_('Select part to build'),
-                             )
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.CASCADE,
+        related_name='builds',
+        limit_choices_to={
+            'is_template': False,
+            'assembly': True,
+            'active': True,
+            'virtual': False,
+        },
+        help_text=_('Select part to build'),
+    )
+
+    sales_order = models.ForeignKey(
+        'order.SalesOrder',
+        on_delete=models.SET_NULL,
+        related_name='builds',
+        null=True, blank=True,
+        help_text=_('SalesOrder to which this build is allocated')
+    )
     
-    take_from = models.ForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
-                                  related_name='sourcing_builds',
-                                  null=True, blank=True,
-                                  help_text=_('Select location to take stock from for this build (leave blank to take from any stock location)')
-                                  )
+    take_from = models.ForeignKey(
+        'stock.StockLocation',
+        on_delete=models.SET_NULL,
+        related_name='sourcing_builds',
+        null=True, blank=True,
+        help_text=_('Select location to take stock from for this build (leave blank to take from any stock location)')
+    )
     
     quantity = models.PositiveIntegerField(
         default=1,
