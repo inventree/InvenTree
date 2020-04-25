@@ -75,6 +75,13 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Status" %}</td>
         <td>{% build_status_label build.status %}</td>
     </tr>
+    {% if build.parent %}
+    <tr>
+        <td><span class='fas fa-tools'></span></td>
+        <td>{% trans "Parent Build" %}</td>
+        <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a></td>
+    </tr>
+    {% endif %}
     {% if build.sales_order %}
     <tr>
         <td><span class='fas fa-dolly'></span></td>

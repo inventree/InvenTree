@@ -18,6 +18,8 @@ from django.core.validators import MinValueValidator
 
 from markdownx.models import MarkdownxField
 
+from mptt.models import MPTTModel, TreeForeignKey
+
 from InvenTree.status_codes import BuildStatus
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string
@@ -26,13 +28,14 @@ from stock.models import StockItem
 from part.models import Part, BomItem
 
 
-class Build(models.Model):
+class Build(MPTTModel):
     """ A Build object organises the creation of new parts from the component parts.
 
     Attributes:
         part: The part to be built (from component BOM items)
         title: Brief title describing the build (required)
         quantity: Number of units to be built
+        parent: Reference to a Build object for which this Build is required
         sales_order: References to a SalesOrder object for which this Build is required (e.g. the output of this build will be used to fulfil a sales order)
         take_from: Location to take stock from to make this build (if blank, can take from anywhere)
         status: Build status code
@@ -44,7 +47,7 @@ class Build(models.Model):
     """
 
     def __str__(self):
-        return "Build {q} x {part}".format(q=decimal2string(self.quantity), part=str(self.part))
+        return "{q} x {part}".format(q=decimal2string(self.quantity), part=str(self.part.full_name))
 
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.id})
@@ -53,6 +56,13 @@ class Build(models.Model):
         blank=False,
         max_length=100,
         help_text=_('Brief description of the build')
+    )
+
+    parent = TreeForeignKey(
+        'self',
+        on_delete=models.DO_NOTHING,
+        blank=True, null=True,
+        related_name='children'
     )
 
     part = models.ForeignKey(
