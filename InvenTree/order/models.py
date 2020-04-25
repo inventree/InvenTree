@@ -315,7 +315,6 @@ class SalesOrder(Order):
     def ship_order(self, user):
         """ Mark this order as 'shipped' """
 
-
         # The order can only be 'shipped' if the current status is PENDING
         if not self.status == SalesOrderStatus.PENDING:
             raise ValidationError({'status': _("SalesOrder cannot be shipped as it is not currently pending")})
@@ -323,7 +322,7 @@ class SalesOrder(Order):
         # Complete the allocation for each allocated StockItem
         for line in self.lines.all():
             for allocation in line.allocations.all():
-                allocation.complete_allocation(user)    
+                allocation.complete_allocation(user)
 
         # Ensure the order status is marked as "Shipped"
         self.status = SalesOrderStatus.SHIPPED
