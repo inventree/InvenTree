@@ -168,7 +168,9 @@ class StockStatus(StatusCode):
     # This can be used as a quick check for filtering
     NOT_IN_STOCK = 100
 
-    SHIPPED = 110  # Item has been shipped to a customer
+    SENT_TO_CUSTOMER = 110  # Item has been shipped to a customer
+    ASSIGNED_TO_BUILD = 120
+    ASSIGNED_TO_OTHER_ITEM = 130
 
     options = {
         OK: _("OK"),
@@ -176,7 +178,6 @@ class StockStatus(StatusCode):
         DAMAGED: _("Damaged"),
         DESTROYED: _("Destroyed"),
         LOST: _("Lost"),
-        SHIPPED: _("Shipped"),
         RETURNED: _("Returned"),
     }
 

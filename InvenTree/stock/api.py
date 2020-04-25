@@ -314,7 +314,6 @@ class StockList(generics.ListCreateAPIView):
     - POST: Create a new StockItem
 
     Additional query parameters are available:
-        - aggregate: If 'true' then stock items are aggregated by Part and Location
         - location: Filter stock by location
         - category: Filter by parts belonging to a certain category
         - supplier: Filter by supplier
@@ -370,10 +369,10 @@ class StockList(generics.ListCreateAPIView):
 
             if in_stock:
                 # Filter out parts which are not actually "in stock"
-                stock_list = stock_list.filter(customer=None, belongs_to=None)
+                stock_list = stock_list.filter(customer=None, belongs_to=None, build_order=None)
             else:
                 # Only show parts which are not in stock
-                stock_list = stock_list.exclude(customer=None, belongs_to=None)
+                stock_list = stock_list.exclude(customer=None, belongs_to=None, build_order=None)
 
         # Filter by 'allocated' patrs?
         allocated = self.request.query_params.get('allocated', None)
@@ -516,6 +515,7 @@ class StockList(generics.ListCreateAPIView):
         'belongs_to',
         'build',
         'sales_order',
+        'build_order',
     ]
 
 

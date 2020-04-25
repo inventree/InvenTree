@@ -25,7 +25,7 @@ from company.models import Company, SupplierPart
 
 from InvenTree.fields import RoundingDecimalField
 from InvenTree.helpers import decimal2string, normalize
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
 from InvenTree.models import InvenTreeAttachment
 
 
@@ -574,12 +574,15 @@ class SalesOrderAllocation(models.Model):
             # Grab a copy of the new stock item (which will keep track of its "parent")
             item = item.splitStock(self.quantity, None, user)
 
+            # Update our own reference to the new item
+            self.item = item
+            self.save()
+
         # Assign the StockItem to the SalesOrder customer
         item.customer = self.line.order.customer
 
         # Clear the location
         item.location = None
+        item.status = StockStatus.SENT_TO_CUSTOMER
 
         item.save()
-
-        print("Finalizing allocation for: " + str(self.item))

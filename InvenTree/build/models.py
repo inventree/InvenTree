@@ -21,7 +21,7 @@ from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
 
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatus, StockStatus
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string
 
@@ -261,32 +261,18 @@ class Build(MPTTModel):
         - Delete pending BuildItem objects
         """
 
-        for item in self.allocated_stock.all().prefetch_related('stock_item'):
-            
-            # Subtract stock from the item
-            item.stock_item.take_stock(
-                item.quantity,
-                user,
-                'Removed {n} items to build {m} x {part}'.format(
-                    n=item.quantity,
-                    m=self.quantity,
-                    part=self.part.full_name
-                )
-            )
+        print("Complete build...")
 
-            # Delete the item
-            item.delete()
-
-        # Mark the date of completion
-        self.completion_date = datetime.now().date()
-
-        self.completed_by = user
+        # Complete the build allocation for each BuildItem
+        for build_item in self.allocated_stock.all().prefetch_related('stock_item'):
+            build_item.complete_allocation(user)
 
         notes = 'Built {q} on {now}'.format(
             q=self.quantity,
             now=str(datetime.now().date())
         )
 
+        # Generate the build outputs
         if self.part.trackable and serial_numbers:
             # Add new serial numbers
             for serial in serial_numbers:
@@ -316,8 +302,12 @@ class Build(MPTTModel):
             item.save()
 
         # Finally, mark the build as complete
+        self.completion_date = datetime.now().date()
+        self.completed_by = user
         self.status = BuildStatus.COMPLETE
         self.save()
+
+        return True
 
     def isFullyAllocated(self):
         """
@@ -476,6 +466,22 @@ class BuildItem(models.Model):
 
         if len(errors) > 0:
             raise ValidationError(errors)
+
+    def complete_allocation(self, user):
+
+        item = self.stock_item
+
+        # Split the allocated stock if there are more available than allocated
+        if item.quantity > self.quantity:
+            item = item.splitStock(self.quantity, None, user)
+
+            # Update our own reference to the new item
+            self.stock_item = item
+            self.save()
+
+        item.status = StockStatus.ASSIGNED_TO_BUILD
+        item.build_order = self.build
+        item.save()
 
     build = models.ForeignKey(
         Build,

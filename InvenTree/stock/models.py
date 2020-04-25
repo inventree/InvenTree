@@ -130,6 +130,7 @@ class StockItem(MPTTModel):
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
+        build_order: Link to a BuildOrder object (if the StockItem has been assigned to a BuildOrder)
     """
 
     def save(self, *args, **kwargs):
@@ -363,6 +364,13 @@ class StockItem(MPTTModel):
         related_name='stock_items',
         null=True, blank=True)
 
+    build_order = models.ForeignKey(
+        'build.Build',
+        on_delete=models.SET_NULL,
+        related_name='stock_items',
+        null=True, blank=True
+    )
+
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)
 
@@ -439,12 +447,20 @@ class StockItem(MPTTModel):
         - Has child StockItems
         - Has a serial number and is tracked
         - Is installed inside another StockItem
+        - It has been delivered to a customer
+        - It has been assigned to a BuildOrder
         """
 
         if self.child_count > 0:
             return False
 
         if self.part.trackable and self.serial is not None:
+            return False
+
+        if self.customer is not None:
+            return False
+
+        if self.build_order is not None:
             return False
 
         return True
@@ -464,7 +480,16 @@ class StockItem(MPTTModel):
     @property
     def in_stock(self):
 
-        if self.belongs_to or self.customer:
+        # Not 'in stock' if it has been installed inside another StockItem
+        if self.belongs_to is not None:
+            return False
+            
+        # Not 'in stock' if it has been sent to a customer
+        if self.customer is not None:
+            return False
+
+        # Not 'in stock' if it has been allocated to a BuildOrder
+        if self.build_order is not None:
             return False
 
         return True
@@ -642,6 +667,7 @@ class StockItem(MPTTModel):
         self.take_stock(quantity, user, 'Split {n} items into new stock item'.format(n=quantity))
 
         # Return a copy of the "new" stock item
+        return new_stock
 
     @transaction.atomic
     def move(self, location, notes, user, **kwargs):
