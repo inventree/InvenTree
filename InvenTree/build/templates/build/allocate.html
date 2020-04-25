@@ -33,6 +33,14 @@ InvenTree | Allocate Parts
     buildTable.inventreeTable({
         uniqueId: 'sub_part',
         url: "{% url 'api-bom-list' %}",
+        detailViewByClick: true,
+        detailView: true,
+        detailFilter: function(index, row) {
+            return row.allocations != null;
+        },
+        detailFormatter: function(index, row, element) {
+            return "Hello world";
+        },
         formatNoMatches: function() { return "{% trans 'No BOM items found' %}"; },
         onLoadSuccess: function(tableData) {
             // Once the BOM data are loaded, request allocation data for the build
@@ -114,9 +122,16 @@ InvenTree | Allocate Parts
                 field: 'allocated',
                 title: '{% trans "Allocated" %}',
                 formatter: function(value, row) {
-                    var progress = value || 0;
 
-                    return makeProgressBar(progress, row.quantity * {{ build.quantity }});
+                    var allocated = 0;
+
+                    if (row.allocations != null) {
+                        row.allocations.forEach(function(allocation) {
+                            allocated += allocation.quantity;
+                        });
+                    }
+
+                    return makeProgressBar(allocated, row.quantity * {{ build.quantity }});
                 },
                 sorter: function(valA, valB, rowA, rowB) {
 
