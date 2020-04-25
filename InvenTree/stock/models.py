@@ -433,7 +433,6 @@ class StockItem(MPTTModel):
 
         return max(self.quantity - self.allocation_count(), 0)
 
-
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
 
