@@ -319,6 +319,30 @@ class Build(MPTTModel):
         self.status = BuildStatus.COMPLETE
         self.save()
 
+    def isFullyAllocated(self):
+        """
+        Return True if this build has been fully allocated.
+        """
+
+        bom_items = self.part.bom_items.all()
+
+        for item in bom_items:
+            part = item.sub_part
+
+            print("Checking:", part)
+
+            if not self.isPartFullyAllocated(part):
+                return False
+
+            return True
+
+    def isPartFullyAllocated(self, part):
+        """
+        Check if a given Part is fully allocated for this Build
+        """
+
+        return self.getAllocatedQuantity(part) >= self.getRequiredQuantity(part)
+
     def getRequiredQuantity(self, part):
         """ Calculate the quantity of <part> required to make this build.
         """

@@ -1,42 +1,37 @@
 {% extends "modal_form.html" %}
+{% load i18n %}
 
 {% block pre_form_content %}
-<b>Build: {{ build.title }}</b> - {{ build.quantity }} x {{ build.part.full_name }}
-<br>
-Are you sure you want to mark this build as complete?
-<hr>
-{% if taking %}
-The following items will be removed from stock:
 
-<table class='table table-striped table-condensed'>
-<tr>
-    <th></th>
-    <th>Part</th>
-    <th>Quantity</th>
-    <th>Location</th>
-</tr>
-{% for item in taking %}
-<tr>
-    <td>
-        {% include "hover_image.html" with image=item.stock_item.part.image hover=True %}
-    </td>
-    <td>
-        {{ item.stock_item.part.full_name }}<br>
-        <i>{{ item.stock_item.part.description }}</i>
-    </td>
-    <td>{{ item.quantity }}</td>
-    <td>{{ item.stock_item.location }}</td>
-</tr>
-{% endfor %}
-</table>
+<h4>{% trans "Build" %} - {{ build }}</h4>
+
+{% if not build.isFullyAllocated %}
+<div class='alert alert-block alert-danger'>
+    <h4>{% trans "Warning: Build order allocation is not complete" %}</h4>
+    {% trans "Build Order has not been fully allocated. Ensure that all Stock Items have been allocated to the Build" %}
+</div>
 {% else %}
-No parts have been allocated to this build.
+<div class='alert alert-block alert-info'>
+    <h4>{% trans "Build order allocation is complete" %}</h4>
+</div>
 {% endif %}
-<hr>
-The following items will be created:
+
+<div class='alert alert-block alert-success'>
+    <h4>{% trans "The following actions will be performed:" %}</h4>
+    <ul>
+        <li>{% trans "Remove allocated items from stock" %}</li>
+        <li>{% trans "Add completed items to stock" %}</li>
+    </ul>
+</div>
+
 <div class='panel panel-default'>
-    {% include "hover_image.html" with image=build.part.image hover=True %}
-    {{ build.quantity }} x {{ build.part.full_name }}
+    <div class='panel-heading'>
+        {% trans "The following items will be created" %}
+    </div>
+    <div class='panel-content'>
+        {% include "hover_image.html" with image=build.part.image hover=True %}
+        {{ build.quantity }} x {{ build.part.full_name }}
+    </div>
 </div>
 
 {% endblock %}
