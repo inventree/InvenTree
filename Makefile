@@ -31,12 +31,12 @@ superuser:
 
 # Install pre-requisites for mysql setup
 mysql:
-	apt-get install mysql-server libmysqlclient-dev
+	sudo apt-get install mysql-server libmysqlclient-dev
 	pip3 install mysqlclient
 
 # Install pre-requisites for postgresql setup
 postgresql:
-	apt-get install postgresql postgresql-contrib libpq-dev
+	sudo apt-get install postgresql postgresql-contrib libpq-dev
 	pip3 install psycopg2
 
 # Update translation files
