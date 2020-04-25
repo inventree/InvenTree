@@ -30,6 +30,21 @@ InvenTree | Allocate Parts
 
     var buildTable = $("#build-item-list");
 
+    // Calculate sum of allocations for a particular table row
+    function sumAllocations(row) {
+        if (row.allocations == null) {
+            return 0;
+        }
+
+        var quantity = 0;
+
+        row.allocations.forEach(function(item) {
+            quantity += item.quantity;
+        });
+
+        return quantity;
+    }
+
     buildTable.inventreeTable({
         uniqueId: 'sub_part',
         url: "{% url 'api-bom-list' %}",
@@ -123,20 +138,14 @@ InvenTree | Allocate Parts
                 title: '{% trans "Allocated" %}',
                 formatter: function(value, row) {
 
-                    var allocated = 0;
-
-                    if (row.allocations != null) {
-                        row.allocations.forEach(function(allocation) {
-                            allocated += allocation.quantity;
-                        });
-                    }
+                    var allocated = sumAllocations(row);
 
                     return makeProgressBar(allocated, row.quantity * {{ build.quantity }});
                 },
                 sorter: function(valA, valB, rowA, rowB) {
 
-                    var aA = rowA.allocated || 0;
-                    var aB = rowB.allocated || 0;
+                    var aA = sumAllocations(rowA);
+                    var aB = sumAllocations(rowB);
                 
                     var qA = rowA.quantity * {{ build.quantity }};
                     var qB = rowB.quantity * {{ build.quantity }};
