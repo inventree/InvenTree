@@ -14,6 +14,11 @@ InvenTree | {% trans "Build" %} - {{ build }}
     {% trans "This build is allocated to Sales Order" %} <b><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></b>
 </div>
 {% endif %}
+{% if build.parent %}
+<div class='alert alert-block alert-info'>
+    {% trans "This build is a child of Build" %} <b><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a></b>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block thumbnail %}
