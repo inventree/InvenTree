@@ -396,6 +396,8 @@ class BuildCreate(AjaxCreateView):
         # User has provided a Part ID
         initials['part'] = self.request.GET.get('part', None)
 
+        initials['parent'] = self.request.GET.get('parent', None)
+
         # User has provided a SalesOrder ID
         initials['sales_order'] = self.request.GET.get('sales_order', None)
 
@@ -540,26 +542,63 @@ class BuildItemCreate(AjaxCreateView):
         build_id = self.get_param('build')
         part_id = self.get_param('part')
 
+        # Reference to a Part object
+        part = None
+
+        # Reference to a StockItem object
+        item = None
+        
+        # Reference to a Build object
+        build = None
+
         if part_id:
             try:
                 part = Part.objects.get(pk=part_id)
+                initials['part'] = part
             except Part.DoesNotExist:
-                part = None
-        else:
-            part = None
+                pass
 
         if build_id:
             try:
                 build = Build.objects.get(pk=build_id)
                 initials['build'] = build
-
-                # Try to work out how many parts to allocate
-                if part:
-                    unallocated = build.getUnallocatedQuantity(part)
-                    initials['quantity'] = unallocated
-
             except Build.DoesNotExist:
                 pass
+
+        quantity = self.request.GET.get('quantity', None)
+
+        if quantity is not None:
+            quantity = float(quantity)
+
+        if quantity is None:
+            # Work out how many parts remain to be alloacted for the build
+            if part:
+                quantity = build.getUnallocatedQuantity(part)
+                
+        item_id = self.get_param('item')
+
+        # If the request specifies a particular StockItem
+        if item_id:
+            try:
+                item = StockItem.objects.get(pk=item_id)
+            except:
+                pass
+
+        # If a StockItem is not selected, try to auto-select one
+        if item is None and part is not None:
+            items = StockItem.objects.filter(part=part)
+            if items.count() == 1:
+                item = items.first()
+
+        # Finally, if a StockItem is selected, ensure the quantity is not too much
+        if item is not None:
+            if quantity is None:
+                quantity = item.unallocated_quantity()
+            else:
+                quantity = min(quantity, item.unallocated_quantity())
+
+        if quantity is not None:
+            initials['quantity'] = quantity
 
         return initials
 

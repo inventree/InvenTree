@@ -34,6 +34,7 @@ class StockItemSerializerBrief(InvenTreeModelSerializer):
 
     location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
+    quantity = serializers.FloatField()
 
     class Meta:
         model = StockItem

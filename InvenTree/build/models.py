@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.db import models, transaction
 from django.db.models import Sum
+from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
 from markdownx.models import MarkdownxField
@@ -53,6 +54,7 @@ class Build(MPTTModel):
         return reverse('build-detail', kwargs={'pk': self.id})
 
     title = models.CharField(
+        verbose_name=_('Build Title'),
         blank=False,
         max_length=100,
         help_text=_('Brief description of the build')
@@ -62,11 +64,14 @@ class Build(MPTTModel):
         'self',
         on_delete=models.DO_NOTHING,
         blank=True, null=True,
-        related_name='children'
+        related_name='children',
+        verbose_name=_('Parent Build'),
+        help_text=_('Parent build to which this build is allocated'),
     )
 
     part = models.ForeignKey(
         'part.Part',
+        verbose_name=_('Part'),
         on_delete=models.CASCADE,
         related_name='builds',
         limit_choices_to={
@@ -80,6 +85,7 @@ class Build(MPTTModel):
 
     sales_order = models.ForeignKey(
         'order.SalesOrder',
+        verbose_name=_('Sales Order Reference'),
         on_delete=models.SET_NULL,
         related_name='builds',
         null=True, blank=True,
@@ -88,6 +94,7 @@ class Build(MPTTModel):
     
     take_from = models.ForeignKey(
         'stock.StockLocation',
+        verbose_name=_('Source Location'),
         on_delete=models.SET_NULL,
         related_name='sourcing_builds',
         null=True, blank=True,
@@ -95,32 +102,48 @@ class Build(MPTTModel):
     )
     
     quantity = models.PositiveIntegerField(
+        verbose_name=_('Build Quantity'),
         default=1,
         validators=[MinValueValidator(1)],
         help_text=_('Number of parts to build')
     )
 
-    status = models.PositiveIntegerField(default=BuildStatus.PENDING,
-                                         choices=BuildStatus.items(),
-                                         validators=[MinValueValidator(0)],
-                                         help_text=_('Build status'))
+    status = models.PositiveIntegerField(
+        verbose_name=_('Build Status'),
+        default=BuildStatus.PENDING,
+        choices=BuildStatus.items(),
+        validators=[MinValueValidator(0)],
+        help_text=_('Build status code')
+    )
     
-    batch = models.CharField(max_length=100, blank=True, null=True,
-                             help_text=_('Batch code for this build output'))
+    batch = models.CharField(
+        verbose_name=_('Batch Code'),
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text=_('Batch code for this build output')
+    )
     
     creation_date = models.DateField(auto_now_add=True, editable=False)
     
     completion_date = models.DateField(null=True, blank=True)
 
-    completed_by = models.ForeignKey(User,
-                                     on_delete=models.SET_NULL,
-                                     blank=True, null=True,
-                                     related_name='builds_completed'
-                                     )
+    completed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        related_name='builds_completed'
+    )
     
-    link = InvenTreeURLField(blank=True, help_text=_('Link to external URL'))
+    link = InvenTreeURLField(
+        verbose_name=_('External Link'),
+        blank=True, help_text=_('Link to external URL')
+    )
 
-    notes = MarkdownxField(blank=True, help_text=_('Extra build notes'))
+    notes = MarkdownxField(
+        verbose_name=_('Notes'),
+        blank=True, help_text=_('Extra build notes')
+    )
 
     @property
     def output_count(self):
@@ -302,22 +325,21 @@ class Build(MPTTModel):
 
         try:
             item = BomItem.objects.get(part=self.part.id, sub_part=part.id)
-            return item.get_required_quantity(self.quantity)
+            q = item.quantity
         except BomItem.DoesNotExist:
-            return 0
+            q = 0
+
+        print("required quantity:", q, "*", self.quantity)
+
+        return q * self.quantity
 
     def getAllocatedQuantity(self, part):
         """ Calculate the total number of <part> currently allocated to this build
         """
 
-        allocated = BuildItem.objects.filter(build=self.id, stock_item__part=part.id).aggregate(Sum('quantity'))
+        allocated = BuildItem.objects.filter(build=self.id, stock_item__part=part.id).aggregate(q=Coalesce(Sum('quantity'), 0))
 
-        q = allocated['quantity__sum']
-
-        if q:
-            return int(q)
-        else:
-            return 0
+        return allocated['q']
 
     def getUnallocatedQuantity(self, part):
         """ Calculate the quantity of <part> which still needs to be allocated to this build.

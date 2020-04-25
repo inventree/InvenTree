@@ -22,6 +22,7 @@ class EditBuildForm(HelperForm):
         fields = [
             'title',
             'part',
+            'parent',
             'sales_order',
             'quantity',
             'take_from',

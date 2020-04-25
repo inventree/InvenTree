@@ -426,6 +426,14 @@ class StockItem(MPTTModel):
 
         return self.build_allocation_count() + self.sales_order_allocation_count()
 
+    def unallocated_quantity(self):
+        """
+        Return the quantity of this StockItem which is *not* allocated
+        """
+
+        return max(self.quantity - self.allocation_count(), 0)
+
+
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
 

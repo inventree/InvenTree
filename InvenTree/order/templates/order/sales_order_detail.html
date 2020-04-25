@@ -254,8 +254,6 @@ function setupCallbacks() {
 
         var row = table.bootstrapTable('getData')[idx];
 
-        console.log('Row ' + idx + ' - ' + row.pk + ', ' + row.quantity);
-
         var quantity = 1;
 
         if (row.allocated < row.quantity) {
