@@ -25,7 +25,7 @@
     <li{% ifequal tab 'bom' %} class="active"{% endifequal %}>
         <a href="{% url 'part-bom' part.id %}">{% trans "BOM" %}<span class="badge{% if part.is_bom_valid == False %} badge-alert{% endif %}">{{ part.bom_count }}</span></a></li>
     <li{% ifequal tab 'build' %} class="active"{% endifequal %}>
-        <a href="{% url 'part-build' part.id %}">{% trans "Build" %}<span class='badge'>{{ part.active_builds|length }}</span></a></li>
+        <a href="{% url 'part-build' part.id %}">{% trans "Build Orders" %}<span class='badge'>{{ part.active_builds|length }}</span></a></li>
     {% endif %}
     {% if part.component or part.used_in_count > 0 %}
     <li{% ifequal tab 'used' %} class="active"{% endifequal %}>

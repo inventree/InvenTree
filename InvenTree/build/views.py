@@ -261,13 +261,13 @@ class BuildComplete(AjaxUpdateView):
             try:
                 location = StockLocation.objects.get(id=loc_id)
                 valid = True
-            except StockLocation.DoesNotExist:
+            except (ValueError, StockLocation.DoesNotExist):
                 form.errors['location'] = [_('Invalid location selected')]
 
             serials = []
 
             if build.part.trackable:
-                # A build for a trackable part must specify serial numbers
+                # A build for a trackable part may optionally specify serial numbers.
 
                 sn = request.POST.get('serial_numbers', '')
 
@@ -295,7 +295,9 @@ class BuildComplete(AjaxUpdateView):
                         valid = False
 
             if valid:
-                build.completeBuild(location, serials, request.user)
+                if not build.completeBuild(location, serials, request.user):
+                    form.non_field_errors = [('Build could not be completed')]
+                    valid = False
 
         data = {
             'form_valid': valid,

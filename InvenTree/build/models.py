@@ -329,8 +329,6 @@ class Build(MPTTModel):
         for item in bom_items:
             part = item.sub_part
 
-            print("Checking:", part)
-
             if not self.isPartFullyAllocated(part):
                 return False
 
@@ -352,8 +350,6 @@ class Build(MPTTModel):
             q = item.quantity
         except BomItem.DoesNotExist:
             q = 0
-
-        print("required quantity:", q, "*", self.quantity)
 
         return q * self.quantity
 
@@ -499,6 +495,6 @@ class BuildItem(models.Model):
         decimal_places=5,
         max_digits=15,
         default=1,
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(0)],
         help_text=_('Stock quantity to allocate to build')
     )

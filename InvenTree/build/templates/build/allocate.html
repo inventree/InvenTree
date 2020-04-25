@@ -70,6 +70,17 @@ InvenTree | Allocate Parts
                     build: {{ build.id }},
                     quantity: getUnallocated(row),
                 },
+                secondary: [
+                    {
+                        field: 'stock_item',
+                        label: '{% trans "New Stock Item" %}',
+                        title: '{% trans "Create new Stock Item"',
+                        url: '{% url "stock-item-create" %}',
+                        data: {
+                            part: row.sub_part,
+                        },
+                    },
+                ]
             });
         });
 
