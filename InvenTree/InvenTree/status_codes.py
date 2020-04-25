@@ -7,12 +7,18 @@ class StatusCode:
     This is used to map a set of integer values to text.
     """
 
-    labels = {}
+    # Colors used for label rendering
+    LBL_WHITE = '#FFF'
+    LBL_GREY = "#AAA"
+    LBL_GREEN = "#50aa51"
+    LBL_BLUE = "#4194bd"
+    LBL_YELLOW = "#fdc82a"
+    LBL_RED = "#e35a57"
 
     @classmethod
-    def render(cls, key):
+    def render(cls, key, large=False):
         """
-        Render the value as a label.
+        Render the value as a HTML label.
         """
 
         # If the key cannot be found, pass it back
@@ -20,12 +26,20 @@ class StatusCode:
             return key
         
         value = cls.options.get(key, key)
-        label = cls.labels.get(key, None)
+        color = cls.colors.get(key, StatusCode.LBL_GREY)
 
-        if label:
-            return "<span class='label label-{label}'>{value}</span>".format(label=label, value=value)
+        if large:
+            span_class = 'label label-large'
+            style = 'color: {c}; border-color: {c}; background: none;'.format(c=color)
         else:
-            return value
+            span_class = 'label'
+            style = 'color: {w}; background: {c}'.format(w=StatusCode.LBL_WHITE, c=color)
+
+        return "<span class='{cl}' style='{st}'>{value}</span>".format(
+            cl=span_class,
+            st=style,
+            value=value
+        )
 
     @classmethod
     def list(cls):
@@ -42,10 +56,10 @@ class StatusCode:
                 'value': cls.options[key]
             }
 
-            label = cls.labels.get(key)
+            color = cls.colors.get(key, None)
 
-            if label:
-                opt['label'] = label
+            if color:
+                opt['color'] = color
 
             codes.append(opt)
 
@@ -92,13 +106,13 @@ class PurchaseOrderStatus(StatusCode):
         RETURNED: _("Returned"),
     }
 
-    labels = {
-        PENDING: "primary",
-        PLACED: "primary",
-        COMPLETE: "success",
-        CANCELLED: "danger",
-        LOST: "warning",
-        RETURNED: "warning",
+    colors = {
+        PENDING: StatusCode.LBL_BLUE,
+        PLACED: StatusCode.LBL_BLUE,
+        COMPLETE: StatusCode.LBL_GREEN,
+        CANCELLED: StatusCode.LBL_RED,
+        LOST: StatusCode.LBL_YELLOW,
+        RETURNED: StatusCode.LBL_YELLOW,
     }
 
     # Open orders
@@ -132,12 +146,12 @@ class SalesOrderStatus(StatusCode):
         RETURNED: _("Returned"),
     }
 
-    labels = {
-        PENDING: "primary",
-        SHIPPED: "success",
-        CANCELLED: "danger",
-        LOST: "warning",
-        RETURNED: "warning",
+    colors = {
+        PENDING: StatusCode.LBL_BLUE,
+        SHIPPED: StatusCode.LBL_GREEN,
+        CANCELLED: StatusCode.LBL_RED,
+        LOST: StatusCode.LBL_YELLOW,
+        RETURNED: StatusCode.LBL_YELLOW,
     }
 
 
@@ -166,11 +180,11 @@ class StockStatus(StatusCode):
         RETURNED: _("Returned"),
     }
 
-    labels = {
-        OK: 'success',
-        ATTENTION: 'warning',
-        DAMAGED: 'danger',
-        DESTROYED: 'danger',
+    colors = {
+        OK: StatusCode.LBL_GREEN,
+        ATTENTION: StatusCode.LBL_YELLOW,
+        DAMAGED: StatusCode.LBL_RED,
+        DESTROYED: StatusCode.LBL_RED,
     }
 
     # The following codes correspond to parts that are 'available' or 'in stock'
@@ -204,11 +218,11 @@ class BuildStatus(StatusCode):
         COMPLETE: _("Complete"),
     }
 
-    labels = {
-        PENDING: 'primary',
-        ALLOCATED: 'info',
-        COMPLETE: 'success',
-        CANCELLED: 'danger',
+    colors = {
+        PENDING: StatusCode.LBL_BLUE,
+        ALLOCATED: StatusCode.LBL_BLUE,
+        COMPLETE: StatusCode.LBL_GREEN,
+        CANCELLED: StatusCode.LBL_RED,
     }
 
     ACTIVE_CODES = [

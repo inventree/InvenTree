@@ -26,7 +26,7 @@ src="{% static 'img/blank_image.png' %}"
 {% endblock %}
 
 {% block page_data %}
-<h3>{% trans "Build" %}</h3>
+<h3>{% trans "Build" %} {% build_status_label build.status large=True %}</h3>
 <hr>
 <h4>{{ build.quantity }} x {{ build.part.full_name }}</h4>
 <div class='btn-row'>

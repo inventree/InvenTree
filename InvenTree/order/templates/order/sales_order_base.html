@@ -30,7 +30,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block page_data %}
 
-<h3>{% trans "Sales Order" %}</h3>
+<h3>{% trans "Sales Order" %} {% sales_order_status_label order.status large=True %}</h3>
 <hr>
 <h4>{{ order }}</h4>
 <p>{{ order.description }}</p>

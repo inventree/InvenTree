@@ -149,6 +149,13 @@
 .label-large {
     margin: 3px;
     font-size: 100%;
+    border: 3px solid;
+    border-radius: 15px;
+    background: none;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .label-right {
