@@ -15,16 +15,6 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% block pre_content %}
 {% include 'stock/loc_link.html' with location=item.location %}
 
-{% if item.sales_order %}
-<div class='alert alert-block alert-info'>
-    {% trans "This stock item was assigned to" %} <b><a href="{% url 'so-detail' item.sales_order.id %}"> {% trans "Sales Order" %} {{ item.sales_order.id }}</a></b>
-</div>
-{% elif item.build_order %}
-<div class='alert alert-block alert-info'>
-    {% trans "This stock item was assigned to" %}<b><a href="{% url 'build-detail' item.build_order.id %}"> {% trans "Build Order" %} #{{ item.build_order.id }}</a></b>
-</div>
-{% else %}
-
 {% for allocation in item.sales_order_allocations.all %}
 <div class='alert alert-block alert-info'>
     {% trans "This stock item is allocated to Sales Order" %} <a href="{% url 'so-detail' allocation.line.order.id %}"><b>#{{ allocation.line.order.reference }}</b></a> ({% trans "Quantity" %}: {% decimal allocation.quantity %})
@@ -36,7 +26,6 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     {% trans "This stock item is allocated to Build" %} <a href="{% url 'build-detail' allocation.build.id %}"><b>#{{ allocation.build.id }}</b></a> ({% trans "Quantity" %}: {% decimal allocation.quantity %})
 </div>
 {% endfor %}
-{% endif %}
 
 {% if item.serialized %}
 <div class='alert alert-block alert-warning'>
@@ -62,13 +51,13 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 <h3>
     {% trans "Stock Item" %}
     {% if item.sales_order %}
-    <div class='label label-large label-large-blue'>
-        {% trans "Sold" $}
-    </div>
+    <a href="{% url 'so-detail' item.sales_order.id %}">
+        <div class='label label-large label-large-blue'>{% trans "Sold" $}</div>
+    </a>
     {% elif item.build_order %}
-    <div class='label label-large label-large-blue'>
-        {% trans "Used in Build" %}
-    </div>
+    <a href="{% url 'build-detail' item.build_order.id %}">
+        <div class='label label-large label-large-blue'>{% trans "Used in Build" %}</div>
+    </a>
     {% elif item.status in StockStatus.UNAVAILABLE_CODES %}{% stock_status_label item.status large=True %}
     {% endif %}
 </h3>

@@ -324,6 +324,9 @@ class SalesOrder(Order):
             for allocation in line.allocations.all():
                 allocation.complete_allocation(user)
 
+                # TODO - Remove the allocation from the database
+                # allocation.delete()
+
         # Ensure the order status is marked as "Shipped"
         self.status = SalesOrderStatus.SHIPPED
         self.shipment_date = datetime.now().date()

@@ -12,7 +12,7 @@ from .models import StockLocation, StockItem
 from .models import StockItemTracking
 
 from build.models import Build
-from company.models import Company, SupplierPart
+from company.models import SupplierPart
 from order.models import PurchaseOrder, SalesOrder
 from part.models import Part
 
