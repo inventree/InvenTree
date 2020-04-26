@@ -41,7 +41,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 <div class='alert alert-block alert-warning'>
     {% trans "This stock item cannot be deleted as it has child items" %}
 </div>
-{% elif item.delete_on_deplete %}
+{% elif item.delete_on_deplete and item.can_delete %}
 <div class='alert alert-block alert-warning'>
     {% trans "This stock item will be automatically deleted when all stock is depleted." %}
 </div>
@@ -59,7 +59,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% endblock %}
 
 {% block page_data %}
-<h3>{% trans "Stock Item" %}</h3>
+<h3>{% trans "Stock Item" %}{% if item.status in StockStatus.UNAVAILABLE_CODES %}{% stock_status_label item.status large=True %}{% endif %}</h3>
 <hr>
 <h4>
 {% if item.serialized %}
@@ -125,6 +125,12 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td>{% trans "Belongs To" %}</td>
         <td><a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a></td>
     </tr>
+    {% elif item.customer %}
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Customer" %}</td>
+        <td><a href="{% url 'company-detail' item.customer.id %}">{{ item.customer.name }}</a></td>
+    </tr>
     {% elif item.location %}
     <tr>
         <td><span class='fas fa-map-marker-alt'></span></td>
@@ -173,11 +179,11 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td><a href="{% url 'po-detail' item.purchase_order.id %}">{{ item.purchase_order }}</a></td>
     </tr>
     {% endif %}
-    {% if item.customer %}
+    {% if item.parent %}
     <tr>
-        <td></td>
-        <td>{% trans "Customer" %}</td>
-        <td>{{ item.customer.name }}</td>
+        <td><span class='fas fa-sitemap'></span></td>
+        <td>{% trans "Parent Item" %}</td>
+        <td><a href="{% url 'stock-item-detail' item.parent.id %}">{{ item.parent }}</a></td>
     </tr>
     {% endif %}
     {% if item.link %}

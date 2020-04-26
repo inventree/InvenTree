@@ -152,6 +152,7 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
             'customer_reference',
             'status',
             'status_text',
+            'shipment_date',
             'notes',
         ]
 

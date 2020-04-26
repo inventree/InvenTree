@@ -7,14 +7,6 @@ class StatusCode:
     This is used to map a set of integer values to text.
     """
 
-    # Colors used for label rendering
-    LBL_WHITE = '#FFF'
-    LBL_GREY = "#AAA"
-    LBL_GREEN = "#50aa51"
-    LBL_BLUE = "#4194bd"
-    LBL_YELLOW = "#fdc82a"
-    LBL_RED = "#e35a57"
-
     @classmethod
     def render(cls, key, large=False):
         """
@@ -26,18 +18,15 @@ class StatusCode:
             return key
         
         value = cls.options.get(key, key)
-        color = cls.colors.get(key, StatusCode.LBL_GREY)
+        color = cls.colors.get(key, 'grey')
 
         if large:
-            span_class = 'label label-large'
-            style = 'color: {c}; border-color: {c}; background: none;'.format(c=color)
+            span_class = 'label label-large label-large-{c}'.format(c=color)
         else:
-            span_class = 'label'
-            style = 'color: {w}; background: {c}'.format(w=StatusCode.LBL_WHITE, c=color)
+            span_class = 'label label-{c}'.format(c=color)
 
-        return "<span class='{cl}' style='{st}'>{value}</span>".format(
+        return "<span class='{cl}'>{value}</span>".format(
             cl=span_class,
-            st=style,
             value=value
         )
 
@@ -107,12 +96,12 @@ class PurchaseOrderStatus(StatusCode):
     }
 
     colors = {
-        PENDING: StatusCode.LBL_BLUE,
-        PLACED: StatusCode.LBL_BLUE,
-        COMPLETE: StatusCode.LBL_GREEN,
-        CANCELLED: StatusCode.LBL_RED,
-        LOST: StatusCode.LBL_YELLOW,
-        RETURNED: StatusCode.LBL_YELLOW,
+        PENDING: 'blue',
+        PLACED: 'blue',
+        COMPLETE: 'green',
+        CANCELLED: 'red',
+        LOST: 'yellow',
+        RETURNED: 'yellow',
     }
 
     # Open orders
@@ -147,11 +136,11 @@ class SalesOrderStatus(StatusCode):
     }
 
     colors = {
-        PENDING: StatusCode.LBL_BLUE,
-        SHIPPED: StatusCode.LBL_GREEN,
-        CANCELLED: StatusCode.LBL_RED,
-        LOST: StatusCode.LBL_YELLOW,
-        RETURNED: StatusCode.LBL_YELLOW,
+        PENDING: 'blue',
+        SHIPPED: 'green',
+        CANCELLED: 'red',
+        LOST: 'yellow',
+        RETURNED: 'yellow',
     }
 
 
@@ -168,7 +157,7 @@ class StockStatus(StatusCode):
     # This can be used as a quick check for filtering
     NOT_IN_STOCK = 100
 
-    SENT_TO_CUSTOMER = 110  # Item has been shipped to a customer
+    SHIPPED = 110  # Item has been shipped to a customer
     ASSIGNED_TO_BUILD = 120
     ASSIGNED_TO_OTHER_ITEM = 130
 
@@ -179,13 +168,19 @@ class StockStatus(StatusCode):
         DESTROYED: _("Destroyed"),
         LOST: _("Lost"),
         RETURNED: _("Returned"),
+        SHIPPED: _('Shipped'),
+        ASSIGNED_TO_BUILD: _("Used for Build"),
+        ASSIGNED_TO_OTHER_ITEM: _("Installed in Stock Item")
     }
 
     colors = {
-        OK: StatusCode.LBL_GREEN,
-        ATTENTION: StatusCode.LBL_YELLOW,
-        DAMAGED: StatusCode.LBL_RED,
-        DESTROYED: StatusCode.LBL_RED,
+        OK: 'green',
+        ATTENTION: 'yellow',
+        DAMAGED: 'red',
+        DESTROYED: 'red',
+        SHIPPED: 'green',
+        ASSIGNED_TO_BUILD: 'blue',
+        ASSIGNED_TO_OTHER_ITEM: 'blue',
     }
 
     # The following codes correspond to parts that are 'available' or 'in stock'
@@ -201,6 +196,8 @@ class StockStatus(StatusCode):
         DESTROYED,
         LOST,
         SHIPPED,
+        ASSIGNED_TO_BUILD,
+        ASSIGNED_TO_OTHER_ITEM,
     ]
 
 
@@ -220,10 +217,10 @@ class BuildStatus(StatusCode):
     }
 
     colors = {
-        PENDING: StatusCode.LBL_BLUE,
-        ALLOCATED: StatusCode.LBL_BLUE,
-        COMPLETE: StatusCode.LBL_GREEN,
-        CANCELLED: StatusCode.LBL_RED,
+        PENDING: 'blue',
+        ALLOCATED: 'blue',
+        COMPLETE: 'green',
+        CANCELLED: 'red',
     }
 
     ACTIVE_CODES = [

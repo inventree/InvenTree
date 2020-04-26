@@ -5,7 +5,7 @@ var {{ label }}Codes = {
     {% for opt in options %}'{{ opt.key }}': {
         key: '{{ opt.key }}',
         value: '{{ opt.value }}',{% if opt.color %}
-        color: '{{ opt.color }}',{% endif %}
+        label: 'label-{{ opt.color }}',{% endif %}
     },{% endfor %}
 };
 
@@ -25,7 +25,7 @@ function {{ label }}StatusDisplay(key) {
     }
 
     // Select the label color
-    var color = {{ label }}Codes[key].color ?? '#AAA';
+    var label = {{ label }}Codes[key].label ?? '';
 
-    return `<span class='label' style='background: ${color};'>${value}</span>`;
+    return `<span class='label ${label}'>${value}</span>`;
 }

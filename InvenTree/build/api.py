@@ -38,7 +38,6 @@ class BuildList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'part',
         'sales_order',
     ]
 
@@ -48,15 +47,25 @@ class BuildList(generics.ListCreateAPIView):
         as some of the fields don't natively play nicely with DRF
         """
 
-        build_list = super().get_queryset()
+        queryset = super().get_queryset().prefetch_related('part')
+
+        return queryset
+    
+    def filter_queryset(self, queryset):
 
         # Filter by build status?
         status = self.request.query_params.get('status', None)
 
         if status is not None:
-            build_list = build_list.filter(status=status)
+            queryset = queryset.filter(status=status)
 
-        return build_list
+        # Filter by associated part?
+        part = self.request.query_params.get('part', None)
+
+        if part is not None:
+            queryset = queryset.filter(part=part)
+
+        return queryset
 
     def get_serializer(self, *args, **kwargs):
 

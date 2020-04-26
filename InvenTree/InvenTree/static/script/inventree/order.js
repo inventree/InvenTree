@@ -238,7 +238,12 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'creation_date',
-                title: 'Date',
+                title: 'Creation Date',
+            },
+            {
+                sortable: true,
+                field: 'shipment_date',
+                title: "Shipment Date",
             },
             {
                 sortable: true,

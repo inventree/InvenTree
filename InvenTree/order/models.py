@@ -583,6 +583,6 @@ class SalesOrderAllocation(models.Model):
 
         # Clear the location
         item.location = None
-        item.status = StockStatus.SENT_TO_CUSTOMER
+        item.status = StockStatus.SHIPPED
 
         item.save()

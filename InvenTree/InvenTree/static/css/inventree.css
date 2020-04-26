@@ -3,6 +3,12 @@
     --secondary-color: #b69c80;
     --highlight-color: #f5efe8;
     --basic-color: #333;
+
+    --label-red: #e35a57;
+    --label-blue: #4194bd;
+    --label-green: #50aa51;
+    --label-grey: #aaa;
+    --label-yellow: #fdc82a;
 }
 
 .markdownx .row {
@@ -156,6 +162,51 @@
     padding-left: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
+}
+
+.label-large-red {
+    color: var(--label-red);
+    border-color: var(--label-red);
+}
+
+.label-red {
+    background: var(--label-red);
+}
+
+.label-large-blue {
+    color: var(--label-blue);
+    border-color: var(--label-blue);
+}
+
+.label-blue {
+    background: var(--label-blue);
+}
+
+.label-large-green {
+    color: var(--label-green);
+    border-color: var(--label-green);
+}
+
+.label-green {
+    background: var(--label-green);
+}
+
+.label-large-grey {
+    color: var(--label-grey);
+    border-color: var(--label-grey);
+}
+
+.label-grey {
+    background: var(--label-grey);
+}
+
+.label-large-yellow {
+    color: var(--label-yellow);
+    border-color: var(--label-yellow);
+}
+
+.label-yellow {
+    background: var(--label-yellow);
 }
 
 .label-right {
