@@ -21,6 +21,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Include sublocations" %}',
                 description: '{% trans "Include stock in sublocations" %}',
             },
+            in_stock: {
+                type: 'bool',
+                title: '{% trans "In stock" %}',
+                description: '{% trans "Item is in stock" %}',
+            },
             active: {
                 type: 'bool',
                 title: '{% trans "Active parts" %}',

@@ -53,6 +53,8 @@ class BuildList(generics.ListCreateAPIView):
     
     def filter_queryset(self, queryset):
 
+        queryset = super().filter_queryset(queryset)
+
         # Filter by build status?
         status = self.request.query_params.get('status', None)
 

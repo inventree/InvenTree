@@ -369,10 +369,10 @@ class StockList(generics.ListCreateAPIView):
 
             if in_stock:
                 # Filter out parts which are not actually "in stock"
-                stock_list = stock_list.filter(customer=None, belongs_to=None, build_order=None)
+                stock_list = stock_list.filter(StockItem.IN_STOCK_FILTER)
             else:
                 # Only show parts which are not in stock
-                stock_list = stock_list.exclude(customer=None, belongs_to=None, build_order=None)
+                stock_list = stock_list.exclude(StockItem.IN_STOCK_FILTER)
 
         # Filter by 'allocated' patrs?
         allocated = self.request.query_params.get('allocated', None)
@@ -511,9 +511,9 @@ class StockList(generics.ListCreateAPIView):
 
     filter_fields = [
         'supplier_part',
-        'customer',
         'belongs_to',
         'build',
+        'build_order',
         'sales_order',
         'build_order',
     ]

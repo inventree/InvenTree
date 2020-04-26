@@ -118,6 +118,8 @@ class StockItemSerializer(InvenTreeModelSerializer):
         fields = [
             'allocated',
             'batch',
+            'build_order',
+            'belongs_to',
             'in_stock',
             'link',
             'location',
@@ -127,6 +129,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'part_detail',
             'pk',
             'quantity',
+            'sales_order',
             'serial',
             'supplier_part',
             'supplier_part_detail',

@@ -261,8 +261,6 @@ class Build(MPTTModel):
         - Delete pending BuildItem objects
         """
 
-        print("Complete build...")
-
         # Complete the build allocation for each BuildItem
         for build_item in self.allocated_stock.all().prefetch_related('stock_item'):
             build_item.complete_allocation(user)
@@ -495,6 +493,11 @@ class BuildItem(models.Model):
         on_delete=models.CASCADE,
         related_name='allocations',
         help_text=_('Stock Item to allocate to build'),
+        limit_choices_to={
+            'build_order': None,
+            'sales_order': None,
+            'belongs_to': None,
+        }
     )
 
     quantity = models.DecimalField(

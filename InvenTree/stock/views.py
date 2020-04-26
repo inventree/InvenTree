@@ -258,9 +258,7 @@ class StockExport(AjaxView):
             stock_items = stock_items.filter(supplier_part=supplier_part)
 
         # Filter out stock items that are not 'in stock'
-        # TODO - This might need some more thought in the future...
-        stock_items = stock_items.filter(customer=None)
-        stock_items = stock_items.filter(belongs_to=None)
+        stock_items = stock_items.filter(StockItem.IN_STOCK_FILTER)
 
         # Pre-fetch related fields to reduce DB queries
         stock_items = stock_items.prefetch_related('part', 'supplier_part__supplier', 'location', 'purchase_order', 'build')
@@ -314,7 +312,7 @@ class StockAdjust(AjaxView, FormMixin):
         """
 
         # Start with all 'in stock' items
-        items = StockItem.objects.filter(customer=None, belongs_to=None)
+        items = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
 
         # Client provides a list of individual stock items
         if 'stock[]' in self.request.GET:

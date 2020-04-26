@@ -13,7 +13,7 @@ from .models import StockItemTracking
 
 from build.models import Build
 from company.models import Company, SupplierPart
-from order.models import PurchaseOrder
+from order.models import PurchaseOrder, SalesOrder
 from part.models import Part
 
 
@@ -74,9 +74,11 @@ class StockItemResource(ModelResource):
 
     belongs_to = Field(attribute='belongs_to', widget=widgets.ForeignKeyWidget(StockItem))
 
-    customer = Field(attribute='customer', widget=widgets.ForeignKeyWidget(Company))
-
     build = Field(attribute='build', widget=widgets.ForeignKeyWidget(Build))
+
+    sales_order = Field(attribute='sales_order', widget=widgets.ForeignKeyWidget(SalesOrder))
+
+    build_order = Field(attribute='build_order', widget=widgets.ForeignKeyWidget(Build))
 
     purchase_order = Field(attribute='purchase_order', widget=widgets.ForeignKeyWidget(PurchaseOrder))
 

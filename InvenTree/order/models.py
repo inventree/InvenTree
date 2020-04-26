@@ -19,7 +19,7 @@ import os
 from datetime import datetime
 from decimal import Decimal
 
-from part.models import Part
+from part import models as PartModels
 from stock import models as stock_models
 from company.models import Company, SupplierPart
 
@@ -511,7 +511,7 @@ class SalesOrderAllocation(models.Model):
         try:
             if not self.line.part == self.item.part:
                 errors['item'] = _('Cannot allocate stock item to a line with a different part')
-        except Part.DoesNotExist:
+        except PartModels.Part.DoesNotExist:
             errors['line'] = _('Cannot allocate stock to a line without a part')
 
         if self.quantity > self.item.quantity:
@@ -535,7 +535,12 @@ class SalesOrderAllocation(models.Model):
         'stock.StockItem',
         on_delete=models.CASCADE,
         related_name='sales_order_allocations',
-        limit_choices_to={'part__salable': True},
+        limit_choices_to={
+            'part__salable': True,
+            'belongs_to': None,
+            'sales_order': None,
+            'build_order': None,
+        },
         help_text=_('Select stock item to allocate')
     )
 
@@ -565,6 +570,8 @@ class SalesOrderAllocation(models.Model):
         - Mark the StockItem as belonging to the Customer (this will remove it from stock)
         """
 
+        order = self.line.order
+
         item = self.item
 
         # If the allocated quantity is less than the amount available,
@@ -579,7 +586,7 @@ class SalesOrderAllocation(models.Model):
             self.save()
 
         # Assign the StockItem to the SalesOrder customer
-        item.customer = self.line.order.customer
+        item.sales_order = order
 
         # Clear the location
         item.location = None

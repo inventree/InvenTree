@@ -6,11 +6,6 @@
 
 {% block content %}
 
-{% if part.active == False %}
-<div class='alert alert-danger alert-block'>
-    {% trans "This part is not active" %}
-</div>
-{% endif %}
 {% if part.is_template %}
 <div class='alert alert-info alert-block'>
     {% trans "This part is a template part." %}
@@ -28,9 +23,14 @@
 <div class="col-sm-6">
     {% include "part/part_thumb.html" %}
     <div class="media-body">
-        <h4>
+        <h3>
             {{ part.full_name }}
-        </h4>   
+            {% if not part.active %}
+            <div class='label label-large label-large-red'>
+                {% trans 'Inactive' %}
+            </div>
+            {% endif %}
+        </h3>   
         <p><i>{{ part.description }}</i></p>
         <p>
             <div class='btn-row'>

@@ -82,7 +82,7 @@ src="{% static 'img/blank_image.png' %}"
     </tr>
     {% if build.parent %}
     <tr>
-        <td><span class='fas fa-tools'></span></td>
+        <td><span class='fas fa-sitemap'></span></td>
         <td>{% trans "Parent Build" %}</td>
         <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a></td>
     </tr>

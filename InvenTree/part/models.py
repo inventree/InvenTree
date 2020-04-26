@@ -42,6 +42,7 @@ from InvenTree.helpers import decimal2string, normalize
 from InvenTree.status_codes import BuildStatus, StockStatus, PurchaseOrderStatus
 
 from company.models import SupplierPart
+from stock import models as StockModels
 
 
 class PartCategory(InvenTreeTree):
@@ -639,11 +640,12 @@ class Part(models.Model):
     def stock_entries(self):
         """ Return all 'in stock' items. To be in stock:
 
-        - customer is None
+        - build_order is None
+        - sales_order is None
         - belongs_to is None
         """
 
-        return self.stock_items.filter(customer=None, belongs_to=None)
+        return self.stock_items.filter(StockModels.StockItem.IN_STOCK_FILTER).exclude(status__in=StockStatus.UNAVAILABLE_CODES)
 
     @property
     def total_stock(self):

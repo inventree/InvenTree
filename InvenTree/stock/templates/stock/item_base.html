@@ -15,11 +15,15 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% block pre_content %}
 {% include 'stock/loc_link.html' with location=item.location %}
 
-{% if item.customer %}
+{% if item.sales_order %}
 <div class='alert alert-block alert-info'>
-    {% trans "This stock item has been sent to" %} <b><a href="{% url 'company-detail-sales-orders' item.customer.id %}">{{ item.customer.name }}</a></b>
+    {% trans "This stock item was assigned to" %} <b><a href="{% url 'so-detail' item.sales_order.id %}"> {% trans "Sales Order" %} {{ item.sales_order.id }}</a></b>
 </div>
-{% endif %}
+{% elif item.build_order %}
+<div class='alert alert-block alert-info'>
+    {% trans "This stock item was assigned to" %}<b><a href="{% url 'build-detail' item.build_order.id %}"> {% trans "Build Order" %} #{{ item.build_order.id }}</a></b>
+</div>
+{% else %}
 
 {% for allocation in item.sales_order_allocations.all %}
 <div class='alert alert-block alert-info'>
@@ -32,6 +36,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     {% trans "This stock item is allocated to Build" %} <a href="{% url 'build-detail' allocation.build.id %}"><b>#{{ allocation.build.id }}</b></a> ({% trans "Quantity" %}: {% decimal allocation.quantity %})
 </div>
 {% endfor %}
+{% endif %}
 
 {% if item.serialized %}
 <div class='alert alert-block alert-warning'>
@@ -46,11 +51,6 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     {% trans "This stock item will be automatically deleted when all stock is depleted." %}
 </div>
 {% endif %}
-{% if item.parent %}
-<div class='alert alert-block alert-info'>
-    {% trans "This stock item was split from " %}<a href="{% url 'stock-item-detail' item.parent.id %}">{{ item.parent }}</a>
-</div>
-{% endif %}
 
 {% endblock %}
 
@@ -59,7 +59,19 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% endblock %}
 
 {% block page_data %}
-<h3>{% trans "Stock Item" %}{% if item.status in StockStatus.UNAVAILABLE_CODES %}{% stock_status_label item.status large=True %}{% endif %}</h3>
+<h3>
+    {% trans "Stock Item" %}
+    {% if item.sales_order %}
+    <div class='label label-large label-large-blue'>
+        {% trans "Sold" $}
+    </div>
+    {% elif item.build_order %}
+    <div class='label label-large label-large-blue'>
+        {% trans "Used in Build" %}
+    </div>
+    {% elif item.status in StockStatus.UNAVAILABLE_CODES %}{% stock_status_label item.status large=True %}
+    {% endif %}
+</h3>
 <hr>
 <h4>
 {% if item.serialized %}
@@ -74,10 +86,10 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     {% if item.in_stock %}
     {% if not item.serialized %}
     <button type='button' class='btn btn-default' id='stock-add' title='Add to stock'>
-        <span class='fas fa-plus-circle' style='color: #1a1;'/>
+        <span class='fas fa-plus-circle icon-green'/>
     </button>
     <button type='button' class='btn btn-default' id='stock-remove' title='Take from stock'>
-        <span class='fas fa-minus-circle' style='color: #a11;'/>
+        <span class='fas fa-minus-circle icon-red''/>
     </button>
     <button type='button' class='btn btn-default' id='stock-count' title='Count stock'>
         <span class='fas fa-clipboard-list'/>
@@ -125,11 +137,17 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td>{% trans "Belongs To" %}</td>
         <td><a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a></td>
     </tr>
-    {% elif item.customer %}
+    {% elif item.sales_order %}
     <tr>
         <td><span class='fas fa-user-tie'></span></td>
-        <td>{% trans "Customer" %}</td>
-        <td><a href="{% url 'company-detail' item.customer.id %}">{{ item.customer.name }}</a></td>
+        <td>{% trans "Sales Order" %}</td>
+        <td><a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a> - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a></td>
+    </tr>
+    {% elif item.build_order %}
+    <tr>
+        <td><span class='fas fa-tools'></span></td>
+        <td>{% trans "Build Order" %}</td>
+        <td><a href="{% url 'build-detail' item.build_order.id %}">{{ item.build_order }}</a></td>
     </tr>
     {% elif item.location %}
     <tr>
@@ -183,7 +201,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     <tr>
         <td><span class='fas fa-sitemap'></span></td>
         <td>{% trans "Parent Item" %}</td>
-        <td><a href="{% url 'stock-item-detail' item.parent.id %}">{{ item.parent }}</a></td>
+        <td><a href="{% url 'stock-item-detail' item.parent.id %}">{% trans "Stock Item" %} #{{ item.parent.id }}</a></td>
     </tr>
     {% endif %}
     {% if item.link %}
