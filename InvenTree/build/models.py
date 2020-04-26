@@ -480,6 +480,8 @@ class BuildItem(models.Model):
             self.stock_item = item
             self.save()
 
+        # TODO - If the item__part object is not trackable, delete the stock item here
+        
         item.status = StockStatus.ASSIGNED_TO_BUILD
         item.build_order = self.build
         item.save()

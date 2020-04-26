@@ -348,13 +348,16 @@ class SOLineItemList(generics.ListCreateAPIView):
 
         queryset = super().get_queryset(*args, **kwargs)
 
-        return queryset.prefetch_related(
+        queryset = queryset.prefetch_related(
             'part',
             'part__stock_items',
             'allocations',
             'allocations__item__location',
             'order',
+            'order__stock_items',
         )
+
+        return queryset
 
     permission_classes = [permissions.IsAuthenticated]
 

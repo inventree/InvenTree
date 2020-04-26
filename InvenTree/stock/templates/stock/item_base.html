@@ -58,7 +58,8 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     <a href="{% url 'build-detail' item.build_order.id %}">
         <div class='label label-large label-large-blue'>{% trans "Used in Build" %}</div>
     </a>
-    {% elif item.status in StockStatus.UNAVAILABLE_CODES %}{% stock_status_label item.status large=True %}
+    {% else %}
+    {% stock_status_label item.status large=True %}
     {% endif %}
 </h3>
 <hr>

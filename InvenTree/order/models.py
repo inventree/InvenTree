@@ -324,8 +324,11 @@ class SalesOrder(Order):
             for allocation in line.allocations.all():
                 allocation.complete_allocation(user)
 
-                # TODO - Remove the allocation from the database
-                # allocation.delete()
+                # Remove the allocation from the database once it has been 'fulfilled'
+                if allocation.item.sales_order == self.order:
+                    allocation.delete()
+                else:
+                    raise ValidationError("Could not complete order - allocation item not fulfilled")
 
         # Ensure the order status is marked as "Shipped"
         self.status = SalesOrderStatus.SHIPPED
@@ -457,6 +460,15 @@ class SalesOrderLineItem(OrderLineItem):
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', help_text=_('Sales Order'))
 
     part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, help_text=_('Part'), limit_choices_to={'salable': True})
+
+    def fulfilled_quantity(self):
+        """
+        Return the total stock quantity fulfilled against this line item.
+        """
+
+        query = self.order.stock_items.filter(part=self.part).aggregate(fulfilled=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['fulfilled']
 
     def allocated_quantity(self):
         """ Return the total stock quantity allocated to this LineItem.

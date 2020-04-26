@@ -211,6 +211,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
     allocated = serializers.FloatField(source='allocated_quantity', read_only=True)
+    fulfilled = serializers.FloatField(source='fulfilled_quantity', read_only=True)
 
     class Meta:
         model = SalesOrderLineItem
@@ -220,6 +221,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'allocated',
             'allocations',
             'quantity',
+            'fulfilled',
             'reference',
             'notes',
             'order',
