@@ -450,7 +450,7 @@ class BuildItem(models.Model):
                     q=self.stock_item.quantity
                 ))]
 
-            if self.stock_item.quantity - self.stock_item.allocation_count() < self.quantity:
+            if self.stock_item.quantity - self.stock_item.allocation_count() + self.quantity < self.quantity:
                 errors['quantity'] = _('StockItem is over-allocated')
 
             if self.quantity <= 0:

@@ -12,11 +12,13 @@ InvenTree | Allocate Parts
 {% include "build/tabs.html" with tab='allocate' %}
 
 <div id='build-item-toolbar'>
+    {% if build.status == BuildStatus.PENDING %}
     <div class='btn-group'>
         <button class='btn btn-primary' type='button' id='btn-order-parts' title='Order Parts'>{% trans "Order Parts" %}</button>
-        {% if 0 %}<button class='btn btn-primary' type='button' id='btn-allocate' title='Allocate Stock'>{% trans "Allocate" %}</button>{% endif %}
+        <button class='btn btn-primary' type='button' id='btn-allocate' title='{% trans "Automatically allocate stock" %}'>{% trans "Auto Allocate" %}</button>
         <button class='btn btn-danger' type='button' id='btn-unallocate' title='Unallocate Stock'>{% trans "Unallocate" %}</button>
     </div>
+    {% endif %}
 </div>
     
 <table class='table table-striped table-condensed' id='build-item-list' data-toolbar='#build-item-toolbar'></table>   
@@ -151,7 +153,15 @@ InvenTree | Allocate Parts
                         field: 'quantity',
                         title: 'Quantity',
                         formatter: function(value, row, index, field) {
-                            return renderLink(value, `/stock/item/${row.stock_item}/`);
+                            var text = '';
+
+                            if (row.serial && row.quantity == 1) {
+                                text = `{% trans "Serial Number" %}: ${row.serial}`;
+                            } else {
+                                text = `{% trans "Quantity" %}: ${row.quantity}`;
+                            }
+
+                            return renderLink(text, `/stock/item/${row.stock_item}/`);
                         },
                     },
                     {
@@ -330,8 +340,8 @@ InvenTree | Allocate Parts
         ],
     });
 
-    {% if 0 %}
-    $("#auto-allocate-build").on('click', function() {
+    {% if build.status == BuildStatus.PENDING %}
+    $("#btn-allocate").on('click', function() {
         launchModalForm(
             "{% url 'build-auto-allocate' build.id %}",
             {
@@ -339,8 +349,7 @@ InvenTree | Allocate Parts
             }
         );
     });
-    {% endif %}
-
+    
     $('#btn-unallocate').on('click', function() {
         launchModalForm(
             "{% url 'build-unallocate' build.id %}",
@@ -349,7 +358,7 @@ InvenTree | Allocate Parts
             }
         );
     });
-
+        
     $("#btn-order-parts").click(function() {
         launchModalForm("/order/purchase-order/order-parts/", {
             data: {
@@ -357,5 +366,8 @@ InvenTree | Allocate Parts
             },
         });
     });
+        
+    {% endif %}
 
 {% endblock %}
+        
