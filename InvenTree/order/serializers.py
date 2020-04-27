@@ -170,7 +170,8 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 
     location_path = serializers.CharField(source='get_location_path')
     location_id = serializers.IntegerField(source='get_location')
-    allocated = serializers.CharField(source='get_allocated')
+    serial = serializers.CharField(source='get_serial')
+    quantity = serializers.FloatField()
 
     class Meta:
         model = SalesOrderAllocation
@@ -178,7 +179,8 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'line',
-            'allocated',
+            'serial',
+            'quantity',
             'location_id',
             'location_path',
             'item',

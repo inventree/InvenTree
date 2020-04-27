@@ -62,7 +62,15 @@ function showAllocationSubTable(index, row, element) {
             field: 'allocated',
             title: 'Quantity',
             formatter: function(value, row, index, field) {
-                return renderLink(value, `/stock/item/${row.item}/`);
+                var text = '';
+                
+                if (row.serial != null && row.quantity == 1) {
+                    text = `{% trans "Serial Number" %}: ${row.serial}`;
+                } else {
+                    text = `{% trans "Quantity" %}: ${row.quantity}`;
+                }
+
+                return renderLink(text, `/stock/item/${row.item}/`);
             },
         },
         {
@@ -138,7 +146,7 @@ function showFulfilledSubTable(index, row, element) {
                 field: 'stock',
                 formatter: function(value, row) {
                     var text = '';
-                    if (row.serial) {
+                    if (row.serial && row.quantity == 1) {
                         text = `{% trans "Serial Number" %}: ${row.serial}`;
                     } else {
                         text = `{% trans "Quantity" %}: ${row.quantity}`;

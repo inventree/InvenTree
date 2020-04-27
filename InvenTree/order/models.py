@@ -24,7 +24,7 @@ from stock import models as stock_models
 from company.models import Company, SupplierPart
 
 from InvenTree.fields import RoundingDecimalField
-from InvenTree.helpers import decimal2string, normalize
+from InvenTree.helpers import decimal2string
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
 from InvenTree.models import InvenTreeAttachment
 
@@ -461,6 +461,11 @@ class SalesOrderLineItem(OrderLineItem):
 
     part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, help_text=_('Part'), limit_choices_to={'salable': True})
 
+    class Meta:
+        unique_together = [
+            ('order', 'part'),
+        ]
+
     def fulfilled_quantity(self):
         """
         Return the total stock quantity fulfilled against this line item.
@@ -482,6 +487,10 @@ class SalesOrderLineItem(OrderLineItem):
 
     def is_fully_allocated(self):
         """ Return True if this line item is fully allocated """
+
+        if self.order.status == SalesOrderStatus.SHIPPED:
+            return self.fulfilled_quantity() >= self.quantity
+
         return self.allocated_quantity() >= self.quantity
 
     def is_over_allocated(self):
@@ -561,12 +570,8 @@ class SalesOrderAllocation(models.Model):
 
     quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, help_text=_('Enter stock allocation quantity'))
 
-    def get_allocated(self):
-        """ String representation of the allocated quantity """
-        if self.item.serial and self.quantity == 1:
-            return "# {sn}".format(sn=self.item.serial)
-        else:
-            return normalize(self.quantity)
+    def get_serial(self):
+        return self.item.serial
 
     def get_location(self):
         return self.item.location.id if self.item.location else None
