@@ -1,5 +1,6 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block css %}
 
@@ -9,7 +10,7 @@
 
 {% include 'part/tabs.html' with tab='bom' %}
 
-<h3>Bill of Materials</h3>
+<h3>{% trans "Bill of Materials" %}</h3>
 
 {% if part.has_complete_bom_pricing == False %}
 <div class='alert alert-block alert-warning'>
@@ -33,18 +34,16 @@
 
 <div id='button-toolbar' class="btn-group" role="group" aria-label="...">
     {% if editing_enabled %}
-    <button class='btn btn-default' type='button' title='Remove selected BOM items' id='bom-item-delete'><span class='glyphicon glyphicon-trash'></span></button>
-    <a href="{% url 'upload-bom' part.id %}">
-        <button class='btn btn-default' type='button' title='Import BOM data' id='bom-upload'><span class='glyphicon glyphicon-open-file'></span></button>
-    </a>
-    <button class='btn btn-default' type='button' title='New BOM Item' id='bom-item-new'><span class='glyphicon glyphicon-plus'></span></button>
-    <button class='btn btn-default' type='button' title='Finish Editing' id='editing-finished'><span class='glyphicon glyphicon-ok'></span></button>
+    <button class='btn btn-default action-button' type='button' title='{% trans "Remove selected BOM items" %}' id='bom-item-delete'><span class='fas fa-trash-alt'></span></button>
+    <button class='btn btn-default action-button' type='button' title='{% trans "Import BOM data" %}' id='bom-upload'><span class='fas fa-file-upload'></span></button>
+    <button class='btn btn-default action-button' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'><span class='fas fa-plus-circle'></span></button>
+    <button class='btn btn-default action-button' type='button' title='{% trans "Finish Editing" %}' id='editing-finished'><span class='fas fa-check-circle'></span></button>
     {% elif part.active %}
-    <button class='btn btn-default' type='button' title='Edit BOM' id='edit-bom'><span class='glyphicon glyphicon-edit'></span></button>
+    <button class='btn btn-default action-button' type='button' title='{% trans "Edit BOM" %}' id='edit-bom'><span class='fas fa-edit'></span></button>
     {% if part.is_bom_valid == False %}
-    <button class='btn btn-default' id='validate-bom' type='button'><span class='glyphicon glyphicon-check'></span></button>
+    <button class='btn btn-default action-button' id='validate-bom' title='{% trans "Validate Bill of Materials" %}' type='button'><span class='fas fa-clipboard-check'></span></button>
     {% endif %}
-    <button title='Export BOM' class='btn btn-default' id='download-bom' type='button'><span class='glyphicon glyphicon-download-alt'></span></button>
+    <button title='{% trans "Export Bill of Materials" %}' class='btn btn-default action-button' id='download-bom' type='button'><span class='fas fa-file-download'></span></button>
     {% endif %}
 </div>
 
@@ -74,6 +73,10 @@
     {% if editing_enabled %}
     $("#editing-finished").click(function() {
         location.href = "{% url 'part-bom' part.id %}";
+    });
+
+    $('#bom-upload').click(function() {
+        location.href = "{% url 'upload-bom' part.id %}";
     });
 
     $("#bom-item-new").click(function () {
