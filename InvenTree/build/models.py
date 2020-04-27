@@ -371,11 +371,12 @@ class Build(MPTTModel):
         parts = []
 
         for item in self.part.bom_items.all().prefetch_related('sub_part'):
-            part = {'part': item.sub_part,
-                    'per_build': item.quantity,
-                    'quantity': item.quantity * self.quantity,
-                    'allocated': self.getAllocatedQuantity(item.sub_part)
-                    }
+            part = {
+                'part': item.sub_part,
+                'per_build': item.quantity,
+                'quantity': item.quantity * self.quantity,
+                'allocated': self.getAllocatedQuantity(item.sub_part)
+            }
 
             parts.append(part)
 

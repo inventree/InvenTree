@@ -205,10 +205,12 @@ When running unit tests, enforce usage of sqlite3 database,
 so that the tests can be run in RAM without any setup requirements
 """
 if 'test' in sys.argv:
-    eprint('Running tests - Using sqlite3 memory database')
+    eprint('InvenTree: Running tests - Using sqlite3 memory database')
     DATABASES['default'] = {
+        # Ensure sqlite3 backend is being used
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'test_db.sqlite3'
+        # Doesn't matter what the database is called, it is executed in RAM
+        'NAME': 'ram_test_db.sqlite3',
     }
 
 # Database backend selection
