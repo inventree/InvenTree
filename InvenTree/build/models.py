@@ -189,7 +189,11 @@ class Build(MPTTModel):
             # How many parts required for this build?
             q_required = item.quantity * self.quantity
 
-            stock = StockItem.objects.filter(part=item.sub_part)
+            # Grab a list of StockItem objects which are "in stock"
+            stock = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
+            
+            # Filter by part reference
+            stock = stock.filter(part=item.sub_part)
 
             # Ensure that the available stock items are in the correct location
             if self.take_from is not None:
