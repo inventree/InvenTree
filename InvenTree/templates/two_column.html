@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+
+<div class='row'>
+    <div class='col-sm-6'>
+        <div class='media-left'>
+            {% block thumbnail %}
+            <!-- Image goes here -->
+            {% endblock %}
+        </div>
+        <div class='media-body'>
+            {% block page_data %}
+            <!-- Data next to image goes here -->
+            {% endblock %}
+        </div>
+    </div>
+    <div class='col-sm-6'>
+        {% block page_details %}
+        <!-- Right column data goes here -->
+        {% endblock %}
+    </div>
+</div>
+
+<hr>
+
+<div class='container-fluid'>
+    {% block details %}
+    <!-- Particular page detail views go here -->
+    {% endblock %}
+</div>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+{% endblock %}

@@ -108,13 +108,13 @@ function loadPurchaseOrderTable(table, options) {
 
     options.params['supplier_detail'] = true;
 
-    var filters = loadTableFilters("order");
+    var filters = loadTableFilters("purchaseorder");
 
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
 
-    setupFilterList("order", $(table));
+    setupFilterList("purchaseorder", $(table));
 
     $(table).inventreeTable({
         url: options.url,
@@ -145,9 +145,9 @@ function loadPurchaseOrderTable(table, options) {
                 }
             },
             {
+                field: 'supplier_reference',
+                title: 'Supplier Reference',
                 sortable: true,
-                field: 'creation_date',
-                title: 'Date',
             },
             {
                 sortable: true,
@@ -159,8 +159,91 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'status',
                 title: 'Status',
                 formatter: function(value, row, index, field) {
-                    return orderStatusDisplay(row.status, row.status_text);
+                    return purchaseOrderStatusDisplay(row.status, row.status_text);
                 }
+            },
+            {
+                sortable: true,
+                field: 'creation_date',
+                title: 'Date',
+            },
+            {
+                sortable: true,
+                field: 'line_items',
+                title: 'Items'
+            },
+        ],
+    });
+}
+
+function loadSalesOrderTable(table, options) {
+
+    options.params = options.params || {};
+    options.params['customer_detail'] = true;
+
+    var filters = loadTableFilters("salesorder");
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    setupFilterList("salesorder", $(table));
+
+    $(table).inventreeTable({
+        url: options.url,
+        queryParams: filters,
+        groupBy: false,
+        original: options.params,
+        formatNoMatches: function() { return "No sales orders found"; },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                sortable: true,
+                field: 'reference',
+                title: 'Sales Order',
+                formatter: function(value, row, index, field) {
+                    return renderLink(value, `/order/sales-order/${row.pk}/`);
+                },
+            },
+            {
+                sortable: true,
+                field: 'customer_detail',
+                title: 'Customer',
+                formatter: function(value, row, index, field) {
+                    return imageHoverIcon(row.customer_detail.image) + renderLink(row.customer_detail.name, `/company/${row.customer}/sales-orders/`);
+                }
+            },
+            {
+                field: 'customer_reference',
+                title: 'Customer Reference',
+                sotrable: true,
+            },
+            {
+                sortable: true,
+                field: 'description',
+                title: 'Description',
+            },
+            {
+                sortable: true,
+                field: 'status',
+                title: 'Status',
+                formatter: function(value, row, index, field) {
+                    return salesOrderStatusDisplay(row.status, row.status_text);
+                }
+            },
+            {
+                sortable: true,
+                field: 'creation_date',
+                title: 'Creation Date',
+            },
+            {
+                sortable: true,
+                field: 'shipment_date',
+                title: "Shipment Date",
             },
             {
                 sortable: true,

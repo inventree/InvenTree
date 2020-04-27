@@ -18,6 +18,8 @@ function defaultFilters() {
         build: "",
         parts: "cascade=1",
         company: "",
+        salesorder: "",
+        purchaseorder: "",
     };
 }
 

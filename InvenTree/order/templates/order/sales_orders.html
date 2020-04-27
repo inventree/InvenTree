@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block page_title %}
+InvenTree | {% trans "Sales Orders" %}
+{% endblock %}
+
+{% block content %}
+
+<h3>{% trans "Sales Orders" %}</h3>
+<hr>
+
+<div id='table-buttons'>
+    <div class='button-toolbar container-fluid' style='float: right;'>
+        <button class='btn btn-primary' type='button' id='so-create' title='{% trans "Create new sales order" %}'>{% trans "New Sales Order" %}</button>
+        <div class='filter-list' id='filter-list-salesorder'>
+            <!-- An empty div in which the filter list will be constructed -->
+        </div>
+    </div>
+</div>
+
+<table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='sales-order-table'>
+</table>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+loadSalesOrderTable("#sales-order-table", {
+    url: "{% url 'api-so-list' %}",
+});
+
+$("#so-create").click(function() {
+    launchModalForm("{% url 'so-create' %}",
+        {
+            follow: true,
+        }
+    );
+});
+
+{% endblock %}

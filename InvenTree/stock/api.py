@@ -314,7 +314,6 @@ class StockList(generics.ListCreateAPIView):
     - POST: Create a new StockItem
 
     Additional query parameters are available:
-        - aggregate: If 'true' then stock items are aggregated by Part and Location
         - location: Filter stock by location
         - category: Filter by parts belonging to a certain category
         - supplier: Filter by supplier
@@ -363,9 +362,31 @@ class StockList(generics.ListCreateAPIView):
         # Start with all objects
         stock_list = super().filter_queryset(queryset)
         
-        # Filter out parts which are not actually "in stock"
-        stock_list = stock_list.filter(customer=None, belongs_to=None)
+        in_stock = self.request.query_params.get('in_stock', None)
 
+        if in_stock is not None:
+            in_stock = str2bool(in_stock)
+
+            if in_stock:
+                # Filter out parts which are not actually "in stock"
+                stock_list = stock_list.filter(StockItem.IN_STOCK_FILTER)
+            else:
+                # Only show parts which are not in stock
+                stock_list = stock_list.exclude(StockItem.IN_STOCK_FILTER)
+
+        # Filter by 'allocated' patrs?
+        allocated = self.request.query_params.get('allocated', None)
+
+        if allocated is not None:
+            allocated = str2bool(allocated)
+
+            if allocated:
+                # Filter StockItem with either build allocations or sales order allocations
+                stock_list = stock_list.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False))
+            else:
+                # Filter StockItem without build allocations or sales order allocations
+                stock_list = stock_list.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
+                
         # Do we wish to filter by "active parts"
         active = self.request.query_params.get('active', None)
 
@@ -387,7 +408,7 @@ class StockList(generics.ListCreateAPIView):
                     stock_list = stock_list.filter(part=part_id)
 
             except (ValueError, Part.DoesNotExist):
-                pass
+                raise ValidationError({"part": "Invalid Part ID specified"})
 
         # Does the client wish to filter by the 'ancestor'?
         anc_id = self.request.query_params.get('ancestor', None)
@@ -400,12 +421,12 @@ class StockList(generics.ListCreateAPIView):
                 stock_list = stock_list.filter(id__in=[item.pk for item in ancestor.children.all()])
 
             except (ValueError, Part.DoesNotExist):
-                pass
+                raise ValidationError({"ancestor": "Invalid ancestor ID specified"})
 
         # Does the client wish to filter by stock location?
         loc_id = self.request.query_params.get('location', None)
 
-        cascade = str2bool(self.request.query_params.get('cascade', False))
+        cascade = str2bool(self.request.query_params.get('cascade', True))
 
         if loc_id is not None:
 
@@ -433,7 +454,7 @@ class StockList(generics.ListCreateAPIView):
                 stock_list = stock_list.filter(part__category__in=category.getUniqueChildren())
 
             except (ValueError, PartCategory.DoesNotExist):
-                pass
+                raise ValidationError({"category": "Invalid category id specified"})
 
         # Filter by StockItem status
         status = self.request.query_params.get('status', None)
@@ -490,9 +511,11 @@ class StockList(generics.ListCreateAPIView):
 
     filter_fields = [
         'supplier_part',
-        'customer',
         'belongs_to',
         'build',
+        'build_order',
+        'sales_order',
+        'build_order',
     ]
 
 

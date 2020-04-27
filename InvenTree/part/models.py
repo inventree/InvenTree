@@ -39,9 +39,10 @@ from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize
 
-from InvenTree.status_codes import BuildStatus, StockStatus, OrderStatus
+from InvenTree.status_codes import BuildStatus, StockStatus, PurchaseOrderStatus
 
 from company.models import SupplierPart
+from stock import models as StockModels
 
 
 class PartCategory(InvenTreeTree):
@@ -639,11 +640,12 @@ class Part(models.Model):
     def stock_entries(self):
         """ Return all 'in stock' items. To be in stock:
 
-        - customer is None
+        - build_order is None
+        - sales_order is None
         - belongs_to is None
         """
 
-        return self.stock_items.filter(customer=None, belongs_to=None)
+        return self.stock_items.filter(StockModels.StockItem.IN_STOCK_FILTER).exclude(status__in=StockStatus.UNAVAILABLE_CODES)
 
     @property
     def total_stock(self):
@@ -824,6 +826,11 @@ class Part(models.Model):
         max_price = None
 
         for item in self.bom_items.all().select_related('sub_part'):
+
+            if item.sub_part.pk == self.pk:
+                print("Warning: Item contains itself in BOM")
+                continue
+
             prices = item.sub_part.get_price_range(quantity * item.quantity)
 
             if prices is None:
@@ -924,6 +931,17 @@ class Part(models.Model):
 
         return n
 
+    def sales_orders(self):
+        """ Return a list of sales orders which reference this part """
+
+        orders = []
+
+        for line in self.sales_order_line_items.all().prefetch_related('order'):
+            if line.order not in orders:
+                orders.append(line.order)
+
+        return orders
+
     def purchase_orders(self):
         """ Return a list of purchase orders which reference this part """
 
@@ -939,18 +957,18 @@ class Part(models.Model):
     def open_purchase_orders(self):
         """ Return a list of open purchase orders against this part """
 
-        return [order for order in self.purchase_orders() if order.status in OrderStatus.OPEN]
+        return [order for order in self.purchase_orders() if order.status in PurchaseOrderStatus.OPEN]
 
     def closed_purchase_orders(self):
         """ Return a list of closed purchase orders against this part """
 
-        return [order for order in self.purchase_orders() if order.status not in OrderStatus.OPEN]
+        return [order for order in self.purchase_orders() if order.status not in PurchaseOrderStatus.OPEN]
 
     @property
     def on_order(self):
         """ Return the total number of items on order for this part. """
 
-        orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=OrderStatus.OPEN).aggregate(
+        orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=PurchaseOrderStatus.OPEN).aggregate(
             quantity=Sum('purchase_order_line_items__quantity'),
             received=Sum('purchase_order_line_items__received')
         )

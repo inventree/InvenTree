@@ -4,8 +4,8 @@
 var {{ label }}Codes = {
     {% for opt in options %}'{{ opt.key }}': {
         key: '{{ opt.key }}',
-        value: '{{ opt.value }}',{% if opt.label %}
-        label: '{{ opt.label }}',{% endif %}
+        value: '{{ opt.value }}',{% if opt.color %}
+        label: 'label-{{ opt.color }}',{% endif %}
     },{% endfor %}
 };
 
@@ -18,18 +18,14 @@ function {{ label }}StatusDisplay(key) {
 
     key = String(key);
 
-    var label = {{ label }}Codes[key].label;
-
     var value = {{ label }}Codes[key].value;
 
     if (value == null || value.length == 0) {
         value = key;
     }
 
-    // Label not found, return the original string
-    if (label == null || label.length == 0) {
-        return value;
-    }
+    // Select the label color
+    var label = {{ label }}Codes[key].label ?? '';
 
-    return `<span class='label label-${label}'>${value}</span>`;
+    return `<span class='label ${label}'>${value}</span>`;
 }

@@ -69,5 +69,7 @@ class RoundingDecimalField(models.DecimalField):
         defaults = {
             'form_class': RoundingDecimalFormField
         }
+
         defaults.update(kwargs)
-        return super(RoundingDecimalField, self).formfield(**kwargs)
+        
+        return super().formfield(**kwargs)

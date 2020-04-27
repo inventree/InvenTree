@@ -78,6 +78,59 @@ function getImageUrlFromTransfer(transfer) {
     return url;
 }
 
+function makeIconButton(icon, cls, pk, title) {
+    // Construct an 'icon button' using the fontawesome set
+
+    var classes = `btn btn-default btn-glyph ${cls}`;
+
+    var id = `${cls}-${pk}`;
+
+    var html = '';
+    
+    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}'>`;
+    html += `<span class='fas ${icon}'></span>`;
+    html += `</button>`;
+
+    return html;
+}
+
+function makeProgressBar(value, maximum, opts) {
+    /*
+     * Render a progessbar!
+     * 
+     * @param value is the current value of the progress bar
+     * @param maximum is the maximum value of the progress bar
+     */
+
+    var options = opts || {};
+
+    value = parseFloat(value);
+    maximum = parseFloat(maximum);
+
+    var percent = parseInt(value / maximum * 100);
+
+    if (percent > 100) {
+        percent = 100;
+    }
+
+    var extraclass = '';
+
+    if (value > maximum) {
+        extraclass='progress-bar-over';
+    } else if (value < maximum) {
+        extraclass = 'progress-bar-under';
+    }
+
+    var id = options.id || 'progress-bar';
+
+    return `
+    <div id='${id}' class='progress'>
+        <div class='progress-bar ${extraclass}' role='progressbar' aria-valuenow='${percent}' aria-valuemin='0' aria-valuemax='100' style='width:${percent}%'></div>
+        <div class='progress-value'>${value} / ${maximum}</div>
+    </div>
+    `;
+}
+
 
 function enableDragAndDrop(element, url, options) {
     /* Enable drag-and-drop file uploading for a given element.

@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
-from InvenTree.status_codes import OrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 
@@ -53,7 +53,7 @@ class POTests(OrderViewTestCase):
         response = self.client.get(reverse('po-detail', args=(1,)))
         self.assertEqual(response.status_code, 200)
         keys = response.context.keys()
-        self.assertIn('OrderStatus', keys)
+        self.assertIn('PurchaseOrderStatus', keys)
 
     def test_po_create(self):
         """ Launch forms to create new PurchaseOrder"""
@@ -91,7 +91,7 @@ class POTests(OrderViewTestCase):
         url = reverse('po-issue', args=(1,))
 
         order = PurchaseOrder.objects.get(pk=1)
-        self.assertEqual(order.status, OrderStatus.PENDING)
+        self.assertEqual(order.status, PurchaseOrderStatus.PENDING)
 
         # Test without confirmation
         response = self.client.post(url, {'confirm': 0}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -109,7 +109,7 @@ class POTests(OrderViewTestCase):
 
         # Test that the order was actually placed
         order = PurchaseOrder.objects.get(pk=1)
-        self.assertEqual(order.status, OrderStatus.PLACED)
+        self.assertEqual(order.status, PurchaseOrderStatus.PLACED)
 
     def test_line_item_create(self):
         """ Test the form for adding a new LineItem to a PurchaseOrder """
@@ -117,7 +117,7 @@ class POTests(OrderViewTestCase):
         # Record the number of line items in the PurchaseOrder
         po = PurchaseOrder.objects.get(pk=1)
         n = po.lines.count()
-        self.assertEqual(po.status, OrderStatus.PENDING)
+        self.assertEqual(po.status, PurchaseOrderStatus.PENDING)
 
         url = reverse('po-line-item-create')
 
@@ -181,7 +181,7 @@ class TestPOReceive(OrderViewTestCase):
         super().setUp()
 
         self.po = PurchaseOrder.objects.get(pk=1)
-        self.po.status = OrderStatus.PLACED
+        self.po.status = PurchaseOrderStatus.PLACED
         self.po.save()
         self.url = reverse('po-receive', args=(1,))
 

@@ -34,6 +34,7 @@ class StockItemSerializerBrief(InvenTreeModelSerializer):
 
     location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
+    quantity = serializers.FloatField()
 
     class Meta:
         model = StockItem
@@ -67,6 +68,8 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'supplier_part',
             'supplier_part__supplier',
             'supplier_part__manufacturer',
+            'allocations',
+            'sales_order_allocations',
             'location',
             'part',
             'tracking_info',
@@ -90,6 +93,9 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True)
 
+    quantity = serializers.FloatField()
+    allocated = serializers.FloatField(source='allocation_count', read_only=True)
+
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
@@ -110,7 +116,10 @@ class StockItemSerializer(InvenTreeModelSerializer):
     class Meta:
         model = StockItem
         fields = [
+            'allocated',
             'batch',
+            'build_order',
+            'belongs_to',
             'in_stock',
             'link',
             'location',
@@ -120,6 +129,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'part_detail',
             'pk',
             'quantity',
+            'sales_order',
             'serial',
             'supplier_part',
             'supplier_part_detail',

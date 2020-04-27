@@ -13,20 +13,20 @@
     <p>All stock items</p>
     {% endif %}
     <p>
-        <div class='btn-group'>
-            <button class='btn btn-default btn-glyph' id='location-create' title='Create new stock location'>
-                <span class='glyphicon glyphicon-plus'/>
+        <div class='btn-group action-buttons'>
+            <button class='btn btn-default' id='location-create' title='Create new stock location'>
+                <span class='fas fa-plus-circle icon-green'/>
             </button>
             {% if location %}
             {% include "qr_button.html" %}
-            <button class='btn btn-default btn-glyph' id='location-count' title='Count stock items'>
-                <span class='glyphicon glyphicon-ok-circle'/>
+            <button class='btn btn-default' id='location-count' title='Count stock items'>
+                <span class='fas fa-clipboard-list'/>
             </button>
             <button class='btn btn-default btn-glyph' id='location-edit' title='Edit stock location'>
-                <span class='glyphicon glyphicon-edit'/>
+                <span class='fas fa-edit icon-blue'/>
             </button>
             <button class='btn btn-default btn-glyph' id='location-delete' title='Delete stock location'>
-                <span class='glyphicon glyphicon-trash'/>
+                <span class='glyphicon glyphicon-trash icon-red'/>
             </button>
             {% endif %}
         </div>
@@ -233,6 +233,7 @@
             {% endif %}
             part_detail: true,
             location_detail: true,
+            in_stock: true,
         },
         url: "{% url 'api-stock-list' %}",
     });

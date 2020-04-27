@@ -228,8 +228,10 @@ function loadStockTable(table, options) {
                     } else {
                         url = `/part/${row.part}/`;
                     }
+
+                    html = imageHoverIcon(thumb) + renderLink(name, url);
                     
-                    return imageHoverIcon(thumb) + renderLink(name, url);
+                    return html;
                 }
             },
             {
@@ -255,9 +257,18 @@ function loadStockTable(table, options) {
                         val = +val.toFixed(5);
                     }
 
-                    var text = renderLink(val, '/stock/item/' + row.pk + '/');
+                    var html = renderLink(val, `/stock/item/${row.pk}/`);
                     
-                    return text;
+                    if (row.allocated) {
+                        html += `<span class='fas fa-bookmark label-right' title='StockItem has been allocated'></span>`;
+                    }
+
+                    // 70 = "LOST"
+                    if (row.status == 70) {
+                        html += `<span class='fas fa-question-circle label-right' title='StockItem is lost'></span>`;
+                    }
+
+                    return html;
                 }
             },
             {

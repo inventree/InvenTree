@@ -3,6 +3,12 @@
     --secondary-color: #b69c80;
     --highlight-color: #f5efe8;
     --basic-color: #333;
+
+    --label-red: #e35a57;
+    --label-blue: #4194bd;
+    --label-green: #50aa51;
+    --label-grey: #aaa;
+    --label-yellow: #fdc82a;
 }
 
 .markdownx .row {
@@ -27,6 +33,38 @@
     border: 1px solid #cce;
     border-radius: 3px;
     padding: 10px;
+}
+
+/* Progress bars */
+
+.progress {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0px;
+    background: #eeeef5;
+}
+
+.progress-bar {
+    opacity: 60%;
+    background: #2aa02a;
+}
+
+.progress-bar-under {
+    background: #eeaa33;
+}
+
+.progress-bar-over {
+    background: #337ab7;
+}
+
+.progress-value {
+    width: 100%;
+    color: #333;
+    position: absolute;
+    text-align: center;
+    top: 0px;
+    left: 0px;
+    font-size: 110%;
 }
 
 .qr-code {
@@ -79,24 +117,20 @@
     color: rgb(13, 245, 25);
 }
 
-.glyphicon-ok {
-    color: #5C5;
+.icon-red {
+    color: #c55;
 }
 
-.glyphicon-ok-circle {
+.icon-green {
+    color: #43bb43;
+}
+
+.icon-blue {
     color: #55c;
 }
 
-.glyphicon-remove {
-    color: #C55;
-}
-
-.glyphicon-trash {
-    color: #C55;
-}
-
-.glyphicon-plus {
-    color: #5C5;
+.icon-yellow {
+    color: #CC2;
 }
 
 /* CSS overrides for treeview */
@@ -121,6 +155,58 @@
 .label-large {
     margin: 3px;
     font-size: 100%;
+    border: 3px solid;
+    border-radius: 15px;
+    background: none;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.label-large-red {
+    color: var(--label-red);
+    border-color: var(--label-red);
+}
+
+.label-red {
+    background: var(--label-red);
+}
+
+.label-large-blue {
+    color: var(--label-blue);
+    border-color: var(--label-blue);
+}
+
+.label-blue {
+    background: var(--label-blue);
+}
+
+.label-large-green {
+    color: var(--label-green);
+    border-color: var(--label-green);
+}
+
+.label-green {
+    background: var(--label-green);
+}
+
+.label-large-grey {
+    color: var(--label-grey);
+    border-color: var(--label-grey);
+}
+
+.label-grey {
+    background: var(--label-grey);
+}
+
+.label-large-yellow {
+    color: var(--label-yellow);
+    border-color: var(--label-yellow);
+}
+
+.label-yellow {
+    background: var(--label-yellow);
 }
 
 .label-right {
@@ -133,6 +219,15 @@
 
 .stock-sub-group td {
     background-color: #ebf4f4;
+}
+
+.sub-table {
+    margin-left: 45px;
+    margin-right: 45px;
+}
+
+.detail-icon .glyphicon {
+    color: #98d296;
 }
 
 /* Force select2 elements in modal forms to be full width */
@@ -248,7 +343,6 @@
 
 /* dropzone class - for Drag-n-Drop file uploads */
 .dropzone {
-    border: 1px solid #555;
     z-index: 2;
 }
 
@@ -290,6 +384,20 @@
     padding-bottom: 2px;
 }
 
+.action-buttons .btn {
+    font-size: 175%;
+    align-content: center;
+    vertical-align: middle;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 3px;
+    padding-bottom: 2px;
+};
+
+.panel-heading .badge {
+    float: right;
+}
+
 .badge {
     float: right;
     background-color: #777;
@@ -308,6 +416,8 @@
     margin: 2px;
     padding: 3px;
     object-fit: contain;
+    border: 1px solid #aaa;
+    border-radius: 3px;
 }
 
 .part-thumb-container:hover .part-thumb-overlay {

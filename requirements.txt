@@ -1,6 +1,6 @@
 wheel>=0.34.2                   # Wheel
 Django==3.0.5                   # Django package
-pillow==6.2.0                   # Image manipulation
+pillow==6.2.2                   # Image manipulation
 djangorestframework==3.10.3     # DRF framework
 django-dbbackup==3.3.0          # Database backup / restore functionality
 django-cors-headers==3.2.0      # CORS headers extension for DRF
@@ -14,10 +14,7 @@ tablib==0.13.0                  # Import / export data files
 django-crispy-forms==1.8.1      # Form helpers
 django-import-export==2.0.0     # Data import / export for admin interface
 django-cleanup==4.0.0           # Manage deletion of old / unused uploaded files
-# TODO: Once the official django-qr-code package has been updated with Django3.x support,
-# the following line should be removed.
-git+git://github.com/chrissam/django-qr-code
-# django-qr-code==1.1.0           # Generate QR codes
+django-qr-code==1.2.0           # Generate QR codes
 flake8==3.3.0                   # PEP checking
 coverage==4.0.3                 # Unit test coverage
 python-coveralls==2.9.1         # Coveralls linking (for Travis)

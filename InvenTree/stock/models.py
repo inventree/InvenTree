@@ -11,6 +11,8 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from django.db import models, transaction
+from django.db.models import Sum, Q
+from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
@@ -28,7 +30,8 @@ from InvenTree.status_codes import StockStatus
 from InvenTree.models import InvenTreeTree
 from InvenTree.fields import InvenTreeURLField
 
-from part.models import Part
+from part import models as PartModels
+from order.models import PurchaseOrder, SalesOrder
 
 
 class StockLocation(InvenTreeTree):
@@ -126,7 +129,12 @@ class StockItem(MPTTModel):
         build: Link to a Build (if this stock item was created from a build)
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
+        sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
+        build_order: Link to a BuildOrder object (if the StockItem has been assigned to a BuildOrder)
     """
+
+    # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
+    IN_STOCK_FILTER = Q(sales_order=None, build_order=None, belongs_to=None)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -210,7 +218,7 @@ class StockItem(MPTTModel):
                         raise ValidationError({
                             'serial': _('A stock item with this serial number already exists')
                         })
-        except Part.DoesNotExist:
+        except PartModels.Part.DoesNotExist:
             pass
 
     def clean(self):
@@ -222,6 +230,18 @@ class StockItem(MPTTModel):
         - The 'part' does not belong to itself
         - Quantity must be 1 if the StockItem has a serial number
         """
+
+        if self.status == StockStatus.SHIPPED and self.sales_order is None:
+            raise ValidationError({
+                'sales_order': "SalesOrder must be specified as status is marked as SHIPPED",
+                'status': "Status cannot be marked as SHIPPED if the Customer is not set",
+            })
+
+        if self.status == StockStatus.ASSIGNED_TO_OTHER_ITEM and self.belongs_to is None:
+            raise ValidationError({
+                'belongs_to': "Belongs_to field must be specified as statis is marked as ASSIGNED_TO_OTHER_ITEM",
+                'status': 'Status cannot be marked as ASSIGNED_TO_OTHER_ITEM if the belongs_to field is not set',
+            })
 
         # The 'supplier_part' field must point to the same part!
         try:
@@ -256,7 +276,7 @@ class StockItem(MPTTModel):
                 if self.part.is_template:
                     raise ValidationError({'part': _('Stock item cannot be created for a template Part')})
 
-        except Part.DoesNotExist:
+        except PartModels.Part.DoesNotExist:
             # This gets thrown if self.supplier_part is null
             # TODO - Find a test than can be perfomed...
             pass
@@ -298,59 +318,102 @@ class StockItem(MPTTModel):
 
     uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
 
-    parent = TreeForeignKey('self',
-                            on_delete=models.DO_NOTHING,
-                            blank=True, null=True,
-                            related_name='children')
+    parent = TreeForeignKey(
+        'self',
+        verbose_name=_('Parent Stock Item'),
+        on_delete=models.DO_NOTHING,
+        blank=True, null=True,
+        related_name='children'
+    )
 
-    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
-                             related_name='stock_items', help_text=_('Base part'),
-                             limit_choices_to={
-                                 'is_template': False,
-                                 'active': True,
-                                 'virtual': False
-                             })
+    part = models.ForeignKey(
+        'part.Part', on_delete=models.CASCADE,
+        verbose_name=_('Base Part'),
+        related_name='stock_items', help_text=_('Base part'),
+        limit_choices_to={
+            'is_template': False,
+            'active': True,
+            'virtual': False
+        })
 
-    supplier_part = models.ForeignKey('company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
-                                      help_text=_('Select a matching supplier part for this stock item'))
+    supplier_part = models.ForeignKey(
+        'company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
+        verbose_name=_('Supplier Part'),
+        help_text=_('Select a matching supplier part for this stock item')
+    )
 
-    location = TreeForeignKey(StockLocation, on_delete=models.DO_NOTHING,
-                              related_name='stock_items', blank=True, null=True,
-                              help_text=_('Where is this stock item located?'))
+    location = TreeForeignKey(
+        StockLocation, on_delete=models.DO_NOTHING,
+        verbose_name=_('Stock Location'),
+        related_name='stock_items',
+        blank=True, null=True,
+        help_text=_('Where is this stock item located?')
+    )
 
-    belongs_to = models.ForeignKey('self', on_delete=models.DO_NOTHING,
-                                   related_name='owned_parts', blank=True, null=True,
-                                   help_text=_('Is this item installed in another item?'))
+    belongs_to = models.ForeignKey(
+        'self',
+        verbose_name=_('Installed In'),
+        on_delete=models.DO_NOTHING,
+        related_name='owned_parts', blank=True, null=True,
+        help_text=_('Is this item installed in another item?')
+    )
 
-    customer = models.ForeignKey('company.Company', on_delete=models.SET_NULL,
-                                 related_name='stockitems', blank=True, null=True,
-                                 help_text=_('Item assigned to customer?'))
-
-    serial = models.PositiveIntegerField(blank=True, null=True,
-                                         help_text=_('Serial number for this item'))
+    serial = models.PositiveIntegerField(
+        verbose_name=_('Serial Number'),
+        blank=True, null=True,
+        help_text=_('Serial number for this item')
+    )
  
-    link = InvenTreeURLField(max_length=125, blank=True, help_text=_("Link to external URL"))
+    link = InvenTreeURLField(
+        verbose_name=_('External Link'),
+        max_length=125, blank=True,
+        help_text=_("Link to external URL")
+    )
 
-    batch = models.CharField(max_length=100, blank=True, null=True,
-                             help_text=_('Batch code for this stock item'))
+    batch = models.CharField(
+        verbose_name=_('Batch Code'),
+        max_length=100, blank=True, null=True,
+        help_text=_('Batch code for this stock item')
+    )
 
-    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
+    quantity = models.DecimalField(
+        verbose_name=_("Stock Quantity"),
+        max_digits=15, decimal_places=5, validators=[MinValueValidator(0)],
+        default=1
+    )
 
     updated = models.DateField(auto_now=True, null=True)
 
     build = models.ForeignKey(
         'build.Build', on_delete=models.SET_NULL,
+        verbose_name=_('Source Build'),
         blank=True, null=True,
         help_text=_('Build for this stock item'),
         related_name='build_outputs',
     )
 
     purchase_order = models.ForeignKey(
-        'order.PurchaseOrder',
+        PurchaseOrder,
         on_delete=models.SET_NULL,
+        verbose_name=_('Source Purchase Order'),
         related_name='stock_items',
         blank=True, null=True,
         help_text=_('Purchase order for this stock item')
+    )
+
+    sales_order = models.ForeignKey(
+        SalesOrder,
+        on_delete=models.SET_NULL,
+        verbose_name=_("Destination Sales Order"),
+        related_name='stock_items',
+        null=True, blank=True)
+
+    build_order = models.ForeignKey(
+        'build.Build',
+        on_delete=models.SET_NULL,
+        verbose_name=_("Destination Build Order"),
+        related_name='stock_items',
+        null=True, blank=True
     )
 
     # last time the stock was checked / counted
@@ -368,12 +431,64 @@ class StockItem(MPTTModel):
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
 
-    notes = MarkdownxField(blank=True, null=True, help_text=_('Stock Item Notes'))
+    notes = MarkdownxField(
+        blank=True, null=True,
+        verbose_name=_("Notes"),
+        help_text=_('Stock Item Notes')
+    )
 
     # If stock item is incoming, an (optional) ETA field
     # expected_arrival = models.DateField(null=True, blank=True)
 
     infinite = models.BooleanField(default=False)
+
+    def is_allocated(self):
+        """
+        Return True if this StockItem is allocated to a SalesOrder or a Build
+        """
+
+        # TODO - For now this only checks if the StockItem is allocated to a SalesOrder
+        # TODO - In future, once the "build" is working better, check this too
+
+        if self.allocations.count() > 0:
+            return True
+
+        if self.sales_order_allocations.count() > 0:
+            return True
+
+        return False
+
+    def build_allocation_count(self):
+        """
+        Return the total quantity allocated to builds
+        """
+
+        query = self.allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['q']
+
+    def sales_order_allocation_count(self):
+        """
+        Return the total quantity allocated to SalesOrders
+        """
+
+        query = self.sales_order_allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['q']
+
+    def allocation_count(self):
+        """
+        Return the total quantity allocated to builds or orders
+        """
+
+        return self.build_allocation_count() + self.sales_order_allocation_count()
+
+    def unallocated_quantity(self):
+        """
+        Return the quantity of this StockItem which is *not* allocated
+        """
+
+        return max(self.quantity - self.allocation_count(), 0)
 
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
@@ -381,12 +496,20 @@ class StockItem(MPTTModel):
         - Has child StockItems
         - Has a serial number and is tracked
         - Is installed inside another StockItem
+        - It has been assigned to a SalesOrder
+        - It has been assigned to a BuildOrder
         """
 
         if self.child_count > 0:
             return False
 
         if self.part.trackable and self.serial is not None:
+            return False
+
+        if self.sales_order is not None:
+            return False
+
+        if self.build_order is not None:
             return False
 
         return True
@@ -406,7 +529,20 @@ class StockItem(MPTTModel):
     @property
     def in_stock(self):
 
-        if self.belongs_to or self.customer:
+        # Not 'in stock' if it has been installed inside another StockItem
+        if self.belongs_to is not None:
+            return False
+            
+        # Not 'in stock' if it has been sent to a customer
+        if self.sales_order is not None:
+            return False
+
+        # Not 'in stock' if it has been allocated to a BuildOrder
+        if self.build_order is not None:
+            return False
+
+        # Not 'in stock' if the status code makes it unavailable
+        if self.status in StockStatus.UNAVAILABLE_CODES:
             return False
 
         return True
@@ -583,6 +719,9 @@ class StockItem(MPTTModel):
         # Remove the specified quantity from THIS stock item
         self.take_stock(quantity, user, 'Split {n} items into new stock item'.format(n=quantity))
 
+        # Return a copy of the "new" stock item
+        return new_stock
+
     @transaction.atomic
     def move(self, location, notes, user, **kwargs):
         """ Move part to a new location.
@@ -604,6 +743,9 @@ class StockItem(MPTTModel):
             quantity = Decimal(kwargs.get('quantity', self.quantity))
         except InvalidOperation:
             return False
+
+        if not self.in_stock:
+            raise ValidationError(_("StockItem cannot be moved as it is not in stock"))
 
         if quantity <= 0:
             return False

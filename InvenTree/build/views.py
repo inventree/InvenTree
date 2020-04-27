@@ -125,7 +125,7 @@ class BuildAutoAllocate(AjaxUpdateView):
 
         if confirm is False:
             form.errors['confirm'] = [_('Confirm stock allocation')]
-            form.non_field_errors = _('Check the confirmation box at the bottom of the list')
+            form.non_field_errors = [_('Check the confirmation box at the bottom of the list')]
         else:
             build.autoAllocate()
             valid = True
@@ -159,7 +159,7 @@ class BuildUnallocate(AjaxUpdateView):
 
         if confirm is False:
             form.errors['confirm'] = [_('Confirm unallocation of build stock')]
-            form.non_field_errors = _('Check the confirmation box')
+            form.non_field_errors = [_('Check the confirmation box')]
         else:
             build.unallocateStock()
             valid = True
@@ -261,13 +261,13 @@ class BuildComplete(AjaxUpdateView):
             try:
                 location = StockLocation.objects.get(id=loc_id)
                 valid = True
-            except StockLocation.DoesNotExist:
+            except (ValueError, StockLocation.DoesNotExist):
                 form.errors['location'] = [_('Invalid location selected')]
 
             serials = []
 
             if build.part.trackable:
-                # A build for a trackable part must specify serial numbers
+                # A build for a trackable part may optionally specify serial numbers.
 
                 sn = request.POST.get('serial_numbers', '')
 
@@ -295,7 +295,9 @@ class BuildComplete(AjaxUpdateView):
                         valid = False
 
             if valid:
-                build.completeBuild(location, serials, request.user)
+                if not build.completeBuild(location, serials, request.user):
+                    form.non_field_errors = [('Build could not be completed')]
+                    valid = False
 
         data = {
             'form_valid': valid,
@@ -393,13 +395,15 @@ class BuildCreate(AjaxCreateView):
 
         initials = super(BuildCreate, self).get_initial().copy()
 
-        part_id = self.request.GET.get('part', None)
+        # User has provided a Part ID
+        initials['part'] = self.request.GET.get('part', None)
 
-        if part_id:
-            try:
-                initials['part'] = Part.objects.get(pk=part_id)
-            except Part.DoesNotExist:
-                pass
+        initials['parent'] = self.request.GET.get('parent', None)
+
+        # User has provided a SalesOrder ID
+        initials['sales_order'] = self.request.GET.get('sales_order', None)
+
+        initials['quantity'] = self.request.GET.get('quantity', 1)
 
         return initials
 
@@ -540,26 +544,63 @@ class BuildItemCreate(AjaxCreateView):
         build_id = self.get_param('build')
         part_id = self.get_param('part')
 
+        # Reference to a Part object
+        part = None
+
+        # Reference to a StockItem object
+        item = None
+        
+        # Reference to a Build object
+        build = None
+
         if part_id:
             try:
                 part = Part.objects.get(pk=part_id)
+                initials['part'] = part
             except Part.DoesNotExist:
-                part = None
-        else:
-            part = None
+                pass
 
         if build_id:
             try:
                 build = Build.objects.get(pk=build_id)
                 initials['build'] = build
-
-                # Try to work out how many parts to allocate
-                if part:
-                    unallocated = build.getUnallocatedQuantity(part)
-                    initials['quantity'] = unallocated
-
             except Build.DoesNotExist:
                 pass
+
+        quantity = self.request.GET.get('quantity', None)
+
+        if quantity is not None:
+            quantity = float(quantity)
+
+        if quantity is None:
+            # Work out how many parts remain to be alloacted for the build
+            if part:
+                quantity = build.getUnallocatedQuantity(part)
+                
+        item_id = self.get_param('item')
+
+        # If the request specifies a particular StockItem
+        if item_id:
+            try:
+                item = StockItem.objects.get(pk=item_id)
+            except:
+                pass
+
+        # If a StockItem is not selected, try to auto-select one
+        if item is None and part is not None:
+            items = StockItem.objects.filter(part=part)
+            if items.count() == 1:
+                item = items.first()
+
+        # Finally, if a StockItem is selected, ensure the quantity is not too much
+        if item is not None:
+            if quantity is None:
+                quantity = item.unallocated_quantity()
+            else:
+                quantity = min(quantity, item.unallocated_quantity())
+
+        if quantity is not None:
+            initials['quantity'] = quantity
 
         return initials
 

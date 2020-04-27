@@ -6,11 +6,6 @@
 
 {% block content %}
 
-{% if part.active == False %}
-<div class='alert alert-danger alert-block'>
-    {% trans "This part is not active" %}
-</div>
-{% endif %}
 {% if part.is_template %}
 <div class='alert alert-info alert-block'>
     {% trans "This part is a template part." %}
@@ -28,43 +23,48 @@
 <div class="col-sm-6">
     {% include "part/part_thumb.html" %}
     <div class="media-body">
-        <h4>
+        <h3>
             {{ part.full_name }}
-        </h4>   
+            {% if not part.active %}
+            <div class='label label-large label-large-red'>
+                {% trans 'Inactive' %}
+            </div>
+            {% endif %}
+        </h3>   
         <p><i>{{ part.description }}</i></p>
         <p>
             <div class='btn-row'>
-                <div class='btn-group'>
-                    <button type='button' class='btn btn-default btn-glyph' id='toggle-starred' title='{% trans "Star this part" %}'>
-                        <span id='part-star-icon' class='starred-part glyphicon {% if starred %}glyphicon-star{% else %}glyphicon-star-empty{% endif %}'/>
+                <div class='btn-group action-buttons'>
+                    <button type='button' class='btn btn-default' id='toggle-starred' title='{% trans "Star this part" %}'>
+                        <span id='part-star-icon' class='fas fa-star {% if starred %}icon-yellow{% endif %}'/>
                     </button>
                     {% if part.is_template == False %}
                     {% include "qr_button.html" %}
                     {% if part.active %}
-                    <button type='button' class='btn btn-default btn-glyph' id='price-button' title='{% trans "Show pricing information" %}'>
-                        <span id='part-price-icon' class='part-price glyphicon glyphicon-usd'/>
+                    <button type='button' class='btn btn-default' id='price-button' title='{% trans "Show pricing information" %}'>
+                        <span id='part-price-icon' class='fas fa-dollar-sign'/>
                     </button>
                     {% if not part.virtual %}
-                    <button type='button' class='btn btn-default btn-glyph' id='part-count' title='Count part stock'>
-                        <span class='glyphicon glyphicon-ok-circle'/>
+                    <button type='button' class='btn btn-default' id='part-count' title='Count part stock'>
+                        <span class='fas fa-clipboard-list'/>
                     </button>
                     {% endif %}
                     {% if part.purchaseable %}
-                    <button type='button' class='btn btn-default btn-glyph' id='part-order' title='Order part'>
-                        <span id='part-order-icon' class='part-order glyphicon glyphicon-shopping-cart'/>
+                    <button type='button' class='btn btn-default' id='part-order' title='Order part'>
+                        <span id='part-order-icon' class='fas fa-shopping-cart'/>
                     </button>
                     {% endif %}
                     {% endif %}
                     {% endif %}
-                    <button type='button' class='btn btn-default btn-glyph' id='part-duplicate' title='Duplicate part'>
-                        <span id='part-duplicate-icon' class='part-duplicate glyphicon glyphicon-duplicate'/>
+                    <button type='button' class='btn btn-default' id='part-duplicate' title='Duplicate part'>
+                        <span id='part-duplicate-icon' class='fas fa-copy'/>
                     </button>
-                    <button type='button' class='btn btn-default btn-glyph' id='part-edit' title='Edit part'>
-                        <span id='part-edit-icon' class='glyphicon glyphicon-edit'/>
+                    <button type='button' class='btn btn-default' id='part-edit' title='Edit part'>
+                        <span id='part-edit-icon' class='fas fa-edit icon-blue'/>
                     </button>
                     {% if not part.active %}
-                    <button type='button' class='btn btn-default btn-glyph' id='part-delete' title='Delete part'>
-                        <span id='part-delete-icon' class='glyphicon glyphicon-trash'/>
+                    <button type='button' class='btn btn-default' id='part-delete' title='Delete part'>
+                        <span id='part-delete-icon' class='fas fa-trash-alt icon-red'/>
                     </button>
                     {% endif %}
                 </div>
