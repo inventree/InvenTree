@@ -41,6 +41,116 @@ $("#new-so-line").click(function() {
     });
 });
 
+{% if order.status == SalesOrderStatus.PENDING %}
+function showAllocationSubTable(index, row, element) {
+    // Construct a table showing stock items which have been allocated against this line item
+    
+    var html = `<div class='sub-table'><table class='table table-striped table-condensed' id='allocation-table-${row.pk}'></table></div>`;
+
+    element.html(html);
+
+    var lineItem = row;
+    
+    var table = $(`#allocation-table-${row.pk}`);
+
+    table.bootstrapTable({
+        data: row.allocations,
+        showHeader: false,
+        columns: [
+        {
+            width: '50%',
+            field: 'allocated',
+            title: 'Quantity',
+            formatter: function(value, row, index, field) {
+                return renderLink(value, `/stock/item/${row.item}/`);
+            },
+        },
+        {
+            field: 'location_id',
+            title: 'Location',
+            formatter: function(value, row, index, field) {
+                return renderLink(row.location_path, `/stock/location/${row.location_id}/`);
+            },
+        },
+        {
+            field: 'buttons',
+            title: 'Actions',
+            formatter: function(value, row, index, field) {
+                
+                var html = "<div class='btn-group float-right' role='group'>";
+                var pk = row.pk;
+                
+                {% if order.status == SalesOrderStatus.PENDING %}
+                html += makeIconButton('fa-edit', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
+                html += makeIconButton('fa-trash-alt', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
+                {% endif %}
+
+                html += "</div>";
+
+                return html;
+            },
+        },
+        ],
+    });
+
+    table.find(".button-allocation-edit").click(function() {
+
+        var pk = $(this).attr('pk');
+
+        launchModalForm(`/order/sales-order/allocation/${pk}/edit/`, {
+            success: reloadTable,
+        });
+    });
+
+    table.find(".button-allocation-delete").click(function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm(`/order/sales-order/allocation/${pk}/delete/`, {
+            success: reloadTable, 
+        });
+    });
+}
+{% endif %}
+
+function showFulfilledSubTable(index, row, element) {
+    // Construct a table showing stock items which have been fulfilled against this line item
+
+    var id = `fulfilled-table-${row.pk}`;
+    var html = `<div class='sub-table'><table class='table table-striped table-condensed' id='${id}'></table></div>`;
+
+    element.html(html);
+
+    var lineItem = row;
+
+    $(`#${id}`).bootstrapTable({
+        url: "{% url 'api-stock-list' %}",
+        queryParams: {
+            part: row.part,
+            sales_order: {{ order.id }},
+        },
+        showHeader: false,
+        columns: [
+            {
+                field: 'pk',
+                visible: false,
+            },
+            {
+                field: 'stock',
+                formatter: function(value, row) {
+                    var text = '';
+                    if (row.serial) {
+                        text = `{% trans "Serial Number" %}: ${row.serial}`;
+                    } else {
+                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+                    }
+
+                    return renderLink(text, `/stock/item/${row.pk}/`);  
+                },
+            }
+        ],
+    });
+}
+
 $("#so-lines-table").inventreeTable({
     formatNoMatches: function() { return "No matching line items"; },
     queryParams: {
@@ -51,78 +161,22 @@ $("#so-lines-table").inventreeTable({
     uniqueId: 'pk',
     url: "{% url 'api-so-line-list' %}",
     onPostBody: setupCallbacks,
+    {% if order.status == SalesOrderStatus.PENDING or order.status == SalesOrderStatus.SHIPPED %}
     detailViewByClick: true,
     detailView: true,
     detailFilter: function(index, row) {
+        {% if order.status == SalesOrderStatus.PENDING %}
         return row.allocated > 0;
+        {% else %}
+        return row.fulfilled > 0;
+        {% endif %}
     },
-    detailFormatter: function(index, row, element) {
-
-        var html = `<div class='sub-table'><table class='table table-striped table-condensed' id='allocation-table-${row.pk}'></table></div>`;
-
-        element.html(html);
-
-        var lineItem = row;
-        
-        var table = $(`#allocation-table-${row.pk}`);
-
-        table.bootstrapTable({
-            data: row.allocations,
-            showHeader: false,
-            columns: [
-            {
-                width: '50%',
-                field: 'allocated',
-                title: 'Quantity',
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, `/stock/item/${row.item}/`);
-                },
-            },
-            {
-                field: 'location_id',
-                title: 'Location',
-                formatter: function(value, row, index, field) {
-                    return renderLink(row.location_path, `/stock/location/${row.location_id}/`);
-                },
-            },
-            {
-                field: 'buttons',
-                title: 'Actions',
-                formatter: function(value, row, index, field) {
-                    
-                    var html = "<div class='btn-group float-right' role='group'>";
-                    var pk = row.pk;
-                    
-                    {% if order.status == SalesOrderStatus.PENDING %}
-                    html += makeIconButton('fa-edit', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
-                    html += makeIconButton('fa-trash-alt', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
-                    {% endif %}
-
-                    html += "</div>";
-
-                    return html;
-                },
-            },
-            ],
-        });
-
-        table.find(".button-allocation-edit").click(function() {
-    
-            var pk = $(this).attr('pk');
-    
-            launchModalForm(`/order/sales-order/allocation/${pk}/edit/`, {
-                success: reloadTable,
-            });
-        });
-    
-        table.find(".button-allocation-delete").click(function() {
-            var pk = $(this).attr('pk');
-
-            launchModalForm(`/order/sales-order/allocation/${pk}/delete/`, {
-                success: reloadTable, 
-            });
-        });
-    },
+    {% if order.status == SalesOrderStatus.PENDING %}
+    detailFormatter: showAllocationSubTable,
+    {% else %}
+    detailFormatter: showFulfilledSubTable,
+    {% endif %}
+    {% endif %}
     columns: [
         {
             field: 'pk',
@@ -154,20 +208,36 @@ $("#so-lines-table").inventreeTable({
         {
             sortable: true,
             field: 'allocated',
-            title: 'Allocated',
+            {% if order.status == SalesOrderStatus.PENDING %}
+            title: '{% trans "Allocated" %}',
+            {% else %}
+            title: '{% trans "Fulfilled" %}',
+            {% endif %}
             formatter: function(value, row, index, field) {
-                return makeProgressBar(row.allocated, row.quantity, {
+                {% if order.status == SalesOrderStatus.PENDING %}
+                var quantity = row.allocated;
+                {% else %}
+                var quantity = row.fulfilled;
+                {% endif %}
+                return makeProgressBar(quantity, row.quantity, {
                     id: `order-line-progress-${row.pk}`,
                 });
             },
             sorter: function(valA, valB, rowA, rowB) {
+                {% if order.status == SalesOrderStatus.PENDING %}
+                var A = rowA.allocated;
+                var B = rowB.allocated;
+                {% else %}
+                var A = rowA.fulfilled;
+                var B = rowB.fulfilled;
+                {% endif %}
                 
-                if (rowA.allocated == 0 && rowB.allocated == 0) {
+                if (A == 0 && B == 0) {
                     return (rowA.quantity > rowB.quantity) ? 1 : -1;
                 }
                 
-                var progressA = parseFloat(rowA.allocated) / rowA.quantity;
-                var progressB = parseFloat(rowB.allocated) / rowB.quantity;
+                var progressA = parseFloat(A) / rowA.quantity;
+                var progressB = parseFloat(B) / rowB.quantity;
 
                 return (progressA < progressB) ? 1 : -1;
             }
@@ -176,6 +246,7 @@ $("#so-lines-table").inventreeTable({
             field: 'notes',
             title: 'Notes',
         },
+        {% if order.status == SalesOrderStatus.PENDING %}
         {
             field: 'buttons',
             formatter: function(value, row, index, field) {
@@ -184,7 +255,6 @@ $("#so-lines-table").inventreeTable({
 
                 var pk = row.pk;
                 
-                {% if order.status == SalesOrderStatus.PENDING %}
                 if (row.part) {
                     var part = row.part_detail;
 
@@ -202,13 +272,12 @@ $("#so-lines-table").inventreeTable({
                 html += makeIconButton('fa-edit', 'button-edit', pk, '{% trans "Edit line item" %}');
                 html += makeIconButton('fa-trash-alt', 'button-delete', pk, '{% trans "Delete line item " %}');
 
-                {% endif %}
-
                 html += `</div>`;
 
                 return html;
             }
         },
+        {% endif %}
     ],
 });
 

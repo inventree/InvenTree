@@ -50,17 +50,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% block page_data %}
 <h3>
     {% trans "Stock Item" %}
-    {% if item.sales_order %}
-    <a href="{% url 'so-detail' item.sales_order.id %}">
-        <div class='label label-large label-large-blue'>{% trans "Sold" $}</div>
-    </a>
-    {% elif item.build_order %}
-    <a href="{% url 'build-detail' item.build_order.id %}">
-        <div class='label label-large label-large-blue'>{% trans "Used in Build" %}</div>
-    </a>
-    {% else %}
     {% stock_status_label item.status large=True %}
-    {% endif %}
 </h3>
 <hr>
 <h4>

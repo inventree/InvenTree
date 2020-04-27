@@ -325,7 +325,7 @@ class SalesOrder(Order):
                 allocation.complete_allocation(user)
 
                 # Remove the allocation from the database once it has been 'fulfilled'
-                if allocation.item.sales_order == self.order:
+                if allocation.item.sales_order == self:
                     allocation.delete()
                 else:
                     raise ValidationError("Could not complete order - allocation item not fulfilled")

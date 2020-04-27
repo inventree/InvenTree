@@ -541,6 +541,10 @@ class StockItem(MPTTModel):
         if self.build_order is not None:
             return False
 
+        # Not 'in stock' if the status code makes it unavailable
+        if self.status in StockStatus.UNAVAILABLE_CODES:
+            return False
+
         return True
 
     @property

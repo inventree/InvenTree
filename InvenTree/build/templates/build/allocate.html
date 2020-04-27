@@ -201,8 +201,9 @@ InvenTree | Allocate Parts
         formatNoMatches: function() { return "{% trans 'No BOM items found' %}"; },
         onLoadSuccess: function(tableData) {
             // Once the BOM data are loaded, request allocation data for the build
-            inventreeGet('/api/build/item/', {
-                build: {{ build.id }},
+            inventreeGet('/api/build/item/',
+                {
+                    build: {{ build.id }},
                 },
                 {
                     success: function(data) {
