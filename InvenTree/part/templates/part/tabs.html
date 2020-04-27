@@ -48,8 +48,8 @@
         <a href="{% url 'part-sales-orders' part.id %}">{% trans "Sales Orders" %} <span class='badge'>{{ part.sales_orders|length }}</span></a>
     </li>
     {% endif %}
-    {% if part.trackable %}
-    <li{% if 0 and ifequal tab 'track' %} class="active"{% endifequal %}>
+    {% if 0 and part.trackable %}
+    <li{% ifequal tab 'track' %} class="active"{% endifequal %}>
         <a href="{% url 'part-track' part.id %}">{% trans "Tracking" %}
         {% if parts.serials.all|length > 0 %}
         <span class="badge">{{ part.serials.all|length }}</span>

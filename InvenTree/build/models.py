@@ -265,8 +265,9 @@ class Build(MPTTModel):
         for build_item in self.allocated_stock.all().prefetch_related('stock_item'):
             build_item.complete_allocation(user)
 
-            # TODO - Remove the builditem from the database
-            # build_item.delete()
+            # Check that the stock-item has been assigned to this build, and remove the builditem from the database
+            if build_item.stock_item.build_order == self:
+                build_item.delete()
 
         notes = 'Built {q} on {now}'.format(
             q=self.quantity,

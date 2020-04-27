@@ -155,22 +155,39 @@ InvenTree | Allocate Parts
                         formatter: function(value, row, index, field) {
                             var text = '';
 
+                            var url = '';
+
                             if (row.serial && row.quantity == 1) {
                                 text = `{% trans "Serial Number" %}: ${row.serial}`;
                             } else {
                                 text = `{% trans "Quantity" %}: ${row.quantity}`;
                             }
 
-                            return renderLink(text, `/stock/item/${row.stock_item}/`);
+                            {% if build.status == BuildStatus.COMPLETE %}
+                            url = `/stock/item/${row.pk}/`;
+                            {% else %}
+                            url = `/stock/item/${row.stock_item}/`;
+                            {% endif %}
+
+                            return renderLink(text, url);
                         },
                     },
                     {
                         field: 'location',
                         title: '{% trans "Location" %}',
                         formatter: function(value, row, index, field) {
-                            return renderLink(row.stock_item_detail.location_name, `/stock/location/${row.stock_item_detail.location}/`);
+                            {% if build.status == BuildStatus.COMPLETE %}
+                            var text = row.location_detail.pathstring;
+                            var url = `/stock/location/${row.location}/`;
+                            {% else %}
+                            var text = row.stock_item_detail.location_name;
+                            var url = `/stock/location/${row.stock_item_detail.location}/`;
+                            {% endif %}
+
+                            return renderLink(text, url);
                         }
                     },
+                    {% if build.status == BuildStatus.PENDING %}
                     {
                         field: 'buttons',
                         title: 'Actions',
@@ -190,6 +207,7 @@ InvenTree | Allocate Parts
                             return html;
                         },
                     },
+                    {% endif %}
                 ]
             });
 
@@ -211,6 +229,42 @@ InvenTree | Allocate Parts
         formatNoMatches: function() { return "{% trans 'No BOM items found' %}"; },
         onLoadSuccess: function(tableData) {
             // Once the BOM data are loaded, request allocation data for the build
+            {% if build.status == BuildStatus.COMPLETE %}
+            // Request StockItem which have been assigned to this build
+            inventreeGet('/api/stock/',
+                {
+                    build_order: {{ build.id }},
+                    location_detail: true,
+                },
+                {
+                    success: function(data) {
+                        // Iterate through the returned data, group by "part",
+                        var allocations = {};
+
+                        data.forEach(function(item) {
+                            // Group allocations by referenced 'part'
+                            var key = parseInt(item.part);
+
+                            if (!(key in allocations)) {
+                                allocations[key] = new Array();
+                            }
+
+                            allocations[key].push(item);
+                        });
+
+                        for (var key in allocations) {
+
+                            var tableRow = buildTable.bootstrapTable('getRowByUniqueId', key);
+
+                            tableRow.allocations = allocations[key];
+
+                            buildTable.bootstrapTable('updateByUniqueId', key, tableRow, true);
+                        }
+                    },
+                },
+            );
+
+            {% else %}
             inventreeGet('/api/build/item/',
                 {
                     build: {{ build.id }},
@@ -249,6 +303,7 @@ InvenTree | Allocate Parts
                     }
                 },
             );
+            {% endif %}
         },
         queryParams: {
             part: {{ build.part.id }},
@@ -288,7 +343,11 @@ InvenTree | Allocate Parts
             {
                 sortable: true,
                 field: 'allocated',
+                {% if build.status == BuildStatus.COMPLETE %}
+                title: '{% trans "Assigned" %}',
+                {% else %}
                 title: '{% trans "Allocated" %}',
+                {% endif %}
                 formatter: function(value, row) {
 
                     var allocated = sumAllocations(row);
@@ -313,6 +372,7 @@ InvenTree | Allocate Parts
                     return (progressA < progressB) ? 1 : -1;
                 }
             },
+            {% if build.status == BuildStatus.PENDING %}
             {
                 field: 'buttons',
                 formatter: function(value, row, index, field) {
@@ -337,6 +397,7 @@ InvenTree | Allocate Parts
                     return html;
                 },
             }
+            {% endif %}
         ],
     });
 
