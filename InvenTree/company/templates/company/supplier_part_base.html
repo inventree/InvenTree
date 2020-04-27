@@ -19,12 +19,12 @@ src="{% static 'img/blank_image.png' %}"
 <h3>{% trans "Supplier Part" %}</h3>
 <p>{{ part.supplier.name }} - {{ part.SKU }}</p>
 <div class='btn-row'>
-    <div class='btn-group'>
-        <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='Edit supplier part'>
-            <span class='glyphicon glyphicon-edit'/>
+    <div class='btn-group action-buttons' role='group'>
+        <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='{% trans "Edit supplier part" %}'>
+            <span class='fas fa-edit icon-green'/>
         </button>
-        <button type='button' class='btn btn-default btn-glyph' id='delete-part' title='Delete supplier part'>
-            <span class='glyphicon glyphicon-trash'/>
+        <button type='button' class='btn btn-default btn-glyph' id='delete-part' title='{% trans "Delete supplier part" %}'>
+            <span class='fas fa-trash-alt icon-red'/>
         </button>
     </div>
 </div>
