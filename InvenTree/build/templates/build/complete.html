@@ -5,14 +5,14 @@
 
 <h4>{% trans "Build" %} - {{ build }}</h4>
 
-{% if not build.isFullyAllocated %}
+{% if build.isFullyAllocated %}
+<div class='alert alert-block alert-info'>
+    <h4>{% trans "Build order allocation is complete" %}</h4>
+</div>
+{% else %}
 <div class='alert alert-block alert-danger'>
     <h4>{% trans "Warning: Build order allocation is not complete" %}</h4>
     {% trans "Build Order has not been fully allocated. Ensure that all Stock Items have been allocated to the Build" %}
-</div>
-{% else %}
-<div class='alert alert-block alert-info'>
-    <h4>{% trans "Build order allocation is complete" %}</h4>
 </div>
 {% endif %}
 

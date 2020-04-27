@@ -323,7 +323,7 @@ class Build(MPTTModel):
             if not self.isPartFullyAllocated(part):
                 return False
 
-            return True
+        return True
 
     def isPartFullyAllocated(self, part):
         """
