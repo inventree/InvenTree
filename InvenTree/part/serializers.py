@@ -15,7 +15,7 @@ from decimal import Decimal
 from django.db.models import Q, Sum
 from django.db.models.functions import Coalesce
 
-from InvenTree.status_codes import StockStatus, OrderStatus, BuildStatus
+from InvenTree.status_codes import StockStatus, PurchaseOrderStatus, BuildStatus
 from InvenTree.serializers import InvenTreeModelSerializer
 
 
@@ -52,19 +52,19 @@ class PartThumbSerializer(serializers.Serializer):
 class PartBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Part (brief detail) """
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
     
     class Meta:
         model = Part
         fields = [
             'pk',
-            'url',
             'full_name',
             'description',
             'thumbnail',
             'active',
             'assembly',
+            'purchaseable',
+            'salable',
             'virtual',
         ]
 
@@ -118,7 +118,7 @@ class PartSerializer(InvenTreeModelSerializer):
         stock_filter = Q(stock_items__status__in=StockStatus.AVAILABLE_CODES)
 
         # Filter to limit orders to "open"
-        order_filter = Q(supplier_parts__purchase_order_line_items__order__status__in=OrderStatus.OPEN)
+        order_filter = Q(supplier_parts__purchase_order_line_items__order__status__in=PurchaseOrderStatus.OPEN)
 
         # Filter to limit builds to "active"
         build_filter = Q(builds__status__in=BuildStatus.ACTIVE_CODES)
@@ -233,9 +233,13 @@ class PartStarSerializer(InvenTreeModelSerializer):
 class BomItemSerializer(InvenTreeModelSerializer):
     """ Serializer for BomItem object """
 
+    price_range = serializers.CharField(read_only=True)
+
+    quantity = serializers.FloatField()
+    
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
-    price_range = serializers.CharField(read_only=True)
+
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
 
     def __init__(self, *args, **kwargs):

@@ -1,13 +1,12 @@
 {% load i18n %}
 {% load status_codes %}
 
-{% load_status_codes %}
-
 <script type='text/javascript'>
 
-{% include "status_codes.html" with label='stock' options=stock_status_codes %}
-{% include "status_codes.html" with label='build' options=build_status_codes %}
-{% include "status_codes.html" with label='order' options=order_status_codes %}
+{% include "status_codes.html" with label='stock' options=StockStatus.list %}
+{% include "status_codes.html" with label='build' options=BuildStatus.list %}
+{% include "status_codes.html" with label='purchaseOrder' options=PurchaseOrderStatus.list %}
+{% include "status_codes.html" with label='salesOrder' options=SalesOrderStatus.list %}
 
 
 function getAvailableTableFilters(tableKey) {
@@ -27,10 +26,15 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Active parts" %}',
                 description: '{% trans "Show stock for active parts" %}',
             },
-            'status': {
+            status: {
                 options: stockCodes,
                 title: '{% trans "Stock status" %}',
                 description: '{% trans "Stock status" %}',
+            },
+            allocated: {
+                type: 'bool',
+                title: '{% trans "Is allocated" %}',
+                description: '{% trans "Item has been alloacted" %}',
             },
         };
     }
@@ -47,11 +51,20 @@ function getAvailableTableFilters(tableKey) {
     }
 
     // Filters for the "Order" table
-    if (tableKey == "order") {
+    if (tableKey == "purchaseorder") {
         return {
             status: {
                 title: '{% trans "Order status" %}',
-                options: orderCodes,
+                options: purchaseOrderCodes,
+            },
+        };
+    }
+
+    if (tableKey == "salesorder") {
+        return {
+            status: {
+                title: '{% trans "Order status" %}',
+                options: salesOrderCodes,
             },
         };
     }
@@ -92,6 +105,14 @@ function getAvailableTableFilters(tableKey) {
             starred: {
                 type: 'bool',
                 title: '{% trans "Starred" %}',
+            },
+            salable: {
+                type: 'bool',
+                title: '{% trans "Salable" %}',
+            },
+            purchaseable: {
+                type: 'bool',
+                title: '{% trans "Purchasable" %}',
             },
         };
     }

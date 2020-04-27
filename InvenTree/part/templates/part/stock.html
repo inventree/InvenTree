@@ -5,7 +5,7 @@
 
 {% include 'part/tabs.html' with tab='stock' %}
 
-<h4>Part Stock</h4>
+<h4>{% trans "Part Stock" %}</h4>
 <hr>
 
 {% if part.is_template %}
@@ -40,6 +40,7 @@
             part: {{ part.id }},
             location_detail: true,
             part_detail: true,
+            in_stock: true,
         },
         groupByField: 'location',
         buttons: [

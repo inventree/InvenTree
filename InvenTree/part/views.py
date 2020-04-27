@@ -38,7 +38,6 @@ from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDelete
 from InvenTree.views import QRCodeView
 
 from InvenTree.helpers import DownloadFile, str2bool
-from InvenTree.status_codes import OrderStatus, BuildStatus
 
 
 class PartIndex(ListView):
@@ -561,8 +560,6 @@ class PartNotes(UpdateView):
         ctx['starred'] = part.isStarredBy(self.request.user)
         ctx['disabled'] = not part.active
 
-        ctx['OrderStatus'] = OrderStatus
-
         return ctx
 
 
@@ -592,9 +589,6 @@ class PartDetail(DetailView):
 
         context['starred'] = part.isStarredBy(self.request.user)
         context['disabled'] = not part.active
-
-        context['OrderStatus'] = OrderStatus
-        context['BuildStatus'] = BuildStatus
 
         return context
 

@@ -25,7 +25,6 @@ function inventreeGet(url, filters={}, options={}) {
         dataType: 'json',
         contentType: 'application/json',
         success: function(response) {
-            console.log('Success GET data at ' + url);
             if (options.success) {
                 options.success(response);
             }
@@ -64,7 +63,6 @@ function inventreeFormDataUpload(url, data, options={}) {
         processData: false,
         contentType: false,
         success: function(data, status, xhr) {
-            console.log('Form data upload success');
             if (options.success) {
                 options.success(data, status, xhr);
             }
@@ -97,7 +95,6 @@ function inventreePut(url, data={}, options={}) {
         dataType: 'json',
         contentType: 'application/json',
         success: function(response, status) {
-            console.log(method + ' - ' + url + ' : result = ' + status);
             if (options.success) {
                 options.success(response, status);
             }
@@ -113,26 +110,4 @@ function inventreePut(url, data={}, options={}) {
             }
         }
     });
-}
-
-// Return list of parts with optional filters
-function getParts(filters={}, options={}) {
-    return inventreeGet('/api/part/', filters, options);
-}
-
-// Return list of part categories with optional filters
-function getPartCategories(filters={}, options={}) {
-    return inventreeGet('/api/part/category/', filters, options);
-}
-
-function getCompanies(filters={}, options={}) {
-    return inventreeGet('/api/company/', filters, options);
-}
-
-function updateStockItem(pk, data, final=false) {
-    return inventreePut('/api/stock/' + pk + '/', data, final);
-}
-
-function updatePart(pk, data, final=false) {
-    return inventreePut('/api/part/' + pk + '/', data, final);
 }

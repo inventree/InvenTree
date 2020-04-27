@@ -18,7 +18,7 @@
     <td><a href="{% url 'build-detail' allocation.build.id %}">{{ allocation.build.title }}</a></td>
     <td>{{ allocation.build.quantity }} &times <a href="{% url 'part-detail' allocation.build.part.id %}">{{ allocation.build.part.full_name }}</a></td>
     <td>{{ allocation.quantity }}</td>
-    <td>{% build_status allocation.build.status %}</td>
+    <td>{% build_status_label allocation.build.status %}</td>
 </tr>
 {% endfor %}
 </table>

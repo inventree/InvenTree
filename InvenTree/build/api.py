@@ -38,6 +38,7 @@ class BuildList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
+        'sales_order',
     ]
 
     def get_queryset(self):
@@ -46,21 +47,27 @@ class BuildList(generics.ListCreateAPIView):
         as some of the fields don't natively play nicely with DRF
         """
 
-        build_list = super().get_queryset()
+        queryset = super().get_queryset().prefetch_related('part')
 
-        # Filter by part
-        part = self.request.query_params.get('part', None)
+        return queryset
+    
+    def filter_queryset(self, queryset):
 
-        if part is not None:
-            build_list = build_list.filter(part=part)
+        queryset = super().filter_queryset(queryset)
 
         # Filter by build status?
         status = self.request.query_params.get('status', None)
 
         if status is not None:
-            build_list = build_list.filter(status=status)
+            queryset = queryset.filter(status=status)
 
-        return build_list
+        # Filter by associated part?
+        part = self.request.query_params.get('part', None)
+
+        if part is not None:
+            queryset = queryset.filter(part=part)
+
+        return queryset
 
     def get_serializer(self, *args, **kwargs):
 
@@ -99,19 +106,24 @@ class BuildItemList(generics.ListCreateAPIView):
         to allow filtering by stock_item.part
         """
 
-        # Does the user wish to filter by part?
-        part_pk = self.request.query_params.get('part', None)
-
         query = BuildItem.objects.all()
 
         query = query.select_related('stock_item')
         query = query.prefetch_related('stock_item__part')
         query = query.prefetch_related('stock_item__part__category')
 
-        if part_pk:
-            query = query.filter(stock_item__part=part_pk)
-
         return query
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+
+        # Does the user wish to filter by part?
+        part_pk = self.request.query_params.get('part', None)
+
+        if part_pk:
+            queryset = queryset.filter(stock_item__part=part_pk)
+
+        return queryset
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -132,7 +144,7 @@ build_item_api_urls = [
 ]
 
 build_api_urls = [
-    url(r'^item/?', include(build_item_api_urls)),
+    url(r'^item/', include(build_item_api_urls)),
 
     url(r'^(?P<pk>\d+)/', BuildDetail.as_view(), name='api-build-detail'),
 

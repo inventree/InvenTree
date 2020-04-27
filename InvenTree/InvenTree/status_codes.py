@@ -7,12 +7,10 @@ class StatusCode:
     This is used to map a set of integer values to text.
     """
 
-    labels = {}
-
     @classmethod
-    def render(cls, key):
+    def render(cls, key, large=False):
         """
-        Render the value as a label.
+        Render the value as a HTML label.
         """
 
         # If the key cannot be found, pass it back
@@ -20,12 +18,17 @@ class StatusCode:
             return key
         
         value = cls.options.get(key, key)
-        label = cls.labels.get(key, None)
+        color = cls.colors.get(key, 'grey')
 
-        if label:
-            return "<span class='label label-{label}'>{value}</span>".format(label=label, value=value)
+        if large:
+            span_class = 'label label-large label-large-{c}'.format(c=color)
         else:
-            return value
+            span_class = 'label label-{c}'.format(c=color)
+
+        return "<span class='{cl}'>{value}</span>".format(
+            cl=span_class,
+            value=value
+        )
 
     @classmethod
     def list(cls):
@@ -42,10 +45,10 @@ class StatusCode:
                 'value': cls.options[key]
             }
 
-            label = cls.labels.get(key)
+            color = cls.colors.get(key, None)
 
-            if label:
-                opt['label'] = label
+            if color:
+                opt['color'] = color
 
             codes.append(opt)
 
@@ -70,11 +73,14 @@ class StatusCode:
         raise ValueError("Label not found")
 
 
-class OrderStatus(StatusCode):
+class PurchaseOrderStatus(StatusCode):
+    """
+    Defines a set of status codes for a PurchaseOrder
+    """
 
     # Order status codes
     PENDING = 10  # Order is pending (not yet placed)
-    PLACED = 20  # Order has been placed
+    PLACED = 20  # Order has been placed with supplier
     COMPLETE = 30  # Order has been completed
     CANCELLED = 40  # Order was cancelled
     LOST = 50  # Order was lost
@@ -89,13 +95,13 @@ class OrderStatus(StatusCode):
         RETURNED: _("Returned"),
     }
 
-    labels = {
-        PENDING: "primary",
-        PLACED: "primary",
-        COMPLETE: "success",
-        CANCELLED: "danger",
-        LOST: "warning",
-        RETURNED: "warning",
+    colors = {
+        PENDING: 'blue',
+        PLACED: 'blue',
+        COMPLETE: 'green',
+        CANCELLED: 'red',
+        LOST: 'yellow',
+        RETURNED: 'yellow',
     }
 
     # Open orders
@@ -112,6 +118,32 @@ class OrderStatus(StatusCode):
     ]
 
 
+class SalesOrderStatus(StatusCode):
+    """ Defines a set of status codes for a SalesOrder """
+
+    PENDING = 10  # Order is pending
+    SHIPPED = 20  # Order has been shipped to customer
+    CANCELLED = 40  # Order has been cancelled
+    LOST = 50  # Order was lost
+    RETURNED = 60  # Order was returned
+
+    options = {
+        PENDING: _("Pending"),
+        SHIPPED: _("Shipped"),
+        CANCELLED: _("Cancelled"),
+        LOST: _("Lost"),
+        RETURNED: _("Returned"),
+    }
+
+    colors = {
+        PENDING: 'blue',
+        SHIPPED: 'green',
+        CANCELLED: 'red',
+        LOST: 'yellow',
+        RETURNED: 'yellow',
+    }
+
+
 class StockStatus(StatusCode):
 
     OK = 10  # Item is OK
@@ -119,6 +151,15 @@ class StockStatus(StatusCode):
     DAMAGED = 55  # Item is damaged
     DESTROYED = 60  # Item is destroyed
     LOST = 70  # Item has been lost
+    RETURNED = 85  # Item has been returned from a customer
+
+    # Any stock code above 100 means that the stock item is not "in stock"
+    # This can be used as a quick check for filtering
+    NOT_IN_STOCK = 100
+
+    SHIPPED = 110  # Item has been shipped to a customer
+    ASSIGNED_TO_BUILD = 120
+    ASSIGNED_TO_OTHER_ITEM = 130
 
     options = {
         OK: _("OK"),
@@ -126,12 +167,20 @@ class StockStatus(StatusCode):
         DAMAGED: _("Damaged"),
         DESTROYED: _("Destroyed"),
         LOST: _("Lost"),
+        RETURNED: _("Returned"),
+        SHIPPED: _('Shipped'),
+        ASSIGNED_TO_BUILD: _("Used for Build"),
+        ASSIGNED_TO_OTHER_ITEM: _("Installed in Stock Item")
     }
 
-    labels = {
-        OK: 'success',
-        ATTENTION: 'warning',
-        DAMAGED: 'danger',
+    colors = {
+        OK: 'green',
+        ATTENTION: 'yellow',
+        DAMAGED: 'red',
+        DESTROYED: 'red',
+        SHIPPED: 'green',
+        ASSIGNED_TO_BUILD: 'blue',
+        ASSIGNED_TO_OTHER_ITEM: 'blue',
     }
 
     # The following codes correspond to parts that are 'available' or 'in stock'
@@ -139,12 +188,16 @@ class StockStatus(StatusCode):
         OK,
         ATTENTION,
         DAMAGED,
+        RETURNED,
     ]
 
     # The following codes correspond to parts that are 'unavailable'
     UNAVAILABLE_CODES = [
         DESTROYED,
         LOST,
+        SHIPPED,
+        ASSIGNED_TO_BUILD,
+        ASSIGNED_TO_OTHER_ITEM,
     ]
 
 
@@ -163,11 +216,11 @@ class BuildStatus(StatusCode):
         COMPLETE: _("Complete"),
     }
 
-    labels = {
-        PENDING: 'primary',
-        ALLOCATED: 'info',
-        COMPLETE: 'success',
-        CANCELLED: 'danger',
+    colors = {
+        PENDING: 'blue',
+        ALLOCATED: 'blue',
+        COMPLETE: 'green',
+        CANCELLED: 'red',
     }
 
     ACTIVE_CODES = [

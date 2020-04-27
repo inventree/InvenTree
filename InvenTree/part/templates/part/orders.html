@@ -1,17 +1,18 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block details %}
 
 {% include 'part/tabs.html' with tab='orders' %}
 
-<h4>Part Orders</h4>
+<h4>{% trans "Purchase Orders" %}</h4>
 <hr>
 
 <div id='button-bar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
-        <button class='btn btn-primary' type='button' id='part-order2' title='Order part'>Order Part</button>
-        <div class='filter-list' id='filter-list-order'>
+        <button class='btn btn-primary' type='button' id='part-order2' title='{% trans "Order part" %}'>{% trans "Order Part" %}</button>
+        <div class='filter-list' id='filter-list-purchaseorder'>
             <!-- An empty div in which the filter list will be constructed -->
         </div>
     </div>
@@ -27,7 +28,10 @@
 {{ block.super }}
 
 loadPurchaseOrderTable($("#purchase-order-table"), {
-    url: "{% url 'api-po-list' %}?part={{ part.id }}",
+    url: "{% url 'api-po-list' %}",
+    params: {
+        part: {{ part.id }},
+    },
 });
 
 $("#part-order2").click(function() {

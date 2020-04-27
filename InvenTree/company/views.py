@@ -13,7 +13,6 @@ from django.urls import reverse
 from django.forms import HiddenInput
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
-from InvenTree.status_codes import OrderStatus
 from InvenTree.helpers import str2bool
 
 from common.models import Currency
@@ -137,7 +136,6 @@ class CompanyDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['OrderStatus'] = OrderStatus
 
         return ctx
 
@@ -244,7 +242,6 @@ class SupplierPartDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['OrderStatus'] = OrderStatus
 
         return ctx
 

@@ -14,16 +14,16 @@
         <p>{% trans "All parts" %}</p>
         {% endif %}
         <p>
-            <div class='btn-group'>
-                <button class='btn btn-default btn-glyph' id='cat-create' title='Create new part category'>
-                    <span class='glyphicon glyphicon-plus'/>
+            <div class='btn-group action-buttons'>
+                <button class='btn btn-default' id='cat-create' title='Create new part category'>
+                    <span class='fas fa-plus-circle icon-green'/>
                 </button>
                 {% if category %}
-                <button class='btn btn-default btn-glyph' id='cat-edit' title='Edit part category'>
-                    <span class='glyphicon glyphicon-edit'/>
+                <button class='btn btn-default' id='cat-edit' title='Edit part category'>
+                    <span class='fas fa-edit icon-blue'/>
                 </button>
-                <button class='btn btn-default btn-glyph' id='cat-delete' title='Delete part category'>
-                    <span class='glyphicon glyphicon-trash'/>
+                <button class='btn btn-default' id='cat-delete' title='Delete part category'>
+                    <span class='fas fa-trash-alt icon-red'/>
                 </button>
                 {% endif %}
             </div>

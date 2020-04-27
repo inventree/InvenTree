@@ -1,0 +1,133 @@
+{% extends "two_column.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+{% load status_codes %}
+
+{% block page_title %}
+InvenTree | {% trans "Sales Order" %}
+{% endblock %}
+
+{% block pre_content %}
+{% if order.status == SalesOrderStatus.PENDING and not order.is_fully_allocated %}
+<div class='alert alert-block alert-danger'>
+    {% trans "This SalesOrder has not been fully allocated" %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block thumbnail %}
+<img class='part-thumb'
+{% if order.customer.image %}
+src="{{ order.customer.image.url }}"
+{% else %}
+src="{% static 'img/blank_image.png' %}"
+{% endif %}
+/>
+{% endblock %}
+
+
+{% block page_data %}
+
+<h3>{% trans "Sales Order" %} {% sales_order_status_label order.status large=True %}</h3>
+<hr>
+<h4>{{ order }}</h4>
+<p>{{ order.description }}</p>
+<div class='btn-row'>
+    <div class='btn-group action-buttons'>
+        <button type='button' class='btn btn-default' id='edit-order' title='Edit order information'>
+            <span class='fas fa-edit icon-green'></span>
+        </button>
+        <button type='button' class='btn btn-default' id='packing-list' title='{% trans "Packing List" %}'>
+            <span class='fas fa-clipboard-list'></span>
+        </button>
+        {% if order.status == SalesOrderStatus.PENDING %}
+        <button type='button' class='btn btn-default' id='ship-order' title='{% trans "Ship order" %}'>
+            <span class='fas fa-paper-plane icon-blue'></span>
+        </button>
+        <button type='button' class='btn btn-default' id='cancel-order' title='{% trans "Cancel order" %}'>
+            <span class='fas fa-times-circle icon-red'></span>
+        </button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block page_details %}
+<h4>{% trans "Sales Order Details" %}</h4>
+<table class='table'>
+    <col width='25'>
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Order Reference" %}</td>
+        <td>{{ order.reference }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-info'></span></td>
+        <td>{% trans "Order Status" %}</td>
+        <td>{% sales_order_status_label order.status %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-building'></span></td>
+        <td>{% trans "Customer" %}</td>
+        <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a></td>
+    </tr>
+    {% if order.customer_reference %}
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Customer Reference" %}</td>
+        <td>{{ order.customer_reference }}</td>
+    </tr>
+    {% endif %}
+    {% if order.link %}
+    <tr>
+        <td><span class='fas fa-link'></span></td>
+        <td>External Link</td>
+        <td><a href="{{ order.link }}">{{ order.link }}</a></td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Created" %}</td>
+        <td>{{ order.creation_date }}<span class='badge'>{{ order.created_by }}</span></td>
+    </tr>
+    {% if order.shipment_date %}
+    <tr>
+        <td><span class='fas fa-truck'></span></td>
+        <td>{% trans "Shipped" %}</td>
+        <td>{{ order.shipment_date }}<span class='badge'>{{ order.shipped_by }}</span></td>
+    </tr>
+    {% endif %}
+    {% if order.status == PurchaseOrderStatus.COMPLETE %}
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Received" %}</td>
+        <td>{{ order.complete_date }}<span class='badge'>{{ order.received_by }}</span></td>
+    </tr>
+    {% endif %}
+</table>
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$("#edit-order").click(function() {
+    launchModalForm("{% url 'so-edit' order.id %}", {
+        reload: true,
+    });
+});
+
+$("#cancel-order").click(function() {
+    launchModalForm("{% url 'so-cancel' order.id %}", {
+        reload: true,
+    });
+});
+
+$("#ship-order").click(function() {
+    launchModalForm("{% url 'so-ship' order.id %}", {
+        reload: true,
+    });
+});
+
+{% endblock %}

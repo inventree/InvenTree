@@ -50,7 +50,7 @@ function toggleStar(options) {
                         {
                             method: 'POST',
                             success: function(response, status) {
-                                $(options.button).removeClass('glyphicon-star-empty').addClass('glyphicon-star');
+                                $(options.button).addClass('icon-yellow');
                             },
                         }
                     );
@@ -64,7 +64,7 @@ function toggleStar(options) {
                         {
                             method: 'DELETE',
                             success: function(response, status) {
-                                $(options.button).removeClass('glyphicon-star').addClass('glyphicon-star-empty');
+                                $(options.button).removeClass('icon-yellow');
                             },
                         }
                     );
@@ -156,6 +156,10 @@ function loadPartTable(table, url, options={}) {
 
             if (row.starred) {
                 display += `<span class='fas fa-star label-right' title='Starred part'></span>`;
+            }
+
+            if (row.salable) {
+                display += `<span class='fas fa-dollar-sign label-right' title='Salable part'></span>`;
             }
 
             /*

@@ -15,6 +15,8 @@ from InvenTree.fields import RoundingDecimalFormField
 
 from stock.models import StockLocation
 from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
+from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
+from .models import SalesOrderAllocation
 
 
 class IssuePurchaseOrderForm(HelperForm):
@@ -48,7 +50,29 @@ class CancelPurchaseOrderForm(HelperForm):
         fields = [
             'confirm',
         ]
+
+
+class CancelSalesOrderForm(HelperForm):
+
+    confirm = forms.BooleanField(required=False, help_text=_('Cancel order'))
+
+    class Meta:
+        model = SalesOrder
+        fields = [
+            'confirm',
+        ]
         
+
+class ShipSalesOrderForm(HelperForm):
+
+    confirm = forms.BooleanField(required=False, help_text=_('Ship order'))
+
+    class Meta:
+        model = SalesOrder
+        fields = [
+            'confirm',
+        ]
+
 
 class ReceivePurchaseOrderForm(HelperForm):
 
@@ -75,11 +99,37 @@ class EditPurchaseOrderForm(HelperForm):
         ]
 
 
+class EditSalesOrderForm(HelperForm):
+    """ Form for editing a SalesOrder object """
+
+    class Meta:
+        model = SalesOrder
+        fields = [
+            'reference',
+            'customer',
+            'customer_reference',
+            'description',
+            'link'
+        ]
+
+
 class EditPurchaseOrderAttachmentForm(HelperForm):
     """ Form for editing a PurchaseOrderAttachment object """
 
     class Meta:
         model = PurchaseOrderAttachment
+        fields = [
+            'order',
+            'attachment',
+            'comment'
+        ]
+
+
+class EditSalesOrderAttachmentForm(HelperForm):
+    """ Form for editing a SalesOrderAttachment object """
+
+    class Meta:
+        model = SalesOrderAttachment
         fields = [
             'order',
             'attachment',
@@ -101,3 +151,32 @@ class EditPurchaseOrderLineItemForm(HelperForm):
             'reference',
             'notes',
         ]
+
+
+class EditSalesOrderLineItemForm(HelperForm):
+    """ Form for editing a SalesOrderLineItem object """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    class Meta:
+        model = SalesOrderLineItem
+        fields = [
+            'order',
+            'part',
+            'quantity',
+            'reference',
+            'notes'
+        ]
+
+
+class EditSalesOrderAllocationForm(HelperForm):
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    class Meta:
+        model = SalesOrderAllocation
+
+        fields = [
+            'line',
+            'item',
+            'quantity']

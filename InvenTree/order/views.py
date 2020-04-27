@@ -16,6 +16,8 @@ import logging
 from decimal import Decimal, InvalidOperation
 
 from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
+from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
+from .models import SalesOrderAllocation
 from .admin import POLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart
@@ -27,7 +29,7 @@ from . import forms as order_forms
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import DownloadFile, str2bool
 
-from InvenTree.status_codes import OrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus
 
 logger = logging.getLogger(__name__)
 
@@ -50,9 +52,14 @@ class PurchaseOrderIndex(ListView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ctx['OrderStatus'] = OrderStatus
-
         return ctx
+
+
+class SalesOrderIndex(ListView):
+
+    model = SalesOrder
+    template_name = 'order/sales_orders.html'
+    context_object_name = 'orders'
 
 
 class PurchaseOrderDetail(DetailView):
@@ -65,9 +72,15 @@ class PurchaseOrderDetail(DetailView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
-        ctx['OrderStatus'] = OrderStatus
-
         return ctx
+
+
+class SalesOrderDetail(DetailView):
+    """ Detail view for a SalesOrder object """
+
+    context_object_name = 'order'
+    queryset = SalesOrder.objects.all().prefetch_related('lines')
+    template_name = 'order/sales_order_detail.html'
 
 
 class PurchaseOrderAttachmentCreate(AjaxCreateView):
@@ -113,6 +126,34 @@ class PurchaseOrderAttachmentCreate(AjaxCreateView):
         return form
 
 
+class SalesOrderAttachmentCreate(AjaxCreateView):
+    """ View for creating a new SalesOrderAttachment """
+
+    model = SalesOrderAttachment
+    form_class = order_forms.EditSalesOrderAttachmentForm
+    ajax_form_title = _('Add Sales Order Attachment')
+
+    def get_data(self):
+        return {
+            'success': _('Added attachment')
+        }
+
+    def get_initial(self):
+        initials = super().get_initial().copy()
+
+        initials['order'] = SalesOrder.objects.get(id=self.request.GET.get('order', None))
+
+        return initials
+
+    def get_form(self):
+        """ Hide the 'order' field """
+
+        form = super().get_form()
+        form.fields['order'].widget = HiddenInput()
+
+        return form
+
+
 class PurchaseOrderAttachmentEdit(AjaxUpdateView):
     """ View for editing a PurchaseOrderAttachment object """
 
@@ -134,12 +175,46 @@ class PurchaseOrderAttachmentEdit(AjaxUpdateView):
         return form
 
 
+class SalesOrderAttachmentEdit(AjaxUpdateView):
+    """ View for editing a SalesOrderAttachment object """
+
+    model = SalesOrderAttachment
+    form_class = order_forms.EditSalesOrderAttachmentForm
+    ajax_form_title = _("Edit Attachment")
+
+    def get_data(self):
+        return {
+            'success': _('Attachment updated')
+        }
+
+    def get_form(self):
+        form = super().get_form()
+
+        form.fields['order'].widget = HiddenInput()
+
+        return form
+
+
 class PurchaseOrderAttachmentDelete(AjaxDeleteView):
     """ View for deleting a PurchaseOrderAttachment """
 
     model = PurchaseOrderAttachment
     ajax_form_title = _("Delete Attachment")
-    ajax_template_name = "order/po_delete.html"
+    ajax_template_name = "order/delete_attachment.html"
+    context_object_name = "attachment"
+
+    def get_data(self):
+        return {
+            "danger": _("Deleted attachment")
+        }
+
+
+class SalesOrderAttachmentDelete(AjaxDeleteView):
+    """ View for deleting a SalesOrderAttachment """
+
+    model = SalesOrderAttachment
+    ajax_form_title = _("Delete Attachment")
+    ajax_template_name = "order/delete_attachment.html"
     context_object_name = "attachment"
 
     def get_data(self):
@@ -165,7 +240,28 @@ class PurchaseOrderNotes(UpdateView):
 
         ctx = super().get_context_data(**kwargs)
 
-        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
+        ctx['editing'] = str2bool(self.request.GET.get('edit', False))
+
+        return ctx
+
+
+class SalesOrderNotes(UpdateView):
+    """ View for editing the 'notes' field of a SalesORder """
+
+    context_object_name = 'order'
+    template_name = 'order/sales_order_notes.html'
+    model = SalesOrder
+
+    fields = ['notes']
+
+    def get_success_url(self):
+        return reverse('so-notes', kwargs={'pk': self.get_object().pk})
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+
+        ctx['editing'] = str2bool(self.request.GET.get('edit', False))
 
         return ctx
 
@@ -180,7 +276,7 @@ class PurchaseOrderCreate(AjaxCreateView):
     def get_initial(self):
         initials = super().get_initial().copy()
 
-        initials['status'] = OrderStatus.PENDING
+        initials['status'] = PurchaseOrderStatus.PENDING
 
         supplier_id = self.request.GET.get('supplier', None)
 
@@ -200,6 +296,35 @@ class PurchaseOrderCreate(AjaxCreateView):
         self.object.save()
 
 
+class SalesOrderCreate(AjaxCreateView):
+    """ View for creating a new SalesOrder object """
+
+    model = SalesOrder
+    ajax_form_title = _("Create Sales Order")
+    form_class = order_forms.EditSalesOrderForm
+
+    def get_initial(self):
+        initials = super().get_initial().copy()
+
+        initials['status'] = PurchaseOrderStatus.PENDING
+
+        customer_id = self.request.GET.get('customer', None)
+
+        if customer_id is not None:
+            try:
+                customer = Company.objects.get(id=customer_id)
+                initials['customer'] = customer
+            except (Company.DoesNotExist, ValueError):
+                pass
+
+        return initials
+
+    def post_save(self, **kwargs):
+        # Record the user who created this sales order
+        self.object.created_by = self.request.user
+        self.object.save()
+
+
 class PurchaseOrderEdit(AjaxUpdateView):
     """ View for editing a PurchaseOrder using a modal form """
 
@@ -214,8 +339,24 @@ class PurchaseOrderEdit(AjaxUpdateView):
         order = self.get_object()
 
         # Prevent user from editing supplier if there are already lines in the order
-        if order.lines.count() > 0 or not order.status == OrderStatus.PENDING:
+        if order.lines.count() > 0 or not order.status == PurchaseOrderStatus.PENDING:
             form.fields['supplier'].widget = HiddenInput()
+
+        return form
+
+
+class SalesOrderEdit(AjaxUpdateView):
+    """ View for editing a SalesOrder """
+
+    model = SalesOrder
+    ajax_form_title = _('Edit Sales Order')
+    form_class = order_forms.EditSalesOrderForm
+
+    def get_form(self):
+        form = super().get_form()
+
+        # Prevent user from editing customer
+        form.fields['customer'].widget = HiddenInput()
 
         return form
 
@@ -249,6 +390,40 @@ class PurchaseOrderCancel(AjaxUpdateView):
 
         if valid:
             order.cancel_order()
+
+        return self.renderJsonResponse(request, form, data)
+
+
+class SalesOrderCancel(AjaxUpdateView):
+    """ View for cancelling a sales order """
+
+    model = SalesOrder
+    ajax_form_title = _("Cancel sales order")
+    ajax_template_name = "order/sales_order_cancel.html"
+    form_class = order_forms.CancelSalesOrderForm
+
+    def post(self, request, *args, **kwargs):
+
+        order = self.get_object()
+        form = self.get_form()
+
+        confirm = str2bool(request.POST.get('confirm', False))
+
+        valid = False
+
+        if not confirm:
+            form.errors['confirm'] = [_('Confirm order cancellation')]
+        else:
+            valid = True
+
+        if valid:
+            if not order.cancel_order():
+                form.non_field_errors = [_('Could not cancel order')]
+                valid = False
+
+        data = {
+            'form_valid': valid,
+        }
 
         return self.renderJsonResponse(request, form, data)
 
@@ -310,7 +485,7 @@ class PurchaseOrderComplete(AjaxUpdateView):
 
         if confirm:
             po = self.get_object()
-            po.status = OrderStatus.COMPLETE
+            po.status = PurchaseOrderStatus.COMPLETE
             po.save()
 
         data = {
@@ -320,6 +495,48 @@ class PurchaseOrderComplete(AjaxUpdateView):
         form = self.get_form()
 
         return self.renderJsonResponse(request, form, data)
+
+
+class SalesOrderShip(AjaxUpdateView):
+    """ View for 'shipping' a SalesOrder """
+    form_class = order_forms.ShipSalesOrderForm
+    model = SalesOrder
+    context_object_name = 'order'
+    ajax_template_name = 'order/sales_order_ship.html'
+    ajax_form_title = _('Ship Order')
+
+    def post(self, request, *args, **kwargs):
+
+        self.request = request
+
+        order = self.get_object()
+        self.object = order
+        
+        form = self.get_form()
+
+        confirm = str2bool(request.POST.get('confirm', False))
+        
+        valid = False
+
+        if not confirm:
+            form.errors['confirm'] = [_('Confirm order shipment')]
+        else:
+            valid = True
+
+        if valid:
+            if not order.ship_order(request.user):
+                form.non_field_errors = [_('Could not ship order')]
+                valid = False
+
+        data = {
+            'form_valid': valid,
+        }
+
+        context = self.get_context_data()
+
+        context['order'] = order
+
+        return self.renderJsonResponse(request, form, data, context)
 
 
 class PurchaseOrderExport(AjaxView):
@@ -879,7 +1096,7 @@ class POLineItemCreate(AjaxCreateView):
 
         # Limit the available to orders to ones that are PENDING
         query = form.fields['order'].queryset
-        query = query.filter(status=OrderStatus.PENDING)
+        query = query.filter(status=PurchaseOrderStatus.PENDING)
         form.fields['order'].queryset = query
 
         order_id = form['order'].value()
@@ -924,10 +1141,78 @@ class POLineItemCreate(AjaxCreateView):
                 order = PurchaseOrder.objects.get(id=order_id)
                 initials['order'] = order
 
-            except PurchaseOrder.DoesNotExist:
+            except (PurchaseOrder.DoesNotExist, ValueError):
                 pass
 
         return initials
+
+
+class SOLineItemCreate(AjaxCreateView):
+    """ Ajax view for creating a new SalesOrderLineItem object """
+
+    model = SalesOrderLineItem
+    context_order_name = 'line'
+    form_class = order_forms.EditSalesOrderLineItemForm
+    ajax_form_title = _('Add Line Item')
+
+    def get_form(self, *args, **kwargs):
+
+        form = super().get_form(*args, **kwargs)
+
+        # If the order is specified, hide the widget
+        order_id = form['order'].value()
+
+        if SalesOrder.objects.filter(id=order_id).exists():
+            form.fields['order'].widget = HiddenInput()
+
+        return form
+
+    def get_initial(self):
+        """
+        Extract initial data for this line item:
+
+        Options:
+            order: The SalesOrder object
+            part: The Part object
+        """
+
+        initials = super().get_initial().copy()
+
+        order_id = self.request.GET.get('order', None)
+        part_id = self.request.GET.get('part', None)
+
+        if order_id:
+            try:
+                order = SalesOrder.objects.get(id=order_id)
+                initials['order'] = order
+            except (SalesOrder.DoesNotExist, ValueError):
+                pass
+
+        if part_id:
+            try:
+                part = Part.objects.get(id=part_id)
+                if part.salable:
+                    initials['part'] = part
+            except (Part.DoesNotExist, ValueError):
+                pass
+
+        return initials
+
+
+class SOLineItemEdit(AjaxUpdateView):
+    """ View for editing a SalesOrderLineItem """
+
+    model = SalesOrderLineItem
+    form_class = order_forms.EditSalesOrderLineItemForm
+    ajax_form_title = _('Edit Line Item')
+
+    def get_form(self):
+        form = super().get_form()
+
+        form.fields.pop('order')
+        form.fields.pop('part')
+
+        return form
 
 
 class POLineItemEdit(AjaxUpdateView):
@@ -960,3 +1245,109 @@ class POLineItemDelete(AjaxDeleteView):
         return {
             'danger': _('Deleted line item'),
         }
+
+
+class SOLineItemDelete(AjaxDeleteView):
+
+    model = SalesOrderLineItem
+    ajax_form_title = _("Delete Line Item")
+    ajax_template_name = "order/so_lineitem_delete.html"
+
+    def get_data(self):
+        return {
+            'danger': _('Deleted line item'),
+        }
+
+
+class SalesOrderAllocationCreate(AjaxCreateView):
+    """ View for creating a new SalesOrderAllocation """
+
+    model = SalesOrderAllocation
+    form_class = order_forms.EditSalesOrderAllocationForm
+    ajax_form_title = _('Allocate Stock to Order')
+
+    def get_initial(self):
+        initials = super().get_initial().copy()
+
+        line_id = self.request.GET.get('line', None)
+
+        if line_id is not None:
+            line = SalesOrderLineItem.objects.get(pk=line_id)
+
+            initials['line'] = line
+
+            # Search for matching stock items, pre-fill if there is only one
+            items = StockItem.objects.filter(part=line.part)
+
+            quantity = line.quantity - line.allocated_quantity()
+            
+            if quantity < 0:
+                quantity = 0
+        
+            if items.count() == 1:
+                item = items.first()
+                initials['item'] = item
+
+                # Reduce the quantity IF there is not enough stock
+                qmax = item.quantity - item.allocation_count()
+
+                if qmax < quantity:
+                    quantity = qmax
+
+            initials['quantity'] = quantity
+
+        return initials
+
+    def get_form(self):
+        
+        form = super().get_form()
+
+        line_id = form['line'].value()
+
+        # If a line item has been specified, reduce the queryset for the stockitem accordingly
+        try:
+            line = SalesOrderLineItem.objects.get(pk=line_id)
+
+            queryset = form.fields['item'].queryset
+
+            # Ensure the part reference matches
+            queryset = queryset.filter(part=line.part)
+
+            # Exclude StockItem which are already allocated to this order
+            allocated = [allocation.item.pk for allocation in line.allocations.all()]
+
+            queryset = queryset.exclude(pk__in=allocated)
+
+            form.fields['item'].queryset = queryset
+
+            # Hide the 'line' field
+            form.fields['line'].widget = HiddenInput()
+        
+        except (ValueError, SalesOrderLineItem.DoesNotExist):
+            pass
+        
+        return form
+
+
+class SalesOrderAllocationEdit(AjaxUpdateView):
+
+    model = SalesOrderAllocation
+    form_class = order_forms.EditSalesOrderAllocationForm
+    ajax_form_title = _('Edit Allocation Quantity')
+
+    def get_form(self):
+        form = super().get_form()
+
+        # Prevent the user from editing particular fields
+        form.fields.pop('item')
+        form.fields.pop('line')
+
+        return form
+
+
+class SalesOrderAllocationDelete(AjaxDeleteView):
+
+    model = SalesOrderAllocation
+    ajax_form_title = _("Remove allocation")
+    context_object_name = 'allocation'
+    ajax_template_name = "order/so_allocation_delete.html"

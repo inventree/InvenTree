@@ -18,9 +18,10 @@ from .version import inventreeVersion, inventreeInstanceName
 from plugins import plugins as inventree_plugins
 
 # Load barcode plugins
-print("INFO: Loading plugins")
-
+print("Loading barcode plugins")
 barcode_plugins = inventree_plugins.load_barcode_plugins()
+
+print("Loading action plugins")
 action_plugins = inventree_plugins.load_action_plugins()
 
 
@@ -135,8 +136,5 @@ class BarcodePluginView(APIView):
 
         # Include the original barcode data
         response['barcode_data'] = barcode_data
-
-        print("Response:")
-        print(response)
 
         return Response(response)

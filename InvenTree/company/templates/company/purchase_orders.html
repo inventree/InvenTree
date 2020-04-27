@@ -1,7 +1,8 @@
 {% extends "company/company_base.html" %}
 {% load static %}
-{% block details %}
 {% load i18n %}
+
+{% block details %}
 
 {% include 'company/tabs.html' with tab='po' %}
 
@@ -10,8 +11,8 @@
 
 <div id='button-bar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
-        <button class='btn btn-primary' type='button' id='company-order2' title='Create new purchase order'>{% trans "New Purchase Order" %}</button>
-        <div class='filter-list' id='filter-list-order'>
+        <button class='btn btn-primary' type='button' id='company-order2' title='{% trans "Create new purchase order" %}'>{% trans "New Purchase Order" %}</button>
+        <div class='filter-list' id='filter-list-purchaseorder'>
             <!-- Empty div -->
         </div>
     </div>
@@ -26,7 +27,10 @@
 {{ block.super }}
 
     loadPurchaseOrderTable("#purchase-order-table", {
-        url: "{% url 'api-po-list' %}?supplier={{ company.id }}",
+        url: "{% url 'api-po-list' %}",
+        params: {
+            supplier: {{ company.id }},
+        }
     });
 
 
