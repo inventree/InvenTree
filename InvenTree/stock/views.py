@@ -838,9 +838,12 @@ class StockItemCreate(AjaxCreateView):
         if part_id:
             try:
                 part = Part.objects.get(pk=part_id)
-                initials['part'] = part
-                initials['location'] = part.get_default_location()
-                initials['supplier_part'] = part.default_supplier
+                # Check that the supplied part is 'valid'
+                if not part.is_template and part.active and not part.virtual:
+                    initials['part'] = part
+                    initials['location'] = part.get_default_location()
+                    initials['supplier_part'] = part.default_supplier
+
             except (ValueError, Part.DoesNotExist):
                 pass
 
