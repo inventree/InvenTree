@@ -461,10 +461,7 @@ class BuildItem(models.Model):
             if self.stock_item.serial and not self.quantity == 1:
                 errors['quantity'] = _('Quantity must be 1 for serialized stock')
 
-        except StockItem.DoesNotExist:
-            pass
-
-        except Part.DoesNotExist:
+        except (StockItem.DoesNotExist, Part.DoesNotExist):
             pass
 
         if len(errors) > 0:

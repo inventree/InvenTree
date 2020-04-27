@@ -11,6 +11,8 @@ from stock.models import StockItem
 from part.models import Part, BomItem
 from InvenTree import status_codes as status
 
+from InvenTree.helpers import ExtractSerialNumbers
+
 
 class BuildTest(TestCase):
     """
@@ -26,7 +28,8 @@ class BuildTest(TestCase):
         self.assembly = Part.objects.create(
             name="An assembled part",
             description="Why does it matter what my description is?",
-            assembly=True
+            assembly=True,
+            trackable=True,
         )
 
         self.sub_part_1 = Part.objects.create(
@@ -83,6 +86,33 @@ class BuildTest(TestCase):
         self.assertTrue(self.build.can_build)
         self.assertFalse(self.build.is_complete)
 
+        # Delete some stock and see if the build can still be completed
+        self.stock_2_1.delete()
+        self.assertFalse(self.build.can_build)
+
+    def test_build_item_clean(self):
+        # Ensure that dodgy BuildItem objects cannot be created
+
+        stock = StockItem.objects.create(part=self.assembly, quantity=99)
+
+        # Create a BuiltItem which points to an invalid StockItem
+        b = BuildItem(stock_item=stock, build=self.build, quantity=10)
+        
+        with self.assertRaises(ValidationError):
+            b.clean()
+
+        # Create a BuildItem which has too much stock assigned
+        b = BuildItem(stock_item=self.stock_1_1, build=self.build, quantity=9999999)
+
+        with self.assertRaises(ValidationError):
+            b.clean()
+
+        # Negative stock? Not on my watch!
+        b = BuildItem(stock_item=self.stock_1_1, build=self.build, quantity=-99)
+
+        with self.assertRaises(ValidationError):
+            b.clean()
+
     def test_duplicate_bom_line(self):
         # Try to add a duplicate BOM item - it should fail!
 
@@ -132,6 +162,18 @@ class BuildTest(TestCase):
         self.assertTrue(self.build.isPartFullyAllocated(self.sub_part_1))
         self.assertFalse(self.build.isPartFullyAllocated(self.sub_part_2))
 
+        self.build.unallocateStock()
+        self.assertEqual(BuildItem.objects.count(), 0)
+
+    def test_auto_allocate(self):
+
+        allocations = self.build.getAutoAllocations()
+
+        self.assertEqual(len(allocations), 1)
+
+        self.build.autoAllocate()
+        self.assertEqual(BuildItem.objects.count(), 1)
+        self.assertTrue(self.build.isPartFullyAllocated(self.sub_part_2))
 
     def test_cancel(self):
 
@@ -146,17 +188,20 @@ class BuildTest(TestCase):
 
         self.assertTrue(self.build.isFullyAllocated())
 
-        self.build.completeBuild(None, None, None)
+        # Generate some serial numbers!
+        serials = ExtractSerialNumbers("1-10", 10)
+
+        self.build.completeBuild(None, serials, None)
 
         self.assertEqual(self.build.status, status.BuildStatus.COMPLETE)
 
         # the original BuildItem objects should have been deleted!
         self.assertEqual(BuildItem.objects.count(), 0)
 
-        # Four new stock items should have been created!
-        # - One for the build output
+        # New stock items should have been created!
+        # - Ten for the build output (as the part was serialized)
         # - Three for the split items assigned to the build
-        self.assertEqual(StockItem.objects.count(), 7)
+        self.assertEqual(StockItem.objects.count(), 16)
 
         # Stock should have been subtracted from the original items
         self.assertEqual(StockItem.objects.get(pk=1).quantity, 950)
@@ -177,5 +222,6 @@ class BuildTest(TestCase):
         self.assertEqual(StockItem.objects.get(pk=6).status, status.StockStatus.ASSIGNED_TO_BUILD)
         
         # And a new stock item created for the build output
-        self.assertEqual(StockItem.objects.get(pk=7).quantity, 10)
+        self.assertEqual(StockItem.objects.get(pk=7).quantity, 1)
+        self.assertEqual(StockItem.objects.get(pk=7).serial, 1)
         self.assertEqual(StockItem.objects.get(pk=7).build, self.build)
