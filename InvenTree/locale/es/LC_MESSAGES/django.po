@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-27 23:32+0000\n"
+"POT-Creation-Date: 2020-04-27 23:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -568,6 +568,16 @@ msgstr ""
 
 #: build/templates/build/detail.html:80
 msgid "Completed"
+msgstr ""
+
+#: build/templates/build/index.html:6 build/templates/build/index.html:14
+#: order/templates/order/so_builds.html:11 order/templates/order/so_tabs.html:9
+#: part/templates/part/tabs.html:28
+msgid "Build Orders"
+msgstr ""
+
+#: build/templates/build/index.html:24
+msgid "New Build Order"
 msgstr ""
 
 #: build/templates/build/notes.html:13 build/templates/build/notes.html:30
@@ -1514,11 +1524,6 @@ msgstr ""
 
 #: order/templates/order/so_attachments.html:11
 msgid "Sales Order Attachments"
-msgstr ""
-
-#: order/templates/order/so_builds.html:11 order/templates/order/so_tabs.html:9
-#: part/templates/part/tabs.html:28
-msgid "Build Orders"
 msgstr ""
 
 #: order/templates/order/so_lineitem_delete.html:5

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-27 23:32+0000\n"
+"POT-Creation-Date: 2020-04-27 23:38+0000\n"
 "PO-Revision-Date: 2020-02-02 08:07+0100\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -638,6 +638,20 @@ msgstr "Nein"
 #: build/templates/build/detail.html:80
 msgid "Completed"
 msgstr "Fertig"
+
+#: build/templates/build/index.html:6 build/templates/build/index.html:14
+#: order/templates/order/so_builds.html:11 order/templates/order/so_tabs.html:9
+#: part/templates/part/tabs.html:28
+#, fuzzy
+#| msgid "Build Notes"
+msgid "Build Orders"
+msgstr "Bau-Bemerkungen"
+
+#: build/templates/build/index.html:24
+#, fuzzy
+#| msgid "Build Notes"
+msgid "New Build Order"
+msgstr "Bau-Bemerkungen"
 
 #: build/templates/build/notes.html:13 build/templates/build/notes.html:30
 msgid "Build Notes"
@@ -1777,13 +1791,6 @@ msgstr ""
 #| msgid "Purchase Order Details"
 msgid "Sales Order Attachments"
 msgstr "Bestelldetails"
-
-#: order/templates/order/so_builds.html:11 order/templates/order/so_tabs.html:9
-#: part/templates/part/tabs.html:28
-#, fuzzy
-#| msgid "Build Notes"
-msgid "Build Orders"
-msgstr "Bau-Bemerkungen"
 
 #: order/templates/order/so_lineitem_delete.html:5
 #, fuzzy
