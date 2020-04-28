@@ -31,7 +31,7 @@ from InvenTree.models import InvenTreeTree
 from InvenTree.fields import InvenTreeURLField
 
 from part import models as PartModels
-from order.models import PurchaseOrder, SalesOrder
+from order import models as OrderModels
 
 
 class StockLocation(InvenTreeTree):
@@ -134,7 +134,12 @@ class StockItem(MPTTModel):
     """
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
-    IN_STOCK_FILTER = Q(sales_order=None, build_order=None, belongs_to=None)
+    IN_STOCK_FILTER = Q(
+        sales_order=None,
+        build_order=None,
+        belongs_to=None,
+        status__in=StockStatus.AVAILABLE_CODES
+    )
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -393,7 +398,7 @@ class StockItem(MPTTModel):
     )
 
     purchase_order = models.ForeignKey(
-        PurchaseOrder,
+        'order.PurchaseOrder',
         on_delete=models.SET_NULL,
         verbose_name=_('Source Purchase Order'),
         related_name='stock_items',
@@ -402,7 +407,7 @@ class StockItem(MPTTModel):
     )
 
     sales_order = models.ForeignKey(
-        SalesOrder,
+        'order.SalesOrder',
         on_delete=models.SET_NULL,
         verbose_name=_("Destination Sales Order"),
         related_name='stock_items',

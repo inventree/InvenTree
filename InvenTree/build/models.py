@@ -25,8 +25,8 @@ from InvenTree.status_codes import BuildStatus, StockStatus
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string
 
-from stock.models import StockItem
-from part.models import Part, BomItem
+from stock import models as StockModels
+from part import models as PartModels
 
 
 class Build(MPTTModel):
@@ -465,7 +465,7 @@ class BuildItem(models.Model):
             if self.stock_item.serial and not self.quantity == 1:
                 errors['quantity'] = _('Quantity must be 1 for serialized stock')
 
-        except (StockItem.DoesNotExist, Part.DoesNotExist):
+        except (StockModels.StockItem.DoesNotExist, PartModels.Part.DoesNotExist):
             pass
 
         if len(errors) > 0:
