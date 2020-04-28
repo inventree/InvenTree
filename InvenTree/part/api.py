@@ -490,7 +490,7 @@ class BomList(generics.ListCreateAPIView):
 
     def filter_queryset(self, queryset):
 
-        query = super().filter_queryset(queryset)
+        queryset = super().filter_queryset(queryset)
 
         # Filter by part?
         part = self.request.query_params.get('part', None)
