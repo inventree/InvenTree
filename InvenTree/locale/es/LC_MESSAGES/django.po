@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-27 23:38+0000\n"
+"POT-Creation-Date: 2020-04-28 00:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -263,7 +263,7 @@ msgstr ""
 msgid "Build status code"
 msgstr ""
 
-#: build/models.py:120 stock/models.py:374
+#: build/models.py:120 stock/models.py:378
 msgid "Batch Code"
 msgstr ""
 
@@ -275,11 +275,11 @@ msgstr ""
 #: company/templates/company/supplier_part_base.html:57
 #: company/templates/company/supplier_part_detail.html:24
 #: part/templates/part/detail.html:67 part/templates/part/part_base.html:85
-#: stock/models.py:368 stock/templates/stock/item_base.html:190
+#: stock/models.py:372 stock/templates/stock/item_base.html:190
 msgid "External Link"
 msgstr ""
 
-#: build/models.py:140 stock/models.py:370
+#: build/models.py:140 stock/models.py:374
 msgid "Link to external URL"
 msgstr ""
 
@@ -287,7 +287,7 @@ msgstr ""
 #: company/templates/company/tabs.html:26 order/templates/order/po_tabs.html:15
 #: order/templates/order/purchase_order_detail.html:200
 #: order/templates/order/so_tabs.html:23 part/templates/part/tabs.html:63
-#: stock/models.py:436 stock/templates/stock/tabs.html:17
+#: stock/models.py:440 stock/templates/stock/tabs.html:17
 msgid "Notes"
 msgstr ""
 
@@ -352,7 +352,7 @@ msgstr ""
 
 #: build/templates/build/allocate.html:161
 #: order/templates/order/sales_order_detail.html:68
-#: order/templates/order/sales_order_detail.html:150 stock/models.py:362
+#: order/templates/order/sales_order_detail.html:150 stock/models.py:366
 #: stock/templates/stock/item_base.html:149
 msgid "Serial Number"
 msgstr ""
@@ -366,6 +366,8 @@ msgstr ""
 #: order/templates/order/purchase_order_detail.html:175
 #: order/templates/order/sales_order_detail.html:70
 #: order/templates/order/sales_order_detail.html:152
+#: part/templates/part/allocation.html:16
+#: part/templates/part/allocation.html:49
 #: stock/templates/stock/item_base.html:20
 #: stock/templates/stock/item_base.html:26
 #: stock/templates/stock/item_base.html:155
@@ -477,6 +479,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:33
 #: order/templates/order/sales_order_notes.html:10
 #: order/templates/order/sales_order_ship.html:25
+#: part/templates/part/allocation.html:27
 #: stock/templates/stock/item_base.html:123
 msgid "Sales Order"
 msgstr ""
@@ -991,7 +994,7 @@ msgid "New Sales Order"
 msgstr ""
 
 #: company/templates/company/supplier_part_base.html:6
-#: company/templates/company/supplier_part_base.html:19 stock/models.py:341
+#: company/templates/company/supplier_part_base.html:19 stock/models.py:345
 #: stock/templates/stock/item_base.html:202
 msgid "Supplier Part"
 msgstr ""
@@ -1223,7 +1226,7 @@ msgid "Supplier order reference code"
 msgstr ""
 
 #: order/models.py:148 order/models.py:222 part/views.py:1113
-#: stock/models.py:604
+#: stock/models.py:608
 msgid "Quantity must be greater than zero"
 msgstr ""
 
@@ -1735,173 +1738,198 @@ msgstr ""
 msgid "Select currency for price calculation"
 msgstr ""
 
-#: part/models.py:62
+#: part/models.py:64
 msgid "Default location for parts in this category"
 msgstr ""
 
-#: part/models.py:65
+#: part/models.py:67
 msgid "Default keywords for parts in this category"
 msgstr ""
 
-#: part/models.py:339
+#: part/models.py:341
 msgid "Part must be unique for name, IPN and revision"
 msgstr ""
 
-#: part/models.py:353
+#: part/models.py:355
 msgid "Part cannot be a template part if it is a variant of another part"
 msgstr ""
 
-#: part/models.py:354
+#: part/models.py:356
 msgid "Part cannot be a variant of another part if it is already a template"
 msgstr ""
 
-#: part/models.py:358 part/templates/part/detail.html:19
+#: part/models.py:360 part/templates/part/detail.html:19
 msgid "Part name"
 msgstr ""
 
-#: part/models.py:362
+#: part/models.py:364
 msgid "Is this part a template part?"
 msgstr ""
 
-#: part/models.py:371
+#: part/models.py:373
 msgid "Is this part a variant of another part?"
 msgstr ""
 
-#: part/models.py:373
+#: part/models.py:375
 msgid "Part description"
 msgstr ""
 
-#: part/models.py:375
+#: part/models.py:377
 msgid "Part keywords to improve visibility in search results"
 msgstr ""
 
-#: part/models.py:380
+#: part/models.py:382
 msgid "Part category"
 msgstr ""
 
-#: part/models.py:382
+#: part/models.py:384
 msgid "Internal Part Number"
 msgstr ""
 
-#: part/models.py:384
+#: part/models.py:386
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:386
+#: part/models.py:388
 msgid "Link to extenal URL"
 msgstr ""
 
-#: part/models.py:398
+#: part/models.py:400
 msgid "Where is this item normally stored?"
 msgstr ""
 
-#: part/models.py:442
+#: part/models.py:444
 msgid "Default supplier part"
 msgstr ""
 
-#: part/models.py:445
+#: part/models.py:447
 msgid "Minimum allowed stock level"
 msgstr ""
 
-#: part/models.py:447
+#: part/models.py:449
 msgid "Stock keeping units for this part"
 msgstr ""
 
-#: part/models.py:449
+#: part/models.py:451
 msgid "Can this part be built from other parts?"
 msgstr ""
 
-#: part/models.py:451
+#: part/models.py:453
 msgid "Can this part be used to build other parts?"
 msgstr ""
 
-#: part/models.py:453
+#: part/models.py:455
 msgid "Does this part have tracking for unique items?"
 msgstr ""
 
-#: part/models.py:455
+#: part/models.py:457
 msgid "Can this part be purchased from external suppliers?"
 msgstr ""
 
-#: part/models.py:457
+#: part/models.py:459
 msgid "Can this part be sold to customers?"
 msgstr ""
 
-#: part/models.py:459
+#: part/models.py:461
 msgid "Is this part active?"
 msgstr ""
 
-#: part/models.py:461
+#: part/models.py:463
 msgid "Is this a virtual part, such as a software product or license?"
 msgstr ""
 
-#: part/models.py:463
+#: part/models.py:465
 msgid "Part notes - supports Markdown formatting"
 msgstr ""
 
-#: part/models.py:465
+#: part/models.py:467
 msgid "Stored BOM checksum"
 msgstr ""
 
-#: part/models.py:1067
+#: part/models.py:1069
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:1072
+#: part/models.py:1074
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:1074
+#: part/models.py:1076
 msgid "Parameter Units"
 msgstr ""
 
-#: part/models.py:1100
+#: part/models.py:1102
 msgid "Parent Part"
 msgstr ""
 
-#: part/models.py:1102
+#: part/models.py:1104
 msgid "Parameter Template"
 msgstr ""
 
-#: part/models.py:1104
+#: part/models.py:1106
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:1128
+#: part/models.py:1130
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:1137
+#: part/models.py:1139
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:1144
+#: part/models.py:1146
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:1147
+#: part/models.py:1149
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:1150
+#: part/models.py:1152
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:1153
+#: part/models.py:1155
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:1155
+#: part/models.py:1157
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:1218
+#: part/models.py:1220
 msgid "Part cannot be added to its own Bill of Materials"
 msgstr ""
 
-#: part/models.py:1225
+#: part/models.py:1227
 #, python-brace-format
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
+msgstr ""
+
+#: part/templates/part/allocation.html:10
+msgid "Part Stock Allocations"
+msgstr ""
+
+#: part/templates/part/allocation.html:14
+#: part/templates/part/allocation.html:41
+msgid "Order"
+msgstr ""
+
+#: part/templates/part/allocation.html:15
+#: part/templates/part/allocation.html:21
+#: part/templates/part/allocation.html:28
+#: part/templates/part/allocation.html:45
+#: stock/templates/stock/item_base.html:8
+#: stock/templates/stock/item_base.html:52
+#: stock/templates/stock/item_base.html:184
+#: stock/templates/stock/stock_adjust.html:16
+msgid "Stock Item"
+msgstr ""
+
+#: part/templates/part/allocation.html:20
+#: stock/templates/stock/item_base.html:129
+msgid "Build Order"
 msgstr ""
 
 #: part/templates/part/attachments.html:8
@@ -2438,169 +2466,162 @@ msgstr ""
 msgid "Set the destination as the default location for selected parts"
 msgstr ""
 
-#: stock/models.py:214
+#: stock/models.py:218
 #, python-brace-format
 msgid ""
 "A stock item with this serial number already exists for template part {part}"
 msgstr ""
 
-#: stock/models.py:219
+#: stock/models.py:223
 msgid "A stock item with this serial number already exists"
 msgstr ""
 
-#: stock/models.py:250
+#: stock/models.py:254
 #, python-brace-format
 msgid "Part type ('{pf}') must be {pe}"
 msgstr ""
 
-#: stock/models.py:260 stock/models.py:269
+#: stock/models.py:264 stock/models.py:273
 msgid "Quantity must be 1 for item with a serial number"
 msgstr ""
 
-#: stock/models.py:261
+#: stock/models.py:265
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr ""
 
-#: stock/models.py:277
+#: stock/models.py:281
 msgid "Stock item cannot be created for a template Part"
 msgstr ""
 
-#: stock/models.py:286
+#: stock/models.py:290
 msgid "Item cannot belong to itself"
 msgstr ""
 
-#: stock/models.py:323
+#: stock/models.py:327
 msgid "Parent Stock Item"
 msgstr ""
 
-#: stock/models.py:331
+#: stock/models.py:335
 msgid "Base Part"
 msgstr ""
 
-#: stock/models.py:332
+#: stock/models.py:336
 msgid "Base part"
 msgstr ""
 
-#: stock/models.py:342
+#: stock/models.py:346
 msgid "Select a matching supplier part for this stock item"
 msgstr ""
 
-#: stock/models.py:347 stock/templates/stock/stock_app_base.html:7
+#: stock/models.py:351 stock/templates/stock/stock_app_base.html:7
 msgid "Stock Location"
 msgstr ""
 
-#: stock/models.py:350
+#: stock/models.py:354
 msgid "Where is this stock item located?"
 msgstr ""
 
-#: stock/models.py:355
+#: stock/models.py:359
 msgid "Installed In"
 msgstr ""
 
-#: stock/models.py:358
+#: stock/models.py:362
 msgid "Is this item installed in another item?"
 msgstr ""
 
-#: stock/models.py:364
+#: stock/models.py:368
 msgid "Serial number for this item"
 msgstr ""
 
-#: stock/models.py:376
+#: stock/models.py:380
 msgid "Batch code for this stock item"
 msgstr ""
 
-#: stock/models.py:380
+#: stock/models.py:384
 msgid "Stock Quantity"
 msgstr ""
 
-#: stock/models.py:389
+#: stock/models.py:393
 msgid "Source Build"
 msgstr ""
 
-#: stock/models.py:391
+#: stock/models.py:395
 msgid "Build for this stock item"
 msgstr ""
 
-#: stock/models.py:398
+#: stock/models.py:402
 msgid "Source Purchase Order"
 msgstr ""
 
-#: stock/models.py:401
+#: stock/models.py:405
 msgid "Purchase order for this stock item"
 msgstr ""
 
-#: stock/models.py:407
+#: stock/models.py:411
 msgid "Destination Sales Order"
 msgstr ""
 
-#: stock/models.py:414
+#: stock/models.py:418
 msgid "Destination Build Order"
 msgstr ""
 
-#: stock/models.py:427
+#: stock/models.py:431
 msgid "Delete this Stock Item when stock is depleted"
 msgstr ""
 
-#: stock/models.py:437 stock/templates/stock/item_notes.html:13
+#: stock/models.py:441 stock/templates/stock/item_notes.html:13
 #: stock/templates/stock/item_notes.html:29
 msgid "Stock Item Notes"
 msgstr ""
 
-#: stock/models.py:601
+#: stock/models.py:605
 msgid "Quantity must be integer"
 msgstr ""
 
-#: stock/models.py:607
+#: stock/models.py:611
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({n})"
 msgstr ""
 
-#: stock/models.py:610 stock/models.py:613
+#: stock/models.py:614 stock/models.py:617
 msgid "Serial numbers must be a list of integers"
 msgstr ""
 
-#: stock/models.py:616
+#: stock/models.py:620
 msgid "Quantity does not match serial numbers"
 msgstr ""
 
-#: stock/models.py:626
+#: stock/models.py:630
 msgid "Serial numbers already exist: "
 msgstr ""
 
-#: stock/models.py:648
+#: stock/models.py:652
 msgid "Add serial number"
 msgstr ""
 
-#: stock/models.py:651
+#: stock/models.py:655
 #, python-brace-format
 msgid "Serialized {n} items"
 msgstr ""
 
-#: stock/models.py:748
+#: stock/models.py:752
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:957
+#: stock/models.py:961
 msgid "Tracking entry title"
 msgstr ""
 
-#: stock/models.py:959
+#: stock/models.py:963
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:961
+#: stock/models.py:965
 msgid "Link to external page for further information"
 msgstr ""
 
 #: stock/templates/stock/item.html:12
 msgid "Stock Tracking Information"
-msgstr ""
-
-#: stock/templates/stock/item_base.html:8
-#: stock/templates/stock/item_base.html:52
-#: stock/templates/stock/item_base.html:184
-#: stock/templates/stock/stock_adjust.html:16
-msgid "Stock Item"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:20
@@ -2632,10 +2653,6 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:117
 msgid "Belongs To"
-msgstr ""
-
-#: stock/templates/stock/item_base.html:129
-msgid "Build Order"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:142

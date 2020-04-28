@@ -190,7 +190,7 @@ class Build(MPTTModel):
             q_required = item.quantity * self.quantity
 
             # Grab a list of StockItem objects which are "in stock"
-            stock = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
+            stock = StockModels.StockItem.objects.filter(StockModels.StockItem.IN_STOCK_FILTER)
             
             # Filter by part reference
             stock = stock.filter(part=item.sub_part)
@@ -282,7 +282,7 @@ class Build(MPTTModel):
         if self.part.trackable and serial_numbers:
             # Add new serial numbers
             for serial in serial_numbers:
-                item = StockItem.objects.create(
+                item = StockModels.StockItem.objects.create(
                     part=self.part,
                     build=self,
                     location=location,
@@ -296,7 +296,7 @@ class Build(MPTTModel):
 
         else:
             # Add stock of the newly created item
-            item = StockItem.objects.create(
+            item = StockModels.StockItem.objects.create(
                 part=self.part,
                 build=self,
                 location=location,
@@ -342,9 +342,9 @@ class Build(MPTTModel):
         """
 
         try:
-            item = BomItem.objects.get(part=self.part.id, sub_part=part.id)
+            item = PartModels.BomItem.objects.get(part=self.part.id, sub_part=part.id)
             q = item.quantity
-        except BomItem.DoesNotExist:
+        except PartModels.BomItem.DoesNotExist:
             q = 0
 
         return q * self.quantity

@@ -14,7 +14,6 @@ from django.urls import reverse
 from django.db import models, transaction
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
-from django.db.models import prefetch_related_objects
 from django.core.validators import MinValueValidator
 
 from django.contrib.auth.models import User
@@ -627,7 +626,6 @@ class Part(models.Model):
         query = self.sales_order_allocations().aggregate(total=Coalesce(Sum('quantity'), 0))
 
         return query['total']
-
 
     def allocation_count(self):
         """

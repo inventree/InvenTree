@@ -31,7 +31,6 @@ from InvenTree.models import InvenTreeTree
 from InvenTree.fields import InvenTreeURLField
 
 from part import models as PartModels
-from order import models as OrderModels
 
 
 class StockLocation(InvenTreeTree):
