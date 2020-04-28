@@ -148,7 +148,7 @@ function loadSupplierPartTable(table, url, options) {
                 field: 'SKU',
                 title: "Supplier Part",
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url);
+                    return renderLink(value, `/supplier-part/${row.pk}/`);
                 }
             },
             {

@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block page_title %}
-InvenTree | Build List 
+InvenTree | {% trans "Build Orders" %} 
 {% endblock %}
 
 {% block content %}
@@ -10,7 +11,7 @@ InvenTree | Build List
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h3>Part Builds</h3>
+        <h3>{% trans "Build Orders" %}</h3>
     </div>
     <div class='col-sm-6'>
 
@@ -20,7 +21,7 @@ InvenTree | Build List
     
     <div id='button-toolbar'>
         <div class='button-toolbar container-fluid' style='float: right;'>
-            <button type='button' class="btn btn-success" id='new-build'>Start New Build</button>
+            <button type='button' class="btn btn-success" id='new-build'>{% trans "New Build Order" %}</button>
             <div class='filter-list' id='filter-list-build'>
                 <!-- An empty div in which the filter list will be constructed -->
             </div>

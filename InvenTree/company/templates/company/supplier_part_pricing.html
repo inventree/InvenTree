@@ -36,8 +36,8 @@
                 {% decimal pb.cost %}
                 {% if pb.currency %}{{ pb.currency.suffix }}{% endif %}
                 <div class='btn-group' style='float: right;'>
-                    <button title='Edit Price Break' class='btn btn-default btn-sm pb-edit-button' type='button' url="{% url 'price-break-edit' pb.id %}"><span class='glyphicon glyphicon-edit'></span></button>
-                    <button title='Delete Price Break' class='btn btn-default btn-sm pb-delete-button' type='button' url="{% url 'price-break-delete' pb.id %}"><span class='glyphicon glyphicon-trash'></span></button>
+                    <button title='Edit Price Break' class='btn btn-default btn-sm pb-edit-button' type='button' url="{% url 'price-break-edit' pb.id %}"><span class='fas fa-edit icon-green'></span></button>
+                    <button title='Delete Price Break' class='btn btn-default btn-sm pb-delete-button' type='button' url="{% url 'price-break-delete' pb.id %}"><span class='fas fa-trash-alt icon-red'></span></button>
                 </div>
             </td>
         </tr>

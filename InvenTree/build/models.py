@@ -25,8 +25,8 @@ from InvenTree.status_codes import BuildStatus, StockStatus
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string
 
-from stock.models import StockItem
-from part.models import Part, BomItem
+from stock import models as StockModels
+from part import models as PartModels
 
 
 class Build(MPTTModel):
@@ -189,7 +189,11 @@ class Build(MPTTModel):
             # How many parts required for this build?
             q_required = item.quantity * self.quantity
 
-            stock = StockItem.objects.filter(part=item.sub_part)
+            # Grab a list of StockItem objects which are "in stock"
+            stock = StockModels.StockItem.objects.filter(StockModels.StockItem.IN_STOCK_FILTER)
+            
+            # Filter by part reference
+            stock = stock.filter(part=item.sub_part)
 
             # Ensure that the available stock items are in the correct location
             if self.take_from is not None:
@@ -278,7 +282,7 @@ class Build(MPTTModel):
         if self.part.trackable and serial_numbers:
             # Add new serial numbers
             for serial in serial_numbers:
-                item = StockItem.objects.create(
+                item = StockModels.StockItem.objects.create(
                     part=self.part,
                     build=self,
                     location=location,
@@ -292,7 +296,7 @@ class Build(MPTTModel):
 
         else:
             # Add stock of the newly created item
-            item = StockItem.objects.create(
+            item = StockModels.StockItem.objects.create(
                 part=self.part,
                 build=self,
                 location=location,
@@ -338,9 +342,9 @@ class Build(MPTTModel):
         """
 
         try:
-            item = BomItem.objects.get(part=self.part.id, sub_part=part.id)
+            item = PartModels.BomItem.objects.get(part=self.part.id, sub_part=part.id)
             q = item.quantity
-        except BomItem.DoesNotExist:
+        except PartModels.BomItem.DoesNotExist:
             q = 0
 
         return q * self.quantity
@@ -461,7 +465,7 @@ class BuildItem(models.Model):
             if self.stock_item.serial and not self.quantity == 1:
                 errors['quantity'] = _('Quantity must be 1 for serialized stock')
 
-        except (StockItem.DoesNotExist, Part.DoesNotExist):
+        except (StockModels.StockItem.DoesNotExist, PartModels.Part.DoesNotExist):
             pass
 
         if len(errors) > 0:

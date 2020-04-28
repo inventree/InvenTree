@@ -141,10 +141,6 @@ class TestBuildViews(TestCase):
         response = self.client.get(reverse('build-index'))
         self.assertEqual(response.status_code, 200)
 
-        content = str(response.content)
-
-        self.assertIn("Part Builds", content)
-
     def test_build_detail(self):
         """ Test the detail view for a Build object """
 

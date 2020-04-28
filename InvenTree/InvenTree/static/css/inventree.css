@@ -384,6 +384,10 @@
     padding-bottom: 2px;
 }
 
+.action-button {
+    font-size: 125%;
+}
+
 .action-buttons .btn {
     font-size: 175%;
     align-content: center;

@@ -11,6 +11,6 @@
         <a href="{% url 'build-output' build.id %}">{% trans "Build Outputs" %}{% if build.output_count > 0%}<span class='badge'>{{ build.output_count }}</span>{% endif %}</a>
     </li>
     <li{% if tab == 'notes' %} class='active'{% endif %}>
-        <a href="{% url 'build-notes' build.id %}">{% trans "Notes" %}{% if build.notes %} <span class='glyphicon glyphicon-small glyphicon-info-sign'></span>{% endif %}</a>
+        <a href="{% url 'build-notes' build.id %}">{% trans "Notes" %}{% if build.notes %} <span class='fas fa-info-circle'></span>{% endif %}</a>
     </li>
 </ul>

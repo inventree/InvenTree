@@ -119,8 +119,8 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
                 formatter: function(value, row, index, field) {
                     var html = parseFloat(value);
 
-                    var bEdit = "<button class='btn item-edit-button btn-sm' type='button' title='Edit stock allocation' url='/build/item/" + row.pk + "/edit/'><span class='glyphicon glyphicon-small glyphicon-edit'></span></button>";
-                    var bDel = "<button class='btn item-del-button btn-sm' type='button' title='Delete stock allocation' url='/build/item/" + row.pk + "/delete/'><span class='glyphicon glyphicon-small glyphicon-trash'></span></button>";
+                    var bEdit = "<button class='btn item-edit-button btn-sm' type='button' title='Edit stock allocation' url='/build/item/" + row.pk + "/edit/'><span class='fas fa-edit'></span></button>";
+                    var bDel = "<button class='btn item-del-button btn-sm' type='button' title='Delete stock allocation' url='/build/item/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'></span></button>";
                     
                     html += "<div class='btn-group' style='float: right;'>" + bEdit + bDel + "</div>";
                     

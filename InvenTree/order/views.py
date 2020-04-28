@@ -234,7 +234,7 @@ class PurchaseOrderNotes(UpdateView):
 
     def get_success_url(self):
 
-        return reverse('purchase-order-notes', kwargs={'pk': self.get_object().id})
+        return reverse('po-notes', kwargs={'pk': self.get_object().id})
 
     def get_context_data(self, **kwargs):
 
