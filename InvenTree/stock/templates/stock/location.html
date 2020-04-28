@@ -9,24 +9,24 @@
     <h3>{{ location.name }}</h3>
     <p>{{ location.description }}</p>
     {% else %}
-    <h3>Stock</h3>
-    <p>All stock items</p>
+    <h3>{% trans "Stock" %}</h3>
+    <p>{% trans "All stock items" %}</p>
     {% endif %}
     <p>
         <div class='btn-group action-buttons'>
-            <button class='btn btn-default' id='location-create' title='Create new stock location'>
+            <button class='btn btn-default' id='location-create' title='{% trans "Create new stock location" %}'>
                 <span class='fas fa-plus-circle icon-green'/>
             </button>
             {% if location %}
             {% include "qr_button.html" %}
-            <button class='btn btn-default' id='location-count' title='Count stock items'>
+            <button class='btn btn-default' id='location-count' title='{% trans "Count stock items" %}'>
                 <span class='fas fa-clipboard-list'/>
             </button>
-            <button class='btn btn-default btn-glyph' id='location-edit' title='Edit stock location'>
+            <button class='btn btn-default btn-glyph' id='location-edit' title='{% trans "Edit stock location" %}'>
                 <span class='fas fa-edit icon-blue'/>
             </button>
-            <button class='btn btn-default btn-glyph' id='location-delete' title='Delete stock location'>
-                <span class='glyphicon glyphicon-trash icon-red'/>
+            <button class='btn btn-default btn-glyph' id='location-delete' title='{% trans "Delete stock location" %}'>
+                <span class='fas fa-trash-alt icon-red'/>
             </button>
             {% endif %}
         </div>

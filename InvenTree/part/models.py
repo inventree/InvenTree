@@ -13,7 +13,7 @@ from django.urls import reverse
 
 from django.db import models, transaction
 from django.db.models import Sum
-from django.db.models import prefetch_related_objects
+from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
 from django.contrib.auth.models import User
@@ -41,6 +41,8 @@ from InvenTree.helpers import decimal2string, normalize
 
 from InvenTree.status_codes import BuildStatus, StockStatus, PurchaseOrderStatus
 
+from build import models as BuildModels
+from order import models as OrderModels
 from company.models import SupplierPart
 from stock import models as StockModels
 
@@ -502,8 +504,7 @@ class Part(models.Model):
         """
 
         total = self.total_stock
-
-        total -= self.allocation_count
+        total -= self.allocation_count()
 
         return max(total, 0)
 
@@ -594,46 +595,47 @@ class Part(models.Model):
 
         return quantity
 
-    @property
-    def build_allocation(self):
-        """ Return list of builds to which this part is allocated
+    def build_order_allocations(self):
+        """
+        Return all 'BuildItem' objects which allocate this part to Build objects
         """
 
-        builds = []
+        return BuildModels.BuildItem.objects.filter(stock_item__part__id=self.id)
 
-        for item in self.used_in.all().prefetch_related('part__builds'):
-
-            active = item.part.active_builds
-            
-            for build in active:
-                b = {}
-
-                b['build'] = build
-                b['quantity'] = item.quantity * build.quantity
-
-                builds.append(b)
-
-        prefetch_related_objects(builds, 'build_items')
-
-        return builds
-
-    @property
-    def allocated_build_count(self):
-        """ Return the total number of this part that are allocated for builds
+    def build_order_allocation_count(self):
+        """
+        Return the total amount of this part allocated to build orders
         """
 
-        return sum([a['quantity'] for a in self.build_allocation])
+        query = self.build_order_allocations().aggregate(total=Coalesce(Sum('quantity'), 0))
 
-    @property
+        return query['total']
+
+    def sales_order_allocations(self):
+        """
+        Return all sales-order-allocation objects which allocate this part to a SalesOrder
+        """
+
+        return OrderModels.SalesOrderAllocation.objects.filter(item__part__id=self.id)
+
+    def sales_order_allocation_count(self):
+        """
+        Return the tutal quantity of this part allocated to sales orders
+        """
+
+        query = self.sales_order_allocations().aggregate(total=Coalesce(Sum('quantity'), 0))
+
+        return query['total']
+
     def allocation_count(self):
-        """ Return true if any of this part is allocated:
-
-        - To another build
-        - To a customer order
+        """
+        Return the total quantity of stock allocated for this part,
+        against both build orders and sales orders.
         """
 
         return sum([
-            self.allocated_build_count,
+            self.build_order_allocation_count(),
+            self.sales_order_allocation_count(),
         ])
 
     @property
@@ -645,7 +647,7 @@ class Part(models.Model):
         - belongs_to is None
         """
 
-        return self.stock_items.filter(StockModels.StockItem.IN_STOCK_FILTER).exclude(status__in=StockStatus.UNAVAILABLE_CODES)
+        return self.stock_items.filter(StockModels.StockItem.IN_STOCK_FILTER)
 
     @property
     def total_stock(self):

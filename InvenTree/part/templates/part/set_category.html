@@ -1,17 +1,18 @@
 {% extends "modal_form.html" %}
+{% load i18n %}
 
 {% block form %}
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
     {% load crispy_forms_tags %}
     
     <label class='control-label'>Parts</label>
-    <p class='help-block'>Set category for the following parts</p>
+    <p class='help-block'>{% trans "Set category for the following parts" %}</p>
     
     <table class='table table-striped'>
         <tr>
-            <th>Part</th>
-            <th>Description</th>
-            <th>Category</th>
+            <th>{% trans "Part" %}</th>
+            <th>{% trans "Description" %}</th>
+            <th>{% trans "Category" %}</th>
             <th>
             </tr>
             {% for part in parts %}
@@ -28,8 +29,8 @@
                     {{ part.category.pathstring }}
                 </td>
                 <td>
-                    <button class='btn btn-default btn-remove' onClick='removeRowFromModalForm()' title='Remove part' type='button'>
-                        <span row='part_row_{{ part.id }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                    <button class='btn btn-default btn-remove' onClick='removeRowFromModalForm()' title='{% trans "Remove part" %}' type='button'>
+                        <span row='part_row_{{ part.id }}' class='fas fa-trash-alt icon-red'></span>
                     </button>
                 </td>
             </tr>

@@ -8,7 +8,7 @@
 
 {% include 'order/po_tabs.html' with tab='attachments' %}
 
-<h4>{% trans "Purchase Order Attachments" %}
+<h4>{% trans "Purchase Order Attachments" %}</h4>
 
 <hr>
 
@@ -34,10 +34,10 @@
             <td>
                 <div class='btn-group' style='float: right;'>    
                     <button type='button' class='btn btn-default btn-glyph attachment-edit-button' url="{% url 'po-attachment-edit' attachment.id %}" data-toggle='tooltip' title='{% trans "Edit attachment" %}'>
-                        <span class='glyphicon glyphicon-edit'/>
+                        <span class='fas fa-edit'/>
                     </button>
                     <button type='button' class='btn btn-default btn-glyph attachment-delete-button' url="{% url 'po-attachment-delete' attachment.id %}" data-toggle='tooltip' title='{% trans "Delete attachment" %}'>
-                        <span class='glyphicon glyphicon-trash'/>
+                        <span class='fas fa-trash-alt icon-red'/>
                     </button>
                 </div>
             </td>

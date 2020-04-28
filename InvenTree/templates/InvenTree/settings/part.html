@@ -1,14 +1,15 @@
 {% extends "InvenTree/settings/settings.html" %}
+{% load i18n %}
 
 {% block tabs %}
 {% include "InvenTree/settings/tabs.html" with tab='part' %}
 {% endblock %}
 
 {% block settings %}
-<h4>Part Parameter Templates</h4>
+<h4>{% transa "Part Parameter Templates" %}</h4>
 
 <div id='param-buttons'>
-    <button class='btn btn-success' id='new-param'>New Parameter</button>
+    <button class='btn btn-success' id='new-param'>{% trans "New Parameter" %}</button>
 </div>
 
 <table class='table table-striped table-condensed' id='param-table' data-toolbar='#param-buttons'>
@@ -24,7 +25,7 @@
         queryParams: {
             ordering: 'name',
         },
-        formatNoMatches: function() { return "No part parameter templates found"; },
+        formatNoMatches: function() { return '{% trans "No part parameter templates found" %}'; },
         columns: [
             {
                 field: 'pk',
@@ -43,8 +44,8 @@
             },
             {
                 formatter: function(value, row, index, field) {
-                    var bEdit = "<button title='Edit Template' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-edit'></span></button>";
-                    var bDel = "<button title='Delete Template' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-trash'></span></button>";
+                    var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                    var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
                     var html = "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
 

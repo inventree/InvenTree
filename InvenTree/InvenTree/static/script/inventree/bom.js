@@ -237,11 +237,11 @@ function loadBomTable(table, options) {
         cols.push({
             formatter: function(value, row, index, field) {
 
-                var bValidate = "<button title='Validate BOM Item' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='glyphicon glyphicon-check'/></button>";
-                var bValid = "<span class='glyphicon glyphicon-ok'/>";
+                var bValidate = "<button title='Validate BOM Item' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-check-circle icon-blue'/></button>";
+                var bValid = "<span title='This line has been validated' class='fas fa-check-double icon-green'/>";
 
-                var bEdit = "<button title='Edit BOM Item' class='bom-edit-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='glyphicon glyphicon-edit'/></button>";
-                var bDelt = "<button title='Delete BOM Item' class='bom-delete-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='glyphicon glyphicon-trash'/></button>";
+                var bEdit = "<button title='Edit BOM Item' class='bom-edit-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='fas fa-edit'/></button>";
+                var bDelt = "<button title='Delete BOM Item' class='bom-delete-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='fas fa-trash-alt icon-red'/></button>";
                 
                 var html = "<div class='btn-group' role='group'>";
                 
