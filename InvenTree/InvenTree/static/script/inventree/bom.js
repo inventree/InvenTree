@@ -185,26 +185,20 @@ function loadBomTable(table, options) {
     if (!options.editable) {
         cols.push(
         {
-            field: 'sub_part_detail.total_stock',
+            field: 'sub_part_detail.stock',
             title: 'Available',
             searchable: false,
             sortable: true,
             formatter: function(value, row, index, field) {
-                var text = "";
-                
-                if (row.quantity < row.sub_part_detail.total_stock)
-                {
-                    text = "<span class='label label-success'>" + value + "</span>";
+
+                var url = `/part/${row.sub_part_detail.pk}/stock/`;
+                var text = value;
+
+                if (value == null || value <= 0) {
+                    text = `<span class='label label-warning'>No Stock</span>`;
                 }
-                else
-                {
-                    if (!value) {
-                        value = 'No Stock';
-                    }
-                    text = "<span class='label label-warning'>" + value + "</span>";
-                }
-                
-                return renderLink(text, row.sub_part_detail.url + "stock/");
+
+                return renderLink(text, url);
             }
         });
 
