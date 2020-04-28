@@ -468,15 +468,15 @@ class BomList(generics.ListCreateAPIView):
 
         # Do we wish to include extra detail?
         try:
-            part_detail = str2bool(self.request.GET.get('part_detail', None))
-            sub_part_detail = str2bool(self.request.GET.get('sub_part_detail', None))
+            kwargs['part_detail'] = str2bool(self.request.GET.get('part_detail', None))
         except AttributeError:
-            part_detail = None
-            sub_part_detail = None
+            pass
 
-        kwargs['part_detail'] = part_detail
-        kwargs['sub_part_detail'] = sub_part_detail
-
+        try:
+            kwargs['sub_part_detail'] = str2bool(self.request.GET.get('sub_part_detail', None))
+        except AttributeError:
+            pass
+        
         # Ensure the request context is passed through!
         kwargs['context'] = self.get_serializer_context()
         
@@ -485,6 +485,12 @@ class BomList(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = BomItem.objects.all()
         queryset = self.get_serializer_class().setup_eager_loading(queryset)
+
+        return queryset
+
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
 
         # Filter by part?
         part = self.request.query_params.get('part', None)

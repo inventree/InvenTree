@@ -133,11 +133,14 @@ function loadBomTable(table, options) {
             title: 'Part',
             sortable: true,
             formatter: function(value, row, index, field) {
-                var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, row.sub_part_detail.url);
+                var url = `/part/${row.sub_part}/`;
+                var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, url);
 
                 // Display an extra icon if this part is an assembly
                 if (row.sub_part_detail.assembly) {
-                    html += "<a href='" + row.sub_part_detail.url + "bom'><span title='Open subassembly' class='fas fa-stream label-right'></span></a>";
+                    var text = `<span title='Open subassembly' class='fas fa-stream label-right'></span>`;
+                    
+                    html += renderLink(text, `/part/${row.sub_part}/bom/`);
                 }
 
                 return html;
@@ -185,26 +188,20 @@ function loadBomTable(table, options) {
     if (!options.editable) {
         cols.push(
         {
-            field: 'sub_part_detail.total_stock',
+            field: 'sub_part_detail.stock',
             title: 'Available',
             searchable: false,
             sortable: true,
             formatter: function(value, row, index, field) {
-                var text = "";
-                
-                if (row.quantity < row.sub_part_detail.total_stock)
-                {
-                    text = "<span class='label label-success'>" + value + "</span>";
+
+                var url = `/part/${row.sub_part_detail.pk}/stock/`;
+                var text = value;
+
+                if (value == null || value <= 0) {
+                    text = `<span class='label label-warning'>No Stock</span>`;
                 }
-                else
-                {
-                    if (!value) {
-                        value = 'No Stock';
-                    }
-                    text = "<span class='label label-warning'>" + value + "</span>";
-                }
-                
-                return renderLink(text, row.sub_part_detail.url + "stock/");
+
+                return renderLink(text, url);
             }
         });
 
