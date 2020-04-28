@@ -239,8 +239,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
     price_range = serializers.CharField(read_only=True)
 
     quantity = serializers.FloatField()
-
-    available = serializers.FloatField(source='available_stock')
     
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
@@ -282,7 +280,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'sub_part',
             'sub_part_detail',
             'quantity',
-            'available',
             'reference',
             'price_range',
             'overage',
