@@ -101,6 +101,8 @@ class PartSerializer(InvenTreeModelSerializer):
 
         return queryset.prefetch_related(
             'category',
+            'category__parts',
+            'category__parent',
             'stock_items',
             'bom_items',
             'builds',
