@@ -197,11 +197,6 @@ class PartList(generics.ListCreateAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
-        try:
-            cat_detail = str2bool(self.request.query_params.get('category_detail', False))
-        except AttributeError:
-            cat_detail = None
-
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
 
