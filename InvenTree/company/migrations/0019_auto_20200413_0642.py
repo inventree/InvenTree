@@ -95,7 +95,7 @@ def associate_manufacturers(apps, schema_editor):
 
         cursor = connection.cursor()
         response = cursor.execute(query)
-        row = response.fetchone()
+        row = cursor.fetchone()
 
         if len(row) > 0:
             return row[0]
