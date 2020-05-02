@@ -1,3 +1,4 @@
+{% load i18n %}
 
 function loadCompanyTable(table, url, options={}) {
     /*
@@ -25,7 +26,7 @@ function loadCompanyTable(table, url, options={}) {
         method: 'get',
         queryParams: filters,
         groupBy: false,
-        formatNoMatches: function() { return "No company information found"; },
+        formatNoMatches: function() { return "{% trans "No company information found" %}"; },
         columns: [
             {
                 field: 'pk',
@@ -34,21 +35,21 @@ function loadCompanyTable(table, url, options={}) {
             },
             {
                 field: 'name',
-                title: 'Company',
+                title: '{% trans "Company" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     var html = imageHoverIcon(row.image) + renderLink(value, row.url);
 
                     if (row.is_customer) {
-                        html += `<span title='Customer' class='fas fa-user-tie label-right'></span>`;
+                        html += `<span title='{% trans "Customer" %}' class='fas fa-user-tie label-right'></span>`;
                     }
                     
                     if (row.is_manufacturer) {
-                        html += `<span title='Manufacturer' class='fas fa-industry label-right'></span>`;
+                        html += `<span title='{% trans "Manufacturer" %}' class='fas fa-industry label-right'></span>`;
                     }
                     
                     if (row.is_supplier) {
-                        html += `<span title='Supplier' class='fas fa-building label-right'></span>`;
+                        html += `<span title='{% trans "Supplier" %}' class='fas fa-building label-right'></span>`;
                     }
 
                     return html;
@@ -56,12 +57,12 @@ function loadCompanyTable(table, url, options={}) {
             },
             {
                 field: 'description',
-                title: 'Description',
+                title: '{% trans "Description" %}',
                 sortable: true,
             },
             {
                 field: 'website',
-                title: 'Website',
+                title: '{% trans "Website" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
                         return renderLink(value, value);
@@ -97,7 +98,7 @@ function loadSupplierPartTable(table, url, options) {
         method: 'get',
         queryParams: filters,
         groupBy: false,
-        formatNoMatches: function() { return "No supplier parts found"; },
+        formatNoMatches: function() { return "{% trans "No supplier parts found" %}"; },
         columns: [
             {
                 checkbox: true,
@@ -105,7 +106,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'part_detail.full_name',
-                title: 'Part',
+                title: '{% trans "Part" %}',
                 formatter: function(value, row, index, field) {
 
                     var url = `/part/${row.part}/`;
@@ -113,15 +114,15 @@ function loadSupplierPartTable(table, url, options) {
                     var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, url);
 
                     if (row.part_detail.is_template) {
-                        html += `<span class='fas fa-clone label-right' title='Template part'></span>`;
+                        html += `<span class='fas fa-clone label-right' title='{% trans "Template part" %}'></span>`;
                     }
 
                     if (row.part_detail.assembly) {
-                        html += `<span class='fas fa-tools label-right' title='Assembled part'></span>`;
+                        html += `<span class='fas fa-tools label-right' title='{% trans "Assembled part" %}'></span>`;
                     }
 
                     if (!row.part_detail.active) {
-                        html += `<span class='label label-warning label-right'>INACTIVE</span>`;
+                        html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`;
                     }
 
                     return html;
@@ -130,7 +131,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'supplier',
-                title: "Supplier",
+                title: "{% trans "Supplier" %}",
                 formatter: function(value, row, index, field) {
                     if (value) {
                         var name = row.supplier_detail.name;
@@ -146,7 +147,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'SKU',
-                title: "Supplier Part",
+                title: "{% trans "Supplier Part" %}",
                 formatter: function(value, row, index, field) {
                     return renderLink(value, `/supplier-part/${row.pk}/`);
                 }
@@ -154,7 +155,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'manufacturer',
-                title: 'Manufacturer',
+                title: '{% trans "Manufacturer" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
                         var name = row.manufacturer_detail.name;
@@ -170,11 +171,11 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'MPN',
-                title: 'MPN',
+                title: '{% trans "MPN" %}',
             },
             {
                 field: 'link',
-                title: 'Link',
+                title: '{% trans "Link" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
                         return renderLink(value, value);
