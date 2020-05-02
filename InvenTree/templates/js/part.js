@@ -41,14 +41,14 @@ function loadPartTable(table, url, options={}) {
     if (options.checkbox) {
         columns.push({
             checkbox: true,
-            title: 'Select',
+            title: '{% trans 'Select' %}',
             searchable: false,
         });
     }
 
     columns.push({
         field: 'name',
-        title: 'Part',
+        title: '{% trans 'Part' %}',
         sortable: true,
         formatter: function(value, row, index, field) {
 
@@ -73,19 +73,19 @@ function loadPartTable(table, url, options={}) {
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
             
             if (row.is_template) {
-                display += `<span class='fas fa-clone label-right' title='Template part'></span>`;
+                display += `<span class='fas fa-clone label-right' title='{% trans "Template part" %}'></span>`;
             }
             
             if (row.assembly) {
-                display += `<span class='fas fa-tools label-right' title='Assembled part'></span>`;
+                display += `<span class='fas fa-tools label-right' title='{% trans "Assembled part" %}'></span>`;
             }
 
             if (row.starred) {
-                display += `<span class='fas fa-star label-right' title='Starred part'></span>`;
+                display += `<span class='fas fa-star label-right' title='{% trans "Starred part" %}'></span>`;
             }
 
             if (row.salable) {
-                display += `<span class='fas fa-dollar-sign label-right' title='Salable part'></span>`;
+                display += `<span class='fas fa-dollar-sign label-right' title='{% trans "Salable part" %}'></span>`;
             }
 
             /*
@@ -95,7 +95,7 @@ function loadPartTable(table, url, options={}) {
             */
             
             if (!row.active) {
-                display += `<span class='label label-warning label-right'>INACTIVE</span>`; 
+                display += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
             }
             return display; 
         }
@@ -104,7 +104,7 @@ function loadPartTable(table, url, options={}) {
     columns.push({
         sortable: true,
         field: 'description',
-        title: 'Description',
+        title: '{% trans 'Description' %}',
         formatter: function(value, row, index, field) {
 
             if (row.is_template) {
@@ -118,20 +118,20 @@ function loadPartTable(table, url, options={}) {
     columns.push({
         sortable: true,
         field: 'category_detail',
-        title: 'Category',
+        title: '{% trans 'Category' %}',
         formatter: function(value, row, index, field) {
             if (row.category) {
                 return renderLink(value.pathstring, "/part/category/" + row.category + "/");
             }
             else {
-                return 'No category';
+                return '{% trans "No category" %}';
             }
         }   
     });
 
     columns.push({
         field: 'in_stock',
-        title: 'Stock',
+        title: '{% trans "Stock" %}',
         searchable: false,
         sortable: true,
         formatter: function(value, row, index, field) {            
@@ -142,20 +142,20 @@ function loadPartTable(table, url, options={}) {
 
                 // Is stock "low" (below the 'minimum_stock' quantity)?
                 if (row.minimum_stock && row.minimum_stock > value) {
-                    value += "<span class='label label-right label-warning'>Low stock</span>";
+                    value += "<span class='label label-right label-warning'>{% trans "Low stock" %}</span>";
                 }
 
             } else if (row.on_order) {
                 // There is no stock available, but stock is on order
-                value = "0<span class='label label-right label-primary'>On Order : " + row.on_order + "</span>";
+                value = "0<span class='label label-right label-primary'>{% trans "On Order" %}: " + row.on_order + "</span>";
                 link = "orders";
             } else if (row.building) {
                 // There is no stock available, but stock is being built
-                value = "0<span class='label label-right label-info'>Building : " + row.building + "</span>";
+                value = "0<span class='label label-right label-info'>{% trans "Building" %}: " + row.building + "</span>";
                 link = "builds";
             } else {
                 // There is no stock available
-                value = "0<span class='label label-right label-danger'>No Stock</span>";
+                value = "0<span class='label label-right label-danger'>{% trans "No Stock" %}</span>";
             }
             
             return renderLink(value, '/part/' + row.pk + "/" + link + "/");
@@ -169,7 +169,7 @@ function loadPartTable(table, url, options={}) {
         queryParams: filters,
         groupBy: false,
         original: params,
-        formatNoMatches: function() { return "No parts found"; },
+        formatNoMatches: function() { return "{% trans "No parts found" %}"; },
         columns: columns,
     });
 
