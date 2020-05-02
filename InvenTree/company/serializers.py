@@ -4,6 +4,8 @@ JSON serializers for Company app
 
 from rest_framework import serializers
 
+from django.db.models import Count
+
 from .models import Company
 from .models import SupplierPart, SupplierPriceBreak
 
@@ -33,10 +35,20 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
 class CompanySerializer(InvenTreeModelSerializer):
     """ Serializer for Company object (full detail) """
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-    part_count = serializers.CharField(read_only=True)
+    @staticmethod
+    def annotate_queryset(queryset):
 
+        return queryset.annotate(
+            parts_supplied=Count('supplied_parts'),
+            parts_manufactured=Count('manufactured_parts')
+        )
+
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    
     image = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
+    parts_supplied = serializers.IntegerField(read_only=True)
+    parts_manufactured = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Company
@@ -57,7 +69,8 @@ class CompanySerializer(InvenTreeModelSerializer):
             'is_manufacturer',
             'is_supplier',
             'notes',
-            'part_count'
+            'parts_supplied',
+            'parts_manufactured',
         ]
 
 
