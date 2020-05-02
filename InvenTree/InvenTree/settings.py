@@ -72,6 +72,27 @@ if DEBUG:
         format='%(asctime)s %(levelname)s %(message)s',
     )
 
+# Does the user wish to use the sentry.io integration?
+sentry_opts = CONFIG.get('sentry', {})
+
+if sentry_opts.get('enabled', False):
+    dsn = sentry_opts.get('dsn', None)
+
+    if dsn is not None:
+        # Try to import required modules (exit if not installed)
+        try:
+            import sentry_sdk
+            from sentry_sdk.integrations.django import DjangoIntegration
+
+            sentry_sdk.init(dsn=dsn, integrations=[DjangoIntegration()], send_default_pii=True)
+
+        except ModuleNotFoundError:
+            print("sentry_sdk module not found. Install using 'pip install sentry-sdk'")
+            sys.exit(-1)
+
+    else:
+        print("Warning: Sentry.io DSN not specified")
+
 # Application definition
 
 INSTALLED_APPS = [
