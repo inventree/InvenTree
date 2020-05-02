@@ -6,7 +6,7 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.http import JsonResponse
 from django.db.models import Q, F, Count
 
 from rest_framework import status
@@ -264,7 +264,15 @@ class PartList(generics.ListCreateAPIView):
 
                 part['category_detail'] = detail
 
-        return Response(data)
+        """
+        Determine the response type based on the request.
+        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        b) For AJAX requests, simply return a JSON rendered response.
+        """
+        if request.is_ajax():
+            return JsonResponse(data, safe=False)
+        else:
+            return Response(data)
 
     def create(self, request, *args, **kwargs):
         """ Override the default 'create' behaviour:
@@ -288,6 +296,7 @@ class PartList(generics.ListCreateAPIView):
 
         queryset = super().get_queryset(*args, **kwargs)
         queryset = part_serializers.PartSerializer.prefetch_queryset(queryset)
+        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
         return queryset
 
