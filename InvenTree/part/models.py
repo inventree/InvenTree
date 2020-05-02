@@ -526,7 +526,7 @@ class Part(models.Model):
         This number (unlike 'available_stock') can be negative.
         """
 
-        return self.total_stock - self.allocation_count + self.on_order
+        return self.total_stock - self.allocation_count() + self.on_order
 
     def isStarredBy(self, user):
         """ Return True if this part has been starred by a particular user """
