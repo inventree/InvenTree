@@ -17,15 +17,58 @@ import os
 import sys
 
 
-def manually_translate_file(filename):
+def manually_translate_file(filename, save=False):
     """
     Manually translate a .po file.
     Present any missing translation strings to the translator,
     and write their responses back to the file.
     """
 
-    print("here we go!", filename)
+    print("Add manual translations to '{f}'".format(f=filename))
+    print("For each missing translation:")
+    print("a) Directly enter a new tranlation in the target language")
+    print("b) Leave empty to skip")
+    
+    input("Press <ENTER> to continue")
+    print("")
 
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+
+    out = []
+
+    # Context data
+    source_line = ''
+    msgid = ''
+
+    for num, line in enumerate(lines):
+        # Keep track of context data BEFORE an empty msgstr object
+        line = line.strip()
+
+        if line.startswith("#: "):
+            source_line = line.replace("#: ", "")
+
+        elif line.startswith("msgid "):
+            msgid = line.replace("msgid ", "")
+
+        if line.strip() == 'msgstr ""':
+            # We have found an empty translation!
+
+            if msgid and len(msgid) > 0 and not msgid == '""':
+                print("Source:", source_line)
+                print("Enter translation for {t}".format(t=msgid))
+
+                translation = str(input(">"))
+
+                if translation and len(translation) > 0:
+                    # Update the line with the new translation
+                    line = 'msgstr "{msg}"'.format(msg=translation)
+
+        out.append(line + "\r\n")
+
+    if save:
+        with open(filename, 'w') as output_file:
+            output_file.writelines(out)
 
 if __name__ == '__main__':
 
@@ -39,6 +82,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="InvenTree Translation Helper")
 
     parser.add_argument('language', help='Language code', action='store')
+
+    parser.add_argument('--fake', help="Do not save updated translations", action='store_true')
 
     args = parser.parse_args()
 
@@ -59,5 +104,5 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Ok, now we run the user through the translation file
-    manually_translate_file(PO_FILE)
+    manually_translate_file(PO_FILE, save=args.fake is not True)
     
