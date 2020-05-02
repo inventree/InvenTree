@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-02 04:54+0000\n"
+"POT-Creation-Date: 2020-05-02 12:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,19 +78,19 @@ msgstr ""
 msgid "File comment"
 msgstr ""
 
-#: InvenTree/settings.py:274
+#: InvenTree/settings.py:295
 msgid "English"
 msgstr ""
 
-#: InvenTree/settings.py:275
+#: InvenTree/settings.py:296
 msgid "German"
 msgstr ""
 
-#: InvenTree/settings.py:276
+#: InvenTree/settings.py:297
 msgid "French"
 msgstr ""
 
-#: InvenTree/settings.py:277
+#: InvenTree/settings.py:298
 msgid "Polish"
 msgstr ""
 
@@ -153,7 +153,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:214 build/templates/build/allocate.html:349
 #: order/templates/order/sales_order_detail.html:220
-#: part/templates/part/part_base.html:114 part/templates/part/tabs.html:21
+#: part/templates/part/tabs.html:21
 msgid "Allocated"
 msgstr ""
 
@@ -182,7 +182,7 @@ msgstr ""
 msgid "Overage must be an integer value or a percentage"
 msgstr ""
 
-#: InvenTree/views.py:536
+#: InvenTree/views.py:548
 msgid "Database Statistics"
 msgstr ""
 
@@ -255,7 +255,7 @@ msgstr ""
 msgid "Number of parts to build"
 msgstr ""
 
-#: build/models.py:112 part/templates/part/part_base.html:131
+#: build/models.py:112 part/templates/part/part_base.html:138
 msgid "Build Status"
 msgstr ""
 
@@ -272,7 +272,7 @@ msgid "Batch code for this build output"
 msgstr ""
 
 #: build/models.py:139 build/templates/build/detail.html:55
-#: company/templates/company/supplier_part_base.html:57
+#: company/templates/company/supplier_part_base.html:60
 #: company/templates/company/supplier_part_detail.html:24
 #: part/templates/part/detail.html:67 part/templates/part/part_base.html:85
 #: stock/models.py:371 stock/templates/stock/item_base.html:189
@@ -397,7 +397,7 @@ msgid "No BOM items found"
 msgstr ""
 
 #: build/templates/build/allocate.html:328
-#: company/templates/company/supplier_part_base.html:50
+#: company/templates/company/supplier_part_base.html:53
 #: company/templates/company/supplier_part_detail.html:27
 #: order/templates/order/purchase_order_detail.html:157
 #: part/templates/part/detail.html:38 part/templates/part/set_category.html:14
@@ -870,13 +870,13 @@ msgid "Contact"
 msgstr ""
 
 #: company/templates/company/detail.html:16
-#: company/templates/company/supplier_part_base.html:73
+#: company/templates/company/supplier_part_base.html:76
 #: company/templates/company/supplier_part_detail.html:30
 msgid "Manufacturer"
 msgstr ""
 
 #: company/templates/company/detail.html:21
-#: company/templates/company/supplier_part_base.html:63
+#: company/templates/company/supplier_part_base.html:66
 #: company/templates/company/supplier_part_detail.html:21 order/models.py:111
 #: order/templates/order/order_base.html:74
 #: order/templates/order/order_wizard/select_pos.html:30
@@ -1000,34 +1000,39 @@ msgid "Supplier Part"
 msgstr ""
 
 #: company/templates/company/supplier_part_base.html:23
-msgid "Edit supplier part"
+#: part/templates/part/orders.html:14
+msgid "Order part"
 msgstr ""
 
 #: company/templates/company/supplier_part_base.html:26
+msgid "Edit supplier part"
+msgstr ""
+
+#: company/templates/company/supplier_part_base.html:29
 msgid "Delete supplier part"
 msgstr ""
 
-#: company/templates/company/supplier_part_base.html:35
+#: company/templates/company/supplier_part_base.html:38
 #: company/templates/company/supplier_part_detail.html:11
 msgid "Supplier Part Details"
 msgstr ""
 
-#: company/templates/company/supplier_part_base.html:40
+#: company/templates/company/supplier_part_base.html:43
 #: company/templates/company/supplier_part_detail.html:14
 msgid "Internal Part"
 msgstr ""
 
-#: company/templates/company/supplier_part_base.html:67
+#: company/templates/company/supplier_part_base.html:70
 #: company/templates/company/supplier_part_detail.html:22
 msgid "SKU"
 msgstr ""
 
-#: company/templates/company/supplier_part_base.html:77
+#: company/templates/company/supplier_part_base.html:80
 #: company/templates/company/supplier_part_detail.html:31
 msgid "MPN"
 msgstr ""
 
-#: company/templates/company/supplier_part_base.html:84
+#: company/templates/company/supplier_part_base.html:87
 #: company/templates/company/supplier_part_detail.html:34
 msgid "Note"
 msgstr ""
@@ -1422,8 +1427,8 @@ msgid "Attachments"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:16
-#: order/templates/order/sales_order_detail.html:17 order/views.py:1042
-#: order/views.py:1156
+#: order/templates/order/sales_order_detail.html:17 order/views.py:1051
+#: order/views.py:1165
 msgid "Add Line Item"
 msgstr ""
 
@@ -1645,39 +1650,39 @@ msgstr ""
 msgid "No lines specified"
 msgstr ""
 
-#: order/views.py:1062
+#: order/views.py:1071
 msgid "Invalid Purchase Order"
 msgstr ""
 
-#: order/views.py:1070
+#: order/views.py:1079
 msgid "Supplier must match for Part and Order"
 msgstr ""
 
-#: order/views.py:1075
+#: order/views.py:1084
 msgid "Invalid SupplierPart selection"
 msgstr ""
 
-#: order/views.py:1207 order/views.py:1225
+#: order/views.py:1216 order/views.py:1234
 msgid "Edit Line Item"
 msgstr ""
 
-#: order/views.py:1241 order/views.py:1253
+#: order/views.py:1250 order/views.py:1262
 msgid "Delete Line Item"
 msgstr ""
 
-#: order/views.py:1246 order/views.py:1258
+#: order/views.py:1255 order/views.py:1267
 msgid "Deleted line item"
 msgstr ""
 
-#: order/views.py:1267
+#: order/views.py:1276
 msgid "Allocate Stock to Order"
 msgstr ""
 
-#: order/views.py:1336
+#: order/views.py:1345
 msgid "Edit Allocation Quantity"
 msgstr ""
 
-#: order/views.py:1351
+#: order/views.py:1360
 msgid "Remove allocation"
 msgstr ""
 
@@ -2122,10 +2127,6 @@ msgid "Part Notes"
 msgstr ""
 
 #: part/templates/part/orders.html:14
-msgid "Order part"
-msgstr ""
-
-#: part/templates/part/orders.html:14
 msgid "Order Part"
 msgstr ""
 
@@ -2197,15 +2198,23 @@ msgstr ""
 msgid "In Stock"
 msgstr ""
 
+#: part/templates/part/part_base.html:114
+msgid "Allocated to Build Orders"
+msgstr ""
+
 #: part/templates/part/part_base.html:121
+msgid "Allocated to Sales Orders"
+msgstr ""
+
+#: part/templates/part/part_base.html:128
 msgid "On Order"
 msgstr ""
 
-#: part/templates/part/part_base.html:136
+#: part/templates/part/part_base.html:143
 msgid "Can Build"
 msgstr ""
 
-#: part/templates/part/part_base.html:142
+#: part/templates/part/part_base.html:149
 msgid "Underway"
 msgstr ""
 

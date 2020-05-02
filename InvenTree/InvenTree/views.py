@@ -525,7 +525,6 @@ class DynamicJsView(TemplateView):
     content_type = 'text/javascript'
     
 
-
 class SettingsView(TemplateView):
     """ View for configuring User settings
     """
