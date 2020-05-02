@@ -70,6 +70,10 @@ def manually_translate_file(filename, save=False):
         with open(filename, 'w') as output_file:
             output_file.writelines(out)
 
+        print("Translation done: written to", filename)
+        print("Run 'make translate' to rebuild translation data")
+
+
 if __name__ == '__main__':
 
     MY_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -105,4 +109,3 @@ if __name__ == '__main__':
 
     # Ok, now we run the user through the translation file
     manually_translate_file(PO_FILE, save=args.fake is not True)
-    
