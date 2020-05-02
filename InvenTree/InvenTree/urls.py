@@ -35,6 +35,7 @@ from rest_framework.documentation import include_docs_urls
 
 from .views import IndexView, SearchView, DatabaseStatsView
 from .views import SettingsView, EditUserView, SetPasswordView
+from .views import DynamicJsView
 
 from .api import InfoView, BarcodePluginView, ActionPluginView
 
@@ -74,6 +75,7 @@ settings_urls = [
 ]
 
 dynamic_javascript_urls = [
+    url(r'^part.js', DynamicJsView.as_view(template_name='js/part.js'), name='part.js'),
 ]
 
 urlpatterns = [

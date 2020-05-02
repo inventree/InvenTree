@@ -514,6 +514,18 @@ class SearchView(TemplateView):
         return super(TemplateView, self).render_to_response(context)
 
 
+class DynamicJsView(TemplateView):
+    """
+    View for returning javacsript files,
+    which instead of being served dynamically,
+    are passed through the django translation engine!
+    """
+
+    template_name = ""
+    content_type = 'text/javascript'
+    
+
+
 class SettingsView(TemplateView):
     """ View for configuring User settings
     """
