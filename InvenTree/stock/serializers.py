@@ -7,6 +7,9 @@ from rest_framework import serializers
 from .models import StockItem, StockLocation
 from .models import StockItemTracking
 
+from django.db.models import Sum, Count
+from django.db.models.functions import Coalesce
+
 from company.serializers import SupplierPartSerializer
 from part.serializers import PartBriefSerializer
 from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer
@@ -62,6 +65,10 @@ class StockItemSerializer(InvenTreeModelSerializer):
         """
 
         return queryset.prefetch_related(
+            'belongs_to',
+            'build',
+            'build_order',
+            'sales_order',
             'supplier_part',
             'supplier_part__supplier',
             'supplier_part__manufacturer',
@@ -79,7 +86,13 @@ class StockItemSerializer(InvenTreeModelSerializer):
         performing database queries as efficiently as possible.
         """
 
-        # TODO - Add custom annotated fields
+        queryset = queryset.annotate(
+            allocated = Coalesce(
+                Sum('sales_order_allocations__quantity', distinct=True), 0) + Coalesce(
+                Sum('allocations__quantity', distinct=True), 0),
+            tracking_items = Count('tracking_info'),
+        )
+
         return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -88,10 +101,10 @@ class StockItemSerializer(InvenTreeModelSerializer):
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='supplier_part', many=False, read_only=True)
 
-    tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True)
+    tracking_items = serializers.IntegerField()
 
     quantity = serializers.FloatField()
-    allocated = serializers.FloatField(source='allocation_count', read_only=True)
+    allocated = serializers.FloatField()
 
     def __init__(self, *args, **kwargs):
 
@@ -140,6 +153,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
         They can be updated by accessing the appropriate API endpoints
         """
         read_only_fields = [
+            'allocated',
             'stocktake_date',
             'stocktake_user',
             'updated',

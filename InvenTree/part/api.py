@@ -293,10 +293,10 @@ class PartList(generics.ListCreateAPIView):
 
     def filter_queryset(self, queryset):
         """
-        Perform custom filtering of the queryset
+        Perform custom filtering of the queryset.
+        We overide the DRF filter_fields here because 
         """
 
-        # Perform basic filtering
         queryset = super().filter_queryset(queryset)
 
         # Filter by 'starred' parts?
