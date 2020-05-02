@@ -47,8 +47,8 @@ class CompanySerializer(InvenTreeModelSerializer):
     
     image = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
-    parts_supplied = serializers.IntegerField()
-    parts_manufactured = serializers.IntegerField()
+    parts_supplied = serializers.IntegerField(read_only=True)
+    parts_manufactured = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Company
