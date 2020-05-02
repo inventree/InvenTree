@@ -145,7 +145,7 @@ $("#po-table").inventreeTable({
             title: '{% trans "Part" %}',
             formatter: function(value, row, index, field) {
                 if (row.part) {
-                    return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${value}/`);
+                    return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
                 } else { 
                     return '-';
                 }
