@@ -20,6 +20,9 @@ src="{% static 'img/blank_image.png' %}"
 <p>{{ part.supplier.name }} - {{ part.SKU }}</p>
 <div class='btn-row'>
     <div class='btn-group action-buttons' role='group'>
+        <button type='button' class='btn btn-default btn-glyph' id='order-part' title='{% trans "Order part" %}'>
+            <span class='fas fa-shopping-cart'></span>
+        </button>
         <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='{% trans "Edit supplier part" %}'>
             <span class='fas fa-edit icon-green'/>
         </button>
@@ -90,6 +93,18 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 {{ block.super }}
+
+$('#order-part').click(function() {
+    launchModalForm(
+        "{% url 'order-parts' %}",
+        {
+            data: {
+                part: {{ part.part.id }},
+            },
+            reload: true,
+        },
+    );
+});
 
 $('#edit-part').click(function () {
     launchModalForm(
