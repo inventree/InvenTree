@@ -87,10 +87,10 @@ class StockItemSerializer(InvenTreeModelSerializer):
         """
 
         queryset = queryset.annotate(
-            allocated = Coalesce(
+            allocated=Coalesce(
                 Sum('sales_order_allocations__quantity', distinct=True), 0) + Coalesce(
                 Sum('allocations__quantity', distinct=True), 0),
-            tracking_items = Count('tracking_info'),
+            tracking_items=Count('tracking_info'),
         )
 
         return queryset

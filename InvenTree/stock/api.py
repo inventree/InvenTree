@@ -420,7 +420,7 @@ class StockList(generics.ListCreateAPIView):
             # Now update each StockItem with the related StockLocation data
             for stock_item in data:
                 loc_id = stock_item['location']
-                stock_item['supplier_detail'] = location_map.get(loc_id, None)
+                stock_item['location_detail'] = location_map.get(loc_id, None)
 
         """
         Determine the response type based on the request.

@@ -294,7 +294,7 @@ class PartList(generics.ListCreateAPIView):
     def filter_queryset(self, queryset):
         """
         Perform custom filtering of the queryset.
-        We overide the DRF filter_fields here because 
+        We overide the DRF filter_fields here because
         """
 
         queryset = super().filter_queryset(queryset)
