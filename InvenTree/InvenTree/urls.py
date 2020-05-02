@@ -76,6 +76,7 @@ settings_urls = [
 
 dynamic_javascript_urls = [
     url(r'^part.js', DynamicJsView.as_view(template_name='js/part.js'), name='part.js'),
+    url(r'^stock.js', DynamicJsView.as_view(template_name='js/stock.js'), name='stock.js'),
 ]
 
 urlpatterns = [
