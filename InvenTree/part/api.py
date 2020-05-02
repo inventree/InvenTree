@@ -239,7 +239,7 @@ class PartList(generics.ListCreateAPIView):
                 cat_id = part['category']
 
                 if cat_id is not None:
-                    category_ids.add(part['category'])
+                    category_ids.add(cat_id)
 
             # Fetch only the required PartCategory objects from the database
             categories = PartCategory.objects.filter(pk__in=category_ids).prefetch_related(
@@ -258,7 +258,7 @@ class PartList(generics.ListCreateAPIView):
                 cat_id = part['category']
 
                 if cat_id is not None and cat_id in category_map.keys():
-                    detail = category_map[part['category']]
+                    detail = category_map[cat_id]
                 else:
                     detail = None
 

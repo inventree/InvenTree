@@ -15,7 +15,7 @@ from .models import StockItemTracking
 from part.models import Part, PartCategory
 
 from .serializers import StockItemSerializer
-from .serializers import LocationSerializer
+from .serializers import LocationSerializer, LocationBriefSerializer
 from .serializers import StockTrackingSerializer
 
 from InvenTree.views import TreeSerializer
@@ -333,11 +333,6 @@ class StockList(generics.ListCreateAPIView):
             pass
 
         try:
-            kwargs['location_detail'] = str2bool(self.request.query_params.get('location_detail', None))
-        except AttributeError:
-            pass
-
-        try:
             kwargs['supplier_part_detail'] = str2bool(self.request.query_params.get('supplier_part_detail', None))
         except AttributeError:
             pass
@@ -349,6 +344,62 @@ class StockList(generics.ListCreateAPIView):
 
     # TODO - Override the 'create' method for this view,
     # to allow the user to be recorded when a new StockItem object is created
+
+    def list(self, request, *args, **kwargs):
+        """
+        Override the 'list' method, as the StockLocation objects
+        are very expensive to serialize.
+        
+        So, we fetch and serialize the required StockLocation objects only as required.
+        """
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        data = serializer.data
+
+        # Do we wish to include StockLocation detail?
+        if str2bool(request.query_params.get('location_detail', False)):
+
+            # Work out which locations we need to query
+            location_ids = set()
+
+            for stock_item in data:
+                loc_id = stock_item['location']
+
+                if loc_id is not None:
+                    location_ids.add(loc_id)
+
+            # Fetch only the required StockLocation objects from the database
+            locations = StockLocation.objects.filter(pk__in=location_ids).prefetch_related(
+                'parent',
+                'children',
+            )
+
+            location_map = {}
+
+            # Serialize each StockLocation object
+            for location in locations:
+                location_map[location.pk] = LocationBriefSerializer(location).data
+
+            # Now update each StockItem with the related StockLocation data
+            for stock_item in data:
+                loc_id = stock_item['location']
+
+                if loc_id is not None and loc_id in location_map.keys():
+                    detail = location_map[loc_id]
+                else:
+                    detail = None
+
+                stock_item['location_detail'] = detail
+
+        return Response(data)
 
     def get_queryset(self, *args, **kwargs):
 

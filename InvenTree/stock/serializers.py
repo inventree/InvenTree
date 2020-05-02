@@ -17,15 +17,12 @@ class LocationBriefSerializer(InvenTreeModelSerializer):
     Provides a brief serializer for a StockLocation object
     """
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
     class Meta:
         model = StockLocation
         fields = [
             'pk',
             'name',
             'pathstring',
-            'url',
         ]
 
 
