@@ -6,7 +6,7 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.http import JsonResponse
 from django.db.models import Q, F, Count
 
 from rest_framework import status
@@ -110,7 +110,7 @@ class PartThumbs(generics.ListAPIView):
 
     serializer_class = part_serializers.PartThumbSerializer
 
-    def list(self, reguest, *args, **kwargs):
+    def list(self, request, *args, **kwargs):
         """
         Serialize the available Part images.
         - Images may be used for multiple parts!
@@ -142,6 +142,7 @@ class PartDetail(generics.RetrieveUpdateAPIView):
 
         queryset = part_serializers.PartSerializer.prefetch_queryset(queryset)
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
+
         return queryset
 
     permission_classes = [
@@ -151,14 +152,12 @@ class PartDetail(generics.RetrieveUpdateAPIView):
     def get_serializer(self, *args, **kwargs):
 
         try:
-            cat_detail = str2bool(self.request.query_params.get('category_detail', False))
+            kwargs['category_detail'] = str2bool(self.request.query_params.get('category_detail', False))
         except AttributeError:
-            cat_detail = None
+            pass
 
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
-
-        kwargs['category_detail'] = cat_detail
 
         # Pass a list of "starred" parts fo the current user to the serializer
         # We do this to reduce the number of database queries required!
@@ -198,15 +197,8 @@ class PartList(generics.ListCreateAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
-        try:
-            cat_detail = str2bool(self.request.query_params.get('category_detail', False))
-        except AttributeError:
-            cat_detail = None
-
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
-
-        kwargs['category_detail'] = cat_detail
 
         # Pass a list of "starred" parts fo the current user to the serializer
         # We do this to reduce the number of database queries required!
@@ -216,6 +208,71 @@ class PartList(generics.ListCreateAPIView):
         kwargs['starred_parts'] = self.starred_parts
 
         return self.serializer_class(*args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Overide the 'list' method, as the PartCategory objects are
+        very expensive to serialize!
+
+        So we will serialize them first, and keep them in memory,
+        so that they do not have to be serialized multiple times...
+        """
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        data = serializer.data
+
+        # Do we wish to include PartCategory detail?
+        if str2bool(request.query_params.get('category_detail', False)):
+
+            # Work out which part categorie we need to query
+            category_ids = set()
+
+            for part in data:
+                cat_id = part['category']
+
+                if cat_id is not None:
+                    category_ids.add(cat_id)
+
+            # Fetch only the required PartCategory objects from the database
+            categories = PartCategory.objects.filter(pk__in=category_ids).prefetch_related(
+                'parts',
+                'parent',
+                'children',
+            )
+
+            category_map = {}
+
+            # Serialize each PartCategory object
+            for category in categories:
+                category_map[category.pk] = part_serializers.CategorySerializer(category).data
+
+            for part in data:
+                cat_id = part['category']
+
+                if cat_id is not None and cat_id in category_map.keys():
+                    detail = category_map[cat_id]
+                else:
+                    detail = None
+
+                part['category_detail'] = detail
+
+        """
+        Determine the response type based on the request.
+        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        b) For AJAX requests, simply return a JSON rendered response.
+        """
+        if request.is_ajax():
+            return JsonResponse(data, safe=False)
+        else:
+            return Response(data)
 
     def create(self, request, *args, **kwargs):
         """ Override the default 'create' behaviour:
@@ -239,15 +296,16 @@ class PartList(generics.ListCreateAPIView):
 
         queryset = super().get_queryset(*args, **kwargs)
         queryset = part_serializers.PartSerializer.prefetch_queryset(queryset)
+        queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
         return queryset
 
     def filter_queryset(self, queryset):
         """
-        Perform custom filtering of the queryset
+        Perform custom filtering of the queryset.
+        We overide the DRF filter_fields here because
         """
 
-        # Perform basic filtering
         queryset = super().filter_queryset(queryset)
 
         # Filter by 'starred' parts?

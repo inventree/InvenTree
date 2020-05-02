@@ -101,6 +101,8 @@ class PartSerializer(InvenTreeModelSerializer):
 
         return queryset.prefetch_related(
             'category',
+            'category__parts',
+            'category__parent',
             'stock_items',
             'bom_items',
             'builds',
@@ -128,12 +130,7 @@ class PartSerializer(InvenTreeModelSerializer):
 
         # Annotate the number total stock count
         queryset = queryset.annotate(
-            in_stock=Coalesce(Sum('stock_items__quantity', filter=stock_filter, distinct=True), Decimal(0))
-        )
-
-        # Annotate the number of parts "on order"
-        # Total "on order" parts = "Quantity" - "Received" for each active purchase order
-        queryset = queryset.annotate(
+            in_stock=Coalesce(Sum('stock_items__quantity', filter=stock_filter, distinct=True), Decimal(0)),
             ordering=Coalesce(Sum(
                 'supplier_parts__purchase_order_line_items__quantity',
                 filter=order_filter,
@@ -142,11 +139,7 @@ class PartSerializer(InvenTreeModelSerializer):
                 'supplier_parts__purchase_order_line_items__received',
                 filter=order_filter,
                 distinct=True
-            ), Decimal(0))
-        )
-
-        # Annotate number of parts being build
-        queryset = queryset.annotate(
+            ), Decimal(0)),
             building=Coalesce(
                 Sum('builds__quantity', filter=build_filter, distinct=True), Decimal(0)
             )

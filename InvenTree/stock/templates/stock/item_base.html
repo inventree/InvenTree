@@ -105,9 +105,8 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     <col width='25'>
     <tr>
         <td><span class='fas fa-shapes'></span></td>
-        <td>Part</td>
+        <td>{% trans "Base Part" %}</td>
         <td>
-            {% include "hover_image.html" with image=item.part.image hover=True %}
             <a href="{% url 'part-stock' item.part.id %}">{{ item.part.full_name }}
         </td>
     </tr>
@@ -145,7 +144,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     {% endif %}
     {% if item.serialized %}
     <tr>
-        <td></td>
+        <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Serial Number" %}</td>
         <td>{{ item.serial }}</td>
     </tr>
