@@ -766,6 +766,7 @@ class OrderParts(AjaxView):
 
         for supplier in self.suppliers:
             supplier.order_items = []
+            
             suppliers[supplier.name] = supplier
 
         for part in self.parts:
@@ -778,7 +779,15 @@ class OrderParts(AjaxView):
 
             if supplier.name not in suppliers:
                 supplier.order_items = []
-                supplier.selected_purchase_order = None
+
+                # Attempt to auto-select a purchase order
+                orders = PurchaseOrder.objects.filter(supplier=supplier, status__in=PurchaseOrderStatus.OPEN)
+
+                if orders.count() == 1:
+                    supplier.selected_purchase_order = orders.first().id
+                else:
+                    supplier.selected_purchase_order = None
+    
                 suppliers[supplier.name] = supplier
                 
             suppliers[supplier.name].order_items.append(part)
