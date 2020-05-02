@@ -32,6 +32,13 @@ class CompanyList(generics.ListCreateAPIView):
 
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
+
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+        queryset = CompanySerializer.annotate_queryset(queryset)
+
+        return queryset
     
     permission_classes = [
         permissions.IsAuthenticated,
@@ -67,6 +74,13 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
+
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+        queryset = CompanySerializer.annotate_queryset(queryset)
+
+        return queryset
     
     permission_classes = [
         permissions.IsAuthenticated,
