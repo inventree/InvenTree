@@ -55,6 +55,10 @@ class StatusCode:
         return codes
 
     @classmethod
+    def text(cls, key):
+        return cls.options.get(key, None)
+
+    @classmethod
     def items(cls):
         return cls.options.items()
 
@@ -202,6 +206,15 @@ class StockStatus(StatusCode):
         SHIPPED,
         ASSIGNED_TO_BUILD,
         ASSIGNED_TO_OTHER_ITEM,
+    ]
+
+    # The following codes are available for receiving goods
+    RECEIVING_CODES = [
+        OK,
+        ATTENTION,
+        DAMAGED,
+        DESTROYED,
+        REJECTED
     ]
 
 
