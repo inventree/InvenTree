@@ -1,3 +1,5 @@
+{% load i18n %}
+
 function removeOrderRowFromOrderWizard(e) {
     /* Remove a part selection from an order form. */
 
@@ -121,7 +123,7 @@ function loadPurchaseOrderTable(table, options) {
         queryParams: filters,
         groupBy: false,
         original: options.params,
-        formatNoMatches: function() { return "No purchase orders found"; },
+        formatNoMatches: function() { return "{% trans "No purchase orders found" %}"; },
         columns: [
             {
                 field: 'pk',
@@ -131,7 +133,7 @@ function loadPurchaseOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'reference',
-                title: 'Purchase Order',
+                title: '{% trans "Purchase Order" %}',
                 formatter: function(value, row, index, field) {
                     return renderLink(value, `/order/purchase-order/${row.pk}/`);
                 }
@@ -139,25 +141,25 @@ function loadPurchaseOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'supplier_detail',
-                title: 'Supplier',
+                title: '{% trans "Supplier" %}',
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/purchase-orders/`);
                 }
             },
             {
                 field: 'supplier_reference',
-                title: 'Supplier Reference',
+                title: '{% trans "Supplier Reference" %}',
                 sortable: true,
             },
             {
                 sortable: true,
                 field: 'description',
-                title: 'Description',
+                title: '{% trans "Description" %}',
             },
             {
                 sortable: true,
                 field: 'status',
-                title: 'Status',
+                title: '{% trans "Status" %}',
                 formatter: function(value, row, index, field) {
                     return purchaseOrderStatusDisplay(row.status, row.status_text);
                 }
@@ -165,12 +167,12 @@ function loadPurchaseOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'creation_date',
-                title: 'Date',
+                title: '{% trans "Date" %}',
             },
             {
                 sortable: true,
                 field: 'line_items',
-                title: 'Items'
+                title: '{% trans "Items" %}'
             },
         ],
     });
@@ -194,7 +196,7 @@ function loadSalesOrderTable(table, options) {
         queryParams: filters,
         groupBy: false,
         original: options.params,
-        formatNoMatches: function() { return "No sales orders found"; },
+        formatNoMatches: function() { return "{% trans "No sales orders found" %}"; },
         columns: [
             {
                 field: 'pk',
@@ -204,7 +206,7 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'reference',
-                title: 'Sales Order',
+                title: '{% trans "Sales Order" %}',
                 formatter: function(value, row, index, field) {
                     return renderLink(value, `/order/sales-order/${row.pk}/`);
                 },
@@ -212,25 +214,25 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'customer_detail',
-                title: 'Customer',
+                title: '{% trans "Customer" %}',
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.customer_detail.image) + renderLink(row.customer_detail.name, `/company/${row.customer}/sales-orders/`);
                 }
             },
             {
                 field: 'customer_reference',
-                title: 'Customer Reference',
+                title: '{% trans "Customer Reference" %}',
                 sotrable: true,
             },
             {
                 sortable: true,
                 field: 'description',
-                title: 'Description',
+                title: '{% trans "Description" %}',
             },
             {
                 sortable: true,
                 field: 'status',
-                title: 'Status',
+                title: '{% trans "Status" %}',
                 formatter: function(value, row, index, field) {
                     return salesOrderStatusDisplay(row.status, row.status_text);
                 }
@@ -238,17 +240,17 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'creation_date',
-                title: 'Creation Date',
+                title: '{% trans "Creation Date" %}',
             },
             {
                 sortable: true,
                 field: 'shipment_date',
-                title: "Shipment Date",
+                title: "{% trans "Shipment Date" %}",
             },
             {
                 sortable: true,
                 field: 'line_items',
-                title: 'Items'
+                title: '{% trans "Items" %}'
             },
         ],
     });
