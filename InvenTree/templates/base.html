@@ -102,17 +102,18 @@ InvenTree
 
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/part.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/bom.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/filters.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/tables.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/build.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/stock.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/modals.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/order.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/company.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/sidenav.js' %}"></script>
+
+<script type='text/javascript' src="{% url 'bom.js' %}"></script>
+<script type='text/javascript' src="{% url 'company.js' %}"></script>
+<script type='text/javascript' src="{% url 'part.js' %}"></script>
+<script type='text/javascript' src="{% url 'stock.js' %}"></script>
+<script type='text/javascript' src="{% url 'build.js' %}"></script>
+<script type='text/javascript' src="{% url 'order.js' %}"></script>
 
 <script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
 <script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>
