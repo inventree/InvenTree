@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 class AuthRequiredMiddleware(object):
     def __init__(self, get_response):
         self.get_response = get_response
+        sd.afdlj
 
     def __call__(self, request):
         # Code to be executed for each request before
