@@ -1,19 +1,8 @@
+{% load i18n %}
+
 /* Stock API functions
  * Requires api.js to be loaded first
  */
-
-function getStockList(filters={}, options={}) {
-    return inventreeGet('/api/stock/', filters, options);
-}
-
-function getStockDetail(pk, options={}) {
-    return inventreeGet('/api/stock/' + pk + '/', {}, options)
-}
-
-function getStockLocations(filters={}, options={}) {
-    return inventreeGet('/api/stock/location/', filters, options)
-}
-
 
 /* Functions for interacting with stock management forms
  */
@@ -28,7 +17,6 @@ function removeStockRow(e) {
 
     $('#' + row).remove();
 }
-
 
 function loadStockTable(table, options) {
     /* Load data into a stock table with adjustable options.
@@ -75,7 +63,7 @@ function loadStockTable(table, options) {
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
-            return 'No stock items matching query';
+            return '{% trans "No stock items matching query" %}';
         },
         url: options.url,
         queryParams: filters,
@@ -205,7 +193,7 @@ function loadStockTable(table, options) {
         columns: [
             {
                 checkbox: true,
-                title: 'Select',
+                title: '{% trans "Select" %}',
                 searchable: false,
             },
             {
@@ -215,7 +203,7 @@ function loadStockTable(table, options) {
             },
             {
                 field: 'part_name',
-                title: 'Part',
+                title: '{% trans "Part" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
 
@@ -236,7 +224,7 @@ function loadStockTable(table, options) {
             },
             {
                 field: 'part_description',
-                title: 'Description',
+                title: '{% trans "Description" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     return row.part_detail.description;
@@ -244,7 +232,7 @@ function loadStockTable(table, options) {
             },
             {
                 field: 'quantity',
-                title: 'Stock',
+                title: '{% trans "Stock" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
 
@@ -260,12 +248,12 @@ function loadStockTable(table, options) {
                     var html = renderLink(val, `/stock/item/${row.pk}/`);
                     
                     if (row.allocated) {
-                        html += `<span class='fas fa-bookmark label-right' title='StockItem has been allocated'></span>`;
+                        html += `<span class='fas fa-bookmark label-right' title='{% trans "StockItem has been allocated" %}'></span>`;
                     }
 
                     // 70 = "LOST"
                     if (row.status == 70) {
-                        html += `<span class='fas fa-question-circle label-right' title='StockItem is lost'></span>`;
+                        html += `<span class='fas fa-question-circle label-right' title='{% trans "StockItem is lost" %}'></span>`;
                     }
 
                     return html;
@@ -273,7 +261,7 @@ function loadStockTable(table, options) {
             },
             {
                 field: 'status',
-                title: 'Status',
+                title: '{% trans "Status" %}',
                 sortable: 'true',
                 formatter: function(value, row, index, field) {
                     return stockStatusDisplay(value);
@@ -281,25 +269,25 @@ function loadStockTable(table, options) {
             },
             {
                 field: 'batch',
-                title: 'Batch',
+                title: '{% trans "Batch" %}',
                 sortable: true,
             },
             {
                 field: 'location_detail.pathstring',
-                title: 'Location',
+                title: '{% trans "Location" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     if (value) {
                         return renderLink(value, '/stock/location/' + row.location + '/');
                     }
                     else {
-                        return '<i>No stock location set</i>';
+                        return '<i>{% trans "No stock location set" %}</i>';
                     }
                 }
             },
             {
                 field: 'notes',
-                title: 'Notes',
+                title: '{% trans "Notes" %}',
             }
         ],
     });
@@ -389,7 +377,6 @@ function loadStockTable(table, options) {
     });
 }
 
-
 function loadStockTrackingTable(table, options) {
 
     var cols = [
@@ -399,7 +386,7 @@ function loadStockTrackingTable(table, options) {
         },
         {
             field: 'date',
-            title: 'Date',
+            title: '{% trans "Date" %}',
             sortable: true,
             formatter: function(value, row, index, field) {
                 var m = moment(value);
@@ -417,7 +404,7 @@ function loadStockTrackingTable(table, options) {
     if (options.partColumn) {
         cols.push({
             field: 'item',
-            title: 'Stock Item',
+            title: '{% trans "Stock Item" %}',
             sortable: true,
             formatter: function(value, row, index, field) {
                 return renderLink(value.part_name, value.url);
@@ -428,7 +415,7 @@ function loadStockTrackingTable(table, options) {
     // Stock transaction description
     cols.push({
         field: 'title',
-        title: 'Description',
+        title: '{% trans "Description" %}',
         sortable: true,
         formatter: function(value, row, index, field) {
             var html = "<b>" + value + "</b>";
@@ -447,7 +434,7 @@ function loadStockTrackingTable(table, options) {
 
     cols.push({
         field: 'quantity',
-        title: 'Quantity',
+        title: '{% trans "Quantity" %}',
         formatter: function(value, row, index, field) {
             return parseFloat(value);
         },
@@ -456,7 +443,7 @@ function loadStockTrackingTable(table, options) {
     cols.push({
         sortable: true,
         field: 'user',
-        title: 'User',
+        title: '{% trans "User" %}',
         formatter: function(value, row, index, field) {
             if (value)
             {
@@ -465,7 +452,7 @@ function loadStockTrackingTable(table, options) {
             }
             else
             {
-                return "No user information";
+                return "{% trans "No user information" %}";
             }
         }
     });

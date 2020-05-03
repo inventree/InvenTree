@@ -1,3 +1,5 @@
+{% load i18n %}
+
 function loadBuildTable(table, options) {
     // Display a table of Build objects
 
@@ -14,7 +16,7 @@ function loadBuildTable(table, options) {
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
-            return "No builds matching query";
+            return "{% trans "No builds matching query" %}";
         },
         url: options.url,
         queryParams: filters,
@@ -28,7 +30,7 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'title',
-                title: 'Build',
+                title: '{% trans "Build" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     return renderLink(value, '/build/' + row.pk + '/');
@@ -36,7 +38,7 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'part',
-                title: 'Part',
+                title: '{% trans "Part" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
 
@@ -47,12 +49,12 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'quantity',
-                title: 'Quantity',
+                title: '{% trans "Quantity" %}',
                 sortable: true,
             },
             {
                 field: 'status',
-                title: 'Status',
+                title: '{% trans "Status" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     return buildStatusDisplay(value);
@@ -60,12 +62,12 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'creation_date',
-                title: 'Created',
+                title: '{% trans "Created" %}',
                 sortable: true,
             },
             {
                 field: 'completion_date',
-                title: 'Completed',
+                title: '{% trans "Completed" %}',
                 sortable: true,
             },
         ],
@@ -97,30 +99,30 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
     table.bootstrapTable({
         url: url,
         sortable: false,
-        formatNoMatches: function() { return 'No parts allocated for ' + part; },
+        formatNoMatches: function() { return '{% trans "No parts allocated for" %} ' + part; },
         columns: [
             {
                 field: 'stock_item_detail',
-                title: 'Stock Item',
+                title: '{% trans "Stock Item" %}',
                 formatter: function(value, row, index, field) {
                     return '' + parseFloat(value.quantity) + ' x ' + value.part_name + ' @ ' + value.location_name;
                 }
             },
             {
                 field: 'stock_item_detail.quantity',
-                title: 'Available',
+                title: '{% trans "Available" %}',
                 formatter: function(value, row, index, field) {
                     return parseFloat(value);
                 }
             },
             {
                 field: 'quantity',
-                title: 'Allocated',
+                title: '{% trans "Allocated" %}',
                 formatter: function(value, row, index, field) {
                     var html = parseFloat(value);
 
-                    var bEdit = "<button class='btn item-edit-button btn-sm' type='button' title='Edit stock allocation' url='/build/item/" + row.pk + "/edit/'><span class='fas fa-edit'></span></button>";
-                    var bDel = "<button class='btn item-del-button btn-sm' type='button' title='Delete stock allocation' url='/build/item/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'></span></button>";
+                    var bEdit = "<button class='btn item-edit-button btn-sm' type='button' title='{% trans "Edit stock allocation" %}' url='/build/item/" + row.pk + "/edit/'><span class='fas fa-edit'></span></button>";
+                    var bDel = "<button class='btn item-del-button btn-sm' type='button' title='{% trans "Delete stock allocation" %}' url='/build/item/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'></span></button>";
                     
                     html += "<div class='btn-group' style='float: right;'>" + bEdit + bDel + "</div>";
                     

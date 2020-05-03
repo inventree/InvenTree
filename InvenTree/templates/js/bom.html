@@ -1,3 +1,5 @@
+{% load i18n %}
+
 /* BOM management functions.
  * Requires follwing files to be loaded first:
  * - api.js
@@ -130,7 +132,7 @@ function loadBomTable(table, options) {
     cols.push(
         {
             field: 'sub_part_detail.full_name',
-            title: 'Part',
+            title: '{% trans "Part" %}',
             sortable: true,
             formatter: function(value, row, index, field) {
                 var url = `/part/${row.sub_part}/`;
@@ -138,7 +140,7 @@ function loadBomTable(table, options) {
 
                 // Display an extra icon if this part is an assembly
                 if (row.sub_part_detail.assembly) {
-                    var text = `<span title='Open subassembly' class='fas fa-stream label-right'></span>`;
+                    var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream label-right'></span>`;
                     
                     html += renderLink(text, `/part/${row.sub_part}/bom/`);
                 }
@@ -152,14 +154,14 @@ function loadBomTable(table, options) {
     cols.push(
         {
             field: 'sub_part_detail.description',
-            title: 'Description',
+            title: '{% trans "Description" %}',
         }
     );
 
     // Part reference
     cols.push({
         field: 'reference',
-        title: 'Reference',
+        title: '{% trans "Reference" %}',
         searchable: true,
         sortable: true,
     });
@@ -167,7 +169,7 @@ function loadBomTable(table, options) {
     // Part quantity
     cols.push({
         field: 'quantity',
-        title: 'Quantity',
+        title: '{% trans "Quantity" %}',
         searchable: false,
         sortable: true,
         formatter: function(value, row, index, field) {
@@ -189,7 +191,7 @@ function loadBomTable(table, options) {
         cols.push(
         {
             field: 'sub_part_detail.stock',
-            title: 'Available',
+            title: '{% trans "Available" %}',
             searchable: false,
             sortable: true,
             formatter: function(value, row, index, field) {
@@ -198,7 +200,7 @@ function loadBomTable(table, options) {
                 var text = value;
 
                 if (value == null || value <= 0) {
-                    text = `<span class='label label-warning'>No Stock</span>`;
+                    text = `<span class='label label-warning'>{% trans "No Stock" %}</span>`;
                 }
 
                 return renderLink(text, url);
@@ -208,13 +210,13 @@ function loadBomTable(table, options) {
         cols.push(
         {
             field: 'price_range',
-            title: 'Price',
+            title: '{% trans "Price" %}',
             sortable: true,
             formatter: function(value, row, index, field) {
                 if (value) {
                     return value;
                 } else {
-                    return "<span class='warning-msg'>No pricing available</span>";
+                    return "<span class='warning-msg'>{% trans "No pricing available" %}</span>";
                 }
             }
         });
@@ -224,7 +226,7 @@ function loadBomTable(table, options) {
     cols.push(
         {
             field: 'note',
-            title: 'Notes',
+            title: '{% trans "Notes" %}',
             searchable: true,
             sortable: true,
         }
@@ -234,11 +236,11 @@ function loadBomTable(table, options) {
         cols.push({
             formatter: function(value, row, index, field) {
 
-                var bValidate = "<button title='Validate BOM Item' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-check-circle icon-blue'/></button>";
-                var bValid = "<span title='This line has been validated' class='fas fa-check-double icon-green'/>";
+                var bValidate = "<button title='{% trans "Validate BOM Item" %}' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-check-circle icon-blue'/></button>";
+                var bValid = "<span title='{% trans "This line has been validated" %}' class='fas fa-check-double icon-green'/>";
 
-                var bEdit = "<button title='Edit BOM Item' class='bom-edit-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='fas fa-edit'/></button>";
-                var bDelt = "<button title='Delete BOM Item' class='bom-delete-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='fas fa-trash-alt icon-red'/></button>";
+                var bEdit = "<button title='{% trans "Edit BOM Item" %}' class='bom-edit-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='fas fa-edit'/></button>";
+                var bDelt = "<button title='{% trans "Delete BOM Item" %}' class='bom-delete-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='fas fa-trash-alt icon-red'/></button>";
                 
                 var html = "<div class='btn-group' role='group'>";
                 
@@ -283,7 +285,7 @@ function loadBomTable(table, options) {
                 return {classes: 'rowinvalid'};
             }
         },
-        formatNoMatches: function() { return "No BOM items found"; },
+        formatNoMatches: function() { return "{% trans "No BOM items found" %}"; },
         clickToSelect: true,
         queryParams: function(p) {
             return params;

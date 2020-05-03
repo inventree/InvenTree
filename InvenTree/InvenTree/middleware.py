@@ -1,6 +1,7 @@
 from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.db import connection
+from django.shortcuts import redirect
 import logging
 import time
 import operator
@@ -55,7 +56,7 @@ class AuthRequiredMiddleware(object):
                     # Does the provided token match a valid user?
                     if Token.objects.filter(key=token).exists():
 
-                        allowed = ['/media/', '/static/']
+                        allowed = ['/api/', '/media/', '/static/']
 
                         # Only allow token-auth for /media/ or /static/ dirs!
                         if any([request.path_info.startswith(a) for a in allowed]):
@@ -63,8 +64,16 @@ class AuthRequiredMiddleware(object):
 
             # No authorization was found for the request
             if not authorized:
-                if not request.path_info == reverse_lazy('login') and not request.path_info.startswith('/api/'):
+                # A logout request will redirect the user to the login screen
+                if request.path_info == reverse_lazy('logout'):
                     return HttpResponseRedirect(reverse_lazy('login'))
+
+                login = reverse_lazy('login')
+
+                if not request.path_info == login and not request.path_info.startswith('/api/'):
+                    # Save the 'next' parameter to pass through to the login view
+
+                    return redirect('%s?next=%s' % (login, request.path))
 
         # Code to be executed for each request/response after
         # the view is called.
