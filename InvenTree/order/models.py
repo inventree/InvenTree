@@ -209,7 +209,7 @@ class PurchaseOrder(Order):
         return self.pending_line_items().count() == 0
 
     @transaction.atomic
-    def receive_line_item(self, line, location, quantity, user):
+    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK):
         """ Receive a line item (or partial line item) against this PO
         """
 
@@ -230,7 +230,9 @@ class PurchaseOrder(Order):
                 supplier_part=line.part,
                 location=location,
                 quantity=quantity,
-                purchase_order=self)
+                purchase_order=self,
+                status=status
+            )
 
             stock.save()
 

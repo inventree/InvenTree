@@ -29,6 +29,11 @@ def stock_status_label(key, *args, **kwargs):
 
 
 @register.simple_tag
+def stock_status_text(key, *args, **kwargs):
+    return mark_safe(StockStatus.text(key))
+
+
+@register.simple_tag
 def build_status_label(key, *args, **kwargs):
     """ Render a Build status label """
     return mark_safe(BuildStatus.render(key, large=kwargs.get('large', False)))

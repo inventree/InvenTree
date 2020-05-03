@@ -29,7 +29,7 @@ from . import forms as order_forms
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import DownloadFile, str2bool
 
-from InvenTree.status_codes import PurchaseOrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus, StockStatus
 
 logger = logging.getLogger(__name__)
 
@@ -669,6 +669,20 @@ class PurchaseOrderReceive(AjaxUpdateView):
                 except (PurchaseOrderLineItem.DoesNotExist, ValueError):
                     continue
 
+                # Check that the StockStatus was set
+                status_key = 'status-{pk}'.format(pk=pk)
+                status = request.POST.get(status_key, StockStatus.OK)
+
+                try:
+                    status = int(status)
+                except ValueError:
+                    status = StockStatus.OK
+
+                if status in StockStatus.RECEIVING_CODES:
+                    line.status_code = status
+                else:
+                    line.status_code = StockStatus.OK
+
                 # Check that line matches the order
                 if not line.order == self.order:
                     # TODO - Display a non-field error?
@@ -725,7 +739,13 @@ class PurchaseOrderReceive(AjaxUpdateView):
             if not line.part:
                 continue
 
-            self.order.receive_line_item(line, self.destination, line.receive_quantity, self.request.user)
+            self.order.receive_line_item(
+                line,
+                self.destination,
+                line.receive_quantity,
+                self.request.user,
+                status=line.status_code,
+            )
 
 
 class OrderParts(AjaxView):

@@ -55,6 +55,10 @@ class StatusCode:
         return codes
 
     @classmethod
+    def text(cls, key):
+        return cls.options.get(key, None)
+
+    @classmethod
     def items(cls):
         return cls.options.items()
 
@@ -150,6 +154,7 @@ class StockStatus(StatusCode):
     ATTENTION = 50  # Item requires attention
     DAMAGED = 55  # Item is damaged
     DESTROYED = 60  # Item is destroyed
+    REJECTED = 65  # Item is rejected
     LOST = 70  # Item has been lost
     RETURNED = 85  # Item has been returned from a customer
 
@@ -167,6 +172,7 @@ class StockStatus(StatusCode):
         DAMAGED: _("Damaged"),
         DESTROYED: _("Destroyed"),
         LOST: _("Lost"),
+        REJECTED: _("Rejected"),
         RETURNED: _("Returned"),
         SHIPPED: _('Shipped'),
         ASSIGNED_TO_BUILD: _("Used for Build"),
@@ -178,6 +184,7 @@ class StockStatus(StatusCode):
         ATTENTION: 'yellow',
         DAMAGED: 'red',
         DESTROYED: 'red',
+        REJECTED: 'red',
         SHIPPED: 'green',
         ASSIGNED_TO_BUILD: 'blue',
         ASSIGNED_TO_OTHER_ITEM: 'blue',
@@ -195,9 +202,19 @@ class StockStatus(StatusCode):
     UNAVAILABLE_CODES = [
         DESTROYED,
         LOST,
+        REJECTED,
         SHIPPED,
         ASSIGNED_TO_BUILD,
         ASSIGNED_TO_OTHER_ITEM,
+    ]
+
+    # The following codes are available for receiving goods
+    RECEIVING_CODES = [
+        OK,
+        ATTENTION,
+        DAMAGED,
+        DESTROYED,
+        REJECTED
     ]
 
 
