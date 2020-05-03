@@ -2,8 +2,6 @@ from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.db import connection
 from django.shortcuts import redirect
-from django.conf import settings
-from django.shortcuts import redirect
 import logging
 import time
 import operator
