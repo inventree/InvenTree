@@ -949,7 +949,7 @@ class StockItemAttachment(InvenTreeAttachment):
         StockItem,
         on_delete=models.CASCADE,
         related_name='attachments'
-    ) 
+    )
 
 
 class StockItemTracking(models.Model):
