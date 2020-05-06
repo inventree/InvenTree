@@ -13,7 +13,21 @@ from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.helpers import GetExportFormats
 from InvenTree.forms import HelperForm
-from .models import StockLocation, StockItem, StockItemTracking
+from .models import StockLocation, StockItem, StockItemTracking, StockItemAttachment
+
+
+class EditStockItemAttachmentForm(HelperForm):
+    """
+    Form for creating / editing a StockItemAttachment object
+    """
+
+    class Meta:
+        model = StockItemAttachment
+        fields = [
+            'stock_item',
+            'attachment',
+            'comment'
+        ]
 
 
 class EditStockLocationForm(HelperForm):

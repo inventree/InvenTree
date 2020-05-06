@@ -16,4 +16,7 @@
     <li{% ifequal tab 'notes' %} class='active'{% endifequal %}>
         <a href="{% url 'stock-item-notes' item.id %}">{% trans "Notes" %}{% if item.notes %} <span class='fas fa-info-circle'></span>{% endif %}</a>
     </li>
+    <li{% if tab == 'attachments' %} class='active'{% endif %}>
+        <a href="{% url 'stock-item-attachments' item.id %}">{% trans "Attachments" %}{% if item.attachments.count > 0 %}<span class='badge'>{{ item.attachments.count }}</span>{% endif %}</a>
+    </li>
 </ul>
