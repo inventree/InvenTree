@@ -8,7 +8,7 @@ from import_export.resources import ModelResource
 from import_export.fields import Field
 import import_export.widgets as widgets
 
-from .models import StockLocation, StockItem
+from .models import StockLocation, StockItem, StockItemAttachment
 from .models import StockItemTracking
 
 from build.models import Build
@@ -108,6 +108,12 @@ class StockItemAdmin(ImportExportModelAdmin):
     list_display = ('part', 'quantity', 'location', 'status', 'updated')
 
 
+class StockAttachmentAdmin(admin.ModelAdmin):
+
+    list_display = ('stock_item', 'attachment', 'comment')
+    
+
+
 class StockTrackingAdmin(ImportExportModelAdmin):
     list_display = ('item', 'date', 'title')
 
@@ -115,3 +121,4 @@ class StockTrackingAdmin(ImportExportModelAdmin):
 admin.site.register(StockLocation, LocationAdmin)
 admin.site.register(StockItem, StockItemAdmin)
 admin.site.register(StockItemTracking, StockTrackingAdmin)
+admin.site.register(StockItemAttachment, StockAttachmentAdmin)

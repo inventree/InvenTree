@@ -27,7 +27,7 @@ from datetime import datetime
 from InvenTree import helpers
 
 from InvenTree.status_codes import StockStatus
-from InvenTree.models import InvenTreeTree
+from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 
 from part import models as PartModels
@@ -933,6 +933,21 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
 
     # Rebuild the MPTT tree
     StockItem.objects.rebuild()
+
+
+class StockItemAttachment(InvenTreeAttachment):
+    """
+    Model for storing file attachments against a StockItem object.
+    """
+
+    def getSubdir(self):
+        return os.path.join("stock_files", str(self.stock_item.id))
+
+    stock_item = models.ForeignKey(
+        StockItem,
+        on_delete=models.CASCADE,
+        related_name='attachments'
+    ) 
 
 
 class StockItemTracking(models.Model):
