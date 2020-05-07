@@ -26,7 +26,7 @@ from datetime import datetime
 
 from company.models import Company, SupplierPart
 from part.models import Part
-from .models import StockItem, StockLocation, StockItemTracking
+from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment
 
 from .admin import StockItemResource
 
@@ -37,6 +37,7 @@ from .forms import AdjustStockForm
 from .forms import TrackingEntryForm
 from .forms import SerializeStockForm
 from .forms import ExportOptionsForm
+from .forms import EditStockItemAttachmentForm
 
 
 class StockIndex(ListView):
@@ -147,6 +148,78 @@ class StockLocationQRCode(QRCodeView):
             return loc.format_barcode()
         except StockLocation.DoesNotExist:
             return None
+
+
+class StockItemAttachmentCreate(AjaxCreateView):
+    """
+    View for adding a new attachment for a StockItem
+    """
+
+    model = StockItemAttachment
+    form_class = EditStockItemAttachmentForm
+    ajax_form_title = _("Add Stock Item Attachment")
+    ajax_template_name = "modal_form.html"
+
+    def get_data(self):
+        return {
+            'success': _("Added attachment")
+        }
+
+    def get_initial(self):
+        """
+        Get initial data for the new StockItem attachment object.
+
+        - Client must provide a valid StockItem ID
+        """
+
+        initials = super().get_initial()
+
+        try:
+            initials['stock_item'] = StockItem.objects.get(id=self.request.GET.get('item', None))
+        except (ValueError, StockItem.DoesNotExist):
+            pass
+
+        return initials
+
+    def get_form(self):
+
+        form = super().get_form()
+        form.fields['stock_item'].widget = HiddenInput()
+        
+        return form
+
+
+class StockItemAttachmentEdit(AjaxUpdateView):
+    """
+    View for editing a StockItemAttachment object.
+    """
+
+    model = StockItemAttachment
+    form_class = EditStockItemAttachmentForm
+    ajax_form_title = _("Edit Stock Item Attachment")
+
+    def get_form(self):
+
+        form = super().get_form()
+        form.fields['stock_item'].widget = HiddenInput()
+
+        return form
+
+
+class StockItemAttachmentDelete(AjaxDeleteView):
+    """
+    View for deleting a StockItemAttachment object.
+    """
+
+    model = StockItemAttachment
+    ajax_form_title = _("Delete Stock Item Attachment")
+    ajax_template_name = "attachment_delete.html"
+    context_object_name = "attachment"
+
+    def get_data(self):
+        return {
+            'danger': _("Deleted attachment"),
+        }
 
 
 class StockExportOptions(AjaxView):

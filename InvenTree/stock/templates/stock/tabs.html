@@ -1,11 +1,14 @@
 {% load i18n %}
 
 <ul class='nav nav-tabs'>
-    <li{% ifequal tab 'tracking' %} class='active'{% endifequal %}>
-        <a href="{% url 'stock-item-detail' item.id %}">{% trans "Tracking" %}</a>
-    </li>
     <li{% ifequal tab 'children' %} class='active'{% endifequal %}>
         <a href="{% url 'stock-item-children' item.id %}">{% trans "Children" %}{% if item.child_count > 0 %}<span class='badge'>{{ item.child_count }}</span>{% endif %}</a>
+    </li>
+    <li{% ifequal tab 'tracking' %} class='active'{% endifequal %}>
+        <a href="{% url 'stock-item-detail' item.id %}">
+            {% trans "Tracking" %}
+            {% if item.tracking_info.count > 0 %}<span class='badge'>{{ item.tracking_info.count }}</span>{% endif %}
+        </a>
     </li>
     {% if 0 %}
     <!-- These tabs are to be implemented in the future -->
@@ -14,6 +17,15 @@
     </li>
     {% endif %}
     <li{% ifequal tab 'notes' %} class='active'{% endifequal %}>
-        <a href="{% url 'stock-item-notes' item.id %}">{% trans "Notes" %}{% if item.notes %} <span class='fas fa-info-circle'></span>{% endif %}</a>
+        <a href="{% url 'stock-item-notes' item.id %}">
+            {% trans "Notes" %}
+            {% if item.notes %} <span class='fas fa-info-circle'></span>{% endif %}
+        </a>
+    </li>
+    <li{% if tab == 'attachments' %} class='active'{% endif %}>
+        <a href="{% url 'stock-item-attachments' item.id %}">
+            {% trans "Attachments" %}
+            {% if item.attachments.count > 0 %}<span class='badge'>{{ item.attachments.count }}</span>{% endif %}
+        </a>
     </li>
 </ul>
