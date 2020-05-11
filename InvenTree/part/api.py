@@ -646,12 +646,12 @@ part_api_urls = [
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
         url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
-        url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
+        url(r'.*^$', CategoryList.as_view(), name='api-part-category-list'),
     ])),
 
     # Base URL for PartAttachment API endpoints
     url(r'attachment/', include([
-        url(r'^$', PartAttachmentList.as_view(), name='api-part-attachment-list'),
+        url(r'^.*$', PartAttachmentList.as_view(), name='api-part-attachment-list'),
     ])),
     
     # Base URL for PartStar API endpoints
