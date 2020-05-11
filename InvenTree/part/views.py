@@ -135,7 +135,7 @@ class PartAttachmentDelete(AjaxDeleteView):
 
     model = PartAttachment
     ajax_form_title = _("Delete Part Attachment")
-    ajax_template_name = "part/attachment_delete.html"
+    ajax_template_name = "attachment_delete.html"
     context_object_name = "attachment"
 
     def get_data(self):

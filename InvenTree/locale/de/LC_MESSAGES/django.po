@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-03 09:34+0000\n"
+"POT-Creation-Date: 2020-05-04 09:50+0000\n"
 "PO-Revision-Date: 2020-05-03 11:32+0200\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -95,64 +95,68 @@ msgstr "Französisch"
 msgid "Polish"
 msgstr "Polnisch"
 
-#: InvenTree/status_codes.py:90 InvenTree/status_codes.py:131
-#: InvenTree/status_codes.py:213
+#: InvenTree/status_codes.py:94 InvenTree/status_codes.py:135
+#: InvenTree/status_codes.py:230
 msgid "Pending"
 msgstr "Ausstehend"
 
-#: InvenTree/status_codes.py:91
+#: InvenTree/status_codes.py:95
 msgid "Placed"
 msgstr "Platziert"
 
-#: InvenTree/status_codes.py:92 InvenTree/status_codes.py:216
+#: InvenTree/status_codes.py:96 InvenTree/status_codes.py:233
 msgid "Complete"
 msgstr "Fertig"
 
-#: InvenTree/status_codes.py:93 InvenTree/status_codes.py:133
-#: InvenTree/status_codes.py:215
+#: InvenTree/status_codes.py:97 InvenTree/status_codes.py:137
+#: InvenTree/status_codes.py:232
 msgid "Cancelled"
 msgstr "Storniert"
 
-#: InvenTree/status_codes.py:94 InvenTree/status_codes.py:134
-#: InvenTree/status_codes.py:169
+#: InvenTree/status_codes.py:98 InvenTree/status_codes.py:138
+#: InvenTree/status_codes.py:174
 msgid "Lost"
 msgstr "Verloren"
 
-#: InvenTree/status_codes.py:95 InvenTree/status_codes.py:135
-#: InvenTree/status_codes.py:170
+#: InvenTree/status_codes.py:99 InvenTree/status_codes.py:139
+#: InvenTree/status_codes.py:176
 msgid "Returned"
 msgstr "Zurückgegeben"
 
-#: InvenTree/status_codes.py:132 InvenTree/status_codes.py:171
+#: InvenTree/status_codes.py:136 InvenTree/status_codes.py:177
 #: order/templates/order/sales_order_base.html:98
 msgid "Shipped"
 msgstr "Versendet"
 
-#: InvenTree/status_codes.py:165
+#: InvenTree/status_codes.py:170
 msgid "OK"
 msgstr "OK"
 
-#: InvenTree/status_codes.py:166
+#: InvenTree/status_codes.py:171
 msgid "Attention needed"
 msgstr "erfordert Eingriff"
 
-#: InvenTree/status_codes.py:167
+#: InvenTree/status_codes.py:172
 msgid "Damaged"
 msgstr "Beschädigt"
 
-#: InvenTree/status_codes.py:168
+#: InvenTree/status_codes.py:173
 msgid "Destroyed"
 msgstr "Zerstört"
 
-#: InvenTree/status_codes.py:172
+#: InvenTree/status_codes.py:175
+msgid "Rejected"
+msgstr ""
+
+#: InvenTree/status_codes.py:178
 msgid "Used for Build"
 msgstr "Verwendet für Bau"
 
-#: InvenTree/status_codes.py:173
+#: InvenTree/status_codes.py:179
 msgid "Installed in Stock Item"
 msgstr "In Lagerobjekt installiert"
 
-#: InvenTree/status_codes.py:214 build/templates/build/allocate.html:349
+#: InvenTree/status_codes.py:231 build/templates/build/allocate.html:349
 #: order/templates/order/sales_order_detail.html:220
 #: part/templates/part/tabs.html:21 templates/js/build.html:120
 msgid "Allocated"
@@ -218,9 +222,10 @@ msgstr "Eltern-Bau, dem dieser Bau zugewiesen ist"
 #: build/models.py:74 build/templates/build/allocate.html:320
 #: build/templates/build/auto_allocate.html:18
 #: build/templates/build/build_base.html:70
-#: build/templates/build/detail.html:22 order/models.py:462
+#: build/templates/build/detail.html:22 order/models.py:464
 #: order/templates/order/order_wizard/select_parts.html:30
 #: order/templates/order/purchase_order_detail.html:145
+#: order/templates/order/receive_parts.html:19
 #: part/templates/part/part_app_base.html:7
 #: part/templates/part/set_category.html:13 templates/js/bom.html:135
 #: templates/js/build.html:41 templates/js/company.html:109
@@ -312,11 +317,11 @@ msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 "zugewiesene Anzahl ({n}) darf nicht die verfügbare ({q}) Anzahl überschreiten"
 
-#: build/models.py:460 order/models.py:546
+#: build/models.py:460 order/models.py:548
 msgid "StockItem is over-allocated"
 msgstr "Zu viele Lagerobjekte zugewiesen"
 
-#: build/models.py:463 order/models.py:549
+#: build/models.py:463 order/models.py:551
 msgid "Allocation quantity must be greater than zero"
 msgstr "Anzahl muss größer null sein"
 
@@ -337,7 +342,7 @@ msgid "Stock quantity to allocate to build"
 msgstr "Lagerobjekt-Anzahl dem Bau zuweisen"
 
 #: build/templates/build/allocate.html:17
-#: company/templates/company/detail_part.html:18 order/views.py:743
+#: company/templates/company/detail_part.html:18 order/views.py:763
 msgid "Order Parts"
 msgstr "Teile bestellen"
 
@@ -485,13 +490,14 @@ msgstr "Bau-Status"
 
 #: build/templates/build/build_base.html:80
 #: build/templates/build/detail.html:42
+#: order/templates/order/receive_parts.html:24
 #: stock/templates/stock/item_base.html:221 templates/js/build.html:57
 #: templates/js/order.html:162 templates/js/order.html:235
 #: templates/js/stock.html:264
 msgid "Status"
 msgstr "Status"
 
-#: build/templates/build/build_base.html:93 order/models.py:460
+#: build/templates/build/build_base.html:93 order/models.py:462
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:33
 #: order/templates/order/sales_order_notes.html:10
@@ -908,7 +914,7 @@ msgstr "Hersteller"
 msgid "Supplier"
 msgstr "Zulieferer"
 
-#: company/templates/company/detail.html:26 order/models.py:275
+#: company/templates/company/detail.html:26 order/models.py:277
 #: order/templates/order/sales_order_base.html:73 templates/js/company.html:44
 #: templates/js/order.html:217
 msgid "Customer"
@@ -920,11 +926,12 @@ msgstr "Zulieferer-Teile"
 
 #: company/templates/company/detail_part.html:13
 #: order/templates/order/purchase_order_detail.html:67
-#: part/templates/part/stock.html:82
+#: part/templates/part/stock.html:82 part/templates/part/supplier.html:12
 msgid "New Supplier Part"
 msgstr "Neues Zulieferer-Teil"
 
-#: company/templates/company/detail_part.html:15 templates/stock_table.html:10
+#: company/templates/company/detail_part.html:15
+#: part/templates/part/supplier.html:14 templates/stock_table.html:10
 msgid "Options"
 msgstr "Optionen"
 
@@ -942,6 +949,7 @@ msgid "Create new Part"
 msgstr "Neues Teil hinzufügen"
 
 #: company/templates/company/detail_part.html:49 company/views.py:51
+#: part/templates/part/supplier.html:44
 msgid "New Supplier"
 msgstr "Neuer Zulieferer"
 
@@ -950,6 +958,7 @@ msgid "Create new Supplier"
 msgstr "Neuen Zulieferer anlegen"
 
 #: company/templates/company/detail_part.html:55 company/views.py:57
+#: part/templates/part/supplier.html:50
 msgid "New Manufacturer"
 msgstr "Neuer Hersteller"
 
@@ -1128,8 +1137,10 @@ msgstr "Lagerbestand"
 msgid "Orders"
 msgstr "Bestellungen"
 
-#: company/templates/company/tabs.html:9 part/templates/part/category.html:83
-#: templates/navbar.html:10 templates/stats.html:8 templates/stats.html:17
+#: company/templates/company/tabs.html:9
+#: order/templates/order/receive_parts.html:14
+#: part/templates/part/category.html:83 templates/navbar.html:10
+#: templates/stats.html:8 templates/stats.html:17
 msgid "Parts"
 msgstr "Teile"
 
@@ -1272,61 +1283,61 @@ msgstr "Teile-Zulieferer muss dem Zulieferer des Kaufvertrags entsprechen"
 msgid "Lines can only be received against an order marked as 'Placed'"
 msgstr "Nur Teile aufgegebener Bestllungen können empfangen werden"
 
-#: order/models.py:281
+#: order/models.py:283
 msgid "Customer order reference code"
 msgstr "Bestellreferenz"
 
-#: order/models.py:320
+#: order/models.py:322
 msgid "SalesOrder cannot be shipped as it is not currently pending"
 msgstr "Bestellung kann nicht versendet werden weil sie nicht anhängig ist"
 
-#: order/models.py:397
+#: order/models.py:399
 msgid "Item quantity"
 msgstr "Anzahl"
 
-#: order/models.py:399
+#: order/models.py:401
 msgid "Line item reference"
 msgstr "Position - Referenz"
 
-#: order/models.py:401
+#: order/models.py:403
 msgid "Line item notes"
 msgstr "Position - Notizen"
 
-#: order/models.py:427 order/templates/order/order_base.html:9
+#: order/models.py:429 order/templates/order/order_base.html:9
 #: order/templates/order/order_base.html:23
 #: stock/templates/stock/item_base.html:175 templates/js/order.html:136
 msgid "Purchase Order"
 msgstr "Kaufvertrag"
 
-#: order/models.py:440
+#: order/models.py:442
 msgid "Supplier part"
 msgstr "Zulieferer-Teil"
 
-#: order/models.py:443
+#: order/models.py:445
 msgid "Number of items received"
 msgstr "Empfangene Objekt-Anzahl"
 
-#: order/models.py:537
+#: order/models.py:539
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "Kann Lagerobjekt keiner Zeile mit einem anderen Teil hinzufügen"
 
-#: order/models.py:539
+#: order/models.py:541
 msgid "Cannot allocate stock to a line without a part"
 msgstr "Kann Lagerobjekt keiner Zeile ohne Teil hinzufügen"
 
-#: order/models.py:542
+#: order/models.py:544
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "zugewiesene Anzahl darf nicht die verfügbare Anzahl überschreiten"
 
-#: order/models.py:552
+#: order/models.py:554
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Anzahl muss 1 für Objekte mit Seriennummer sein"
 
-#: order/models.py:569
+#: order/models.py:571
 msgid "Select stock item to allocate"
 msgstr "Lagerobjekt für Zuordnung auswählen"
 
-#: order/models.py:572
+#: order/models.py:574
 msgid "Enter stock allocation quantity"
 msgstr "Zuordnungsanzahl eingeben"
 
@@ -1359,6 +1370,7 @@ msgstr "Aufgegeben"
 
 #: order/templates/order/order_base.html:106
 #: order/templates/order/purchase_order_detail.html:180
+#: order/templates/order/receive_parts.html:22
 #: order/templates/order/sales_order_base.html:105
 msgid "Received"
 msgstr "Empfangen"
@@ -1458,8 +1470,8 @@ msgid "Attachments"
 msgstr "Anhänge"
 
 #: order/templates/order/purchase_order_detail.html:16
-#: order/templates/order/sales_order_detail.html:17 order/views.py:1051
-#: order/views.py:1165
+#: order/templates/order/sales_order_detail.html:17 order/views.py:1071
+#: order/views.py:1185
 msgid "Add Line Item"
 msgstr "Position hinzufügen"
 
@@ -1482,6 +1494,7 @@ msgid "No line items found"
 msgstr "Keine Positionen gefunden"
 
 #: order/templates/order/purchase_order_detail.html:162
+#: order/templates/order/receive_parts.html:20
 msgid "Order Code"
 msgstr "Bestellnummer"
 
@@ -1497,6 +1510,29 @@ msgstr "Position löschen"
 #: order/templates/order/purchase_order_detail.html:217
 msgid "Receive line item"
 msgstr "Position empfangen"
+
+#: order/templates/order/receive_parts.html:8
+msgid "Receive outstanding parts for"
+msgstr ""
+
+#: order/templates/order/receive_parts.html:15
+msgid "Select parts to receive against this order"
+msgstr ""
+
+#: order/templates/order/receive_parts.html:21
+#: part/templates/part/part_base.html:128 templates/js/part.html:210
+msgid "On Order"
+msgstr "bestellt"
+
+#: order/templates/order/receive_parts.html:23
+#, fuzzy
+#| msgid "Received"
+msgid "Receive"
+msgstr "Empfangen"
+
+#: order/templates/order/receive_parts.html:36
+msgid "Error: Referenced part has been removed"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:15
 msgid "This SalesOrder has not been fully allocated"
@@ -1673,51 +1709,51 @@ msgstr "Anzahl empfangener Positionen"
 msgid "No destination set"
 msgstr "Kein Ziel gesetzt"
 
-#: order/views.py:691
+#: order/views.py:705
 msgid "Error converting quantity to number"
 msgstr "Fehler beim Konvertieren zu Zahl"
 
-#: order/views.py:697
+#: order/views.py:711
 msgid "Receive quantity less than zero"
 msgstr "Anzahl kleiner null empfangen"
 
-#: order/views.py:703
+#: order/views.py:717
 msgid "No lines specified"
 msgstr "Keine Zeilen angegeben"
 
-#: order/views.py:1071
+#: order/views.py:1091
 msgid "Invalid Purchase Order"
 msgstr "Ungültige Bestellung"
 
-#: order/views.py:1079
+#: order/views.py:1099
 msgid "Supplier must match for Part and Order"
 msgstr "Zulieferer muss zum Teil und zur Bestellung passen"
 
-#: order/views.py:1084
+#: order/views.py:1104
 msgid "Invalid SupplierPart selection"
 msgstr "Ungültige Wahl des Zulieferer-Teils"
 
-#: order/views.py:1216 order/views.py:1234
+#: order/views.py:1236 order/views.py:1254
 msgid "Edit Line Item"
 msgstr "Position bearbeiten"
 
-#: order/views.py:1250 order/views.py:1262
+#: order/views.py:1270 order/views.py:1282
 msgid "Delete Line Item"
 msgstr "Position löschen"
 
-#: order/views.py:1255 order/views.py:1267
+#: order/views.py:1275 order/views.py:1287
 msgid "Deleted line item"
 msgstr "Position gelöscht"
 
-#: order/views.py:1276
+#: order/views.py:1296
 msgid "Allocate Stock to Order"
 msgstr "Lagerbestand dem Auftrag zuweisen"
 
-#: order/views.py:1345
+#: order/views.py:1365
 msgid "Edit Allocation Quantity"
 msgstr "Zuordnung bearbeiten"
 
-#: order/views.py:1360
+#: order/views.py:1380
 msgid "Remove allocation"
 msgstr "Zuordnung entfernen"
 
@@ -2195,7 +2231,7 @@ msgstr "Wert"
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: part/templates/part/params.html:34
+#: part/templates/part/params.html:34 part/templates/part/supplier.html:17
 msgid "Delete"
 msgstr "Löschen"
 
@@ -2249,10 +2285,6 @@ msgstr "Zu Bauaufträgen zugeordnet"
 msgid "Allocated to Sales Orders"
 msgstr "Zu Aufträgen zugeordnet"
 
-#: part/templates/part/part_base.html:128 templates/js/part.html:210
-msgid "On Order"
-msgstr "bestellt"
-
 #: part/templates/part/part_base.html:143
 msgid "Can Build"
 msgstr "Herstellbar?"
@@ -2269,11 +2301,11 @@ msgstr "Aus vorhandenen Bildern auswählen"
 msgid "Upload new image"
 msgstr "Neues Bild hochladen"
 
-#: part/templates/part/sales_orders.html:14
+#: part/templates/part/sales_orders.html:15
 msgid "New sales order"
 msgstr "Neuer Auftrag"
 
-#: part/templates/part/sales_orders.html:14
+#: part/templates/part/sales_orders.html:15
 msgid "New Order"
 msgstr "Neue Bestellung"
 
@@ -2301,6 +2333,30 @@ msgstr "Kein Bestand"
 #: part/templates/part/stock_count.html:9 templates/InvenTree/low_stock.html:7
 msgid "Low Stock"
 msgstr "Niedriger Bestand"
+
+#: part/templates/part/supplier.html:8
+#, fuzzy
+#| msgid "Suppliers"
+msgid "Part Suppliers"
+msgstr "Zulieferer"
+
+#: part/templates/part/supplier.html:17
+#, fuzzy
+#| msgid "Delete supplier part"
+msgid "Delete supplier parts"
+msgstr "Zuliefererteil entfernen"
+
+#: part/templates/part/supplier.html:45
+#, fuzzy
+#| msgid "Create new Supplier"
+msgid "Create new supplier"
+msgstr "Neuen Zulieferer anlegen"
+
+#: part/templates/part/supplier.html:51
+#, fuzzy
+#| msgid "Create new Manufacturer"
+msgid "Create new manufacturer"
+msgstr "Neuen Hersteller anlegen"
 
 #: part/templates/part/tabs.html:9
 msgid "Parameters"
