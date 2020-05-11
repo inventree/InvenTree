@@ -5,6 +5,8 @@ JSON API for the Stock app
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django_filters import NumberFilter
 
+from rest_framework import status
+
 from django.conf.urls import url, include
 from django.urls import reverse
 from django.http import JsonResponse
@@ -657,6 +659,43 @@ class StockTrackingList(generics.ListCreateAPIView):
     queryset = StockItemTracking.objects.all()
     serializer_class = StockTrackingSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer(self, *args, **kwargs):
+        try:
+            kwargs['item_detail'] = str2bool(self.request.query_params.get('item_detail', False))
+        except:
+            pass
+
+        try:
+            kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
+        except:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        """ Create a new StockItemTracking object
+        
+        Here we override the default 'create' implementation,
+        to save the user information associated with the request object.
+        """
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Record the user who created this Part object
+        item = serializer.save()
+        item.user = request.user
+        item.system = False
+
+        # quantity field cannot be explicitly adjusted  here
+        item.quantity = item.item.quantity
+        item.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     filter_backends = [
         DjangoFilterBackend,
