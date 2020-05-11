@@ -38,6 +38,7 @@
             return {
                 ordering: '-date',
                 item: {{ item.pk }},
+                user_detail: true,
             };
         },
         url: "{% url 'api-stock-track' %}", 
