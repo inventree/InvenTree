@@ -639,6 +639,7 @@ class BomItemValidate(generics.UpdateAPIView):
 
         return Response(serializer.data)
 
+
 part_api_urls = [
     url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
