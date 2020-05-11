@@ -19,6 +19,7 @@ from django.urls import reverse
 
 from .models import Part, PartCategory, BomItem, PartStar
 from .models import PartParameter, PartParameterTemplate
+from .models import PartAttachment
 
 from . import serializers as part_serializers
 
@@ -103,6 +104,27 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single PartCategory object """
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+
+class PartAttachmentList(generics.ListCreateAPIView):
+    """
+    API endpoint for listing (and creating) a PartAttachment (file upload).
+    """
+
+    queryset = PartAttachment.objects.all()
+    serializer_class = part_serializers.PartAttachmentSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    ]
+
+    filter_fields = [
+        'part',
+    ]
 
 
 class PartThumbs(generics.ListAPIView):
@@ -618,33 +640,31 @@ class BomItemValidate(generics.UpdateAPIView):
         return Response(serializer.data)
 
 
-cat_api_urls = [
-
-    url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
-
-    url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
-]
-
-
-part_star_api_urls = [
-    url(r'^(?P<pk>\d+)/?', PartStarDetail.as_view(), name='api-part-star-detail'),
-
-    # Catchall
-    url(r'^.*$', PartStarList.as_view(), name='api-part-star-list'),
-]
-
-part_param_api_urls = [
-    url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),
-
-    url(r'^.*$', PartParameterList.as_view(), name='api-part-param-list'),
-]
-
 part_api_urls = [
     url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
-    url(r'^category/', include(cat_api_urls)),
-    url(r'^star/', include(part_star_api_urls)),
-    url(r'^parameter/', include(part_param_api_urls)),
+    # Base URL for PartCategory API endpoints
+    url(r'^category/', include([
+        url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
+        url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
+    ])),
+
+    # Base URL for PartAttachment API endpoints
+    url(r'attachment/', include([
+        url(r'^$', PartAttachmentList.as_view(), name='api-part-attachment-list'),
+    ])),
+    
+    # Base URL for PartStar API endpoints
+    url(r'^star/', include([
+        url(r'^(?P<pk>\d+)/?', PartStarDetail.as_view(), name='api-part-star-detail'),
+        url(r'^$', PartStarList.as_view(), name='api-part-star-list'),
+    ])),
+    
+    # Base URL for PartParameter API endpoints
+    url(r'^parameter/', include([
+        url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),
+        url(r'^.*$', PartParameterList.as_view(), name='api-part-param-list'),
+    ])),
 
     url(r'^thumbs/', PartThumbs.as_view(), name='api-part-thumbs'),
 
@@ -653,16 +673,12 @@ part_api_urls = [
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]
 
-bom_item_urls = [
-
-    url(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),
-
-    url(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
-]
-
 bom_api_urls = [
     # BOM Item Detail
-    url(r'^(?P<pk>\d+)/', include(bom_item_urls)),
+    url(r'^(?P<pk>\d+)/', include([
+        url(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),
+        url(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
+    ])),
 
     # Catch-all
     url(r'^.*$', BomList.as_view(), name='api-bom-list'),
