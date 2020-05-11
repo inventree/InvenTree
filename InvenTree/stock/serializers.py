@@ -207,11 +207,24 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
 class StockTrackingSerializer(InvenTreeModelSerializer):
     """ Serializer for StockItemTracking model """
 
+    def __init__(self, *args, **kwargs):
+
+        item_detail = kwargs.pop('item_detail', False)
+        user_detail = kwargs.pop('user_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if item_detail is not True:
+            self.fields.pop('item_detail')
+
+        if user_detail is not True:
+            self.fields.pop('user_detail')
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    user = UserSerializerBrief(many=False, read_only=True)
+    item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
 
-    item = StockItemSerializerBrief(many=False, read_only=True)
+    user_detail = UserSerializerBrief(source='user', many=False, read_only=True)
 
     class Meta:
         model = StockItemTracking
@@ -219,12 +232,14 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
             'pk',
             'url',
             'item',
+            'item_detail',
             'date',
             'title',
             'notes',
             'link',
             'quantity',
             'user',
+            'user_detail',
             'system',
         ]
 
