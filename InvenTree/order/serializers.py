@@ -14,6 +14,7 @@ from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 from part.serializers import PartBriefSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
+from .models import PurchaseOrderAttachment, SalesOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem
 from .models import SalesOrderAllocation
 
@@ -103,6 +104,22 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'part_detail',
             'supplier_part_detail',
             'received',
+        ]
+
+
+class POAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Serializers for the PurchaseOrderAttachment model
+    """
+
+    class Meta:
+        model = PurchaseOrderAttachment
+        
+        fields = [
+            'pk',
+            'order',
+            'attachment',
+            'comment',
         ]
 
 
@@ -230,4 +247,20 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'order_detail',
             'part',
             'part_detail',
+        ]
+
+
+class SOAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Serializers for the SalesOrderAttachment model
+    """
+
+    class Meta:
+        model = SalesOrderAttachment
+        
+        fields = [
+            'pk',
+            'order',
+            'attachment',
+            'comment',
         ]

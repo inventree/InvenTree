@@ -9,6 +9,7 @@ from .models import Part, PartStar
 from .models import PartCategory
 from .models import BomItem
 from .models import PartParameter, PartParameterTemplate
+from .models import PartAttachment
 
 from decimal import Decimal
 
@@ -36,6 +37,22 @@ class CategorySerializer(InvenTreeModelSerializer):
             'url',
             'parent',
             'parts',
+        ]
+
+
+class PartAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for the PartAttachment class
+    """
+
+    class Meta:
+        model = PartAttachment
+
+        fields = [
+            'pk',
+            'part',
+            'attachment',
+            'comment'
         ]
 
 

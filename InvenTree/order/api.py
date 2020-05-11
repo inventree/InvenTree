@@ -9,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, permissions
 from rest_framework import filters
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 from InvenTree.helpers import str2bool
 
@@ -17,10 +17,12 @@ from part.models import Part
 from company.models import SupplierPart
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
-from .serializers import POSerializer, POLineItemSerializer
+from .models import PurchaseOrderAttachment
+from .serializers import POSerializer, POLineItemSerializer, POAttachmentSerializer
 
 from .models import SalesOrder, SalesOrderLineItem
-from .serializers import SalesOrderSerializer, SOLineItemSerializer
+from .models import SalesOrderAttachment
+from .serializers import SalesOrderSerializer, SOLineItemSerializer, SOAttachmentSerializer
 
 
 class POList(generics.ListCreateAPIView):
@@ -195,6 +197,25 @@ class POLineItemDetail(generics.RetrieveUpdateAPIView):
 
     permission_classes = [
         permissions.IsAuthenticated,
+    ]
+
+
+class SOAttachmentList(generics.ListCreateAPIView):
+    """
+    API endpoint for listing (and creating) a SalesOrderAttachment (file upload)
+    """
+
+    queryset = SalesOrderAttachment.objects.all()
+    serializer_class = SOAttachmentSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    ]
+
+    filter_fields = [
+        'order',
     ]
 
 
@@ -378,10 +399,32 @@ class SOLineItemDetail(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class POAttachmentList(generics.ListCreateAPIView):
+    """
+    API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)
+    """
+
+    queryset = PurchaseOrderAttachment.objects.all()
+    serializer_class = POAttachmentSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    ]
+
+    filter_fields = [
+        'order',
+    ]
+
+
 order_api_urls = [
     # API endpoints for purchase orders
     url(r'^po/(?P<pk>\d+)/$', PODetail.as_view(), name='api-po-detail'),
-    url(r'^po/$', POList.as_view(), name='api-po-list'),
+    url(r'po/attachment/', include([
+        url(r'^.*$', POAttachmentList.as_view(), name='api-po-attachment-list'),
+    ])),
+    url(r'^po/.*$', POList.as_view(), name='api-po-list'),
 
     # API endpoints for purchase order line items
     url(r'^po-line/(?P<pk>\d+)/$', POLineItemDetail.as_view(), name='api-po-line-detail'),
@@ -389,7 +432,11 @@ order_api_urls = [
 
     # API endpoints for sales ordesr
     url(r'^so/(?P<pk>\d+)/$', SODetail.as_view(), name='api-so-detail'),
-    url(r'^so/$', SOList.as_view(), name='api-so-list'),
+    url(r'so/attachment/', include([
+        url(r'^.*$', SOAttachmentList.as_view(), name='api-so-attachment-list'),
+    ])),
+
+    url(r'^so/.*$', SOList.as_view(), name='api-so-list'),
 
     # API endpoints for sales order line items
     url(r'^so-line/(?P<pk>\d+)/$', SOLineItemDetail.as_view(), name='api-so-line-detail'),

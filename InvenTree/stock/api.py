@@ -12,6 +12,7 @@ from django.db.models import Q
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
+from .models import StockItemAttachment
 
 from part.models import Part, PartCategory
 from part.serializers import PartBriefSerializer
@@ -22,6 +23,7 @@ from company.serializers import SupplierPartSerializer
 from .serializers import StockItemSerializer
 from .serializers import LocationSerializer, LocationBriefSerializer
 from .serializers import StockTrackingSerializer
+from .serializers import StockItemAttachmentSerializer
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
@@ -624,6 +626,25 @@ class StockList(generics.ListCreateAPIView):
     ]
 
 
+class StockAttachmentList(generics.ListCreateAPIView):
+    """
+    API endpoint for listing (and creating) a StockItemAttachment (file upload)
+    """
+
+    queryset = StockItemAttachment.objects.all()
+    serializer_class = StockItemAttachmentSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    ]
+
+    filter_fields = [
+        'stock_item',
+    ]
+
+
 class StockTrackingList(generics.ListCreateAPIView):
     """ API endpoint for list view of StockItemTracking objects.
 
@@ -691,6 +712,11 @@ stock_api_urls = [
     url(r'add/?', StockAdd.as_view(), name='api-stock-add'),
     url(r'remove/?', StockRemove.as_view(), name='api-stock-remove'),
     url(r'transfer/?', StockTransfer.as_view(), name='api-stock-transfer'),
+
+    # Base URL for StockItemAttachment API endpoints
+    url(r'^attachment/', include([
+        url(r'^$', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
+    ])),
 
     url(r'track/?', StockTrackingList.as_view(), name='api-stock-track'),
 

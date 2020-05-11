@@ -31,7 +31,7 @@ class OrderTest(APITestCase):
 
         return self.client.get(url + "?" + options, format='json')
 
-    def test_po_list(self,):
+    def test_po_list(self):
         
         url = reverse('api-po-list')
 
@@ -41,4 +41,20 @@ class OrderTest(APITestCase):
 
         # Filter by stuff
         response = self.doGet(url, 'status=10&part=1&supplier_part=1')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_po_attachments(self):
+
+        url = reverse('api-po-attachment-list')
+
+        response = self.doGet(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def test_so_attachments(self):
+
+        url = reverse('api-so-attachment-list')
+
+        response = self.doGet(url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)

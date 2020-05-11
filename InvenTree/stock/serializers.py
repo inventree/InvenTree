@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 from .models import StockItem, StockLocation
 from .models import StockItemTracking
+from .models import StockItemAttachment
 
 from django.db.models import Sum, Count
 from django.db.models.functions import Coalesce
@@ -186,6 +187,20 @@ class LocationSerializer(InvenTreeModelSerializer):
             'parent',
             'pathstring',
             'items',
+        ]
+
+
+class StockItemAttachmentSerializer(InvenTreeModelSerializer):
+    """ Serializer for StockItemAttachment model """
+
+    class Meta:
+        model = StockItemAttachment
+
+        fields = [
+            'pk',
+            'stock_item',
+            'attachment',
+            'comment'
         ]
 
 
