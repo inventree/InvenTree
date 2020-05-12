@@ -9,54 +9,7 @@
 
 <hr>
 
-<div id='attachment-buttons'>
-    <div class="btn-group">
-        <button type='button' class='btn btn-success' id='new-attachment'>{% trans "Add Attachment" %}</button>
-    </div>
-</div>
-
-
-<table class='table table-striped table-condensed' data-toolbar='#attachment-buttons' id='attachment-table'>
-    <thead>
-        <tr>
-            <th data-field='file' data-searchable='true'>{% trans "File" %}</th>
-            <th data-field='comment' data-searchable='true'>{% trans "Comment" %}</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for attachment in part.attachments.all %}
-        <tr>
-            <td><a href='/media/{{ attachment.attachment }}'>{{ attachment.basename }}</a></td>
-            <td>{{ attachment.comment }}</td>
-            <td>
-                <div class='btn-group' style='float: right;'>    
-                    <button type='button' class='btn btn-default btn-glyph attachment-edit-button' url="{% url 'part-attachment-edit' attachment.id %}" data-toggle='tooltip' title='{% trans "Edit attachment" %}'>
-                        <span class='fas fa-edit'/>
-                    </button>
-                    <button type='button' class='btn btn-default btn-glyph attachment-delete-button' url="{% url 'part-attachment-delete' attachment.id %}" data-toggle='tooltip' title='{% trans "Delete attachment" %}'>
-                        <span class='fas fa-trash-alt icon-red'/>
-                    </button>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-{% if part.variant_of and part.variant_of.attachments.count > 0 %}
-<tr>
-    <td colspan='3'>
-        Attachments for template part <b><i>{{ part.variant_of.full_name }}</i></b>
-    </td>
-</tr>
-{% for attachment in part.variant_of.attachments.all %}
-<tr>
-    <td><a href='/media/{{ attachment.attachment }}'>{{ attachment.basename }}</a></td>
-    <td>{{ attachment.comment }}</td>
-    <td></td>
-</tr>
-{% endfor %}
-{% endif %}
-</table>
+{% include "attachment_table.html" with attachments=part.attachments.all %}
 
 {% endblock %}
 
@@ -73,7 +26,9 @@
     $("#attachment-table").on('click', '.attachment-edit-button', function() {
         var button = $(this);
 
-        launchModalForm(button.attr('url'), 
+        var url = `/part/attachment/${button.attr('pk')}/edit/`;
+
+        launchModalForm(url, 
             {
                 reload: true,
             });
@@ -82,7 +37,9 @@
     $("#attachment-table").on('click', '.attachment-delete-button', function() {
         var button = $(this);
 
-        launchModalForm(button.attr('url'), {
+        var url = `/part/attachment/${button.attr('pk')}/delete/`;
+
+        launchModalForm(url, {
             success: function() {
                 location.reload();
             }

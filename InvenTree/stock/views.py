@@ -160,6 +160,12 @@ class StockItemAttachmentCreate(AjaxCreateView):
     ajax_form_title = _("Add Stock Item Attachment")
     ajax_template_name = "modal_form.html"
 
+    def post_save(self, **kwargs):
+        """ Record the user that uploaded the attachment """
+        
+        self.object.user = self.request.user
+        self.object.save()
+
     def get_data(self):
         return {
             'success': _("Added attachment")

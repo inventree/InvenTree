@@ -29,6 +29,7 @@ from .serializers import StockItemAttachmentSerializer
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
+from InvenTree.api import AttachmentMixin
 
 from decimal import Decimal, InvalidOperation
 
@@ -478,6 +479,23 @@ class StockList(generics.ListCreateAPIView):
 
         if sales_order:
             queryset = queryset.filter(sales_order=sales_order)
+
+        # Filter by "serialized" status?
+        serialized = params.get('serialized', None)
+
+        if serialized is not None:
+            serialized = str2bool(serialized)
+
+            if serialized:
+                queryset = queryset.exclude(serial=None)
+            else:
+                queryset = queryset.filter(serial=None)
+
+        # Filter by serial number?
+        serial_number = params.get('serial', None)
+
+        if serial_number is not None:
+            queryset = queryset.filter(serial=serial_number)
         
         in_stock = self.request.query_params.get('in_stock', None)
 
@@ -628,19 +646,13 @@ class StockList(generics.ListCreateAPIView):
     ]
 
 
-class StockAttachmentList(generics.ListCreateAPIView):
+class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
     API endpoint for listing (and creating) a StockItemAttachment (file upload)
     """
 
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockItemAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
 
     filter_fields = [
         'stock_item',

@@ -8,43 +8,11 @@
 
 {% include 'order/so_tabs.html' with tab='attachments' %}
 
-<h4>{% trans "Sales Order Attachments" %}
+<h4>{% trans "Sales Order Attachments" %}</h4>
 
 <hr>
 
-<div id='attachment-buttons'>
-    <div class='btn-group'>
-        <button type='button' class='btn btn-success' id='new-attachment'>{% trans "Add Attachment" %}</button>
-    </div>
-</div>
-
-<table class='table table-striped table-condensed' data-toolbar='#attachment-buttons' id='attachment-table'>
-    <thead>
-        <tr>
-            <th data-field='file' data-searchable='true'>{% trans "File" %}</th>
-            <th data-field='comment' data-searchable='true'>{% trans "Comment" %}</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for attachment in order.attachments.all %}
-        <tr>
-            <td><a href='/media/{{ attachment.attachment }}'>{{ attachment.basename }}</a></td>
-            <td>{{ attachment.comment }}</td>
-            <td>
-                <div class='btn-group' style='float: right;'>    
-                    <button type='button' class='btn btn-default btn-glyph attachment-edit-button' url="{% url 'so-attachment-edit' attachment.id %}" data-toggle='tooltip' title='{% trans "Edit attachment" %}'>
-                        <span class='fas fa-edit'/>
-                    </button>
-                    <button type='button' class='btn btn-default btn-glyph attachment-delete-button' url="{% url 'so-attachment-delete' attachment.id %}" data-toggle='tooltip' title='{% trans "Delete attachment" %}'>
-                        <span class='fas fa-trash-alt icon-red'/>
-                    </button>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% include "attachment_table.html" with attachments=order.attachments.all %}
 
 {% endblock %}
 
@@ -62,7 +30,9 @@ $("#new-attachment").click(function() {
 $("#attachment-table").on('click', '.attachment-edit-button', function() {
     var button = $(this);
 
-    launchModalForm(button.attr('url'), {
+    var url = `/order/sales-order/attachment/${button.attr('pk')}/edit/`;
+
+    launchModalForm(url, {
         reload: true,
     });
 });
@@ -70,7 +40,9 @@ $("#attachment-table").on('click', '.attachment-edit-button', function() {
 $("#attachment-table").on('click', '.attachment-delete-button', function() {
     var button = $(this);
 
-    launchModalForm(button.attr('url'), {
+    var url = `/order/sales-order/attachment/${button.attr('pk')}/delete/`;
+
+    launchModalForm(url, {
         reload: true,
     });
 });

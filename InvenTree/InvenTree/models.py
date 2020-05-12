@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import os
 
 from django.db import models
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
@@ -41,6 +42,8 @@ class InvenTreeAttachment(models.Model):
     Attributes:
         attachment: File
         comment: String descriptor for the attachment
+        user: User associated with file upload
+        upload_date: Date the file was uploaded
     """
     def getSubdir(self):
         """
@@ -54,6 +57,15 @@ class InvenTreeAttachment(models.Model):
                                   help_text=_('Select file to attach'))
 
     comment = models.CharField(max_length=100, help_text=_('File comment'))
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        help_text=_('User'),
+    )
+
+    upload_date = models.DateField(auto_now_add=True, null=True, blank=True)
 
     @property
     def basename(self):
