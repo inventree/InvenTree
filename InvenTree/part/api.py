@@ -296,23 +296,16 @@ class PartList(generics.ListCreateAPIView):
         else:
             return Response(data)
 
-    def create(self, request, *args, **kwargs):
-        """ Override the default 'create' behaviour:
+    def perform_create(self, serializer):
+        """
         We wish to save the user who created this part!
 
-        Note: Implementation coped from DRF class CreateModelMixin
+        Note: Implementation copied from DRF class CreateModelMixin
         """
 
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        
-        # Record the user who created this Part object
         part = serializer.save()
-        part.creation_user = request.user
+        part.creation_user = self.request.user
         part.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_queryset(self, *args, **kwargs):
 

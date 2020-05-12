@@ -663,6 +663,12 @@ class StockAttachmentList(generics.ListCreateAPIView):
         'stock_item',
     ]
 
+    def perform_create(self, serializer):
+
+        attachment = serializer.save()
+        attachment.user = self.request.user
+        attachment.save()
+
 
 class StockTrackingList(generics.ListCreateAPIView):
     """ API endpoint for list view of StockItemTracking objects.
