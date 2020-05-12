@@ -12,6 +12,7 @@ from rest_framework import filters
 from django.conf.urls import url, include
 
 from InvenTree.helpers import str2bool
+from InvenTree.api import AttachmentMixin
 
 from part.models import Part
 from company.models import SupplierPart
@@ -200,19 +201,13 @@ class POLineItemDetail(generics.RetrieveUpdateAPIView):
     ]
 
 
-class SOAttachmentList(generics.ListCreateAPIView):
+class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
     API endpoint for listing (and creating) a SalesOrderAttachment (file upload)
     """
 
     queryset = SalesOrderAttachment.objects.all()
     serializer_class = SOAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
 
     filter_fields = [
         'order',
@@ -399,19 +394,13 @@ class SOLineItemDetail(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class POAttachmentList(generics.ListCreateAPIView):
+class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
     API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)
     """
 
     queryset = PurchaseOrderAttachment.objects.all()
     serializer_class = POAttachmentSerializer
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
 
     filter_fields = [
         'order',

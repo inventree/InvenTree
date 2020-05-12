@@ -25,6 +25,7 @@ from . import serializers as part_serializers
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
+from InvenTree.api import AttachmentMixin
 
 
 class PartCategoryTree(TreeSerializer):
@@ -106,21 +107,13 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = PartCategory.objects.all()
 
 
-class PartAttachmentList(generics.ListCreateAPIView):
+class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
     API endpoint for listing (and creating) a PartAttachment (file upload).
     """
 
     queryset = PartAttachment.objects.all()
     serializer_class = part_serializers.PartAttachmentSerializer
-
-    permission_classes = [permissions.IsAuthenticated]
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-        filters.SearchFilter,
-    ]
 
     filter_fields = [
         'part',
