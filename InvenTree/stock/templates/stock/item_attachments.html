@@ -22,7 +22,7 @@
         <tr>
             <th data-field='file' data-searchable='true'>{% trans "File" %}</th>
             <th data-field='comment' data-searchable='true'>{% trans "Comment" %}</th>
-            <th data-field='user' data-searchable='true'>{% trans "Uploaded By" %}</th>
+            <th data-field='user' data-searchable='true'>{% trans "Uploaded" %}</th>
             <th></th>
         </tr>
     </thead>
@@ -32,7 +32,8 @@
             <td><a href='/media/{{ attachment.attachment }}'>{{ attachment.basename }}</a></td>
             <td>{{ attachment.comment }}</td>
             <td>
-                {% if attachment.user %}{{ attachment.user.username }}{% else %}-{% endif %}
+                {% if attachment.upload_date %}{{ attachment.upload_date }}{% endif %}
+                {% if attachment.user %}<span class='badge'>{{ attachment.user.username }}</div>{% endif %}
             </td>
             <td>
                 <div class='btn-group' style='float: right;'>    

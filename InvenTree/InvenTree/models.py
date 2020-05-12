@@ -42,6 +42,8 @@ class InvenTreeAttachment(models.Model):
     Attributes:
         attachment: File
         comment: String descriptor for the attachment
+        user: User associated with file upload
+        upload_date: Date the file was uploaded
     """
     def getSubdir(self):
         """
@@ -62,6 +64,8 @@ class InvenTreeAttachment(models.Model):
         blank=True, null=True,
         help_text=_('User'),
     )
+
+    upload_date = models.DateField(auto_now_add=True, null=True, blank=True)
 
     @property
     def basename(self):
