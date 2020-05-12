@@ -17,6 +17,15 @@ Refer to the [getting started guide](https://inventree.github.io/docs/start/inst
 
 For InvenTree documentation, refer to the [InvenTre documentation website](https://inventree.github.io).
 
+## Integration
+
+InvenTree is designed to be extensible, and provides multiple options for integration with external applications or addition of custom plugins:
+
+* [InvenTree API](https://inventree.github.io/docs/extend/api)
+* [Python module](https://inventree.github.io/docs/extend/python)
+* [Plugin interface](https://inventree.github.io/docs/extend/plugins)
+* [Third party](https://inventree.github.io/docs/extend/integrate)
+
 ## Developer Documentation
 
 For code documentation, refer to the [developer documentation](http://inventree.readthedocs.io/en/latest/).
