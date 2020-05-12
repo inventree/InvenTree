@@ -93,6 +93,10 @@ class PurchaseOrderAttachmentCreate(AjaxCreateView):
     ajax_form_title = _("Add Purchase Order Attachment")
     ajax_template_name = "modal_form.html"
 
+    def post_save(self, **kwargs):
+        self.object.user = self.request.user
+        self.object.save()
+
     def get_data(self):
         return {
             "success": _("Added attachment")
@@ -132,6 +136,10 @@ class SalesOrderAttachmentCreate(AjaxCreateView):
     model = SalesOrderAttachment
     form_class = order_forms.EditSalesOrderAttachmentForm
     ajax_form_title = _('Add Sales Order Attachment')
+
+    def post_save(self, **kwargs):
+        self.object.user = self.request.user
+        self.object.save()
 
     def get_data(self):
         return {

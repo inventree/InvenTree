@@ -8,6 +8,9 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 from django.http import JsonResponse
 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -39,6 +42,28 @@ class InfoView(AjaxView):
         }
 
         return JsonResponse(data)
+
+
+class AttachmentMixin:
+    """
+    Mixin for creating attachment objects,
+    and ensuring the user information is saved correctly.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    ]
+
+    def perform_create(self, serializer):
+        """ Save the user information when a file is uploaded """
+
+        attachment = serializer.save()
+        attachment.user = self.request.user
+        attachment.save()
 
 
 class ActionPluginView(APIView):

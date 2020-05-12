@@ -193,6 +193,16 @@ class LocationSerializer(InvenTreeModelSerializer):
 class StockItemAttachmentSerializer(InvenTreeModelSerializer):
     """ Serializer for StockItemAttachment model """
 
+    def __init_(self, *args, **kwargs):
+        user_detail = kwargs.pop('user_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if user_detail is not True:
+            self.fields.pop('user_detail')
+
+    user_detail = UserSerializerBrief(source='user', read_only=True)
+
     class Meta:
         model = StockItemAttachment
 
@@ -200,7 +210,9 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
             'pk',
             'stock_item',
             'attachment',
-            'comment'
+            'comment',
+            'user',
+            'user_detail',
         ]
 
 
