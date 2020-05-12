@@ -478,6 +478,12 @@ class StockList(generics.ListCreateAPIView):
 
         if sales_order:
             queryset = queryset.filter(sales_order=sales_order)
+
+        # Filter by serial number?
+        serial_number = params.get('serial', None)
+
+        if serial_number is not None:
+            queryset = queryset.filter(serial=serial_number)
         
         in_stock = self.request.query_params.get('in_stock', None)
 
