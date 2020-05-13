@@ -140,9 +140,12 @@ function enableDragAndDrop(element, url, options) {
         url - URL to POST the file to
         options - object with following possible values:
             label - Label of the file to upload (default='file')
+            data - Other form data to upload
             success - Callback function in case of success
             error - Callback function in case of error
     */
+
+    data = options.data || {};
 
     $(element).on('drop', function(event) {
 
@@ -151,6 +154,11 @@ function enableDragAndDrop(element, url, options) {
         var label = options.label || 'file';
 
         var formData = new FormData();
+
+        // Add the extra data
+        for (var key in data) {
+            formData.append(key, data[key]);
+        }
 
         if (isFileTransfer(transfer)) {
             formData.append(label, transfer.files[0]);
