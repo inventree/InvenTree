@@ -346,9 +346,11 @@
     z-index: 2;
 }
 
+/*
 .dropzone * {
     pointer-events: none;
 }
+*/
 
 .dragover {
     background-color: #55A;
