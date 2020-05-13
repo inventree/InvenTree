@@ -112,7 +112,10 @@ class PurchaseOrderAttachmentCreate(AjaxCreateView):
 
         initials = super(AjaxCreateView, self).get_initial()
 
-        initials["order"] = PurchaseOrder.objects.get(id=self.request.GET.get('order', -1))
+        try:
+            initials["order"] = PurchaseOrder.objects.get(id=self.request.GET.get('order', -1))
+        except (ValueError, PurchaseOrder.DoesNotExist):
+            pass
 
         return initials
 
@@ -149,7 +152,10 @@ class SalesOrderAttachmentCreate(AjaxCreateView):
     def get_initial(self):
         initials = super().get_initial().copy()
 
-        initials['order'] = SalesOrder.objects.get(id=self.request.GET.get('order', None))
+        try:
+            initials['order'] = SalesOrder.objects.get(id=self.request.GET.get('order', None))
+        except (ValueError, SalesOrder.DoesNotExist):
+            pass
 
         return initials
 
