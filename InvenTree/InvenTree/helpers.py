@@ -120,6 +120,59 @@ def normalize(d):
     return d.quantize(Decimal(1)) if d == d.to_integral() else d.normalize()
 
 
+def increment(n):
+    """
+    Attempt to increment an integer (or a string that looks like an integer!)
+    
+    e.g.
+
+    001 -> 002
+    2 -> 3
+    AB01 -> AB02
+    QQQ -> QQQ
+    
+    """
+
+    value = str(n).strip()
+
+    # Ignore empty strings
+    if not value:
+        return value
+
+    pattern = r"(.*?)(\d+)?$"
+
+    result = re.search(pattern, value)
+
+    # No match!
+    if result is None:
+        return value
+
+    groups = result.groups()
+
+    # If we cannot match the regex, then simply return the provided value
+    if not len(groups) == 2:
+        return value
+
+    prefix, number = groups
+
+    # No number extracted? Simply return the prefix (without incrementing!)
+    if not number:
+        return prefix
+
+    # Record the width of the number
+    width = len(number)
+
+    try:
+        number = int(number) + 1
+        number = str(number)
+    except ValueError:
+        pass
+
+    number = number.zfill(width)
+
+    return prefix + number
+
+
 def decimal2string(d):
     """
     Format a Decimal number as a string,

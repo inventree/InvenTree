@@ -108,6 +108,29 @@ class TestQuoteWrap(TestCase):
         self.assertEqual(helpers.WrapWithQuotes('hello"'), '"hello"')
 
 
+class TestIncrement(TestCase):
+
+    def tests(self):
+        """ Test 'intelligent' incrementing function """
+
+        tests = [
+            ("", ""),
+            (1, "2"),
+            ("001", "002"),
+            ("1001", "1002"),
+            ("ABC123", "ABC124"),
+            ("XYZ0", "XYZ1"),
+            ("123Q", "123Q"),
+            ("QQQ", "QQQ"),
+        ]
+
+        for test in tests:
+            a, b = test
+
+            result = helpers.increment(a)
+            self.assertEqual(result, b)
+
+
 class TestMakeBarcode(TestCase):
     """ Tests for barcode string creation """
 

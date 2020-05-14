@@ -4,7 +4,7 @@
 - model: order.purchaseorder
   pk: 1
   fields:
-    reference: 0001
+    reference: '0001'
     description: "Ordering some screws"
     supplier: 1
 
@@ -12,7 +12,7 @@
 - model: order.purchaseorder
   pk: 2
   fields:
-    reference: 0002
+    reference: '0002'
     description: "Ordering some more screws"
     supplier: 3
 
