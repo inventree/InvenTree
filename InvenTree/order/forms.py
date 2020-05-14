@@ -8,6 +8,9 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext as _
 
+from crispy_forms.layout import Field, Layout
+from crispy_forms.bootstrap import PrependedText
+
 from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.forms import HelperForm
@@ -88,6 +91,23 @@ class ReceivePurchaseOrderForm(HelperForm):
 class EditPurchaseOrderForm(HelperForm):
     """ Form for editing a PurchaseOrder object """
 
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        # TODO - Refactor this?
+        self.helper.layout = Layout(
+            Field(PrependedText(
+                'reference',
+                'PO',
+                placeholder=_("Purchase Order")
+            )),
+            Field('supplier'),
+            Field('supplier_reference'),
+            Field('description'),
+            Field('link'),
+        )
+
     class Meta:
         model = PurchaseOrder
         fields = [
@@ -101,6 +121,23 @@ class EditPurchaseOrderForm(HelperForm):
 
 class EditSalesOrderForm(HelperForm):
     """ Form for editing a SalesOrder object """
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        # TODO - Refactor?
+        self.helper.layout = Layout(
+            Field(PrependedText(
+                'reference',
+                'SO',
+                placeholder=_("Sales Order")
+            )),
+            Field('customer'),
+            Field('customer_reference'),
+            Field('description'),
+            Field('link'),
+        )
 
     class Meta:
         model = SalesOrder
