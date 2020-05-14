@@ -24,7 +24,7 @@ from stock import models as stock_models
 from company.models import Company, SupplierPart
 
 from InvenTree.fields import RoundingDecimalField
-from InvenTree.helpers import decimal2string
+from InvenTree.helpers import decimal2string, increment
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
 from InvenTree.models import InvenTreeAttachment
 
@@ -95,6 +95,44 @@ class PurchaseOrder(Order):
     """
     
     ORDER_PREFIX = "PO"
+
+    @classmethod
+    def getNextOrderNumber(cls):
+        """
+        Try to predict the next order-number
+        """
+
+        if PurchaseOrder.objects.count() == 0:
+            return None
+
+        # We will assume that the latest pk has the highest PO number
+        order = PurchaseOrder.objects.last()
+        ref = order.reference
+
+        if not ref:
+            return None
+
+        tries = set()
+
+        tries.add(ref)
+
+        while 1:
+            new_ref = increment(ref)
+
+            if new_ref in tries:
+                # We are in a looping situation - simply return the original one
+                return ref
+
+            # Check that the new ref does not exist in the database
+            if PurchaseOrder.objects.filter(reference=new_ref).exists():
+                tries.add(new_ref)
+                new_ref = increment(new_ref)
+
+            else:
+                break
+
+        return new_ref
+
 
     def __str__(self):
         return "PO {ref} - {company}".format(ref=self.reference, company=self.supplier.name)
