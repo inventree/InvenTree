@@ -290,6 +290,7 @@ class PurchaseOrderCreate(AjaxCreateView):
     def get_initial(self):
         initials = super().get_initial().copy()
 
+        initials['reference'] = PurchaseOrder.getNextOrderNumber()
         initials['status'] = PurchaseOrderStatus.PENDING
 
         supplier_id = self.request.GET.get('supplier', None)
