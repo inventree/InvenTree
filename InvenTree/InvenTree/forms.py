@@ -7,8 +7,7 @@ from __future__ import unicode_literals
 
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Field, Layout
-from crispy_forms.bootstrap import PrependedText
+from crispy_forms.layout import Layout
 from django.contrib.auth.models import User
 
 
@@ -30,7 +29,7 @@ class HelperForm(forms.ModelForm):
         """
 
         self.helper.layout = Layout(*self.fields.keys())
-        
+
 
 class DeleteForm(forms.Form):
     """ Generic deletion form which provides simple user confirmation
