@@ -7,6 +7,8 @@ from __future__ import unicode_literals
 
 from django import forms
 from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Field, Layout
+from crispy_forms.bootstrap import PrependedText
 from django.contrib.auth.models import User
 
 
@@ -19,6 +21,16 @@ class HelperForm(forms.ModelForm):
 
         self.helper.form_tag = False
 
+        """
+        Create a default 'layout' for this form.
+        Ref: https://django-crispy-forms.readthedocs.io/en/latest/layouts.html
+        This is required to do fancy things later (like adding PrependedText, etc).
+
+        Simply create a 'blank' layout for each available field.
+        """
+
+        self.helper.layout = Layout(*self.fields.keys())
+        
 
 class DeleteForm(forms.Form):
     """ Generic deletion form which provides simple user confirmation
