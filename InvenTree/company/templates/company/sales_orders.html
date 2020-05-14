@@ -33,9 +33,16 @@
         }
     });
 
-
     $("#new-sales-order").click(function() {
-        // TODO - Create a new sales order
+        launchModalForm(
+            "{% url 'so-create' %}",
+            {
+                data: {
+                    customer: {{ company.id }},
+                },
+                follow: true,
+            },
+        );
     });
 
 {% endblock %}
