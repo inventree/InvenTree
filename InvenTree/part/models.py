@@ -266,6 +266,48 @@ class Part(MPTTModel):
     def __str__(self):
         return "{n} - {d}".format(n=self.full_name, d=self.description)
 
+    def check_if_serial_number_exists(self, sn):
+        """
+        Check if a serial number exists for this Part.
+
+        Note: Serial numbers must be unique across an entire Part "tree",
+        so here we filter by the entire tree.
+        """
+
+        parts = Part.objects.filter(tree_id=self.tree_id)
+        stock = StockModels.StockItem.objects.filter(part__in=parts, serial=sn)
+
+        return stock.exists()
+
+    def get_highest_serial_number(self):
+        """
+        Return the highest serial number for this Part.
+
+        Note: Serial numbers must be unique across an entire Part "tree",
+        so we filter by the entire tree.
+        """
+
+        parts = Part.objects.filter(tree_id=self.tree_id)
+        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None).order_by('-serial')
+
+        if stock.count() > 0:
+            return stock.first().serial
+        
+        # No serial numbers found
+        return None
+
+    def get_next_serial_number(self):
+        """
+        Return the next-available serial number for this Part.
+        """
+
+        n = self.get_highest_serial_number()
+
+        if n is None:
+            return 1
+        else:
+            return n + 1
+
     @property
     def full_name(self):
         """ Format a 'full name' for this Part.
@@ -642,32 +684,40 @@ class Part(MPTTModel):
             self.sales_order_allocation_count(),
         ])
 
-    @property
-    def stock_entries(self):
-        """ Return all 'in stock' items. To be in stock:
+    def stock_entries(self, include_variants=True, in_stock=None):
+        """ Return all stock entries for this Part.
 
-        - build_order is None
-        - sales_order is None
-        - belongs_to is None
+        - If this is a template part, include variants underneath this.
+
+        Note: To return all stock-entries for all part variants under this one,
+        we need to be creative with the filtering.
         """
 
-        return self.stock_items.filter(StockModels.StockItem.IN_STOCK_FILTER)
+        if include_variants:
+            query = StockModels.StockItem.objects.filter(part__in=self.get_descendants(include_self=True))
+        else:
+            query = self.stock_items
+
+        if in_stock is True:
+            query = query.filter(StockModels.StockItem.IN_STOCK_FILTER)
+        elif in_stock is False:
+            query = query.exclude(StockModels.StockItem.IN_STOCK_FILTER)
+
+        return query
 
     @property
     def total_stock(self):
         """ Return the total stock quantity for this part.
-        Part may be stored in multiple locations
+        
+        - Part may be stored in multiple locations
+        - If this part is a "template" (variants exist) then these are counted too
         """
 
-        if self.is_template:
-            total = sum([variant.total_stock for variant in self.variants.all()])
-        else:
-            total = self.stock_entries.filter(status__in=StockStatus.AVAILABLE_CODES).aggregate(total=Sum('quantity'))['total']
+        entries = self.stock_entries(in_stock=True)
 
-        if total:
-            return total
-        else:
-            return Decimal(0)
+        query = entries.aggregate(t=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['t']
 
     @property
     def has_bom(self):

@@ -142,10 +142,30 @@ class StockItem(MPTTModel):
     )
 
     def save(self, *args, **kwargs):
+        """
+        Save this StockItem to the database. Performs a number of checks:
+
+        - Unique serial number requirement
+        - Adds a transaction note when the item is first created.
+        """
+
+        # Query to look for duplicate serial numbers
+        parts = PartModels.Part.objects.filter(tree_id=self.part.tree_id)
+        stock = StockItem.objects.filter(part__in=parts, serial=self.serial)
+
         if not self.pk:
+            # StockItem has not yet been saved
             add_note = True
         else:
+            # StockItem has already been saved
             add_note = False
+
+            stock = stock.exclude(pk=self.pk)
+
+        if self.serial is not None:
+            # Check for presence of stock with same serial number
+            if stock.exists():
+                raise ValidationError({"serial": _("StockItem with this serial number already exists")})
 
         user = kwargs.pop('user', None)
         
@@ -172,37 +192,6 @@ class StockItem(MPTTModel):
         """ Return True if this StockItem is serialized """
         return self.serial is not None and self.quantity == 1
 
-    @classmethod
-    def check_serial_number(cls, part, serial_number):
-        """ Check if a new stock item can be created with the provided part_id
-
-        Args:
-            part: The part to be checked
-        """
-
-        if not part.trackable:
-            return False
-
-        # Return False if an invalid serial number is supplied
-        try:
-            serial_number = int(serial_number)
-        except ValueError:
-            return False
-
-        items = StockItem.objects.filter(serial=serial_number)
-
-        # Is this part a variant? If so, check S/N across all sibling variants
-        if part.variant_of is not None:
-            items = items.filter(part__variant_of=part.variant_of)
-        else:
-            items = items.filter(part=part)
-
-        # An existing serial number exists
-        if items.exists():
-            return False
-
-        return True
-
     def validate_unique(self, exclude=None):
         super(StockItem, self).validate_unique(exclude)
 
@@ -210,18 +199,21 @@ class StockItem(MPTTModel):
         # ensure that the serial number is unique
         # across all variants of the same template part
 
+        print("validating...")
+        print(self.pk, self.serial)
+
         try:
             if self.serial is not None:
-                # This is a variant part (check S/N across all sibling variants)
-                if self.part.variant_of is not None:
-                    if StockItem.objects.filter(part__variant_of=self.part.variant_of, serial=self.serial).exclude(id=self.id).exists():
-                        raise ValidationError({
-                            'serial': _('A stock item with this serial number already exists for template part {part}'.format(part=self.part.variant_of))
-                        })
-                else:
-                    if StockItem.objects.filter(part=self.part, serial=self.serial).exclude(id=self.id).exists():
-                        raise ValidationError({
-                            'serial': _('A stock item with this serial number already exists')
+
+                parts = PartModels.Part.objects.filter(tree_id=self.part.tree_id)
+                stock = StockItem.objects.filter(
+                    part__in=parts,
+                    serial=self.serial,
+                ).exclude(pk=self.pk)
+
+                if stock.exists():
+                    raise ValidationError({
+                            'serial': _('A stock item with this serial number already exists for this part'),
                         })
         except PartModels.Part.DoesNotExist:
             pass
@@ -599,6 +591,9 @@ class StockItem(MPTTModel):
         if self.serialized:
             return
 
+        if not self.part.trackable:
+            raise ValidationError({"part": _("Part is not set as trackable")})
+
         # Quantity must be a valid integer value
         try:
             quantity = int(quantity)
@@ -624,7 +619,7 @@ class StockItem(MPTTModel):
         existing = []
 
         for serial in serials:
-            if not StockItem.check_serial_number(self.part, serial):
+            if self.part.check_if_serial_number_exists(serial):
                 existing.append(serial)
 
         if len(existing) > 0:
