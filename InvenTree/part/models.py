@@ -24,7 +24,7 @@ from markdownx.models import MarkdownxField
 
 from django_cleanup import cleanup
 
-from mptt.models import TreeForeignKey
+from mptt.models import TreeForeignKey, MPTTModel
 
 from stdimage.models import StdImageField
 
@@ -200,7 +200,7 @@ def match_part_names(match, threshold=80, reverse=True, compare_length=False):
 
 
 @cleanup.ignore
-class Part(models.Model):
+class Part(MPTTModel):
     """ The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -236,8 +236,12 @@ class Part(models.Model):
     """
 
     class Meta:
-        verbose_name = "Part"
-        verbose_name_plural = "Parts"
+        verbose_name = _("Part")
+        verbose_name_plural = _("Parts")
+
+    class MPTTMeta:
+        # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
+        parent_attr='variant_of'
 
     def save(self, *args, **kwargs):
         """
