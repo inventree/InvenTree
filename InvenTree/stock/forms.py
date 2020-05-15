@@ -100,8 +100,6 @@ class SerializeStockForm(HelperForm):
         # Extract the stock item
         item = kwargs.pop('item')
 
-        super().__init__(*args, **kwargs)
-
         # Pre-calculate what the serial numbers should be!
         sn = item.part.get_next_serial_number()
 
@@ -110,17 +108,15 @@ class SerializeStockForm(HelperForm):
         else:
             sn = str(sn)
 
-        # TODO - Refactor this? Should not have to specify Field('field') for each field...
-        self.helper.layout = Layout(
-            Field('quantity'),
-            Field(PrependedText(
-                'serial_numbers',
-                '#',
-                placeholder=sn
-            )),
-            Field('destination'),
-            Field('note'),
-        )
+        self.prefix = {
+            'serial_numbers': 'fa-hashtag',
+        }
+
+        self.placeholder = {
+            'serial_numbers': sn
+        }
+
+        super().__init__(*args, **kwargs)
 
     class Meta:
         model = StockItem
