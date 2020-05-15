@@ -98,3 +98,60 @@
     level: 0
     lft: 0
     rght: 0
+
+# A 'template' part
+- model: part.part
+  pk: 10000
+  fields:
+    name: 'Chair Template'
+    description: 'A chair'
+    is_template: True
+    category: 7
+    tree_id: 1
+    level: 0
+    lft: 0
+    rght: 0
+
+- model: part.part
+  pk: 10001
+  fields:
+    name: 'Blue Chair'
+    variant_of: 10000
+    category: 7
+    tree_id: 1
+    level: 0
+    lft: 0
+    rght: 0
+
+- model: part.part
+  pk: 10002
+  fields:
+    name: 'Red chair'
+    variant_of: 10000
+    category: 7
+    tree_id: 1
+    level: 0
+    lft: 0
+    rght: 0
+
+- model: part.part
+  pk: 10003
+  fields:
+    name: 'Green chair'
+    variant_of: 10000
+    category: 7
+    tree_id: 1
+    level: 0
+    lft: 0
+    rght: 0
+
+- model: part.part
+  pk: 10004
+  fields:
+    name: 'Green chair variant'
+    variant_of: 10003
+    category: 
+    tree_id: 1
+    level: 0
+    lft: 0
+    rght: 0

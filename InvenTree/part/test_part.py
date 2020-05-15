@@ -52,6 +52,18 @@ class PartTest(TestCase):
 
         self.C1 = Part.objects.get(name='C_22N_0805')
 
+        Part.objects.rebuild()
+
+    def test_tree(self):
+        # Test that the part variant tree is working properly
+        chair = Part.objects.get(pk=10000)
+        self.assertEqual(chair.get_children().count(), 3)
+        self.assertEqual(chair.get_descendant_count(), 4)
+
+        green = Part.objects.get(pk=10004)
+        self.assertEqual(green.get_ancestors().count(), 2)
+        self.assertEqual(green.get_root(), chair)
+
     def test_str(self):
         p = Part.objects.get(pk=100)
         self.assertEqual(str(p), "BOB | Bob | A2 - Can we build it?")
