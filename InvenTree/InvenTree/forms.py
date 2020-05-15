@@ -39,7 +39,7 @@ class HelperForm(forms.ModelForm):
         for field in self.fields:
             prefix = self.prefix.get(field, None)
             suffix = self.suffix.get(field, None)
-            placeholder = self.placeholder.get(field, None)
+            placeholder = self.placeholder.get(field, '')
 
             # Look for font-awesome icons
             if prefix and prefix.startswith('fa-'):

@@ -93,20 +93,16 @@ class EditPurchaseOrderForm(HelperForm):
 
     def __init__(self, *args, **kwargs):
 
-        super().__init__(*args, **kwargs)
+        self.prefix = {
+            'reference': 'PO',
+            'link': 'fa-link',
+        }
 
-        # TODO - Refactor this?
-        self.helper.layout = Layout(
-            Field(PrependedText(
-                'reference',
-                'PO',
-                placeholder=_("Purchase Order")
-            )),
-            Field('supplier'),
-            Field('supplier_reference'),
-            Field('description'),
-            Field('link'),
-        )
+        self.placeholder = {
+            'reference': _('Enter purchase order number'),
+        }
+
+        super().__init__(*args, **kwargs)
 
     class Meta:
         model = PurchaseOrder
@@ -124,20 +120,16 @@ class EditSalesOrderForm(HelperForm):
 
     def __init__(self, *args, **kwargs):
 
-        super().__init__(*args, **kwargs)
+        self.prefix = {
+            'reference': 'SO',
+            'link': 'fa-link',
+        }
 
-        # TODO - Refactor?
-        self.helper.layout = Layout(
-            Field(PrependedText(
-                'reference',
-                'SO',
-                placeholder=_("Sales Order")
-            )),
-            Field('customer'),
-            Field('customer_reference'),
-            Field('description'),
-            Field('link'),
-        )
+        self.placeholder = {
+            'reference': _('Enter sales order number'),
+        }
+
+        super().__init__(*args, **kwargs)
 
     class Meta:
         model = SalesOrder
