@@ -774,7 +774,16 @@ class StockItemSerialize(AjaxUpdateView):
 
         item = self.get_object()
 
+        # Pre-calculate what the serial numbers should be!
+        sn = item.part.get_next_serial_number()
+
+        if item.quantity >= 2:
+            sn = "{n}-{m}".format(n=sn, m=int(sn+item.quantity-1))
+        else:
+            sn = str(sn)
+
         initials['quantity'] = item.quantity
+        initials['serial_numbers'] = sn
         initials['destination'] = item.location.pk
 
         return initials

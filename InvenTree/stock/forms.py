@@ -9,6 +9,9 @@ from django import forms
 from django.forms.utils import ErrorDict
 from django.utils.translation import ugettext as _
 
+from crispy_forms.layout import Field, Layout
+from crispy_forms.bootstrap import PrependedText
+
 from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.helpers import GetExportFormats
@@ -95,11 +98,29 @@ class SerializeStockForm(HelperForm):
     def __init__(self, *args, **kwargs):
 
         # Extract the stock item
-        stock_item = kwargs.pop('item')
+        item = kwargs.pop('item')
 
         super().__init__(*args, **kwargs)
 
-        # TODO - Pre-fill the serial numbers!
+        # Pre-calculate what the serial numbers should be!
+        sn = item.part.get_next_serial_number()
+
+        if item.quantity >= 2:
+            sn = "{n}-{m}".format(n=sn, m=int(sn+item.quantity-1))
+        else:
+            sn = str(sn)
+
+        # TODO - Refactor this? Should not have to specify Field('field') for each field...
+        self.helper.layout = Layout(
+            Field('quantity'),
+            Field(PrependedText(
+                'serial_numbers',
+                '#',
+                placeholder=sn
+            )),
+            Field('destination'),
+            Field('note'),
+        )
 
     class Meta:
         model = StockItem
