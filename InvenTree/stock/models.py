@@ -149,9 +149,8 @@ class StockItem(MPTTModel):
         - Adds a transaction note when the item is first created.
         """
 
-        # Query to look for duplicate serial numbers
-        parts = PartModels.Part.objects.filter(tree_id=self.part.tree_id)
-        stock = StockItem.objects.filter(part__in=parts, serial=self.serial)
+        self.validate_unique()
+        self.clean()
 
         if not self.pk:
             # StockItem has not yet been saved
@@ -159,13 +158,6 @@ class StockItem(MPTTModel):
         else:
             # StockItem has already been saved
             add_note = False
-
-            stock = stock.exclude(pk=self.pk)
-
-        if self.serial is not None:
-            # Check for presence of stock with same serial number
-            if stock.exists():
-                raise ValidationError({"serial": _("StockItem with this serial number already exists")})
 
         user = kwargs.pop('user', None)
         
@@ -193,30 +185,25 @@ class StockItem(MPTTModel):
         return self.serial is not None and self.quantity == 1
 
     def validate_unique(self, exclude=None):
+        """
+        Test that this StockItem is "unique".
+        If the StockItem is serialized, the same serial number.
+        cannot exist for the same part (or part tree).
+        """
+
         super(StockItem, self).validate_unique(exclude)
 
-        # If the Part object is a variant (of a template part),
-        # ensure that the serial number is unique
-        # across all variants of the same template part
+        if self.serial is not None:
+            # Query to look for duplicate serial numbers
+            parts = PartModels.Part.objects.filter(tree_id=self.part.tree_id)
+            stock = StockItem.objects.filter(part__in=parts, serial=self.serial)
 
-        print("validating...")
-        print(self.pk, self.serial)
+            # Exclude myself from the search
+            if self.pk is not None:
+                stock = stock.exclude(pk=self.pk)
 
-        try:
-            if self.serial is not None:
-
-                parts = PartModels.Part.objects.filter(tree_id=self.part.tree_id)
-                stock = StockItem.objects.filter(
-                    part__in=parts,
-                    serial=self.serial,
-                ).exclude(pk=self.pk)
-
-                if stock.exists():
-                    raise ValidationError({
-                            'serial': _('A stock item with this serial number already exists for this part'),
-                        })
-        except PartModels.Part.DoesNotExist:
-            pass
+            if stock.exists():
+                raise ValidationError({"serial": _("StockItem with this serial number already exists")})
 
     def clean(self):
         """ Validate the StockItem object (separate to field validation)

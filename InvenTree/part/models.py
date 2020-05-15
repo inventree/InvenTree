@@ -39,7 +39,7 @@ from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize
 
-from InvenTree.status_codes import BuildStatus, StockStatus, PurchaseOrderStatus
+from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 
 from build import models as BuildModels
 from order import models as OrderModels
@@ -241,7 +241,7 @@ class Part(MPTTModel):
 
     class MPTTMeta:
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
-        parent_attr='variant_of'
+        parent_attr = 'variant_of'
 
     def save(self, *args, **kwargs):
         """
