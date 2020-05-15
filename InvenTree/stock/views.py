@@ -755,7 +755,18 @@ class StockItemSerialize(AjaxUpdateView):
     model = StockItem
     ajax_template_name = 'stock/item_serialize.html'
     ajax_form_title = _('Serialize Stock')
-    form_class = SerializeStockForm
+    #form_class = SerializeStockForm
+
+    def get_form(self):
+
+        context = self.get_form_kwargs()
+
+        # Pass the StockItem object through to the form
+        context['item'] = self.get_object()
+
+        form = SerializeStockForm(**context)
+
+        return form
 
     def get_initial(self):
 

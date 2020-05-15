@@ -13,6 +13,8 @@ from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.helpers import GetExportFormats
 from InvenTree.forms import HelperForm
+from InvenTree.fields import RoundingDecimalFormField
+
 from .models import StockLocation, StockItem, StockItemTracking, StockItemAttachment
 
 
@@ -79,7 +81,7 @@ class CreateStockItemForm(HelperForm):
         self._clean_form()
 
 
-class SerializeStockForm(forms.ModelForm):
+class SerializeStockForm(HelperForm):
     """ Form for serializing a StockItem. """
 
     destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label='Destination', required=True, help_text='Destination for serialized stock (by default, will remain in current location)')
@@ -87,6 +89,17 @@ class SerializeStockForm(forms.ModelForm):
     serial_numbers = forms.CharField(label='Serial numbers', required=True, help_text='Unique serial numbers (must match quantity)')
     
     note = forms.CharField(label='Notes', required=False, help_text='Add transaction note (optional)')
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    def __init__(self, *args, **kwargs):
+
+        # Extract the stock item
+        stock_item = kwargs.pop('item')
+
+        super().__init__(*args, **kwargs)
+
+        # TODO - Pre-fill the serial numbers!
 
     class Meta:
         model = StockItem
