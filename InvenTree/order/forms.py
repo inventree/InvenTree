@@ -8,9 +8,6 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext as _
 
-from crispy_forms.layout import Field, Layout
-from crispy_forms.bootstrap import PrependedText
-
 from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.forms import HelperForm

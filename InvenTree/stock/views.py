@@ -755,7 +755,7 @@ class StockItemSerialize(AjaxUpdateView):
     model = StockItem
     ajax_template_name = 'stock/item_serialize.html'
     ajax_form_title = _('Serialize Stock')
-    #form_class = SerializeStockForm
+    form_class = SerializeStockForm
 
     def get_form(self):
 
@@ -774,16 +774,8 @@ class StockItemSerialize(AjaxUpdateView):
 
         item = self.get_object()
 
-        # Pre-calculate what the serial numbers should be!
-        sn = item.part.getNextSerialNumber()
-
-        if item.quantity >= 2:
-            sn = "{n}-{m}".format(n=sn, m=int(sn+item.quantity-1))
-        else:
-            sn = str(sn)
-
         initials['quantity'] = item.quantity
-        initials['serial_numbers'] = sn
+        initials['serial_numbers'] = item.part.getSerialNumberString(item.quantity)
         initials['destination'] = item.location.pk
 
         return initials

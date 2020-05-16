@@ -308,7 +308,6 @@ class StockTest(TestCase):
         item.delete_on_deplete = True
         item.save()
 
-
         n = StockItem.objects.filter(part=25).count()
 
         self.assertEqual(item.quantity, 10)

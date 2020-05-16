@@ -9,9 +9,6 @@ from django import forms
 from django.forms.utils import ErrorDict
 from django.utils.translation import ugettext as _
 
-from crispy_forms.layout import Field, Layout
-from crispy_forms.bootstrap import PrependedText
-
 from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.helpers import GetExportFormats
@@ -111,23 +108,7 @@ class SerializeStockForm(HelperForm):
         item = kwargs.pop('item', None)
 
         if item:
-
-            # Pre-calculate what the serial numbers should be!
-            sn = item.part.getNextSerialNumber()
-
-            if item.quantity >= 2:
-                sn = "{n}-{m}".format(n=sn, m=int(sn+item.quantity-1))
-            else:
-                sn = str(sn)
-
-            
-            self.field_placeholder = {
-                'serial_numbers': sn
-            }
-
-        self.field_prefix = {
-            'serial_numbers': 'fa-hashtag',
-        }
+            self.field_placeholder['serial_numbers'] = item.part.getSerialNumberString(item.quantity)
 
         super().__init__(*args, **kwargs)
 

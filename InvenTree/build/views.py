@@ -197,17 +197,12 @@ class BuildComplete(AjaxUpdateView):
         if not build.part.trackable:
             form.fields.pop('serial_numbers')
         else:
-            sn = build.part.getNextSerialNumber()
-
-            if build.quantity > 1:
-                sn = "{n}-{m}".format(
-                    n=str(sn),
-                    m=str(sn+build.quantity-1)
-                )
+            if build.quantity == 1:
+                text = _('Next available serial number is')
             else:
-                sn = str(sn)
-            
-            form.field_placeholder['serial_numbers'] = sn
+                text = _('Next available serial numbers are')
+
+            form.field_placeholder['serial_numbers'] = text + " " + build.part.getSerialNumberString(build.quantity)
 
             form.rebuild_layout()
 

@@ -308,6 +308,24 @@ class Part(MPTTModel):
         else:
             return n + 1
 
+    def getSerialNumberString(self, quantity):
+        """
+        Return a formatted string representing the next available serial numbers,
+        given a certain quantity of items.
+        """
+
+        sn = self.getNextSerialNumber()
+
+        if quantity >= 2:
+            sn = "{n}-{m}".format(
+                n=sn,
+                m=int(sn + quantity - 1)
+            )
+        else:
+            sn = str(sn)
+
+        return sn
+
     @property
     def full_name(self):
         """ Format a 'full name' for this Part.
