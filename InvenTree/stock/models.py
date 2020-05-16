@@ -606,7 +606,7 @@ class StockItem(MPTTModel):
         existing = []
 
         for serial in serials:
-            if self.part.check_if_serial_number_exists(serial):
+            if self.part.checkIfSerialNumberExists(serial):
                 existing.append(serial)
 
         if len(existing) > 0:

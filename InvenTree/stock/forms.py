@@ -113,7 +113,7 @@ class SerializeStockForm(HelperForm):
         if item:
 
             # Pre-calculate what the serial numbers should be!
-            sn = item.part.get_next_serial_number()
+            sn = item.part.getNextSerialNumber()
 
             if item.quantity >= 2:
                 sn = "{n}-{m}".format(n=sn, m=int(sn+item.quantity-1))

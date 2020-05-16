@@ -361,26 +361,26 @@ class VariantTest(StockTest):
         chair = Part.objects.get(pk=10000)
 
         # Operations on the top-level object
-        self.assertTrue(chair.check_if_serial_number_exists(1))
-        self.assertTrue(chair.check_if_serial_number_exists(2))
-        self.assertTrue(chair.check_if_serial_number_exists(3))
-        self.assertTrue(chair.check_if_serial_number_exists(4))
-        self.assertTrue(chair.check_if_serial_number_exists(5))
+        self.assertTrue(chair.checkIfSerialNumberExists(1))
+        self.assertTrue(chair.checkIfSerialNumberExists(2))
+        self.assertTrue(chair.checkIfSerialNumberExists(3))
+        self.assertTrue(chair.checkIfSerialNumberExists(4))
+        self.assertTrue(chair.checkIfSerialNumberExists(5))
 
-        self.assertTrue(chair.check_if_serial_number_exists(20))
-        self.assertTrue(chair.check_if_serial_number_exists(21))
-        self.assertTrue(chair.check_if_serial_number_exists(22))
+        self.assertTrue(chair.checkIfSerialNumberExists(20))
+        self.assertTrue(chair.checkIfSerialNumberExists(21))
+        self.assertTrue(chair.checkIfSerialNumberExists(22))
 
-        self.assertFalse(chair.check_if_serial_number_exists(30))
+        self.assertFalse(chair.checkIfSerialNumberExists(30))
 
-        self.assertEqual(chair.get_next_serial_number(), 23)
+        self.assertEqual(chair.getNextSerialNumber(), 23)
 
         # Same operations on a sub-item
         variant = Part.objects.get(pk=10003)
-        self.assertEqual(variant.get_next_serial_number(), 23)
+        self.assertEqual(variant.getNextSerialNumber(), 23)
 
         # Create a new serial number
-        n = variant.get_highest_serial_number()
+        n = variant.getHighestSerialNumber()
 
         item = StockItem(
             part=variant,

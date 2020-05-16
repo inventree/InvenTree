@@ -282,7 +282,7 @@ class BuildComplete(AjaxUpdateView):
                         existing = []
 
                         for serial in serials:
-                            if not StockItem.check_serial_number(build.part, serial):
+                            if build.part.checkIfSerialNumberExists(serial):
                                 existing.append(serial)
 
                         if len(existing) > 0:

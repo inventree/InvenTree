@@ -266,7 +266,7 @@ class Part(MPTTModel):
     def __str__(self):
         return "{n} - {d}".format(n=self.full_name, d=self.description)
 
-    def check_if_serial_number_exists(self, sn):
+    def checkIfSerialNumberExists(self, sn):
         """
         Check if a serial number exists for this Part.
 
@@ -279,7 +279,7 @@ class Part(MPTTModel):
 
         return stock.exists()
 
-    def get_highest_serial_number(self):
+    def getHighestSerialNumber(self):
         """
         Return the highest serial number for this Part.
 
@@ -296,12 +296,12 @@ class Part(MPTTModel):
         # No serial numbers found
         return None
 
-    def get_next_serial_number(self):
+    def getNextSerialNumber(self):
         """
         Return the next-available serial number for this Part.
         """
 
-        n = self.get_highest_serial_number()
+        n = self.getHighestSerialNumber()
 
         if n is None:
             return 1
