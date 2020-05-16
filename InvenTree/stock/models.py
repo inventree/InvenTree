@@ -1113,7 +1113,7 @@ class StockItemTestResult(models.Model):
 
     user = models.ForeignKey(
         User,
-        on_delete = models.SET_NULL,
+        on_delete=models.SET_NULL,
         blank=True, null=True
     )
 
