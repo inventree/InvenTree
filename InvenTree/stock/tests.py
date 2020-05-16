@@ -423,3 +423,11 @@ class TestResultTest(StockTest):
         # Passing tests
         self.assertEqual(item.getTestResults(result=True).count(), 3)
         self.assertEqual(item.getTestResults(result=False).count(), 1)
+
+        # Result map
+        result_map = item.testResultMap()
+
+        self.assertEqual(len(result_map), 3)
+
+        for test in ['Firmware Version', 'Settings Checksum', 'Temperature Test']:
+            self.assertIn(test, result_map.keys())

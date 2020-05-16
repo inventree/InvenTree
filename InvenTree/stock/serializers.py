@@ -7,6 +7,7 @@ from rest_framework import serializers
 from .models import StockItem, StockLocation
 from .models import StockItemTracking
 from .models import StockItemAttachment
+from .models import StockItemTestResult
 
 from django.db.models import Sum, Count
 from django.db.models.functions import Coalesce
@@ -213,6 +214,24 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
             'comment',
             'user',
             'user_detail',
+        ]
+
+
+class StockItemTestResultSerializer(InvenTreeModelSerializer):
+    """ Serializer for the StockItemTestResult model """
+
+    class Meta:
+        model = StockItemTestResult
+
+        fields = [
+            'pk',
+            'test',
+            'result',
+            'value',
+            'attachment',
+            'notes',
+            'user',
+            'date'
         ]
 
 

@@ -922,6 +922,14 @@ class StockItem(MPTTModel):
         return s
 
     def getTestResults(self, test=None, result=None, user=None):
+        """
+        Return all test results associated with this StockItem.
+
+        Optionally can filter results by:
+        - Test name
+        - Test result
+        - User
+        """
 
         results = self.test_results
 
@@ -938,6 +946,25 @@ class StockItem(MPTTModel):
             results = results.filter(user=user)
 
         return results
+
+    def testResultMap(self, **kwargs):
+        """
+        Return a map of test-results using the test name as the key.
+        Where multiple test results exist for a given name,
+        the *most recent* test is used.
+
+        This map is useful for rendering to a template (e.g. a test report),
+        as all named tests are accessible.
+        """
+
+        results = self.getTestResults(**kwargs).order_by('-date')
+
+        result_map = {}
+
+        for result in results:
+            result_map[result.test] = result
+
+        return result_map
 
 
 @receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
