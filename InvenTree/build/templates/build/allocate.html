@@ -198,8 +198,8 @@ InvenTree | Allocate Parts
                             var html = `<div class='btn-group float-right' role='group'>`;
 
                             {% if build.status == BuildStatus.PENDING %}
-                            html += makeIconButton('fa-edit', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
-                            html += makeIconButton('fa-trash-alt', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
+                            html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
+                            html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
                             {% endif %}
 
                             html += `</div>`;
@@ -389,7 +389,7 @@ InvenTree | Allocate Parts
                         html += makeIconButton('fa-tools', 'button-build', pk, '{% trans "Build parts" %}');
                     }
 
-                    html += makeIconButton('fa-plus', 'button-add', pk, '{% trans "Allocate stock" %}');
+                    html += makeIconButton('fa-plus icon-green', 'button-add', pk, '{% trans "Allocate stock" %}');
                     {% endif %}
                     
                     html += '</div>';

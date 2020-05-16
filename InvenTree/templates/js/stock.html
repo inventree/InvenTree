@@ -116,6 +116,19 @@ function loadStockTestResultsTable(table, options) {
             },
             {
                 field: 'buttons',
+                formatter: function(value, row) {
+
+                    var pk = row.pk;
+
+                    var html = `<div class='btn-group float-right' role='group'>`;
+                    
+                    html += makeIconButton('fa-edit icon-blue', 'button-test-edit', pk, '{% trans "Edit test result" %}');
+                    html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
+
+                    html += `</div>`;
+
+                    return html;
+                }
             },
         ]
     });

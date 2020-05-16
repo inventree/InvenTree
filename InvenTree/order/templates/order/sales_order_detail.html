@@ -89,8 +89,8 @@ function showAllocationSubTable(index, row, element) {
                 var pk = row.pk;
                 
                 {% if order.status == SalesOrderStatus.PENDING %}
-                html += makeIconButton('fa-edit', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
-                html += makeIconButton('fa-trash-alt', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
+                html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
+                html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
                 {% endif %}
 
                 html += "</div>";
@@ -274,11 +274,11 @@ $("#so-lines-table").inventreeTable({
                         html += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build parts" %}');
                     }
                     
-                    html += makeIconButton('fa-plus', 'button-add', pk, '{% trans "Allocate parts" %}');   
+                    html += makeIconButton('fa-plus icon-green', 'button-add', pk, '{% trans "Allocate parts" %}');   
                 }
                 
-                html += makeIconButton('fa-edit', 'button-edit', pk, '{% trans "Edit line item" %}');
-                html += makeIconButton('fa-trash-alt', 'button-delete', pk, '{% trans "Delete line item " %}');
+                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
+                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line item " %}');
 
                 html += `</div>`;
 

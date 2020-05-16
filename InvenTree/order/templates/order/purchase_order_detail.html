@@ -208,7 +208,7 @@ $("#po-table").inventreeTable({
                 var pk = row.pk;
 
                 {% if order.status == PurchaseOrderStatus.PENDING %}
-                html += makeIconButton('fa-edit', 'button-line-edit', pk, '{% trans "Edit line item" %}');
+                html += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
                 html += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
                 {% endif %}
 
