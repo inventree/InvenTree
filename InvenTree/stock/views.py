@@ -864,6 +864,8 @@ class StockItemCreate(AjaxCreateView):
 
         form = super().get_form()
 
+        part = None
+
         # If the user has selected a Part, limit choices for SupplierPart
         if form['part'].value():
             part_id = form['part'].value()
@@ -871,6 +873,9 @@ class StockItemCreate(AjaxCreateView):
             try:
                 part = Part.objects.get(id=part_id)
                 
+                sn = part.getNextSerialNumber()
+                form.field_placeholder['serial_numbers'] = _('Next available serial number is') + ' ' + str(sn)
+
                 # Hide the 'part' field (as a valid part is selected)
                 form.fields['part'].widget = HiddenInput()
 
@@ -893,6 +898,7 @@ class StockItemCreate(AjaxCreateView):
 
                     # If there is one (and only one) supplier part available, pre-select it
                     all_parts = parts.all()
+
                     if len(all_parts) == 1:
 
                         # TODO - This does NOT work for some reason? Ref build.views.BuildItemCreate
@@ -904,7 +910,7 @@ class StockItemCreate(AjaxCreateView):
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
         elif form['supplier_part'].value() is not None:
             pass
-
+            
         return form
 
     def get_initial(self):
@@ -975,6 +981,8 @@ class StockItemCreate(AjaxCreateView):
         - Manage serial-number valdiation for tracked parts
         """
 
+        part = None
+
         form = self.get_form()
 
         data = {}
@@ -984,10 +992,14 @@ class StockItemCreate(AjaxCreateView):
         if valid:
             part_id = form['part'].value()
             try:
-                self.part = Part.objects.get(id=part_id)
+                part = Part.objects.get(id=part_id)
                 quantity = Decimal(form['quantity'].value())
+
+                sn = part.getNextSerialNumber()
+                form.field_placeholder['serial_numbers'] = _("Next available serial number is") + " " + str(sn)
+
             except (Part.DoesNotExist, ValueError, InvalidOperation):
-                self.part = None
+                part = None
                 quantity = 1
                 valid = False
                 form.errors['quantity'] = [_('Invalid quantity')]
@@ -996,11 +1008,11 @@ class StockItemCreate(AjaxCreateView):
                 form.errors['quantity'] = [_('Quantity must be greater than zero')]
                 valid = False
 
-            if self.part is None:
+            if part is None:
                 form.errors['part'] = [_('Invalid part selection')]
             else:
                 # A trackable part must provide serial numbesr
-                if self.part.trackable:
+                if part.trackable:
                     sn = request.POST.get('serial_numbers', '')
 
                     sn = str(sn).strip()
@@ -1013,7 +1025,7 @@ class StockItemCreate(AjaxCreateView):
                             existing = []
 
                             for serial in serials:
-                                if self.part.checkIfSerialNumberExists(serial):
+                                if part.checkIfSerialNumberExists(serial):
                                     existing.append(serial)
 
                             if len(existing) > 0:
@@ -1033,7 +1045,7 @@ class StockItemCreate(AjaxCreateView):
                                     for serial in serials:
                                         # Create a new stock item for each serial number
                                         item = StockItem(
-                                            part=self.part,
+                                            part=part,
                                             quantity=1,
                                             serial=serial,
                                             supplier_part=form_data.get('supplier_part'),
