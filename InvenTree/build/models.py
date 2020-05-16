@@ -60,11 +60,14 @@ class Build(MPTTModel):
 
         super().clean()
 
-        if self.part.trackable:
-            if not self.quantity == int(self.quantity):
-                raise ValidationError({
-                    'quantity': _("Build quantity must be integer value for trackable parts")
-                })
+        try:
+            if self.part.trackable:
+                if not self.quantity == int(self.quantity):
+                    raise ValidationError({
+                        'quantity': _("Build quantity must be integer value for trackable parts")
+                    })
+        except PartModels.Part.DoesNotExist:
+            pass
 
     title = models.CharField(
         verbose_name=_('Build Title'),

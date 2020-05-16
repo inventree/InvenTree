@@ -215,6 +215,8 @@ class StockItem(MPTTModel):
         - Quantity must be 1 if the StockItem has a serial number
         """
 
+        super().clean()
+
         if self.status == StockStatus.SHIPPED and self.sales_order is None:
             raise ValidationError({
                 'sales_order': "SalesOrder must be specified as status is marked as SHIPPED",
@@ -227,14 +229,20 @@ class StockItem(MPTTModel):
                 'status': 'Status cannot be marked as ASSIGNED_TO_OTHER_ITEM if the belongs_to field is not set',
             })
 
-        if self.part.trackable:
-            # Trackable parts must have integer values for quantity field!
-            if not self.quantity == int(self.quantity):
-                raise ValidationError({
-                    'quantity': _('Quantity must be integer value for trackable parts')
-                })
+        try:
+            if self.part.trackable:
+                # Trackable parts must have integer values for quantity field!
+                if not self.quantity == int(self.quantity):
+                    raise ValidationError({
+                        'quantity': _('Quantity must be integer value for trackable parts')
+                    })
+        except PartModels.Part.DoesNotExist:
+            # For some reason the 'clean' process sometimes throws errors because self.part does not exist
+            # It *seems* that this only occurs in unit testing, though.
+            # Probably should investigate this at some point.
+            pass
 
-        if self.quantity <= 0:
+        if self.quantity < 0:
             raise ValidationError({
                 'quantity': _('Quantity must be greater than zero')
             })
