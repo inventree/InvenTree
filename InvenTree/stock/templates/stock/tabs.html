@@ -10,6 +10,14 @@
             {% if item.tracking_info.count > 0 %}<span class='badge'>{{ item.tracking_info.count }}</span>{% endif %}
         </a>
     </li>
+    {% if item.part.trackable %}
+    <li{% if tab == 'tests' %} class='active'{% endif %}>
+        <a href="{% url 'stock-item-test-results' item.id %}">
+            {% trans "Test Results" %}
+            {% if item.test_results.count > 0 %}<span class='badge'>{{ item.test_results.count }}</span>{% endif %}
+        </a>
+    </li>
+    {% endif %}
     {% if 0 %}
     <!-- These tabs are to be implemented in the future -->
     <li{% ifequal tab 'builds' %} class='active'{% endifequal %}>
