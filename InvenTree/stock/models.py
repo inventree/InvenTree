@@ -921,6 +921,24 @@ class StockItem(MPTTModel):
 
         return s
 
+    def getTestResults(self, test=None, result=None, user=None):
+
+        results = self.test_results
+
+        if test:
+            # Filter by test name
+            results = results.filter(test=test)
+
+        if result is not None:
+            # Filter by test status
+            results = results.filter(result=result)
+
+        if user:
+            # Filter by user
+            results = results.filter(user=user)
+
+        return results
+
 
 @receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
 def before_delete_stock_item(sender, instance, using, **kwargs):
@@ -1009,6 +1027,7 @@ class StockItemTestResult(models.Model):
         result: Test result value (pass / fail / etc)
         value: Recorded test output value (optional)
         attachment: Link to StockItem attachment (optional)
+        notes: Extra user notes related to the test (optional)
         user: User who uploaded the test result
         date: Date the test result was recorded
     """
@@ -1057,6 +1076,12 @@ class StockItemTestResult(models.Model):
         blank=True, null=True,
         verbose_name=_('Attachment'),
         help_text=_('Test result attachment'),
+    )
+
+    notes = models.CharField(
+        blank=True, max_length=500,
+        verbose_name=_('Notes'),
+        help_text=_("Test notes"),
     )
 
     user = models.ForeignKey(
