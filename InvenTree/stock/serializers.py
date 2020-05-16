@@ -225,6 +225,7 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
 
         fields = [
             'pk',
+            'stock_item',
             'test',
             'result',
             'value',
