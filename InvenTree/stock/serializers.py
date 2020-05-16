@@ -212,6 +212,7 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
             'stock_item',
             'attachment',
             'comment',
+            'date',
             'user',
             'user_detail',
         ]
@@ -233,6 +234,14 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
             'notes',
             'user',
             'date'
+        ]
+
+        read_only_fields = [
+            'pk',
+            'stock_item',
+            'attachment',
+            'user',
+            'date',
         ]
 
 

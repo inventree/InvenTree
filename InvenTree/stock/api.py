@@ -687,6 +687,36 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         'value',
     ]
 
+    def perform_create(self, serializer):
+        """
+        Create a new test result object.
+
+        Also, check if an attachment was uploaded alongside the test result,
+        and save it to the database if it were.
+        """
+
+        # Capture the user information
+        test_result = serializer.save()
+        test_result.user = self.request.user
+
+        # Check if a file has been attached to the request
+        attachment_file = self.request.FILES.get('attachment', None)
+
+        if attachment_file:
+            # Create a new attachment associated with the stock item
+            attachment = StockItemAttachment(
+                attachment=attachment_file,
+                stock_item=test_result.stock_item,
+                user=test_result.user
+            )
+
+            attachment.save()
+
+            # Link the attachment back to the test result
+            test_result.attachment = attachment
+
+        test_result.save()
+
 
 class StockTrackingList(generics.ListCreateAPIView):
     """ API endpoint for list view of StockItemTracking objects.

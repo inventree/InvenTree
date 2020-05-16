@@ -181,9 +181,12 @@ class StocktakeTest(StockAPITestCase):
 
 class StockTestResultTest(StockAPITestCase):
 
+    def get_url(self):
+        return reverse('api-stock-test-result-list')
+
     def test_list(self):
 
-        url = reverse('api-stock-test-result-list')
+        url = self.get_url()
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -193,10 +196,39 @@ class StockTestResultTest(StockAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 4)
 
+    def test_post_fail(self):
+        # Attempt to post a new test result without specifying required data
+
+        url = self.get_url()
+
+        response = self.client.post(
+            url,
+            data={
+                'test': 'A test',
+                'result': True,
+            },
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # This one should pass!
+        response = self.client.post(
+            url,
+            data={
+                'test': 'A test',
+                'stock_item': 105,
+                'result': True,
+            },
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
     def test_post(self):
         # Test creation of a new test result
 
-        url = reverse('api-stock-test-result-list')
+        url = self.get_url()
 
         response = self.client.get(url)
         n = len(response.data)
@@ -220,4 +252,7 @@ class StockTestResultTest(StockAPITestCase):
         response = self.client.get(url, data={'test': 'Checked Steam Valve'})
 
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['value'], '150kPa')
+
+        test = response.data[0]
+        self.assertEqual(test['value'], '150kPa')
+        self.assertEqual(test['user'], 1)
