@@ -10,6 +10,7 @@ import import_export.widgets as widgets
 
 from .models import StockLocation, StockItem, StockItemAttachment
 from .models import StockItemTracking
+from .models import StockItemTestResult
 
 from build.models import Build
 from company.models import SupplierPart
@@ -117,7 +118,13 @@ class StockTrackingAdmin(ImportExportModelAdmin):
     list_display = ('item', 'date', 'title')
 
 
+class StockItemTestResultAdmin(admin.ModelAdmin):
+
+    list_display = ('stock_item', 'test', 'result', 'value')
+
+
 admin.site.register(StockLocation, LocationAdmin)
 admin.site.register(StockItem, StockItemAdmin)
 admin.site.register(StockItemTracking, StockTrackingAdmin)
 admin.site.register(StockItemAttachment, StockAttachmentAdmin)
+admin.site.register(StockItemTestResult, StockItemTestResultAdmin)
