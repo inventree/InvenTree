@@ -18,6 +18,110 @@ function removeStockRow(e) {
     $('#' + row).remove();
 }
 
+
+function passFailBadge(result) {
+
+    if (result) {
+        return `<span class='label label-green'>{% trans "PASS" %}</span>`;
+    } else {
+        return `<span class='label label-red'>{% trans "FAIL" %}</span>`;
+    }
+}
+
+function loadStockTestResultsTable(table, options) {
+    /*
+     * Load StockItemTestResult table
+     */
+
+    var params = options.params || {};
+    
+    // HTML element to setup the filtering
+    var filterListElement = options.filterList || '#filter-list-stocktests';
+
+    var filters = {};
+
+    filters = loadTableFilters("stocktests");
+
+    var original = {};
+
+    for (var key in params) {
+        original[key] = params[key];
+    }
+
+    setupFilterList("stocktests", table, filterListElement);
+
+    // Override the default values, or add new ones
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    table.inventreeTable({
+        method: 'get',
+        formatNoMatches: function() {
+            return '{% trans "No test results matching query" %}';
+        },
+        url: "{% url 'api-stock-test-result-list' %}",
+        queryParams: filters,
+        original: original,
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false
+            },
+            {
+                field: 'test',
+                title: '{% trans "Test" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    var html = value;
+
+                    if (row.attachment_detail) {
+                        html += `<a href='${row.attachment_detail.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
+                    }
+
+                    return html;
+                },
+            },
+            {
+                field: 'result',
+                title: "{% trans "Result" %}",
+                sortable: true,
+                formatter: function(value) {
+                    return passFailBadge(value);
+                }
+            },
+            {
+                field: 'value',
+                title: "{% trans "Value" %}",
+                sortable: true,
+            },
+            {
+                field: 'notes',
+                title: '{% trans "Notes" %}',
+            },
+            {
+                field: 'date',
+                title: '{% trans "Uploaded" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    var html = value;
+
+                    if (row.user_detail) {
+                        html += `<span class='badge'>${row.user_detail.username}</span>`;
+                    }
+
+                    return html;
+                }
+            },
+            {
+                field: 'buttons',
+            },
+        ]
+    });
+}
+
+
 function loadStockTable(table, options) {
     /* Load data into a stock table with adjustable options.
      * Fetches data (via AJAX) and loads into a bootstrap table.
