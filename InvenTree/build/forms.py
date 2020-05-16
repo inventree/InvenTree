@@ -46,6 +46,13 @@ class ConfirmBuildForm(HelperForm):
 class CompleteBuildForm(HelperForm):
     """ Form for marking a Build as complete """
 
+    field_prefix = {
+        'serial_numbers': 'fa-hashtag',
+    }
+
+    field_placeholder = {
+    }
+
     location = forms.ModelChoiceField(
         queryset=StockLocation.objects.all(),
         help_text='Location of completed parts',

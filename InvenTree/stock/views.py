@@ -876,6 +876,8 @@ class StockItemCreate(AjaxCreateView):
                 sn = part.getNextSerialNumber()
                 form.field_placeholder['serial_numbers'] = _('Next available serial number is') + ' ' + str(sn)
 
+                form.rebuild_layout()
+
                 # Hide the 'part' field (as a valid part is selected)
                 form.fields['part'].widget = HiddenInput()
 
@@ -997,6 +999,8 @@ class StockItemCreate(AjaxCreateView):
 
                 sn = part.getNextSerialNumber()
                 form.field_placeholder['serial_numbers'] = _("Next available serial number is") + " " + str(sn)
+
+                form.rebuild_layout()
 
             except (Part.DoesNotExist, ValueError, InvalidOperation):
                 part = None

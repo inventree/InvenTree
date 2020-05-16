@@ -34,6 +34,10 @@ class HelperForm(forms.ModelForm):
         Simply create a 'blank' layout for each available field.
         """
 
+        self.rebuild_layout()
+
+    def rebuild_layout(self):
+
         layouts = []
 
         for field in self.fields:
