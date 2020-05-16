@@ -281,6 +281,7 @@ class StockItemTestResultEdit(AjaxUpdateView):
         
         return form
 
+
 class StockItemTestResultDelete(AjaxDeleteView):
     """
     View for deleting a StockItemTestResult
