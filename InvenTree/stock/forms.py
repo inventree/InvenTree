@@ -13,6 +13,8 @@ from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.helpers import GetExportFormats
 from InvenTree.forms import HelperForm
+from InvenTree.fields import RoundingDecimalFormField
+
 from .models import StockLocation, StockItem, StockItemTracking, StockItemAttachment
 
 
@@ -47,6 +49,15 @@ class CreateStockItemForm(HelperForm):
 
     serial_numbers = forms.CharField(label='Serial numbers', required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
 
+    def __init__(self, *args, **kwargs):
+        
+        self.field_prefix = {
+            'serial_numbers': 'fa-hashtag',
+            'link': 'fa-link',
+        }
+
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = StockItem
         fields = [
@@ -69,6 +80,7 @@ class CreateStockItemForm(HelperForm):
             return
         
         self.cleaned_data = {}
+
         # If the form is permitted to be empty, and none of the form data has
         # changed from the initial data, short circuit any validation.
         if self.empty_permitted and not self.has_changed():
@@ -79,7 +91,7 @@ class CreateStockItemForm(HelperForm):
         self._clean_form()
 
 
-class SerializeStockForm(forms.ModelForm):
+class SerializeStockForm(HelperForm):
     """ Form for serializing a StockItem. """
 
     destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label='Destination', required=True, help_text='Destination for serialized stock (by default, will remain in current location)')
@@ -87,6 +99,18 @@ class SerializeStockForm(forms.ModelForm):
     serial_numbers = forms.CharField(label='Serial numbers', required=True, help_text='Unique serial numbers (must match quantity)')
     
     note = forms.CharField(label='Notes', required=False, help_text='Add transaction note (optional)')
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    def __init__(self, *args, **kwargs):
+
+        # Extract the stock item
+        item = kwargs.pop('item', None)
+
+        if item:
+            self.field_placeholder['serial_numbers'] = item.part.getSerialNumberString(item.quantity)
+
+        super().__init__(*args, **kwargs)
 
     class Meta:
         model = StockItem

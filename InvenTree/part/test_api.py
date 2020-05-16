@@ -85,7 +85,7 @@ class PartAPITest(APITestCase):
         data = {'cascade': True}
         response = self.client.get(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 8)
+        self.assertEqual(len(response.data), 13)
 
     def test_get_parts_by_cat(self):
         url = reverse('api-part-list')

@@ -196,6 +196,15 @@ class BuildComplete(AjaxUpdateView):
 
         if not build.part.trackable:
             form.fields.pop('serial_numbers')
+        else:
+            if build.quantity == 1:
+                text = _('Next available serial number is')
+            else:
+                text = _('Next available serial numbers are')
+
+            form.field_placeholder['serial_numbers'] = text + " " + build.part.getSerialNumberString(build.quantity)
+
+            form.rebuild_layout()
 
         return form
 
@@ -208,6 +217,7 @@ class BuildComplete(AjaxUpdateView):
         initials = super(BuildComplete, self).get_initial().copy()
 
         build = self.get_object()
+
         if build.part.default_location is not None:
             try:
                 location = StockLocation.objects.get(pk=build.part.default_location.id)
@@ -282,7 +292,7 @@ class BuildComplete(AjaxUpdateView):
                         existing = []
 
                         for serial in serials:
-                            if not StockItem.check_serial_number(build.part, serial):
+                            if build.part.checkIfSerialNumberExists(serial):
                                 existing.append(serial)
 
                         if len(existing) > 0:

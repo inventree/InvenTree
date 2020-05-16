@@ -53,6 +53,22 @@ class Build(MPTTModel):
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.id})
 
+    def clean(self):
+        """
+        Validation for Build object.
+        """
+
+        super().clean()
+
+        try:
+            if self.part.trackable:
+                if not self.quantity == int(self.quantity):
+                    raise ValidationError({
+                        'quantity': _("Build quantity must be integer value for trackable parts")
+                    })
+        except PartModels.Part.DoesNotExist:
+            pass
+
     title = models.CharField(
         verbose_name=_('Build Title'),
         blank=False,

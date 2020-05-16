@@ -16,6 +16,14 @@ from .models import SupplierPriceBreak
 class EditCompanyForm(HelperForm):
     """ Form for editing a Company object """
 
+    field_prefix = {
+        'website': 'fa-globe-asia',
+        'email': 'fa-at',
+        'address': 'fa-envelope',
+        'contact': 'fa-user-tie',
+        'phone': 'fa-phone',
+    }
+
     class Meta:
         model = Company
         fields = [
@@ -44,6 +52,13 @@ class CompanyImageForm(HelperForm):
 
 class EditSupplierPartForm(HelperForm):
     """ Form for editing a SupplierPart object """
+
+    field_prefix = {
+        'link': 'fa-link',
+        'MPN': 'fa-hashtag',
+        'SKU': 'fa-hashtag',
+        'note': 'fa-pencil-alt',
+    }
 
     class Meta:
         model = SupplierPart

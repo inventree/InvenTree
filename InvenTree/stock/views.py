@@ -717,7 +717,7 @@ class StockItemEdit(AjaxUpdateView):
             query = query.filter(part=item.part.id)
             form.fields['supplier_part'].queryset = query
 
-        if not item.part.trackable:
+        if not item.part.trackable or not item.serialized:
             form.fields.pop('serial')
 
         return form
@@ -757,6 +757,17 @@ class StockItemSerialize(AjaxUpdateView):
     ajax_form_title = _('Serialize Stock')
     form_class = SerializeStockForm
 
+    def get_form(self):
+
+        context = self.get_form_kwargs()
+
+        # Pass the StockItem object through to the form
+        context['item'] = self.get_object()
+
+        form = SerializeStockForm(**context)
+
+        return form
+
     def get_initial(self):
 
         initials = super().get_initial().copy()
@@ -764,6 +775,7 @@ class StockItemSerialize(AjaxUpdateView):
         item = self.get_object()
 
         initials['quantity'] = item.quantity
+        initials['serial_numbers'] = item.part.getSerialNumberString(item.quantity)
         initials['destination'] = item.location.pk
 
         return initials
@@ -844,6 +856,8 @@ class StockItemCreate(AjaxCreateView):
 
         form = super().get_form()
 
+        part = None
+
         # If the user has selected a Part, limit choices for SupplierPart
         if form['part'].value():
             part_id = form['part'].value()
@@ -851,6 +865,11 @@ class StockItemCreate(AjaxCreateView):
             try:
                 part = Part.objects.get(id=part_id)
                 
+                sn = part.getNextSerialNumber()
+                form.field_placeholder['serial_numbers'] = _('Next available serial number is') + ' ' + str(sn)
+
+                form.rebuild_layout()
+
                 # Hide the 'part' field (as a valid part is selected)
                 form.fields['part'].widget = HiddenInput()
 
@@ -873,6 +892,7 @@ class StockItemCreate(AjaxCreateView):
 
                     # If there is one (and only one) supplier part available, pre-select it
                     all_parts = parts.all()
+
                     if len(all_parts) == 1:
 
                         # TODO - This does NOT work for some reason? Ref build.views.BuildItemCreate
@@ -884,7 +904,7 @@ class StockItemCreate(AjaxCreateView):
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
         elif form['supplier_part'].value() is not None:
             pass
-
+            
         return form
 
     def get_initial(self):
@@ -917,6 +937,7 @@ class StockItemCreate(AjaxCreateView):
         if part_id:
             try:
                 part = Part.objects.get(pk=part_id)
+
                 # Check that the supplied part is 'valid'
                 if not part.is_template and part.active and not part.virtual:
                     initials['part'] = part
@@ -954,6 +975,8 @@ class StockItemCreate(AjaxCreateView):
         - Manage serial-number valdiation for tracked parts
         """
 
+        part = None
+
         form = self.get_form()
 
         data = {}
@@ -965,11 +988,21 @@ class StockItemCreate(AjaxCreateView):
             try:
                 part = Part.objects.get(id=part_id)
                 quantity = Decimal(form['quantity'].value())
+
+                sn = part.getNextSerialNumber()
+                form.field_placeholder['serial_numbers'] = _("Next available serial number is") + " " + str(sn)
+
+                form.rebuild_layout()
+
             except (Part.DoesNotExist, ValueError, InvalidOperation):
                 part = None
                 quantity = 1
                 valid = False
                 form.errors['quantity'] = [_('Invalid quantity')]
+
+            if quantity <= 0:
+                form.errors['quantity'] = [_('Quantity must be greater than zero')]
+                valid = False
 
             if part is None:
                 form.errors['part'] = [_('Invalid part selection')]
@@ -988,7 +1021,7 @@ class StockItemCreate(AjaxCreateView):
                             existing = []
 
                             for serial in serials:
-                                if not StockItem.check_serial_number(part, serial):
+                                if part.checkIfSerialNumberExists(serial):
                                     existing.append(serial)
 
                             if len(existing) > 0:
@@ -1003,24 +1036,26 @@ class StockItemCreate(AjaxCreateView):
 
                                 form_data = form.cleaned_data
 
-                                for serial in serials:
-                                    # Create a new stock item for each serial number
-                                    item = StockItem(
-                                        part=part,
-                                        quantity=1,
-                                        serial=serial,
-                                        supplier_part=form_data.get('supplier_part'),
-                                        location=form_data.get('location'),
-                                        batch=form_data.get('batch'),
-                                        delete_on_deplete=False,
-                                        status=form_data.get('status'),
-                                        link=form_data.get('link'),
-                                    )
+                                if form.is_valid():
 
-                                    item.save(user=request.user)
+                                    for serial in serials:
+                                        # Create a new stock item for each serial number
+                                        item = StockItem(
+                                            part=part,
+                                            quantity=1,
+                                            serial=serial,
+                                            supplier_part=form_data.get('supplier_part'),
+                                            location=form_data.get('location'),
+                                            batch=form_data.get('batch'),
+                                            delete_on_deplete=False,
+                                            status=form_data.get('status'),
+                                            link=form_data.get('link'),
+                                        )
 
-                                data['success'] = _('Created {n} new stock items'.format(n=len(serials)))
-                                valid = True
+                                        item.save(user=request.user)
+
+                                    data['success'] = _('Created {n} new stock items'.format(n=len(serials)))
+                                    valid = True
 
                         except ValidationError as e:
                             form.errors['serial_numbers'] = e.messages
@@ -1031,6 +1066,24 @@ class StockItemCreate(AjaxCreateView):
                         form.clean()
                         form._post_clean()
 
+                        if form.is_valid():
+
+                            item = form.save(commit=False)
+                            item.save(user=request.user)
+
+                            data['pk'] = item.pk
+                            data['url'] = item.get_absolute_url()
+                            data['success'] = _("Created new stock item")
+
+                            valid = True
+
+                else:  # Referenced Part object is not marked as "trackable"
+                    # For non-serialized items, simply save the form.
+                    # We need to call _post_clean() here because it is prevented in the form implementation
+                    form.clean()
+                    form._post_clean()
+
+                    if form.is_valid:
                         item = form.save(commit=False)
                         item.save(user=request.user)
 
@@ -1038,20 +1091,9 @@ class StockItemCreate(AjaxCreateView):
                         data['url'] = item.get_absolute_url()
                         data['success'] = _("Created new stock item")
 
-                else:  # Referenced Part object is not marked as "trackable"
-                    # For non-serialized items, simply save the form.
-                    # We need to call _post_clean() here because it is prevented in the form implementation
-                    form.clean()
-                    form._post_clean()
-                    
-                    item = form.save(commit=False)
-                    item.save(user=request.user)
+                        valid = True
 
-                    data['pk'] = item.pk
-                    data['url'] = item.get_absolute_url()
-                    data['success'] = _("Created new stock item")
-
-        data['form_valid'] = valid
+        data['form_valid'] = valid and form.is_valid()
 
         return self.renderJsonResponse(request, form, data=data)
 
