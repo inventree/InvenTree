@@ -698,6 +698,11 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         except:
             pass
 
+        try:
+            kwargs['attachment_detail'] = str2bool(self.request.query_params.get('attachment_detail', False))
+        except:
+            pass
+
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
