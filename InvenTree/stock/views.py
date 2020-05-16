@@ -26,7 +26,7 @@ from datetime import datetime
 
 from company.models import Company, SupplierPart
 from part.models import Part
-from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment
+from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
 
 from .admin import StockItemResource
 
@@ -38,6 +38,7 @@ from .forms import TrackingEntryForm
 from .forms import SerializeStockForm
 from .forms import ExportOptionsForm
 from .forms import EditStockItemAttachmentForm
+from .forms import EditStockItemTestResultForm
 
 
 class StockIndex(ListView):
@@ -226,6 +227,68 @@ class StockItemAttachmentDelete(AjaxDeleteView):
         return {
             'danger': _("Deleted attachment"),
         }
+
+
+class StockItemTestResultCreate(AjaxCreateView):
+    """
+    View for adding a new StockItemTestResult
+    """
+
+    model = StockItemTestResult
+    form_class = EditStockItemTestResultForm
+    ajax_form_title = _("Add Test Result")
+
+    def post_save(self, **kwargs):
+        """ Record the user that uploaded the test result """
+
+        self.object.user = self.request.user
+        self.object.save()
+
+    def get_initial(self):
+
+        initials = super().get_initial()
+
+        try:
+            stock_id = self.request.GET.get('stock_item', None)
+            initials['stock_item'] = StockItem.objects.get(pk=stock_id)
+        except (ValueError, StockItem.DoesNotExist):
+            pass
+
+        return initials
+
+    def get_form(self):
+
+        form = super().get_form()
+        form.fields['stock_item'].widget = HiddenInput()
+
+        return form
+
+
+class StockItemTestResultEdit(AjaxUpdateView):
+    """
+    View for editing a StockItemTestResult
+    """
+
+    model = StockItemTestResult
+    form_class = EditStockItemTestResultForm
+    ajax_form_title = _("Edit Test Result")
+
+    def get_form(self):
+
+        form = super().get_form()
+
+        form.fields['stock_item'].widget = HiddenInput()
+        
+        return form
+
+class StockItemTestResultDelete(AjaxDeleteView):
+    """
+    View for deleting a StockItemTestResult
+    """
+
+    model = StockItemTestResult
+    ajax_form_title = _("Delete Test Result")
+    context_object_name = "result"
 
 
 class StockExportOptions(AjaxView):

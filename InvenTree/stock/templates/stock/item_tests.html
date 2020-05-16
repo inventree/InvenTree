@@ -12,7 +12,9 @@
 
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style="float: right;">
-        <!-- TODO - Add a button here to manually upload a new test result -->
+        <div class='btn-group' role='group'>
+            <button type='button' class='btn btn-success' id='add-test-result'>{% trans "Add Test Result" %}</button>
+        </div>
         <div class='filter-list' id='filter-list-stocktests'>
             <!-- Empty div -->
         </div>
@@ -35,5 +37,40 @@ loadStockTestResultsTable(
         },
     }
 );
+
+function reloadTable() {
+    $("#test-result-table").bootstrapTable("refresh");
+}
+
+$("#add-test-result").click(function() {
+    launchModalForm(
+        "{% url 'stock-item-test-create' %}", {
+            data: {
+                stock_item: {{ item.id }},
+            },
+            success: reloadTable,
+        }
+    );
+});
+
+$("#test-result-table").on('click', '.button-test-edit', function() {
+    var button = $(this);
+
+    var url = `/stock/item/test/${button.attr('pk')}/edit/`;
+
+    launchModalForm(url, {
+        success: reloadTable,
+    });
+});
+
+$("#test-result-table").on('click', '.button-test-delete', function() {
+    var button = $(this);
+
+    var url = `/stock/item/test/${button.attr('pk')}/delete/`;
+
+    launchModalForm(url, {
+        success: reloadTable,
+    });
+});
 
 {% endblock %}
