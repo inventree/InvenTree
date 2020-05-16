@@ -656,6 +656,12 @@ class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockItemAttachmentSerializer
 
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    ]
+
     filter_fields = [
         'stock_item',
     ]

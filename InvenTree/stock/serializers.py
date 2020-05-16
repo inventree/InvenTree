@@ -212,7 +212,7 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
             'stock_item',
             'attachment',
             'comment',
-            'date',
+            'upload_date',
             'user',
             'user_detail',
         ]
