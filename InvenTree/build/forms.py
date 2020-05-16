@@ -55,10 +55,14 @@ class CompleteBuildForm(HelperForm):
 
     location = forms.ModelChoiceField(
         queryset=StockLocation.objects.all(),
-        help_text='Location of completed parts',
+        help_text=_('Location of completed parts'),
     )
 
-    serial_numbers = forms.CharField(label='Serial numbers', required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
+    serial_numbers = forms.CharField(
+        label=_('Serial numbers'),
+        required=False,
+        help_text=_('Enter unique serial numbers (or leave blank)')
+    )
 
     confirm = forms.BooleanField(required=False, help_text=_('Confirm build completion'))
 
