@@ -1,8 +1,6 @@
 {% load i18n %}
 {% load status_codes %}
 
-<script type='text/javascript'>
-
 {% include "status_codes.html" with label='stock' options=StockStatus.list %}
 {% include "status_codes.html" with label='build' options=BuildStatus.list %}
 {% include "status_codes.html" with label='purchaseOrder' options=PurchaseOrderStatus.list %}
@@ -37,6 +35,16 @@ function getAvailableTableFilters(tableKey) {
                 description: '{% trans "Item has been alloacted" %}',
             },
         };
+    }
+
+    // Filters for the 'stock test' table
+    if (tableKey == 'stocktests') {
+        return {
+            result: {
+                type: 'bool',
+                title: "{% trans 'Test result' %}",
+            },
+        }
     }
 
     // Filters for the "Build" table
@@ -124,4 +132,3 @@ function getAvailableTableFilters(tableKey) {
     // Finally, no matching key
     return {};
 }
-</script>

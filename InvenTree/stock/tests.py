@@ -17,6 +17,7 @@ class StockTest(TestCase):
         'part',
         'location',
         'stock',
+        'stock_tests',
     ]
 
     def setUp(self):
@@ -95,8 +96,8 @@ class StockTest(TestCase):
         self.assertFalse(self.drawer2.has_items())
 
         # Drawer 3 should have three stock items
-        self.assertEqual(self.drawer3.stock_items.count(), 15)
-        self.assertEqual(self.drawer3.item_count, 15)
+        self.assertEqual(self.drawer3.stock_items.count(), 16)
+        self.assertEqual(self.drawer3.item_count, 16)
 
     def test_stock_count(self):
         part = Part.objects.get(pk=1)
@@ -108,7 +109,7 @@ class StockTest(TestCase):
         self.assertEqual(part.total_stock, 9000)
 
         # There should be 18 widgets in stock
-        self.assertEqual(StockItem.objects.filter(part=25).aggregate(Sum('quantity'))['quantity__sum'], 18)
+        self.assertEqual(StockItem.objects.filter(part=25).aggregate(Sum('quantity'))['quantity__sum'], 19)
 
     def test_delete_location(self):
 
@@ -168,12 +169,12 @@ class StockTest(TestCase):
         self.assertEqual(w1.quantity, 4)
 
         # There should also be a new object still in drawer3
-        self.assertEqual(StockItem.objects.filter(part=25).count(), 4)
+        self.assertEqual(StockItem.objects.filter(part=25).count(), 5)
         widget = StockItem.objects.get(location=self.drawer3.id, part=25, quantity=4)
 
         # Try to move negative units
         self.assertFalse(widget.move(self.bathroom, 'Test', None, quantity=-100))
-        self.assertEqual(StockItem.objects.filter(part=25).count(), 4)
+        self.assertEqual(StockItem.objects.filter(part=25).count(), 5)
 
         # Try to move to a blank location
         self.assertFalse(widget.move(None, 'null', None))
@@ -404,3 +405,29 @@ class VariantTest(StockTest):
 
         item.serial += 1
         item.save()
+
+
+class TestResultTest(StockTest):
+    """
+    Tests for the StockItemTestResult model.
+    """
+
+    def test_test_count(self):
+        item = StockItem.objects.get(pk=105)
+        tests = item.test_results
+        self.assertEqual(tests.count(), 4)
+
+        results = item.getTestResults(test="Temperature Test")
+        self.assertEqual(results.count(), 2)
+
+        # Passing tests
+        self.assertEqual(item.getTestResults(result=True).count(), 3)
+        self.assertEqual(item.getTestResults(result=False).count(), 1)
+
+        # Result map
+        result_map = item.testResultMap()
+
+        self.assertEqual(len(result_map), 3)
+
+        for test in ['Firmware Version', 'Settings Checksum', 'Temperature Test']:
+            self.assertIn(test, result_map.keys())

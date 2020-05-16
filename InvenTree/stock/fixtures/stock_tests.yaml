@@ -1,0 +1,31 @@
+- model: stock.stockitemtestresult
+  fields:
+    stock_item: 105
+    test: "Firmware Version"
+    value: "0xA1B2C3D4"
+    result: True
+    date: 2020-02-02
+
+- model: stock.stockitemtestresult
+  fields:
+    stock_item: 105
+    test: "Settings Checksum"
+    value: "0xAABBCCDD"
+    result: True
+    date: 2020-02-02
+
+- model: stock.stockitemtestresult
+  fields:
+    stock_item: 105
+    test: "Temperature Test"
+    result: False
+    date: 2020-05-16
+    notes: 'Got too hot or something'
+
+- model: stock.stockitemtestresult
+  fields:
+    stock_item: 105
+    test: "Temperature Test"
+    result: True
+    date: 2020-05-17
+    notes: 'Passed temperature test by making it cooler'

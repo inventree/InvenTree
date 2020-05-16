@@ -15,7 +15,9 @@ from InvenTree.helpers import GetExportFormats
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 
-from .models import StockLocation, StockItem, StockItemTracking, StockItemAttachment
+from .models import StockLocation, StockItem, StockItemTracking
+from .models import StockItemAttachment
+from .models import StockItemTestResult
 
 
 class EditStockItemAttachmentForm(HelperForm):
@@ -29,6 +31,22 @@ class EditStockItemAttachmentForm(HelperForm):
             'stock_item',
             'attachment',
             'comment'
+        ]
+
+
+class EditStockItemTestResultForm(HelperForm):
+    """
+    Form for creating / editing a StockItemTestResult object.
+    """
+
+    class Meta:
+        model = StockItemTestResult
+        fields = [
+            'stock_item',
+            'test',
+            'result',
+            'value',
+            'notes',
         ]
 
 

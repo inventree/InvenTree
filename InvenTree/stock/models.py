@@ -921,6 +921,51 @@ class StockItem(MPTTModel):
 
         return s
 
+    def getTestResults(self, test=None, result=None, user=None):
+        """
+        Return all test results associated with this StockItem.
+
+        Optionally can filter results by:
+        - Test name
+        - Test result
+        - User
+        """
+
+        results = self.test_results
+
+        if test:
+            # Filter by test name
+            results = results.filter(test=test)
+
+        if result is not None:
+            # Filter by test status
+            results = results.filter(result=result)
+
+        if user:
+            # Filter by user
+            results = results.filter(user=user)
+
+        return results
+
+    def testResultMap(self, **kwargs):
+        """
+        Return a map of test-results using the test name as the key.
+        Where multiple test results exist for a given name,
+        the *most recent* test is used.
+
+        This map is useful for rendering to a template (e.g. a test report),
+        as all named tests are accessible.
+        """
+
+        results = self.getTestResults(**kwargs).order_by('-date')
+
+        result_map = {}
+
+        for result in results:
+            result_map[result.test] = result
+
+        return result_map
+
 
 @receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
 def before_delete_stock_item(sender, instance, using, **kwargs):
@@ -993,3 +1038,86 @@ class StockItemTracking(models.Model):
 
     # TODO
     # file = models.FileField()
+
+
+class StockItemTestResult(models.Model):
+    """
+    A StockItemTestResult records results of custom tests against individual StockItem objects.
+    This is useful for tracking unit acceptance tests, and particularly useful when integrated
+    with automated testing setups.
+
+    Multiple results can be recorded against any given test, allowing tests to be run many times.
+    
+    Attributes:
+        stock_item: Link to StockItem
+        test: Test name (simple string matching)
+        result: Test result value (pass / fail / etc)
+        value: Recorded test output value (optional)
+        attachment: Link to StockItem attachment (optional)
+        notes: Extra user notes related to the test (optional)
+        user: User who uploaded the test result
+        date: Date the test result was recorded
+    """
+
+    def clean(self):
+
+        super().clean()
+
+        # If an attachment is linked to this result, the attachment must also point to the item
+        try:
+            if self.attachment:
+                if not self.attachment.stock_item == self.stock_item:
+                    raise ValidationError({
+                        'attachment': _("Test result attachment must be linked to the same StockItem"),
+                    })
+        except (StockItem.DoesNotExist, StockItemAttachment.DoesNotExist):
+            pass
+
+    stock_item = models.ForeignKey(
+        StockItem,
+        on_delete=models.CASCADE,
+        related_name='test_results'
+    )
+
+    test = models.CharField(
+        blank=False, max_length=100,
+        verbose_name=_('Test'),
+        help_text=_('Test name')
+    )
+
+    result = models.BooleanField(
+        default=False,
+        verbose_name=_('Result'),
+        help_text=_('Test result')
+    )
+
+    value = models.CharField(
+        blank=True, max_length=500,
+        verbose_name=_('Value'),
+        help_text=_('Test output value')
+    )
+
+    attachment = models.ForeignKey(
+        StockItemAttachment,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Attachment'),
+        help_text=_('Test result attachment'),
+    )
+
+    notes = models.CharField(
+        blank=True, max_length=500,
+        verbose_name=_('Notes'),
+        help_text=_("Test notes"),
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True
+    )
+
+    date = models.DateTimeField(
+        auto_now_add=True,
+        editable=False
+    )

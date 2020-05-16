@@ -70,6 +70,18 @@
     lft: 0
     rght: 0
 
+- model: stock.stockitem
+  pk: 105
+  fields:
+    part: 25
+    location: 7
+    quantity: 1
+    serial: 1000
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
 # Stock items for template / variant parts
 - model: stock.stockitem
   pk: 500

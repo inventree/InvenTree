@@ -24,6 +24,7 @@ stock_item_detail_urls = [
 
     url(r'^add_tracking/', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
 
+    url(r'^test/', views.StockItemDetail.as_view(template_name='stock/item_tests.html'), name='stock-item-test-results'),
     url(r'^children/', views.StockItemDetail.as_view(template_name='stock/item_childs.html'), name='stock-item-children'),
     url(r'^attachments/', views.StockItemDetail.as_view(template_name='stock/item_attachments.html'), name='stock-item-attachments'),
     url(r'^notes/', views.StockItemNotes.as_view(), name='stock-item-notes'),
@@ -51,10 +52,18 @@ stock_urls = [
 
     url(r'^item/new/?', views.StockItemCreate.as_view(), name='stock-item-create'),
 
+    # URLs for StockItem attachments
     url(r'^item/attachment/', include([
         url(r'^new/', views.StockItemAttachmentCreate.as_view(), name='stock-item-attachment-create'),
         url(r'^(?P<pk>\d+)/edit/', views.StockItemAttachmentEdit.as_view(), name='stock-item-attachment-edit'),
         url(r'^(?P<pk>\d+)/delete/', views.StockItemAttachmentDelete.as_view(), name='stock-item-attachment-delete'),
+    ])),
+
+    # URLs for StockItem tests
+    url(r'^item/test/', include([
+        url(r'^new/', views.StockItemTestResultCreate.as_view(), name='stock-item-test-create'),
+        url(r'^(?P<pk>\d+)/edit/', views.StockItemTestResultEdit.as_view(), name='stock-item-test-edit'),
+        url(r'^(?P<pk>\d+)/delete/', views.StockItemTestResultDelete.as_view(), name='stock-item-test-delete'),
     ])),
 
     url(r'^track/', include(stock_tracking_urls)),

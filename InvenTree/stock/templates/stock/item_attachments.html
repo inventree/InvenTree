@@ -7,8 +7,8 @@
 
 {% include "stock/tabs.html" with tab='attachments' %}
 
-<hr>
 <h4>{% trans "Stock Item Attachments" %}</h4>
+<hr>
 
 {% include "attachment_table.html" with attachments=item.attachments.all %}
 

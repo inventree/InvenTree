@@ -114,6 +114,7 @@ InvenTree
 <script type='text/javascript' src="{% url 'stock.js' %}"></script>
 <script type='text/javascript' src="{% url 'build.js' %}"></script>
 <script type='text/javascript' src="{% url 'order.js' %}"></script>
+<script type='text/javascript' src="{% url 'table_filters.js' %}"></script>
 
 <script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
 <script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>
@@ -121,8 +122,6 @@ InvenTree
 
 {% block js_load %}
 {% endblock %}
-
-{% include "table_filters.html" %}
 
 <script type='text/javascript'>
 
