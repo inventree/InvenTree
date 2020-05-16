@@ -993,3 +993,79 @@ class StockItemTracking(models.Model):
 
     # TODO
     # file = models.FileField()
+
+
+class StockItemTestResult(models.Model):
+    """
+    A StockItemTestResult records results of custom tests against individual StockItem objects.
+    This is useful for tracking unit acceptance tests, and particularly useful when integrated
+    with automated testing setups.
+
+    Multiple results can be recorded against any given test, allowing tests to be run many times.
+    
+    Attributes:
+        stock_item: Link to StockItem
+        test: Test name (simple string matching)
+        result: Test result value (pass / fail / etc)
+        value: Recorded test output value (optional)
+        attachment: Link to StockItem attachment (optional)
+        user: User who uploaded the test result
+        date: Date the test result was recorded
+    """
+
+    def clean(self):
+
+        super().clean()
+
+        # If an attachment is linked to this result, the attachment must also point to the item
+        try:
+            if self.attachment:
+                if not self.attachment.stock_item == self.stock_item:
+                    raise ValidationError({
+                        'attachment': _("Test result attachment must be linked to the same StockItem"),
+                    })
+        except (StockItem.DoesNotExist, StockItemAttachment.DoesNotExist):
+            pass
+
+    stock_item = models.ForeignKey(
+        StockItem,
+        on_delete=models.CASCADE,
+        related_name='test_results'
+    )
+
+    test = models.CharField(
+        blank=False, max_length=100,
+        verbose_name=_('Test'),
+        help_text=_('Test name')
+    )
+
+    result = models.BooleanField(
+        default=False,
+        verbose_name=_('Result'),
+        help_text=_('Test result')
+    )
+
+    value = models.CharField(
+        blank=True, max_length=500,
+        verbose_name=_('Value'),
+        help_text=_('Test output value')
+    )
+
+    attachment = models.ForeignKey(
+        StockItemAttachment,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Attachment'),
+        help_text=_('Test result attachment'),
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete = models.SET_NULL,
+        blank=True, null=True
+    )
+
+    date = models.DateTimeField(
+        auto_now_add=True,
+        editable=False
+    )
