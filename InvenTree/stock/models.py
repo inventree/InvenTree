@@ -227,6 +227,18 @@ class StockItem(MPTTModel):
                 'status': 'Status cannot be marked as ASSIGNED_TO_OTHER_ITEM if the belongs_to field is not set',
             })
 
+        if self.part.trackable:
+            # Trackable parts must have integer values for quantity field!
+            if not self.quantity == int(self.quantity):
+                raise ValidationError({
+                    'quantity': _('Quantity must be integer value for trackable parts')
+                })
+
+        if self.quantity <= 0:
+            raise ValidationError({
+                'quantity': _('Quantity must be greater than zero')
+            })
+
         # The 'supplier_part' field must point to the same part!
         try:
             if self.supplier_part is not None:
