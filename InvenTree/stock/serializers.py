@@ -194,7 +194,7 @@ class LocationSerializer(InvenTreeModelSerializer):
 class StockItemAttachmentSerializer(InvenTreeModelSerializer):
     """ Serializer for StockItemAttachment model """
 
-    def __init_(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         user_detail = kwargs.pop('user_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -221,6 +221,16 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
 class StockItemTestResultSerializer(InvenTreeModelSerializer):
     """ Serializer for the StockItemTestResult model """
 
+    user_detail = UserSerializerBrief(source='user', read_only=True)
+
+    def __init__(self, *args, **kwargs):
+        user_detail = kwargs.pop('user_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if user_detail is not True:
+            self.fields.pop('user_detail')
+
     class Meta:
         model = StockItemTestResult
 
@@ -233,6 +243,7 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
             'attachment',
             'notes',
             'user',
+            'user_detail',
             'date'
         ]
 

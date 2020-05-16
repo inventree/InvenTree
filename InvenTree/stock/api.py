@@ -692,6 +692,16 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         'value',
     ]
 
+    def get_serializer(self, *args, **kwargs):
+        try:
+            kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
+        except:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
     def perform_create(self, serializer):
         """
         Create a new test result object.
