@@ -538,11 +538,10 @@ class StockList(generics.ListCreateAPIView):
             try:
                 part = Part.objects.get(pk=part_id)
 
-                # If the part is a Template part, select stock items for any "variant" parts under that template
-                if part.is_template:
-                    queryset = queryset.filter(part__in=[part.id for part in Part.objects.filter(variant_of=part_id)])
-                else:
-                    queryset = queryset.filter(part=part_id)
+                # Filter by any parts "under" the given part
+                parts = part.get_descendants(include_self=True)
+
+                queryset = queryset.filter(part__in=parts)
 
             except (ValueError, Part.DoesNotExist):
                 raise ValidationError({"part": "Invalid Part ID specified"})
