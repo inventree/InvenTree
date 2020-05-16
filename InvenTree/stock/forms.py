@@ -52,6 +52,15 @@ class CreateStockItemForm(HelperForm):
 
     serial_numbers = forms.CharField(label='Serial numbers', required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
 
+    def __init__(self, *args, **kwargs):
+        
+        self.field_prefix = {
+            'serial_numbers': 'fa-hashtag',
+            'link': 'fa-link',
+        }
+
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = StockItem
         fields = [
@@ -74,6 +83,7 @@ class CreateStockItemForm(HelperForm):
             return
         
         self.cleaned_data = {}
+
         # If the form is permitted to be empty, and none of the form data has
         # changed from the initial data, short circuit any validation.
         if self.empty_permitted and not self.has_changed():
@@ -98,22 +108,25 @@ class SerializeStockForm(HelperForm):
     def __init__(self, *args, **kwargs):
 
         # Extract the stock item
-        item = kwargs.pop('item')
+        item = kwargs.pop('item', None)
 
-        # Pre-calculate what the serial numbers should be!
-        sn = item.part.get_next_serial_number()
+        if item:
 
-        if item.quantity >= 2:
-            sn = "{n}-{m}".format(n=sn, m=int(sn+item.quantity-1))
-        else:
-            sn = str(sn)
+            # Pre-calculate what the serial numbers should be!
+            sn = item.part.get_next_serial_number()
+
+            if item.quantity >= 2:
+                sn = "{n}-{m}".format(n=sn, m=int(sn+item.quantity-1))
+            else:
+                sn = str(sn)
+
+            
+            self.field_placeholder = {
+                'serial_numbers': sn
+            }
 
         self.field_prefix = {
             'serial_numbers': 'fa-hashtag',
-        }
-
-        self.field_placeholder = {
-            'serial_numbers': sn
         }
 
         super().__init__(*args, **kwargs)
