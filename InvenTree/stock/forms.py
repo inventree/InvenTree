@@ -108,11 +108,11 @@ class SerializeStockForm(HelperForm):
         else:
             sn = str(sn)
 
-        self.prefix = {
+        self.field_prefix = {
             'serial_numbers': 'fa-hashtag',
         }
 
-        self.placeholder = {
+        self.field_placeholder = {
             'serial_numbers': sn
         }
 

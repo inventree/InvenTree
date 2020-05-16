@@ -93,12 +93,12 @@ class EditPurchaseOrderForm(HelperForm):
 
     def __init__(self, *args, **kwargs):
 
-        self.prefix = {
+        self.field_prefix = {
             'reference': 'PO',
             'link': 'fa-link',
         }
 
-        self.placeholder = {
+        self.field_placeholder = {
             'reference': _('Enter purchase order number'),
         }
 
@@ -120,12 +120,12 @@ class EditSalesOrderForm(HelperForm):
 
     def __init__(self, *args, **kwargs):
 
-        self.prefix = {
+        self.field_prefix = {
             'reference': 'SO',
             'link': 'fa-link',
         }
 
-        self.placeholder = {
+        self.field_placeholder = {
             'reference': _('Enter sales order number'),
         }
 

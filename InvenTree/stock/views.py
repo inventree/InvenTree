@@ -717,7 +717,7 @@ class StockItemEdit(AjaxUpdateView):
             query = query.filter(part=item.part.id)
             form.fields['supplier_part'].queryset = query
 
-        if not item.part.trackable:
+        if not item.part.trackable or not item.serialized:
             form.fields.pop('serial')
 
         return form
