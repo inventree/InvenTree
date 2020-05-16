@@ -88,9 +88,9 @@ class CategoryTest(TestCase):
 
         self.assertEqual(self.electronics.partcount(), 3)
 
-        self.assertEqual(self.mechanical.partcount(), 4)
-        self.assertEqual(self.mechanical.partcount(active=True), 3)
-        self.assertEqual(self.mechanical.partcount(False), 2)
+        self.assertEqual(self.mechanical.partcount(), 8)
+        self.assertEqual(self.mechanical.partcount(active=True), 7)
+        self.assertEqual(self.mechanical.partcount(False), 6)
 
         self.assertEqual(self.electronics.item_count, self.electronics.partcount())
 

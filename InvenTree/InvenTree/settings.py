@@ -341,7 +341,7 @@ if DEBUG:
     print("STATIC_ROOT:", STATIC_ROOT)
 
 # crispy forms use the bootstrap templates
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True

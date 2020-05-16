@@ -97,6 +97,12 @@ class SetPartCategoryForm(forms.Form):
 class EditPartForm(HelperForm):
     """ Form for editing a Part object """
 
+    field_prefix = {
+        'keywords': 'fa-key',
+        'link': 'fa-link',
+        'IPN': 'fa-hashtag',
+    }
+
     deep_copy = forms.BooleanField(required=False,
                                    initial=True,
                                    help_text=_("Perform 'deep copy' which will duplicate all BOM data for this part"),
@@ -154,6 +160,10 @@ class EditPartParameterForm(HelperForm):
 
 class EditCategoryForm(HelperForm):
     """ Form for editing a PartCategory object """
+
+    field_prefix = {
+        'default_keywords': 'fa-key',
+    }
 
     class Meta:
         model = PartCategory

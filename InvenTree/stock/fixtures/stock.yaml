@@ -69,3 +69,171 @@
     tree_id: 0
     lft: 0
     rght: 0
+
+- model: stock.stockitem
+  pk: 105
+  fields:
+    part: 25
+    location: 7
+    quantity: 1
+    serial: 1000
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+# Stock items for template / variant parts
+- model: stock.stockitem
+  pk: 500
+  fields:
+    part: 10001
+    location: 7
+    quantity: 5
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 501
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 1
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 501
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 1
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 502
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 2
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 503
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 3
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 504
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 4
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 505
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 5
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 510
+  fields:
+    part: 10002
+    location: 7
+    quantity: 1
+    serial: 10
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 511
+  fields:
+    part: 10002
+    location: 7
+    quantity: 1
+    serial: 11
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 512
+  fields:
+    part: 10002
+    location: 7
+    quantity: 1
+    serial: 12
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 520
+  fields:
+    part: 10004
+    location: 7
+    quantity: 1
+    serial: 20
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 521
+  fields:
+    part: 10004
+    location: 7
+    quantity: 1
+    serial: 21
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 522
+  fields:
+    part: 10004
+    location: 7
+    quantity: 1
+    serial: 22
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0

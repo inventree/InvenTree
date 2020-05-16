@@ -31,11 +31,17 @@ class OrderTest(TestCase):
 
         self.assertEqual(order.get_absolute_url(), '/order/purchase-order/1/')
 
-        self.assertEqual(str(order), 'PO 1 - ACME')
+        self.assertEqual(str(order), 'PO 0001 - ACME')
         
         line = PurchaseOrderLineItem.objects.get(pk=1)
 
-        self.assertEqual(str(line), "100 x ACME0001 from ACME (for PO 1 - ACME)")
+        self.assertEqual(str(line), "100 x ACME0001 from ACME (for PO 0001 - ACME)")
+
+    def test_increment(self):
+
+        next_ref = PurchaseOrder.getNextOrderNumber()
+
+        self.assertEqual(next_ref, '0003')
 
     def test_on_order(self):
         """ There should be 3 separate items on order for the M2x4 LPHS part """

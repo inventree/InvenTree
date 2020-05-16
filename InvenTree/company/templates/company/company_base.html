@@ -85,10 +85,10 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
 
     $('#company-edit').click(function() {
         launchModalForm(
-                        "{% url 'company-edit' company.id %}",
-                        {
-                            reload: true
-                        });
+            "{% url 'company-edit' company.id %}",
+            {
+                reload: true
+            });
     });
 
     $("#company-order-2").click(function() {
@@ -104,10 +104,10 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
 
     $('#company-delete').click(function() {
         launchModalForm(
-                        "{% url 'company-delete' company.id %}",
-                        {
-                            redirect: "{% url 'company-index' %}"
-                        });
+            "{% url 'company-delete' company.id %}",
+            {
+                redirect: "{% url 'company-index' %}"
+            });
     });
 
     enableDragAndDrop(
@@ -123,11 +123,11 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
 
     $("#company-thumb").click(function() {
         launchModalForm(
-                        "{% url 'company-image' company.id %}",
-                        {
-                            reload: true
-                        }
-                        );
+            "{% url 'company-image' company.id %}",
+            {
+                reload: true
+            }
+        );
     });
 
 {% endblock %}

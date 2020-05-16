@@ -81,6 +81,7 @@ dynamic_javascript_urls = [
     url(r'^order.js', DynamicJsView.as_view(template_name='js/order.html'), name='order.js'),
     url(r'^company.js', DynamicJsView.as_view(template_name='js/company.html'), name='company.js'),
     url(r'^bom.js', DynamicJsView.as_view(template_name='js/bom.html'), name='bom.js'),
+    url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/table_filters.html'), name='table_filters.js'),
 ]
 
 urlpatterns = [

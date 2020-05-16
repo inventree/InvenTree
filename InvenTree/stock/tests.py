@@ -17,6 +17,7 @@ class StockTest(TestCase):
         'part',
         'location',
         'stock',
+        'stock_tests',
     ]
 
     def setUp(self):
@@ -37,6 +38,10 @@ class StockTest(TestCase):
         self.client.login(username='username', password='password')
 
         self.user = User.objects.get(username='username')
+
+        # Ensure the MPTT objects are correctly rebuild
+        Part.objects.rebuild()
+        StockItem.objects.rebuild()
 
     def test_loc_count(self):
         self.assertEqual(StockLocation.objects.count(), 7)
@@ -91,17 +96,20 @@ class StockTest(TestCase):
         self.assertFalse(self.drawer2.has_items())
 
         # Drawer 3 should have three stock items
-        self.assertEqual(self.drawer3.stock_items.count(), 3)
-        self.assertEqual(self.drawer3.item_count, 3)
+        self.assertEqual(self.drawer3.stock_items.count(), 16)
+        self.assertEqual(self.drawer3.item_count, 16)
 
     def test_stock_count(self):
         part = Part.objects.get(pk=1)
+        entries = part.stock_entries()
 
-        # There should be 5000 screws in stock
+        self.assertEqual(entries.count(), 2)
+
+        # There should be 9000 screws in stock
         self.assertEqual(part.total_stock, 9000)
 
         # There should be 18 widgets in stock
-        self.assertEqual(StockItem.objects.filter(part=25).aggregate(Sum('quantity'))['quantity__sum'], 18)
+        self.assertEqual(StockItem.objects.filter(part=25).aggregate(Sum('quantity'))['quantity__sum'], 19)
 
     def test_delete_location(self):
 
@@ -161,12 +169,12 @@ class StockTest(TestCase):
         self.assertEqual(w1.quantity, 4)
 
         # There should also be a new object still in drawer3
-        self.assertEqual(StockItem.objects.filter(part=25).count(), 4)
+        self.assertEqual(StockItem.objects.filter(part=25).count(), 5)
         widget = StockItem.objects.get(location=self.drawer3.id, part=25, quantity=4)
 
         # Try to move negative units
         self.assertFalse(widget.move(self.bathroom, 'Test', None, quantity=-100))
-        self.assertEqual(StockItem.objects.filter(part=25).count(), 4)
+        self.assertEqual(StockItem.objects.filter(part=25).count(), 5)
 
         # Try to move to a blank location
         self.assertFalse(widget.move(None, 'null', None))
@@ -327,3 +335,99 @@ class StockTest(TestCase):
 
         # Serialize the remainder of the stock
         item.serializeStock(2, [99, 100], self.user)
+
+
+class VariantTest(StockTest):
+    """
+    Tests for calculation stock counts against templates / variants
+    """
+
+    def test_variant_stock(self):
+        # Check the 'Chair' variant
+        chair = Part.objects.get(pk=10000)
+
+        # No stock items for the variant part itself
+        self.assertEqual(chair.stock_entries(include_variants=False).count(), 0)
+
+        self.assertEqual(chair.stock_entries().count(), 12)
+
+        green = Part.objects.get(pk=10003)
+        self.assertEqual(green.stock_entries(include_variants=False).count(), 0)
+        self.assertEqual(green.stock_entries().count(), 3)
+
+    def test_serial_numbers(self):
+        # Test serial number functionality for variant / template parts
+
+        chair = Part.objects.get(pk=10000)
+
+        # Operations on the top-level object
+        self.assertTrue(chair.checkIfSerialNumberExists(1))
+        self.assertTrue(chair.checkIfSerialNumberExists(2))
+        self.assertTrue(chair.checkIfSerialNumberExists(3))
+        self.assertTrue(chair.checkIfSerialNumberExists(4))
+        self.assertTrue(chair.checkIfSerialNumberExists(5))
+
+        self.assertTrue(chair.checkIfSerialNumberExists(20))
+        self.assertTrue(chair.checkIfSerialNumberExists(21))
+        self.assertTrue(chair.checkIfSerialNumberExists(22))
+
+        self.assertFalse(chair.checkIfSerialNumberExists(30))
+
+        self.assertEqual(chair.getNextSerialNumber(), 23)
+
+        # Same operations on a sub-item
+        variant = Part.objects.get(pk=10003)
+        self.assertEqual(variant.getNextSerialNumber(), 23)
+
+        # Create a new serial number
+        n = variant.getHighestSerialNumber()
+
+        item = StockItem(
+            part=variant,
+            quantity=1,
+            serial=n
+        )
+
+        # This should fail
+        with self.assertRaises(ValidationError):
+            item.save()
+
+        # This should pass
+        item.serial = n + 1
+        item.save()
+
+        # Attempt to create the same serial number but for a variant (should fail!)
+        item.pk = None
+        item.part = Part.objects.get(pk=10004)
+        
+        with self.assertRaises(ValidationError):
+            item.save()
+
+        item.serial += 1
+        item.save()
+
+
+class TestResultTest(StockTest):
+    """
+    Tests for the StockItemTestResult model.
+    """
+
+    def test_test_count(self):
+        item = StockItem.objects.get(pk=105)
+        tests = item.test_results
+        self.assertEqual(tests.count(), 4)
+
+        results = item.getTestResults(test="Temperature Test")
+        self.assertEqual(results.count(), 2)
+
+        # Passing tests
+        self.assertEqual(item.getTestResults(result=True).count(), 3)
+        self.assertEqual(item.getTestResults(result=False).count(), 1)
+
+        # Result map
+        result_map = item.testResultMap()
+
+        self.assertEqual(len(result_map), 3)
+
+        for test in ['Firmware Version', 'Settings Checksum', 'Temperature Test']:
+            self.assertIn(test, result_map.keys())

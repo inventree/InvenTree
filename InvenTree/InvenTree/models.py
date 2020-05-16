@@ -56,7 +56,7 @@ class InvenTreeAttachment(models.Model):
     attachment = models.FileField(upload_to=rename_attachment,
                                   help_text=_('Select file to attach'))
 
-    comment = models.CharField(max_length=100, help_text=_('File comment'))
+    comment = models.CharField(blank=True, max_length=100, help_text=_('File comment'))
 
     user = models.ForeignKey(
         User,

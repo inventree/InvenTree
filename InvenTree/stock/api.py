@@ -15,6 +15,7 @@ from django.db.models import Q
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
 from .models import StockItemAttachment
+from .models import StockItemTestResult
 
 from part.models import Part, PartCategory
 from part.serializers import PartBriefSerializer
@@ -26,6 +27,7 @@ from .serializers import StockItemSerializer
 from .serializers import LocationSerializer, LocationBriefSerializer
 from .serializers import StockTrackingSerializer
 from .serializers import StockItemAttachmentSerializer
+from .serializers import StockItemTestResultSerializer
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
@@ -536,11 +538,10 @@ class StockList(generics.ListCreateAPIView):
             try:
                 part = Part.objects.get(pk=part_id)
 
-                # If the part is a Template part, select stock items for any "variant" parts under that template
-                if part.is_template:
-                    queryset = queryset.filter(part__in=[part.id for part in Part.objects.filter(variant_of=part_id)])
-                else:
-                    queryset = queryset.filter(part=part_id)
+                # Filter by any parts "under" the given part
+                parts = part.get_descendants(include_self=True)
+
+                queryset = queryset.filter(part__in=parts)
 
             except (ValueError, Part.DoesNotExist):
                 raise ValidationError({"part": "Invalid Part ID specified"})
@@ -654,9 +655,87 @@ class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockItemAttachmentSerializer
 
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    ]
+
     filter_fields = [
         'stock_item',
     ]
+
+
+class StockItemTestResultList(generics.ListCreateAPIView):
+    """
+    API endpoint for listing (and creating) a StockItemTestResult object.
+    """
+
+    queryset = StockItemTestResult.objects.all()
+    serializer_class = StockItemTestResultSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+        'stock_item',
+        'test',
+        'user',
+        'result',
+        'value',
+    ]
+
+    def get_serializer(self, *args, **kwargs):
+        try:
+            kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
+        except:
+            pass
+
+        try:
+            kwargs['attachment_detail'] = str2bool(self.request.query_params.get('attachment_detail', False))
+        except:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def perform_create(self, serializer):
+        """
+        Create a new test result object.
+
+        Also, check if an attachment was uploaded alongside the test result,
+        and save it to the database if it were.
+        """
+
+        # Capture the user information
+        test_result = serializer.save()
+        test_result.user = self.request.user
+
+        # Check if a file has been attached to the request
+        attachment_file = self.request.FILES.get('attachment', None)
+
+        if attachment_file:
+            # Create a new attachment associated with the stock item
+            attachment = StockItemAttachment(
+                attachment=attachment_file,
+                stock_item=test_result.stock_item,
+                user=test_result.user
+            )
+
+            attachment.save()
+
+            # Link the attachment back to the test result
+            test_result.attachment = attachment
+
+        test_result.save()
 
 
 class StockTrackingList(generics.ListCreateAPIView):
@@ -767,6 +846,11 @@ stock_api_urls = [
     # Base URL for StockItemAttachment API endpoints
     url(r'^attachment/', include([
         url(r'^$', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
+    ])),
+
+    # Base URL for StockItemTestResult API endpoints
+    url(r'^test/', include([
+        url(r'^$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 
     url(r'track/?', StockTrackingList.as_view(), name='api-stock-track'),

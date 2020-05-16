@@ -29,7 +29,7 @@ from . import forms as order_forms
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import DownloadFile, str2bool
 
-from InvenTree.status_codes import PurchaseOrderStatus, StockStatus
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +112,10 @@ class PurchaseOrderAttachmentCreate(AjaxCreateView):
 
         initials = super(AjaxCreateView, self).get_initial()
 
-        initials["order"] = PurchaseOrder.objects.get(id=self.request.GET.get('order', -1))
+        try:
+            initials["order"] = PurchaseOrder.objects.get(id=self.request.GET.get('order', -1))
+        except (ValueError, PurchaseOrder.DoesNotExist):
+            pass
 
         return initials
 
@@ -149,7 +152,10 @@ class SalesOrderAttachmentCreate(AjaxCreateView):
     def get_initial(self):
         initials = super().get_initial().copy()
 
-        initials['order'] = SalesOrder.objects.get(id=self.request.GET.get('order', None))
+        try:
+            initials['order'] = SalesOrder.objects.get(id=self.request.GET.get('order', None))
+        except (ValueError, SalesOrder.DoesNotExist):
+            pass
 
         return initials
 
@@ -284,6 +290,7 @@ class PurchaseOrderCreate(AjaxCreateView):
     def get_initial(self):
         initials = super().get_initial().copy()
 
+        initials['reference'] = PurchaseOrder.getNextOrderNumber()
         initials['status'] = PurchaseOrderStatus.PENDING
 
         supplier_id = self.request.GET.get('supplier', None)
@@ -314,7 +321,8 @@ class SalesOrderCreate(AjaxCreateView):
     def get_initial(self):
         initials = super().get_initial().copy()
 
-        initials['status'] = PurchaseOrderStatus.PENDING
+        initials['reference'] = SalesOrder.getNextOrderNumber()
+        initials['status'] = SalesOrderStatus.PENDING
 
         customer_id = self.request.GET.get('customer', None)
 

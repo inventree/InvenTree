@@ -7,6 +7,7 @@ from rest_framework import serializers
 from .models import StockItem, StockLocation
 from .models import StockItemTracking
 from .models import StockItemAttachment
+from .models import StockItemTestResult
 
 from django.db.models import Sum, Count
 from django.db.models.functions import Coalesce
@@ -193,7 +194,7 @@ class LocationSerializer(InvenTreeModelSerializer):
 class StockItemAttachmentSerializer(InvenTreeModelSerializer):
     """ Serializer for StockItemAttachment model """
 
-    def __init_(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         user_detail = kwargs.pop('user_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -211,8 +212,52 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
             'stock_item',
             'attachment',
             'comment',
+            'upload_date',
             'user',
             'user_detail',
+        ]
+
+
+class StockItemTestResultSerializer(InvenTreeModelSerializer):
+    """ Serializer for the StockItemTestResult model """
+
+    user_detail = UserSerializerBrief(source='user', read_only=True)
+    attachment_detail = StockItemAttachmentSerializer(source='attachment', read_only=True)
+
+    def __init__(self, *args, **kwargs):
+        user_detail = kwargs.pop('user_detail', False)
+        attachment_detail = kwargs.pop('attachment_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if user_detail is not True:
+            self.fields.pop('user_detail')
+
+        if attachment_detail is not True:
+            self.fields.pop('attachment_detail')
+
+    class Meta:
+        model = StockItemTestResult
+
+        fields = [
+            'pk',
+            'stock_item',
+            'test',
+            'result',
+            'value',
+            'attachment',
+            'attachment_detail',
+            'notes',
+            'user',
+            'user_detail',
+            'date'
+        ]
+
+        read_only_fields = [
+            'pk',
+            'attachment',
+            'user',
+            'date',
         ]
 
 

@@ -88,6 +88,19 @@ class ReceivePurchaseOrderForm(HelperForm):
 class EditPurchaseOrderForm(HelperForm):
     """ Form for editing a PurchaseOrder object """
 
+    def __init__(self, *args, **kwargs):
+
+        self.field_prefix = {
+            'reference': 'PO',
+            'link': 'fa-link',
+        }
+
+        self.field_placeholder = {
+            'reference': _('Enter purchase order number'),
+        }
+
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = PurchaseOrder
         fields = [
@@ -101,6 +114,19 @@ class EditPurchaseOrderForm(HelperForm):
 
 class EditSalesOrderForm(HelperForm):
     """ Form for editing a SalesOrder object """
+
+    def __init__(self, *args, **kwargs):
+
+        self.field_prefix = {
+            'reference': 'SO',
+            'link': 'fa-link',
+        }
+
+        self.field_placeholder = {
+            'reference': _('Enter sales order number'),
+        }
+
+        super().__init__(*args, **kwargs)
 
     class Meta:
         model = SalesOrder

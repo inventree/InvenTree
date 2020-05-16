@@ -20,6 +20,20 @@
 {% block js_ready %}
 {{ block.super }}
 
+enableDragAndDrop(
+    '#attachment-dropzone',
+    "{% url 'po-attachment-create' %}",
+    {
+        data: {
+            order: {{ order.id }},
+        },
+        label: 'attachment',
+        success: function(data, status, xhr) {
+            location.reload();
+        }
+    }
+);
+
 $("#new-attachment").click(function() {
     launchModalForm("{% url 'po-attachment-create' %}?order={{ order.id }}",
         {
