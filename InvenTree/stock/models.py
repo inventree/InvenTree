@@ -276,10 +276,6 @@ class StockItem(MPTTModel):
                     # Serial numbered items cannot be deleted on depletion
                     self.delete_on_deplete = False
 
-                # A template part cannot be instantiated as a StockItem
-                if self.part.is_template:
-                    raise ValidationError({'part': _('Stock item cannot be created for a template Part')})
-
         except PartModels.Part.DoesNotExist:
             # This gets thrown if self.supplier_part is null
             # TODO - Find a test than can be perfomed...
