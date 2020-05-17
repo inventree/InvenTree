@@ -1183,7 +1183,8 @@ class PartTestTemplate(models.Model):
     part = models.ForeignKey(
         Part,
         on_delete=models.CASCADE,
-        related_name='test_templates'
+        related_name='test_templates',
+        limit_choices_to={'trackable': True},
     )
 
     test_name = models.CharField(
