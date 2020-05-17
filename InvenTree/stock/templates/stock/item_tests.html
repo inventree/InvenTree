@@ -61,6 +61,7 @@ $("#test-result-table").on('click', '.button-test-add', function() {
                 stock_item: {{ item.id }},
                 test: test_name
             },
+            success: reloadTable,
         }
     );
 });

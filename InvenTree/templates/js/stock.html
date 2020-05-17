@@ -102,6 +102,10 @@ function loadStockTestResultsTable(table, options) {
                 formatter: function(value, row) {
                     var html = value;
 
+                    if (row.required) {
+                        html = `<b>${value}</b>`;
+                    }
+
                     if (row.result == null) {
                         html += noResultBadge();
                     } else {
@@ -171,16 +175,27 @@ function loadStockTestResultsTable(table, options) {
                         // Iterate through the returned test result data, and group by test
                         data.forEach(function(item) {
                             var match = false;
+                            var override = false;
 
                             var key = testKey(item.test);
 
                             // Try to associate this result with a test row
-                            tableData.forEach(function(row) {
+                            tableData.forEach(function(row, index) {
+                                
+                                
                                 // The result matches the test template row
                                 if (key == testKey(row.test_name)) {
-
+                                    
                                     // Force the names to be the same!
                                     item.test_name = row.test_name;
+                                    item.required = row.required;
+
+                                    if (row.result == null) {
+                                        // The original row has not recorded a result - override!
+                                        tableData[index] = item;
+                                        override = true;
+                                    }
+
                                     match = true;
                                 }
                             });
@@ -191,7 +206,9 @@ function loadStockTestResultsTable(table, options) {
                                 item.test_name = item.test;
                             }
 
-                            tableData.push(item);
+                            if (!override) {
+                                tableData.push(item);
+                            }
                         });
 
                         // Finally, push the data back into the table!
