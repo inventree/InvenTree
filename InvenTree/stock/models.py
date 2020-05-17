@@ -1000,6 +1000,9 @@ class StockItem(MPTTModel):
             'failed': failed,
         }
 
+    def hasRequiredTests(self):
+        return self.part.getRequiredTests().count() > 0
+
     def passedAllRequiredTests(self):
 
         status = self.requiredTestStatus()

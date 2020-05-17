@@ -301,7 +301,6 @@ class MakePartVariant(AjaxCreateView):
         form = super(AjaxCreateView, self).get_form()
 
         # Hide some variant-related fields
-        form.fields['is_template'].widget = HiddenInput()
         form.fields['variant_of'].widget = HiddenInput()
 
         return form

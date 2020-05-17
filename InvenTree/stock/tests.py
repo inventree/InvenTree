@@ -456,11 +456,5 @@ class TestResultTest(StockTest):
             test='sew cushion',
             result=True
         )
-
-        results = item.testResultMap()
-
-        for key in results.keys():
-            result = results[key]
     
         self.assertTrue(item.passedAllRequiredTests())
-

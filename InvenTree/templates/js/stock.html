@@ -68,7 +68,7 @@ function loadStockTestResultsTable(table, options) {
 
         html += makeIconButton('fa-plus icon-green', 'button-test-add', row.test_name, '{% trans "Add test result" %}');
 
-        if (!grouped) {
+        if (!grouped && row.result != null) {
             var pk = row.pk;
             html += makeIconButton('fa-edit icon-blue', 'button-test-edit', pk, '{% trans "Edit test result" %}');
             html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
