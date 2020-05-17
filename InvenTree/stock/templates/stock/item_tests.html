@@ -7,7 +7,7 @@
 
 {% include "stock/tabs.html" with tab='tests' %}
 
-<h4>{% trans "Test Results" %}</h4>
+<h4>{% trans "Test Data" %}</h4>
 <hr>
 
 <div id='button-toolbar'>
@@ -20,8 +20,8 @@
         </div>
     </div>
 </div>
-
-<table class='table table-striped table-condensed' data-toolbar='#button-toolbar' id='test-result-table'></table>
+        
+<table class='table table-striped table-condensed' data-toolbar='#button-toolbar' id='test-result-table'></table>                
 
 {% endblock %}
 
@@ -30,11 +30,8 @@
 
 loadStockTestResultsTable(
     $("#test-result-table"), {
-        params: {
-            stock_item: {{ item.id }},
-            user_detail: true,
-            attachment_detail: true,
-        },
+        part: {{ item.part.id }},
+        stock_item: {{ item.id }},
     }
 );
 
@@ -49,6 +46,21 @@ $("#add-test-result").click(function() {
                 stock_item: {{ item.id }},
             },
             success: reloadTable,
+        }
+    );
+});
+
+$("#test-result-table").on('click', '.button-test-add', function() {
+    var button = $(this);
+
+    var test_name = button.attr('pk');
+
+    launchModalForm(
+        "{% url 'stock-item-test-create' %}", {
+            data: {
+                stock_item: {{ item.id }},
+                test: test_name
+            },
         }
     );
 });

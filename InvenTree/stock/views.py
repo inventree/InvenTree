@@ -254,6 +254,8 @@ class StockItemTestResultCreate(AjaxCreateView):
         except (ValueError, StockItem.DoesNotExist):
             pass
 
+        initials['test'] = self.request.GET.get('test', '')
+
         return initials
 
     def get_form(self):
