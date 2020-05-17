@@ -429,5 +429,6 @@ class TestResultTest(StockTest):
 
         self.assertEqual(len(result_map), 3)
 
-        for test in ['Firmware Version', 'Settings Checksum', 'Temperature Test']:
+        # Keys are all lower-case and do not contain spaces
+        for test in ['firmwareversion', 'settingschecksum', 'temperaturetest']:
             self.assertIn(test, result_map.keys())

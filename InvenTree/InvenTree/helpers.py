@@ -19,6 +19,20 @@ from .version import inventreeVersion, inventreeInstanceName
 from .settings import MEDIA_URL, STATIC_URL
 
 
+def generateTestKey(test_name):
+    """
+    Generate a test 'key' for a given test name.
+    This must not have spaces as it will be used for dict lookup in a template.
+    
+    Tests must be named such that they will have unique keys.
+    """
+
+    key = test_name.strip().lower()
+    key = key.replace(" ", "")
+
+    return key
+
+
 def getMediaUrl(filename):
     """
     Return the qualified access path for the given file,

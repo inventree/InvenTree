@@ -962,7 +962,8 @@ class StockItem(MPTTModel):
         result_map = {}
 
         for result in results:
-            result_map[result.test] = result
+            key = helpers.generateTestKey(result.test) 
+            result_map[key] = result
 
         return result_map
 
