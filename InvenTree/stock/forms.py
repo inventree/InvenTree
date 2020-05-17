@@ -46,6 +46,7 @@ class EditStockItemTestResultForm(HelperForm):
             'test',
             'result',
             'value',
+            'attachment',
             'notes',
         ]
 

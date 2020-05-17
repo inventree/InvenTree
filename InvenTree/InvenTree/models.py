@@ -53,6 +53,9 @@ class InvenTreeAttachment(models.Model):
 
         return "attachments"
 
+    def __str__(self):
+        return os.path.basename(self.attachment.name)
+
     attachment = models.FileField(upload_to=rename_attachment,
                                   help_text=_('Select file to attach'))
 
