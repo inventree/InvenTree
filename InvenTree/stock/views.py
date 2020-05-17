@@ -254,12 +254,25 @@ class StockItemTestResultCreate(AjaxCreateView):
         except (ValueError, StockItem.DoesNotExist):
             pass
 
+        initials['test'] = self.request.GET.get('test', '')
+
         return initials
 
     def get_form(self):
 
         form = super().get_form()
         form.fields['stock_item'].widget = HiddenInput()
+
+        # Extract the StockItem object
+        item_id = form['stock_item'].value()
+
+        # Limit the options for the file attachments
+        try:
+            stock_item = StockItem.objects.get(pk=item_id)
+            form.fields['attachment'].queryset = stock_item.attachments.all()
+        except (ValueError, StockItem.DoesNotExist):
+            # Hide the attachments field
+            form.fields['attachment'].widget = HiddenInput()
 
         return form
 
@@ -278,6 +291,8 @@ class StockItemTestResultEdit(AjaxUpdateView):
         form = super().get_form()
 
         form.fields['stock_item'].widget = HiddenInput()
+
+        form.fields['attachment'].queryset = self.object.stock_item.attachments.all()
         
         return form
 

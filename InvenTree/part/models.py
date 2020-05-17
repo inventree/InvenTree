@@ -990,6 +990,30 @@ class Part(MPTTModel):
 
         self.save()
 
+    def getTestTemplates(self, required=None, include_parent=True):
+        """
+        Return a list of all test templates associated with this Part.
+        These are used for validation of a StockItem.
+
+        args:
+            required: Set to True or False to filter by "required" status
+            include_parent: Set to True to traverse upwards
+        """
+
+        if include_parent:
+            tests = PartTestTemplate.objects.filter(part__in=self.get_ancestors(include_self=True))
+        else:
+            tests = self.test_templates
+
+        if required is not None:
+            tests = tests.filter(required=required)
+
+        return tests
+    
+    def getRequiredTests(self):
+        # Return the tests which are required by this part
+        return self.getTestTemplates(required=True)
+
     @property
     def attachment_count(self):
         """ Count the number of attachments for this part.
@@ -1107,6 +1131,88 @@ class PartStar(models.Model):
 
     class Meta:
         unique_together = ['part', 'user']
+
+
+class PartTestTemplate(models.Model):
+    """
+    A PartTestTemplate defines a 'template' for a test which is required to be run
+    against a StockItem (an instance of the Part).
+
+    The test template applies "recursively" to part variants, allowing tests to be
+    defined in a heirarchy.
+
+    Test names are simply strings, rather than enforcing any sort of structure or pattern.
+    It is up to the user to determine what tests are defined (and how they are run).
+
+    To enable generation of unique lookup-keys for each test, there are some validation tests
+    run on the model (refer to the validate_unique function).
+    """
+
+    def save(self, *args, **kwargs):
+
+        self.clean()
+
+        super().save(*args, **kwargs)
+
+    def clean(self):
+
+        self.test_name = self.test_name.strip()
+
+        self.validate_unique()
+        super().clean()
+
+    def validate_unique(self, exclude=None):
+        """
+        Test that this test template is 'unique' within this part tree.
+        """
+
+        if not self.part.trackable:
+            raise ValidationError({
+                'part': _('Test templates can only be created for trackable parts')
+            })
+
+        # Get a list of all tests "above" this one
+        tests = PartTestTemplate.objects.filter(
+            part__in=self.part.get_ancestors(include_self=True)
+        )
+
+        # If this item is already in the database, exclude it from comparison!
+        if self.pk is not None:
+            tests = tests.exclude(pk=self.pk)
+
+        key = self.key
+
+        for test in tests:
+            if test.key == key:
+                raise ValidationError({
+                    'test_name': _("Test with this name already exists for this part")
+                })
+
+        super().validate_unique(exclude)
+
+    @property
+    def key(self):
+        """ Generate a key for this test """
+        return helpers.generateTestKey(self.test_name)
+
+    part = models.ForeignKey(
+        Part,
+        on_delete=models.CASCADE,
+        related_name='test_templates',
+        limit_choices_to={'trackable': True},
+    )
+
+    test_name = models.CharField(
+        blank=False, max_length=100,
+        verbose_name=_("Test name"),
+        help_text=_("Enter a name for the test")
+    )
+
+    required = models.BooleanField(
+        default=True,
+        verbose_name=_("Required"),
+        help_text=_("Is this test required to pass?")
+    )
 
 
 class PartParameterTemplate(models.Model):

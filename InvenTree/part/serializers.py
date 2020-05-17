@@ -10,6 +10,7 @@ from .models import PartCategory
 from .models import BomItem
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment
+from .models import PartTestTemplate
 
 from decimal import Decimal
 
@@ -53,6 +54,22 @@ class PartAttachmentSerializer(InvenTreeModelSerializer):
             'part',
             'attachment',
             'comment'
+        ]
+
+
+class PartTestTemplateSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for the PartTestTemplate class
+    """
+
+    class Meta:
+        model = PartTestTemplate
+
+        fields = [
+            'pk',
+            'part',
+            'test_name',
+            'required'
         ]
 
 

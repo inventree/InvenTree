@@ -25,6 +25,7 @@ from .models import PartCategory, Part, PartAttachment
 from .models import PartParameterTemplate, PartParameter
 from .models import BomItem
 from .models import match_part_names
+from .models import PartTestTemplate
 
 from common.models import Currency, InvenTreeSetting
 from company.models import SupplierPart
@@ -149,6 +150,55 @@ class PartAttachmentDelete(AjaxDeleteView):
         }
 
 
+class PartTestTemplateCreate(AjaxCreateView):
+    """ View for creating a PartTestTemplate """
+
+    model = PartTestTemplate
+    form_class = part_forms.EditPartTestTemplateForm
+    ajax_form_title = _("Create Test Template")
+    
+    def get_initial(self):
+
+        initials = super().get_initial()
+
+        try:
+            part_id = self.request.GET.get('part', None)
+            initials['part'] = Part.objects.get(pk=part_id)
+        except (ValueError, Part.DoesNotExist):
+            pass
+
+        return initials
+
+    def get_form(self):
+
+        form = super().get_form()
+        form.fields['part'].widget = HiddenInput()
+
+        return form
+
+
+class PartTestTemplateEdit(AjaxUpdateView):
+    """ View for editing a PartTestTemplate """
+
+    model = PartTestTemplate
+    form_class = part_forms.EditPartTestTemplateForm
+    ajax_form_title = _("Edit Test Template")
+
+    def get_form(self):
+
+        form = super().get_form()
+        form.fields['part'].widget = HiddenInput()
+
+        return form
+
+
+class PartTestTemplateDelete(AjaxDeleteView):
+    """ View for deleting a PartTestTemplate """
+
+    model = PartTestTemplate
+    ajax_form_title = _("Delete Test Template")
+
+
 class PartSetCategory(AjaxUpdateView):
     """ View for settings the part category for multiple parts at once """
 
@@ -251,7 +301,6 @@ class MakePartVariant(AjaxCreateView):
         form = super(AjaxCreateView, self).get_form()
 
         # Hide some variant-related fields
-        form.fields['is_template'].widget = HiddenInput()
         form.fields['variant_of'].widget = HiddenInput()
 
         return form
