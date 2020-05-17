@@ -26,4 +26,14 @@
 {% block js_ready %}
 {{ block.super }}
 
+loadPartTestTemplateTable(
+    $("#test-template-table"),
+    {
+        part: {{ part.pk }},
+        params: {
+            part: {{ part.pk }},
+        }
+    }
+);
+
 {% endblock %}

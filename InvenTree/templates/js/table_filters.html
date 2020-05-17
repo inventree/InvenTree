@@ -44,7 +44,17 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: "{% trans 'Test result' %}",
             },
-        }
+        };
+    }
+
+    // Filters for the 'part test template' table
+    if (tableKey == 'parttests') {
+        return {
+            required: {
+                type: 'bool',
+                title: "{% trans "Required" %}",
+            }
+        };
     }
 
     // Filters for the "Build" table

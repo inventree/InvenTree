@@ -149,6 +149,12 @@ class PartTestTemplateList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Filter by 'required' status
+        required = params.get('required', None)
+
+        if required is not None:
+            queryset = queryset.filter(required=required)
+
         return queryset
 
     permission_classes = [permissions.IsAuthenticated]

@@ -285,3 +285,84 @@ function loadPartTable(table, url, options={}) {
         location.href = '/part/export/?parts=' + parts;
     });
 }
+
+
+function loadPartTestTemplateTable(table, options) {
+    /*
+     * Load PartTestTemplate table.
+     */
+    
+    var params = options.params || {};
+
+    var part = options.part || null;
+
+    var filterListElement = options.filterList || '#filter-list-parttests';
+
+    var filters = loadTableFilters("parttests");
+
+    var original = {};
+
+    for (var key in params) {
+        original[key] = params[key];
+    }
+
+    setupFilterList("parttests", table, filterListElement);
+
+    // Override the default values, or add new ones
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    table.inventreeTable({
+        method: 'get',
+        formatNoMatches: function() {
+            return '{% trans "No test templates matching query" %}';
+        },
+        url: "{% url 'api-part-test-template-list' %}",
+        queryParams: filters,
+        original: original,
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+            },
+            {
+                field: 'test_name',
+                title: "{% trans "Test Name" %}",
+                sortable: true,
+            },
+            {
+                field: 'required',
+                title: "{% trans 'Required' %}",
+                sortable: true,
+                formatter: function(value) {
+                    if (value) {
+                        return `<span class='label label-green'>{% trans "YES" %}</span>`;
+                    } else {
+                        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
+                    }
+                }
+            },
+            {
+                field: 'buttons',
+                formatter: function(value, row) {
+                    var pk = row.pk;
+
+                    if (row.part == part) {
+                        var html = `<div class='btn-group float-right' role='group'>`;
+                        
+                        html += makeIconButton('fa-edit icon-blue', 'button-test-edit', pk, '{% trans "Edit test result" %}');
+                        html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
+
+                        html += `</div>`;
+
+                        return html;
+                    } else {
+                        return '{% trans "This test is defined for a parent part" %}';
+                    }
+                }
+            }
+        ]
+    });
+}
