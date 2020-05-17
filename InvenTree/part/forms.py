@@ -139,13 +139,11 @@ class EditPartForm(HelperForm):
             'revision',
             'keywords',
             'variant_of',
-            'is_template',
             'link',
             'default_location',
             'default_supplier',
             'units',
             'minimum_stock',
-            'active',
         ]
 
 
