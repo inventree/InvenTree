@@ -1146,17 +1146,26 @@ class PartTestTemplate(models.Model):
 
     def save(self, *args, **kwargs):
 
-        self.validate_unique()
         self.clean()
 
         super().save(*args, **kwargs)
+
+    def clean(self):
+
+        self.test_name = self.test_name.strip()
+
+        self.validate_unique()
+        super().clean()
 
     def validate_unique(self, exclude=None):
         """
         Test that this test template is 'unique' within this part tree.
         """
 
-        super().validate_unique(exclude)
+        if not self.part.trackable:
+            raise ValidationError({
+                'part': _('Test templates can only be created for trackable parts')
+            })
 
         # Get a list of all tests "above" this one
         tests = PartTestTemplate.objects.filter(
@@ -1174,6 +1183,8 @@ class PartTestTemplate(models.Model):
                 raise ValidationError({
                     'test_name': _("Test with this name already exists for this part")
                 })
+
+        super().validate_unique(exclude)
 
     @property
     def key(self):
