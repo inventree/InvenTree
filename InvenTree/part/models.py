@@ -1109,6 +1109,76 @@ class PartStar(models.Model):
         unique_together = ['part', 'user']
 
 
+class PartTestTemplate(models.Model):
+    """
+    A PartTestTemplate defines a 'template' for a test which is required to be run
+    against a StockItem (an instance of the Part).
+
+    The test template applies "recursively" to part variants, allowing tests to be
+    defined in a heirarchy.
+
+    Test names are simply strings, rather than enforcing any sort of structure or pattern.
+    It is up to the user to determine what tests are defined (and how they are run).
+
+    To enable generation of unique lookup-keys for each test, there are some validation tests
+    run on the model (refer to the validate_unique function).
+    """
+
+    def save(self):
+
+        self.validate_unique()
+        self.clean()
+
+        super().save()
+
+    def validate_unique(self, exclude=None):
+        """
+        Test that this test template is 'unique' within this part tree.
+        """
+
+        super().validate_unique(exclude)
+
+        # Get a list of all tests "above" this one
+        tests = self.objects.filter(
+            part__in=self.part.get_ancestors(include_self=True)
+        )
+
+        # If this item is already in the database, exclude it from comparison!
+        if self.pk is not None:
+            tests = tests.exclude(pk=self.pk)
+
+        key = self.key
+
+        for test in tests:
+            if test.key == key:
+                raise ValidationError({
+                    'test_name': _("Test with this name already exists for this part")
+                })
+
+    @property
+    def key(self):
+        """ Generate a key for this test """
+        return helpers.generateTestKey(self.test_name)
+
+    part = models.ForeignKey(
+        Part,
+        on_delete=models.CASCADE,
+        related_name='test_templates'
+    )
+
+    test_name = models.CharField(
+        blank=False, max_length=100,
+        verbose_name=_("Test name"),
+        help_text=_("Enter a name for the test")
+    )
+
+    required = models.BooleanField(
+        default=True,
+        verbose_name=_("Required"),
+        help_text=_("Is this test required to pass?")
+    )
+
+
 class PartParameterTemplate(models.Model):
     """
     A PartParameterTemplate provides a template for key:value pairs for extra
