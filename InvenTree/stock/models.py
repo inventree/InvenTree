@@ -967,6 +967,49 @@ class StockItem(MPTTModel):
 
         return result_map
 
+    def requiredTestStatus(self):
+        """
+        Return the status of the tests required for this StockItem.
+
+        return:
+            A dict containing the following items:
+            - total: Number of required tests
+            - passed: Number of tests that have passed
+            - failed: Number of tests that have failed
+        """
+
+        # All the tests required by the part object
+        required = self.part.getRequiredTests()
+
+        results = self.testResultMap()
+
+        total = len(required)
+        passed = 0
+        failed = 0
+
+        for test in required:
+            key = helpers.generateTestKey(test.test_name)
+
+            if key in results:
+                result = results[key]
+
+                if result.result:
+                    passed += 1
+                else:
+                    failed += 1
+
+        return {
+            'total': total,
+            'passed': passed,
+            'failed': failed,
+        }
+
+    def passedAllRequiredTests(self):
+
+        status = self.requiredTestStatus()
+
+        return status['passed'] >= status['total']
+
 
 @receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
 def before_delete_stock_item(sender, instance, using, **kwargs):

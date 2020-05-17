@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from .models import StockLocation, StockItem, StockItemTracking
+from .models import StockItemTestResult
 from part.models import Part
 
 
@@ -15,6 +16,7 @@ class StockTest(TestCase):
     fixtures = [
         'category',
         'part',
+        'test_templates',
         'location',
         'stock',
         'stock_tests',
@@ -432,3 +434,33 @@ class TestResultTest(StockTest):
         # Keys are all lower-case and do not contain spaces
         for test in ['firmwareversion', 'settingschecksum', 'temperaturetest']:
             self.assertIn(test, result_map.keys())
+
+    def test_test_results(self):
+        item = StockItem.objects.get(pk=522)
+
+        status = item.requiredTestStatus()
+
+        self.assertEqual(status['total'], 5)
+        self.assertEqual(status['passed'], 3)
+        self.assertEqual(status['failed'], 1)
+
+        self.assertFalse(item.passedAllRequiredTests())
+
+        # Add some new test results to make it pass!
+        test = StockItemTestResult.objects.get(pk=12345)
+        test.result = True
+        test.save()
+
+        StockItemTestResult.objects.create(
+            stock_item=item,
+            test='sew cushion',
+            result=True
+        )
+
+        results = item.testResultMap()
+
+        for key in results.keys():
+            result = results[key]
+    
+        self.assertTrue(item.passedAllRequiredTests())
+

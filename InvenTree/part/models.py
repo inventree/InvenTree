@@ -1009,6 +1009,10 @@ class Part(MPTTModel):
             tests = tests.filter(required=required)
 
         return tests
+    
+    def getRequiredTests(self):
+        # Return the tests which are required by this part
+        return self.getTestTemplates(required=True)
 
     @property
     def attachment_count(self):
