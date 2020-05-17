@@ -129,6 +129,15 @@
             {% endif %}
         </tr>
         <tr>
+            <td><b>{% trans "Template" %}</b></td>
+            <td>{% include "slide.html" with state=part.is_template field='is_template' %}</td>
+            {% if part.is_template %}
+            <td>{% trans "Part is a template part (variants can be made from this part)" %}</td>
+            {% else %}
+            <td><i>{% trans "Part is not a template part" %}</i></td>
+            {% endif %}
+        </tr>
+        <tr>
             <td><b>{% trans "Assembly" %}</b></td>
             <td>{% include "slide.html" with state=part.assembly field='assembly' %}</td>   
             {% if part.assembly %}
@@ -173,6 +182,15 @@
             <td><i>{% trans "Part cannot be sold to customers" %}</i></td>
             {% endif %}
         </tr>
+        <tr>
+            <td><b>{% trans "Active" %}</b></td>
+            <td>{% include "slide.html" with state=part.active field='active' %}</td>
+            {% if part.active %}
+            <td>{% trans "Part is active" %}</td>
+            {% else %}
+            <td><i>{% trans "Part is not active" %}</i></td>
+            {% endif %}
+        </tr>
     </table>
     </div>
 </div>
@@ -196,7 +214,7 @@
         data[field] = checked;
 
         // Update the particular field
-        inventreePut("/api/part/{{ part.id }}/",
+        inventreePut("{% url 'api-part-detail' part.id %}",
             data,
             {
                 method: 'PATCH',

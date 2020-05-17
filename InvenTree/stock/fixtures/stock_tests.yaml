@@ -29,3 +29,40 @@
     result: True
     date: 2020-05-17
     notes: 'Passed temperature test by making it cooler'
+
+- model: stock.stockitemtestresult
+  fields:
+    stock_item: 522
+    test: 'applypaint'
+    result: True
+    date: 2020-05-17
+
+- model: stock.stockitemtestresult
+  fields:
+    stock_item: 522
+    test: 'applypaint'
+    result: False
+    date: 2020-05-18
+
+- model: stock.stockitemtestresult
+  fields:
+    stock_item: 522
+    test: 'Attach Legs'
+    result: True
+    date: 2020-05-17
+
+- model: stock.stockitemtestresult
+  fields:
+    stock_item: 522
+    test: 'Check that chair is GreEn   '
+    result: True
+    date: 2020-05-17
+
+- model: stock.stockitemtestresult
+  pk: 12345
+  fields:
+    stock_item: 522
+    test: 'test strength of chair'
+    result: False
+    value: 100kg
+    date: 2020-05-17

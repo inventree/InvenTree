@@ -16,6 +16,7 @@ class PartAPITest(APITestCase):
         'part',
         'location',
         'bom',
+        'test_templates',
     ]
 
     def setUp(self):
@@ -159,3 +160,56 @@ class PartAPITest(APITestCase):
         data['part'] = 2
         data['sub_part'] = 2
         response = self.client.post(url, data, format='json')
+
+    def test_test_templates(self):
+
+        url = reverse('api-part-test-template-list')
+
+        # List ALL items
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 7)
+
+        # Request for a particular part
+        response = self.client.get(url, data={'part': 10000})
+        self.assertEqual(len(response.data), 5)
+
+        response = self.client.get(url, data={'part': 10004})
+        self.assertEqual(len(response.data), 7)
+
+        # Try to post a new object (should succeed)
+        response = self.client.post(
+            url,
+            data={
+                'part': 10000,
+                'test_name': 'New Test',
+                'required': True,
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Try to post a new test with the same name (should fail)
+        response = self.client.post(
+            url,
+            data={
+                'part': 10004,
+                'test_name': "   newtest"
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Try to post a new test against a non-trackable part (should fail)
+        response = self.client.post(
+            url,
+            data={
+                'part': 1,
+                'test_name': 'A simple test',
+            }
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

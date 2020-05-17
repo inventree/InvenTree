@@ -15,6 +15,12 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% block pre_content %}
 {% include 'stock/loc_link.html' with location=item.location %}
 
+{% if item.hasRequiredTests and not item.passedAllRequiredTests %}
+<div class='alert alert-block alert-danger'>
+    {% trans "This stock item has not passed all required tests" %}
+</div>
+{% endif %}
+
 {% for allocation in item.sales_order_allocations.all %}
 <div class='alert alert-block alert-info'>
     {% trans "This stock item is allocated to Sales Order" %} <a href="{% url 'so-detail' allocation.line.order.id %}"><b>#{{ allocation.line.order.reference }}</b></a> ({% trans "Quantity" %}: {% decimal allocation.quantity %})
@@ -221,6 +227,13 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td>{% trans "Status" %}</td>
         <td>{% stock_status_label item.status %}</td>
     </tr>
+    {% if item.hasRequiredTests %}
+    <tr>
+        <td><span class='fas fa-vial'></span></td>
+        <td>{% trans "Tests" %}</td>
+        <td>{{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}</td>
+    </tr>
+    {% endif %}
 </table>
 {% endblock %}
 

@@ -19,7 +19,7 @@ from django.urls import reverse
 
 from .models import Part, PartCategory, BomItem, PartStar
 from .models import PartParameter, PartParameterTemplate
-from .models import PartAttachment
+from .models import PartAttachment, PartTestTemplate
 
 from . import serializers as part_serializers
 
@@ -117,6 +117,52 @@ class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
 
     filter_fields = [
         'part',
+    ]
+
+
+class PartTestTemplateList(generics.ListCreateAPIView):
+    """
+    API endpoint for listing (and creating) a PartTestTemplate.
+    """
+
+    queryset = PartTestTemplate.objects.all()
+    serializer_class = part_serializers.PartTestTemplateSerializer
+
+    def filter_queryset(self, queryset):
+        """
+        Filter the test list queryset.
+
+        If filtering by 'part', we include results for any parts "above" the specified part.
+        """
+
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        part = params.get('part', None)
+
+        # Filter by part
+        if part:
+            try:
+                part = Part.objects.get(pk=part)
+                queryset = queryset.filter(part__in=part.get_ancestors(include_self=True))
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        # Filter by 'required' status
+        required = params.get('required', None)
+
+        if required is not None:
+            queryset = queryset.filter(required=required)
+
+        return queryset
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+        filters.SearchFilter,
     ]
 
 
@@ -635,8 +681,13 @@ part_api_urls = [
         url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
     ])),
 
+    # Base URL for PartTestTemplate API endpoints
+    url(r'^test-template/', include([
+        url(r'^$', PartTestTemplateList.as_view(), name='api-part-test-template-list'),
+    ])),
+
     # Base URL for PartAttachment API endpoints
-    url(r'attachment/', include([
+    url(r'^attachment/', include([
         url(r'^$', PartAttachmentList.as_view(), name='api-part-attachment-list'),
     ])),
     

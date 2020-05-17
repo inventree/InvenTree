@@ -22,10 +22,25 @@ function removeStockRow(e) {
 function passFailBadge(result) {
 
     if (result) {
-        return `<span class='label label-green'>{% trans "PASS" %}</span>`;
+        return `<span class='label label-green float-right'>{% trans "PASS" %}</span>`;
     } else {
-        return `<span class='label label-red'>{% trans "FAIL" %}</span>`;
+        return `<span class='label label-red float-right'>{% trans "FAIL" %}</span>`;
     }
+}
+
+function noResultBadge() {
+    return `<span class='label label-blue float-right'>{% trans "NO RESULT" %}</span>`;
+}
+
+function testKey(test_name) {
+    // Convert test name to a unique key without any illegal chars
+
+    test_name = test_name.trim().toLowerCase();
+    test_name = test_name.replace(' ', '');
+
+    test_name = test_name.replace(/[^0-9a-z]/gi, '');
+
+    return test_name;
 }
 
 function loadStockTestResultsTable(table, options) {
@@ -33,68 +48,76 @@ function loadStockTestResultsTable(table, options) {
      * Load StockItemTestResult table
      */
 
-    var params = options.params || {};
-    
-    // HTML element to setup the filtering
-    var filterListElement = options.filterList || '#filter-list-stocktests';
+    function formatDate(row) {
+        // Function for formatting date field
+        var html = row.date;
 
-    var filters = {};
+        if (row.user_detail) {
+            html += `<span class='badge'>${row.user_detail.username}</span>`;
+        }
 
-    filters = loadTableFilters("stocktests");
+        if (row.attachment_detail) {
+            html += `<a href='${row.attachment_detail.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
+        }
 
-    var original = {};
-
-    for (var key in params) {
-        original[key] = params[key];
+        return html;
     }
 
-    setupFilterList("stocktests", table, filterListElement);
+    function makeButtons(row, grouped) {
+        var html = `<div class='btn-group float-right' role='group'>`;
 
-    // Override the default values, or add new ones
-    for (var key in params) {
-        filters[key] = params[key];
+        html += makeIconButton('fa-plus icon-green', 'button-test-add', row.test_name, '{% trans "Add test result" %}');
+
+        if (!grouped && row.result != null) {
+            var pk = row.pk;
+            html += makeIconButton('fa-edit icon-blue', 'button-test-edit', pk, '{% trans "Edit test result" %}');
+            html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
+        }
+        
+        html += "</div>";
+
+        return html;
     }
 
+    // First, load all the test templates
     table.inventreeTable({
+        url: "{% url 'api-part-test-template-list' %}",
         method: 'get',
         formatNoMatches: function() {
-            return '{% trans "No test results matching query" %}';
+            return "{% trans 'No test results found' %}";
         },
-        url: "{% url 'api-stock-test-result-list' %}",
-        queryParams: filters,
-        original: original,
+        queryParams: {
+            part: options.part,
+        },
         columns: [
             {
                 field: 'pk',
                 title: 'ID',
-                visible: false
+                visible: false,
             },
             {
-                field: 'test',
-                title: '{% trans "Test" %}',
+                field: 'test_name',
+                title: "{% trans "Test Name" %}",
                 sortable: true,
                 formatter: function(value, row) {
                     var html = value;
 
-                    if (row.attachment_detail) {
-                        html += `<a href='${row.attachment_detail.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
+                    if (row.required) {
+                        html = `<b>${value}</b>`;
+                    }
+
+                    if (row.result == null) {
+                        html += noResultBadge();
+                    } else {
+                        html += passFailBadge(row.result);
                     }
 
                     return html;
-                },
-            },
-            {
-                field: 'result',
-                title: "{% trans "Result" %}",
-                sortable: true,
-                formatter: function(value) {
-                    return passFailBadge(value);
                 }
             },
             {
                 field: 'value',
-                title: "{% trans "Value" %}",
-                sortable: true,
+                title: '{% trans "Value" %}',
             },
             {
                 field: 'notes',
@@ -102,35 +125,98 @@ function loadStockTestResultsTable(table, options) {
             },
             {
                 field: 'date',
-                title: '{% trans "Uploaded" %}',
-                sortable: true,
+                title: '{% trans "Test Date" %}',
                 formatter: function(value, row) {
-                    var html = value;
-
-                    if (row.user_detail) {
-                        html += `<span class='badge'>${row.user_detail.username}</span>`;
-                    }
-
-                    return html;
+                    return formatDate(row);
                 }
             },
             {
                 field: 'buttons',
                 formatter: function(value, row) {
-
-                    var pk = row.pk;
-
-                    var html = `<div class='btn-group float-right' role='group'>`;
-                    
-                    html += makeIconButton('fa-edit icon-blue', 'button-test-edit', pk, '{% trans "Edit test result" %}');
-                    html += makeIconButton('fa-trash-alt icon-red', 'button-test-delete', pk, '{% trans "Delete test result" %}');
-
-                    html += `</div>`;
-
-                    return html;
+                    return makeButtons(row, false);
                 }
             },
-        ]
+        ],
+        groupBy: true,
+        groupByField: 'test_name',
+        groupByFormatter: function(field, id, data) {
+
+            // Extract the "latest" row (data are returned in date order from the server)
+            var latest = data[data.length-1];
+
+            switch (field) {
+            case 'test_name':
+                return latest.test_name + ` <i>(${data.length})</i>` + passFailBadge(latest.result);
+            case 'value':
+                return latest.value;
+            case 'notes':
+                return latest.notes;
+            case 'date':
+                return formatDate(latest);
+            case 'buttons':
+                // Buttons are done differently for grouped rows
+                return makeButtons(latest, true);
+            default:
+                return "---";
+            }
+        },
+        onLoadSuccess: function(tableData) {
+            // Once the test template data are loaded, query for results
+            inventreeGet(
+                "{% url 'api-stock-test-result-list' %}",
+                {
+                    stock_item: options.stock_item,
+                    user_detail: true,
+                    attachment_detail: true,
+                },
+                {
+                    success: function(data) {
+
+                        // Iterate through the returned test result data, and group by test
+                        data.forEach(function(item) {
+                            var match = false;
+                            var override = false;
+
+                            var key = testKey(item.test);
+
+                            // Try to associate this result with a test row
+                            tableData.forEach(function(row, index) {
+                                
+                                
+                                // The result matches the test template row
+                                if (key == testKey(row.test_name)) {
+                                    
+                                    // Force the names to be the same!
+                                    item.test_name = row.test_name;
+                                    item.required = row.required;
+
+                                    if (row.result == null) {
+                                        // The original row has not recorded a result - override!
+                                        tableData[index] = item;
+                                        override = true;
+                                    }
+
+                                    match = true;
+                                }
+                            });
+
+                            // No match could be found (this is a new test!)
+                            if (!match) {
+
+                                item.test_name = item.test;
+                            }
+
+                            if (!override) {
+                                tableData.push(item);
+                            }
+                        });
+
+                        // Finally, push the data back into the table!
+                        table.bootstrapTable("load", tableData);
+                    }
+                },
+            );
+        }
     });
 }
 

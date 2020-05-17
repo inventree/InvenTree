@@ -106,6 +106,7 @@
     name: 'Chair Template'
     description: 'A chair'
     is_template: True
+    trackable: true
     category: 7
     tree_id: 1
     level: 0
@@ -117,6 +118,7 @@
   fields:
     name: 'Blue Chair'
     variant_of: 10000
+    trackable: true
     category: 7
     tree_id: 1
     level: 0
@@ -128,6 +130,7 @@
   fields:
     name: 'Red chair'
     variant_of: 10000
+    trackable: true
     category: 7
     tree_id: 1
     level: 0
@@ -140,6 +143,7 @@
     name: 'Green chair'
     variant_of: 10000
     category: 7
+    trackable: true
     tree_id: 1
     level: 0
     lft: 0
@@ -150,7 +154,8 @@
   fields:
     name: 'Green chair variant'
     variant_of: 10003
-    category: 
+    category: 7
+    trackable: true
     tree_id: 1
     level: 0
     lft: 0

@@ -12,6 +12,7 @@ from .models import PartCategory, Part
 from .models import PartAttachment, PartStar
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
+from .models import PartTestTemplate
 
 from stock.models import StockLocation
 from company.models import SupplierPart
@@ -126,6 +127,11 @@ class PartStarAdmin(admin.ModelAdmin):
     list_display = ('part', 'user')
 
 
+class PartTestTemplateAdmin(admin.ModelAdmin):
+
+    list_display = ('part', 'test_name', 'required')
+
+
 class BomItemResource(ModelResource):
     """ Class for managing BomItem data import/export """
 
@@ -202,3 +208,4 @@ admin.site.register(PartStar, PartStarAdmin)
 admin.site.register(BomItem, BomItemAdmin)
 admin.site.register(PartParameterTemplate, ParameterTemplateAdmin)
 admin.site.register(PartParameter, ParameterAdmin)
+admin.site.register(PartTestTemplate, PartTestTemplateAdmin)
