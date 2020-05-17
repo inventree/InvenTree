@@ -36,4 +36,40 @@ loadPartTestTemplateTable(
     }
 );
 
+function reloadTable() {
+    $("#test-template-table").bootstrapTable("refresh");
+}
+
+$("#add-test-template").click(function() {
+    launchModalForm(
+        "{% url 'part-test-template-create' %}",
+        {
+            data: {
+                part: {{ part.id }},
+            },
+            success: reloadTable,
+        }
+    );
+});
+
+$("#test-template-table").on('click', '.button-test-edit', function() {
+    var button = $(this);
+
+    var url = `/part/test-template/${button.attr('pk')}/edit/`;
+
+    launchModalForm(url, {
+        success: reloadTable,
+    });
+});
+
+$("#test-template-table").on('click', '.button-test-delete', function() {
+    var button = $(this);
+
+    var url = `/part/test-template/${button.attr('pk')}/delete/`;
+
+    launchModalForm(url, {
+        success: reloadTable,
+    });
+});
+
 {% endblock %}

@@ -15,6 +15,7 @@ from django.utils.translation import ugettext as _
 from .models import Part, PartCategory, PartAttachment
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
+from .models import PartTestTemplate
 
 from common.models import Currency
 
@@ -26,6 +27,19 @@ class PartImageForm(HelperForm):
         model = Part
         fields = [
             'image',
+        ]
+
+
+class EditPartTestTemplateForm(HelperForm):
+    """ Class for creating / editing a PartTestTemplate object """
+
+    class Meta:
+        model = PartTestTemplate
+
+        fields = [
+            'part',
+            'test_name',
+            'required'
         ]
 
 
