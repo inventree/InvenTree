@@ -10,7 +10,7 @@
     {% if item.part.trackable %}
     <li{% if tab == 'tests' %} class='active'{% endif %}>
         <a href="{% url 'stock-item-test-results' item.id %}">
-            {% trans "Test Results" %}
+            {% trans "Test Data" %}
             {% if item.test_results.count > 0 %}<span class='badge'>{{ item.test_results.count }}</span>{% endif %}
         </a>
     </li>

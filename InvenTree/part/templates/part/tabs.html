@@ -48,13 +48,21 @@
         <a href="{% url 'part-sales-orders' part.id %}">{% trans "Sales Orders" %} <span class='badge'>{{ part.sales_orders|length }}</span></a>
     </li>
     {% endif %}
-    {% if 0 and part.trackable %}
+    {% if part.trackable %}
+    {% if 0 %}
+    <!-- TODO - Add the 'tracking' tab back in -->
     <li{% ifequal tab 'track' %} class="active"{% endifequal %}>
         <a href="{% url 'part-track' part.id %}">{% trans "Tracking" %}
         {% if parts.serials.all|length > 0 %}
         <span class="badge">{{ part.serials.all|length }}</span>
         {% endif %}
     </a></li>
+    {% endif %}
+    <li{% ifequal tab 'tests' %} class='active'{% endifequal %}>
+        <a href='{% url "part-test-templates" part.id %}'>{% trans "Tests" %}
+            {% if part.getTestTemplates.count > 0 %}<span class='badge'>{{ part.getTestTemplates.count }}</span>{% endif %}
+        </a>
+    </li>
     {% endif %}
     <li{% ifequal tab 'attachments' %} class="active"{% endifequal %}>
         <a href="{% url 'part-attachments' part.id %}">{% trans "Attachments" %} {% if part.attachment_count > 0 %}<span class="badge">{{ part.attachment_count }}</span>{% endif %}</a>
