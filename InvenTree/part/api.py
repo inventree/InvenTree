@@ -159,6 +159,7 @@ class PartTestTemplateList(generics.ListCreateAPIView):
         filters.SearchFilter,
     ]
 
+
 class PartThumbs(generics.ListAPIView):
     """ API endpoint for retrieving information on available Part thumbnails """
 
