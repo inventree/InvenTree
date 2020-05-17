@@ -990,6 +990,26 @@ class Part(MPTTModel):
 
         self.save()
 
+    def getTestTemplates(self, required=None, include_parent=True):
+        """
+        Return a list of all test templates associated with this Part.
+        These are used for validation of a StockItem.
+
+        args:
+            required: Set to True or False to filter by "required" status
+            include_parent: Set to True to traverse upwards
+        """
+
+        if include_parent:
+            tests = PartTestTemplate.objects.filter(part__in=self.get_ancestors(include_self=True))
+        else:
+            tests = self.test_templates
+
+        if required is not None:
+            tests = tests.filter(required=required)
+
+        return tests
+
     @property
     def attachment_count(self):
         """ Count the number of attachments for this part.
@@ -1124,12 +1144,12 @@ class PartTestTemplate(models.Model):
     run on the model (refer to the validate_unique function).
     """
 
-    def save(self):
+    def save(self, *args, **kwargs):
 
         self.validate_unique()
         self.clean()
 
-        super().save()
+        super().save(*args, **kwargs)
 
     def validate_unique(self, exclude=None):
         """
@@ -1139,7 +1159,7 @@ class PartTestTemplate(models.Model):
         super().validate_unique(exclude)
 
         # Get a list of all tests "above" this one
-        tests = self.objects.filter(
+        tests = PartTestTemplate.objects.filter(
             part__in=self.part.get_ancestors(include_self=True)
         )
 
