@@ -286,6 +286,14 @@ function loadPartTable(table, url, options={}) {
     });
 }
 
+function yesNoLabel(value) {
+    if (value) {
+        return `<span class='label label-green'>{% trans "YES" %}</span>`;
+    } else {
+        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
+    }
+}
+
 
 function loadPartTestTemplateTable(table, options) {
     /*
@@ -333,15 +341,29 @@ function loadPartTestTemplateTable(table, options) {
                 sortable: true,
             },
             {
+                field: 'description',
+                title: "{% trans "Description" %}",
+            },
+            {
                 field: 'required',
                 title: "{% trans 'Required' %}",
                 sortable: true,
                 formatter: function(value) {
-                    if (value) {
-                        return `<span class='label label-green'>{% trans "YES" %}</span>`;
-                    } else {
-                        return `<span class='label label-yellow'>{% trans "NO" %}</span>`;
-                    }
+                    return yesNoLabel(value);
+                }
+            },
+            {
+                field: 'requires_value',
+                title: "{% trans "Requires Value" %}",
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
+            },
+            {
+                field: 'requires_attachment',
+                title: "{% trans "Requires Attachment" %}",
+                formatter: function(value) {
+                    return yesNoLabel(value);
                 }
             },
             {
