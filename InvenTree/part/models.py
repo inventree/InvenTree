@@ -1204,14 +1204,32 @@ class PartTestTemplate(models.Model):
 
     test_name = models.CharField(
         blank=False, max_length=100,
-        verbose_name=_("Test name"),
+        verbose_name=_("Test Name"),
         help_text=_("Enter a name for the test")
+    )
+
+    description = models.CharField(
+        blank=False, null=True, max_length=100,
+        verbose_name=_("Test Description"),
+        help_text=_("Enter description for this test")
     )
 
     required = models.BooleanField(
         default=True,
         verbose_name=_("Required"),
         help_text=_("Is this test required to pass?")
+    )
+
+    requires_value = models.BooleanField(
+        default=False,
+        verbose_name=_("Requires Value"),
+        help_text=_("Does this test require a value when adding a test result?")
+    )
+
+    requires_attachment = models.BooleanField(
+        default=False,
+        verbose_name=_("Requires Attachment"),
+        help_text=_("Does this test require a file attachment when adding a test result?")
     )
 
 

@@ -39,7 +39,10 @@ class EditPartTestTemplateForm(HelperForm):
         fields = [
             'part',
             'test_name',
-            'required'
+            'description',
+            'required',
+            'requires_value',
+            'requires_attachment',
         ]
 
 
