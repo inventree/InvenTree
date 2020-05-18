@@ -5,6 +5,7 @@ Helper forms which subclass Django forms to provide additional functionality
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext as _
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
@@ -92,6 +93,20 @@ class HelperForm(forms.ModelForm):
         self.helper.layout = Layout(*layouts)
 
 
+class ConfirmForm(forms.Form):
+    """ Generic confirmation form """
+
+    confirm = forms.BooleanField(
+        required=False, initial=False,
+        help_text=_("Confirm")
+    )
+
+    class Meta:
+        fields = [
+            'confirm'
+        ]
+
+
 class DeleteForm(forms.Form):
     """ Generic deletion form which provides simple user confirmation
     """
@@ -99,7 +114,7 @@ class DeleteForm(forms.Form):
     confirm_delete = forms.BooleanField(
         required=False,
         initial=False,
-        help_text='Confirm item deletion'
+        help_text=_('Confirm item deletion')
     )
 
     class Meta:
@@ -131,14 +146,14 @@ class SetPasswordForm(HelperForm):
                                      required=True,
                                      initial='',
                                      widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
-                                     help_text='Enter new password')
+                                     help_text=_('Enter new password'))
 
     confirm_password = forms.CharField(max_length=100,
                                        min_length=8,
                                        required=True,
                                        initial='',
                                        widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
-                                       help_text='Confirm new password')
+                                       help_text=_('Confirm new password'))
 
     class Meta:
         model = User

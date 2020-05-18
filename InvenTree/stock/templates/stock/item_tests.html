@@ -14,6 +14,9 @@
     <div class='button-toolbar container-fluid' style="float: right;">
         <div class='btn-group' role='group'>
             <button type='button' class='btn btn-success' id='add-test-result'>{% trans "Add Test Data" %}</button>
+            {% if user.is_staff %}
+            <button type='button' class='btn btn-danger' id='delete-test-results'>{% trans "Delete Test Data" %}</button>
+            {% endif %}
         </div>
         <div class='filter-list' id='filter-list-stocktests'>
             <!-- Empty div -->
@@ -39,6 +42,17 @@ function reloadTable() {
     location.reload();
     //$("#test-result-table").bootstrapTable("refresh");
 }
+
+{% if user.is_staff %}
+$("#delete-test-results").click(function() {
+    launchModalForm(
+        "{% url 'stock-item-delete-test-data' item.id %}",
+        {
+            success: reloadTable,
+        }
+    );
+});
+{% endif %}
 
 $("#add-test-result").click(function() {
     launchModalForm(
