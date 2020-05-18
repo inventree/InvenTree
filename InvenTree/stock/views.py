@@ -244,7 +244,6 @@ class StockItemDeleteTestData(AjaxUpdateView):
 
     def post(self, request, *args, **kwargs):
 
-
         valid = False
 
         stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
