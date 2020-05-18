@@ -1115,6 +1115,28 @@ class StockItemTestResult(models.Model):
                     })
         except (StockItem.DoesNotExist, StockItemAttachment.DoesNotExist):
             pass
+        
+        # If this test result corresponds to a template, check the requirements of the template
+        key = helpers.generateTestKey(self.test)
+
+        templates = self.stock_item.part.getTestTemplates()
+
+        for template in templates:
+            if key == template.key:
+                
+                if template.requires_value:
+                    if not self.value:
+                        raise ValidationError({
+                            "value": _("Value must be provided for this test"),
+                        })
+
+                if template.requires_attachment:
+                    if not self.attachment:
+                        raise ValidationError({
+                            "attachment": _("Attachment must be uploaded for this test"),
+                        })
+
+                break
 
     stock_item = models.ForeignKey(
         StockItem,
