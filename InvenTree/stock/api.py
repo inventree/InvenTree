@@ -499,7 +499,7 @@ class StockList(generics.ListCreateAPIView):
         if serial_number is not None:
             queryset = queryset.filter(serial=serial_number)
         
-        in_stock = self.request.query_params.get('in_stock', None)
+        in_stock = params.get('in_stock', None)
 
         if in_stock is not None:
             in_stock = str2bool(in_stock)
@@ -512,7 +512,7 @@ class StockList(generics.ListCreateAPIView):
                 queryset = queryset.exclude(StockItem.IN_STOCK_FILTER)
 
         # Filter by 'allocated' patrs?
-        allocated = self.request.query_params.get('allocated', None)
+        allocated = params.get('allocated', None)
 
         if allocated is not None:
             allocated = str2bool(allocated)
@@ -531,8 +531,14 @@ class StockList(generics.ListCreateAPIView):
             active = str2bool(active)
             queryset = queryset.filter(part__active=active)
 
+        # Filter by internal part number
+        IPN = params.get('IPN', None)
+
+        if IPN:
+            queryset = queryset.filter(part__IPN=IPN)
+
         # Does the client wish to filter by the Part ID?
-        part_id = self.request.query_params.get('part', None)
+        part_id = params.get('part', None)
 
         if part_id:
             try:
