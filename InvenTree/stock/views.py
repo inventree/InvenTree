@@ -17,6 +17,7 @@ from django.utils.translation import ugettext as _
 from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
+from InvenTree.forms import ConfirmForm
 
 from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
 from InvenTree.helpers import ExtractSerialNumbers
@@ -227,6 +228,41 @@ class StockItemAttachmentDelete(AjaxDeleteView):
         return {
             'danger': _("Deleted attachment"),
         }
+
+
+class StockItemDeleteTestData(AjaxUpdateView):
+    """
+    View for deleting all test data
+    """
+
+    model = StockItem
+    form_class = ConfirmForm
+    ajax_form_title = _("Delete All Test Data")
+
+    def get_form(self):
+        return ConfirmForm()
+
+    def post(self, request, *args, **kwargs):
+
+        valid = False
+
+        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
+        form = self.get_form()
+        
+        confirm = str2bool(request.POST.get('confirm', False))
+
+        if confirm is not True:
+            form.errors['confirm'] = [_('Confirm test data deletion')]
+            form.non_field_errors = [_('Check the confirmation box')]
+        else:
+            stock_item.test_results.all().delete()
+            valid = True
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data)
 
 
 class StockItemTestResultCreate(AjaxCreateView):
