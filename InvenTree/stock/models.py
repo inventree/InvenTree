@@ -1112,12 +1112,12 @@ class StockItemTestResult(models.Model):
 
         super().clean()
 
+        """
         # If this test result corresponds to a template, check the requirements of the template
         key = helpers.generateTestKey(self.test)
 
         templates = self.stock_item.part.getTestTemplates()
 
-        """
         TODO: Re-introduce this at a later stage, it is buggy when uplaoding an attachment via the API
         for template in templates:
             if key == template.key:
