@@ -1102,20 +1102,16 @@ class StockItemTestResult(models.Model):
         date: Date the test result was recorded
     """
 
+    def save(self, *args, **kwargs):
+
+        super().clean()
+        super().validate_unique()
+        super().save(*args, **kwargs)
+
     def clean(self):
 
         super().clean()
 
-        # If an attachment is linked to this result, the attachment must also point to the item
-        try:
-            if self.attachment:
-                if not self.attachment.stock_item == self.stock_item:
-                    raise ValidationError({
-                        'attachment': _("Test result attachment must be linked to the same StockItem"),
-                    })
-        except (StockItem.DoesNotExist, StockItemAttachment.DoesNotExist):
-            pass
-        
         # If this test result corresponds to a template, check the requirements of the template
         key = helpers.generateTestKey(self.test)
 
@@ -1130,13 +1126,26 @@ class StockItemTestResult(models.Model):
                             "value": _("Value must be provided for this test"),
                         })
 
+                """
+                TODO: Re-introduce this at a later stage, it is buggy when uplaoding an attachment via the API
                 if template.requires_attachment:
                     if not self.attachment:
                         raise ValidationError({
                             "attachment": _("Attachment must be uploaded for this test"),
                         })
+                """
 
                 break
+
+        # If an attachment is linked to this result, the attachment must also point to the item
+        try:
+            if self.attachment:
+                if not self.attachment.stock_item == self.stock_item:
+                    raise ValidationError({
+                        'attachment': _("Test result attachment must be linked to the same StockItem"),
+                    })
+        except (StockItem.DoesNotExist, StockItemAttachment.DoesNotExist):
+            pass
 
     stock_item = models.ForeignKey(
         StockItem,
