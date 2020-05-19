@@ -1117,6 +1117,8 @@ class StockItemTestResult(models.Model):
 
         templates = self.stock_item.part.getTestTemplates()
 
+        """
+        TODO: Re-introduce this at a later stage, it is buggy when uplaoding an attachment via the API
         for template in templates:
             if key == template.key:
                 
@@ -1126,16 +1128,14 @@ class StockItemTestResult(models.Model):
                             "value": _("Value must be provided for this test"),
                         })
 
-                """
-                TODO: Re-introduce this at a later stage, it is buggy when uplaoding an attachment via the API
                 if template.requires_attachment:
                     if not self.attachment:
                         raise ValidationError({
                             "attachment": _("Attachment must be uploaded for this test"),
                         })
-                """
 
                 break
+        """
 
         # If an attachment is linked to this result, the attachment must also point to the item
         try:
