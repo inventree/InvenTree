@@ -1112,7 +1112,7 @@ class StockItemTestResult(models.Model):
 
         super().clean()
 
-         # If this test result corresponds to a template, check the requirements of the template
+        # If this test result corresponds to a template, check the requirements of the template
         key = helpers.generateTestKey(self.test)
 
         templates = self.stock_item.part.getTestTemplates()
@@ -1134,7 +1134,7 @@ class StockItemTestResult(models.Model):
                             "attachment": _("Attachment must be uploaded for this test"),
                         })
                 """
-                
+
                 break
 
         # If an attachment is linked to this result, the attachment must also point to the item
