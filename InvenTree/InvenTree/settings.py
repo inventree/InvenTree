@@ -148,6 +148,7 @@ INSTALLED_APPS = [
     'mptt',                         # Modified Preorder Tree Traversal
     'markdownx',                    # Markdown editing
     'markdownify',                  # Markdown template rendering
+    'django_tex',                   # LaTeX output
 ]
 
 LOGGING = {
@@ -198,6 +199,14 @@ TEMPLATES = [
                 'InvenTree.context.status_codes',
             ],
         },
+    },
+    # Backend for LaTeX report rendering
+    {
+        'NAME': 'tex',
+        'BACKEND': 'django_tex.engine.TeXEngine', 
+        'DIRS': [
+            os.path.join(MEDIA_ROOT, 'report'),
+        ]
     },
 ]
 
@@ -339,6 +348,17 @@ USE_TZ = True
 
 DATE_INPUT_FORMATS = [
     "%Y-%m-%d",
+]
+
+# LaTeX rendering settings (django-tex)
+latex_settings = CONFIG.get('latex', {})
+
+# Set the latex interpreter in the config.yaml settings file
+LATEX_INTERPRETER = latex_settings.get('interpreter', 'pdflatex')
+
+LATEX_GRAPHICSPATH = [
+    # Allow LaTeX files to access the report assets directory
+    os.path.join(MEDIA_ROOT, "report", "assets"),
 ]
 
 # crispy forms use the bootstrap templates

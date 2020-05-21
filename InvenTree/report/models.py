@@ -12,6 +12,8 @@ from django.core.validators import FileExtensionValidator
 
 from django.utils.translation import gettext_lazy as _
 
+from django_tex.shortcuts import render_to_pdf
+
 
 def rename_template(instance, filename):
 
@@ -28,6 +30,28 @@ class ReportTemplate(models.Model):
     def __str__(self):
         return os.path.basename(self.template.name)
 
+    @property
+    def extension(self):
+        return os.path.splitext(self.template.name)[1].lower()
+
+    def render(self, request, context={}, **kwargs):
+        """
+        Render to template.
+        """
+
+        filename = kwargs.get('filename', 'report.pdf')
+
+        template = os.path.join('report_template', os.path.basename(self.template.name))
+
+        if 1 or self.extension == '.tex':
+            return render_to_pdf(request, template, context, filename=filename)
+
+    name = models.CharField(
+        blank=False, max_length=100,
+        help_text=_('Template name'),
+        unique=True,
+    )
+
     template = models.FileField(
         upload_to=rename_template,
         help_text=_("Report template file"),
@@ -35,6 +59,13 @@ class ReportTemplate(models.Model):
     )
 
     description = models.CharField(max_length=250, help_text=_("Report template description"))
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        help_text=_("Query filters (comma-separated list of key=value pairs)"),
+        validators=[validate_filter_string]
+    )
 
 
 def rename_asset(instance, filename):
