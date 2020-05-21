@@ -8,7 +8,7 @@ from .models import ReportTemplate, ReportAsset
 
 class ReportTemplateAdmin(admin.ModelAdmin):
 
-    list_display = ('template', 'description')
+    list_display = ('name', 'description', 'template')
 
 
 class ReportAssetAdmin(admin.ModelAdmin):
