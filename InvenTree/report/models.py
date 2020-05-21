@@ -19,6 +19,7 @@ def rename_template(instance, filename):
 
     return os.path.join('report', 'template', filename)
 
+
 class ReportTemplate(models.Model):
     """
     Reporting template model.
