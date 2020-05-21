@@ -72,6 +72,27 @@ if DEBUG:
         format='%(asctime)s %(levelname)s %(message)s',
     )
 
+# Web URL endpoint for served static files
+STATIC_URL = '/static/'
+
+# The filesystem location for served static files
+STATIC_ROOT = os.path.abspath(CONFIG.get('static_root', os.path.join(BASE_DIR, 'static')))
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'InvenTree', 'static'),
+]
+
+# Web URL endpoint for served media files
+MEDIA_URL = '/media/'
+
+# The filesystem location for served static files
+MEDIA_ROOT = os.path.abspath(CONFIG.get('media_root', os.path.join(BASE_DIR, 'media')))
+
+if DEBUG:
+    print("InvenTree running in DEBUG mode")
+    print("MEDIA_ROOT:", MEDIA_ROOT)
+    print("STATIC_ROOT:", STATIC_ROOT)
+
 # Does the user wish to use the sentry.io integration?
 sentry_opts = CONFIG.get('sentry', {})
 
@@ -161,7 +182,11 @@ ROOT_URLCONF = 'InvenTree.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            # Allow templates in the reporting directory to be accessed
+            os.path.join(MEDIA_ROOT, 'report'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -315,31 +340,6 @@ USE_TZ = True
 DATE_INPUT_FORMATS = [
     "%Y-%m-%d",
 ]
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.10/howto/static-files/
-
-# Web URL endpoint for served static files
-STATIC_URL = '/static/'
-
-# The filesystem location for served static files
-STATIC_ROOT = os.path.abspath(CONFIG.get('static_root', os.path.join(BASE_DIR, 'static')))
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'InvenTree', 'static'),
-]
-
-# Web URL endpoint for served media files
-MEDIA_URL = '/media/'
-
-# The filesystem location for served static files
-MEDIA_ROOT = os.path.abspath(CONFIG.get('media_root', os.path.join(BASE_DIR, 'media')))
-
-if DEBUG:
-    print("InvenTree running in DEBUG mode")
-    print("MEDIA_ROOT:", MEDIA_ROOT)
-    print("STATIC_ROOT:", STATIC_ROOT)
 
 # crispy forms use the bootstrap templates
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
