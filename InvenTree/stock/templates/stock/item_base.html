@@ -15,8 +15,6 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% block pre_content %}
 {% include 'stock/loc_link.html' with location=item.location %}
 
-{% include "report_template/test.html" with item=item %}
-
 {% if item.hasRequiredTests and not item.passedAllRequiredTests %}
 <div class='alert alert-block alert-danger'>
     {% trans "This stock item has not passed all required tests" %}
