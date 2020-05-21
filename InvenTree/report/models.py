@@ -13,6 +13,7 @@ from django.core.validators import FileExtensionValidator
 from django.utils.translation import gettext_lazy as _
 
 from django_tex.shortcuts import render_to_pdf
+from django_weasyprint import WeasyTemplateResponseMixin
 
 
 def rename_template(instance, filename):
@@ -20,6 +21,21 @@ def rename_template(instance, filename):
     filename = os.path.basename(filename)
 
     return os.path.join('report', 'report_template', filename)
+
+
+class WeasyprintReportMixin(WeasyTemplateResponseMixin):
+    """
+    Class for rendering a HTML template to a PDF.
+    """
+
+    pdf_filename = 'report.pdf'
+    pdf_attachment = True
+
+    def __init__(self, request, template, **kwargs):
+
+        self.request = request
+        self.template_name = template
+        self.pdf_filename = kwargs.get('filename', 'report.pdf')
 
 
 class ReportTemplate(models.Model):
@@ -34,17 +50,29 @@ class ReportTemplate(models.Model):
     def extension(self):
         return os.path.splitext(self.template.name)[1].lower()
 
+    @property
+    def template_name(self):
+        return os.path.join('report_template', os.path.basename(self.template.name))
+
     def render(self, request, context={}, **kwargs):
         """
-        Render to template.
+        Render the template to a PDF file.
+
+        Supported template formats:
+            .tex - Uses django-tex plugin to render LaTeX template against an installed LaTeX engine
+            .html - Uses django-weasyprint plugin to render HTML template against Weasyprint
         """
 
         filename = kwargs.get('filename', 'report.pdf')
 
-        template = os.path.join('report_template', os.path.basename(self.template.name))
+        context['request'] = request
 
-        if 1 or self.extension == '.tex':
-            return render_to_pdf(request, template, context, filename=filename)
+        if self.extension == '.tex':
+            return render_to_pdf(request, self.template_name, context, filename=filename)
+        elif self.extension in ['.htm', '.html']:
+            wp = WeasyprintReportMixin(request, self.template_name, **kwargs)
+            return wp.render_to_response(context, **kwargs)
+
 
     name = models.CharField(
         blank=False, max_length=100,
@@ -55,7 +83,7 @@ class ReportTemplate(models.Model):
     template = models.FileField(
         upload_to=rename_template,
         help_text=_("Report template file"),
-        validators=[FileExtensionValidator(allowed_extensions=['html', 'tex'])],
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])],
     )
 
     description = models.CharField(max_length=250, help_text=_("Report template description"))
