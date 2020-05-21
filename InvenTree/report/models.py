@@ -54,7 +54,14 @@ class ReportTemplate(models.Model):
     def template_name(self):
         return os.path.join('report_template', os.path.basename(self.template.name))
 
-    def render(self, request, context={}, **kwargs):
+    def get_context_data(self, request):
+        """
+        Supply context data to the template for rendering
+        """
+
+        return {}
+
+    def render(self, request, **kwargs):
         """
         Render the template to a PDF file.
 
@@ -65,14 +72,17 @@ class ReportTemplate(models.Model):
 
         filename = kwargs.get('filename', 'report.pdf')
 
+        context = self.get_context_data(request)
+
         context['request'] = request
 
         if self.extension == '.tex':
+            # Render LaTeX template to PDF
             return render_to_pdf(request, self.template_name, context, filename=filename)
         elif self.extension in ['.htm', '.html']:
+            # Render HTML template to PDF
             wp = WeasyprintReportMixin(request, self.template_name, **kwargs)
             return wp.render_to_response(context, **kwargs)
-
 
     name = models.CharField(
         blank=False, max_length=100,

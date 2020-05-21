@@ -203,7 +203,7 @@ TEMPLATES = [
     # Backend for LaTeX report rendering
     {
         'NAME': 'tex',
-        'BACKEND': 'django_tex.engine.TeXEngine', 
+        'BACKEND': 'django_tex.engine.TeXEngine',
         'DIRS': [
             os.path.join(MEDIA_ROOT, 'report'),
         ]
@@ -355,6 +355,8 @@ latex_settings = CONFIG.get('latex', {})
 
 # Set the latex interpreter in the config.yaml settings file
 LATEX_INTERPRETER = latex_settings.get('interpreter', 'pdflatex')
+
+LATEX_INTERPRETER_OPTIONS = latex_settings.get('options', '')
 
 LATEX_GRAPHICSPATH = [
     # Allow LaTeX files to access the report assets directory
