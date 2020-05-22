@@ -93,8 +93,13 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <span class='fas fa-copy'/>
     </button>
     {% endif %}
+    {% if item.part.has_test_report_templates %}
+    <button type='button' class='btn btn-default' id='stock-test-report' title='Generate test report'>
+        <span class='fas fa-tasks'/>
+    </button>
+    {% endif %}
     <button type='button' class='btn btn-default' id='stock-edit' title='Edit stock item'>
-        <span class='fas fa-edit'/>
+        <span class='fas fa-edit icon-blue'/>
     </button>
     {% if item.can_delete %}
     <button type='button' class='btn btn-default' id='stock-delete' title='Edit stock item'>
@@ -263,6 +268,17 @@ $("#stock-serialize").click(function() {
         }
     );
 });
+
+{% if item.part.has_test_report_templates %}
+$("#stock-test-report").click(function() {
+    launchModalForm(
+        "{% url 'stock-item-test-report-select' item.id %}",
+        {
+            follow: true,
+        }
+    );
+});
+{% endif %}
 
 $("#stock-duplicate").click(function() {
     launchModalForm(

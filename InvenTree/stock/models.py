@@ -963,6 +963,13 @@ class StockItem(MPTTModel):
 
         return result_map
 
+    def testResultList(self, **kwargs):
+        """
+        Return a list of test-result objects for this StockItem
+        """
+
+        return self.testResultMap(**kwargs).values()
+
     def requiredTestStatus(self):
         """
         Return the status of the tests required for this StockItem.

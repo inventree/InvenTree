@@ -27,19 +27,12 @@ from datetime import datetime
 
 from company.models import Company, SupplierPart
 from part.models import Part
+from report.models import TestReport
 from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
 
 from .admin import StockItemResource
 
-from .forms import EditStockLocationForm
-from .forms import CreateStockItemForm
-from .forms import EditStockItemForm
-from .forms import AdjustStockForm
-from .forms import TrackingEntryForm
-from .forms import SerializeStockForm
-from .forms import ExportOptionsForm
-from .forms import EditStockItemAttachmentForm
-from .forms import EditStockItemTestResultForm
+from . import forms as StockForms
 
 
 class StockIndex(ListView):
@@ -114,7 +107,7 @@ class StockLocationEdit(AjaxUpdateView):
     """
 
     model = StockLocation
-    form_class = EditStockLocationForm
+    form_class = StockForms.EditStockLocationForm
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Location')
@@ -158,7 +151,7 @@ class StockItemAttachmentCreate(AjaxCreateView):
     """
 
     model = StockItemAttachment
-    form_class = EditStockItemAttachmentForm
+    form_class = StockForms.EditStockItemAttachmentForm
     ajax_form_title = _("Add Stock Item Attachment")
     ajax_template_name = "modal_form.html"
 
@@ -203,7 +196,7 @@ class StockItemAttachmentEdit(AjaxUpdateView):
     """
 
     model = StockItemAttachment
-    form_class = EditStockItemAttachmentForm
+    form_class = StockForms.EditStockItemAttachmentForm
     ajax_form_title = _("Edit Stock Item Attachment")
 
     def get_form(self):
@@ -271,7 +264,7 @@ class StockItemTestResultCreate(AjaxCreateView):
     """
 
     model = StockItemTestResult
-    form_class = EditStockItemTestResultForm
+    form_class = StockForms.EditStockItemTestResultForm
     ajax_form_title = _("Add Test Result")
 
     def post_save(self, **kwargs):
@@ -319,7 +312,7 @@ class StockItemTestResultEdit(AjaxUpdateView):
     """
 
     model = StockItemTestResult
-    form_class = EditStockItemTestResultForm
+    form_class = StockForms.EditStockItemTestResultForm
     ajax_form_title = _("Edit Test Result")
 
     def get_form(self):
@@ -343,12 +336,81 @@ class StockItemTestResultDelete(AjaxDeleteView):
     context_object_name = "result"
 
 
+class StockItemTestReportSelect(AjaxView):
+    """
+    View for selecting a TestReport template,
+    and generating a TestReport as a PDF.
+    """
+
+    model = StockItem
+    ajax_form_title = _("Select Test Report Template")
+
+    def get_form(self):
+
+        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
+        return StockForms.TestReportFormatForm(stock_item)
+
+    def post(self, request, *args, **kwargs):
+
+        template_id = request.POST.get('template', None)
+
+        try:
+            template = TestReport.objects.get(pk=template_id)
+        except (ValueError, TestReport.DoesNoteExist):
+            raise ValidationError({'template': _("Select valid template")})
+
+        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
+
+        url = reverse('stock-item-test-report-download')
+
+        url += '?stock_item={id}'.format(id=stock_item.pk)
+        url += '&template={id}'.format(id=template.pk)
+
+        data = {
+            'form_valid': True,
+            'url': url,
+        }
+
+        return self.renderJsonResponse(request, self.get_form(), data=data)
+
+
+class StockItemTestReportDownload(AjaxView):
+    """
+    Download a TestReport against a StockItem.
+
+    Requires the following arguments to be passed as URL params:
+
+    stock_item - Valid PK of a StockItem object
+    template - Valid PK of a TestReport template object
+
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        template = request.GET.get('template', None)
+        stock_item = request.GET.get('stock_item', None)
+
+        try:
+            template = TestReport.objects.get(pk=template)
+        except (ValueError, TestReport.DoesNotExist):
+            raise ValidationError({'template': 'Invalid template ID'})
+
+        try:
+            stock_item = StockItem.objects.get(pk=stock_item)
+        except (ValueError, StockItem.DoesNotExist):
+            raise ValidationError({'stock_item': 'Invalid StockItem ID'})
+
+        template.stock_item = stock_item
+
+        return template.render(request)
+
+
 class StockExportOptions(AjaxView):
     """ Form for selecting StockExport options """
 
     model = StockLocation
     ajax_form_title = _('Stock Export Options')
-    form_class = ExportOptionsForm
+    form_class = StockForms.ExportOptionsForm
 
     def post(self, request, *args, **kwargs):
 
@@ -491,7 +553,7 @@ class StockAdjust(AjaxView, FormMixin):
 
     ajax_template_name = 'stock/stock_adjust.html'
     ajax_form_title = _('Adjust Stock')
-    form_class = AdjustStockForm
+    form_class = StockForms.AdjustStockForm
     stock_items = []
 
     def get_GET_items(self):
@@ -809,7 +871,7 @@ class StockItemEdit(AjaxUpdateView):
     """
 
     model = StockItem
-    form_class = EditStockItemForm
+    form_class = StockForms.EditStockItemForm
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Item')
@@ -845,7 +907,7 @@ class StockLocationCreate(AjaxCreateView):
     """
 
     model = StockLocation
-    form_class = EditStockLocationForm
+    form_class = StockForms.EditStockLocationForm
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Location')
@@ -870,7 +932,7 @@ class StockItemSerialize(AjaxUpdateView):
     model = StockItem
     ajax_template_name = 'stock/item_serialize.html'
     ajax_form_title = _('Serialize Stock')
-    form_class = SerializeStockForm
+    form_class = StockForms.SerializeStockForm
 
     def get_form(self):
 
@@ -879,7 +941,7 @@ class StockItemSerialize(AjaxUpdateView):
         # Pass the StockItem object through to the form
         context['item'] = self.get_object()
 
-        form = SerializeStockForm(**context)
+        form = StockForms.SerializeStockForm(**context)
 
         return form
 
@@ -958,7 +1020,7 @@ class StockItemCreate(AjaxCreateView):
     """
 
     model = StockItem
-    form_class = CreateStockItemForm
+    form_class = StockForms.CreateStockItemForm
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Item')
@@ -1265,7 +1327,7 @@ class StockItemTrackingEdit(AjaxUpdateView):
 
     model = StockItemTracking
     ajax_form_title = _('Edit Stock Tracking Entry')
-    form_class = TrackingEntryForm
+    form_class = StockForms.TrackingEntryForm
 
 
 class StockItemTrackingCreate(AjaxCreateView):
@@ -1274,7 +1336,7 @@ class StockItemTrackingCreate(AjaxCreateView):
 
     model = StockItemTracking
     ajax_form_title = _("Add Stock Tracking Entry")
-    form_class = TrackingEntryForm
+    form_class = StockForms.TrackingEntryForm
 
     def post(self, request, *args, **kwargs):
 
