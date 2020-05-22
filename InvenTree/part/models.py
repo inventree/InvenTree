@@ -372,6 +372,11 @@ class Part(MPTTModel):
 
         return templates
 
+    def has_test_report_templates(self):
+        """ Return True if this part has a TestReport defined """
+
+        return len(self.get_test_report_templates()) > 0
+
     def get_absolute_url(self):
         """ Return the web URL for viewing this part """
         return reverse('part-detail', kwargs={'pk': self.id})

@@ -212,6 +212,7 @@ class TestReport(ReportTemplateBase, PartFilterMixin):
     def getSubdir(self):
         return 'test'
 
+    # Requires a stock_item object to be given to it before rendering
     stock_item = None
 
     def get_context_data(self, request):
