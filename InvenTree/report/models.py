@@ -38,7 +38,7 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'report.pdf')
 
 
-class ReportTemplate(models.Model):
+class ReportTemplateBase(models.Model):
     """
     Reporting template model.
     """
@@ -46,13 +46,16 @@ class ReportTemplate(models.Model):
     def __str__(self):
         return os.path.basename(self.template.name)
 
+    def getSubdir(self):
+        return ''
+
     @property
     def extension(self):
         return os.path.splitext(self.template.name)[1].lower()
 
     @property
     def template_name(self):
-        return os.path.join('report_template', os.path.basename(self.template.name))
+        return os.path.join('report_template', self.getSubdir(), os.path.basename(self.template.name))
 
     def get_context_data(self, request):
         """
@@ -104,6 +107,35 @@ class ReportTemplate(models.Model):
         help_text=_("Query filters (comma-separated list of key=value pairs)"),
         validators=[validate_filter_string]
     )
+
+    class Meta:
+        abstract = True
+
+
+class ReportTemplate(ReportTemplateBase):
+    """
+    A simple reporting template which is used to upload template files,
+    which can then be used in other concrete template classes.
+    """
+
+    pass
+
+
+class TestReport(ReportTemplateBase):
+    """
+    Render a TestReport against a StockItem object.
+    """
+
+    def getSubdir(self):
+        return 'test'
+
+    stock_item = None
+
+    def get_context_data(self, request):
+        return {
+            'stock_item': self.stock_item,
+            'results': self.stock_item.testResultMap()
+        }
 
 
 def rename_asset(instance, filename):

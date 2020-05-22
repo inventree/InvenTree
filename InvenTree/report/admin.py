@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 
 from .models import ReportTemplate, ReportAsset
-
+from .models import TestReport
 
 class ReportTemplateAdmin(admin.ModelAdmin):
 
@@ -17,4 +17,5 @@ class ReportAssetAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ReportTemplate, ReportTemplateAdmin)
+admin.site.register(TestReport, ReportTemplateAdmin)
 admin.site.register(ReportAsset, ReportAssetAdmin)
