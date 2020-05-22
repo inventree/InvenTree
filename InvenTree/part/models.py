@@ -372,7 +372,6 @@ class Part(MPTTModel):
 
         return templates
 
-
     def get_absolute_url(self):
         """ Return the web URL for viewing this part """
         return reverse('part-detail', kwargs={'pk': self.id})

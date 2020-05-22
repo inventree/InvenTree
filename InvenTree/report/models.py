@@ -192,7 +192,6 @@ class PartFilterMixin(models.Model):
 
         return parts.exists()
 
-
     def get_part_filters(self):
         """ Return a map of filters to be used for Part filtering """
         return validateFilterString(self.part_filters)
