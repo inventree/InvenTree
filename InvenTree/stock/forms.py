@@ -151,7 +151,6 @@ class TestReportFormatForm(HelperForm):
             'template',
         ]
 
-    
     def __init__(self, stock_item, *args, **kwargs):
         self.stock_item = stock_item
 

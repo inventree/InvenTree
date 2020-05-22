@@ -941,7 +941,7 @@ class StockItemSerialize(AjaxUpdateView):
         # Pass the StockItem object through to the form
         context['item'] = self.get_object()
 
-        form = SerializeStockForm(**context)
+        form = StockForms.SerializeStockForm(**context)
 
         return form
 
