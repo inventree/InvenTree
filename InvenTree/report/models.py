@@ -20,7 +20,7 @@ def rename_template(instance, filename):
 
     filename = os.path.basename(filename)
 
-    return os.path.join('report', 'report_template', filename)
+    return os.path.join('report', 'report_template', instance.getSubdir(), filename)
 
 
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
