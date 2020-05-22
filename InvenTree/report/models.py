@@ -13,7 +13,7 @@ from django.core.exceptions import ValidationError
 
 from django.utils.translation import gettext_lazy as _
 
-from part.models import Part
+from part import models as PartModels
 
 from django_tex.shortcuts import render_to_pdf
 from django_weasyprint import WeasyTemplateResponseMixin
@@ -186,7 +186,7 @@ class PartFilterMixin(models.Model):
 
         filters = self.get_part_filters()
 
-        parts = Part.objects.filter(**filters)
+        parts = PartModels.Part.objects.filter(**filters)
 
         parts = parts.filter(pk=part.pk)
 
