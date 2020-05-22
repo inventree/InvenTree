@@ -218,6 +218,7 @@ class TestReport(ReportTemplateBase, PartFilterMixin):
     def get_context_data(self, request):
         return {
             'stock_item': self.stock_item,
+            'part': self.stock_item.part,
             'results': self.stock_item.testResultMap(),
             'result_list': self.stock_item.testResultList()
         }
