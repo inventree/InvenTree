@@ -269,6 +269,17 @@ $("#stock-serialize").click(function() {
     );
 });
 
+{% if item.part.has_test_report_templates %}
+$("#stock-test-report").click(function() {
+    launchModalForm(
+        "{% url 'stock-item-test-report-select' item.id %}",
+        {
+            follow: true,
+        }
+    );
+});
+{% endif %}
+
 $("#stock-duplicate").click(function() {
     launchModalForm(
         "{% url 'stock-item-create' %}",

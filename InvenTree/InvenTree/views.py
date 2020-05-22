@@ -166,6 +166,9 @@ class AjaxMixin(object):
             except AttributeError:
                 context = {}
 
+        if form is None:
+            form = self.get_form()
+
         if form:
             context['form'] = form
         else:

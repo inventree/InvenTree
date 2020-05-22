@@ -100,7 +100,7 @@ class ReportTemplateBase(models.Model):
     """
 
     def __str__(self):
-        return os.path.basename(self.template.name)
+        return "{n} - {d}".format(n=self.name, d=self.description)
 
     def getSubdir(self):
         return ''
@@ -218,7 +218,8 @@ class TestReport(ReportTemplateBase, PartFilterMixin):
     def get_context_data(self, request):
         return {
             'stock_item': self.stock_item,
-            'results': self.stock_item.testResultMap()
+            'results': self.stock_item.testResultMap(),
+            'result_list': self.stock_item.testResultList()
         }
 
 
