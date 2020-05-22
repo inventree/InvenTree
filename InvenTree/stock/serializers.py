@@ -108,11 +108,14 @@ class StockItemSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
     allocated = serializers.FloatField()
 
+    required_tests = serializers.IntegerField(source='required_test_count', read_only=True)
+
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
         location_detail = kwargs.pop('location_detail', False)
         supplier_part_detail = kwargs.pop('supplier_part_detail', False)
+        test_detail = kwargs.pop('test_detail', False)
 
         super(StockItemSerializer, self).__init__(*args, **kwargs)
 
@@ -124,6 +127,9 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
         if supplier_part_detail is not True:
             self.fields.pop('supplier_part_detail')
+
+        if test_detail is not True:
+            self.fields.pop('required_tests')
 
     class Meta:
         model = StockItem
@@ -141,6 +147,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'part_detail',
             'pk',
             'quantity',
+            'required_tests',
             'sales_order',
             'serial',
             'supplier_part',
