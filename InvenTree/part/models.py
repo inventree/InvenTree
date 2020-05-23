@@ -1033,6 +1033,9 @@ class Part(MPTTModel):
         # Return the tests which are required by this part
         return self.getTestTemplates(required=True)
 
+    def requiredTestCount(self):
+        return self.getRequiredTests().count()
+
     @property
     def attachment_count(self):
         """ Count the number of attachments for this part.
