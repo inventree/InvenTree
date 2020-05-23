@@ -229,19 +229,14 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
     """ Serializer for the StockItemTestResult model """
 
     user_detail = UserSerializerBrief(source='user', read_only=True)
-    attachment_detail = StockItemAttachmentSerializer(source='attachment', read_only=True)
 
     def __init__(self, *args, **kwargs):
         user_detail = kwargs.pop('user_detail', False)
-        attachment_detail = kwargs.pop('attachment_detail', False)
 
         super().__init__(*args, **kwargs)
 
         if user_detail is not True:
             self.fields.pop('user_detail')
-
-        if attachment_detail is not True:
-            self.fields.pop('attachment_detail')
 
     class Meta:
         model = StockItemTestResult
@@ -253,7 +248,6 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
             'result',
             'value',
             'attachment',
-            'attachment_detail',
             'notes',
             'user',
             'user_detail',

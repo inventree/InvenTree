@@ -56,8 +56,8 @@ function loadStockTestResultsTable(table, options) {
             html += `<span class='badge'>${row.user_detail.username}</span>`;
         }
 
-        if (row.attachment_detail) {
-            html += `<a href='${row.attachment_detail.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
+        if (row.attachment) {
+            html += `<a href='${row.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
         }
 
         return html;

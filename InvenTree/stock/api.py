@@ -693,11 +693,6 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         except:
             pass
 
-        try:
-            kwargs['attachment_detail'] = str2bool(self.request.query_params.get('attachment_detail', False))
-        except:
-            pass
-
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
@@ -713,23 +708,6 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         # Capture the user information
         test_result = serializer.save()
         test_result.user = self.request.user
-
-        # Check if a file has been attached to the request
-        attachment_file = self.request.FILES.get('attachment', None)
-
-        if attachment_file:
-            # Create a new attachment associated with the stock item
-            attachment = StockItemAttachment(
-                attachment=attachment_file,
-                stock_item=test_result.stock_item,
-                user=test_result.user
-            )
-
-            attachment.save()
-
-            # Link the attachment back to the test result
-            test_result.attachment = attachment
-
         test_result.save()
 
 

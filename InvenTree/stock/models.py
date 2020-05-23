@@ -1094,6 +1094,11 @@ class StockItemTracking(models.Model):
     # file = models.FileField()
 
 
+def rename_stock_item_test_result_attachment(instance, filename):
+
+    return os.path.join('stock_files', str(instance.stock_item.pk), os.path.basename(filename))
+
+
 class StockItemTestResult(models.Model):
     """
     A StockItemTestResult records results of custom tests against individual StockItem objects.
@@ -1123,13 +1128,11 @@ class StockItemTestResult(models.Model):
 
         super().clean()
 
-        """
         # If this test result corresponds to a template, check the requirements of the template
         key = helpers.generateTestKey(self.test)
 
         templates = self.stock_item.part.getTestTemplates()
 
-        TODO: Re-introduce this at a later stage, it is buggy when uplaoding an attachment via the API
         for template in templates:
             if key == template.key:
                 
@@ -1146,17 +1149,6 @@ class StockItemTestResult(models.Model):
                         })
 
                 break
-        """
-
-        # If an attachment is linked to this result, the attachment must also point to the item
-        try:
-            if self.attachment:
-                if not self.attachment.stock_item == self.stock_item:
-                    raise ValidationError({
-                        'attachment': _("Test result attachment must be linked to the same StockItem"),
-                    })
-        except (StockItem.DoesNotExist, StockItemAttachment.DoesNotExist):
-            pass
 
     stock_item = models.ForeignKey(
         StockItem,
@@ -1182,10 +1174,9 @@ class StockItemTestResult(models.Model):
         help_text=_('Test output value')
     )
 
-    attachment = models.ForeignKey(
-        StockItemAttachment,
-        on_delete=models.SET_NULL,
-        blank=True, null=True,
+    attachment = models.FileField(
+        null=True, blank=True,
+        upload_to=rename_stock_item_test_result_attachment,
         verbose_name=_('Attachment'),
         help_text=_('Test result attachment'),
     )
