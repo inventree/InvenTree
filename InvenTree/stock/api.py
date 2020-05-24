@@ -687,6 +687,8 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         'value',
     ]
 
+    ordering = 'date'
+
     def get_serializer(self, *args, **kwargs):
         try:
             kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))

@@ -230,6 +230,8 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
 
     user_detail = UserSerializerBrief(source='user', read_only=True)
 
+    key = serializers.CharField(read_only=True)
+
     def __init__(self, *args, **kwargs):
         user_detail = kwargs.pop('user_detail', False)
 
@@ -244,6 +246,7 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'stock_item',
+            'key',
             'test',
             'result',
             'value',

@@ -1129,7 +1129,7 @@ class StockItemTestResult(models.Model):
         super().clean()
 
         # If this test result corresponds to a template, check the requirements of the template
-        key = helpers.generateTestKey(self.test)
+        key = self.key
 
         templates = self.stock_item.part.getTestTemplates()
 
@@ -1149,6 +1149,10 @@ class StockItemTestResult(models.Model):
                         })
 
                 break
+
+    @property
+    def key(self):
+        return helpers.generateTestKey(self.test)
 
     stock_item = models.ForeignKey(
         StockItem,
