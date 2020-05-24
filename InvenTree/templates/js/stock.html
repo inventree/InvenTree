@@ -32,17 +32,6 @@ function noResultBadge() {
     return `<span class='label label-blue float-right'>{% trans "NO RESULT" %}</span>`;
 }
 
-function testKey(test_name) {
-    // Convert test name to a unique key without any illegal chars
-
-    test_name = test_name.trim().toLowerCase();
-    test_name = test_name.replace(' ', '');
-
-    test_name = test_name.replace(/[^0-9a-z]/gi, '');
-
-    return test_name;
-}
-
 function loadStockTestResultsTable(table, options) {
     /*
      * Load StockItemTestResult table
@@ -56,8 +45,8 @@ function loadStockTestResultsTable(table, options) {
             html += `<span class='badge'>${row.user_detail.username}</span>`;
         }
 
-        if (row.attachment_detail) {
-            html += `<a href='${row.attachment_detail.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
+        if (row.attachment) {
+            html += `<a href='${row.attachment}'><span class='fas fa-file-alt label-right'></span></a>`;
         }
 
         return html;
@@ -177,14 +166,14 @@ function loadStockTestResultsTable(table, options) {
                             var match = false;
                             var override = false;
 
-                            var key = testKey(item.test);
+                            var key = item.key;
 
                             // Try to associate this result with a test row
                             tableData.forEach(function(row, index) {
                                 
                                 
                                 // The result matches the test template row
-                                if (key == testKey(row.test_name)) {
+                                if (key == row.key) {
                                     
                                     // Force the names to be the same!
                                     item.test_name = row.test_name;

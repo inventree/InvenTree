@@ -80,21 +80,10 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
-        try:
-            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', False))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['location_detail'] = str2bool(self.request.query_params.get('location_detail', False))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['supplier_part_detail'] = str2bool(self.request.query_params.get('supplier_detail', False))
-        except AttributeError:
-            pass
-
+        kwargs['part_detail'] = True
+        kwargs['location_detail'] = True
+        kwargs['supplier_part_detail'] = True
+        kwargs['test_detail'] = True
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
@@ -698,14 +687,11 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         'value',
     ]
 
+    ordering = 'date'
+
     def get_serializer(self, *args, **kwargs):
         try:
             kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
-        except:
-            pass
-
-        try:
-            kwargs['attachment_detail'] = str2bool(self.request.query_params.get('attachment_detail', False))
         except:
             pass
 
@@ -724,23 +710,6 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         # Capture the user information
         test_result = serializer.save()
         test_result.user = self.request.user
-
-        # Check if a file has been attached to the request
-        attachment_file = self.request.FILES.get('attachment', None)
-
-        if attachment_file:
-            # Create a new attachment associated with the stock item
-            attachment = StockItemAttachment(
-                attachment=attachment_file,
-                stock_item=test_result.stock_item,
-                user=test_result.user
-            )
-
-            attachment.save()
-
-            # Link the attachment back to the test result
-            test_result.attachment = attachment
-
         test_result.save()
 
 

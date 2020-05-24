@@ -105,9 +105,11 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'thumbnail',
             'active',
             'assembly',
+            'is_template',
             'purchaseable',
             'salable',
             'stock',
+            'trackable',
             'virtual',
         ]
 
