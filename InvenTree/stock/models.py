@@ -647,6 +647,9 @@ class StockItem(MPTTModel):
             # Copy entire transaction history
             new_item.copyHistoryFrom(self)
 
+            # Copy test result history
+            new_item.copyTestResultsFrom(self)
+
             # Create a new stock tracking item
             new_item.addTransactionNote(_('Add serial number'), user, notes=notes)
 
@@ -655,13 +658,24 @@ class StockItem(MPTTModel):
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
-        """ Copy stock history from another part """
+        """ Copy stock history from another StockItem """
 
         for item in other.tracking_info.all():
             
             item.item = self
             item.pk = None
             item.save()
+
+    @transaction.atomic
+    def copyTestResultsFrom(self, other, filters={}):
+        """ Copy all test results from another StockItem """
+
+        for result in other.test_results.all().filter(**filters):
+
+            # Create a copy of the test result by nulling-out the pk
+            result.pk = None
+            result.stock_item = self
+            result.save()
 
     @transaction.atomic
     def splitStock(self, quantity, location, user):
@@ -712,6 +726,9 @@ class StockItem(MPTTModel):
 
         # Copy the transaction history of this part into the new one
         new_stock.copyHistoryFrom(self)
+
+        # Copy the test results of this part to the new one
+        new_stock.copyTestResultsFrom(self)
 
         # Add a new tracking item for the new stock item
         new_stock.addTransactionNote(
