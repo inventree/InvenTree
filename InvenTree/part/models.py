@@ -1339,6 +1339,11 @@ class BomItem(models.Model):
         checksum: Validation checksum for the particular BOM line item
     """
 
+    def save(self, *args, **kwargs):
+
+        self.clean()
+        super().save(*args, **kwargs)
+
     def get_absolute_url(self):
         return reverse('bom-item-detail', kwargs={'pk': self.id})
 
@@ -1430,6 +1435,16 @@ class BomItem(models.Model):
         - A part cannot refer to itself in its BOM
         - A part cannot refer to a part which refers to it
         """
+
+        # If the sub_part is 'trackable' then the 'quantity' field must be an integer
+        try:
+            if self.sub_part.trackable:
+                if not self.quantity == int(self.quantity):
+                    raise ValidationError({
+                        "quantity": _("Quantity must be integer value for trackable parts")
+                    })
+        except Part.DoesNotExist:
+            pass
 
         # A part cannot refer to itself in its BOM
         try:
