@@ -458,3 +458,68 @@ class TestResultTest(StockTest):
         )
     
         self.assertTrue(item.passedAllRequiredTests())
+
+    def test_duplicate_item_tests(self):
+
+        # Create an example stock item by copying one from the database (because we are lazy)
+        item = StockItem.objects.get(pk=522)
+
+        item.pk = None
+        item.serial = None
+        item.quantity = 50
+
+        item.save()
+
+        # Do some tests!
+        StockItemTestResult.objects.create(
+            stock_item=item,
+            test="Firmware",
+            result=True
+        )
+
+        StockItemTestResult.objects.create(
+            stock_item=item,
+            test="Paint Color",
+            result=True,
+            value="Red"
+        )
+
+        StockItemTestResult.objects.create(
+            stock_item=item,
+            test="Applied Sticker",
+            result=False
+        )
+
+        self.assertEqual(item.test_results.count(), 3)
+        self.assertEqual(item.quantity, 50)
+
+        # Split some items out
+        item2 = item.splitStock(20, None, None)
+
+        self.assertEqual(item.quantity, 30)
+
+        self.assertEqual(item.test_results.count(), 3)
+        self.assertEqual(item2.test_results.count(), 3)
+
+        StockItemTestResult.objects.create(
+            stock_item=item2,
+            test='A new test'
+        )
+
+        self.assertEqual(item.test_results.count(), 3)
+        self.assertEqual(item2.test_results.count(), 4)
+
+        # Test StockItem serialization
+        item2.serializeStock(1, [100], self.user)
+
+        # Add a test result to the parent *after* serialization
+        StockItemTestResult.objects.create(
+            stock_item=item2,
+            test='abcde'
+        )
+
+        self.assertEqual(item2.test_results.count(), 5)
+
+        item3 = StockItem.objects.get(serial=100, part=item2.part)
+
+        self.assertEqual(item3.test_results.count(), 4)
