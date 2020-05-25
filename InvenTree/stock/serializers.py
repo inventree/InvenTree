@@ -259,7 +259,6 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
 
         read_only_fields = [
             'pk',
-            'attachment',
             'user',
             'date',
         ]
