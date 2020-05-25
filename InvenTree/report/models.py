@@ -6,8 +6,11 @@ Report template model definitions
 from __future__ import unicode_literals
 
 import os
+import sys
 
 from django.db import models
+from django.conf import settings
+
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 
@@ -15,8 +18,21 @@ from django.utils.translation import gettext_lazy as _
 
 from part import models as PartModels
 
-from django_tex.shortcuts import render_to_pdf
-from django_weasyprint import WeasyTemplateResponseMixin
+try:
+    from django_weasyprint import WeasyTemplateResponseMixin
+except OSError as err:
+    print("OSError: {e}".format(e=err))
+    print("You may require some further system packages to be installed.")
+    sys.exit(1)
+
+# Conditional import if LaTeX templating is enabled
+if settings.LATEX_ENABLED:
+    try:
+        from django_tex.shortcuts import render_to_pdf
+    except OSError as err:
+        print("OSError: {e}".format(e=err))
+        print("You may not have a working LaTeX toolchain installed?")
+        sys.exit(1)
 
 
 def rename_template(instance, filename):
@@ -137,7 +153,10 @@ class ReportTemplateBase(models.Model):
 
         if self.extension == '.tex':
             # Render LaTeX template to PDF
-            return render_to_pdf(request, self.template_name, context, filename=filename)
+            if settings.LATEX_ENABLED:
+                return render_to_pdf(request, self.template_name, context, filename=filename)
+            else:
+                return ValidationError("Enable LaTeX support in config.yaml")
         elif self.extension in ['.htm', '.html']:
             # Render HTML template to PDF
             wp = WeasyprintReportMixin(request, self.template_name, **kwargs)

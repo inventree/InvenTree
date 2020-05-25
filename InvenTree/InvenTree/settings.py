@@ -351,12 +351,15 @@ DATE_INPUT_FORMATS = [
 ]
 
 # LaTeX rendering settings (django-tex)
-latex_settings = CONFIG.get('latex', {})
+LATEX_SETTINGS = CONFIG.get('latex', {})
+
+# Is LaTeX rendering enabled? (Off by default)
+LATEX_ENABLED = LATEX_SETTINGS.get('enabled', False)
 
 # Set the latex interpreter in the config.yaml settings file
-LATEX_INTERPRETER = latex_settings.get('interpreter', 'pdflatex')
+LATEX_INTERPRETER = LATEX_SETTINGS.get('interpreter', 'pdflatex')
 
-LATEX_INTERPRETER_OPTIONS = latex_settings.get('options', '')
+LATEX_INTERPRETER_OPTIONS = LATEX_SETTINGS.get('options', '')
 
 LATEX_GRAPHICSPATH = [
     # Allow LaTeX files to access the report assets directory
