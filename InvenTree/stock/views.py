@@ -887,7 +887,7 @@ class StockItemEdit(AjaxUpdateView):
         return form
 
 
-class StockItemEdit(AjaxUpdateView):
+class StockItemConvert(AjaxUpdateView):
     """
     View for 'converting' a StockItem to a variant of its current part.
     """
