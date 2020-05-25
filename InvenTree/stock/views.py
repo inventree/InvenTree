@@ -887,6 +887,30 @@ class StockItemEdit(AjaxUpdateView):
         return form
 
 
+class StockItemEdit(AjaxUpdateView):
+    """
+    View for 'converting' a StockItem to a variant of its current part.
+    """
+
+    model = StockItem
+    form_class = StockForms.ConvertStockItemForm
+    ajax_form_title = _('Convert Stock Item')
+    ajax_template_name = 'stock/stockitem_convert.html'
+    context_object_name = 'item'
+
+    def get_form(self):
+        """
+        Filter the available parts.
+        """
+
+        form = super().get_form()
+        item = self.get_object()
+
+        form.fields['part'].queryset = item.part.get_all_variants()
+
+        return form
+
+
 class StockLocationCreate(AjaxCreateView):
     """
     View for creating a new StockLocation

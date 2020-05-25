@@ -93,6 +93,11 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <span class='fas fa-copy'/>
     </button>
     {% endif %}
+    {% if item.part.has_variants %}
+    <button type='button' class='btn btn-default' id='stock-convert' title="Convert stock to variant">
+        <span class='fas fa-screwdriver'/>
+    </button>
+    {% endif %}
     {% if item.part.has_test_report_templates %}
     <button type='button' class='btn btn-default' id='stock-test-report' title='Generate test report'>
         <span class='fas fa-tasks'/>
@@ -323,6 +328,16 @@ function itemAdjust(action) {
         }
     );
 }
+
+{% if item.part.has_variants %}
+$("#stock-convert").click(function() {
+    launchModalForm("{% url 'stock-item-convert' item.id %}",
+        {
+            reload: true,
+        }
+    );
+});
+{% endif %}
 
 $("#stock-move").click(function() {
     itemAdjust("move");

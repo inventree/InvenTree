@@ -1,0 +1,17 @@
+{% extends "modal_form.html" %}
+{% load i18n %}
+
+{% block pre_form_content %}
+
+<div class='alert alert-block alert-info'>
+    <b>{% trans "Convert Stock Item" %}</b><br>
+    {% trans "This stock item is current an instance of " %}<i>{{ item.part }}</i><br>
+    {% trans "It can be converted to one of the part variants listed below." %}
+</div>
+
+<div class='alert alert-block alert-warning'>
+    <b>{% trans "Warning" %}</b>
+    {% trans "This action cannot be easily undone" %}
+</div>
+
+{% endblock %}

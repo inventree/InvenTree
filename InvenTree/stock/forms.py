@@ -63,6 +63,18 @@ class EditStockLocationForm(HelperForm):
         ]
 
 
+class ConvertStockItemForm(HelperForm):
+    """
+    Form for converting a StockItem to a variant of its current part.
+    """
+
+    class Meta:
+        model = StockItem
+        fields = [
+            'part'
+        ]
+
+
 class CreateStockItemForm(HelperForm):
     """ Form for creating a new StockItem """
 
