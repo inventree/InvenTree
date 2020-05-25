@@ -331,7 +331,6 @@ class StockItem(MPTTModel):
         verbose_name=_('Base Part'),
         related_name='stock_items', help_text=_('Base part'),
         limit_choices_to={
-            'is_template': False,
             'active': True,
             'virtual': False
         })

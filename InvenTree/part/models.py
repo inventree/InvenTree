@@ -1109,6 +1109,17 @@ class Part(MPTTModel):
 
         return self.parameters.order_by('template__name')
 
+    @property
+    def has_variants(self):
+        """ Check if this Part object has variants underneath it. """
+
+        return self.get_all_variants().count() > 0
+
+    def get_all_variants(self):
+        """ Return all Part object which exist as a variant under this part. """
+
+        return self.get_descendants(include_self=False)
+
 
 def attach_file(instance, filename):
     """ Function for storing a file for a PartAttachment
