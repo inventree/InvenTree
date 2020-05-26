@@ -19,6 +19,7 @@ from django.db.models.functions import Coalesce
 
 from InvenTree.status_codes import StockStatus, PurchaseOrderStatus, BuildStatus
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -45,6 +46,8 @@ class PartAttachmentSerializer(InvenTreeModelSerializer):
     """
     Serializer for the PartAttachment class
     """
+
+    attachment = InvenTreeAttachmentSerializerField()
 
     class Meta:
         model = PartAttachment

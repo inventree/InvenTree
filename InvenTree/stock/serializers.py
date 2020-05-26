@@ -212,6 +212,8 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
 
     user_detail = UserSerializerBrief(source='user', read_only=True)
 
+    attachment = InvenTreeAttachmentSerializerField()
+
     class Meta:
         model = StockItemAttachment
 
