@@ -1066,7 +1066,6 @@ class StockItemCreate(AjaxCreateView):
         # Could not extract a part object
         return None
 
-
     def get_form(self):
         """ Get form for StockItem creation.
         Overrides the default get_form() method to intelligently limit
@@ -1080,8 +1079,6 @@ class StockItemCreate(AjaxCreateView):
         if part is not None:
             sn = part.getNextSerialNumber()
             form.field_placeholder['serial_numbers'] = _('Next available serial number is') + ' ' + str(sn)
-
-            print("Placeholder:", sn)
 
             form.rebuild_layout()
 
