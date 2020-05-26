@@ -15,6 +15,7 @@ from django.db.models.functions import Coalesce
 from company.serializers import SupplierPartSerializer
 from part.serializers import PartBriefSerializer
 from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
 
 class LocationBriefSerializer(InvenTreeModelSerializer):
@@ -231,6 +232,8 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
     user_detail = UserSerializerBrief(source='user', read_only=True)
 
     key = serializers.CharField(read_only=True)
+
+    attachment = InvenTreeAttachmentSerializerField()
 
     def __init__(self, *args, **kwargs):
         user_detail = kwargs.pop('user_detail', False)
