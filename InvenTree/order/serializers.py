@@ -10,6 +10,8 @@ from rest_framework import serializers
 from django.db.models import Count
 
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import InvenTreeAttachmentSerializerField
+
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 from part.serializers import PartBriefSerializer
 
@@ -111,6 +113,8 @@ class POAttachmentSerializer(InvenTreeModelSerializer):
     """
     Serializers for the PurchaseOrderAttachment model
     """
+
+    attachment = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         model = PurchaseOrderAttachment
@@ -254,6 +258,8 @@ class SOAttachmentSerializer(InvenTreeModelSerializer):
     """
     Serializers for the SalesOrderAttachment model
     """
+
+    attachment = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         model = SalesOrderAttachment
