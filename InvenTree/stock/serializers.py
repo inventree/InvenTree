@@ -212,7 +212,7 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
 
     user_detail = UserSerializerBrief(source='user', read_only=True)
 
-    attachment = InvenTreeAttachmentSerializerField()
+    attachment = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         model = StockItemAttachment
@@ -227,6 +227,12 @@ class StockItemAttachmentSerializer(InvenTreeModelSerializer):
             'user_detail',
         ]
 
+        read_only_fields = [
+            'upload_date',
+            'user',
+            'user_detail'
+        ]
+
 
 class StockItemTestResultSerializer(InvenTreeModelSerializer):
     """ Serializer for the StockItemTestResult model """
@@ -235,7 +241,7 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
 
     key = serializers.CharField(read_only=True)
 
-    attachment = InvenTreeAttachmentSerializerField()
+    attachment = InvenTreeAttachmentSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         user_detail = kwargs.pop('user_detail', False)

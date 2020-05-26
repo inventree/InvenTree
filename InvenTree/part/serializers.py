@@ -47,7 +47,7 @@ class PartAttachmentSerializer(InvenTreeModelSerializer):
     Serializer for the PartAttachment class
     """
 
-    attachment = InvenTreeAttachmentSerializerField()
+    attachment = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         model = PartAttachment
