@@ -104,10 +104,10 @@ class StockItemSerializer(InvenTreeModelSerializer):
     location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='supplier_part', many=False, read_only=True)
 
-    tracking_items = serializers.IntegerField()
+    tracking_items = serializers.IntegerField(source='tracking_info_count')
 
     quantity = serializers.FloatField()
-    allocated = serializers.FloatField()
+    allocated = serializers.FloatField(source='allocation_count')
 
     required_tests = serializers.IntegerField(source='required_test_count', read_only=True)
 
