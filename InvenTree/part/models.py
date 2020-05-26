@@ -41,6 +41,7 @@ from InvenTree.helpers import decimal2string, normalize
 
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 
+from report import models as ReportModels
 from build import models as BuildModels
 from order import models as OrderModels
 from company.models import SupplierPart
@@ -357,6 +358,24 @@ class Part(MPTTModel):
 
         self.category = category
         self.save()
+
+    def get_test_report_templates(self):
+        """
+        Return all the TestReport template objects which map to this Part.
+        """
+
+        templates = []
+
+        for report in ReportModels.TestReport.objects.all():
+            if report.matches_part(self):
+                templates.append(report)
+
+        return templates
+
+    def has_test_report_templates(self):
+        """ Return True if this part has a TestReport defined """
+
+        return len(self.get_test_report_templates()) > 0
 
     def get_absolute_url(self):
         """ Return the web URL for viewing this part """
@@ -1014,6 +1033,9 @@ class Part(MPTTModel):
         # Return the tests which are required by this part
         return self.getTestTemplates(required=True)
 
+    def requiredTestCount(self):
+        return self.getRequiredTests().count()
+
     @property
     def attachment_count(self):
         """ Count the number of attachments for this part.
@@ -1086,6 +1108,17 @@ class Part(MPTTModel):
         """ Return all parameters for this part, ordered by name """
 
         return self.parameters.order_by('template__name')
+
+    @property
+    def has_variants(self):
+        """ Check if this Part object has variants underneath it. """
+
+        return self.get_all_variants().count() > 0
+
+    def get_all_variants(self):
+        """ Return all Part object which exist as a variant under this part. """
+
+        return self.get_descendants(include_self=False)
 
 
 def attach_file(instance, filename):
@@ -1204,14 +1237,32 @@ class PartTestTemplate(models.Model):
 
     test_name = models.CharField(
         blank=False, max_length=100,
-        verbose_name=_("Test name"),
+        verbose_name=_("Test Name"),
         help_text=_("Enter a name for the test")
+    )
+
+    description = models.CharField(
+        blank=False, null=True, max_length=100,
+        verbose_name=_("Test Description"),
+        help_text=_("Enter description for this test")
     )
 
     required = models.BooleanField(
         default=True,
         verbose_name=_("Required"),
         help_text=_("Is this test required to pass?")
+    )
+
+    requires_value = models.BooleanField(
+        default=False,
+        verbose_name=_("Requires Value"),
+        help_text=_("Does this test require a value when adding a test result?")
+    )
+
+    requires_attachment = models.BooleanField(
+        default=False,
+        verbose_name=_("Requires Attachment"),
+        help_text=_("Does this test require a file attachment when adding a test result?")
     )
 
 
@@ -1298,6 +1349,11 @@ class BomItem(models.Model):
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
     """
+
+    def save(self, *args, **kwargs):
+
+        self.clean()
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse('bom-item-detail', kwargs={'pk': self.id})
@@ -1390,6 +1446,16 @@ class BomItem(models.Model):
         - A part cannot refer to itself in its BOM
         - A part cannot refer to a part which refers to it
         """
+
+        # If the sub_part is 'trackable' then the 'quantity' field must be an integer
+        try:
+            if self.sub_part.trackable:
+                if not self.quantity == int(self.quantity):
+                    raise ValidationError({
+                        "quantity": _("Quantity must be integer value for trackable parts")
+                    })
+        except Part.DoesNotExist:
+            pass
 
         # A part cannot refer to itself in its BOM
         try:

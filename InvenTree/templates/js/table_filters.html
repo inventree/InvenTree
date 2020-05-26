@@ -34,6 +34,14 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Is allocated" %}',
                 description: '{% trans "Item has been alloacted" %}',
             },
+            serial_gte: {
+                title: "{% trans "Serial number GTE" %}",
+                description: "{% trans "Serial number greater than or equal to" %}"
+            },
+            serial_lte: {
+                title: "{% trans "Serial number LTE" %}",
+                description: "{% trans "Serial number less than or equal to" %}",
+            },
         };
     }
 

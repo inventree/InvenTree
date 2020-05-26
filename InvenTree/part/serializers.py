@@ -62,14 +62,20 @@ class PartTestTemplateSerializer(InvenTreeModelSerializer):
     Serializer for the PartTestTemplate class
     """
 
+    key = serializers.CharField(read_only=True)
+
     class Meta:
         model = PartTestTemplate
 
         fields = [
             'pk',
+            'key',
             'part',
             'test_name',
-            'required'
+            'description',
+            'required',
+            'requires_value',
+            'requires_attachment',
         ]
 
 
@@ -99,9 +105,11 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'thumbnail',
             'active',
             'assembly',
+            'is_template',
             'purchaseable',
             'salable',
             'stock',
+            'trackable',
             'virtual',
         ]
 

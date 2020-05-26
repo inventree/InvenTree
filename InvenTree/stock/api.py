@@ -80,21 +80,10 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_serializer(self, *args, **kwargs):
 
-        try:
-            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', False))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['location_detail'] = str2bool(self.request.query_params.get('location_detail', False))
-        except AttributeError:
-            pass
-
-        try:
-            kwargs['supplier_part_detail'] = str2bool(self.request.query_params.get('supplier_detail', False))
-        except AttributeError:
-            pass
-
+        kwargs['part_detail'] = True
+        kwargs['location_detail'] = True
+        kwargs['supplier_part_detail'] = True
+        kwargs['test_detail'] = True
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
@@ -498,8 +487,21 @@ class StockList(generics.ListCreateAPIView):
 
         if serial_number is not None:
             queryset = queryset.filter(serial=serial_number)
+
+        # Filter by range of serial numbers?
+        serial_number_gte = params.get('serial_gte', None)
+        serial_number_lte = params.get('serial_lte', None)
+
+        if serial_number_gte is not None or serial_number_lte is not None:
+            queryset = queryset.exclude(serial=None)
+
+        if serial_number_gte is not None:
+            queryset = queryset.filter(serial__gte=serial_number_gte)
         
-        in_stock = self.request.query_params.get('in_stock', None)
+        if serial_number_lte is not None:
+            queryset = queryset.filter(serial__lte=serial_number_lte)
+
+        in_stock = params.get('in_stock', None)
 
         if in_stock is not None:
             in_stock = str2bool(in_stock)
@@ -512,7 +514,7 @@ class StockList(generics.ListCreateAPIView):
                 queryset = queryset.exclude(StockItem.IN_STOCK_FILTER)
 
         # Filter by 'allocated' patrs?
-        allocated = self.request.query_params.get('allocated', None)
+        allocated = params.get('allocated', None)
 
         if allocated is not None:
             allocated = str2bool(allocated)
@@ -531,8 +533,14 @@ class StockList(generics.ListCreateAPIView):
             active = str2bool(active)
             queryset = queryset.filter(part__active=active)
 
+        # Filter by internal part number
+        IPN = params.get('IPN', None)
+
+        if IPN:
+            queryset = queryset.filter(part__IPN=IPN)
+
         # Does the client wish to filter by the Part ID?
-        part_id = self.request.query_params.get('part', None)
+        part_id = params.get('part', None)
 
         if part_id:
             try:
@@ -692,14 +700,11 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         'value',
     ]
 
+    ordering = 'date'
+
     def get_serializer(self, *args, **kwargs):
         try:
             kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
-        except:
-            pass
-
-        try:
-            kwargs['attachment_detail'] = str2bool(self.request.query_params.get('attachment_detail', False))
         except:
             pass
 
@@ -718,23 +723,6 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         # Capture the user information
         test_result = serializer.save()
         test_result.user = self.request.user
-
-        # Check if a file has been attached to the request
-        attachment_file = self.request.FILES.get('attachment', None)
-
-        if attachment_file:
-            # Create a new attachment associated with the stock item
-            attachment = StockItemAttachment(
-                attachment=attachment_file,
-                stock_item=test_result.stock_item,
-                user=test_result.user
-            )
-
-            attachment.save()
-
-            # Link the attachment back to the test result
-            test_result.attachment = attachment
-
         test_result.save()
 
 

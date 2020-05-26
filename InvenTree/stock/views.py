@@ -17,6 +17,7 @@ from django.utils.translation import ugettext as _
 from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
+from InvenTree.forms import ConfirmForm
 
 from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
 from InvenTree.helpers import ExtractSerialNumbers
@@ -26,19 +27,12 @@ from datetime import datetime
 
 from company.models import Company, SupplierPart
 from part.models import Part
+from report.models import TestReport
 from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
 
 from .admin import StockItemResource
 
-from .forms import EditStockLocationForm
-from .forms import CreateStockItemForm
-from .forms import EditStockItemForm
-from .forms import AdjustStockForm
-from .forms import TrackingEntryForm
-from .forms import SerializeStockForm
-from .forms import ExportOptionsForm
-from .forms import EditStockItemAttachmentForm
-from .forms import EditStockItemTestResultForm
+from . import forms as StockForms
 
 
 class StockIndex(ListView):
@@ -113,7 +107,7 @@ class StockLocationEdit(AjaxUpdateView):
     """
 
     model = StockLocation
-    form_class = EditStockLocationForm
+    form_class = StockForms.EditStockLocationForm
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Location')
@@ -157,7 +151,7 @@ class StockItemAttachmentCreate(AjaxCreateView):
     """
 
     model = StockItemAttachment
-    form_class = EditStockItemAttachmentForm
+    form_class = StockForms.EditStockItemAttachmentForm
     ajax_form_title = _("Add Stock Item Attachment")
     ajax_template_name = "modal_form.html"
 
@@ -202,7 +196,7 @@ class StockItemAttachmentEdit(AjaxUpdateView):
     """
 
     model = StockItemAttachment
-    form_class = EditStockItemAttachmentForm
+    form_class = StockForms.EditStockItemAttachmentForm
     ajax_form_title = _("Edit Stock Item Attachment")
 
     def get_form(self):
@@ -229,13 +223,48 @@ class StockItemAttachmentDelete(AjaxDeleteView):
         }
 
 
+class StockItemDeleteTestData(AjaxUpdateView):
+    """
+    View for deleting all test data
+    """
+
+    model = StockItem
+    form_class = ConfirmForm
+    ajax_form_title = _("Delete All Test Data")
+
+    def get_form(self):
+        return ConfirmForm()
+
+    def post(self, request, *args, **kwargs):
+
+        valid = False
+
+        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
+        form = self.get_form()
+        
+        confirm = str2bool(request.POST.get('confirm', False))
+
+        if confirm is not True:
+            form.errors['confirm'] = [_('Confirm test data deletion')]
+            form.non_field_errors = [_('Check the confirmation box')]
+        else:
+            stock_item.test_results.all().delete()
+            valid = True
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data)
+
+
 class StockItemTestResultCreate(AjaxCreateView):
     """
     View for adding a new StockItemTestResult
     """
 
     model = StockItemTestResult
-    form_class = EditStockItemTestResultForm
+    form_class = StockForms.EditStockItemTestResultForm
     ajax_form_title = _("Add Test Result")
 
     def post_save(self, **kwargs):
@@ -263,17 +292,6 @@ class StockItemTestResultCreate(AjaxCreateView):
         form = super().get_form()
         form.fields['stock_item'].widget = HiddenInput()
 
-        # Extract the StockItem object
-        item_id = form['stock_item'].value()
-
-        # Limit the options for the file attachments
-        try:
-            stock_item = StockItem.objects.get(pk=item_id)
-            form.fields['attachment'].queryset = stock_item.attachments.all()
-        except (ValueError, StockItem.DoesNotExist):
-            # Hide the attachments field
-            form.fields['attachment'].widget = HiddenInput()
-
         return form
 
 
@@ -283,7 +301,7 @@ class StockItemTestResultEdit(AjaxUpdateView):
     """
 
     model = StockItemTestResult
-    form_class = EditStockItemTestResultForm
+    form_class = StockForms.EditStockItemTestResultForm
     ajax_form_title = _("Edit Test Result")
 
     def get_form(self):
@@ -291,8 +309,6 @@ class StockItemTestResultEdit(AjaxUpdateView):
         form = super().get_form()
 
         form.fields['stock_item'].widget = HiddenInput()
-
-        form.fields['attachment'].queryset = self.object.stock_item.attachments.all()
         
         return form
 
@@ -307,12 +323,81 @@ class StockItemTestResultDelete(AjaxDeleteView):
     context_object_name = "result"
 
 
+class StockItemTestReportSelect(AjaxView):
+    """
+    View for selecting a TestReport template,
+    and generating a TestReport as a PDF.
+    """
+
+    model = StockItem
+    ajax_form_title = _("Select Test Report Template")
+
+    def get_form(self):
+
+        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
+        return StockForms.TestReportFormatForm(stock_item)
+
+    def post(self, request, *args, **kwargs):
+
+        template_id = request.POST.get('template', None)
+
+        try:
+            template = TestReport.objects.get(pk=template_id)
+        except (ValueError, TestReport.DoesNoteExist):
+            raise ValidationError({'template': _("Select valid template")})
+
+        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
+
+        url = reverse('stock-item-test-report-download')
+
+        url += '?stock_item={id}'.format(id=stock_item.pk)
+        url += '&template={id}'.format(id=template.pk)
+
+        data = {
+            'form_valid': True,
+            'url': url,
+        }
+
+        return self.renderJsonResponse(request, self.get_form(), data=data)
+
+
+class StockItemTestReportDownload(AjaxView):
+    """
+    Download a TestReport against a StockItem.
+
+    Requires the following arguments to be passed as URL params:
+
+    stock_item - Valid PK of a StockItem object
+    template - Valid PK of a TestReport template object
+
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        template = request.GET.get('template', None)
+        stock_item = request.GET.get('stock_item', None)
+
+        try:
+            template = TestReport.objects.get(pk=template)
+        except (ValueError, TestReport.DoesNotExist):
+            raise ValidationError({'template': 'Invalid template ID'})
+
+        try:
+            stock_item = StockItem.objects.get(pk=stock_item)
+        except (ValueError, StockItem.DoesNotExist):
+            raise ValidationError({'stock_item': 'Invalid StockItem ID'})
+
+        template.stock_item = stock_item
+
+        return template.render(request)
+
+
 class StockExportOptions(AjaxView):
     """ Form for selecting StockExport options """
 
     model = StockLocation
     ajax_form_title = _('Stock Export Options')
-    form_class = ExportOptionsForm
+    form_class = StockForms.ExportOptionsForm
 
     def post(self, request, *args, **kwargs):
 
@@ -455,7 +540,7 @@ class StockAdjust(AjaxView, FormMixin):
 
     ajax_template_name = 'stock/stock_adjust.html'
     ajax_form_title = _('Adjust Stock')
-    form_class = AdjustStockForm
+    form_class = StockForms.AdjustStockForm
     stock_items = []
 
     def get_GET_items(self):
@@ -773,7 +858,7 @@ class StockItemEdit(AjaxUpdateView):
     """
 
     model = StockItem
-    form_class = EditStockItemForm
+    form_class = StockForms.EditStockItemForm
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Item')
@@ -802,6 +887,30 @@ class StockItemEdit(AjaxUpdateView):
         return form
 
 
+class StockItemConvert(AjaxUpdateView):
+    """
+    View for 'converting' a StockItem to a variant of its current part.
+    """
+
+    model = StockItem
+    form_class = StockForms.ConvertStockItemForm
+    ajax_form_title = _('Convert Stock Item')
+    ajax_template_name = 'stock/stockitem_convert.html'
+    context_object_name = 'item'
+
+    def get_form(self):
+        """
+        Filter the available parts.
+        """
+
+        form = super().get_form()
+        item = self.get_object()
+
+        form.fields['part'].queryset = item.part.get_all_variants()
+
+        return form
+
+
 class StockLocationCreate(AjaxCreateView):
     """
     View for creating a new StockLocation
@@ -809,7 +918,7 @@ class StockLocationCreate(AjaxCreateView):
     """
 
     model = StockLocation
-    form_class = EditStockLocationForm
+    form_class = StockForms.EditStockLocationForm
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Location')
@@ -834,7 +943,7 @@ class StockItemSerialize(AjaxUpdateView):
     model = StockItem
     ajax_template_name = 'stock/item_serialize.html'
     ajax_form_title = _('Serialize Stock')
-    form_class = SerializeStockForm
+    form_class = StockForms.SerializeStockForm
 
     def get_form(self):
 
@@ -843,7 +952,7 @@ class StockItemSerialize(AjaxUpdateView):
         # Pass the StockItem object through to the form
         context['item'] = self.get_object()
 
-        form = SerializeStockForm(**context)
+        form = StockForms.SerializeStockForm(**context)
 
         return form
 
@@ -922,10 +1031,40 @@ class StockItemCreate(AjaxCreateView):
     """
 
     model = StockItem
-    form_class = CreateStockItemForm
+    form_class = StockForms.CreateStockItemForm
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Item')
+
+    def get_part(self, form=None):
+        """
+        Attempt to get the "part" associted with this new stockitem.
+
+        - May be passed to the form as a query parameter (e.g. ?part=<id>)
+        - May be passed via the form field itself.
+        """
+
+        # Try to extract from the URL query
+        part_id = self.request.GET.get('part', None)
+
+        if part_id:
+            try:
+                part = Part.objects.get(pk=part_id)
+                return part
+            except (Part.DoesNotExist, ValueError):
+                pass
+
+        # Try to get from the form
+        if form:
+            try:
+                part_id = form['part'].value()
+                part = Part.objects.get(pk=part_id)
+                return part
+            except (Part.DoesNotExist, ValueError):
+                pass
+
+        # Could not extract a part object
+        return None
 
     def get_form(self):
         """ Get form for StockItem creation.
@@ -935,53 +1074,44 @@ class StockItemCreate(AjaxCreateView):
 
         form = super().get_form()
 
-        part = None
+        part = self.get_part(form=form)
 
-        # If the user has selected a Part, limit choices for SupplierPart
-        if form['part'].value():
-            part_id = form['part'].value()
+        if part is not None:
+            sn = part.getNextSerialNumber()
+            form.field_placeholder['serial_numbers'] = _('Next available serial number is') + ' ' + str(sn)
 
-            try:
-                part = Part.objects.get(id=part_id)
-                
-                sn = part.getNextSerialNumber()
-                form.field_placeholder['serial_numbers'] = _('Next available serial number is') + ' ' + str(sn)
+            form.rebuild_layout()
 
-                form.rebuild_layout()
+            # Hide the 'part' field (as a valid part is selected)
+            form.fields['part'].widget = HiddenInput()
 
-                # Hide the 'part' field (as a valid part is selected)
-                form.fields['part'].widget = HiddenInput()
+            # trackable parts get special consideration
+            if part.trackable:
+                form.fields['delete_on_deplete'].widget = HiddenInput()
+                form.fields['delete_on_deplete'].initial = False
+            else:
+                form.fields.pop('serial_numbers')
 
-                # trackable parts get special consideration
-                if part.trackable:
-                    form.fields['delete_on_deplete'].widget = HiddenInput()
-                    form.fields['delete_on_deplete'].initial = False
-                else:
-                    form.fields.pop('serial_numbers')
+            # If the part is NOT purchaseable, hide the supplier_part field
+            if not part.purchaseable:
+                form.fields['supplier_part'].widget = HiddenInput()
+            else:
+                # Pre-select the allowable SupplierPart options
+                parts = form.fields['supplier_part'].queryset
+                parts = parts.filter(part=part.id)
 
-                # If the part is NOT purchaseable, hide the supplier_part field
-                if not part.purchaseable:
-                    form.fields['supplier_part'].widget = HiddenInput()
-                else:
-                    # Pre-select the allowable SupplierPart options
-                    parts = form.fields['supplier_part'].queryset
-                    parts = parts.filter(part=part.id)
+                form.fields['supplier_part'].queryset = parts
 
-                    form.fields['supplier_part'].queryset = parts
+                # If there is one (and only one) supplier part available, pre-select it
+                all_parts = parts.all()
 
-                    # If there is one (and only one) supplier part available, pre-select it
-                    all_parts = parts.all()
+                if len(all_parts) == 1:
 
-                    if len(all_parts) == 1:
-
-                        # TODO - This does NOT work for some reason? Ref build.views.BuildItemCreate
-                        form.fields['supplier_part'].initial = all_parts[0].id
-
-            except Part.DoesNotExist:
-                pass
+                    # TODO - This does NOT work for some reason? Ref build.views.BuildItemCreate
+                    form.fields['supplier_part'].initial = all_parts[0].id
 
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
-        elif form['supplier_part'].value() is not None:
+        if form['supplier_part'].value() is not None:
             pass
             
         return form
@@ -1004,27 +1134,20 @@ class StockItemCreate(AjaxCreateView):
         else:
             initials = super(StockItemCreate, self).get_initial().copy()
 
-        part_id = self.request.GET.get('part', None)
+        part = self.get_part()
+
         loc_id = self.request.GET.get('location', None)
         sup_part_id = self.request.GET.get('supplier_part', None)
 
-        part = None
         location = None
         supplier_part = None
 
-        # Part field has been specified
-        if part_id:
-            try:
-                part = Part.objects.get(pk=part_id)
-
-                # Check that the supplied part is 'valid'
-                if not part.is_template and part.active and not part.virtual:
-                    initials['part'] = part
-                    initials['location'] = part.get_default_location()
-                    initials['supplier_part'] = part.default_supplier
-
-            except (ValueError, Part.DoesNotExist):
-                pass
+        if part is not None:
+            # Check that the supplied part is 'valid'
+            if not part.is_template and part.active and not part.virtual:
+                initials['part'] = part
+                initials['location'] = part.get_default_location()
+                initials['supplier_part'] = part.default_supplier
 
         # SupplierPart field has been specified
         # It must match the Part, if that has been supplied
@@ -1229,7 +1352,7 @@ class StockItemTrackingEdit(AjaxUpdateView):
 
     model = StockItemTracking
     ajax_form_title = _('Edit Stock Tracking Entry')
-    form_class = TrackingEntryForm
+    form_class = StockForms.TrackingEntryForm
 
 
 class StockItemTrackingCreate(AjaxCreateView):
@@ -1238,7 +1361,7 @@ class StockItemTrackingCreate(AjaxCreateView):
 
     model = StockItemTracking
     ajax_form_title = _("Add Stock Tracking Entry")
-    form_class = TrackingEntryForm
+    form_class = StockForms.TrackingEntryForm
 
     def post(self, request, *args, **kwargs):
 

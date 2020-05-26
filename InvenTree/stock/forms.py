@@ -63,6 +63,18 @@ class EditStockLocationForm(HelperForm):
         ]
 
 
+class ConvertStockItemForm(HelperForm):
+    """
+    Form for converting a StockItem to a variant of its current part.
+    """
+
+    class Meta:
+        model = StockItem
+        fields = [
+            'part'
+        ]
+
+
 class CreateStockItemForm(HelperForm):
     """ Form for creating a new StockItem """
 
@@ -140,6 +152,34 @@ class SerializeStockForm(HelperForm):
             'destination',
             'note',
         ]
+
+
+class TestReportFormatForm(HelperForm):
+    """ Form for selection a test report template """
+
+    class Meta:
+        model = StockItem
+        fields = [
+            'template',
+        ]
+
+    def __init__(self, stock_item, *args, **kwargs):
+        self.stock_item = stock_item
+
+        super().__init__(*args, **kwargs)
+        self.fields['template'].choices = self.get_template_choices()
+    
+    def get_template_choices(self):
+        """ Available choices """
+
+        choices = []
+
+        for report in self.stock_item.part.get_test_report_templates():
+            choices.append((report.pk, report))
+
+        return choices
+
+    template = forms.ChoiceField(label=_('Template'), help_text=_('Select test report template'))
 
 
 class ExportOptionsForm(HelperForm):

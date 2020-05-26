@@ -32,7 +32,7 @@
             <input class='numberinput'
               min='0'
               {% if stock_action == 'take' or stock_action == 'move' %} max='{{ item.quantity }}' {% endif %}
-              value='{{ item.new_quantity }}' type='number' name='stock-id-{{ item.id }}' id='stock-id-{{ item.id }}'/>
+              value='{% decimal item.new_quantity %}' type='number' name='stock-id-{{ item.id }}' id='stock-id-{{ item.id }}'/>
             {% if item.error %}
             <br><span class='help-inline'>{{ item.error }}</span>
             {% endif %}

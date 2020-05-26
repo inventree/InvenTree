@@ -331,7 +331,6 @@ class StockItem(MPTTModel):
         verbose_name=_('Base Part'),
         related_name='stock_items', help_text=_('Base part'),
         limit_choices_to={
-            'is_template': False,
             'active': True,
             'virtual': False
         })
@@ -647,6 +646,9 @@ class StockItem(MPTTModel):
             # Copy entire transaction history
             new_item.copyHistoryFrom(self)
 
+            # Copy test result history
+            new_item.copyTestResultsFrom(self)
+
             # Create a new stock tracking item
             new_item.addTransactionNote(_('Add serial number'), user, notes=notes)
 
@@ -655,13 +657,24 @@ class StockItem(MPTTModel):
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
-        """ Copy stock history from another part """
+        """ Copy stock history from another StockItem """
 
         for item in other.tracking_info.all():
             
             item.item = self
             item.pk = None
             item.save()
+
+    @transaction.atomic
+    def copyTestResultsFrom(self, other, filters={}):
+        """ Copy all test results from another StockItem """
+
+        for result in other.test_results.all().filter(**filters):
+
+            # Create a copy of the test result by nulling-out the pk
+            result.pk = None
+            result.stock_item = self
+            result.save()
 
     @transaction.atomic
     def splitStock(self, quantity, location, user):
@@ -712,6 +725,9 @@ class StockItem(MPTTModel):
 
         # Copy the transaction history of this part into the new one
         new_stock.copyHistoryFrom(self)
+
+        # Copy the test results of this part to the new one
+        new_stock.copyTestResultsFrom(self)
 
         # Add a new tracking item for the new stock item
         new_stock.addTransactionNote(
@@ -963,6 +979,13 @@ class StockItem(MPTTModel):
 
         return result_map
 
+    def testResultList(self, **kwargs):
+        """
+        Return a list of test-result objects for this StockItem
+        """
+
+        return self.testResultMap(**kwargs).values()
+
     def requiredTestStatus(self):
         """
         Return the status of the tests required for this StockItem.
@@ -999,6 +1022,10 @@ class StockItem(MPTTModel):
             'passed': passed,
             'failed': failed,
         }
+
+    @property
+    def required_test_count(self):
+        return self.part.getRequiredTests().count()
 
     def hasRequiredTests(self):
         return self.part.getRequiredTests().count() > 0
@@ -1083,6 +1110,11 @@ class StockItemTracking(models.Model):
     # file = models.FileField()
 
 
+def rename_stock_item_test_result_attachment(instance, filename):
+
+    return os.path.join('stock_files', str(instance.stock_item.pk), os.path.basename(filename))
+
+
 class StockItemTestResult(models.Model):
     """
     A StockItemTestResult records results of custom tests against individual StockItem objects.
@@ -1102,19 +1134,41 @@ class StockItemTestResult(models.Model):
         date: Date the test result was recorded
     """
 
+    def save(self, *args, **kwargs):
+
+        super().clean()
+        super().validate_unique()
+        super().save(*args, **kwargs)
+
     def clean(self):
 
         super().clean()
 
-        # If an attachment is linked to this result, the attachment must also point to the item
-        try:
-            if self.attachment:
-                if not self.attachment.stock_item == self.stock_item:
-                    raise ValidationError({
-                        'attachment': _("Test result attachment must be linked to the same StockItem"),
-                    })
-        except (StockItem.DoesNotExist, StockItemAttachment.DoesNotExist):
-            pass
+        # If this test result corresponds to a template, check the requirements of the template
+        key = self.key
+
+        templates = self.stock_item.part.getTestTemplates()
+
+        for template in templates:
+            if key == template.key:
+                
+                if template.requires_value:
+                    if not self.value:
+                        raise ValidationError({
+                            "value": _("Value must be provided for this test"),
+                        })
+
+                if template.requires_attachment:
+                    if not self.attachment:
+                        raise ValidationError({
+                            "attachment": _("Attachment must be uploaded for this test"),
+                        })
+
+                break
+
+    @property
+    def key(self):
+        return helpers.generateTestKey(self.test)
 
     stock_item = models.ForeignKey(
         StockItem,
@@ -1140,10 +1194,9 @@ class StockItemTestResult(models.Model):
         help_text=_('Test output value')
     )
 
-    attachment = models.ForeignKey(
-        StockItemAttachment,
-        on_delete=models.SET_NULL,
-        blank=True, null=True,
+    attachment = models.FileField(
+        null=True, blank=True,
+        upload_to=rename_stock_item_test_result_attachment,
         verbose_name=_('Attachment'),
         help_text=_('Test result attachment'),
     )

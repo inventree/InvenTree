@@ -33,3 +33,9 @@ For code documentation, refer to the [developer documentation](http://inventree.
 ## Contributing
 
 Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://inventree.github.io/pages/contribute).
+
+## Donate
+
+If you use InvenTree and find it to be useful, please consider making a donation toward its continued development. 
+
+[Donate via PayPal](https://paypal.me/inventree?locale.x=en_AU)

@@ -72,6 +72,27 @@ if DEBUG:
         format='%(asctime)s %(levelname)s %(message)s',
     )
 
+# Web URL endpoint for served static files
+STATIC_URL = '/static/'
+
+# The filesystem location for served static files
+STATIC_ROOT = os.path.abspath(CONFIG.get('static_root', os.path.join(BASE_DIR, 'static')))
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'InvenTree', 'static'),
+]
+
+# Web URL endpoint for served media files
+MEDIA_URL = '/media/'
+
+# The filesystem location for served static files
+MEDIA_ROOT = os.path.abspath(CONFIG.get('media_root', os.path.join(BASE_DIR, 'media')))
+
+if DEBUG:
+    print("InvenTree running in DEBUG mode")
+    print("MEDIA_ROOT:", MEDIA_ROOT)
+    print("STATIC_ROOT:", STATIC_ROOT)
+
 # Does the user wish to use the sentry.io integration?
 sentry_opts = CONFIG.get('sentry', {})
 
@@ -106,12 +127,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # InvenTree apps
-    'common.apps.CommonConfig',
-    'part.apps.PartConfig',
-    'stock.apps.StockConfig',
-    'company.apps.CompanyConfig',
     'build.apps.BuildConfig',
+    'common.apps.CommonConfig',
+    'company.apps.CompanyConfig',
     'order.apps.OrderConfig',
+    'part.apps.PartConfig',
+    'report.apps.ReportConfig',
+    'stock.apps.StockConfig',
 
     # Third part add-ons
     'django_filters',               # Extended filter functionality
@@ -126,6 +148,7 @@ INSTALLED_APPS = [
     'mptt',                         # Modified Preorder Tree Traversal
     'markdownx',                    # Markdown editing
     'markdownify',                  # Markdown template rendering
+    'django_tex',                   # LaTeX output
 ]
 
 LOGGING = {
@@ -160,7 +183,11 @@ ROOT_URLCONF = 'InvenTree.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            # Allow templates in the reporting directory to be accessed
+            os.path.join(MEDIA_ROOT, 'report'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -172,6 +199,14 @@ TEMPLATES = [
                 'InvenTree.context.status_codes',
             ],
         },
+    },
+    # Backend for LaTeX report rendering
+    {
+        'NAME': 'tex',
+        'BACKEND': 'django_tex.engine.TeXEngine',
+        'DIRS': [
+            os.path.join(MEDIA_ROOT, 'report'),
+        ]
     },
 ]
 
@@ -315,30 +350,21 @@ DATE_INPUT_FORMATS = [
     "%Y-%m-%d",
 ]
 
+# LaTeX rendering settings (django-tex)
+LATEX_SETTINGS = CONFIG.get('latex', {})
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.10/howto/static-files/
+# Is LaTeX rendering enabled? (Off by default)
+LATEX_ENABLED = LATEX_SETTINGS.get('enabled', False)
 
-# Web URL endpoint for served static files
-STATIC_URL = '/static/'
+# Set the latex interpreter in the config.yaml settings file
+LATEX_INTERPRETER = LATEX_SETTINGS.get('interpreter', 'pdflatex')
 
-# The filesystem location for served static files
-STATIC_ROOT = os.path.abspath(CONFIG.get('static_root', os.path.join(BASE_DIR, 'static')))
+LATEX_INTERPRETER_OPTIONS = LATEX_SETTINGS.get('options', '')
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'InvenTree', 'static'),
+LATEX_GRAPHICSPATH = [
+    # Allow LaTeX files to access the report assets directory
+    os.path.join(MEDIA_ROOT, "report", "assets"),
 ]
-
-# Web URL endpoint for served media files
-MEDIA_URL = '/media/'
-
-# The filesystem location for served static files
-MEDIA_ROOT = os.path.abspath(CONFIG.get('media_root', os.path.join(BASE_DIR, 'media')))
-
-if DEBUG:
-    print("InvenTree running in DEBUG mode")
-    print("MEDIA_ROOT:", MEDIA_ROOT)
-    print("STATIC_ROOT:", STATIC_ROOT)
 
 # crispy forms use the bootstrap templates
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

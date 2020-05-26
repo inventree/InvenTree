@@ -73,3 +73,16 @@ log_queries: False
 sentry:
   enabled: False
   # dsn: add-your-sentry-dsn-here
+
+# LaTeX report rendering
+# InvenTree uses the django-tex plugin to enable LaTeX report rendering
+# Ref: https://pypi.org/project/django-tex/
+# Note: Ensure that a working LaTeX toolchain is installed and working *before* starting the server
+latex:
+  # Select the LaTeX interpreter to use for PDF rendering
+  # Note: The intepreter needs to be installed on the system!
+  # e.g. to install pdflatex: apt-get texlive-latex-base
+  enabled: False
+  interpreter: pdflatex 
+  # Extra options to pass through to the LaTeX interpreter
+  options: ''

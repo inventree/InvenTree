@@ -272,8 +272,9 @@ function setupFilterList(tableKey, table, target) {
     for (var key in filters) {
         var value = getFilterOptionValue(tableKey, key, filters[key]);
         var title = getFilterTitle(tableKey, key);
+        var description = getFilterDescription(tableKey, key);
         
-        element.append(`<div class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
+        element.append(`<div title='${description}' class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
     }
 
     // Add a callback for adding a new filter
@@ -361,6 +362,15 @@ function getFilterTitle(tableKey, filterKey) {
     return settings.title || filterKey;
 }
 
+
+/**
+ * Return the pretty description for the given table and filter selection
+ */
+function getFilterDescription(tableKey, filterKey) {
+    var settings = getFilterSettings(tableKey, filterKey);
+
+    return settings.title;
+}
 
 /*
  * Return a description for the given table and filter selection.

@@ -13,7 +13,13 @@
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style="float: right;">
         <div class='btn-group' role='group'>
+            {% if user.is_staff %}
+            <button type='button' class='btn btn-danger' id='delete-test-results'>{% trans "Delete Test Data" %}</button>
+            {% endif %}
             <button type='button' class='btn btn-success' id='add-test-result'>{% trans "Add Test Data" %}</button>
+            {% if item.part.has_test_report_templates %}
+            <button type='button' class='btn btn-default' id='test-report'>{% trans "Test Report" %} <span class='fas fa-tasks'></span></button>
+            {% endif %}
         </div>
         <div class='filter-list' id='filter-list-stocktests'>
             <!-- Empty div -->
@@ -39,6 +45,28 @@ function reloadTable() {
     location.reload();
     //$("#test-result-table").bootstrapTable("refresh");
 }
+
+{% if item.part.has_test_report_templates %}
+$("#test-report").click(function() {
+    launchModalForm(
+        "{% url 'stock-item-test-report-select' item.id %}",
+        {
+            follow: true,
+        }
+    );
+});
+{% endif %}
+
+{% if user.is_staff %}
+$("#delete-test-results").click(function() {
+    launchModalForm(
+        "{% url 'stock-item-delete-test-data' item.id %}",
+        {
+            success: reloadTable,
+        }
+    );
+});
+{% endif %}
 
 $("#add-test-result").click(function() {
     launchModalForm(

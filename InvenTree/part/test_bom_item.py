@@ -44,6 +44,20 @@ class BomItemTest(TestCase):
             item = BomItem.objects.create(part=self.bob, sub_part=self.bob, quantity=7)
             item.clean()
 
+    def test_integer_quantity(self):
+        """
+        Test integer validation for BomItem
+        """
+
+        p = Part.objects.create(name="test", description="d", component=True, trackable=True)
+
+        # Creation of a BOMItem with a non-integer quantity of a trackable Part should fail
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(part=self.bob, sub_part=p, quantity=21.7)
+
+        # But with an integer quantity, should be fine
+        BomItem.objects.create(part=self.bob, sub_part=p, quantity=21)
+
     def test_overage(self):
         """ Test that BOM line overages are calculated correctly """
 

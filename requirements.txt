@@ -20,3 +20,5 @@ coverage==4.0.3                 # Unit test coverage
 python-coveralls==2.9.1         # Coveralls linking (for Travis)
 rapidfuzz==0.7.6                # Fuzzy string matching
 django-stdimage==5.1.1          # Advanced ImageField management
+django-tex==1.1.7               # LaTeX PDF export
+django-weasyprint==1.0.1        # HTML PDF export
