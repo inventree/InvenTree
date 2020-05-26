@@ -33,6 +33,13 @@
             <td>{{ part.revision }}</td>
         </tr>
         {% endif %}
+        {% if part.trackable %}
+        <tr>
+            <td><span class='fas fa-hashtag'></span></td>
+            <td><b>{% trans "Next Serial Number" %}</b></td>
+            <td>{{ part.getNextSerialNumber }}</td>
+        </tr>
+        {% endif %}
         <tr>
             <td><span class='fas fa-info-circle'></span></td>
             <td><b>{% trans "Description" %}</b></td>

@@ -337,12 +337,21 @@ function loadStockTable(table, options) {
                 } else {
                     return '-';
                 }
-            } else if (field == 'location__path') {
+            } else if (field == 'location_detail.pathstring') {
                 /* Determine how many locations */
                 var locations = [];
 
                 data.forEach(function(item) {
-                    var loc = item.location;
+
+                    var loc = null;
+
+                    if (item.location_detail) {
+                        loc = item.location_detail.pathstring;
+                    } else {
+                        loc = "{% trans "Undefined location" %}";
+                    }
+
+                    console.log("Location: " + loc);
 
                     if (!locations.includes(loc)) {
                         locations.push(loc); 
@@ -353,7 +362,11 @@ function loadStockTable(table, options) {
                     return "In " + locations.length + " locations";
                 } else {
                     // A single location!
-                    return renderLink(row.location__path, '/stock/location/' + row.location + '/')
+                    if (row.location_detail) {
+                        return renderLink(row.location_detail.pathstring, `/stock/location/${row.location}/`);
+                    } else {
+                        return "<i>{% trans "Undefined location" %}</i>";
+                    }
                 }
             } else if (field == 'notes') {
                 var notes = [];

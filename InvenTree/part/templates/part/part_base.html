@@ -6,11 +6,14 @@
 
 {% block content %}
 
+{% if part.virtual %}
+<div class='alert alert-info alert-block'>
+    {% trans "This part is a virtual part" %}
+</div>
+{% endif %}
 {% if part.is_template %}
 <div class='alert alert-info alert-block'>
     {% trans "This part is a template part." %}
-    <br>
-    {% trans "It is not a real part, but real parts can be based on this template." %}
 </div>
 {% endif %}
 {% if part.variant_of %}
