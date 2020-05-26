@@ -1036,6 +1036,37 @@ class StockItemCreate(AjaxCreateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Item')
 
+    def get_part(self, form=None):
+        """
+        Attempt to get the "part" associted with this new stockitem.
+
+        - May be passed to the form as a query parameter (e.g. ?part=<id>)
+        - May be passed via the form field itself.
+        """
+
+        # Try to extract from the URL query
+        part_id = self.request.GET.get('part', None)
+
+        if part_id:
+            try:
+                part = Part.objects.get(pk=part_id)
+                return part
+            except (Part.DoesNotExist, ValueError):
+                pass
+
+        # Try to get from the form
+        if form:
+            try:
+                part_id = form['part'].value()
+                part = Part.objects.get(pk=part_id)
+                return part
+            except (Part.DoesNotExist, ValueError):
+                pass
+
+        # Could not extract a part object
+        return None
+
+
     def get_form(self):
         """ Get form for StockItem creation.
         Overrides the default get_form() method to intelligently limit
@@ -1044,53 +1075,46 @@ class StockItemCreate(AjaxCreateView):
 
         form = super().get_form()
 
-        part = None
+        part = self.get_part(form=form)
 
-        # If the user has selected a Part, limit choices for SupplierPart
-        if form['part'].value():
-            part_id = form['part'].value()
+        if part is not None:
+            sn = part.getNextSerialNumber()
+            form.field_placeholder['serial_numbers'] = _('Next available serial number is') + ' ' + str(sn)
 
-            try:
-                part = Part.objects.get(id=part_id)
-                
-                sn = part.getNextSerialNumber()
-                form.field_placeholder['serial_numbers'] = _('Next available serial number is') + ' ' + str(sn)
+            print("Placeholder:", sn)
 
-                form.rebuild_layout()
+            form.rebuild_layout()
 
-                # Hide the 'part' field (as a valid part is selected)
-                form.fields['part'].widget = HiddenInput()
+            # Hide the 'part' field (as a valid part is selected)
+            form.fields['part'].widget = HiddenInput()
 
-                # trackable parts get special consideration
-                if part.trackable:
-                    form.fields['delete_on_deplete'].widget = HiddenInput()
-                    form.fields['delete_on_deplete'].initial = False
-                else:
-                    form.fields.pop('serial_numbers')
+            # trackable parts get special consideration
+            if part.trackable:
+                form.fields['delete_on_deplete'].widget = HiddenInput()
+                form.fields['delete_on_deplete'].initial = False
+            else:
+                form.fields.pop('serial_numbers')
 
-                # If the part is NOT purchaseable, hide the supplier_part field
-                if not part.purchaseable:
-                    form.fields['supplier_part'].widget = HiddenInput()
-                else:
-                    # Pre-select the allowable SupplierPart options
-                    parts = form.fields['supplier_part'].queryset
-                    parts = parts.filter(part=part.id)
+            # If the part is NOT purchaseable, hide the supplier_part field
+            if not part.purchaseable:
+                form.fields['supplier_part'].widget = HiddenInput()
+            else:
+                # Pre-select the allowable SupplierPart options
+                parts = form.fields['supplier_part'].queryset
+                parts = parts.filter(part=part.id)
 
-                    form.fields['supplier_part'].queryset = parts
+                form.fields['supplier_part'].queryset = parts
 
-                    # If there is one (and only one) supplier part available, pre-select it
-                    all_parts = parts.all()
+                # If there is one (and only one) supplier part available, pre-select it
+                all_parts = parts.all()
 
-                    if len(all_parts) == 1:
+                if len(all_parts) == 1:
 
-                        # TODO - This does NOT work for some reason? Ref build.views.BuildItemCreate
-                        form.fields['supplier_part'].initial = all_parts[0].id
-
-            except Part.DoesNotExist:
-                pass
+                    # TODO - This does NOT work for some reason? Ref build.views.BuildItemCreate
+                    form.fields['supplier_part'].initial = all_parts[0].id
 
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
-        elif form['supplier_part'].value() is not None:
+        if form['supplier_part'].value() is not None:
             pass
             
         return form
@@ -1113,27 +1137,20 @@ class StockItemCreate(AjaxCreateView):
         else:
             initials = super(StockItemCreate, self).get_initial().copy()
 
-        part_id = self.request.GET.get('part', None)
+        part = self.get_part()
+
         loc_id = self.request.GET.get('location', None)
         sup_part_id = self.request.GET.get('supplier_part', None)
 
-        part = None
         location = None
         supplier_part = None
 
-        # Part field has been specified
-        if part_id:
-            try:
-                part = Part.objects.get(pk=part_id)
-
-                # Check that the supplied part is 'valid'
-                if not part.is_template and part.active and not part.virtual:
-                    initials['part'] = part
-                    initials['location'] = part.get_default_location()
-                    initials['supplier_part'] = part.default_supplier
-
-            except (ValueError, Part.DoesNotExist):
-                pass
+        if part is not None:
+            # Check that the supplied part is 'valid'
+            if not part.is_template and part.active and not part.virtual:
+                initials['part'] = part
+                initials['location'] = part.get_default_location()
+                initials['supplier_part'] = part.default_supplier
 
         # SupplierPart field has been specified
         # It must match the Part, if that has been supplied
