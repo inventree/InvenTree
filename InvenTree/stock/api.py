@@ -487,7 +487,20 @@ class StockList(generics.ListCreateAPIView):
 
         if serial_number is not None:
             queryset = queryset.filter(serial=serial_number)
+
+        # Filter by range of serial numbers?
+        serial_number_gte = params.get('serial_gte', None)
+        serial_number_lte = params.get('serial_lte', None)
+
+        if serial_number_gte is not None or serial_number_lte is not None:
+            queryset = queryset.exclude(serial=None)
+
+        if serial_number_gte is not None:
+            queryset = queryset.filter(serial__gte=serial_number_gte)
         
+        if serial_number_lte is not None:
+            queryset = queryset.filter(serial__lte=serial_number_lte)
+
         in_stock = params.get('in_stock', None)
 
         if in_stock is not None:
