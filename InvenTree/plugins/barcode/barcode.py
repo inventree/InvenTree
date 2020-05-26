@@ -74,6 +74,6 @@ class BarcodePlugin(plugin.InvenTreePlugin):
         Use the existing serializer to do this
         """
 
-        serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_detail=True)
+        serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
 
         return serializer.data

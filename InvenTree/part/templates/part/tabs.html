@@ -18,7 +18,7 @@
         <a href="{% url 'part-stock' part.id %}">{% trans "Stock" %} <span class="badge">{% decimal part.total_stock %}</span></a>
     </li>
     {% endif %}
-    {% if part.component or part.used_in_count > 0 %}
+    {% if part.component or part.salable or part.used_in_count > 0 %}
     <li{% ifequal tab 'allocation' %} class="active"{% endifequal %}>
         <a href="{% url 'part-allocation' part.id %}">{% trans "Allocated" %} <span class="badge">{% decimal part.allocation_count %}</span></a>
     </li>
