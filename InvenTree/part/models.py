@@ -1364,7 +1364,6 @@ class BomItem(models.Model):
                              help_text=_('Select parent part'),
                              limit_choices_to={
                                  'assembly': True,
-                                 'is_template': False,
                              })
 
     # A link to the child item (sub-part)
@@ -1373,7 +1372,6 @@ class BomItem(models.Model):
                                  help_text=_('Select part to be used in BOM'),
                                  limit_choices_to={
                                      'component': True,
-                                     'is_template': False,
                                  })
 
     # Quantity required
