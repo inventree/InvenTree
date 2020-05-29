@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
 from InvenTree.helpers import GetExportFormats
+from InvenTree.fields import RoundingDecimalFormField
 
 from mptt.fields import TreeNodeChoiceField
 from django import forms
@@ -193,6 +194,8 @@ class EditCategoryForm(HelperForm):
 
 class EditBomItemForm(HelperForm):
     """ Form for editing a BomItem object """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
 
     class Meta:
         model = BomItem

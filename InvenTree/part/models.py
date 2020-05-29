@@ -262,6 +262,9 @@ class Part(MPTTModel):
                 if n_refs == 0:
                     previous.image.delete(save=False)
 
+        self.clean()
+        self.validate_unique()
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -433,11 +436,7 @@ class Part(MPTTModel):
     def clean(self):
         """ Perform cleaning operations for the Part model """
 
-        if self.is_template and self.variant_of is not None:
-            raise ValidationError({
-                'is_template': _("Part cannot be a template part if it is a variant of another part"),
-                'variant_of': _("Part cannot be a variant of another part if it is already a template"),
-            })
+        super().clean()
 
     name = models.CharField(max_length=100, blank=False,
                             help_text=_('Part name'),
@@ -1364,7 +1363,6 @@ class BomItem(models.Model):
                              help_text=_('Select parent part'),
                              limit_choices_to={
                                  'assembly': True,
-                                 'is_template': False,
                              })
 
     # A link to the child item (sub-part)
@@ -1373,7 +1371,6 @@ class BomItem(models.Model):
                                  help_text=_('Select part to be used in BOM'),
                                  limit_choices_to={
                                      'component': True,
-                                     'is_template': False,
                                  })
 
     # Quantity required

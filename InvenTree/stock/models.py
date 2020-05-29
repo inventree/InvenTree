@@ -292,11 +292,6 @@ class StockItem(MPTTModel):
     def get_part_name(self):
         return self.part.full_name
 
-    class Meta:
-        unique_together = [
-            ('part', 'serial'),
-        ]
-
     def format_barcode(self):
         """ Return a JSON string for formatting a barcode for this StockItem.
         Can be used to perform lookup of a stockitem using barcode
