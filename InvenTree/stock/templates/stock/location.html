@@ -189,9 +189,7 @@
     $('#item-create').click(function () {
         launchModalForm("{% url 'stock-item-create' %}",
                         {
-                            success: function() {
-                                $("#stock-table").bootstrapTable('refresh');
-                            },
+                            follow: true,
                             data: {
                                 {% if location %}
                                 location: {{ location.id }}
