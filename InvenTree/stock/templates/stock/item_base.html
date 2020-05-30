@@ -144,11 +144,15 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td>{% trans "Build Order" %}</td>
         <td><a href="{% url 'build-detail' item.build_order.id %}">{{ item.build_order }}</a></td>
     </tr>
-    {% elif item.location %}
+    {% else %}
     <tr>
         <td><span class='fas fa-map-marker-alt'></span></td>
         <td>{% trans "Location" %}</td>
+        {% if item.location %}
         <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
+        {% else %}
+        <td>{% trans "No location set" %}</td>
+        {% endif %}
     </tr>
     {% endif %}
     {% if item.uid %}
