@@ -332,6 +332,16 @@ $("#show-qr-code").click(function() {
 
 {% if item.in_stock %}
 
+{% if item.part.salable %}
+$("#stock-assign-to-customer").click(function() {
+    launchModalForm("{% url 'stock-item-assign' item.id %}",
+        {
+            reload: true,
+        }
+    );
+});
+{% endif %}
+
 function itemAdjust(action) {
     launchModalForm("/stock/adjust/", 
         {

@@ -223,6 +223,44 @@ class StockItemAttachmentDelete(AjaxDeleteView):
         }
 
 
+class StockItemAssignToCustomer(AjaxUpdateView):
+    """
+    View for manually assigning a StockItem to a Customer
+    """
+
+    model = StockItem
+    ajax_form_title = _("Assign to Customer")
+    context_object_name = "item"
+    form_class = StockForms.AssignStockItemToCustomerForm
+
+    def post(self, request, *args, **kwargs):
+
+        customer = request.POST.get('customer', None)
+
+        if customer:
+            try:
+                customer = Company.objects.get(pk=customer)
+            except (ValueError, Company.DoesNotExist):
+                customer = None
+
+        if customer is not None:
+            stock_item = self.get_object()
+
+            item = stock_item.allocateToCustomer(
+                customer,
+                user=request.user
+            )
+
+            item.clearAllocations()
+
+        data = {
+            'form_valid': True,
+        }
+
+        return self.renderJsonResponse(request, self.get_form(), data)
+
+
+
 class StockItemDeleteTestData(AjaxUpdateView):
     """
     View for deleting all test data
