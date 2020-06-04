@@ -643,11 +643,20 @@ class Part(MPTTModel):
         # Calculate the minimum number of parts that can be built using each sub-part
         for item in self.bom_items.all().prefetch_related('sub_part__stock_items'):
             stock = item.sub_part.available_stock
+
+            # If (by some chance) we get here but the BOM item quantity is invalid,
+            # ignore!
+            if item.quantity <= 0:
+                continue
+
             n = int(stock / item.quantity)
 
             if total is None or n < total:
                 total = n
 
+        if total is None:
+            total = 0
+        
         return max(total, 0)
 
     @property
