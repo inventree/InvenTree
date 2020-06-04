@@ -32,6 +32,7 @@ from InvenTree.status_codes import StockStatus
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 
+from company import models as CompanyModels
 from part import models as PartModels
 
 
@@ -350,6 +351,16 @@ class StockItem(MPTTModel):
         on_delete=models.DO_NOTHING,
         related_name='owned_parts', blank=True, null=True,
         help_text=_('Is this item installed in another item?')
+    )
+
+    customer = models.ForeignKey(
+        CompanyModels.Company,
+        on_delete=models.SET_NULL,
+        null=True,
+        limit_choices_to={'is_customer': True},
+        related_name='assigned_stock',
+        help_text=_("Customer"),
+        verbose_name=_("Customer"),
     )
 
     serial = models.PositiveIntegerField(
