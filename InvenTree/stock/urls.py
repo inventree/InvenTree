@@ -23,6 +23,7 @@ stock_item_detail_urls = [
     url(r'^delete/', views.StockItemDelete.as_view(), name='stock-item-delete'),
     url(r'^qr_code/', views.StockItemQRCode.as_view(), name='stock-item-qr'),
     url(r'^delete_test_data/', views.StockItemDeleteTestData.as_view(), name='stock-item-delete-test-data'),
+    url(r'^assign/', views.StockItemAssignToCustomer.as_view(), name='stock-item-assign'),
 
     url(r'^add_tracking/', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
 

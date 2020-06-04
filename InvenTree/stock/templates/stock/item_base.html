@@ -71,43 +71,48 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     {% include "qr_button.html" %}
     {% if item.in_stock %}
     {% if not item.serialized %}
-    <button type='button' class='btn btn-default' id='stock-add' title='Add to stock'>
+    <button type='button' class='btn btn-default' id='stock-add' title='{% trans "Add to stock" %}'>
         <span class='fas fa-plus-circle icon-green'/>
     </button>
-    <button type='button' class='btn btn-default' id='stock-remove' title='Take from stock'>
+    <button type='button' class='btn btn-default' id='stock-remove' title='{% trans "Take from stock" %}'>
         <span class='fas fa-minus-circle icon-red''/>
     </button>
-    <button type='button' class='btn btn-default' id='stock-count' title='Count stock'>
+    <button type='button' class='btn btn-default' id='stock-count' title='{% trans "Count stock" %}'>
         <span class='fas fa-clipboard-list'/>
     </button>
     {% if item.part.trackable %}
-    <button type='button' class='btn btn-default' id='stock-serialize' title='Serialize stock'>
+    <button type='button' class='btn btn-default' id='stock-serialize' title='{% trans "Serialize stock" %}'>
         <span class='fas fa-hashtag'/>
     </button>
     {% endif %}
+    {% if item.part.salable %}
+    <button type='button' class='btn btn-default' id='stock-assign-to-customer' title='{% trans "Assign to Customer" %}'>
+        <span class='fas fa-user-tie'/>
+    </button>
     {% endif %}
-    <button type='button' class='btn btn-default' id='stock-move' title='Transfer stock'>
+    {% endif %}
+    <button type='button' class='btn btn-default' id='stock-move' title='{% trans "Transfer stock" %}'>
         <span class='fas fa-exchange-alt icon-blue'/>
     </button>
-    <button type='button' class='btn btn-default' id='stock-duplicate' title='Duplicate stock item'>
+    <button type='button' class='btn btn-default' id='stock-duplicate' title='{% trans "Duplicate stock item" %}'>
         <span class='fas fa-copy'/>
     </button>
     {% endif %}
     {% if item.part.has_variants %}
-    <button type='button' class='btn btn-default' id='stock-convert' title="Convert stock to variant">
+    <button type='button' class='btn btn-default' id='stock-convert' title='{% trans "Convert stock to variant" %}'>
         <span class='fas fa-screwdriver'/>
     </button>
     {% endif %}
     {% if item.part.has_test_report_templates %}
-    <button type='button' class='btn btn-default' id='stock-test-report' title='Generate test report'>
+    <button type='button' class='btn btn-default' id='stock-test-report' title='{% trans "Generate test report" %}'>
         <span class='fas fa-tasks'/>
     </button>
     {% endif %}
-    <button type='button' class='btn btn-default' id='stock-edit' title='Edit stock item'>
+    <button type='button' class='btn btn-default' id='stock-edit' title='{% trans "Edit stock item" %}'>
         <span class='fas fa-edit icon-blue'/>
     </button>
     {% if item.can_delete %}
-    <button type='button' class='btn btn-default' id='stock-delete' title='Edit stock item'>
+    <button type='button' class='btn btn-default' id='stock-delete' title='{% trans "Edit stock item" %}'>
         <span class='fas fa-trash-alt icon-red'/>
     </button>
     {% endif %}
@@ -126,6 +131,13 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
             <a href="{% url 'part-stock' item.part.id %}">{{ item.part.full_name }}
         </td>
     </tr>
+    {% if item.customer %}
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Customer" %}</td>
+        <td><a href="{% url 'company-detail' item.customer.id %}">{{ item.customer.name }}</a></td>
+    </tr>
+    {% endif %}
     {% if item.belongs_to %}
     <tr>
         <td><span class='fas fa-box'></span></td>
@@ -319,6 +331,16 @@ $("#show-qr-code").click(function() {
 });
 
 {% if item.in_stock %}
+
+{% if item.part.salable %}
+$("#stock-assign-to-customer").click(function() {
+    launchModalForm("{% url 'stock-item-assign' item.id %}",
+        {
+            reload: true,
+        }
+    );
+});
+{% endif %}
 
 function itemAdjust(action) {
     launchModalForm("/stock/adjust/", 
