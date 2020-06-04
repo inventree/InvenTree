@@ -346,12 +346,21 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             # Include context data about the updated object
             data['pk'] = obj.id
 
+            self.post_save(obj)
+
             try:
                 data['url'] = obj.get_absolute_url()
             except AttributeError:
                 pass
 
         return self.renderJsonResponse(request, form, data)
+
+    def post_save(self, obj, *args, **kwargs):
+        """
+        Hook called after the form data is saved.
+        (Optional)
+        """
+        pass
 
 
 class AjaxDeleteView(AjaxMixin, UpdateView):

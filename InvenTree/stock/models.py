@@ -32,6 +32,7 @@ from InvenTree.status_codes import StockStatus
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 
+from company import models as CompanyModels
 from part import models as PartModels
 
 
@@ -217,12 +218,6 @@ class StockItem(MPTTModel):
 
         super().clean()
 
-        if self.status == StockStatus.SHIPPED and self.sales_order is None:
-            raise ValidationError({
-                'sales_order': "SalesOrder must be specified as status is marked as SHIPPED",
-                'status': "Status cannot be marked as SHIPPED if the Customer is not set",
-            })
-
         if self.status == StockStatus.ASSIGNED_TO_OTHER_ITEM and self.belongs_to is None:
             raise ValidationError({
                 'belongs_to': "Belongs_to field must be specified as statis is marked as ASSIGNED_TO_OTHER_ITEM",
@@ -352,6 +347,16 @@ class StockItem(MPTTModel):
         help_text=_('Is this item installed in another item?')
     )
 
+    customer = models.ForeignKey(
+        CompanyModels.Company,
+        on_delete=models.SET_NULL,
+        null=True,
+        limit_choices_to={'is_customer': True},
+        related_name='assigned_stock',
+        help_text=_("Customer"),
+        verbose_name=_("Customer"),
+    )
+
     serial = models.PositiveIntegerField(
         verbose_name=_('Serial Number'),
         blank=True, null=True,
@@ -430,6 +435,64 @@ class StockItem(MPTTModel):
         verbose_name=_("Notes"),
         help_text=_('Stock Item Notes')
     )
+
+    def clearAllocations(self):
+        """
+        Clear all order allocations for this StockItem:
+
+        - SalesOrder allocations
+        - Build allocations
+        """
+
+        # Delete outstanding SalesOrder allocations
+        self.sales_order_allocations.all().delete()
+
+        # Delete outstanding BuildOrder allocations
+        self.allocations.all().delete()
+
+    def allocateToCustomer(self, customer, quantity=None, order=None, user=None, notes=None):
+        """
+        Allocate a StockItem to a customer.
+
+        This action can be called by the following processes:
+        - Completion of a SalesOrder
+        - User manually assigns a StockItem to the customer
+
+        Args:
+            customer: The customer (Company) to assign the stock to
+            quantity: Quantity to assign (if not supplied, total quantity is used)
+            order: SalesOrder reference
+            user: User that performed the action
+            notes: Notes field
+        """
+
+        if quantity is None:
+            quantity = self.quantity
+
+        if quantity >= self.quantity:
+            item = self
+        else:
+            item = self.splitStock(quantity, None, user)
+
+        # Update StockItem fields with new information
+        item.sales_order = order
+        item.status = StockStatus.SHIPPED
+        item.customer = customer
+        item.location = None
+
+        item.save()
+
+        # TODO - Remove any stock item allocations from this stock item
+
+        item.addTransactionNote(
+            _("Assigned to Customer"),
+            user,
+            notes=_("Manually assigned to customer") + " " + customer.name,
+            system=True
+        )
+
+        # Return the reference to the stock item
+        return item
 
     # If stock item is incoming, an (optional) ETA field
     # expected_arrival = models.DateField(null=True, blank=True)

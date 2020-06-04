@@ -632,24 +632,14 @@ class SalesOrderAllocation(models.Model):
 
         order = self.line.order
 
-        item = self.item
+        item = self.item.allocateToCustomer(
+            order.customer,
+            quantity=self.quantity,
+            order=order,
+            user=user
+        )
 
-        # If the allocated quantity is less than the amount available,
-        # then split the stock item into two lots
-        if item.quantity > self.quantity:
-
-            # Grab a copy of the new stock item (which will keep track of its "parent")
-            item = item.splitStock(self.quantity, None, user)
-
-            # Update our own reference to the new item
-            self.item = item
-            self.save()
-
-        # Assign the StockItem to the SalesOrder customer
-        item.sales_order = order
-
-        # Clear the location
-        item.location = None
-        item.status = StockStatus.SHIPPED
-
-        item.save()
+        # Update our own reference to the StockItem
+        # (It may have changed if the stock was split)
+        self.item = item
+        self.save()

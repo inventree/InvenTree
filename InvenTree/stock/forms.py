@@ -34,6 +34,18 @@ class EditStockItemAttachmentForm(HelperForm):
         ]
 
 
+class AssignStockItemToCustomerForm(HelperForm):
+    """
+    Form for manually assigning a StockItem to a Customer
+    """
+
+    class Meta:
+        model = StockItem
+        fields = [
+            'customer',
+        ]
+
+
 class EditStockItemTestResultForm(HelperForm):
     """
     Form for creating / editing a StockItemTestResult object.
