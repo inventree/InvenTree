@@ -494,7 +494,6 @@ class StockItem(MPTTModel):
         # Return the reference to the stock item
         return item
 
-
     # If stock item is incoming, an (optional) ETA field
     # expected_arrival = models.DateField(null=True, blank=True)
 

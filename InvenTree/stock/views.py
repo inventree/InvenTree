@@ -260,7 +260,6 @@ class StockItemAssignToCustomer(AjaxUpdateView):
         return self.renderJsonResponse(request, self.get_form(), data)
 
 
-
 class StockItemDeleteTestData(AjaxUpdateView):
     """
     View for deleting all test data
