@@ -21,6 +21,13 @@
     <li{% if tab == 'co' %} class='active'{% endif %}>
         <a href="{% url 'company-detail-sales-orders' company.id %}">{% trans "Sales Orders" %} <span class='badge'>{{ company.sales_orders.count }}</span></a>
     </li>
+    <li{% if tab == 'assigned' %} class='active'{% endif %}>
+        <a href="{% url 'company-detail-assigned-stock' company.id %}">{% trans "Assigned Stock" %}
+            <span class='badge'>
+            {{ company.assigned_stock.count }}
+            </span>
+        </a>
+    </li>
     {% endif %}
     <li{% if tab == 'notes' %} class='active'{% endif %}>
         <a href="{% url 'company-notes' company.id %}">{% trans "Notes" %}{% if company.notes %} <span class='fas fa-info-circle'></span>{% endif %}</a>
