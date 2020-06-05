@@ -13,6 +13,7 @@ from django.conf.urls import url, include
 
 from InvenTree.helpers import str2bool
 from InvenTree.api import AttachmentMixin
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 
 from part.models import Part
 from company.models import SupplierPart
@@ -67,6 +68,17 @@ class POList(generics.ListCreateAPIView):
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
+
+        # Filter by 'outstanding' status
+        outstanding = params.get('outstanding', None)
+
+        if outstanding is not None:
+            outstanding = str2bool(outstanding)
+
+            if outstanding:
+                queryset = queryset.filter(status__in=PurchaseOrderStatus.OPEN)
+            else:
+                queryset = queryset.exclude(status__in=PurchaseOrderStatus.OPEN)
 
         # Special filtering for 'status' field
         status = params.get('status', None)
@@ -258,6 +270,17 @@ class SOList(generics.ListCreateAPIView):
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
+
+        # Filter by 'outstanding' status
+        outstanding = params.get('outstanding', None)
+
+        if outstanding is not None:
+            outstanding = str2bool(outstanding)
+
+            if outstanding:
+                queryset = queryset.filter(status__in=SalesOrderStatus.OPEN)
+            else:
+                queryset = queryset.exclude(status__in=SalesOrderStatus.OPEN)
 
         status = params.get('status', None)
 

@@ -13,13 +13,14 @@ company_detail_urls = [
 
     # url(r'orders/?', views.CompanyDetail.as_view(template_name='company/orders.html'), name='company-detail-orders'),
 
-    url(r'parts/', views.CompanyDetail.as_view(template_name='company/detail_part.html'), name='company-detail-parts'),
-    url(r'stock/?', views.CompanyDetail.as_view(template_name='company/detail_stock.html'), name='company-detail-stock'),
-    url(r'purchase-orders/?', views.CompanyDetail.as_view(template_name='company/purchase_orders.html'), name='company-detail-purchase-orders'),
-    url(r'sales-orders/?', views.CompanyDetail.as_view(template_name='company/sales_orders.html'), name='company-detail-sales-orders'),
-    url(r'notes/?', views.CompanyNotes.as_view(), name='company-notes'),
+    url(r'^parts/', views.CompanyDetail.as_view(template_name='company/detail_part.html'), name='company-detail-parts'),
+    url(r'^stock/', views.CompanyDetail.as_view(template_name='company/detail_stock.html'), name='company-detail-stock'),
+    url(r'^purchase-orders/', views.CompanyDetail.as_view(template_name='company/purchase_orders.html'), name='company-detail-purchase-orders'),
+    url(r'^assigned-stock/', views.CompanyDetail.as_view(template_name='company/assigned_stock.html'), name='company-detail-assigned-stock'),
+    url(r'^sales-orders/', views.CompanyDetail.as_view(template_name='company/sales_orders.html'), name='company-detail-sales-orders'),
+    url(r'^notes/', views.CompanyNotes.as_view(), name='company-notes'),
 
-    url(r'thumbnail/?', views.CompanyImage.as_view(), name='company-image'),
+    url(r'^thumbnail/', views.CompanyImage.as_view(), name='company-image'),
 
     # Any other URL
     url(r'^.*$', views.CompanyDetail.as_view(), name='company-detail'),
