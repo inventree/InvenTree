@@ -97,6 +97,10 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Order status" %}',
                 options: salesOrderCodes,
             },
+            outstanding: {
+                type: 'bool',
+                title: '{% trans "Outstanding" %}',
+            },
         };
     }
 

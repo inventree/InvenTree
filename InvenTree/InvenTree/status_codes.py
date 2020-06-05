@@ -147,6 +147,11 @@ class SalesOrderStatus(StatusCode):
         RETURNED: 'yellow',
     }
 
+    # Open orders
+    OPEN = [
+        PENDING,
+    ]
+
 
 class StockStatus(StatusCode):
 
