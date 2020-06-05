@@ -103,6 +103,9 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         model = Part
         fields = [
             'pk',
+            'IPN',
+            'name',
+            'revision',
             'full_name',
             'description',
             'thumbnail',

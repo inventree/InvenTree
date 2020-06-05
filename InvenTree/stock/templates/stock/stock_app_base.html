@@ -22,11 +22,6 @@ InvenTree | Stock
 {% endif %}
 {% endblock %}
 
-{% block js_load %}
-{{ block.super }}
-<script type='text/javascript' src="{% static 'script/inventree/stock.js' %}"></script>
-{% endblock %}
-
 {% block js_ready %}
 {{ block.super }}
     loadTree("{% url 'api-stock-tree' %}",
