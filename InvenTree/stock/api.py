@@ -471,6 +471,12 @@ class StockList(generics.ListCreateAPIView):
         if sales_order:
             queryset = queryset.filter(sales_order=sales_order)
 
+        # Filter by customer
+        customer = params.get('customer', None)
+
+        if customer:
+            queryset = queryset.filter(customer=customer)
+
         # Filter by "serialized" status?
         serialized = params.get('serialized', None)
 

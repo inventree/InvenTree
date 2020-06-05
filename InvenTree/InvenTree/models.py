@@ -102,12 +102,14 @@ class InvenTreeTree(MPTTModel):
     name = models.CharField(
         blank=False,
         max_length=100,
-        validators=[validate_tree_name]
+        validators=[validate_tree_name],
+        help_text=_("Name"),
     )
 
     description = models.CharField(
-        blank=False,
-        max_length=250
+        blank=True,
+        max_length=250,
+        help_text=_("Description (optional)")
     )
 
     # When a category is deleted, graft the children onto its parent

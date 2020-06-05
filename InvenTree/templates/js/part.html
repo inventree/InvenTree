@@ -95,6 +95,8 @@ function loadPartTable(table, url, options={}) {
             field: 'pk',
             title: 'ID',
             visible: false,
+            switchable: false,
+            searchable: false,
         }
     ];
 
@@ -103,8 +105,15 @@ function loadPartTable(table, url, options={}) {
             checkbox: true,
             title: '{% trans 'Select' %}',
             searchable: false,
+            switchable: false,
         });
     }
+
+    columns.push({
+        field: 'IPN',
+        title: 'IPN',
+        sortable: true,
+    }),
 
     columns.push({
         field: 'name',
@@ -231,6 +240,7 @@ function loadPartTable(table, url, options={}) {
         original: params,
         formatNoMatches: function() { return "{% trans "No parts found" %}"; },
         columns: columns,
+        showColumns: true,
     });
 
     if (options.buttons) {

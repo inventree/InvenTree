@@ -140,6 +140,7 @@ class StockItem(MPTTModel):
         sales_order=None,
         build_order=None,
         belongs_to=None,
+        status__in=StockStatus.AVAILABLE_CODES
     )
 
     def save(self, *args, **kwargs):
