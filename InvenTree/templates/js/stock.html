@@ -262,6 +262,7 @@ function loadStockTable(table, options) {
         customSort: customGroupSorter,
         groupBy: true,
         original: original,
+        showColumns: true,
         groupByField: options.groupByField || 'part',
         groupByFormatter: function(field, id, data) {
 
@@ -272,6 +273,9 @@ function loadStockTable(table, options) {
                 var name = row.part_detail.full_name;
 
                 return imageHoverIcon(row.part_detail.thumbnail) + name + ' <i>(' + data.length + ' items)</i>';
+            }
+            else if (field == 'IPN') {
+                return row.part_detail.IPN;
             }
             else if (field == 'part_description') {
                 return row.part_detail.description;
@@ -403,6 +407,15 @@ function loadStockTable(table, options) {
                 field: 'pk',
                 title: 'ID',
                 visible: false,
+                switchable: false,
+            },
+            {
+                field: 'IPN',
+                title: 'IPN',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return row.part_detail.IPN;
+                },
             },
             {
                 field: 'part_name',
