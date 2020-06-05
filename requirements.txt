@@ -1,5 +1,5 @@
 wheel>=0.34.2                   # Wheel
-Django==3.0.5                   # Django package
+Django==3.0.7                   # Django package
 pillow==6.2.2                   # Image manipulation
 djangorestframework==3.10.3     # DRF framework
 django-dbbackup==3.3.0          # Database backup / restore functionality

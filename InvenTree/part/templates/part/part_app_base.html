@@ -26,12 +26,6 @@ InvenTree | {% trans "Part List" %}
 
 {% endblock %}
 
-{% block js_load %}
-{{ block.super }}
-<script type='text/javascript' src="{% static 'script/inventree/part.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/stock.js' %}"></script>
-{% endblock %}
-
 {% block js_ready %}
 {{ block.super }}
 

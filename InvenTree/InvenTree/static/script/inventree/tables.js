@@ -107,8 +107,6 @@ $.fn.inventreeTable = function(options) {
 
 function customGroupSorter(sortName, sortOrder, sortData) {
 
-    console.log('got here');
-
     var order = sortOrder === 'desc' ? -1 : 1;
 
     sortData.sort(function(a, b) {
