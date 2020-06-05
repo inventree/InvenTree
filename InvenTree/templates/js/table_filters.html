@@ -78,10 +78,15 @@ function getAvailableTableFilters(tableKey) {
 
     // Filters for the "Order" table
     if (tableKey == "purchaseorder") {
+
         return {
             status: {
                 title: '{% trans "Order status" %}',
                 options: purchaseOrderCodes,
+            },
+            outstanding: {
+                type: 'bool',
+                title: '{% trans "Outstanding" %}',
             },
         };
     }
