@@ -85,11 +85,11 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <span class='fas fa-hashtag'/>
     </button>
     {% endif %}
+    {% endif %}
     {% if item.part.salable %}
     <button type='button' class='btn btn-default' id='stock-assign-to-customer' title='{% trans "Assign to Customer" %}'>
         <span class='fas fa-user-tie'/>
     </button>
-    {% endif %}
     {% endif %}
     <button type='button' class='btn btn-default' id='stock-move' title='{% trans "Transfer stock" %}'>
         <span class='fas fa-exchange-alt icon-blue'/>
