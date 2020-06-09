@@ -1,5 +1,6 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load inventree_extras %}
 
 {% block details %}
 {% include "part/tabs.html" with tab='variants' %}
@@ -40,7 +41,7 @@
                 {% endif %}
             </td>
             <td>{{ variant.description }}</td>
-            <td>{{ variant.total_stock }}</td>
+            <td>{% decimal variant.total_stock %}</td>
         </tr>
     {% endfor %}
     </tbody>
