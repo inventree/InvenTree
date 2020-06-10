@@ -67,53 +67,58 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% endif %}
 </h4>
 
-<div class='btn-group action-buttons'>
-    {% include "qr_button.html" %}
+<div class='btn-group' role='group'>
+
+
+</div>
+
+<div class='btn-group action-buttons' role='group'>
+    <!-- QR label menu -->
+    <div class='dropdown dropdown-buttons'>
+        <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
+        <ul class='dropdown-menu' role='menu'>
+            <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+            <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+            <li><a href='#' id='link-barcode'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        </ul>
+    </div>
     {% if item.in_stock %}
-    {% if not item.serialized %}
-    <button type='button' class='btn btn-default' id='stock-add' title='{% trans "Add to stock" %}'>
-        <span class='fas fa-plus-circle icon-green'/>
-    </button>
-    <button type='button' class='btn btn-default' id='stock-remove' title='{% trans "Take from stock" %}'>
-        <span class='fas fa-minus-circle icon-red''/>
-    </button>
-    <button type='button' class='btn btn-default' id='stock-count' title='{% trans "Count stock" %}'>
-        <span class='fas fa-clipboard-list'/>
-    </button>
-    {% if item.part.trackable %}
-    <button type='button' class='btn btn-default' id='stock-serialize' title='{% trans "Serialize stock" %}'>
-        <span class='fas fa-hashtag'/>
-    </button>
+    <!-- Stock adjustment menu -->
+    <div class='dropdown dropdown-buttons'>
+        <button id='stock-options' title='{% trans "Stock adjustment actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
+        <ul class='dropdown-menu' role='menu'>
+            {% if not item.serialized %}
+            <li><a href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-clipboard-list'></span> {% trans "Count stock" %}</a></li>
+            <li><a href='#' id='stock-add' title='{% trans "Add stock" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
+            <li><a href='#' id='stock-remove' title='{% trans "Remove stock" %}'><span class='fas fa-minus-circle icon-red'></span> {% trans "Remove stock" %}</a></li>
+            {% endif %}
+            <li><a href='#' id='stock-move' title='{% trans "Transfer stock" %}'><span class='fas fa-exchange-alt icon-blue'></span> {% trans "Transfer stock" %}</a></li>
+        </ul>
+    </div>
     {% endif %}
-    {% endif %}
-    {% if item.part.salable %}
-    <button type='button' class='btn btn-default' id='stock-assign-to-customer' title='{% trans "Assign to Customer" %}'>
-        <span class='fas fa-user-tie'/>
-    </button>
-    {% endif %}
-    <button type='button' class='btn btn-default' id='stock-move' title='{% trans "Transfer stock" %}'>
-        <span class='fas fa-exchange-alt icon-blue'/>
-    </button>
-    <button type='button' class='btn btn-default' id='stock-duplicate' title='{% trans "Duplicate stock item" %}'>
-        <span class='fas fa-copy'/>
-    </button>
-    {% endif %}
-    {% if item.part.has_variants %}
-    <button type='button' class='btn btn-default' id='stock-convert' title='{% trans "Convert stock to variant" %}'>
-        <span class='fas fa-screwdriver'/>
-    </button>
-    {% endif %}
+    <!-- Edit stock item -->
+    <div class='dropdown dropdown-buttons'>
+        <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-tools'></span> <span class='caret'></span></button>
+        <ul class='dropdown-menu' role='menu'>
+            {% if item.part.trackable and not item.serialized %}
+            <li><a href='#' id='stock-serialize' title='{% trans "Serialize stock" %}'><span class='fas fa-hashtag'></span> {% trans "Serialize stock" %}</a> </li>
+            {% endif %}
+            {% if item.part.salable and not item.customer %}
+            <li><a href='#' id='stock-assign-to-customer' title='{% trans "Assign to customer" %}'><span class='fas fa-user-tie'></span> {% trans "Assign to customer" %}</a></li>
+            {% endif %}
+            {% if item.part.has_variants %}
+            <li><a href='#' id='stock-convert' title='{% trans "Convert to variant" %}'><span class='fas fa-screwdriver'></span> {% trans "Convert to variant" %}</a></li>
+            {% endif %}
+            <li><a href='#' id='stock-duplicate' title='{% trans "Duplicate stock item" %}'><span class='fas fa-copy'></span> {% trans "Duplicate stock item" %}</a></li>
+            <li><a href='#' id='stock-edit' title='{% trans "Edit stock item" %}'><span class='fas fa-edit icon-blue'></span> {% trans "Edit stock item" %}</a></li>
+            {% if item.can_delete %}
+            <li><a href='#' id='stock-delete' title='{% trans "Delete stock item" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete stock item" %}</a></li>
+            {% endif %}
+        </ul>
+    </div>
     {% if item.part.has_test_report_templates %}
     <button type='button' class='btn btn-default' id='stock-test-report' title='{% trans "Generate test report" %}'>
         <span class='fas fa-tasks'/>
-    </button>
-    {% endif %}
-    <button type='button' class='btn btn-default' id='stock-edit' title='{% trans "Edit stock item" %}'>
-        <span class='fas fa-edit icon-blue'/>
-    </button>
-    {% if item.can_delete %}
-    <button type='button' class='btn btn-default' id='stock-delete' title='{% trans "Delete stock item" %}'>
-        <span class='fas fa-trash-alt icon-red'/>
     </button>
     {% endif %}
 </div>

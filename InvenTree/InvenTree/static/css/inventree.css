@@ -259,6 +259,16 @@
     margin-left: 1px;
 }
 
+.dropdown-buttons {
+    display: inline-block
+}
+
+.dropdown-menu .open{
+    z-index: 1000;
+    position: relative;
+    overflow: visible;
+}
+
 /* Styles for table buttons and filtering */
 .button-toolbar .btn {
     margin-left: 1px;
@@ -455,6 +465,7 @@
 
 .media-body {
     padding-top: 10px;
+    overflow: visible;
 }
 
 .navigation {
