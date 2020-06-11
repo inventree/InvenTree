@@ -33,6 +33,12 @@ class BarcodePlugin:
         return self.PLUGIN_NAME
 
     def __init__(self, barcode_data):
+        """
+        Initialize the BarcodePlugin instance
+
+        Args:
+            barcode_data - The raw barcode data
+        """
 
         self.data = barcode_data
 

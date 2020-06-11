@@ -20,3 +20,27 @@ function scanBarcode(barcode, options={}) {
         }
     );
 }
+
+
+/*
+ * Associate barcode data with a StockItem
+ */
+function associateBarcode(barcode, stockitem, options={}) {
+
+    console.log('Associating barcode data:');
+    console.log('barcode: ' + barcode);
+
+    inventreePut(
+        '/api/barcode/assign/',
+        {
+            'barcode': barcode,
+            'stockitem': stockitem,
+        },
+        {
+            method: 'POST',
+            success: function(response, status) {
+                console.log(response);
+            },
+        }
+    );
+}

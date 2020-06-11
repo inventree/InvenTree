@@ -125,7 +125,114 @@ class BarcodeScan(APIView):
 
         return Response(response)
 
+
+class BarcodeAssign(APIView):
+    """
+    Endpoint for assigning a barcode to a stock item.
+    
+    - This only works if the barcode is not already associated with an object in the database
+    - If the barcode does not match an object, then the barcode hash is assigned to the StockItem
+    """
+
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    def post(self, request, *args, **kwargs):
+
+        data = request.data
+
+        if 'barcode' not in data:
+            raise ValidationError({'barcode': 'Must provide barcode_data parameter'})
+
+        if 'stockitem' not in data:
+            raise ValidationError({'stockitem': 'Must provide stockitem parameter'})
+
+        barcode_data = data['barcode']
+
+        try:
+            item = StockItem.objects.get(pk=data['stockitem'])
+        except (ValueError, StockItem.DoesNotExist):
+            raise ValidationError({'stockitem': 'No matching stock item found'})
+
+        plugins = load_barcode_plugins()
+
+        plugin = None
+
+        for plugin_class in plugins:
+            plugin_instance = plugin_class(barcode_data)
+
+            if plugin_instance.validate():
+                plugin = plugin_instance
+                break
+
+        match_found = False
+
+        response = {}
+
+        response['barcode_data'] = barcode_data
+
+        # Matching plugin was found
+        if plugin is not None:
+            
+            hash = plugin.hash()
+            response['hash'] = hash
+            response['plugin'] = plugin.name
+
+            # Ensure that the barcode does not already match a database entry
+
+            if plugin.getStockItem() is not None:
+                match_found = True
+                response['error'] = 'Barcode already matches StockItem object'
+
+            if plugin.getStockLocation() is not None:
+                match_found = True
+                response['error'] = 'Barcode already matches StockLocation object'
+
+            if plugin.getPart() is not None:
+                match_found = True
+                response['error'] = 'Barcode already matches Part object' 
+
+            if not match_found:
+                # Try to associate by hash
+                try:
+                    item = StockItem.objects.get(uid=hash)
+                    response['error'] = 'Barcode hash already matches StockItem object'
+                    match_found = True
+                except StockItem.DoesNotExist:
+                    pass
+
+        else:
+            hash = hash_barcode(barcode_data)
+
+            response['hash'] = hash
+            response['plugin'] = None
+
+            # Lookup stock item by hash
+            try:
+                item = StockItem.objects.get(uid=hash)
+                response['error'] = 'Barcode hash already matches StockItem object'
+                match_found = True
+            except StockItem.DoesNotExist:
+                pass
+
+        if not match_found:
+            response['success'] = 'Barcode associated with StockItem'
+
+            # Save the barcode hash
+            item.uid = response['hash']
+            item.save()
+
+            serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
+            response['stockitem'] = serializer.data
+
+
+        return Response(response)
+
+
 barcode_api_urls = [
+
+    url(r'^assign/$', BarcodeAssign.as_view(), name='api-barcode-assign'),
     
     # Catch-all performs barcode 'scan'
     url(r'^.*$', BarcodeScan.as_view(), name='api-barcode-plugin'),
