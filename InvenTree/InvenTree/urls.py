@@ -20,6 +20,7 @@ from stock.urls import stock_urls
 from build.urls import build_urls
 from order.urls import order_urls
 
+from barcode.api import barcode_api_urls
 from common.api import common_api_urls
 from part.api import part_api_urls, bom_api_urls
 from company.api import company_api_urls
@@ -37,13 +38,15 @@ from .views import IndexView, SearchView, DatabaseStatsView
 from .views import SettingsView, EditUserView, SetPasswordView
 from .views import DynamicJsView
 
-from .api import InfoView, BarcodePluginView, ActionPluginView
+from .api import InfoView
+from .api import ActionPluginView
 
 from users.urls import user_urls
 
 admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
+    url(r'^barcode/', include(barcode_api_urls)),
     url(r'^common/', include(common_api_urls)),
     url(r'^part/', include(part_api_urls)),
     url(r'^bom/', include(bom_api_urls)),
@@ -56,7 +59,6 @@ apipatterns = [
     url(r'^user/', include(user_urls)),
 
     # Plugin endpoints
-    url(r'^barcode/', BarcodePluginView.as_view(), name='api-barcode-plugin'),
     url(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
 
     # InvenTree information endpoint
