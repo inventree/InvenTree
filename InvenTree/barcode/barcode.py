@@ -108,19 +108,23 @@ class BarcodePlugin:
         return False
 
 
-def load_barcode_plugins():
+def load_barcode_plugins(debug=False):
     """
     Function to load all barcode plugins
     """
 
-    print("Loading barcode plugins")
+    if debug:
+        print("Loading barcode plugins")
 
     plugins = InvenTreePlugins.get_plugins(BarcodePlugins, BarcodePlugin)
 
-    if len(plugins) > 0:
-        print("Discovered {n} plugins:".format(n=len(plugins)))
+    if debug:
+        if len(plugins) > 0:
+            print("Discovered {n} plugins:".format(n=len(plugins)))
 
-        for p in plugins:
-            print(" - {p}".format(p=p.PLUGIN_NAME))
+            for p in plugins:
+                print(" - {p}".format(p=p.PLUGIN_NAME))
+        else:
+            print("No barcode plugins found")
 
     return plugins

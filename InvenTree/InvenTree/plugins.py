@@ -34,7 +34,6 @@ def get_plugins(pkg, baseclass):
 
     # Iterate through each module in the package
     for mod in modules:
-        print("mod:", mod)
         # Iterate through each class in the module
         for item in get_classes(mod):
             plugin = item[1]
