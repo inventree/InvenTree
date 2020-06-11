@@ -50,6 +50,18 @@ class BarcodePlugin:
 
         return None
 
+    def getStockItemByHash(self):
+        """
+        Attempt to retrieve a StockItem associated with this barcode,
+        based on the barcode hash.
+        """
+
+        try:
+            item = StockItem.objects.get(uid=self.hash())
+            return item
+        except StockItem.DoesNotExist:
+            return None
+
     def renderStockItem(self, item):
         """
         Render a stock item to JSON response

@@ -80,6 +80,9 @@ class BarcodeScan(APIView):
             # Try to associate with a stock item
             item = plugin.getStockItem()
 
+            if item is None:
+                item = plugin.getStockItemByHash()
+
             if item is not None:
                 response['stockitem'] = plugin.renderStockItem(item)
                 match_found = True
@@ -194,13 +197,11 @@ class BarcodeAssign(APIView):
                 response['error'] = 'Barcode already matches Part object' 
 
             if not match_found:
-                # Try to associate by hash
-                try:
-                    item = StockItem.objects.get(uid=hash)
+                item = plugin.getStockItemByHash()
+
+                if item is not None:
                     response['error'] = 'Barcode hash already matches StockItem object'
                     match_found = True
-                except StockItem.DoesNotExist:
-                    pass
 
         else:
             hash = hash_barcode(barcode_data)
@@ -235,5 +236,5 @@ barcode_api_urls = [
     url(r'^assign/$', BarcodeAssign.as_view(), name='api-barcode-assign'),
     
     # Catch-all performs barcode 'scan'
-    url(r'^.*$', BarcodeScan.as_view(), name='api-barcode-plugin'),
+    url(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),
 ]
