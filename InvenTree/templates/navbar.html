@@ -28,6 +28,11 @@
     </ul>
     <ul class="nav navbar-nav navbar-right">
         {% include "search_form.html" %}
+        <li class ='nav navbar-nav'>
+          <button id='barcode-scan' class='btn btn-default' title='{% trans "Scan Barcode" %}'>
+              <span class='fas fa-qrcode'></span>
+          </button>
+        </li>
         <li class='dropdown'>
           <a class='dropdown-toggle' data-toggle='dropdown' href="#"><span class="fas fa-user"></span> <b>{{ user.get_username }}</b></a>
           <ul class='dropdown-menu'>

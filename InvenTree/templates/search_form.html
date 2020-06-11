@@ -5,5 +5,7 @@
     <div class="form-group">
         <input type="text" name='search' class="form-control" placeholder="{% trans 'Search' %}"{% if query_text %} value="{{ query }}"{% endif %}>
     </div>
-    <button type="submit" id='search-submit' class="btn btn-default"><span class='fas fa-search'></span></button>
+    <button type="submit" id='search-submit' class="btn btn-default" title='{% trans "Search" %}'>
+        <span class='fas fa-search'></span>
+    </button>
 </form>

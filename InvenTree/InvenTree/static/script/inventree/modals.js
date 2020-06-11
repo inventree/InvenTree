@@ -442,7 +442,8 @@ function attachSecondaryModal(modal, options) {
                      */
 
                     var select = '#id_' + options.field;
-                    var option = new Option(response.text, response.pk, true, true)
+                    
+                    var option = new Option(response.text, response.pk, true, true);
                     
                     $(modal).find(select).append(option).trigger('change');
                 }
