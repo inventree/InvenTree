@@ -56,7 +56,12 @@ function makeBarcodeInput(placeholderText='') {
     <div class='form-group'>
         <label class='control-label' for='barcode'>Barcode</label>
         <div class='controls'>
-            <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
+            <div class='input-group'>
+                <span class='input-group-addon'>
+                    <span class='fas fa-qrcode'></span>
+                </span>
+                <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
+            </div>
             <div id='hint_barcode_data' class='help-block'>Enter barcode data</div>
         </div>
     </div>
