@@ -2,6 +2,7 @@
 
 import hashlib
 
+from django.urls import reverse
 from django.conf.urls import url
 from django.utils.translation import ugettext as _
 
@@ -86,6 +87,7 @@ class BarcodeScan(APIView):
 
             if item is not None:
                 response['stockitem'] = plugin.renderStockItem(item)
+                response['url'] = reverse('stock-item-detail', kwargs={'pk': item.id})
                 match_found = True
 
             # Try to associate with a stock location
@@ -93,6 +95,7 @@ class BarcodeScan(APIView):
 
             if loc is not None:
                 response['stocklocation'] = plugin.renderStockLocation(loc)
+                response['url'] = reverse('location-detail', kwargs={'pk': loc.id})
                 match_found = True
 
             # Try to associate with a part
@@ -100,6 +103,7 @@ class BarcodeScan(APIView):
 
             if part is not None:
                 response['part'] = plugin.renderPart(part)
+                response['url'] = reverse('part-detail', kwargs={'pk': part.id})
                 match_found = True
 
             response['hash'] = plugin.hash()
@@ -118,6 +122,7 @@ class BarcodeScan(APIView):
                 item = StockItem.objects.get(uid=hash)
                 serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
                 response['stockitem'] = serializer.data
+                response['url'] = reverse('stock-item-detail', kwargs={'pk': item.id})
                 match_found = True
             except StockItem.DoesNotExist:
                 pass

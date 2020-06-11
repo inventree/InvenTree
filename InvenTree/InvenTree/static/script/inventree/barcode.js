@@ -52,6 +52,7 @@ function makeBarcodeInput(placeholderText='') {
      */
 
     var html = `
+    <div id='barcode-error-message'></div>
     <form class='js-modal-form' method='post'>
     <div class='form-group'>
         <label class='control-label' for='barcode'>Barcode</label>
@@ -72,9 +73,35 @@ function makeBarcodeInput(placeholderText='') {
 }
 
 
+function showBarcodeError(modal, message, style='danger') {
+
+    var html = `<div class='alert alert-block alert-${style}'>`;
+
+    html += message;
+
+    html += "</div>";
+
+    $(modal + ' #barcode-error-message').html(html);
+}
+
+function clearBarcodeError(modal, message) {
+
+    $(modal + ' #barcode-error-message').html('');
+}
+
+
 function getBarcodeData(modal) {
 
-    return $(modal + ' #barcode').val();
+    modal = modal || '#modal-form';
+
+    var el = $(modal + ' #barcode');
+
+    var barcode = el.val();
+
+    el.val('');
+    el.focus();
+
+    return barcode;
 }
 
 
@@ -164,7 +191,26 @@ function barcodeScanDialog() {
                     {
                         method: 'POST',
                         success: function(response, status) {
+
                             console.log(response);
+
+                            if (status == 'success') {
+                                
+                                if ('success' in response) {
+                                    if ('url' in response) {
+                                        // Redirect to the URL!
+                                        $(modal).modal('hide');
+                                        window.location.href = response.url;
+                                    }
+
+                                } else if ('error' in response) {
+                                    showBarcodeError(modal, response.error, 'warning');
+                                } else {
+                                    showBarcodeError(modal, "Unknown response from server", 'warning');
+                                }
+                            } else {
+                                showBarcodeError(modal, `Invalid server response.<br>Status code: '${status}'`);
+                            }      
                         },
                     },
                 );

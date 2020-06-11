@@ -390,10 +390,11 @@ $('#stock-add').click(function() {
 
 $("#stock-delete").click(function () {
     launchModalForm(
-                     "{% url 'stock-item-delete' item.id %}",
-                     {
-                         redirect: "{% url 'part-stock' item.part.id %}"
-                     });
+        "{% url 'stock-item-delete' item.id %}",
+        {
+            redirect: "{% url 'part-stock' item.part.id %}"
+        }
+    );
 });
 
 {% endblock %}
