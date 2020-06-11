@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import hashlib
+
 from django.conf.urls import url
+from django.utils.translation import ugettext as _
 
 from rest_framework.exceptions import ValidationError
-
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -53,7 +54,7 @@ class BarcodeScan(APIView):
         data = request.data
 
         if 'barcode' not in data:
-            raise ValidationError({'barcode': 'Must provide barcode_data parameter'})
+            raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
 
         plugins = load_barcode_plugins()
 
@@ -122,9 +123,9 @@ class BarcodeScan(APIView):
                 pass
 
         if not match_found:
-            response['error'] = 'No match found for barcode data'
+            response['error'] = _('No match found for barcode data')
         else:
-            response['success'] = 'Match found for barcode data'
+            response['success'] = _('Match found for barcode data')
 
         return Response(response)
 
@@ -146,17 +147,17 @@ class BarcodeAssign(APIView):
         data = request.data
 
         if 'barcode' not in data:
-            raise ValidationError({'barcode': 'Must provide barcode_data parameter'})
+            raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
 
         if 'stockitem' not in data:
-            raise ValidationError({'stockitem': 'Must provide stockitem parameter'})
+            raise ValidationError({'stockitem': _('Must provide stockitem parameter')})
 
         barcode_data = data['barcode']
 
         try:
             item = StockItem.objects.get(pk=data['stockitem'])
         except (ValueError, StockItem.DoesNotExist):
-            raise ValidationError({'stockitem': 'No matching stock item found'})
+            raise ValidationError({'stockitem': _('No matching stock item found')})
 
         plugins = load_barcode_plugins()
 
@@ -186,21 +187,21 @@ class BarcodeAssign(APIView):
 
             if plugin.getStockItem() is not None:
                 match_found = True
-                response['error'] = 'Barcode already matches StockItem object'
+                response['error'] = _('Barcode already matches StockItem object')
 
             if plugin.getStockLocation() is not None:
                 match_found = True
-                response['error'] = 'Barcode already matches StockLocation object'
+                response['error'] = _('Barcode already matches StockLocation object')
 
             if plugin.getPart() is not None:
                 match_found = True
-                response['error'] = 'Barcode already matches Part object' 
+                response['error'] = _('Barcode already matches Part object')
 
             if not match_found:
                 item = plugin.getStockItemByHash()
 
                 if item is not None:
-                    response['error'] = 'Barcode hash already matches StockItem object'
+                    response['error'] = _('Barcode hash already matches StockItem object')
                     match_found = True
 
         else:
@@ -212,13 +213,13 @@ class BarcodeAssign(APIView):
             # Lookup stock item by hash
             try:
                 item = StockItem.objects.get(uid=hash)
-                response['error'] = 'Barcode hash already matches StockItem object'
+                response['error'] = _('Barcode hash already matches StockItem object')
                 match_found = True
             except StockItem.DoesNotExist:
                 pass
 
         if not match_found:
-            response['success'] = 'Barcode associated with StockItem'
+            response['success'] = _('Barcode associated with StockItem')
 
             # Save the barcode hash
             item.uid = response['hash']
