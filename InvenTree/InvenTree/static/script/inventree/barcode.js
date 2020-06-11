@@ -90,6 +90,15 @@ function clearBarcodeError(modal, message) {
 }
 
 
+function enableBarcodeInput(modal, enabled=true) {
+
+    var barcode = $(modal + ' #barcode');
+
+    barcode.prop('disabled', !enabled);
+    
+    modalEnable(modal, enabled);
+}
+
 function getBarcodeData(modal) {
 
     modal = modal || '#modal-form';
@@ -126,7 +135,6 @@ function barcodeDialog(title, options={}) {
             var barcode = getBarcodeData(modal);
 
             if (options.submit) {
-                modalEnable(modal, false);
                 options.submit(barcode);
             }
 
@@ -138,7 +146,6 @@ function barcodeDialog(title, options={}) {
             var barcode = getBarcodeData(modal);
 
             if (options.submit) {
-                modalEnable(modal, false);
                 options.submit(barcode);
             }
         });
@@ -182,7 +189,9 @@ function barcodeScanDialog() {
     barcodeDialog(
         "Scan Barcode",
         {
+            headerContent: `<div class='alert alert-info alert-block'>Scan barcode data below</div>`,
             submit: function(barcode) {
+                enableBarcodeInput(modal, false);
                 inventreePut(
                     '/api/barcode/',
                     {
@@ -193,6 +202,8 @@ function barcodeScanDialog() {
                         success: function(response, status) {
 
                             console.log(response);
+
+                            enableBarcodeInput(modal, true);
 
                             if (status == 'success') {
                                 
