@@ -84,7 +84,7 @@ class BarcodeAPITest(APITestCase):
 
         response = self.client.post(
             self.assign_url, format='json',
-            data = {
+            data={
                 'barcode': barcode_data,
                 'stockitem': item.pk
             }
@@ -106,7 +106,7 @@ class BarcodeAPITest(APITestCase):
         # Ensure that the same UID cannot be assigned to a different stock item!
         response = self.client.post(
             self.assign_url, format='json',
-            data = {
+            data={
                 'barcode': barcode_data,
                 'stockitem': 521
             }

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import hashlib
-
 from django.urls import reverse
 from django.conf.urls import url
 from django.utils.translation import ugettext as _
@@ -11,13 +9,10 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-import InvenTree.plugins as InvenTreePlugins
-
 from stock.models import StockItem
 from stock.serializers import StockItemSerializer
 
-import barcode.plugins as BarcodePlugins
-from barcode.barcode import BarcodePlugin, load_barcode_plugins, hash_barcode
+from barcode.barcode import load_barcode_plugins, hash_barcode
 
 
 class BarcodeScan(APIView):
@@ -232,7 +227,6 @@ class BarcodeAssign(APIView):
 
             serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
             response['stockitem'] = serializer.data
-
 
         return Response(response)
 

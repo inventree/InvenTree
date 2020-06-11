@@ -47,7 +47,6 @@ def get_plugins(pkg, baseclass):
     return plugins
 
 
-
 def load_action_plugins():
     """
     Return a list of all registered action plugins

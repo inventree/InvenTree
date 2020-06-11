@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import hashlib
-import json
 
 from InvenTree import plugins as InvenTreePlugins
 from barcode import plugins as BarcodePlugins
 
+from stock.models import StockItem
 from stock.serializers import StockItemSerializer, LocationSerializer
 from part.serializers import PartSerializer
 
@@ -70,7 +70,6 @@ class BarcodePlugin:
         serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
         return serializer.data
 
-
     def getStockLocation(self):
         """
         Attempt to retrieve a StockLocation associated with this barcode.
@@ -93,7 +92,7 @@ class BarcodePlugin:
         Default implementation returns None
         """
 
-        return None 
+        return None
 
     def renderPart(self, part):
         """
