@@ -1,11 +1,9 @@
+{% load i18n %}
 
 /*
  * Pass barcode data to the server.
  */
 function scanBarcode(barcode, options={}) {
-
-    console.log('Sending barcode data:');
-    console.log(barcode);
 
     inventreePut(
         '/api/barcode/',
@@ -27,11 +25,13 @@ function makeBarcodeInput(placeholderText='') {
      * Generate HTML for a barcode input
      */
 
+    placeholderText = placeholderText || '{% trans "Scan barcode data here using wedge scanner" %}';
+
     var html = `
     <div id='barcode-error-message'></div>
     <form class='js-modal-form' method='post'>
     <div class='form-group'>
-        <label class='control-label' for='barcode'>Barcode</label>
+        <label class='control-label' for='barcode'>{% trans "Barcode" %}</label>
         <div class='controls'>
             <div class='input-group'>
                 <span class='input-group-addon'>
@@ -39,7 +39,7 @@ function makeBarcodeInput(placeholderText='') {
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
             </div>
-            <div id='hint_barcode_data' class='help-block'>Enter barcode data</div>
+            <div id='hint_barcode_data' class='help-block'>{% trans "Enter barcode data" %}</div>
         </div>
     </div>
     </form>
@@ -137,7 +137,7 @@ function barcodeDialog(title, options={}) {
         content += options.headerContent;
     }
 
-    content += `<div class='alert alert-info alert-block'>Scan barcode data below</div>`;
+    content += `<div class='alert alert-info alert-block'>{% trans "Scan barcode data below" %}</div>`;
 
     content += makeBarcodeInput();
 
@@ -178,8 +178,6 @@ function barcodeScanDialog() {
                         method: 'POST',
                         success: function(response, status) {
 
-                            console.log(response);
-
                             enableBarcodeInput(modal, true);
 
                             if (status == 'success') {
@@ -194,10 +192,10 @@ function barcodeScanDialog() {
                                 } else if ('error' in response) {
                                     showBarcodeError(modal, response.error, 'warning');
                                 } else {
-                                    showBarcodeError(modal, "Unknown response from server", 'warning');
+                                    showBarcodeError(modal, "{% trans 'Unknown response from server' %}", 'warning');
                                 }
                             } else {
-                                showBarcodeError(modal, `Invalid server response.<br>Status code: '${status}'`);
+                                showBarcodeError(modal, `{% trans "Invalid server response" %}.<br>Status code: '${status}'`);
                             }      
                         },
                     },
@@ -242,11 +240,11 @@ function linkBarcodeDialog(stockitem, options={}) {
                                 } else if ('error' in response) {
                                     showBarcodeError(modal, response.error, 'warning');
                                 } else {
-                                    showBarcodeError(modal, "Unknown response from server", warning);
+                                    showBarcodeError(modal, "{% trans 'Unknown response from server' %}", warning);
                                 }
 
                             } else {
-                                showBarcodeError(modal, `Invalid server response.<br>Status code: '${status}'`);
+                                showBarcodeError(modal, `{% trans "Invalid server response" %}.<br>Status code: '${status}'`);
                             }
                         },
                     },
@@ -262,11 +260,15 @@ function linkBarcodeDialog(stockitem, options={}) {
  */
 function unlinkBarcode(stockitem) {
 
+    var html = `<b>{% trans "Unlink Barcode" %}</b><br>`;
+
+    html += "{% trans 'This will remove the association between this stock item and the barcode' %}";
+
     showQuestionDialog(
-        "Unlink Barcode",
-        "Remove barcode association from this Stock Item",
+        "{% trans 'Unlink Barcode' %}",
+        html,
         {
-            accept_text: "Unlink",
+            accept_text: "{% trans 'Unlink' %}",
             accept: function() {
                 inventreePut(
                     `/api/stock/${stockitem}/`,

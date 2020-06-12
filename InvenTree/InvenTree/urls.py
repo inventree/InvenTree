@@ -76,7 +76,9 @@ settings_urls = [
     url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings'),
 ]
 
+# Some javascript files are served 'dynamically', allowing them to pass through the Django translation layer
 dynamic_javascript_urls = [
+    url(r'^barcode.js', DynamicJsView.as_view(template_name='js/barcode.html'), name='barcode.js'),
     url(r'^part.js', DynamicJsView.as_view(template_name='js/part.html'), name='part.js'),
     url(r'^stock.js', DynamicJsView.as_view(template_name='js/stock.html'), name='stock.js'),
     url(r'^build.js', DynamicJsView.as_view(template_name='js/build.html'), name='build.js'),
