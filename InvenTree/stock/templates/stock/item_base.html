@@ -78,7 +78,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
             <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
-            <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+            <li class='disabled'><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
             {% if item.uid %}
             <li><a href='#' id='unlink-barcode'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
             {% else %}

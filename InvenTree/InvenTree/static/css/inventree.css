@@ -82,10 +82,23 @@
     float: left;
 }
 
+.navbar-barcode-li {
+    border-left: none;
+    border-right: none;
+}
+
 .navbar-nav > li {
     border-left: 1px solid;
     border-right: 1px solid;
     border-color: #eee;
+}
+
+.navbar-form {
+    padding-right: 3px;
+}
+
+#barcode-scan {
+    margin-top: 8px;
 }
 
 .icon-header {
