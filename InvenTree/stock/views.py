@@ -1164,7 +1164,7 @@ class StockItemCreate(AjaxCreateView):
             try:
                 original = StockItem.objects.get(pk=item_to_copy)
                 initials = model_to_dict(original)
-                self.ajax_form_title = _("Copy Stock Item")
+                self.ajax_form_title = _("Duplicate Stock Item")
             except StockItem.DoesNotExist:
                 initials = super(StockItemCreate, self).get_initial().copy()
 
