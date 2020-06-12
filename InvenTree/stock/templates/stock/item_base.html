@@ -80,6 +80,9 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
             <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
             <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
             <li><a href='#' id='link-barcode'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+            {% if item.uid %}
+            <li><a href='#' id='unlink-barcode'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+            {% endif %}
         </ul>
     </div>
     {% if item.in_stock %}
@@ -333,6 +336,10 @@ $("#show-qr-code").click(function() {
     {
         no_post: true,
     });
+});
+
+$("#unlink-barcode").click(function() {
+    unlinkBarcode({{ item.id }});
 });
 
 {% if item.in_stock %}

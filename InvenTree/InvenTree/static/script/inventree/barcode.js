@@ -22,6 +22,36 @@ function scanBarcode(barcode, options={}) {
 }
 
 
+function unlinkBarcode(stockitem) {
+    /*
+     * Remove barcode association from a device.
+     */
+
+    showQuestionDialog(
+        "Unlink Barcode",
+        "Remove barcode association from this Stock Item",
+        {
+            accept_text: "Unlink",
+            accept: function() {
+                inventreePut(
+                    `/api/stock/${stockitem}/`,
+                    {
+                        // Clear the UID field
+                        uid: '',
+                    },
+                    {
+                        method: 'PATCH',
+                        success: function(response, status) {
+                            location.reload();
+                        },
+                    },
+                );
+            },
+        }
+    );
+}
+
+
 /*
  * Associate barcode data with a StockItem
  */
