@@ -1,7 +1,10 @@
 {% extends "modal_delete_form.html" %}
 
+{% load i18n %}
+{% load inventree_extras %}
+
 {% block pre_form_content %}
-Are you sure you want to delete stock location '{{ location.name }}'?
+{% trans "Are you sure you want to delete this stock location?" %}
 
 <br>
 
@@ -33,7 +36,7 @@ If this location is deleted, these items will be moved to the top level 'Stock' 
 
 <ul class='list-group'>
     {% for item in location.stock_items.all %}
-    <li class='list-group-item'><b>{{ item.part.full_name }}</b> - <i>{{ item.part.description }}</i><span class='badge'>{{ item.quantity }}</span></li>
+    <li class='list-group-item'><b>{{ item.part.full_name }}</b> - <i>{{ item.part.description }}</i><span class='badge'>{% decimal item.quantity %}</span></li>
     {% endfor %}
 </ul>
 {% endif %}

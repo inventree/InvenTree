@@ -108,6 +108,7 @@ InvenTree
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/sidenav.js' %}"></script>
 
+<script type='text/javascript' src="{% url 'barcode.js' %}"></script>
 <script type='text/javascript' src="{% url 'bom.js' %}"></script>
 <script type='text/javascript' src="{% url 'company.js' %}"></script>
 <script type='text/javascript' src="{% url 'part.js' %}"></script>
@@ -132,6 +133,11 @@ $(document).ready(function () {
     inventreeDocReady();
     
     showCachedAlerts();
+
+    $('#barcode-scan').click(function() {
+        barcodeScanDialog();
+    });
+
 });
 
 </script>

@@ -82,10 +82,23 @@
     float: left;
 }
 
+.navbar-barcode-li {
+    border-left: none;
+    border-right: none;
+}
+
 .navbar-nav > li {
     border-left: 1px solid;
     border-right: 1px solid;
     border-color: #eee;
+}
+
+.navbar-form {
+    padding-right: 3px;
+}
+
+#barcode-scan {
+    margin-top: 8px;
 }
 
 .icon-header {
@@ -257,6 +270,16 @@
 .dropdown {
     padding-left: 1px;
     margin-left: 1px;
+}
+
+.dropdown-buttons {
+    display: inline-block
+}
+
+.dropdown-menu .open{
+    z-index: 1000;
+    position: relative;
+    overflow: visible;
 }
 
 /* Styles for table buttons and filtering */
@@ -455,6 +478,7 @@
 
 .media-body {
     padding-top: 10px;
+    overflow: visible;
 }
 
 .navigation {

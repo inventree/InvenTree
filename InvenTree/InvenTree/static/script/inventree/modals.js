@@ -166,14 +166,28 @@ function modalSetContent(modal, content='') {
 }
 
 
+function modalSetSubmitText(modal, text) {
+    if (text) {
+        $(modal).find('#modal-form-submit').html(text);
+    }
+}
+
+
+function modalSetCloseText(modal, text) {
+    if (text) {
+        $(modal).find('#modal-form-close').html(text);
+    }
+}
+
+
 function modalSetButtonText(modal, submit_text, close_text) {
     /* Set the button text for a modal form
      * 
      * submit_text - text for the form submit button
      * close_text - text for the form dismiss button
      */
-    $(modal).find("#modal-form-submit").html(submit_text);
-    $(modal).find("#modal-form-close").html(close_text);
+    modalSetSubmitText(modal, submit_text);
+    modalSetCloseText(modal, close_text);
 }
 
 
@@ -442,7 +456,8 @@ function attachSecondaryModal(modal, options) {
                      */
 
                     var select = '#id_' + options.field;
-                    var option = new Option(response.text, response.pk, true, true)
+                    
+                    var option = new Option(response.text, response.pk, true, true);
                     
                     $(modal).find(select).append(option).trigger('change');
                 }
