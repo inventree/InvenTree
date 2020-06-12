@@ -30,7 +30,7 @@ class BarcodeAPITest(APITestCase):
         self.client.login(username='testuser', password='password')
 
         self.scan_url = reverse('api-barcode-scan')
-        self.assign_url = reverse('api-barcode-assign')
+        self.assign_url = reverse('api-barcode-link')
 
     def postBarcode(self, url, barcode):
 

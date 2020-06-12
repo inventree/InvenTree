@@ -233,7 +233,7 @@ class BarcodeAssign(APIView):
 
 barcode_api_urls = [
 
-    url(r'^assign/$', BarcodeAssign.as_view(), name='api-barcode-assign'),
+    url(r'^link/$', BarcodeAssign.as_view(), name='api-barcode-link'),
     
     # Catch-all performs barcode 'scan'
     url(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),

@@ -22,60 +22,6 @@ function scanBarcode(barcode, options={}) {
 }
 
 
-function unlinkBarcode(stockitem) {
-    /*
-     * Remove barcode association from a device.
-     */
-
-    showQuestionDialog(
-        "Unlink Barcode",
-        "Remove barcode association from this Stock Item",
-        {
-            accept_text: "Unlink",
-            accept: function() {
-                inventreePut(
-                    `/api/stock/${stockitem}/`,
-                    {
-                        // Clear the UID field
-                        uid: '',
-                    },
-                    {
-                        method: 'PATCH',
-                        success: function(response, status) {
-                            location.reload();
-                        },
-                    },
-                );
-            },
-        }
-    );
-}
-
-
-/*
- * Associate barcode data with a StockItem
- */
-function associateBarcode(barcode, stockitem, options={}) {
-
-    console.log('Associating barcode data:');
-    console.log('barcode: ' + barcode);
-
-    inventreePut(
-        '/api/barcode/assign/',
-        {
-            'barcode': barcode,
-            'stockitem': stockitem,
-        },
-        {
-            method: 'POST',
-            success: function(response, status) {
-                console.log(response);
-            },
-        }
-    );
-}
-
-
 function makeBarcodeInput(placeholderText='') {
     /*
      * Generate HTML for a barcode input
@@ -191,6 +137,8 @@ function barcodeDialog(title, options={}) {
         content += options.headerContent;
     }
 
+    content += `<div class='alert alert-info alert-block'>Scan barcode data below</div>`;
+
     content += makeBarcodeInput();
 
     if (options.footerContent) {
@@ -219,7 +167,6 @@ function barcodeScanDialog() {
     barcodeDialog(
         "Scan Barcode",
         {
-            headerContent: `<div class='alert alert-info alert-block'>Scan barcode data below</div>`,
             submit: function(barcode) {
                 enableBarcodeInput(modal, false);
                 inventreePut(
@@ -258,4 +205,83 @@ function barcodeScanDialog() {
             }, 
         },
     ); 
+}
+
+
+/*
+ * Dialog for linking a particular barcode to a stock item.
+ */
+function linkBarcodeDialog(stockitem, options={}) {
+
+    var modal = '#modal-form';
+
+    barcodeDialog(
+        "Link Barcode",
+        {
+            submit: function(barcode) {
+                enableBarcodeInput(modal, false);
+                inventreePut(
+                    '/api/barcode/link/',
+                    {
+                        barcode: barcode,
+                        stockitem: stockitem,
+                    },
+                    {
+                        method: 'POST',
+                        success: function(response, status) {
+
+                            console.log(response);
+
+                            enableBarcodeInput(modal, true);
+
+                            if (status == 'success') {
+
+                                if ('success' in response) {
+                                    $(modal).modal('hide');
+                                    location.reload();
+                                } else if ('error' in response) {
+                                    showBarcodeError(modal, response.error, 'warning');
+                                } else {
+                                    showBarcodeError(modal, "Unknown response from server", warning);
+                                }
+
+                            } else {
+                                showBarcodeError(modal, `Invalid server response.<br>Status code: '${status}'`);
+                            }
+                        },
+                    },
+                );
+            }
+        }
+    );
+}
+
+
+/*
+ * Remove barcode association from a device.
+ */
+function unlinkBarcode(stockitem) {
+
+    showQuestionDialog(
+        "Unlink Barcode",
+        "Remove barcode association from this Stock Item",
+        {
+            accept_text: "Unlink",
+            accept: function() {
+                inventreePut(
+                    `/api/stock/${stockitem}/`,
+                    {
+                        // Clear the UID field
+                        uid: '',
+                    },
+                    {
+                        method: 'PATCH',
+                        success: function(response, status) {
+                            location.reload();
+                        },
+                    },
+                );
+            },
+        }
+    );
 }

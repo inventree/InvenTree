@@ -79,9 +79,10 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <ul class='dropdown-menu' role='menu'>
             <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
             <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
-            <li><a href='#' id='link-barcode'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
             {% if item.uid %}
             <li><a href='#' id='unlink-barcode'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+            {% else %}
+            <li><a href='#' id='link-barcode'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
             {% endif %}
         </ul>
     </div>
@@ -336,6 +337,10 @@ $("#show-qr-code").click(function() {
     {
         no_post: true,
     });
+});
+
+$("#link-barcode").click(function() {
+    linkBarcodeDialog({{ item.id }});
 });
 
 $("#unlink-barcode").click(function() {
