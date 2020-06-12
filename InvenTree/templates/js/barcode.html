@@ -325,7 +325,7 @@ function barcodeCheckIn(location_id, options={}) {
         modalEnable(modal, false);
 
         // Remove click listeners
-        $(modal + ' .button-item-remove').off('click');
+        $(modal + ' .button-item-remove').unbind('click');
 
         var table = $(modal + ' #items-table-div');
 
@@ -361,18 +361,24 @@ function barcodeCheckIn(location_id, options={}) {
 
         $(modal + ' #barcode').focus();
 
-
-        $(modal + ' .button-item-remove').on('click', function() {
+        $(modal + ' .button-item-remove').unbind('click').on('mouseup', function() {
             var pk = $(this).attr('pk');
+
+            var match = false;
 
             for (var ii = 0; ii < items.length; ii++) {
                 if (pk.toString() == items[ii].pk.toString()) {
-                    //items.splice(ii, 1);
+                    items.splice(ii, 1);
+                    match = true;
                     break;
                 }
             }
+            
+            if (match) {
+                reloadTable();
+            }
 
-            reloadTable();
+            return false;
 
         });
     }
