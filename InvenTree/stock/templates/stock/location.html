@@ -120,6 +120,12 @@
         inventreeDel('show-part-locs');
     });
 
+    {% if location %}
+    $("#barcode-check-in").click(function() {
+        barcodeCheckIn({{ location.id }});
+    });
+    {% endif %}
+
     $("#stock-export").click(function() {
         launchModalForm("{% url 'stock-export-options' %}", {
             submit_text: "Export",
