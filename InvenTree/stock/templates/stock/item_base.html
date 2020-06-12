@@ -140,6 +140,19 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
             <a href="{% url 'part-stock' item.part.id %}">{{ item.part.full_name }}
         </td>
     </tr>
+    {% if item.serialized %}
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Serial Number" %}</td>
+        <td>{{ item.serial }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td></td>
+        <td>{% trans "Quantity" %}</td>
+        <td>{% decimal item.quantity %} {% if item.part.units %}{{ item.part.units }}{% endif %}</td>
+    </tr>
+    {% endif %}
     {% if item.customer %}
     <tr>
         <td><span class='fas fa-user-tie'></span></td>
@@ -181,19 +194,6 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td><span class='fas fa-barcode'></span></td>
         <td>{% trans "Unique Identifier" %}</td>
         <td>{{ item.uid }}</td>
-    </tr>
-    {% endif %}
-    {% if item.serialized %}
-    <tr>
-        <td><span class='fas fa-hashtag'></span></td>
-        <td>{% trans "Serial Number" %}</td>
-        <td>{{ item.serial }}</td>
-    </tr>
-    {% else %}
-    <tr>
-        <td></td>
-        <td>{% trans "Quantity" %}</td>
-        <td>{% decimal item.quantity %} {% if item.part.units %}{{ item.part.units }}{% endif %}</td>
     </tr>
     {% endif %}
     {% if item.batch %}
