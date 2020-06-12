@@ -79,30 +79,3 @@ class APITests(APITestCase):
         self.assertIn('instance', data)
 
         self.assertEquals('InvenTree', data['server'])
-
-    def test_barcode_fail(self):
-        # Test barcode endpoint without auth
-        response = self.client.post(reverse('api-barcode-plugin'), format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_barcode(self):
-        """ Test the barcode endpoint """
-
-        self.tokenAuth()
-
-        url = reverse('api-barcode-plugin')
-
-        data = {
-            'barcode': {
-                'asdlaksdfalsdkfsa;fdlkasd;'
-            },
-        }
-
-        response = self.client.post(url, format='json', data=data)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        self.assertIn('error', response.data)
-        self.assertIn('barcode_data', response.data)
-        self.assertEqual(response.data['error'], 'Unknown barcode format')

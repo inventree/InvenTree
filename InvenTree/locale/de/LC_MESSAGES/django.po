@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-09 06:17+0000\n"
+"POT-Creation-Date: 2020-06-12 00:43+0000\n"
 "PO-Revision-Date: 2020-05-03 11:32+0200\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -17,29 +17,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 19.12.0\n"
 
-#: InvenTree/api.py:86
+#: InvenTree/api.py:83
 msgid "No action specified"
 msgstr "Keine Aktion angegeben"
 
-#: InvenTree/api.py:100
+#: InvenTree/api.py:97
 msgid "No matching action found"
 msgstr "Keine passende Aktion gefunden"
-
-#: InvenTree/api.py:131
-msgid "No barcode data provided"
-msgstr "Keine Strichcodedaten bereitgestellt"
-
-#: InvenTree/api.py:146
-msgid "Barcode successfully decoded"
-msgstr "Strichcode erfolgreich dekodiert"
-
-#: InvenTree/api.py:149
-msgid "Barcode plugin returned incorrect response"
-msgstr "Ungültige Antwort vom Strichcode-Plugin"
-
-#: InvenTree/api.py:159
-msgid "Unknown barcode format"
-msgstr "Unbekanntes Strichcode-Format"
 
 #: InvenTree/forms.py:101 build/forms.py:37
 msgid "Confirm"
@@ -225,6 +209,50 @@ msgstr "Überschuss muss eine Ganzzahl oder ein Prozentwert sein"
 msgid "Database Statistics"
 msgstr "Datenbankstatistiken"
 
+#: barcode/api.py:53 barcode/api.py:150
+msgid "Must provide barcode_data parameter"
+msgstr ""
+
+#: barcode/api.py:126
+msgid "No match found for barcode data"
+msgstr ""
+
+#: barcode/api.py:128
+msgid "Match found for barcode data"
+msgstr ""
+
+#: barcode/api.py:153
+msgid "Must provide stockitem parameter"
+msgstr ""
+
+#: barcode/api.py:160
+#, fuzzy
+#| msgid "No matching action found"
+msgid "No matching stock item found"
+msgstr "Keine passende Aktion gefunden"
+
+#: barcode/api.py:190
+msgid "Barcode already matches StockItem object"
+msgstr ""
+
+#: barcode/api.py:194
+msgid "Barcode already matches StockLocation object"
+msgstr ""
+
+#: barcode/api.py:198
+msgid "Barcode already matches Part object"
+msgstr ""
+
+#: barcode/api.py:204 barcode/api.py:216
+msgid "Barcode hash already matches StockItem object"
+msgstr ""
+
+#: barcode/api.py:222
+#, fuzzy
+#| msgid "Create new Stock Item"
+msgid "Barcode associated with StockItem"
+msgstr "Neues Lagerobjekt hinzufügen"
+
 #: build/forms.py:58
 #, fuzzy
 #| msgid "Location Details"
@@ -333,7 +361,7 @@ msgstr "Chargennummer für diese Bau-Ausgabe"
 #: company/templates/company/supplier_part_base.html:60
 #: company/templates/company/supplier_part_detail.html:24
 #: part/templates/part/detail.html:74 part/templates/part/part_base.html:88
-#: stock/models.py:368 stock/templates/stock/item_base.html:221
+#: stock/models.py:368 stock/templates/stock/item_base.html:230
 msgid "External Link"
 msgstr "Externer Link"
 
@@ -414,7 +442,7 @@ msgstr "Neues Lagerobjekt"
 #: build/templates/build/allocate.html:161
 #: order/templates/order/sales_order_detail.html:68
 #: order/templates/order/sales_order_detail.html:150 stock/models.py:362
-#: stock/templates/stock/item_base.html:180
+#: stock/templates/stock/item_base.html:189
 msgid "Serial Number"
 msgstr "Seriennummer"
 
@@ -431,7 +459,7 @@ msgstr "Seriennummer"
 #: part/templates/part/allocation.html:49
 #: stock/templates/stock/item_base.html:26
 #: stock/templates/stock/item_base.html:32
-#: stock/templates/stock/item_base.html:186
+#: stock/templates/stock/item_base.html:195
 #: stock/templates/stock/stock_adjust.html:18 templates/js/bom.html:172
 #: templates/js/build.html:52 templates/js/stock.html:653
 msgid "Quantity"
@@ -439,7 +467,7 @@ msgstr "Anzahl"
 
 #: build/templates/build/allocate.html:177
 #: build/templates/build/auto_allocate.html:20
-#: stock/templates/stock/item_base.html:162
+#: stock/templates/stock/item_base.html:171
 #: stock/templates/stock/stock_adjust.html:17 templates/js/stock.html:493
 msgid "Location"
 msgstr "Standort"
@@ -521,7 +549,7 @@ msgstr "Keine Lagerobjekt gefunden, die diesem Bau zugewiesen werden können"
 #: build/templates/build/build_base.html:8
 #: build/templates/build/build_base.html:34
 #: build/templates/build/complete.html:6
-#: stock/templates/stock/item_base.html:200 templates/js/build.html:33
+#: stock/templates/stock/item_base.html:209 templates/js/build.html:33
 #: templates/navbar.html:12
 msgid "Build"
 msgstr "Bau"
@@ -541,7 +569,7 @@ msgstr "Bau-Status"
 #: build/templates/build/build_base.html:80
 #: build/templates/build/detail.html:42
 #: order/templates/order/receive_parts.html:24
-#: stock/templates/stock/item_base.html:253 templates/js/build.html:57
+#: stock/templates/stock/item_base.html:262 templates/js/build.html:57
 #: templates/js/order.html:162 templates/js/order.html:235
 #: templates/js/stock.html:480
 msgid "Status"
@@ -553,7 +581,7 @@ msgstr "Status"
 #: order/templates/order/sales_order_notes.html:10
 #: order/templates/order/sales_order_ship.html:25
 #: part/templates/part/allocation.html:27
-#: stock/templates/stock/item_base.html:150 templates/js/order.html:209
+#: stock/templates/stock/item_base.html:159 templates/js/order.html:209
 msgid "Sales Order"
 msgstr "Bestellung"
 
@@ -622,7 +650,7 @@ msgid "Stock can be taken from any available location."
 msgstr "Bestand kann jedem verfügbaren Lagerort entnommen werden."
 
 #: build/templates/build/detail.html:48
-#: stock/templates/stock/item_base.html:193 templates/js/stock.html:488
+#: stock/templates/stock/item_base.html:202 templates/js/stock.html:488
 msgid "Batch"
 msgstr "Los"
 
@@ -976,14 +1004,14 @@ msgstr "Hersteller"
 #: company/templates/company/supplier_part_detail.html:21 order/models.py:148
 #: order/templates/order/order_base.html:74
 #: order/templates/order/order_wizard/select_pos.html:30
-#: stock/templates/stock/item_base.html:228 templates/js/company.html:52
+#: stock/templates/stock/item_base.html:237 templates/js/company.html:52
 #: templates/js/company.html:134 templates/js/order.html:144
 msgid "Supplier"
 msgstr "Zulieferer"
 
 #: company/templates/company/detail.html:26 order/models.py:314
 #: order/templates/order/sales_order_base.html:73 stock/models.py:357
-#: stock/models.py:358 stock/templates/stock/item_base.html:137
+#: stock/models.py:358 stock/templates/stock/item_base.html:146
 #: templates/js/company.html:44 templates/js/order.html:217
 msgid "Customer"
 msgstr "Kunde"
@@ -1098,7 +1126,7 @@ msgstr "Neuer Auftrag"
 
 #: company/templates/company/supplier_part_base.html:6
 #: company/templates/company/supplier_part_base.html:19 stock/models.py:331
-#: stock/templates/stock/item_base.html:233 templates/js/company.html:150
+#: stock/templates/stock/item_base.html:242 templates/js/company.html:150
 msgid "Supplier Part"
 msgstr "Zulieferer-Teil"
 
@@ -1385,7 +1413,7 @@ msgstr "Position - Notizen"
 
 #: order/models.py:466 order/templates/order/order_base.html:9
 #: order/templates/order/order_base.html:23
-#: stock/templates/stock/item_base.html:207 templates/js/order.html:136
+#: stock/templates/stock/item_base.html:216 templates/js/order.html:136
 msgid "Purchase Order"
 msgstr "Kaufvertrag"
 
@@ -2114,14 +2142,14 @@ msgstr "Bestellung"
 #: part/templates/part/allocation.html:45
 #: stock/templates/stock/item_base.html:8
 #: stock/templates/stock/item_base.html:58
-#: stock/templates/stock/item_base.html:215
+#: stock/templates/stock/item_base.html:224
 #: stock/templates/stock/stock_adjust.html:16 templates/js/build.html:106
 #: templates/js/stock.html:623
 msgid "Stock Item"
 msgstr "Lagerobjekt"
 
 #: part/templates/part/allocation.html:20
-#: stock/templates/stock/item_base.html:156
+#: stock/templates/stock/item_base.html:165
 msgid "Build Order"
 msgstr "Bauauftrag"
 
@@ -2539,7 +2567,7 @@ msgstr "Benutzt in"
 msgid "Tracking"
 msgstr "Tracking"
 
-#: part/templates/part/tabs.html:64 stock/templates/stock/item_base.html:259
+#: part/templates/part/tabs.html:64 stock/templates/stock/item_base.html:268
 msgid "Tests"
 msgstr ""
 
@@ -2738,22 +2766,6 @@ msgstr "BOM-Position beaarbeiten"
 msgid "Confim BOM item deletion"
 msgstr "Löschung von BOM-Position bestätigen"
 
-#: plugins/barcode/inventree.py:70
-msgid "Part does not exist"
-msgstr "Teil existiert nicht"
-
-#: plugins/barcode/inventree.py:79
-msgid "StockLocation does not exist"
-msgstr "Lagerort existiert nicht"
-
-#: plugins/barcode/inventree.py:89
-msgid "StockItem does not exist"
-msgstr "Lagerobjekt existiert nicht"
-
-#: plugins/barcode/inventree.py:92
-msgid "No matching data"
-msgstr "Keine passenden Daten"
-
 #: report/models.py:167
 #, fuzzy
 #| msgid "Template part"
@@ -2834,7 +2846,7 @@ msgstr "Teil kann nicht zu sich selbst gehören"
 msgid "Parent Stock Item"
 msgstr "Eltern-Lagerobjekt"
 
-#: stock/models.py:322 stock/templates/stock/item_base.html:129
+#: stock/models.py:322 stock/templates/stock/item_base.html:138
 msgid "Base Part"
 msgstr "Basisteil"
 
@@ -3066,99 +3078,132 @@ msgstr ""
 "Dieses Lagerobjekt wird automatisch gelöscht wenn der Lagerbestand "
 "aufgebraucht ist."
 
-#: stock/templates/stock/item_base.html:74
+#: stock/templates/stock/item_base.html:78
 #, fuzzy
-#| msgid "Add stock"
-msgid "Add to stock"
-msgstr "Bestand hinzufügen"
+#| msgid "Source Location"
+msgid "Barcode actions"
+msgstr "Quell-Standort"
 
-#: stock/templates/stock/item_base.html:77
+#: stock/templates/stock/item_base.html:80
 #, fuzzy
-#| msgid "Remove From Stock"
-msgid "Take from stock"
-msgstr "Aus Lagerbestand entfernen"
+#| msgid "Part QR Code"
+msgid "Show QR Code"
+msgstr "Teil-QR-Code"
 
-#: stock/templates/stock/item_base.html:80 templates/stock_table.html:14
+#: stock/templates/stock/item_base.html:81
+msgid "Print Label"
+msgstr ""
+
+#: stock/templates/stock/item_base.html:83 templates/js/barcode.html:263
+#: templates/js/barcode.html:268
+msgid "Unlink Barcode"
+msgstr ""
+
+#: stock/templates/stock/item_base.html:85
+msgid "Link Barcode"
+msgstr ""
+
+#: stock/templates/stock/item_base.html:92
+#, fuzzy
+#| msgid "Confirm stock adjustment"
+msgid "Stock adjustment actions"
+msgstr "Bestands-Anpassung bestätigen"
+
+#: stock/templates/stock/item_base.html:95 templates/stock_table.html:14
 msgid "Count stock"
 msgstr "Bestand zählen"
 
-#: stock/templates/stock/item_base.html:84
-#, fuzzy
-#| msgid "Serialize Stock"
-msgid "Serialize stock"
-msgstr "Lagerbestand erfassen"
+#: stock/templates/stock/item_base.html:96 templates/stock_table.html:12
+msgid "Add stock"
+msgstr "Bestand hinzufügen"
 
-#: stock/templates/stock/item_base.html:90 stock/views.py:232
-#, fuzzy
-#| msgid "Item assigned to customer?"
-msgid "Assign to Customer"
-msgstr "Ist dieses Objekt einem Kunden zugeteilt?"
+#: stock/templates/stock/item_base.html:97 templates/stock_table.html:13
+msgid "Remove stock"
+msgstr "Bestand entfernen"
 
-#: stock/templates/stock/item_base.html:94
+#: stock/templates/stock/item_base.html:99
 #, fuzzy
 #| msgid "Order stock"
 msgid "Transfer stock"
 msgstr "Bestand bestellen"
 
-#: stock/templates/stock/item_base.html:97
+#: stock/templates/stock/item_base.html:105
+#, fuzzy
+#| msgid "Stock Locations"
+msgid "Stock actions"
+msgstr "Lagerobjekt-Standorte"
+
+#: stock/templates/stock/item_base.html:108
+#, fuzzy
+#| msgid "Serialize Stock"
+msgid "Serialize stock"
+msgstr "Lagerbestand erfassen"
+
+#: stock/templates/stock/item_base.html:111
+#, fuzzy
+#| msgid "Item assigned to customer?"
+msgid "Assign to customer"
+msgstr "Ist dieses Objekt einem Kunden zugeteilt?"
+
+#: stock/templates/stock/item_base.html:114
+#, fuzzy
+#| msgid "Count stock items"
+msgid "Convert to variant"
+msgstr "Lagerobjekte zählen"
+
+#: stock/templates/stock/item_base.html:116
 #, fuzzy
 #| msgid "Count stock items"
 msgid "Duplicate stock item"
 msgstr "Lagerobjekte zählen"
 
-#: stock/templates/stock/item_base.html:102
-#, fuzzy
-#| msgid "Count stock items"
-msgid "Convert stock to variant"
-msgstr "Lagerobjekte zählen"
-
-#: stock/templates/stock/item_base.html:107
-msgid "Generate test report"
-msgstr ""
-
-#: stock/templates/stock/item_base.html:111
+#: stock/templates/stock/item_base.html:117
 #, fuzzy
 #| msgid "Edit Stock Item"
 msgid "Edit stock item"
 msgstr "Lagerobjekt bearbeiten"
 
-#: stock/templates/stock/item_base.html:115
+#: stock/templates/stock/item_base.html:119
 #, fuzzy
 #| msgid "Delete Stock Item"
 msgid "Delete stock item"
 msgstr "Lagerobjekt löschen"
 
 #: stock/templates/stock/item_base.html:124
+msgid "Generate test report"
+msgstr ""
+
+#: stock/templates/stock/item_base.html:133
 msgid "Stock Item Details"
 msgstr "Lagerbestands-Details"
 
-#: stock/templates/stock/item_base.html:144
+#: stock/templates/stock/item_base.html:153
 msgid "Belongs To"
 msgstr "Gehört zu"
 
-#: stock/templates/stock/item_base.html:166
+#: stock/templates/stock/item_base.html:175
 #, fuzzy
 #| msgid "No stock location set"
 msgid "No location set"
 msgstr "Kein Lagerort gesetzt"
 
-#: stock/templates/stock/item_base.html:173
+#: stock/templates/stock/item_base.html:182
 msgid "Unique Identifier"
 msgstr "Eindeutiger Bezeichner"
 
-#: stock/templates/stock/item_base.html:214
+#: stock/templates/stock/item_base.html:223
 msgid "Parent Item"
 msgstr "Elternposition"
 
-#: stock/templates/stock/item_base.html:239
+#: stock/templates/stock/item_base.html:248
 msgid "Last Updated"
 msgstr "Zuletzt aktualisiert"
 
-#: stock/templates/stock/item_base.html:244
+#: stock/templates/stock/item_base.html:253
 msgid "Last Stocktake"
 msgstr "Letzte Inventur"
 
-#: stock/templates/stock/item_base.html:248
+#: stock/templates/stock/item_base.html:257
 msgid "No stocktake performed"
 msgstr "Keine Inventur ausgeführt"
 
@@ -3288,6 +3333,12 @@ msgstr "Lagerobjekt bearbeiten"
 #| msgid "Delete Part Attachment"
 msgid "Delete Stock Item Attachment"
 msgstr "Teilanhang löschen"
+
+#: stock/views.py:232
+#, fuzzy
+#| msgid "Item assigned to customer?"
+msgid "Assign to Customer"
+msgstr "Ist dieses Objekt einem Kunden zugeteilt?"
 
 #: stock/views.py:270
 #, fuzzy
@@ -3424,8 +3475,10 @@ msgid "Create new Stock Item"
 msgstr "Neues Lagerobjekt hinzufügen"
 
 #: stock/views.py:1167
-msgid "Copy Stock Item"
-msgstr "Lagerobjekt kopieren"
+#, fuzzy
+#| msgid "Count stock items"
+msgid "Duplicate Stock Item"
+msgstr "Lagerobjekte zählen"
 
 #: stock/views.py:1240
 msgid "Invalid quantity"
@@ -3549,6 +3602,49 @@ msgstr ""
 #: templates/attachment_table.html:33
 msgid "Delete attachment"
 msgstr "Anhang löschen"
+
+#: templates/js/barcode.html:28
+#, fuzzy
+#| msgid "No barcode data provided"
+msgid "Scan barcode data here using wedge scanner"
+msgstr "Keine Strichcodedaten bereitgestellt"
+
+#: templates/js/barcode.html:34
+#, fuzzy
+#| msgid "Source Location"
+msgid "Barcode"
+msgstr "Quell-Standort"
+
+#: templates/js/barcode.html:42
+#, fuzzy
+#| msgid "No barcode data provided"
+msgid "Enter barcode data"
+msgstr "Keine Strichcodedaten bereitgestellt"
+
+#: templates/js/barcode.html:140
+#, fuzzy
+#| msgid "No barcode data provided"
+msgid "Scan barcode data below"
+msgstr "Keine Strichcodedaten bereitgestellt"
+
+#: templates/js/barcode.html:195 templates/js/barcode.html:243
+#, fuzzy
+#| msgid "Unknown barcode format"
+msgid "Unknown response from server"
+msgstr "Unbekanntes Strichcode-Format"
+
+#: templates/js/barcode.html:198 templates/js/barcode.html:247
+msgid "Invalid server response"
+msgstr ""
+
+#: templates/js/barcode.html:265
+msgid ""
+"This will remove the association between this stock item and the barcode"
+msgstr ""
+
+#: templates/js/barcode.html:271
+msgid "Unlink"
+msgstr ""
 
 #: templates/js/bom.html:143
 msgid "Open subassembly"
@@ -3693,8 +3789,10 @@ msgid "NO RESULT"
 msgstr ""
 
 #: templates/js/stock.html:58
+#, fuzzy
+#| msgid "Edit Sales Order"
 msgid "Add test result"
-msgstr ""
+msgstr "Auftrag bearbeiten"
 
 #: templates/js/stock.html:76
 #, fuzzy
@@ -3832,41 +3930,37 @@ msgstr "Kaufen"
 msgid "Sell"
 msgstr "Verkaufen"
 
-#: templates/navbar.html:36
+#: templates/navbar.html:32
+msgid "Scan Barcode"
+msgstr ""
+
+#: templates/navbar.html:41
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/navbar.html:39
+#: templates/navbar.html:44
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: templates/navbar.html:40
+#: templates/navbar.html:45
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: templates/navbar.html:42
+#: templates/navbar.html:47
 msgid "Login"
 msgstr "Einloggen"
 
-#: templates/navbar.html:45
+#: templates/navbar.html:50
 msgid "About InvenTree"
 msgstr "Über InvenBaum"
 
-#: templates/navbar.html:46
+#: templates/navbar.html:51
 msgid "Statistics"
 msgstr "Statistiken"
 
-#: templates/search_form.html:6
+#: templates/search_form.html:6 templates/search_form.html:8
 msgid "Search"
 msgstr "Suche"
-
-#: templates/stock_table.html:12
-msgid "Add stock"
-msgstr "Bestand hinzufügen"
-
-#: templates/stock_table.html:13
-msgid "Remove stock"
-msgstr "Bestand entfernen"
 
 #: templates/stock_table.html:15
 msgid "Move stock"
@@ -3879,6 +3973,37 @@ msgstr "Bestand bestellen"
 #: templates/stock_table.html:17
 msgid "Delete Stock"
 msgstr "Bestand löschen"
+
+#~ msgid "Barcode successfully decoded"
+#~ msgstr "Strichcode erfolgreich dekodiert"
+
+#~ msgid "Barcode plugin returned incorrect response"
+#~ msgstr "Ungültige Antwort vom Strichcode-Plugin"
+
+#~ msgid "Part does not exist"
+#~ msgstr "Teil existiert nicht"
+
+#~ msgid "StockLocation does not exist"
+#~ msgstr "Lagerort existiert nicht"
+
+#~ msgid "StockItem does not exist"
+#~ msgstr "Lagerobjekt existiert nicht"
+
+#~ msgid "No matching data"
+#~ msgstr "Keine passenden Daten"
+
+#, fuzzy
+#~| msgid "Add stock"
+#~ msgid "Add to stock"
+#~ msgstr "Bestand hinzufügen"
+
+#, fuzzy
+#~| msgid "Remove From Stock"
+#~ msgid "Take from stock"
+#~ msgstr "Aus Lagerbestand entfernen"
+
+#~ msgid "Copy Stock Item"
+#~ msgstr "Lagerobjekt kopieren"
 
 #~ msgid "Part cannot be a variant of another part if it is already a template"
 #~ msgstr ""

@@ -4,10 +4,6 @@ import inspect
 import importlib
 import pkgutil
 
-# Action plugins
-import plugins.action as action
-from plugins.action.action import ActionPlugin
-
 
 def iter_namespace(pkg):
 
@@ -43,23 +39,5 @@ def get_plugins(pkg, baseclass):
             plugin = item[1]
             if issubclass(plugin, baseclass) and plugin.PLUGIN_NAME:
                 plugins.append(plugin)
-
-    return plugins
-
-
-def load_action_plugins():
-    """
-    Return a list of all registered action plugins
-    """
-
-    print("Loading action plugins")
-
-    plugins = get_plugins(action, ActionPlugin)
-
-    if len(plugins) > 0:
-        print("Discovered {n} action plugins:".format(n=len(plugins)))
-
-        for ap in plugins:
-            print(" - {ap}".format(ap=ap.PLUGIN_NAME))
 
     return plugins

@@ -12,25 +12,36 @@
     <h3>{% trans "Stock" %}</h3>
     <p>{% trans "All stock items" %}</p>
     {% endif %}
-    <p>
-        <div class='btn-group action-buttons'>
-            <button class='btn btn-default' id='location-create' title='{% trans "Create new stock location" %}'>
-                <span class='fas fa-plus-circle icon-green'/>
-            </button>
-            {% if location %}
-            {% include "qr_button.html" %}
-            <button class='btn btn-default' id='location-count' title='{% trans "Count stock items" %}'>
-                <span class='fas fa-clipboard-list'/>
-            </button>
-            <button class='btn btn-default btn-glyph' id='location-edit' title='{% trans "Edit stock location" %}'>
-                <span class='fas fa-edit icon-blue'/>
-            </button>
-            <button class='btn btn-default btn-glyph' id='location-delete' title='{% trans "Delete stock location" %}'>
-                <span class='fas fa-trash-alt icon-red'/>
-            </button>
-            {% endif %}
+    <div class='btn-group action-buttons' role='group'>
+        <button class='btn btn-default' id='location-create' title='{% trans "Create new stock location" %}'>
+            <span class='fas fa-plus-circle icon-green'/>
+        </button>
+        <!-- Barcode actions menu -->
+        {% if location %}
+        <div class='dropdown dropdown-buttons'>
+            <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
+            <ul class='dropdown-menu' role='menu'>
+                <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+                <li class='disabled'><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+                <li><a href='#' id='barcode-check-in'><span class='fas fa-arrow-right'></span> {% trans "Check-in Items" %}</a></li>
+            </ul>
         </div>
-    </p>
+        <div class='dropdown dropdown-buttons'>
+            <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
+            <ul class='dropdown-menu' role='menu'>
+                <li><a href='#' id='location-count'><span class='fas fa-clipboard-list'></span>
+                 {% trans "Count stock" %}</a></li>
+            </ul>
+        </div>
+        <div class='dropdown dropdown-buttons'>
+            <button id='location-actions' title='{% trans "Location actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle="dropdown"><span class='fas fa-sitemap'></span> <span class='caret'></span></button>
+            <ul class='dropdown-menu' role='menu'>
+                <li><a href='#' id='location-edit'><span class='fas fa-edit icon-green'></span> {% trans "Edit location" %}</a></li>
+                <li><a href='#' id='location-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete location" %}</a></li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
 </div>
 <div class='col-sm-6'>
     {% if location %}
@@ -108,6 +119,12 @@
     $("#collapse-item-locations").on('hidden.bs.collapse', function() {
         inventreeDel('show-part-locs');
     });
+
+    {% if location %}
+    $("#barcode-check-in").click(function() {
+        barcodeCheckIn({{ location.id }});
+    });
+    {% endif %}
 
     $("#stock-export").click(function() {
         launchModalForm("{% url 'stock-export-options' %}", {

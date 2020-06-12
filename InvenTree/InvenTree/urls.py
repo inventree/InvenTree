@@ -20,6 +20,7 @@ from stock.urls import stock_urls
 from build.urls import build_urls
 from order.urls import order_urls
 
+from barcode.api import barcode_api_urls
 from common.api import common_api_urls
 from part.api import part_api_urls, bom_api_urls
 from company.api import company_api_urls
@@ -37,13 +38,15 @@ from .views import IndexView, SearchView, DatabaseStatsView
 from .views import SettingsView, EditUserView, SetPasswordView
 from .views import DynamicJsView
 
-from .api import InfoView, BarcodePluginView, ActionPluginView
+from .api import InfoView
+from .api import ActionPluginView
 
 from users.urls import user_urls
 
 admin.site.site_header = "InvenTree Admin"
 
 apipatterns = [
+    url(r'^barcode/', include(barcode_api_urls)),
     url(r'^common/', include(common_api_urls)),
     url(r'^part/', include(part_api_urls)),
     url(r'^bom/', include(bom_api_urls)),
@@ -56,7 +59,6 @@ apipatterns = [
     url(r'^user/', include(user_urls)),
 
     # Plugin endpoints
-    url(r'^barcode/', BarcodePluginView.as_view(), name='api-barcode-plugin'),
     url(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
 
     # InvenTree information endpoint
@@ -74,7 +76,9 @@ settings_urls = [
     url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings'),
 ]
 
+# Some javascript files are served 'dynamically', allowing them to pass through the Django translation layer
 dynamic_javascript_urls = [
+    url(r'^barcode.js', DynamicJsView.as_view(template_name='js/barcode.html'), name='barcode.js'),
     url(r'^part.js', DynamicJsView.as_view(template_name='js/part.html'), name='part.js'),
     url(r'^stock.js', DynamicJsView.as_view(template_name='js/stock.html'), name='stock.js'),
     url(r'^build.js', DynamicJsView.as_view(template_name='js/build.html'), name='build.js'),
