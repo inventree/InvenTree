@@ -80,21 +80,25 @@ class Company(models.Model):
     """
 
     name = models.CharField(max_length=100, blank=False, unique=True,
-                            help_text=_('Company name'))
+                            help_text=_('Company name'),
+                            verbose_name=_('Company name'))
 
-    description = models.CharField(max_length=500, help_text=_('Description of the company'))
+    description = models.CharField(max_length=500, verbose_name=_('Company description'), help_text=_('Description of the company'))
 
-    website = models.URLField(blank=True, help_text=_('Company website URL'))
+    website = models.URLField(blank=True, verbose_name=_('Website'), help_text=_('Company website URL'))
 
     address = models.CharField(max_length=200,
+                               verbose_name=_('Address'),
                                blank=True, help_text=_('Company address'))
 
     phone = models.CharField(max_length=50,
+                             verbose_name=_('Phone number'),
                              blank=True, help_text=_('Contact phone number'))
 
-    email = models.EmailField(blank=True, help_text=_('Contact email address'))
+    email = models.EmailField(blank=True, verbose_name=_('Email'), help_text=_('Contact email address'))
 
     contact = models.CharField(max_length=100,
+                               verbose_name=_('Contact'),
                                blank=True, help_text=_('Point of contact'))
 
     link = InvenTreeURLField(blank=True, help_text=_('Link to external company information'))
@@ -269,6 +273,7 @@ class SupplierPart(models.Model):
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='supplier_parts',
+                             verbose_name=_('Base Part'),
                              limit_choices_to={
                                  'purchaseable': True,
                                  'is_template': False,
