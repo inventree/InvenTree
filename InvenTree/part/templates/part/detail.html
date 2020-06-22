@@ -191,7 +191,7 @@
         </tr>
         <tr>
             <td><b>{% trans "Active" %}</b></td>
-            <td>{% include "slide.html" with state=part.active field='active' %}</td>
+            <td>{% include "slide.html" with state=part.active field='active' disabled=False %}</td>
             {% if part.active %}
             <td>{% trans "Part is active" %}</td>
             {% else %}
