@@ -494,10 +494,15 @@ function loadStockTable(table, options) {
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     if (value) {
-                        return renderLink(value, '/stock/location/' + row.location + '/');
+                        return renderLink(value, `/stock/location/${row.location}/`);
                     }
                     else {
-                        return '<i>{% trans "No stock location set" %}</i>';
+                        if (row.customer) {
+                            var text = "{% trans "Shipped to customer" %}";
+                            return renderLink(text, `/company/${row.customer}/assigned-stock/`);
+                        } else {
+                            return '<i>{% trans "No stock location set" %}</i>';
+                        }
                     }
                 }
             },
