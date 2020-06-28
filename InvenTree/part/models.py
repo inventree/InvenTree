@@ -594,7 +594,16 @@ class Part(MPTTModel):
     def quantity_to_order(self):
         """ Return the quantity needing to be ordered for this part. """
 
-        required = -1 * self.net_stock
+        # How many do we need to have "on hand" at any point?
+        required = self.net_stock - self.minimum_stock
+
+        if required < 0:
+            return abs(required)
+
+        # Do not need to order any
+        return 0
+
+        required = self.net_stock
         return max(required, 0)
 
     @property
