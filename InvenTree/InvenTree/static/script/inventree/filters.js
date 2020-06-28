@@ -14,7 +14,7 @@
 
 function defaultFilters() {
     return {
-        stock: "cascade=1",
+        stock: "cascade=1&in_stock=1",
         build: "",
         parts: "cascade=1",
         company: "",

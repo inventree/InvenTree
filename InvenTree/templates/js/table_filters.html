@@ -14,6 +14,11 @@ function getAvailableTableFilters(tableKey) {
     // Filters for the "Stock" table
     if (tableKey == 'stock') {
         return {
+            in_stock: {
+                type: 'bool',
+                title: '{% trans "In Stock" %}',
+                description: '{% trans "Show items which are in stock" %}',
+            },
             cascade: {
                 type: 'bool',
                 title: '{% trans "Include sublocations" %}',
