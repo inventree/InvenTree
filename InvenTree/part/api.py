@@ -363,9 +363,10 @@ class PartList(generics.ListCreateAPIView):
         queryset = super().filter_queryset(queryset)
 
         # Filter by 'starred' parts?
-        starred = str2bool(self.request.query_params.get('starred', None))
+        starred = self.request.query_params.get('starred', None)
 
         if starred is not None:
+            starred = str2bool(starred)
             starred_parts = [star.part.pk for star in self.request.user.starred_parts.all()]
 
             if starred:
