@@ -30,8 +30,8 @@ def MakeBomTemplate(fmt):
     if not IsValidBOMFormat(fmt):
         fmt = 'csv'
 
-    query = BomItem.objects.filter(pk=None)
-    dataset = BomItemResource().export(queryset=query)
+    # query = BomItem.objects.filter(pk=None)
+    dataset = BomItemResource().export()
 
     data = dataset.export(fmt)
 
