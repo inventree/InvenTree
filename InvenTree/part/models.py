@@ -1355,7 +1355,7 @@ class PartParameter(models.Model):
 class BomItem(models.Model):
     """ A BomItem links a part to its component items.
     A part can have a BOM (bill of materials) which defines
-    which parts are required (and in what quatity) to make it.
+    which parts are required (and in what quantity) to make it.
 
     Attributes:
         part: Link to the parent part (the part that will be produced)
