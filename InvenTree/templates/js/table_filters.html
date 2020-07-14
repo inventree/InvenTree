@@ -11,6 +11,24 @@ function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
 
+    // Filters for the "customer stock" table (really a subset of "stock")
+    if (tableKey == "customerstock") {
+        return {
+            serialized: {
+                type: 'bool',
+                title: '{% trans "Is Serialized" %}',
+            },
+            serial_gte: {
+                title: "{% trans "Serial number GTE" %}",
+                description: "{% trans "Serial number greater than or equal to" %}"
+            },
+            serial_lte: {
+                title: "{% trans "Serial number LTE" %}",
+                description: "{% trans "Serial number less than or equal to" %}",
+            },
+        };
+    }
+
     // Filters for the "Stock" table
     if (tableKey == 'stock') {
         return {
@@ -38,6 +56,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Is allocated" %}',
                 description: '{% trans "Item has been alloacted" %}',
+            },
+            serialized: {
+                type: 'bool',
+                title: '{% trans "Is Serialized" %}',
             },
             serial_gte: {
                 title: "{% trans "Serial number GTE" %}",
