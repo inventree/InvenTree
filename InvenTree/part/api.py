@@ -190,7 +190,7 @@ class PartThumbs(generics.ListAPIView):
         return Response(data)
 
 
-class PartDetail(generics.RetrieveUpdateAPIView):
+class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single Part object """
 
     queryset = Part.objects.all()
@@ -228,6 +228,18 @@ class PartDetail(generics.RetrieveUpdateAPIView):
         kwargs['starred_parts'] = self.starred_parts
 
         return self.serializer_class(*args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        # Retrieve part
+        part = Part.objects.get(pk=int(kwargs['pk']))
+        # Check if inactive
+        if not part.active:
+            # Delete
+            return super(PartDetail, self).destroy(request, *args, **kwargs)
+        else:
+            # Return 405 error
+            message = f'Part \'{part.name}\' (pk = {part.pk}) is active: cannot delete'
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data=message)
 
 
 class PartList(generics.ListCreateAPIView):
@@ -363,9 +375,10 @@ class PartList(generics.ListCreateAPIView):
         queryset = super().filter_queryset(queryset)
 
         # Filter by 'starred' parts?
-        starred = str2bool(self.request.query_params.get('starred', None))
+        starred = self.request.query_params.get('starred', None)
 
         if starred is not None:
+            starred = str2bool(starred)
             starred_parts = [star.part.pk for star in self.request.user.starred_parts.all()]
 
             if starred:

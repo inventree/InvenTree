@@ -234,9 +234,11 @@ function loadStockTable(table, options) {
     var filterListElement = options.filterList || "#filter-list-stock";
 
     var filters = {};
-    
+
+    var filterKey = options.filterKey || "stock";
+     
     if (!options.disableFilters) {
-        filters = loadTableFilters("stock");
+        filters = loadTableFilters(filterKey);
     }
 
     var original = {};
@@ -245,7 +247,7 @@ function loadStockTable(table, options) {
         original[key] = params[key];
     }
 
-    setupFilterList("stock", table, filterListElement);
+    setupFilterList(filterKey, table, filterListElement);
 
     // Override the default values, or add new ones
     for (var key in params) {
