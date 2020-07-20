@@ -92,6 +92,18 @@ class PartThumbSerializer(serializers.Serializer):
     count = serializers.IntegerField(read_only=True)
 
 
+class PartThumbSerializerUpdate(InvenTreeModelSerializer):
+    """ Serializer for updating Part thumbnail """
+
+    image = InvenTreeAttachmentSerializerField(required=True)
+
+    class Meta:
+        model = Part
+        fields = [
+            'image',
+        ]
+
+
 class PartBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Part (brief detail) """
 
