@@ -1,6 +1,7 @@
 """
 JSON serializers for Part app
 """
+import imghdr
 
 from rest_framework import serializers
 
@@ -90,6 +91,27 @@ class PartThumbSerializer(serializers.Serializer):
 
     image = serializers.URLField(read_only=True)
     count = serializers.IntegerField(read_only=True)
+
+
+class PartThumbSerializerUpdate(InvenTreeModelSerializer):
+    """ Serializer for updating Part thumbnail """
+
+    def validate_image(self, value):
+        """
+        Check that file is an image.
+        """
+        validate = imghdr.what(value)
+        if not validate:
+            raise serializers.ValidationError("File is not an image")
+        return value
+
+    image = InvenTreeAttachmentSerializerField(required=True)
+
+    class Meta:
+        model = Part
+        fields = [
+            'image',
+        ]
 
 
 class PartBriefSerializer(InvenTreeModelSerializer):
