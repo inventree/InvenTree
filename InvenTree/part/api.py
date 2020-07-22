@@ -190,6 +190,21 @@ class PartThumbs(generics.ListAPIView):
         return Response(data)
 
 
+class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
+    """ API endpoint for updating Part thumbnails"""
+
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.PartThumbSerializerUpdate
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend
+    ]
+
+
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single Part object """
 
@@ -716,7 +731,10 @@ part_api_urls = [
         url(r'^.*$', PartParameterList.as_view(), name='api-part-param-list'),
     ])),
 
-    url(r'^thumbs/', PartThumbs.as_view(), name='api-part-thumbs'),
+    url(r'^thumbs/', include([
+        url(r'^$', PartThumbs.as_view(), name='api-part-thumbs'),
+        url(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
+    ])),
 
     url(r'^(?P<pk>\d+)/?', PartDetail.as_view(), name='api-part-detail'),
 
