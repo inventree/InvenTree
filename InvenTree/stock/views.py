@@ -1239,8 +1239,8 @@ class StockItemCreate(AjaxCreateView):
                 valid = False
                 form.errors['quantity'] = [_('Invalid quantity')]
 
-            if quantity <= 0:
-                form.errors['quantity'] = [_('Quantity must be greater than zero')]
+            if quantity < 0:
+                form.errors['quantity'] = [_('Quantity cannot be less than zero')]
                 valid = False
 
             if part is None:
