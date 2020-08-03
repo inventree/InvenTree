@@ -115,7 +115,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
             {% endif %}
             <li><a href='#' id='stock-duplicate' title='{% trans "Duplicate stock item" %}'><span class='fas fa-copy'></span> {% trans "Duplicate stock item" %}</a></li>
             <li><a href='#' id='stock-edit' title='{% trans "Edit stock item" %}'><span class='fas fa-edit icon-blue'></span> {% trans "Edit stock item" %}</a></li>
-            {% if item.can_delete %}
+            {% if item.can_delete or user.is_staff %}
             <li><a href='#' id='stock-delete' title='{% trans "Delete stock item" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete stock item" %}</a></li>
             {% endif %}
         </ul>
