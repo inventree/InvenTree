@@ -21,7 +21,7 @@ from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
 
-from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import BuildStatus
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string
 
@@ -501,7 +501,6 @@ class BuildItem(models.Model):
 
         # TODO - If the item__part object is not trackable, delete the stock item here
         
-        item.status = StockStatus.ASSIGNED_TO_BUILD
         item.build_order = self.build
         item.save()
 

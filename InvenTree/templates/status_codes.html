@@ -18,14 +18,18 @@ function {{ label }}StatusDisplay(key) {
 
     key = String(key);
 
-    var value = {{ label }}Codes[key].value;
+    var value = null;
+    var label = null;
+
+    if (key in {{ label }}Codes) {
+        value = {{ label }}Codes[key].value;
+        label = {{ label }}Codes[key].label;
+    }
 
     if (value == null || value.length == 0) {
         value = key;
+        label = '';
     }
-
-    // Select the label color
-    var label = {{ label }}Codes[key].label ?? '';
 
     return `<span class='label ${label}'>${value}</span>`;
 }

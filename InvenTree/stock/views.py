@@ -260,6 +260,41 @@ class StockItemAssignToCustomer(AjaxUpdateView):
         return self.renderJsonResponse(request, self.get_form(), data)
 
 
+class StockItemReturnToStock(AjaxUpdateView):
+    """
+    View for returning a stock item (which is assigned to a customer) to stock.
+    """
+
+    model = StockItem
+    ajax_form_title = _("Return to Stock")
+    context_object_name = "item"
+    form_class = StockForms.ReturnStockItemForm
+
+    def post(self, request, *args, **kwargs):
+
+        location = request.POST.get('location', None)
+
+        if location:
+            try:
+                location = StockLocation.objects.get(pk=location)
+            except (ValueError, StockLocation.DoesNotExist):
+                location = None
+
+        if location:
+            stock_item = self.get_object()
+
+            stock_item.returnFromCustomer(location, request.user)
+        else:
+            raise ValidationError({'location': _("Specify a valid location")})
+
+        data = {
+            'form_valid': True,
+            'success': _("Stock item returned from customer")
+        }
+
+        return self.renderJsonResponse(request, self.get_form(), data)
+
+
 class StockItemDeleteTestData(AjaxUpdateView):
     """
     View for deleting all test data

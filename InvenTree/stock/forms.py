@@ -46,6 +46,18 @@ class AssignStockItemToCustomerForm(HelperForm):
         ]
 
 
+class ReturnStockItemForm(HelperForm):
+    """
+    Form for manually returning a StockItem into stock
+    """
+
+    class Meta:
+        model = StockItem
+        fields = [
+            'location',
+        ]
+
+
 class EditStockItemTestResultForm(HelperForm):
     """
     Form for creating / editing a StockItemTestResult object.

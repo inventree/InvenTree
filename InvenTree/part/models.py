@@ -65,7 +65,7 @@ class PartCategory(InvenTreeTree):
         help_text=_('Default location for parts in this category')
     )
 
-    default_keywords = models.CharField(blank=True, max_length=250, help_text=_('Default keywords for parts in this category'))
+    default_keywords = models.CharField(null=True, blank=True, max_length=250, help_text=_('Default keywords for parts in this category'))
 
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={'pk': self.id})
