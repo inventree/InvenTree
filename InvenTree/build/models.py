@@ -21,7 +21,7 @@ from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
 
-from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import BuildStatus
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string
 

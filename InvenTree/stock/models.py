@@ -219,12 +219,6 @@ class StockItem(MPTTModel):
 
         super().clean()
 
-        if self.status == StockStatus.ASSIGNED_TO_OTHER_ITEM and self.belongs_to is None:
-            raise ValidationError({
-                'belongs_to': "Belongs_to field must be specified as statis is marked as ASSIGNED_TO_OTHER_ITEM",
-                'status': 'Status cannot be marked as ASSIGNED_TO_OTHER_ITEM if the belongs_to field is not set',
-            })
-
         try:
             if self.part.trackable:
                 # Trackable parts must have integer values for quantity field!
@@ -477,7 +471,6 @@ class StockItem(MPTTModel):
 
         # Update StockItem fields with new information
         item.sales_order = order
-        item.status = StockStatus.SHIPPED
         item.customer = customer
         item.location = None
 

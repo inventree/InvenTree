@@ -167,8 +167,6 @@ class StockStatus(StatusCode):
     # This can be used as a quick check for filtering
     NOT_IN_STOCK = 100
 
-    SHIPPED = 110  # Item has been shipped to a customer
-
     options = {
         OK: _("OK"),
         ATTENTION: _("Attention needed"),
@@ -177,7 +175,6 @@ class StockStatus(StatusCode):
         LOST: _("Lost"),
         REJECTED: _("Rejected"),
         RETURNED: _("Returned"),
-        SHIPPED: _('Shipped'),
     }
 
     colors = {
@@ -186,7 +183,6 @@ class StockStatus(StatusCode):
         DAMAGED: 'red',
         DESTROYED: 'red',
         REJECTED: 'red',
-        SHIPPED: 'green',
     }
 
     # The following codes correspond to parts that are 'available' or 'in stock'
@@ -202,7 +198,6 @@ class StockStatus(StatusCode):
         DESTROYED,
         LOST,
         REJECTED,
-        SHIPPED,
     ]
 
     # The following codes are available for receiving goods
