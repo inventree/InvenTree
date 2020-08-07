@@ -495,6 +495,23 @@ class StockItem(MPTTModel):
         # Return the reference to the stock item
         return item
 
+    def returnFromCustomer(self, location, user=None):
+        """
+        Return stock item from customer, back into the specified location.
+        """
+
+        self.addTransactionNote(
+            _("Returned from customer") + " " + self.customer.name,
+            user,
+            notes=_("Returned to location") + " " + location.name,
+            system=True
+        )
+
+        self.customer = None
+        self.location = location
+
+        self.save()
+
     # If stock item is incoming, an (optional) ETA field
     # expected_arrival = models.DateField(null=True, blank=True)
 

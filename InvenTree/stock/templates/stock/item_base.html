@@ -354,7 +354,6 @@ $("#unlink-barcode").click(function() {
 
 {% if item.in_stock %}
 
-{% if item.part.salable %}
 $("#stock-assign-to-customer").click(function() {
     launchModalForm("{% url 'stock-item-assign' item.id %}",
         {
@@ -362,7 +361,6 @@ $("#stock-assign-to-customer").click(function() {
         }
     );
 });
-{% endif %}
 
 function itemAdjust(action) {
     launchModalForm("/stock/adjust/", 
@@ -401,6 +399,16 @@ $('#stock-remove').click(function() {
 
 $('#stock-add').click(function() {
     itemAdjust('add');
+});
+
+{% else %}
+
+$("#stock-return-from-customer").click(function() {
+    launchModalForm("{% url 'stock-item-return' item.id %}",
+        {
+            reload: true,
+        }
+    );
 });
 
 {% endif %}
