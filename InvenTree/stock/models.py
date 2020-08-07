@@ -140,6 +140,7 @@ class StockItem(MPTTModel):
         sales_order=None,
         build_order=None,
         belongs_to=None,
+        customer=None,
         status__in=StockStatus.AVAILABLE_CODES
     )
 
@@ -218,12 +219,6 @@ class StockItem(MPTTModel):
         """
 
         super().clean()
-
-        if self.status == StockStatus.ASSIGNED_TO_OTHER_ITEM and self.belongs_to is None:
-            raise ValidationError({
-                'belongs_to': "Belongs_to field must be specified as statis is marked as ASSIGNED_TO_OTHER_ITEM",
-                'status': 'Status cannot be marked as ASSIGNED_TO_OTHER_ITEM if the belongs_to field is not set',
-            })
 
         try:
             if self.part.trackable:
@@ -477,7 +472,6 @@ class StockItem(MPTTModel):
 
         # Update StockItem fields with new information
         item.sales_order = order
-        item.status = StockStatus.SHIPPED
         item.customer = customer
         item.location = None
 
@@ -494,6 +488,23 @@ class StockItem(MPTTModel):
 
         # Return the reference to the stock item
         return item
+
+    def returnFromCustomer(self, location, user=None):
+        """
+        Return stock item from customer, back into the specified location.
+        """
+
+        self.addTransactionNote(
+            _("Returned from customer") + " " + self.customer.name,
+            user,
+            notes=_("Returned to location") + " " + location.name,
+            system=True
+        )
+
+        self.customer = None
+        self.location = location
+
+        self.save()
 
     # If stock item is incoming, an (optional) ETA field
     # expected_arrival = models.DateField(null=True, blank=True)
@@ -597,6 +608,10 @@ class StockItem(MPTTModel):
 
         # Not 'in stock' if it has been allocated to a BuildOrder
         if self.build_order is not None:
+            return False
+
+        # Not 'in stock' if it has been assigned to a customer
+        if self.customer is not None:
             return False
 
         # Not 'in stock' if the status code makes it unavailable
