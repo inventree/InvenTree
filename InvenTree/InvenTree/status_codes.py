@@ -169,7 +169,6 @@ class StockStatus(StatusCode):
 
     SHIPPED = 110  # Item has been shipped to a customer
     ASSIGNED_TO_BUILD = 120
-    ASSIGNED_TO_OTHER_ITEM = 130
 
     options = {
         OK: _("OK"),
@@ -181,7 +180,6 @@ class StockStatus(StatusCode):
         RETURNED: _("Returned"),
         SHIPPED: _('Shipped'),
         ASSIGNED_TO_BUILD: _("Used for Build"),
-        ASSIGNED_TO_OTHER_ITEM: _("Installed in Stock Item")
     }
 
     colors = {
@@ -192,7 +190,6 @@ class StockStatus(StatusCode):
         REJECTED: 'red',
         SHIPPED: 'green',
         ASSIGNED_TO_BUILD: 'blue',
-        ASSIGNED_TO_OTHER_ITEM: 'blue',
     }
 
     # The following codes correspond to parts that are 'available' or 'in stock'
@@ -210,7 +207,6 @@ class StockStatus(StatusCode):
         REJECTED,
         SHIPPED,
         ASSIGNED_TO_BUILD,
-        ASSIGNED_TO_OTHER_ITEM,
     ]
 
     # The following codes are available for receiving goods
