@@ -140,6 +140,7 @@ class StockItem(MPTTModel):
         sales_order=None,
         build_order=None,
         belongs_to=None,
+        customer=None,
         status__in=StockStatus.AVAILABLE_CODES
     )
 
@@ -607,6 +608,10 @@ class StockItem(MPTTModel):
 
         # Not 'in stock' if it has been allocated to a BuildOrder
         if self.build_order is not None:
+            return False
+
+        # Not 'in stock' if it has been assigned to a customer
+        if self.customer is not None:
             return False
 
         # Not 'in stock' if the status code makes it unavailable

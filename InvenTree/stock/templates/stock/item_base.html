@@ -97,16 +97,15 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
             <li><a href='#' id='stock-remove' title='{% trans "Remove stock" %}'><span class='fas fa-minus-circle icon-red'></span> {% trans "Remove stock" %}</a></li>
             {% endif %}
             <li><a href='#' id='stock-move' title='{% trans "Transfer stock" %}'><span class='fas fa-exchange-alt icon-blue'></span> {% trans "Transfer stock" %}</a></li>
-            {% endif %}
             {% if item.part.trackable and not item.serialized %}
             <li><a href='#' id='stock-serialize' title='{% trans "Serialize stock" %}'><span class='fas fa-hashtag'></span> {% trans "Serialize stock" %}</a> </li>
             {% endif %}
-            {% if item.part.salable %}
-            {% if item.customer %}
-            <li><a href='#' id='stock-return-from-customer' title='{% trans "Return to stock" %}'><span class='fas fa-undo'></span> {% trans "Return to stock" %}</a></li>
-            {% else %}
+            {% endif %}
+            {% if item.part.salable and not item.customer %}
             <li><a href='#' id='stock-assign-to-customer' title='{% trans "Assign to customer" %}'><span class='fas fa-user-tie'></span> {% trans "Assign to customer" %}</a></li>
             {% endif %}
+            {% if item.customer %}
+            <li><a href='#' id='stock-return-from-customer' title='{% trans "Return to stock" %}'><span class='fas fa-undo'></span> {% trans "Return to stock" %}</a></li>
             {% endif %}
         </ul>
     </div>
