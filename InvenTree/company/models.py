@@ -80,7 +80,7 @@ class Company(models.Model):
     """
 
     class Meta:
-        ordering = ['name',]
+        ordering = ['name', ]
 
     name = models.CharField(max_length=100, blank=False, unique=True,
                             help_text=_('Company name'),

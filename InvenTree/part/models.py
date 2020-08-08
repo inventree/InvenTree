@@ -239,7 +239,7 @@ class Part(MPTTModel):
     class Meta:
         verbose_name = _("Part")
         verbose_name_plural = _("Parts")
-        ordering = ['name',]
+        ordering = ['name', ]
 
     class MPTTMeta:
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
