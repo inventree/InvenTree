@@ -47,6 +47,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Active parts" %}',
                 description: '{% trans "Show stock for active parts" %}',
             },
+            depleted: {
+                type: 'bool',
+                title: '{% trans "Depleted" %}',
+                description: '{% trans "Show stock items which are depleted" %}',
+            },
             status: {
                 options: stockCodes,
                 title: '{% trans "Stock status" %}',
