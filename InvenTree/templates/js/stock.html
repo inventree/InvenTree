@@ -468,6 +468,10 @@ function loadStockTable(table, options) {
                         html += `<span class='fas fa-question-circle label-right' title='{% trans "StockItem is lost" %}'></span>`;
                     }
 
+                    if (row.quantity <= 0) {
+                        html += `<span class='label label-right label-danger'>{% trans "Depleted" %}</span>`;
+                    }
+
                     return html;
                 }
             },

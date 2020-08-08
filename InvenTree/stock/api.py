@@ -539,10 +539,21 @@ class StockList(generics.ListCreateAPIView):
             active = str2bool(active)
             queryset = queryset.filter(part__active=active)
 
+        # Filter by 'depleted' status
+        depleted = params.get('depleted', None)
+
+        if depleted is not None:
+            depleted = str2bool(depleted)
+
+            if depleted:
+                queryset = queryset.filter(quantity__lte=0)
+            else:
+                queryset = queryset.exclude(quantity__lte=0)
+
         # Filter by internal part number
         IPN = params.get('IPN', None)
 
-        if IPN:
+        if IPN is not None:
             queryset = queryset.filter(part__IPN=IPN)
 
         # Does the client wish to filter by the Part ID?
