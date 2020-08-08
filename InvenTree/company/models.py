@@ -79,6 +79,9 @@ class Company(models.Model):
         is_manufacturer: boolean value, is this company a manufacturer
     """
 
+    class Meta:
+        ordering = ['name',]
+
     name = models.CharField(max_length=100, blank=False, unique=True,
                             help_text=_('Company name'),
                             verbose_name=_('Company name'))
