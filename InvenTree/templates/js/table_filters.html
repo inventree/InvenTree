@@ -32,35 +32,30 @@ function getAvailableTableFilters(tableKey) {
     // Filters for the "Stock" table
     if (tableKey == 'stock') {
         return {
-            in_stock: {
+            active: {
                 type: 'bool',
-                title: '{% trans "In Stock" %}',
-                description: '{% trans "Show items which are in stock" %}',
+                title: '{% trans "Active parts" %}',
+                description: '{% trans "Show stock for active parts" %}',
+            },
+            allocated: {
+                type: 'bool',
+                title: '{% trans "Is allocated" %}',
+                description: '{% trans "Item has been alloacted" %}',
             },
             cascade: {
                 type: 'bool',
                 title: '{% trans "Include sublocations" %}',
                 description: '{% trans "Include stock in sublocations" %}',
             },
-            active: {
-                type: 'bool',
-                title: '{% trans "Active parts" %}',
-                description: '{% trans "Show stock for active parts" %}',
-            },
             depleted: {
                 type: 'bool',
                 title: '{% trans "Depleted" %}',
                 description: '{% trans "Show stock items which are depleted" %}',
             },
-            status: {
-                options: stockCodes,
-                title: '{% trans "Stock status" %}',
-                description: '{% trans "Stock status" %}',
-            },
-            allocated: {
+            in_stock: {
                 type: 'bool',
-                title: '{% trans "Is allocated" %}',
-                description: '{% trans "Item has been alloacted" %}',
+                title: '{% trans "In Stock" %}',
+                description: '{% trans "Show items which are in stock" %}',
             },
             serialized: {
                 type: 'bool',
@@ -73,6 +68,11 @@ function getAvailableTableFilters(tableKey) {
             serial_lte: {
                 title: "{% trans "Serial number LTE" %}",
                 description: "{% trans "Serial number less than or equal to" %}",
+            },
+            status: {
+                options: stockCodes,
+                title: '{% trans "Stock status" %}',
+                description: '{% trans "Stock status" %}',
             },
         };
     }
