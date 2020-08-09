@@ -71,8 +71,8 @@ class PartCategory(InvenTreeTree):
         return reverse('category-detail', kwargs={'pk': self.id})
 
     class Meta:
-        verbose_name = "Part Category"
-        verbose_name_plural = "Part Categories"
+        verbose_name = _("Part Category")
+        verbose_name_plural = _("Part Categories")
 
     def get_parts(self, cascade=True):
         """ Return a queryset for all parts under this category.
@@ -239,6 +239,7 @@ class Part(MPTTModel):
     class Meta:
         verbose_name = _("Part")
         verbose_name_plural = _("Parts")
+        ordering = ['name', ]
 
     class MPTTMeta:
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
@@ -1490,7 +1491,7 @@ class BomItem(models.Model):
             pass
 
     class Meta:
-        verbose_name = "BOM Item"
+        verbose_name = _("BOM Item")
 
         # Prevent duplication of parent/child rows
         unique_together = ('part', 'sub_part')
