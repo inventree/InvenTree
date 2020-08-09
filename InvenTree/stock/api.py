@@ -518,8 +518,8 @@ class StockList(generics.ListCreateAPIView):
         if serial_number_lte is not None:
             queryset = queryset.filter(serial__lte=serial_number_lte)
 
-        # Filter by "in_stock" status (default behaviour is "True")
-        in_stock = params.get('in_stock', True)
+        # Filter by "in_stock" status
+        in_stock = params.get('in_stock', None)
 
         if in_stock is not None:
             in_stock = str2bool(in_stock)
