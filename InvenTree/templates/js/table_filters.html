@@ -57,6 +57,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "In Stock" %}',
                 description: '{% trans "Show items which are in stock" %}',
             },
+            sent_to_customer: {
+                type: 'bool',
+                title: '{% trans "Sent to customer" %}',
+                description: '{% trans "Show items which have been assigned to a customer" %}',
+            },
             serialized: {
                 type: 'bool',
                 title: '{% trans "Is Serialized" %}',
