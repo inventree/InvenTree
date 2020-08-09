@@ -477,6 +477,17 @@ class StockList(generics.ListCreateAPIView):
         if customer:
             queryset = queryset.filter(customer=customer)
 
+        # Filter if items have been sent to a customer (any customer)
+        sent_to_customer = params.get('sent_to_customer', None)
+
+        if sent_to_customer is not None:
+            sent_to_customer = str2bool(sent_to_customer)
+
+            if sent_to_customer:
+                queryset = queryset.exclude(customer=None)
+            else:
+                queryset = queryset.filter(customer=None)
+
         # Filter by "serialized" status?
         serialized = params.get('serialized', None)
 
@@ -507,6 +518,7 @@ class StockList(generics.ListCreateAPIView):
         if serial_number_lte is not None:
             queryset = queryset.filter(serial__lte=serial_number_lte)
 
+        # Filter by "in_stock" status
         in_stock = params.get('in_stock', None)
 
         if in_stock is not None:
