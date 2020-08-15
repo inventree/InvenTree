@@ -182,9 +182,6 @@ if DEBUG and CONFIG.get('debug_toolbar', False):
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
-if CONFIG.get('log_queries', False):
-    MIDDLEWARE.append('InvenTree.middleware.QueryCountMiddleware')
-
 ROOT_URLCONF = 'InvenTree.urls'
 
 TEMPLATES = [

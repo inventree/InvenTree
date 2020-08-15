@@ -63,11 +63,6 @@ static_root: '../inventree_static'
 #       and only if InvenTree is accessed from a local IP (127.0.0.1)
 debug_toolbar: False
 
-# Logging options
-# If debug mode is enabled, set log_queries to True to show aggregate database queries in the debug console
-# TODO - Remove me!
-log_queries: False
-
 # Backup options
 # Set the backup_dir parameter to store backup files in a specific location
 # If unspecified, the local user's temp directory will be used
