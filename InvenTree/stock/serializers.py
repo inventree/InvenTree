@@ -99,15 +99,34 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
         return queryset
 
+    belongs_to = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    build_order = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    customer = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    location = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    in_stock = serializers.BooleanField(read_only=True)
+
+    sales_order = serializers.PrimaryKeyRelatedField(read_only=True)
+
     status_text = serializers.CharField(source='get_status_display', read_only=True)
     
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
-    location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
+    supplier_part = serializers.PrimaryKeyRelatedField(read_only=True)
+    
     supplier_part_detail = SupplierPartSerializer(source='supplier_part', many=False, read_only=True)
+
+    part = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+
+    location_detail = LocationBriefSerializer(source='location', many=False, read_only=True)
 
     tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True, required=False)
 
     quantity = serializers.FloatField()
+    
     allocated = serializers.FloatField(source='allocation_count', required=False)
 
     serial = serializers.IntegerField(required=False)
@@ -140,9 +159,9 @@ class StockItemSerializer(InvenTreeModelSerializer):
         fields = [
             'allocated',
             'batch',
-            'build_order',
             'belongs_to',
             'customer',
+            'build_order',
             'in_stock',
             'link',
             'location',
@@ -155,10 +174,10 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'required_tests',
             'sales_order',
             'serial',
-            'supplier_part',
-            'supplier_part_detail',
             'status',
             'status_text',
+            'supplier_part',
+            'supplier_part_detail',
             'tracking_items',
             'uid',
         ]
