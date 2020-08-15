@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from django.contrib import admin
 
-# Register your models here.
+from .models import StockItemLabel
+
+
+class StockItemLabelAdmin(admin.ModelAdmin):
+
+    list_display = ('name', 'description', 'label')
+
+
+admin.site.register(StockItemLabel, StockItemLabelAdmin)
