@@ -67,7 +67,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None):
 
             bom_items.append(item)
 
-            if item.sub_part.assembly:    
+            if item.sub_part.assembly:
                 if max_levels is None or level < max_levels:
                     add_items(item.sub_part.bom_items.all().order_by('id'), level + 1)
         
