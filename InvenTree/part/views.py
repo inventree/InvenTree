@@ -1392,10 +1392,22 @@ class BomDownload(AjaxView):
 
         cascade = str2bool(request.GET.get('cascade', False))
 
+        levels = request.GET.get('levels', None)
+
+        if levels is not None:
+            try:
+                levels = int(levels)
+
+                if levels <= 0:
+                    levels = None
+
+            except ValueError:
+                levels = None
+
         if not IsValidBOMFormat(export_format):
             export_format = 'csv'
 
-        return ExportBom(part, fmt=export_format, cascade=cascade)
+        return ExportBom(part, fmt=export_format, cascade=cascade, max_levels=levels)
 
     def get_data(self):
         return {
@@ -1419,6 +1431,7 @@ class BomExport(AjaxView):
         # Extract POSTed form data
         fmt = request.POST.get('file_format', 'csv').lower()
         cascade = str2bool(request.POST.get('cascading', False))
+        levels = request.POST.get('levels', None)
 
         try:
             part = Part.objects.get(pk=self.kwargs['pk'])
@@ -1433,6 +1446,9 @@ class BomExport(AjaxView):
 
         url += '?file_format=' + fmt
         url += '&cascade=' + str(cascade)
+
+        if levels:
+            url += '&levels=' + str(levels)
 
         data = {
             'form_valid': part is not None,
