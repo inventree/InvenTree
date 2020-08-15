@@ -6,6 +6,7 @@ Passes URL lookup downstream to each app as required.
 
 
 from django.conf.urls import url, include
+from django.urls import path
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from qr_code import urls as qr_code_urls
@@ -134,6 +135,13 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # Media file access
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Debug toolbar access (if in DEBUG mode)
+if settings.DEBUG and 'debug_toolbar' in settings.INSTALLED_APPS:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug/', include(debug_toolbar.urls)),
+    ] + urlpatterns
 
 # Send any unknown URLs to the parts page
 urlpatterns += [url(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]

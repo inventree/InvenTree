@@ -172,11 +172,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware',
+
+    'InvenTree.middleware.AuthRequiredMiddleware'
 ]
 
-if CONFIG.get('log_queries', False):
-    MIDDLEWARE.append('InvenTree.middleware.QueryCountMiddleware')
+# If the debug toolbar is enabled, add the modules
+if DEBUG and CONFIG.get('debug_toolbar', False):
+    print("Running with DEBUG_TOOLBAR enabled")
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 ROOT_URLCONF = 'InvenTree.urls'
 
@@ -377,3 +381,8 @@ DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
 DBBACKUP_STORAGE_OPTIONS = {
     'location': CONFIG.get('backup_dir', tempfile.gettempdir()),
 }
+
+# Internal IP addresses allowed to see the debug toolbar
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
