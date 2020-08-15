@@ -236,6 +236,9 @@ class PartSerializer(InvenTreeModelSerializer):
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
     starred = serializers.SerializerMethodField()
 
+    # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
+    category = serializers.PrimaryKeyRelatedField(queryset=PartCategory.objects.all())
+
     # TODO - Include annotation for the following fields:
     # allocated_stock = serializers.FloatField(source='allocation_count', read_only=True)
     # bom_items = serializers.IntegerField(source='bom_count', read_only=True)
