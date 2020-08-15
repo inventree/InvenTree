@@ -338,11 +338,6 @@ class StockList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
         serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
@@ -363,6 +358,7 @@ class StockList(generics.ListCreateAPIView):
                 part_ids.add(part)
 
             sp = item['supplier_part']
+
             if sp:
                 supplier_part_ids.add(sp)
 
@@ -434,6 +430,7 @@ class StockList(generics.ListCreateAPIView):
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset(*args, **kwargs)
+
         queryset = StockItemSerializer.prefetch_queryset(queryset)
         queryset = StockItemSerializer.annotate_queryset(queryset)
 
