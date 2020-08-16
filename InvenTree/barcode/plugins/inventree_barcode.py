@@ -68,7 +68,7 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                 # Initially try casting to an integer
                 try:
                     pk = int(data)
-                except (ValueError):
+                except (TypeError, ValueError):
                     pk = None
 
                 if pk is None:
@@ -89,10 +89,21 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
 
         for k in self.data.keys():
             if k.lower() == 'stocklocation':
+
+                pk = None
+
+                # First try simple integer lookup
                 try:
-                    pk = self.data[k]['id']
-                except (AttributeError, KeyError):
-                    raise ValidationError({k: "id parameter not supplied"})
+                    pk = int(self.data[k])
+                except (TypeError, ValueError):
+                    pk = None
+
+                if pk is None:
+                    # Lookup by 'id' field
+                    try:
+                        pk = self.data[k]['id']
+                    except (AttributeError, KeyError):
+                        raise ValidationError({k: "id parameter not supplied"})
 
                 try:
                     loc = StockLocation.objects.get(pk=pk)
@@ -106,10 +117,20 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
 
         for k in self.data.keys():
             if k.lower() == 'part':
+
+                pk = None
+
+                # Try integer lookup first
                 try:
-                    pk = self.data[k]['id']
-                except (AttributeError, KeyError):
-                    raise ValidationError({k, 'id parameter not supplied'})
+                    pk = int(self.data[k])
+                except (TypeError, ValueError):
+                    pk = None
+
+                if pk is None:
+                    try:
+                        pk = self.data[k]['id']
+                    except (AttributeError, KeyError):
+                        raise ValidationError({k, 'id parameter not supplied'})
 
                 try:
                     part = Part.objects.get(pk=pk)
