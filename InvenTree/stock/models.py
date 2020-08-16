@@ -45,16 +45,17 @@ class StockLocation(InvenTreeTree):
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
 
-    def format_barcode(self):
+    def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this StockLocation object """
 
         return helpers.MakeBarcode(
             'stocklocation',
+            self.pk,
             {
-                "id": self.id,
                 "name": self.name,
                 "url": reverse('api-location-detail', kwargs={'pk': self.id}),
-            }
+            },
+            **kwargs
         )
 
     def get_stock_items(self, cascade=True):
@@ -298,7 +299,6 @@ class StockItem(MPTTModel):
             "stockitem",
             self.id,
             {
-                "id": self.id,
                 "url": reverse('api-stock-detail', kwargs={'pk': self.id}),
             },
             **kwargs

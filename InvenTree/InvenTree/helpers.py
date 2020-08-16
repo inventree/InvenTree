@@ -265,6 +265,9 @@ def MakeBarcode(object_name, object_pk, object_data, **kwargs):
         data['tool'] = 'InvenTree'
         data['version'] = inventreeVersion()
         data['instance'] = inventreeInstanceName()
+
+        # Ensure PK is included
+        object_data['id'] = object_pk
         data[object_name] = object_data
 
     return json.dumps(data, sort_keys=True)
