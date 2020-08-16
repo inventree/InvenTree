@@ -296,6 +296,50 @@ class StockItemReturnToStock(AjaxUpdateView):
         return self.renderJsonResponse(request, self.get_form(), data)
 
 
+class StockItemSelectLabels(AjaxView):
+    """
+    View for selecting a template for printing labels for one (or more) StockItem objects
+    """
+
+    model = StockItem
+    ajax_form_title = _('Select Label Template')
+
+    def get_form(self):
+
+        item = StockItem.objects.get(pk=self.kwargs['pk'])
+
+        labels = []
+
+        for label in StockItemLabel.objects.all():
+            if label.matches_stock_item(item):
+                labels.append(label)
+
+        return StockForms.StockItemLabelSelectForm(labels)
+
+    def post(self, request, *args, **kwargs):
+
+        label = request.POST.get('label', None)
+
+        try:
+            label = StockItemLabel.objects.get(pk=label)
+        except (ValueError, StockItemLabel.DoesNotExist):
+            raise ValidationError({'label': _("Select valid label")})
+    
+        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
+
+        url = reverse('stock-item-print-labels')
+
+        url += '?label={pk}'.format(pk=label.pk)
+        url += '&items[]={pk}'.format(pk=stock_item.pk)
+
+        data = {
+            'form_valid': True,
+            'url': url,
+        }
+
+        return self.renderJsonResponse(request, self.get_form(), data=data)
+
+
 class StockItemPrintLabels(AjaxView):
     """
     View for printing labels and returning a PDF

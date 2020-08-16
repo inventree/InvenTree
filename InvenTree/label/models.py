@@ -43,6 +43,12 @@ class LabelTemplate(models.Model):
     def template(self):
         return self.label.path
 
+    def __str__(self):
+        return "{n} - {d}".format(
+            n=self.name,
+            d=self.description
+        )
+
     name = models.CharField(
         unique=True,
         blank=False, max_length=100,
@@ -137,6 +143,7 @@ class StockItemLabel(LabelTemplate):
                 'uid': item.uid,
                 'pk': item.pk,
                 'qr_data': item.format_short_barcode(),
+                'tests': item.testResultMap()
             })
 
         return records

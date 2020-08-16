@@ -129,6 +129,9 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <span class='fas fa-tasks'/>
     </button>
     {% endif %}
+    <button type='button' class='btn btn-default' id='stock-print-label' title='{% trans "Print labels" %}'>
+        <span class='fas fa-tag'></span>
+    </button>
 </div>
 
 {% endblock %}
@@ -313,6 +316,15 @@ $("#stock-test-report").click(function() {
     );
 });
 {% endif %}
+
+$("#stock-print-label").click(function() {
+    launchModalForm(
+        "{% url 'stock-item-label-select' item.id %}",
+        {
+            follow: true,
+        }
+    )
+});
 
 $("#stock-duplicate").click(function() {
     launchModalForm(
