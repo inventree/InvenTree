@@ -14,7 +14,7 @@ from django.core.validators import FileExtensionValidator
 
 from django.utils.translation import gettext_lazy as _
 
-from InvenTree.helpers import validateFilterString
+from InvenTree.helpers import validateFilterString, normalize
 
 from stock.models import StockItem
 
@@ -38,6 +38,10 @@ class LabelTemplate(models.Model):
     # Each class of label files will be stored in a separate subdirectory
     SUBDIR = "label"
 
+    @property
+    def template(self):
+        return self.label.path
+
     name = models.CharField(
         unique=True,
         blank=False, max_length=100,
@@ -60,6 +64,9 @@ class LabelTemplate(models.Model):
     )
 
     def get_record_data(self, items):
+        """
+        Return a list of dict objects, one for each item.
+        """
 
         return []
 
@@ -67,9 +74,9 @@ class LabelTemplate(models.Model):
 
         records = self.get_record_data(items)
 
-        writer = LabelWriter(self.label.filename)
+        writer = LabelWriter(self.template)
 
-        writer.write_label(records, 'out.pdf')
+        writer.write_labels(records, 'out.html')
 
 
 class StockItemLabel(LabelTemplate):
@@ -91,3 +98,26 @@ class StockItemLabel(LabelTemplate):
         items = items.filter(pk=item.pk)
 
         return items.exists()
+
+    def get_record_data(self, items):
+        """
+        Generate context data for each provided StockItem
+        """
+        records = []
+        
+        for item in items:
+
+            # Add some basic information
+            records.append({
+                'item': item,
+                'part': item.part,
+                'name': item.part.name,
+                'ipn': item.part.IPN,
+                'quantity': normalize(item.quantity),
+                'serial': item.serial,
+                'uid': item.uid,
+                'pk': item.pk,
+                'qr_data': item.format_short_barcode(),
+            })
+
+        return records

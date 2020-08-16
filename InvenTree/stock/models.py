@@ -302,6 +302,13 @@ class StockItem(MPTTModel):
             }
         )
 
+    def format_short_barcode(self):
+        """
+        Return a short barcode
+        """
+
+        return "stockid={pk}".format(pk=self.pk)
+
     uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
 
     parent = TreeForeignKey(
