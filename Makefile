@@ -51,12 +51,12 @@ style:
 # Run unit tests
 test:
 	cd InvenTree && python3 manage.py check
-	cd InvenTree && python3 manage.py test barcode build common company order part report stock InvenTree
+	cd InvenTree && python3 manage.py test barcode build common company label order part report stock InvenTree
 
 # Run code coverage
 coverage:
 	cd InvenTree && python3 manage.py check
-	coverage run InvenTree/manage.py test barcode build common company order part report stock InvenTree
+	coverage run InvenTree/manage.py test barcode build common company label order part report stock InvenTree
 	coverage html
 
 # Install packages required to generate code docs

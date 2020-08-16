@@ -138,6 +138,7 @@ class TestMakeBarcode(TestCase):
 
         bc = helpers.MakeBarcode(
             "part",
+            3,
             {
                 "id": 3,
                 "url": "www.google.com",
