@@ -6,6 +6,7 @@ Label printing models
 from __future__ import unicode_literals
 
 import os
+import io
 
 from blabel import LabelWriter
 
@@ -70,13 +71,31 @@ class LabelTemplate(models.Model):
 
         return []
 
-    def render(self, items, **kwargs):
+    def render_to_file(self, filename, items, **kwargs):
+        """
+        Render labels to a PDF file
+        """
 
         records = self.get_record_data(items)
 
         writer = LabelWriter(self.template)
 
-        writer.write_labels(records, 'out.html')
+        writer.write_labels(records, filename)
+
+    def render(self, items, **kwargs):
+        """
+        Render labels to an in-memory PDF object, and return it
+        """
+
+        records = self.get_record_data(items)
+
+        writer = LabelWriter(self.template)
+
+        buffer = io.BytesIO()
+
+        writer.write_labels(records, buffer)
+
+        return buffer
 
 
 class StockItemLabel(LabelTemplate):
