@@ -6,7 +6,7 @@ import subprocess
 from common.models import InvenTreeSetting
 import django
 
-INVENTREE_SW_VERSION = "0.1.2"
+INVENTREE_SW_VERSION = "0.1.3 pre"
 
 
 def inventreeInstanceName():
