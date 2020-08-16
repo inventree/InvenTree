@@ -28,6 +28,7 @@ from datetime import datetime
 from company.models import Company, SupplierPart
 from part.models import Part
 from report.models import TestReport
+from label.models import StockItemLabel
 from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
 
 from .admin import StockItemResource
@@ -293,6 +294,44 @@ class StockItemReturnToStock(AjaxUpdateView):
         }
 
         return self.renderJsonResponse(request, self.get_form(), data)
+
+
+class StockItemPrintLabels(AjaxView):
+    """
+    View for printing labels and returning a PDF
+
+    Requires the following arguments to be passed as URL params:
+
+    items: List of valid StockItem pk values
+    label: Valid pk of a StockItemLabel template
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        label = request.GET.get('label', None)
+
+        try:
+            label = StockItemLabel.objects.get(pk=label)
+        except (ValueError, StockItemLabel.DoesNotExist):
+            raise ValidationError({'label': 'Invalid label ID'})
+
+        item_pks = request.GET.getlist('items[]')
+
+        items = []
+
+        for pk in item_pks:
+            try:
+                item = StockItem.objects.get(pk=pk)
+                items.append(item)
+            except (ValueError, StockItem.DoesNotExist):
+                pass
+
+        if len(items) == 0:
+            raise ValidationError({'items': 'Must provide valid stockitems'})
+
+        pdf = label.render(items).getbuffer()
+
+        return DownloadFile(pdf, 'stock_labels.pdf', content_type='application/pdf')
 
 
 class StockItemDeleteTestData(AjaxUpdateView):
