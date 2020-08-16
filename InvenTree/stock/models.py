@@ -283,7 +283,7 @@ class StockItem(MPTTModel):
     def get_part_name(self):
         return self.part.full_name
 
-    def format_barcode(self):
+    def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this StockItem.
         Can be used to perform lookup of a stockitem using barcode
 
@@ -296,18 +296,13 @@ class StockItem(MPTTModel):
 
         return helpers.MakeBarcode(
             "stockitem",
+            self.id,
             {
                 "id": self.id,
                 "url": reverse('api-stock-detail', kwargs={'pk': self.id}),
-            }
+            },
+            **kwargs
         )
-
-    def format_short_barcode(self):
-        """
-        Return a short barcode
-        """
-
-        return "stockid={pk}".format(pk=self.pk)
 
     uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
 

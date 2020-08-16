@@ -47,12 +47,12 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
         else:
             return False
 
-        for key in ['tool', 'version']:
-            if key not in self.data.keys():
-                return False
+        # If any of the following keys are in the JSON data,
+        # let's go ahead and assume that the code is a valid InvenTree one...
 
-        if not self.data['tool'] == 'InvenTree':
-            return False
+        for key in ['tool', 'version', 'InvenTree', 'stockitem', 'location', 'part']:
+            if key in self.data.keys():
+                return True
 
         return True
 
@@ -60,10 +60,22 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
 
         for k in self.data.keys():
             if k.lower() == 'stockitem':
+
+                data = self.data[k]
+
+                pk = None
+
+                # Initially try casting to an integer
                 try:
-                    pk = self.data[k]['id']
-                except (AttributeError, KeyError):
-                    raise ValidationError({k: "id parameter not supplied"})
+                    pk = int(data)
+                except (ValueError):
+                    pk = None
+
+                if pk is None:
+                    try:
+                        pk = self.data[k]['id']
+                    except (AttributeError, KeyError):
+                        raise ValidationError({k: "id parameter not supplied"})
 
                 try:
                     item = StockItem.objects.get(pk=pk)

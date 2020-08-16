@@ -142,7 +142,7 @@ class StockItemLabel(LabelTemplate):
                 'serial': item.serial,
                 'uid': item.uid,
                 'pk': item.pk,
-                'qr_data': item.format_short_barcode(),
+                'qr_data': item.format_barcode(brief=True),
                 'tests': item.testResultMap()
             })
 
