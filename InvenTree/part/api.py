@@ -603,7 +603,20 @@ class BomList(generics.ListCreateAPIView):
     """
 
     serializer_class = part_serializers.BomItemSerializer
-    
+
+    def list(self, request, *args, **kwargs):
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        data = serializer.data
+
+        if request.is_ajax():
+            return JsonResponse(data, safe=False)
+        else:
+            return Response(data)
+
     def get_serializer(self, *args, **kwargs):
 
         # Do we wish to include extra detail?
@@ -622,8 +635,10 @@ class BomList(generics.ListCreateAPIView):
         
         return self.serializer_class(*args, **kwargs)
 
-    def get_queryset(self):
+    def get_queryset(self, *args, **kwargs):
+
         queryset = BomItem.objects.all()
+
         queryset = self.get_serializer_class().setup_eager_loading(queryset)
 
         return queryset
