@@ -58,9 +58,10 @@ static_root: '../inventree_static'
 #  - git
 #  - ssh
 
-# Logging options
-# If debug mode is enabled, set log_queries to True to show aggregate database queries in the debug console
-log_queries: False
+# Set debug_toolbar to True to enable a debugging toolbar for InvenTree
+# Note: This will only be displayed if DEBUG mode is enabled, 
+#       and only if InvenTree is accessed from a local IP (127.0.0.1)
+debug_toolbar: False
 
 # Backup options
 # Set the backup_dir parameter to store backup files in a specific location

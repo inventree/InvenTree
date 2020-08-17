@@ -338,11 +338,6 @@ class StockList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
         serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
@@ -363,6 +358,7 @@ class StockList(generics.ListCreateAPIView):
                 part_ids.add(part)
 
             sp = item['supplier_part']
+
             if sp:
                 supplier_part_ids.add(sp)
 
@@ -434,6 +430,7 @@ class StockList(generics.ListCreateAPIView):
     def get_queryset(self, *args, **kwargs):
 
         queryset = super().get_queryset(*args, **kwargs)
+
         queryset = StockItemSerializer.prefetch_queryset(queryset)
         queryset = StockItemSerializer.annotate_queryset(queryset)
 
@@ -477,6 +474,17 @@ class StockList(generics.ListCreateAPIView):
         if customer:
             queryset = queryset.filter(customer=customer)
 
+        # Filter if items have been sent to a customer (any customer)
+        sent_to_customer = params.get('sent_to_customer', None)
+
+        if sent_to_customer is not None:
+            sent_to_customer = str2bool(sent_to_customer)
+
+            if sent_to_customer:
+                queryset = queryset.exclude(customer=None)
+            else:
+                queryset = queryset.filter(customer=None)
+
         # Filter by "serialized" status?
         serialized = params.get('serialized', None)
 
@@ -507,6 +515,7 @@ class StockList(generics.ListCreateAPIView):
         if serial_number_lte is not None:
             queryset = queryset.filter(serial__lte=serial_number_lte)
 
+        # Filter by "in_stock" status
         in_stock = params.get('in_stock', None)
 
         if in_stock is not None:
@@ -539,10 +548,21 @@ class StockList(generics.ListCreateAPIView):
             active = str2bool(active)
             queryset = queryset.filter(part__active=active)
 
+        # Filter by 'depleted' status
+        depleted = params.get('depleted', None)
+
+        if depleted is not None:
+            depleted = str2bool(depleted)
+
+            if depleted:
+                queryset = queryset.filter(quantity__lte=0)
+            else:
+                queryset = queryset.exclude(quantity__lte=0)
+
         # Filter by internal part number
         IPN = params.get('IPN', None)
 
-        if IPN:
+        if IPN is not None:
             queryset = queryset.filter(part__IPN=IPN)
 
         # Does the client wish to filter by the Part ID?

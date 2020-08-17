@@ -40,7 +40,7 @@ def MakeBomTemplate(fmt):
     return DownloadFile(data, filename)
 
 
-def ExportBom(part, fmt='csv', cascade=False):
+def ExportBom(part, fmt='csv', cascade=False, max_levels=None):
     """ Export a BOM (Bill of Materials) for a given part.
 
     Args:
@@ -59,8 +59,8 @@ def ExportBom(part, fmt='csv', cascade=False):
         # Add items at a given layer
         for item in items:
 
-            item.level = '-' * level
-
+            item.level = str(int(level))
+            
             # Avoid circular BOM references
             if item.pk in uids:
                 continue
@@ -68,7 +68,8 @@ def ExportBom(part, fmt='csv', cascade=False):
             bom_items.append(item)
 
             if item.sub_part.assembly:
-                add_items(item.sub_part.bom_items.all().order_by('id'), level + 1)
+                if max_levels is None or level < max_levels:
+                    add_items(item.sub_part.bom_items.all().order_by('id'), level + 1)
         
     if cascade:
         # Cascading (multi-level) BOM

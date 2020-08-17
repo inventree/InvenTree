@@ -1,4 +1,4 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/inventree/InvenTree.svg?branch=master)](https://travis-ci.org/inventree/InvenTree) [![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest) [![Coverage Status](https://coveralls.io/repos/github/inventree/InvenTree/badge.svg)](https://coveralls.io/github/inventree/InvenTree)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/inventree/InvenTree.svg?branch=master)](https://travis-ci.org/inventree/InvenTree) [![Coverage Status](https://coveralls.io/repos/github/inventree/InvenTree/badge.svg)](https://coveralls.io/github/inventree/InvenTree)
 
 <img src="images/logo/inventree.png" alt="InvenTree" width="128"/>
 
@@ -15,7 +15,7 @@ Refer to the [getting started guide](https://inventree.github.io/docs/start/inst
 
 ## Documentation
 
-For InvenTree documentation, refer to the [InvenTre documentation website](https://inventree.github.io).
+For InvenTree documentation, refer to the [InvenTree documentation website](https://inventree.github.io).
 
 ## Integration
 

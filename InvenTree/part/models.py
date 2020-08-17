@@ -65,14 +65,14 @@ class PartCategory(InvenTreeTree):
         help_text=_('Default location for parts in this category')
     )
 
-    default_keywords = models.CharField(blank=True, max_length=250, help_text=_('Default keywords for parts in this category'))
+    default_keywords = models.CharField(null=True, blank=True, max_length=250, help_text=_('Default keywords for parts in this category'))
 
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={'pk': self.id})
 
     class Meta:
-        verbose_name = "Part Category"
-        verbose_name_plural = "Part Categories"
+        verbose_name = _("Part Category")
+        verbose_name_plural = _("Part Categories")
 
     def get_parts(self, cascade=True):
         """ Return a queryset for all parts under this category.
@@ -239,6 +239,7 @@ class Part(MPTTModel):
     class Meta:
         verbose_name = _("Part")
         verbose_name_plural = _("Parts")
+        ordering = ['name', ]
 
     class MPTTMeta:
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
@@ -559,16 +560,17 @@ class Part(MPTTModel):
 
     responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='parts_responible')
 
-    def format_barcode(self):
+    def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this Part object """
 
         return helpers.MakeBarcode(
             "part",
+            self.id,
             {
-                "id": self.id,
                 "name": self.full_name,
                 "url": reverse('api-part-detail', kwargs={'pk': self.id}),
-            }
+            },
+            **kwargs
         )
 
     @property
@@ -1490,7 +1492,7 @@ class BomItem(models.Model):
             pass
 
     class Meta:
-        verbose_name = "BOM Item"
+        verbose_name = _("BOM Item")
 
         # Prevent duplication of parent/child rows
         unique_together = ('part', 'sub_part')

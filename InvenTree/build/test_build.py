@@ -211,15 +211,12 @@ class BuildTest(TestCase):
         # New stock items created and assigned to the build
         self.assertEqual(StockItem.objects.get(pk=4).quantity, 50)
         self.assertEqual(StockItem.objects.get(pk=4).build_order, self.build)
-        self.assertEqual(StockItem.objects.get(pk=4).status, status.StockStatus.ASSIGNED_TO_BUILD)
 
         self.assertEqual(StockItem.objects.get(pk=5).quantity, 50)
         self.assertEqual(StockItem.objects.get(pk=5).build_order, self.build)
-        self.assertEqual(StockItem.objects.get(pk=5).status, status.StockStatus.ASSIGNED_TO_BUILD)
 
         self.assertEqual(StockItem.objects.get(pk=6).quantity, 250)
         self.assertEqual(StockItem.objects.get(pk=6).build_order, self.build)
-        self.assertEqual(StockItem.objects.get(pk=6).status, status.StockStatus.ASSIGNED_TO_BUILD)
         
         # And a new stock item created for the build output
         self.assertEqual(StockItem.objects.get(pk=7).quantity, 1)

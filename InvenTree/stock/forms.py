@@ -46,6 +46,18 @@ class AssignStockItemToCustomerForm(HelperForm):
         ]
 
 
+class ReturnStockItemForm(HelperForm):
+    """
+    Form for manually returning a StockItem into stock
+    """
+
+    class Meta:
+        model = StockItem
+        fields = [
+            'location',
+        ]
+
+
 class EditStockItemTestResultForm(HelperForm):
     """
     Form for creating / editing a StockItemTestResult object.
@@ -164,6 +176,37 @@ class SerializeStockForm(HelperForm):
             'destination',
             'note',
         ]
+
+
+class StockItemLabelSelectForm(HelperForm):
+    """ Form for selecting a label template for a StockItem """
+
+    label = forms.ChoiceField(
+        label=_('Label'),
+        help_text=_('Select test report template')
+    )
+
+    class Meta:
+        model = StockItem
+        fields = [
+            'label',
+        ]
+
+    def get_label_choices(self, labels):
+
+        choices = []
+
+        if len(labels) > 0:
+            for label in labels:
+                choices.append((label.pk, label))
+
+        return choices
+
+    def __init__(self, labels, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.fields['label'].choices = self.get_label_choices(labels)
 
 
 class TestReportFormatForm(HelperForm):

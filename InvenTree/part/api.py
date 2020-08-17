@@ -190,6 +190,21 @@ class PartThumbs(generics.ListAPIView):
         return Response(data)
 
 
+class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
+    """ API endpoint for updating Part thumbnails"""
+
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.PartThumbSerializerUpdate
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend
+    ]
+
+
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single Part object """
 
@@ -588,7 +603,20 @@ class BomList(generics.ListCreateAPIView):
     """
 
     serializer_class = part_serializers.BomItemSerializer
-    
+
+    def list(self, request, *args, **kwargs):
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        data = serializer.data
+
+        if request.is_ajax():
+            return JsonResponse(data, safe=False)
+        else:
+            return Response(data)
+
     def get_serializer(self, *args, **kwargs):
 
         # Do we wish to include extra detail?
@@ -607,8 +635,10 @@ class BomList(generics.ListCreateAPIView):
         
         return self.serializer_class(*args, **kwargs)
 
-    def get_queryset(self):
+    def get_queryset(self, *args, **kwargs):
+
         queryset = BomItem.objects.all()
+
         queryset = self.get_serializer_class().setup_eager_loading(queryset)
 
         return queryset
@@ -716,7 +746,10 @@ part_api_urls = [
         url(r'^.*$', PartParameterList.as_view(), name='api-part-param-list'),
     ])),
 
-    url(r'^thumbs/', PartThumbs.as_view(), name='api-part-thumbs'),
+    url(r'^thumbs/', include([
+        url(r'^$', PartThumbs.as_view(), name='api-part-thumbs'),
+        url(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
+    ])),
 
     url(r'^(?P<pk>\d+)/?', PartDetail.as_view(), name='api-part-detail'),
 

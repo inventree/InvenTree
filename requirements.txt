@@ -1,6 +1,7 @@
 wheel>=0.34.2                   # Wheel
 Django==3.0.7                   # Django package
-pillow==6.2.2                   # Image manipulation
+pillow==7.1.0                   # Image manipulation
+blabel==0.1.3                   # Simple PDF label printing
 djangorestframework==3.10.3     # DRF framework
 django-dbbackup==3.3.0          # Database backup / restore functionality
 django-cors-headers==3.2.0      # CORS headers extension for DRF
@@ -15,10 +16,11 @@ django-crispy-forms==1.8.1      # Form helpers
 django-import-export==2.0.0     # Data import / export for admin interface
 django-cleanup==4.0.0           # Manage deletion of old / unused uploaded files
 django-qr-code==1.2.0           # Generate QR codes
-flake8==3.3.0                   # PEP checking
+flake8==3.8.3                   # PEP checking
 coverage==4.0.3                 # Unit test coverage
 python-coveralls==2.9.1         # Coveralls linking (for Travis)
 rapidfuzz==0.7.6                # Fuzzy string matching
 django-stdimage==5.1.1          # Advanced ImageField management
 django-tex==1.1.7               # LaTeX PDF export
 django-weasyprint==1.0.1        # HTML PDF export
+django-debug-toolbar==2.2       # Debug / profiling toolbar

@@ -28,6 +28,7 @@ from datetime import datetime
 from company.models import Company, SupplierPart
 from part.models import Part
 from report.models import TestReport
+from label.models import StockItemLabel
 from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
 
 from .admin import StockItemResource
@@ -258,6 +259,123 @@ class StockItemAssignToCustomer(AjaxUpdateView):
         }
 
         return self.renderJsonResponse(request, self.get_form(), data)
+
+
+class StockItemReturnToStock(AjaxUpdateView):
+    """
+    View for returning a stock item (which is assigned to a customer) to stock.
+    """
+
+    model = StockItem
+    ajax_form_title = _("Return to Stock")
+    context_object_name = "item"
+    form_class = StockForms.ReturnStockItemForm
+
+    def post(self, request, *args, **kwargs):
+
+        location = request.POST.get('location', None)
+
+        if location:
+            try:
+                location = StockLocation.objects.get(pk=location)
+            except (ValueError, StockLocation.DoesNotExist):
+                location = None
+
+        if location:
+            stock_item = self.get_object()
+
+            stock_item.returnFromCustomer(location, request.user)
+        else:
+            raise ValidationError({'location': _("Specify a valid location")})
+
+        data = {
+            'form_valid': True,
+            'success': _("Stock item returned from customer")
+        }
+
+        return self.renderJsonResponse(request, self.get_form(), data)
+
+
+class StockItemSelectLabels(AjaxView):
+    """
+    View for selecting a template for printing labels for one (or more) StockItem objects
+    """
+
+    model = StockItem
+    ajax_form_title = _('Select Label Template')
+
+    def get_form(self):
+
+        item = StockItem.objects.get(pk=self.kwargs['pk'])
+
+        labels = []
+
+        for label in StockItemLabel.objects.all():
+            if label.matches_stock_item(item):
+                labels.append(label)
+
+        return StockForms.StockItemLabelSelectForm(labels)
+
+    def post(self, request, *args, **kwargs):
+
+        label = request.POST.get('label', None)
+
+        try:
+            label = StockItemLabel.objects.get(pk=label)
+        except (ValueError, StockItemLabel.DoesNotExist):
+            raise ValidationError({'label': _("Select valid label")})
+    
+        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
+
+        url = reverse('stock-item-print-labels')
+
+        url += '?label={pk}'.format(pk=label.pk)
+        url += '&items[]={pk}'.format(pk=stock_item.pk)
+
+        data = {
+            'form_valid': True,
+            'url': url,
+        }
+
+        return self.renderJsonResponse(request, self.get_form(), data=data)
+
+
+class StockItemPrintLabels(AjaxView):
+    """
+    View for printing labels and returning a PDF
+
+    Requires the following arguments to be passed as URL params:
+
+    items: List of valid StockItem pk values
+    label: Valid pk of a StockItemLabel template
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        label = request.GET.get('label', None)
+
+        try:
+            label = StockItemLabel.objects.get(pk=label)
+        except (ValueError, StockItemLabel.DoesNotExist):
+            raise ValidationError({'label': 'Invalid label ID'})
+
+        item_pks = request.GET.getlist('items[]')
+
+        items = []
+
+        for pk in item_pks:
+            try:
+                item = StockItem.objects.get(pk=pk)
+                items.append(item)
+            except (ValueError, StockItem.DoesNotExist):
+                pass
+
+        if len(items) == 0:
+            raise ValidationError({'items': 'Must provide valid stockitems'})
+
+        pdf = label.render(items).getbuffer()
+
+        return DownloadFile(pdf, 'stock_labels.pdf', content_type='application/pdf')
 
 
 class StockItemDeleteTestData(AjaxUpdateView):
@@ -1239,8 +1357,8 @@ class StockItemCreate(AjaxCreateView):
                 valid = False
                 form.errors['quantity'] = [_('Invalid quantity')]
 
-            if quantity <= 0:
-                form.errors['quantity'] = [_('Quantity must be greater than zero')]
+            if quantity < 0:
+                form.errors['quantity'] = [_('Quantity cannot be less than zero')]
                 valid = False
 
             if part is None:

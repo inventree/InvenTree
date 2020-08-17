@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load status_codes %}
 
 /* Stock API functions
  * Requires api.js to be loaded first
@@ -425,15 +426,9 @@ function loadStockTable(table, options) {
                 sortable: true,
                 formatter: function(value, row, index, field) {
 
-                    var url = '';
+                    var url = `/stock/item/${row.pk}/`;
                     var thumb = row.part_detail.thumbnail;
                     var name = row.part_detail.full_name;
-
-                    if (row.supplier_part) {
-                        url = `/supplier-part/${row.supplier_part}/`;
-                    } else {
-                        url = `/part/${row.part}/`;
-                    }
 
                     html = imageHoverIcon(thumb) + renderLink(name, url);
                     
@@ -466,12 +461,30 @@ function loadStockTable(table, options) {
                     var html = renderLink(val, `/stock/item/${row.pk}/`);
                     
                     if (row.allocated) {
-                        html += `<span class='fas fa-bookmark label-right' title='{% trans "StockItem has been allocated" %}'></span>`;
+                        html += `<span class='fas fa-bookmark label-right' title='{% trans "Stock item has been allocated" %}'></span>`;
                     }
 
+                    if (row.customer) {
+                        html += `<span class='fas fa-user-tie label-right' title='{% trans "Stock item has been assigned to customer" %}'></span>`;
+                    } else if (row.build_order) {
+                        html += `<span class='fas fa-tools label-right' title='{% trans "Stock item was assigned to a build order" %}'></span>`;
+                    } else if (row.sales_order) {
+                        html += `<span class='fas fa-dollar-sign label-right' title='{% trans "Stock item was assigned to a sales order" %}'></span>`;
+                    }
+
+                    // Special stock status codes
+
+                    // 65 = "REJECTED"
+                    if (row.status == 65) {
+                        html += `<span class='fas fa-times-circle label-right' title='{% trans "Stock item has been rejected" %}'></span>`;
+                    }
                     // 70 = "LOST"
-                    if (row.status == 70) {
-                        html += `<span class='fas fa-question-circle label-right' title='{% trans "StockItem is lost" %}'></span>`;
+                    else if (row.status == 70) {
+                        html += `<span class='fas fa-question-circle label-right' title='{% trans "Stock item is lost" %}'></span>`;
+                    }
+
+                    if (row.quantity <= 0) {
+                        html += `<span class='label label-right label-danger'>{% trans "Depleted" %}</span>`;
                     }
 
                     return html;
