@@ -950,6 +950,7 @@ class BomUpload(FormView):
 
         q_idx = self.getColumnIndex('Quantity')
         p_idx = self.getColumnIndex('Part')
+        i_idx = self.getColumnIndex('IPN')
         d_idx = self.getColumnIndex('Description')
         r_idx = self.getColumnIndex('Reference')
         n_idx = self.getColumnIndex('Notes')
@@ -972,7 +973,7 @@ class BomUpload(FormView):
 
                 row['part_name'] = part_name
 
-                # Fuzzy match the values and see what happends
+                # Fuzzy match the values and see what happens
                 matches = []
 
                 for part in self.allowed_parts:
@@ -981,6 +982,9 @@ class BomUpload(FormView):
 
                 if len(matches) > 0:
                     matches = sorted(matches, key=lambda item: item['match'], reverse=True)
+
+            if i_idx >= 0:
+                row['part_ipn'] = row['data'][i_idx]
 
             if d_idx >= 0:
                 row['description'] = row['data'][d_idx]
@@ -993,14 +997,31 @@ class BomUpload(FormView):
 
             row['quantity'] = quantity
 
-            # Part selection: separate match from options
+            # Part selection using IPN
+            try:
+                if row['part_ipn']:
+                    part_matches = [part for part in self.allowed_parts if row['part_ipn'] == part.IPN]
+                    part_options = [part for part in self.allowed_parts if part not in part_matches]
+
+                    # Check for single match
+                    if len(part_matches) == 1:
+                        row['part_match'] = part_matches[0]
+
+                    row['part_options'] = part_options
+
+                    continue
+            except KeyError:
+                pass
+           
+            # Part selection using Part Name
             match_limit = 100
             part_matches = [m['part'] for m in matches if m['match'] >= match_limit]
+
+            # Check for single match
             if len(part_matches) == 1:
                 row['part_match'] = part_matches[0]
                 row['part_options'] = [m['part'] for m in matches if m['match'] < match_limit]
             else:
-                row['part_match'] = None
                 row['part_options'] = [m['part'] for m in matches]
 
     def extractDataFromFile(self, bom):
