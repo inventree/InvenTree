@@ -59,8 +59,8 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None):
         # Add items at a given layer
         for item in items:
 
-            item.level = '-' * level
-
+            item.level = str(int(level))
+            
             # Avoid circular BOM references
             if item.pk in uids:
                 continue
