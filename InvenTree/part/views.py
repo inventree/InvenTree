@@ -847,6 +847,7 @@ class BomUpload(FormView):
             rows.append({
                 'index': row.get('index', -1),
                 'data': data,
+                'part_match': row.get('part_match', None),
                 'part_options': row.get('part_options', self.allowed_parts),
 
                 # User-input (passed between client and server)
@@ -991,7 +992,16 @@ class BomUpload(FormView):
                 row['notes'] = row['data'][n_idx]
 
             row['quantity'] = quantity
-            row['part_options'] = [m['part'] for m in matches]
+
+            # Part selection: separate match from options
+            match_limit = 100
+            part_matches = [m['part'] for m in matches if m['match'] >= match_limit]
+            if len(part_matches) == 1:
+                row['part_match'] = part_matches[0]
+                row['part_options'] = [m['part'] for m in matches if m['match'] < match_limit]
+            else:
+                row['part_match'] = None
+                row['part_options'] = [m['part'] for m in matches]
 
     def extractDataFromFile(self, bom):
         """ Read data from the BOM file """
