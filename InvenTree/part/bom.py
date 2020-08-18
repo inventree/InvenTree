@@ -14,6 +14,7 @@ from InvenTree.helpers import DownloadFile, GetExportFormats
 
 from .admin import BomItemResource
 from .models import BomItem
+from company.models import SupplierPart
 
 
 def IsValidBOMFormat(fmt):
@@ -90,6 +91,36 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None):
         bom_items = [item for item in part.bom_items.all().order_by('id')]
 
     dataset = BomItemResource().export(queryset=bom_items, cascade=cascade)
+
+    # Expand dataset with manufacturer parts
+    manufacturer_headers = ('Manufacturer_', 'MPN_')
+    manufacturer_cols = {}
+
+    for b_idx, bom_item in enumerate(bom_items):
+        # Get part instance
+        b_part = bom_item.sub_part
+        # Filter supplier parts
+        supplier_parts = SupplierPart.objects.filter(part__pk=b_part.pk)
+        # Construct manufacturer data
+        manufacturer_list = []
+        for supplier_part in supplier_parts:
+            manufacturer_list.append((supplier_part.manufacturer.name, supplier_part.MPN))
+        # Add manufacturer data to manufacturer columns
+        for m_idx, manufacturer in enumerate(manufacturer_list):
+            try:
+                manufacturer_cols[manufacturer_headers[0] + str(m_idx)].update({b_idx: manufacturer[0]})
+                manufacturer_cols[manufacturer_headers[1] + str(m_idx)].update({b_idx: manufacturer[1]})
+            except KeyError:
+                manufacturer_cols[manufacturer_headers[0] + str(m_idx)] = {b_idx: manufacturer[0]}
+                manufacturer_cols[manufacturer_headers[1] + str(m_idx)] = {b_idx: manufacturer[1]}
+
+    # Add manufacturer columns to dataset
+    for header, col_dict in manufacturer_cols.items():
+        # Construct column tuple
+        col = tuple(col_dict.get(c_idx, '') for c_idx in range(len(bom_items)))
+        # Add column to dataset
+        dataset.append_col(col, header=header)
+
     data = dataset.export(fmt)
 
     filename = '{n}_BOM.{fmt}'.format(n=part.full_name, fmt=fmt)
