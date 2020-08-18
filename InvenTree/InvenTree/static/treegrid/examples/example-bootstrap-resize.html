@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="shortcut icon" href="../../assets/ico/favicon.png">
+
+        <title>TreeGrid for Bootstrap 3.0.x</title>
+
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/jquery.treegrid.css">
+        <link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/default.min.css">
+        <script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+		<script>hljs.initHighlightingOnLoad();</script>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.treegrid.js"></script>
+        <script type="text/javascript" src="../js/jquery.treegrid.bootstrap3.js"></script>
+        <script type="text/javascript">
+
+            $(document).ready(function() {
+                $('.tree').treegrid();
+                $('.tree-2').treegrid({
+                    expanderExpandedClass: 'glyphicon glyphicon-minus',
+                    expanderCollapsedClass: 'glyphicon glyphicon-plus'
+                });
+
+            });
+        </script>   
+    <script>
+      (function(i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function() {
+          (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', 'UA-43342702-1', 'maxazan.github.io');
+      ga('send', 'pageview');
+
+    </script>
+    </head>
+
+    <body>
+        <div class="container">
+
+            <h1><a href="http://maxazan.github.io/jquery-treegrid/">TreeGrid</a> Bootstrap 3 resize examples</h1>
+
+            <table class="table tree">
+                <tr class="treegrid-1">
+                    <td>Root node 1</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-2 treegrid-parent-1">
+                    <td>Node 1-1</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-3 treegrid-parent-1">
+                    <td>Node 1-2</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-4 treegrid-parent-3">
+                    <td>Node 1-2-1</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-5">
+                    <td>Root node 2</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-6 treegrid-parent-5">
+                    <td>Node 2-1</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-7 treegrid-parent-5">
+                    <td>Node 2-2</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-8 treegrid-parent-7">
+                    <td>Node 2-2-1</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>        
+            </table>	
+            <h3>Code</h3>
+
+            <pre><code class="html">&lt;link href=&quot;bootstrap-3.0.0/css/bootstrap.css&quot; rel=&quot;stylesheet&quot;&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;../css/jquery.treegrid.css&quot;&gt;
+
+&lt;script type=&quot;text/javascript&quot; src=&quot;../js/jquery.treegrid.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;../js/jquery.treegrid.bootstrap3.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+    $(document).ready(function() {
+        $(&#39;.tree&#39;).treegrid();
+    });
+&lt;/script&gt;</code></pre> 
+            <h2>Bootstrap TreeGrid example<br>
+                table-bordered table-striped table-condensed<br>
+                custom expander</h2>
+            <table class="table tree-2 table-bordered table-striped table-condensed">
+                <tr class="treegrid-1">
+                    <td>Root node 1</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-2 treegrid-parent-1">
+                    <td>Node 1-1</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-3 treegrid-parent-1">
+                    <td>Node 1-2</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-4 treegrid-parent-3">
+                    <td>Node 1-2-1</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-5">
+                    <td>Root node 2</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-6 treegrid-parent-5">
+                    <td>Node 2-1</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-7 treegrid-parent-5">
+                    <td>Node 2-2</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>
+                <tr class="treegrid-8 treegrid-parent-7">
+                    <td>Node 2-2-1</td><td class="hidden-xs">Additional info</td><td class="hidden-xs hidden-sm">Additional info2</td><td class="hidden-xs hidden-sm hidden-md">Additional info3</td>
+                </tr>        
+            </table>	
+
+            <h3>Code</h3>
+            <pre><code class="html">&lt;link href=&quot;bootstrap-3.0.0/css/bootstrap.css&quot; rel=&quot;stylesheet&quot;&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;../css/jquery.treegrid.css&quot;&gt;
+
+&lt;script type=&quot;text/javascript&quot; src=&quot;../js/jquery.treegrid.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;../js/jquery.treegrid.bootstrap3.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+    $(document).ready(function() {
+        $(&#39;.tree&#39;).treegrid({
+                    expanderExpandedClass: &#39;glyphicon glyphicon-minus&#39;,
+                    expanderCollapsedClass: &#39;glyphicon glyphicon-plus&#39;
+                });
+    });
+&lt;/script&gt;</code></pre> 
+        </div> <!-- /container -->
+
+
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+    </body>
+</html>
