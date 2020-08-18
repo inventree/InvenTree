@@ -62,6 +62,11 @@
                     </button>
 
                     <select class='select bomselect' id='select_part_{{ row.index }}' name='part_{{ row.index }}'>
+                        {% if row.part_match %}
+                            {% with row.part_match as part %}
+                            <option value='{{ part.id }}'{% if part.id == row.part.id %} selected='selected'{% endif %}>{{ part.full_name }} - {{ part.description }}</option>
+                            {% endwith %}  
+                        {% endif %}
                         <option value=''>---------</option>
                         {% for part in row.part_options %}
                         <option value='{{ part.id }}'{% if part.id == row.part.id %} selected='selected'{% endif %}>{{ part.full_name }} - {{ part.description }}</option>
