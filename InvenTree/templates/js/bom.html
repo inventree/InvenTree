@@ -127,11 +127,10 @@ function loadBomTable(table, options) {
         */
     }
 
-
     // Part column
     cols.push(
         {
-            field: 'sub_part_detail.full_name',
+            field: 'sub_part',
             title: '{% trans "Part" %}',
             sortable: true,
             formatter: function(value, row, index, field) {
@@ -150,6 +149,7 @@ function loadBomTable(table, options) {
         }
     );
 
+    
     // Part description
     cols.push(
         {
@@ -236,26 +236,31 @@ function loadBomTable(table, options) {
         cols.push({
             formatter: function(value, row, index, field) {
 
-                var bValidate = "<button title='{% trans "Validate BOM Item" %}' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-check-circle icon-blue'/></button>";
-                var bValid = "<span title='{% trans "This line has been validated" %}' class='fas fa-check-double icon-green'/>";
+                if (row.part == options.parent_id) {
 
-                var bEdit = "<button title='{% trans "Edit BOM Item" %}' class='bom-edit-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='fas fa-edit'/></button>";
-                var bDelt = "<button title='{% trans "Delete BOM Item" %}' class='bom-delete-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='fas fa-trash-alt icon-red'/></button>";
-                
-                var html = "<div class='btn-group' role='group'>";
-                
-                html += bEdit;
-                html += bDelt;
-                
-                if (!row.validated) {
-                    html += bValidate;
+                    var bValidate = "<button title='{% trans "Validate BOM Item" %}' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-check-circle icon-blue'/></button>";
+                    var bValid = "<span title='{% trans "This line has been validated" %}' class='fas fa-check-double icon-green'/>";
+
+                    var bEdit = "<button title='{% trans "Edit BOM Item" %}' class='bom-edit-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='fas fa-edit'/></button>";
+                    var bDelt = "<button title='{% trans "Delete BOM Item" %}' class='bom-delete-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='fas fa-trash-alt icon-red'/></button>";
+                    
+                    var html = "<div class='btn-group' role='group'>";
+                    
+                    html += bEdit;
+                    html += bDelt;
+                    
+                    if (!row.validated) {
+                        html += bValidate;
+                    } else {
+                        html += bValid;
+                    }
+
+                    html += "</div>";
+
+                    return html;
                 } else {
-                    html += bValid;
+                    return '';
                 }
-
-                html += "</div>";
-
-                return html;
             }
         });
     }
@@ -274,8 +279,37 @@ function loadBomTable(table, options) {
     if (options.sub_part_detail) {
         params.sub_part_detail = true;
     }
+
+    function requestSubItems(part_pk) {
+
+        inventreeGet(
+            options.bom_url,
+            {
+                part: part_pk,
+                sub_part_detail: true,
+            },
+            {
+                success: function(response) {
+                    for (var idx = 0; idx < response.length; idx++) {
+                        response[idx].parentId = part_pk;
+                    }
+
+                    table.bootstrapTable('append', response);
+                },
+                error: function() {
+                    console.log('Error requesting BOM for part=' + part_pk);
+                }
+            }
+        )
+    }
     
     table.bootstrapTable({
+        treeEnable: true,
+        rootParentId: options.parent_id,
+        idField: 'sub_part',
+        uniqueId: 'pk',
+        parentIdField: 'part',
+        treeShowField: 'sub_part',
         sortable: true,
         search: true,
         rowStyle: function(row, index) {
@@ -291,7 +325,36 @@ function loadBomTable(table, options) {
             return params;
         },
         columns: cols,
-        url: options.bom_url
+        url: options.bom_url,
+        onPostBody: function() {
+            table.treegrid({
+                treeColumn: 0,
+                onExpand: function() {
+                }
+            });
+        },
+        onLoadSuccess: function() {
+
+            var data = table.bootstrapTable('getData');
+
+            for (var idx = 0; idx < data.length; idx++) {
+                var row = data[idx];
+
+                // If a row already has a parent ID set, it's already been updated!
+                if (row.parentId) {
+                    continue;
+                }
+
+                // Set the parent ID of the top-level rows
+                row.parentId = options.parent_id;
+
+                table.bootstrapTable('updateRow', idx, row, true);
+
+                if (row.sub_part_detail.assembly) {
+                    requestSubItems(row.sub_part);
+                }
+            }
+        },
     });
 
     // In editing mode, attached editables to the appropriate table elements
