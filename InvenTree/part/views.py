@@ -1325,8 +1325,16 @@ class BomUpload(FormView):
 
         for row in self.bom_rows:
             # Has a part been selected for the given row?
-            if row.get('part', None) is None:
+            part = row.get('part', None)
+
+            if part is None:
                 row['errors']['part'] = _('Select a part')
+            else:
+                # Will the selected part result in a recursive BOM?
+                try:
+                    part.checkAddToBOM(self.part)
+                except ValidationError:
+                    row['errors']['part'] = _('Selected part creates a circular BOM')
 
             # Has a quantity been specified?
             if row.get('quantity', None) is None:
