@@ -1,18 +1,23 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load i18n %}
 {% load inventree_extras %}
 
 {% block details %}
 
 {% include "part/tabs.html" with tab='bom' %}
 
-<h4>Upload Bill of Materials</h4>
+<h4>{% trans "Upload Bill of Materials" %}</h4>
 <hr>
 
-<p>Step 1 - Select BOM File</p>
+<p>{% trans "Step 1 - Select BOM File" %}</p>
 
 <div class='alert alert-info alert-block'>
-    <p>The BOM file must contain the required named columns as provided in the <a href="/part/bom_template/">BOM Upload Template</a></a></p>
+    <b>{% trans "Requirements for BOM upload" %}:</b>
+    <ul>
+        <li>{% trans "The BOM file must contain the required named columns as provided in the " %} <b><a href="/part/bom_template/">{% trans "BOM Upload Template" %}</a></b></li>
+        <li>{% trans "Each part must already exist in the database" %}</li>
+    </ul>
 </div>
 
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">

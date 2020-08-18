@@ -19,7 +19,7 @@ from django.conf import settings
 import os
 
 from rapidfuzz import fuzz
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from .models import PartCategory, Part, PartAttachment
 from .models import PartParameterTemplate, PartParameter
@@ -948,81 +948,133 @@ class BomUpload(FormView):
         The pre-fill data are then passed through to the part selection form.
         """
 
+        # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
+        k_idx = self.getColumnIndex('Part_ID')
+        p_idx = self.getColumnIndex('Part_Name')
+        i_idx = self.getColumnIndex('Part_IPN')
+
         q_idx = self.getColumnIndex('Quantity')
-        p_idx = self.getColumnIndex('Part')
-        i_idx = self.getColumnIndex('IPN')
-        d_idx = self.getColumnIndex('Description')
         r_idx = self.getColumnIndex('Reference')
-        n_idx = self.getColumnIndex('Notes')
+        o_idx = self.getColumnIndex('Overage')
+        n_idx = self.getColumnIndex('Note')
 
         for row in self.bom_rows:
+            """
 
-            quantity = 0
-            part = None
+            Iterate through each row in the uploaded data,
+            and see if we can match the row to a "Part" object in the database.
 
+            There are three potential ways to match, based on the uploaded data:
+
+            a) Use the PK (primary key) field for the part, uploaded in the "Part_ID" field
+            b) Use the IPN (internal part number) field for the part, uploaded in the "Part_IPN" field
+            c) Use the name of the part, uploaded in the "Part_Name" field
+
+            Notes:
+            - If using the Part_ID field, we can do an exact match against the PK field
+            - If using the Part_IPN field, we can do an exact match against the IPN field
+            - If using the Part_Name field, we can use fuzzy string matching to match "close" values
+            
+            We also extract other information from the row, for the other non-matched fields:
+            - Quantity
+            - Reference
+            - Overage
+            - Note
+            
+            """
+
+            # Initially use a quantity of zero
+            quantity = Decimal(0)
+
+            # Initially we do not have a part to reference
+            exact_match_part = None
+
+            # A list of potential Part matches
+            part_options = self.allowed_parts
+
+            # Check if there is a column corresponding to "quantity"
             if q_idx >= 0:
                 q_val = row['data'][q_idx]
 
-                try:
-                    quantity = int(q_val)
-                except ValueError:
-                    pass
+                if q_val:
+                    try:
+                        # Attempt to extract a valid quantity from the field
+                        quantity = Decimal(q_val)
+                    except (ValueError, InvalidOperation):
+                        pass
 
+            # Store the 'quantity' value
+            row['quantity'] = quantity
+
+            # Check if there is a column corresponding to "PK"
+            if k_idx >= 0:
+                pk = row['data'][k_idx]
+
+                if pk:
+                    try:
+                        # Attempt Part lookup based on PK value
+                        exact_match_part = Part.objects.get(pk=pk)
+                    except (ValueError, Part.DoesNotExist):
+                        exact_match_part = None
+
+            # Check if there is a column corresponding to "Part Name"
             if p_idx >= 0:
                 part_name = row['data'][p_idx]
 
                 row['part_name'] = part_name
 
-                # Fuzzy match the values and see what happens
                 matches = []
 
                 for part in self.allowed_parts:
                     ratio = fuzz.partial_ratio(part.name + part.description, part_name)
                     matches.append({'part': part, 'match': ratio})
 
+                # Sort matches by the 'strength' of the match ratio
                 if len(matches) > 0:
                     matches = sorted(matches, key=lambda item: item['match'], reverse=True)
 
+                    part_options = [m['part'] for m in matches]
+
+            # Check if there is a column corresponding to "Part IPN"
             if i_idx >= 0:
                 row['part_ipn'] = row['data'][i_idx]
 
-            if d_idx >= 0:
-                row['description'] = row['data'][d_idx]
+            # Check if there is a column corresponding to "Overage" field
+            if o_idx >= 0:
+                row['overage'] = row['data'][o_idx]
 
+            # Check if there is a column corresponding to "Reference" field
             if r_idx >= 0:
                 row['reference'] = row['data'][r_idx]
 
+            # Check if there is a column corresponding to "Note" field
             if n_idx >= 0:
-                row['notes'] = row['data'][n_idx]
+                row['note'] = row['data'][n_idx]
+        
+            # Supply list of part options for each row, sorted by how closely they match the part name
+            row['part_options'] = part_options
 
-            row['quantity'] = quantity
+            # Unless found, the 'part_match' is blank
+            row['part_match'] = None
 
-            # Part selection using IPN
-            try:
-                if row['part_ipn']:
-                    part_matches = [part for part in self.allowed_parts if row['part_ipn'] == part.IPN]
-                    part_options = [part for part in self.allowed_parts if part not in part_matches]
-
-                    # Check for single match
-                    if len(part_matches) == 1:
-                        row['part_match'] = part_matches[0]
-
-                    row['part_options'] = part_options
-
-                    continue
-            except KeyError:
-                pass
-           
-            # Part selection using Part Name
-            match_limit = 100
-            part_matches = [m['part'] for m in matches if m['match'] >= match_limit]
-
-            # Check for single match
-            if len(part_matches) == 1:
-                row['part_match'] = part_matches[0]
-                row['part_options'] = [m['part'] for m in matches if m['match'] < match_limit]
+            if exact_match_part:
+                # If there is an exact match based on PK, use that
+                row['part_match'] = exact_match_part
             else:
-                row['part_options'] = [m['part'] for m in matches]
+                # Otherwise, check to see if there is a matching IPN
+                try:
+                    if row['part_ipn']:
+                        part_matches = [part for part in self.allowed_parts if row['part_ipn'].lower() == part.IPN.lower()]
+    
+                        # Check for single match
+                        if len(part_matches) == 1:
+                            row['part_match'] = part_matches[0]
+
+                        continue
+                except KeyError:
+                    pass
+
+            print(row, row['part_match'], len(row['part_options']))
 
     def extractDataFromFile(self, bom):
         """ Read data from the BOM file """
@@ -1190,13 +1242,20 @@ class BomUpload(FormView):
                     if row is None:
                         continue
 
-                    q = 1
+                    q = Decimal(1)
 
                     try:
-                        q = int(value)
-                        if q <= 0:
+                        q = Decimal(value)
+                        if q < 0:
                             row['errors']['quantity'] = _('Quantity must be greater than zero')
-                    except ValueError:
+
+                        if 'part' in row.keys():
+                            if row['part'].trackable:
+                                # Trackable parts must use integer quantities
+                                if not q == int(q):
+                                    row['errors']['quantity'] = _('Quantity must be integer value for trackable parts')
+
+                    except (ValueError, InvalidOperation):
                         row['errors']['quantity'] = _('Enter a valid quantity')
 
                     row['quantity'] = q
@@ -1206,6 +1265,7 @@ class BomUpload(FormView):
 
             # Extract part from each row
             if key.startswith('part_'):
+
                 try:
                     row_id = int(key.replace('part_', ''))
 
@@ -1239,6 +1299,14 @@ class BomUpload(FormView):
 
                 row['part'] = part
 
+                if part.trackable:
+                    # For trackable parts, ensure the quantity is an integer value!
+                    if 'quantity' in row.keys():
+                        q = row['quantity']
+
+                        if not q == int(q):
+                            row['errors']['quantity'] = _('Quantity must be integer value for trackable parts')
+
             # Extract other fields which do not require further validation
             for field in ['reference', 'notes']:
                 if key.startswith(field + '_'):
@@ -1257,8 +1325,16 @@ class BomUpload(FormView):
 
         for row in self.bom_rows:
             # Has a part been selected for the given row?
-            if row.get('part', None) is None:
+            part = row.get('part', None)
+
+            if part is None:
                 row['errors']['part'] = _('Select a part')
+            else:
+                # Will the selected part result in a recursive BOM?
+                try:
+                    part.checkAddToBOM(self.part)
+                except ValidationError:
+                    row['errors']['part'] = _('Selected part creates a circular BOM')
 
             # Has a quantity been specified?
             if row.get('quantity', None) is None:

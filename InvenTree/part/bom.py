@@ -30,8 +30,14 @@ def MakeBomTemplate(fmt):
     if not IsValidBOMFormat(fmt):
         fmt = 'csv'
 
+    # Create an "empty" queryset, essentially.
+    # This will then export just the row headers!
     query = BomItem.objects.filter(pk=None)
-    dataset = BomItemResource().export(queryset=query)
+
+    dataset = BomItemResource().export(
+        queryset=query,
+        importing=True
+    )
 
     data = dataset.export(fmt)
 
@@ -96,26 +102,23 @@ class BomUploadManager:
 
     # Fields which are absolutely necessary for valid upload
     REQUIRED_HEADERS = [
-        'Part',
+        'Part_Name',
         'Quantity'
     ]
     
     # Fields which would be helpful but are not required
     OPTIONAL_HEADERS = [
+        'Part_IPN',
+        'Part_ID',
         'Reference',
-        'Notes',
+        'Note',
         'Overage',
-        'Description',
-        'Category',
-        'Supplier',
-        'Manufacturer',
-        'MPN',
-        'IPN',
     ]
 
     EDITABLE_HEADERS = [
         'Reference',
-        'Notes'
+        'Note',
+        'Overage'
     ]
 
     HEADERS = REQUIRED_HEADERS + OPTIONAL_HEADERS
@@ -163,6 +166,11 @@ class BomUploadManager:
         # Try for a case-insensitive match
         for h in self.HEADERS:
             if h.lower() == header.lower():
+                return h
+
+        # Try for a case-insensitive match with space replacement
+        for h in self.HEADERS:
+            if h.lower() == header.lower().replace(' ', '_'):
                 return h
 
         # Finally, look for a close match using fuzzy matching
