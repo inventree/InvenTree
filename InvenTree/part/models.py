@@ -271,6 +271,42 @@ class Part(MPTTModel):
     def __str__(self):
         return "{n} - {d}".format(n=self.full_name, d=self.description)
 
+    def checkAddToBOM(self, parent):
+        """
+        Check if this Part can be added to the BOM of another part.
+
+        This will fail if:
+
+        a) The parent part is the same as this one
+        b) The parent part is used in the BOM for *this* part
+        c) The parent part is used in the BOM for any child parts under this one
+        
+        Failing this check raises a ValidationError!
+
+        """
+
+        if parent is None:
+            return
+
+        if self.pk == parent.pk:
+            raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)".format(
+                p1=str(self),
+                p2=str(parent)
+            ))})
+
+        # Ensure that the parent part does not appear under any child BOM item!
+        for item in self.bom_items.all():
+
+            # Check for simple match
+            if item.sub_part == parent:
+                raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)".format(
+                    p1=str(parent),
+                    p2=str(self)
+                ))})
+
+            # And recursively check too
+            item.sub_part.checkAddToBOM(parent)
+
     def checkIfSerialNumberExists(self, sn):
         """
         Check if a serial number exists for this Part.
@@ -1357,7 +1393,7 @@ class PartParameter(models.Model):
 class BomItem(models.Model):
     """ A BomItem links a part to its component items.
     A part can have a BOM (bill of materials) which defines
-    which parts are required (and in what quatity) to make it.
+    which parts are required (and in what quantity) to make it.
 
     Attributes:
         part: Link to the parent part (the part that will be produced)
@@ -1474,22 +1510,8 @@ class BomItem(models.Model):
         except Part.DoesNotExist:
             pass
 
-        # A part cannot refer to itself in its BOM
-        try:
-            if self.sub_part is not None and self.part is not None:
-                if self.part == self.sub_part:
-                    raise ValidationError({'sub_part': _('Part cannot be added to its own Bill of Materials')})
-        
-            # TODO - Make sure that there is no recusion
-
-            # Test for simple recursion
-            for item in self.sub_part.bom_items.all():
-                if self.part == item.sub_part:
-                    raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)".format(p1=str(self.part), p2=str(self.sub_part)))})
-        
-        except Part.DoesNotExist:
-            # A blank Part will be caught elsewhere
-            pass
+        # Check for circular BOM references
+        self.sub_part.checkAddToBOM(self.part)
 
     class Meta:
         verbose_name = _("BOM Item")

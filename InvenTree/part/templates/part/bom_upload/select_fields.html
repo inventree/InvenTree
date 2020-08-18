@@ -1,17 +1,18 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load i18n %}
 {% load inventree_extras %}
 
 {% block details %}
 {% include "part/tabs.html" with tab='bom' %}
-<h4>Upload Bill of Materials</h4>
+<h4>{% trans "Upload Bill of Materials" %}</h4>
 
-<p>Step 2 - Select Fields</p>
+<p>{% trans "Step 2 - Select Fields" %}</p>
 <hr>
 
 {% if missing_columns and missing_columns|length > 0 %}
 <div class='alert alert-danger alert-block' role='alert'>
-    Missing selections for the following required columns:
+    {% trans "Missing selections for the following required columns" %}:
     <br>
     <ul>
         {% for col in missing_columns %}
@@ -22,7 +23,7 @@
 {% endif %}
 
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
-    <button type="submit" class="save btn btn-default">Submit Selections</button>
+    <button type="submit" class="save btn btn-default">{% trans "Submit Selections" %}</button>
     {% csrf_token %}
 
     <input type='hidden' name='form_step' value='select_fields'/>
@@ -31,7 +32,7 @@
         <thead>
             <tr>
                 <th></th>
-                <th>Row</th>
+                <th>{% trans "File Fields" %}</th>
                 {% for col in bom_columns %}
                 <th>
                     <div>
@@ -48,7 +49,7 @@
         <tbody>
             <tr>
                 <td></td>
-                <td></td>
+                <td>{% trans "Match Fields" %}</td>
                 {% for col in bom_columns %}
                 <td>
                     <select class='select' id='id_col_{{ forloop.counter0 }}' name='col_guess_{{ forloop.counter0 }}'>
