@@ -45,16 +45,17 @@ class StockLocation(InvenTreeTree):
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
 
-    def format_barcode(self):
+    def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this StockLocation object """
 
         return helpers.MakeBarcode(
             'stocklocation',
+            self.pk,
             {
-                "id": self.id,
                 "name": self.name,
                 "url": reverse('api-location-detail', kwargs={'pk': self.id}),
-            }
+            },
+            **kwargs
         )
 
     def get_stock_items(self, cascade=True):
@@ -283,7 +284,7 @@ class StockItem(MPTTModel):
     def get_part_name(self):
         return self.part.full_name
 
-    def format_barcode(self):
+    def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this StockItem.
         Can be used to perform lookup of a stockitem using barcode
 
@@ -296,10 +297,11 @@ class StockItem(MPTTModel):
 
         return helpers.MakeBarcode(
             "stockitem",
+            self.id,
             {
-                "id": self.id,
                 "url": reverse('api-stock-detail', kwargs={'pk': self.id}),
-            }
+            },
+            **kwargs
         )
 
     uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))

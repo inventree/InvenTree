@@ -99,6 +99,10 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         if manufacturer_detail is not True:
             self.fields.pop('manufacturer_detail')
 
+    supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
+
+    manufacturer = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_manufacturer=True))
+
     class Meta:
         model = SupplierPart
         fields = [

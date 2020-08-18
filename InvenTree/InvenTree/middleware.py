@@ -91,6 +91,8 @@ class QueryCountMiddleware(object):
     To enable this middleware, set 'log_queries: True' in the local InvenTree config file.
 
     Reference: https://www.dabapps.com/blog/logging-sql-queries-django-13/
+
+    Note: 2020-08-15 - This is no longer used, instead we now rely on the django-debug-toolbar addon
     """
 
     def __init__(self, get_response):

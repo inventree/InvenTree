@@ -236,6 +236,9 @@ class PartSerializer(InvenTreeModelSerializer):
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
     starred = serializers.SerializerMethodField()
 
+    # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
+    category = serializers.PrimaryKeyRelatedField(queryset=PartCategory.objects.all())
+
     # TODO - Include annotation for the following fields:
     # allocated_stock = serializers.FloatField(source='allocation_count', read_only=True)
     # bom_items = serializers.IntegerField(source='bom_count', read_only=True)
@@ -302,8 +305,13 @@ class BomItemSerializer(InvenTreeModelSerializer):
     price_range = serializers.CharField(read_only=True)
 
     quantity = serializers.FloatField()
+
+    part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
     
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+
+    sub_part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(component=True))
+
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
 
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
@@ -328,6 +336,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
         queryset = queryset.prefetch_related('part')
         queryset = queryset.prefetch_related('part__category')
         queryset = queryset.prefetch_related('part__stock_items')
+
         queryset = queryset.prefetch_related('sub_part')
         queryset = queryset.prefetch_related('sub_part__category')
         queryset = queryset.prefetch_related('sub_part__stock_items')

@@ -560,16 +560,17 @@ class Part(MPTTModel):
 
     responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='parts_responible')
 
-    def format_barcode(self):
+    def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this Part object """
 
         return helpers.MakeBarcode(
             "part",
+            self.id,
             {
-                "id": self.id,
                 "name": self.full_name,
                 "url": reverse('api-part-detail', kwargs={'pk': self.id}),
-            }
+            },
+            **kwargs
         )
 
     @property
