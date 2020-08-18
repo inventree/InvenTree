@@ -989,7 +989,7 @@ class BomUpload(FormView):
             # Initially we do not have a part to reference
             exact_match_part = None
 
-            # A list of potential Part matches 
+            # A list of potential Part matches
             part_options = self.allowed_parts
 
             # Check if there is a column corresponding to "quantity"
