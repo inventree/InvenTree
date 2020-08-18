@@ -139,15 +139,70 @@ class BomItemResource(ModelResource):
 
     bom_id = Field(attribute='pk')
 
+    # ID of the parent part
     parent_part_id = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
-    parent_part_name = Field(attribute='part__full_name', readonly=True)
+    # IPN of the parent part
+    parent_part_ipn = Field(attribute='part__IPN', readonly=True)
 
-    sub_part_id = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
+    # Name of the parent part
+    parent_part_name = Field(attribute='part__name', readonly=True)
 
-    sub_part_name = Field(attribute='sub_part__full_name', readonly=True)
+    # ID of the sub-part
+    part_id = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
 
+    # IPN of the sub-part
+    part_ipn = Field(attribute='sub_part__IPN', readonly=True)
+
+    # Name of the sub-part
+    part_name = Field(attribute='sub_part__name', readonly=True)
+
+    # Description of the sub-part
+    part_description = Field(attribute='sub_part__description', readonly=True)
+
+    # Is the sub-part itself an assembly?
     sub_assembly = Field(attribute='sub_part__assembly', readonly=True)
+
+    def before_export(self, queryset, *args, **kwargs):
+
+        self.is_importing = kwargs.get('importing', False)
+
+    def get_fields(self, **kwargs):
+        """
+        If we are exporting for the purposes of generating
+        a 'bom-import' template, there are some fields which
+        we are not interested in.
+        """
+
+        fields = super().get_fields(**kwargs)
+
+        # If we are not generating an "import" template,
+        # just return the complete list of fields
+        if not self.is_importing:
+            return fields
+
+        # Otherwise, remove some fields we are not interested in
+
+        idx = 0
+
+        to_remove = [
+            'level',
+            'bom_id',
+            'parent_part_id',
+            'parent_part_ipn',
+            'parent_part_name',
+            'part_description',
+            'sub_assembly'
+        ]
+
+        while idx < len(fields):
+
+            if fields[idx].column_name.lower() in to_remove:
+                del fields[idx]
+            else:
+                idx += 1
+
+        return fields
 
     class Meta:
         model = BomItem

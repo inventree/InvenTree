@@ -30,8 +30,14 @@ def MakeBomTemplate(fmt):
     if not IsValidBOMFormat(fmt):
         fmt = 'csv'
 
+    # Create an "empty" queryset, essentially.
+    # This will then export just the row headers!
     query = BomItem.objects.filter(pk=None)
-    dataset = BomItemResource().export(queryset=query)
+
+    dataset = BomItemResource().export(
+        queryset=query,
+        importing=True
+    )
 
     data = dataset.export(fmt)
 
