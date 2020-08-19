@@ -280,7 +280,9 @@ function loadBomTable(table, options) {
         params.sub_part_detail = true;
     }
 
-    function requestSubItems(part_pk) {
+    // Function to request BOM data for sub-items
+    // This function may be called recursively for multi-level BOMs
+    function requestSubItems(bom_pk, part_pk) {
 
         inventreeGet(
             options.bom_url,
@@ -291,10 +293,17 @@ function loadBomTable(table, options) {
             {
                 success: function(response) {
                     for (var idx = 0; idx < response.length; idx++) {
-                        response[idx].parentId = part_pk;
+                        
+                        response[idx].parentId = bom_pk;
+
+                        if (response[idx].sub_part_detail.assembly) {
+                            requestSubItems(response[idx].pk, response[idx].sub_part)
+                        }
                     }
 
                     table.bootstrapTable('append', response);
+
+                    table.treegrid('collapseAll');
                 },
                 error: function() {
                     console.log('Error requesting BOM for part=' + part_pk);
@@ -306,9 +315,9 @@ function loadBomTable(table, options) {
     table.bootstrapTable({
         treeEnable: true,
         rootParentId: options.parent_id,
-        idField: 'sub_part',
+        idField: 'pk',
         uniqueId: 'pk',
-        parentIdField: 'part',
+        parentIdField: 'parentId',
         treeShowField: 'sub_part',
         sortable: true,
         search: true,
@@ -351,7 +360,7 @@ function loadBomTable(table, options) {
                 table.bootstrapTable('updateRow', idx, row, true);
 
                 if (row.sub_part_detail.assembly) {
-                    requestSubItems(row.sub_part);
+                    requestSubItems(row.pk, row.sub_part);
                 }
             }
         },
