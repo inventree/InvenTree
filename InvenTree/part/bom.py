@@ -114,9 +114,6 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, supplier_data=Fal
             # Filter supplier parts
             supplier_parts = SupplierPart.objects.filter(part__pk=b_part.pk)
             
-            # Construct supplier-part data
-            supplier_part_list = []
-            
             for idx, supplier_part in enumerate(supplier_parts):
 
                 if supplier_part.supplier:
