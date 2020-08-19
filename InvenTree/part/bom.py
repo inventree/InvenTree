@@ -93,26 +93,59 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None):
     dataset = BomItemResource().export(queryset=bom_items, cascade=cascade)
 
     # Expand dataset with manufacturer parts
-    manufacturer_headers = ('Manufacturer_', 'MPN_')
+    manufacturer_headers = [
+        _('Supplier'),
+        _('SKU'),
+        _('Manufacturer'),
+        _('MPN'),
+    ]
+
     manufacturer_cols = {}
 
     for b_idx, bom_item in enumerate(bom_items):
         # Get part instance
         b_part = bom_item.sub_part
+
         # Filter supplier parts
         supplier_parts = SupplierPart.objects.filter(part__pk=b_part.pk)
-        # Construct manufacturer data
-        manufacturer_list = []
-        for supplier_part in supplier_parts:
-            manufacturer_list.append((supplier_part.manufacturer.name, supplier_part.MPN))
-        # Add manufacturer data to manufacturer columns
-        for m_idx, manufacturer in enumerate(manufacturer_list):
+        
+        # Construct supplier-part data
+        supplier_part_list = []
+        
+        for idx, supplier_part in enumerate(supplier_parts):
+
+            if supplier_part.supplier:
+                supplier_name = supplier_part.supplier.name
+            else:
+                supplier_name = ''
+
+            supplier_sku = supplier_part.SKU
+
+            if supplier_part.manufacturer:
+                manufacturer_name = supplier_part.manufacturer.name
+            else:
+                manufacturer_name = ''
+
+            manufacturer_mpn = supplier_part.MPN
+
+            # Add manufacturer data to the manufacturer columns
+
+            # Generate column names for this supplier
+            k_sup = manufacturer_headers[0] + "_" + str(idx)
+            k_sku = manufacturer_headers[1] + "_" + str(idx)
+            k_man = manufacturer_headers[2] + "_" + str(idx)
+            k_mpn = manufacturer_headers[3] + "_" + str(idx)
+
             try:
-                manufacturer_cols[manufacturer_headers[0] + str(m_idx)].update({b_idx: manufacturer[0]})
-                manufacturer_cols[manufacturer_headers[1] + str(m_idx)].update({b_idx: manufacturer[1]})
+                manufacturer_cols[k_sup].update({b_idx: supplier_name})
+                manufacturer_cols[k_sku].update({b_idx: supplier_sku})
+                manufacturer_cols[k_man].update({b_idx: manufacturer_name})
+                manufacturer_cols[k_mpn].update({b_idx: manufacturer_mpn})
             except KeyError:
-                manufacturer_cols[manufacturer_headers[0] + str(m_idx)] = {b_idx: manufacturer[0]}
-                manufacturer_cols[manufacturer_headers[1] + str(m_idx)] = {b_idx: manufacturer[1]}
+                manufacturer_cols[k_sup] = {b_idx: supplier_name}
+                manufacturer_cols[k_sku] = {b_idx: supplier_sku}
+                manufacturer_cols[k_man] = {b_idx: manufacturer_name}
+                manufacturer_cols[k_mpn] = {b_idx: manufacturer_mpn}
 
     # Add manufacturer columns to dataset
     for header, col_dict in manufacturer_cols.items():
