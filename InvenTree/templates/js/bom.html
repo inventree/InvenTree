@@ -312,13 +312,14 @@ function loadBomTable(table, options) {
         )
     }
     
-    table.bootstrapTable({
+    table.inventreeTable({
         treeEnable: true,
         rootParentId: options.parent_id,
         idField: 'pk',
         uniqueId: 'pk',
         parentIdField: 'parentId',
         treeShowField: 'sub_part',
+        showColumns: true,
         sortable: true,
         search: true,
         rowStyle: function(row, index) {
