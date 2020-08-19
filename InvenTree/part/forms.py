@@ -54,9 +54,11 @@ class BomExportForm(forms.Form):
 
     file_format = forms.ChoiceField(label=_("File Format"), help_text=_("Select output file format"))
 
-    cascading = forms.BooleanField(label=_("Cascading"), required=False, initial=False, help_text=_("Download cascading / multi-level BOM"))
+    cascading = forms.BooleanField(label=_("Cascading"), required=False, initial=True, help_text=_("Download cascading / multi-level BOM"))
 
     levels = forms.IntegerField(label=_("Levels"), required=True, initial=0, help_text=_("Select maximum number of BOM levels to export (0 = all levels)"))
+
+    supplier_data = forms.BooleanField(label=_("Include Supplier Data"), required=False, initial=True, help_text=_("Include supplier part data in exported BOM"))
 
     def get_choices(self):
         """ BOM export format choices """
