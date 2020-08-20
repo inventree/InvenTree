@@ -40,6 +40,7 @@ if settings.LATEX_ENABLED:
 
 from django.http import HttpResponse
 
+
 class TexResponse(HttpResponse):
     def __init__(self, content, filename=None):
         super().__init__(content_type="application/txt")
