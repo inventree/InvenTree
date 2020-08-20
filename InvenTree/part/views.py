@@ -1520,13 +1520,13 @@ class BomDownload(AjaxView):
         if not IsValidBOMFormat(export_format):
             export_format = 'csv'
 
-        return ExportBom(   part,
-                            fmt=export_format,
-                            cascade=cascade,
-                            max_levels=levels,
-                            parameter_data=parameter_data,
-                            stock_data=stock_data,
-                            supplier_data=supplier_data)
+        return ExportBom(part,
+                         fmt=export_format,
+                         cascade=cascade,
+                         max_levels=levels,
+                         parameter_data=parameter_data,
+                         stock_data=stock_data,
+                         supplier_data=supplier_data)
 
     def get_data(self):
         return {
