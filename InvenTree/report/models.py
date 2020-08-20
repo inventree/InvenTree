@@ -30,6 +30,7 @@ if settings.LATEX_ENABLED:
     try:
         from django_tex.shortcuts import render_to_pdf
         from django_tex.core import render_template_with_context
+        from django_tex.exceptions import TexError
     except OSError as err:
         print("OSError: {e}".format(e=err))
         print("You may not have a working LaTeX toolchain installed?")
@@ -163,9 +164,14 @@ class ReportTemplateBase(models.Model):
         if self.extension == '.tex':
             # Render LaTeX template to PDF
             if settings.LATEX_ENABLED:
-                rendered = render_template_with_context(self.template_name, context)
-                #return TexResponse(rendered, filename="raw.tex")
-                return render_to_pdf(request, self.template_name, context, filename=filename)
+                # Attempt to render to LaTeX template
+                # If there is a rendering error, return the (partially rendered) template,
+                # so at least we can debug what is going on
+                try:
+                    rendered = render_template_with_context(self.template_name, context)
+                    return render_to_pdf(request, self.template_name, context, filename=filename)
+                except TexError:
+                    return TexResponse(rendered, filename="error.tex")
             else:
                 return ValidationError("Enable LaTeX support in config.yaml")
         elif self.extension in ['.htm', '.html']:
