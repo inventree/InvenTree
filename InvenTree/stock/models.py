@@ -348,7 +348,7 @@ class StockItem(MPTTModel):
     customer = models.ForeignKey(
         CompanyModels.Company,
         on_delete=models.SET_NULL,
-        null=True,
+        null=True, blank=True,
         limit_choices_to={'is_customer': True},
         related_name='assigned_stock',
         help_text=_("Customer"),
