@@ -8,6 +8,8 @@ from __future__ import unicode_literals
 import os
 import sys
 
+import datetime
+
 from django.db import models
 from django.conf import settings
 
@@ -29,10 +31,21 @@ except OSError as err:
 if settings.LATEX_ENABLED:
     try:
         from django_tex.shortcuts import render_to_pdf
+        from django_tex.core import render_template_with_context
+        from django_tex.exceptions import TexError
     except OSError as err:
         print("OSError: {e}".format(e=err))
         print("You may not have a working LaTeX toolchain installed?")
         sys.exit(1)
+
+from django.http import HttpResponse
+
+
+class TexResponse(HttpResponse):
+    def __init__(self, content, filename=None):
+        super().__init__(content_type="application/txt")
+        self["Content-Disposition"] = 'filename="{}"'.format(filename)
+        self.write(content)
 
 
 def rename_template(instance, filename):
@@ -150,11 +163,20 @@ class ReportTemplateBase(models.Model):
         context = self.get_context_data(request)
 
         context['request'] = request
+        context['user'] = request.user
+        context['datetime'] = datetime.datetime.now()
 
         if self.extension == '.tex':
             # Render LaTeX template to PDF
             if settings.LATEX_ENABLED:
-                return render_to_pdf(request, self.template_name, context, filename=filename)
+                # Attempt to render to LaTeX template
+                # If there is a rendering error, return the (partially rendered) template,
+                # so at least we can debug what is going on
+                try:
+                    rendered = render_template_with_context(self.template_name, context)
+                    return render_to_pdf(request, self.template_name, context, filename=filename)
+                except TexError:
+                    return TexResponse(rendered, filename="error.tex")
             else:
                 return ValidationError("Enable LaTeX support in config.yaml")
         elif self.extension in ['.htm', '.html']:
