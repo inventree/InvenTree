@@ -269,7 +269,7 @@ class Part(MPTTModel):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return "{n} - {d}".format(n=self.full_name, d=self.description)
+        return f"{self.full_name} - {self.description} - {self.available_stock}"
 
     def checkAddToBOM(self, parent):
         """
