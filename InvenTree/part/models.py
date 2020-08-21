@@ -14,6 +14,8 @@ from django.urls import reverse
 from django.db import models, transaction
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
+from django.db.models import IntegerField
+from django.db.models.functions import Cast
 from django.core.validators import MinValueValidator
 
 from django.contrib.auth.models import User
@@ -329,7 +331,8 @@ class Part(MPTTModel):
         """
 
         parts = Part.objects.filter(tree_id=self.tree_id)
-        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None).order_by('-serial')
+        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None).annotate(
+            serial_as_int=Cast('serial', output_field=IntegerField())).order_by('-serial_as_int')
 
         if stock.count() > 0:
             return stock.first().serial

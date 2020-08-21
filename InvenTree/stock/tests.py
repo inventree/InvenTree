@@ -391,8 +391,8 @@ class VariantTest(StockTest):
         with self.assertRaises(ValidationError):
             item.save()
 
-        # This should pass
-        item.serial = n + 1
+        # This should pass, although not strictly an int field now.
+        item.serial = int(n) + 1
         item.save()
 
         # Attempt to create the same serial number but for a variant (should fail!)
