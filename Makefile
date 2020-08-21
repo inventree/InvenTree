@@ -10,17 +10,7 @@ clean:
 # Create a superuser account
 superuser:
 	cd InvenTree && python3 manage.py createsuperuser
-
-# Install pre-requisites for mysql setup
-mysql:
-	sudo apt-get install mysql-server libmysqlclient-dev
-	pip3 install mysqlclient
-
-# Install pre-requisites for postgresql setup
-postgresql:
-	sudo apt-get install postgresql postgresql-contrib libpq-dev
-	pip3 install psycopg2
-
+	
 # Install packages required to generate code docs
 docreqs:
 	pip3 install -U -r docs/requirements.txt

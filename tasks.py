@@ -200,3 +200,25 @@ def coverage(c):
 
     # Generate coverage report
     c.run('coverage html')
+
+@task
+def mysql(c):
+    """
+    Install packages required for using InvenTree with a MySQL database.
+    """
+    
+    print('Installing packages required for MySQL')
+
+    c.run('sudo apt-get install mysql-server libmysqlclient-dev')
+    c.run('pip3 install mysqlclient')
+
+@task
+def postgresql(c):
+    """
+    Install packages required for using InvenTree with a PostgreSQL database
+    """
+
+    print("Installing packages required for PostgreSQL")
+
+    c.run('sudo apt-get install postgresql postgresql-contrib libpq-dev')
+    c.run('pip3 install psycopg2')
