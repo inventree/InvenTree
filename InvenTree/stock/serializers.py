@@ -129,7 +129,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
     
     allocated = serializers.FloatField(source='allocation_count', required=False)
 
-    serial = serializers.IntegerField(required=False)
+    serial = serializers.CharField(required=False)
 
     required_tests = serializers.IntegerField(source='required_test_count', read_only=True, required=False)
 
