@@ -7,24 +7,6 @@ clean:
 	rm -rf .tox
 	rm -f .coverage
 
-update: install migrate static
-
-# Perform database migrations (after schema changes are made)
-migrate:
-	cd InvenTree && python3 manage.py makemigrations
-	cd InvenTree && python3 manage.py migrate
-	cd InvenTree && python3 manage.py migrate --run-syncdb
-	cd InvenTree && python3 manage.py check
-
-# Collect static files into the correct locations
-static:
-	cd InvenTree && python3 manage.py collectstatic
-
-# Install all required packages
-install:
-	pip3 install -U -r requirements.txt
-	cd InvenTree && python3 setup.py
-
 # Create a superuser account
 superuser:
 	cd InvenTree && python3 manage.py createsuperuser
@@ -53,11 +35,6 @@ test:
 	cd InvenTree && python3 manage.py check
 	cd InvenTree && python3 manage.py test barcode build common company label order part report stock InvenTree
 
-# Run code coverage
-coverage:
-	cd InvenTree && python3 manage.py check
-	coverage run InvenTree/manage.py test barcode build common company label order part report stock InvenTree
-	coverage html
 
 # Install packages required to generate code docs
 docreqs:
@@ -71,5 +48,3 @@ docs:
 backup:
 	cd InvenTree && python3 manage.py dbbackup
 	cd InvenTree && python3 manage.py mediabackup
-
-.PHONY: clean migrate superuser install mysql postgresql translate static style test coverage docreqs docs backup update

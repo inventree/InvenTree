@@ -1,8 +1,29 @@
 # -*- coding: utf-8 -*-
 
 from invoke import task
+from shutil import copyfile
 
+import random
+import string
 import os
+
+def apps():
+    """
+    Returns a list of installed apps
+    """
+
+    return [
+        'barcode',
+        'build',
+        'common',
+        'company',
+        'label',
+        'order',
+        'part',
+        'report',
+        'stock',
+        'InvenTree'
+    ]
 
 def localDir():
     """
@@ -24,7 +45,7 @@ def managePyPath():
     Return the path of the manage.py file
     """
 
-    return os.path.join(managePyDir, 'manage.py')
+    return os.path.join(managePyDir(), 'manage.py')
 
 def manage(c, cmd):
     """
@@ -39,6 +60,45 @@ def manage(c, cmd):
         path=managePyDir(),
         cmd=cmd
     ))
+
+@task(help={'length': 'Length of secret key (default=50)'})
+def key(c, length=50, force=False):
+    """
+    Generates a SECRET_KEY file which InvenTree uses for generating security hashes
+    """
+
+    SECRET_KEY_FILE = os.path.join(localDir(), 'InvenTree', 'secret_key.txt')
+
+    # If a SECRET_KEY file does not exist, generate a new one!
+    if force or not os.path.exists(SECRET_KEY_FILE):
+        print("Generating SECRET_KEY file - " + SECRET_KEY_FILE)
+        with open(SECRET_KEY_FILE, 'w') as key_file:
+            options = string.digits + string.ascii_letters + string.punctuation
+
+            key = ''.join([random.choice(options) for i in range(length)])
+
+            key_file.write(key)
+
+    else:
+        print("SECRET_KEY file already exists - skipping")
+
+
+@task(post=[key])
+def install(c):
+    """
+    Installs required python packages, and runs initial setup functions.
+    """
+
+    # Install required Python packages with PIP
+    #c.run('pip3 install -U -r requirements.txt')
+
+    # If a config.yaml file does not exist, copy from the template!
+    CONFIG_FILE = os.path.join(localDir(), 'InvenTree', 'config.yaml')
+    CONFIG_TEMPLATE_FILE = os.path.join(localDir(), 'InvenTree', 'config_template.yaml')
+
+    if not os.path.exists(CONFIG_FILE):
+        print("Config file 'config.yaml' does not exist - copying from template.")
+        copyfile(CONFIG_TEMPLATE_FILE, CONFIG_FILE)
 
 @task
 def migrate(c):
@@ -58,6 +118,50 @@ def migrate(c):
     print("========================================")
     print("InvenTree database migrations completed!")
 
+
 @task
-def test(c):
-    print("hello!")
+def static(c):
+    """
+    Copies required static files to the STATIC_ROOT directory,
+    as per Django requirements.
+    """
+
+    manage(c, "collectstatic")
+
+
+@task(pre=[install, migrate, static])
+def update(c):
+    """
+    Update InvenTree installation.
+
+    This command should be invoked after source code has been updated,
+    e.g. downloading new code from GitHub.
+
+    The following tasks are performed, in order:
+
+    - install
+    - migrate
+    - static
+    """
+    pass
+
+@task
+def coverage(c):
+    """
+    Run code-coverage of the InvenTree codebase,
+    using the 'coverage' code-analysis tools.
+
+    Generates a code coverage report (available in the htmlcov directory)
+    """
+
+    # Run sanity check on the django install
+    manage(c, 'check')
+
+    # Run coverage tests
+    c.run('coverage run {manage} test {apps}'.format(
+        manage=managePyPath(),
+        apps=' '.join(apps())
+    ))
+
+    # Generate coverage report
+    c.run('coverage html')
