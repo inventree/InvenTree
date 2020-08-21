@@ -90,7 +90,7 @@ def install(c):
     """
 
     # Install required Python packages with PIP
-    #c.run('pip3 install -U -r requirements.txt')
+    c.run('pip3 install -U -r requirements.txt')
 
     # If a config.yaml file does not exist, copy from the template!
     CONFIG_FILE = os.path.join(localDir(), 'InvenTree', 'config.yaml')
