@@ -101,6 +101,14 @@ def install(c):
         copyfile(CONFIG_TEMPLATE_FILE, CONFIG_FILE)
 
 @task
+def superuser(c):
+    """
+    Create a superuser (admin) account for the database.
+    """
+
+    manage(c, 'createsuperuser')
+
+@task
 def migrate(c):
     """
     Performs database migrations.
@@ -222,3 +230,15 @@ def postgresql(c):
 
     c.run('sudo apt-get install postgresql postgresql-contrib libpq-dev')
     c.run('pip3 install psycopg2')
+
+@task
+def backup(c):
+    """
+    Create a backup of database models and uploaded media files.
+
+    Backup files will be written to the 'backup_dir' file specified in 'config.yaml'
+
+    """
+
+    manage(c, 'dbbackup')
+    manage(c, 'mediabackup')
