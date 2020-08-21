@@ -242,3 +242,13 @@ def backup(c):
 
     manage(c, 'dbbackup')
     manage(c, 'mediabackup')
+
+@task(help={'address': 'Server address:port'})
+def server(c, address="127.0.0.1:8000"):
+    """
+    Launch a (deveopment) server using Django's in-built webserver.
+
+    Note: This is *not* sufficient for a production installation.
+    """
+
+    manage(c, "runserver {address}".format(address=address))
