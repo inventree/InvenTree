@@ -295,10 +295,7 @@ class StockTest(TestCase):
         with self.assertRaises(ValidationError):
             item.serializeStock(-1, [], self.user)
 
-        # Try invalid serial numbers
-        with self.assertRaises(ValidationError):
-            item.serializeStock(3, [1, 2, 'k'], self.user)
-
+        # Not enough serial numbers for all stock items.
         with self.assertRaises(ValidationError):
             item.serializeStock(3, "hello", self.user)
 

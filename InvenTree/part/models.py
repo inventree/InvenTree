@@ -346,10 +346,12 @@ class Part(MPTTModel):
 
         if n is None:
             return 1
-        elif n is int:
-            return n + 1
         else:
-            return None
+            try:
+                return int(n) + 1
+            except ValueError:
+                return None
+
 
     def getSerialNumberString(self, quantity):
         """
