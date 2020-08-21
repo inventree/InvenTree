@@ -26,9 +26,6 @@ translate:
 	cd InvenTree && python3 manage.py makemessages
 	cd InvenTree && python3 manage.py compilemessages
 
-# Run PEP style checks against source code
-style:
-	flake8 InvenTree
 
 # Install packages required to generate code docs
 docreqs:

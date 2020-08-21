@@ -146,6 +146,15 @@ def update(c):
     pass
 
 @task
+def style(c):
+    """
+    Run PEP style checks against InvenTree sourcecode
+    """
+
+    print("Running PEP style checks...")
+    c.run('flake8 InvenTree')
+
+@task
 def test(c):
     """
     Run unit-tests for InvenTree codebase.
