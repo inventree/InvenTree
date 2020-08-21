@@ -17,7 +17,7 @@ django-import-export==2.0.0     # Data import / export for admin interface
 django-cleanup==4.0.0           # Manage deletion of old / unused uploaded files
 django-qr-code==1.2.0           # Generate QR codes
 flake8==3.8.3                   # PEP checking
-coverage==4.0.3                 # Unit test coverage
+coverage==5.2.1                 # Unit test coverage
 python-coveralls==2.9.1         # Coveralls linking (for Travis)
 rapidfuzz==0.7.6                # Fuzzy string matching
 django-stdimage==5.1.1          # Advanced ImageField management
