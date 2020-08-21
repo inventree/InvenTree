@@ -21,12 +21,6 @@ postgresql:
 	sudo apt-get install postgresql postgresql-contrib libpq-dev
 	pip3 install psycopg2
 
-# Update translation files
-translate:
-	cd InvenTree && python3 manage.py makemessages
-	cd InvenTree && python3 manage.py compilemessages
-
-
 # Install packages required to generate code docs
 docreqs:
 	pip3 install -U -r docs/requirements.txt

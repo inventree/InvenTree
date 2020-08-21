@@ -146,6 +146,18 @@ def update(c):
     pass
 
 @task
+def translate(c):
+    """
+    Regenerate translation files.
+
+    Run this command after added new translatable strings,
+    or after adding translations for existing strings.
+    """
+
+    manage(c, "makemigrations")
+    manage(c, "compilemessages")
+
+@task
 def style(c):
     """
     Run PEP style checks against InvenTree sourcecode
