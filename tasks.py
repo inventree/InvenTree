@@ -146,6 +146,20 @@ def update(c):
     pass
 
 @task
+def test(c):
+    """
+    Run unit-tests for InvenTree codebase.
+    """
+
+    # Run sanity check on the django install
+    manage(c, 'check')
+
+    # Run coverage tests
+    manage(c, 'test {apps}'.format(
+        apps=' '.join(apps())
+    ))
+
+@task
 def coverage(c):
     """
     Run code-coverage of the InvenTree codebase,

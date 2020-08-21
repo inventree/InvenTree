@@ -30,12 +30,6 @@ translate:
 style:
 	flake8 InvenTree
 
-# Run unit tests
-test:
-	cd InvenTree && python3 manage.py check
-	cd InvenTree && python3 manage.py test barcode build common company label order part report stock InvenTree
-
-
 # Install packages required to generate code docs
 docreqs:
 	pip3 install -U -r docs/requirements.txt
