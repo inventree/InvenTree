@@ -16,6 +16,8 @@ from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 
+from InvenTree.helpers import validateFilterString
+
 from django.utils.translation import gettext_lazy as _
 
 from part import models as PartModels
@@ -53,59 +55,6 @@ def rename_template(instance, filename):
     filename = os.path.basename(filename)
 
     return os.path.join('report', 'report_template', instance.getSubdir(), filename)
-
-
-def validateFilterString(value):
-    """
-    Validate that a provided filter string looks like a list of comma-separated key=value pairs
-
-    These should nominally match to a valid database filter based on the model being filtered.
-
-    e.g. "category=6, IPN=12"
-    e.g. "part__name=widget"
-
-    The ReportTemplate class uses the filter string to work out which items a given report applies to.
-    For example, an acceptance test report template might only apply to stock items with a given IPN,
-    so the string could be set to:
-
-    filters = "IPN = ACME0001"
-
-    Returns a map of key:value pairs
-    """
-
-    # Empty results map
-    results = {}
-
-    value = str(value).strip()
-
-    if not value or len(value) == 0:
-        return results
-
-    groups = value.split(',')
-
-    for group in groups:
-        group = group.strip()
-
-        pair = group.split('=')
-
-        if not len(pair) == 2:
-            raise ValidationError(
-                "Invalid group: {g}".format(g=group)
-            )
-
-        k, v = pair
-
-        k = k.strip()
-        v = v.strip()
-
-        if not k or not v:
-            raise ValidationError(
-                "Invalid group: {g}".format(g=group)
-            )
-
-        results[k] = v
-
-    return results
 
 
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
