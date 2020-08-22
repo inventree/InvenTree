@@ -151,15 +151,6 @@ class ReportTemplateBase(models.Model):
         abstract = True
 
 
-class ReportTemplate(ReportTemplateBase):
-    """
-    A simple reporting template which is used to upload template files,
-    which can then be used in other concrete template classes.
-    """
-
-    pass
-
-
 class PartFilterMixin(models.Model):
     """
     A model mixin used for matching a report type against a Part object.
