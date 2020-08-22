@@ -8,7 +8,7 @@ from .models import StockItemLabel
 
 class StockItemLabelAdmin(admin.ModelAdmin):
 
-    list_display = ('name', 'description', 'label')
+    list_display = ('name', 'description', 'label', 'filters', 'enabled')
 
 
 admin.site.register(StockItemLabel, StockItemLabelAdmin)
