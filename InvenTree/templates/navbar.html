@@ -1,56 +1,65 @@
 {% load static %}
 {% load i18n %}
-
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-xs navbar-default navbar-fixed-top ">
   <div class="container-fluid">
     <div class="navbar-header clearfix content-heading">
       <a class="navbar-brand" id='logo' href="{% url 'index' %}" style="padding-top: 7px; padding-bottom: 5px;"><img src="{% static 'img/inventree.png' %}" width="32" height="32" style="display:block; margin: auto;"/></a>
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+      </div>
     </div>
-    <ul class="nav navbar-nav">
-      <li><a href="{% url 'part-index' %}"><span class='fas fa-shapes icon-header'></span> {% trans "Parts" %}</a></li>
-      <li><a href="{% url 'stock-index' %}"><span class='fas fa-boxes icon-header'></span>{% trans "Stock" %}</a></li>
-      <li><a href="{% url 'build-index' %}"><span class='fas fa-tools icon-header'></span>{% trans "Build" %}</a></li>
-      <li class='nav navbar-nav'>
-        <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-shopping-cart icon-header'></span>{% trans "Buy" %}</a>
-        <ul class='dropdown-menu'>
-          <li><a href="{% url 'supplier-index' %}"><span class='fas fa-building icon-header'></span>{% trans "Suppliers" %}</a></li>
-          <li><a href="{% url 'manufacturer-index' %}"><span class='fas fa-industry icon-header'></span>{% trans "Manufacturers" %}</a></li>
-          <li><a href="{% url 'po-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
-        </ul>
-      </li>
-      <li class='nav navbar-nav'>
-        <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-truck icon-header'></span>{% trans "Sell" %}</a>
-        <ul class='dropdown-menu'>
-          <li><a href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
-          <li><a href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
-        </ul>
-      </li>
-    </ul>
-    <ul class="nav navbar-nav navbar-right">
-        {% include "search_form.html" %}
-        <li class ='navbar-barcode-li nav navbar-nav'>
-          <button id='barcode-scan' class='btn btn-default' title='{% trans "Scan Barcode" %}'>
-              <span class='fas fa-qrcode'></span>
-          </button>
-        </li>
-        <li class='dropdown'>
-          <a class='dropdown-toggle' data-toggle='dropdown' href="#"><span class="fas fa-user"></span> <b>{{ user.get_username }}</b></a>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="{% url 'part-index' %}"><span class='fas fa-shapes icon-header'></span>{% trans "Parts" %}</a></li>
+        <li><a href="{% url 'stock-index' %}"><span class='fas fa-boxes icon-header'></span>{% trans "Stock" %}</a></li>
+        <li><a href="{% url 'build-index' %}"><span class='fas fa-tools icon-header'></span>{% trans "Build" %}</a></li>
+        <li class='nav navbar-nav'>
+          <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-shopping-cart icon-header'></span>{% trans "Buy" %}</a>
           <ul class='dropdown-menu'>
-              {% if user.is_authenticated %}
-              {% if user.is_staff %}
-              <li><a href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
-              <hr>
-              {% endif %}
-              <li><a href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
-              <li><a href="{% url 'logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
-              {% else %}
-              <li><a href="{% url 'login' %}"><span class="fas fa-sign-in-alt"></span> {% trans "Login" %}</a></li>
-              {% endif %}
-              <hr>  
-              <li id='launch-about'><a href='#'><span class="fas fa-info-circle"></span> {% trans "About InvenTree" %}</a></li>
-              <li id='launch-stats'><a href='#'><span class='fas fa-chart-pie'></span> {% trans "Statistics" %}</a></li>
-            </ul>
-          </li> 
-    </ul>
+            <li><a href="{% url 'supplier-index' %}"><span class='fas fa-building icon-header'></span>{% trans "Suppliers" %}</a></li>
+            <li><a href="{% url 'manufacturer-index' %}"><span class='fas fa-industry icon-header'></span>{% trans "Manufacturers" %}</a></li>
+            <li><a href="{% url 'po-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
+          </ul>
+        </li>
+        <li class='nav navbar-nav'>
+          <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-truck icon-header'></span>{% trans "Sell" %}</a>
+          <ul class='dropdown-menu'>
+            <li><a href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
+            <li><a href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+          {% include "search_form.html" %}
+          <li class ='navbar-barcode-li nav navbar-nav'>
+            <button id='barcode-scan' class='btn btn-default' title='{% trans "Scan Barcode" %}'>
+                <span class='fas fa-qrcode'></span>
+            </button>
+          </li>
+          <li class='dropdown'>
+            <a class='dropdown-toggle' data-toggle='dropdown' href="#"><span class="fas fa-user"></span> <b>{{ user.get_username }}</b></a>
+            <ul class='dropdown-menu'>
+                {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                <li><a href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
+                <hr>
+                {% endif %}
+                <li><a href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
+                <li><a href="{% url 'logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
+                {% else %}
+                <li><a href="{% url 'login' %}"><span class="fas fa-sign-in-alt"></span> {% trans "Login" %}</a></li>
+                {% endif %}
+                <hr>  
+                <li id='launch-about'><a href='#'><span class="fas fa-info-circle"></span> {% trans "About InvenTree" %}</a></li>
+                <li id='launch-stats'><a href='#'><span class='fas fa-chart-pie'></span> {% trans "Statistics" %}</a></li>
+              </ul>
+            </li> 
+      </ul>
+    </div>
   </div>
 </nav>

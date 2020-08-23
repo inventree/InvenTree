@@ -15,6 +15,8 @@ from InvenTree.helpers import GetExportFormats
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 
+from report.models import TestReport
+
 from .models import StockLocation, StockItem, StockItemTracking
 from .models import StockItemAttachment
 from .models import StockItemTestResult
@@ -225,12 +227,17 @@ class TestReportFormatForm(HelperForm):
         self.fields['template'].choices = self.get_template_choices()
     
     def get_template_choices(self):
-        """ Available choices """
+        """
+        Generate a list of of TestReport options for the StockItem
+        """
 
         choices = []
 
-        for report in self.stock_item.part.get_test_report_templates():
-            choices.append((report.pk, report))
+        templates = TestReport.objects.filter(enabled=True)
+
+        for template in templates:
+            if template.matches_stock_item(self.stock_item):
+                choices.append(template)
 
         return choices
 
