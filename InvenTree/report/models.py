@@ -153,36 +153,6 @@ class ReportTemplateBase(models.Model):
         verbose_name=_('Enabled')
     )
 
-    class Meta:
-        abstract = True
-
-
-class PartFilterMixin(models.Model):
-    """
-    A model mixin used for matching a report type against a Part object.
-    Used to assign a report to a given part using custom filters.
-    """
-
-    class Meta:
-        abstract = True
-
-    def matches_part(self, part):
-        """
-        Test if this report matches a given part.
-        """
-
-        filters = self.get_part_filters()
-
-        parts = PartModels.Part.objects.filter(**filters)
-
-        parts = parts.filter(pk=part.pk)
-
-        return parts.exists()
-
-    def get_part_filters(self):
-        """ Return a map of filters to be used for Part filtering """
-        return validateFilterString(self.part_filters)
-
     filters = models.CharField(
         blank=True,
         max_length=250,
@@ -190,8 +160,10 @@ class PartFilterMixin(models.Model):
         validators=[validateFilterString]
     )
 
+    class Meta:
+        abstract = True
 
-class TestReport(ReportTemplateBase, PartFilterMixin):
+class TestReport(ReportTemplateBase):
     """
     Render a TestReport against a StockItem object.
     """
