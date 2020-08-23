@@ -16,11 +16,11 @@ from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 
+from stock.models import StockItem
+
 from InvenTree.helpers import validateFilterString
 
 from django.utils.translation import gettext_lazy as _
-
-from part import models as PartModels
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -162,6 +162,7 @@ class ReportTemplateBase(models.Model):
 
     class Meta:
         abstract = True
+
 
 class TestReport(ReportTemplateBase):
     """

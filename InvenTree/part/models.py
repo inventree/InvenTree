@@ -41,7 +41,6 @@ from InvenTree.helpers import decimal2string, normalize
 
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 
-from report import models as ReportModels
 from build import models as BuildModels
 from order import models as OrderModels
 from company.models import SupplierPart
