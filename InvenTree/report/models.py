@@ -147,6 +147,12 @@ class ReportTemplateBase(models.Model):
 
     description = models.CharField(max_length=250, help_text=_("Report template description"))
 
+    enabled = models.BooleanField(
+        default=True,
+        help_text=_('Report template is enabled'),
+        verbose_name=_('Enabled')
+    )
+
     class Meta:
         abstract = True
 
