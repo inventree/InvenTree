@@ -183,7 +183,7 @@ class PartFilterMixin(models.Model):
         """ Return a map of filters to be used for Part filtering """
         return validateFilterString(self.part_filters)
 
-    part_filters = models.CharField(
+    filters = models.CharField(
         blank=True,
         max_length=250,
         help_text=_("Part query filters (comma-separated list of key=value pairs)"),
