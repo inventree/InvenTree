@@ -399,24 +399,6 @@ class Part(MPTTModel):
         self.category = category
         self.save()
 
-    def get_test_report_templates(self):
-        """
-        Return all the TestReport template objects which map to this Part.
-        """
-
-        templates = []
-
-        for report in ReportModels.TestReport.objects.all():
-            if report.matches_part(self):
-                templates.append(report)
-
-        return templates
-
-    def has_test_report_templates(self):
-        """ Return True if this part has a TestReport defined """
-
-        return len(self.get_test_report_templates()) > 0
-
     def get_absolute_url(self):
         """ Return the web URL for viewing this part """
         return reverse('part-detail', kwargs={'pk': self.id})

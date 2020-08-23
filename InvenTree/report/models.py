@@ -202,6 +202,17 @@ class TestReport(ReportTemplateBase, PartFilterMixin):
     # Requires a stock_item object to be given to it before rendering
     stock_item = None
 
+    def matches_stock_item(self, item):
+        """
+        Test if this report template matches a given StockItem objects
+        """
+
+        filters = validateFilterString(self.part_filters)
+
+        items = StockItem.objects.filter(**filters)
+
+        return items.exists()
+
     def get_context_data(self, request):
         return {
             'stock_item': self.stock_item,
