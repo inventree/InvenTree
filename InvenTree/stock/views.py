@@ -310,7 +310,8 @@ class StockItemSelectLabels(AjaxView):
 
         labels = []
 
-        for label in StockItemLabel.objects.all():
+        # Construct a list of StockItemLabel objects which are enabled, and the filters match the selected StockItem
+        for label in StockItemLabel.objects.filter(enabled=True):
             if label.matches_stock_item(item):
                 labels.append(label)
 
