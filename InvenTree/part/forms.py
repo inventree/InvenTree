@@ -196,10 +196,18 @@ class EditCategoryForm(HelperForm):
         ]
 
 
+class PartModelChoiceField(forms.ModelChoiceField):
+    """ Extending string representation of Part instance with available stock """
+    def label_from_instance(self, part):
+        return f'{part} - {part.available_stock}'
+
+
 class EditBomItemForm(HelperForm):
     """ Form for editing a BomItem object """
 
     quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    sub_part = PartModelChoiceField(queryset=Part.objects.all())
 
     class Meta:
         model = BomItem
