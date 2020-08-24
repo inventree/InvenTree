@@ -391,6 +391,11 @@ class VariantTest(StockTest):
         with self.assertRaises(ValidationError):
             item.save()
 
+        # Verify items with a non-numeric serial don't offer a next serial.
+        item.serial="string"
+        item.save()
+        self.assertEqual(variant.getNextSerialNumber(), None)
+
         # This should pass, although not strictly an int field now.
         item.serial = int(n) + 1
         item.save()

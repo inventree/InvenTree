@@ -330,14 +330,21 @@ class Part(MPTTModel):
         """
 
         parts = Part.objects.filter(tree_id=self.tree_id)
-        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None).annotate(
-            serial_as_int=Cast('serial', output_field=IntegerField())).order_by('-serial_as_int')
-
-        if stock.count() > 0:
-            return stock.first().serial
+        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None)
         
+        try:
+            ordered = sorted(stock.all(), reverse=True, key=lambda n: int(n.serial))
+
+            if len(ordered) > 0:
+                return ordered[0].serial
+
+        # Non-numeric serials, so don't suggest one.
+        except ValueError:
+            return None
+
         # No serial numbers found
-        return None
+        return 0
+
 
     def getNextSerialNumber(self):
         """
@@ -347,12 +354,9 @@ class Part(MPTTModel):
         n = self.getHighestSerialNumber()
 
         if n is None:
-            return 1
+            return None
         else:
-            try:
-                return int(n) + 1
-            except ValueError:
-                return None
+            return int(n) + 1
 
 
     def getSerialNumberString(self, quantity):
