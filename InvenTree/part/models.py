@@ -367,6 +367,9 @@ class Part(MPTTModel):
 
         sn = self.getNextSerialNumber()
 
+        if sn is None:
+            return None
+
         if quantity >= 2:
             sn = "{n}-{m}".format(
                 n=sn,
