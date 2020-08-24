@@ -51,7 +51,8 @@ class PartResource(ModelResource):
         report_skipped = False
         clean_model_instances = True
         exclude = [
-            'bom_checksum', 'bom_checked_by', 'bom_checked_date'
+            'bom_checksum', 'bom_checked_by', 'bom_checked_date',
+            'lft', 'rght', 'tree_id', 'level',
         ]
 
     def get_queryset(self):

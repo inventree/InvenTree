@@ -16,9 +16,11 @@ from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 
-from django.utils.translation import gettext_lazy as _
+from stock.models import StockItem
 
-from part import models as PartModels
+from InvenTree.helpers import validateFilterString
+
+from django.utils.translation import gettext_lazy as _
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -53,59 +55,6 @@ def rename_template(instance, filename):
     filename = os.path.basename(filename)
 
     return os.path.join('report', 'report_template', instance.getSubdir(), filename)
-
-
-def validateFilterString(value):
-    """
-    Validate that a provided filter string looks like a list of comma-separated key=value pairs
-
-    These should nominally match to a valid database filter based on the model being filtered.
-
-    e.g. "category=6, IPN=12"
-    e.g. "part__name=widget"
-
-    The ReportTemplate class uses the filter string to work out which items a given report applies to.
-    For example, an acceptance test report template might only apply to stock items with a given IPN,
-    so the string could be set to:
-
-    filters = "IPN = ACME0001"
-
-    Returns a map of key:value pairs
-    """
-
-    # Empty results map
-    results = {}
-
-    value = str(value).strip()
-
-    if not value or len(value) == 0:
-        return results
-
-    groups = value.split(',')
-
-    for group in groups:
-        group = group.strip()
-
-        pair = group.split('=')
-
-        if not len(pair) == 2:
-            raise ValidationError(
-                "Invalid group: {g}".format(g=group)
-            )
-
-        k, v = pair
-
-        k = k.strip()
-        v = v.strip()
-
-        if not k or not v:
-            raise ValidationError(
-                "Invalid group: {g}".format(g=group)
-            )
-
-        results[k] = v
-
-    return results
 
 
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
@@ -198,54 +147,24 @@ class ReportTemplateBase(models.Model):
 
     description = models.CharField(max_length=250, help_text=_("Report template description"))
 
-    class Meta:
-        abstract = True
+    enabled = models.BooleanField(
+        default=True,
+        help_text=_('Report template is enabled'),
+        verbose_name=_('Enabled')
+    )
 
-
-class ReportTemplate(ReportTemplateBase):
-    """
-    A simple reporting template which is used to upload template files,
-    which can then be used in other concrete template classes.
-    """
-
-    pass
-
-
-class PartFilterMixin(models.Model):
-    """
-    A model mixin used for matching a report type against a Part object.
-    Used to assign a report to a given part using custom filters.
-    """
-
-    class Meta:
-        abstract = True
-
-    def matches_part(self, part):
-        """
-        Test if this report matches a given part.
-        """
-
-        filters = self.get_part_filters()
-
-        parts = PartModels.Part.objects.filter(**filters)
-
-        parts = parts.filter(pk=part.pk)
-
-        return parts.exists()
-
-    def get_part_filters(self):
-        """ Return a map of filters to be used for Part filtering """
-        return validateFilterString(self.part_filters)
-
-    part_filters = models.CharField(
+    filters = models.CharField(
         blank=True,
         max_length=250,
         help_text=_("Part query filters (comma-separated list of key=value pairs)"),
         validators=[validateFilterString]
     )
 
+    class Meta:
+        abstract = True
 
-class TestReport(ReportTemplateBase, PartFilterMixin):
+
+class TestReport(ReportTemplateBase):
     """
     Render a TestReport against a StockItem object.
     """
@@ -255,6 +174,17 @@ class TestReport(ReportTemplateBase, PartFilterMixin):
 
     # Requires a stock_item object to be given to it before rendering
     stock_item = None
+
+    def matches_stock_item(self, item):
+        """
+        Test if this report template matches a given StockItem objects
+        """
+
+        filters = validateFilterString(self.part_filters)
+
+        items = StockItem.objects.filter(**filters)
+
+        return items.exists()
 
     def get_context_data(self, request):
         return {

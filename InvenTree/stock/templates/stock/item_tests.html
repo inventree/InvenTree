@@ -17,9 +17,7 @@
             <button type='button' class='btn btn-danger' id='delete-test-results'>{% trans "Delete Test Data" %}</button>
             {% endif %}
             <button type='button' class='btn btn-success' id='add-test-result'>{% trans "Add Test Data" %}</button>
-            {% if item.part.has_test_report_templates %}
             <button type='button' class='btn btn-default' id='test-report'>{% trans "Test Report" %} <span class='fas fa-tasks'></span></button>
-            {% endif %}
         </div>
         <div class='filter-list' id='filter-list-stocktests'>
             <!-- Empty div -->

@@ -70,6 +70,12 @@ class LabelTemplate(models.Model):
         validators=[validateFilterString]
     )
 
+    enabled = models.BooleanField(
+        default=True,
+        help_text=_('Label template is enabled'),
+        verbose_name=_('Enabled')
+    )
+
     def get_record_data(self, items):
         """
         Return a list of dict objects, one for each item.
