@@ -1120,7 +1120,8 @@ class StockItemSerialize(AjaxUpdateView):
 
         initials['quantity'] = item.quantity
         initials['serial_numbers'] = item.part.getSerialNumberString(item.quantity)
-        initials['destination'] = item.location.pk
+        if item.location is not None:
+            initials['destination'] = item.location.pk
 
         return initials
 
