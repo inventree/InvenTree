@@ -13,7 +13,7 @@ from .models import StockItemTracking
 from .models import StockItemTestResult
 
 from build.models import Build
-from company.models import SupplierPart
+from company.models import Company, SupplierPart
 from order.models import PurchaseOrder, SalesOrder
 from part.models import Part
 
@@ -59,11 +59,13 @@ class StockItemResource(ModelResource):
     # Custom manaegrs for ForeignKey fields
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
-    part_name = Field(attribute='part__full_ame', readonly=True)
+    part_name = Field(attribute='part__full_name', readonly=True)
 
     supplier_part = Field(attribute='supplier_part', widget=widgets.ForeignKeyWidget(SupplierPart))
 
     supplier = Field(attribute='supplier_part__supplier__id', readonly=True)
+
+    customer = Field(attribute='customer', widget=widgets.ForeignKeyWidget(Company))
 
     supplier_name = Field(attribute='supplier_part__supplier__name', readonly=True)
 
@@ -76,6 +78,8 @@ class StockItemResource(ModelResource):
     belongs_to = Field(attribute='belongs_to', widget=widgets.ForeignKeyWidget(StockItem))
 
     build = Field(attribute='build', widget=widgets.ForeignKeyWidget(Build))
+
+    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(StockItem))
 
     sales_order = Field(attribute='sales_order', widget=widgets.ForeignKeyWidget(SalesOrder))
 
@@ -100,6 +104,11 @@ class StockItemResource(ModelResource):
         skip_unchanged = True
         report_skipped = False
         clean_model_instance = True
+
+        exclude = [
+            # Exclude MPTT internal model fields
+            'lft', 'rght', 'tree_id', 'level',
+        ]
 
 
 class StockItemAdmin(ImportExportModelAdmin):

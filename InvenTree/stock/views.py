@@ -310,7 +310,8 @@ class StockItemSelectLabels(AjaxView):
 
         labels = []
 
-        for label in StockItemLabel.objects.all():
+        # Construct a list of StockItemLabel objects which are enabled, and the filters match the selected StockItem
+        for label in StockItemLabel.objects.filter(enabled=True):
             if label.matches_stock_item(item):
                 labels.append(label)
 
@@ -1119,7 +1120,8 @@ class StockItemSerialize(AjaxUpdateView):
 
         initials['quantity'] = item.quantity
         initials['serial_numbers'] = item.part.getSerialNumberString(item.quantity)
-        initials['destination'] = item.location.pk
+        if item.location is not None:
+            initials['destination'] = item.location.pk
 
         return initials
 
