@@ -135,7 +135,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
         """
 
         stock_headers = [
-            _('Location'),
+            _('Default Location'),
             _('Available Stock'),
         ]
 
