@@ -1499,6 +1499,10 @@ class BomDownload(AjaxView):
 
         cascade = str2bool(request.GET.get('cascade', False))
 
+        parameter_data = str2bool(request.GET.get('parameter_data', False))
+
+        stock_data = str2bool(request.GET.get('stock_data', False))
+
         supplier_data = str2bool(request.GET.get('supplier_data', False))
 
         levels = request.GET.get('levels', None)
@@ -1516,7 +1520,13 @@ class BomDownload(AjaxView):
         if not IsValidBOMFormat(export_format):
             export_format = 'csv'
 
-        return ExportBom(part, fmt=export_format, cascade=cascade, max_levels=levels, supplier_data=supplier_data)
+        return ExportBom(part,
+                         fmt=export_format,
+                         cascade=cascade,
+                         max_levels=levels,
+                         parameter_data=parameter_data,
+                         stock_data=stock_data,
+                         supplier_data=supplier_data)
 
     def get_data(self):
         return {
@@ -1541,6 +1551,8 @@ class BomExport(AjaxView):
         fmt = request.POST.get('file_format', 'csv').lower()
         cascade = str2bool(request.POST.get('cascading', False))
         levels = request.POST.get('levels', None)
+        parameter_data = str2bool(request.POST.get('parameter_data', False))
+        stock_data = str2bool(request.POST.get('stock_data', False))
         supplier_data = str2bool(request.POST.get('supplier_data', False))
 
         try:
@@ -1556,6 +1568,8 @@ class BomExport(AjaxView):
 
         url += '?file_format=' + fmt
         url += '&cascade=' + str(cascade)
+        url += '&parameter_data=' + str(parameter_data)
+        url += '&stock_data=' + str(stock_data)
         url += '&supplier_data=' + str(supplier_data)
 
         if levels:
