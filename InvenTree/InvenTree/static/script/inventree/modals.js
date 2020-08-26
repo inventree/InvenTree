@@ -27,7 +27,7 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
      * - titleFunc: optional function which takes an element and generates a title
      */
     
-    var html = ``;
+    var options = [];
 
     elements.forEach(function(element) {
         
@@ -45,10 +45,10 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
             title = titleFunc(element);
         }
 
-        html += makeOption(text, value, title);
+        options.push(makeOption(text, value, title));
     });
 
-    return html;
+    return options;
 }
 
 
