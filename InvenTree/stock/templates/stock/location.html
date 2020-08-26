@@ -212,6 +212,14 @@
                                 location: {{ location.id }}
                                 {% endif %}
                             },
+                            callback: [
+                                {
+                                    field: 'part',
+                                    action: function(value) {
+                                        console.log('value: ' + value);
+                                    }
+                                },
+                            ],
                             secondary: [
                                 {
                                     field: 'part',

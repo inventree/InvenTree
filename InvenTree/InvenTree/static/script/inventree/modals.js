@@ -397,6 +397,13 @@ function injectModalForm(modal, form_html) {
 }
 
 
+function getFieldByName(modal, name) {
+    /* Find the field (with the given name) within the modal */
+
+    return $(modal).find(`#id_${name}`);
+}
+
+
 function insertNewItemButton(modal, options) {
     /* Insert a button into a modal form, after a field label.
      * Looks for a <label> tag inside the form with the attribute "for='id_<field>'"
@@ -472,6 +479,39 @@ function attachSecondaries(modal, secondaries) {
 
     for (var i = 0; i < secondaries.length; i++) {
         attachSecondaryModal(modal, secondaries[i]);
+    }
+}
+
+
+function attachFieldCallback(modal, callback) {
+    /* Attach a 'callback' function to a given field in the modal form.
+     * When the value of that field is changed, the callback function is performed.
+     * 
+     * options:
+     * - field: The name of the field to attach to
+     * - action: A function to perform
+     */
+
+     // Find the field input in the form
+     var field = getFieldByName(modal, callback.field);
+
+    field.change(function() {
+
+        if (callback.action) {
+            // Run the callback function with the new value of the field!
+            callback.action(field.val(), field);
+        } else {
+            console.log(`Value changed for field ${callback.field} - ${field.val()}`);
+        }
+    });
+}
+
+
+function attachCallbacks(modal, callbacks) {
+    /* Attach a provided list of callback functions */
+
+    for (var i = 0; i < callbacks.length; i++) {
+        attachFieldCallback(modal, callbacks[i]);
     }
 }
 
@@ -575,6 +615,7 @@ function launchModalForm(url, options = {}) {
      * no_post - If true, only display form data, hide submit button, and disallow POST
      * after_render - Callback function to run after form is rendered
      * secondary - List of secondary modals to attach
+     * callback - List of callback functions to attach to inputs
      */
 
     var modal = options.modal || '#modal-form';
@@ -613,6 +654,10 @@ function launchModalForm(url, options = {}) {
 
                 if (options.secondary) {
                     attachSecondaries(modal, options.secondary);
+                }
+
+                if (options.callback) {
+                    attachCallbacks(modal, options.callback);
                 }
 
                 if (options.no_post) {
