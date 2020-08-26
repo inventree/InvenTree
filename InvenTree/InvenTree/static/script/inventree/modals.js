@@ -52,6 +52,41 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
 }
 
 
+function setFieldOptions(fieldName, optionList, options={}) {
+    /* Set the options for a <select> field.
+     *
+     * Args:
+     * - fieldName: The name of the target field
+     * - Options: List of formatted <option> strings
+     * - append: If true, options will be appended, otherwise will replace existing options.
+     */
+
+    
+    var append = options.append || false;
+    
+    var modal = options.modal || '#modal-form';
+
+    var field = getFieldByName(modal, fieldName);
+
+    var addEmptyOption = options.addEmptyOption || true;
+
+    // If not appending, clear out the field... 
+    if (!append) {
+        field.find('option').remove();
+    }
+
+    if (addEmptyOption) {
+        // Add an 'empty' option at the top of the list
+        field.append(makeOption('---------', '', '---------'));
+    }
+
+    optionList.forEach(function(option) {
+        field.append(option);
+    });
+
+}
+
+
 function partialMatcher(params, data) {
     /* Replacement function for the 'matcher' parameter for a select2 dropdown.
 
