@@ -104,7 +104,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             self.fields.pop('manufacturer_detail')
 
         if prettify is not True:
-            self.fields.pop('pretty_name')        
+            self.fields.pop('pretty_name')
 
     supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
 
