@@ -1273,8 +1273,12 @@ class StockItemCreate(AjaxCreateView):
             form.fields['supplier_part'].queryset = SupplierPart.objects.none()
 
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
-        if form['supplier_part'].value() is not None:
-            pass
+        supplier_part = form['supplier_part'].value()
+        if supplier_part is not None:
+            # Check if supplier part is default
+            if not supplier_part.isdigit():
+                # Remove field from form (to prevent "dynamic" field validation)
+                form.fields.pop('supplier_part')
             
         return form
 
