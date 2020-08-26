@@ -320,15 +320,12 @@ $("#print-label").click(function() {
 });
 
 $("#stock-duplicate").click(function() {
-    launchModalForm(
-        "{% url 'stock-item-create' %}",
-        {
-            follow: true,
-            data: {
-                copy: {{ item.id }},
-            },
+    createNewStockItem({
+        follow: true,
+        data: {
+            copy: {{ item.id }},
         }
-    );
+    });
 });
 
 $("#stock-edit").click(function () {

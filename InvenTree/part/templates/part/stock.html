@@ -25,14 +25,12 @@
 {{ block.super }}
 
     $('#add-stock-item').click(function () {
-        launchModalForm(
-                        "{% url 'stock-item-create' %}",
-                        {
-                            reload: true,
-                            data: {
-                                part: {{ part.id }}
-                            }
-                        });
+        createNewStockItem({
+            reload: true,
+            data: {
+                part: {{ part.id }},
+            }
+        });
     });
 
     loadStockTable($("#stock-table"), {
@@ -64,37 +62,12 @@
     });
 
     $('#item-create').click(function () {
-        launchModalForm("{% url 'stock-item-create' %}", {
+        createNewStockItem({
             reload: true,
             data: {
-                part: {{ part.id }}
-            },
-            secondary: [
-                {
-                    field: 'part',
-                    label: '{% trans "New Part" %}',
-                    title: '{% trans "Create New Part" %}',
-                    url: "{% url 'part-create' %}",
-                },
-                {
-                    field: 'supplier_part',
-                    label: '{% trans "New Supplier Part" %}',
-                    title: '{% trans "Create new Supplier Part" %}',
-                    url: "{% url 'supplier-part-create' %}",
-                    data: {
-                        part: {{ part.id }}
-                    },
-                },
-                {
-                    field: 'location',
-                    label: '{% trans "New Location" %}',
-                    title: '{% trans "Create New Location" %}',
-                    url: "{% url 'stock-location-create' %}",
-                }
-            ]
+                part: {{ part.id }},
+            }
         });
-
-        return false;
     });
 
 {% endblock %}
