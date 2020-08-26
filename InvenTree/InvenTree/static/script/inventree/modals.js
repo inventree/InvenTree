@@ -1,7 +1,54 @@
-function makeOption(id, title) {
+function makeOption(text, value, title) {
     /* Format an option for a select element
      */
-    return "<option value='" + id + "'>" + title + "</option>";
+
+    var html = `<option value='${value || text}'`;
+
+    if (title) {
+        html += ` title='${title}'`;
+    }
+
+    html += `>${text}</option>`;
+
+    return html;
+}
+
+function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
+    /*
+     * Programatically generate a list of <option> elements,
+     * from the (assumed array) of elements.
+     * For each element, we pass the element to the supplied functions,
+     * which (in turn) generate display / value / title values.
+     * 
+     * Args:
+     * - elements: List of elements
+     * - textFunc: Function which takes an element and generates the text to be displayed 
+     * - valueFunc: optional function which takes an element and generates the value
+     * - titleFunc: optional function which takes an element and generates a title
+     */
+    
+    var html = ``;
+
+    elements.forEach(function(element) {
+        
+        var text = textFunc(element);
+        var value = null;
+        var title = null;
+
+        if (valueFunc) {
+            value = valueFunc(element);
+        } else {
+            value = text;
+        }
+
+        if (titleFunc) {
+            title = titleFunc(element);
+        }
+
+        html += makeOption(text, value, title);
+    });
+
+    return html;
 }
 
 
