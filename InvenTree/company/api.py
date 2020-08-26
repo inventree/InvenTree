@@ -158,6 +158,11 @@ class SupplierPartList(generics.ListCreateAPIView):
             kwargs['manufacturer_detail'] = str2bool(self.request.query_params.get('manufacturer_detail', None))
         except AttributeError:
             pass
+
+        try:
+            kwargs['pretty'] = str2bool(self.request.query_params.get('pretty', None))
+        except AttributeError:
+            pass
         
         kwargs['context'] = self.get_serializer_context()
 
