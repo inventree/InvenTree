@@ -87,6 +87,53 @@ function setFieldOptions(fieldName, optionList, options={}) {
 }
 
 
+function reloadFieldOptions(fieldName, options) {
+    /* Reload the options for a given field,
+     * using an AJAX request.
+     *
+     * Args:
+     * - fieldName: The name of the field
+     * - options: 
+     * -- url: Query url
+     * -- params: Query params
+     * -- value: A function which takes a returned option and returns the 'value' (if not specified, the `pk` field is used)
+     * -- text: A function which takes a returned option and returns the 'text'
+     * -- title: A function which takes a returned option and returns the 'title' (optional!)
+     */
+
+    inventreeGet(options.url, options.params, {
+        success: function(response) {
+            var opts = makeOptionsList(response,
+                function(item) {
+                    return options.text(item);
+                },
+                function(item) {
+                    if (options.value) {
+                        return options.value(item);
+                    } else {
+                        // Fallback is to use the 'pk' field
+                        return item.pk;
+                    }
+                },
+                function(item) {
+                    if (options.title) {
+                        return options.title(item);
+                    } else {
+                        return null;
+                    }
+                }
+            );
+
+            // Update the target field with the new options
+            setFieldOptions(fieldName, opts);
+        },
+        error: function(response) {
+            console.log("Error GETting field options");
+        }
+    });
+}
+
+
 function partialMatcher(params, data) {
     /* Replacement function for the 'matcher' parameter for a select2 dropdown.
 

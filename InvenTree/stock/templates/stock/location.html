@@ -216,7 +216,20 @@
                                 {
                                     field: 'part',
                                     action: function(value) {
-                                        console.log('value: ' + value);
+
+                                        reloadFieldOptions(
+                                            'supplier_part',
+                                            {
+                                                url: "{% url 'api-supplier-part-list' %}",
+                                                params: {
+                                                    part: value,
+                                                    pretty: true,
+                                                },
+                                                text: function(item) {
+                                                    return item.pretty_name;
+                                                }
+                                            }
+                                        )
                                     }
                                 },
                             ],
