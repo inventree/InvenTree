@@ -204,59 +204,13 @@
     {% endif %}
 
     $('#item-create').click(function () {
-        launchModalForm("{% url 'stock-item-create' %}",
-                        {
-                            follow: true,
-                            data: {
-                                {% if location %}
-                                location: {{ location.id }}
-                                {% endif %}
-                            },
-                            callback: [
-                                {
-                                    field: 'part',
-                                    action: function(value) {
-
-                                        reloadFieldOptions(
-                                            'supplier_part',
-                                            {
-                                                url: "{% url 'api-supplier-part-list' %}",
-                                                params: {
-                                                    part: value,
-                                                    pretty: true,
-                                                },
-                                                text: function(item) {
-                                                    return item.pretty_name;
-                                                }
-                                            }
-                                        )
-                                    }
-                                },
-                            ],
-                            secondary: [
-                                {
-                                    field: 'part',
-                                    label: 'New Part',
-                                    title: 'Create New Part',
-                                    url: "{% url 'part-create' %}",
-                                },
-                                {
-                                    field: 'supplier_part',
-                                    label: 'New Supplier Part',
-                                    title: 'Create new Supplier Part',
-                                    url: "{% url 'supplier-part-create' %}"
-                                },
-                                {
-                                    field: 'location',
-                                    label: 'New Location',
-                                    title: 'Create New Location',
-                                    url: "{% url 'stock-location-create' %}",
-                                }
-                            ]
-                        });
-
-
-        return false;
+        createNewStockItem({
+            data: {
+                {% if location %}
+                location: {{ location.id }}
+                {% endif %}
+            }
+        });
     });
     
     loadStockTable($("#stock-table"), {
