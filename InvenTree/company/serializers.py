@@ -80,13 +80,17 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
+
     manufacturer_detail = CompanyBriefSerializer(source='manufacturer', many=False, read_only=True)
+
+    pretty_name = serializers.CharField(read_only=True)
 
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
         supplier_detail = kwargs.pop('supplier_detail', False)
         manufacturer_detail = kwargs.pop('manufacturer_detail', False)
+        prettify = kwargs.pop('pretty', False)
 
         super(SupplierPartSerializer, self).__init__(*args, **kwargs)
 
@@ -99,6 +103,9 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         if manufacturer_detail is not True:
             self.fields.pop('manufacturer_detail')
 
+        if prettify is not True:
+            self.fields.pop('pretty_name')
+
     supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
 
     manufacturer = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_manufacturer=True))
@@ -109,6 +116,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'pk',
             'part',
             'part_detail',
+            'pretty_name',
             'supplier',
             'supplier_detail',
             'SKU',

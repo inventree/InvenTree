@@ -237,7 +237,7 @@ class TestReportFormatForm(HelperForm):
 
         for template in templates:
             if template.matches_stock_item(self.stock_item):
-                choices.append(template)
+                choices.append((template.pk, template))
 
         return choices
 

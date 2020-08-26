@@ -7,6 +7,8 @@ from rapidfuzz import fuzz
 import tablib
 import os
 
+from collections import OrderedDict
+
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
@@ -47,7 +49,7 @@ def MakeBomTemplate(fmt):
     return DownloadFile(data, filename)
 
 
-def ExportBom(part, fmt='csv', cascade=False, max_levels=None, supplier_data=False):
+def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=False, stock_data=False, supplier_data=False):
     """ Export a BOM (Bill of Materials) for a given part.
 
     Args:
@@ -92,9 +94,75 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, supplier_data=Fal
 
     dataset = BomItemResource().export(queryset=bom_items, cascade=cascade)
 
+    def add_columns_to_dataset(columns, column_size):
+        try:
+            for header, column_dict in columns.items():
+                # Construct column tuple
+                col = tuple(column_dict.get(c_idx, '') for c_idx in range(column_size))
+                # Add column to dataset
+                dataset.append_col(col, header=header)
+        except AttributeError:
+            pass
+
+    if parameter_data:
+        """
+        If requested, add extra columns for each PartParameter associated with each line item
+        """
+
+        parameter_cols = {}
+
+        for b_idx, bom_item in enumerate(bom_items):
+            # Get part parameters
+            parameters = bom_item.sub_part.get_parameters()
+            # Add parameters to columns
+            if parameters:
+                for parameter in parameters:
+                    name = parameter.template.name
+                    value = parameter.data
+
+                    try:
+                        parameter_cols[name].update({b_idx: value})
+                    except KeyError:
+                        parameter_cols[name] = {b_idx: value}
+                
+        # Add parameter columns to dataset
+        parameter_cols_ordered = OrderedDict(sorted(parameter_cols.items(), key=lambda x: x[0]))
+        add_columns_to_dataset(parameter_cols_ordered, len(bom_items))
+
+    if stock_data:
+        """
+        If requested, add extra columns for stock data associated with each line item
+        """
+
+        stock_headers = [
+            _('Default Location'),
+            _('Available Stock'),
+        ]
+
+        stock_cols = {}
+
+        for b_idx, bom_item in enumerate(bom_items):
+            stock_data = []
+            # Get part default location
+            try:
+                stock_data.append(bom_item.sub_part.get_default_location().name)
+            except AttributeError:
+                stock_data.append('')
+            # Get part current stock
+            stock_data.append(bom_item.sub_part.available_stock)
+
+            for s_idx, header in enumerate(stock_headers):
+                try:
+                    stock_cols[header].update({b_idx: stock_data[s_idx]})
+                except KeyError:
+                    stock_cols[header] = {b_idx: stock_data[s_idx]}
+
+        # Add stock columns to dataset
+        add_columns_to_dataset(stock_cols, len(bom_items))
+
     if supplier_data:
         """
-        If requested, add extra columns for each SupplierPart associated with the each line item
+        If requested, add extra columns for each SupplierPart associated with each line item
         """
 
         # Expand dataset with manufacturer parts
@@ -150,11 +218,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, supplier_data=Fal
                     manufacturer_cols[k_mpn] = {b_idx: manufacturer_mpn}
 
         # Add manufacturer columns to dataset
-        for header, col_dict in manufacturer_cols.items():
-            # Construct column tuple
-            col = tuple(col_dict.get(c_idx, '') for c_idx in range(len(bom_items)))
-            # Add column to dataset
-            dataset.append_col(col, header=header)
+        add_columns_to_dataset(manufacturer_cols, len(bom_items))
 
     data = dataset.export(fmt)
 

@@ -58,7 +58,11 @@ class BomExportForm(forms.Form):
 
     levels = forms.IntegerField(label=_("Levels"), required=True, initial=0, help_text=_("Select maximum number of BOM levels to export (0 = all levels)"))
 
-    supplier_data = forms.BooleanField(label=_("Include Supplier Data"), required=False, initial=True, help_text=_("Include supplier part data in exported BOM"))
+    parameter_data = forms.BooleanField(label=_("Include Parameter Data"), required=False, initial=False, help_text=_("Include part parameters data in exported BOM"))
+
+    stock_data = forms.BooleanField(label=_("Include Stock Data"), required=False, initial=False, help_text=_("Include part stock data in exported BOM"))
+
+    supplier_data = forms.BooleanField(label=_("Include Supplier Data"), required=False, initial=True, help_text=_("Include part supplier data in exported BOM"))
 
     def get_choices(self):
         """ BOM export format choices """
@@ -196,10 +200,18 @@ class EditCategoryForm(HelperForm):
         ]
 
 
+class PartModelChoiceField(forms.ModelChoiceField):
+    """ Extending string representation of Part instance with available stock """
+    def label_from_instance(self, part):
+        return f'{part} - {part.available_stock}'
+
+
 class EditBomItemForm(HelperForm):
     """ Form for editing a BomItem object """
 
     quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    sub_part = PartModelChoiceField(queryset=Part.objects.all())
 
     class Meta:
         model = BomItem
