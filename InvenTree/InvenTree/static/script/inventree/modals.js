@@ -77,7 +77,7 @@ function setFieldOptions(fieldName, optionList, options={}) {
 
     if (addEmptyOption) {
         // Add an 'empty' option at the top of the list
-        field.append(makeOption('---------', '', '---------'));
+        field.append(`<option value="">---------</option>`);
     }
 
     optionList.forEach(function(option) {

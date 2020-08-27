@@ -205,6 +205,7 @@
 
     $('#item-create').click(function () {
         createNewStockItem({
+            follow: true,
             data: {
                 {% if location %}
                 location: {{ location.id }}
