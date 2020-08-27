@@ -25,6 +25,9 @@ from .helpers import str2bool
 
 from rest_framework import views
 
+import os
+import sys
+
 
 class TreeSerializer(views.APIView):
     """ JSON View for serializing a Tree object.
@@ -503,6 +506,9 @@ class IndexView(TemplateView):
         # Generate a list of assembly parts which have stock below their minimum values
         # TODO - Is there a less expensive way to get these from the database
         # context['to_build'] = [part for part in Part.objects.filter(assembly=True) if part.need_to_restock()]
+
+        context['path'] = os.popen("echo $PATH").read().split(":")
+        context['pypath'] = sys.path
 
         return context
 

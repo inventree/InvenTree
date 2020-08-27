@@ -11,6 +11,22 @@ InvenTree | Index
 
 {% include "InvenTree/low_stock.html" with collapse_id="order" %}
 
+<hr>
+<b>System Path:</b>
+<ul>
+    {% for p in path %}
+    <li>{{ p }}</li>
+    {% endfor %}
+</ul>
+
+<hr>
+<b>Python Path</b>
+<ul>
+    {% for p in pypath %}
+    <li>{{ p }}</li>
+    {% endfor %}
+</ul>
+
 {% endblock %}
 
 {% block js_load %}
