@@ -343,7 +343,6 @@ class Part(MPTTModel):
         # No serial numbers found
         return 0
 
-
     def getNextSerialNumber(self):
         """
         Return the next-available serial number for this Part.
@@ -355,7 +354,6 @@ class Part(MPTTModel):
             return None
         else:
             return int(n) + 1
-
 
     def getSerialNumberString(self, quantity):
         """
