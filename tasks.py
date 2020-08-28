@@ -47,7 +47,7 @@ def managePyPath():
 
     return os.path.join(managePyDir(), 'manage.py')
 
-def manage(c, cmd):
+def manage(c, cmd, pty=False):
     """
     Runs a given command against django's "manage.py" script.
 
@@ -59,7 +59,7 @@ def manage(c, cmd):
     c.run('cd {path} && python3 manage.py {cmd}'.format(
         path=managePyDir(),
         cmd=cmd
-    ))
+    ), pty=pty)
 
 @task(help={'length': 'Length of secret key (default=50)'})
 def key(c, length=50, force=False):
@@ -106,7 +106,7 @@ def superuser(c):
     Create a superuser (admin) account for the database.
     """
 
-    manage(c, 'createsuperuser')
+    manage(c, 'createsuperuser', pty=True)
 
 @task
 def migrate(c):
