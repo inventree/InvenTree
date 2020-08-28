@@ -180,7 +180,7 @@ class TestReport(ReportTemplateBase):
         Test if this report template matches a given StockItem objects
         """
 
-        filters = validateFilterString(self.part_filters)
+        filters = validateFilterString(self.filters)
 
         items = StockItem.objects.filter(**filters)
 

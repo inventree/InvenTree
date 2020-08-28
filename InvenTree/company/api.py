@@ -104,11 +104,40 @@ class SupplierPartList(generics.ListCreateAPIView):
 
         queryset = super().get_queryset()
 
+        return queryset
+
+    def filter_queryset(self, queryset):
+        """
+        Custom filtering for the queryset.
+        """
+
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        # Filter by manufacturer
+        manufacturer = params.get('manufacturer', None)
+
+        if manufacturer is not None:
+            queryset = queryset.filter(manufacturer=manufacturer)
+
+        # Filter by supplier
+        supplier = params.get('supplier', None)
+
+        if supplier is not None:
+            queryset = queryset.filter(supplier=supplier)
+
         # Filter by EITHER manufacturer or supplier
-        company = self.request.query_params.get('company', None)
+        company = params.get('company', None)
 
         if company is not None:
             queryset = queryset.filter(Q(manufacturer=company) | Q(supplier=company))
+
+        # Filter by parent part?
+        part = params.get('part', None)
+
+        if part is not None:
+            queryset = queryset.filter(part=part)
 
         return queryset
 
@@ -129,6 +158,11 @@ class SupplierPartList(generics.ListCreateAPIView):
             kwargs['manufacturer_detail'] = str2bool(self.request.query_params.get('manufacturer_detail', None))
         except AttributeError:
             pass
+
+        try:
+            kwargs['pretty'] = str2bool(self.request.query_params.get('pretty', None))
+        except AttributeError:
+            pass
         
         kwargs['context'] = self.get_serializer_context()
 
@@ -147,9 +181,6 @@ class SupplierPartList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'part',
-        'supplier',
-        'manufacturer',
     ]
 
     search_fields = [

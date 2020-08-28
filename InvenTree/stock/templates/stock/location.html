@@ -204,38 +204,14 @@
     {% endif %}
 
     $('#item-create').click(function () {
-        launchModalForm("{% url 'stock-item-create' %}",
-                        {
-                            follow: true,
-                            data: {
-                                {% if location %}
-                                location: {{ location.id }}
-                                {% endif %}
-                            },
-                            secondary: [
-                                {
-                                    field: 'part',
-                                    label: 'New Part',
-                                    title: 'Create New Part',
-                                    url: "{% url 'part-create' %}",
-                                },
-                                {
-                                    field: 'supplier_part',
-                                    label: 'New Supplier Part',
-                                    title: 'Create new Supplier Part',
-                                    url: "{% url 'supplier-part-create' %}"
-                                },
-                                {
-                                    field: 'location',
-                                    label: 'New Location',
-                                    title: 'Create New Location',
-                                    url: "{% url 'stock-location-create' %}",
-                                }
-                            ]
-                        });
-
-
-        return false;
+        createNewStockItem({
+            follow: true,
+            data: {
+                {% if location %}
+                location: {{ location.id }}
+                {% endif %}
+            }
+        });
     });
     
     loadStockTable($("#stock-table"), {

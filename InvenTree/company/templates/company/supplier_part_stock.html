@@ -44,23 +44,13 @@
     });
 
     $("#item-create").click(function() {
-        launchModalForm("{% url 'stock-item-create' %}", {
-            reload: true,
+        createNewStockItem({
             data: {
                 part: {{ part.part.id }},
                 supplier_part: {{ part.id }},
             },
-            secondary: [
-                {
-                    field: 'location',
-                    label: '{% trans "New Location" %}',
-                    title: '{% trans "Create New Location" %}',
-                    url: "{% url 'stock-location-create' %}",
-                }
-            ]
+            reload: true,
         });
-
-        return false;
     });
 
 

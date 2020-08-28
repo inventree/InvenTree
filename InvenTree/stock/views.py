@@ -1240,7 +1240,7 @@ class StockItemCreate(AjaxCreateView):
             form.rebuild_layout()
 
             # Hide the 'part' field (as a valid part is selected)
-            form.fields['part'].widget = HiddenInput()
+            # form.fields['part'].widget = HiddenInput()
 
             # trackable parts get special consideration
             if part.trackable:
@@ -1266,6 +1266,11 @@ class StockItemCreate(AjaxCreateView):
 
                     # TODO - This does NOT work for some reason? Ref build.views.BuildItemCreate
                     form.fields['supplier_part'].initial = all_parts[0].id
+
+        else:
+            # No Part has been selected!
+            # We must not provide *any* options for SupplierPart
+            form.fields['supplier_part'].queryset = SupplierPart.objects.none()
 
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
         if form['supplier_part'].value() is not None:

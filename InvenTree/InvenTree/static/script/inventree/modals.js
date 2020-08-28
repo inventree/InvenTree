@@ -1,7 +1,136 @@
-function makeOption(id, title) {
+function makeOption(text, value, title) {
     /* Format an option for a select element
      */
-    return "<option value='" + id + "'>" + title + "</option>";
+
+    var html = `<option value='${value || text}'`;
+
+    if (title) {
+        html += ` title='${title}'`;
+    }
+
+    html += `>${text}</option>`;
+
+    return html;
+}
+
+function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
+    /*
+     * Programatically generate a list of <option> elements,
+     * from the (assumed array) of elements.
+     * For each element, we pass the element to the supplied functions,
+     * which (in turn) generate display / value / title values.
+     * 
+     * Args:
+     * - elements: List of elements
+     * - textFunc: Function which takes an element and generates the text to be displayed 
+     * - valueFunc: optional function which takes an element and generates the value
+     * - titleFunc: optional function which takes an element and generates a title
+     */
+    
+    var options = [];
+
+    elements.forEach(function(element) {
+        
+        var text = textFunc(element);
+        var value = null;
+        var title = null;
+
+        if (valueFunc) {
+            value = valueFunc(element);
+        } else {
+            value = text;
+        }
+
+        if (titleFunc) {
+            title = titleFunc(element);
+        }
+
+        options.push(makeOption(text, value, title));
+    });
+
+    return options;
+}
+
+
+function setFieldOptions(fieldName, optionList, options={}) {
+    /* Set the options for a <select> field.
+     *
+     * Args:
+     * - fieldName: The name of the target field
+     * - Options: List of formatted <option> strings
+     * - append: If true, options will be appended, otherwise will replace existing options.
+     */
+
+    
+    var append = options.append || false;
+    
+    var modal = options.modal || '#modal-form';
+
+    var field = getFieldByName(modal, fieldName);
+
+    var addEmptyOption = options.addEmptyOption || true;
+
+    // If not appending, clear out the field... 
+    if (!append) {
+        field.find('option').remove();
+    }
+
+    if (addEmptyOption) {
+        // Add an 'empty' option at the top of the list
+        field.append(`<option value="">---------</option>`);
+    }
+
+    optionList.forEach(function(option) {
+        field.append(option);
+    });
+
+}
+
+
+function reloadFieldOptions(fieldName, options) {
+    /* Reload the options for a given field,
+     * using an AJAX request.
+     *
+     * Args:
+     * - fieldName: The name of the field
+     * - options: 
+     * -- url: Query url
+     * -- params: Query params
+     * -- value: A function which takes a returned option and returns the 'value' (if not specified, the `pk` field is used)
+     * -- text: A function which takes a returned option and returns the 'text'
+     * -- title: A function which takes a returned option and returns the 'title' (optional!)
+     */
+
+    inventreeGet(options.url, options.params, {
+        success: function(response) {
+            var opts = makeOptionsList(response,
+                function(item) {
+                    return options.text(item);
+                },
+                function(item) {
+                    if (options.value) {
+                        return options.value(item);
+                    } else {
+                        // Fallback is to use the 'pk' field
+                        return item.pk;
+                    }
+                },
+                function(item) {
+                    if (options.title) {
+                        return options.title(item);
+                    } else {
+                        return null;
+                    }
+                }
+            );
+
+            // Update the target field with the new options
+            setFieldOptions(fieldName, opts);
+        },
+        error: function(response) {
+            console.log("Error GETting field options");
+        }
+    });
 }
 
 
@@ -397,6 +526,13 @@ function injectModalForm(modal, form_html) {
 }
 
 
+function getFieldByName(modal, name) {
+    /* Find the field (with the given name) within the modal */
+
+    return $(modal).find(`#id_${name}`);
+}
+
+
 function insertNewItemButton(modal, options) {
     /* Insert a button into a modal form, after a field label.
      * Looks for a <label> tag inside the form with the attribute "for='id_<field>'"
@@ -472,6 +608,39 @@ function attachSecondaries(modal, secondaries) {
 
     for (var i = 0; i < secondaries.length; i++) {
         attachSecondaryModal(modal, secondaries[i]);
+    }
+}
+
+
+function attachFieldCallback(modal, callback) {
+    /* Attach a 'callback' function to a given field in the modal form.
+     * When the value of that field is changed, the callback function is performed.
+     * 
+     * options:
+     * - field: The name of the field to attach to
+     * - action: A function to perform
+     */
+
+     // Find the field input in the form
+     var field = getFieldByName(modal, callback.field);
+
+    field.change(function() {
+
+        if (callback.action) {
+            // Run the callback function with the new value of the field!
+            callback.action(field.val(), field);
+        } else {
+            console.log(`Value changed for field ${callback.field} - ${field.val()}`);
+        }
+    });
+}
+
+
+function attachCallbacks(modal, callbacks) {
+    /* Attach a provided list of callback functions */
+
+    for (var i = 0; i < callbacks.length; i++) {
+        attachFieldCallback(modal, callbacks[i]);
     }
 }
 
@@ -575,6 +744,7 @@ function launchModalForm(url, options = {}) {
      * no_post - If true, only display form data, hide submit button, and disallow POST
      * after_render - Callback function to run after form is rendered
      * secondary - List of secondary modals to attach
+     * callback - List of callback functions to attach to inputs
      */
 
     var modal = options.modal || '#modal-form';
@@ -613,6 +783,10 @@ function launchModalForm(url, options = {}) {
 
                 if (options.secondary) {
                     attachSecondaries(modal, options.secondary);
+                }
+
+                if (options.callback) {
+                    attachCallbacks(modal, options.callback);
                 }
 
                 if (options.no_post) {
