@@ -100,6 +100,8 @@ function visibleColumnString(columns) {
  */
 $.fn.inventreeTable = function(options) {
 
+    var table = this;
+
     var tableName = options.name || 'table';
 
     var varName = tableName + '-pagesize';
@@ -110,14 +112,51 @@ $.fn.inventreeTable = function(options) {
     options.rememberOrder = true;
     options.sortable = true;
     options.search = true;
+    options.showColumns = true;
 
     // Callback to save pagination data
     options.onPageChange = function(number, size) {
         inventreeSave(varName, size);
     };
 
+    // Add a callback when the table is loaded
+    table.on('load-success.bs.table', function() {
+
+        // Load visible column list
+        var visibleColumns = inventreeLoad(`table_columns_${tableName}`, null);
+
+        // If a set of visible columns has been saved, load!
+        if (visibleColumns) {
+            var columns = visibleColumns.split(",");
+    
+            // Which columns are currently visible?
+            var visible = table.bootstrapTable('getVisibleColumns');
+
+            visible.forEach(function(column) {
+                // Visible field should *not* be visible! (hide it!)
+                if (!columns.includes(visible.field)) {
+                    table.bootstrapTable('hideColumn', visible.field);
+                }
+            });
+        }
+    });
+
+    // Callback when a column is changed
+    options.onColumnSwitch = function(field, checked) {
+        console.log(`${field} -> ${checked}`);
+
+        var columns = table.bootstrapTable('getVisibleColumns');
+
+        var text = visibleColumnString(columns);
+
+        // Save visible columns
+        inventreeSave(`table_columns_${tableName}`, text);
+
+        console.log('saving: ' + text);
+    };
+
     // Standard options for all tables
-    this.bootstrapTable(options);
+    table.bootstrapTable(options);
 }
 
 function customGroupSorter(sortName, sortOrder, sortData) {
