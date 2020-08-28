@@ -264,6 +264,7 @@ function loadStockTable(table, options) {
         queryParams: filters,
         customSort: customGroupSorter,
         groupBy: true,
+        name: 'stock',
         original: original,
         showColumns: true,
         groupByField: options.groupByField || 'part',
@@ -405,6 +406,7 @@ function loadStockTable(table, options) {
                 checkbox: true,
                 title: '{% trans "Select" %}',
                 searchable: false,
+                switchable: false,
             },
             {
                 field: 'pk',
