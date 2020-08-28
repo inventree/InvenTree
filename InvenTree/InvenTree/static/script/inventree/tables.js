@@ -80,6 +80,21 @@ function reloadTable(table, filters) {
 }
 
 
+function visibleColumnString(columns) {
+    /* Generate a list of "visible" columns to save to file. */
+
+    var fields = [];
+
+    columns.forEach(function(column) {
+        if (column.switchable && column.visible) {
+            fields.push(column.field);
+        }
+    });
+
+    return fields.join(',');
+}
+
+
 /* Wrapper function for bootstrapTable.
  * Sets some useful defaults, and manage persistent settings.
  */
