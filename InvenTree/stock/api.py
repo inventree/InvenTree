@@ -186,7 +186,7 @@ class StockCount(StockAdjust):
 
 class StockAdd(StockAdjust):
     """
-    Endpoint for adding stock
+    Endpoint for adding a quantity of stock to an existing StockItem
     """
 
     def post(self, request, *args, **kwargs):
@@ -204,7 +204,7 @@ class StockAdd(StockAdjust):
 
 class StockRemove(StockAdjust):
     """
-    Endpoint for removing stock.
+    Endpoint for removing a quantity of stock from an existing StockItem.
     """
 
     def post(self, request, *args, **kwargs):
