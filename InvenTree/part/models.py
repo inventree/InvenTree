@@ -1087,6 +1087,20 @@ class Part(MPTTModel):
 
         return n
 
+    @property
+    def part_attachments(self):
+        """
+        Return *all* attachments for this part,
+        potentially including attachments for template parts
+        above this one.
+        """
+
+        ancestors = self.get_ancestors(include_self=True)
+
+        attachments = PartAttachment.objects.filter(part__in=ancestors)
+
+        return attachments
+
     def sales_orders(self):
         """ Return a list of sales orders which reference this part """
 
