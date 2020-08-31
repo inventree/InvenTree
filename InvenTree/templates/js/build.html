@@ -21,12 +21,14 @@ function loadBuildTable(table, options) {
         url: options.url,
         queryParams: filters,
         groupBy: false,
+        name: 'builds',
         original: params,
         columns: [
             {
                 field: 'pk',
                 title: 'ID', 
                 visible: false,
+                switchable: false,
             },
             {
                 field: 'title',

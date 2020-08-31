@@ -73,6 +73,7 @@ function loadStockTestResultsTable(table, options) {
     table.inventreeTable({
         url: "{% url 'api-part-test-template-list' %}",
         method: 'get',
+        name: 'testresult',
         formatNoMatches: function() {
             return "{% trans 'No test results found' %}";
         },
@@ -84,6 +85,7 @@ function loadStockTestResultsTable(table, options) {
                 field: 'pk',
                 title: 'ID',
                 visible: false,
+                switchable: false,
             },
             {
                 field: 'test_name',
@@ -264,6 +266,7 @@ function loadStockTable(table, options) {
         queryParams: filters,
         customSort: customGroupSorter,
         groupBy: true,
+        name: 'stock',
         original: original,
         showColumns: true,
         groupByField: options.groupByField || 'part',
@@ -405,6 +408,7 @@ function loadStockTable(table, options) {
                 checkbox: true,
                 title: '{% trans "Select" %}',
                 searchable: false,
+                switchable: false,
             },
             {
                 field: 'pk',
