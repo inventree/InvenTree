@@ -121,6 +121,7 @@ function loadPurchaseOrderTable(table, options) {
     $(table).inventreeTable({
         url: options.url,
         queryParams: filters,
+        name: 'purchaseorder',
         groupBy: false,
         original: options.params,
         formatNoMatches: function() { return "{% trans "No purchase orders found" %}"; },
@@ -129,6 +130,7 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'pk',
                 title: 'ID',
                 visible: false,
+                switchable: false,
             },
             {
                 sortable: true,
@@ -194,6 +196,7 @@ function loadSalesOrderTable(table, options) {
     $(table).inventreeTable({
         url: options.url,
         queryParams: filters,
+        name: 'salesorder',
         groupBy: false,
         original: options.params,
         formatNoMatches: function() { return "{% trans "No sales orders found" %}"; },
@@ -202,6 +205,7 @@ function loadSalesOrderTable(table, options) {
                 field: 'pk',
                 title: 'ID',
                 visible: false,
+                switchable: false,
             },
             {
                 sortable: true,

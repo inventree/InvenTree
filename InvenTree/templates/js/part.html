@@ -237,6 +237,7 @@ function loadPartTable(table, url, options={}) {
         method: 'get',
         queryParams: filters,
         groupBy: false,
+        name: 'part',
         original: params,
         formatNoMatches: function() { return "{% trans "No parts found" %}"; },
         columns: columns,
@@ -338,6 +339,7 @@ function loadPartTestTemplateTable(table, options) {
         },
         url: "{% url 'api-part-test-template-list' %}",
         queryParams: filters,
+        name: 'testtemplate',
         original: original,
         columns: [
             {
