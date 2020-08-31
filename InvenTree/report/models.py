@@ -127,7 +127,7 @@ class ReportTemplateBase(models.Model):
                 except TexError:
                     return TexResponse(rendered, filename="error.tex")
             else:
-                return ValidationError("Enable LaTeX support in config.yaml")
+                raise ValidationError("Enable LaTeX support in config.yaml")
         elif self.extension in ['.htm', '.html']:
             # Render HTML template to PDF
             wp = WeasyprintReportMixin(request, self.template_name, **kwargs)

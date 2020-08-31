@@ -137,7 +137,7 @@ class PurchaseOrder(Order):
         return "PO {ref} - {company}".format(ref=self.reference, company=self.supplier.name)
 
     status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING, choices=PurchaseOrderStatus.items(),
-                                         help_text='Purchase order status')
+                                         help_text=_('Purchase order status'))
 
     supplier = models.ForeignKey(
         Company, on_delete=models.CASCADE,
@@ -145,7 +145,7 @@ class PurchaseOrder(Order):
             'is_supplier': True,
         },
         related_name='purchase_orders',
-        help_text=_('Supplier')
+        help_text=_('Company from which the items are being ordered')
     )
 
     supplier_reference = models.CharField(max_length=64, blank=True, help_text=_("Supplier order reference code"))
@@ -157,9 +157,9 @@ class PurchaseOrder(Order):
         related_name='+'
     )
 
-    issue_date = models.DateField(blank=True, null=True)
+    issue_date = models.DateField(blank=True, null=True, help_text=_('Date order was issued'))
 
-    complete_date = models.DateField(blank=True, null=True)
+    complete_date = models.DateField(blank=True, null=True, help_text=_('Date order was completed'))
 
     def get_absolute_url(self):
         return reverse('po-detail', kwargs={'pk': self.id})
@@ -311,11 +311,11 @@ class SalesOrder(Order):
         null=True,
         limit_choices_to={'is_customer': True},
         related_name='sales_orders',
-        help_text=_("Customer"),
+        help_text=_("Company to which the items are being sold"),
     )
 
     status = models.PositiveIntegerField(default=SalesOrderStatus.PENDING, choices=SalesOrderStatus.items(),
-                                         help_text='Purchase order status')
+                                         help_text=_('Purchase order status'))
 
     customer_reference = models.CharField(max_length=64, blank=True, help_text=_("Customer order reference code"))
 
