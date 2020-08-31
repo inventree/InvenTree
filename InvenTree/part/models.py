@@ -1080,12 +1080,7 @@ class Part(MPTTModel):
 
         """
 
-        n = self.attachments.count()
-
-        if self.variant_of:
-            n += self.variant_of.attachments.count()
-
-        return n
+        return self.part_attachments.count()
 
     @property
     def part_attachments(self):
