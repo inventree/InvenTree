@@ -119,28 +119,6 @@ $.fn.inventreeTable = function(options) {
         inventreeSave(varName, size);
     };
 
-    // Add a callback when the table is loaded
-    table.on('load-success.bs.table', function() {
-
-        // Load visible column list
-        var visibleColumns = inventreeLoad(`table_columns_${tableName}`, null);
-
-        // If a set of visible columns has been saved, load!
-        if (visibleColumns) {
-            var columns = visibleColumns.split(",");
-    
-            // Which columns are currently visible?
-            var visible = table.bootstrapTable('getVisibleColumns');
-
-            visible.forEach(function(column) {
-                // Visible field should *not* be visible! (hide it!)
-                if (!columns.includes(visible.field)) {
-                    table.bootstrapTable('hideColumn', visible.field);
-                }
-            });
-        }
-    });
-
     // Callback when a column is changed
     options.onColumnSwitch = function(field, checked) {
         console.log(`${field} -> ${checked}`);
@@ -151,12 +129,34 @@ $.fn.inventreeTable = function(options) {
 
         // Save visible columns
         inventreeSave(`table_columns_${tableName}`, text);
-
-        console.log('saving: ' + text);
     };
 
     // Standard options for all tables
     table.bootstrapTable(options);
+
+    // Load visible column list from memory
+    // Load visible column list
+    var visibleColumns = inventreeLoad(`table_columns_${tableName}`, null);
+
+    // If a set of visible columns has been saved, load!
+    if (visibleColumns) {
+        var columns = visibleColumns.split(",");
+
+        // Which columns are currently visible?
+        var visible = table.bootstrapTable('getVisibleColumns');
+
+        if (visible) {
+            visible.forEach(function(column) {
+    
+                // Visible field should *not* be visible! (hide it!)
+                if (column.switchable && !columns.includes(column.field)) {
+                    table.bootstrapTable('hideColumn', column.field);
+                }
+            });
+        } else {
+            console.log('Could not get list of visible columns!');
+        }
+    }
 }
 
 function customGroupSorter(sortName, sortOrder, sortData) {
