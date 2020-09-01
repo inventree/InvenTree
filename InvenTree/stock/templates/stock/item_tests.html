@@ -73,6 +73,7 @@ $("#add-test-result").click(function() {
                 stock_item: {{ item.id }},
             },
             success: reloadTable,
+            focus: 'test',
         }
     );
 });
@@ -89,6 +90,7 @@ $("#test-result-table").on('click', '.button-test-add', function() {
                 test: test_name
             },
             success: reloadTable,
+            focus: 'value',
         }
     );
 });

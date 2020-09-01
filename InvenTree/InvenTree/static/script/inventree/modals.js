@@ -469,6 +469,9 @@ function openModal(options) {
 
     $(modal).on('shown.bs.modal', function() {
         $(modal + ' .modal-form-content').scrollTop(0);
+        if (options.focus) {
+            getFieldByName(modal, options.focus).focus();
+        }
     });
 
     // Prevent 'enter' key from submitting the form using the normal method
@@ -745,6 +748,7 @@ function launchModalForm(url, options = {}) {
      * after_render - Callback function to run after form is rendered
      * secondary - List of secondary modals to attach
      * callback - List of callback functions to attach to inputs
+     * focus - Select which field to focus on by default
      */
 
     var modal = options.modal || '#modal-form';
@@ -763,6 +767,7 @@ function launchModalForm(url, options = {}) {
                 modal: modal,
                 submit_text: submit_text,
                 close_text: close_text,
+                focus: options.focus
             });
         },
         success: function(response) {
