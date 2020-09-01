@@ -376,7 +376,7 @@ class Part(MPTTModel):
         if type(latest) is int:
 
             if quantity >= 2:
-                text = '{n} - {m}'.format(n=latest+1, m=latest+1+quantity)
+                text = '{n} - {m}'.format(n=latest + 1, m=latest + 1 + quantity)
 
                 return _('Next available serial numbers are') + ' ' + text
             else:
