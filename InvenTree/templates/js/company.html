@@ -27,16 +27,20 @@ function loadCompanyTable(table, url, options={}) {
         queryParams: filters,
         groupBy: false,
         formatNoMatches: function() { return "{% trans "No company information found" %}"; },
+        showColumns: true,
+        name: 'company',
         columns: [
             {
                 field: 'pk',
                 title: 'ID',
                 visible: false,
+                switchable: false,
             },
             {
                 field: 'name',
                 title: '{% trans "Company" %}',
                 sortable: true,
+                switchable: false,
                 formatter: function(value, row, index, field) {
                     var html = imageHoverIcon(row.image) + renderLink(value, row.url);
 
@@ -97,11 +101,13 @@ function loadSupplierPartTable(table, url, options) {
         url: url,
         method: 'get',
         queryParams: filters,
+        name: 'supplierparts',
         groupBy: false,
         formatNoMatches: function() { return "{% trans "No supplier parts found" %}"; },
         columns: [
             {
                 checkbox: true,
+                switchable: false,
             },
             {
                 sortable: true,

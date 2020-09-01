@@ -1080,12 +1080,21 @@ class Part(MPTTModel):
 
         """
 
-        n = self.attachments.count()
+        return self.part_attachments.count()
 
-        if self.variant_of:
-            n += self.variant_of.attachments.count()
+    @property
+    def part_attachments(self):
+        """
+        Return *all* attachments for this part,
+        potentially including attachments for template parts
+        above this one.
+        """
 
-        return n
+        ancestors = self.get_ancestors(include_self=True)
+
+        attachments = PartAttachment.objects.filter(part__in=ancestors)
+
+        return attachments
 
     def sales_orders(self):
         """ Return a list of sales orders which reference this part """

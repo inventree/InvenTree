@@ -111,6 +111,7 @@ function loadBomTable(table, options) {
             field: 'pk',
             title: 'ID',
             visible: false,
+            switchable: false,
         },
     ];
 
@@ -320,6 +321,7 @@ function loadBomTable(table, options) {
         parentIdField: 'parentId',
         treeShowField: 'sub_part',
         showColumns: true,
+        name: 'bom',
         sortable: true,
         search: true,
         rowStyle: function(row, index) {

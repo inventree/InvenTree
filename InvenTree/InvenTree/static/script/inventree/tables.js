@@ -80,10 +80,27 @@ function reloadTable(table, filters) {
 }
 
 
+function visibleColumnString(columns) {
+    /* Generate a list of "visible" columns to save to file. */
+
+    var fields = [];
+
+    columns.forEach(function(column) {
+        if (column.switchable && column.visible) {
+            fields.push(column.field);
+        }
+    });
+
+    return fields.join(',');
+}
+
+
 /* Wrapper function for bootstrapTable.
  * Sets some useful defaults, and manage persistent settings.
  */
 $.fn.inventreeTable = function(options) {
+
+    var table = this;
 
     var tableName = options.name || 'table';
 
@@ -95,14 +112,51 @@ $.fn.inventreeTable = function(options) {
     options.rememberOrder = true;
     options.sortable = true;
     options.search = true;
+    options.showColumns = true;
 
     // Callback to save pagination data
     options.onPageChange = function(number, size) {
         inventreeSave(varName, size);
     };
 
+    // Callback when a column is changed
+    options.onColumnSwitch = function(field, checked) {
+        console.log(`${field} -> ${checked}`);
+
+        var columns = table.bootstrapTable('getVisibleColumns');
+
+        var text = visibleColumnString(columns);
+
+        // Save visible columns
+        inventreeSave(`table_columns_${tableName}`, text);
+    };
+
     // Standard options for all tables
-    this.bootstrapTable(options);
+    table.bootstrapTable(options);
+
+    // Load visible column list from memory
+    // Load visible column list
+    var visibleColumns = inventreeLoad(`table_columns_${tableName}`, null);
+
+    // If a set of visible columns has been saved, load!
+    if (visibleColumns) {
+        var columns = visibleColumns.split(",");
+
+        // Which columns are currently visible?
+        var visible = table.bootstrapTable('getVisibleColumns');
+
+        if (visible) {
+            visible.forEach(function(column) {
+    
+                // Visible field should *not* be visible! (hide it!)
+                if (column.switchable && !columns.includes(column.field)) {
+                    table.bootstrapTable('hideColumn', column.field);
+                }
+            });
+        } else {
+            console.log('Could not get list of visible columns!');
+        }
+    }
 }
 
 function customGroupSorter(sortName, sortOrder, sortData) {

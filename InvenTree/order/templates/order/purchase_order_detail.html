@@ -127,6 +127,7 @@ function setupCallbacks() {
 
 $("#po-table").inventreeTable({
     onPostBody: setupCallbacks,
+    name: 'purchaseorder',
     formatNoMatches: function() { return "{% trans 'No line items found' %}"; },
     queryParams: {
         order: {{ order.id }},
@@ -138,6 +139,7 @@ $("#po-table").inventreeTable({
             field: 'pk',
             title: 'ID',
             visible: false,
+            switchable: false,
         },
         {
             field: 'part',
