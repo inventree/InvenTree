@@ -21,7 +21,7 @@ before_install:
     - invoke migrate
     - cd InvenTree && python3 manage.py createsuperuser --username InvenTreeAdmin --email admin@inventree.com --noinput && cd ..
     - psql -c 'create database inventree_test_db;' -U postgres
-    - mysql -e `CREATE DATABSE inventree_test_db;'
+    - mysql -e 'CREATE DATABSE inventree_test_db;'
 
 script:
     - cd InvenTree && python3 manage.py makemigrations && cd ..
