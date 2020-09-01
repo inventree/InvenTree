@@ -295,10 +295,7 @@ class StockTest(TestCase):
         with self.assertRaises(ValidationError):
             item.serializeStock(-1, [], self.user)
 
-        # Try invalid serial numbers
-        with self.assertRaises(ValidationError):
-            item.serializeStock(3, [1, 2, 'k'], self.user)
-
+        # Not enough serial numbers for all stock items.
         with self.assertRaises(ValidationError):
             item.serializeStock(3, "hello", self.user)
 
@@ -375,14 +372,14 @@ class VariantTest(StockTest):
 
         self.assertFalse(chair.checkIfSerialNumberExists(30))
 
-        self.assertEqual(chair.getNextSerialNumber(), 23)
+        self.assertEqual(chair.getLatestSerialNumber(), '22')
 
         # Same operations on a sub-item
         variant = Part.objects.get(pk=10003)
-        self.assertEqual(variant.getNextSerialNumber(), 23)
+        self.assertEqual(variant.getLatestSerialNumber(), '22')
 
         # Create a new serial number
-        n = variant.getHighestSerialNumber()
+        n = variant.getLatestSerialNumber()
 
         item = StockItem(
             part=variant,
@@ -394,8 +391,14 @@ class VariantTest(StockTest):
         with self.assertRaises(ValidationError):
             item.save()
 
-        # This should pass
-        item.serial = n + 1
+        # Verify items with a non-numeric serial don't offer a next serial.
+        item.serial = "string"
+        item.save()
+
+        self.assertEqual(variant.getLatestSerialNumber(), "string")
+
+        # This should pass, although not strictly an int field now.
+        item.serial = int(n) + 1
         item.save()
 
         # Attempt to create the same serial number but for a variant (should fail!)

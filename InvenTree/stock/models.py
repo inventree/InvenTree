@@ -355,9 +355,9 @@ class StockItem(MPTTModel):
         verbose_name=_("Customer"),
     )
 
-    serial = models.PositiveIntegerField(
+    serial = models.CharField(
         verbose_name=_('Serial Number'),
-        blank=True, null=True,
+        max_length=100, blank=True, null=True,
         help_text=_('Serial number for this item')
     )
  
@@ -685,9 +685,6 @@ class StockItem(MPTTModel):
             raise ValidationError({"quantity": _("Quantity must not exceed available stock quantity ({n})".format(n=self.quantity))})
 
         if not type(serials) in [list, tuple]:
-            raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
-
-        if any([type(i) is not int for i in serials]):
             raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
 
         if not quantity == len(serials):

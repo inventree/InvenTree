@@ -220,5 +220,5 @@ class BuildTest(TestCase):
         
         # And a new stock item created for the build output
         self.assertEqual(StockItem.objects.get(pk=7).quantity, 1)
-        self.assertEqual(StockItem.objects.get(pk=7).serial, 1)
+        self.assertEqual(StockItem.objects.get(pk=7).serial, "1")
         self.assertEqual(StockItem.objects.get(pk=7).build, self.build)
