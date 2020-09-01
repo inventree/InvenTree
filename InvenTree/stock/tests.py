@@ -372,14 +372,14 @@ class VariantTest(StockTest):
 
         self.assertFalse(chair.checkIfSerialNumberExists(30))
 
-        self.assertEqual(chair.getNextSerialNumber(), 23)
+        self.assertEqual(chair.getLatestSerialNumber(), '22')
 
         # Same operations on a sub-item
         variant = Part.objects.get(pk=10003)
-        self.assertEqual(variant.getNextSerialNumber(), 23)
+        self.assertEqual(variant.getLatestSerialNumber(), '22')
 
         # Create a new serial number
-        n = variant.getHighestSerialNumber()
+        n = variant.getLatestSerialNumber()
 
         item = StockItem(
             part=variant,
@@ -394,10 +394,8 @@ class VariantTest(StockTest):
         # Verify items with a non-numeric serial don't offer a next serial.
         item.serial = "string"
         item.save()
-        self.assertEqual(variant.getNextSerialNumber(), None)
 
-        # And the same for the range when serializing.
-        self.assertEqual(variant.getSerialNumberString(5), None)
+        self.assertEqual(variant.getLatestSerialNumber(), "string")
 
         # This should pass, although not strictly an int field now.
         item.serial = int(n) + 1
