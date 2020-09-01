@@ -174,18 +174,36 @@ def style(c):
     print("Running PEP style checks...")
     c.run('flake8 InvenTree')
 
-@task
-def test(c):
+@task(help={'database': "Database framework to use (default=sqlite)"})
+def test(c, database=None):
     """
     Run unit-tests for InvenTree codebase.
     """
+
+    if database is None:
+        database = 'sqlite'
+
+    database = database.lower()
+
+    allowed = {
+        'sqlite': 'InvenTree.settings',
+        'postgresql': 'InvenTree.ci_postgresql',
+        'mysql': 'InvenTree.ci_mysql',
+    }
+
+    if database not in allowed.keys():
+        print("Database framework not supported for testing:")
+        print("Choose from: '{a}'".format(a=allowed))
+
+        return False
 
     # Run sanity check on the django install
     manage(c, 'check')
 
     # Run coverage tests
-    manage(c, 'test {apps}'.format(
-        apps=' '.join(apps())
+    manage(c, 'test {apps} --settings={sett}'.format(
+        apps=' '.join(apps()),
+        sett=allowed[database]
     ))
 
 @task

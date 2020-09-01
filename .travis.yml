@@ -1,5 +1,9 @@
 dist: xenial
 
+services:
+    - mysql
+    - postgresql
+
 language: python
 python:
     - 3.6
@@ -16,11 +20,14 @@ before_install:
     - invoke install
     - invoke migrate
     - cd InvenTree && python3 manage.py createsuperuser --username InvenTreeAdmin --email admin@inventree.com --noinput && cd ..
+    - psql -c 'create database inventree_test_db;' -U postgres
+    - mysql -e `CREATE DATABSE inventree_test_db;'
 
 script:
     - cd InvenTree && python3 manage.py makemigrations && cd ..
     - python3 ci/check_migration_files.py
     - invoke coverage
+    - invoke test --database=mysql
     - invoke translate
     - invoke style
 
