@@ -1,5 +1,6 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load i18n %}
 {% load inventree_extras %}
 
 {% block details %}
@@ -7,7 +8,7 @@
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h4>Part Variants</h4>
+        <h4>{% trans "Part Variants" %}</h4>
     </div>
     <div class='col-sm-6'>
     </div>
@@ -17,45 +18,32 @@
 <div id='button-toolbar'>
     <div class='btn-group'>
         {% if part.is_template and part.active %}
-        <button class='btn btn-success' id='new-variant' title='Create new variant'>New Variant</button>
+        <button class='btn btn-success' id='new-variant' title='{% trans "Create new variant" %}'>{% trans "New Variant" %}</button>
         {% endif %}
     </div>
 </div>
 
-<table class='table table-striped table-condensed' id='variant-table' data-toolbar='#button-toolbar'>
-    <thead>
-        <tr>
-            <th data-sortable='true'>Variant</th>
-            <th data-sortable='true'>Description</th>
-            <th data-sortable='true'>Stock</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for variant in part.variants.all %}
-        <tr>
-            <td>
-                {% include "hover_image.html" with image=variant.image hover=True %}
-                <a href="{% url 'part-detail' variant.id %}">{{ variant.full_name }}</a>
-                {% if not variant.active %}
-                <span class='label label-warning' style='float: right;'>INACTIVE</span>
-                {% endif %}
-            </td>
-            <td>{{ variant.description }}</td>
-            <td>{% decimal variant.total_stock %}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
+<table class='table table-striped table-condensed' id='variants-table' data-toolbar='#button-toolbar'>
 </table>
 
 {% endblock %}
 
+{% block js_load %}
+{{ block.super }}
+
+<!-- jquery-treegrid -->
+<script type='text/javascript' src='{% static "treegrid/js/jquery.treegrid.js" %}'></script>
+<script type='text/javascript' src='{% static "treegrid/js/jquery.treegrid.bootstrap3.js" %}'></script>
+
+<!-- boostrap-table-treegrid -->
+<script type='text/javascript' src='{% static "bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.js" %}'></script>
+
+{% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
 
-
-    $('#variant-table').inventreeTable({
-    });
+    loadPartVariantTable($('#variants-table'), {{ part.pk }});
 
     $('#new-variant').click(function() {
         launchModalForm(

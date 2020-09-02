@@ -60,6 +60,98 @@ function toggleStar(options) {
     );
 }
 
+
+function loadPartVariantTable(table, partId, options) {
+    /* Load part variant table
+     */
+
+    var params = {
+        ancestor: partId,
+    };
+
+    var cols = [
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+            switchable: false,
+        },
+        {
+            field: 'name',
+            title: '{% trans "Name" %}',
+            switchable: false,
+            formatter: function(value, row, index, field) {
+                var html = '';
+
+                var name = '';
+
+                if (row.IPN) {
+                    name += row.IPN;
+                    name += ' | ';
+                }
+    
+                name += value;
+    
+                if (row.revision) {
+                    name += ' | ';
+                    name += row.revision;
+                }
+    
+                if (row.is_template) {
+                    name = '<i>' + name + '</i>';
+                }
+
+                html += imageHoverIcon(row.thumbnail);
+                html += renderLink(name, `/part/${row.pk}/`);
+
+                return html;
+            },
+        },
+        {
+            field: 'IPN',
+            title: '{% trans 'IPN' %}',
+        },
+        {
+            field: 'revision',
+            title: '{% trans 'Revision' %}',
+        },
+        {
+            field: 'description',
+            title: '{% trans "Description" %}',
+        },
+        {
+            field: 'in_stock',
+            title: '{% trans "Stock" %}',
+        }
+    ];
+
+    table.inventreeTable({
+        url: "{% url 'api-part-list' %}",
+        name: 'partvariants',
+        showColumns: true,
+        original: params,
+        queryParams: params,
+        formatNoMatches: function() { return "{% trans "No variants found" %}"; },
+        columns: cols,
+        treeEnable: true,
+        rootParentId: partId,
+        parentIdField: 'variant_of',
+        idField: 'pk',
+        uniqueId: 'pk',
+        treeShowField: 'name',
+        sortable: true,
+        search: true,
+        onPostBody: function() {
+            table.treegrid({
+                treeColumn: 0,
+            });
+
+            table.treegrid('collapseAll');
+        }
+    });
+}
+
+
 function loadPartTable(table, url, options={}) {
     /* Load part listing data into specified table.
      * 
