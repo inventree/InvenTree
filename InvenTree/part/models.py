@@ -497,18 +497,18 @@ class Part(MPTTModel):
 
     description = models.CharField(max_length=250, blank=False, help_text=_('Part description'))
 
-    keywords = models.CharField(max_length=250, blank=True, help_text=_('Part keywords to improve visibility in search results'))
+    keywords = models.CharField(max_length=250, blank=True, null=True, help_text=_('Part keywords to improve visibility in search results'))
 
     category = TreeForeignKey(PartCategory, related_name='parts',
                               null=True, blank=True,
                               on_delete=models.DO_NOTHING,
                               help_text=_('Part category'))
 
-    IPN = models.CharField(max_length=100, blank=True, help_text=_('Internal Part Number'), validators=[validators.validate_part_ipn])
+    IPN = models.CharField(max_length=100, blank=True, null=True, help_text=_('Internal Part Number'), validators=[validators.validate_part_ipn])
 
-    revision = models.CharField(max_length=100, blank=True, help_text=_('Part revision or version number'))
+    revision = models.CharField(max_length=100, blank=True, null=True, help_text=_('Part revision or version number'))
 
-    link = InvenTreeURLField(blank=True, help_text=_('Link to extenal URL'))
+    link = InvenTreeURLField(blank=True, null=True, help_text=_('Link to extenal URL'))
 
     image = StdImageField(
         upload_to=rename_part_image,
@@ -569,7 +569,7 @@ class Part(MPTTModel):
 
     minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text=_('Minimum allowed stock level'))
 
-    units = models.CharField(max_length=20, default="", blank=True, help_text=_('Stock keeping units for this part'))
+    units = models.CharField(max_length=20, default="", blank=True, null=True, help_text=_('Stock keeping units for this part'))
 
     assembly = models.BooleanField(default=False, verbose_name='Assembly', help_text=_('Can this part be built from other parts?'))
 
@@ -585,7 +585,7 @@ class Part(MPTTModel):
 
     virtual = models.BooleanField(default=False, help_text=_('Is this a virtual part, such as a software product or license?'))
 
-    notes = MarkdownxField(blank=True, help_text=_('Part notes - supports Markdown formatting'))
+    notes = MarkdownxField(blank=True, null=True, help_text=_('Part notes - supports Markdown formatting'))
 
     bom_checksum = models.CharField(max_length=128, blank=True, help_text=_('Stored BOM checksum'))
 
