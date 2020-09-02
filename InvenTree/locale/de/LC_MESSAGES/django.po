@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-02 13:54+0000\n"
+"POT-Creation-Date: 2020-09-02 13:57+0000\n"
 "PO-Revision-Date: 2020-05-03 11:32+0200\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -1232,8 +1232,8 @@ msgstr "Bestellungen"
 
 #: company/templates/company/tabs.html:9
 #: order/templates/order/receive_parts.html:14 part/models.py:240
-#: part/templates/part/category.html:83 templates/navbar.html:18
-#: templates/stats.html:8 templates/stats.html:17
+#: part/templates/part/cat_link.html:7 part/templates/part/category.html:83
+#: templates/navbar.html:18 templates/stats.html:8 templates/stats.html:17
 msgid "Parts"
 msgstr "Teile"
 
