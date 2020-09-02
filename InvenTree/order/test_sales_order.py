@@ -133,7 +133,6 @@ class SalesOrderTest(TestCase):
 
         for item in outputs.all():
             self.assertEqual(item.quantity, 25)
-
     
         self.assertEqual(Sa.sales_order, None)
         self.assertEqual(Sb.sales_order, None)
