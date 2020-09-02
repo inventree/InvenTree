@@ -1,8 +1,10 @@
+{% load i18n %}
+
 <div class='navigation'>
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li><a href='#' id='toggle-part-tree'><b><span class='fas fa-stream'></span></b></a></li>
-    <li class="breadcrumb-item{% if category is None %} active" aria-current="page{% endif %}"><a href="/part/">Parts</a></li>
+    <li class="breadcrumb-item{% if category is None %} active" aria-current="page{% endif %}"><a href="/part/">{% trans "Parts" %}</a></li>
 {% if category %}
 {% for path_item in category.parentpath %}
     <li class="breadcrumb-item"><a href="{% url 'category-detail' path_item.id %}">{{ path_item.name }}</a></li>

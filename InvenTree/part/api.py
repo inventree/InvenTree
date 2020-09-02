@@ -275,6 +275,7 @@ class PartList(generics.ListCreateAPIView):
         - purchaseable: Filter by purcahseable field
         - salable: Filter by salable field
         - active: Filter by active field
+        - ancestor: Filter parts by 'ancestor' (template / variant tree)
     """
 
     serializer_class = part_serializers.PartSerializer
@@ -387,10 +388,24 @@ class PartList(generics.ListCreateAPIView):
         We overide the DRF filter_fields here because
         """
 
+        params = self.request.query_params
+
         queryset = super().filter_queryset(queryset)
 
+        # Filter by 'ancestor'?
+        ancestor = params.get('ancestor', None)
+
+        if ancestor is not None:
+            # If an 'ancestor' part is provided, filter to match only children
+            try:
+                ancestor = Part.objects.get(pk=ancestor)
+                descendants = ancestor.get_descendants(include_self=False)
+                queryset = queryset.filter(pk__in=[d.pk for d in descendants])
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # Filter by 'starred' parts?
-        starred = self.request.query_params.get('starred', None)
+        starred = params.get('starred', None)
 
         if starred is not None:
             starred = str2bool(starred)
@@ -402,10 +417,10 @@ class PartList(generics.ListCreateAPIView):
                 queryset = queryset.exclude(pk__in=starred_parts)
 
         # Cascade?
-        cascade = str2bool(self.request.query_params.get('cascade', None))
+        cascade = str2bool(params.get('cascade', None))
 
         # Does the user wish to filter by category?
-        cat_id = self.request.query_params.get('category', None)
+        cat_id = params.get('category', None)
 
         if cat_id is None:
             # No category filtering if category is not specified
@@ -437,7 +452,7 @@ class PartList(generics.ListCreateAPIView):
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
         # Filter by whether the part has stock
-        has_stock = self.request.query_params.get("has_stock", None)
+        has_stock = params.get("has_stock", None)
         if has_stock is not None:
             has_stock = str2bool(has_stock)
 
@@ -447,7 +462,7 @@ class PartList(generics.ListCreateAPIView):
                 queryset = queryset.filter(Q(in_stock__lte=0))
 
         # If we are filtering by 'low_stock' status
-        low_stock = self.request.query_params.get('low_stock', None)
+        low_stock = params.get('low_stock', None)
 
         if low_stock is not None:
             low_stock = str2bool(low_stock)

@@ -18,7 +18,7 @@
 {% endif %}
 {% if part.variant_of %}
 <div class='alert alert-info alert-block'>
-    {% trans "This part is a variant of" %} <b><a href="{% url 'part-detail' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></b>
+    {% trans "This part is a variant of" %} <b><a href="{% url 'part-variants' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></b>
 </div>
 {% endif %}
 
