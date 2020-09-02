@@ -36,8 +36,14 @@
         {% if part.trackable %}
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
-            <td><b>{% trans "Next Serial Number" %}</b></td>
-            <td>{{ part.getNextSerialNumber }}</td>
+            <td><b>{% trans "Latest Serial Number" %}</b></td>
+            <td>
+                {% if part.getLatestSerialNumber %}
+                {{ part.getLatestSerialNumber }}
+                {% else %}
+                {% trans "No serial numbers recorded" %}
+                {% endif %}
+            </td>
         </tr>
         {% endif %}
         <tr>

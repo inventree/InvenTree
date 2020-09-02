@@ -319,52 +319,75 @@ class Part(MPTTModel):
 
         return stock.exists()
 
-    def getHighestSerialNumber(self):
+    def getLatestSerialNumber(self):
         """
-        Return the highest serial number for this Part.
+        Return the "latest" serial number for this Part.
+
+        If *all* the serial numbers are integers, then this will return the highest one.
+        Otherwise, it will simply return the serial number most recently added.
 
         Note: Serial numbers must be unique across an entire Part "tree",
         so we filter by the entire tree.
         """
 
         parts = Part.objects.filter(tree_id=self.tree_id)
-        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None).order_by('-serial')
-
-        if stock.count() > 0:
-            return stock.first().serial
+        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None)
         
+        # There are no matchin StockItem objects (skip further tests)
+        if not stock.exists():
+            return None
+
+        # Attempt to coerce the returned serial numbers to integers
+        # If *any* are not integers, fail!
+        try:
+            ordered = sorted(stock.all(), reverse=True, key=lambda n: int(n.serial))
+
+            if len(ordered) > 0:
+                return ordered[0].serial
+
+        # One or more of the serial numbers was non-numeric
+        # In this case, the "best" we can do is return the most recent
+        except ValueError:
+            return stock.last().serial
+
         # No serial numbers found
         return None
 
-    def getNextSerialNumber(self):
-        """
-        Return the next-available serial number for this Part.
-        """
-
-        n = self.getHighestSerialNumber()
-
-        if n is None:
-            return 1
-        else:
-            return n + 1
-
-    def getSerialNumberString(self, quantity):
+    def getSerialNumberString(self, quantity=1):
         """
         Return a formatted string representing the next available serial numbers,
         given a certain quantity of items.
         """
 
-        sn = self.getNextSerialNumber()
+        latest = self.getLatestSerialNumber()
 
-        if quantity >= 2:
-            sn = "{n}-{m}".format(
-                n=sn,
-                m=int(sn + quantity - 1)
-            )
+        quantity = int(quantity)
+
+        # No serial numbers can be found, assume 1 as the first serial
+        if latest is None:
+            latest = 0
+
+        # Attempt to turn into an integer
+        try:
+            latest = int(latest)
+        except:
+            pass
+
+        if type(latest) is int:
+
+            if quantity >= 2:
+                text = '{n} - {m}'.format(n=latest + 1, m=latest + 1 + quantity)
+
+                return _('Next available serial numbers are') + ' ' + text
+            else:
+                text = str(latest)
+
+                return _('Next available serial number is') + ' ' + text
+
         else:
-            sn = str(sn)
+            # Non-integer values, no option but to return latest
 
-        return sn
+            return _('Most recent serial number is') + ' ' + str(latest)
 
     @property
     def full_name(self):

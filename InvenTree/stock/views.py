@@ -1234,8 +1234,9 @@ class StockItemCreate(AjaxCreateView):
         part = self.get_part(form=form)
 
         if part is not None:
-            sn = part.getNextSerialNumber()
-            form.field_placeholder['serial_numbers'] = _('Next available serial number is') + ' ' + str(sn)
+
+            # Add placeholder text for the serial number field
+            form.field_placeholder['serial_numbers'] = part.getSerialNumberString()
 
             form.rebuild_layout()
 
@@ -1352,11 +1353,6 @@ class StockItemCreate(AjaxCreateView):
             try:
                 part = Part.objects.get(id=part_id)
                 quantity = Decimal(form['quantity'].value())
-
-                sn = part.getNextSerialNumber()
-                form.field_placeholder['serial_numbers'] = _("Next available serial number is") + " " + str(sn)
-
-                form.rebuild_layout()
 
             except (Part.DoesNotExist, ValueError, InvalidOperation):
                 part = None
