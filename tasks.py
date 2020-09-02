@@ -162,7 +162,7 @@ def translate(c):
     or after adding translations for existing strings.
     """
 
-    manage(c, "makemigrations")
+    manage(c, "makemessages")
     manage(c, "compilemessages")
 
 @task
