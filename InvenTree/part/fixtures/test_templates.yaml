@@ -1,25 +1,30 @@
 # Tests for the top-level "chair" part
 - model: part.parttesttemplate
+  pk: 1
   fields:
     part: 10000
     test_name: Test strength of chair
 
 - model: part.parttesttemplate
+  pk: 2
   fields:
     part: 10000
     test_name: Apply paint
 
 - model: part.parttesttemplate
+  pk: 3
   fields:
     part: 10000
     test_name: Sew cushion
 
 - model: part.parttesttemplate
+  pk: 4
   fields:
     part: 10000
     test_name: Attach legs
 
 - model: part.parttesttemplate
+  pk: 5
   fields:
     part: 10000
     test_name: Record weight
@@ -27,12 +32,14 @@
 
 # Add some tests for one of the variants
 - model: part.parttesttemplate
+  pk: 6
   fields:
     part: 10003
     test_name: Check that chair is green
     required: true
 
 - model: part.parttesttemplate
+  pk: 7
   fields:
     part: 10004
     test_name: Check that chair is especially green

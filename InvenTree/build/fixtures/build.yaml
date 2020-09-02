@@ -1,6 +1,7 @@
 # Construct build objects 
 
 - model: build.build
+  pk: 1
   fields:
     part: 25
     batch: 'B1'
@@ -16,6 +17,7 @@
     tree_id: 0
 
 - model: build.build
+  pk: 2
   fields:
     part: 50
     title: 'Making things'

@@ -31,7 +31,8 @@ script:
     - cd InvenTree && python3 manage.py makemigrations && cd ..
     - python3 ci/check_migration_files.py
     - invoke coverage
-    - invoke test --database=mysql
+    - cd InvenTree && python3 manage.py test --settings=InvenTree.ci_mysql && cd ..
+    - cd InvenTree && python3 manage.py test --settings=InvenTree.ci_postgresql && cd ..
     - invoke translate
     - invoke style
 

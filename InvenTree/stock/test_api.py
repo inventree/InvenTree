@@ -21,7 +21,7 @@ class StockAPITestCase(APITestCase):
     def setUp(self):
         # Create a user for auth
         User = get_user_model()
-        User.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.user = User.objects.create_user('testuser', 'test@testing.com', 'password')
         self.client.login(username='testuser', password='password')
 
     def doPost(self, url, data={}):
@@ -308,4 +308,4 @@ class StockTestResultTest(StockAPITestCase):
 
         test = response.data[0]
         self.assertEqual(test['value'], '150kPa')
-        self.assertEqual(test['user'], 1)
+        self.assertEqual(test['user'], self.user.pk)

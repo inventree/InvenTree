@@ -113,17 +113,17 @@ class ContactSimpleTest(TestCase):
 
     def setUp(self):
         # Create a simple company
-        c = Company.objects.create(name='Test Corp.', description='We make stuff good')
+        self.c = Company.objects.create(name='Test Corp.', description='We make stuff good')
 
         # Add some contacts
-        Contact.objects.create(name='Joe Smith', company=c)
-        Contact.objects.create(name='Fred Smith', company=c)
-        Contact.objects.create(name='Sally Smith', company=c)
+        Contact.objects.create(name='Joe Smith', company=self.c)
+        Contact.objects.create(name='Fred Smith', company=self.c)
+        Contact.objects.create(name='Sally Smith', company=self.c)
 
     def test_exists(self):
         self.assertEqual(Contact.objects.count(), 3)
 
     def test_delete(self):
         # Remove the parent company
-        Company.objects.get(pk=1).delete()
+        Company.objects.get(pk=self.c.pk).delete()
         self.assertEqual(Contact.objects.count(), 0)
