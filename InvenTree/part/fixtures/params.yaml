@@ -20,12 +20,14 @@
 
 # And some parameters (requires part.yaml)
 - model: part.PartParameter
+  pk: 1
   fields:
     part: 1
     template: 1
     data: 4
 
 - model: part.PartParameter
+  pk: 2
   fields:
     part: 2
     template: 1

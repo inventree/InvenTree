@@ -203,22 +203,25 @@ class BuildTest(TestCase):
         # - Three for the split items assigned to the build
         self.assertEqual(StockItem.objects.count(), 16)
 
+        A = StockItem.objects.get(pk=self.stock_1_1.pk)
+        B = StockItem.objects.get(pk=self.stock_1_2.pk)
+        C = StockItem.objects.get(pk=self.stock_2_1.pk)
+
         # Stock should have been subtracted from the original items
-        self.assertEqual(StockItem.objects.get(pk=1).quantity, 950)
-        self.assertEqual(StockItem.objects.get(pk=2).quantity, 50)
-        self.assertEqual(StockItem.objects.get(pk=3).quantity, 4750)
+        self.assertEqual(A.quantity, 950)
+        self.assertEqual(B.quantity, 50)
+        self.assertEqual(C.quantity, 4750)
 
-        # New stock items created and assigned to the build
-        self.assertEqual(StockItem.objects.get(pk=4).quantity, 50)
-        self.assertEqual(StockItem.objects.get(pk=4).build_order, self.build)
+        # New stock items should have also been allocated to the build
+        allocated = StockItem.objects.filter(build_order=self.build)
 
-        self.assertEqual(StockItem.objects.get(pk=5).quantity, 50)
-        self.assertEqual(StockItem.objects.get(pk=5).build_order, self.build)
+        self.assertEqual(allocated.count(), 3)
 
-        self.assertEqual(StockItem.objects.get(pk=6).quantity, 250)
-        self.assertEqual(StockItem.objects.get(pk=6).build_order, self.build)
+        q = sum([item.quantity for item in allocated.all()])
+
+        self.assertEqual(q, 350)
         
-        # And a new stock item created for the build output
-        self.assertEqual(StockItem.objects.get(pk=7).quantity, 1)
-        self.assertEqual(StockItem.objects.get(pk=7).serial, "1")
-        self.assertEqual(StockItem.objects.get(pk=7).build, self.build)
+        # And 10 new stock items created for the build output
+        outputs = StockItem.objects.filter(build=self.build)
+
+        self.assertEqual(outputs.count(), 10)

@@ -175,18 +175,15 @@ def style(c):
     c.run('flake8 InvenTree')
 
 @task
-def test(c):
+def test(c, database=None):
     """
     Run unit-tests for InvenTree codebase.
     """
-
     # Run sanity check on the django install
     manage(c, 'check')
 
     # Run coverage tests
-    manage(c, 'test {apps}'.format(
-        apps=' '.join(apps())
-    ))
+    manage(c, 'test', pty=True)
 
 @task
 def coverage(c):

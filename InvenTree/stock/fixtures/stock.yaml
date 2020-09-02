@@ -2,6 +2,7 @@
 
 # 4,000 screws in the dining room
 - model: stock.stockitem
+  pk: 1
   fields:
     part: 1
     location: 3
@@ -14,6 +15,7 @@
 
 # 5,000 screws in the bathroom
 - model: stock.stockitem
+  pk: 2
   fields:
     part: 1
     location: 2

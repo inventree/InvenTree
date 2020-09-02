@@ -1,4 +1,5 @@
 - model: stock.stockitemtestresult
+  pk: 1
   fields:
     stock_item: 105
     test: "Firmware Version"
@@ -7,6 +8,7 @@
     date: 2020-02-02
 
 - model: stock.stockitemtestresult
+  pk: 2
   fields:
     stock_item: 105
     test: "Settings Checksum"
@@ -15,6 +17,7 @@
     date: 2020-02-02
 
 - model: stock.stockitemtestresult
+  pk: 3
   fields:
     stock_item: 105
     test: "Temperature Test"
@@ -23,6 +26,7 @@
     notes: 'Got too hot or something'
 
 - model: stock.stockitemtestresult
+  pk: 4
   fields:
     stock_item: 105
     test: "Temperature Test"
@@ -31,6 +35,7 @@
     notes: 'Passed temperature test by making it cooler'
 
 - model: stock.stockitemtestresult
+  pk: 5
   fields:
     stock_item: 522
     test: 'applypaint'
@@ -38,6 +43,7 @@
     date: 2020-05-17
 
 - model: stock.stockitemtestresult
+  pk: 6
   fields:
     stock_item: 522
     test: 'applypaint'
@@ -45,6 +51,7 @@
     date: 2020-05-18
 
 - model: stock.stockitemtestresult
+  pk: 7
   fields:
     stock_item: 522
     test: 'Attach Legs'
@@ -52,6 +59,7 @@
     date: 2020-05-17
 
 - model: stock.stockitemtestresult
+  pk: 8
   fields:
     stock_item: 522
     test: 'Check that chair is GreEn   '

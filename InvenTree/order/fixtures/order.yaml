@@ -29,6 +29,7 @@
 # 250 x ACME0002 (M2x4 LPHS)
 # Partially received (50)
 - model: order.purchaseorderlineitem
+  pk: 2
   fields:
     order: 1
     part: 2
@@ -37,6 +38,7 @@
 
 # 1000 x ACME0003
 - model: order.purchaseorderlineitem
+  pk: 3
   fields:
     order: 1
     part: 3

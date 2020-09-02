@@ -1,5 +1,9 @@
 dist: xenial
 
+services:
+    - mysql
+    - postgresql
+
 language: python
 python:
     - 3.6
@@ -12,15 +16,23 @@ addons:
 before_install:
     - sudo apt-get update
     - sudo apt-get install gettext
+    - sudo apt-get install mysql-server libmysqlclient-dev
+    - sudo apt-get install libpq-dev
     - pip3 install invoke
+    - pip3 install mysqlclient
+    - pip3 install psycopg2
     - invoke install
     - invoke migrate
     - cd InvenTree && python3 manage.py createsuperuser --username InvenTreeAdmin --email admin@inventree.com --noinput && cd ..
+    - psql -c 'create database inventree_test_db;' -U postgres
+    - mysql -e 'CREATE DATABASE inventree_test_db;'
 
 script:
     - cd InvenTree && python3 manage.py makemigrations && cd ..
     - python3 ci/check_migration_files.py
     - invoke coverage
+    - cd InvenTree && python3 manage.py test --settings=InvenTree.ci_mysql && cd ..
+    - cd InvenTree && python3 manage.py test --settings=InvenTree.ci_postgresql && cd ..
     - invoke translate
     - invoke style
 
