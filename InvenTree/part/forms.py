@@ -129,10 +129,17 @@ class EditPartForm(HelperForm):
         'IPN': 'fa-hashtag',
     }
 
-    deep_copy = forms.BooleanField(required=False,
-                                   initial=True,
-                                   help_text=_("Perform 'deep copy' which will duplicate all BOM data for this part"),
-                                   widget=forms.HiddenInput())
+    bom_copy = forms.BooleanField(required=False,
+                                  initial=True,
+                                  help_text=_("Duplicate all BOM data for this part"),
+                                  label=_('Copy BOM'),
+                                  widget=forms.HiddenInput())
+
+    parameters_copy = forms.BooleanField(required=False,
+                                         initial=True,
+                                         help_text=_("Duplicate all parameters data for this part"),
+                                         label=_('Copy Parameters'),
+                                         widget=forms.HiddenInput())
 
     confirm_creation = forms.BooleanField(required=False,
                                           initial=False,
@@ -142,7 +149,8 @@ class EditPartForm(HelperForm):
     class Meta:
         model = Part
         fields = [
-            'deep_copy',
+            'bom_copy',
+            'parameters_copy',
             'confirm_creation',
             'category',
             'name',

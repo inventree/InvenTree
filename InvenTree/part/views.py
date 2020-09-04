@@ -330,7 +330,7 @@ class MakePartVariant(AjaxCreateView):
             data['url'] = part.get_absolute_url()
 
             # Copy relevent information from the template part
-            part.deepCopy(part_template, bom=True)
+            part.deepCopy(part_template, bom=True, parameters=True)
 
         return self.renderJsonResponse(request, form, data, context=context)
 
@@ -377,15 +377,19 @@ class PartDuplicate(AjaxCreateView):
     def get_form(self):
         form = super(AjaxCreateView, self).get_form()
 
-        # Force display of the 'deep_copy' widget
-        form.fields['deep_copy'].widget = CheckboxInput()
+        # Force display of the 'bom_copy' widget
+        form.fields['bom_copy'].widget = CheckboxInput()
+
+        # Force display of the 'parameters_copy' widget
+        form.fields['parameters_copy'].widget = CheckboxInput()
 
         return form
 
     def post(self, request, *args, **kwargs):
         """ Capture the POST request for part duplication
 
-        - If the deep_copy object is set, copy all the BOM items too!
+        - If the bom_copy object is set, copy all the BOM items too!
+        - If the parameters_copy object is set, copy all the parameters too!
         """
 
         form = self.get_form()
@@ -428,12 +432,13 @@ class PartDuplicate(AjaxCreateView):
             data['pk'] = part.pk
             data['text'] = str(part)
 
-            deep_copy = str2bool(request.POST.get('deep_copy', False))
+            bom_copy = str2bool(request.POST.get('bom_copy', False))
+            parameters_copy = str2bool(request.POST.get('parameters_copy', False))
 
             original = self.get_part_to_copy()
 
             if original:
-                part.deepCopy(original, bom=deep_copy)
+                part.deepCopy(original, bom=bom_copy, parameters=parameters_copy)
 
             try:
                 data['url'] = part.get_absolute_url()
@@ -456,7 +461,9 @@ class PartDuplicate(AjaxCreateView):
         else:
             initials = super(AjaxCreateView, self).get_initial()
 
-        initials['deep_copy'] = str2bool(InvenTreeSetting.get_setting('part_deep_copy', True))
+        initials['bom_copy'] = str2bool(InvenTreeSetting.get_setting('part_deep_copy', True))
+        # Create new entry in InvenTree/common/kvp.yaml?
+        initials['parameters_copy'] = str2bool(InvenTreeSetting.get_setting('part_deep_copy', True))
 
         return initials
 
