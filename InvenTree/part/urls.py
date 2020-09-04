@@ -99,8 +99,10 @@ part_urls = [
     # Export data for multiple parts
     url(r'^export/', views.PartExport.as_view(), name='part-export'),
 
-    # Individual part
+    # Individual part using pk
     url(r'^(?P<pk>\d+)/', include(part_detail_urls)),
+    # Individual part using IPN as slug
+    url(r'^(?P<slug>[-\w]+)/', views.PartDetailFromIPN.as_view(), name='part-detail-from-ipn'),
 
     # Part category
     url(r'^category/(?P<pk>\d+)/', include(part_category_urls)),

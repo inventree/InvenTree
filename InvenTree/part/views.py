@@ -647,6 +647,41 @@ class PartDetail(DetailView):
         return context
 
 
+class PartDetailFromIPN(PartDetail):
+    slug_field = 'IPN'
+    slug_url_kwarg = 'slug'
+
+    def get_object(self):
+        """ Return Part object which IPN field matches the slug value """
+        queryset = self.get_queryset()
+        # Get slug
+        slug = self.kwargs.get(self.slug_url_kwarg)
+
+        if slug is not None:
+            slug_field = self.get_slug_field()
+            # Filter by the slug value
+            queryset = queryset.filter(**{slug_field: slug})
+
+            try:
+                # Get unique part from queryset
+                part = queryset.get()
+                # Return Part object
+                return part
+            except queryset.model.DoesNotExist:
+                pass
+        
+        return None
+
+    def get(self, request, *args, **kwargs):
+        """ Attempt to match slug to a Part, else redirect to PartIndex view """
+        self.object = self.get_object()
+
+        if not self.object:
+            return HttpResponseRedirect(reverse('part-index'))
+
+        return super(PartDetailFromIPN, self).get(request, *args, **kwargs)
+
+
 class PartQRCode(QRCodeView):
     """ View for displaying a QR code for a Part object """
 
