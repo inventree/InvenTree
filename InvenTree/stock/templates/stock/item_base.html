@@ -61,9 +61,9 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 <hr>
 <h4>
 {% if item.serialized %}
-{{ item.part.full_name}} # {{ item.serial }}
+<a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name}}</a> # {{ item.serial }}
 {% else %}
-{% decimal item.quantity %} &times {{ item.part.full_name }}
+<a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name }}</a> &times {% decimal item.quantity %}
 {% endif %}
 </h4>
 
