@@ -13,6 +13,8 @@ from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment
 from .models import PartTestTemplate
 
+from stock.models import StockItem
+
 from decimal import Decimal
 
 from sql_util.utils import SubquerySum, SubqueryCount
@@ -20,7 +22,7 @@ from sql_util.utils import SubquerySum, SubqueryCount
 from django.db.models import Q
 from django.db.models.functions import Coalesce
 
-from InvenTree.status_codes import StockStatus, PurchaseOrderStatus, BuildStatus
+from InvenTree.status_codes import PurchaseOrderStatus, BuildStatus
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
@@ -191,19 +193,10 @@ class PartSerializer(InvenTreeModelSerializer):
         to reduce database trips.
         """
 
-        # Filter to limit stock items to "available"
-        stock_filter = Q(
-            status__in=StockStatus.AVAILABLE_CODES,
-            sales_order=None,
-            build_order=None,
-            belongs_to=None,
-            customer=None,
-        )
-
         # Annotate with the total 'in stock' quantity
         queryset = queryset.annotate(
             in_stock=Coalesce(
-                SubquerySum('stock_items__quantity', filter=stock_filter),
+                SubquerySum('stock_items__quantity', filter=StockItem.IN_STOCK_FILTER),
                 Decimal(0)
             ),
         )
