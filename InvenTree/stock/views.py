@@ -1243,12 +1243,12 @@ class StockItemCreate(AjaxCreateView):
             # Hide the 'part' field (as a valid part is selected)
             # form.fields['part'].widget = HiddenInput()
 
-            # trackable parts get special consideration
+            # Trackable parts get special consideration:
             if part.trackable:
                 form.fields['delete_on_deplete'].widget = HiddenInput()
                 form.fields['delete_on_deplete'].initial = False
             else:
-                form.fields.pop('serial_numbers')
+                form.fields['serial_numbers'].widget = HiddenInput()
 
             # If the part is NOT purchaseable, hide the supplier_part field
             if not part.purchaseable:
@@ -1306,11 +1306,9 @@ class StockItemCreate(AjaxCreateView):
         supplier_part = None
 
         if part is not None:
-            # Check that the supplied part is 'valid'
-            if not part.is_template and part.active and not part.virtual:
-                initials['part'] = part
-                initials['location'] = part.get_default_location()
-                initials['supplier_part'] = part.default_supplier
+            initials['part'] = part
+            initials['location'] = part.get_default_location()
+            initials['supplier_part'] = part.default_supplier
 
         # SupplierPart field has been specified
         # It must match the Part, if that has been supplied

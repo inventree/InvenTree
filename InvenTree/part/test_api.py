@@ -1,7 +1,14 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
+
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+
+from part.models import Part
+from stock.models import StockItem
+from company.models import Company
+
+from InvenTree.status_codes import StockStatus
 
 
 class PartAPITest(APITestCase):
@@ -213,3 +220,77 @@ class PartAPITest(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class PartAPIAggregationTest(APITestCase):
+    """
+    Tests to ensure that the various aggregation annotations are working correctly...
+    """
+
+    fixtures = [
+        'category',
+        'company',
+        'part',
+        'location',
+        'bom',
+        'test_templates',
+    ]
+
+    def setUp(self):
+        # Create a user for auth
+        User = get_user_model()
+        User.objects.create_user('testuser', 'test@testing.com', 'password')
+
+        self.client.login(username='testuser', password='password')
+
+        # Add a new part
+        self.part = Part.objects.create(
+            name='Banana',
+        )
+
+        # Create some stock items associated with the part
+
+        # First create 600 units which are OK
+        StockItem.objects.create(part=self.part, quantity=100)
+        StockItem.objects.create(part=self.part, quantity=200)
+        StockItem.objects.create(part=self.part, quantity=300)
+
+        # Now create another 400 units which are LOST
+        StockItem.objects.create(part=self.part, quantity=400, status=StockStatus.LOST)
+
+    def get_part_data(self):
+        url = reverse('api-part-list')
+
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        for part in response.data:
+            if part['pk'] == self.part.pk:
+                return part
+
+        # We should never get here!
+        self.assertTrue(False)
+
+    def test_stock_quantity(self):
+        """
+        Simple test for the stock quantity
+        """
+
+        data = self.get_part_data()
+
+        self.assertEqual(data['in_stock'], 600)
+        self.assertEqual(data['stock_item_count'], 4)
+    
+        # Add some more stock items!!
+        for i in range(100):
+            StockItem.objects.create(part=self.part, quantity=5)
+
+        # Add another stock item which is assigned to a customer (and shouldn't count)
+        customer = Company.objects.get(pk=4)
+        StockItem.objects.create(part=self.part, quantity=9999, customer=customer)
+
+        data = self.get_part_data()
+
+        self.assertEqual(data['in_stock'], 1100)
+        self.assertEqual(data['stock_item_count'], 105)

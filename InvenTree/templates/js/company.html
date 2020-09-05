@@ -21,6 +21,73 @@ function loadCompanyTable(table, url, options={}) {
 
     setupFilterList("company", $(table));
 
+    var columns = [
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+            switchable: false,
+        },
+        {
+            field: 'name',
+            title: '{% trans "Company" %}',
+            sortable: true,
+            switchable: false,
+            formatter: function(value, row, index, field) {
+                var html = imageHoverIcon(row.image) + renderLink(value, row.url);
+
+                if (row.is_customer) {
+                    html += `<span title='{% trans "Customer" %}' class='fas fa-user-tie label-right'></span>`;
+                }
+                
+                if (row.is_manufacturer) {
+                    html += `<span title='{% trans "Manufacturer" %}' class='fas fa-industry label-right'></span>`;
+                }
+                
+                if (row.is_supplier) {
+                    html += `<span title='{% trans "Supplier" %}' class='fas fa-building label-right'></span>`;
+                }
+
+                return html;
+            }
+        },
+        {
+            field: 'description',
+            title: '{% trans "Description" %}',
+            sortable: true,
+        },
+        {
+            field: 'website',
+            title: '{% trans "Website" %}',
+            formatter: function(value, row, index, field) {
+                if (value) {
+                    return renderLink(value, value);
+                }
+                return '';
+            }
+        },
+    ];
+
+    if (options.pagetype == 'suppliers') {
+        columns.push({
+            sortable: true,
+            field: 'parts_supplied',
+            title: '{% trans "Parts Supplied" %}',
+            formatter: function(value, row) {
+                return renderLink(value, `/company/${row.pk}/parts/`);
+            }
+        });
+    } else if (options.pagetype == 'manufacturers') {
+        columns.push({
+            sortable: true,
+            field: 'parts_manufactured',
+            title: '{% trans "Parts Manufactured" %}',
+            formatter: function(value, row) {
+                return renderLink(value, `/company/${row.pk}/parts/`);
+            }
+        });
+    }
+
     $(table).inventreeTable({
         url: url,
         method: 'get',
@@ -28,53 +95,8 @@ function loadCompanyTable(table, url, options={}) {
         groupBy: false,
         formatNoMatches: function() { return "{% trans "No company information found" %}"; },
         showColumns: true,
-        name: 'company',
-        columns: [
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-                switchable: false,
-            },
-            {
-                field: 'name',
-                title: '{% trans "Company" %}',
-                sortable: true,
-                switchable: false,
-                formatter: function(value, row, index, field) {
-                    var html = imageHoverIcon(row.image) + renderLink(value, row.url);
-
-                    if (row.is_customer) {
-                        html += `<span title='{% trans "Customer" %}' class='fas fa-user-tie label-right'></span>`;
-                    }
-                    
-                    if (row.is_manufacturer) {
-                        html += `<span title='{% trans "Manufacturer" %}' class='fas fa-industry label-right'></span>`;
-                    }
-                    
-                    if (row.is_supplier) {
-                        html += `<span title='{% trans "Supplier" %}' class='fas fa-building label-right'></span>`;
-                    }
-
-                    return html;
-                }
-            },
-            {
-                field: 'description',
-                title: '{% trans "Description" %}',
-                sortable: true,
-            },
-            {
-                field: 'website',
-                title: '{% trans "Website" %}',
-                formatter: function(value, row, index, field) {
-                    if (value) {
-                        return renderLink(value, value);
-                    }
-                    return '';
-                }
-            },
-        ],
+        name: options.pagetype || 'company',
+        columns: columns,
     });
 }
 
