@@ -101,8 +101,6 @@ part_urls = [
 
     # Individual part using pk
     url(r'^(?P<pk>\d+)/', include(part_detail_urls)),
-    # Individual part using IPN as slug
-    url(r'^(?P<slug>[-\w]+)/', views.PartDetailFromIPN.as_view(), name='part-detail-from-ipn'),
 
     # Part category
     url(r'^category/(?P<pk>\d+)/', include(part_category_urls)),
@@ -125,6 +123,9 @@ part_urls = [
 
     # Bom Items
     url(r'^bom/(?P<pk>\d+)/', include(part_bom_urls)),
+
+    # Individual part using IPN as slug
+    url(r'^(?P<slug>[-\w]+)/', views.PartDetailFromIPN.as_view(), name='part-detail-from-ipn'),
 
     # Top level part list (display top level parts and categories)
     url(r'^.*$', views.PartIndex.as_view(), name='part-index'),
