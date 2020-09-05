@@ -15,7 +15,7 @@ from .models import PartTestTemplate
 
 from decimal import Decimal
 
-from sql_util.utils import SubquerySum
+from sql_util.utils import SubquerySum, SubqueryCount
 
 from django.db.models import Q
 from django.db.models.functions import Coalesce
@@ -208,6 +208,11 @@ class PartSerializer(InvenTreeModelSerializer):
             ),
         )
 
+        # Annotate with the total number of stock items
+        queryset = queryset.annotate(
+            stock_item_count=SubqueryCount('stock_items')
+        )
+
         # Filter to limit builds to "active"
         build_filter = Q(
             status__in=BuildStatus.ACTIVE_CODES
@@ -253,6 +258,7 @@ class PartSerializer(InvenTreeModelSerializer):
     in_stock = serializers.FloatField(read_only=True)
     ordering = serializers.FloatField(read_only=True)
     building = serializers.FloatField(read_only=True)
+    stock_item_count = serializers.IntegerField(read_only=True)
 
     image = serializers.CharField(source='get_image_url', read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
@@ -295,6 +301,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'revision',
             'salable',
             'starred',
+            'stock_item_count',
             'thumbnail',
             'trackable',
             'units',
