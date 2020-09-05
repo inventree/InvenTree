@@ -15,3 +15,10 @@
   fields:
     name: Zerg Corp
     description: We eat the competition
+- model: company.company
+  pk: 4
+  fields:
+    name: A customer
+    description: A company that we sell things to!
+    is_customer: True
+  
