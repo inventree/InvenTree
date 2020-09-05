@@ -1041,6 +1041,7 @@ class Part(MPTTModel):
         Keyword Args:
             image: If True, copies Part image (default = True)
             bom: If True, copies BOM data (default = False)
+            parameters: If True, copies Parameters data (default = True)
         """
 
         # Copy the part image
@@ -1057,6 +1058,17 @@ class Part(MPTTModel):
                 item.part = self
                 item.pk = None
                 item.save()
+
+        # Copy the parameters data
+        if kwargs.get('parameters', True):
+            # Get template part parameters
+            parameters = other.get_parameters()
+            # Copy template part parameters to new variant part
+            for parameter in parameters:
+                PartParameter.create(part=self,
+                                     template=parameter.template,
+                                     data=parameter.data,
+                                     save=True)
 
         # Copy the fields that aren't available in the duplicate form
         self.salable = other.salable
@@ -1401,6 +1413,13 @@ class PartParameter(models.Model):
     template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', help_text=_('Parameter Template'))
 
     data = models.CharField(max_length=500, help_text=_('Parameter Value'))
+
+    @classmethod
+    def create(cls, part, template, data, save=False):
+        part_parameter = cls(part=part, template=template, data=data)
+        if save:
+            part_parameter.save()
+        return part_parameter
 
 
 class BomItem(models.Model):
