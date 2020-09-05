@@ -137,7 +137,7 @@ class EditPartForm(HelperForm):
 
     parameters_copy = forms.BooleanField(required=False,
                                          initial=True,
-                                         help_text=_("Duplicate all parameters data for this part"),
+                                         help_text=_("Duplicate all parameter data for this part"),
                                          label=_('Copy Parameters'),
                                          widget=forms.HiddenInput())
 

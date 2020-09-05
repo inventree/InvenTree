@@ -303,6 +303,12 @@ class MakePartVariant(AjaxCreateView):
         # Hide some variant-related fields
         # form.fields['variant_of'].widget = HiddenInput()
 
+        # Force display of the 'bom_copy' widget
+        form.fields['bom_copy'].widget = CheckboxInput()
+
+        # Force display of the 'parameters_copy' widget
+        form.fields['parameters_copy'].widget = CheckboxInput()
+
         return form
 
     def post(self, request, *args, **kwargs):
@@ -329,8 +335,11 @@ class MakePartVariant(AjaxCreateView):
             data['text'] = str(part)
             data['url'] = part.get_absolute_url()
 
+            bom_copy = str2bool(request.POST.get('bom_copy', False))
+            parameters_copy = str2bool(request.POST.get('parameters_copy', False))
+
             # Copy relevent information from the template part
-            part.deepCopy(part_template, bom=True, parameters=True)
+            part.deepCopy(part_template, bom=bom_copy, parameters=parameters_copy)
 
         return self.renderJsonResponse(request, form, data, context=context)
 
