@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from rest_framework import serializers
 
-from django.db.models import Count
+from sql_util.utils import SubqueryCount
 
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
@@ -39,9 +39,11 @@ class POSerializer(InvenTreeModelSerializer):
         Add extra information to the queryset
         """
 
-        return queryset.annotate(
-            line_items=Count('lines'),
+        queryset = queryset.annotate(
+            line_items=SubqueryCount('lines')
         )
+
+        return queryset
 
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
     
@@ -147,9 +149,11 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
         Add extra information to the queryset
         """
 
-        return queryset.annotate(
-            line_items=Count('lines'),
+        queryset = queryset.annotate(
+            line_items=SubqueryCount('lines')
         )
+
+        return queryset
 
     customer_detail = CompanyBriefSerializer(source='customer', many=False, read_only=True)
 
