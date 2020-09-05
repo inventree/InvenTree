@@ -4,7 +4,7 @@ JSON serializers for Company app
 
 from rest_framework import serializers
 
-from django.db.models import Count
+from sql_util.utils import SubqueryCount
 
 from .models import Company
 from .models import SupplierPart, SupplierPriceBreak
@@ -38,10 +38,16 @@ class CompanySerializer(InvenTreeModelSerializer):
     @staticmethod
     def annotate_queryset(queryset):
 
-        return queryset.annotate(
-            parts_supplied=Count('supplied_parts'),
-            parts_manufactured=Count('manufactured_parts')
+        # Add count of parts manufactured
+        queryset = queryset.annotate(
+            parts_manufactured=SubqueryCount('manufactured_parts')
         )
+
+        queryset = queryset.annotate(
+            parts_supplied=SubqueryCount('supplied_parts')
+        )
+
+        return queryset
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
     

@@ -33,6 +33,7 @@ InvenTree | {% trans "Supplier List" %}
 
     loadCompanyTable("#company-table", "{% url 'api-company-list' %}",
         {
+            pagetype: '{{ pagetype }}',
             params: {
                 {% for key,value in filters.items %}{{ key }}: "{{ value }}",{% endfor %}
             }
