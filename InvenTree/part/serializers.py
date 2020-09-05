@@ -15,7 +15,9 @@ from .models import PartTestTemplate
 
 from decimal import Decimal
 
-from django.db.models import Q, Sum
+from sql_util.utils import SubquerySum
+
+from django.db.models import Q
 from django.db.models.functions import Coalesce
 
 from InvenTree.status_codes import StockStatus, PurchaseOrderStatus, BuildStatus
@@ -190,28 +192,48 @@ class PartSerializer(InvenTreeModelSerializer):
         """
 
         # Filter to limit stock items to "available"
-        stock_filter = Q(stock_items__status__in=StockStatus.AVAILABLE_CODES)
+        stock_filter = Q(
+            status__in=StockStatus.AVAILABLE_CODES,
+            sales_order=None,
+            build_order=None,
+            belongs_to=None,
+            customer=None,
+        )
 
-        # Filter to limit orders to "open"
-        order_filter = Q(supplier_parts__purchase_order_line_items__order__status__in=PurchaseOrderStatus.OPEN)
+        # Annotate with the total 'in stock' quantity
+        queryset = queryset.annotate(
+            in_stock=Coalesce(
+                SubquerySum('stock_items__quantity', filter=stock_filter),
+                Decimal(0)
+            ),
+        )
 
         # Filter to limit builds to "active"
-        build_filter = Q(builds__status__in=BuildStatus.ACTIVE_CODES)
+        build_filter = Q(
+            status__in=BuildStatus.ACTIVE_CODES
+        )
 
-        # Annotate the number total stock count
+        # Annotate with the total 'building' quantity
         queryset = queryset.annotate(
-            in_stock=Coalesce(Sum('stock_items__quantity', filter=stock_filter, distinct=True), Decimal(0)),
-            ordering=Coalesce(Sum(
-                'supplier_parts__purchase_order_line_items__quantity',
-                filter=order_filter,
-                distinct=True
-            ), Decimal(0)) - Coalesce(Sum(
-                'supplier_parts__purchase_order_line_items__received',
-                filter=order_filter,
-                distinct=True
-            ), Decimal(0)),
             building=Coalesce(
-                Sum('builds__quantity', filter=build_filter, distinct=True), Decimal(0)
+                SubquerySum('builds__quantity', filter=build_filter),
+                Decimal(0),
+            )
+        )
+        
+        # Filter to limit orders to "open"
+        order_filter = Q(
+            order__status__in=PurchaseOrderStatus.OPEN
+        )
+
+        # Annotate with the total 'on order' quantity
+        queryset = queryset.annotate(
+            ordering=Coalesce(
+                SubquerySum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter),
+                Decimal(0),
+            ) - Coalesce(
+                SubquerySum('supplier_parts__purchase_order_line_items__received', filter=order_filter),
+                Decimal(0),
             )
         )
         
