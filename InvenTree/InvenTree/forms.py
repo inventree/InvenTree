@@ -11,7 +11,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText
 from django.contrib.auth.models import User
-
+from common.models import Theme
 
 class HelperForm(forms.ModelForm):
     """ Provides simple integration of crispy_forms extension. """
@@ -160,4 +160,15 @@ class SetPasswordForm(HelperForm):
         fields = [
             'enter_password',
             'confirm_password'
+        ]
+
+
+class ThemeSelectForm(forms.ModelForm):
+    """ Form for setting color theme
+    """
+
+    class Meta:
+        model = Theme
+        fields = [
+            'theme'
         ]

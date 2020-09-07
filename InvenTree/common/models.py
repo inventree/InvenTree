@@ -154,3 +154,17 @@ class Currency(models.Model):
             self.value = 1.0
 
         super().save(*args, **kwargs)
+
+
+class Theme(models.Model):
+    """ Color Theme setting """
+
+    class ThemeChoices(models.IntegerChoices):
+        DEFAULT = 0, _('Default')
+        DARKER = 1, _('Darker')
+
+    theme = models.IntegerField(choices=ThemeChoices.choices,
+                                default=ThemeChoices.DEFAULT)
+
+    def __str__(self):
+        return self.theme

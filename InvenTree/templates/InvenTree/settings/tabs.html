@@ -8,6 +8,9 @@
     <li{% ifequal tab 'part' %} class='active'{% endifequal %}>
         <a href="{% url 'settings-part' %}"><span class='fas fa-shapes'></span> Part</a>
     </li>
+    <li{% ifequal tab 'theme' %} class='active'{% endifequal %}>
+        <a href="{% url 'settings-theme' %}"><span class='fas fa-fill'></span> Theme</a>
+    </li>
     {% if user.is_staff %}
     <li{% ifequal tab 'other' %} class='active'{% endifequal %}>
         <a href="{% url 'settings-other' %}"><span class='fas fa-cogs'></span> Other</a>

@@ -11,16 +11,17 @@ from __future__ import unicode_literals
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse_lazy
 
 from django.views import View
-from django.views.generic import UpdateView, CreateView
+from django.views.generic import UpdateView, CreateView, FormView
 from django.views.generic.base import TemplateView
 
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, Theme
 
-from .forms import DeleteForm, EditUserForm, SetPasswordForm
+from .forms import DeleteForm, EditUserForm, SetPasswordForm, ThemeSelectForm
 from .helpers import str2bool
 
 from rest_framework import views
@@ -554,6 +555,14 @@ class SettingsView(TemplateView):
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
 
         return ctx
+
+
+class ThemeSelectView(FormView):
+    """ View for selecting a color theme """
+
+    form_class = ThemeSelectForm
+    success_url = reverse_lazy('settings-theme')
+    template_name = "InvenTree/settings/theme.html"
 
 
 class DatabaseStatsView(AjaxView):
