@@ -683,6 +683,8 @@ class PartDetailFromIPN(PartDetail):
                 part = queryset.get()
                 # Return Part object
                 return part
+            except queryset.model.MultipleObjectsReturned:
+                pass
             except queryset.model.DoesNotExist:
                 pass
         
