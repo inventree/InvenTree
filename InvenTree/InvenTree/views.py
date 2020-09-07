@@ -564,6 +564,32 @@ class ThemeSelectView(FormView):
     success_url = reverse_lazy('settings-theme')
     template_name = "InvenTree/settings/theme.html"
 
+    def get_initial(self):
+        """ Select user theme """
+        initial = super(ThemeSelectView, self).get_initial()
+        initial['theme'] = Theme.objects.all().get().theme
+        return initial
+
+    def post(self, request, *args, **kwargs):
+        """ Save user color theme """
+        form = self.get_form()
+        if form.is_valid():
+            theme_select = form.cleaned_data['theme']
+            
+            try:
+                user_theme = Theme.objects.all().get()
+            except Theme.DoesNotExist:
+                print('No theme selected yet')
+                user_theme = Theme()
+
+            # Set color theme 
+            user_theme.theme = theme_select
+            user_theme.save()
+
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
 
 class DatabaseStatsView(AjaxView):
     """ View for displaying database statistics """

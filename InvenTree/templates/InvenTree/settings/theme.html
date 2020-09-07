@@ -1,4 +1,6 @@
 {% extends "InvenTree/settings/settings.html" %}
+{% load i18n %}
+{% load inventree_extras %}
 
 {% block tabs %}
 {% include "InvenTree/settings/tabs.html" with tab='theme' %}
@@ -16,9 +18,10 @@
     <div class='col-sm-6'>
         <div style='float: left;'>
             <form action="{% url 'settings-theme' %}" method="post">
-            {% csrf_token %}
-            {{ form }}
-            <input class='btn btn-primary' type="submit" value='Apply Theme'>
+                {% csrf_token %}
+                {% load crispy_forms_tags %}
+                {% crispy form %}
+{#                 <button type='submit' class='btn btn-primary'>{% trans "Apply Theme" %}</button> #}
             </form> 
         </div>
     </div>

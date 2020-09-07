@@ -159,12 +159,12 @@ class Currency(models.Model):
 class Theme(models.Model):
     """ Color Theme setting """
 
-    class ThemeChoices(models.IntegerChoices):
-        DEFAULT = 0, _('Default')
-        DARKER = 1, _('Darker')
+    class ThemeChoices(models.TextChoices):
+        DEFAULT = '', _('Default')
+        DARKER = '-darker', _('Darker')
 
-    theme = models.IntegerField(choices=ThemeChoices.choices,
-                                default=ThemeChoices.DEFAULT)
+    theme = models.CharField(max_length=20,
+                             choices=ThemeChoices.choices,
+                             default=ThemeChoices.DEFAULT,
+                             blank=True)
 
-    def __str__(self):
-        return self.theme

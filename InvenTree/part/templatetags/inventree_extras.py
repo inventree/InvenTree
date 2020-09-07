@@ -3,10 +3,10 @@ over and above the built-in Django tags.
 """
 
 from django import template
-from InvenTree import version
+from InvenTree import version, settings
 from InvenTree.helpers import decimal2string
 
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, Theme
 
 register = template.Library()
 
@@ -88,3 +88,9 @@ def inventree_docs_url(*args, **kwargs):
 @register.simple_tag()
 def inventree_setting(key, *args, **kwargs):
     return InvenTreeSetting.get_setting(key)
+
+
+@register.simple_tag()
+def get_theme_css():
+    user_theme = Theme.objects.all().get().theme
+    return f'{settings.STATIC_URL}css/inventree' + user_theme + '.css'
