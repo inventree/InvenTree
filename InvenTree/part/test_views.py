@@ -122,7 +122,7 @@ class PartDetailTest(PartViewTestCase):
         test_ipn_match(index_result=False, detail_result=True)
 
         # Test multiple matches
-        part = Part.objects.get(pk=pk+1)
+        part = Part.objects.get(pk=pk + 1)
         part.IPN = ipn_test
         part.save()
 
