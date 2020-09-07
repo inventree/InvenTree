@@ -180,7 +180,6 @@ class ColorThemeSelectForm(forms.ModelForm):
         # Form rendering
         self.helper.form_show_labels = False
         self.helper.form_class = 'form-inline'
-        # self.helper.field_template = 'bootstrap4/layout/inline_field.html'
         self.helper.layout = Layout(
             Field('name'),
             StrictButton(_('Apply Theme'), css_class='btn btn-primary', type='submit')
