@@ -11,7 +11,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton
 from django.contrib.auth.models import User
-from common.models import Theme
+from common.models import ColorTheme
+
 
 class HelperForm(forms.ModelForm):
     """ Provides simple integration of crispy_forms extension. """
@@ -163,24 +164,24 @@ class SetPasswordForm(HelperForm):
         ]
 
 
-class ThemeSelectForm(forms.ModelForm):
+class ColorThemeSelectForm(forms.ModelForm):
     """ Form for setting color theme
     """
 
     class Meta:
-        model = Theme
+        model = ColorTheme
         fields = [
-            'theme'
+            'name'
         ]
 
     def __init__(self, *args, **kwargs):
-        super(ThemeSelectForm, self).__init__(*args, **kwargs)
+        super(ColorThemeSelectForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         # Form rendering
         self.helper.form_show_labels = False
         self.helper.form_class = 'form-inline'
         # self.helper.field_template = 'bootstrap4/layout/inline_field.html'
         self.helper.layout = Layout(
-                Field('theme'),
-                StrictButton(_('Apply Theme'), css_class='btn btn-primary', type='submit')
-            )
+            Field('name'),
+            StrictButton(_('Apply Theme'), css_class='btn btn-primary', type='submit')
+        )

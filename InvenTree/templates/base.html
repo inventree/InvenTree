@@ -39,7 +39,7 @@
 <link rel="stylesheet" href="{% static 'css/select2.css' %}">
 <link rel="stylesheet" href="{% static 'css/select2-bootstrap.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap-toggle.css' %}">
-<link rel="stylesheet" href="{% get_theme_css %}">
+<link rel="stylesheet" href="{% get_theme_css user.get_username %}">
 
 {% block css %}
 {% endblock %}

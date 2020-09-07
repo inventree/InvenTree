@@ -6,7 +6,7 @@ from django import template
 from InvenTree import version, settings
 from InvenTree.helpers import decimal2string
 
-from common.models import InvenTreeSetting, Theme
+from common.models import InvenTreeSetting, ColorTheme
 
 register = template.Library()
 
@@ -91,6 +91,9 @@ def inventree_setting(key, *args, **kwargs):
 
 
 @register.simple_tag()
-def get_theme_css():
-    user_theme = Theme.objects.all().get().theme
+def get_theme_css(username):
+    try:
+        user_theme = ColorTheme.objects.filter(user=username).get().name
+    except ColorTheme.DoesNotExist:
+        user_theme = ''
     return f'{settings.STATIC_URL}css/inventree' + user_theme + '.css'

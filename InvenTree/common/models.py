@@ -156,15 +156,16 @@ class Currency(models.Model):
         super().save(*args, **kwargs)
 
 
-class Theme(models.Model):
+class ColorTheme(models.Model):
     """ Color Theme setting """
 
-    class ThemeChoices(models.TextChoices):
+    class ColorThemeChoices(models.TextChoices):
         DEFAULT = '', _('Default')
         DARKER = '-darker', _('Darker')
 
-    theme = models.CharField(max_length=20,
-                             choices=ThemeChoices.choices,
-                             default=ThemeChoices.DEFAULT,
-                             blank=True)
+    name = models.CharField(max_length=20,
+                            choices=ColorThemeChoices.choices,
+                            default=ColorThemeChoices.DEFAULT,
+                            blank=True)
 
+    user = models.CharField(max_length=150)
