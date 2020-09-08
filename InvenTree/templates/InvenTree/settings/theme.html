@@ -14,16 +14,10 @@
     </div>
 </div>    
 
-<div class='row'>
-    <div class='col-sm-6'>
-        <div style='float: left;'>
-            <form action="{% url 'settings-theme' %}" method="post">
-                {% csrf_token %}
-                {% load crispy_forms_tags %}
-                {% crispy form %}
-            </form> 
-        </div>
-    </div>
-</div>
+<form action="{% url 'settings-theme' %}" method="post">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+    {% crispy form %}
+</form> 
 
 {% endblock %}

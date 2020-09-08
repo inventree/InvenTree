@@ -157,11 +157,12 @@ class Currency(models.Model):
 
 
 class ColorTheme(models.Model):
-    """ Color Theme setting """
+    """ Color Theme Setting """
 
     class ColorThemeChoices(models.TextChoices):
         DEFAULT = '', _('Default')
-        DARKER = '-darker', _('Darker')
+        DARKER = 'darker', _('Darker')
+        DARK_READER = 'dark-reader', _('Dark Reader')
 
     name = models.CharField(max_length=20,
                             choices=ColorThemeChoices.choices,

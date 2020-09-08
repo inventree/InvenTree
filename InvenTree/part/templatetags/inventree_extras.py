@@ -1,6 +1,7 @@
 """ This module provides template tags for extra functionality
 over and above the built-in Django tags.
 """
+import os
 
 from django import template
 from InvenTree import version, settings
@@ -91,9 +92,18 @@ def inventree_setting(key, *args, **kwargs):
 
 
 @register.simple_tag()
-def get_theme_css(username):
+def get_color_theme_css(username):
     try:
         user_theme = ColorTheme.objects.filter(user=username).get().name
+        if not user_theme:
+            user_theme = 'default'
     except ColorTheme.DoesNotExist:
-        user_theme = ''
-    return f'{settings.STATIC_URL}css/inventree' + user_theme + '.css'
+        user_theme = 'default'
+
+    # Build path to CSS sheet
+    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme + '.css')
+
+    # Build static URL
+    inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
+
+    return inventree_css_static_url

@@ -9,7 +9,7 @@ from django.utils.translation import ugettext as _
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
-from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton
+from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
 from django.contrib.auth.models import User
 from common.models import ColorTheme
 
@@ -165,8 +165,7 @@ class SetPasswordForm(HelperForm):
 
 
 class ColorThemeSelectForm(forms.ModelForm):
-    """ Form for setting color theme
-    """
+    """ Form for setting color theme """
 
     class Meta:
         model = ColorTheme
@@ -179,8 +178,14 @@ class ColorThemeSelectForm(forms.ModelForm):
         self.helper = FormHelper()
         # Form rendering
         self.helper.form_show_labels = False
-        self.helper.form_class = 'form-inline'
         self.helper.layout = Layout(
-            Field('name'),
-            StrictButton(_('Apply Theme'), css_class='btn btn-primary', type='submit')
+            Div(
+                Div(Field('name'),
+                    css_class='col-sm-6',
+                    style='width: 200px;'),
+                Div(StrictButton(_('Apply Theme'), css_class='btn btn-primary', type='submit'),
+                    css_class='col-sm-6',
+                    style='width: auto;'),
+                css_class='row',
+            ),
         )
