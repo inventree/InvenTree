@@ -78,6 +78,56 @@ class PartDetailTest(PartViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['editing_enabled'])
 
+    def test_part_detail_from_ipn(self):
+        """
+        Test that we can retrieve a part detail page from part IPN:
+        - if no part with matching IPN -> return part index
+        - if unique IPN match -> return part detail page
+        - if multiple IPN matches -> return part index
+        """
+        ipn_test = 'PART-000000-AA'
+        pk = 1
+
+        def test_ipn_match(index_result=False, detail_result=False):
+            index_redirect = False
+            detail_redirect = False
+
+            response = self.client.get(reverse('part-detail-from-ipn', args=(ipn_test,)))
+
+            # Check for PartIndex redirect
+            try:
+                if response.url == '/part/':
+                    index_redirect = True
+            except AttributeError:
+                pass
+
+            # Check for PartDetail redirect
+            try:
+                if response.context['part'].pk == pk:
+                    detail_redirect = True
+            except TypeError:
+                pass
+
+            self.assertEqual(index_result, index_redirect)
+            self.assertEqual(detail_result, detail_redirect)
+
+        # Test no match
+        test_ipn_match(index_result=True, detail_result=False)
+
+        # Test unique match
+        part = Part.objects.get(pk=pk)
+        part.IPN = ipn_test
+        part.save()
+
+        test_ipn_match(index_result=False, detail_result=True)
+
+        # Test multiple matches
+        part = Part.objects.get(pk=pk + 1)
+        part.IPN = ipn_test
+        part.save()
+
+        test_ipn_match(index_result=True, detail_result=False)
+
     def test_bom_download(self):
         """ Test downloading a BOM for a valid part """
 
