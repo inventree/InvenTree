@@ -565,7 +565,7 @@ class ColorThemeSelectView(FormView):
     template_name = "InvenTree/settings/theme.html"
 
     def get_user_theme(self):
-        """ Get user color theme """
+        """ Get current user color theme """
         try:
             user_theme = ColorTheme.objects.filter(user=self.request.user).get()
         except ColorTheme.DoesNotExist:
@@ -574,32 +574,61 @@ class ColorThemeSelectView(FormView):
         return user_theme
 
     def get_initial(self):
-        """ Select user theme """
+        """ Select current user color theme as initial choice """
+
         initial = super(ColorThemeSelectView, self).get_initial()
+
         user_theme = self.get_user_theme()
         if user_theme:
             initial['name'] = user_theme.name
         return initial
 
-    def post(self, request, *args, **kwargs):
-        """ Save user color theme """
-        form = self.get_form()
-        if form.is_valid():
-            theme_select = form.cleaned_data['name']
-            # Get current user theme
-            user_theme = self.get_user_theme()
-            
-            # Create theme entry if user did not select one yet
-            if not user_theme:
-                user_theme = ColorTheme()
+    def get(self, request, *args, **kwargs):
+        """ Check if current color theme exists, else display alert box """
 
+        context = {}
+
+        form = self.get_form()
+        context['form'] = form
+
+        user_theme = self.get_user_theme()
+        if user_theme:
+            # Check color theme is a valid choice
+            if not ColorTheme.is_valid_choice(user_theme):
+                user_color_theme_name = user_theme.name
+                if not user_color_theme_name:
+                    user_color_theme_name = 'default'
+
+                context['invalid_color_theme'] = user_color_theme_name
+
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        """ Save user color theme selection """
+
+        form = self.get_form()
+
+        # Get current user theme
+        user_theme = self.get_user_theme()
+
+        # Create theme entry if user did not select one yet
+        if not user_theme:
+            user_theme = ColorTheme()
+            user_theme.user = request.user
+
+        if form.is_valid():
+            theme_selected = form.cleaned_data['name']
+            
             # Set color theme to form selection
-            user_theme.user = str(request.user)
-            user_theme.name = theme_select
+            user_theme.name = theme_selected
             user_theme.save()
 
             return self.form_valid(form)
         else:
+            # Set color theme to default
+            user_theme.name = ColorTheme.default_color_theme[0]
+            user_theme.save()
+
             return self.form_invalid(form)
 
 

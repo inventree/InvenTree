@@ -6,7 +6,10 @@ These models are 'generic' and do not fit a particular business logic object.
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
@@ -159,14 +162,44 @@ class Currency(models.Model):
 class ColorTheme(models.Model):
     """ Color Theme Setting """
 
-    class ColorThemeChoices(models.TextChoices):
-        DEFAULT = '', _('Default')
-        DARKER = 'darker', _('Darker')
-        DARK_READER = 'dark-reader', _('Dark Reader')
+    default_color_theme = ('', _('Default'))
 
     name = models.CharField(max_length=20,
-                            choices=ColorThemeChoices.choices,
-                            default=ColorThemeChoices.DEFAULT,
+                            default='',
                             blank=True)
 
-    user = models.CharField(max_length=150)
+    user = models.CharField(max_length=150,
+                            unique=True)
+
+    @classmethod
+    def get_color_themes_choices(cls):
+        """ Get all color themes from static folder """
+
+        # Get files list from css/color-themes/ folder
+        files_list = []
+        for file in os.listdir(settings.STATIC_COLOR_THEMES_DIR):
+            files_list.append(os.path.splitext(file))
+
+        # Get color themes choices (CSS sheets)
+        choices = [(file_name.lower(), _(file_name.replace('-', ' ').title()))
+                   for file_name, file_ext in files_list
+                   if file_ext == '.css' and file_name.lower() != 'default']
+
+        # Add default option as empty option
+        choices.insert(0, cls.default_color_theme)
+
+        return choices
+
+    @classmethod
+    def is_valid_choice(cls, user_color_theme):
+        """ Check if color theme is valid choice """
+        try:
+            user_color_theme_name = user_color_theme.name
+        except AttributeError:
+            return False
+
+        for color_theme in cls.get_color_themes_choices():
+            if user_color_theme_name == color_theme[0]:
+                return True
+
+        return False

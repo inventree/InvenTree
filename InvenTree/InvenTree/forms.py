@@ -167,6 +167,8 @@ class SetPasswordForm(HelperForm):
 class ColorThemeSelectForm(forms.ModelForm):
     """ Form for setting color theme """
 
+    name = forms.ChoiceField(choices=(), required=False)
+
     class Meta:
         model = ColorTheme
         fields = [
@@ -175,6 +177,10 @@ class ColorThemeSelectForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ColorThemeSelectForm, self).__init__(*args, **kwargs)
+
+        # Populate color themes choices
+        self.fields['name'].choices = ColorTheme.get_color_themes_choices()
+
         self.helper = FormHelper()
         # Form rendering
         self.helper.form_show_labels = False

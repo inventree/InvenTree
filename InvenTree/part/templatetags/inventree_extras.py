@@ -94,14 +94,15 @@ def inventree_setting(key, *args, **kwargs):
 @register.simple_tag()
 def get_color_theme_css(username):
     try:
-        user_theme = ColorTheme.objects.filter(user=username).get().name
-        if not user_theme:
-            user_theme = 'default'
+        user_theme = ColorTheme.objects.filter(user=username).get()
+        user_theme_name = user_theme.name
+        if not user_theme_name or not ColorTheme.is_valid_choice(user_theme):
+            user_theme_name = 'default'
     except ColorTheme.DoesNotExist:
-        user_theme = 'default'
+        user_theme_name = 'default'
 
     # Build path to CSS sheet
-    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme + '.css')
+    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
 
     # Build static URL
     inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
