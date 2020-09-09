@@ -11,16 +11,17 @@ from __future__ import unicode_literals
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse_lazy
 
 from django.views import View
-from django.views.generic import UpdateView, CreateView
+from django.views.generic import UpdateView, CreateView, FormView
 from django.views.generic.base import TemplateView
 
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, ColorTheme
 
-from .forms import DeleteForm, EditUserForm, SetPasswordForm
+from .forms import DeleteForm, EditUserForm, SetPasswordForm, ColorThemeSelectForm
 from .helpers import str2bool
 
 from rest_framework import views
@@ -554,6 +555,81 @@ class SettingsView(TemplateView):
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
 
         return ctx
+
+
+class ColorThemeSelectView(FormView):
+    """ View for selecting a color theme """
+
+    form_class = ColorThemeSelectForm
+    success_url = reverse_lazy('settings-theme')
+    template_name = "InvenTree/settings/theme.html"
+
+    def get_user_theme(self):
+        """ Get current user color theme """
+        try:
+            user_theme = ColorTheme.objects.filter(user=self.request.user).get()
+        except ColorTheme.DoesNotExist:
+            user_theme = None
+
+        return user_theme
+
+    def get_initial(self):
+        """ Select current user color theme as initial choice """
+
+        initial = super(ColorThemeSelectView, self).get_initial()
+
+        user_theme = self.get_user_theme()
+        if user_theme:
+            initial['name'] = user_theme.name
+        return initial
+
+    def get(self, request, *args, **kwargs):
+        """ Check if current color theme exists, else display alert box """
+
+        context = {}
+
+        form = self.get_form()
+        context['form'] = form
+
+        user_theme = self.get_user_theme()
+        if user_theme:
+            # Check color theme is a valid choice
+            if not ColorTheme.is_valid_choice(user_theme):
+                user_color_theme_name = user_theme.name
+                if not user_color_theme_name:
+                    user_color_theme_name = 'default'
+
+                context['invalid_color_theme'] = user_color_theme_name
+
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        """ Save user color theme selection """
+
+        form = self.get_form()
+
+        # Get current user theme
+        user_theme = self.get_user_theme()
+
+        # Create theme entry if user did not select one yet
+        if not user_theme:
+            user_theme = ColorTheme()
+            user_theme.user = request.user
+
+        if form.is_valid():
+            theme_selected = form.cleaned_data['name']
+            
+            # Set color theme to form selection
+            user_theme.name = theme_selected
+            user_theme.save()
+
+            return self.form_valid(form)
+        else:
+            # Set color theme to default
+            user_theme.name = ColorTheme.default_color_theme[0]
+            user_theme.save()
+
+            return self.form_invalid(form)
 
 
 class DatabaseStatsView(AjaxView):

@@ -82,6 +82,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'InvenTree', 'static'),
 ]
 
+# Color Themes Directory
+STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
+
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
 

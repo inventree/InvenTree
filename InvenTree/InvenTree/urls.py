@@ -36,7 +36,7 @@ from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
 
 from .views import IndexView, SearchView, DatabaseStatsView
-from .views import SettingsView, EditUserView, SetPasswordView
+from .views import SettingsView, EditUserView, SetPasswordView, ColorThemeSelectView
 from .views import DynamicJsView
 
 from .api import InfoView
@@ -71,6 +71,7 @@ settings_urls = [
     url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
     url(r'^currency/?', SettingsView.as_view(template_name='InvenTree/settings/currency.html'), name='settings-currency'),
     url(r'^part/?', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
+    url(r'^theme/?', ColorThemeSelectView.as_view(), name='settings-theme'),
     url(r'^other/?', SettingsView.as_view(template_name='InvenTree/settings/other.html'), name='settings-other'),
 
     # Catch any other urls
