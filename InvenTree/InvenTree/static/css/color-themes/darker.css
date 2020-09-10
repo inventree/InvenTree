@@ -1,0 +1,42 @@
+/* Color Theme: "Darker" by Radek Hladik */
+
+.navbar-nav > li {
+    border-color: rgb(179, 179, 179);
+}
+
+.navbar-nav > li > a {
+      color:#0b2a62 !important;
+}
+
+.navbar-nav > li > a:hover {
+    color:#202020 !important;
+}
+
+.navbar-nav > .open > a {
+    color:#202020 !important;
+}
+
+.navbar {
+    background-color: rgb(189, 189, 189);
+}
+
+.table-condensed > tbody > tr > td {
+    border-top: 1px solid #062152 !important ;
+}
+
+.table-striped > tbody > tr > td {
+    border-top: 1px solid #92b3f1 ;
+}
+
+.table-bordered, .table-bordered > tbody > tr > td   {
+    border: 1px solid rgb(182,182,182);
+}
+
+.table-bordered > thead > tr > th {
+    border: 1px solid rgb(182, 182, 182);
+    background-color: rgb(235, 235, 235);
+}
+
+h3 {
+    color:#06255d;
+}

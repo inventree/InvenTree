@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -39,6 +40,7 @@
 <link rel="stylesheet" href="{% static 'css/select2-bootstrap.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap-toggle.css' %}">
 <link rel="stylesheet" href="{% static 'css/inventree.css' %}">
+<link rel="stylesheet" href="{% get_color_theme_css user.get_username %}">
 
 {% block css %}
 {% endblock %}

@@ -1,12 +1,13 @@
 """ This module provides template tags for extra functionality
 over and above the built-in Django tags.
 """
+import os
 
 from django import template
-from InvenTree import version
+from InvenTree import version, settings
 from InvenTree.helpers import decimal2string
 
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, ColorTheme
 
 register = template.Library()
 
@@ -88,3 +89,22 @@ def inventree_docs_url(*args, **kwargs):
 @register.simple_tag()
 def inventree_setting(key, *args, **kwargs):
     return InvenTreeSetting.get_setting(key)
+
+
+@register.simple_tag()
+def get_color_theme_css(username):
+    try:
+        user_theme = ColorTheme.objects.filter(user=username).get()
+        user_theme_name = user_theme.name
+        if not user_theme_name or not ColorTheme.is_valid_choice(user_theme):
+            user_theme_name = 'default'
+    except ColorTheme.DoesNotExist:
+        user_theme_name = 'default'
+
+    # Build path to CSS sheet
+    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
+
+    # Build static URL
+    inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
+
+    return inventree_css_static_url

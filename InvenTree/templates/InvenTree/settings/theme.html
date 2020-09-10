@@ -1,0 +1,32 @@
+{% extends "InvenTree/settings/settings.html" %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block tabs %}
+{% include "InvenTree/settings/tabs.html" with tab='theme' %}
+{% endblock %}
+
+{% block settings %}
+
+<div class='row'>
+    <div class='col-sm-6'>
+        <h4>Color Themes</h4>
+    </div>
+</div>    
+
+<form action="{% url 'settings-theme' %}" method="post">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+    {% crispy form %}
+</form>
+
+{% if invalid_color_theme %}
+	<div class="alert alert-danger alert-block" role="alert" style="display: inline-block;">
+	{% blocktrans %}
+		The CSS sheet "{{invalid_color_theme}}.css" for the currently selected color theme was not found.<br>
+		Please select another color theme :)
+	{% endblocktrans %}
+	</div>
+{% endif %}
+
+{% endblock %}
