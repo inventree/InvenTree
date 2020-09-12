@@ -108,6 +108,25 @@ function inventreePut(url, data={}, options={}) {
             if (options.error) {
                 options.error(xhr, ajaxOptions, thrownError);
             }
+        },
+        complete: function(xhr, status) {
+            if (options.complete) {
+                options.complete(xhr, status);
+            }
         }
     });
+}
+
+
+function inventreeDelete(url, options={}) {
+    /*
+     * Delete a record
+     */
+
+    options = options || {};
+
+    options.method = 'DELETE';
+
+    inventreePut(url, {}, options);
+
 }
