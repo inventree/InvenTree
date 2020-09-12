@@ -39,7 +39,6 @@ function removeRowFromBomWizard(e) {
         if (colNum >= 3) {
             var cell = $(this).find('td:eq(1)');
             cell.text(rowNum++);
-            console.log("Row: " + rowNum);
         }
     });
 }
@@ -106,26 +105,16 @@ function loadBomTable(table, options) {
 
     // Construct the table columns
 
-    var cols = [
-        {
-            field: 'pk',
-            title: 'ID',
-            visible: false,
-            switchable: false,
-        },
-    ];
+    var cols = [];
 
     if (options.editable) {
-        
-        /*
-        // TODO - Enable multi-select functionality 
         cols.push({
+            field: 'ID',
+            title: '',
             checkbox: true,
-            title: 'Select',
-            searchable: false,
-            sortable: false,
+            visible: true,
+            switchable: false,
         });
-        */
     }
 
     // Part column
@@ -234,16 +223,23 @@ function loadBomTable(table, options) {
     );
 
     if (options.editable) {
+
         cols.push({
+            title: '{% trans "Actions" %}',
+            switchable: false,
+            field: 'pk',
+            visible: true,
             formatter: function(value, row, index, field) {
 
                 if (row.part == options.parent_id) {
 
-                    var bValidate = "<button title='{% trans "Validate BOM Item" %}' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-check-circle icon-blue'/></button>";
-                    var bValid = "<span title='{% trans "This line has been validated" %}' class='fas fa-check-double icon-green'/>";
+                    var bValidate = `<button title='{% trans "Validate BOM Item" %}' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-check-circle icon-blue'/></button>`;
+                    
+                    var bValid = `<span title='{% trans "This line has been validated" %}' class='fas fa-check-double icon-green'/>`;
 
-                    var bEdit = "<button title='{% trans "Edit BOM Item" %}' class='bom-edit-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/edit'><span class='fas fa-edit'/></button>";
-                    var bDelt = "<button title='{% trans "Delete BOM Item" %}' class='bom-delete-button btn btn-default btn-glyph' type='button' url='/part/bom/" + row.pk + "/delete'><span class='fas fa-trash-alt icon-red'/></button>";
+                    var bEdit = `<button title='{% trans "Edit BOM Item" %}' class='bom-edit-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-edit'></span></button>`;
+
+                    var bDelt = `<button title='{% trans "Delete BOM Item" %}' class='bom-delete-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
                     
                     var html = "<div class='btn-group' role='group'>";
                     
@@ -314,10 +310,10 @@ function loadBomTable(table, options) {
     }
     
     table.inventreeTable({
-        treeEnable: true,
+        treeEnable: !options.editable,
         rootParentId: options.parent_id,
         idField: 'pk',
-        uniqueId: 'pk',
+        //uniqueId: 'pk',
         parentIdField: 'parentId',
         treeShowField: 'sub_part',
         showColumns: true,
@@ -333,37 +329,43 @@ function loadBomTable(table, options) {
         },
         formatNoMatches: function() { return "{% trans "No BOM items found" %}"; },
         clickToSelect: true,
-        queryParams: function(p) {
-            return params;
-        },
+        queryParams: params,
         columns: cols,
         url: options.bom_url,
         onPostBody: function() {
-            table.treegrid({
-                treeColumn: 0,
-                onExpand: function() {
-                }
-            });
+
+            if (!options.editable) {
+                table.treegrid({
+                    treeColumn: 0,
+                    onExpand: function() {
+                    }
+                });
+            }
         },
         onLoadSuccess: function() {
 
-            var data = table.bootstrapTable('getData');
+            if (options.editable) {
+                table.bootstrapTable('uncheckAll');
+            } else {
 
-            for (var idx = 0; idx < data.length; idx++) {
-                var row = data[idx];
+                var data = table.bootstrapTable('getData');
 
-                // If a row already has a parent ID set, it's already been updated!
-                if (row.parentId) {
-                    continue;
-                }
+                for (var idx = 0; idx < data.length; idx++) {
+                    var row = data[idx];
 
-                // Set the parent ID of the top-level rows
-                row.parentId = options.parent_id;
+                    // If a row already has a parent ID set, it's already been updated!
+                    if (row.parentId) {
+                        continue;
+                    }
 
-                table.bootstrapTable('updateRow', idx, row, true);
+                    // Set the parent ID of the top-level rows
+                    row.parentId = options.parent_id;
 
-                if (row.sub_part_detail.assembly) {
-                    requestSubItems(row.pk, row.sub_part);
+                    table.bootstrapTable('updateRow', idx, row, true);
+
+                    if (row.sub_part_detail.assembly) {
+                        requestSubItems(row.pk, row.sub_part);
+                    }
                 }
             }
         },
@@ -373,29 +375,39 @@ function loadBomTable(table, options) {
     if (options.editable) {
 
         table.on('click', '.bom-delete-button', function() {
-            var button = $(this);
+
+            var pk = $(this).attr('pk');
+            var url = `/part/bom/${pk}/delete/`;
             
-            launchModalForm(button.attr('url'), {
-                                success: function() {
-                                    reloadBomTable(table);
-                                }
-            });
+            launchModalForm(
+                url,
+                {
+                    success: function() {
+                        reloadBomTable(table);
+                    }
+                }
+            );
         });
 
         table.on('click', '.bom-edit-button', function() {
-            var button = $(this);
+            
+            var pk = $(this).attr('pk');
+            var url = `/part/bom/${pk}/edit/`;
 
-            launchModalForm(button.attr('url'), {
-                                success: function() {
-                                    reloadBomTable(table);
-                                }
-            });
+            launchModalForm(
+                url,
+                {
+                    success: function() {
+                        reloadBomTable(table);
+                    }
+                }
+            );
         });
 
         table.on('click', '.bom-validate-button', function() {
-            var button = $(this);
-
-            var url = '/api/bom/' + button.attr('pk') + '/validate/';
+            
+            var pk = $(this).attr('pk');
+            var url = `/api/bom/${pk}/validate/`;
 
             inventreePut(
                 url,

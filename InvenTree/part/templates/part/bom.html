@@ -90,6 +90,48 @@
         location.href = "{% url 'part-bom' part.id %}";
     });
 
+    $('#bom-item-delete').click(function() {
+
+        // Get a list of the selected BOM items
+        var rows = $("#bom-table").bootstrapTable('getSelections');
+
+        // TODO - In the future, display (in the dialog) which items are going to be deleted
+
+        showQuestionDialog(
+            '{% trans "Delete selected BOM items?" %}',
+            '{% trans "All selected BOM items will be deleted" %}',
+            {
+                accept: function() {
+
+                    // Delete each row one at a time!
+                    function deleteRow(idx) {
+
+                        if (idx >= rows.length) {
+                            // All selected rows deleted - reload the table
+                            $("#bom-table").bootstrapTable('refresh');
+                        }
+
+                        var row = rows[idx];
+
+                        var url = `/api/bom/${row.pk}/`;
+
+                        inventreeDelete(
+                            url,
+                            {
+                                complete: function(xhr, status) {
+                                    deleteRow(idx + 1);
+                                }
+                            }
+                        )
+                    }
+
+                    // Start the deletion!
+                    deleteRow(0);
+                }
+            }
+        );
+        });
+
     $('#bom-upload').click(function() {
         location.href = "{% url 'upload-bom' part.id %}";
     });
