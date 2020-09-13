@@ -2,19 +2,19 @@
 
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
-        <button class='btn btn-default' id='stock-export' title='Export Stock Information'>{% trans "Export" %}</button>
+        <button class='btn btn-default' id='stock-export' title='{% trans "Export Stock Information" %}'>{% trans "Export" %}</button>
         {% if read_only %}
         {% else %}
         <button class="btn btn-success" id='item-create'>{% trans "New Stock Item" %}</button>
-        <div class="btn dropdown">
+        <div class="btn-group">
             <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
             <ul class="dropdown-menu">
-                <li><a href="#" id='multi-item-add' title='Add to selected stock items'>{% trans "Add stock" %}</a></li>
-                <li><a href="#" id='multi-item-remove' title='Remove from selected stock items'>{% trans "Remove stock" %}</a></li>
-                <li><a href="#" id='multi-item-stocktake' title='Stocktake selected stock items'>{% trans "Count stock" %}</a></li>
-                <li><a href='#' id='multi-item-move' title='Move selected stock items'>{% trans "Move stock" %}</a></li>
-                <li><a href='#' id='multi-item-order' title='Order selected items'>{% trans "Order stock" %}</a></li>
-                <li><a href='#' id='multi-item-delete' title='Delete selected items'>{% trans "Delete Stock" %}</a></li>
+                <li><a href="#" id='multi-item-add' title='{% trans "Add to selected stock items" %}'>{% trans "Add stock" %}</a></li>
+                <li><a href="#" id='multi-item-remove' title='{% trans "Remove from selected stock items" %}'>{% trans "Remove stock" %}</a></li>
+                <li><a href="#" id='multi-item-stocktake' title='{% trans "Stocktake selected stock items" %}'>{% trans "Count stock" %}</a></li>
+                <li><a href='#' id='multi-item-move' title='{% trans "Move selected stock items" %}'>{% trans "Move stock" %}</a></li>
+                <li><a href='#' id='multi-item-order' title='{% trans "Order selected items" %}'>{% trans "Order stock" %}</a></li>
+                <li><a href='#' id='multi-item-delete' title='{% trans "Delete selected items" %}'>{% trans "Delete Stock" %}</a></li>
             </ul>
         </div>
         {% endif %}
