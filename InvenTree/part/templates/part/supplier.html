@@ -9,13 +9,14 @@
 <hr>
 
 <div id='button-toolbar'>
-    <button class="btn btn-success" id='supplier-create'>{% trans "New Supplier Part" %}</button>
-    <div id='opt-dropdown' class="dropdown" style='float: right;'>
-        <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}
-            <span class="caret"></span></button>
+    <div class='btn-group'>
+        <button class="btn btn-success" id='supplier-create'>{% trans "New Supplier Part" %}</button>
+        <div id='opt-dropdown' class="btn-group">
+            <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
             <ul class="dropdown-menu">
                 <li><a href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>{% trans "Delete" %}</a></li>
             </ul>
+        </div>
     </div>
 </div>
 

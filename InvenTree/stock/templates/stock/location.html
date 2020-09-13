@@ -18,7 +18,7 @@
         </button>
         <!-- Barcode actions menu -->
         {% if location %}
-        <div class='dropdown dropdown-buttons'>
+        <div class='btn-group'>
             <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
             <ul class='dropdown-menu' role='menu'>
                 <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
@@ -26,14 +26,14 @@
                 <li><a href='#' id='barcode-check-in'><span class='fas fa-arrow-right'></span> {% trans "Check-in Items" %}</a></li>
             </ul>
         </div>
-        <div class='dropdown dropdown-buttons'>
+        <div class='btn-group'>
             <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
             <ul class='dropdown-menu' role='menu'>
                 <li><a href='#' id='location-count'><span class='fas fa-clipboard-list'></span>
                  {% trans "Count stock" %}</a></li>
             </ul>
         </div>
-        <div class='dropdown dropdown-buttons'>
+        <div class='btn-group'>
             <button id='location-actions' title='{% trans "Location actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle="dropdown"><span class='fas fa-sitemap'></span> <span class='caret'></span></button>
             <ul class='dropdown-menu' role='menu'>
                 <li><a href='#' id='location-edit'><span class='fas fa-edit icon-green'></span> {% trans "Edit location" %}</a></li>

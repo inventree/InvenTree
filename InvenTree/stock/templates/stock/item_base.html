@@ -74,7 +74,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 
 <div class='btn-group action-buttons' role='group'>
     <!-- Barcode actions menu -->
-    <div class='dropdown dropdown-buttons'>
+    <div class='btn-group'>
         <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
             <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
@@ -87,7 +87,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         </ul>
     </div>
     <!-- Stock adjustment menu -->
-    <div class='dropdown dropdown-buttons'>
+    <div class='btn-group'>
         <button id='stock-options' title='{% trans "Stock adjustment actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
             {% if item.in_stock %}
@@ -110,7 +110,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         </ul>
     </div>
     <!-- Edit stock item -->
-    <div class='dropdown dropdown-buttons'>
+    <div class='btn-group'>
         <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-tools'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
 
