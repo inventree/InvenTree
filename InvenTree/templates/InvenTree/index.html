@@ -7,9 +7,24 @@ InvenTree | Index
 {% block content %}
 <h3>InvenTree</h3>
 <hr>
-{% include "InvenTree/starred_parts.html" with collapse_id="starred" %}
 
-{% include "InvenTree/low_stock.html" with collapse_id="order" %}
+<div class="row">
+    <div class="col-sm-6">
+        {% include "InvenTree/latest_parts.html" with collapse_id="latest" %}
+    </div>
+    <div class="col-sm-6">
+        {% include "InvenTree/bom_invalid.html" with collapse_id="bom_invalid" %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        {% include "InvenTree/starred_parts.html" with collapse_id="starred" %}
+    </div>
+    <div class="col-sm-6">
+        {% include "InvenTree/low_stock.html" with collapse_id="order" %}
+    </div>
+</div>
 
 {% endblock %}
 
@@ -21,6 +36,18 @@ InvenTree | Index
 
 {{ block.super }}
 
+loadPartTable("#latest-parts-table", "{% url 'api-part-list' %}", {
+    params: {
+        "latest_parts": true,
+    }
+});
+
+loadPartTable("#bom-invalid-table", "{% url 'api-part-list' %}", {
+    params: {
+        "bom_invalid": true,
+    }
+});
+
 loadPartTable("#starred-parts-table", "{% url 'api-part-list' %}", {
     params: {
         "starred": true,
@@ -31,6 +58,19 @@ loadPartTable("#low-stock-table", "{% url 'api-part-list' %}", {
     params: {
         "low_stock": true,
     }
+});
+
+$("#bom-invalid-table").on('load-success.bs.table', function() {
+    var count = $("#bom-invalid-table").bootstrapTable('getData').length;
+
+    $("#bom-invalid-count").html(count);
+});
+
+
+$("#latest-parts-table").on('load-success.bs.table', function() {
+    var count = $("#latest-parts-table").bootstrapTable('getData').length;
+
+    $("#latest-parts-count").html(count);
 });
 
 $("#starred-parts-table").on('load-success.bs.table', function() {

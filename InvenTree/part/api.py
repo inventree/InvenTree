@@ -405,6 +405,27 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Filter by latest part creation date
+        latest_parts = params.get('latest_parts', None)
+
+        if latest_parts is not None:
+            # Get the last 5 created parts
+            queryset = queryset.order_by('-creation_date')[:5]
+
+        # Filter invalid BOMs
+        bom_invalid = params.get('bom_invalid', None)
+
+        if bom_invalid is not None:
+            # Get assemblies with invalid BOMs
+            assemblies = queryset.filter(active=True).filter(assembly=True)
+            valid_boms = []
+
+            for part in assemblies:
+                if part.is_bom_valid:
+                    valid_boms.append(part.pk)
+
+            queryset = assemblies.exclude(pk__in=valid_boms)
+
         # Filter by 'starred' parts?
         starred = params.get('starred', None)
 
