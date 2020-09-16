@@ -82,9 +82,10 @@
     float: left;
 }
 
-.navbar-barcode-li {
+#navbar-barcode-li {
     border-left: none;
     border-right: none;
+    padding-right: 5px;
 }
 
 .navbar-nav > li {
