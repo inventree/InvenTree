@@ -59,7 +59,10 @@ class BuildList(generics.ListCreateAPIView):
         status = self.request.query_params.get('status', None)
 
         if status is not None:
-            queryset = queryset.filter(status=status)
+            # Get status codes
+            codes = status.split('-')
+            # Filter by codes
+            queryset = queryset.filter(status__in=codes)
 
         # Filter by associated part?
         part = self.request.query_params.get('part', None)
