@@ -7,6 +7,7 @@ These models are 'generic' and do not fit a particular business logic object.
 from __future__ import unicode_literals
 
 import os
+import decimal
 
 from django.db import models
 from django.conf import settings
@@ -162,6 +163,9 @@ class Currency(models.Model):
 
 
 class PriceBreak(models.Model):
+    """
+    Represents a PriceBreak model
+    """
 
     class Meta:
         abstract = True
@@ -172,6 +176,18 @@ class PriceBreak(models.Model):
 
     currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
 
+    @property
+    def converted_cost(self):
+        """
+        Return the cost of this price break, converted to the base currency
+        """
+
+        scaler = decimal.Decimal(1.0)
+
+        if self.currency:
+            scaler = self.currency.value
+
+        return self.cost * scaler
 
 
 class ColorTheme(models.Model):
