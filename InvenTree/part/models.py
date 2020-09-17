@@ -46,6 +46,8 @@ from order import models as OrderModels
 from company.models import SupplierPart
 from stock import models as StockModels
 
+import common.models
+
 
 class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
@@ -1225,6 +1227,20 @@ class PartAttachment(InvenTreeAttachment):
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
                              related_name='attachments')
+
+
+class PartSellPriceBreak(common.models.PriceBreak):
+    """
+    Represents a price break for selling this part
+    """
+
+    part = models.ForeignKey(
+        Part, on_delete=models.CASCADE,
+        related_name='salepricebreaks'
+    )
+
+    class Meta:
+        unique_together = ('part', 'quantity')
 
 
 class PartStar(models.Model):
