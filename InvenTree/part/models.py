@@ -1236,7 +1236,8 @@ class PartSellPriceBreak(common.models.PriceBreak):
 
     part = models.ForeignKey(
         Part, on_delete=models.CASCADE,
-        related_name='salepricebreaks'
+        related_name='salepricebreaks',
+        limit_choices_to={'salable': True}
     )
 
     class Meta:
