@@ -14,6 +14,8 @@ from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 
+import InvenTree.fields
+
 
 class InvenTreeSetting(models.Model):
     """
@@ -157,6 +159,19 @@ class Currency(models.Model):
             self.value = 1.0
 
         super().save(*args, **kwargs)
+
+
+class PriceBreak(models.Model):
+
+    class Meta:
+        abstract = True
+
+    quantity = InvenTree.fields.RoundingDecimalField(max_digits=15, decimal_places=5, default=1, validators=[MinValueValidator(1)])
+
+    cost = InvenTree.fields.RoundingDecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
+
+    currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
+
 
 
 class ColorTheme(models.Model):
