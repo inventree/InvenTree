@@ -12,7 +12,7 @@ INVENTREE_SW_VERSION = "0.1.3 pre"
 
 def inventreeInstanceName():
     """ Returns the InstanceName settings for the current database """
-    return common.modelsInvenTreeSetting.get_setting("InstanceName", "")
+    return common.models.InvenTreeSetting.get_setting("InstanceName", "")
 
 
 def inventreeVersion():

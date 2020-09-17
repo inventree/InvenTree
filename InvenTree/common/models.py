@@ -177,6 +177,14 @@ class PriceBreak(models.Model):
     currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
 
     @property
+    def symbol(self):
+        return self.currency.symbol if self.currency else ''
+
+    @property
+    def suffix(self):
+        return self.currency.suffix if self.currency else ''
+
+    @property
     def converted_cost(self):
         """
         Return the cost of this price break, converted to the base currency
