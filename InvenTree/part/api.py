@@ -20,6 +20,7 @@ from django.urls import reverse
 from .models import Part, PartCategory, BomItem, PartStar
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
+from .models import PartSellPriceBreak
 
 from . import serializers as part_serializers
 
@@ -105,6 +106,27 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single PartCategory object """
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+
+class PartSalePriceList(generics.ListCreateAPIView):
+    """
+    API endpoint for list view of PartSalePriceBreak model
+    """
+
+    queryset = PartSellPriceBreak.objects.all()
+    serializer_class = part_serializers.PartSalePriceSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend
+    ]
+
+    filter_fields = [
+        'part',
+    ]
 
 
 class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
@@ -754,6 +776,11 @@ part_api_urls = [
     url(r'^star/', include([
         url(r'^(?P<pk>\d+)/?', PartStarDetail.as_view(), name='api-part-star-detail'),
         url(r'^$', PartStarList.as_view(), name='api-part-star-list'),
+    ])),
+
+    # Base URL for part sale pricing
+    url(r'^sale-price/', include([
+        url(r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
     ])),
     
     # Base URL for PartParameter API endpoints

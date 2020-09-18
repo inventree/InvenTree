@@ -12,6 +12,7 @@ from .models import BomItem
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment
 from .models import PartTestTemplate
+from .models import PartSellPriceBreak
 
 from stock.models import StockItem
 
@@ -85,6 +86,32 @@ class PartTestTemplateSerializer(InvenTreeModelSerializer):
             'requires_value',
             'requires_attachment',
         ]
+
+
+class PartSalePriceSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for sale prices for Part model.
+    """
+
+    symbol = serializers.CharField(read_only=True)
+
+    suffix = serializers.CharField(read_only=True)
+
+    quantity = serializers.FloatField()
+
+    cost = serializers.FloatField()
+
+    class Meta:
+        model = PartSellPriceBreak
+        fields = [
+            'pk',
+            'part',
+            'quantity',
+            'cost',
+            'currency',
+            'symbol',
+            'suffix',
+        ]    
 
 
 class PartThumbSerializer(serializers.Serializer):
