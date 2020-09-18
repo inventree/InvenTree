@@ -498,6 +498,22 @@ class PartList(generics.ListCreateAPIView):
                 # Filter items which have an 'in_stock' level higher than 'minimum_stock'
                 queryset = queryset.filter(Q(in_stock__gte=F('minimum_stock')))
 
+        # Filter by "parts which need stock to complete build"
+        stock_to_build = params.get('stock_to_build', None)
+
+        if stock_to_build is not None:
+            # Filter only active parts
+            queryset = queryset.filter(active=True)
+            parts_need_stock = []
+
+            # Find parts with active builds
+            # where any subpart's stock is lower than quantity being built
+            for part in queryset:
+                if part.active_builds and part.can_build < part.quantity_being_built:
+                    parts_need_stock.append(part.pk)
+
+            queryset = queryset.filter(pk__in=parts_need_stock)
+
         return queryset
 
     permission_classes = [
