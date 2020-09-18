@@ -18,6 +18,12 @@ part_attachment_urls = [
     url(r'^(?P<pk>\d+)/delete/?', views.PartAttachmentDelete.as_view(), name='part-attachment-delete'),
 ]
 
+sale_price_break_urls = [
+    url(r'^new/', views.PartSalePriceBreakCreate.as_view(), name='sale-price-break-create'),
+    url(r'^(?P<pk>\d+)/edit/', views.PartSalePriceBreakEdit.as_view(), name='sale-price-break-edit'),
+    url(r'^(?P<pk>\d+)/delete/', views.PartSalePriceBreakDelete.as_view(), name='sale-price-break-delete'),
+]
+
 part_parameter_urls = [
     
     url(r'^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
@@ -27,7 +33,6 @@ part_parameter_urls = [
     url(r'^new/', views.PartParameterCreate.as_view(), name='part-param-create'),
     url(r'^(?P<pk>\d+)/edit/', views.PartParameterEdit.as_view(), name='part-param-edit'),
     url(r'^(?P<pk>\d+)/delete/', views.PartParameterDelete.as_view(), name='part-param-delete'),
-
 ]
 
 part_detail_urls = [
@@ -108,6 +113,9 @@ part_urls = [
 
     # Part attachments
     url(r'^attachment/', include(part_attachment_urls)),
+
+    # Part price breaks
+    url(r'^sale-price/', include(sale_price_break_urls)),
 
     # Part test templates
     url(r'^test-template/', include([
