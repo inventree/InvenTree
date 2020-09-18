@@ -491,6 +491,9 @@ class BuildItem(models.Model):
 
         item = self.stock_item
 
+        # link the stock item to this specific build
+        item.belongs_to = self.build
+
         # Split the allocated stock if there are more available than allocated
         if item.quantity > self.quantity:
             item = item.splitStock(self.quantity, None, user)
