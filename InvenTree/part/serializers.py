@@ -111,7 +111,7 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
             'currency',
             'symbol',
             'suffix',
-        ]    
+        ]
 
 
 class PartThumbSerializer(serializers.Serializer):
