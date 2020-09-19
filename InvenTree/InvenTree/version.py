@@ -3,15 +3,16 @@ Provides information on the current InvenTree version
 """
 
 import subprocess
-from common.models import InvenTreeSetting
 import django
+
+import common.models
 
 INVENTREE_SW_VERSION = "0.1.3 pre"
 
 
 def inventreeInstanceName():
     """ Returns the InstanceName settings for the current database """
-    return InvenTreeSetting.get_setting("InstanceName", "")
+    return common.models.InvenTreeSetting.get_setting("InstanceName", "")
 
 
 def inventreeVersion():

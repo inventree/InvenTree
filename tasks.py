@@ -109,6 +109,14 @@ def superuser(c):
     manage(c, 'createsuperuser', pty=True)
 
 @task
+def check(c):
+    """
+    Check validity of django codebase
+    """
+
+    manage(c, "check")
+
+@task
 def migrate(c):
     """
     Performs database migrations.

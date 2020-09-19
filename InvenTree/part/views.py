@@ -26,6 +26,7 @@ from .models import PartParameterTemplate, PartParameter
 from .models import BomItem
 from .models import match_part_names
 from .models import PartTestTemplate
+from .models import PartSellPriceBreak
 
 from common.models import Currency, InvenTreeSetting
 from company.models import SupplierPart
@@ -2097,3 +2098,75 @@ class BomItemDelete(AjaxDeleteView):
     ajax_template_name = 'part/bom-delete.html'
     context_object_name = 'item'
     ajax_form_title = _('Confim BOM item deletion')
+
+
+class PartSalePriceBreakCreate(AjaxCreateView):
+    """ View for creating a sale price break for a part """
+
+    model = PartSellPriceBreak
+    form_class = part_forms.EditPartSalePriceBreakForm
+    ajax_form_title = _('Add Price Break')
+    
+    def get_data(self):
+        return {
+            'success': _('Added new price break')
+        }
+
+    def get_part(self):
+        try:
+            part = Part.objects.get(id=self.request.GET.get('part'))
+        except (ValueError, Part.DoesNotExist):
+            part = None
+        
+        if part is None:
+            try:
+                part = Part.objects.get(id=self.request.POST.get('part'))
+            except (ValueError, Part.DoesNotExist):
+                part = None
+
+        return part
+
+    def get_form(self):
+
+        form = super(AjaxCreateView, self).get_form()
+        form.fields['part'].widget = HiddenInput()
+
+        return form
+
+    def get_initial(self):
+
+        initials = super(AjaxCreateView, self).get_initial()
+
+        initials['part'] = self.get_part()
+
+        # Pre-select the default currency
+        try:
+            base = Currency.objects.get(base=True)
+            initials['currency'] = base
+        except Currency.DoesNotExist:
+            pass
+
+        return initials
+
+
+class PartSalePriceBreakEdit(AjaxUpdateView):
+    """ View for editing a sale price break """
+
+    model = PartSellPriceBreak
+    form_class = part_forms.EditPartSalePriceBreakForm
+    ajax_form_title = _('Edit Price Break')
+
+    def get_form(self):
+
+        form = super().get_form()
+        form.fields['part'].widget = HiddenInput()
+
+        return form
+
+    
+class PartSalePriceBreakDelete(AjaxDeleteView):
+    """ View for deleting a sale price break """
+
+    model = PartSellPriceBreak
+    ajax_form_title = _("Delete Price Break")
+    ajax_template_name = "modal_delete_form.html"

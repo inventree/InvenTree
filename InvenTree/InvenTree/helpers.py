@@ -15,7 +15,8 @@ from django.http import StreamingHttpResponse
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
-from .version import inventreeVersion, inventreeInstanceName
+import InvenTree.version
+
 from .settings import MEDIA_URL, STATIC_URL
 
 
@@ -263,8 +264,8 @@ def MakeBarcode(object_name, object_pk, object_data, **kwargs):
         data[object_name] = object_pk
     else:
         data['tool'] = 'InvenTree'
-        data['version'] = inventreeVersion()
-        data['instance'] = inventreeInstanceName()
+        data['version'] = InvenTree.version.inventreeVersion()
+        data['instance'] = InvenTree.version.inventreeInstanceName()
 
         # Ensure PK is included
         object_data['id'] = object_pk
