@@ -684,6 +684,7 @@ class StockList(generics.ListCreateAPIView):
 
     search_fields = [
         'serial',
+        'batch',
         'part__name',
         'part__IPN',
         'part__description'
