@@ -82,19 +82,20 @@ loadBuildTable("#build-pending-table", {
     params: {
         part_detail: true,
         active: true,
-    }
+    },
+    disableFilters: true,
 });
 
 loadSimplePartTable("#low-stock-table", "{% url 'api-part-list' %}", {
     params: {
-        "low_stock": true,
+        low_stock: true,
     },
     name: "low_stock_parts",
 });
 
 loadSimplePartTable("#stock-to-build-table", "{% url 'api-part-list' %}", {
     params: {
-        "stock_to_build": true,
+        stock_to_build: true,
     },
     name: "to_build_parts",
 });
@@ -102,17 +103,17 @@ loadSimplePartTable("#stock-to-build-table", "{% url 'api-part-list' %}", {
 loadPurchaseOrderTable("#po-outstanding-table", {
     url: "{% url 'api-po-list' %}",
     params: {
-        "supplier_detail": true,
-        "outstanding": true,
+        supplier_detail: true,
+        outstanding: true,
     }
 });
 
 loadSalesOrderTable("#so-outstanding-table", {
     url: "{% url 'api-so-list' %}",
     params: {
-        "customer_detail": true,
-        "outstanding": true,
-    }
+        customer_detail: true,
+        outstanding: true,
+    },
 });
 
 $("#latest-parts-table").on('load-success.bs.table', function() {

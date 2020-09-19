@@ -408,6 +408,10 @@ class PartList(generics.ListCreateAPIView):
         # Filter by whether the BOM has been validated (or not)
         bom_valid = params.get('bom_valid', None)
 
+        # TODO: Querying bom_valid status may be quite expensive
+        # TODO: (It needs to be profiled!)
+        # TODO: It might be worth caching the bom_valid status to a database column
+
         if bom_valid is not None:
 
             bom_valid = str2bool(bom_valid)
@@ -498,6 +502,9 @@ class PartList(generics.ListCreateAPIView):
 
         # Filter by "parts which need stock to complete build"
         stock_to_build = params.get('stock_to_build', None)
+
+        # TODO: This is super expensive, database query wise...
+        # TODO: Need to figure out a cheaper way of making this filter query
 
         if stock_to_build is not None:
             # Filter only active parts
