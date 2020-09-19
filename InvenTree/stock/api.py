@@ -440,6 +440,8 @@ class StockList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
+        queryset = super().filter_queryset(queryset)
+
         # Perform basic filtering:
         # Note: We do not let DRF filter here, it be slow AF
 
@@ -678,6 +680,13 @@ class StockList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
+    ]
+
+    search_fields = [
+        'serial',
+        'part__name',
+        'part__IPN',
+        'part__description'
     ]
 
 
