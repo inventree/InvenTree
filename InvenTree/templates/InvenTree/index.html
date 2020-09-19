@@ -55,10 +55,12 @@ InvenTree | Index
 
 {{ block.super }}
 
-loadPartTable("#latest-parts-table", "{% url 'api-part-list' %}", {
+loadSimplePartTable("#latest-parts-table", "{% url 'api-part-list' %}", {
     params: {
-        "latest_parts": true,
-    }
+        ordering: "-creation_date",
+        limit: 10,
+    },
+    name: 'latest_parts',
 });
 
 loadPartTable("#starred-parts-table", "{% url 'api-part-list' %}", {

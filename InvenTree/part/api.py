@@ -405,13 +405,6 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
-        # Filter by latest part creation date
-        latest_parts = params.get('latest_parts', None)
-
-        if latest_parts is not None:
-            # Get the last 5 created parts
-            queryset = queryset.order_by('-creation_date')[:5]
-
         # Filter invalid BOMs
         bom_invalid = params.get('bom_invalid', None)
 
@@ -514,6 +507,17 @@ class PartList(generics.ListCreateAPIView):
 
             queryset = queryset.filter(pk__in=parts_need_stock)
 
+        # Limit choices
+        limit = params.get('limit', None)
+
+        if limit is not None:
+            try:
+                limit = int(limit)
+                if limit > 0:
+                    queryset = queryset[:limit]
+            except ValueError:
+                pass
+
         return queryset
 
     permission_classes = [
@@ -539,6 +543,7 @@ class PartList(generics.ListCreateAPIView):
 
     ordering_fields = [
         'name',
+        'creation_date',
     ]
 
     # Default ordering
