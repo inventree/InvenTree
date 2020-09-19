@@ -27,6 +27,7 @@ from InvenTree.helpers import decimal2string
 
 from stock import models as StockModels
 from part import models as PartModels
+from stock.models import StockItem
 
 
 class Build(MPTTModel):
@@ -280,10 +281,13 @@ class Build(MPTTModel):
         - Takes allocated items from stock
         - Delete pending BuildItem objects
         """
-
+        components_used = []
         # Complete the build allocation for each BuildItem
         for build_item in self.allocated_stock.all().prefetch_related('stock_item'):
             build_item.complete_allocation(user)
+
+            # Store component stock items in case we want to "install" them into the build's stock item
+            components_used.append(build_item.stock_item)
 
             # Check that the stock-item has been assigned to this build, and remove the builditem from the database
             if build_item.stock_item.build_order == self:
@@ -322,6 +326,17 @@ class Build(MPTTModel):
             )
 
             item.save()
+
+        # Install stock items into the build output(s)
+        outputs = StockItem.objects.filter(build=self)
+        if self.quantity == 1:
+            build_output = outputs[0]
+            if build_output.part.trackable:
+                for component in components_used:
+                    component.belongs_to = build_output
+                    component.save()
+        else:
+            raise NotImplementedError("Installing stock items into multiple build outputs is not yet supported")
 
         # Finally, mark the build as complete
         self.completion_date = datetime.now().date()
@@ -488,11 +503,7 @@ class BuildItem(models.Model):
             raise ValidationError(errors)
 
     def complete_allocation(self, user):
-
         item = self.stock_item
-
-        # link the stock item to this specific build
-        item.belongs_to = self.build
 
         # Split the allocated stock if there are more available than allocated
         if item.quantity > self.quantity:

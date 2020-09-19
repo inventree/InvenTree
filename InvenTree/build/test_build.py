@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from decimal import Decimal
 
 from django.test import TestCase
 
@@ -225,3 +226,59 @@ class BuildTest(TestCase):
         outputs = StockItem.objects.filter(build=self.build)
 
         self.assertEqual(outputs.count(), 10)
+
+
+class BuildBelongsToTest(TestCase):
+    """
+    Tests that ensure "belongs_to" functionality is working properly
+    """
+    def setUp(self):
+        # Create a base "Part"
+        self.assembly = Part.objects.create(
+            name="An assembled part",
+            description="Why does it matter what my description is?",
+            assembly=True,
+            trackable=True,
+        )
+
+        self.sub_part = Part.objects.create(
+            name="Widget A",
+            description="A widget",
+            component=True
+        )
+
+        # Create BOM item links for the parts
+        BomItem.objects.create(
+            part=self.assembly,
+            sub_part=self.sub_part,
+            quantity=2
+        )
+
+        # Create some stock items to assign to the build
+        self.stock = StockItem.objects.create(part=self.sub_part, quantity=100)
+
+    def test_build_single_output_untrackable_component(self):
+        # Create a "Build" object to make 1x assembly
+        self.build = Build.objects.create(
+            title="This is a build",
+            part=self.assembly,
+            quantity=1
+        )
+        # Create a new allocation
+        build_item = BuildItem(
+            build=self.build,
+            stock_item=self.stock,
+            quantity=2)
+        build_item.save()
+
+        self.assertTrue(self.build.isFullyAllocated())
+        self.build.completeBuild(None, [5], None)
+
+        # Ensure that we created an output with the expected serial number
+        self.assertEqual("5", StockItem.objects.filter(build=self.build)[0].serial)
+        # Ensure that there are 2 units of stock allocated to the build
+        allocated_stock = StockItem.objects.filter(build_order=self.build)[0]
+        self.assertEqual(allocated_stock.quantity, Decimal(2))
+        # Ensure that the component stock now "belongs_to" the build stock item ID
+        self.assertEqual(3, self.build.build_outputs.all()[0].pk)  # confirm that the build output pk == 3
+        self.assertEqual(allocated_stock.belongs_to_id, 3)  # confirm that the component stock items belong to ID 3

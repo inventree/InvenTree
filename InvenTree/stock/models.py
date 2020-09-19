@@ -338,7 +338,7 @@ class StockItem(MPTTModel):
     )
 
     belongs_to = models.ForeignKey(
-        'build.Build',
+        'self',
         verbose_name=_('Installed In'),
         on_delete=models.DO_NOTHING,
         related_name='owned_parts', blank=True, null=True,
