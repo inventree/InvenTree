@@ -109,7 +109,10 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Build status" %}',
                 options: buildCodes,
             },
-
+            pending: {
+                type: 'bool',
+                title: '{% trans "Pending" %}',
+            }
         };
     }
 

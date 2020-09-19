@@ -405,26 +405,27 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
-        # Filter by latest part creation date
-        latest_parts = params.get('latest_parts', None)
+        # Filter by whether the BOM has been validated (or not)
+        bom_valid = params.get('bom_valid', None)
 
-        if latest_parts is not None:
-            # Get the last 5 created parts
-            queryset = queryset.order_by('-creation_date')[:5]
+        # TODO: Querying bom_valid status may be quite expensive
+        # TODO: (It needs to be profiled!)
+        # TODO: It might be worth caching the bom_valid status to a database column
 
-        # Filter invalid BOMs
-        bom_invalid = params.get('bom_invalid', None)
+        if bom_valid is not None:
 
-        if bom_invalid is not None:
-            # Get assemblies with invalid BOMs
-            assemblies = queryset.filter(active=True).filter(assembly=True)
-            valid_boms = []
+            bom_valid = str2bool(bom_valid)
 
-            for part in assemblies:
-                if part.is_bom_valid:
-                    valid_boms.append(part.pk)
+            # Limit queryset to active assemblies
+            queryset = queryset.filter(active=True, assembly=True)
 
-            queryset = assemblies.exclude(pk__in=valid_boms)
+            pks = []
+
+            for part in queryset:
+                if part.is_bom_valid() == bom_valid:
+                    pks.append(part.pk)
+
+            queryset = queryset.filter(pk__in=pks)
 
         # Filter by 'starred' parts?
         starred = params.get('starred', None)
@@ -475,6 +476,7 @@ class PartList(generics.ListCreateAPIView):
 
         # Filter by whether the part has stock
         has_stock = params.get("has_stock", None)
+
         if has_stock is not None:
             has_stock = str2bool(has_stock)
 
@@ -501,6 +503,9 @@ class PartList(generics.ListCreateAPIView):
         # Filter by "parts which need stock to complete build"
         stock_to_build = params.get('stock_to_build', None)
 
+        # TODO: This is super expensive, database query wise...
+        # TODO: Need to figure out a cheaper way of making this filter query
+
         if stock_to_build is not None:
             # Filter only active parts
             queryset = queryset.filter(active=True)
@@ -513,6 +518,17 @@ class PartList(generics.ListCreateAPIView):
                     parts_need_stock.append(part.pk)
 
             queryset = queryset.filter(pk__in=parts_need_stock)
+
+        # Limit choices
+        limit = params.get('limit', None)
+
+        if limit is not None:
+            try:
+                limit = int(limit)
+                if limit > 0:
+                    queryset = queryset[:limit]
+            except ValueError:
+                pass
 
         return queryset
 
@@ -539,6 +555,7 @@ class PartList(generics.ListCreateAPIView):
 
     ordering_fields = [
         'name',
+        'creation_date',
     ]
 
     # Default ordering

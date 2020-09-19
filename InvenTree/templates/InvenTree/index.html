@@ -55,58 +55,65 @@ InvenTree | Index
 
 {{ block.super }}
 
-loadPartTable("#latest-parts-table", "{% url 'api-part-list' %}", {
+loadSimplePartTable("#latest-parts-table", "{% url 'api-part-list' %}", {
     params: {
-        "latest_parts": true,
-    }
+        ordering: "-creation_date",
+        limit: 10,
+    },
+    name: 'latest_parts',
 });
 
-loadPartTable("#starred-parts-table", "{% url 'api-part-list' %}", {
+loadSimplePartTable("#starred-parts-table", "{% url 'api-part-list' %}", {
     params: {
         "starred": true,
-    }
+    },
+    name: 'starred_parts',
 });
 
-loadPartTable("#bom-invalid-table", "{% url 'api-part-list' %}", {
+loadSimplePartTable("#bom-invalid-table", "{% url 'api-part-list' %}", {
     params: {
-        "bom_invalid": true,
-    }
+        "bom_valid": false,
+    },
+    name: 'bom_invalid_parts',
 });
 
 loadBuildTable("#build-pending-table", {
     url: "{% url 'api-build-list' %}",
     params: {
-        "part_detail": true,
-        "status": "10-20",
-    }
+        part_detail: true,
+        active: true,
+    },
+    disableFilters: true,
 });
 
-loadPartTable("#low-stock-table", "{% url 'api-part-list' %}", {
+loadSimplePartTable("#low-stock-table", "{% url 'api-part-list' %}", {
     params: {
-        "low_stock": true,
-    }
+        low_stock: true,
+    },
+    name: "low_stock_parts",
 });
 
-loadPartTable("#stock-to-build-table", "{% url 'api-part-list' %}", {
+loadSimplePartTable("#stock-to-build-table", "{% url 'api-part-list' %}", {
     params: {
-        "stock_to_build": true,
-    }
+        stock_to_build: true,
+    },
+    name: "to_build_parts",
 });
 
 loadPurchaseOrderTable("#po-outstanding-table", {
     url: "{% url 'api-po-list' %}",
     params: {
-        "supplier_detail": true,
-        "oustanding": true,
+        supplier_detail: true,
+        outstanding: true,
     }
 });
 
 loadSalesOrderTable("#so-outstanding-table", {
     url: "{% url 'api-so-list' %}",
     params: {
-        "customer_detail": true,
-        "oustanding": true,
-    }
+        customer_detail: true,
+        outstanding: true,
+    },
 });
 
 $("#latest-parts-table").on('load-success.bs.table', function() {
