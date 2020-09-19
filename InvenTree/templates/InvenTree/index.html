@@ -7,9 +7,43 @@ InvenTree | Index
 {% block content %}
 <h3>InvenTree</h3>
 <hr>
-{% include "InvenTree/starred_parts.html" with collapse_id="starred" %}
 
-{% include "InvenTree/low_stock.html" with collapse_id="order" %}
+<div class="row">
+    <div class="col-sm-6">
+        {% include "InvenTree/latest_parts.html" with collapse_id="latest_parts" %}
+    </div>
+    <div class="col-sm-6">
+        {% include "InvenTree/starred_parts.html" with collapse_id="starred" %}
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-sm-6">
+        {% include "InvenTree/bom_invalid.html" with collapse_id="bom_invalid" %}
+    </div>
+    <div class="col-sm-6">
+        {% include "InvenTree/build_pending.html" with collapse_id="build_pending" %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        {% include "InvenTree/low_stock.html" with collapse_id="order" %}
+    </div>
+    <div class="col-sm-6">
+        {% include "InvenTree/required_stock_build.html" with collapse_id="stock_to_build" %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        {% include "InvenTree/po_outstanding.html" with collapse_id="po_outstanding" %}
+    </div>
+    <div class="col-sm-6">
+        {% include "InvenTree/so_outstanding.html" with collapse_id="so_outstanding" %}
+    </div>
+</div>
 
 {% endblock %}
 
@@ -21,16 +55,71 @@ InvenTree | Index
 
 {{ block.super }}
 
-loadPartTable("#starred-parts-table", "{% url 'api-part-list' %}", {
+loadSimplePartTable("#latest-parts-table", "{% url 'api-part-list' %}", {
+    params: {
+        ordering: "-creation_date",
+        limit: 10,
+    },
+    name: 'latest_parts',
+});
+
+loadSimplePartTable("#starred-parts-table", "{% url 'api-part-list' %}", {
     params: {
         "starred": true,
+    },
+    name: 'starred_parts',
+});
+
+loadSimplePartTable("#bom-invalid-table", "{% url 'api-part-list' %}", {
+    params: {
+        "bom_valid": false,
+    },
+    name: 'bom_invalid_parts',
+});
+
+loadBuildTable("#build-pending-table", {
+    url: "{% url 'api-build-list' %}",
+    params: {
+        part_detail: true,
+        active: true,
+    },
+    disableFilters: true,
+});
+
+loadSimplePartTable("#low-stock-table", "{% url 'api-part-list' %}", {
+    params: {
+        low_stock: true,
+    },
+    name: "low_stock_parts",
+});
+
+loadSimplePartTable("#stock-to-build-table", "{% url 'api-part-list' %}", {
+    params: {
+        stock_to_build: true,
+    },
+    name: "to_build_parts",
+});
+
+loadPurchaseOrderTable("#po-outstanding-table", {
+    url: "{% url 'api-po-list' %}",
+    params: {
+        supplier_detail: true,
+        outstanding: true,
     }
 });
 
-loadPartTable("#low-stock-table", "{% url 'api-part-list' %}", {
+loadSalesOrderTable("#so-outstanding-table", {
+    url: "{% url 'api-so-list' %}",
     params: {
-        "low_stock": true,
-    }
+        customer_detail: true,
+        outstanding: true,
+    },
+});
+
+$("#latest-parts-table").on('load-success.bs.table', function() {
+    var count = $("#latest-parts-table").bootstrapTable('getData').length;
+
+    $("#latest-parts-count").html(count);
 });
 
 $("#starred-parts-table").on('load-success.bs.table', function() {
@@ -39,11 +128,40 @@ $("#starred-parts-table").on('load-success.bs.table', function() {
     $("#starred-parts-count").html(count);
 });
 
+$("#bom-invalid-table").on('load-success.bs.table', function() {
+    var count = $("#bom-invalid-table").bootstrapTable('getData').length;
+
+    $("#bom-invalid-count").html(count);
+});
+
+$("#build-pending-table").on('load-success.bs.table', function() {
+    var count = $("#build-pending-table").bootstrapTable('getData').length;
+
+    $("#build-pending-count").html(count);
+});
+
 $("#low-stock-table").on('load-success.bs.table', function() {
     var count = $("#low-stock-table").bootstrapTable('getData').length;
 
     $("#low-stock-count").html(count);
 });
 
+$("#stock-to-build-table").on('load-success.bs.table', function() {
+    var count = $("#stock-to-build-table").bootstrapTable('getData').length;
+
+    $("#stock-to-build-count").html(count);
+});
+
+$("#po-outstanding-table").on('load-success.bs.table', function() {
+    var count = $("#po-outstanding-table").bootstrapTable('getData').length;
+
+    $("#po-outstanding-count").html(count);
+});
+
+$("#so-outstanding-table").on('load-success.bs.table', function() {
+    var count = $("#so-outstanding-table").bootstrapTable('getData').length;
+
+    $("#so-outstanding-count").html(count);
+});
 
 {% endblock %}

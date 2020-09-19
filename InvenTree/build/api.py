@@ -12,6 +12,7 @@ from rest_framework import generics, permissions
 from django.conf.urls import url, include
 
 from InvenTree.helpers import str2bool
+from InvenTree.status_codes import BuildStatus
 
 from .models import Build, BuildItem
 from .serializers import BuildSerializer, BuildItemSerializer
@@ -60,6 +61,17 @@ class BuildList(generics.ListCreateAPIView):
 
         if status is not None:
             queryset = queryset.filter(status=status)
+
+        # Filter by "active" status
+        active = self.request.query_params.get('active', None)
+
+        if active is not None:
+            active = str2bool(active)
+
+            if active:
+                queryset = queryset.filter(status__in=BuildStatus.ACTIVE_CODES)
+            else:
+                queryset = queryset.exclude(status__in=BuildStatus.ACTIVE_CODES)
 
         # Filter by associated part?
         part = self.request.query_params.get('part', None)

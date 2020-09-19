@@ -137,11 +137,22 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
     """ Serializer for SupplierPriceBreak object """
 
+    symbol = serializers.CharField(read_only=True)
+
+    suffix = serializers.CharField(read_only=True)
+
+    quantity = serializers.FloatField()
+
+    cost = serializers.FloatField()
+
     class Meta:
         model = SupplierPriceBreak
         fields = [
             'pk',
             'part',
             'quantity',
-            'cost'
+            'cost',
+            'currency',
+            'symbol',
+            'suffix',
         ]
