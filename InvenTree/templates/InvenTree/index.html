@@ -103,7 +103,7 @@ loadPurchaseOrderTable("#po-outstanding-table", {
     url: "{% url 'api-po-list' %}",
     params: {
         "supplier_detail": true,
-        "oustanding": true,
+        "outstanding": true,
     }
 });
 
@@ -111,7 +111,7 @@ loadSalesOrderTable("#so-outstanding-table", {
     url: "{% url 'api-so-list' %}",
     params: {
         "customer_detail": true,
-        "oustanding": true,
+        "outstanding": true,
     }
 });
 
