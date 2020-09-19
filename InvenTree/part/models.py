@@ -845,7 +845,6 @@ class Part(MPTTModel):
 
         return str(hash.digest())
 
-    @property
     def is_bom_valid(self):
         """ Check if the BOM is 'valid' - if the calculated checksum matches the stored value
         """

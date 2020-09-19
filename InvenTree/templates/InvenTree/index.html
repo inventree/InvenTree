@@ -72,7 +72,7 @@ loadSimplePartTable("#starred-parts-table", "{% url 'api-part-list' %}", {
 
 loadSimplePartTable("#bom-invalid-table", "{% url 'api-part-list' %}", {
     params: {
-        "bom_invalid": true,
+        "bom_valid": false,
     },
     name: 'bom_invalid_parts',
 });

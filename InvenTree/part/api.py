@@ -405,19 +405,23 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
-        # Filter invalid BOMs
-        bom_invalid = params.get('bom_invalid', None)
+        # Filter by whether the BOM has been validated (or not)
+        bom_valid = params.get('bom_valid', None)
 
-        if bom_invalid is not None:
-            # Get assemblies with invalid BOMs
-            assemblies = queryset.filter(active=True).filter(assembly=True)
-            valid_boms = []
+        if bom_valid is not None:
 
-            for part in assemblies:
-                if part.is_bom_valid:
-                    valid_boms.append(part.pk)
+            bom_valid = str2bool(bom_valid)
 
-            queryset = assemblies.exclude(pk__in=valid_boms)
+            # Limit queryset to active assemblies
+            queryset = queryset.filter(active=True, assembly=True)
+
+            pks = []
+
+            for part in queryset:
+                if part.is_bom_valid() == bom_valid:
+                    pks.append(part.pk)
+
+            queryset = queryset.filter(pk__in=pks)
 
         # Filter by 'starred' parts?
         starred = params.get('starred', None)
@@ -468,6 +472,7 @@ class PartList(generics.ListCreateAPIView):
 
         # Filter by whether the part has stock
         has_stock = params.get("has_stock", None)
+
         if has_stock is not None:
             has_stock = str2bool(has_stock)
 
