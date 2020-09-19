@@ -405,6 +405,27 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Filter by latest part creation date
+        latest_parts = params.get('latest_parts', None)
+
+        if latest_parts is not None:
+            # Get the last 5 created parts
+            queryset = queryset.order_by('-creation_date')[:5]
+
+        # Filter invalid BOMs
+        bom_invalid = params.get('bom_invalid', None)
+
+        if bom_invalid is not None:
+            # Get assemblies with invalid BOMs
+            assemblies = queryset.filter(active=True).filter(assembly=True)
+            valid_boms = []
+
+            for part in assemblies:
+                if part.is_bom_valid:
+                    valid_boms.append(part.pk)
+
+            queryset = assemblies.exclude(pk__in=valid_boms)
+
         # Filter by 'starred' parts?
         starred = params.get('starred', None)
 
@@ -476,6 +497,22 @@ class PartList(generics.ListCreateAPIView):
             else:
                 # Filter items which have an 'in_stock' level higher than 'minimum_stock'
                 queryset = queryset.filter(Q(in_stock__gte=F('minimum_stock')))
+
+        # Filter by "parts which need stock to complete build"
+        stock_to_build = params.get('stock_to_build', None)
+
+        if stock_to_build is not None:
+            # Filter only active parts
+            queryset = queryset.filter(active=True)
+            parts_need_stock = []
+
+            # Find parts with active builds
+            # where any subpart's stock is lower than quantity being built
+            for part in queryset:
+                if part.active_builds and part.can_build < part.quantity_being_built:
+                    parts_need_stock.append(part.pk)
+
+            queryset = queryset.filter(pk__in=parts_need_stock)
 
         return queryset
 
