@@ -80,8 +80,8 @@ loadSimplePartTable("#bom-invalid-table", "{% url 'api-part-list' %}", {
 loadBuildTable("#build-pending-table", {
     url: "{% url 'api-build-list' %}",
     params: {
-        "part_detail": true,
-        "status": "10-20",
+        part_detail: true,
+        active: true,
     }
 });
 
