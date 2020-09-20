@@ -241,23 +241,22 @@ class BuildBelongsToTest(TestCase):
             trackable=True,
         )
 
+    def test_build_single_output_untrackable_component(self):
         self.sub_part = Part.objects.create(
             name="Widget A",
             description="A widget",
-            component=True
+            component=True,
+            trackable=False
         )
-
         # Create BOM item links for the parts
         BomItem.objects.create(
             part=self.assembly,
             sub_part=self.sub_part,
             quantity=2
         )
-
         # Create some stock items to assign to the build
         self.stock = StockItem.objects.create(part=self.sub_part, quantity=100)
 
-    def test_build_single_output_untrackable_component(self):
         # Create a "Build" object to make 1x assembly
         self.build = Build.objects.create(
             title="This is a build",
@@ -282,3 +281,98 @@ class BuildBelongsToTest(TestCase):
         # Ensure that the component stock now "belongs_to" the build stock item ID
         self.assertEqual(3, self.build.build_outputs.all()[0].pk)  # confirm that the build output pk == 3
         self.assertEqual(allocated_stock.belongs_to_id, 3)  # confirm that the component stock items belong to ID 3
+
+    def test_build_single_output_trackable_component(self):
+        self.sub_part = Part.objects.create(
+            name="Widget A",
+            description="A widget",
+            component=True,
+            trackable=True,
+
+        )
+        # Create BOM item links for the parts
+        BomItem.objects.create(
+            part=self.assembly,
+            sub_part=self.sub_part,
+            quantity=1
+        )
+        # Create some stock items to assign to the build
+        self.stock = StockItem.objects.create(part=self.sub_part, quantity=1, serial="101")
+
+        # Create a "Build" object to make 1x assembly
+        self.build = Build.objects.create(
+            title="This is a build",
+            part=self.assembly,
+            quantity=1
+        )
+        # Create a new allocation
+        build_item = BuildItem(
+            build=self.build,
+            stock_item=self.stock,
+            quantity=1)
+        build_item.save()
+
+        self.assertTrue(self.build.isFullyAllocated())
+        self.build.completeBuild(None, [5], None)
+
+        # Ensure that we created an output with the expected serial number
+        self.assertEqual("5", StockItem.objects.filter(build=self.build)[0].serial)
+        # Ensure that there is 1 unit of stock allocated to the build
+        allocated_stock = StockItem.objects.filter(build_order=self.build)[0]
+        self.assertEqual(allocated_stock.quantity, Decimal(1))
+        # Ensure that the component stock now "belongs_to" the build stock item ID
+        self.assertEqual(2, self.build.build_outputs.all()[0].pk)  # confirm that the build output pk == 2
+        self.assertEqual(allocated_stock.belongs_to_id, 2)  # confirm that the component stock items belong to ID 2
+        self.assertEqual("101", allocated_stock.serial)
+
+    def test_build_single_output_trackable_two_components(self):
+        self.sub_part = Part.objects.create(
+            name="Widget A",
+            description="A widget",
+            component=True,
+            trackable=True,
+
+        )
+        # Create BOM item links for the parts
+        BomItem.objects.create(
+            part=self.assembly,
+            sub_part=self.sub_part,
+            quantity=2
+        )
+        # Create some stock items to assign to the build
+        self.stock_101 = StockItem.objects.create(part=self.sub_part, quantity=1, serial="101")
+        self.stock_102 = StockItem.objects.create(part=self.sub_part, quantity=1, serial="102")
+
+        # Create a "Build" object to make 1x assembly
+        self.build = Build.objects.create(
+            title="This is a build",
+            part=self.assembly,
+            quantity=1
+        )
+        # Create new allocations
+        build_item_101 = BuildItem(
+            build=self.build,
+            stock_item=self.stock_101,
+            quantity=1)
+        build_item_101.save()
+        build_item_102 = BuildItem(
+            build=self.build,
+            stock_item=self.stock_102,
+            quantity=1)
+        build_item_102.save()
+
+        self.assertTrue(self.build.isFullyAllocated())
+        self.build.completeBuild(None, [5], None)
+
+        # Ensure that we created an output with the expected serial number
+        self.assertEqual("5", StockItem.objects.filter(build=self.build)[0].serial)
+        # Ensure that there are 2 units of stock allocated to the build
+        allocated_stock = StockItem.objects.filter(build_order=self.build)
+        self.assertEqual(2, len(allocated_stock))
+        # Ensure that the component stock now "belongs_to" the build stock item ID
+        self.assertEqual(3, self.build.build_outputs.all()[0].pk)  # confirm that the build output pk == 3
+        serials_found = set()
+        for subpart_stock in allocated_stock:
+            self.assertEqual(subpart_stock.belongs_to_id, 3)  # confirm that the component stock items belong to ID 3
+            serials_found.add(subpart_stock.serial)
+        self.assertEqual({"101", "102"}, serials_found)

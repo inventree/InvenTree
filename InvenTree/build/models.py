@@ -329,7 +329,7 @@ class Build(MPTTModel):
             item.save()
 
         # Install stock items into the build output(s)
-        self.install_subitems(subitems_used)
+        self.install_subitems(subitems_used, user)
 
         # Finally, mark the build as complete
         self.completion_date = datetime.now().date()
@@ -393,7 +393,7 @@ class Build(MPTTModel):
 
         return max(self.getRequiredQuantity(part) - self.getAllocatedQuantity(part), 0)
 
-    def install_subitems(self, subitems: List[StockItem]):
+    def install_subitems(self, subitems: List[StockItem], user):
         """
         Assigns the build output's stock item ID to each sub item's belong_to attribute
         """
@@ -401,9 +401,13 @@ class Build(MPTTModel):
         if self.quantity == 1:
             build_output = outputs[0]
             if build_output.part.trackable:
-                for component in subitems:
-                    component.belongs_to = build_output
-                    component.save()
+                for subitem in subitems:
+                    subitem.belongs_to = build_output
+                    subitem.save()
+                    # Add a new note detailed the stock item has been installed into a build output
+                    subitem.addTransactionNote("Installed Items",
+                                               user,
+                                               "{} installed in {}".format(subitem, build_output))  # TODO check for serialized subparts
         else:
             # TODO: Installing stock items into multiple build outputs is not yet supported
             pass
