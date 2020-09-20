@@ -1,5 +1,6 @@
 {% extends "modal_form.html" %}
 {% load i18n %}
+{% load inventree_extras %}
 {% block pre_form_content %}
 
 {{ block.super }}
@@ -28,7 +29,7 @@
         {{ item.stock_item.part.full_name }}<br>
         <i>{{ item.stock_item.part.description }}</i>
     </td>
-    <td>{{ item.quantity }}</td>
+    <td>{% decimal item.quantity %}</td>
     <td>{{ item.stock_item.location }}</td>
 </tr>
 {% endfor %}
@@ -36,7 +37,9 @@
 
 {% else %}
 <div class='alert alert-block alert-warning'>
-    {% trans "No stock items found that can be allocated to this build" %}
+    {% trans "No stock items found that can be automatically allocated to this build" %}
+    <br>
+    {% trans "Stock items will have to be manually allocated" %}
 </div>
 {% endif %}
 

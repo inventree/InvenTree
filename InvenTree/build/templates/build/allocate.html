@@ -415,7 +415,7 @@ InvenTree | Allocate Parts
         launchModalForm(
             "{% url 'build-auto-allocate' build.id %}",
             {
-                reload: true,
+                success: reloadTable,
             }
         );
     });
@@ -424,7 +424,7 @@ InvenTree | Allocate Parts
         launchModalForm(
             "{% url 'build-unallocate' build.id %}",
             {
-                reload: true,
+                success: reloadTable,
             }
         );
     });
