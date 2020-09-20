@@ -6,9 +6,10 @@ Build database model definitions
 from __future__ import unicode_literals
 
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from django.contrib.auth.models import User
+from django.db.models.base import ModelBase
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 
@@ -329,7 +330,7 @@ class Build(MPTTModel):
             item.save()
 
         # Install stock items into the build output(s)
-        self.install_subitems(subitems_used, user)
+        self.installSubitems(subitems_used, user)
 
         # Finally, mark the build as complete
         self.completion_date = datetime.now().date()
@@ -393,21 +394,20 @@ class Build(MPTTModel):
 
         return max(self.getRequiredQuantity(part) - self.getAllocatedQuantity(part), 0)
 
-    def install_subitems(self, subitems: List[StockItem], user):
+    def installSubitems(self, subitems: List[StockItem], user: Optional[ModelBase]):
         """
         Assigns the build output's stock item ID to each sub item's belong_to attribute
         """
         outputs = StockItem.objects.filter(build=self)
-        if self.quantity == 1:
+        if self.quantity == 1 and outputs[0].part.trackable:
             build_output = outputs[0]
-            if build_output.part.trackable:
-                for subitem in subitems:
-                    subitem.belongs_to = build_output
-                    subitem.save()
-                    # Add a new note detailed the stock item has been installed into a build output
-                    subitem.addTransactionNote("Installed Item(s)",
-                                               user,
-                                               "{} installed in {}".format(subitem, build_output))
+            for subitem in subitems:
+                subitem.belongs_to = build_output
+                subitem.save()
+                # Add a new note detailed the stock item has been installed into a build output
+                subitem.addTransactionNote("Installed Item(s)",
+                                           user,
+                                           "{} installed in {}".format(subitem, build_output))
         else:
             # TODO: Installing stock items into multiple build outputs is not yet supported
             pass

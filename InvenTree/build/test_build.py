@@ -288,7 +288,6 @@ class BuildBelongsToTest(TestCase):
             description="A widget",
             component=True,
             trackable=True,
-
         )
         # Create BOM item links for the parts
         BomItem.objects.create(
@@ -331,7 +330,6 @@ class BuildBelongsToTest(TestCase):
             description="A widget",
             component=True,
             trackable=True,
-
         )
         # Create BOM item links for the parts
         BomItem.objects.create(
