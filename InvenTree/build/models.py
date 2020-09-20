@@ -405,9 +405,9 @@ class Build(MPTTModel):
                     subitem.belongs_to = build_output
                     subitem.save()
                     # Add a new note detailed the stock item has been installed into a build output
-                    subitem.addTransactionNote("Installed Items",
+                    subitem.addTransactionNote("Installed Item(s)",
                                                user,
-                                               "{} installed in {}".format(subitem, build_output))  # TODO check for serialized subparts
+                                               "{} installed in {}".format(subitem, build_output))
         else:
             # TODO: Installing stock items into multiple build outputs is not yet supported
             pass
