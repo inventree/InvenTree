@@ -6,6 +6,7 @@ Build database model definitions
 from __future__ import unicode_literals
 
 from datetime import datetime
+from typing import List
 
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
@@ -281,13 +282,13 @@ class Build(MPTTModel):
         - Takes allocated items from stock
         - Delete pending BuildItem objects
         """
-        components_used = []
+        subitems_used = []
         # Complete the build allocation for each BuildItem
         for build_item in self.allocated_stock.all().prefetch_related('stock_item'):
             build_item.complete_allocation(user)
 
             # Store component stock items in case we want to "install" them into the build's stock item
-            components_used.append(build_item.stock_item)
+            subitems_used.append(build_item.stock_item)
 
             # Check that the stock-item has been assigned to this build, and remove the builditem from the database
             if build_item.stock_item.build_order == self:
@@ -328,15 +329,7 @@ class Build(MPTTModel):
             item.save()
 
         # Install stock items into the build output(s)
-        outputs = StockItem.objects.filter(build=self)
-        if self.quantity == 1:
-            build_output = outputs[0]
-            if build_output.part.trackable:
-                for component in components_used:
-                    component.belongs_to = build_output
-                    component.save()
-        else:
-            raise NotImplementedError("Installing stock items into multiple build outputs is not yet supported")
+        self.install_subitems(subitems_used)
 
         # Finally, mark the build as complete
         self.completion_date = datetime.now().date()
@@ -399,6 +392,21 @@ class Build(MPTTModel):
         """
 
         return max(self.getRequiredQuantity(part) - self.getAllocatedQuantity(part), 0)
+
+    def install_subitems(self, subitems: List[StockItem]):
+        """
+        Assigns the build output's stock item ID to each sub item's belong_to attribute
+        """
+        outputs = StockItem.objects.filter(build=self)
+        if self.quantity == 1:
+            build_output = outputs[0]
+            if build_output.part.trackable:
+                for component in subitems:
+                    component.belongs_to = build_output
+                    component.save()
+        else:
+            # TODO: Installing stock items into multiple build outputs is not yet supported
+            pass
 
     @property
     def required_parts(self):
