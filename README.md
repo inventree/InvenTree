@@ -9,13 +9,13 @@ InvenTree is designed to be lightweight and easy to use for SME or hobbyist appl
 
 However, powerful business logic works in the background to ensure that stock tracking history is maintained, and users have ready access to stock level information.
 
+# Documentation
+
+For InvenTree documentation, refer to the [InvenTree documentation website](https://inventree.readthedocs.io/en/latest/).
+
 ## Getting Started
 
 Refer to the [getting started guide](https://inventree.readthedocs.io/en/latest/start/install/) for installation and setup instructions.
-
-## Documentation
-
-For InvenTree documentation, refer to the [InvenTree documentation website](https://inventree.readthedocs.io/en/latest/).
 
 ## Integration
 
@@ -26,11 +26,11 @@ InvenTree is designed to be extensible, and provides multiple options for integr
 * [Plugin interface](https://inventree.readthedocs.io/en/latest/extend/plugins)
 * [Third party](https://inventree.readthedocs.io/en/latest/extend/integrate)
 
-## Contributing
+# Contributing
 
 Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://inventree.readthedocs.io/en/latest/contribute/).
 
-## Donate
+# Donate
 
 If you use InvenTree and find it to be useful, please consider making a donation toward its continued development. 
 
