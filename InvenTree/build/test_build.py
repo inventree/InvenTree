@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.utils import IntegrityError
 
+from InvenTree.status_codes import BuildStatus
 from build.models import Build, BuildItem
 from stock.models import StockItem
 from part.models import Part, BomItem
@@ -228,7 +229,7 @@ class BuildTest(TestCase):
         self.assertEqual(outputs.count(), 10)
 
 
-class BuildBelongsToTest(TestCase):
+class TestBuildBelongsTo(TestCase):
     """
     Tests that ensure "belongs_to" functionality is working properly
     """
@@ -371,3 +372,57 @@ class BuildBelongsToTest(TestCase):
             self.assertEqual(subpart_stock.belongs_to_id, self.build.build_outputs.all()[0].pk)
             serials_found.add(subpart_stock.serial)
         self.assertEqual({"101", "102"}, serials_found)
+
+
+class TestModifyCompletedBuild(TestCase):
+    """
+    Tests functionality of modifying a completed build
+    """
+    def setUp(self):
+        # Create a base "Part"
+        self.assembly = Part.objects.create(
+            name="An assembled part",
+            description="Why does it matter what my description is?",
+            assembly=True,
+            trackable=True,
+        )
+        self.sub_part = Part.objects.create(
+            name="Widget A",
+            description="A widget",
+            component=True,
+            trackable=True,
+        )
+        # Create BOM item links for the parts
+        BomItem.objects.create(
+            part=self.assembly,
+            sub_part=self.sub_part,
+            quantity=2
+        )
+        # Create some stock items to assign to the build
+        self.stock_101 = StockItem.objects.create(part=self.sub_part, quantity=1, serial="101")
+        self.stock_102 = StockItem.objects.create(part=self.sub_part, quantity=1, serial="102")
+
+        # Create a "Build" object to make 1x assembly
+        self.build = Build.objects.create(
+            title="This is a build",
+            part=self.assembly,
+            quantity=1
+        )
+        # Create new allocations
+        build_item_101 = BuildItem(
+            build=self.build,
+            stock_item=self.stock_101,
+            quantity=1)
+        build_item_101.save()
+        build_item_102 = BuildItem(
+            build=self.build,
+            stock_item=self.stock_102,
+            quantity=1)
+        build_item_102.save()
+        self.build.completeBuild(None, [5], None)
+
+    def test_modify_completed(self):
+        self.build.setBuildModifying()
+        self.assertIsNone(self.build.completion_date)
+        self.assertIsNone(self.build.completed_by)
+        self.assertEqual(BuildStatus.MODIFYING, self.build.status)

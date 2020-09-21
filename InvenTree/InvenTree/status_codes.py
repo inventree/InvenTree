@@ -217,12 +217,14 @@ class BuildStatus(StatusCode):
     ALLOCATED = 20  # Parts have been removed from stock
     CANCELLED = 30  # Build was cancelled
     COMPLETE = 40  # Build is complete
+    MODIFYING = 50  # Build is being modified (parts uninstalled/installed)
 
     options = {
         PENDING: _("Pending"),
         ALLOCATED: _("Allocated"),
         CANCELLED: _("Cancelled"),
         COMPLETE: _("Complete"),
+        MODIFYING: _("Modifying"),
     }
 
     colors = {
@@ -230,9 +232,11 @@ class BuildStatus(StatusCode):
         ALLOCATED: 'blue',
         COMPLETE: 'green',
         CANCELLED: 'red',
+        MODIFYING: 'blue'
     }
 
     ACTIVE_CODES = [
         PENDING,
-        ALLOCATED
+        ALLOCATED,
+        MODIFYING,
     ]

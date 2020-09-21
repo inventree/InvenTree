@@ -434,6 +434,36 @@ class BuildUpdate(AjaxUpdateView):
         }
 
 
+class BuildModify(AjaxUpdateView):
+    """ View to modify a build
+    Provides a modification confirmation dialog
+    """
+    model = Build
+    ajax_template_name = 'build/modify_build.html'
+    ajax_form_title = _('Modify Build')
+    context_object_name = 'build'
+    form_class = forms.ModifyBuildForm
+
+    def post(self, request, *args, **kwargs):
+        """ Handle POST request. Mark the build status as MODIFYING """
+
+        build = self.get_object()
+        form = self.get_form()
+        valid = form.is_valid()
+        confirm = str2bool(request.POST.get('confirm_modify', False))
+
+        if confirm:
+            build.setBuildModifying()
+        else:
+            valid = False
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data=data)
+
+
 class BuildDelete(AjaxDeleteView):
     """ View to delete a build """
 

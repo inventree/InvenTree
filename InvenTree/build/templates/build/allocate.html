@@ -12,7 +12,7 @@ InvenTree | Allocate Parts
 {% include "build/tabs.html" with tab='allocate' %}
 
 <div id='build-item-toolbar'>
-    {% if build.status == BuildStatus.PENDING %}
+    {% if build.status == BuildStatus.PENDING or build.status == BuildStatus.MODIFYING %}
     <div class='btn-group'>
         <button class='btn btn-primary' type='button' id='btn-order-parts' title='Order Parts'>{% trans "Order Parts" %}</button>
         <button class='btn btn-primary' type='button' id='btn-allocate' title='{% trans "Automatically allocate stock" %}'>{% trans "Auto Allocate" %}</button>
@@ -196,7 +196,7 @@ InvenTree | Allocate Parts
                             return renderLink(text, url);
                         }
                     },
-                    {% if build.status == BuildStatus.PENDING %}
+                    {% if build.status == BuildStatus.PENDING or build.status == BuildStatus.MODIFYING %}
                     {
                         field: 'buttons',
                         title: 'Actions',
@@ -206,7 +206,7 @@ InvenTree | Allocate Parts
 
                             var html = `<div class='btn-group float-right' role='group'>`;
 
-                            {% if build.status == BuildStatus.PENDING %}
+                            {% if build.status == BuildStatus.PENDING or build.status == BuildStatus.MODIFYING %}
                             html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
                             html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
                             {% endif %}
@@ -381,7 +381,7 @@ InvenTree | Allocate Parts
                     return (progressA < progressB) ? 1 : -1;
                 }
             },
-            {% if build.status == BuildStatus.PENDING %}
+            {% if build.status == BuildStatus.PENDING or build.status == BuildStatus.MODIFYING %}
             {
                 field: 'buttons',
                 formatter: function(value, row, index, field) {
@@ -389,7 +389,7 @@ InvenTree | Allocate Parts
                     var html = `<div class='btn-group float-right' role='group'>`;
                     var pk = row.sub_part;
 
-                    {% if build.status == BuildStatus.PENDING %}
+                    {% if build.status == BuildStatus.PENDING or build.status == BuildStatus.MODIFYING %}
                     if (row.sub_part_detail.purchaseable) {
                         html += makeIconButton('fa-shopping-cart', 'button-buy', pk, '{% trans "Buy parts" %}');
                     }
@@ -410,7 +410,7 @@ InvenTree | Allocate Parts
         ],
     });
 
-    {% if build.status == BuildStatus.PENDING %}
+    {% if build.status == BuildStatus.PENDING or build.status == BuildStatus.MODIFYING %}
     $("#btn-allocate").on('click', function() {
         launchModalForm(
             "{% url 'build-auto-allocate' build.id %}",

@@ -187,6 +187,23 @@ class Build(MPTTModel):
         self.status = BuildStatus.CANCELLED
         self.save()
 
+    @transaction.atomic
+    def setBuildModifying(self):
+        """
+        - Handle allocated parts
+        - Set completion_date and and completed_by to None
+        - Set build status to MODIFYING
+        - Save the Build object
+        """
+        # TODO:  What currently happens to allocated parts?
+        # TODO:  Handle case where user tries to edit build with more than 1 build output
+        # Date of 'completion' is the date the build was cancelled
+        self.completion_date = None
+        self.completed_by = None
+
+        self.status = BuildStatus.MODIFYING
+        self.save()
+
     def getAutoAllocations(self):
         """ Return a list of parts which will be allocated
         using the 'AutoAllocate' function.

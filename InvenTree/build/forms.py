@@ -31,6 +31,18 @@ class EditBuildForm(HelperForm):
         ]
 
 
+class ModifyBuildForm(HelperForm):
+    """ Form for confirming modifying a build """
+
+    confirm_modify = forms.BooleanField(required=False)
+
+    class Meta:
+        model = Build
+        fields = [
+            'confirm_modify'
+        ]
+
+
 class ConfirmBuildForm(HelperForm):
     """ Form for auto-allocation of stock to a build """
 

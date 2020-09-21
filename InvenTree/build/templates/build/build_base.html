@@ -47,6 +47,11 @@ src="{% static 'img/blank_image.png' %}"
             <span class='fas fa-times-circle icon-red'/>
         </button>
         {% endif %}
+        {% if build.is_complete %}
+        <button type='button' class='btn btn-default' id='build-modify' title='Modify Build'>
+            <span class='fas fa-sync-alt icon-blue'/>
+        </button>
+        {% endif %}
         {% if build.status == BuildStatus.CANCELLED %}
         <button type='button' class='btn btn-default btn-glyph' id='build-delete' title='Delete Build'>
             <span class='fas fa-trash-alt icon-red'/>
@@ -143,6 +148,15 @@ src="{% static 'img/blank_image.png' %}"
             "{% url 'build-delete' build.id %}",
             {
                 redirect: "{% url 'build-index' %}",
+            }
+        );
+    });
+
+    $("#build-modify").click(function () {
+        launchModalForm(
+            "{% url 'build-modify' build.id %}",
+            {
+                reload: true
             }
         );
     });
