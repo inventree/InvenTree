@@ -11,28 +11,24 @@ However, powerful business logic works in the background to ensure that stock tr
 
 ## Getting Started
 
-Refer to the [getting started guide](https://inventree.github.io/docs/start/install) for installation and setup instructions.
+Refer to the [getting started guide](https://inventree.readthedocs.io/en/latest/start/install/) for installation and setup instructions.
 
 ## Documentation
 
-For InvenTree documentation, refer to the [InvenTree documentation website](https://inventree.github.io).
+For InvenTree documentation, refer to the [InvenTree documentation website](https://inventree.readthedocs.io/en/latest/).
 
 ## Integration
 
 InvenTree is designed to be extensible, and provides multiple options for integration with external applications or addition of custom plugins:
 
-* [InvenTree API](https://inventree.github.io/docs/extend/api)
-* [Python module](https://inventree.github.io/docs/extend/python)
-* [Plugin interface](https://inventree.github.io/docs/extend/plugins)
-* [Third party](https://inventree.github.io/docs/extend/integrate)
-
-## Developer Documentation
-
-For code documentation, refer to the [developer documentation](http://inventree.readthedocs.io/en/latest/).
+* [InvenTree API](https://inventree.readthedocs.io/en/latest/extend/api/)
+* [Python module](https://inventree.readthedocs.io/en/latest/extend/python)
+* [Plugin interface](https://inventree.readthedocs.io/en/latest/extend/plugins)
+* [Third party](https://inventree.readthedocs.io/en/latest/extend/integrate)
 
 ## Contributing
 
-Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://inventree.github.io/pages/contribute).
+Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://inventree.readthedocs.io/en/latest/contribute/).
 
 ## Donate
 
