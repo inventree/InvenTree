@@ -83,7 +83,7 @@ def inventree_github_url(*args, **kwargs):
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
     """ Return URL for InvenTree documenation site """
-    return "https://inventree.github.io"
+    return "https://inventree.readthedocs.io/"
 
 
 @register.simple_tag()

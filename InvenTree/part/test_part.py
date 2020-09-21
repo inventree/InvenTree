@@ -35,7 +35,7 @@ class TemplateTagTest(TestCase):
         self.assertIn('github.com', inventree_extras.inventree_github_url())
 
     def test_docs(self):
-        self.assertIn('inventree.github.io', inventree_extras.inventree_docs_url())
+        self.assertIn('inventree.readthedocs.io', inventree_extras.inventree_docs_url())
 
 
 class PartTest(TestCase):
