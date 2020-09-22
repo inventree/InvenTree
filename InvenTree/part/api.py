@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse
-from django.db.models import Q, F, Count
+from django.db.models import Q, F, Count, Prefetch, Sum
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -22,11 +22,14 @@ from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak
 
+from build.models import Build
+
 from . import serializers as part_serializers
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
+from InvenTree.status_codes import BuildStatus
 
 
 class PartCategoryTree(TreeSerializer):
@@ -531,13 +534,25 @@ class PartList(generics.ListCreateAPIView):
         if stock_to_build is not None:
             # Filter only active parts
             queryset = queryset.filter(active=True)
+            # Prefetch current active builds
+            build_active_queryset = Build.objects.filter(status__in=BuildStatus.ACTIVE_CODES)
+            build_active_prefetch = Prefetch('builds',
+                                             queryset=build_active_queryset,
+                                             to_attr='current_builds')
+            parts = queryset.prefetch_related(build_active_prefetch)
+
+            # Store parts with builds needing stock
             parts_need_stock = []
 
             # Find parts with active builds
             # where any subpart's stock is lower than quantity being built
-            for part in queryset:
-                if part.active_builds and part.can_build < part.quantity_being_built:
-                    parts_need_stock.append(part.pk)
+            for part in parts:
+                if part.current_builds:
+                    builds_ids = [build.id for build in part.current_builds]
+                    total_build_quantity = build_active_queryset.filter(pk__in=builds_ids).aggregate(quantity=Sum('quantity'))['quantity']
+
+                    if part.can_build < total_build_quantity:
+                        parts_need_stock.append(part.pk)
 
             queryset = queryset.filter(pk__in=parts_need_stock)
 
