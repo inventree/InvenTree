@@ -455,6 +455,12 @@ class StockList(generics.ListCreateAPIView):
         if belongs_to:
             queryset = queryset.filter(belongs_to=belongs_to)
 
+        # Filter by batch code
+        batch = params.get('batch', None)
+
+        if batch is not None:
+            queryset = queryset.filter(batch=batch)
+
         build = params.get('build', None)
 
         if build:
