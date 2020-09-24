@@ -18,6 +18,12 @@ part_attachment_urls = [
     url(r'^(?P<pk>\d+)/delete/?', views.PartAttachmentDelete.as_view(), name='part-attachment-delete'),
 ]
 
+sale_price_break_urls = [
+    url(r'^new/', views.PartSalePriceBreakCreate.as_view(), name='sale-price-break-create'),
+    url(r'^(?P<pk>\d+)/edit/', views.PartSalePriceBreakEdit.as_view(), name='sale-price-break-edit'),
+    url(r'^(?P<pk>\d+)/delete/', views.PartSalePriceBreakDelete.as_view(), name='sale-price-break-delete'),
+]
+
 part_parameter_urls = [
     
     url(r'^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
@@ -27,7 +33,6 @@ part_parameter_urls = [
     url(r'^new/', views.PartParameterCreate.as_view(), name='part-param-create'),
     url(r'^(?P<pk>\d+)/edit/', views.PartParameterEdit.as_view(), name='part-param-edit'),
     url(r'^(?P<pk>\d+)/delete/', views.PartParameterDelete.as_view(), name='part-param-delete'),
-
 ]
 
 part_detail_urls = [
@@ -52,6 +57,7 @@ part_detail_urls = [
     url(r'^suppliers/?', views.PartDetail.as_view(template_name='part/supplier.html'), name='part-suppliers'),
     url(r'^orders/?', views.PartDetail.as_view(template_name='part/orders.html'), name='part-orders'),
     url(r'^sales-orders/', views.PartDetail.as_view(template_name='part/sales_orders.html'), name='part-sales-orders'),
+    url(r'^sale-prices/', views.PartDetail.as_view(template_name='part/sale_prices.html'), name='part-sale-prices'),
     url(r'^tests/', views.PartDetail.as_view(template_name='part/part_tests.html'), name='part-test-templates'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
     url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
@@ -107,6 +113,9 @@ part_urls = [
 
     # Part attachments
     url(r'^attachment/', include(part_attachment_urls)),
+
+    # Part price breaks
+    url(r'^sale-price/', include(sale_price_break_urls)),
 
     # Part test templates
     url(r'^test-template/', include([

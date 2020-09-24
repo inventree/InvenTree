@@ -5,7 +5,11 @@ function loadBuildTable(table, options) {
 
     var params = options.params || {};
 
-    var filters = loadTableFilters("build");
+    var filters = {};
+    
+    if (!options.disableFilters) {
+        loadTableFilters("build");
+    }
 
     for (var key in params) {
         filters[key] = params[key];
@@ -13,7 +17,7 @@ function loadBuildTable(table, options) {
 
     setupFilterList("build", table);
 
-    table.inventreeTable({
+    $(table).inventreeTable({
         method: 'get',
         formatNoMatches: function() {
             return "{% trans "No builds matching query" %}";

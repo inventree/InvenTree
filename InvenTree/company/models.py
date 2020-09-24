@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 import os
 
 import math
-from decimal import Decimal
 
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
@@ -24,9 +23,10 @@ from stdimage.models import StdImageField
 
 from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
 from InvenTree.helpers import normalize
-from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
+from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import PurchaseOrderStatus
-from common.models import Currency
+
+import common.models
 
 
 def rename_company_image(instance, filename):
@@ -433,7 +433,7 @@ class SupplierPart(models.Model):
         return s
 
 
-class SupplierPriceBreak(models.Model):
+class SupplierPriceBreak(common.models.PriceBreak):
     """ Represents a quantity price break for a SupplierPart.
     - Suppliers can offer discounts at larger quantities
     - SupplierPart(s) may have zero-or-more associated SupplierPriceBreak(s)
@@ -446,23 +446,6 @@ class SupplierPriceBreak(models.Model):
     """
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks')
-
-    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, default=1, validators=[MinValueValidator(1)])
-
-    cost = RoundingDecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
-
-    currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
-
-    @property
-    def converted_cost(self):
-        """ Return the cost of this price break, converted to the base currency """
-
-        scaler = Decimal(1.0)
-
-        if self.currency:
-            scaler = self.currency.value
-
-        return self.cost * scaler
 
     class Meta:
         unique_together = ("part", "quantity")

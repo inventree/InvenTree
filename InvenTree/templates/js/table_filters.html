@@ -26,6 +26,14 @@ function getAvailableTableFilters(tableKey) {
                 title: "{% trans "Serial number LTE" %}",
                 description: "{% trans "Serial number less than or equal to" %}",
             },
+            serial: {
+                title: "{% trans "Serial number" %}",
+                description: "{% trans "Serial number" %}"
+            },
+            batch: {
+                title: '{% trans "Batch" %}',
+                description: '{% trans "Batch code" %}',
+            },
         };
     }
 
@@ -66,6 +74,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Is Serialized" %}',
             },
+            serial: {
+                title: "{% trans "Serial number" %}",
+                description: "{% trans "Serial number" %}"
+            },
             serial_gte: {
                 title: "{% trans "Serial number GTE" %}",
                 description: "{% trans "Serial number greater than or equal to" %}"
@@ -79,6 +91,10 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Stock status" %}',
                 description: '{% trans "Stock status" %}',
             },
+            batch: {
+                title: '{% trans "Batch" %}',
+                description: '{% trans "Batch code" %}',
+            }
         };
     }
 
@@ -109,7 +125,10 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Build status" %}',
                 options: buildCodes,
             },
-
+            pending: {
+                type: 'bool',
+                title: '{% trans "Pending" %}',
+            }
         };
     }
 

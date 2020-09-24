@@ -32,6 +32,8 @@ InvenTree | {% trans "Search Results" %}
 
 {% include "InvenTree/search_stock_location.html" with collapse_id="locations" %}
 
+{% include "InvenTree/search_stock_items.html" with collapse_id="stock" %}
+
 {% endblock %}
 
 {% block js_load %}
@@ -42,9 +44,8 @@ InvenTree | {% trans "Search Results" %}
 {% block js_ready %}
 {{ block.super }}
 
-    $(".panel-group").hide();
-
     function onSearchResults(table, output) {
+
         $(table).on('load-success.bs.table', function() {
 
             var panel = $(output).closest('.panel-group');
@@ -56,7 +57,6 @@ InvenTree | {% trans "Search Results" %}
                 text = '<i>No results</i>'
 
                 $(panel).hide();
-                
 
             } else {
                 text = n + ' result';
@@ -67,17 +67,23 @@ InvenTree | {% trans "Search Results" %}
 
                 $(panel).show();
 
+                var collapse = panel.find('.panel-collapse');
+
+                collapse.collapse('show');
+
                 $("#no-search-results").hide();
             }
 
-            $(output).html(text);
+            $(output).html(`<i>${text}</i>`);
         });
     }
 
     onSearchResults("#category-results-table", "#category-results-count");
     
     onSearchResults("#location-results-table", "#location-results-count");
-
+    
+    onSearchResults("#stock-results-table", "#stock-results-count");
+    
     onSearchResults('#part-results-table', '#part-result-count');
 
     onSearchResults('#company-results-table', '#company-result-count');
@@ -102,6 +108,85 @@ InvenTree | {% trans "Search Results" %}
                 title: 'Description',
             },
         ],
+    });
+
+    $('#stock-results-table').inventreeTable({
+        url: "{% url 'api-stock-list' %}",
+        queryParams: {
+            search: "{{ query }}",
+            part_detail: true,
+            location_detail: true,
+        },
+        columns: [
+            {
+                field: 'part',
+                title: "{% trans "Part" %}",
+                sortable: true,
+                formatter: function(value, row) {
+                    var url = `/stock/item/${row.pk}/`;
+                    var thumb = row.part_detail.thumbnail;
+                    var name = row.part_detail.full_name;
+
+                    html = imageHoverIcon(thumb) + renderLink(name, url);
+                    
+                    return html;
+                }
+            },
+            {
+                field: 'part_description',
+                title: '{% trans "Description" %}',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return row.part_detail.description;
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Stock" %}',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+
+                    var val = parseFloat(value);
+
+                    // If there is a single unit with a serial number, use the serial number
+                    if (row.serial && row.quantity == 1) {
+                        val = '# ' + row.serial;
+                    } else {
+                        val = +val.toFixed(5);
+                    }
+
+                    var html = renderLink(val, `/stock/item/${row.pk}/`);
+
+                    return html;
+                }
+            },
+            {
+                field: 'status',
+                title: '{% trans "Status" %}',
+                sortable: 'true',
+                formatter: function(value, row, index, field) {
+                    return stockStatusDisplay(value);
+                },
+            },
+            {
+                field: 'location_detail.pathstring',
+                title: '{% trans "Location" %}',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value, `/stock/location/${row.location}/`);
+                    }
+                    else {
+                        if (row.customer) {
+                            var text = "{% trans "Shipped to customer" %}";
+                            return renderLink(text, `/company/${row.customer}/assigned-stock/`);
+                        } else {
+                            return '<i>{% trans "No stock location set" %}</i>';
+                        }
+                    }
+                }
+            },
+        ]
     });
 
 

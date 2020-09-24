@@ -24,8 +24,8 @@ from markdownx.models import MarkdownxField
 from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus
-from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string
+import InvenTree.fields
 
 from stock import models as StockModels
 from part import models as PartModels
@@ -154,7 +154,7 @@ class Build(MPTTModel):
         related_name='builds_completed'
     )
     
-    link = InvenTreeURLField(
+    link = InvenTree.fields.InvenTreeURLField(
         verbose_name=_('External Link'),
         blank=True, help_text=_('Link to external URL')
     )

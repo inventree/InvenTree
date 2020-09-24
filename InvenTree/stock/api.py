@@ -440,6 +440,8 @@ class StockList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
+        queryset = super().filter_queryset(queryset)
+
         # Perform basic filtering:
         # Note: We do not let DRF filter here, it be slow AF
 
@@ -452,6 +454,12 @@ class StockList(generics.ListCreateAPIView):
 
         if belongs_to:
             queryset = queryset.filter(belongs_to=belongs_to)
+
+        # Filter by batch code
+        batch = params.get('batch', None)
+
+        if batch is not None:
+            queryset = queryset.filter(batch=batch)
 
         build = params.get('build', None)
 
@@ -678,6 +686,14 @@ class StockList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
+    ]
+
+    search_fields = [
+        'serial',
+        'batch',
+        'part__name',
+        'part__IPN',
+        'part__description'
     ]
 
 
