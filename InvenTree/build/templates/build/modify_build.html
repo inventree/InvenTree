@@ -1,5 +1,12 @@
 {% extends "modal_modify_form.html" %}
+{% load i18n %}
 
 {% block pre_form_content %}
+{% if build.build_outputs.count == 1 %}
 Are you sure you want to modify this build?
+{% else %}
+<div class='alert alert-block alert-danger'>
+{% trans "Modifying builds is only allowed for builds with single outputs" %}
+</div>
+{% endif %}
 {% endblock %}

@@ -450,7 +450,8 @@ class BuildModify(AjaxUpdateView):
         form = self.get_form()
         valid = form.is_valid()
         confirm = str2bool(request.POST.get('confirm_modify', False))
-
+        if build.build_outputs.count != 1:  # don't modify build if we don't have exactly 1 build output
+            valid = True
         if confirm:
             build.setBuildModifying()
         else:

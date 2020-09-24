@@ -335,7 +335,8 @@ class Build(MPTTModel):
         # Generate the build outputs
         if self.status == BuildStatus.MODIFYING:
             # Save the build output instead of making a new one
-            item = StockModels.StockItem.objects.get(id=self.id)
+            assert self.build_outputs.count() == 1, "Only 1 build output expected for a modified build"
+            item = StockModels.StockItem.objects.get(id=self.build_outputs.all()[0].id)
             item.save()
         elif self.part.trackable and serial_numbers:
             # Add new serial numbers
@@ -349,7 +350,6 @@ class Build(MPTTModel):
                     batch=str(self.batch) if self.batch else '',
                     notes=notes
                 )
-
                 item.save()
         else:
             # Add stock of the newly created item
