@@ -191,18 +191,33 @@ class Build(MPTTModel):
     def setBuildModifying(self):
         """
         - Handle allocated parts
-        - Set completion_date and and completed_by to None
+        - Reset build attributes that will be overwritten once the build is completed again
         - Set build status to MODIFYING
         - Save the Build object
         """
-        # TODO:  What currently happens to allocated parts?
         # TODO:  Handle case where user tries to edit build with more than 1 build output
-        # Date of 'completion' is the date the build was cancelled
-        self.completion_date = None
-        self.completed_by = None
+        if self.build_outputs.count() == 1:
+            # Store previous allocations as build items
+            for item in self.build_outputs.all()[0].owned_parts.all():
+                # Reset certain attributes (these will get rewritten if they stay allocated and the build is completed)
+                item.belongs_to = None
+                item.belongs_to_id = None
+                item.build_order = None
+                item.build_order_id = None
+                # Create a new allocation
+                build_item = BuildItem(
+                    build=self,
+                    stock_item=item,
+                    quantity=item.quantity)
+                item.save()
+                build_item.save()
 
-        self.status = BuildStatus.MODIFYING
-        self.save()
+            # Reset build attributes (these will get reset once the build is completed)
+            self.completion_date = None
+            self.completed_by = None
+
+            self.status = BuildStatus.MODIFYING
+            self.save()
 
     def getAutoAllocations(self):
         """ Return a list of parts which will be allocated
@@ -318,7 +333,11 @@ class Build(MPTTModel):
         )
 
         # Generate the build outputs
-        if self.part.trackable and serial_numbers:
+        if self.status == BuildStatus.MODIFYING:
+            # Save the build output instead of making a new one
+            item = StockModels.StockItem.objects.get(id=self.id)
+            item.save()
+        elif self.part.trackable and serial_numbers:
             # Add new serial numbers
             for serial in serial_numbers:
                 item = StockModels.StockItem.objects.create(
@@ -332,19 +351,9 @@ class Build(MPTTModel):
                 )
 
                 item.save()
-
         else:
-            # Add stock of the newly created item
-            item = StockModels.StockItem.objects.create(
-                part=self.part,
-                build=self,
-                location=location,
-                quantity=self.quantity,
-                batch=str(self.batch) if self.batch else '',
-                notes=notes
-            )
-
-            item.save()
+            # Don't make another build output if we're coming from modifying the build
+            pass
 
         # Install stock items into the build output(s)
         self.installSubitems(subitems_used, user)

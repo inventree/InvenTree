@@ -426,3 +426,16 @@ class TestModifyCompletedBuild(TestCase):
         self.assertIsNone(self.build.completion_date)
         self.assertIsNone(self.build.completed_by)
         self.assertEqual(BuildStatus.MODIFYING, self.build.status)
+
+    def test_complete_modified(self):
+        initial_completed_build = self.build
+        self.build.setBuildModifying()
+        stock_101_compare = StockItem.objects.get(serial="101")
+        stock_102_compare = StockItem.objects.get(serial="102")
+        # check that our stock item subparts are the same after build is moved to modified
+        # as right before the intial build is completed
+        self.assertEqual(self.stock_101, stock_101_compare)
+        self.assertEqual(self.stock_102, stock_102_compare)
+        self.build.completeBuild(None, [5], None)
+        # check that our build is the same before and after modification
+        self.assertEqual(initial_completed_build, self.build)
