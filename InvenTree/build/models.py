@@ -352,8 +352,16 @@ class Build(MPTTModel):
 
                 item.save()
         else:
-            # Don't make another build output if we're coming from modifying the build
-            pass
+            # Add stock of the newly created item
+            item = StockModels.StockItem.objects.create(
+                part=self.part,
+                build=self,
+                location=location,
+                quantity=self.quantity,
+                batch=str(self.batch) if self.batch else '',
+                notes=notes
+            )
+            item.save()
 
         # Install stock items into the build output(s)
         self.installSubitems(subitems_used, user)
