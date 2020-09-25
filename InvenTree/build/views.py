@@ -482,6 +482,15 @@ class BuildItemDelete(AjaxDeleteView):
     ajax_form_title = _('Unallocate Stock')
     context_object_name = 'item'
 
+    def post(self, request, *args, **kwargs):
+        build_item = self.get_object()
+        if build_item.build.status == BuildStatus.MODIFYING and build_item.build.build_outputs.count() == 1:
+            build_output = build_item.build.build_outputs.all()[0]
+            build_item.stock_item.addTransactionNote("Uninstalled Item(s)",
+                                                     self.request.user,
+                                                     "{} uninstalled from {}".format(build_item.stock_item, build_output))
+        return super(BuildItemDelete, self).post(request, *args, **kwargs)
+
     def get_data(self):
         return {
             'danger': _('Removed parts from build allocation')

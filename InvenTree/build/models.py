@@ -190,12 +190,11 @@ class Build(MPTTModel):
     @transaction.atomic
     def setBuildModifying(self):
         """
-        - Handle allocated parts
+        - Reset subparts back to an allocated state and create new build items for those subparts
         - Reset build attributes that will be overwritten once the build is completed again
         - Set build status to MODIFYING
         - Save the Build object
         """
-        # TODO:  Handle case where user tries to edit build with more than 1 build output
         if self.build_outputs.count() == 1:
             # Store previous allocations as build items
             for item in self.build_outputs.all()[0].owned_parts.all():
@@ -333,9 +332,8 @@ class Build(MPTTModel):
         )
 
         # Generate the build outputs
-        if self.status == BuildStatus.MODIFYING:
+        if self.status == BuildStatus.MODIFYING and self.build_outputs.count() == 1:
             # Save the build output instead of making a new one
-            assert self.build_outputs.count() == 1, "Only 1 build output expected for a modified build"
             item = StockModels.StockItem.objects.get(id=self.build_outputs.all()[0].id)
             item.save()
         elif self.part.trackable and serial_numbers:
