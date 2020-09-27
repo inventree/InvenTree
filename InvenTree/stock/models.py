@@ -1042,7 +1042,9 @@ class StockItem(MPTTModel):
         as all named tests are accessible.
         """
 
-        results = self.getTestResults(**kwargs).order_by('-date')
+        # Filter results by "date", so that newer results
+        # will override older ones.
+        results = self.getTestResults(**kwargs).order_by('date')
 
         result_map = {}
 
