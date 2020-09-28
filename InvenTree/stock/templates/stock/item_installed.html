@@ -19,13 +19,102 @@
 
 {{ block.super }}
 
-loadStockTable($("#installed-table"), {
-    params: {
+$('#installed-table').inventreeTable({
+    formatNoMatches: function() {
+        return '{% trans "No stock items installed" %}';
+    },
+    url: "{% url 'api-stock-list' %}",
+    queryParams: {
         installed_in: {{ item.id }},
         part_detail: true,
     },
     name: 'stock-item-installed',
     url: "{% url 'api-stock-list' %}",   
-})
+    showColumns: true,
+    columns: [
+        {
+            checkbox: true,
+            title: '{% trans 'Select' %}',
+            searchable: false,
+            switchable: false,
+            visible: false,
+        },
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+            switchable: false,
+        },
+        {
+            field: 'part_name',
+            title: '{% trans "Part" %}',
+            sortable: true,
+            formatter: function(value, row, index, field) {
+
+                var url = `/stock/item/${row.pk}/`;
+                var thumb = row.part_detail.thumbnail;
+                var name = row.part_detail.full_name;
+
+                html = imageHoverIcon(thumb) + renderLink(name, url);
+                
+                return html;
+            }
+        },
+        {
+            field: 'IPN',
+            title: 'IPN',
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                return row.part_detail.IPN;
+            },
+        },
+        {
+            field: 'part_description',
+            title: '{% trans "Description" %}',
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                return row.part_detail.description;
+            }
+        },
+        {
+            field: 'quantity',
+            title: '{% trans "Stock" %}',
+            sortable: true,
+            formatter: function(value, row, index, field) {
+
+                var val = parseFloat(value);
+
+                // If there is a single unit with a serial number, use the serial number
+                if (row.serial && row.quantity == 1) {
+                    val = '# ' + row.serial;
+                } else {
+                    val = +val.toFixed(5);
+                }
+
+                var html = renderLink(val, `/stock/item/${row.pk}/`);
+
+                return html;
+            }
+        },
+        {
+            field: 'status',
+            title: '{% trans "Status" %}',
+            sortable: 'true',
+            formatter: function(value, row, index, field) {
+                return stockStatusDisplay(value);
+            },
+        },
+        {
+            field: 'batch',
+            title: '{% trans "Batch" %}',
+            sortable: true,
+        },
+        {
+            field: 'actions',
+            switchable: false,
+            title: '',
+        }
+    ]
+});
 
 {% endblock %}
