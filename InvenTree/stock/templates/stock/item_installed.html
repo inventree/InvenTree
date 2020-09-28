@@ -149,7 +149,8 @@ $('#installed-table').inventreeTable({
                 {
                     data: {
                         'items[]': [pk],
-                    }
+                    },
+                    reload: true,
                 }
             );
         });
@@ -157,6 +158,27 @@ $('#installed-table').inventreeTable({
     buttons: [
         '#stock-options',
     ]
+});
+
+$('#multi-item-uninstall').click(function() {
+
+    var selections = $('#installed-table').bootstrapTable('getSelections');
+
+    var items = [];
+
+    selections.forEach(function(item) {
+        items.push(item.pk);
+    });
+
+    launchModalForm(
+        "{% url 'stock-item-uninstall' %}",
+        {
+            data: {
+                'items[]': items,
+            },
+            reload: true,
+        }
+    );
 });
 
 {% endblock %}

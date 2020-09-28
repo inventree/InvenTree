@@ -706,6 +706,36 @@ class StockItemUninstall(AjaxView, FormMixin):
 
         return self.stock_items
 
+    def get_initial(self):
+
+        initials = super().get_initial().copy()
+
+        # Keep track of the current locations of stock items
+        current_locations = set()
+
+        # Keep track of the default locations for stock items
+        default_locations = set()
+
+        for item in self.stock_items:
+
+            if item.location:
+                current_locations.add(item.location)
+
+            if item.part.default_location:
+                default_locations.add(item.part.default_location)
+
+        if len(current_locations) == 1:
+            # If the selected stock items are currently in a single location,
+            # select that location as the destination.
+            initials['location'] = next(iter(current_locations))
+        elif len(current_locations) == 0:
+            # There are no current locations set
+            if len(default_locations) == 1:
+                # Select the single default location
+                initials['location'] = next(iter(default_locations))
+
+        return initials
+
     def get(self, request, *args, **kwargs):
 
         """ Extract list of stock items, which are supplied as a list,
@@ -716,8 +746,6 @@ class StockItemUninstall(AjaxView, FormMixin):
             self.stock_items = StockItem.objects.filter(id__in=request.GET.getlist('items[]'))
         else:
             self.stock_items = []
-
-        print("GET:", request.GET)
 
         return self.renderJsonResponse(request, self.get_form())
 
@@ -731,7 +759,7 @@ class StockItemUninstall(AjaxView, FormMixin):
 
         for item in self.request.POST:
             if item.startswith('stock-item-'):
-                pk = item.replace('stock-item', '')
+                pk = item.replace('stock-item-', '')
 
                 try:
                     stock_item = StockItem.objects.get(pk=pk)
@@ -741,9 +769,22 @@ class StockItemUninstall(AjaxView, FormMixin):
 
         self.stock_items = items
 
+        # Assume the form is valid, until it isn't!
+        valid = True
+
         confirmed = str2bool(request.POST.get('confirm'))
 
-        valid = False
+        location = request.POST.get('location', None)
+
+        if location:
+            try:
+                location = StockLocation.objects.get(pk=location)
+            except (ValueError, StockLocation.DoesNotExist):
+                location = None
+
+        if not location:
+            # Location is required!
+            valid = False
 
         form = self.get_form()
 
@@ -754,6 +795,13 @@ class StockItemUninstall(AjaxView, FormMixin):
         data = {
             'form_valid': valid,
         }
+
+        if valid:
+            # Ok, now let's actually uninstall the stock items
+            for item in self.stock_items:
+                pass
+
+            data['success'] = _('Uninstalled stock items')
 
         return self.renderJsonResponse(request, form=form, data=data)
 
