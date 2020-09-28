@@ -1273,7 +1273,7 @@ class POLineItemEdit(AjaxUpdateView):
         form = super().get_form()
 
         # Prevent user from editing order once line item is assigned
-        form.fields.pop('order')
+        form.fields['order'].widget = HiddenInput()
 
         return form
 

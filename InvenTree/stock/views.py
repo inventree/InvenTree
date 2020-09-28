@@ -1170,8 +1170,9 @@ class StockItemEdit(AjaxUpdateView):
             query = query.filter(part=item.part.id)
             form.fields['supplier_part'].queryset = query
 
-        if not item.part.trackable or not item.serialized:
-            form.fields.pop('serial')
+        # Hide the serial number field if it is not required
+        if not item.part.trackable and not item.serialized:
+            form.fields['serial'].widget = HiddenInput()
 
         return form
 
