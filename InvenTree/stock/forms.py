@@ -278,6 +278,8 @@ class UninstallStockForm(forms.ModelForm):
 
     location = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label=_('Location'), help_text=_('Destination location for uninstalled items'))
 
+    note = forms.CharField(label=_('Notes'), required=False, help_text=_('Add transaction note (optional)'))
+
     confirm = forms.BooleanField(required=False, initial=False, label=_('Confirm uninstall'), help_text=_('Confirm removal of installed stock items'))
 
     class Meta:
@@ -286,6 +288,7 @@ class UninstallStockForm(forms.ModelForm):
 
         fields = [
             'location',
+            'note',
             'confirm',
         ]
 

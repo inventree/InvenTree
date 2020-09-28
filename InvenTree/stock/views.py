@@ -774,6 +774,8 @@ class StockItemUninstall(AjaxView, FormMixin):
 
         confirmed = str2bool(request.POST.get('confirm'))
 
+        note = request.POST.get('note', '')
+
         location = request.POST.get('location', None)
 
         if location:
@@ -799,7 +801,7 @@ class StockItemUninstall(AjaxView, FormMixin):
         if valid:
             # Ok, now let's actually uninstall the stock items
             for item in self.stock_items:
-                pass
+                item.uninstallIntoLocation(location, request.user, note)
 
             data['success'] = _('Uninstalled stock items')
 
