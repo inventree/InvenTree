@@ -1,0 +1,31 @@
+{% extends "stock/item_base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block details %}
+
+{% include "stock/tabs.html" with tab='installed' %}
+
+<h4>{% trans "Installed Items" %}</h4>
+<hr>
+
+<table class='table table-striped table-condensed' id='installed-table'>
+</table>
+
+{% endblock %}
+
+{% block js_ready %}
+
+{{ block.super }}
+
+loadStockTable($("#installed-table"), {
+    params: {
+        installed_in: {{ item.id }},
+        part_detail: true,
+    },
+    name: 'stock-item-installed',
+    url: "{% url 'api-stock-list' %}",   
+})
+
+{% endblock %}
