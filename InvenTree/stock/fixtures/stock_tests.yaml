@@ -62,7 +62,7 @@
   pk: 8
   fields:
     stock_item: 522
-    test: 'Check that chair is GreEn   '
+    test: 'Check that chair is GreEn'
     result: True
     date: 2020-05-17
 
