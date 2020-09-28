@@ -444,7 +444,7 @@ class TestResultTest(StockTest):
         status = item.requiredTestStatus()
 
         self.assertEqual(status['total'], 5)
-        self.assertEqual(status['passed'], 3)
+        self.assertEqual(status['passed'], 2)
         self.assertEqual(status['failed'], 1)
 
         self.assertFalse(item.passedAllRequiredTests())
