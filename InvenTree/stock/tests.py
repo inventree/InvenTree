@@ -464,7 +464,7 @@ class TestResultTest(StockTest):
         )
     
         # Still should be failing at this point,
-        # as the most recent "apply paint" test was False 
+        # as the most recent "apply paint" test was False
         self.assertFalse(item.passedAllRequiredTests())
 
         # Add a new test result against this required test
