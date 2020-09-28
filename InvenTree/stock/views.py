@@ -683,6 +683,139 @@ class StockItemQRCode(QRCodeView):
             return None
 
 
+class StockItemUninstall(AjaxView, FormMixin):
+    """
+    View for uninstalling one or more StockItems,
+    which are installed in another stock item.
+
+    Stock items are uninstalled into a location,
+    defaulting to the location that they were "in" before they were installed.
+
+    If multiple default locations are detected,
+    leave the final location up to the user.
+    """
+
+    ajax_template_name = 'stock/stock_uninstall.html'
+    ajax_form_title = _('Uninstall Stock Items')
+    form_class = StockForms.UninstallStockForm
+
+    # List of stock items to uninstall (initially empty)
+    stock_items = []
+
+    def get_stock_items(self):
+
+        return self.stock_items
+
+    def get_initial(self):
+
+        initials = super().get_initial().copy()
+
+        # Keep track of the current locations of stock items
+        current_locations = set()
+
+        # Keep track of the default locations for stock items
+        default_locations = set()
+
+        for item in self.stock_items:
+
+            if item.location:
+                current_locations.add(item.location)
+
+            if item.part.default_location:
+                default_locations.add(item.part.default_location)
+
+        if len(current_locations) == 1:
+            # If the selected stock items are currently in a single location,
+            # select that location as the destination.
+            initials['location'] = next(iter(current_locations))
+        elif len(current_locations) == 0:
+            # There are no current locations set
+            if len(default_locations) == 1:
+                # Select the single default location
+                initials['location'] = next(iter(default_locations))
+
+        return initials
+
+    def get(self, request, *args, **kwargs):
+
+        """ Extract list of stock items, which are supplied as a list,
+        e.g. items[]=1,2,3
+        """
+
+        if 'items[]' in request.GET:
+            self.stock_items = StockItem.objects.filter(id__in=request.GET.getlist('items[]'))
+        else:
+            self.stock_items = []
+
+        return self.renderJsonResponse(request, self.get_form())
+
+    def post(self, request, *args, **kwargs):
+
+        """
+        Extract a list of stock items which are included as hidden inputs in the form data.
+        """
+
+        items = []
+
+        for item in self.request.POST:
+            if item.startswith('stock-item-'):
+                pk = item.replace('stock-item-', '')
+
+                try:
+                    stock_item = StockItem.objects.get(pk=pk)
+                    items.append(stock_item)
+                except (ValueError, StockItem.DoesNotExist):
+                    pass
+
+        self.stock_items = items
+
+        # Assume the form is valid, until it isn't!
+        valid = True
+
+        confirmed = str2bool(request.POST.get('confirm'))
+
+        note = request.POST.get('note', '')
+
+        location = request.POST.get('location', None)
+
+        if location:
+            try:
+                location = StockLocation.objects.get(pk=location)
+            except (ValueError, StockLocation.DoesNotExist):
+                location = None
+
+        if not location:
+            # Location is required!
+            valid = False
+
+        form = self.get_form()
+
+        if not confirmed:
+            valid = False
+            form.errors['confirm'] = [_('Confirm stock adjustment')]
+
+        data = {
+            'form_valid': valid,
+        }
+
+        if valid:
+            # Ok, now let's actually uninstall the stock items
+            for item in self.stock_items:
+                item.uninstallIntoLocation(location, request.user, note)
+
+            data['success'] = _('Uninstalled stock items')
+
+        return self.renderJsonResponse(request, form=form, data=data)
+
+    def get_context_data(self):
+
+        context = super().get_context_data()
+
+        context['stock_items'] = self.get_stock_items()
+
+        return context
+
+
 class StockAdjust(AjaxView, FormMixin):
     """ View for enacting simple stock adjustments:
     
@@ -1037,8 +1170,9 @@ class StockItemEdit(AjaxUpdateView):
             query = query.filter(part=item.part.id)
             form.fields['supplier_part'].queryset = query
 
-        if not item.part.trackable or not item.serialized:
-            form.fields.pop('serial')
+        # Hide the serial number field if it is not required
+        if not item.part.trackable and not item.serialized:
+            form.fields['serial'].widget = HiddenInput()
 
         return form
 

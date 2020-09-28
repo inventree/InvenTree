@@ -3,6 +3,8 @@ from django.db.models import Sum
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
+import datetime
+
 from .models import StockLocation, StockItem, StockItemTracking
 from .models import StockItemTestResult
 from part.models import Part
@@ -439,13 +441,14 @@ class TestResultTest(StockTest):
             self.assertIn(test, result_map.keys())
 
     def test_test_results(self):
+
         item = StockItem.objects.get(pk=522)
 
         status = item.requiredTestStatus()
 
         self.assertEqual(status['total'], 5)
-        self.assertEqual(status['passed'], 3)
-        self.assertEqual(status['failed'], 1)
+        self.assertEqual(status['passed'], 2)
+        self.assertEqual(status['failed'], 2)
 
         self.assertFalse(item.passedAllRequiredTests())
 
@@ -460,6 +463,18 @@ class TestResultTest(StockTest):
             result=True
         )
     
+        # Still should be failing at this point,
+        # as the most recent "apply paint" test was False
+        self.assertFalse(item.passedAllRequiredTests())
+
+        # Add a new test result against this required test
+        StockItemTestResult.objects.create(
+            stock_item=item,
+            test='apply paint',
+            date=datetime.datetime(2022, 12, 12),
+            result=True
+        )
+
         self.assertTrue(item.passedAllRequiredTests())
 
     def test_duplicate_item_tests(self):

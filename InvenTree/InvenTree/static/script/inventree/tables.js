@@ -157,6 +157,11 @@ $.fn.inventreeTable = function(options) {
             console.log('Could not get list of visible columns!');
         }
     }
+
+    // Optionally, link buttons to the table selection
+    if (options.buttons) {
+        linkButtonsToSelection(table, options.buttons);
+    }
 }
 
 function customGroupSorter(sortName, sortOrder, sortData) {

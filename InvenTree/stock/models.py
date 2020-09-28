@@ -341,7 +341,7 @@ class StockItem(MPTTModel):
         'self',
         verbose_name=_('Installed In'),
         on_delete=models.DO_NOTHING,
-        related_name='owned_parts', blank=True, null=True,
+        related_name='installed_parts', blank=True, null=True,
         help_text=_('Is this item installed in another item?')
     )
 
@@ -584,6 +584,78 @@ class StockItem(MPTTModel):
             return False
 
         return True
+
+    def installedItemCount(self):
+        """
+        Return the number of stock items installed inside this one.
+        """
+
+        return self.installed_parts.count()
+
+    def hasInstalledItems(self):
+        """
+        Returns true if this stock item has other stock items installed in it.
+        """
+
+        return self.installedItemCount() > 0
+
+    @transaction.atomic
+    def installIntoStockItem(self, otherItem, user, notes):
+        """
+        Install this stock item into another stock item.
+
+        Args
+            otherItem: The stock item to install this item into
+            user: The user performing the operation
+            notes: Any notes associated with the operation
+        """
+
+        # Cannot be already installed in another stock item!
+        if self.belongs_to is not None:
+            return False
+
+        # TODO - Are there any other checks that need to be performed at this stage?
+
+        # Mark this stock item as belonging to the other one
+        self.belongs_to = otherItem
+        
+        self.save()
+
+        # Add a transaction note!
+        self.addTransactionNote(
+            _('Installed in stock item') + ' ' + str(otherItem.pk),
+            user,
+            notes=notes
+        )
+
+    @transaction.atomic
+    def uninstallIntoLocation(self, location, user, notes):
+        """
+        Uninstall this stock item from another item, into a location.
+
+        Args:
+            location: The stock location where the item will be moved
+            user: The user performing the operation
+            notes: Any notes associated with the operation
+        """
+
+        # If the stock item is not installed in anything, ignore
+        if self.belongs_to is None:
+            return False
+
+        # TODO - Are there any other checks that need to be performed at this stage?
+
+        self.belongs_to = None
+        self.location = location
+
+        self.save()
+
+        # Add a transaction note!
+        self.addTransactionNote(
+            _('Uninstalled into location') + ' ' + str(location),
+            user,
+            notes=notes
+        )
 
     @property
     def children(self):
@@ -1042,7 +1114,9 @@ class StockItem(MPTTModel):
         as all named tests are accessible.
         """
 
-        results = self.getTestResults(**kwargs).order_by('-date')
+        # Filter results by "date", so that newer results
+        # will override older ones.
+        results = self.getTestResults(**kwargs).order_by('date')
 
         result_map = {}
 

@@ -238,7 +238,7 @@ function loadStockTable(table, options) {
 
     var filters = {};
 
-    var filterKey = options.filterKey || "stock";
+    var filterKey = options.filterKey || options.name || "stock";
      
     if (!options.disableFilters) {
         filters = loadTableFilters(filterKey);
@@ -417,14 +417,6 @@ function loadStockTable(table, options) {
                 switchable: false,
             },
             {
-                field: 'IPN',
-                title: 'IPN',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    return row.part_detail.IPN;
-                },
-            },
-            {
                 field: 'part_name',
                 title: '{% trans "Part" %}',
                 sortable: true,
@@ -438,6 +430,14 @@ function loadStockTable(table, options) {
                     
                     return html;
                 }
+            },
+            {
+                field: 'IPN',
+                title: 'IPN',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return row.part_detail.IPN;
+                },
             },
             {
                 field: 'part_description',
@@ -512,16 +512,20 @@ function loadStockTable(table, options) {
                 title: '{% trans "Location" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    if (value) {
+                    if (row.belongs_to) {
+                        var text = "{% trans 'Installed in Stock Item ' %}" + row.belongs_to;
+                        var url = `/stock/item/${row.belongs_to}/installed/`;
+
+                        return renderLink(text, url);
+                    } else if (row.customer) {
+                        var text = "{% trans "Shipped to customer" %}";
+                        return renderLink(text, `/company/${row.customer}/assigned-stock/`);
+                    }
+                    else if (value) {
                         return renderLink(value, `/stock/location/${row.location}/`);
                     }
                     else {
-                        if (row.customer) {
-                            var text = "{% trans "Shipped to customer" %}";
-                            return renderLink(text, `/company/${row.customer}/assigned-stock/`);
-                        } else {
-                            return '<i>{% trans "No stock location set" %}</i>';
-                        }
+                        return '<i>{% trans "No stock location set" %}</i>';
                     }
                 }
             },

@@ -30,6 +30,10 @@ function getAvailableTableFilters(tableKey) {
                 title: "{% trans "Serial number" %}",
                 description: "{% trans "Serial number" %}"
             },
+            batch: {
+                title: '{% trans "Batch" %}',
+                description: '{% trans "Batch code" %}',
+            },
         };
     }
 
@@ -61,6 +65,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "In Stock" %}',
                 description: '{% trans "Show items which are in stock" %}',
             },
+            installed: {
+                type: 'bool',
+                title: '{% trans "Installed" %}',
+                description: '{% trans "Show stock items which are installed in another item" %}',
+            },
             sent_to_customer: {
                 type: 'bool',
                 title: '{% trans "Sent to customer" %}',
@@ -87,6 +96,10 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Stock status" %}',
                 description: '{% trans "Stock status" %}',
             },
+            batch: {
+                title: '{% trans "Batch" %}',
+                description: '{% trans "Batch code" %}',
+            }
         };
     }
 
