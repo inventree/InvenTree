@@ -238,7 +238,7 @@ function loadStockTable(table, options) {
 
     var filters = {};
 
-    var filterKey = options.filterKey || "stock";
+    var filterKey = options.filterKey || options.name || "stock";
      
     if (!options.disableFilters) {
         filters = loadTableFilters(filterKey);
