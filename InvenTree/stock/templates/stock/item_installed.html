@@ -113,8 +113,28 @@ $('#installed-table').inventreeTable({
             field: 'actions',
             switchable: false,
             title: '',
+            formatter: function(value, row) {
+                var pk = row.pk;
+
+                var html = `<div class='btn-group float-right' role='group'>`;
+
+                html += makeIconButton('fa-trash-alt icon-red', 'button-uninstall', pk, '{% trans "Uninstall item" %}');
+
+                html += `</div>`;
+
+                return html;
+            }
         }
-    ]
+    ],
+    onLoadSuccess: function() {
+
+        var table = $('#installed-table');
+
+        // Find buttons and associate actions
+        table.find('.button-uninstall').click(function() {
+            var pk = $(this).attr('pk');
+        });
+    }
 });
 
 {% endblock %}
