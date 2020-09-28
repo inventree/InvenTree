@@ -683,6 +683,89 @@ class StockItemQRCode(QRCodeView):
             return None
 
 
+class StockItemUninstall(AjaxView, FormMixin):
+    """
+    View for uninstalling one or more StockItems,
+    which are installed in another stock item.
+
+    Stock items are uninstalled into a location,
+    defaulting to the location that they were "in" before they were installed.
+
+    If multiple default locations are detected,
+    leave the final location up to the user.
+    """
+
+    ajax_template_name = 'stock/stock_uninstall.html'
+    ajax_form_title = _('Uninstall Stock Items')
+    form_class = StockForms.UninstallStockForm
+
+    # List of stock items to uninstall (initially empty)
+    stock_items = []
+
+    def get_stock_items(self):
+
+        return self.stock_items
+
+    def get(self, request, *args, **kwargs):
+
+        """ Extract list of stock items, which are supplied as a list,
+        e.g. items[]=1,2,3
+        """
+
+        if 'items[]' in request.GET:
+            self.stock_items = StockItem.objects.filter(id__in=request.GET.getlist('items[]'))
+        else:
+            self.stock_items = []
+
+        print("GET:", request.GET)
+
+        return self.renderJsonResponse(request, self.get_form())
+
+    def post(self, request, *args, **kwargs):
+
+        """
+        Extract a list of stock items which are included as hidden inputs in the form data.
+        """
+
+        items = []
+
+        for item in self.request.POST:
+            if item.startswith('stock-item-'):
+                pk = item.replace('stock-item', '')
+
+                try:
+                    stock_item = StockItem.objects.get(pk=pk)
+                    items.append(stock_item)
+                except (ValueError, StockItem.DoesNotExist):
+                    pass 
+
+        self.stock_items = items
+
+        confirmed = str2bool(request.POST.get('confirm'))
+
+        valid = False
+
+        form = self.get_form()
+
+        if not confirmed:
+            valid = False
+            form.errors['confirm'] = [_('Confirm stock adjustment')]
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form=form, data=data)
+
+    def get_context_data(self):
+
+        context = super().get_context_data()
+
+        context['stock_items'] = self.get_stock_items()
+
+        return context
+
+
 class StockAdjust(AjaxView, FormMixin):
     """ View for enacting simple stock adjustments:
     

@@ -60,6 +60,8 @@ stock_urls = [
 
     url(r'^item/new/?', views.StockItemCreate.as_view(), name='stock-item-create'),
 
+    url(r'^item/uninstall/', views.StockItemUninstall.as_view(), name='stock-item-uninstall'),
+
     url(r'^item/test-report-download/', views.StockItemTestReportDownload.as_view(), name='stock-item-test-report-download'),
     url(r'^item/print-stock-labels/', views.StockItemPrintLabels.as_view(), name='stock-item-print-labels'),
 
