@@ -3,6 +3,8 @@ from django.db.models import Sum
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
+import datetime
+
 from .models import StockLocation, StockItem, StockItemTracking
 from .models import StockItemTestResult
 from part.models import Part
@@ -335,35 +337,6 @@ class StockTest(TestCase):
         # Serialize the remainder of the stock
         item.serializeStock(2, [99, 100], self.user)
 
-    def test_installation(self):
-        """
-        Test that the functions to install stock items in other stock items work.
-        """
-
-        item_1 = StockItem.objects.get(pk=1)
-        item_2 = StockItem.objects.get(pk=2)
-
-        self.assertEqual(item_1.belongs_to, None)
-        self.assertFalse(item_2.hasInstalledItems())
-        
-        n = item_1.tracking_info_count
-
-        # Now, let's install item_1 into item_2
-        item_1.installIntoStockItem(item_2, self.user, "Hello world!")
-
-        # Check that it installed properly!
-        self.assertEqual(item_1.tracking_info_count, n + 1)
-        self.assertTrue(item_2.hasInstalledItems())
-        self.assertEqual(item_1.belongs_to, item_2)
-
-        # Now, let's uninstall it!
-        item_1.uninstallIntoLocation(item_1.location, self.user, "Wello horld!")
-
-        # Check that it uninstalled
-        self.assertEqual(item_1.tracking_info_count, n + 2)
-        self.assertFalse(item_2.hasInstalledItems())
-        self.assertEqual(item_1.belongs_to, None)
-        
 
 class VariantTest(StockTest):
     """
@@ -468,13 +441,14 @@ class TestResultTest(StockTest):
             self.assertIn(test, result_map.keys())
 
     def test_test_results(self):
+
         item = StockItem.objects.get(pk=522)
 
         status = item.requiredTestStatus()
 
         self.assertEqual(status['total'], 5)
-        self.assertEqual(status['passed'], 3)
-        self.assertEqual(status['failed'], 1)
+        self.assertEqual(status['passed'], 2)
+        self.assertEqual(status['failed'], 2)
 
         self.assertFalse(item.passedAllRequiredTests())
 
@@ -489,6 +463,18 @@ class TestResultTest(StockTest):
             result=True
         )
     
+        # Still should be failing at this point,
+        # as the most recent "apply paint" test was False 
+        self.assertFalse(item.passedAllRequiredTests())
+
+        # Add a new test result against this required test
+        StockItemTestResult.objects.create(
+            stock_item=item,
+            test='apply paint',
+            date=datetime.datetime(2022, 12, 12),
+            result=True
+        )
+
         self.assertTrue(item.passedAllRequiredTests())
 
     def test_duplicate_item_tests(self):
