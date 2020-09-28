@@ -341,7 +341,7 @@ class StockItem(MPTTModel):
         'self',
         verbose_name=_('Installed In'),
         on_delete=models.DO_NOTHING,
-        related_name='owned_parts', blank=True, null=True,
+        related_name='installed_parts', blank=True, null=True,
         help_text=_('Is this item installed in another item?')
     )
 
@@ -584,6 +584,20 @@ class StockItem(MPTTModel):
             return False
 
         return True
+
+    def installedItemCount(self):
+        """
+        Return the number of stock items installed inside this one.
+        """
+
+        return self.installed_parts.count()
+
+    def hasInstalledItems(self):
+        """
+        Returns true if this stock item has other stock items installed in it.
+        """
+
+        return self.installedItemCount() > 0
 
     @property
     def children(self):
