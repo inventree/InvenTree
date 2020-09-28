@@ -292,6 +292,7 @@ class UninstallStockForm(forms.ModelForm):
             'confirm',
         ]
 
+
 class AdjustStockForm(forms.ModelForm):
     """ Form for performing simple stock adjustments.
 

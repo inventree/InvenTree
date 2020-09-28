@@ -625,7 +625,7 @@ class StockItem(MPTTModel):
         self.addTransactionNote(
             _('Installed in stock item') + ' ' + str(otherItem.pk),
             user,
-            notes=notes   
+            notes=notes
         )
 
     @transaction.atomic

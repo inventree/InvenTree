@@ -765,7 +765,7 @@ class StockItemUninstall(AjaxView, FormMixin):
                     stock_item = StockItem.objects.get(pk=pk)
                     items.append(stock_item)
                 except (ValueError, StockItem.DoesNotExist):
-                    pass 
+                    pass
 
         self.stock_items = items
 
