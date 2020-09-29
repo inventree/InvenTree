@@ -1889,6 +1889,21 @@ class CategoryDetail(DetailView):
         return context
 
 
+class CategoryParametric(CategoryDetail):
+    """ Parametric view for PartCategory """
+    template_name = 'part/category_parametric.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(CategoryParametric, self).get_context_data(**kwargs).copy()
+
+        category = kwargs['object']
+        context['parameters'] = category.get_unique_parameters()
+        print(context)
+
+        return context
+
+
 class CategoryEdit(AjaxUpdateView):
     """ Update view to edit a PartCategory """
     model = PartCategory

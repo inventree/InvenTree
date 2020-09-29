@@ -111,6 +111,20 @@ class PartCategory(InvenTreeTree):
         """ True if there are any parts in this category """
         return self.partcount() > 0
 
+    def get_unique_parameters(self, cascade=True):
+        """ Get all parameters for all parts from this category """
+        parameters = []
+
+        parts = self.get_parts(cascade=cascade).prefetch_related('parameters', 'parameters__template')
+
+        for part in parts:
+            for parameter in part.parameters.all():
+                template_name = parameter.template.name
+                if template_name not in parameters:
+                    parameters.append(template_name)
+
+        return parameters
+
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
 def before_delete_part_category(sender, instance, using, **kwargs):
