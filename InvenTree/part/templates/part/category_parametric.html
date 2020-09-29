@@ -16,16 +16,10 @@
 
     loadParametricPartTable(
         "#parametric-part-table",
-        "{% url 'api-part-list' %}",
-        {
-            params: {
-                {% if category %}category: {{ category.id }},
-                {% else %}category: "null",
-                {% endif %}
-            },
-            headers: {{ parameters|safe }},
-            name: 'parametric',
-        },
+        { 
+        	headers: {{ headers|safe }},
+        	data: {{ parameters|safe }},
+        }
     );
 
 {% endblock %}

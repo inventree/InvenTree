@@ -1898,8 +1898,10 @@ class CategoryParametric(CategoryDetail):
         context = super(CategoryParametric, self).get_context_data(**kwargs).copy()
 
         category = kwargs['object']
-        context['parameters'] = category.get_unique_parameters()
-        print(context)
+        context['headers'] = category.get_unique_parameters()
+        context['headers'].append('IPN')
+        context['headers'].append('Name')
+        context['parameters'] = category.get_parts_parameters()
 
         return context
 

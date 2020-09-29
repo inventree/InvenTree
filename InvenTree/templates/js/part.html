@@ -163,95 +163,22 @@ function loadSimplePartTable(table, url, options={}) {
 }
 
 
-function loadParametricPartTable(table, url, options={}) {
+function loadParametricPartTable(table, options={}) {
     /* Load parametric part data into specified table.
      * 
      * Args:
      *  - table: HTML reference to the table
-     *  - url: Base URL for API query
+     *  - data: Parameters data
      */
 
-    var params = options.params || {};
-    console.log(params)
+    var table_headers = options.headers
+    var table_data = options.data
+/*    console.log(table_headers)
+    console.log(table_data)*/
 
-    var filters = loadTableFilters("parts");
-    for (var key in params) {
-        filters[key] = params[key];
-    }
-    console.log(filters)
+    var columns = [];
 
-    var columns = [
-        {
-            field: 'pk',
-            title: 'ID',
-            visible: false,
-            switchable: false,
-            searchable: false,
-        }
-    ];
-
-    columns.push({
-        field: 'IPN',
-        title: 'IPN',
-        sortable: true,
-    }),
-
-    columns.push({
-        field: 'name',
-        title: '{% trans 'Part' %}',
-        sortable: true,
-        formatter: function(value, row, index, field) {
-
-            var name = '';
-
-            if (row.IPN) {
-                name += row.IPN;
-                name += ' | ';
-            }
-
-            name += value;
-
-            if (row.revision) {
-                name += ' | ';
-                name += row.revision;
-            }
-
-            if (row.is_template) {
-                name = '<i>' + name + '</i>';
-            }
-
-            var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
-            
-            if (row.is_template) {
-                display += `<span class='fas fa-clone label-right' title='{% trans "Template part" %}'></span>`;
-            }
-            
-            if (row.assembly) {
-                display += `<span class='fas fa-tools label-right' title='{% trans "Assembled part" %}'></span>`;
-            }
-
-            if (row.starred) {
-                display += `<span class='fas fa-star label-right' title='{% trans "Starred part" %}'></span>`;
-            }
-
-            if (row.salable) {
-                display += `<span class='fas fa-dollar-sign label-right' title='{% trans "Salable part" %}'></span>`;
-            }
-
-            /*
-            if (row.component) {
-                display = display + `<span class='fas fa-cogs label-right' title='Component part'></span>`;
-            }
-            */
-            
-            if (!row.active) {
-                display += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
-            }
-            return display; 
-        }
-    });
-
-    for (header of options.headers) {
+    for (header of table_headers) {
         columns.push({
             field: header,
             title: header,
@@ -260,16 +187,17 @@ function loadParametricPartTable(table, url, options={}) {
     }
 
     $(table).inventreeTable({
-        url: url,
-        sortName: 'pk',
+/*        url: url,*/
+        sortName: 'name',
         method: 'get',
-        queryParams: filters,
+        queryParams: table_headers,
         groupBy: false,
         name: options.name || 'parametric',
-        original: params,
+/*        original: params,*/
         formatNoMatches: function() { return "{% trans "No parts found" %}"; },
         columns: columns,
         showColumns: true,
+        data: table_data,
     });
 }
 
