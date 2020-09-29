@@ -125,6 +125,7 @@ class StockItemAdmin(ImportExportModelAdmin):
         'batch',
     ]
 
+
 class StockAttachmentAdmin(admin.ModelAdmin):
 
     list_display = ('stock_item', 'attachment', 'comment')
