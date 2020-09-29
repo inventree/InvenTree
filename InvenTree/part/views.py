@@ -1875,7 +1875,18 @@ class CategoryDetail(DetailView):
     model = PartCategory
     context_object_name = 'category'
     queryset = PartCategory.objects.all().prefetch_related('children')
-    template_name = 'part/category.html'
+    template_name = 'part/category_partlist.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(CategoryDetail, self).get_context_data(**kwargs).copy()
+
+        try:
+            context['part_count'] = kwargs['object'].partcount()
+        except KeyError:
+            context['part_count'] = 0
+
+        return context
 
 
 class CategoryEdit(AjaxUpdateView):

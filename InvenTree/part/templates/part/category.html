@@ -115,8 +115,11 @@
     </div>
 </div>
 
+
+{% block part_list %}
 <table class='table table-striped table-condensed' data-toolbar='#button-toolbar' id='part-table'>
 </table>
+{% endblock part_list %}
 
 {% endblock %}
 {% block js_load %}
@@ -239,6 +242,18 @@
             },
             buttons: ['#part-options'],
             checkbox: true,
+        },
+    );
+
+    loadParametricPartTable(
+        "#parametric-part-table",
+        "{% url 'api-part-list' %}",
+        {
+            params: {
+                {% if category %}category: {{ category.id }},
+                {% else %}category: "null",
+                {% endif %}
+            },
         },
     );
 

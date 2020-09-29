@@ -163,6 +163,51 @@ function loadSimplePartTable(table, url, options={}) {
 }
 
 
+function loadParametricPartTable(table, url, options={}) {
+    /* Load parametric part data into specified table.
+     * 
+     * Args:
+     *  - table: HTML reference to the table
+     *  - url: Base URL for API query
+     */
+
+    // Ensure category detail is included
+    options.params['category_detail'] = true;
+
+    var params = options.params || {};
+    console.log(params)
+
+    var filters = {};
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+    console.log(filters)
+
+    var columns = [
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: true,
+            switchable: true,
+            searchable: false,
+        }
+    ];
+
+    $(table).inventreeTable({
+        url: url,
+        sortName: 'pk',
+        method: 'get',
+        queryParams: filters,
+        groupBy: false,
+        name: options.name || 'part',
+        original: params,
+        formatNoMatches: function() { return "{% trans "No parts found" %}"; },
+        columns: columns,
+        showColumns: true,
+    });
+}
+
+
 function loadPartTable(table, url, options={}) {
     /* Load part listing data into specified table.
      * 
