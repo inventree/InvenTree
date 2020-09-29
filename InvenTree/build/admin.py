@@ -20,6 +20,12 @@ class BuildAdmin(ImportExportModelAdmin):
         'notes',
     )
 
+    search_fields = [
+        'title',
+        'part__name',
+        'part__description',
+    ]
+
 
 class BuildItemAdmin(admin.ModelAdmin):
 

@@ -28,6 +28,9 @@
     <div class="media-body">
         <h3>
             {{ part.full_name }}
+            {% if user.is_staff %}
+            <a  href="{% url 'admin:part_part_change' part.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
+            {% endif %}
             {% if not part.active %}
             <div class='label label-large label-large-red'>
                 {% trans 'Inactive' %}

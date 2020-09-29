@@ -117,6 +117,14 @@ class StockItemAdmin(ImportExportModelAdmin):
 
     list_display = ('part', 'quantity', 'location', 'status', 'updated')
 
+    # A list of search fields which can be used for lookup on matching 'autocomplete' fields
+    search_fields = [
+        'part__name',
+        'part__description',
+        'serial',
+        'batch',
+    ]
+
 
 class StockAttachmentAdmin(admin.ModelAdmin):
 
