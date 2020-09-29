@@ -61,9 +61,12 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 <hr>
 <h4>
 {% if item.serialized %}
-<a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name}}</a> # {{ item.serial }}
+    <a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name}}</a> # {{ item.serial }}
 {% else %}
-<a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name }}</a> &times {% decimal item.quantity %}
+    <a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name }}</a> &times {% decimal item.quantity %}
+{% endif %}
+{% if user.is_staff %}
+    <a  href="{% url 'admin:stock_stockitem_change' item.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
 {% endif %}
 </h4>
 
