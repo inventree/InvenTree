@@ -430,6 +430,17 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Filter by whether the part has an IPN (internal part number) defined
+        has_ipn = params.get('has_ipn', None)
+
+        if has_ipn is not None:
+            has_ipn = str2bool(has_ipn)
+
+            if has_ipn:
+                queryset = queryset.exclude(IPN='')
+            else:
+                queryset = queryset.filter(IPN='')
+
         # Filter by whether the BOM has been validated (or not)
         bom_valid = params.get('bom_valid', None)
 
