@@ -807,7 +807,19 @@ function launchModalForm(url, options = {}) {
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
+
             $(modal).modal('hide');
+
+            // Permission denied!
+            if (xhr.status == 403) {
+                showAlertDialog(
+                    "Permission Denied",
+                    "You do not have the required permissions to access this function"
+                );
+
+                return;
+            }
+
             showAlertDialog('Error requesting form data', renderErrorMessage(xhr));
         }
     };
