@@ -22,7 +22,12 @@ src="{% static 'img/blank_image.png' %}"
 {% block page_data %}
 <h3>{% trans "Purchase Order" %} {% purchase_order_status_label order.status large=True %}</h3>
 <hr>
-<h4>{{ order }}</h4>
+<h4>
+    {{ order }}
+    {% if user.is_staff and perms.order.change_purchaseorder %}
+    <a href="{% url 'admin:order_purchaseorder_change' order.pk %}"><span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span></a>
+    {% endif %}
+</h4>
 <p>{{ order.description }}</p>
 <p>
     <div class='btn-row'>
