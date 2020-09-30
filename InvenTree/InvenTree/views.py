@@ -13,6 +13,8 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
 from django.views import View
 from django.views.generic import UpdateView, CreateView, FormView
 from django.views.generic.base import TemplateView
@@ -105,11 +107,31 @@ class TreeSerializer(views.APIView):
         return JsonResponse(response, safe=False)
 
 
-class AjaxMixin(object):
+class AjaxMixin(PermissionRequiredMixin):
     """ AjaxMixin provides basic functionality for rendering a Django form to JSON.
     Handles jsonResponse rendering, and adds extra data for the modal forms to process
     on the client side.
+
+    Any view which inherits the AjaxMixin will need
+    correct permissions set using the 'permission_required' attribute
+
     """
+
+    # By default, allow *any* permissions
+    permission_required = '*'
+
+    def has_permission(self):
+        """
+        Override the default behaviour of has_permission from PermissionRequiredMixin.
+
+        Basically, if permission_required attribute = '*',
+        no permissions are actually required!
+        """
+
+        if self.permission_required == '*':
+            return True
+        else:
+            return super().has_permission()
 
     # By default, point to the modal_form template
     # (this can be overridden by a child class)
