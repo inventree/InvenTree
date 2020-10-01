@@ -1872,6 +1872,7 @@ class PartParameterDelete(AjaxDeleteView):
 
 class CategoryDetail(DetailView):
     """ Detail view for PartCategory """
+
     model = PartCategory
     context_object_name = 'category'
     queryset = PartCategory.objects.all().prefetch_related('children')
@@ -1891,17 +1892,29 @@ class CategoryDetail(DetailView):
 
 class CategoryParametric(CategoryDetail):
     """ Parametric view for PartCategory """
+
     template_name = 'part/category_parametric.html'
 
     def get_context_data(self, **kwargs):
 
         context = super(CategoryParametric, self).get_context_data(**kwargs).copy()
 
-        category = kwargs['object']
-        context['headers'] = category.get_unique_parameters()
-        context['headers'].append('IPN')
-        context['headers'].append('Name')
-        context['parameters'] = category.get_parts_parameters()
+        # Get current category
+        category = kwargs.get('object', None)
+
+        if category:
+            cascade = kwargs.get('cascade', True)
+            # Prefetch parts parameters
+            parts_parameters = category.prefetch_parts_parameters(cascade=cascade)
+            # Get table headers (unique parameters names)
+            context['headers'] = category.get_unique_parameters(cascade=cascade,
+                                                                prefetch=parts_parameters)
+            # Insert part information
+            context['headers'].insert(0, 'description')
+            context['headers'].insert(0, 'part')
+            # Get parameters data
+            context['parameters'] = category.get_parts_parameters(cascade=cascade,
+                                                                  prefetch=parts_parameters)
 
         return context
 
