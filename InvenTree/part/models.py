@@ -111,6 +111,58 @@ class PartCategory(InvenTreeTree):
         """ True if there are any parts in this category """
         return self.partcount() > 0
 
+    def prefetch_parts_parameters(self, cascade=True):
+        """ Prefectch parts parameters """
+
+        return self.get_parts(cascade=cascade).prefetch_related('parameters', 'parameters__template').all()
+
+    def get_unique_parameters(self, cascade=True, prefetch=None):
+        """ Get all unique parameter names for all parts from this category """
+
+        unique_parameters_names = []
+
+        if prefetch:
+            parts = prefetch
+        else:
+            parts = self.prefetch_parts_parameters(cascade=cascade)
+
+        for part in parts:
+            for parameter in part.parameters.all():
+                parameter_name = parameter.template.name
+                if parameter_name not in unique_parameters_names:
+                    unique_parameters_names.append(parameter_name)
+
+        return sorted(unique_parameters_names)
+
+    def get_parts_parameters(self, cascade=True, prefetch=None):
+        """ Get all parameter names and values for all parts from this category """
+
+        category_parameters = []
+
+        if prefetch:
+            parts = prefetch
+        else:
+            parts = self.prefetch_parts_parameters(cascade=cascade)
+
+        for part in parts:
+            part_parameters = {
+                'pk': part.pk,
+                'name': part.name,
+                'description': part.description,
+            }
+            # Add IPN only if it exists
+            if part.IPN:
+                part_parameters['IPN'] = part.IPN
+
+            for parameter in part.parameters.all():
+                parameter_name = parameter.template.name
+                parameter_value = parameter.data
+                part_parameters[parameter_name] = parameter_value
+
+            category_parameters.append(part_parameters)
+
+        return category_parameters
+
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
 def before_delete_part_category(sender, instance, using, **kwargs):

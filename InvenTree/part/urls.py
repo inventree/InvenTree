@@ -77,7 +77,8 @@ part_category_urls = [
     url(r'^edit/?', views.CategoryEdit.as_view(), name='category-edit'),
     url(r'^delete/?', views.CategoryDelete.as_view(), name='category-delete'),
 
-    url('^.*$', views.CategoryDetail.as_view(), name='category-detail'),
+    url(r'^parametric/?', views.CategoryParametric.as_view(), name='category-parametric'),
+    url(r'^.*$', views.CategoryDetail.as_view(), name='category-detail'),
 ]
 
 part_bom_urls = [

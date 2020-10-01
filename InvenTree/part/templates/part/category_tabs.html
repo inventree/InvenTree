@@ -1,0 +1,11 @@
+{% load i18n %}
+{% load inventree_extras %}
+
+<ul class="nav nav-tabs">
+    <li{% ifequal tab 'part-list' %} class="active"{% endifequal %}>
+        <a href="{% url 'category-detail' category.id %}">{% trans "Parts" %} <span class="badge">{% decimal part_count %}</span></a>
+    </li>
+    <li{% ifequal tab 'parametric-table' %} class='active'{% endifequal %}>
+        <a href="{% url 'category-parametric' category.id %}">{% trans "Parametric Table" %}</a>
+    </li>
+</ul>
