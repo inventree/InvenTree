@@ -18,8 +18,10 @@ InvenTree | {% trans "Search Results" %}
 <br><br>
 <hr>
 
+{% if query %}
+
 <div id='no-search-results'>
-    <h4><i>{% trans "No results found" %}</i></h4>
+<h4><i>{% trans "No results found for " %}'{{ query }}'</i></h4>
 </div>
 
 {% include "InvenTree/search_part_category.html" with collapse_id="categories" %}
@@ -33,6 +35,14 @@ InvenTree | {% trans "Search Results" %}
 {% include "InvenTree/search_stock_location.html" with collapse_id="locations" %}
 
 {% include "InvenTree/search_stock_items.html" with collapse_id="stock" %}
+
+{% else %}
+    
+<div id='empty-search-query'>
+<h4><i>{% trans "Enter a search query" %}</i></h4>
+</div>
+
+{% endif %}
 
 {% endblock %}
 

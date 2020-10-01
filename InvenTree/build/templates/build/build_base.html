@@ -33,7 +33,12 @@ src="{% static 'img/blank_image.png' %}"
 {% block page_data %}
 <h3>{% trans "Build" %} {% build_status_label build.status large=True %}</h3>
 <hr>
-<h4>{{ build.quantity }} x {{ build.part.full_name }}</h4>
+<h4>
+    {{ build.quantity }} x {{ build.part.full_name }}
+    {% if user.is_staff and perms.build.change_build %}
+    <a  href="{% url 'admin:build_build_change' build.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
+{% endif %}
+</h4>
 <div class='btn-row'>
     <div class='btn-group action-buttons'>
         <button type='button' class='btn btn-default' id='build-edit' title='Edit Build'>
