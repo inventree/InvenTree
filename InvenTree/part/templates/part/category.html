@@ -7,7 +7,12 @@
 <div class='row'>
     <div class='col-sm-6'>
         {% if category %}
-        <h3>{{ category.name }}</h3>
+        <h3>
+            {{ category.name }}
+            {% if user.is_staff and perms.part.change_partcategory %}
+            <a href="{% url 'admin:part_partcategory_change' category.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
+            {% endif %}
+        </h3>
         <p>{{ category.description }}</p>
         {% else %}
         <h3>{% trans "Part Categories" %}</h3>
@@ -109,9 +114,9 @@
                 </ul>
             </div>
         </div>
-        <div class='filter-list' id='filter-list-parts'>
-            <!-- Empty div -->
-        </div>
+    </div>
+    <div class='filter-list' id='filter-list-parts'>
+        <!-- Empty div -->
     </div>
 </div>
 

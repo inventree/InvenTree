@@ -61,9 +61,12 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 <hr>
 <h4>
 {% if item.serialized %}
-<a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name}}</a> # {{ item.serial }}
+    <a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name}}</a> # {{ item.serial }}
 {% else %}
-<a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name }}</a> &times {% decimal item.quantity %}
+    <a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name }}</a> &times {% decimal item.quantity %}
+{% endif %}
+{% if user.is_staff and perms.stock.change_stockitem %}
+    <a  href="{% url 'admin:stock_stockitem_change' item.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
 {% endif %}
 </h4>
 
@@ -106,6 +109,11 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
             {% endif %}
             {% if item.customer %}
             <li><a href='#' id='stock-return-from-customer' title='{% trans "Return to stock" %}'><span class='fas fa-undo'></span> {% trans "Return to stock" %}</a></li>
+            {% endif %}
+            {% if item.belongs_to %}
+            <li>
+                <a href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a>
+            </li>
             {% endif %}
         </ul>
     </div>
@@ -165,8 +173,12 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     {% if item.belongs_to %}
     <tr>
         <td><span class='fas fa-box'></span></td>
-        <td>{% trans "Belongs To" %}</td>
-        <td><a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a></td>
+        <td>
+            {% trans "Installed In" %}
+        </td>
+        <td>
+            <a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a>
+        </td>
     </tr>
     {% elif item.sales_order %}
     <tr>
@@ -296,6 +308,19 @@ $("#stock-serialize").click(function() {
     launchModalForm(
         "{% url 'stock-item-serialize' item.id %}",
         {
+            reload: true,
+        }
+    );
+});
+
+$('#stock-uninstall').click(function() {
+
+    launchModalForm(
+        "{% url 'stock-item-uninstall' %}",
+        {
+            data: {
+                'items[]': [{{ item.pk}}],
+            },
             reload: true,
         }
     );

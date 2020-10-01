@@ -23,6 +23,12 @@ class PurchaseOrderAdmin(ImportExportModelAdmin):
         'creation_date'
     )
 
+    search_fields = [
+        'reference',
+        'supplier__name',
+        'description',
+    ]
+
 
 class SalesOrderAdmin(ImportExportModelAdmin):
 
@@ -33,6 +39,12 @@ class SalesOrderAdmin(ImportExportModelAdmin):
         'description',
         'creation_date',
     )
+
+    search_fields = [
+        'reference',
+        'customer__name',
+        'description',
+    ]
 
 
 class POLineItemResource(ModelResource):

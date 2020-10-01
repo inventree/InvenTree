@@ -173,6 +173,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Include subcategories" %}',
                 description: '{% trans "Include parts in subcategories" %}',
             },
+            has_ipn: {
+                type: 'bool',
+                title: '{% trans "Has IPN" %}',
+                description: '{% trans "Part has internal part number" %}',
+            },
             active: {
                 type: 'bool',
                 title: '{% trans "Active" %}',
