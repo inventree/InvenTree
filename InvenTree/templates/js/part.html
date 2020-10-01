@@ -164,18 +164,16 @@ function loadSimplePartTable(table, url, options={}) {
 
 
 function loadParametricPartTable(table, options={}) {
-    /* Load parametric part data into specified table.
+    /* Load parametric table for part parameters
      * 
      * Args:
      *  - table: HTML reference to the table
-     *  - table_headers: Table headers/columns
+     *  - table_headers: Unique parameters found in category
      *  - table_data: Parameters data
      */
 
     var table_headers = options.headers
     var table_data = options.data
-/*    console.log(table_headers)
-    console.log(table_data)*/
 
     var columns = [];
 
@@ -211,19 +209,17 @@ function loadParametricPartTable(table, options={}) {
                 title: header,
                 sortable: true,
                 filterControl: 'input',
-                clear: 'fa-times icon-red',
+                /* TODO: Search icons are not displayed */
+                /*clear: 'fa-times icon-red',*/
             });
         }
     }
 
     $(table).inventreeTable({
-/*        url: url,*/
         sortName: 'part',
-/*        method: 'get',*/
         queryParams: table_headers,
         groupBy: false,
         name: options.name || 'parametric',
-/*        original: params,*/
         formatNoMatches: function() { return "{% trans "No parts found" %}"; },
         columns: columns,
         showColumns: true,

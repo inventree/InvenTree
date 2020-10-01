@@ -114,7 +114,7 @@ class PartCategory(InvenTreeTree):
     def prefetch_parts_parameters(self, cascade=True):
         """ Prefectch parts parameters """
 
-        return self.get_parts(cascade=cascade).prefetch_related('parameters', 'parameters__template')
+        return self.get_parts(cascade=cascade).prefetch_related('parameters', 'parameters__template').all()
 
     def get_unique_parameters(self, cascade=True, prefetch=None):
         """ Get all unique parameter names for all parts from this category """
