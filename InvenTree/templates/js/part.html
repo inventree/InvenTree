@@ -168,7 +168,8 @@ function loadParametricPartTable(table, options={}) {
      * 
      * Args:
      *  - table: HTML reference to the table
-     *  - data: Parameters data
+     *  - table_headers: Table headers/columns
+     *  - table_data: Parameters data
      */
 
     var table_headers = options.headers
@@ -181,9 +182,10 @@ function loadParametricPartTable(table, options={}) {
     for (header of table_headers) {
         if (header === 'part') {
             columns.push({
-                field: 'part',
+                field: header,
                 title: '{% trans 'Part' %}',
                 sortable: true,
+                sortName: 'name',
                 formatter: function(value, row, index, field) {
 
                     var name = '';
