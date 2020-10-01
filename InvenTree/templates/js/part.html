@@ -210,6 +210,8 @@ function loadParametricPartTable(table, options={}) {
                 field: header,
                 title: header,
                 sortable: true,
+                filterControl: 'input',
+                clear: 'fa-times icon-red',
             });
         }
     }
@@ -226,6 +228,7 @@ function loadParametricPartTable(table, options={}) {
         columns: columns,
         showColumns: true,
         data: table_data,
+        filterControl: true,
     });
 }
 
