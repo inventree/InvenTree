@@ -20,38 +20,30 @@ RULESET_OPTIONS = [
 	'change',
 	'delete',	
 ]
-# RULESET_OPTIONS = (
-# 		('view', 'View'),
-# 		('add', 'Add'),
-# 		('change', 'Change'),
-# 		('delete', 'Delete'),
-# 	)
-
-# RULESET_TYPE_MODELS = {
-# 	'part': ['part_category', 'part', ]
-# }
 
 class Role(models.Model):
 	""" Role model """
 
 	name = models.CharField(max_length=100, unique=True)
 
-	def __str__(self):
-		return self.name
+	group = models.OneToOneField(Group, unique=True, blank=True, on_delete=models.CASCADE)
 
-	@property
-	def get_role_group(self):
-		return Group.objects.get(name=self.name)
+	def __str__(self):
+		""" Name for admin interface """
+		return self.name
 
 	def save(self, *args, **kwargs):
 		""" Custom save method """
 
-		super(Role, self).save(*args, **kwargs)
-
 		try:
-			group = self.get_role_group
+			if self.group.name != self.name:
+				# Rename group
+				self.group.name = self.name
+				self.group.save()
 		except:
-			group = Group.objects.create(name=self.name)
+			self.group = Group.objects.create(name=self.name)
+
+		super(Role, self).save(*args, **kwargs)
 
 		for ruleset_type in RULESET_TYPE_CHOICES:
 			try:
@@ -59,24 +51,32 @@ class Role(models.Model):
 			except:
 				ruleset = RuleSet.objects.create(name=ruleset_type[0], role=self)
 
+			# Should already be saved when form is saved but does not hurt (much)
 			ruleset.save()
 
 		# Set permissions
-		self.set_permissions(group=group)
+		self.set_permissions()
+
+	def delete(self, *args, **kwargs):
+		""" Custom delete method """
+
+		self.group.delete()
+
+		super(Role, self).delete(*args, **kwargs)
 
 	@classmethod
 	def create(cls, name):
 		""" Create role, group and default rulesets"""
+
 		role = cls(name=name)
+
 		role.save()
 
 	def assign_to_user(self, user):
-		""" Assign role (group) to user """
+		""" Assign role (eg. group) to user """
 
-		group = self.get_role_group
-
-		if group:
-			group.user_set.add(user)			
+		if self.group:
+			self.group.user_set.add(user)			
 			return True
 
 		return False
@@ -95,11 +95,8 @@ class Role(models.Model):
 		
 		return query
 
-	def set_permissions(self, group=None):
+	def set_permissions(self):
 		""" Set role permissions for all rulesets """
-
-		if not group:
-			group = self.get_role_group
 
 		for ruleset in self.get_rulesets():
 			for rule_option in RULESET_OPTIONS:
@@ -108,16 +105,11 @@ class Role(models.Model):
 				# Get all ruleset permissions for option
 				rule_option_permissions = ruleset.get_permissions_option(rule_option)
 
-				print(f'\n{ruleset=}')
-				print(f'{rule_option=}')
-				print(f'{is_rule_option_enabled=}')
-				print(f'{rule_option_permissions=}\n')
-
 				for permission in rule_option_permissions:
 					if is_rule_option_enabled:
-						group.permissions.add(permission)
+						self.group.permissions.add(permission)
 					else:
-						group.permissions.remove(permission)
+						self.group.permissions.remove(permission)
 
 
 class RuleSet(models.Model):
@@ -126,8 +118,8 @@ class RuleSet(models.Model):
 	name = models.CharField(max_length=20, choices=RULESET_TYPE_CHOICES, blank=False)
 
 	role = models.ForeignKey(Role, related_name='rule_sets',
-                             on_delete=models.CASCADE,
-                             help_text=_('Select Role'))
+							 on_delete=models.CASCADE,
+							 help_text=_('Select Role'))
 
 	view = models.BooleanField(default=True)
 
@@ -138,8 +130,8 @@ class RuleSet(models.Model):
 	delete = models.BooleanField(default=False)
 
 	def __str__(self):
-		# To hide in admin interface
-		return ''
+		# TODO: Find a way to hide inside admin interface
+		return self.name.title()
 
 	def get_models(self):
 		""" Get models related to ruleset """

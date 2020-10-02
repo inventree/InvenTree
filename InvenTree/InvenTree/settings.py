@@ -154,7 +154,7 @@ INSTALLED_APPS = [
     'markdownx',                    # Markdown editing
     'markdownify',                  # Markdown template rendering
     'django_tex',                   # LaTeX output
-    'django_extensions',            # REMOVE
+    # 'django_extensions',          # Only used for shell_plus
 ]
 
 LOGGING = {
