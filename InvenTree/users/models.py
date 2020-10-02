@@ -39,20 +39,36 @@ class Role(models.Model):
 	def __str__(self):
 		return self.name
 
+	@property
+	def get_role_group(self):
+		return Group.objects.get(name=self.name)
+
+	def save(self, *args, **kwargs):
+		""" Custom save method """
+
+		super(Role, self).save(*args, **kwargs)
+
+		try:
+			group = self.get_role_group
+		except:
+			group = Group.objects.create(name=self.name)
+
+		for ruleset_type in RULESET_TYPE_CHOICES:
+			try:
+				ruleset = self.get_ruleset(name=ruleset_type[0])
+			except:
+				ruleset = RuleSet.objects.create(name=ruleset_type[0], role=self)
+
+			ruleset.save()
+
+		# Set permissions
+		self.set_permissions(group=group)
+
 	@classmethod
 	def create(cls, name):
 		""" Create role, group and default rulesets"""
 		role = cls(name=name)
 		role.save()
-
-		group = Group.objects.create(name=name)
-
-		for ruleset_type in RULESET_TYPE_CHOICES:
-			RuleSet.objects.create(name=ruleset_type[0], role=role)
-
-	@property
-	def get_role_group(self):
-		return Group.objects.get(name=self.name)
 
 	def assign_to_user(self, user):
 		""" Assign role (group) to user """
@@ -65,6 +81,13 @@ class Role(models.Model):
 
 		return False
 
+	def get_ruleset(self, name):
+		""" Return a specific ruleset """
+
+		query = RuleSet.objects.filter(role=self.pk).get(name=name)
+
+		return query
+
 	def get_rulesets(self):
 		""" Return a queryset for all rulesets under this role """
 
@@ -72,10 +95,11 @@ class Role(models.Model):
 		
 		return query
 
-	def set_permissions(self):
+	def set_permissions(self, group=None):
 		""" Set role permissions for all rulesets """
 
-		group = self.get_role_group
+		if not group:
+			group = self.get_role_group
 
 		for ruleset in self.get_rulesets():
 			for rule_option in RULESET_OPTIONS:
@@ -84,10 +108,15 @@ class Role(models.Model):
 				# Get all ruleset permissions for option
 				rule_option_permissions = ruleset.get_permissions_option(rule_option)
 
-				if is_rule_option_enabled:
-					group.permissions.set(rule_option_permissions)
-				else:
-					for permission in rule_option_permissions:
+				print(f'\n{ruleset=}')
+				print(f'{rule_option=}')
+				print(f'{is_rule_option_enabled=}')
+				print(f'{rule_option_permissions=}\n')
+
+				for permission in rule_option_permissions:
+					if is_rule_option_enabled:
+						group.permissions.add(permission)
+					else:
 						group.permissions.remove(permission)
 
 

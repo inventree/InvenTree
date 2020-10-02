@@ -18,4 +18,3 @@ class RuleSetInline(admin.TabularInline):
 class RoleAdmin(admin.ModelAdmin):
 	inlines = [RuleSetInline]
 	verbose_name_plural = 'Roles'
-
