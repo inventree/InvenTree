@@ -434,7 +434,7 @@ class Part(MPTTModel):
 
                 return _('Next available serial numbers are') + ' ' + text
             else:
-                text = str(latest)
+                text = str(latest + 1)
 
                 return _('Next available serial number is') + ' ' + text
 
