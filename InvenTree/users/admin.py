@@ -87,7 +87,7 @@ class RoleGroupAdmin(admin.ModelAdmin):
 
     filter_horizontal = ['permissions']
 
-     # Save inlines before model
+    # Save inlines before model
     # https://stackoverflow.com/a/14860703/12794913
     def save_model(self, request, obj, form, change):
         if obj is not None:
