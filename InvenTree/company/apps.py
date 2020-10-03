@@ -38,4 +38,5 @@ class CompanyConfig(AppConfig):
                             company.image = None
                             company.save()
         except (OperationalError, ProgrammingError):
-            print("Could not generate Company thumbnails")
+            # Getting here probably meant the database was in test mode
+            pass

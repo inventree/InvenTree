@@ -28,9 +28,7 @@ class RuleSet(models.Model):
         ('part', _('Parts')),
         ('stock', _('Stock')),
         ('build', _('Build Orders')),
-        ('supplier', _('Suppliers')),
         ('purchase_order', _('Purchase Orders')),
-        ('customer', _('Customers')),
         ('sales_order', _('Sales Orders')),
     ]
 
@@ -73,6 +71,21 @@ class RuleSet(models.Model):
             'build.builditem',
             'stock.stockitem',
             'stock.stocklocation',   
+        ],
+        'purchase_order': [
+            'company.company',
+            'company.supplierpart',
+            'company.supplierpricebreak',
+            'order.purchaseorder',
+            'order.purchaseorderattachment',
+            'order.purchaseorderlineitem',
+        ],
+        'sales_order': [
+            'company.company',
+            'order.salesorder',
+            'order.salesorderattachment',
+            'order.salesorderlineitem',
+            'order.salesorderallocation',
         ]
     }
 
@@ -119,10 +132,11 @@ class RuleSet(models.Model):
         super().save(*args, **kwargs)
 
     def get_models(self):
+        """
+        Return the database tables / models that this ruleset covers.
+        """
 
-        models = {
-            ''
-        }
+        return self.RULESET_MODELS.get(self.name, [])
 
 def update_group_roles(group):
     """
