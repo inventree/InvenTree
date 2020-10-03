@@ -61,14 +61,30 @@ class RuleSetModelTest(TestCase):
 
         errors = 0
 
+        assigned_models = []
+
         # Now check that each defined model is a valid table name
         for key in RuleSet.RULESET_MODELS.keys():
 
             models = RuleSet.RULESET_MODELS[key]
 
             for m in models:
+
+                assigned_models.append(m)
+
                 if m not in available_tables:
                     print("{n} is not a valid database table".format(n=m))
                     errors += 1
 
         self.assertEqual(errors, 0)
+
+        missing_models = []
+
+        for model in available_tables:
+            if model not in assigned_models:
+                missing_models.append(model)
+
+        if len(missing_models) > 0:
+            print("WARNING: The following database models are not covered by the define RuleSet permissions:")
+            for m in missing_models:
+                print("-", m)

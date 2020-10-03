@@ -45,6 +45,7 @@ class RuleSet(models.Model):
             'auth_user',
             'auth_permission',
             'authtoken_token',
+            'users_ruleset',
         ],
         'part': [
             'part_part',
