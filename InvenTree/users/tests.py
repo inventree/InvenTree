@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.test import TestCase
+from django.apps import apps
 
 from users.models import RuleSet
 
@@ -44,3 +45,30 @@ class RuleSetModelTest(TestCase):
         self.assertEqual(len(extra), 0)
         self.assertEqual(len(empty), 0)
 
+    def test_model_names(self):
+        """
+        Test that each model defined in the rulesets is valid,
+        based on the database schema!
+        """
+
+        available_models = apps.get_models()
+
+        available_tables = []
+
+        for model in available_models:
+            table_name = model.objects.model._meta.db_table
+            available_tables.append(table_name)
+
+        errors = 0
+
+        # Now check that each defined model is a valid table name
+        for key in RuleSet.RULESET_MODELS.keys():
+
+            models = RuleSet.RULESET_MODELS[key]
+
+            for m in models:
+                if m not in available_tables:
+                    print("{n} is not a valid database table".format(n=m))
+                    errors += 1
+
+        self.assertEqual(errors, 0)
