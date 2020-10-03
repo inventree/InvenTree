@@ -138,6 +138,7 @@ INSTALLED_APPS = [
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
+    'users.apps.UsersConfig',
 
     # Third part add-ons
     'django_filters',               # Extended filter functionality
