@@ -153,6 +153,7 @@ INSTALLED_APPS = [
     'markdownx',                    # Markdown editing
     'markdownify',                  # Markdown template rendering
     'django_tex',                   # LaTeX output
+    'django_admin_shell',           # Python shell for the admin interface
 ]
 
 LOGGING = {
