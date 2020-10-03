@@ -14,7 +14,7 @@ class UsersConfig(AppConfig):
         try:
             self.assign_permissions()
         except (OperationalError, ProgrammingError):
-            pass    
+            pass
 
     def assign_permissions(self):
 

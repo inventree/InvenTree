@@ -9,9 +9,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth.models import Group
 
-User = get_user_model()
-
 from users.models import RuleSet
+
+User = get_user_model()
 
 
 class RuleSetInline(admin.TabularInline):

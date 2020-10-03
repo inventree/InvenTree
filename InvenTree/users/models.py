@@ -71,7 +71,7 @@ class RuleSet(models.Model):
             'build_build',
             'build_builditem',
             'stock_stockitem',
-            'stock_stocklocation',   
+            'stock_stocklocation',
         ],
         'purchase_order': [
             'company_company',
@@ -139,6 +139,7 @@ class RuleSet(models.Model):
 
         return self.RULESET_MODELS.get(self.name, [])
 
+
 def update_group_roles(group):
     """
     Update group roles:
@@ -148,10 +149,10 @@ def update_group_roles(group):
     """
 
     # List of permissions which must be added to the group
-    permissions_to_add = []
+    # permissions_to_add = []
 
     # List of permissions which must be removed from the group
-    permissions_to_delete = []
+    # permissions_to_delete = []
 
     # Get all the rulesets associated with this group
     for r in RuleSet.RULESET_CHOICES:
