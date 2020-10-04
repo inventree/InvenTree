@@ -143,6 +143,7 @@ class StockItem(MPTTModel):
         build_order=None,
         belongs_to=None,
         customer=None,
+        is_building=False,
         status__in=StockStatus.AVAILABLE_CODES
     )
 
