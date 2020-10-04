@@ -799,3 +799,113 @@ function createNewStockItem(options) {
 
     launchModalForm("{% url 'stock-item-create' %}", options);
 }
+
+
+function loadInstalledInTable(table, options) {
+    /*
+    * Display a table showing the stock items which are installed in this stock item.
+    * This is a multi-level tree table, where the "top level" items are Part objects,
+    * and the children of each top-level item are the associated installed stock items.
+    * 
+    * The process for retrieving data and displaying the table is as follows:
+    *
+    * A) Get BOM data for the stock item
+    *    - It is assumed that the stock item will be for an assembly
+    *      (otherwise why are we installing stuff anyway?)
+    *    - Request BOM items for stock_item.part (and only for trackable sub items)
+    * 
+    * B) Add parts to table
+    *    - Create rows for each trackable sub-part in the table
+    *
+    * C) Gather installed stock item data
+    *    - Get the list of installed stock items via the API
+    *    - If the Part reference is already in the table, add the sub-item as a child
+    *    - If this is a stock item for a *new* part, request that part from the API,
+    *      and add that part as a new row, then add the stock item as a child of that part
+    *
+    * D) Enjoy!
+    *
+    *
+    * And the options object contains the following things:
+    *
+    * - stock_item: The PK of the master stock_item object
+    * - part: The PK of the Part reference of the stock_item object
+    */
+
+    table.inventreeTable(
+        {
+            url: "{% url 'api-bom-list' %}",
+            queryParams: {
+                part: options.part,
+                trackable: true,
+                sub_part_detail: true,
+            },
+            showColumns: false,
+            name: 'installed-in',
+            columns: [
+                {
+                    checkbox: true,
+                    title: '{% trans 'Select' %}',
+                    searchable: false,
+                    switchable: false,
+                },
+                {
+                    field: 'pk',
+                    title: 'ID',
+                    visible: false,
+                    switchable: false,
+                },
+                {
+                    field: 'part',
+                    title: '{% trans "Part" %}',
+                    sortable: true,
+                    formatter: function(value, row, index, field) {
+        
+                        var url = `/stock/item/${row.pk}/`;
+                        var thumb = row.sub_part_detail.thumbnail;
+                        var name = row.sub_part_detail.full_name;
+        
+                        html = imageHoverIcon(thumb) + renderLink(name, url);
+                        
+                        return html;
+                    }
+                },
+                {
+                    field: 'installed',
+                    title: '{% trans "Installed" %}',
+                    sortable: false,
+                    formatter: function(value, row, index, field) {
+                        // Construct a progress showing how many items have been installed
+
+                        var installed = row.installed || 0;
+                        var required = row.quantity || 0;
+
+                        var progress = makeProgressBar(installed, required, {
+                            id: row.sub_part.pk,
+                        });
+
+                        return progress;
+                    }
+                },
+                {
+                    field: 'actions',
+                    switchable: false,
+                    formatter: function(value, row) {
+                        var pk = row.sub_part.pk;
+
+                        var html = `<div class='btn-group float-right' role='group'>`;
+
+                        html += makeIconButton('fa-link', 'button-install', pk, '{% trans "Install item" %}');
+
+                        html += `</div>`;
+
+                        return html;
+                    }
+                }
+            ],
+            onLoadSuccess: function() {
+                console.log('data loaded!');
+            }
+        }
+    );
+}
