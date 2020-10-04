@@ -625,11 +625,19 @@ class StockItem(MPTTModel):
         stock_item.belongs_to = self
         stock_item.save()
 
-        # Add a transaction note!
+        # Add a transaction note to the other item
         stock_item.addTransactionNote(
             _('Installed into stock item') + ' ' + str(self.pk),
             user,
-            notes=notes
+            notes=notes,
+            url=self.get_absolute_url()
+        )
+
+        # Add a transaction note to this item
+        self.addTransactionNote(
+            _('Installed stock item') + ' ' + str(stock_item.pk),
+            user, notes=notes,
+            url=stock_item.get_absolute_url()
         )
 
     @transaction.atomic
@@ -649,16 +657,31 @@ class StockItem(MPTTModel):
 
         # TODO - Are there any other checks that need to be performed at this stage?
 
+        # Add a transaction note to the parent item
+        self.belongs_to.addTransactionNote(
+            _("Uninstalled stock item") + ' ' + str(self.pk),
+            user,
+            notes=notes,
+            url=self.get_absolute_url(),
+        )
+
+        # Mark this stock item as *not* belonging to anyone
         self.belongs_to = None
         self.location = location
 
         self.save()
 
+        if location:
+            url = location.get_absolute_url()
+        else:
+            url = ''
+
         # Add a transaction note!
         self.addTransactionNote(
             _('Uninstalled into location') + ' ' + str(location),
             user,
-            notes=notes
+            notes=notes,
+            url=url
         )
 
     @property
