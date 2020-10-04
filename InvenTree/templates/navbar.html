@@ -21,7 +21,7 @@
         {% if perms.stock.view_stockitem or perms.part.view_stocklocation %}
         <li><a href="{% url 'stock-index' %}"><span class='fas fa-boxes icon-header'></span>{% trans "Stock" %}</a></li>
         {% endif %}
-        {% if perms.build %}
+        {% if perms.build.view_build %}
         <li><a href="{% url 'build-index' %}"><span class='fas fa-tools icon-header'></span>{% trans "Build" %}</a></li>
         {% endif %}
         {% if perms.order.view_purchaseorder %}
