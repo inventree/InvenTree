@@ -403,6 +403,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'quantity',
             'reference',
             'price_range',
+            'optional',
             'overage',
             'note',
             'validated',
