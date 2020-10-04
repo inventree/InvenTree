@@ -7,7 +7,9 @@ import datetime
 
 from .models import StockLocation, StockItem, StockItemTracking
 from .models import StockItemTestResult
+
 from part.models import Part
+from build.models import Build
 
 
 class StockTest(TestCase):
@@ -62,9 +64,14 @@ class StockTest(TestCase):
         # And there should be *no* items being build
         self.assertEqual(part.quantity_being_built, 0)
 
+        build = Build.objects.create(part=part, title='A test build', quantity=1)
+
         # Add some stock items which are "building"
         for i in range(10):
-            StockItem.objects.create(part=part, quantity=10, is_building=True)
+            StockItem.objects.create(
+                part=part, build=build,
+                quantity=10, is_building=True
+            )
 
         # The "is_building" quantity should not be counted here
         self.assertEqual(part.total_stock, n + 5)
