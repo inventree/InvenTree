@@ -600,12 +600,12 @@ class StockItem(MPTTModel):
         return self.installedItemCount() > 0
 
     @transaction.atomic
-    def installIntoStockItem(self, otherItem, quantity, user, notes):
+    def installStockItem(self, otherItem, quantity, user, notes):
         """
-        Install this stock item into another stock item.
+        Install another stock item into this stock item.
 
         Args
-            otherItem: The stock item to install this item into
+            otherItem: The stock item to install into this stock item
             quantity: The quantity of stock to install
             user: The user performing the operation
             notes: Any notes associated with the operation
@@ -615,16 +615,19 @@ class StockItem(MPTTModel):
         if self.belongs_to is not None:
             return False
 
-        # TODO - Are there any other checks that need to be performed at this stage?
+        # If the quantity is less than the stock item, split the stock!
+        stock_item = otherItem.splitStock(quantity, None, user)
 
-        # Mark this stock item as belonging to the other one
-        self.belongs_to = otherItem
-        
-        self.save()
+        if stock_item is None:
+            stock_item = otherItem
+
+        # Assign the other stock item into this one
+        stock_item.belongs_to = self
+        stock_item.save()
 
         # Add a transaction note!
-        self.addTransactionNote(
-            _('Installed in stock item') + ' ' + str(otherItem.pk),
+        stock_item.addTransactionNote(
+            _('Installed into stock item') + ' ' + str(self.pk),
             user,
             notes=notes
         )
@@ -839,20 +842,20 @@ class StockItem(MPTTModel):
 
         # Do not split a serialized part
         if self.serialized:
-            return
+            return self
 
         try:
             quantity = Decimal(quantity)
         except (InvalidOperation, ValueError):
-            return
+            return self
 
         # Doesn't make sense for a zero quantity
         if quantity <= 0:
-            return
+            return self
 
         # Also doesn't make sense to split the full amount
         if quantity >= self.quantity:
-            return
+            return self
 
         # Create a new StockItem object, duplicating relevant fields
         # Nullify the PK so a new record is created

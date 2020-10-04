@@ -716,8 +716,6 @@ class StockItemInstall(AjaxUpdateView):
         try:
             part = self.request.GET.get('part', None)
 
-            print(self.request.GET)
-
             if part is not None:
                 part = Part.objects.get(pk=part)
                 items = items.filter(part=part)
@@ -750,14 +748,22 @@ class StockItemInstall(AjaxUpdateView):
 
     def post(self, request, *args, **kwargs):
 
-
         form = self.get_form()
-        valid = False
 
-        valid = form.is_valid() and valid
+        valid = form.is_valid()
 
         if valid:
-            pass
+            # We assume by this point that we have a valid stock_item and quantity values
+            data = form.cleaned_data
+
+            other_stock_item = data['stock_item']
+            quantity = data['quantity_to_install']
+            notes = data['notes']
+
+            # Install the other stock item into this one
+            this_stock_item = self.get_object()
+
+            this_stock_item.installStockItem(other_stock_item, quantity, request.user, notes)
 
         data = {
             'form_valid': valid,
