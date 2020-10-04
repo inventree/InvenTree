@@ -64,7 +64,7 @@ class StockTest(TestCase):
 
         # Add some stock items which are "building"
         for i in range(10):
-            item = StockItem.objects.create(part=part, quantity=10, is_building=True)
+            StockItem.objects.create(part=part, quantity=10, is_building=True)
 
         # The "is_building" quantity should not be counted here
         self.assertEqual(part.total_stock, n + 5)
