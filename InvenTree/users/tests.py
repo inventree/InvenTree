@@ -59,8 +59,6 @@ class RuleSetModelTest(TestCase):
             table_name = model.objects.model._meta.db_table
             available_tables.append(table_name)
 
-        errors = 0
-
         assigned_models = []
 
         # Now check that each defined model is a valid table name
@@ -71,10 +69,6 @@ class RuleSetModelTest(TestCase):
             for m in models:
 
                 assigned_models.append(m)
-
-                if m not in available_tables:
-                    print("{n} is not a valid database table".format(n=m))
-                    errors += 1
 
         missing_models = []
 
@@ -87,5 +81,18 @@ class RuleSetModelTest(TestCase):
             for m in missing_models:
                 print("-", m)
 
-        self.assertEqual(errors, 0)
+        extra_models = []
+
+        defined_models = assigned_models + RuleSet.RULESET_IGNORE
+
+        for model in defined_models:
+            if model not in available_tables:
+                extra_models.append(model)
+
+        if len(extra_models) > 0:
+            print("The following RuleSet permissions do not match a database model:")
+            for m in extra_models:
+                print("-", m)
+
         self.assertEqual(len(missing_models), 0)
+        self.assertEqual(len(extra_models), 0)
