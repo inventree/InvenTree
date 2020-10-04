@@ -765,20 +765,30 @@ class BomList(generics.ListCreateAPIView):
 
         queryset = super().filter_queryset(queryset)
 
+        params = self.request.query_params
+
+        # Filter by "optional" status?
+        optional = params.get('optional', None)
+
+        if optional is not None:
+            optional = str2bool(optional)
+
+            queryset = queryset.filter(optional=optional)
+
         # Filter by part?
-        part = self.request.query_params.get('part', None)
+        part = params.get('part', None)
 
         if part is not None:
             queryset = queryset.filter(part=part)
         
         # Filter by sub-part?
-        sub_part = self.request.query_params.get('sub_part', None)
+        sub_part = params.get('sub_part', None)
 
         if sub_part is not None:
             queryset = queryset.filter(sub_part=sub_part)
 
         # Filter by "trackable" status of the sub-part
-        trackable = self.request.query_params.get('trackable', None)
+        trackable = params.get('trackable', None)
 
         if trackable is not None:
             trackable = str2bool(trackable)

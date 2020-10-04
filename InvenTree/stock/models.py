@@ -130,6 +130,7 @@ class StockItem(MPTTModel):
         status: Status of this StockItem (ref: InvenTree.status_codes.StockStatus)
         notes: Extra notes field
         build: Link to a Build (if this stock item was created from a build)
+        is_building: Boolean field indicating if this stock item is currently being built
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
@@ -142,6 +143,7 @@ class StockItem(MPTTModel):
         build_order=None,
         belongs_to=None,
         customer=None,
+        is_building=False,
         status__in=StockStatus.AVAILABLE_CODES
     )
 
@@ -273,10 +275,24 @@ class StockItem(MPTTModel):
             # TODO - Find a test than can be perfomed...
             pass
 
+        # Ensure that the item cannot be assigned to itself
         if self.belongs_to and self.belongs_to.pk == self.pk:
             raise ValidationError({
                 'belongs_to': _('Item cannot belong to itself')
             })
+
+        # If the item is marked as "is_building", it must point to a build!
+        if self.is_building and not self.build:
+            raise ValidationError({
+                'build': _("Item must have a build reference if is_building=True")
+            })
+
+        # If the item points to a build, check that the Part references match
+        if self.build:
+            if not self.part == self.build.part:
+                raise ValidationError({
+                    'build': _("Build reference does not point to the same part object")
+                })
 
     def get_absolute_url(self):
         return reverse('stock-item-detail', kwargs={'pk': self.id})
@@ -387,6 +403,10 @@ class StockItem(MPTTModel):
         blank=True, null=True,
         help_text=_('Build for this stock item'),
         related_name='build_outputs',
+    )
+
+    is_building = models.BooleanField(
+        default=False,
     )
 
     purchase_order = models.ForeignKey(
@@ -713,6 +733,10 @@ class StockItem(MPTTModel):
 
         # Not 'in stock' if it has been assigned to a customer
         if self.customer is not None:
+            return False
+
+        # Not 'in stock' if it is building
+        if self.is_building:
             return False
 
         # Not 'in stock' if the status code makes it unavailable
