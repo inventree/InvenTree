@@ -72,8 +72,8 @@ class RuleSet(models.Model):
         ],
         'purchase_order': [
             'company_company',
-            'part_supplierpart',
-            'part_supplierpricebreak',
+            'company_supplierpart',
+            'company_supplierpricebreak',
             'order_purchaseorder',
             'order_purchaseorderattachment',
             'order_purchaseorderlineitem',
@@ -90,9 +90,9 @@ class RuleSet(models.Model):
     # Database models we ignore permission sets for
     RULESET_IGNORE = [
         # Core django models (not user configurable)
-        'django_admin_log',
-        'django_content_type',
-        'django_session',
+        'admin_logentry',
+        'contenttypes_contenttype',
+        'sessions_session',
 
         # Models which currently do not require permissions
         'common_colortheme',
@@ -275,9 +275,12 @@ def update_group_roles(group, debug=False):
 
         (permission_name, model) = perm.split('_')
 
-        content_type = ContentType.objects.get(app_label=app, model=model)
-
-        permission = Permission.objects.get(content_type=content_type, codename=perm)
+        try:
+            content_type = ContentType.objects.get(app_label=app, model=model)
+            permission = Permission.objects.get(content_type=content_type, codename=perm)
+        except ContentType.DoesNotExist:
+            print(f"Error: Could not find permission matching '{permission_string}'")
+            permission = None
 
         return permission
 
