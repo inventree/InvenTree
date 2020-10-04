@@ -130,6 +130,7 @@ class StockItem(MPTTModel):
         status: Status of this StockItem (ref: InvenTree.status_codes.StockStatus)
         notes: Extra notes field
         build: Link to a Build (if this stock item was created from a build)
+        is_building: Boolean field indicating if this stock item is currently being built
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
@@ -387,6 +388,10 @@ class StockItem(MPTTModel):
         blank=True, null=True,
         help_text=_('Build for this stock item'),
         related_name='build_outputs',
+    )
+
+    is_building = models.BooleanField(
+        default=False,
     )
 
     purchase_order = models.ForeignKey(
