@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -172,16 +173,35 @@ class RuleSet(models.Model):
         return self.RULESET_MODELS.get(self.name, [])
 
 
-def update_group_roles(group):
+def update_group_roles(group, debug=False):
     """
-    Update group roles:
-    
-    a) Ensure default roles are assigned to each group.
-    b) Ensure group permissions are correctly updated and assigned
+
+    Iterates through all of the RuleSets associated with the group,
+    and ensures that the correct permissions are either applied or removed from the group.
+
+    This function is called under the following conditions:
+
+    a) Whenever the InvenTree database is launched
+    b) Whenver the group object is updated
+
+    The RuleSet model has complete control over the permissions applied to any group.
+
     """
 
     # List of permissions already associated with this group
-    group_permissions = '??????'
+    group_permissions = set()
+
+    # Iterate through each permission already assigned to this group,
+    # and create a simplified permission key string
+    for p in group.permissions.all():
+        (permission, app, model) = p.natural_key()
+
+        permission_string = '{app}.{perm}'.format(
+            app=app,
+            perm=permission
+        )
+
+        group_permissions.add(permission_string)
 
     # List of permissions which must be added to the group
     permissions_to_add = set()
@@ -199,7 +219,7 @@ def update_group_roles(group):
             allowed - Whether or not the action is allowed
         """
 
-        if not action in ['view', 'add', 'change', 'delete']:
+        if action not in ['view', 'add', 'change', 'delete']:
             raise ValueError("Action {a} is invalid".format(a=action))
 
         permission_string = RuleSet.get_model_permission_string(model, action)
@@ -210,13 +230,16 @@ def update_group_roles(group):
             if permission_string in permissions_to_delete:
                 permissions_to_delete.remove(permission_string)
 
-            permissions_to_add.add(permission_string)
+            if permission_string not in group_permissions:
+                permissions_to_add.add(permission_string)
 
         else:
 
             # A forbidden action will be ignored if we have already allowed it
             if permission_string not in permissions_to_add:
-                permissions_to_delete.add(permission_string)
+
+                if permission_string in group_permissions:
+                    permissions_to_delete.add(permission_string)
 
     # Get all the rulesets associated with this group
     for r in RuleSet.RULESET_CHOICES:
@@ -240,12 +263,46 @@ def update_group_roles(group):
             add_model(model, 'change', ruleset.can_change)
             add_model(model, 'delete', ruleset.can_delete)
 
-        # TODO - Update permissions here
+    def get_permission_object(permission_string):
+        """
+        Find the permission object in the database,
+        from the simplified permission string
 
-    # TODO - Update group permissions
+        Args:
+            permission_string - a simplified permission_string e.g. 'part.view_partcategory'
 
-    print("To add:", permissions_to_add)
-    print("To delete:", permissions_to_delete)
+        Returns the permission object in the database associated with the permission string
+        """
+
+        (app, perm) = permission_string.split('.')
+
+        (permission_name, model) = perm.split('_')
+
+        content_type = ContentType.objects.get(app_label=app, model=model)
+
+        permission = Permission.objects.get(content_type=content_type, codename=perm)
+
+        return permission
+
+    # Add any required permissions to the group
+    for perm in permissions_to_add:
+        
+        permission = get_permission_object(perm)
+
+        group.permissions.add(permission)
+
+        if debug:
+            print(f"Adding permission {perm} to group {group.name}")
+
+    # Remove any extra permissions from the group
+    for perm in permissions_to_delete:
+
+        permission = get_permission_object(perm)
+
+        group.permissions.remove(permission)
+
+        if debug:
+            print(f"Removing permission {perm} from group {group.name}")
 
 
 @receiver(post_save, sender=Group)
@@ -253,7 +310,7 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     """
     Called *after* a Group object is saved.
     As the linked RuleSet instances are saved *before* the Group,
-    then we can now use these RuleSet values to update the 
+    then we can now use these RuleSet values to update the
     group permissions.
     """
 

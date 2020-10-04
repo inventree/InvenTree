@@ -76,7 +76,6 @@ class RuleSetModelTest(TestCase):
                     print("{n} is not a valid database table".format(n=m))
                     errors += 1
 
-
         missing_models = []
 
         for model in available_tables:
