@@ -470,10 +470,16 @@ function loadStockTable(table, options) {
 
                     if (row.customer) {
                         html += `<span class='fas fa-user-tie label-right' title='{% trans "Stock item has been assigned to customer" %}'></span>`;
-                    } else if (row.build_order) {
-                        html += `<span class='fas fa-tools label-right' title='{% trans "Stock item was assigned to a build order" %}'></span>`;
-                    } else if (row.sales_order) {
-                        html += `<span class='fas fa-dollar-sign label-right' title='{% trans "Stock item was assigned to a sales order" %}'></span>`;
+                    } else {
+                        if (row.build_order) {
+                            html += `<span class='fas fa-tools label-right' title='{% trans "Stock item was assigned to a build order" %}'></span>`;
+                        } else if (row.sales_order) {
+                            html += `<span class='fas fa-dollar-sign label-right' title='{% trans "Stock item was assigned to a sales order" %}'></span>`;
+                        }
+                    }
+
+                    if (row.belongs_to) {
+                        html += `<span class='fas fa-box label-right' title='{% trans "Stock item has been installed in another item" %}'></span>`;
                     }
 
                     // Special stock status codes
@@ -520,6 +526,9 @@ function loadStockTable(table, options) {
                     } else if (row.customer) {
                         var text = "{% trans "Shipped to customer" %}";
                         return renderLink(text, `/company/${row.customer}/assigned-stock/`);
+                    } else if (row.sales_order) {
+                        var text = `{% trans "Assigned to sales order" %}`;
+                        return renderLink(text, `/order/sales-order/${row.sales_order}/`); 
                     }
                     else if (value) {
                         return renderLink(value, `/stock/location/${row.location}/`);
@@ -844,6 +853,10 @@ function loadInstalledInTable(table, options) {
                     data: {
                         part: pk,
                     },
+                    success: function() {
+                        // Refresh entire table!
+                        table.bootstrapTable('refresh');
+                    }
                 }
             );
         });
@@ -895,7 +908,7 @@ function loadInstalledInTable(table, options) {
                                     html += `{% trans "Quantity" %}: ${subrow.quantity}`; 
                                 }
 
-                                return html;
+                                return renderLink(html, `/stock/item/${subrow.pk}/`);
                             },
                         },
                         {
@@ -969,6 +982,10 @@ function loadInstalledInTable(table, options) {
                         var name = row.sub_part_detail.full_name;
         
                         html = imageHoverIcon(thumb) + renderLink(name, url);
+
+                        if (row.not_in_bom) {
+                            html = `<i>${html}</i>`
+                        }
                         
                         return html;
                     }
@@ -1015,6 +1032,7 @@ function loadInstalledInTable(table, options) {
                     "{% url 'api-stock-list' %}",
                     {
                         installed_in: options.stock_item,
+                        part_detail: true,
                     },
                     {
                         success: function(stock_items) {
@@ -1055,6 +1073,25 @@ function loadInstalledInTable(table, options) {
                                     if (match) {
                                         break;
                                     }
+                                }
+
+                                if (!match) {
+                                    // The stock item did *not* match any items in the BOM!
+                                    // Add a new row to the table...
+
+                                    console.log("Found an unmatched part! " + item.pk + " -> " + item.part);
+                                    
+                                    // Contruct a new "row" to add to the table
+                                    var new_row = {
+                                        sub_part: item.part,
+                                        sub_part_detail: item.part_detail,
+                                        not_in_bom: true,
+                                        installed_count: item.quantity,
+                                        installed_items: [item],
+                                    };
+
+                                    table.bootstrapTable('append', [new_row]);
+
                                 }
                             });
 
