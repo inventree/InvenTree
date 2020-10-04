@@ -683,6 +683,46 @@ class StockItemQRCode(QRCodeView):
             return None
 
 
+class StockItemInstall(AjaxUpdateView):
+    """
+    View for manually installing stock items into
+    a particular stock item.
+
+    In contrast to the StockItemUninstall view,
+    only a single stock item can be installed at once.
+    
+    The "part" to be installed must be provided in the GET query parameters.
+    
+    """
+
+    model = StockItem
+    form_class = StockForms.InstallStockForm
+    ajax_form_title = _('Install Stock Item')
+
+    def get_form(self):
+
+        form = super().get_form()
+
+        return form
+
+    def post(self, request, *args, **kwargs):
+
+
+        form = self.get_form()
+        valid = False
+
+        valid = form.is_valid() and valid
+
+        if valid:
+            pass
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data=data)
+
+
 class StockItemUninstall(AjaxView, FormMixin):
     """
     View for uninstalling one or more StockItems,

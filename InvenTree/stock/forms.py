@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 from django import forms
 from django.forms.utils import ErrorDict
 from django.utils.translation import ugettext as _
+from django.core.validators import MinValueValidator
 
 from mptt.fields import TreeNodeChoiceField
 
@@ -269,6 +270,33 @@ class ExportOptionsForm(HelperForm):
         super().__init__(*args, **kwargs)
 
         self.fields['file_format'].choices = self.get_format_choices()
+
+
+class InstallStockForm(HelperForm):
+    """
+    Form for manually installing a stock item into another stock item
+    """
+
+    stock_item = forms.ModelChoiceField(
+        required=True,
+        queryset=StockItem.objects.filter(StockItem.IN_STOCK_FILTER),
+        help_text=_('Stock item to install')
+    )
+
+    quantity = RoundingDecimalFormField(
+        max_digits=10, decimal_places=5,
+        help_text=_('Stock quantity to assign'),
+        validators=[
+            MinValueValidator(0.001)
+        ]
+    )
+
+    class Meta:
+        model = StockItem
+        fields = [
+            'stock_item',
+            'quantity',
+        ]
 
 
 class UninstallStockForm(forms.ModelForm):
