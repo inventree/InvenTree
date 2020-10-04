@@ -24,7 +24,6 @@ class RuleSet(models.Model):
     """
 
     RULESET_CHOICES = [
-        ('general', _('General')),
         ('admin', _('Admin')),
         ('part', _('Parts')),
         ('stock', _('Stock')),
@@ -38,9 +37,6 @@ class RuleSet(models.Model):
     ]
 
     RULESET_MODELS = {
-        'general': [
-            'part_partstar',
-        ],
         'admin': [
             'auth_group',
             'auth_user',
@@ -99,13 +95,14 @@ class RuleSet(models.Model):
         'django_session',
 
         # Models which currently do not require permissions
-        'common_inventreesetting',
-        'common_currency',
         'common_colortheme',
+        'common_currency',
+        'common_inventreesetting',
         'company_contact',
         'label_stockitemlabel',
-        'report_testreport',
         'report_reportasset',
+        'report_testreport',
+        'part_partstar',
     ]
 
     RULE_OPTIONS = [
