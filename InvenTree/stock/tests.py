@@ -47,6 +47,30 @@ class StockTest(TestCase):
         Part.objects.rebuild()
         StockItem.objects.rebuild()
 
+    def test_is_building(self):
+        """
+        Test that the is_building flag does not count towards stock.
+        """
+
+        part = Part.objects.get(pk=1)
+
+        # Record the total stock count
+        n = part.total_stock
+
+        StockItem.objects.create(part=part, quantity=5)
+
+        # And there should be *no* items being build
+        self.assertEqual(part.quantity_being_built, 0)
+
+        # Add some stock items which are "building"
+        for i in range(10):
+            item = StockItem.objects.create(part=part, quantity=10, is_building=True)
+
+        # The "is_building" quantity should not be counted here
+        self.assertEqual(part.total_stock, n + 5)
+
+        self.assertEqual(part.quantity_being_built, 100)
+
     def test_loc_count(self):
         self.assertEqual(StockLocation.objects.count(), 7)
 

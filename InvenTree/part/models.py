@@ -784,12 +784,13 @@ class Part(MPTTModel):
         """ Return the current number of parts currently being built
         """
 
-        quantity = self.active_builds.aggregate(quantity=Sum('quantity'))['quantity']
+        stock_items = self.stock_items.filter(is_building=True)
 
-        if quantity is None:
-            quantity = 0
+        query = stock_items.aggregate(
+            quantity=Coalesce(Sum('quantity'), Decimal(0))
+        )
 
-        return quantity
+        return query['quantity']
 
     def build_order_allocations(self):
         """
