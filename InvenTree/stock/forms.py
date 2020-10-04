@@ -19,6 +19,8 @@ from InvenTree.fields import RoundingDecimalFormField
 
 from report.models import TestReport
 
+from part.models import Part
+
 from .models import StockLocation, StockItem, StockItemTracking
 from .models import StockItemAttachment
 from .models import StockItemTestResult
@@ -278,6 +280,11 @@ class InstallStockForm(HelperForm):
     Form for manually installing a stock item into another stock item
     """
 
+    part = forms.ModelChoiceField(
+        queryset=Part.objects.all(),
+        widget=forms.HiddenInput
+    )
+
     stock_item = forms.ModelChoiceField(
         required=True,
         queryset=StockItem.objects.filter(StockItem.IN_STOCK_FILTER),
@@ -302,6 +309,7 @@ class InstallStockForm(HelperForm):
     class Meta:
         model = StockItem
         fields = [
+            'part',
             'stock_item',
             'quantity_to_install',
             'notes',

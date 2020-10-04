@@ -699,6 +699,8 @@ class StockItemInstall(AjaxUpdateView):
     form_class = StockForms.InstallStockForm
     ajax_form_title = _('Install Stock Item')
 
+    part = None
+
     def get_stock_items(self):
         """
         Return a list of stock items suitable for displaying to the user.
@@ -713,14 +715,19 @@ class StockItemInstall(AjaxUpdateView):
         items = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
 
         # Filter by Part association
-        try:
-            part = self.request.GET.get('part', None)
 
-            if part is not None:
-                part = Part.objects.get(pk=part)
-                items = items.filter(part=part)
+        # Look at GET params
+        part_id = self.request.GET.get('part', None)
+
+        if part_id is None:
+            # Look at POST params
+            part_id = self.request.POST.get('part', None)
+
+        try:
+            self.part = Part.objects.get(pk=part_id)
+            items = items.filter(part=self.part)
         except (ValueError, Part.DoesNotExist):
-            pass
+            self.part = None
 
         return items
 
@@ -735,6 +742,9 @@ class StockItemInstall(AjaxUpdateView):
             item = items.first()
             initials['stock_item'] = item.pk
             initials['quantity_to_install'] = item.quantity
+
+        if self.part:
+            initials['part'] = self.part
         
         return initials
 
