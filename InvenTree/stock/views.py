@@ -698,6 +698,7 @@ class StockItemInstall(AjaxUpdateView):
     model = StockItem
     form_class = StockForms.InstallStockForm
     ajax_form_title = _('Install Stock Item')
+    ajax_template_name = "stock/item_install.html"
 
     part = None
 

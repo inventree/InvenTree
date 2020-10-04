@@ -899,9 +899,6 @@ function loadInstalledInTable(table, options) {
                                 var pk = subrow.pk;
                                 var html = '';
 
-                                html += row.sub_part_detail.full_name;
-                                html += " | ";
-
                                 if (subrow.serial && subrow.quantity == 1) {
                                     html += `{% trans "Serial" %}: ${subrow.serial}`;
                                 } else {
@@ -917,6 +914,10 @@ function loadInstalledInTable(table, options) {
                             formatter: function(value, subrow, index, field) {
                                 return stockStatusDisplay(value);
                             }
+                        },
+                        {
+                            field: 'batch',
+                            title: '{% trans "Batch" %}',
                         },
                         {
                             field: 'actions',
