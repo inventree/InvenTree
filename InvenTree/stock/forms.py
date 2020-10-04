@@ -319,8 +319,6 @@ class InstallStockForm(HelperForm):
 
         data = super().clean()
 
-        print("Data:", data)
-
         stock_item = data.get('stock_item', None)
         quantity = data.get('quantity_to_install', None)
 
