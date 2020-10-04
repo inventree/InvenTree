@@ -8,6 +8,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth.models import Group
+from django.contrib.auth.admin import UserAdmin
 
 from users.models import RuleSet
 
@@ -15,6 +16,10 @@ User = get_user_model()
 
 
 class RuleSetInline(admin.TabularInline):
+    """
+    Class for displaying inline RuleSet data in the Group admin page.
+    """
+
     model = RuleSet
     can_delete = False
     verbose_name = 'Ruleset'
@@ -27,6 +32,11 @@ class RuleSetInline(admin.TabularInline):
 
 
 class InvenTreeGroupAdminForm(forms.ModelForm):
+    """
+    Custom admin form for the Group model.
+
+    Adds the ability for editing user membership directly in the group admin page.
+    """
 
     class Meta:
         model = Group
@@ -54,8 +64,6 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
 
     def save_m2m(self):
         # Add the users to the Group.
-        # Deprecated in Django 1.10: Direct assignment to a reverse foreign key
-        #                            or many-to-many relation
 
         self.instance.user_set.set(self.cleaned_data['users'])
 
@@ -100,5 +108,28 @@ class RoleGroupAdmin(admin.ModelAdmin):
         form.instance.save()  # form.instance is the parent
 
 
+class InvenTreeUserAdmin(UserAdmin):
+    """
+    Custom admin page for the User model.
+
+    Hides the "permissions" view as this is now handled
+    entirely by groups and RuleSets.
+
+    (And it's confusing!)
+    """
+
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+        (_('Permissions'), {
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups'),
+        }),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+    )
+
+
 admin.site.unregister(Group)
 admin.site.register(Group, RoleGroupAdmin)
+
+admin.site.unregister(User)
+admin.site.register(User, InvenTreeUserAdmin)
