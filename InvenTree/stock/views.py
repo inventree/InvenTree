@@ -683,6 +683,106 @@ class StockItemQRCode(QRCodeView):
             return None
 
 
+class StockItemInstall(AjaxUpdateView):
+    """
+    View for manually installing stock items into
+    a particular stock item.
+
+    In contrast to the StockItemUninstall view,
+    only a single stock item can be installed at once.
+    
+    The "part" to be installed must be provided in the GET query parameters.
+    
+    """
+
+    model = StockItem
+    form_class = StockForms.InstallStockForm
+    ajax_form_title = _('Install Stock Item')
+    ajax_template_name = "stock/item_install.html"
+
+    part = None
+
+    def get_stock_items(self):
+        """
+        Return a list of stock items suitable for displaying to the user.
+
+        Requirements:
+        - Items must be in stock
+        
+        Filters:
+        - Items can be filtered by Part reference
+        """
+
+        items = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
+
+        # Filter by Part association
+
+        # Look at GET params
+        part_id = self.request.GET.get('part', None)
+
+        if part_id is None:
+            # Look at POST params
+            part_id = self.request.POST.get('part', None)
+
+        try:
+            self.part = Part.objects.get(pk=part_id)
+            items = items.filter(part=self.part)
+        except (ValueError, Part.DoesNotExist):
+            self.part = None
+
+        return items
+
+    def get_initial(self):
+
+        initials = super().get_initial()
+
+        items = self.get_stock_items()
+
+        # If there is a single stock item available, we can use it!
+        if items.count() == 1:
+            item = items.first()
+            initials['stock_item'] = item.pk
+            initials['quantity_to_install'] = item.quantity
+
+        if self.part:
+            initials['part'] = self.part
+        
+        return initials
+
+    def get_form(self):
+
+        form = super().get_form()
+
+        form.fields['stock_item'].queryset = self.get_stock_items()
+
+        return form
+
+    def post(self, request, *args, **kwargs):
+
+        form = self.get_form()
+
+        valid = form.is_valid()
+
+        if valid:
+            # We assume by this point that we have a valid stock_item and quantity values
+            data = form.cleaned_data
+
+            other_stock_item = data['stock_item']
+            quantity = data['quantity_to_install']
+            notes = data['notes']
+
+            # Install the other stock item into this one
+            this_stock_item = self.get_object()
+
+            this_stock_item.installStockItem(other_stock_item, quantity, request.user, notes)
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data=data)
+
+
 class StockItemUninstall(AjaxView, FormMixin):
     """
     View for uninstalling one or more StockItems,

@@ -777,6 +777,13 @@ class BomList(generics.ListCreateAPIView):
         if sub_part is not None:
             queryset = queryset.filter(sub_part=sub_part)
 
+        # Filter by "trackable" status of the sub-part
+        trackable = self.request.query_params.get('trackable', None)
+
+        if trackable is not None:
+            trackable = str2bool(trackable)
+            queryset = queryset.filter(sub_part__trackable=trackable)
+
         return queryset
 
     permission_classes = [

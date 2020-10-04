@@ -600,12 +600,13 @@ class StockItem(MPTTModel):
         return self.installedItemCount() > 0
 
     @transaction.atomic
-    def installIntoStockItem(self, otherItem, user, notes):
+    def installStockItem(self, otherItem, quantity, user, notes):
         """
-        Install this stock item into another stock item.
+        Install another stock item into this stock item.
 
         Args
-            otherItem: The stock item to install this item into
+            otherItem: The stock item to install into this stock item
+            quantity: The quantity of stock to install
             user: The user performing the operation
             notes: Any notes associated with the operation
         """
@@ -614,18 +615,29 @@ class StockItem(MPTTModel):
         if self.belongs_to is not None:
             return False
 
-        # TODO - Are there any other checks that need to be performed at this stage?
+        # If the quantity is less than the stock item, split the stock!
+        stock_item = otherItem.splitStock(quantity, None, user)
 
-        # Mark this stock item as belonging to the other one
-        self.belongs_to = otherItem
-        
-        self.save()
+        if stock_item is None:
+            stock_item = otherItem
 
-        # Add a transaction note!
-        self.addTransactionNote(
-            _('Installed in stock item') + ' ' + str(otherItem.pk),
+        # Assign the other stock item into this one
+        stock_item.belongs_to = self
+        stock_item.save()
+
+        # Add a transaction note to the other item
+        stock_item.addTransactionNote(
+            _('Installed into stock item') + ' ' + str(self.pk),
             user,
-            notes=notes
+            notes=notes,
+            url=self.get_absolute_url()
+        )
+
+        # Add a transaction note to this item
+        self.addTransactionNote(
+            _('Installed stock item') + ' ' + str(stock_item.pk),
+            user, notes=notes,
+            url=stock_item.get_absolute_url()
         )
 
     @transaction.atomic
@@ -645,16 +657,31 @@ class StockItem(MPTTModel):
 
         # TODO - Are there any other checks that need to be performed at this stage?
 
+        # Add a transaction note to the parent item
+        self.belongs_to.addTransactionNote(
+            _("Uninstalled stock item") + ' ' + str(self.pk),
+            user,
+            notes=notes,
+            url=self.get_absolute_url(),
+        )
+
+        # Mark this stock item as *not* belonging to anyone
         self.belongs_to = None
         self.location = location
 
         self.save()
 
+        if location:
+            url = location.get_absolute_url()
+        else:
+            url = ''
+
         # Add a transaction note!
         self.addTransactionNote(
             _('Uninstalled into location') + ' ' + str(location),
             user,
-            notes=notes
+            notes=notes,
+            url=url
         )
 
     @property
@@ -838,20 +865,20 @@ class StockItem(MPTTModel):
 
         # Do not split a serialized part
         if self.serialized:
-            return
+            return self
 
         try:
             quantity = Decimal(quantity)
         except (InvalidOperation, ValueError):
-            return
+            return self
 
         # Doesn't make sense for a zero quantity
         if quantity <= 0:
-            return
+            return self
 
         # Also doesn't make sense to split the full amount
         if quantity >= self.quantity:
-            return
+            return self
 
         # Create a new StockItem object, duplicating relevant fields
         # Nullify the PK so a new record is created
