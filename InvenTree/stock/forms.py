@@ -283,8 +283,10 @@ class InstallStockForm(HelperForm):
         help_text=_('Stock item to install')
     )
 
-    quantity = RoundingDecimalFormField(
+    quantity_to_install = RoundingDecimalFormField(
         max_digits=10, decimal_places=5,
+        initial=1,
+        label=_('Quantity'),
         help_text=_('Stock quantity to assign'),
         validators=[
             MinValueValidator(0.001)
@@ -295,7 +297,7 @@ class InstallStockForm(HelperForm):
         model = StockItem
         fields = [
             'stock_item',
-            'quantity',
+            'quantity_to_install',
         ]
 
 

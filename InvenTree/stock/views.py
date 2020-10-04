@@ -703,6 +703,22 @@ class StockItemInstall(AjaxUpdateView):
 
         form = super().get_form()
 
+        queryset = form.fields['stock_item'].queryset
+
+        part = self.request.GET.get('part', None)
+
+        # Filter the available stock items based on the Part reference
+        if part:
+            try:
+                part = Part.objects.get(pk=part)
+
+                queryset = queryset.filter(part=part)
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        form.fields['stock_item'].queryset = queryset
+
         return form
 
     def post(self, request, *args, **kwargs):
