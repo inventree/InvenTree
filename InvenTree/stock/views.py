@@ -699,25 +699,52 @@ class StockItemInstall(AjaxUpdateView):
     form_class = StockForms.InstallStockForm
     ajax_form_title = _('Install Stock Item')
 
+    def get_stock_items(self):
+        """
+        Return a list of stock items suitable for displaying to the user.
+
+        Requirements:
+        - Items must be in stock
+        
+        Filters:
+        - Items can be filtered by Part reference
+        """
+
+        items = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
+
+        # Filter by Part association
+        try:
+            part = self.request.GET.get('part', None)
+
+            print(self.request.GET)
+
+            if part is not None:
+                part = Part.objects.get(pk=part)
+                items = items.filter(part=part)
+        except (ValueError, Part.DoesNotExist):
+            pass
+
+        return items
+
+    def get_initial(self):
+
+        initials = super().get_initial()
+
+        items = self.get_stock_items()
+
+        # If there is a single stock item available, we can use it!
+        if items.count() == 1:
+            item = items.first()
+            initials['stock_item'] = item.pk
+            initials['quantity_to_install'] = item.quantity
+        
+        return initials
+
     def get_form(self):
 
         form = super().get_form()
 
-        queryset = form.fields['stock_item'].queryset
-
-        part = self.request.GET.get('part', None)
-
-        # Filter the available stock items based on the Part reference
-        if part:
-            try:
-                part = Part.objects.get(pk=part)
-
-                queryset = queryset.filter(part=part)
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        form.fields['stock_item'].queryset = queryset
+        form.fields['stock_item'].queryset = self.get_stock_items()
 
         return form
 

@@ -600,12 +600,13 @@ class StockItem(MPTTModel):
         return self.installedItemCount() > 0
 
     @transaction.atomic
-    def installIntoStockItem(self, otherItem, user, notes):
+    def installIntoStockItem(self, otherItem, quantity, user, notes):
         """
         Install this stock item into another stock item.
 
         Args
             otherItem: The stock item to install this item into
+            quantity: The quantity of stock to install
             user: The user performing the operation
             notes: Any notes associated with the operation
         """
