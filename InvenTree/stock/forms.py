@@ -9,6 +9,7 @@ from django import forms
 from django.forms.utils import ErrorDict
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 
 from mptt.fields import TreeNodeChoiceField
 
@@ -293,13 +294,33 @@ class InstallStockForm(HelperForm):
         ]
     )
 
+    notes = forms.CharField(
+        required=False,
+        help_text=_('Notes')
+    )
+
     class Meta:
         model = StockItem
         fields = [
             'stock_item',
             'quantity_to_install',
+            'notes',
         ]
 
+    def clean(self):
+
+        data = super().clean()
+
+        print("Data:", data)
+
+        stock_item = data['stock_item']
+        quantity = data['quantity_to_install']
+
+        if quantity > stock_item.quantity:
+            raise ValidationError({'quantity_to_install': _('Must not exceed available quantity')})
+
+        return data
+        
 
 class UninstallStockForm(forms.ModelForm):
     """
