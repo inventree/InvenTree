@@ -282,7 +282,7 @@ class InstallStockForm(HelperForm):
 
     part = forms.ModelChoiceField(
         queryset=Part.objects.all(),
-        widget=forms.HiddenInput
+        widget=forms.HiddenInput()
     )
 
     stock_item = forms.ModelChoiceField(
@@ -321,10 +321,10 @@ class InstallStockForm(HelperForm):
 
         print("Data:", data)
 
-        stock_item = data['stock_item']
-        quantity = data['quantity_to_install']
+        stock_item = data.get('stock_item', None)
+        quantity = data.get('quantity_to_install', None)
 
-        if quantity > stock_item.quantity:
+        if stock_item and quantity and quantity > stock_item.quantity:
             raise ValidationError({'quantity_to_install': _('Must not exceed available quantity')})
 
         return data

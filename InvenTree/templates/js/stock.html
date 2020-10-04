@@ -1078,8 +1078,6 @@ function loadInstalledInTable(table, options) {
                                 if (!match) {
                                     // The stock item did *not* match any items in the BOM!
                                     // Add a new row to the table...
-
-                                    console.log("Found an unmatched part! " + item.pk + " -> " + item.part);
                                     
                                     // Contruct a new "row" to add to the table
                                     var new_row = {
