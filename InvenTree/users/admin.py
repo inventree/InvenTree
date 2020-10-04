@@ -34,7 +34,6 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
         fields = [
             'name',
             'users',
-            'permissions',
         ]
 
     def __init__(self, *args, **kwargs):
