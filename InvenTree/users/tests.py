@@ -76,15 +76,17 @@ class RuleSetModelTest(TestCase):
                     print("{n} is not a valid database table".format(n=m))
                     errors += 1
 
-        self.assertEqual(errors, 0)
 
         missing_models = []
 
         for model in available_tables:
-            if model not in assigned_models:
+            if model not in assigned_models and model not in RuleSet.RULESET_IGNORE:
                 missing_models.append(model)
 
         if len(missing_models) > 0:
-            print("WARNING: The following database models are not covered by the define RuleSet permissions:")
+            print("The following database models are not covered by the defined RuleSet permissions:")
             for m in missing_models:
                 print("-", m)
+
+        self.assertEqual(errors, 0)
+        self.assertEqual(len(missing_models), 0)

@@ -90,6 +90,23 @@ class RuleSet(models.Model):
         ]
     }
 
+    # Database models we ignore permission sets for
+    RULESET_IGNORE = [
+        # Core django models (not user configurable)
+        'django_admin_log',
+        'django_content_type',
+        'django_session',
+
+        # Models which currently do not require permissions
+        'common_inventreesetting',
+        'common_currency',
+        'common_colortheme',
+        'company_contact',
+        'label_stockitemlabel',
+        'report_testreport',
+        'report_reportasset',
+    ]
+
     RULE_OPTIONS = [
         'can_view',
         'can_add',
@@ -125,6 +142,21 @@ class RuleSet(models.Model):
 
     can_delete = models.BooleanField(verbose_name=_('Delete'), default=False, help_text=_('Permission to delete items'))
     
+    @staticmethod
+    def get_model_permission_string(model, permission):
+        """
+        Construct the correctly formatted permission string,
+        given the app_model name, and the permission type.
+        """
+
+        app, model = model.split('_')
+
+        return "{app}.{perm}_{model}".format(
+            app=app,
+            perm=permission,
+            model=model
+        )
+
     def __str__(self):
         return self.name
 
@@ -148,11 +180,43 @@ def update_group_roles(group):
     b) Ensure group permissions are correctly updated and assigned
     """
 
+    # List of permissions already associated with this group
+    group_permissions = '??????'
+
     # List of permissions which must be added to the group
-    # permissions_to_add = []
+    permissions_to_add = set()
 
     # List of permissions which must be removed from the group
-    # permissions_to_delete = []
+    permissions_to_delete = set()
+
+    def add_model(name, action, allowed):
+        """
+        Add a new model to the pile:
+
+        args:
+            name - The name of the model e.g. part_part
+            action - The permission action e.g. view
+            allowed - Whether or not the action is allowed
+        """
+
+        if not action in ['view', 'add', 'change', 'delete']:
+            raise ValueError("Action {a} is invalid".format(a=action))
+
+        permission_string = RuleSet.get_model_permission_string(model, action)
+
+        if allowed:
+
+            # An 'allowed' action is always preferenced over a 'forbidden' action
+            if permission_string in permissions_to_delete:
+                permissions_to_delete.remove(permission_string)
+
+            permissions_to_add.add(permission_string)
+
+        else:
+
+            # A forbidden action will be ignored if we have already allowed it
+            if permission_string not in permissions_to_add:
+                permissions_to_delete.add(permission_string)
 
     # Get all the rulesets associated with this group
     for r in RuleSet.RULESET_CHOICES:
@@ -165,12 +229,32 @@ def update_group_roles(group):
             # Create the ruleset with default values (if it does not exist)
             ruleset = RuleSet.objects.create(group=group, name=rulename)
 
+        # Which database tables does this RuleSet touch?
+        models = ruleset.get_models()
+
+        for model in models:
+            # Keep track of the available permissions for each model
+
+            add_model(model, 'view', ruleset.can_view)
+            add_model(model, 'add', ruleset.can_add)
+            add_model(model, 'change', ruleset.can_change)
+            add_model(model, 'delete', ruleset.can_delete)
+
         # TODO - Update permissions here
 
     # TODO - Update group permissions
 
+    print("To add:", permissions_to_add)
+    print("To delete:", permissions_to_delete)
+
 
 @receiver(post_save, sender=Group)
 def create_missing_rule_sets(sender, instance, **kwargs):
+    """
+    Called *after* a Group object is saved.
+    As the linked RuleSet instances are saved *before* the Group,
+    then we can now use these RuleSet values to update the 
+    group permissions.
+    """
 
     update_group_roles(instance)
