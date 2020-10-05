@@ -58,6 +58,7 @@ class PartViewTestCase(TestCase):
 class PartListTest(PartViewTestCase):
 
     def test_part_index(self):
+        # TODO (eeintech): I have no idea why this request raises PermissionDenied
         response = self.client.get(reverse('part-index'))
         self.assertEqual(response.status_code, 200)
         
@@ -183,6 +184,7 @@ class PartTests(PartViewTestCase):
 
     def test_part_create(self):
         """ Launch form to create a new part """
+        # TODO (eeintech): I have no idea why this request raises PermissionDenied
         response = self.client.get(reverse('part-create'), {'category': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
@@ -263,6 +265,7 @@ class CategoryTest(PartViewTestCase):
 
     def test_create(self):
         """ Test view for creating a new category """
+        # TODO (eeintech): I have no idea why this request raises PermissionDenied
         response = self.client.get(reverse('category-create'), {'category': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         self.assertEqual(response.status_code, 200)

@@ -22,6 +22,7 @@ from django.views.generic.base import TemplateView
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
+from users.models import RuleSet
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm, ColorThemeSelectForm
 from .helpers import str2bool
@@ -107,7 +108,32 @@ class TreeSerializer(views.APIView):
         return JsonResponse(response, safe=False)
 
 
-class AjaxMixin(PermissionRequiredMixin):
+class InvenTreePermissionRequiredMixin(PermissionRequiredMixin):
+    """ Extends PermissionRequiredMixin to auto-populate permissions based on ruleset """
+
+    ruleset_permission = None
+
+    def get_permission_required(self):
+        """ Handles the presence of the ruleset_permission field """
+
+        permission_required = []
+
+        if self.ruleset_permission:
+            (ruleset, permission) = self.ruleset_permission.split('.')
+
+            for model in RuleSet.RULESET_MODELS.get(ruleset, None):
+                permission_required.append(
+                    RuleSet.get_model_permission_string(model=model,
+                                                        permission=permission)
+                )
+
+        if permission_required:
+            return permission_required
+        else:
+            return super().get_permission_required()
+
+
+class AjaxMixin(InvenTreePermissionRequiredMixin):
     """ AjaxMixin provides basic functionality for rendering a Django form to JSON.
     Handles jsonResponse rendering, and adds extra data for the modal forms to process
     on the client side.
@@ -128,7 +154,7 @@ class AjaxMixin(PermissionRequiredMixin):
         no permissions are actually required!
         """
 
-        if self.permission_required == '*':
+        if self.permission_required == '*' and not self.ruleset_permission:
             return True
         else:
             return super().has_permission()

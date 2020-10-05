@@ -39,17 +39,20 @@ from .admin import PartResource
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
+from InvenTree.views import InvenTreePermissionRequiredMixin
 
 from InvenTree.helpers import DownloadFile, str2bool
 
 
-class PartIndex(PermissionRequiredMixin, ListView):
+class PartIndex(InvenTreePermissionRequiredMixin, ListView):
     """ View for displaying list of Part objects
     """
     model = Part
     template_name = 'part/category.html'
     context_object_name = 'parts'
-    permission_required = ('part.view_part', 'part.view_partcategory')
+
+    ruleset_permission = 'part.view'
+    # permission_required = ('part.view_part', 'part.view_partcategory')
 
     def get_queryset(self):
         return Part.objects.all().select_related('category')
@@ -511,7 +514,8 @@ class PartCreate(AjaxCreateView):
     ajax_form_title = _('Create new part')
     ajax_template_name = 'part/create_part.html'
 
-    permission_required = 'part.add_part'
+    ruleset_permission = 'part.add'
+    # permission_required = 'part.add_part'
 
     def get_data(self):
         return {
@@ -2044,7 +2048,18 @@ class CategoryCreate(AjaxCreateView):
     ajax_template_name = 'modal_form.html'
     form_class = part_forms.EditCategoryForm
 
-    permission_required = 'part.add_partcategory'
+    # ruleset_permission = 'part.add'
+    # TODO (eeintech): With 5 or more permissions, TestCase fails... no idea why!
+    permission_required = ('part.add_part',
+                           'part.add_bomitem',
+                           'part.add_partcategory',
+                           'part.add_partattachment',
+                           'part.add_partsellpricebreak',
+                           # 'part.add_parttesttemplate',
+                           # 'part.add_partparametertemplate',
+                           # 'part.add_partparameter'
+                           )
+
 
     def get_context_data(self, **kwargs):
         """ Add extra context data to template.
