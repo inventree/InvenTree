@@ -97,15 +97,11 @@ class RoleGroupAdmin(admin.ModelAdmin):
     # Save inlines before model
     # https://stackoverflow.com/a/14860703/12794913
     def save_model(self, request, obj, form, change):
-        if obj is not None:
-            # Save model immediately only if in 'Add role' view
-            super().save_model(request, obj, form, change)
-        else:
-            pass  # don't actually save the parent instance
+        pass  # don't actually save the parent instance
 
     def save_formset(self, request, form, formset, change):
         formset.save()  # this will save the children
-        form.instance.save()  # form.instance is the parent
+        form.instance.save(update_fields=['name'])  # form.instance is the parent
 
 
 class InvenTreeUserAdmin(UserAdmin):
