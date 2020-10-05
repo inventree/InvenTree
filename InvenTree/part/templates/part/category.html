@@ -20,16 +20,22 @@
         {% endif %}
         <p>
             <div class='btn-group action-buttons'>
+                {% if perms.part.create_partcategory %}
                 <button class='btn btn-default' id='cat-create' title='{% trans "Create new part category" %}'>
                     <span class='fas fa-plus-circle icon-green'/>
                 </button>
+                {% endif %}
                 {% if category %}
+                {% if perms.part.change_partcategory %}
                 <button class='btn btn-default' id='cat-edit' title='{% trans "Edit part category" %}'>
                     <span class='fas fa-edit icon-blue'/>
                 </button>
+                {% endif %}
+                {% if perms.part.delete_partcategory %}
                 <button class='btn btn-default' id='cat-delete' title='{% trans "Delete part category" %}'>
                     <span class='fas fa-trash-alt icon-red'/>
                 </button>
+                {% endif %}
                 {% endif %}
             </div>
         </p>
@@ -104,11 +110,15 @@
     <div class='button-toolbar container-fluid' style="float: right;">
         <div class='btn-group'>
             <button class='btn btn-default' id='part-export' title='{% trans "Export Part Data" %}'>{% trans "Export" %}</button>
+            {% if perms.part.create_part %}
             <button class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>{% trans "New Part" %}</button>
+            {% endif %}
             <div class='btn-group'>
                 <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown">{% trans "Options" %}<span class='caret'></span></button>
                 <ul class='dropdown-menu'>
+                    {% if perms.part.change_part %}
                     <li><a href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
+                    {% endif %}
                     <li><a href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
                     <li><a href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
                 </ul>
@@ -180,6 +190,7 @@
         location.href = url;
     });
 
+    {% if perms.part.create_part %}
     $("#part-create").click(function() {
         launchModalForm(
             "{% url 'part-create' %}",
@@ -207,6 +218,7 @@
             }
         );
     });
+    {% endif %}
 
     {% if category %}
     $("#cat-edit").click(function () {
