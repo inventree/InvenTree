@@ -9,6 +9,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
+from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 
 from users.models import RuleSet
 
@@ -61,6 +63,26 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
         label=_('Users'),
         help_text=_('Select which users are assigned to this group')
     )
+
+    def clean(self):
+        """ Validate that added Users don't belong to any group other than the current one
+        """
+
+        users = self.cleaned_data['users'].exclude(groups=self.instance)
+
+        error_message = ''
+        for user in users:
+            if user.groups.all():
+                error_message += f'<br>- {user.username} is in ' \
+                                 f'"{Group.objects.get(user=user).name}" group'
+
+        if error_message:
+            raise ValidationError(
+                mark_safe(_(f'The following users are already assigned to a group:'
+                            f'{error_message}'))
+            )
+
+        return self.cleaned_data
 
     def save_m2m(self):
         # Add the users to the Group.
