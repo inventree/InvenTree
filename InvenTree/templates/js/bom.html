@@ -169,6 +169,10 @@ function loadBomTable(table, options) {
             // Let's make it a bit more pretty
             text = parseFloat(text);
 
+            if (row.optional) {
+                text += " ({% trans "Optional" %})";    
+            }
+
             if (row.overage) {
                 text += "<small> (+" + row.overage + ")    </small>";
             }

@@ -22,7 +22,8 @@ def apps():
         'part',
         'report',
         'stock',
-        'InvenTree'
+        'InvenTree',
+        'users',
     ]
 
 def localDir():
@@ -107,6 +108,14 @@ def superuser(c):
     """
 
     manage(c, 'createsuperuser', pty=True)
+
+@task
+def check(c):
+    """
+    Check validity of django codebase
+    """
+
+    manage(c, "check")
 
 @task
 def migrate(c):
@@ -248,4 +257,4 @@ def server(c, address="127.0.0.1:8000"):
     Note: This is *not* sufficient for a production installation.
     """
 
-    manage(c, "runserver {address}".format(address=address))
+    manage(c, "runserver {address}".format(address=address), pty=True)

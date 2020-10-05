@@ -3,9 +3,13 @@ from django.db.models import Sum
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
+import datetime
+
 from .models import StockLocation, StockItem, StockItemTracking
 from .models import StockItemTestResult
+
 from part.models import Part
+from build.models import Build
 
 
 class StockTest(TestCase):
@@ -44,6 +48,35 @@ class StockTest(TestCase):
         # Ensure the MPTT objects are correctly rebuild
         Part.objects.rebuild()
         StockItem.objects.rebuild()
+
+    def test_is_building(self):
+        """
+        Test that the is_building flag does not count towards stock.
+        """
+
+        part = Part.objects.get(pk=1)
+
+        # Record the total stock count
+        n = part.total_stock
+
+        StockItem.objects.create(part=part, quantity=5)
+
+        # And there should be *no* items being build
+        self.assertEqual(part.quantity_being_built, 0)
+
+        build = Build.objects.create(part=part, title='A test build', quantity=1)
+
+        # Add some stock items which are "building"
+        for i in range(10):
+            StockItem.objects.create(
+                part=part, build=build,
+                quantity=10, is_building=True
+            )
+
+        # The "is_building" quantity should not be counted here
+        self.assertEqual(part.total_stock, n + 5)
+
+        self.assertEqual(part.quantity_being_built, 100)
 
     def test_loc_count(self):
         self.assertEqual(StockLocation.objects.count(), 7)
@@ -439,13 +472,14 @@ class TestResultTest(StockTest):
             self.assertIn(test, result_map.keys())
 
     def test_test_results(self):
+
         item = StockItem.objects.get(pk=522)
 
         status = item.requiredTestStatus()
 
         self.assertEqual(status['total'], 5)
-        self.assertEqual(status['passed'], 3)
-        self.assertEqual(status['failed'], 1)
+        self.assertEqual(status['passed'], 2)
+        self.assertEqual(status['failed'], 2)
 
         self.assertFalse(item.passedAllRequiredTests())
 
@@ -460,6 +494,18 @@ class TestResultTest(StockTest):
             result=True
         )
     
+        # Still should be failing at this point,
+        # as the most recent "apply paint" test was False
+        self.assertFalse(item.passedAllRequiredTests())
+
+        # Add a new test result against this required test
+        StockItemTestResult.objects.create(
+            stock_item=item,
+            test='apply paint',
+            date=datetime.datetime(2022, 12, 12),
+            result=True
+        )
+
         self.assertTrue(item.passedAllRequiredTests())
 
     def test_duplicate_item_tests(self):

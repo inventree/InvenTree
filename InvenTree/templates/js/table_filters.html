@@ -26,6 +26,14 @@ function getAvailableTableFilters(tableKey) {
                 title: "{% trans "Serial number LTE" %}",
                 description: "{% trans "Serial number less than or equal to" %}",
             },
+            serial: {
+                title: "{% trans "Serial number" %}",
+                description: "{% trans "Serial number" %}"
+            },
+            batch: {
+                title: '{% trans "Batch" %}',
+                description: '{% trans "Batch code" %}',
+            },
         };
     }
 
@@ -57,6 +65,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "In Stock" %}',
                 description: '{% trans "Show items which are in stock" %}',
             },
+            installed: {
+                type: 'bool',
+                title: '{% trans "Installed" %}',
+                description: '{% trans "Show stock items which are installed in another item" %}',
+            },
             sent_to_customer: {
                 type: 'bool',
                 title: '{% trans "Sent to customer" %}',
@@ -65,6 +78,10 @@ function getAvailableTableFilters(tableKey) {
             serialized: {
                 type: 'bool',
                 title: '{% trans "Is Serialized" %}',
+            },
+            serial: {
+                title: "{% trans "Serial number" %}",
+                description: "{% trans "Serial number" %}"
             },
             serial_gte: {
                 title: "{% trans "Serial number GTE" %}",
@@ -79,6 +96,10 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Stock status" %}',
                 description: '{% trans "Stock status" %}',
             },
+            batch: {
+                title: '{% trans "Batch" %}',
+                description: '{% trans "Batch code" %}',
+            }
         };
     }
 
@@ -109,7 +130,10 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Build status" %}',
                 options: buildCodes,
             },
-
+            pending: {
+                type: 'bool',
+                title: '{% trans "Pending" %}',
+            }
         };
     }
 
@@ -148,6 +172,11 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Include subcategories" %}',
                 description: '{% trans "Include parts in subcategories" %}',
+            },
+            has_ipn: {
+                type: 'bool',
+                title: '{% trans "Has IPN" %}',
+                description: '{% trans "Part has internal part number" %}',
             },
             active: {
                 type: 'bool',

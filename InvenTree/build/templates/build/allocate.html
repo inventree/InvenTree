@@ -50,6 +50,15 @@ InvenTree | Allocate Parts
         return {{ build.quantity }} * row.quantity - sumAllocations(row);
     }
 
+    function setExpandedAllocatedLocation(row) {
+        // Handle case when stock item does not have a location set
+        if (row.location_detail == null) {
+            return 'No stock location set';
+        } else {
+            return row.location_detail.pathstring;
+        }
+    }
+
     function reloadTable() {
         // Reload the build allocation table
         buildTable.bootstrapTable('refresh');
@@ -76,7 +85,7 @@ InvenTree | Allocate Parts
                     {
                         field: 'stock_item',
                         label: '{% trans "New Stock Item" %}',
-                        title: '{% trans "Create new Stock Item"',
+                        title: '{% trans "Create new Stock Item" %}',
                         url: '{% url "stock-item-create" %}',
                         data: {
                             part: row.sub_part,
@@ -146,7 +155,7 @@ InvenTree | Allocate Parts
 
             subTable.bootstrapTable({
                 data: row.allocations,
-                showHeader: false,
+                showHeader: true,
                 columns: [
                     {
                         width: '50%',
@@ -177,7 +186,7 @@ InvenTree | Allocate Parts
                         title: '{% trans "Location" %}',
                         formatter: function(value, row, index, field) {
                             {% if build.status == BuildStatus.COMPLETE %}
-                            var text = row.location_detail.pathstring;
+                            var text = setExpandedAllocatedLocation(row);
                             var url = `/stock/location/${row.location}/`;
                             {% else %}
                             var text = row.stock_item_detail.location_name;
@@ -406,7 +415,7 @@ InvenTree | Allocate Parts
         launchModalForm(
             "{% url 'build-auto-allocate' build.id %}",
             {
-                reload: true,
+                success: reloadTable,
             }
         );
     });
@@ -415,7 +424,7 @@ InvenTree | Allocate Parts
         launchModalForm(
             "{% url 'build-unallocate' build.id %}",
             {
-                reload: true,
+                success: reloadTable,
             }
         );
     });

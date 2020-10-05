@@ -401,7 +401,7 @@ class PriceBreakCreate(AjaxCreateView):
 
     def get_data(self):
         return {
-            'success': 'Added new price break'
+            'success': _('Added new price break')
         }
 
     def get_part(self):

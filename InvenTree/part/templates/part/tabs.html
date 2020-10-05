@@ -46,6 +46,9 @@
     </li>
     {% endif %}
     {% if part.salable %}
+    <li {% if tab == 'sales-prices' %}class='active'{% endif %}>
+        <a href="{% url 'part-sale-prices' part.id %}">{% trans "Sale Price" %}</a>
+    </li>
     <li{% ifequal tab 'sales-orders' %} class='active'{% endifequal %}>
         <a href="{% url 'part-sales-orders' part.id %}">{% trans "Sales Orders" %} <span class='badge'>{{ part.sales_orders|length }}</span></a>
     </li>

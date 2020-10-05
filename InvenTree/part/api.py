@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse
-from django.db.models import Q, F, Count
+from django.db.models import Q, F, Count, Prefetch, Sum
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -20,12 +20,16 @@ from django.urls import reverse
 from .models import Part, PartCategory, BomItem, PartStar
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
+from .models import PartSellPriceBreak
+
+from build.models import Build
 
 from . import serializers as part_serializers
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
+from InvenTree.status_codes import BuildStatus
 
 
 class PartCategoryTree(TreeSerializer):
@@ -105,6 +109,27 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single PartCategory object """
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+
+class PartSalePriceList(generics.ListCreateAPIView):
+    """
+    API endpoint for list view of PartSalePriceBreak model
+    """
+
+    queryset = PartSellPriceBreak.objects.all()
+    serializer_class = part_serializers.PartSalePriceSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend
+    ]
+
+    filter_fields = [
+        'part',
+    ]
 
 
 class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
@@ -405,6 +430,39 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Filter by whether the part has an IPN (internal part number) defined
+        has_ipn = params.get('has_ipn', None)
+
+        if has_ipn is not None:
+            has_ipn = str2bool(has_ipn)
+
+            if has_ipn:
+                queryset = queryset.exclude(IPN='')
+            else:
+                queryset = queryset.filter(IPN='')
+
+        # Filter by whether the BOM has been validated (or not)
+        bom_valid = params.get('bom_valid', None)
+
+        # TODO: Querying bom_valid status may be quite expensive
+        # TODO: (It needs to be profiled!)
+        # TODO: It might be worth caching the bom_valid status to a database column
+
+        if bom_valid is not None:
+
+            bom_valid = str2bool(bom_valid)
+
+            # Limit queryset to active assemblies
+            queryset = queryset.filter(active=True, assembly=True)
+
+            pks = []
+
+            for part in queryset:
+                if part.is_bom_valid() == bom_valid:
+                    pks.append(part.pk)
+
+            queryset = queryset.filter(pk__in=pks)
+
         # Filter by 'starred' parts?
         starred = params.get('starred', None)
 
@@ -454,6 +512,7 @@ class PartList(generics.ListCreateAPIView):
 
         # Filter by whether the part has stock
         has_stock = params.get("has_stock", None)
+
         if has_stock is not None:
             has_stock = str2bool(has_stock)
 
@@ -476,6 +535,48 @@ class PartList(generics.ListCreateAPIView):
             else:
                 # Filter items which have an 'in_stock' level higher than 'minimum_stock'
                 queryset = queryset.filter(Q(in_stock__gte=F('minimum_stock')))
+
+        # Filter by "parts which need stock to complete build"
+        stock_to_build = params.get('stock_to_build', None)
+
+        # TODO: This is super expensive, database query wise...
+        # TODO: Need to figure out a cheaper way of making this filter query
+
+        if stock_to_build is not None:
+            # Filter only active parts
+            queryset = queryset.filter(active=True)
+            # Prefetch current active builds
+            build_active_queryset = Build.objects.filter(status__in=BuildStatus.ACTIVE_CODES)
+            build_active_prefetch = Prefetch('builds',
+                                             queryset=build_active_queryset,
+                                             to_attr='current_builds')
+            parts = queryset.prefetch_related(build_active_prefetch)
+
+            # Store parts with builds needing stock
+            parts_need_stock = []
+
+            # Find parts with active builds
+            # where any subpart's stock is lower than quantity being built
+            for part in parts:
+                if part.current_builds:
+                    builds_ids = [build.id for build in part.current_builds]
+                    total_build_quantity = build_active_queryset.filter(pk__in=builds_ids).aggregate(quantity=Sum('quantity'))['quantity']
+
+                    if part.can_build < total_build_quantity:
+                        parts_need_stock.append(part.pk)
+
+            queryset = queryset.filter(pk__in=parts_need_stock)
+
+        # Limit choices
+        limit = params.get('limit', None)
+
+        if limit is not None:
+            try:
+                limit = int(limit)
+                if limit > 0:
+                    queryset = queryset[:limit]
+            except ValueError:
+                pass
 
         return queryset
 
@@ -502,6 +603,7 @@ class PartList(generics.ListCreateAPIView):
 
     ordering_fields = [
         'name',
+        'creation_date',
     ]
 
     # Default ordering
@@ -663,17 +765,34 @@ class BomList(generics.ListCreateAPIView):
 
         queryset = super().filter_queryset(queryset)
 
+        params = self.request.query_params
+
+        # Filter by "optional" status?
+        optional = params.get('optional', None)
+
+        if optional is not None:
+            optional = str2bool(optional)
+
+            queryset = queryset.filter(optional=optional)
+
         # Filter by part?
-        part = self.request.query_params.get('part', None)
+        part = params.get('part', None)
 
         if part is not None:
             queryset = queryset.filter(part=part)
         
         # Filter by sub-part?
-        sub_part = self.request.query_params.get('sub_part', None)
+        sub_part = params.get('sub_part', None)
 
         if sub_part is not None:
             queryset = queryset.filter(sub_part=sub_part)
+
+        # Filter by "trackable" status of the sub-part
+        trackable = params.get('trackable', None)
+
+        if trackable is not None:
+            trackable = str2bool(trackable)
+            queryset = queryset.filter(sub_part__trackable=trackable)
 
         return queryset
 
@@ -754,6 +873,11 @@ part_api_urls = [
     url(r'^star/', include([
         url(r'^(?P<pk>\d+)/?', PartStarDetail.as_view(), name='api-part-star-detail'),
         url(r'^$', PartStarList.as_view(), name='api-part-star-list'),
+    ])),
+
+    # Base URL for part sale pricing
+    url(r'^sale-price/', include([
+        url(r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
     ])),
     
     # Base URL for PartParameter API endpoints

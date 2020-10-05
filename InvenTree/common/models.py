@@ -7,12 +7,15 @@ These models are 'generic' and do not fit a particular business logic object.
 from __future__ import unicode_literals
 
 import os
+import decimal
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+
+import InvenTree.fields
 
 
 class InvenTreeSetting(models.Model):
@@ -157,6 +160,42 @@ class Currency(models.Model):
             self.value = 1.0
 
         super().save(*args, **kwargs)
+
+
+class PriceBreak(models.Model):
+    """
+    Represents a PriceBreak model
+    """
+
+    class Meta:
+        abstract = True
+
+    quantity = InvenTree.fields.RoundingDecimalField(max_digits=15, decimal_places=5, default=1, validators=[MinValueValidator(1)])
+
+    cost = InvenTree.fields.RoundingDecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
+
+    currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
+
+    @property
+    def symbol(self):
+        return self.currency.symbol if self.currency else ''
+
+    @property
+    def suffix(self):
+        return self.currency.suffix if self.currency else ''
+
+    @property
+    def converted_cost(self):
+        """
+        Return the cost of this price break, converted to the base currency
+        """
+
+        scaler = decimal.Decimal(1.0)
+
+        if self.currency:
+            scaler = self.currency.value
+
+        return self.cost * scaler
 
 
 class ColorTheme(models.Model):

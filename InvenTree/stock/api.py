@@ -440,6 +440,8 @@ class StockList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
+        queryset = super().filter_queryset(queryset)
+
         # Perform basic filtering:
         # Note: We do not let DRF filter here, it be slow AF
 
@@ -452,6 +454,12 @@ class StockList(generics.ListCreateAPIView):
 
         if belongs_to:
             queryset = queryset.filter(belongs_to=belongs_to)
+
+        # Filter by batch code
+        batch = params.get('batch', None)
+
+        if batch is not None:
+            queryset = queryset.filter(batch=batch)
 
         build = params.get('build', None)
 
@@ -467,6 +475,26 @@ class StockList(generics.ListCreateAPIView):
 
         if sales_order:
             queryset = queryset.filter(sales_order=sales_order)
+
+        # Filter stock items which are installed in another (specific) stock item
+        installed_in = params.get('installed_in', None)
+
+        if installed_in:
+            # Note: The "installed_in" field is called "belongs_to"
+            queryset = queryset.filter(belongs_to=installed_in)
+
+        # Filter stock items which are installed in another stock item
+        installed = params.get('installed', None)
+
+        if installed is not None:
+            installed = str2bool(installed)
+
+            if installed:
+                # Exclude items which are *not* installed in another item
+                queryset = queryset.exclude(belongs_to=None)
+            else:
+                # Exclude items which are instaled in another item
+                queryset = queryset.filter(belongs_to=None)
 
         # Filter by customer
         customer = params.get('customer', None)
@@ -678,6 +706,14 @@ class StockList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
+    ]
+
+    search_fields = [
+        'serial',
+        'batch',
+        'part__name',
+        'part__IPN',
+        'part__description'
     ]
 
 

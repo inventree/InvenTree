@@ -25,6 +25,7 @@ stock_item_detail_urls = [
     url(r'^delete_test_data/', views.StockItemDeleteTestData.as_view(), name='stock-item-delete-test-data'),
     url(r'^assign/', views.StockItemAssignToCustomer.as_view(), name='stock-item-assign'),
     url(r'^return/', views.StockItemReturnToStock.as_view(), name='stock-item-return'),
+    url(r'^install/', views.StockItemInstall.as_view(), name='stock-item-install'),
 
     url(r'^add_tracking/', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
 
@@ -34,6 +35,7 @@ stock_item_detail_urls = [
     url(r'^test/', views.StockItemDetail.as_view(template_name='stock/item_tests.html'), name='stock-item-test-results'),
     url(r'^children/', views.StockItemDetail.as_view(template_name='stock/item_childs.html'), name='stock-item-children'),
     url(r'^attachments/', views.StockItemDetail.as_view(template_name='stock/item_attachments.html'), name='stock-item-attachments'),
+    url(r'^installed/', views.StockItemDetail.as_view(template_name='stock/item_installed.html'), name='stock-item-installed'),
     url(r'^notes/', views.StockItemNotes.as_view(), name='stock-item-notes'),
 
     url('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
@@ -58,6 +60,8 @@ stock_urls = [
     url(r'^location/new/', views.StockLocationCreate.as_view(), name='stock-location-create'),
 
     url(r'^item/new/?', views.StockItemCreate.as_view(), name='stock-item-create'),
+
+    url(r'^item/uninstall/', views.StockItemUninstall.as_view(), name='stock-item-uninstall'),
 
     url(r'^item/test-report-download/', views.StockItemTestReportDownload.as_view(), name='stock-item-test-report-download'),
     url(r'^item/print-stock-labels/', views.StockItemPrintLabels.as_view(), name='stock-item-print-labels'),

@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from common.models import InvenTreeSetting
+import common.models
 
 import re
 
@@ -43,7 +43,7 @@ def validate_part_name(value):
 def validate_part_ipn(value):
     """ Validate the Part IPN against regex rule """
 
-    pattern = InvenTreeSetting.get_setting('part_ipn_regex')
+    pattern = common.models.InvenTreeSetting.get_setting('part_ipn_regex')
 
     if pattern:
         match = re.search(pattern, value)

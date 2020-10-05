@@ -46,6 +46,8 @@ from order import models as OrderModels
 from company.models import SupplierPart
 from stock import models as StockModels
 
+import common.models
+
 
 class PartCategory(InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
@@ -108,6 +110,58 @@ class PartCategory(InvenTreeTree):
     def has_parts(self):
         """ True if there are any parts in this category """
         return self.partcount() > 0
+
+    def prefetch_parts_parameters(self, cascade=True):
+        """ Prefectch parts parameters """
+
+        return self.get_parts(cascade=cascade).prefetch_related('parameters', 'parameters__template').all()
+
+    def get_unique_parameters(self, cascade=True, prefetch=None):
+        """ Get all unique parameter names for all parts from this category """
+
+        unique_parameters_names = []
+
+        if prefetch:
+            parts = prefetch
+        else:
+            parts = self.prefetch_parts_parameters(cascade=cascade)
+
+        for part in parts:
+            for parameter in part.parameters.all():
+                parameter_name = parameter.template.name
+                if parameter_name not in unique_parameters_names:
+                    unique_parameters_names.append(parameter_name)
+
+        return sorted(unique_parameters_names)
+
+    def get_parts_parameters(self, cascade=True, prefetch=None):
+        """ Get all parameter names and values for all parts from this category """
+
+        category_parameters = []
+
+        if prefetch:
+            parts = prefetch
+        else:
+            parts = self.prefetch_parts_parameters(cascade=cascade)
+
+        for part in parts:
+            part_parameters = {
+                'pk': part.pk,
+                'name': part.name,
+                'description': part.description,
+            }
+            # Add IPN only if it exists
+            if part.IPN:
+                part_parameters['IPN'] = part.IPN
+
+            for parameter in part.parameters.all():
+                parameter_name = parameter.template.name
+                parameter_value = parameter.data
+                part_parameters[parameter_name] = parameter_value
+
+            category_parameters.append(part_parameters)
+
+        return category_parameters
 
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
@@ -380,7 +434,7 @@ class Part(MPTTModel):
 
                 return _('Next available serial numbers are') + ' ' + text
             else:
-                text = str(latest)
+                text = str(latest + 1)
 
                 return _('Next available serial number is') + ' ' + text
 
@@ -730,12 +784,13 @@ class Part(MPTTModel):
         """ Return the current number of parts currently being built
         """
 
-        quantity = self.active_builds.aggregate(quantity=Sum('quantity'))['quantity']
+        stock_items = self.stock_items.filter(is_building=True)
 
-        if quantity is None:
-            quantity = 0
+        query = stock_items.aggregate(
+            quantity=Coalesce(Sum('quantity'), Decimal(0))
+        )
 
-        return quantity
+        return query['quantity']
 
     def build_order_allocations(self):
         """
@@ -845,7 +900,6 @@ class Part(MPTTModel):
 
         return str(hash.digest())
 
-    @property
     def is_bom_valid(self):
         """ Check if the BOM is 'valid' - if the calculated checksum matches the stored value
         """
@@ -1227,6 +1281,21 @@ class PartAttachment(InvenTreeAttachment):
                              related_name='attachments')
 
 
+class PartSellPriceBreak(common.models.PriceBreak):
+    """
+    Represents a price break for selling this part
+    """
+
+    part = models.ForeignKey(
+        Part, on_delete=models.CASCADE,
+        related_name='salepricebreaks',
+        limit_choices_to={'salable': True}
+    )
+
+    class Meta:
+        unique_together = ('part', 'quantity')
+
+
 class PartStar(models.Model):
     """ A PartStar object creates a relationship between a User and a Part.
 
@@ -1431,6 +1500,7 @@ class BomItem(models.Model):
         part: Link to the parent part (the part that will be produced)
         sub_part: Link to the child part (the part that will be consumed)
         quantity: Number of 'sub_parts' consumed to produce one 'part'
+        optional: Boolean field describing if this BomItem is optional
         reference: BOM reference field (e.g. part designators)
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
@@ -1463,6 +1533,8 @@ class BomItem(models.Model):
 
     # Quantity required
     quantity = models.DecimalField(default=1.0, max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], help_text=_('BOM quantity for this BOM item'))
+
+    optional = models.BooleanField(default=False, help_text=_("This BOM item is optional"))
 
     overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
                                help_text=_('Estimated build wastage quantity (absolute or percentage)')

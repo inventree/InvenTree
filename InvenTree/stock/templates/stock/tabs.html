@@ -38,4 +38,12 @@
         <a href="{% url 'stock-item-children' item.id %}">{% trans "Children" %}{% if item.child_count > 0 %}<span class='badge'>{{ item.child_count }}</span>{% endif %}</a>
     </li>
     {% endif %}
+    {% if item.part.assembly or item.installedItemCount > 0 %}
+    <li {% if tab == 'installed' %} class='active'{% endif %}>
+        <a href="{% url 'stock-item-installed' item.id %}">
+            {% trans "Installed Items" %}
+            {% if item.installedItemCount > 0 %}<span class='badge'>{{ item.installedItemCount }}</span>{% endif %}
+        </a>
+    </li>
+    {% endif %}
 </ul>

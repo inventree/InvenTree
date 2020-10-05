@@ -1,6 +1,8 @@
 {% extends "modal_form.html" %}
+{% load i18n %}
 
 {% block pre_form_content %}
-Create serialized items from this stock item.<br>
-Select quantity to serialize, and unique serial numbers.
+{% trans "Create serialized items from this stock item." %}
+<br>
+{% trans "Select quantity to serialize, and unique serial numbers." %}
 {% endblock %}

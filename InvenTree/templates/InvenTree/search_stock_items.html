@@ -1,0 +1,16 @@
+{% extends "collapse.html" %}
+
+{% load i18n %}
+
+{% block collapse_title %}
+<h4>{% trans "Stock Items" %}</h4>
+{% endblock %}
+
+{% block collapse_heading %}
+<h4><span id='stock-results-count'>{% include "InvenTree/searching.html" %}</span></h4>
+{% endblock %}
+
+{% block collapse_content %}
+<table class='table table-striped table-condensed' data-toolbar="#button-toolbar" id='stock-results-table'>
+</table>
+{% endblock %}

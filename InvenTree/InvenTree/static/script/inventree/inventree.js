@@ -105,9 +105,14 @@ function makeProgressBar(value, maximum, opts) {
     var options = opts || {};
 
     value = parseFloat(value);
-    maximum = parseFloat(maximum);
 
-    var percent = parseInt(value / maximum * 100);
+    var percent = 100;
+
+    // Prevent div-by-zero or null value
+    if (maximum && maximum > 0) {
+        maximum = parseFloat(maximum);
+        percent = parseInt(value / maximum * 100);
+    }
 
     if (percent > 100) {
         percent = 100;
@@ -115,10 +120,20 @@ function makeProgressBar(value, maximum, opts) {
 
     var extraclass = '';
 
-    if (value > maximum) {
+    if (maximum) {
+        // TODO - Special color?
+    }
+    else if (value > maximum) {
         extraclass='progress-bar-over';
     } else if (value < maximum) {
         extraclass = 'progress-bar-under';
+    }
+
+    var text = value;
+
+    if (maximum) {
+        text += ' / ';
+        text += maximum;
     }
 
     var id = options.id || 'progress-bar';
@@ -126,7 +141,7 @@ function makeProgressBar(value, maximum, opts) {
     return `
     <div id='${id}' class='progress'>
         <div class='progress-bar ${extraclass}' role='progressbar' aria-valuenow='${percent}' aria-valuemin='0' aria-valuemax='100' style='width:${percent}%'></div>
-        <div class='progress-value'>${value} / ${maximum}</div>
+        <div class='progress-value'>${text}</div>
     </div>
     `;
 }

@@ -17,6 +17,8 @@ from .models import Part, PartCategory, PartAttachment
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartTestTemplate
+from .models import PartSellPriceBreak
+
 
 from common.models import Currency
 
@@ -229,7 +231,8 @@ class EditBomItemForm(HelperForm):
             'quantity',
             'reference',
             'overage',
-            'note'
+            'note',
+            'optional',
         ]
 
         # Prevent editing of the part associated with this BomItem
@@ -251,5 +254,24 @@ class PartPriceForm(forms.Form):
         model = Part
         fields = [
             'quantity',
+            'currency',
+        ]
+
+
+class EditPartSalePriceBreakForm(HelperForm):
+    """
+    Form for creating / editing a sale price for a part
+    """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    cost = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    class Meta:
+        model = PartSellPriceBreak
+        fields = [
+            'part',
+            'quantity',
+            'cost',
             'currency',
         ]

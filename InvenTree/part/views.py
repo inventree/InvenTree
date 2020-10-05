@@ -26,6 +26,7 @@ from .models import PartParameterTemplate, PartParameter
 from .models import BomItem
 from .models import match_part_names
 from .models import PartTestTemplate
+from .models import PartSellPriceBreak
 
 from common.models import Currency, InvenTreeSetting
 from company.models import SupplierPart
@@ -1871,10 +1872,51 @@ class PartParameterDelete(AjaxDeleteView):
 
 class CategoryDetail(DetailView):
     """ Detail view for PartCategory """
+
     model = PartCategory
     context_object_name = 'category'
     queryset = PartCategory.objects.all().prefetch_related('children')
-    template_name = 'part/category.html'
+    template_name = 'part/category_partlist.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(CategoryDetail, self).get_context_data(**kwargs).copy()
+
+        try:
+            context['part_count'] = kwargs['object'].partcount()
+        except KeyError:
+            context['part_count'] = 0
+
+        return context
+
+
+class CategoryParametric(CategoryDetail):
+    """ Parametric view for PartCategory """
+
+    template_name = 'part/category_parametric.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(CategoryParametric, self).get_context_data(**kwargs).copy()
+
+        # Get current category
+        category = kwargs.get('object', None)
+
+        if category:
+            cascade = kwargs.get('cascade', True)
+            # Prefetch parts parameters
+            parts_parameters = category.prefetch_parts_parameters(cascade=cascade)
+            # Get table headers (unique parameters names)
+            context['headers'] = category.get_unique_parameters(cascade=cascade,
+                                                                prefetch=parts_parameters)
+            # Insert part information
+            context['headers'].insert(0, 'description')
+            context['headers'].insert(0, 'part')
+            # Get parameters data
+            context['parameters'] = category.get_parts_parameters(cascade=cascade,
+                                                                  prefetch=parts_parameters)
+
+        return context
 
 
 class CategoryEdit(AjaxUpdateView):
@@ -2097,3 +2139,75 @@ class BomItemDelete(AjaxDeleteView):
     ajax_template_name = 'part/bom-delete.html'
     context_object_name = 'item'
     ajax_form_title = _('Confim BOM item deletion')
+
+
+class PartSalePriceBreakCreate(AjaxCreateView):
+    """ View for creating a sale price break for a part """
+
+    model = PartSellPriceBreak
+    form_class = part_forms.EditPartSalePriceBreakForm
+    ajax_form_title = _('Add Price Break')
+    
+    def get_data(self):
+        return {
+            'success': _('Added new price break')
+        }
+
+    def get_part(self):
+        try:
+            part = Part.objects.get(id=self.request.GET.get('part'))
+        except (ValueError, Part.DoesNotExist):
+            part = None
+        
+        if part is None:
+            try:
+                part = Part.objects.get(id=self.request.POST.get('part'))
+            except (ValueError, Part.DoesNotExist):
+                part = None
+
+        return part
+
+    def get_form(self):
+
+        form = super(AjaxCreateView, self).get_form()
+        form.fields['part'].widget = HiddenInput()
+
+        return form
+
+    def get_initial(self):
+
+        initials = super(AjaxCreateView, self).get_initial()
+
+        initials['part'] = self.get_part()
+
+        # Pre-select the default currency
+        try:
+            base = Currency.objects.get(base=True)
+            initials['currency'] = base
+        except Currency.DoesNotExist:
+            pass
+
+        return initials
+
+
+class PartSalePriceBreakEdit(AjaxUpdateView):
+    """ View for editing a sale price break """
+
+    model = PartSellPriceBreak
+    form_class = part_forms.EditPartSalePriceBreakForm
+    ajax_form_title = _('Edit Price Break')
+
+    def get_form(self):
+
+        form = super().get_form()
+        form.fields['part'].widget = HiddenInput()
+
+        return form
+
+    
+class PartSalePriceBreakDelete(AjaxDeleteView):
+    """ View for deleting a sale price break """
+
+    model = PartSellPriceBreak
+    ajax_form_title = _("Delete Price Break")
+    ajax_template_name = "modal_delete_form.html"

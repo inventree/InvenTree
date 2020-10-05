@@ -109,10 +109,20 @@ $.fn.inventreeTable = function(options) {
     options.pagination = true;
     options.pageSize = inventreeLoad(varName, 25);
     options.pageList = [25, 50, 100, 250, 'all'];
+
     options.rememberOrder = true;
-    options.sortable = true;
-    options.search = true;
-    options.showColumns = true;
+
+    if (options.sortable == null) {
+        options.sortable = true;
+    }
+
+    if (options.search == null) {
+        options.search = true;
+    }
+
+    if (options.showColumns == null) {
+        options.showColumns = true;
+    }
 
     // Callback to save pagination data
     options.onPageChange = function(number, size) {
@@ -156,6 +166,11 @@ $.fn.inventreeTable = function(options) {
         } else {
             console.log('Could not get list of visible columns!');
         }
+    }
+
+    // Optionally, link buttons to the table selection
+    if (options.buttons) {
+        linkButtonsToSelection(table, options.buttons);
     }
 }
 

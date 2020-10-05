@@ -11,7 +11,7 @@ from django.core import validators
 from django import forms
 from decimal import Decimal
 
-from InvenTree.helpers import normalize
+import InvenTree.helpers
 
 
 class InvenTreeURLFormField(FormURLField):
@@ -55,7 +55,7 @@ class RoundingDecimalFormField(forms.DecimalField):
         """
 
         if type(value) == Decimal:
-            return normalize(value)
+            return InvenTree.helpers.normalize(value)
         else:
             return value
 
