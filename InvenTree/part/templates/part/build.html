@@ -10,7 +10,7 @@
 <div id='button-toolbar'>
     <div class='button-toolbar container-flui' style='float: right';>
         {% if part.active %}
-        {% if perms.build.add_build %}
+        {% if roles.build.add %}
         <button class="btn btn-success" id='start-build'>{% trans "Start New Build" %}</button>
         {% endif %}
         {% endif %}

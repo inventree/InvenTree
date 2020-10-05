@@ -9,7 +9,7 @@
         {% if category %}
         <h3>
             {{ category.name }}
-            {% if user.is_staff and perms.part.change_partcategory %}
+            {% if user.is_staff and roles.part.change %}
             <a href="{% url 'admin:part_partcategory_change' category.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
             {% endif %}
         </h3>
@@ -20,18 +20,18 @@
         {% endif %}
         <p>
             <div class='btn-group action-buttons'>
-                {% if perms.part.add_partcategory %}
+                {% if roles.part.add %}
                 <button class='btn btn-default' id='cat-create' title='{% trans "Create new part category" %}'>
                     <span class='fas fa-plus-circle icon-green'/>
                 </button>
                 {% endif %}
                 {% if category %}
-                {% if perms.part.change_partcategory %}
+                {% if roles.part.change %}
                 <button class='btn btn-default' id='cat-edit' title='{% trans "Edit part category" %}'>
                     <span class='fas fa-edit icon-blue'/>
                 </button>
                 {% endif %}
-                {% if perms.part.delete_partcategory %}
+                {% if roles.part.delete %}
                 <button class='btn btn-default' id='cat-delete' title='{% trans "Delete part category" %}'>
                     <span class='fas fa-trash-alt icon-red'/>
                 </button>
@@ -110,13 +110,13 @@
     <div class='button-toolbar container-fluid' style="float: right;">
         <div class='btn-group'>
             <button class='btn btn-default' id='part-export' title='{% trans "Export Part Data" %}'>{% trans "Export" %}</button>
-            {% if perms.part.add_part %}
+            {% if roles.part.add %}
             <button class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>{% trans "New Part" %}</button>
             {% endif %}
             <div class='btn-group'>
                 <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown">{% trans "Options" %}<span class='caret'></span></button>
                 <ul class='dropdown-menu'>
-                    {% if perms.part.change_part %}
+                    {% if roles.part.change %}
                     <li><a href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
                     {% endif %}
                     <li><a href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
@@ -190,7 +190,7 @@
         location.href = url;
     });
 
-    {% if perms.part.add_part %}
+    {% if roles.part.add %}
     $("#part-create").click(function() {
         launchModalForm(
             "{% url 'part-create' %}",

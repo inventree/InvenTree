@@ -26,7 +26,7 @@
     {% if part.assembly %}
     <li{% ifequal tab 'bom' %} class="active"{% endifequal %}>
         <a href="{% url 'part-bom' part.id %}">{% trans "BOM" %}<span class="badge{% if part.is_bom_valid == False %} badge-alert{% endif %}">{{ part.bom_count }}</span></a></li>
-    {% if perms.build.view_build %}
+    {% if roles.build.view %}
     <li{% ifequal tab 'build' %} class="active"{% endifequal %}>
         <a href="{% url 'part-build' part.id %}">{% trans "Build Orders" %}<span class='badge'>{{ part.builds.count }}</span></a>
     </li>
