@@ -489,6 +489,7 @@ class BuildItem(models.Model):
         # TODO - If the item__part object is not trackable, delete the stock item here
         
         item.build_order = self.build
+        item.is_building = False
         item.save()
 
     build = models.ForeignKey(
