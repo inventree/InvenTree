@@ -45,6 +45,9 @@ class StockCategoryTree(TreeSerializer):
     title = 'Stock'
     model = StockLocation
 
+    def get_queryset(self):
+        return self.get_items()
+
     @property
     def root_url(self):
         return reverse('stock-index')

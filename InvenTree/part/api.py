@@ -36,6 +36,9 @@ class PartCategoryTree(TreeSerializer):
 
     title = "Parts"
     model = PartCategory
+
+    def get_queryset(self):
+        return self.get_items()
     
     @property
     def root_url(self):
