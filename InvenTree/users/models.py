@@ -160,6 +160,15 @@ class RuleSet(models.Model):
 
     def save(self, *args, **kwargs):
 
+        # It does not make sense to be able to change / create something,
+        # but not be able to view it!
+
+        if self.can_add or self.can_change or self.can_delete:
+            self.can_view = True
+
+        if self.can_add or self.can_delete:
+            self.can_change = True
+
         super().save(*args, **kwargs)
 
     def get_models(self):
@@ -227,16 +236,13 @@ def update_group_roles(group, debug=False):
             if permission_string in permissions_to_delete:
                 permissions_to_delete.remove(permission_string)
 
-            if permission_string not in group_permissions:
-                permissions_to_add.add(permission_string)
+            permissions_to_add.add(permission_string)
 
         else:
 
             # A forbidden action will be ignored if we have already allowed it
             if permission_string not in permissions_to_add:
-
-                if permission_string in group_permissions:
-                    permissions_to_delete.add(permission_string)
+                permissions_to_delete.add(permission_string)
 
     # Get all the rulesets associated with this group
     for r in RuleSet.RULESET_CHOICES:
@@ -287,6 +293,10 @@ def update_group_roles(group, debug=False):
     # Add any required permissions to the group
     for perm in permissions_to_add:
         
+        # Ignore if permission is already in the group
+        if perm in group_permissions:
+            continue
+
         permission = get_permission_object(perm)
 
         group.permissions.add(permission)
@@ -296,6 +306,10 @@ def update_group_roles(group, debug=False):
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
+
+        # Ignore if the permission is not already assigned
+        if perm not in group_permissions:
+            continue
 
         permission = get_permission_object(perm)
 
