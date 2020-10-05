@@ -35,18 +35,25 @@ def user_roles(request):
 
     user = request.user
 
-    roles = {}
+    roles = {
+    }
 
     for group in user.groups.all():
         for rule in group.rule_sets.all():
-            roles[rule.name] = {
-                'view': rule.can_view or user.is_superuser,
-                'add': rule.can_add or user.is_superuser,
-                'change': rule.can_change or user.is_superuser,
-                'delete': rule.can_delete or user.is_superuser,
-            }
 
-    print("Roles:")
-    print(roles)
+            # Ensure the role name is in the dict
+            if rule.name not in roles:
+                roles[rule.name] = {
+                    'view': user.is_superuser,
+                    'add': user.is_superuser,
+                    'change': user.is_superuser,
+                    'delete': user.is_superuser
+                }
+
+            # Roles are additive across groups
+            roles[rule.name]['view'] |= rule.can_view
+            roles[rule.name]['add'] |= rule.can_add
+            roles[rule.name]['change'] |= rule.can_change
+            roles[rule.name]['delete'] |= rule.can_delete
 
     return {'roles': roles}
