@@ -9,6 +9,7 @@ from stock.models import StockItem
 from company.models import Company
 
 from InvenTree.status_codes import StockStatus
+from InvenTree.helpers import addUserPermissions
 
 
 class PartAPITest(APITestCase):
@@ -29,7 +30,33 @@ class PartAPITest(APITestCase):
     def setUp(self):
         # Create a user for auth
         User = get_user_model()
-        User.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@testing.com',
+            password='password'
+        )
+
+        # Add the permissions required to access the API endpoints
+        perms = [
+            'view_part',
+            'add_part',
+            'change_part',
+            'delete_part',
+            'view_partcategory',
+            'add_partcategory',
+            'change_partcategory',
+            'view_bomitem',
+            'add_bomitem',
+            'change_bomitem',
+            'view_partattachment',
+            'change_partattachment',
+            'add_partattachment',
+            'view_parttesttemplate',
+            'add_parttesttemplate',
+            'change_parttesttemplate',
+        ]
+
+        addUserPermissions(self.user, perms)
 
         self.client.login(username='testuser', password='password')
 

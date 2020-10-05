@@ -4,6 +4,8 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
+from InvenTree.helpers import addUserPermissions
+
 from .models import Part
 
 
@@ -23,7 +25,32 @@ class PartViewTestCase(TestCase):
 
         # Create a user
         User = get_user_model()
-        User.objects.create_user('username', 'user@email.com', 'password')
+        self.user = User.objects.create_user(
+            username='username',
+            email='user@email.com',
+            password='password'
+        )
+
+        # Add the permissions required to access the pages
+        perms = [
+            'view_part',
+            'add_part',
+            'change_part',
+            'delete_part',
+            'view_partcategory',
+            'add_partcategory',
+            'change_partcategory',
+            'view_bomitem',
+            'add_bomitem',
+            'change_bomitem',
+            'view_partattachment',
+            'change_partattachment',
+            'add_partattachment',
+        ]
+
+        addUserPermissions(self.user, perms)
+
+        self.user.save()
 
         self.client.login(username='username', password='password')
 
@@ -140,11 +167,13 @@ class PartTests(PartViewTestCase):
     """ Tests for Part forms """
 
     def test_part_edit(self):
+
         response = self.client.get(reverse('part-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
 
         keys = response.context.keys()
         data = str(response.content)
+
+        self.assertEqual(response.status_code, 200)
 
         self.assertIn('part', keys)
         self.assertIn('csrf_token', keys)
@@ -188,6 +217,8 @@ class PartAttachmentTests(PartViewTestCase):
 
         response = self.client.get(reverse('part-attachment-create'), {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
+
+        # TODO - Create a new attachment using this view
 
     def test_invalid_create(self):
         """ test creation of an attachment for an invalid part """

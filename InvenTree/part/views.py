@@ -635,7 +635,7 @@ class PartNotes(UpdateView):
     template_name = 'part/notes.html'
     model = Part
 
-    permission_required = 'part.update_part'
+    permission_required = 'part.change_part'
 
     fields = ['notes']
 
@@ -753,7 +753,7 @@ class PartImageUpload(AjaxUpdateView):
 
     form_class = part_forms.PartImageForm
 
-    permission_required = 'part.update_part'
+    permission_required = 'part.change_part'
 
     def get_data(self):
         return {
@@ -768,7 +768,7 @@ class PartImageSelect(AjaxUpdateView):
     ajax_template_name = 'part/select_image.html'
     ajax_form_title = _('Select Part Image')
 
-    permission_required = 'part.update_part'
+    permission_required = 'part.change_part'
 
     fields = [
         'image',
@@ -811,7 +811,7 @@ class PartEdit(AjaxUpdateView):
     ajax_form_title = _('Edit Part Properties')
     context_object_name = 'part'
 
-    permission_required = 'part.update_part'
+    permission_required = 'part.change_part'
 
     def get_form(self):
         """ Create form for Part editing.
@@ -837,7 +837,7 @@ class BomValidate(AjaxUpdateView):
     context_object_name = 'part'
     form_class = part_forms.BomValidateForm
 
-    permission_required = ('part.update_part')
+    permission_required = ('part.change_part')
 
     def get_context(self):
         return {
@@ -905,7 +905,7 @@ class BomUpload(PermissionRequiredMixin, FormView):
     missing_columns = []
     allowed_parts = []
 
-    permission_required = ('part.update_part', 'part.add_bomitem')
+    permission_required = ('part.change_part', 'part.add_bomitem')
 
     def get_success_url(self):
         part = self.get_object()
