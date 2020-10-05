@@ -190,6 +190,17 @@ class BuildTest(TestCase):
 
         # Generate some serial numbers!
         serials = ExtractSerialNumbers("1-10", 10)
+        #
+        # Create stock items for each build output
+        for i in range(self.build.quantity):
+            item = StockItem.objects.create(
+                part=self.build.part,
+                build=self.build,
+                quantity=1,
+                batch=str(self.build.batch) if self.build.batch else '',
+                is_building=True
+            )
+            item.save()
 
         self.build.completeBuild(None, serials, None)
 

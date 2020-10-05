@@ -296,15 +296,17 @@ class Build(MPTTModel):
         # Update build output metadata
         if self.part.trackable and serial_numbers:
             if len(serial_numbers) != self.build_outputs.count():
-                raise ValidationError("Number of serial numbers should equal the number of build outputs")
-            for i, build_output in enumerate(self.build_outputs):
+                raise ValidationError("Number of serial numbers [{}] should equal the number of build outputs [{}]".format(
+                    len(serial_numbers), self.build_outputs.count()
+                ))
+            for i, build_output in enumerate(self.build_outputs.all()):
                 build_output.serial = serial_numbers[i]
                 build_output.location = location
                 build_output.notes = notes
                 build_output.save()
                 build_output.is_building = False
         else:
-            for build_output in self.build_outputs:
+            for build_output in self.build_outputs.all():
                 build_output.location = location
                 build_output.notes = notes
                 build_output.save()
