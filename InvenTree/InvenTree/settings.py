@@ -138,6 +138,7 @@ INSTALLED_APPS = [
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
+    'users.apps.UsersConfig',
 
     # Third part add-ons
     'django_filters',               # Extended filter functionality
@@ -153,6 +154,7 @@ INSTALLED_APPS = [
     'markdownx',                    # Markdown editing
     'markdownify',                  # Markdown template rendering
     'django_tex',                   # LaTeX output
+    'django_admin_shell',           # Python shell for the admin interface
 ]
 
 LOGGING = {
