@@ -389,7 +389,7 @@ class BuildCreate(AjaxCreateView):
     """ View to create a new Build object """
     model = Build
     context_object_name = 'build'
-    form_class = forms.EditBuildForm
+    form_class = forms.CreateBuildForm
     ajax_form_title = _('Start new Build')
     ajax_template_name = 'modal_form.html'
 

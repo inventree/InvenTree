@@ -13,6 +13,24 @@ from .models import Build, BuildItem
 from stock.models import StockLocation
 
 
+class CreateBuildForm(HelperForm):
+    """ Form for creating a Build object.
+    """
+
+    class Meta:
+        model = Build
+        fields = [
+            'title',
+            'part',
+            'parent',
+            'sales_order',
+            'quantity',
+            'take_from',
+            'batch',
+            'link',
+        ]
+
+
 class EditBuildForm(HelperForm):
     """ Form for editing a Build object.
     """
@@ -24,7 +42,6 @@ class EditBuildForm(HelperForm):
             'part',
             'parent',
             'sales_order',
-            'quantity',
             'take_from',
             'batch',
             'link',
