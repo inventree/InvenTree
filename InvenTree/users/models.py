@@ -335,6 +335,7 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     group permissions.
     """
     created = kwargs.get('created', False)
+    # To trigger the group permissions update: update_fields should not be None
     update_fields = kwargs.get('update_fields', None)
 
     if created or update_fields:

@@ -101,6 +101,7 @@ class RoleGroupAdmin(admin.ModelAdmin):
 
     def save_formset(self, request, form, formset, change):
         formset.save()  # this will save the children
+        # update_fields is required to trigger permissions update
         form.instance.save(update_fields=['name'])  # form.instance is the parent
 
 
