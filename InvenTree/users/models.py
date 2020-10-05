@@ -134,9 +134,9 @@ class RuleSet(models.Model):
 
     can_view = models.BooleanField(verbose_name=_('View'), default=True, help_text=_('Permission to view items'))
 
-    can_add = models.BooleanField(verbose_name=_('Create'), default=False, help_text=_('Permission to add items'))
+    can_add = models.BooleanField(verbose_name=_('Add'), default=False, help_text=_('Permission to add items'))
 
-    can_change = models.BooleanField(verbose_name=_('Update'), default=False, help_text=_('Permissions to edit items'))
+    can_change = models.BooleanField(verbose_name=_('Change'), default=False, help_text=_('Permissions to edit items'))
 
     can_delete = models.BooleanField(verbose_name=_('Delete'), default=False, help_text=_('Permission to delete items'))
     
