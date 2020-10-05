@@ -210,6 +210,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'InvenTree.context.status_codes',
+                'InvenTree.context.user_roles',
             ],
         },
     },
