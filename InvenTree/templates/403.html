@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block page_title %}
+InvenTree | {% trans "Permission Denied" %}
+{% endblock %}
+
+{% block content %}
+
+<div class='container-fluid'>
+    <h3>{% trans "Permission Denied" %}</h3>
+
+    <div class='alert alert-danger alert-block'>
+        {% trans "You do not have permission to view this page." %}
+    </div>
+</div>
+
+{% endblock %}
