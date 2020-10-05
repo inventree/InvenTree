@@ -27,6 +27,7 @@ class RuleSet(models.Model):
         ('admin', _('Admin')),
         ('part', _('Parts')),
         ('stock', _('Stock')),
+        ('test', _('Testing')),
         ('build', _('Build Orders')),
         ('purchase_order', _('Purchase Orders')),
         ('sales_order', _('Sales Orders')),
@@ -50,7 +51,6 @@ class RuleSet(models.Model):
             'part_partcategory',
             'part_partattachment',
             'part_partsellpricebreak',
-            'part_parttesttemplate',
             'part_partparametertemplate',
             'part_partparameter',
         ],
@@ -59,6 +59,9 @@ class RuleSet(models.Model):
             'stock_stocklocation',
             'stock_stockitemattachment',
             'stock_stockitemtracking',
+        ],
+        'test': [
+            'part_parttesttemplate',
             'stock_stockitemtestresult',
         ],
         'build': [
