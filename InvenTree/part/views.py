@@ -78,7 +78,7 @@ class PartAttachmentCreate(AjaxCreateView):
     ajax_form_title = _("Add part attachment")
     ajax_template_name = "modal_form.html"
 
-    permission_required = 'part.create_partattachment'
+    permission_required = 'part.add_partattachment'
 
     def post_save(self):
         """ Record the user that uploaded the attachment """
@@ -166,7 +166,7 @@ class PartTestTemplateCreate(AjaxCreateView):
     form_class = part_forms.EditPartTestTemplateForm
     ajax_form_title = _("Create Test Template")
 
-    permission_required = 'part.create_parttesttemplate'
+    permission_required = 'part.add_parttesttemplate'
     
     def get_initial(self):
 
@@ -306,7 +306,7 @@ class MakePartVariant(AjaxCreateView):
     ajax_form_title = _('Create Variant')
     ajax_template_name = 'part/variant_part.html'
 
-    permission_required = 'part.create_part'
+    permission_required = 'part.add_part'
 
     def get_part_template(self):
         return get_object_or_404(Part, id=self.kwargs['pk'])
@@ -386,7 +386,7 @@ class PartDuplicate(AjaxCreateView):
     ajax_form_title = _("Duplicate Part")
     ajax_template_name = "part/copy_part.html"
 
-    permission_required = 'part.create_part'
+    permission_required = 'part.add_part'
 
     def get_data(self):
         return {
@@ -511,7 +511,7 @@ class PartCreate(AjaxCreateView):
     ajax_form_title = _('Create new part')
     ajax_template_name = 'part/create_part.html'
 
-    permission_required = 'part.create_part'
+    permission_required = 'part.add_part'
 
     def get_data(self):
         return {
@@ -905,7 +905,7 @@ class BomUpload(PermissionRequiredMixin, FormView):
     missing_columns = []
     allowed_parts = []
 
-    permission_required = ('part.update_part', 'part.create_bomitem')
+    permission_required = ('part.update_part', 'part.add_bomitem')
 
     def get_success_url(self):
         part = self.get_object()
@@ -1827,7 +1827,7 @@ class PartPricing(AjaxView):
 class PartParameterTemplateCreate(AjaxCreateView):
     """ View for creating a new PartParameterTemplate """
 
-    permission_required = 'part.create_partparametertemplate'
+    permission_required = 'part.add_partparametertemplate'
 
     model = PartParameterTemplate
     form_class = part_forms.EditPartParameterTemplateForm
@@ -1856,7 +1856,7 @@ class PartParameterTemplateDelete(AjaxDeleteView):
 class PartParameterCreate(AjaxCreateView):
     """ View for creating a new PartParameter """
 
-    permission_required = 'part.create_partparameter'
+    permission_required = 'part.add_partparameter'
 
     model = PartParameter
     form_class = part_forms.EditPartParameterForm
@@ -2044,7 +2044,7 @@ class CategoryCreate(AjaxCreateView):
     ajax_template_name = 'modal_form.html'
     form_class = part_forms.EditCategoryForm
 
-    permission_required = 'part.create_partcategory'
+    permission_required = 'part.add_partcategory'
 
     def get_context_data(self, **kwargs):
         """ Add extra context data to template.
@@ -2097,7 +2097,7 @@ class BomItemCreate(AjaxCreateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create BOM item')
 
-    permission_required = 'part.create_bomitem'
+    permission_required = 'part.add_bomitem'
 
     def get_form(self):
         """ Override get_form() method to reduce Part selection options.
@@ -2225,7 +2225,7 @@ class PartSalePriceBreakCreate(AjaxCreateView):
     form_class = part_forms.EditPartSalePriceBreakForm
     ajax_form_title = _('Add Price Break')
 
-    permission_required = 'part.create_partsellpricebreak'
+    permission_required = 'part.add_partsellpricebreak'
     
     def get_data(self):
         return {
