@@ -293,35 +293,22 @@ class Build(MPTTModel):
             q=self.quantity,
             now=str(datetime.now().date())
         )
-
-        # Generate the build outputs
+        # Update build output metadata
         if self.part.trackable and serial_numbers:
-            # Add new serial numbers
-            for serial in serial_numbers:
-                item = StockModels.StockItem.objects.create(
-                    part=self.part,
-                    build=self,
-                    location=location,
-                    quantity=1,
-                    serial=serial,
-                    batch=str(self.batch) if self.batch else '',
-                    notes=notes
-                )
-
-                item.save()
-
+            if len(serial_numbers) != self.build_outputs.count():
+                raise ValidationError("Number of serial numbers should equal the number of build outputs")
+            for i, build_output in enumerate(self.build_outputs):
+                build_output.serial = serial_numbers[i]
+                build_output.location = location
+                build_output.notes = notes
+                build_output.save()
+                build_output.is_building = False
         else:
-            # Add stock of the newly created item
-            item = StockModels.StockItem.objects.create(
-                part=self.part,
-                build=self,
-                location=location,
-                quantity=self.quantity,
-                batch=str(self.batch) if self.batch else '',
-                notes=notes
-            )
-
-            item.save()
+            for build_output in self.build_outputs:
+                build_output.location = location
+                build_output.notes = notes
+                build_output.save()
+                build_output.is_building = False
 
         # Finally, mark the build as complete
         self.completion_date = datetime.now().date()

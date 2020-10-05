@@ -314,7 +314,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
             self.pre_save()
             self.object = self.form.save()
-            self.post_save()
+            self.post_save(obj=self.object)  # TODO: is this necessary? get_object() was failing inside post_save()
 
             # Return the PK of the newly-created object
             data['pk'] = self.object.pk

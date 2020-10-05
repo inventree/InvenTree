@@ -5,20 +5,21 @@ Django views for interacting with Build objects
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext as _
+from datetime import datetime
+
 from django.core.exceptions import ValidationError
-from django.views.generic import DetailView, ListView, UpdateView
 from django.forms import HiddenInput
 from django.urls import reverse
+from django.utils.translation import ugettext as _
+from django.views.generic import DetailView, ListView, UpdateView
 
-from part.models import Part
-from .models import Build, BuildItem
-from . import forms
-from stock.models import StockLocation, StockItem
-
-from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
 from InvenTree.helpers import str2bool, ExtractSerialNumbers
 from InvenTree.status_codes import BuildStatus
+from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
+from part.models import Part
+from stock.models import StockLocation, StockItem
+from . import forms
+from .models import Build, BuildItem
 
 
 class BuildIndex(ListView):
@@ -417,6 +418,20 @@ class BuildCreate(AjaxCreateView):
         return {
             'success': _('Created new build'),
         }
+
+    def post_save(self, obj, **kwargs):
+        build = obj
+        # Create stock items for each build output
+        for i in range(build.quantity):
+            item = StockItem.objects.create(
+                part=build.part,
+                build=build,
+                quantity=build.quantity,
+                batch=str(build.batch) if build.batch else '',
+                is_building=True
+            )
+            item.save()
+        super().post_save(**kwargs)
 
 
 class BuildUpdate(AjaxUpdateView):
