@@ -37,4 +37,4 @@ class PartConfig(AppConfig):
                             part.image = None
                             part.save()
         except (OperationalError, ProgrammingError):
-            print("Could not generate Part thumbnails")
+            pass
