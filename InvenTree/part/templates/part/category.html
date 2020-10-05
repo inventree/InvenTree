@@ -20,7 +20,7 @@
         {% endif %}
         <p>
             <div class='btn-group action-buttons'>
-                {% if perms.part.create_partcategory %}
+                {% if perms.part.add_partcategory %}
                 <button class='btn btn-default' id='cat-create' title='{% trans "Create new part category" %}'>
                     <span class='fas fa-plus-circle icon-green'/>
                 </button>
@@ -110,7 +110,7 @@
     <div class='button-toolbar container-fluid' style="float: right;">
         <div class='btn-group'>
             <button class='btn btn-default' id='part-export' title='{% trans "Export Part Data" %}'>{% trans "Export" %}</button>
-            {% if perms.part.create_part %}
+            {% if perms.part.add_part %}
             <button class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>{% trans "New Part" %}</button>
             {% endif %}
             <div class='btn-group'>
@@ -190,7 +190,7 @@
         location.href = url;
     });
 
-    {% if perms.part.create_part %}
+    {% if perms.part.add_part %}
     $("#part-create").click(function() {
         launchModalForm(
             "{% url 'part-create' %}",

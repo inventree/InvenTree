@@ -26,14 +26,17 @@
     {% if part.assembly %}
     <li{% ifequal tab 'bom' %} class="active"{% endifequal %}>
         <a href="{% url 'part-bom' part.id %}">{% trans "BOM" %}<span class="badge{% if part.is_bom_valid == False %} badge-alert{% endif %}">{{ part.bom_count }}</span></a></li>
+    {% if perms.build.view_build %}
     <li{% ifequal tab 'build' %} class="active"{% endifequal %}>
-        <a href="{% url 'part-build' part.id %}">{% trans "Build Orders" %}<span class='badge'>{{ part.builds.count }}</span></a></li>
+        <a href="{% url 'part-build' part.id %}">{% trans "Build Orders" %}<span class='badge'>{{ part.builds.count }}</span></a>
+    </li>
+    {% endif %}
     {% endif %}
     {% if part.component or part.used_in_count > 0 %}
     <li{% ifequal tab 'used' %} class="active"{% endifequal %}>
         <a href="{% url 'part-used-in' part.id %}">{% trans "Used In" %} {% if part.used_in_count > 0 %}<span class="badge">{{ part.used_in_count }}</span>{% endif %}</a></li>
     {% endif %}
-    {% if part.purchaseable %}
+    {% if part.purchaseable and perms.order.view_purchaseorder %}
     {% if part.is_template == False %}
     <li{% ifequal tab 'suppliers' %} class="active"{% endifequal %}>
         <a href="{% url 'part-suppliers' part.id %}">{% trans "Suppliers" %}
@@ -45,7 +48,7 @@
         <a href="{% url 'part-orders' part.id %}">{% trans "Purchase Orders" %} <span class='badge'>{{ part.purchase_orders|length }}</span></a>
     </li>
     {% endif %}
-    {% if part.salable %}
+    {% if part.salable and perms.order.view_salesorder %}
     <li {% if tab == 'sales-prices' %}class='active'{% endif %}>
         <a href="{% url 'part-sale-prices' part.id %}">{% trans "Sale Price" %}</a>
     </li>

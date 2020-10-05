@@ -1,15 +1,18 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load i18n %}
 {% block details %}
 
 {% include 'part/tabs.html' with tab='build' %}
 
-<h3>Part Builds</h3>
+<h3>{% trans "Part Builds" %}</h3>
 
 <div id='button-toolbar'>
     <div class='button-toolbar container-flui' style='float: right';>
         {% if part.active %}
-        <button class="btn btn-success" id='start-build'>Start New Build</button>
+        {% if perms.build.add_build %}
+        <button class="btn btn-success" id='start-build'>{% trans "Start New Build" %}</button>
+        {% endif %}
         {% endif %}
         <div class='filter-list' id='filter-list-build'>
             <!-- Empty div for filters -->

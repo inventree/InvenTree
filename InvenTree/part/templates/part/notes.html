@@ -29,7 +29,9 @@
         <h4>{% trans "Part Notes" %}</h4>
     </div>
     <div class='col-sm-6'>
+        {% if perms.part.change_part %}
         <button title='{% trans "Edit notes" %}' class='btn btn-default action-button float-right' id='edit-notes'><span class='fas fa-edit'></span></button>
+        {% endif %}
     </div>
 </div>
 <hr>
