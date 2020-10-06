@@ -137,7 +137,8 @@ class RuleSetModelTest(TestCase):
 
             rule.save()
 
-        group.save()
+        # update_fields is required to trigger permissions update
+        group.save(update_fields=['name'])
 
         # There should now be three permissions for each rule set
         self.assertEqual(group.permissions.count(), 3 * len(permission_set))
@@ -151,7 +152,8 @@ class RuleSetModelTest(TestCase):
 
             rule.save()
 
-        group.save()
+        # update_fields is required to trigger permissions update
+        group.save(update_fields=['name'])
 
         # There should now not be any permissions assigned to this group
         self.assertEqual(group.permissions.count(), 0)
