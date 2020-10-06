@@ -171,6 +171,10 @@ class RuleSet(models.Model):
 
         super().save(*args, **kwargs)
 
+        if self.group:
+            # Update the group too!
+            self.group.save()
+
     def get_models(self):
         """
         Return the database tables / models that this ruleset covers.
@@ -328,12 +332,7 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     group permissions.
     """
 
-    created = kwargs.get('created', False)
-    # To trigger the group permissions update: update_fields should not be None
-    update_fields = kwargs.get('update_fields', None)
-
-    if created or update_fields:
-        update_group_roles(instance)
+    update_group_roles(instance)
 
 
 def check_user_role(user, role, permission):
