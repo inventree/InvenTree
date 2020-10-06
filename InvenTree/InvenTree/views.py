@@ -22,7 +22,7 @@ from django.views.generic.base import TemplateView
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
-from users.models import check_user_role
+from users.models import check_user_role, RuleSet
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm, ColorThemeSelectForm
 from .helpers import str2bool
@@ -147,7 +147,13 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
         for required in roles_required:
 
             (role, permission) = required.split('.')
+
+            if role not in RuleSet.RULESET_NAMES:
+                raise ValueError(f"Role '{role}' is not a valid role")
             
+            if permission not in RuleSet.RULESET_PERMISSIONS:
+                raise ValueError(f"Permission '{permission}' is not a valid permission")
+
             # Return False if the user does not have *any* of the required roles
             if not check_user_role(user, role, permission):
                 return False

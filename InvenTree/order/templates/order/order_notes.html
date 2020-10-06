@@ -28,9 +28,11 @@
     <div class='col-sm-6'>
         <h4>{% trans "Order Notes" %}</h4>
     </div>
+    {% if roles.purchase_order.change %}
     <div class='col-sm-6'>
         <button title='{% trans "Edit notes" %}' class='btn btn-default action-button float-right' id='edit-notes'><span class='fas fa-edit'></span></button>
     </div>
+    {% endif %}
 </div>
 <hr>
 <div class='panel panel-default'>

@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 
 from InvenTree.status_codes import PurchaseOrderStatus
 
@@ -32,7 +33,21 @@ class OrderViewTestCase(TestCase):
 
         # Create a user
         User = get_user_model()
-        User.objects.create_user('username', 'user@email.com', 'password')
+        user = User.objects.create_user('username', 'user@email.com', 'password')
+
+        # Ensure that the user has the correct permissions!
+        g = Group.objects.create(name='orders')
+        user.groups.add(g)
+
+        for rule in g.rule_sets.all():
+            if rule.name in ['purchase_order', 'sales_order']:
+                rule.can_change = True
+                rule.can_add = True
+                rule.can_delete = True
+
+                rule.save()
+
+        g.save()
 
         self.client.login(username='username', password='password')
 
