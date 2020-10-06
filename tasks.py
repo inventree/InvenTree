@@ -22,7 +22,8 @@ def apps():
         'part',
         'report',
         'stock',
-        'InvenTree'
+        'InvenTree',
+        'users',
     ]
 
 def localDir():

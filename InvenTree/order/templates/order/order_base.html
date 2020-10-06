@@ -24,7 +24,7 @@ src="{% static 'img/blank_image.png' %}"
 <hr>
 <h4>
     {{ order }}
-    {% if user.is_staff and perms.order.change_purchaseorder %}
+    {% if user.is_staff and roles.purchase_order.change %}
     <a href="{% url 'admin:order_purchaseorder_change' order.pk %}"><span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span></a>
     {% endif %}
 </h4>
@@ -32,29 +32,31 @@ src="{% static 'img/blank_image.png' %}"
 <p>
     <div class='btn-row'>
         <div class='btn-group action-buttons'>
-            <button type='button' class='btn btn-default' id='edit-order' title='Edit order information'>
+            {% if roles.purchase_order.change %}
+            <button type='button' class='btn btn-default' id='edit-order' title='{% trans "Edit order information" %}'>
                 <span class='fas fa-edit icon-green'></span>
             </button>
-            <button type='button' class='btn btn-default' id='export-order' title='Export order to file'>
-                <span class='fas fa-file-download'></span>
-            </button>
             {% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}
-            <button type='button' class='btn btn-default' id='place-order' title='Place order'>
+            <button type='button' class='btn btn-default' id='place-order' title='{% trans "Place order" %}'>
                 <span class='fas fa-paper-plane icon-blue'></span>
             </button>
             {% elif order.status == PurchaseOrderStatus.PLACED %}
-            <button type='button' class='btn btn-default' id='receive-order' title='Receive items'>
+            <button type='button' class='btn btn-default' id='receive-order' title='{% trans "Receive items" %}'>
                 <span class='fas fa-clipboard-check'></span>
             </button>
-            <button type='button' class='btn btn-default' id='complete-order' title='Mark order as complete'>
+            <button type='button' class='btn btn-default' id='complete-order' title='{% trans "Mark order as complete" %}'>
                 <span class='fas fa-check-circle'></span>
             </button>
             {% endif %}
             {% if order.status == PurchaseOrderStatus.PENDING or order.status == PurchaseOrderStatus.PLACED %}
-            <button type='button' class='btn btn-default' id='cancel-order' title='Cancel order'>
+            <button type='button' class='btn btn-default' id='cancel-order' title='{% trans "Cancel order" %}'>
                 <span class='fas fa-times-circle icon-red'></span>
             </button>
             {% endif %}
+            {% endif %}
+            <button type='button' class='btn btn-default' id='export-order' title='{% trans "Export order to file" %}'>
+                <span class='fas fa-file-download'></span>
+            </button>
         </div>
     </div>
 </p>

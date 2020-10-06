@@ -138,6 +138,7 @@ INSTALLED_APPS = [
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
+    'users.apps.UsersConfig',
 
     # Third part add-ons
     'django_filters',               # Extended filter functionality
@@ -153,6 +154,7 @@ INSTALLED_APPS = [
     'markdownx',                    # Markdown editing
     'markdownify',                  # Markdown template rendering
     'django_tex',                   # LaTeX output
+    'django_admin_shell',           # Python shell for the admin interface
 ]
 
 LOGGING = {
@@ -208,6 +210,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'InvenTree.context.status_codes',
+                'InvenTree.context.user_roles',
             ],
         },
     },
@@ -228,6 +231,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.DjangoModelPermissions',
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }

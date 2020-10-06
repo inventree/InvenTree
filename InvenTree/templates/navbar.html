@@ -15,9 +15,16 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+        {% if roles.part.view %}
         <li><a href="{% url 'part-index' %}"><span class='fas fa-shapes icon-header'></span>{% trans "Parts" %}</a></li>
+        {% endif %}
+        {% if roles.stock.view %}
         <li><a href="{% url 'stock-index' %}"><span class='fas fa-boxes icon-header'></span>{% trans "Stock" %}</a></li>
+        {% endif %}
+        {% if roles.build.view %}
         <li><a href="{% url 'build-index' %}"><span class='fas fa-tools icon-header'></span>{% trans "Build" %}</a></li>
+        {% endif %}
+        {% if roles.purchase_order.view %}
         <li class='nav navbar-nav'>
           <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-shopping-cart icon-header'></span>{% trans "Buy" %}</a>
           <ul class='dropdown-menu'>
@@ -26,6 +33,8 @@
             <li><a href="{% url 'po-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
           </ul>
         </li>
+        {% endif %}
+        {% if roles.sales_order.view %}
         <li class='nav navbar-nav'>
           <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-truck icon-header'></span>{% trans "Sell" %}</a>
           <ul class='dropdown-menu'>
@@ -33,6 +42,7 @@
             <li><a href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
           </ul>
         </li>
+        {% endif %}
       </ul>
       <ul class="nav navbar-nav navbar-right">
           {% include "search_form.html" %}

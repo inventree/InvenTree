@@ -12,7 +12,7 @@
 <hr>
 
 <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-    {% if order.status == PurchaseOrderStatus.PENDING %}
+    {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
     <button type='button' class='btn btn-default' id='new-po-line'>{% trans "Add Line Item" %}</button>
     {% endif %}
 </div>
@@ -209,12 +209,12 @@ $("#po-table").inventreeTable({
 
                 var pk = row.pk;
 
-                {% if order.status == PurchaseOrderStatus.PENDING %}
+                {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.delete %}
                 html += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
                 html += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
                 {% endif %}
 
-                {% if order.status == PurchaseOrderStatus.PLACED %}
+                {% if order.status == PurchaseOrderStatus.PLACED and roles.purchase_order.change %}
                 if (row.received < row.quantity) {
                     html += makeIconButton('fa-clipboard-check', 'button-line-receive', pk, '{% trans "Receive line item" %}');
                 }

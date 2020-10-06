@@ -231,7 +231,8 @@ class EditBomItemForm(HelperForm):
             'quantity',
             'reference',
             'overage',
-            'note'
+            'note',
+            'optional',
         ]
 
         # Prevent editing of the part associated with this BomItem

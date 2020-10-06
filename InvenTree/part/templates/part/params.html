@@ -10,7 +10,9 @@
 
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
+        {% if roles.part.add %}
         <button title='{% trans "Add new parameter" %}' class='btn btn-success' id='param-create'>{% trans "New Parameter" %}</button>
+        {% endif %}
     </div>
 </div>
 
@@ -30,8 +32,12 @@
             <td>
                 {{ param.template.units }}
                 <div class='btn-group' style='float: right;'>
+                    {% if roles.part.change %}
                     <button title='{% trans "Edit" %}' class='btn btn-default btn-glyph param-edit' url="{% url 'part-param-edit' param.id %}" type='button'><span class='fas fa-edit'/></button>
+                    {% endif %}
+                    {% if roles.part.delete %}
                     <button title='{% trans "Delete" %}' class='btn btn-default btn-glyph param-delete' url="{% url 'part-param-delete' param.id %}" type='button'><span class='fas fa-trash-alt icon-red'/></button>
+                    {% endif %}
                 </div>
             </td>
         </tr>
@@ -48,6 +54,7 @@
     $('#param-table').inventreeTable({
     });
 
+    {% if roles.part.add %}
     $('#param-create').click(function() {
         launchModalForm("{% url 'part-param-create' %}?part={{ part.id }}", {
             reload: true,
@@ -59,6 +66,7 @@
             }],
         });
     });
+    {% endif %}
 
     $('.param-edit').click(function() {
         var button = $(this);
