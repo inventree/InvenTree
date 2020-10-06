@@ -255,7 +255,7 @@ class PurchaseOrderNotes(InvenTreeRoleMixin, UpdateView):
     context_object_name = 'order'
     template_name = 'order/order_notes.html'
     model = PurchaseOrder
-    role_required = 'purchase_order.change'
+    role_required = 'purchase_order.view'
 
     fields = ['notes']
 
