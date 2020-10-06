@@ -155,8 +155,15 @@ class RuleSet(models.Model):
             model=model
         )
 
-    def __str__(self):
-        return self.name
+    def __str__(self, debug=False):
+        """ Ruleset string representation """
+        if debug:
+            # Makes debugging easier
+            return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
+                   f'v: {str(self.can_view).ljust(5)} | a: {str(self.can_add).ljust(5)} | ' \
+                   f'c: {str(self.can_change).ljust(5)} | d: {str(self.can_delete).ljust(5)}'
+        else:
+            return self.name
 
     def save(self, *args, **kwargs):
 
@@ -327,6 +334,9 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     then we can now use these RuleSet values to update the
     group permissions.
     """
+    created = kwargs.get('created', False)
+    # To trigger the group permissions update: update_fields should not be None
+    update_fields = kwargs.get('update_fields', None)
 
     created = kwargs.get('created', False)
     # To trigger the group permissions update: update_fields should not be None
