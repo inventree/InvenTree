@@ -35,7 +35,7 @@ src="{% static 'img/blank_image.png' %}"
 <hr>
 <h4>
     {{ build.quantity }} x {{ build.part.full_name }}
-    {% if user.is_staff and perms.build.change_build %}
+    {% if user.is_staff and roles.build.change %}
     <a  href="{% url 'admin:build_build_change' build.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
 {% endif %}
 </h4>

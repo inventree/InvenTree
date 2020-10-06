@@ -3,6 +3,8 @@ from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
+from InvenTree.helpers import addUserPermissions
+
 from .models import Company
 
 
@@ -14,7 +16,16 @@ class CompanyTest(APITestCase):
     def setUp(self):
         # Create a user for auth
         User = get_user_model()
-        User.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.user = User.objects.create_user('testuser', 'test@testing.com', 'password')
+        
+        perms = [
+            'view_company',
+            'change_company',
+            'add_company',
+        ]
+
+        addUserPermissions(self.user, perms)
+        
         self.client.login(username='testuser', password='password')
 
         Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)

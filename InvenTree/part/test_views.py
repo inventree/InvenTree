@@ -3,6 +3,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 
 from .models import Part
 
@@ -23,7 +24,24 @@ class PartViewTestCase(TestCase):
 
         # Create a user
         User = get_user_model()
-        User.objects.create_user('username', 'user@email.com', 'password')
+        self.user = User.objects.create_user(
+            username='username',
+            email='user@email.com',
+            password='password'
+        )
+
+        # Put the user into a group with the correct permissions
+        group = Group.objects.create(name='mygroup')
+        self.user.groups.add(group)
+
+        # Give the group *all* the permissions!
+        for rule in group.rule_sets.all():
+            rule.can_view = True
+            rule.can_change = True
+            rule.can_add = True
+            rule.can_delete = True
+
+            rule.save()
 
         self.client.login(username='username', password='password')
 
@@ -140,11 +158,13 @@ class PartTests(PartViewTestCase):
     """ Tests for Part forms """
 
     def test_part_edit(self):
+
         response = self.client.get(reverse('part-edit', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
 
         keys = response.context.keys()
         data = str(response.content)
+
+        self.assertEqual(response.status_code, 200)
 
         self.assertIn('part', keys)
         self.assertIn('csrf_token', keys)
@@ -188,6 +208,8 @@ class PartAttachmentTests(PartViewTestCase):
 
         response = self.client.get(reverse('part-attachment-create'), {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
+
+        # TODO - Create a new attachment using this view
 
     def test_invalid_create(self):
         """ test creation of an attachment for an invalid part """

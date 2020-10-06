@@ -134,9 +134,9 @@ class RuleSet(models.Model):
 
     can_view = models.BooleanField(verbose_name=_('View'), default=True, help_text=_('Permission to view items'))
 
-    can_add = models.BooleanField(verbose_name=_('Create'), default=False, help_text=_('Permission to add items'))
+    can_add = models.BooleanField(verbose_name=_('Add'), default=False, help_text=_('Permission to add items'))
 
-    can_change = models.BooleanField(verbose_name=_('Update'), default=False, help_text=_('Permissions to edit items'))
+    can_change = models.BooleanField(verbose_name=_('Change'), default=False, help_text=_('Permissions to edit items'))
 
     can_delete = models.BooleanField(verbose_name=_('Delete'), default=False, help_text=_('Permission to delete items'))
     
@@ -177,6 +177,10 @@ class RuleSet(models.Model):
             self.can_change = True
 
         super().save(*args, **kwargs)
+
+        if self.group:
+            # Update the group too!
+            self.group.save()
 
     def get_models(self):
         """
@@ -334,9 +338,37 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     then we can now use these RuleSet values to update the
     group permissions.
     """
-    created = kwargs.get('created', False)
-    # To trigger the group permissions update: update_fields should not be None
-    update_fields = kwargs.get('update_fields', None)
 
-    if created or update_fields:
-        update_group_roles(instance)
+    update_group_roles(instance)
+
+
+def check_user_role(user, role, permission):
+    """
+    Check if a user has a particular role:permission combination.
+
+    If the user is a superuser, this will return True
+    """
+
+    if user.is_superuser:
+        return True
+
+    for group in user.groups.all():
+
+        for rule in group.rule_sets.all():
+
+            if rule.name == role:
+
+                if permission == 'add' and rule.can_add:
+                    return True
+
+                if permission == 'change' and rule.can_change:
+                    return True
+
+                if permission == 'view' and rule.can_view:
+                    return True
+
+                if permission == 'delete' and rule.can_delete:
+                    return True
+
+    # No matching permissions found
+    return False

@@ -39,9 +39,11 @@
     <button class='btn btn-default action-button' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'><span class='fas fa-plus-circle'></span></button>
     <button class='btn btn-default action-button' type='button' title='{% trans "Finish Editing" %}' id='editing-finished'><span class='fas fa-check-circle'></span></button>
     {% elif part.active %}
+    {% if roles.part.change %}
     <button class='btn btn-default action-button' type='button' title='{% trans "Edit BOM" %}' id='edit-bom'><span class='fas fa-edit'></span></button>
     {% if part.is_bom_valid == False %}
     <button class='btn btn-default action-button' id='validate-bom' title='{% trans "Validate Bill of Materials" %}' type='button'><span class='fas fa-clipboard-check'></span></button>
+    {% endif %}
     {% endif %}
     <button title='{% trans "Export Bill of Materials" %}' class='btn btn-default action-button' id='download-bom' type='button'><span class='fas fa-file-download'></span></button>
     {% endif %}

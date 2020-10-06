@@ -24,7 +24,7 @@ src="{% static 'img/blank_image.png' %}"
 <hr>
 <h4>
     {{ order }}
-    {% if user.is_staff and perms.order.change_purchaseorder %}
+    {% if user.is_staff and roles.purchase_order.change %}
     <a href="{% url 'admin:order_purchaseorder_change' order.pk %}"><span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span></a>
     {% endif %}
 </h4>

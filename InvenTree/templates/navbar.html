@@ -15,16 +15,16 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        {% if perms.part.view_part or perms.part.view_partcategory %}
+        {% if roles.part.view %}
         <li><a href="{% url 'part-index' %}"><span class='fas fa-shapes icon-header'></span>{% trans "Parts" %}</a></li>
         {% endif %}
-        {% if perms.stock.view_stockitem or perms.part.view_stocklocation %}
+        {% if roles.stock.view %}
         <li><a href="{% url 'stock-index' %}"><span class='fas fa-boxes icon-header'></span>{% trans "Stock" %}</a></li>
         {% endif %}
-        {% if perms.build.view_build %}
+        {% if roles.build.view %}
         <li><a href="{% url 'build-index' %}"><span class='fas fa-tools icon-header'></span>{% trans "Build" %}</a></li>
         {% endif %}
-        {% if perms.order.view_purchaseorder %}
+        {% if roles.purchase_order.view %}
         <li class='nav navbar-nav'>
           <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-shopping-cart icon-header'></span>{% trans "Buy" %}</a>
           <ul class='dropdown-menu'>
@@ -34,7 +34,7 @@
           </ul>
         </li>
         {% endif %}
-        {% if perms.order.view_salesorder %}
+        {% if roles.sales_order.view %}
         <li class='nav navbar-nav'>
           <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-truck icon-header'></span>{% trans "Sell" %}</a>
           <ul class='dropdown-menu'>

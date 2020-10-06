@@ -3,6 +3,8 @@ from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
+from InvenTree.helpers import addUserPermissions
+
 from .models import StockLocation
 
 
@@ -22,6 +24,20 @@ class StockAPITestCase(APITestCase):
         # Create a user for auth
         User = get_user_model()
         self.user = User.objects.create_user('testuser', 'test@testing.com', 'password')
+
+        # Add the necessary permissions to the user
+        perms = [
+            'view_stockitemtestresult',
+            'change_stockitemtestresult',
+            'add_stockitemtestresult',
+            'add_stocklocation',
+            'change_stocklocation',
+            'add_stockitem',
+            'change_stockitem',
+        ]
+
+        addUserPermissions(self.user, perms)
+
         self.client.login(username='testuser', password='password')
 
     def doPost(self, url, data={}):

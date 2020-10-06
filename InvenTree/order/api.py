@@ -6,7 +6,7 @@ JSON API for the Order app
 from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, permissions
+from rest_framework import generics
 from rest_framework import filters
 
 from django.conf.urls import url, include
@@ -109,10 +109,6 @@ class POList(generics.ListCreateAPIView):
 
         return queryset
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -162,10 +158,6 @@ class PODetail(generics.RetrieveUpdateAPIView):
 
         return queryset
 
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
-
 
 class POLineItemList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of POLineItem objects
@@ -188,10 +180,6 @@ class POLineItemList(generics.ListCreateAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -207,10 +195,6 @@ class POLineItemDetail(generics.RetrieveUpdateAPIView):
 
     queryset = PurchaseOrderLineItem
     serializer_class = POLineItemSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
 
 class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
@@ -300,10 +284,6 @@ class SOList(generics.ListCreateAPIView):
 
         return queryset
 
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
-
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -351,8 +331,6 @@ class SODetail(generics.RetrieveUpdateAPIView):
 
         return queryset
 
-    permission_classes = [permissions.IsAuthenticated]
-
 
 class SOLineItemList(generics.ListCreateAPIView):
     """
@@ -398,8 +376,6 @@ class SOLineItemList(generics.ListCreateAPIView):
 
         return queryset
 
-    permission_classes = [permissions.IsAuthenticated]
-
     filter_backends = [DjangoFilterBackend]
 
     filter_fields = [
@@ -413,8 +389,6 @@ class SOLineItemDetail(generics.RetrieveUpdateAPIView):
 
     queryset = SalesOrderLineItem.objects.all()
     serializer_class = SOLineItemSerializer
-
-    permission_classes = [permissions.IsAuthenticated]
 
 
 class POAttachmentList(generics.ListCreateAPIView, AttachmentMixin):

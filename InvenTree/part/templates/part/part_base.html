@@ -28,7 +28,7 @@
     <div class="media-body">
         <h3>
             {{ part.full_name }}
-            {% if user.is_staff and perms.part.change_part %}
+            {% if user.is_staff and roles.part.change %}
             <a  href="{% url 'admin:part_part_change' part.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
             {% endif %}
             {% if not part.active %}
@@ -56,26 +56,36 @@
             <button type='button' class='btn btn-default' id='price-button' title='{% trans "Show pricing information" %}'>
                 <span id='part-price-icon' class='fas fa-dollar-sign'/>
             </button>
-            <button type='button' class='btn btn-default' id='part-count' title='Count part stock'>
+            {% if roles.stock.change %}
+            <button type='button' class='btn btn-default' id='part-count' title='{% trans "Count part stock" %}'>
                 <span class='fas fa-clipboard-list'/>
             </button>
+            {% endif %}
             {% if part.purchaseable %}
-            <button type='button' class='btn btn-default' id='part-order' title='Order part'>
+            {% if roles.purchase_order.add %}
+            <button type='button' class='btn btn-default' id='part-order' title='{% trans "Order part" %}'>
                 <span id='part-order-icon' class='fas fa-shopping-cart'/>
             </button>
             {% endif %}
             {% endif %}
+            {% endif %}
             <!-- Part actions -->
+            {% if roles.part.add or roles.part.change or roles.part.delete %}
             <div class='btn-group'>
                 <button id='part-actions' title='{% trans "Part actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'> <span class='fas fa-shapes'></span> <span class='caret'></span></button>
                 <ul class='dropdown-menu'>
+                    {% if roles.part.add %}
                     <li><a href='#' id='part-duplicate'><span class='fas fa-copy'></span> {% trans "Duplicate part" %}</a></li>
+                    {% endif %}
+                    {% if roles.part.change %}
                     <li><a href='#' id='part-edit'><span class='fas fa-edit icon-blue'></span> {% trans "Edit part" %}</a></li>
-                    {% if not part.active %}
+                    {% endif %}
+                    {% if not part.active and roles.part.delete %}
                     <li><a href='#' id='part-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete part" %}</a></li>
                     {% endif %}
                 </ul>
             </div>
+            {% endif %}
         </div>
         <table class='table table-condensed'>
             <col width='25'>
@@ -274,6 +284,7 @@
                         });
     });
 
+    {% if roles.part.change %}
     $("#part-edit").click(function() {
         launchModalForm(
             "{% url 'part-edit' part.id %}",
@@ -282,6 +293,7 @@
             }
         );
     });
+    {% endif %}
 
     $("#part-order").click(function() {
         launchModalForm("{% url 'order-parts' %}", {
@@ -292,6 +304,7 @@
         });
     });
 
+    {% if roles.part.add %}
     $("#part-duplicate").click(function() {
         launchModalForm(
             "{% url 'part-duplicate' part.id %}",
@@ -300,8 +313,9 @@
             }
         );
     });
+    {% endif %}
 
-    {% if not part.active %}
+    {% if not part.active and roles.part.delete %}
     $("#part-delete").click(function() {
         launchModalForm(
             "{% url 'part-delete' part.id %}",
