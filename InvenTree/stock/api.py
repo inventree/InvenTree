@@ -52,6 +52,10 @@ class StockCategoryTree(TreeSerializer):
     def get_items(self):
         return StockLocation.objects.all().prefetch_related('stock_items', 'children')
 
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API detail endpoint for Stock object
@@ -68,7 +72,6 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = StockItem.objects.all()
     serializer_class = StockItemSerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self, *args, **kwargs):
 
@@ -288,10 +291,6 @@ class StockLocationList(generics.ListCreateAPIView):
                     pass
             
         return queryset
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -695,10 +694,6 @@ class StockList(generics.ListCreateAPIView):
 
         return queryset
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -743,10 +738,6 @@ class StockItemTestResultList(generics.ListCreateAPIView):
 
     queryset = StockItemTestResult.objects.all()
     serializer_class = StockItemTestResultSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -799,7 +790,6 @@ class StockTrackingList(generics.ListCreateAPIView):
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockTrackingSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer(self, *args, **kwargs):
         try:
@@ -871,7 +861,6 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = StockLocation.objects.all()
     serializer_class = LocationSerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
 
 stock_endpoints = [

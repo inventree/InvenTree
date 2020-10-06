@@ -36,6 +36,10 @@ class RuleSet(models.Model):
         choice[0] for choice in RULESET_CHOICES
     ]
 
+    RULESET_PERMISSIONS = [
+        'view', 'add', 'change', 'delete',
+    ]
+
     RULESET_MODELS = {
         'admin': [
             'auth_group',
@@ -134,9 +138,9 @@ class RuleSet(models.Model):
 
     can_view = models.BooleanField(verbose_name=_('View'), default=True, help_text=_('Permission to view items'))
 
-    can_add = models.BooleanField(verbose_name=_('Create'), default=False, help_text=_('Permission to add items'))
+    can_add = models.BooleanField(verbose_name=_('Add'), default=False, help_text=_('Permission to add items'))
 
-    can_change = models.BooleanField(verbose_name=_('Update'), default=False, help_text=_('Permissions to edit items'))
+    can_change = models.BooleanField(verbose_name=_('Change'), default=False, help_text=_('Permissions to edit items'))
 
     can_delete = models.BooleanField(verbose_name=_('Delete'), default=False, help_text=_('Permission to delete items'))
     
@@ -155,8 +159,15 @@ class RuleSet(models.Model):
             model=model
         )
 
-    def __str__(self):
-        return self.name
+    def __str__(self, debug=False):
+        """ Ruleset string representation """
+        if debug:
+            # Makes debugging easier
+            return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
+                   f'v: {str(self.can_view).ljust(5)} | a: {str(self.can_add).ljust(5)} | ' \
+                   f'c: {str(self.can_change).ljust(5)} | d: {str(self.can_delete).ljust(5)}'
+        else:
+            return self.name
 
     def save(self, *args, **kwargs):
 
@@ -170,6 +181,10 @@ class RuleSet(models.Model):
             self.can_change = True
 
         super().save(*args, **kwargs)
+
+        if self.group:
+            # Update the group too!
+            self.group.save()
 
     def get_models(self):
         """
@@ -329,3 +344,35 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     """
 
     update_group_roles(instance)
+
+
+def check_user_role(user, role, permission):
+    """
+    Check if a user has a particular role:permission combination.
+
+    If the user is a superuser, this will return True
+    """
+
+    if user.is_superuser:
+        return True
+
+    for group in user.groups.all():
+
+        for rule in group.rule_sets.all():
+
+            if rule.name == role:
+
+                if permission == 'add' and rule.can_add:
+                    return True
+
+                if permission == 'change' and rule.can_change:
+                    return True
+
+                if permission == 'view' and rule.can_view:
+                    return True
+
+                if permission == 'delete' and rule.can_delete:
+                    return True
+
+    # No matching permissions found
+    return False

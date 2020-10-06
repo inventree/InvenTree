@@ -34,18 +34,16 @@ src="{% static 'img/blank_image.png' %}"
 <hr>
 <h4>
     {{ order }}
-    {% if user.is_staff and perms.order.change_salesorder %}
+    {% if user.is_staff and roles.sales_order.change %}
     <a href="{% url 'admin:order_salesorder_change' order.pk %}"><span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span></a>
     {% endif %}
 </h4>
 <p>{{ order.description }}</p>
 <div class='btn-row'>
     <div class='btn-group action-buttons'>
+        {% if roles.sales_order.change %}
         <button type='button' class='btn btn-default' id='edit-order' title='Edit order information'>
             <span class='fas fa-edit icon-green'></span>
-        </button>
-        <button type='button' class='btn btn-default' id='packing-list' title='{% trans "Packing List" %}'>
-            <span class='fas fa-clipboard-list'></span>
         </button>
         {% if order.status == SalesOrderStatus.PENDING %}
         <button type='button' class='btn btn-default' id='ship-order' title='{% trans "Ship order" %}'>
@@ -55,6 +53,10 @@ src="{% static 'img/blank_image.png' %}"
             <span class='fas fa-times-circle icon-red'></span>
         </button>
         {% endif %}
+        {% endif %}
+        <button type='button' disabled='' class='btn btn-default' id='packing-list' title='{% trans "Packing List" %}'>
+            <span class='fas fa-clipboard-list'></span>
+        </button>
     </div>
 </div>
 {% endblock %}

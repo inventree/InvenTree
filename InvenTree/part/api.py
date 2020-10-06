@@ -44,6 +44,10 @@ class PartCategoryTree(TreeSerializer):
     def get_items(self):
         return PartCategory.objects.all().prefetch_related('parts', 'children')
 
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
 
 class CategoryList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PartCategory objects.
@@ -54,10 +58,6 @@ class CategoryList(generics.ListCreateAPIView):
 
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategorySerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     def get_queryset(self):
         """
@@ -119,10 +119,6 @@ class PartSalePriceList(generics.ListCreateAPIView):
     queryset = PartSellPriceBreak.objects.all()
     serializer_class = part_serializers.PartSalePriceSerializer
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         DjangoFilterBackend
     ]
@@ -182,8 +178,6 @@ class PartTestTemplateList(generics.ListCreateAPIView):
 
         return queryset
 
-    permission_classes = [permissions.IsAuthenticated]
-
     filter_backends = [
         DjangoFilterBackend,
         filters.OrderingFilter,
@@ -221,10 +215,6 @@ class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartThumbSerializerUpdate
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         DjangoFilterBackend
     ]
@@ -245,10 +235,6 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
         return queryset
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     def get_serializer(self, *args, **kwargs):
 
@@ -580,10 +566,6 @@ class PartList(generics.ListCreateAPIView):
 
         return queryset
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -676,10 +658,6 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
     queryset = PartParameterTemplate.objects.all()
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         filters.OrderingFilter,
     ]
@@ -698,10 +676,6 @@ class PartParameterList(generics.ListCreateAPIView):
 
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend
@@ -796,10 +770,6 @@ class BomList(generics.ListCreateAPIView):
 
         return queryset
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -815,10 +785,6 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = BomItem.objects.all()
     serializer_class = part_serializers.BomItemSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
 
 class BomItemValidate(generics.UpdateAPIView):

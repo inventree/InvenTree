@@ -30,6 +30,8 @@ class InfoView(AjaxView):
     Use to confirm that the server is running, etc.
     """
 
+    permission_classes = [permissions.AllowAny]
+
     def get(self, request, *args, **kwargs):
 
         data = {

@@ -15,6 +15,8 @@ from django.http import StreamingHttpResponse
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
+from django.contrib.auth.models import Permission
+
 import InvenTree.version
 
 from .settings import MEDIA_URL, STATIC_URL
@@ -441,3 +443,21 @@ def validateFilterString(value):
         results[k] = v
 
     return results
+
+
+def addUserPermission(user, permission):
+    """
+    Shortcut function for adding a certain permission to a user.
+    """
+    
+    perm = Permission.objects.get(codename=permission)
+    user.user_permissions.add(perm)
+
+
+def addUserPermissions(user, permissions):
+    """
+    Shortcut function for adding multiple permissions to a user.
+    """
+
+    for permission in permissions:
+        addUserPermission(user, permission)

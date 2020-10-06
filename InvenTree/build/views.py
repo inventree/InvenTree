@@ -17,16 +17,18 @@ from . import forms
 from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
+from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.helpers import str2bool, ExtractSerialNumbers
 from InvenTree.status_codes import BuildStatus
 
 
-class BuildIndex(ListView):
+class BuildIndex(InvenTreeRoleMixin, ListView):
     """ View for displaying list of Builds
     """
     model = Build
     template_name = 'build/index.html'
     context_object_name = 'builds'
+    role_required = 'build.view'
 
     def get_queryset(self):
         """ Return all Build objects (order by date, newest first) """
@@ -56,6 +58,7 @@ class BuildCancel(AjaxUpdateView):
     ajax_form_title = _('Cancel Build')
     context_object_name = 'build'
     form_class = forms.CancelBuildForm
+    role_required = 'build.change'
 
     def post(self, request, *args, **kwargs):
         """ Handle POST request. Mark the build status as CANCELLED """
@@ -94,6 +97,7 @@ class BuildAutoAllocate(AjaxUpdateView):
     context_object_name = 'build'
     ajax_form_title = _('Allocate Stock')
     ajax_template_name = 'build/auto_allocate.html'
+    role_required = 'build.change'
 
     def get_context_data(self, *args, **kwargs):
         """ Get the context data for form rendering. """
@@ -147,6 +151,7 @@ class BuildUnallocate(AjaxUpdateView):
     form_class = forms.ConfirmBuildForm
     ajax_form_title = _("Unallocate Stock")
     ajax_template_name = "build/unallocate.html"
+    form_required = 'build.change'
 
     def post(self, request, *args, **kwargs):
 
@@ -184,6 +189,7 @@ class BuildComplete(AjaxUpdateView):
     context_object_name = "build"
     ajax_form_title = _("Complete Build")
     ajax_template_name = "build/complete.html"
+    role_required = 'build.change'
 
     def get_form(self):
         """ Get the form object.
@@ -325,6 +331,7 @@ class BuildNotes(UpdateView):
     context_object_name = 'build'
     template_name = 'build/notes.html'
     model = Build
+    role_required = 'build.view'
 
     fields = ['notes']
 
@@ -342,9 +349,11 @@ class BuildNotes(UpdateView):
 
 class BuildDetail(DetailView):
     """ Detail view of a single Build object. """
+
     model = Build
     template_name = 'build/detail.html'
     context_object_name = 'build'
+    role_required = 'build.view'
 
     def get_context_data(self, **kwargs):
 
@@ -363,6 +372,7 @@ class BuildAllocate(DetailView):
     model = Build
     context_object_name = 'build'
     template_name = 'build/allocate.html'
+    role_required = ['build.change']
 
     def get_context_data(self, **kwargs):
         """ Provide extra context information for the Build allocation page """
@@ -392,6 +402,7 @@ class BuildCreate(AjaxCreateView):
     form_class = forms.EditBuildForm
     ajax_form_title = _('Start new Build')
     ajax_template_name = 'modal_form.html'
+    role_required = 'build.add'
 
     def get_initial(self):
         """ Get initial parameters for Build creation.
@@ -427,6 +438,7 @@ class BuildUpdate(AjaxUpdateView):
     context_object_name = 'build'
     ajax_form_title = _('Edit Build Details')
     ajax_template_name = 'modal_form.html'
+    role_required = 'build.change'
 
     def get_data(self):
         return {
@@ -440,6 +452,7 @@ class BuildDelete(AjaxDeleteView):
     model = Build
     ajax_template_name = 'build/delete_build.html'
     ajax_form_title = _('Delete Build')
+    role_required = 'build.delete'
 
 
 class BuildItemDelete(AjaxDeleteView):
@@ -451,6 +464,7 @@ class BuildItemDelete(AjaxDeleteView):
     ajax_template_name = 'build/delete_build_item.html'
     ajax_form_title = _('Unallocate Stock')
     context_object_name = 'item'
+    role_required = 'build.delete'
 
     def get_data(self):
         return {
@@ -465,6 +479,7 @@ class BuildItemCreate(AjaxCreateView):
     form_class = forms.EditBuildItemForm
     ajax_template_name = 'build/create_build_item.html'
     ajax_form_title = _('Allocate new Part')
+    role_required = 'build.add'
 
     part = None
     available_stock = None
@@ -618,6 +633,7 @@ class BuildItemEdit(AjaxUpdateView):
     ajax_template_name = 'modal_form.html'
     form_class = forms.EditBuildItemForm
     ajax_form_title = _('Edit Stock Allocation')
+    role_required = 'build.change'
 
     def get_data(self):
         return {

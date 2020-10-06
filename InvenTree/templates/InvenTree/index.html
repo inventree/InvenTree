@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-
+{% load i18n %}
 {% block page_title %}
-InvenTree | Index
+InvenTree | {% trans "Index" %}
 {% endblock %}
 
 {% block content %}
@@ -9,24 +9,24 @@ InvenTree | Index
 <hr>
 
 <div class='col-sm-6'>
-    {% if perms.part.view_part %}
+    {% if roles.part.view %}
     {% include "InvenTree/latest_parts.html" with collapse_id="latest_parts" %}
     {% include "InvenTree/bom_invalid.html" with collapse_id="bom_invalid" %}
     {% include "InvenTree/starred_parts.html" with collapse_id="starred" %}
     {% endif %}
-    {% if perms.build.view_build %}
+    {% if roles.build.view %}
     {% include "InvenTree/build_pending.html" with collapse_id="build_pending" %}
     {% endif %}
 </div>
 <div class='col-sm-6'>
-    {% if perms.stock.view_stockitem %}
+    {% if roles.stock.view %}
     {% include "InvenTree/low_stock.html" with collapse_id="order" %}
     {% include "InvenTree/required_stock_build.html" with collapse_id="stock_to_build" %}
     {% endif %}
-    {% if perms.order.view_purchaseorder %}
+    {% if roles.purchase_order.view %}
     {% include "InvenTree/po_outstanding.html" with collapse_id="po_outstanding" %}
     {% endif %}
-    {% if perms.order.view_salesorder %}
+    {% if roles.sales_order.view %}
     {% include "InvenTree/so_outstanding.html" with collapse_id="so_outstanding" %}
     {% endif %}
 </div>
