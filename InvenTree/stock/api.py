@@ -52,6 +52,10 @@ class StockCategoryTree(TreeSerializer):
     def get_items(self):
         return StockLocation.objects.all().prefetch_related('stock_items', 'children')
 
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API detail endpoint for Stock object

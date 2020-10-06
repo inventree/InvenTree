@@ -44,6 +44,10 @@ class PartCategoryTree(TreeSerializer):
     def get_items(self):
         return PartCategory.objects.all().prefetch_related('parts', 'children')
 
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
 
 class CategoryList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PartCategory objects.

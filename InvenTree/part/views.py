@@ -12,7 +12,6 @@ from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, FormView, UpdateView
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
@@ -39,17 +38,21 @@ from .admin import PartResource
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
+from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.helpers import DownloadFile, str2bool
 
 
-class PartIndex(PermissionRequiredMixin, ListView):
+class PartIndex(InvenTreeRoleMixin, ListView):
     """ View for displaying list of Part objects
     """
+
     model = Part
     template_name = 'part/category.html'
     context_object_name = 'parts'
-    permission_required = ('part.view_part', 'part.view_partcategory')
+
+    role_required = 'part.view'
+
 
     def get_queryset(self):
         return Part.objects.all().select_related('category')
@@ -658,7 +661,7 @@ class PartNotes(UpdateView):
         return ctx
 
 
-class PartDetail(PermissionRequiredMixin, DetailView):
+class PartDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view for Part object
     """
 
@@ -666,7 +669,7 @@ class PartDetail(PermissionRequiredMixin, DetailView):
     queryset = Part.objects.all().select_related('category')
     template_name = 'part/detail.html'
 
-    permission_required = 'part.view_part'
+    role_required = 'part.view'
 
     # Add in some extra context information based on query params
     def get_context_data(self, **kwargs):
@@ -869,7 +872,7 @@ class BomValidate(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context=self.get_context())
 
 
-class BomUpload(PermissionRequiredMixin, FormView):
+class BomUpload(InvenTreeRoleMixin, FormView):
     """ View for uploading a BOM file, and handling BOM data importing.
 
     The BOM upload process is as follows:
@@ -905,7 +908,7 @@ class BomUpload(PermissionRequiredMixin, FormView):
     missing_columns = []
     allowed_parts = []
 
-    permission_required = ('part.change_part', 'part.add_bomitem')
+    role_required = ('part.change', 'part.add')
 
     def get_success_url(self):
         part = self.get_object()
@@ -1931,7 +1934,7 @@ class PartParameterDelete(AjaxDeleteView):
     ajax_form_title = _('Delete Part Parameter')
     
 
-class CategoryDetail(PermissionRequiredMixin, DetailView):
+class CategoryDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view for PartCategory """
 
     model = PartCategory
@@ -1939,7 +1942,7 @@ class CategoryDetail(PermissionRequiredMixin, DetailView):
     queryset = PartCategory.objects.all().prefetch_related('children')
     template_name = 'part/category_partlist.html'
 
-    permission_required = 'part.view_partcategory'
+    role_required = 'part.view'
 
     def get_context_data(self, **kwargs):
 
@@ -2081,13 +2084,13 @@ class CategoryCreate(AjaxCreateView):
         return initials
 
 
-class BomItemDetail(PermissionRequiredMixin, DetailView):
+class BomItemDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view for BomItem """
     context_object_name = 'item'
     queryset = BomItem.objects.all()
     template_name = 'part/bom-detail.html'
 
-    permission_required = 'part.view_bomitem'
+    role_required = 'part.view'
 
 
 class BomItemCreate(AjaxCreateView):

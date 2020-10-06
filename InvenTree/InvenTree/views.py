@@ -22,6 +22,7 @@ from django.views.generic.base import TemplateView
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
+from users.models import check_user_role, RuleSet
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm, ColorThemeSelectForm
 from .helpers import str2bool
@@ -682,3 +683,56 @@ class DatabaseStatsView(AjaxView):
         """
 
         return ctx
+
+
+class InvenTreeRoleMixin(PermissionRequiredMixin):
+    """
+    Permission class based on user roles, not user 'permissions'.
+
+    To specify which role is required for the mixin,
+    set the class attribute 'role_required' to something like the following:
+
+    role_required = 'part.add'
+    role_required = [
+        'part.change',
+        'build.add',
+    ]
+    """
+
+    # By default, no roles are required
+    # Roles must be specified 
+    role_required = None
+
+    def has_permission(self):
+        """
+        Determine if the current user 
+        """
+
+        roles_required = []
+
+        if type(self.role_required) is str:
+            roles_required.append(self.role_required)
+        elif type(self.role_required) in [list, tuple]:
+            roles_required = self.role_required
+
+        # List of permissions that will be required
+        permissions = []
+
+        user = self.request.user
+
+        # Superuser can have any permissions they desire
+        if user.is_superuser:
+            return True
+
+        print(type(self), "Required roles:", roles_required)
+
+        for required in roles_required:
+
+            (role, permission) = required.split('.')
+            
+            # Return False if the user does not have *any* of the required roles
+            if not check_user_role(user, role, permission):
+                return False
+
+        # We did not fail any required checks
+        return True

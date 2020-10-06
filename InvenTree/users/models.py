@@ -329,3 +329,35 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     """
 
     update_group_roles(instance)
+
+
+def check_user_role(user, role, permission):
+    """
+    Check if a user has a particular role:permission combination.
+
+    If the user is a superuser, this will return True
+    """
+
+    if user.is_superuser:
+        return True
+
+    for group in user.groups.all():
+
+        for rule in group.rule_sets.all():
+
+            if rule.name == role:
+
+                if permission == 'add' and rule.can_add:
+                    return True
+
+                if permission == 'change' and rule.can_change:
+                    return True
+
+                if permission == 'view' and rule.can_view:
+                    return True
+
+                if permission == 'delete' and rule.can_delete:
+                    return True
+
+    # No matching permissions found
+    return False
