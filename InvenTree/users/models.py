@@ -338,9 +338,6 @@ def create_missing_rule_sets(sender, instance, **kwargs):
     then we can now use these RuleSet values to update the
     group permissions.
     """
-    created = kwargs.get('created', False)
-    # To trigger the group permissions update: update_fields should not be None
-    update_fields = kwargs.get('update_fields', None)
 
     update_group_roles(instance)
 
