@@ -28,7 +28,7 @@
     <div class="media-body">
         <h3>
             {{ part.full_name }}
-            {% if user.is_staff and perms.part.change_part %}
+            {% if user.is_staff and roles.part.change %}
             <a  href="{% url 'admin:part_part_change' part.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
             {% endif %}
             {% if not part.active %}
@@ -315,7 +315,7 @@
     });
     {% endif %}
 
-    {% if not part.active and perms.part.delete_part %}
+    {% if not part.active and roles.part.delete %}
     $("#part-delete").click(function() {
         launchModalForm(
             "{% url 'part-delete' part.id %}",

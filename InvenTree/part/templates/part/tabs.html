@@ -36,7 +36,7 @@
     <li{% ifequal tab 'used' %} class="active"{% endifequal %}>
         <a href="{% url 'part-used-in' part.id %}">{% trans "Used In" %} {% if part.used_in_count > 0 %}<span class="badge">{{ part.used_in_count }}</span>{% endif %}</a></li>
     {% endif %}
-    {% if part.purchaseable and perms.order.view_purchaseorder %}
+    {% if part.purchaseable and roles.purchase_order.view %}
     {% if part.is_template == False %}
     <li{% ifequal tab 'suppliers' %} class="active"{% endifequal %}>
         <a href="{% url 'part-suppliers' part.id %}">{% trans "Suppliers" %}
@@ -48,7 +48,7 @@
         <a href="{% url 'part-orders' part.id %}">{% trans "Purchase Orders" %} <span class='badge'>{{ part.purchase_orders|length }}</span></a>
     </li>
     {% endif %}
-    {% if part.salable and perms.order.view_salesorder %}
+    {% if part.salable and roles.sales_order.view %}
     <li {% if tab == 'sales-prices' %}class='active'{% endif %}>
         <a href="{% url 'part-sale-prices' part.id %}">{% trans "Sale Price" %}</a>
     </li>

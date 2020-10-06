@@ -8,7 +8,7 @@
     {% if location %}
     <h3>
         {{ location.name }}
-        {% if user.is_staff and perms.stock.change_stocklocation %}
+        {% if user.is_staff and roles.stock.change %}
         <a  href="{% url 'admin:stock_stocklocation_change' location.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
         {% endif %}
     </h3>
