@@ -36,6 +36,10 @@ class RuleSet(models.Model):
         choice[0] for choice in RULESET_CHOICES
     ]
 
+    RULESET_PERMISSIONS = [
+        'view', 'add', 'change', 'delete',
+    ]
+
     RULESET_MODELS = {
         'admin': [
             'auth_group',

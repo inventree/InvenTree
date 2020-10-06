@@ -28,18 +28,21 @@ from . import forms as order_forms
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
 
 logger = logging.getLogger(__name__)
 
 
-class PurchaseOrderIndex(ListView):
+class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):
     """ List view for all purchase orders """
 
     model = PurchaseOrder
     template_name = 'order/purchase_orders.html'
     context_object_name = 'orders'
+
+    role_required = 'purchase_order.view'
 
     def get_queryset(self):
         """ Retrieve the list of purchase orders,
@@ -55,19 +58,21 @@ class PurchaseOrderIndex(ListView):
         return ctx
 
 
-class SalesOrderIndex(ListView):
+class SalesOrderIndex(InvenTreeRoleMixin, ListView):
 
     model = SalesOrder
     template_name = 'order/sales_orders.html'
     context_object_name = 'orders'
+    role_required = 'sales_order.view'
 
 
-class PurchaseOrderDetail(DetailView):
+class PurchaseOrderDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view for a PurchaseOrder object """
 
     context_object_name = 'order'
     queryset = PurchaseOrder.objects.all().prefetch_related('lines')
     template_name = 'order/purchase_order_detail.html'
+    role_required = 'purchase_order.view'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -75,12 +80,13 @@ class PurchaseOrderDetail(DetailView):
         return ctx
 
 
-class SalesOrderDetail(DetailView):
+class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view for a SalesOrder object """
 
     context_object_name = 'order'
     queryset = SalesOrder.objects.all().prefetch_related('lines')
     template_name = 'order/sales_order_detail.html'
+    role_required = 'sales_order.view'
 
 
 class PurchaseOrderAttachmentCreate(AjaxCreateView):
@@ -92,6 +98,7 @@ class PurchaseOrderAttachmentCreate(AjaxCreateView):
     form_class = order_forms.EditPurchaseOrderAttachmentForm
     ajax_form_title = _("Add Purchase Order Attachment")
     ajax_template_name = "modal_form.html"
+    role_required = 'purchase_order.add'
 
     def post_save(self, **kwargs):
         self.object.user = self.request.user
@@ -139,6 +146,7 @@ class SalesOrderAttachmentCreate(AjaxCreateView):
     model = SalesOrderAttachment
     form_class = order_forms.EditSalesOrderAttachmentForm
     ajax_form_title = _('Add Sales Order Attachment')
+    role_required = 'sales_order.add'
 
     def post_save(self, **kwargs):
         self.object.user = self.request.user
@@ -174,6 +182,7 @@ class PurchaseOrderAttachmentEdit(AjaxUpdateView):
     model = PurchaseOrderAttachment
     form_class = order_forms.EditPurchaseOrderAttachmentForm
     ajax_form_title = _("Edit Attachment")
+    role_required = 'purchase_order.change'
 
     def get_data(self):
         return {
@@ -195,6 +204,7 @@ class SalesOrderAttachmentEdit(AjaxUpdateView):
     model = SalesOrderAttachment
     form_class = order_forms.EditSalesOrderAttachmentForm
     ajax_form_title = _("Edit Attachment")
+    role_required = 'sales_order.change'
 
     def get_data(self):
         return {
@@ -216,6 +226,7 @@ class PurchaseOrderAttachmentDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Attachment")
     ajax_template_name = "order/delete_attachment.html"
     context_object_name = "attachment"
+    role_required = 'purchase_order.delete'
 
     def get_data(self):
         return {
@@ -230,6 +241,7 @@ class SalesOrderAttachmentDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Attachment")
     ajax_template_name = "order/delete_attachment.html"
     context_object_name = "attachment"
+    role_required = 'sales_order.delete'
 
     def get_data(self):
         return {
@@ -237,12 +249,13 @@ class SalesOrderAttachmentDelete(AjaxDeleteView):
         }
 
 
-class PurchaseOrderNotes(UpdateView):
+class PurchaseOrderNotes(InvenTreeRoleMixin, UpdateView):
     """ View for updating the 'notes' field of a PurchaseOrder """
 
     context_object_name = 'order'
     template_name = 'order/order_notes.html'
     model = PurchaseOrder
+    role_required = 'purchase_order.change'
 
     fields = ['notes']
 
@@ -259,12 +272,13 @@ class PurchaseOrderNotes(UpdateView):
         return ctx
 
 
-class SalesOrderNotes(UpdateView):
+class SalesOrderNotes(InvenTreeRoleMixin, UpdateView):
     """ View for editing the 'notes' field of a SalesORder """
 
     context_object_name = 'order'
     template_name = 'order/sales_order_notes.html'
     model = SalesOrder
+    role_required = 'sales_order.view'
 
     fields = ['notes']
 
@@ -286,6 +300,7 @@ class PurchaseOrderCreate(AjaxCreateView):
     model = PurchaseOrder
     ajax_form_title = _("Create Purchase Order")
     form_class = order_forms.EditPurchaseOrderForm
+    role_required = 'purchase_order.add'
 
     def get_initial(self):
         initials = super().get_initial().copy()
@@ -317,6 +332,7 @@ class SalesOrderCreate(AjaxCreateView):
     model = SalesOrder
     ajax_form_title = _("Create Sales Order")
     form_class = order_forms.EditSalesOrderForm
+    role_required = 'sales_order.add'
 
     def get_initial(self):
         initials = super().get_initial().copy()
@@ -347,6 +363,7 @@ class PurchaseOrderEdit(AjaxUpdateView):
     model = PurchaseOrder
     ajax_form_title = _('Edit Purchase Order')
     form_class = order_forms.EditPurchaseOrderForm
+    role_required = 'purchase_order.change'
 
     def get_form(self):
 
@@ -367,6 +384,7 @@ class SalesOrderEdit(AjaxUpdateView):
     model = SalesOrder
     ajax_form_title = _('Edit Sales Order')
     form_class = order_forms.EditSalesOrderForm
+    role_required = 'sales_order.change'
 
     def get_form(self):
         form = super().get_form()
@@ -384,6 +402,7 @@ class PurchaseOrderCancel(AjaxUpdateView):
     ajax_form_title = _('Cancel Order')
     ajax_template_name = 'order/order_cancel.html'
     form_class = order_forms.CancelPurchaseOrderForm
+    role_required = 'purchase_order.change'
 
     def post(self, request, *args, **kwargs):
         """ Mark the PO as 'CANCELLED' """
@@ -417,6 +436,7 @@ class SalesOrderCancel(AjaxUpdateView):
     ajax_form_title = _("Cancel sales order")
     ajax_template_name = "order/sales_order_cancel.html"
     form_class = order_forms.CancelSalesOrderForm
+    role_required = 'sales_order.change'
 
     def post(self, request, *args, **kwargs):
 
@@ -451,6 +471,7 @@ class PurchaseOrderIssue(AjaxUpdateView):
     ajax_form_title = _('Issue Order')
     ajax_template_name = "order/order_issue.html"
     form_class = order_forms.IssuePurchaseOrderForm
+    role_required = 'purchase_order.change'
 
     def post(self, request, *args, **kwargs):
         """ Mark the purchase order as 'PLACED' """
@@ -486,6 +507,7 @@ class PurchaseOrderComplete(AjaxUpdateView):
     ajax_template_name = "order/order_complete.html"
     ajax_form_title = _("Complete Order")
     context_object_name = 'order'
+    role_required = 'purchase_order.change'
 
     def get_context_data(self):
 
@@ -520,6 +542,7 @@ class SalesOrderShip(AjaxUpdateView):
     context_object_name = 'order'
     ajax_template_name = 'order/sales_order_ship.html'
     ajax_form_title = _('Ship Order')
+    role_required = 'sales_order.change'
 
     def post(self, request, *args, **kwargs):
 
@@ -563,6 +586,7 @@ class PurchaseOrderExport(AjaxView):
     """
 
     model = PurchaseOrder
+    role_required = 'purchase_order.view'
 
     def get(self, request, *args, **kwargs):
 
@@ -594,6 +618,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
     form_class = order_forms.ReceivePurchaseOrderForm
     ajax_form_title = _("Receive Parts")
     ajax_template_name = "order/receive_parts.html"
+    role_required = 'purchase_order.change'
 
     # Where the parts will be going (selected in POST request)
     destination = None
@@ -778,6 +803,11 @@ class OrderParts(AjaxView):
 
     ajax_form_title = _("Order Parts")
     ajax_template_name = 'order/order_wizard/select_parts.html'
+
+    role_required = [
+        'part.view',
+        'purchase_order.change',
+    ]
 
     # List of Parts we wish to order
     parts = []
@@ -1085,6 +1115,7 @@ class POLineItemCreate(AjaxCreateView):
     context_object_name = 'line'
     form_class = order_forms.EditPurchaseOrderLineItemForm
     ajax_form_title = _('Add Line Item')
+    role_required = 'purchase_order.add'
 
     def post(self, request, *arg, **kwargs):
 
@@ -1199,6 +1230,7 @@ class SOLineItemCreate(AjaxCreateView):
     context_order_name = 'line'
     form_class = order_forms.EditSalesOrderLineItemForm
     ajax_form_title = _('Add Line Item')
+    role_required = 'sales_order.add'
 
     def get_form(self, *args, **kwargs):
 
@@ -1250,6 +1282,7 @@ class SOLineItemEdit(AjaxUpdateView):
     model = SalesOrderLineItem
     form_class = order_forms.EditSalesOrderLineItemForm
     ajax_form_title = _('Edit Line Item')
+    role_required = 'sales_order.change'
 
     def get_form(self):
         form = super().get_form()
@@ -1268,6 +1301,7 @@ class POLineItemEdit(AjaxUpdateView):
     form_class = order_forms.EditPurchaseOrderLineItemForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Line Item')
+    role_required = 'purchase_order.change'
 
     def get_form(self):
         form = super().get_form()
@@ -1285,7 +1319,8 @@ class POLineItemDelete(AjaxDeleteView):
     model = PurchaseOrderLineItem
     ajax_form_title = _('Delete Line Item')
     ajax_template_name = 'order/po_lineitem_delete.html'
-    
+    role_required = 'purchase_order.delete'
+
     def get_data(self):
         return {
             'danger': _('Deleted line item'),
@@ -1297,6 +1332,7 @@ class SOLineItemDelete(AjaxDeleteView):
     model = SalesOrderLineItem
     ajax_form_title = _("Delete Line Item")
     ajax_template_name = "order/so_lineitem_delete.html"
+    role_required = 'sales_order.delete'
 
     def get_data(self):
         return {
@@ -1310,6 +1346,7 @@ class SalesOrderAllocationCreate(AjaxCreateView):
     model = SalesOrderAllocation
     form_class = order_forms.EditSalesOrderAllocationForm
     ajax_form_title = _('Allocate Stock to Order')
+    role_required = 'sales_order.add'
 
     def get_initial(self):
         initials = super().get_initial().copy()
@@ -1379,6 +1416,7 @@ class SalesOrderAllocationEdit(AjaxUpdateView):
     model = SalesOrderAllocation
     form_class = order_forms.EditSalesOrderAllocationForm
     ajax_form_title = _('Edit Allocation Quantity')
+    role_required = 'sales_order.change'
 
     def get_form(self):
         form = super().get_form()
@@ -1396,3 +1434,4 @@ class SalesOrderAllocationDelete(AjaxDeleteView):
     ajax_form_title = _("Remove allocation")
     context_object_name = 'allocation'
     ajax_template_name = "order/so_allocation_delete.html"
+    role_required = 'sales_order.delete'

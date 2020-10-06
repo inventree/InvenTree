@@ -44,7 +44,7 @@ src="{% static 'img/blank_image.png' %}"
         <button type='button' class='btn btn-default' id='edit-order' title='Edit order information'>
             <span class='fas fa-edit icon-green'></span>
         </button>
-        <button type='button' class='btn btn-default' id='packing-list' title='{% trans "Packing List" %}'>
+        <button type='button' disabled='' class='btn btn-default' id='packing-list' title='{% trans "Packing List" %}'>
             <span class='fas fa-clipboard-list'></span>
         </button>
         {% if order.status == SalesOrderStatus.PENDING %}
