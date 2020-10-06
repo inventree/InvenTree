@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.admin.widgets import FilteredSelectMultiple
@@ -64,26 +64,6 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
         help_text=_('Select which users are assigned to this group')
     )
 
-    def clean(self):
-        """ Validate that added Users don't belong to any group other than the current one
-        """
-
-        users = self.cleaned_data['users'].exclude(groups=self.instance)
-
-        error_message = ''
-        for user in users:
-            if user.groups.all():
-                error_message += f'<br>- {user.username} is in ' \
-                                 f'"{Group.objects.get(user=user).name}" group'
-
-        if error_message:
-            raise ValidationError(
-                mark_safe(_(f'The following users are already assigned to a group:'
-                            f'{error_message}'))
-            )
-
-        return self.cleaned_data
-
     def save_m2m(self):
         # Add the users to the Group.
 
@@ -116,15 +96,37 @@ class RoleGroupAdmin(admin.ModelAdmin):
 
     filter_horizontal = ['permissions']
 
-    # Save inlines before model
-    # https://stackoverflow.com/a/14860703/12794913
     def save_model(self, request, obj, form, change):
-        pass  # don't actually save the parent instance
+        """ 
+            This method serves two purposes:
+            - show warning message whenever the group users belong to multiple groups
+            - skip saving of the group instance model as inlines needs to be saved before.
+        """
+
+        # Get form cleaned data
+        users = form.cleaned_data['users']
+
+        # Check for users who are members of multiple groups
+        warning_message = ''
+        for user in users:
+            if user.groups.all().count() > 1:
+                warning_message += f'<br>- <b>{user.username}</b> is member of: '
+                for idx, group in enumerate(user.groups.all()):
+                    warning_message += f'<b>{group.name}</b>'
+                    if idx < len(user.groups.all()) - 1:
+                        warning_message += ', '
+
+        # If any, display warning message when group is saved
+        if warning_message:
+            warning_message = mark_safe(_(f'The following users are members of multiple groups:'
+                                          f'{warning_message}'))
+            messages.add_message(request, messages.WARNING, warning_message)
 
     def save_formset(self, request, form, formset, change):
-        formset.save()  # this will save the children
-        # update_fields is required to trigger permissions update
-        form.instance.save(update_fields=['name'])  # form.instance is the parent
+        # Save inline Rulesets
+        formset.save()
+        # Save Group instance and update permissions
+        form.instance.save(update_fields=['name'])
 
 
 class InvenTreeUserAdmin(UserAdmin):
