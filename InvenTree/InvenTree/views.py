@@ -22,7 +22,7 @@ from django.views.generic.base import TemplateView
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
 from common.models import InvenTreeSetting, ColorTheme
-from users.models import check_user_role, RuleSet
+from users.models import check_user_role
 
 from .forms import DeleteForm, EditUserForm, SetPasswordForm, ColorThemeSelectForm
 from .helpers import str2bool
@@ -700,12 +700,12 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
     """
 
     # By default, no roles are required
-    # Roles must be specified 
+    # Roles must be specified
     role_required = None
 
     def has_permission(self):
         """
-        Determine if the current user 
+        Determine if the current user
         """
 
         roles_required = []
@@ -714,9 +714,6 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
             roles_required.append(self.role_required)
         elif type(self.role_required) in [list, tuple]:
             roles_required = self.role_required
-
-        # List of permissions that will be required
-        permissions = []
 
         user = self.request.user
 

@@ -53,7 +53,6 @@ class PartIndex(InvenTreeRoleMixin, ListView):
 
     role_required = 'part.view'
 
-
     def get_queryset(self):
         return Part.objects.all().select_related('category')
 
