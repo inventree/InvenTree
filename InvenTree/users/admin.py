@@ -9,7 +9,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
-from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 
 from users.models import RuleSet
@@ -97,7 +96,7 @@ class RoleGroupAdmin(admin.ModelAdmin):
     filter_horizontal = ['permissions']
 
     def save_model(self, request, obj, form, change):
-        """ 
+        """
             This method serves two purposes:
             - show warning message whenever the group users belong to multiple groups
             - skip saving of the group instance model as inlines needs to be saved before.
