@@ -60,10 +60,17 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 </h3>
 <hr>
 <h4>
+{% if roles.part.view %}
+<a href='{% url "part-detail" item.part.pk %}'>
+{% endif %}
+{{ item.part.full_name}}
+{% if roles.part.view %}
+</a>
+{% endif %}
 {% if item.serialized %}
-    <a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name}}</a> # {{ item.serial }}
+ # {{ item.serial }}
 {% else %}
-    <a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name }}</a> &times {% decimal item.quantity %}
+ &times {% decimal item.quantity %}
 {% endif %}
 {% if user.is_staff and roles.stock.change %}
     <a  href="{% url 'admin:stock_stockitem_change' item.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
@@ -156,7 +163,13 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td><span class='fas fa-shapes'></span></td>
         <td>{% trans "Base Part" %}</td>
         <td>
-            <a href="{% url 'part-stock' item.part.id %}">{{ item.part.full_name }}
+            {% if roles.part.view %}
+            <a href="{% url 'part-stock' item.part.id %}">
+            {% endif %}
+            {{ item.part.full_name }}
+            {% if roles.part.view %}
+            </a>
+            {% endif %}
         </td>
     </tr>
     {% if item.serialized %}
