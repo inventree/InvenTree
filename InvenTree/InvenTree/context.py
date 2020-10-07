@@ -7,6 +7,8 @@ Provides extra global data to all templates.
 from InvenTree.status_codes import SalesOrderStatus, PurchaseOrderStatus
 from InvenTree.status_codes import BuildStatus, StockStatus
 
+from users.models import RuleSet
+
 
 def status_codes(request):
 
@@ -38,22 +40,31 @@ def user_roles(request):
     roles = {
     }
 
-    for group in user.groups.all():
-        for rule in group.rule_sets.all():
+    if user.is_superuser:
+        for ruleset in RuleSet.RULESET_MODELS.keys():
+            roles[ruleset] = {
+                'view': True,
+                'add': True,
+                'change': True,
+                'delete': True,
+            }
+    else:
+        for group in user.groups.all():
+            for rule in group.rule_sets.all():
 
-            # Ensure the role name is in the dict
-            if rule.name not in roles:
-                roles[rule.name] = {
-                    'view': user.is_superuser,
-                    'add': user.is_superuser,
-                    'change': user.is_superuser,
-                    'delete': user.is_superuser
-                }
+                # Ensure the role name is in the dict
+                if rule.name not in roles:
+                    roles[rule.name] = {
+                        'view': user.is_superuser,
+                        'add': user.is_superuser,
+                        'change': user.is_superuser,
+                        'delete': user.is_superuser
+                    }
 
-            # Roles are additive across groups
-            roles[rule.name]['view'] |= rule.can_view
-            roles[rule.name]['add'] |= rule.can_add
-            roles[rule.name]['change'] |= rule.can_change
-            roles[rule.name]['delete'] |= rule.can_delete
+                # Roles are additive across groups
+                roles[rule.name]['view'] |= rule.can_view
+                roles[rule.name]['add'] |= rule.can_add
+                roles[rule.name]['change'] |= rule.can_change
+                roles[rule.name]['delete'] |= rule.can_delete
 
     return {'roles': roles}
