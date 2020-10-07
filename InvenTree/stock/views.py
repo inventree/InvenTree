@@ -17,6 +17,7 @@ from django.utils.translation import ugettext as _
 from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
+from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.forms import ConfirmForm
 
 from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
@@ -36,12 +37,13 @@ from .admin import StockItemResource
 from . import forms as StockForms
 
 
-class StockIndex(ListView):
+class StockIndex(InvenTreeRoleMixin, ListView):
     """ StockIndex view loads all StockLocation and StockItem object
     """
     model = StockItem
     template_name = 'stock/location.html'
     context_obect_name = 'locations'
+    role_required = 'stock.view'
 
     def get_context_data(self, **kwargs):
         context = super(StockIndex, self).get_context_data(**kwargs).copy()
@@ -58,7 +60,7 @@ class StockIndex(ListView):
         return context
 
 
-class StockLocationDetail(DetailView):
+class StockLocationDetail(InvenTreeRoleMixin, DetailView):
     """
     Detailed view of a single StockLocation object
     """
@@ -67,9 +69,10 @@ class StockLocationDetail(DetailView):
     template_name = 'stock/location.html'
     queryset = StockLocation.objects.all()
     model = StockLocation
+    role_required = 'stock.view'
 
 
-class StockItemDetail(DetailView):
+class StockItemDetail(InvenTreeRoleMixin, DetailView):
     """
     Detailed view of a single StockItem object
     """
@@ -78,14 +81,16 @@ class StockItemDetail(DetailView):
     template_name = 'stock/item.html'
     queryset = StockItem.objects.all()
     model = StockItem
+    role_required = 'stock.view'
 
 
-class StockItemNotes(UpdateView):
+class StockItemNotes(InvenTreeRoleMixin, UpdateView):
     """ View for editing the 'notes' field of a StockItem object """
 
     context_object_name = 'item'
     template_name = 'stock/item_notes.html'
     model = StockItem
+    role_required = 'stock.view'
 
     fields = ['notes']
 
@@ -112,6 +117,7 @@ class StockLocationEdit(AjaxUpdateView):
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Location')
+    role_required = 'stock.change'
 
     def get_form(self):
         """ Customize form data for StockLocation editing.
@@ -136,6 +142,7 @@ class StockLocationQRCode(QRCodeView):
     """ View for displaying a QR code for a StockLocation object """
 
     ajax_form_title = _("Stock Location QR code")
+    role_required = 'stock.view'
 
     def get_qr_data(self):
         """ Generate QR code data for the StockLocation """
@@ -155,6 +162,7 @@ class StockItemAttachmentCreate(AjaxCreateView):
     form_class = StockForms.EditStockItemAttachmentForm
     ajax_form_title = _("Add Stock Item Attachment")
     ajax_template_name = "modal_form.html"
+    role_required = 'stock.add'
 
     def post_save(self, **kwargs):
         """ Record the user that uploaded the attachment """
@@ -199,6 +207,7 @@ class StockItemAttachmentEdit(AjaxUpdateView):
     model = StockItemAttachment
     form_class = StockForms.EditStockItemAttachmentForm
     ajax_form_title = _("Edit Stock Item Attachment")
+    role_required = 'stock.change'
 
     def get_form(self):
 
@@ -217,6 +226,7 @@ class StockItemAttachmentDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Stock Item Attachment")
     ajax_template_name = "attachment_delete.html"
     context_object_name = "attachment"
+    role_required = 'stock.delete'
 
     def get_data(self):
         return {
@@ -233,6 +243,7 @@ class StockItemAssignToCustomer(AjaxUpdateView):
     ajax_form_title = _("Assign to Customer")
     context_object_name = "item"
     form_class = StockForms.AssignStockItemToCustomerForm
+    role_required = 'stock.change'
 
     def post(self, request, *args, **kwargs):
 
@@ -270,6 +281,7 @@ class StockItemReturnToStock(AjaxUpdateView):
     ajax_form_title = _("Return to Stock")
     context_object_name = "item"
     form_class = StockForms.ReturnStockItemForm
+    role_required = 'stock.change'
 
     def post(self, request, *args, **kwargs):
 
@@ -303,6 +315,7 @@ class StockItemSelectLabels(AjaxView):
 
     model = StockItem
     ajax_form_title = _('Select Label Template')
+    role_required = 'stock.view'
 
     def get_form(self):
 
@@ -351,6 +364,8 @@ class StockItemPrintLabels(AjaxView):
     label: Valid pk of a StockItemLabel template
     """
 
+    role_required = 'stock.view'
+
     def get(self, request, *args, **kwargs):
 
         label = request.GET.get('label', None)
@@ -387,6 +402,7 @@ class StockItemDeleteTestData(AjaxUpdateView):
     model = StockItem
     form_class = ConfirmForm
     ajax_form_title = _("Delete All Test Data")
+    role_required = ['stock.change', 'stock.delete']
 
     def get_form(self):
         return ConfirmForm()
@@ -422,6 +438,7 @@ class StockItemTestResultCreate(AjaxCreateView):
     model = StockItemTestResult
     form_class = StockForms.EditStockItemTestResultForm
     ajax_form_title = _("Add Test Result")
+    role_required = 'stock.add'
 
     def post_save(self, **kwargs):
         """ Record the user that uploaded the test result """
@@ -459,6 +476,7 @@ class StockItemTestResultEdit(AjaxUpdateView):
     model = StockItemTestResult
     form_class = StockForms.EditStockItemTestResultForm
     ajax_form_title = _("Edit Test Result")
+    role_required = 'stock.change'
 
     def get_form(self):
 
@@ -477,6 +495,7 @@ class StockItemTestResultDelete(AjaxDeleteView):
     model = StockItemTestResult
     ajax_form_title = _("Delete Test Result")
     context_object_name = "result"
+    role_required = 'stock.delete'
 
 
 class StockItemTestReportSelect(AjaxView):
@@ -487,6 +506,7 @@ class StockItemTestReportSelect(AjaxView):
 
     model = StockItem
     ajax_form_title = _("Select Test Report Template")
+    role_required = 'stock.view'
 
     def get_form(self):
 
@@ -527,6 +547,7 @@ class StockItemTestReportDownload(AjaxView):
     template - Valid PK of a TestReport template object
 
     """
+    role_required = 'stock.view'
 
     def get(self, request, *args, **kwargs):
 
@@ -554,6 +575,7 @@ class StockExportOptions(AjaxView):
     model = StockLocation
     ajax_form_title = _('Stock Export Options')
     form_class = StockForms.ExportOptionsForm
+    role_required = 'stock.view'
 
     def post(self, request, *args, **kwargs):
 
@@ -586,6 +608,7 @@ class StockExport(AjaxView):
     """
 
     model = StockItem
+    role_required = 'stock.view'
 
     def get(self, request, *args, **kwargs):
 
@@ -673,6 +696,7 @@ class StockItemQRCode(QRCodeView):
     """ View for displaying a QR code for a StockItem object """
 
     ajax_form_title = _("Stock Item QR Code")
+    role_required = 'stock.view'
 
     def get_qr_data(self):
         """ Generate QR code data for the StockItem """
@@ -699,6 +723,7 @@ class StockItemInstall(AjaxUpdateView):
     form_class = StockForms.InstallStockForm
     ajax_form_title = _('Install Stock Item')
     ajax_template_name = "stock/item_install.html"
+    role_required = 'stock.change'
 
     part = None
 
@@ -798,6 +823,7 @@ class StockItemUninstall(AjaxView, FormMixin):
     ajax_template_name = 'stock/stock_uninstall.html'
     ajax_form_title = _('Uninstall Stock Items')
     form_class = StockForms.UninstallStockForm
+    role_required = 'stock.change'
 
     # List of stock items to uninstall (initially empty)
     stock_items = []
@@ -931,6 +957,7 @@ class StockAdjust(AjaxView, FormMixin):
     ajax_form_title = _('Adjust Stock')
     form_class = StockForms.AdjustStockForm
     stock_items = []
+    role_required = 'stock.change'
 
     def get_GET_items(self):
         """ Return list of stock items initally requested using GET.
@@ -1251,6 +1278,7 @@ class StockItemEdit(AjaxUpdateView):
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Item')
+    role_required = 'stock.change'
 
     def get_form(self):
         """ Get form for StockItem editing.
@@ -1287,6 +1315,7 @@ class StockItemConvert(AjaxUpdateView):
     ajax_form_title = _('Convert Stock Item')
     ajax_template_name = 'stock/stockitem_convert.html'
     context_object_name = 'item'
+    role_required = 'stock.change'
 
     def get_form(self):
         """
@@ -1312,6 +1341,7 @@ class StockLocationCreate(AjaxCreateView):
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Location')
+    role_required = 'stock.add'
 
     def get_initial(self):
         initials = super(StockLocationCreate, self).get_initial().copy()
@@ -1334,6 +1364,7 @@ class StockItemSerialize(AjaxUpdateView):
     ajax_template_name = 'stock/item_serialize.html'
     ajax_form_title = _('Serialize Stock')
     form_class = StockForms.SerializeStockForm
+    role_required = 'stock.change'
 
     def get_form(self):
 
@@ -1426,6 +1457,7 @@ class StockItemCreate(AjaxCreateView):
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Item')
+    role_required = 'stock.add'
 
     def get_part(self, form=None):
         """
@@ -1701,6 +1733,7 @@ class StockLocationDelete(AjaxDeleteView):
     ajax_template_name = 'stock/location_delete.html'
     context_object_name = 'location'
     ajax_form_title = _('Delete Stock Location')
+    role_required = 'stock.delete'
 
 
 class StockItemDelete(AjaxDeleteView):
@@ -1714,6 +1747,7 @@ class StockItemDelete(AjaxDeleteView):
     ajax_template_name = 'stock/item_delete.html'
     context_object_name = 'item'
     ajax_form_title = _('Delete Stock Item')
+    role_required = 'stock.delete'
 
 
 class StockItemTrackingDelete(AjaxDeleteView):
@@ -1725,9 +1759,10 @@ class StockItemTrackingDelete(AjaxDeleteView):
     model = StockItemTracking
     ajax_template_name = 'stock/tracking_delete.html'
     ajax_form_title = _('Delete Stock Tracking Entry')
+    role_required = 'stock.delete'
 
 
-class StockTrackingIndex(ListView):
+class StockTrackingIndex(InvenTreeRoleMixin, ListView):
     """
     StockTrackingIndex provides a page to display StockItemTracking objects
     """
@@ -1735,6 +1770,7 @@ class StockTrackingIndex(ListView):
     model = StockItemTracking
     template_name = 'stock/tracking.html'
     context_object_name = 'items'
+    role_required = 'stock.view'
 
 
 class StockItemTrackingEdit(AjaxUpdateView):
@@ -1743,6 +1779,7 @@ class StockItemTrackingEdit(AjaxUpdateView):
     model = StockItemTracking
     ajax_form_title = _('Edit Stock Tracking Entry')
     form_class = StockForms.TrackingEntryForm
+    role_required = 'stock.change'
 
 
 class StockItemTrackingCreate(AjaxCreateView):
@@ -1752,6 +1789,7 @@ class StockItemTrackingCreate(AjaxCreateView):
     model = StockItemTracking
     ajax_form_title = _("Add Stock Tracking Entry")
     form_class = StockForms.TrackingEntryForm
+    role_required = 'stock.add'
 
     def post(self, request, *args, **kwargs):
 

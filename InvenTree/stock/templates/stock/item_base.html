@@ -60,10 +60,17 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 </h3>
 <hr>
 <h4>
+{% if roles.part.view %}
+<a href='{% url "part-detail" item.part.pk %}'>
+{% endif %}
+{{ item.part.full_name}}
+{% if roles.part.view %}
+</a>
+{% endif %}
 {% if item.serialized %}
-    <a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name}}</a> # {{ item.serial }}
+ # {{ item.serial }}
 {% else %}
-    <a href='{% url "part-detail" item.part.pk %}'>{{ item.part.full_name }}</a> &times {% decimal item.quantity %}
+ &times {% decimal item.quantity %}
 {% endif %}
 {% if user.is_staff and roles.stock.change %}
     <a  href="{% url 'admin:stock_stockitem_change' item.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
@@ -82,14 +89,17 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <ul class='dropdown-menu' role='menu'>
             <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
             <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
-            {% if item.uid %}
-            <li><a href='#' id='unlink-barcode'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
-            {% else %}
-            <li><a href='#' id='link-barcode'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+            {% if roles.stock.change %}
+                {% if item.uid %}
+                <li><a href='#' id='unlink-barcode'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+                {% else %}
+                <li><a href='#' id='link-barcode'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>\
+                {% endif %}
             {% endif %}
         </ul>
     </div>
     <!-- Stock adjustment menu -->
+    {% if roles.stock.change %}
     <div class='btn-group'>
         <button id='stock-options' title='{% trans "Stock adjustment actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
@@ -117,21 +127,27 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
             {% endif %}
         </ul>
     </div>
+    {% endif %}
     <!-- Edit stock item -->
+    {% if roles.stock.change %}
     <div class='btn-group'>
         <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-tools'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
-
             {% if item.part.has_variants %}
             <li><a href='#' id='stock-convert' title='{% trans "Convert to variant" %}'><span class='fas fa-screwdriver'></span> {% trans "Convert to variant" %}</a></li>
             {% endif %}
+            {% if roles.stock.add %}
             <li><a href='#' id='stock-duplicate' title='{% trans "Duplicate stock item" %}'><span class='fas fa-copy'></span> {% trans "Duplicate stock item" %}</a></li>
+            {% endif %}
             <li><a href='#' id='stock-edit' title='{% trans "Edit stock item" %}'><span class='fas fa-edit icon-blue'></span> {% trans "Edit stock item" %}</a></li>
-            {% if item.can_delete or user.is_staff %}
-            <li><a href='#' id='stock-delete' title='{% trans "Delete stock item" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete stock item" %}</a></li>
+            {% if user.is_staff or roles.stock.delete %}
+                {% if item.can_delete %}
+                <li><a href='#' id='stock-delete' title='{% trans "Delete stock item" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete stock item" %}</a></li>
+                {% endif %}
             {% endif %}
         </ul>
     </div>
+    {% endif %}
     <button type='button' class='btn btn-default' id='stock-test-report' title='{% trans "Generate test report" %}'>
         <span class='fas fa-file-invoice'/>
     </button>
@@ -147,7 +163,13 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td><span class='fas fa-shapes'></span></td>
         <td>{% trans "Base Part" %}</td>
         <td>
-            <a href="{% url 'part-stock' item.part.id %}">{{ item.part.full_name }}
+            {% if roles.part.view %}
+            <a href="{% url 'part-stock' item.part.id %}">
+            {% endif %}
+            {{ item.part.full_name }}
+            {% if roles.part.view %}
+            </a>
+            {% endif %}
         </td>
     </tr>
     {% if item.serialized %}
