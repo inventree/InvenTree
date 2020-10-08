@@ -15,6 +15,8 @@ from .models import PartParameterTemplate, PartParameter
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
+from InvenTree.helpers import normalize
+
 from stock.models import StockLocation
 from company.models import SupplierPart
 
@@ -164,6 +166,15 @@ class BomItemResource(ModelResource):
 
     # Is the sub-part itself an assembly?
     sub_assembly = Field(attribute='sub_part__assembly', readonly=True)
+
+    def dehydrate_quantity(self, item):
+        """
+        Special consideration for the 'quantity' field on data export.
+        We do not want a spreadsheet full of "1.0000" (we'd rather "1")
+
+        Ref: https://django-import-export.readthedocs.io/en/latest/getting_started.html#advanced-data-manipulation-on-export
+        """
+        return normalize(item.quantity)
 
     def before_export(self, queryset, *args, **kwargs):
 
