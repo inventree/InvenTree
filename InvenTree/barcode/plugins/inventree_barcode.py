@@ -42,6 +42,8 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
         elif type(self.data) is str:
             try:
                 self.data = json.loads(self.data)
+                if type(self.data) is not dict:
+                    return False
             except json.JSONDecodeError:
                 return False
         else:
