@@ -82,7 +82,7 @@ class Company(models.Model):
     class Meta:
         ordering = ['name', ]
 
-    name = models.CharField(max_length=100, blank=False, unique=True,
+    name = models.CharField(max_length=100, blank=False,
                             help_text=_('Company name'),
                             verbose_name=_('Company name'))
 
@@ -98,7 +98,8 @@ class Company(models.Model):
                              verbose_name=_('Phone number'),
                              blank=True, help_text=_('Contact phone number'))
 
-    email = models.EmailField(blank=True, verbose_name=_('Email'), help_text=_('Contact email address'))
+    email = models.EmailField(blank=True, null=True, unique=True,
+                              verbose_name=_('Email'), help_text=_('Contact email address'))
 
     contact = models.CharField(max_length=100,
                                verbose_name=_('Contact'),
