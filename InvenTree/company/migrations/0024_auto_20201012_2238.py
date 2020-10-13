@@ -6,7 +6,7 @@ def make_empty_email_field_null(apps, schema_editor):
     for company in Company.objects.all():
         if company.email == '':
             company.email = None
-        company.save()
+            company.save()
 
 
 class Migration(migrations.Migration):
@@ -16,12 +16,21 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # Allow email field to be NULL
+        migrations.AlterField(
+            model_name='company',
+            name='email',
+            field=models.EmailField(blank=True, help_text='Contact email address', max_length=254, null=True, unique=False, verbose_name='Email'),
+        ),
+        # Convert empty email string to NULL
         migrations.RunPython(make_empty_email_field_null),
+        # Make email field unique
         migrations.AlterField(
             model_name='company',
             name='email',
             field=models.EmailField(blank=True, help_text='Contact email address', max_length=254, null=True, unique=True, verbose_name='Email'),
         ),
+        # Remove unique constraint on name field
         migrations.AlterField(
             model_name='company',
             name='name',
