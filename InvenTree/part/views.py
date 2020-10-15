@@ -21,7 +21,7 @@ import os
 from rapidfuzz import fuzz
 from decimal import Decimal, InvalidOperation
 
-from .models import PartCategory, Part, PartAttachment
+from .models import PartCategory, Part, PartAttachment, PartRelated
 from .models import PartParameterTemplate, PartParameter
 from .models import BomItem
 from .models import match_part_names
@@ -68,6 +68,73 @@ class PartIndex(InvenTreeRoleMixin, ListView):
         context['part_count'] = Part.objects.count()
 
         return context
+
+
+class PartRelatedCreate(AjaxCreateView):
+    """ View for creating a new PartRelated object
+
+    - The view only makes sense if a Part object is passed to it
+    """
+    model = PartRelated
+    form_class = part_forms.CreatePartRelatedForm
+    ajax_form_title = _("Add Related Part")
+    ajax_template_name = "modal_form.html"
+    role_required = 'part.change'
+
+    # TODO: QuerySet should not show parts already related to object
+
+    def get_initial(self):
+        """ Point part_1 to parent part """
+
+        initials = {}
+
+        part_id = self.request.GET.get('part', None)
+
+        if part_id:
+            try:
+                initials['part_1'] = Part.objects.get(pk=part_id)
+            except (Part.DoesNotExist, ValueError):
+                pass
+
+        return initials
+
+    def get_form(self):
+        """ Create a form to upload a new PartRelated
+
+        - Hide the 'part_1' field (parent part)
+        """
+
+        form = super(AjaxCreateView, self).get_form()
+
+        form.fields['part_1'].widget = HiddenInput()
+
+        return form
+
+    def post_save(self):
+        """ Save PartRelated model (POST method does not) """
+
+        form = self.get_form()
+
+        if form.is_valid():
+            print('form is valid!')
+
+            part_1 = form.cleaned_data['part_1']
+            part_2 = form.cleaned_data['part_2']
+
+            print(f'{part_1=}')
+            print(f'{part_2=}')
+
+            PartRelated.create(part_1, part_2)
+
+
+class PartRelatedDelete(AjaxDeleteView):
+    """ View for deleting a PartRelated object """
+
+    model = PartRelated
+    ajax_form_title = _("Delete Related Part")
+    ajax_template_name = "related_delete.html"
+    context_object_name = "related"
+    role_required = 'part.change'
 
 
 class PartAttachmentCreate(AjaxCreateView):

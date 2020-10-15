@@ -1264,11 +1264,11 @@ class Part(MPTTModel):
         parts_2 = self.related_parts_2.filter(part_2__id=self.pk)
 
         for part in parts_1:
-            # Append 
+            # Append
             related_parts.append(part.part_2)
 
         for part in parts_2:
-            # Append 
+            # Append
             related_parts.append(part.part_1)
 
         return related_parts
@@ -1749,28 +1749,41 @@ class PartRelated(models.Model):
 
     part_1 = models.ForeignKey(Part, related_name='related_parts_1', on_delete=models.DO_NOTHING)
 
-    part_2 = models.ForeignKey(Part, related_name='related_parts_2', on_delete=models.DO_NOTHING)
+    part_2 = models.ForeignKey(Part, related_name='related_parts_2', on_delete=models.DO_NOTHING,
+                               help_text=_('Choose Related Part'))
+
+    def __str__(self):
+        return f'{self.part_1} <-> {self.part_2}'
 
     def create_relationship(self, part_1, part_2):
+        ''' Create relationship between two parts '''
+
+        validate = True
 
         parts = Part.objects.all()
+        related_parts = PartRelated.objects.all()
 
-        # Check if part exist
+        # Check if part exist and there are not the same part
         if (part_1 in parts and part_2 in parts) and (part_1 is not part_2):
+            # Check if relation exists already
+            for relation in related_parts:
+                if (part_1 == relation.part_1 and part_2 == relation.part_2) \
+                   or (part_1 == relation.part_2 and part_2 == relation.part_1):
+                    validate = False
+        else:
+            validate = False
+
+        if validate:
             # Add relationship
             self.part_1 = part_1
             self.part_2 = part_2
             self.save()
 
-            return True
-        else:
-            return False
+        return validate
 
     @classmethod
     def create(cls, part_1, part_2):
+        ''' Create PartRelated object '''
         related_part = cls()
         related_part.create_relationship(part_1, part_2)
         return related_part
-
-    def __str__(self):
-        return f'{part_1} <-> {part_2}'

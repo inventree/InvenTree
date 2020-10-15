@@ -1,0 +1,46 @@
+{% extends "part/part_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block details %}
+
+{% include 'part/tabs.html' with tab='related-parts' %}
+
+<h4>{% trans "Related Parts" %}</h4>
+<hr>
+
+<div id='button-bar'>
+    <div class='button-toolbar container-fluid' style='float: left;'>
+        <button class='btn btn-primary' type='button' id='add-related-part' title='{% trans "Add Related" %}'>{% trans "Add Related" %}</button>
+        <div class='filter-list' id='filter-list-related'>
+            <!-- An empty div in which the filter list will be constructed -->
+        </div>
+    </div>
+</div>
+
+<table class='table table-striped table-condensed related-table' id='table-related-part' data-toolbar='#button-bar'>
+</table>
+
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+loadPartRelatedTable($("#table-related-part"), {
+    url: "{% url 'api-part-list' %}",
+    params: {
+        part: {{ part.id }},
+    },
+});
+
+$("#add-related-part").click(function() {
+    launchModalForm("{% url 'part-related-create' %}", {
+        data: {
+            part: {{ part.id }},
+        },
+        reload: true,
+    });
+});
+
+{% endblock %}
