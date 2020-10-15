@@ -6,18 +6,18 @@
 
 {% include "company/supplier_part_tabs.html" with tab='orders' %}
 
-<hr>
-
 <h4>{% trans "Supplier Part Orders" %}</h4>
 
+<hr>
+
 <div id='button-bar'>
-        <div class='btn-group'>
-            <button class='btn btn-primary' type='button' id='part-order2' title='Order part'>Order Part</button>
-        </div>
+    <div class='btn-group'>
+        <button class='btn btn-primary' type='button' id='order-part2' title='Order part'>Order Part</button>
     </div>
+</div>
     
-    <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#button-bar'>
-    </table>
+<table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#button-bar'>
+</table>
 
 {% endblock %}
 

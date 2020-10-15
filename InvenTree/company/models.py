@@ -423,12 +423,15 @@ class SupplierPart(models.Model):
         return str(self)
 
     def __str__(self):
-        s = "{supplier} ({sku})".format(
-            sku=self.SKU,
-            supplier=self.supplier.name)
+        s = ''
+
+        if self.part.IPN:
+            s += f'{self.part.IPN}'
+
+        s += f' | {self.supplier.name} | {self.SKU}'
 
         if self.manufacturer_string:
-            s = s + ' - ' + self.manufacturer_string
+            s = s + ' | ' + self.manufacturer_string
         
         return s
 
