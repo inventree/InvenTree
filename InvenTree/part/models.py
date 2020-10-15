@@ -1254,6 +1254,25 @@ class Part(MPTTModel):
 
         return self.get_descendants(include_self=False)
 
+    def fetch_related_parts(self):
+        """ Return all related parts """
+
+        related_parts = []
+
+        parts_1 = self.related_parts_1.filter(part_1__id=self.pk)
+
+        parts_2 = self.related_parts_2.filter(part_2__id=self.pk)
+
+        for part in parts_1:
+            # Append 
+            related_parts.append(part.part_2)
+
+        for part in parts_2:
+            # Append 
+            related_parts.append(part.part_1)
+
+        return related_parts
+
 
 def attach_file(instance, filename):
     """ Function for storing a file for a PartAttachment
@@ -1723,3 +1742,35 @@ class BomItem(models.Model):
         pmax = decimal2string(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
+
+
+class PartRelated(models.Model):
+    """ Store and handle related parts (eg. mating connector, crimps, etc.) """
+
+    part_1 = models.ForeignKey(Part, related_name='related_parts_1', on_delete=models.DO_NOTHING)
+
+    part_2 = models.ForeignKey(Part, related_name='related_parts_2', on_delete=models.DO_NOTHING)
+
+    def create_relationship(self, part_1, part_2):
+
+        parts = Part.objects.all()
+
+        # Check if part exist
+        if (part_1 in parts and part_2 in parts) and (part_1 is not part_2):
+            # Add relationship
+            self.part_1 = part_1
+            self.part_2 = part_2
+            self.save()
+
+            return True
+        else:
+            return False
+
+    @classmethod
+    def create(cls, part_1, part_2):
+        related_part = cls()
+        related_part.create_relationship(part_1, part_2)
+        return related_part
+
+    def __str__(self):
+        return f'{part_1} <-> {part_2}'
