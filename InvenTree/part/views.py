@@ -81,10 +81,8 @@ class PartRelatedCreate(AjaxCreateView):
     ajax_template_name = "modal_form.html"
     role_required = 'part.change'
 
-    # TODO: QuerySet should not show parts already related to object
-
     def get_initial(self):
-        """ Point part_1 to parent part """
+        """ Set parent part as part_1 field """
 
         initials = {}
 
@@ -102,11 +100,29 @@ class PartRelatedCreate(AjaxCreateView):
         """ Create a form to upload a new PartRelated
 
         - Hide the 'part_1' field (parent part)
+        - Display parts which are not yet related
         """
 
         form = super(AjaxCreateView, self).get_form()
 
         form.fields['part_1'].widget = HiddenInput()
+
+        try:
+            # Get parent part
+            parent_part = self.get_initial()['part_1']
+            # Get existing related parts
+            related_parts = [related_part[1].pk for related_part in parent_part.get_related_parts()]
+
+            # Build updated choice list excluding parts already related to parent part
+            updated_choices = []
+            for choice in form.fields["part_2"].choices:
+                if choice[0] not in related_parts:
+                    updated_choices.append(choice)
+
+            # Update choices for related part
+            form.fields['part_2'].choices = updated_choices
+        except KeyError:
+            pass
 
         return form
 
@@ -116,13 +132,8 @@ class PartRelatedCreate(AjaxCreateView):
         form = self.get_form()
 
         if form.is_valid():
-            print('form is valid!')
-
             part_1 = form.cleaned_data['part_1']
             part_2 = form.cleaned_data['part_2']
-
-            print(f'{part_1=}')
-            print(f'{part_2=}')
 
             PartRelated.create(part_1, part_2)
 
@@ -132,7 +143,6 @@ class PartRelatedDelete(AjaxDeleteView):
 
     model = PartRelated
     ajax_form_title = _("Delete Related Part")
-    ajax_template_name = "related_delete.html"
     context_object_name = "related"
     role_required = 'part.change'
 

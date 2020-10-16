@@ -163,41 +163,6 @@ function loadSimplePartTable(table, url, options={}) {
 }
 
 
-function loadPartRelatedTable(table, options={}) {
-    /* Load related parts table */
-
-    var columns = [
-        {
-            field: options.params['part'],
-            title: '{% trans 'Part' %}',
-            sortable: true,
-            sortName: 'name',
-            formatter: function(value, row, index, field) {
-
-                var name = '';
-
-                if (row.IPN) {
-                    name += row.IPN + ' | ' + row.name;
-                } else {
-                    name += row.name;
-                }
-                
-                return renderLink(name, '/part/' + row.pk + '/'); 
-            }
-        }
-    ];
-
-    $(table).inventreeTable({
-        sortName: 'part',
-        groupBy: false,
-        name: options.name || 'related_parts',
-        formatNoMatches: function() { return "{% trans "No parts found" %}"; },
-        columns: columns,
-        showColumns: true,
-    });
-}
-
-
 function loadParametricPartTable(table, options={}) {
     /* Load parametric table for part parameters
      * 

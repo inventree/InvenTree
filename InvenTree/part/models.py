@@ -1254,24 +1254,31 @@ class Part(MPTTModel):
 
         return self.get_descendants(include_self=False)
 
-    def fetch_related_parts(self):
-        """ Return all related parts """
+    def get_related_parts(self):
+        """ Return list of tuples for all related parts:
+            - first value is PartRelated object
+            - second value is matching Part object
+        """
 
         related_parts = []
 
-        parts_1 = self.related_parts_1.filter(part_1__id=self.pk)
+        related_parts_1 = self.related_parts_1.filter(part_1__id=self.pk)
 
-        parts_2 = self.related_parts_2.filter(part_2__id=self.pk)
+        related_parts_2 = self.related_parts_2.filter(part_2__id=self.pk)
 
-        for part in parts_1:
-            # Append
-            related_parts.append(part.part_2)
+        for related_part in related_parts_1:
+            # Add to related parts list
+            related_parts.append((related_part, related_part.part_2))
 
-        for part in parts_2:
-            # Append
-            related_parts.append(part.part_1)
+        for related_part in related_parts_2:
+            # Add to related parts list
+            related_parts.append((related_part, related_part.part_1))
 
         return related_parts
+
+    @property
+    def related_count(self):
+        return len(self.get_related_parts())
 
 
 def attach_file(instance, filename):
@@ -1783,7 +1790,8 @@ class PartRelated(models.Model):
 
     @classmethod
     def create(cls, part_1, part_2):
-        ''' Create PartRelated object '''
+        ''' Create PartRelated object and relationship between two parts '''
+
         related_part = cls()
         related_part.create_relationship(part_1, part_2)
         return related_part
