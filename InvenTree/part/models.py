@@ -1754,16 +1754,18 @@ class BomItem(models.Model):
 class PartRelated(models.Model):
     """ Store and handle related parts (eg. mating connector, crimps, etc.) """
 
-    part_1 = models.ForeignKey(Part, related_name='related_parts_1', on_delete=models.DO_NOTHING)
+    part_1 = models.ForeignKey(Part, related_name='related_parts_1',
+                               on_delete=models.DO_NOTHING)
 
-    part_2 = models.ForeignKey(Part, related_name='related_parts_2', on_delete=models.DO_NOTHING,
-                               help_text=_('Choose Related Part'))
+    part_2 = models.ForeignKey(Part, related_name='related_parts_2',
+                               on_delete=models.DO_NOTHING,
+                               help_text=_('Select Related Part'))
 
     def __str__(self):
-        return f'{self.part_1} <-> {self.part_2}'
+        return f'{self.part_1} <--> {self.part_2}'
 
-    def create_relationship(self, part_1, part_2):
-        ''' Create relationship between two parts '''
+    def validate(self, part_1, part_2):
+        ''' Validate that the two parts relationship is unique '''
 
         validate = True
 
@@ -1771,14 +1773,34 @@ class PartRelated(models.Model):
         related_parts = PartRelated.objects.all()
 
         # Check if part exist and there are not the same part
-        if (part_1 in parts and part_2 in parts) and (part_1 is not part_2):
+        if (part_1 in parts and part_2 in parts) and (part_1.pk != part_2.pk):
             # Check if relation exists already
             for relation in related_parts:
                 if (part_1 == relation.part_1 and part_2 == relation.part_2) \
                    or (part_1 == relation.part_2 and part_2 == relation.part_1):
                     validate = False
+                    break
         else:
             validate = False
+
+        return validate
+
+    def clean(self):
+        ''' Overwrite clean method to check that relation is unique '''
+
+        validate = self.validate(self.part_1, self.part_2)
+
+        if not validate:
+            error_message = _('Error creating relationship: check that '
+                              'the part is not related to itself '
+                              'and that the relationship is unique')
+
+            raise ValidationError(error_message)
+
+    def create_relationship(self, part_1, part_2):
+        ''' Create relationship between two parts '''
+
+        validate = self.validate(part_1, part_2)
 
         if validate:
             # Add relationship

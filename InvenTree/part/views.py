@@ -113,10 +113,12 @@ class PartRelatedCreate(AjaxCreateView):
             # Get existing related parts
             related_parts = [related_part[1].pk for related_part in parent_part.get_related_parts()]
 
-            # Build updated choice list excluding parts already related to parent part
+            # Build updated choice list excluding
+            # - parts already related to parent part
+            # - the parent part itself
             updated_choices = []
             for choice in form.fields["part_2"].choices:
-                if choice[0] not in related_parts:
+                if (choice[0] not in related_parts) and (choice[0] != parent_part.pk):
                     updated_choices.append(choice)
 
             # Update choices for related part
