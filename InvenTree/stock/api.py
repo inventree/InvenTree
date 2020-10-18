@@ -324,8 +324,31 @@ class StockList(generics.ListCreateAPIView):
     serializer_class = StockItemSerializer
     queryset = StockItem.objects.all()
 
-    # TODO - Override the 'create' method for this view,
-    # to allow the user to be recorded when a new StockItem object is created
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new StockItem object via the API.
+
+        We override the default 'create' implementation.
+
+        If a location is *not* specified, but the linked *part* has a default location,
+        we can pre-fill the location automatically.
+        """
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        item = serializer.save()
+
+        # A location was *not* specified - try to infer it
+        if 'location' not in request.data:
+            location = item.part.get_default_location()
+            if location is not None:
+                item.location = location
+                item.save()
+
+        # Return a response
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def list(self, request, *args, **kwargs):
         """

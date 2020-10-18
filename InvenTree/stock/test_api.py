@@ -97,6 +97,53 @@ class StockItemTest(StockAPITestCase):
         response = self.client.get(self.list_url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_create_default_location(self):
+        """
+        Test the default location functionality,
+        if a 'location' is not specified in the creation request.
+        """
+
+        # The part 'R_4K7_0603' (pk=4) has a default location specified
+
+        response = self.client.post(
+            self.list_url,
+            data={
+                'part': 4,
+                'quantity': 10
+            }
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['location'], 2)
+
+        # What if we explicitly set the location to a different value?
+
+        response = self.client.post(
+            self.list_url,
+            data={
+                'part': 4,
+                'quantity': 20,
+                'location': 1,
+            }
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['location'], 1)
+
+        # And finally, what if we set the location explicitly to None?
+
+        response = self.client.post(
+            self.list_url,
+            data={
+                'part': 4,
+                'quantity': 20,
+                'location': '',
+            }
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['location'], None)
+
     def test_stock_item_create(self):
         """
         Test creation of a StockItem via the API
