@@ -427,8 +427,9 @@ class SupplierPart(models.Model):
 
         if self.part.IPN:
             s += f'{self.part.IPN}'
+            s += ' | '
 
-        s += f' | {self.supplier.name} | {self.SKU}'
+        s += f'{self.supplier.name} | {self.SKU}'
 
         if self.manufacturer_string:
             s = s + ' | ' + self.manufacturer_string
