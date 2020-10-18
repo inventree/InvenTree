@@ -21,6 +21,11 @@ database:
 # Select default system language (default is 'en-us')
 language: en-us
 
+# System time-zone (default is UTC)
+# Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+# Select an option from the "TZ database name" column
+timezone: UTC
+
 # Set debug to False to run in production mode
 debug: True
 
