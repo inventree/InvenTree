@@ -56,6 +56,34 @@ class BarcodeAPITest(APITestCase):
         self.assertIn('plugin', data)
         self.assertIsNone(data['plugin'])
 
+    def test_integer_barcode(self):
+
+        response = self.postBarcode(self.scan_url, '123456789')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.data
+        self.assertIn('error', data)
+
+        self.assertIn('barcode_data', data)
+        self.assertIn('hash', data)
+        self.assertIn('plugin', data)
+        self.assertIsNone(data['plugin'])
+
+    def test_array_barcode(self):
+
+        response = self.postBarcode(self.scan_url, "['foo', 'bar']")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.data
+        self.assertIn('error', data)
+
+        self.assertIn('barcode_data', data)
+        self.assertIn('hash', data)
+        self.assertIn('plugin', data)
+        self.assertIsNone(data['plugin'])
+
     def test_barcode_generation(self):
 
         item = StockItem.objects.get(pk=522)
