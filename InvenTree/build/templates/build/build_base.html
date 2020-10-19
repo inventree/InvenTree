@@ -5,18 +5,18 @@
 {% load status_codes %}
 
 {% block page_title %}
-InvenTree | {% trans "Build" %} - {{ build }}
+InvenTree | {% trans "Build Order" %} - {{ build }}
 {% endblock %}
 
 {% block pre_content %}
 {% if build.sales_order %}
 <div class='alert alert-block alert-info'>
-    {% trans "This build is allocated to Sales Order" %} <b><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></b>
+    {% trans "This Build Order is allocated to Sales Order" %} <b><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></b>
 </div>
 {% endif %}
 {% if build.parent %}
 <div class='alert alert-block alert-info'>
-    {% trans "This build is a child of Build" %} <b><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a></b>
+    {% trans "This Build Order is a child of Build Order" %} <b><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a></b>
 </div>
 {% endif %}
 {% endblock %}
@@ -31,14 +31,15 @@ src="{% static 'img/blank_image.png' %}"
 {% endblock %}
 
 {% block page_data %}
-<h3>{% trans "Build" %} {% build_status_label build.status large=True %}</h3>
-<hr>
-<h4>
-    {{ build.quantity }} x {{ build.part.full_name }}
+<h3>
+    {% trans "Build Order" %} {{ build }}
     {% if user.is_staff and roles.build.change %}
     <a  href="{% url 'admin:build_build_change' build.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
-{% endif %}
-</h4>
+    {% endif %}
+</h3>
+<h3>{% build_status_label build.status large=True %}</h3>
+<hr>
+<p>{{ build.title }}</p>
 <div class='btn-row'>
     <div class='btn-group action-buttons'>
         {% if roles.build.change %}
@@ -68,9 +69,9 @@ src="{% static 'img/blank_image.png' %}"
 <h4>{% trans "Build Details" %}</h4>
 <table class='table table-striped table-condensed'>
     <tr>
-        <td></td>
-        <td>{% trans "Build Title" %}</td>
-        <td>{{ build.title }}</td>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Build Order Reference" %}</td>
+        <td>{{ build.reference }}</td>
     </tr>
     <tr>
         <td><span class='fas fa-shapes'></span></td>

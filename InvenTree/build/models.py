@@ -22,7 +22,7 @@ from markdownx.models import MarkdownxField
 from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus
-from InvenTree.helpers import decimal2string, increment
+from InvenTree.helpers import increment
 import InvenTree.fields
 
 from stock import models as StockModels

@@ -28,7 +28,6 @@ class EditBuildForm(HelperForm):
         'reference': _('Build Order reference')
     }
 
-
     class Meta:
         model = Build
         fields = [

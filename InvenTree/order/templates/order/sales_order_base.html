@@ -27,17 +27,18 @@ src="{% static 'img/blank_image.png' %}"
 />
 {% endblock %}
 
-
 {% block page_data %}
 
-<h3>{% trans "Sales Order" %} {% sales_order_status_label order.status large=True %}</h3>
-<hr>
-<h4>
-    {{ order }}
+<h3>
+    {% trans "Sales Order" %} {{ order.reference }}
     {% if user.is_staff and roles.sales_order.change %}
     <a href="{% url 'admin:order_salesorder_change' order.pk %}"><span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span></a>
     {% endif %}
-</h4>
+</h3>
+<h3>
+    {% sales_order_status_label order.status large=True %}
+</h3>
+<hr>
 <p>{{ order.description }}</p>
 <div class='btn-row'>
     <div class='btn-group action-buttons'>
