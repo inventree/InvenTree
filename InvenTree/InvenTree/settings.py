@@ -155,6 +155,7 @@ INSTALLED_APPS = [
     'markdownify',                  # Markdown template rendering
     'django_tex',                   # LaTeX output
     'django_admin_shell',           # Python shell for the admin interface
+    'simple_history',               # Stores Django model state on every create/update/delete
 ]
 
 LOGGING = {
@@ -178,7 +179,8 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware'
+    'InvenTree.middleware.AuthRequiredMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 ])
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [

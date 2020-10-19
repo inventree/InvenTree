@@ -3,10 +3,12 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from import_export.admin import ImportExportModelAdmin
+from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 from import_export.resources import ModelResource
 from import_export.fields import Field
 import import_export.widgets as widgets
+
+from simple_history.admin import SimpleHistoryAdmin
 
 from .models import PartCategory, Part
 from .models import PartAttachment, PartStar
@@ -73,7 +75,7 @@ class PartResource(ModelResource):
         return query
 
 
-class PartAdmin(ImportExportModelAdmin):
+class PartAdmin(ImportExportMixin, SimpleHistoryAdmin):
     
     resource_class = PartResource
 

@@ -6,6 +6,8 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.apps import AppConfig
 from django.conf import settings
 
+from simple_history import register as history_register
+
 
 class PartConfig(AppConfig):
     name = 'part'
@@ -14,6 +16,10 @@ class PartConfig(AppConfig):
         """
         This function is called whenever the Part app is loaded.
         """
+        from .models import Part
+
+        # History Tracking
+        history_register(Part)
 
         self.generate_part_thumbnails()
 
