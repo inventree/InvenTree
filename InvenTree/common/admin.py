@@ -14,7 +14,7 @@ class CurrencyAdmin(ImportExportModelAdmin):
 
 class SettingsAdmin(ImportExportModelAdmin):
     
-    list_display = ('key', 'value', 'description')
+    list_display = ('key', 'value')
 
 
 admin.site.register(Currency, CurrencyAdmin)
