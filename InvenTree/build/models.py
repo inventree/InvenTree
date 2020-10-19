@@ -89,7 +89,7 @@ class Build(MPTTModel):
     )
 
     title = models.CharField(
-        verbose_name=_('Build Title'),
+        verbose_name=_('Description'),
         blank=False,
         max_length=100,
         help_text=_('Brief description of the build')
