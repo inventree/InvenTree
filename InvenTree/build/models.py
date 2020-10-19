@@ -34,6 +34,7 @@ class Build(MPTTModel):
 
     Attributes:
         part: The part to be built (from component BOM items)
+        reference: Build order reference (required, must be unique)
         title: Brief title describing the build (required)
         quantity: Number of units to be built
         parent: Reference to a Build object for which this Build is required
@@ -68,6 +69,14 @@ class Build(MPTTModel):
                     })
         except PartModels.Part.DoesNotExist:
             pass
+
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        help_text=_('Build Order Reference'),
+        verbose_name=_('Reference'),
+    )
 
     title = models.CharField(
         verbose_name=_('Build Title'),
