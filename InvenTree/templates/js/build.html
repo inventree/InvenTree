@@ -35,12 +35,18 @@ function loadBuildTable(table, options) {
                 switchable: false,
             },
             {
-                field: 'title',
+                field: 'reference',
                 title: '{% trans "Build" %}',
                 sortable: true,
+                switchable: false,
                 formatter: function(value, row, index, field) {
                     return renderLink(value, '/build/' + row.pk + '/');
                 }
+            },
+            {
+                field: 'title',
+                title: '{% trans "Description" %}',
+                sortable: true,
             },
             {
                 field: 'part',
