@@ -43,7 +43,7 @@ def validate_part_name(value):
 def validate_part_ipn(value):
     """ Validate the Part IPN against regex rule """
 
-    pattern = common.models.InvenTreeSetting.get_setting('part_ipn_regex')
+    pattern = common.models.InvenTreeSetting.get_setting('PART_IPN_REGEX')
 
     if pattern:
         match = re.search(pattern, value)
@@ -57,7 +57,7 @@ def validate_build_order_reference(value):
     Validate the 'reference' field of a BuildOrder
     """
 
-    pattern = common.models.InvenTreeSetting.get_setting('buildorder_reference_regex')
+    pattern = common.models.InvenTreeSetting.get_setting('BUILDORDER_REFERENCE_REGEX')
 
     if pattern:
         match = re.search(pattern, value)
@@ -71,7 +71,7 @@ def validate_purchase_order_reference(value):
     Validate the 'reference' field of a PurchaseOrder
     """
 
-    pattern = common.models.InvenTreeSetting.get_setting('purchaseorder_reference_regex')
+    pattern = common.models.InvenTreeSetting.get_setting('PURCHASEORDER_REFERENCE_REGEX')
 
     if pattern:
         match = re.search(pattern, value)
@@ -85,7 +85,7 @@ def validate_sales_order_reference(value):
     Validate the 'reference' field of a SalesOrder
     """
 
-    pattern = common.models.InvenTreeSetting.get_setting('salesorder_reference_regex')
+    pattern = common.models.InvenTreeSetting.get_setting('SALESORDER_REFERENCE_REGEX')
 
     if pattern:
         match = re.search(pattern, value)

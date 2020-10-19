@@ -27,6 +27,30 @@ class InvenTreeSetting(models.Model):
     even if that key does not exist.
     """
 
+    # Dict of default values for various internal settings
+    DEFAULT_VALUES = {
+        # Global inventree settings
+        'INVENTREE_INSTANCE': 'InvenTree Server',
+
+        # Part settings
+        'PART_IPN_REGEX': '',
+        'PART_COPY_BOM': True,
+        'PART_COPY_PARAMETERS': True,
+        'PART_COPY_TESTS': True,
+
+        # Stock settings
+
+        # Build Order settings
+        'BUILDORDER_REFERENCE_PREFIX': 'BO',
+        'BUILDORDER_REFERENCE_REGEX': '',
+
+        # Purchase Order Settings
+        'PURCHASEORDER_REFERENCE_PREFIX': 'PO',
+
+        # Sales Order Settings
+        'SALESORDER_REFERENCE_PREFIX': 'SO',
+    }
+
     class Meta:
         verbose_name = "InvenTree Setting"
         verbose_name_plural = "InvenTree Settings"
@@ -39,8 +63,12 @@ class InvenTreeSetting(models.Model):
         """
 
         try:
-            setting = InvenTreeSetting.objects.get(key__iexact=key)
-            return setting.value
+            settings = InvenTreeSetting.objects.filter(key__iexact=key)
+
+            if len(settings) > 0:
+                return settings[0].value
+            else:
+                return backup_value
         except InvenTreeSetting.DoesNotExist:
             return backup_value
 
