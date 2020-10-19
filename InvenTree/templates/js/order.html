@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load inventree_extras %}
 
 function removeOrderRowFromOrderWizard(e) {
     /* Remove a part selection from an order form. */
@@ -137,6 +138,13 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'reference',
                 title: '{% trans "Purchase Order" %}',
                 formatter: function(value, row, index, field) {
+
+                    var prefix = "{% inventree_setting 'PURCHASEORDER_REFERENCE_PREFIX' %}";
+
+                    if (prefix) {
+                        value = `${prefix}${value}`;
+                    }
+
                     return renderLink(value, `/order/purchase-order/${row.pk}/`);
                 }
             },  
@@ -212,6 +220,13 @@ function loadSalesOrderTable(table, options) {
                 field: 'reference',
                 title: '{% trans "Sales Order" %}',
                 formatter: function(value, row, index, field) {
+
+                    var prefix = "{% inventree_setting 'SALESORDER_REFERENCE_PREFIX' %}";
+
+                    if (prefix) {
+                        value = `${prefix}${value}`;
+                    }
+
                     return renderLink(value, `/order/sales-order/${row.pk}/`);
                 },
             },
