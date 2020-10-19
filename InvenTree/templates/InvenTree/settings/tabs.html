@@ -29,9 +29,4 @@
     <li {% if tab == 'so' %} class='active'{% endif %}>
         <a href="{% url 'settings-so' %}"><span class='fas fa-truck'></span> {% trans "Sales Orders" %}</a>
     </li>
-    {% if user.is_staff %}
-    <li{% ifequal tab 'other' %} class='active'{% endifequal %}>
-        <a href="{% url 'settings-other' %}"><span class='fas fa-cogs'></span> {% trans "Other" %}</a>
-    </li>
-    {% endif %}
 </ul>

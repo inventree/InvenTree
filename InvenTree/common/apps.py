@@ -39,6 +39,9 @@ class CommonConfig(AppConfig):
                 instance = InvenTreeSetting.objects.get(key='InstanceName')
                 instance_name = instance.value
 
+                # Delete the legacy key
+                instance.delete()
+
             # Create new value
             InvenTreeSetting.objects.create(
                 key='INVENTREE_INSTANCE',

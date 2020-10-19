@@ -77,7 +77,6 @@ settings_urls = [
     url(r'^build/?', SettingsView.as_view(template_name='InvenTree/settings/build.html'), name='settings-build'),
     url(r'^purchase-order/?', SettingsView.as_view(template_name='InvenTree/settings/po.html'), name='settings-po'),
     url(r'^sales-order/?', SettingsView.as_view(template_name='InvenTree/settings/so.html'), name='settings-so'),
-    url(r'^other/?', SettingsView.as_view(template_name='InvenTree/settings/other.html'), name='settings-other'),
 
     # Catch any other urls
     url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings'),
