@@ -354,7 +354,7 @@ function renderErrorMessage(xhr) {
     
     var html = '<b>' + xhr.statusText + '</b><br>';
     
-    html += '<b>Status Code - ' + xhr.status + '</b><br><hr>';
+    html += '<b>Error Code - ' + xhr.status + '</b><br><hr>';
     
     html += `
     <div class='panel-group'>
