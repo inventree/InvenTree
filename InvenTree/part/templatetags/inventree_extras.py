@@ -88,7 +88,7 @@ def inventree_docs_url(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_setting(key, *args, **kwargs):
-    return InvenTreeSetting.get_setting(key)
+    return InvenTreeSetting.get_setting(key, backup_value=kwargs.get('backup', None))
 
 
 @register.simple_tag()
