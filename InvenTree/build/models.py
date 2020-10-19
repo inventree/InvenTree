@@ -23,6 +23,8 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus
 from InvenTree.helpers import increment
+from InvenTree.validators import validate_build_order_reference
+
 import InvenTree.fields
 
 from stock import models as StockModels
@@ -81,6 +83,9 @@ class Build(MPTTModel):
         blank=False,
         help_text=_('Build Order Reference'),
         verbose_name=_('Reference'),
+        validators=[
+            validate_build_order_reference
+        ]
     )
 
     title = models.CharField(

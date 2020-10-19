@@ -52,6 +52,48 @@ def validate_part_ipn(value):
             raise ValidationError(_('IPN must match regex pattern') + " '{pat}'".format(pat=pattern))
 
 
+def validate_build_order_reference(value):
+    """
+    Validate the 'reference' field of a BuildOrder
+    """
+
+    pattern = common.models.InvenTreeSetting.get_setting('buildorder_reference_regex')
+
+    if pattern:
+        match = re.search(pattern, value)
+
+        if match is None:
+            raise ValidationError(_('Reference must match pattern') + f" '{pattern}'")
+
+
+def validate_purchase_order_reference(value):
+    """
+    Validate the 'reference' field of a PurchaseOrder
+    """
+
+    pattern = common.models.InvenTreeSetting.get_setting('purchaseorder_reference_regex')
+
+    if pattern:
+        match = re.search(pattern, value)
+
+        if match is None:
+            raise ValidationError(_('Reference must match pattern') + f" '{pattern}'")
+
+
+def validate_sales_order_reference(value):
+    """
+    Validate the 'reference' field of a SalesOrder
+    """
+
+    pattern = common.models.InvenTreeSetting.get_setting('salesorder_reference_regex')
+
+    if pattern:
+        match = re.search(pattern, value)
+
+        if match is None:
+            raise ValidationError(_('Reference must match pattern') + f" '{pattern}'")
+
+
 def validate_tree_name(value):
     """ Prevent illegal characters in tree item names """
 
