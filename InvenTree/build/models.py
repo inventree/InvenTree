@@ -22,7 +22,7 @@ from markdownx.models import MarkdownxField
 from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus
-from InvenTree.helpers import increment
+from InvenTree.helpers import increment, getSetting
 from InvenTree.validators import validate_build_order_reference
 
 import InvenTree.fields
@@ -56,7 +56,9 @@ class Build(MPTTModel):
 
     def __str__(self):
 
-        return f"BO{self.reference}"
+        prefix = getSetting("BUILDORDER_REFERENCE_PREFIX")
+
+        return f"{prefix}{self.reference}"
 
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.id})

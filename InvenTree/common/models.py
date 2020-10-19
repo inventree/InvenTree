@@ -62,6 +62,10 @@ class InvenTreeSetting(models.Model):
         If it does not exist, return the backup value (default = None)
         """
 
+        # If no backup value is specified, atttempt to retrieve a "default" value
+        if backup_value is None:
+            backup_value = InvenTreeSetting.DEFAULT_VALUES.get(key, None)
+
         try:
             settings = InvenTreeSetting.objects.filter(key__iexact=key)
 

@@ -19,7 +19,16 @@ from django.contrib.auth.models import Permission
 
 import InvenTree.version
 
+from common.models import InvenTreeSetting
 from .settings import MEDIA_URL, STATIC_URL
+
+
+def getSetting(key, backup_value=None):
+    """
+    Shortcut for reading a setting value from the database
+    """
+
+    return InvenTreeSetting.get_setting(key, backup_value=backup_value)
 
 
 def generateTestKey(test_name):
