@@ -1,7 +1,14 @@
 {% extends "InvenTree/settings/settings.html" %}
 
+{% load i18n %}
+
 {% block tabs %}
 {% include "InvenTree/settings/tabs.html" with tab='other' %}
+{% endblock %}
+
+
+{% block subtitle %}
+{% trans "Other Settings" %}
 {% endblock %}
 
 {% block settings %}

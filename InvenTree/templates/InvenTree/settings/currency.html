@@ -1,4 +1,9 @@
 {% extends "InvenTree/settings/settings.html" %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "General Settings" %}
+{% endblock %}
 
 {% block tabs %}
 {% include "InvenTree/settings/tabs.html" with tab='currency' %}
@@ -6,10 +11,10 @@
 
 {% block settings %}
 
-<h4>Currencies</h4>
+<h4>{% trans "Currencies" %}</h4>
 
 <div id='currency-buttons'>
-    <button class='btn btn-success' id='new-currency'>New Currency</button>
+    <button class='btn btn-success' id='new-currency'>{% trans "New Currency" %}</button>
 </div>
 
 <table class='table table-striped table-condensed' id='currency-table' data-toolbar='#currency-buttons'>

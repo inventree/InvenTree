@@ -1,19 +1,37 @@
+{% load i18n %}
+
+<h4><span class='fas fa-user'></span> {% trans "User Settings" %}</h4>
 <ul class='nav nav-pills nav-stacked'>
     <li{% ifequal tab 'user' %} class='active'{% endifequal %}>
-        <a href="{% url 'settings-user' %}"><span class='fas fa-user'></span> User</a>
-    </li>
-    <li{% ifequal tab 'currency' %} class='active'{% endifequal %}>
-        <a href="{% url 'settings-currency' %}"><span class='fas fa-dollar-sign'></span> Currency</a>
-    </li>
-    <li{% ifequal tab 'part' %} class='active'{% endifequal %}>
-        <a href="{% url 'settings-part' %}"><span class='fas fa-shapes'></span> Part</a>
+        <a href="{% url 'settings-user' %}"><span class='fas fa-user'></span> {% trans "Account" %}</a>
     </li>
     <li{% ifequal tab 'theme' %} class='active'{% endifequal %}>
-        <a href="{% url 'settings-theme' %}"><span class='fas fa-fill'></span> Theme</a>
+        <a href="{% url 'settings-theme' %}"><span class='fas fa-fill'></span> {% trans "Theme" %}</a>
+    </li>
+</ul>
+<h4><span class='fas fa-cogs'></span> {% trans "InvenTree Settings" %}</h4>
+<ul class='nav nav-pills nav-stacked'>
+    <li{% ifequal tab 'currency' %} class='active'{% endifequal %}>
+        <a href="{% url 'settings-currency' %}"><span class='fas fa-dollar-sign'></span> {% trans "Currency" %}</a>
+    </li>
+    <li{% ifequal tab 'part' %} class='active'{% endifequal %}>
+        <a href="{% url 'settings-part' %}"><span class='fas fa-shapes'></span> {% trans "Parts" %}</a>
+    </li>
+    <li {% if tab == 'stock' %} class='active'{% endif %}>
+        <a href='{% url 'settings-stock' %}'><span class='fas fa-boxes'></span> {% trans "Stock" %}</a>
+    </li>
+    <li {% if tab == 'build' %} class='active'{% endif %}>
+        <a href="{% url 'settings-build' %}"><span class='fas fa-tools'></span> {% trans "Build Orders" %}</a>
+    </li>
+    <li {% if tab == 'po' %} class='active'{% endif %}>
+        <a href="{% url 'settings-po' %}"><span class='fas fa-shopping-cart'></span> {% trans "Purchase Orders" %}</a>
+    </li>
+    <li {% if tab == 'so' %} class='active'{% endif %}>
+        <a href="{% url 'settings-so' %}"><span class='fas fa-truck'></span> {% trans "Sales Orders" %}</a>
     </li>
     {% if user.is_staff %}
     <li{% ifequal tab 'other' %} class='active'{% endifequal %}>
-        <a href="{% url 'settings-other' %}"><span class='fas fa-cogs'></span> Other</a>
+        <a href="{% url 'settings-other' %}"><span class='fas fa-cogs'></span> {% trans "Other" %}</a>
     </li>
     {% endif %}
 </ul>

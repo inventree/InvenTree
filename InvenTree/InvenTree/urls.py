@@ -69,9 +69,14 @@ apipatterns = [
 settings_urls = [
 
     url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
+    url(r'^theme/?', ColorThemeSelectView.as_view(), name='settings-theme'),
+   
     url(r'^currency/?', SettingsView.as_view(template_name='InvenTree/settings/currency.html'), name='settings-currency'),
     url(r'^part/?', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
-    url(r'^theme/?', ColorThemeSelectView.as_view(), name='settings-theme'),
+    url(r'^stock/?', SettingsView.as_view(template_name='InvenTree/settings/stock.html'), name='settings-stock'),
+    url(r'^build/?', SettingsView.as_view(template_name='InvenTree/settings/build.html'), name='settings-build'),
+    url(r'^purchase-order/?', SettingsView.as_view(template_name='InvenTree/settings/po.html'), name='settings-po'),
+    url(r'^sales-order/?', SettingsView.as_view(template_name='InvenTree/settings/so.html'), name='settings-so'),
     url(r'^other/?', SettingsView.as_view(template_name='InvenTree/settings/other.html'), name='settings-other'),
 
     # Catch any other urls

@@ -6,11 +6,15 @@
 {% include "InvenTree/settings/tabs.html" with tab='theme' %}
 {% endblock %}
 
+{% block subtitle %}
+{% trans "Theme Settings" %}
+{% endblock %}
+
 {% block settings %}
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h4>Color Themes</h4>
+        <h4>{% trans "Color Themes" %}</h4>
     </div>
 </div>    
 
