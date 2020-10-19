@@ -48,6 +48,10 @@ class Build(MPTTModel):
         notes: Text notes
     """
 
+    class Meta:
+        verbose_name = _("Build Order")
+        verbose_name_plural = _("Build Orders")
+
     def __str__(self):
         return "{q} x {part}".format(q=decimal2string(self.quantity), part=str(self.part.full_name))
 
