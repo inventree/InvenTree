@@ -94,7 +94,7 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
-$('#order-part').click(function() {
+$('#order-part, #order-part2').click(function() {
     launchModalForm(
         "{% url 'order-parts' %}",
         {
