@@ -498,6 +498,11 @@ class StockList(generics.ListCreateAPIView):
         if sales_order:
             queryset = queryset.filter(sales_order=sales_order)
 
+        purchase_order = params.get('purchase_order', None)
+
+        if purchase_order is not None:
+            queryset = queryset.filter(purchase_order=purchase_order)
+
         # Filter stock items which are installed in another (specific) stock item
         installed_in = params.get('installed_in', None)
 

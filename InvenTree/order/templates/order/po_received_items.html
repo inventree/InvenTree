@@ -1,0 +1,34 @@
+{% extends "order/order_base.html" %}
+
+{% load inventree_extras %}
+{% load i18n %}
+{% load static %}
+
+{% block details %}
+
+{% include 'order/po_tabs.html' with tab='received' %}
+
+<h4>{% trans "Received Items" %}</h4>
+<hr>
+
+{% include "stock_table.html" with read_only=True %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+loadStockTable($("#stock-table"), {
+    params: {
+        purchase_order: {{ order.id }},
+        part_detail: true,
+        supplier_detail: true,
+        location_detail: true,
+    },
+    buttons: [
+        '#stock-options',
+    ],
+    filterkey: "postock"
+});
+
+{% endblock %}
