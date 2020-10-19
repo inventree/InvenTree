@@ -262,7 +262,7 @@ function loadStockTable(table, options) {
         formatNoMatches: function() {
             return '{% trans "No stock items matching query" %}';
         },
-        url: options.url,
+        url: options.url || "{% url 'api-stock-list' %}",
         queryParams: filters,
         customSort: customGroupSorter,
         groupBy: true,
