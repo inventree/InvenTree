@@ -22,7 +22,7 @@ from markdownx.models import MarkdownxField
 from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus
-from InvenTree.helpers import decimal2string
+from InvenTree.helpers import decimal2string, increment
 import InvenTree.fields
 
 from stock import models as StockModels
@@ -53,7 +53,8 @@ class Build(MPTTModel):
         verbose_name_plural = _("Build Orders")
 
     def __str__(self):
-        return "{q} x {part}".format(q=decimal2string(self.quantity), part=str(self.part.full_name))
+
+        return f"BO{self.reference}"
 
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.id})
@@ -177,6 +178,38 @@ class Build(MPTTModel):
     @property
     def output_count(self):
         return self.build_outputs.count()
+
+    @classmethod
+    def getNextBuildNumber(cls):
+        """
+        Try to predict the next Build Order reference:
+        """
+
+        if cls.objects.count() == 0:
+            return None
+
+        build = cls.objects.last()
+        ref = build.reference
+
+        if not ref:
+            return None
+
+        tries = set()
+
+        while 1:
+            new_ref = increment(ref)
+
+            if new_ref in tries:
+                # We are potentially stuck in a loop - simply return the original reference
+                return ref
+
+            if cls.objects.filter(reference=new_ref).exists():
+                tries.add(new_ref)
+                new_ref = increment(new_ref)
+            else:
+                break
+
+        return new_ref
 
     @transaction.atomic
     def cancelBuild(self, user):

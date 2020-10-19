@@ -415,6 +415,8 @@ class BuildCreate(AjaxCreateView):
         # User has provided a Part ID
         initials['part'] = self.request.GET.get('part', None)
 
+        initials['reference'] = Build.getNextBuildNumber()
+
         initials['parent'] = self.request.GET.get('parent', None)
 
         # User has provided a SalesOrder ID
