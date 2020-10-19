@@ -400,7 +400,7 @@ class BuildCreate(AjaxCreateView):
     model = Build
     context_object_name = 'build'
     form_class = forms.EditBuildForm
-    ajax_form_title = _('Start new Build')
+    ajax_form_title = _('New Build Order')
     ajax_template_name = 'modal_form.html'
     role_required = 'build.add'
 

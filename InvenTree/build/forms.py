@@ -17,14 +17,27 @@ class EditBuildForm(HelperForm):
     """ Form for editing a Build object.
     """
 
+    field_prefix = {
+        'reference': 'BO',
+        'link': 'fa-link',
+        'batch': 'fa-layer-group',
+        'location': 'fa-map-marker-alt',
+    }
+
+    field_placeholder = {
+        'reference': _('Build Order reference')
+    }
+
+
     class Meta:
         model = Build
         fields = [
+            'reference',
             'title',
             'part',
+            'quantity',
             'parent',
             'sales_order',
-            'quantity',
             'take_from',
             'batch',
             'link',
