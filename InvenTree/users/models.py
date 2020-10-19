@@ -107,6 +107,7 @@ class RuleSet(models.Model):
         'report_reportasset',
         'report_testreport',
         'part_partstar',
+        'part_historicalpart',
     ]
 
     RULE_OPTIONS = [
