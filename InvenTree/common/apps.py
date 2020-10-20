@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from django.db.utils import OperationalError, ProgrammingError
+from django.db.utils import OperationalError, ProgrammingError, IntegrityError
 
 
 class CommonConfig(AppConfig):
@@ -48,7 +48,7 @@ class CommonConfig(AppConfig):
                 value=instance_name
             )
 
-        except (OperationalError, ProgrammingError):
+        except (OperationalError, ProgrammingError, IntegrityError):
             # Migrations have not yet been applied - table does not exist
             pass
 
@@ -87,6 +87,6 @@ class CommonConfig(AppConfig):
                     setting.key = key
                     setting.save()
 
-            except (OperationalError, ProgrammingError):
+            except (OperationalError, ProgrammingError, IntegrityError):
                 # Table might not yet exist
                 pass
