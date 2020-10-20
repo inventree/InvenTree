@@ -1510,11 +1510,8 @@ class StockItemCreate(AjaxCreateView):
             # form.fields['part'].widget = HiddenInput()
 
             # Trackable parts get special consideration:
-            if part.trackable:
-                form.fields['delete_on_deplete'].widget = HiddenInput()
-                form.fields['delete_on_deplete'].initial = False
-            else:
-                form.fields['serial_numbers'].widget = HiddenInput()
+            form.fields['delete_on_deplete'].disabled = not part.trackable
+            form.fields['serial_numbers'].disabled = not part.trackable
 
             # If the part is NOT purchaseable, hide the supplier_part field
             if not part.purchaseable:
@@ -1538,6 +1535,8 @@ class StockItemCreate(AjaxCreateView):
             # No Part has been selected!
             # We must not provide *any* options for SupplierPart
             form.fields['supplier_part'].queryset = SupplierPart.objects.none()
+
+            form.fields['serial_numbers'].disabled = True
 
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
         if form['supplier_part'].value() is not None:

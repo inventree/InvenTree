@@ -769,6 +769,7 @@ function createNewStockItem(options) {
             field: 'part',
             action: function(value) {
 
+                // Reload options for supplier part
                 reloadFieldOptions(
                     'supplier_part',
                     {
@@ -779,6 +780,18 @@ function createNewStockItem(options) {
                         },
                         text: function(item) {
                             return item.pretty_name;
+                        }
+                    }
+                );
+
+                // Disable serial number field if the part is not trackable
+                inventreeGet(
+                    `/api/part/${value}/`, {},
+                    {
+                        success: function(response) {
+
+                            enableField('serial_numbers', response.trackable);
+                            clearField('serial_numbers');
                         }
                     }
                 );
