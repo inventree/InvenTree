@@ -54,7 +54,7 @@ class BuildTestSimple(TestCase):
         self.assertEqual(b.batch, 'B2')
         self.assertEqual(b.quantity, 21)
 
-        self.assertEqual(str(b), '21 x Orphan')
+        self.assertEqual(str(b), 'BO0002')
 
     def test_url(self):
         b1 = Build.objects.get(pk=1)

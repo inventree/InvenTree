@@ -35,3 +35,14 @@ class CurrencyDelete(AjaxDeleteView):
     model = models.Currency
     ajax_form_title = _('Delete Currency')
     ajax_template_name = "common/delete_currency.html"
+
+
+class SettingEdit(AjaxUpdateView):
+    """
+    View for editing an InvenTree key:value settings object,
+    (or creating it if the key does not already exist)
+    """
+
+    model = models.InvenTreeSetting
+    ajax_form_title = _('Change Setting')
+    form_class = forms.SettingEditForm

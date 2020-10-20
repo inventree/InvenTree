@@ -5,7 +5,12 @@
 {% include "InvenTree/settings/tabs.html" with tab='part' %}
 {% endblock %}
 
+{% block subtitle %}
+{% trans "Part Settings" %}
+{% endblock %}
+
 {% block settings %}
+
 <h4>{% trans "Part Parameter Templates" %}</h4>
 
 <div id='param-buttons'>

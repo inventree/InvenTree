@@ -1,0 +1,32 @@
+{% extends "InvenTree/settings/settings.html" %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block tabs %}
+{% include "InvenTree/settings/tabs.html" with tab='build' %}
+{% endblock %}
+
+{% block subtitle %}
+{% trans "Build Order Settings" %}
+{% endblock %}
+
+{% block settings %}
+
+<table class='table table-striped table-condensed'>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <th>{% trans "Reference Prefix" %}</th>
+            <th>{% inventree_setting 'BUILDORDER_REFERENCE_PREFIX' backup='BO' %}</th>
+            <td>{% trans "Prefix for Build Order reference" %}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Reference Regex" %}</th>
+            <th>{% inventree_setting 'BUILDORDER_REFERENCE_REGEX' %}</th>
+            <td>{% trans "Regex validator for Build Order reference" %}</td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %}

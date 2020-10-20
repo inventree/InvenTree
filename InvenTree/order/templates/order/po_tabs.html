@@ -2,7 +2,10 @@
 
 <ul class='nav nav-tabs'>
     <li{% ifequal tab 'details' %} class='active'{% endifequal %}>
-        <a href="{% url 'po-detail' order.id %}">{% trans "Items" %}</a>
+        <a href="{% url 'po-detail' order.id %}">{% trans "Line Items" %}</a>
+    </li>
+    <li {% if tab == 'received' %} class='active'{% endif %}>
+        <a href="{% url 'po-received' order.id %}">{% trans "Received Items" %}</a>
     </li>
     <li{% if tab == 'attachments' %} class='active'{% endif %}>
         <a href="{% url 'po-attachments' order.id %}">{% trans "Attachments" %}

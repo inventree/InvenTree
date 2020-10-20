@@ -96,7 +96,7 @@ class EditPurchaseOrderForm(HelperForm):
         }
 
         self.field_placeholder = {
-            'reference': _('Enter purchase order number'),
+            'reference': _('Purchase Order reference'),
         }
 
         super().__init__(*args, **kwargs)

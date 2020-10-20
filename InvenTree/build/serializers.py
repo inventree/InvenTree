@@ -41,6 +41,7 @@ class BuildSerializer(InvenTreeModelSerializer):
             'completion_date',
             'part',
             'part_detail',
+            'reference',
             'sales_order',
             'quantity',
             'status',

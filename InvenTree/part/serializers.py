@@ -2,30 +2,20 @@
 JSON serializers for Part app
 """
 import imghdr
-
-from rest_framework import serializers
-
-from .models import Part, PartStar
-
-from .models import PartCategory
-from .models import BomItem
-from .models import PartParameter, PartParameterTemplate
-from .models import PartAttachment
-from .models import PartTestTemplate
-from .models import PartSellPriceBreak
-
-from stock.models import StockItem
-
 from decimal import Decimal
-
-from sql_util.utils import SubquerySum, SubqueryCount
 
 from django.db.models import Q
 from django.db.models.functions import Coalesce
+from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+                                   InvenTreeModelSerializer)
+from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
+from rest_framework import serializers
+from sql_util.utils import SubqueryCount, SubquerySum
+from stock.models import StockItem
 
-from InvenTree.status_codes import PurchaseOrderStatus, BuildStatus
-from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField
+from .models import (BomItem, Part, PartAttachment, PartCategory,
+                     PartParameter, PartParameterTemplate, PartSellPriceBreak,
+                     PartStar, PartTestTemplate)
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -41,6 +31,7 @@ class CategorySerializer(InvenTreeModelSerializer):
             'pk',
             'name',
             'description',
+            'default_location',
             'pathstring',
             'url',
             'parent',
@@ -304,6 +295,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'category_detail',
             'component',
             'description',
+            'default_location',
             'full_name',
             'image',
             'in_stock',

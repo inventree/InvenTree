@@ -22,7 +22,9 @@ from markdownx.models import MarkdownxField
 from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus
-from InvenTree.helpers import decimal2string
+from InvenTree.helpers import increment, getSetting
+from InvenTree.validators import validate_build_order_reference
+
 import InvenTree.fields
 
 from stock import models as StockModels
@@ -34,6 +36,7 @@ class Build(MPTTModel):
 
     Attributes:
         part: The part to be built (from component BOM items)
+        reference: Build order reference (required, must be unique)
         title: Brief title describing the build (required)
         quantity: Number of units to be built
         parent: Reference to a Build object for which this Build is required
@@ -47,8 +50,15 @@ class Build(MPTTModel):
         notes: Text notes
     """
 
+    class Meta:
+        verbose_name = _("Build Order")
+        verbose_name_plural = _("Build Orders")
+
     def __str__(self):
-        return "{q} x {part}".format(q=decimal2string(self.quantity), part=str(self.part.full_name))
+
+        prefix = getSetting("BUILDORDER_REFERENCE_PREFIX")
+
+        return f"{prefix}{self.reference}"
 
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.id})
@@ -69,8 +79,19 @@ class Build(MPTTModel):
         except PartModels.Part.DoesNotExist:
             pass
 
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        help_text=_('Build Order Reference'),
+        verbose_name=_('Reference'),
+        validators=[
+            validate_build_order_reference
+        ]
+    )
+
     title = models.CharField(
-        verbose_name=_('Build Title'),
+        verbose_name=_('Description'),
         blank=False,
         max_length=100,
         help_text=_('Brief description of the build')
@@ -164,6 +185,38 @@ class Build(MPTTModel):
     @property
     def output_count(self):
         return self.build_outputs.count()
+
+    @classmethod
+    def getNextBuildNumber(cls):
+        """
+        Try to predict the next Build Order reference:
+        """
+
+        if cls.objects.count() == 0:
+            return None
+
+        build = cls.objects.last()
+        ref = build.reference
+
+        if not ref:
+            return None
+
+        tries = set()
+
+        while 1:
+            new_ref = increment(ref)
+
+            if new_ref in tries:
+                # We are potentially stuck in a loop - simply return the original reference
+                return ref
+
+            if cls.objects.filter(reference=new_ref).exists():
+                tries.add(new_ref)
+                new_ref = increment(new_ref)
+            else:
+                break
+
+        return new_ref
 
     @transaction.atomic
     def cancelBuild(self, user):
