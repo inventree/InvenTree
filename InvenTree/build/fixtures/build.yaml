@@ -5,6 +5,7 @@
   fields:
     part: 25
     batch: 'B1'
+    reference: "0001"
     title: 'Building 7 parts'
     quantity: 7
     notes: 'Some simple notes'
@@ -20,6 +21,7 @@
   pk: 2
   fields:
     part: 50
+    reference: "0002"
     title: 'Making things'
     batch: 'B2'
     status: 40  # COMPLETE

@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load inventree_extras %}
 
 function loadBuildTable(table, options) {
     // Display a table of Build objects
@@ -35,12 +36,25 @@ function loadBuildTable(table, options) {
                 switchable: false,
             },
             {
-                field: 'title',
+                field: 'reference',
                 title: '{% trans "Build" %}',
                 sortable: true,
+                switchable: false,
                 formatter: function(value, row, index, field) {
+
+                    var prefix = "{% inventree_setting 'BUILDORDER_REFERENCE_PREFIX' %}";
+
+                    if (prefix) {
+                        value = `${prefix}${value}`;
+                    }
+
                     return renderLink(value, '/build/' + row.pk + '/');
                 }
+            },
+            {
+                field: 'title',
+                title: '{% trans "Description" %}',
+                sortable: true,
             },
             {
                 field: 'part',

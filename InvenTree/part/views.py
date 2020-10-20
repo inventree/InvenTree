@@ -493,9 +493,9 @@ class PartDuplicate(AjaxCreateView):
         else:
             initials = super(AjaxCreateView, self).get_initial()
 
-        initials['bom_copy'] = str2bool(InvenTreeSetting.get_setting('part_deep_copy', True))
-        # Create new entry in InvenTree/common/kvp.yaml?
-        initials['parameters_copy'] = str2bool(InvenTreeSetting.get_setting('part_deep_copy', True))
+        initials['bom_copy'] = str2bool(InvenTreeSetting.get_setting('PART_COPY_BOM', True))
+        
+        initials['parameters_copy'] = str2bool(InvenTreeSetting.get_setting('PART_COPY_PARAMETERS', True))
 
         return initials
 
