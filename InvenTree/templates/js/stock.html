@@ -257,6 +257,56 @@ function loadStockTable(table, options) {
         filters[key] = params[key];
     }
 
+    function locationDetail(row) {
+        /* 
+         * Function to display a "location" of a StockItem.
+         * 
+         * Complicating factors: A StockItem may not actually *be* in a location!
+         * - Could be at a customer
+         * - Could be installed in another stock item
+         * - Could be assigned to a sales order
+         * - Could be currently in production!
+         *
+         * So, instead of being naive, we'll check!
+         */
+
+        // Display text
+        var text = '';
+
+        // URL (optional)
+        var url = '';
+        
+        if (row.belongs_to) {
+            // StockItem is installed inside a different StockItem
+            text = `{% trans "Installed in Stock Item" %} ${row.belongs_to}`;
+            url = `/stock/item/${row.belongs_to}/installed/`;
+        } else if (row.customer) {
+            // StockItem has been assigned to a customer
+            text = "{% trans "Shipped to customer" %}";
+            url = `/company/${row.customer}/assigned-stock/`;
+        } else if (row.sales_order) {
+            // StockItem has been assigned to a sales order
+            text = "{% trans "Assigned to Sales Order" %}";
+            url = `/order/sales-order/${row.sales_order}/`;
+        } else if (row.is_building && row.build) {
+            // StockItem is currently being built!
+            text = "{% trans "In production" %}";
+            url = `/build/${row.build}/`;
+        } else if (row.location) {
+            text = row.location_detail.pathstring;
+            url = `/stock/location/${row.location}/`;
+        } else {
+            text = "<i>{% trans "No stock location set" %}</i>";
+            url = '';
+        }
+
+        if (url) {
+            return renderLink(text, url);
+        } else {
+            return text;
+        }
+    }
+
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
@@ -353,28 +403,20 @@ function loadStockTable(table, options) {
 
                 data.forEach(function(item) {
 
-                    var loc = null;
+                    var detail = locationDetail(item);
 
-                    if (item.location_detail) {
-                        loc = item.location_detail.pathstring;
-                    } else {
-                        loc = "{% trans "Undefined location" %}";
-                    }
-
-                    if (!locations.includes(loc)) {
-                        locations.push(loc); 
+                    if (!locations.includes(detail)) {
+                        locations.push(detail);
                     }
                 });
 
-                if (locations.length > 1) {
+                if (locations.length == 1) {
+                    // Single location, easy!
+                    return locations[0];
+                } else if (locations.length > 1) {
                     return "In " + locations.length + " locations";
                 } else {
-                    // A single location!
-                    if (row.location_detail) {
-                        return renderLink(row.location_detail.pathstring, `/stock/location/${row.location}/`);
-                    } else {
-                        return "<i>{% trans "Undefined location" %}</i>";
-                    }
+                    return "<i>{% trans "Undefined location" %}</i>";
                 }
             } else if (field == 'notes') {
                 var notes = [];
@@ -519,24 +561,7 @@ function loadStockTable(table, options) {
                 title: '{% trans "Location" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                    if (row.belongs_to) {
-                        var text = "{% trans 'Installed in Stock Item ' %}" + row.belongs_to;
-                        var url = `/stock/item/${row.belongs_to}/installed/`;
-
-                        return renderLink(text, url);
-                    } else if (row.customer) {
-                        var text = "{% trans "Shipped to customer" %}";
-                        return renderLink(text, `/company/${row.customer}/assigned-stock/`);
-                    } else if (row.sales_order) {
-                        var text = `{% trans "Assigned to sales order" %}`;
-                        return renderLink(text, `/order/sales-order/${row.sales_order}/`); 
-                    }
-                    else if (value) {
-                        return renderLink(value, `/stock/location/${row.location}/`);
-                    }
-                    else {
-                        return '<i>{% trans "No stock location set" %}</i>';
-                    }
+                    return locationDetail(row);
                 }
             },
             {
