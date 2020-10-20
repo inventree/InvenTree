@@ -33,7 +33,20 @@
         {% if build.take_from %}
         <a href="{% url 'stock-location-detail' build.take_from.id %}">{{ build.take_from }}</a>
         {% else %}
-        {% trans "Stock can be taken from any available location." %}
+        <i>{% trans "Stock can be taken from any available location." %}</i>
+        {% endif %}
+    </td>
+</tr>
+<tr>
+    <td><span class='fas fa-map-marker-alt'></span></td>
+    <td>{% trans "Destination" %}</td>
+    <td>
+        {% if build.destination %}
+        <a href="{% url 'stock-location-detail' build.destination.id %}">
+            {{ build.destination }}
+        </a>
+        {% else %}
+        <i>{% trans "Destination location not specified" %}</i>
         {% endif %}
     </td>
 </tr>

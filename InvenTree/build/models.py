@@ -111,7 +111,6 @@ class Build(MPTTModel):
         on_delete=models.CASCADE,
         related_name='builds',
         limit_choices_to={
-            'is_template': False,
             'assembly': True,
             'active': True,
             'virtual': False,
@@ -225,6 +224,24 @@ class Build(MPTTModel):
                 break
 
         return new_ref
+
+    def createInitialStockItem(self, user):
+        """
+        Create an initial output StockItem to be completed by this build.
+        """
+
+        output = StockModels.StockItem.objects.create(
+            part=self.part,  # Link to the parent part
+            location=None,  # No location (yet) until it is completed
+            quantity=self.quantity,
+            batch='',  # The 'batch' code is not set until the item is completed
+            build=self,  # Point back to this build
+            is_building=True,  # Mark this StockItem as building
+        )
+
+        output.save()
+
+        # TODO - Add a transaction note to the new StockItem
 
     @transaction.atomic
     def cancelBuild(self, user):

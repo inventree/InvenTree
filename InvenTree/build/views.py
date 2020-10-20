@@ -439,15 +439,14 @@ class BuildCreate(AjaxCreateView):
         return {
             'success': _('Created new build'),
         }
-
-    def post_save(self, new_object):
+        
+    def post_save(self, new_object, request, **kwargs):
         """
-        Called immediately after the build has been created.
+        Called immediately after a new Build object is created.
         """
 
         build = new_object
-
-        print("Created:", build)
+        build.createInitialStockItem(request.user)
 
 
 class BuildUpdate(AjaxUpdateView):
