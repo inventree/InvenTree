@@ -181,8 +181,15 @@ function customGroupSorter(sortName, sortOrder, sortData) {
     sortData.sort(function(a, b) {
 
         // Extract default field values
-        var aa = a[sortName];
-        var bb = b[sortName];
+        // Allow multi-level access if required
+        // Ref: https://stackoverflow.com/a/6394168
+
+        function extract(obj, i) {
+            return obj[i];
+        }
+
+        var aa = sortName.split('.').reduce(extract, a);
+        var bb = sortName.split('.').reduce(extract, b);
 
         // Extract parent information
         var aparent = a._data && a._data['parent-index'];
