@@ -568,7 +568,7 @@ class BuildItem(models.Model):
         'stock.StockItem',
         on_delete=models.CASCADE,
         related_name='allocations',
-        help_text=_('Stock Item to allocate to build'),
+        help_text=_('Source stock item'),
         limit_choices_to={
             'build_order': None,
             'sales_order': None,
@@ -582,4 +582,15 @@ class BuildItem(models.Model):
         default=1,
         validators=[MinValueValidator(0)],
         help_text=_('Stock quantity to allocate to build')
+    )
+
+    install_into = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        related_name='items_to_install',
+        help_text=_('Destination stock item'),
+        limit_choices_to={
+            'is_building': True,
+        }
     )
