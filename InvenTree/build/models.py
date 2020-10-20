@@ -32,7 +32,7 @@ from part import models as PartModels
 
 
 class Build(MPTTModel):
-    """ A Build object organises the creation of new parts from the component parts.
+    """ A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
         part: The part to be built (from component BOM items)
@@ -70,15 +70,14 @@ class Build(MPTTModel):
 
         super().clean()
 
-        try:
-            if self.part.trackable:
-                if not self.quantity == int(self.quantity):
-                    raise ValidationError({
-                        'quantity': _("Build quantity must be integer value for trackable parts")
-                    })
-        except PartModels.Part.DoesNotExist:
-            pass
+        # Build quantity must be an integer
+        # Maybe in the future this will be adjusted?
 
+        if not self.quantity == int(self.quantity):
+            raise ValidationError({
+                'quantity': _("Build quantity must be integer value for trackable parts")
+            })
+        
     reference = models.CharField(
         unique=True,
         max_length=64,

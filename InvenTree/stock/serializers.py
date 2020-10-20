@@ -157,6 +157,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'customer',
             'build_order',
             'in_stock',
+            'is_building',
             'link',
             'location',
             'location_detail',
