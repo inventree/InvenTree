@@ -322,7 +322,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
         """
         pass
 
-    def post_save(self, **kwargs):
+    def post_save(self, new_object, **kwargs):
         """
         Hook for doing something with the created object after it is saved
         """
@@ -356,7 +356,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
             self.pre_save()
             self.object = self.form.save()
-            self.post_save()
+            self.post_save(self.object)
 
             # Return the PK of the newly-created object
             data['pk'] = self.object.pk

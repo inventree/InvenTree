@@ -35,10 +35,11 @@ class EditBuildForm(HelperForm):
             'title',
             'part',
             'quantity',
+            'batch',
+            'take_from',
+            'destination',
             'parent',
             'sales_order',
-            'take_from',
-            'batch',
             'link',
         ]
 

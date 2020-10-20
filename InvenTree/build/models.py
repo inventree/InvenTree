@@ -102,7 +102,7 @@ class Build(MPTTModel):
         blank=True, null=True,
         related_name='children',
         verbose_name=_('Parent Build'),
-        help_text=_('Parent build to which this build is allocated'),
+        help_text=_('BuildOrder to which this build is allocated'),
     )
 
     part = models.ForeignKey(
@@ -137,6 +137,15 @@ class Build(MPTTModel):
         help_text=_('Select location to take stock from for this build (leave blank to take from any stock location)')
     )
     
+    destination = models.ForeignKey(
+        'stock.StockLocation',
+        verbose_name=_('Destination Location'),
+        on_delete=models.SET_NULL,
+        related_name='incoming_builds',
+        null=True, blank=True,
+        help_text=_('Select location where the completed items will be stored'),
+    )
+
     quantity = models.PositiveIntegerField(
         verbose_name=_('Build Quantity'),
         default=1,

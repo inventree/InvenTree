@@ -412,8 +412,17 @@ class BuildCreate(AjaxCreateView):
 
         initials = super(BuildCreate, self).get_initial().copy()
 
-        # User has provided a Part ID
-        initials['part'] = self.request.GET.get('part', None)
+        part = self.request.GET.get('part', None)
+
+        if part:
+
+            try:
+                part = Part.objects.get(pk=part)
+                # User has provided a Part ID
+                initials['part'] = part
+                initials['destination'] = part.get_default_location()
+            except (ValueError, Part.DoesNotExist):
+                pass
 
         initials['reference'] = Build.getNextBuildNumber()
 
