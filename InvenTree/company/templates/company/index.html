@@ -12,12 +12,13 @@ InvenTree | {% trans "Supplier List" %}
 <h3>{{ title }}</h3>
 <hr>
 
+{% if title == 'Manufacturers' and roles.purchase_order.add or title == 'Suppliers' and roles.purchase_order.add or title == 'Customers' and roles.sales_order.add %}
 <div id='button-toolbar'>
     <div class='btn-group'>
         <button type='button' class="btn btn-success" id='new-company'>{{ button_text }}</button>
     </div>
 </div>
-
+{% endif %}
 
 <table class='table table-striped' id='company-table' data-toolbar='#button-toolbar'>
 </table>
