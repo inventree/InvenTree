@@ -15,6 +15,20 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% block pre_content %}
 {% include 'stock/loc_link.html' with location=item.location %}
 
+{% if item.is_building %}
+<div class='alert alert-block alert-info'>
+    {% trans "This stock item is in production and cannot be edited." %}<br>
+    {% trans "Edit the stock item from the build view." %}<br>
+
+    {% if item.build %}
+    <a href="{% url 'build-detail' item.build.id %}">
+        <b>{{ item.build }}</b>
+    </a>
+    {% endif %}
+
+</div>
+{% endif %}
+
 {% if item.hasRequiredTests and not item.passedAllRequiredTests %}
 <div class='alert alert-block alert-danger'>
     {% trans "This stock item has not passed all required tests" %}
@@ -79,7 +93,6 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 
 <div class='btn-group' role='group'>
 
-
 </div>
 
 <div class='btn-group action-buttons' role='group'>
@@ -99,7 +112,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         </ul>
     </div>
     <!-- Stock adjustment menu -->
-    {% if roles.stock.change %}
+    {% if roles.stock.change and not item.is_building %}
     <div class='btn-group'>
         <button id='stock-options' title='{% trans "Stock adjustment actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
@@ -129,7 +142,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     </div>
     {% endif %}
     <!-- Edit stock item -->
-    {% if roles.stock.change %}
+    {% if roles.stock.change and not item.is_building %}
     <div class='btn-group'>
         <button id='stock-edit-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-tools'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
@@ -221,7 +234,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         {% if item.location %}
         <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
         {% else %}
-        <td>{% trans "No location set" %}</td>
+        <td><i>{% trans "No location set" %}</i></td>
         {% endif %}
     </tr>
     {% endif %}
@@ -290,7 +303,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         {% if item.stocktake_date %}
         <td>{{ item.stocktake_date }} <span class='badge'>{{ item.stocktake_user }}</span></td>
         {% else %}
-        <td>{% trans "No stocktake performed" %}</td>
+        <td><i>{% trans "No stocktake performed" %}</i></td>
         {% endif %}
     </tr>
     <tr>

@@ -10,90 +10,133 @@
 
 <hr>
 
-<table class='table table-striped'>
-    <col width='25'>
-<tr>
-    <td></td>
-    <td>{% trans "Title" %}</td>
-    <td>{{ build.title }}</td>
-</tr>
-<tr>
-    <td><span class='fas fa-shapes'></span></td>
-    <td>{% trans "Part" %}</td>
-    <td><a href="{% url 'part-build' build.part.id %}">{{ build.part.full_name }}</a></td>
-</tr>
-<tr>
-    <td></td>
-    <td>{% trans "Quantity" %}</td><td>{{ build.quantity }}</td>
-</tr>
-<tr>
-    <td><span class='fas fa-map-marker-alt'></span></td>
-    <td>{% trans "Stock Source" %}</td>
-    <td>
-        {% if build.take_from %}
-        <a href="{% url 'stock-location-detail' build.take_from.id %}">{{ build.take_from }}</a>
-        {% else %}
-        <i>{% trans "Stock can be taken from any available location." %}</i>
+<div class='row'>
+    <div class='col-sm-6'>
+        <table class='table table-striped'>
+            <col width='25'>
+        <tr>
+            <td><span class='fas fa-info'></span></td>
+            <td>{% trans "Description" %}</td>
+            <td>{{ build.title }}</td>
+        </tr>
+        <tr>
+            <td><span class='fas fa-shapes'></span></td>
+            <td>{% trans "Part" %}</td>
+            <td><a href="{% url 'part-build' build.part.id %}">{{ build.part.full_name }}</a></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>{% trans "Quantity" %}</td><td>{{ build.quantity }}</td>
+        </tr>
+        <tr>
+            <td><span class='fas fa-map-marker-alt'></span></td>
+            <td>{% trans "Stock Source" %}</td>
+            <td>
+                {% if build.take_from %}
+                <a href="{% url 'stock-location-detail' build.take_from.id %}">{{ build.take_from }}</a>
+                {% else %}
+                <i>{% trans "Stock can be taken from any available location." %}</i>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td><span class='fas fa-map-marker-alt'></span></td>
+            <td>{% trans "Destination" %}</td>
+            <td>
+                {% if build.destination %}
+                <a href="{% url 'stock-location-detail' build.destination.id %}">
+                    {{ build.destination }}
+                </a>
+                {% else %}
+                <i>{% trans "Destination location not specified" %}</i>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td><span class='fas fa-info'></span></td>
+            <td>{% trans "Status" %}</td>
+            <td>{% build_status_label build.status %}</td>
+        </tr>
+        <tr>
+            <td><span class='fas fa-spinner'></span></td>
+            <td>{% trans "Progress" %}</td>
+            <td>{{ build.completed }} / {{ build.quantity }}</td>
+        </tr>
+        {% if build.batch %}
+        <tr>
+            <td><span class='fas fa-layer-group'></span></td>
+            <td>{% trans "Batch" %}</td>
+            <td>{{ build.batch }}</td>
+        </tr>
         {% endif %}
-    </td>
-</tr>
-<tr>
-    <td><span class='fas fa-map-marker-alt'></span></td>
-    <td>{% trans "Destination" %}</td>
-    <td>
-        {% if build.destination %}
-        <a href="{% url 'stock-location-detail' build.destination.id %}">
-            {{ build.destination }}
-        </a>
-        {% else %}
-        <i>{% trans "Destination location not specified" %}</i>
+        {% if build.parent %}
+        <tr>
+            <td><span class='fas fa-sitemap'></span></td>
+            <td>{% trans "Parent Build" %}</td>
+            <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a></td>
+        </tr>
         {% endif %}
-    </td>
-</tr>
-<tr>
-    <td><span class='fas fa-info'></span></td>
-    <td>{% trans "Status" %}</td>
-    <td>{% build_status_label build.status %}</td>
-</tr>
-{% if build.batch %}
-<tr>
-    <td></td>
-    <td>{% trans "Batch" %}</td>
-    <td>{{ build.batch }}</td>
-</tr>
-{% endif %}
-{% if build.link %}
-<tr>
-    <td><span class='fas fa-link'></span></td>
-    <td>{% trans "External Link" %}</td>
-    <td><a href="{{ build.link }}">{{ build.link }}</a></td>
-</tr>
-{% endif %}
-<tr>
-    <td><span class='fas fa-calendar-alt'></span></td>
-    <td>{% trans "Created" %}</td>
-    <td>{{ build.creation_date }}</td>
-</tr>
-{% if build.is_active %}
-<tr>
-    <td></td>
-    <td>{% trans "Enough Parts?" %}</td>
-    <td>
-        {% if build.can_build %}
-        {% trans "Yes" %}
-        {% else %}
-        {% trans "No" %}
+        {% if build.sales_order %}
+        <tr>
+            <td><span class='fas fa-dolly'></span></td>
+            <td>{% trans "Sales Order" %}</td>
+            <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></td>
+        </tr>
         {% endif %}
-    </td>
-</tr>
-{% endif %}
-{% if build.completion_date %}
-<tr>
-    <td><span class='fas fa-calendar-alt'></span></td>
-    <td>{% trans "Completed" %}</td>
-    <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
-</tr>
-{% endif %}
-</table>
+        {% if build.link %}
+        <tr>
+            <td><span class='fas fa-link'></span></td>
+            <td>{% trans "External Link" %}</td>
+            <td><a href="{{ build.link }}">{{ build.link }}</a></td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td><span class='fas fa-calendar-alt'></span></td>
+            <td>{% trans "Created" %}</td>
+            <td>{{ build.creation_date }}</td>
+        </tr>
+        </table>
+    </div>
+    <div class='col-sm-6'>
+        <table class='table table-striped'>
+            <col width='25'>
+            <tr>
+                <td><span class='fas fa-dollar-sign'></span></td>
+                <td>{% trans "BOM Price" %}</td>
+                <td>
+                    {% if bom_price %}
+                    {{ bom_price }}
+                    {% if build.part.has_complete_bom_pricing == False %}
+                    <br><span class='warning-msg'><i>{% trans "BOM pricing is incomplete" %}</i></span>
+                    {% endif %}
+                    {% else %}
+                    <span class='warning-msg'><i>{% trans "No pricing information" %}</i></span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% if build.is_active %}
+            <tr>
+                <td></td>
+                <td>{% trans "Enough Parts?" %}</td>
+                <td>
+                    {% if build.can_build %}
+                    {% trans "Yes" %}
+                    {% else %}
+                    {% trans "No" %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+            {% if build.completion_date %}
+            <tr>
+                <td><span class='fas fa-calendar-alt'></span></td>
+                <td>{% trans "Completed" %}</td>
+                <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
+            </tr>
+            {% endif %}
+    
+        </table>
+    </div>
+</div>
 
 {% endblock %}

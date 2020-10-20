@@ -62,21 +62,6 @@ class Build(MPTTModel):
 
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.id})
-
-    def clean(self):
-        """
-        Validation for Build object.
-        """
-
-        super().clean()
-
-        # Build quantity must be an integer
-        # Maybe in the future this will be adjusted?
-
-        if not self.quantity == int(self.quantity):
-            raise ValidationError({
-                'quantity': _("Build quantity must be integer value for trackable parts")
-            })
         
     reference = models.CharField(
         unique=True,
@@ -149,7 +134,13 @@ class Build(MPTTModel):
         verbose_name=_('Build Quantity'),
         default=1,
         validators=[MinValueValidator(1)],
-        help_text=_('Number of parts to build')
+        help_text=_('Number of stock items to build')
+    )
+
+    completed = models.PositiveIntegerField(
+        verbose_name=_('Completed items'),
+        default=0,
+        help_text=_('Number of stock items which have been completed')
     )
 
     status = models.PositiveIntegerField(
