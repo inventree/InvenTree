@@ -75,6 +75,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'build',
+            'install_into',
             'part',
             'part_name',
             'part_image',

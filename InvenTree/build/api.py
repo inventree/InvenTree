@@ -119,6 +119,7 @@ class BuildItemList(generics.ListCreateAPIView):
         return query
 
     def filter_queryset(self, queryset):
+
         queryset = super().filter_queryset(queryset)
 
         # Does the user wish to filter by part?
@@ -135,7 +136,8 @@ class BuildItemList(generics.ListCreateAPIView):
 
     filter_fields = [
         'build',
-        'stock_item'
+        'stock_item',
+        'install_into',
     ]
 
 
