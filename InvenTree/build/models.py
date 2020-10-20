@@ -184,6 +184,57 @@ class Build(MPTTModel):
     def output_count(self):
         return self.build_outputs.count()
 
+    def getBuildOutputs(self, **kwargs):
+        """
+        Return a list of build outputs
+        """
+
+        outputs = self.build_outputs
+
+        # Filter by 'in stock' status
+        in_stock = kwargs.get('in_stock', None)
+
+        if in_stock is not None:
+            if in_stock:
+                outputs = outputs.filter(StockModels.StockItem.IN_STOCK_FILTER)
+            else:
+                outputs = outputs.exclude(StockModels.StockItem.IN_STOCK_FILTER)
+
+        # Filter by 'complete' status
+        complete = kwargs.get('complete', None)
+
+        if complete is not None:
+            if complete:
+                outputs = outputs.filter(is_building=False)
+            else:
+                outputs = outputs.filter(is_building=True)
+
+        return outputs
+
+    @property
+    def complete_outputs(self):
+        """
+        Return all the "completed" build outputs
+        """
+
+        outputs = self.getBuildOutputs(complete=True)
+
+        # TODO - Ordering?
+
+        return outputs
+
+    @property
+    def incomplete_outputs(self):
+        """
+        Return all the "incomplete" build outputs"
+        """
+
+        outputs = self.getBuildOutputs(complete=False)
+
+        # TODO - Order by how "complete" they are?
+
+        return outputs
+
     @classmethod
     def getNextBuildNumber(cls):
         """
@@ -494,6 +545,7 @@ class Build(MPTTModel):
     @property
     def is_complete(self):
         """ Returns True if the build status is COMPLETE """
+
         return self.status == BuildStatus.COMPLETE
 
 
