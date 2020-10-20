@@ -440,6 +440,15 @@ class BuildCreate(AjaxCreateView):
             'success': _('Created new build'),
         }
 
+    def post_save(self, new_object):
+        """
+        Called immediately after the build has been created.
+        """
+
+        build = new_object
+
+        print("Created:", build)
+
 
 class BuildUpdate(AjaxUpdateView):
     """ View for editing a Build object """
