@@ -134,6 +134,32 @@ function reloadFieldOptions(fieldName, options) {
 }
 
 
+function enableField(fieldName, enabled, options={}) {
+    /* Enable (or disable) a particular field in a modal.
+     * 
+     * Args:
+     * - fieldName: The name of the field
+     * - enabled: boolean enabled / disabled status
+     * - options:
+     */
+
+    var modal = options.modal || '#modal-form';
+
+    var field = getFieldByName(modal, fieldName);
+
+    field.prop("disabled", !enabled);
+}
+
+function clearField(fieldName, options={}) {
+
+    var modal = options.modal || '#modal-form';
+
+    var field = getFieldByName(modal, fieldName);
+
+    field.val("");
+}
+
+
 function partialMatcher(params, data) {
     /* Replacement function for the 'matcher' parameter for a select2 dropdown.
 

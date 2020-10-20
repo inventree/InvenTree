@@ -1,6 +1,37 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+function newBuildOrder(options={}) {
+    /* Launch modal form to create a new BuildOrder.
+     */
+
+    launchModalForm(
+        "{% url 'build-create' %}",
+        {
+            follow: true,
+            data: options.data || {},
+            callback: [
+            {
+                field: 'part',
+                action: function(value) {
+                    inventreeGet(
+                        `/api/part/${value}/`, {},
+                        {
+                            success: function(response) {
+
+                                //enableField('serial_numbers', response.trackable);
+                                //clearField('serial_numbers');
+                            }
+                        }
+                    );
+                },
+            }
+        ],
+        }
+    )
+     
+}
+
 function loadBuildTable(table, options) {
     // Display a table of Build objects
 
