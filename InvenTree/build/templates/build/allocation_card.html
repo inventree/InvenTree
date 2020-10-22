@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="panel panel-default">
+<div class="panel panel-default" id='allocation-panel-{{ item.pk }}'>
     <div class="panel-heading" role="tab" id="heading-{{ item.pk }}">
       <div class="panel-title">
           <div class='row'>
@@ -10,11 +10,15 @@
                 </div>
             </a>
             <div class='col-sm-3'>
-                PROGRESS
+                <div>
+                    {% trans "Completed lines" %}: 
+                    <div id='output-progress-{{ item.pk }}'>
+                        <span class='fas fa-spin fa-spinner'></span>
+                    </div>
+                </div>
             </div>
             <div class='col-sm-3'>
-                ACTIONS
-                <div class='btn-group float-right' id='#output-actions-{{ item.pk }}'>
+                <div class='btn-group float-right' id='output-actions-{{ item.pk }}'>
                     <span class='fas fa-spin fa-spinner'></span>
                 </div>
             </div>

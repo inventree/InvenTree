@@ -680,15 +680,12 @@ class BuildItemCreate(AjaxCreateView):
                 quantity = min(quantity, item.unallocated_quantity())
 
         # If the output has been specified
-        print("output_id:", output_id)
         if output_id:
             try:
                 output = StockItem.objects.get(pk=output_id)
                 initials['install_into'] = output
-                print("Output:", output)
             except (ValueError, StockItem.DoesNotExist):
                 pass
-                print("no output found")
 
         if quantity is not None:
             initials['quantity'] = quantity

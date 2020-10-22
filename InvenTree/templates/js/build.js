@@ -32,6 +32,60 @@ function newBuildOrder(options={}) {
 }
 
 
+function makeBuildOutputActionButtons(output) {
+    /* Generate action buttons for a build output.
+     */
+
+    var outputId = output.pk;
+
+    var panel = `#allocation-panel-${outputId}`;
+    
+    // Find the div where the buttons will be displayed
+    var buildActions = $(panel).find(`#output-actions-${outputId}`);
+
+    var html = `<div class='btn-group float-right' role='group'>`;
+
+    // Add a button to "auto allocate" against the particular build output
+    html += makeIconButton(
+        'fa-clipboard-check icon-blue', 'button-output-auto', outputId,
+        '{% trans "Allocate stock items to this output" %}'
+    );
+
+    // Add a button to "complete" the particular build output
+    html += makeIconButton(
+        'fa-tools icon-green', 'button-output-complete', outputId,
+        '{% trans "Complete build output" %}',
+    );
+
+    // Add a button to "cancel" the particular build output (unallocate)
+    html += makeIconButton(
+        'fa-times-circle icon-red', 'button-output-cancel', outputId,
+        '{% trans "Cancel build output" %}',
+    );
+
+    // Add a button to "destroy" the particular build output (mark as damaged, scrap)
+    // TODO
+
+    html += '</div>';
+
+    buildActions.html(html);
+
+    // Add callbacks for the buttons
+    $(panel).find(`#button-output-auto-${outputId}`).click(function() {
+        // TODO
+    });
+
+    $(panel).find(`#button-output-complete-${outputId}`).click(function() {
+        // TODO
+    });
+
+    $(panel).find(`#button-output-cancel-${outputId}`).click(function() {
+        // TODO
+    });
+
+}
+
+
 function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
     /*
      * Load the "allocation table" for a particular build output.
@@ -97,14 +151,13 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
             sub_part_detail: true,
         },
         formatNoMatches: function() { 
-            return "{% trans "No BOM items found" %}";
+            return '{% trans "No BOM items found" %}';
         },
         name: 'build-allocation',
         uniqueId: 'sub_part',
         onPostBody: setupCallbacks,
         onLoadSuccess: function(tableData) {
             // Once the BOM data are loaded, request allocation data for this build output
-
             inventreeGet('/api/build/item/',
                 {
                     build: buildId,
@@ -114,6 +167,12 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                     success: function(data) {
                         // Iterate through the returned data, and group by the part they point to
                         var allocations = {};
+
+                        // Total number of line items
+                        var totalLines = tableData.length;
+
+                        // Total number of "completely allocated" lines
+                        var allocatedLines = 0;
 
                         data.forEach(function(item) {
 
@@ -136,9 +195,35 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                             // Set the allocation list for that row
                             tableRow.allocations = allocations[key];
 
+                            // Calculate the total allocated quantity
+                            var allocatedQuantity = 0;
+
+                            tableRow.allocations.forEach(function (allocation) {
+                                allocatedQuantity += allocation.quantity;
+                            });
+
+                            // Is this line item fully allocated?
+                            if (allocatedQuantity >= (tableRow.quantity * output.quantity)) {
+                                allocatedLines += 1;
+                            }
+
                             // Push the updated row back into the main table
                             $(table).bootstrapTable('updateByUniqueId', key, tableRow, true);
                         }
+
+                        // Update the total progress for this build output
+                        var buildProgress = $(`#allocation-panel-${outputId}`).find($(`#output-progress-${outputId}`));
+
+                        var progress = makeProgressBar(
+                            allocatedLines,
+                            totalLines
+                        );
+
+                        buildProgress.html(progress);
+
+                        // Update the available actions for this build output
+
+                        makeBuildOutputActionButtons(output);
                     }
                 }
             );
