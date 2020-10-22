@@ -934,8 +934,10 @@ class Part(MPTTModel):
     def required_parts(self):
         """ Return a list of parts required to make this part (list of BOM items) """
         parts = []
+
         for bom in self.bom_items.all().select_related('sub_part'):
             parts.append(bom.sub_part)
+        
         return parts
 
     def get_allowed_bom_items(self):

@@ -29,8 +29,154 @@ function newBuildOrder(options={}) {
         ],
         }
     )
-     
 }
+
+
+function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
+    /*
+     * Load the "allocation table" for a particular build output.
+     * 
+     * Args:
+     * - buildId: The PK of the Build object
+     * - partId: The PK of the Part object
+     * - output: The StockItem object which is the "output" of the build
+     * - options:
+     * -- table: The #id of the table (will be auto-calculated if not provided)
+     */
+
+    var outputId = output.pk;
+
+    var table = options.table || `#allocation-table-${outputId}`;
+
+    function reloadTable() {
+        // Reload the entire build allocation table
+        $(table).bootstrapTable('refresh');
+    }
+
+    function setupCallbacks() {
+        // Register button callbacks once table data are loaded
+
+        // Callback for 'allocate' button
+        $(table).find(".button-add").click(function() {
+
+            // Primary key of the 'sub_part'
+            var pk = $(this).attr('pk');
+
+            // Extract row data from the table
+            var idx = $(this).closest('tr').attr('data-index');
+            var row = $(table).bootstrapTable('getData')[idx];
+
+            // Launch form to allocate new stock against this output
+            launchModalForm("{% url 'build-item-create' %}", {
+                success: reloadTable,
+                data: {
+                    part: pk,
+                    build: buildId,
+                    install_into: outputId,
+                },
+                secondary: [
+                {
+                    field: 'stock_item',
+                    label: '{% trans "New Stock Item" %}',
+                    title: '{% trans "Create new Stock Item" %}',
+                    url: '{% url "stock-item-create" %}',
+                    data: {
+                        part: pk,
+                    },
+                },
+            ]
+            });
+        });
+    }
+
+    // Load table of BOM items
+    $(table).inventreeTable({
+        url: "{% url 'api-bom-list' %}",
+        queryParams: {
+            part: partId,
+            sub_part_detail: true,
+        },
+        formatNoMatches: function() { 
+            return "{% trans "No BOM items found" %}";
+        },
+        name: 'build-allocation',
+        onPostBody: setupCallbacks,
+        onLoadSuccess: function(tableData) {
+            // Once the BOM data are loaded, request allocation data for this build output
+
+            inventreeGet('/api/build/item/',
+                {
+                    build: buildId,
+                    output: outputId,
+                },
+                {
+                    success: function(data) {
+                        // TODO
+                    }
+                }
+            );
+        },
+        showColumns: false,
+        detailViewByClick: true,
+        detailView: true,
+        detailFilter: function(index, row) {
+            return row.allocations != null;
+        },
+        detailFormatter: function(index, row, element) {
+            // TODO
+            return '---';
+        },
+        columns: [
+            {
+                field: 'pk',
+                visible: false,
+            },
+            {
+                field: 'sub_part_detail.full_name',
+                title: "{% trans "Required Part" %}",
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    var url = `/part/${row.sub_part}/`;
+                    var thumb = row.sub_part_detail.thumbnail;
+                    var name = row.sub_part_detail.full_name;
+
+                    var html = imageHoverIcon(thumb) + renderLink(name, url);
+
+                    return html;
+                }
+            },
+            {
+                field: 'reference',
+                title: '{% trans "Reference" %}',
+            },
+            {
+                field: 'allocated',
+                title: '{% trans "Allocated" %}',
+                formatter: function(value, row, index, field) {
+                    var allocated = value || 0;
+                    var required = row.quantity * output.quantity;
+
+                    return makeProgressBar(allocated, required);
+                }
+            },
+            {
+                field: 'actions',
+                title: '{% trans "Actions" %}',
+                formatter: function(value, row, index, field) {
+                    // Generate action buttons for this build output
+                    var html = `<div class='btn-group float-right' role='group'>`;
+
+                    html += makeIconButton('fa-plus icon-green', 'button-add', row.sub_part, '{% trans "Allocate stock" %}');
+
+                    html += '</div>';
+
+                    return html;
+                }
+            },
+        ]
+    });
+}
+
 
 function loadBuildTable(table, options) {
     // Display a table of Build objects

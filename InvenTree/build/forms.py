@@ -8,6 +8,8 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext as _
 
 from InvenTree.forms import HelperForm
+from InvenTree.fields import RoundingDecimalFormField
+
 from django import forms
 from .models import Build, BuildItem
 from stock.models import StockLocation
@@ -91,7 +93,7 @@ class CompleteBuildForm(HelperForm):
 class CancelBuildForm(HelperForm):
     """ Form for cancelling a build """
 
-    confirm_cancel = forms.BooleanField(required=False, help_text='Confirm build cancellation')
+    confirm_cancel = forms.BooleanField(required=False, help_text=_('Confirm build cancellation'))
 
     class Meta:
         model = Build
@@ -101,7 +103,11 @@ class CancelBuildForm(HelperForm):
 
 
 class EditBuildItemForm(HelperForm):
-    """ Form for adding a new BuildItem to a Build """
+    """
+    Form for creating (or editing) a BuildItem object.
+    """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, help_text=_('Select quantity of stock to allocate'))
 
     class Meta:
         model = BuildItem
@@ -109,4 +115,5 @@ class EditBuildItemForm(HelperForm):
             'build',
             'stock_item',
             'quantity',
+            'install_into',
         ]

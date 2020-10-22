@@ -20,13 +20,38 @@ InvenTree | Allocate Parts
     </div>
     {% endif %}
 </div>
-    
-<table class='table table-striped table-condensed' id='build-item-list' data-toolbar='#build-item-toolbar'></table>   
+
+<!--
+    <table class='table table-striped table-condensed' id='build-item-list' data-toolbar='#build-item-toolbar'></table>   
+-->
+
+
+<div class="panel-group" id="build-output-accordion" role="tablist" aria-multiselectable="true">
+    {% for item in build.incomplete_outputs %}
+    {% include "build/allocation_card.html" with item=item complete=False %}
+    {% endfor %}
+</div>
 
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
+
+    {% for item in build.incomplete_outputs %}
+
+    // Get the build output as a javascript object
+    inventreeGet('{% url 'api-stock-detail' item.pk %}', {},
+        {
+            success: function(response) {
+                loadBuildOutputAllocationTable(
+                    {{ build.pk }},
+                    {{ build.part.pk }},
+                    response
+                );
+            }
+        }
+    );
+    {% endfor %}
 
     var buildTable = $("#build-item-list");
 

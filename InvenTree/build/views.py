@@ -492,22 +492,36 @@ class BuildItemDelete(AjaxDeleteView):
 
 
 class BuildItemCreate(AjaxCreateView):
-    """ View for allocating a new part to a build """
+    """
+    View for allocating a StockItems to a build output.    
+    """
 
     model = BuildItem
     form_class = forms.EditBuildItemForm
     ajax_template_name = 'build/create_build_item.html'
-    ajax_form_title = _('Allocate new Part')
+    ajax_form_title = _('Allocate stock to build output')
     role_required = 'build.add'
 
+    # The output StockItem against which the allocation is being made
+    output = None
+
+    # The "part" which is being allocated to the output
     part = None
+    
     available_stock = None
 
     def get_context_data(self):
-        ctx = super(AjaxCreateView, self).get_context_data()
+        """
+        Provide context data to the template which renders the form.
+        """
+
+        ctx = super().get_context_data()
 
         if self.part:
             ctx['part'] = self.part
+
+        if self.output:
+            ctx['output'] = self.output
 
         if self.available_stock:
             ctx['stock'] = self.available_stock
@@ -526,7 +540,28 @@ class BuildItemCreate(AjaxCreateView):
         build_id = form['build'].value()
 
         if build_id is not None:
+            """
+            If the build has been provided, hide the widget to change the build selection.
+            Additionally, update the allowable selections for other fields.
+            """
             form.fields['build'].widget = HiddenInput()
+            form.fields['install_into'].queryset = StockItem.objects.filter(build=build_id, is_building=True)
+        else:
+            """
+            Build has *not* been selected
+            """
+            pass
+
+        # If the output stock item is specified, hide the input field
+        output_id = form['install_into'].value()
+
+        if output_id is not None:
+
+            try:
+                self.output = StockItem.objects.get(pk=output_id)
+                form.fields['install_into'].widget = HiddenInput()
+            except (ValueError, StockItem.DoesNotExist):
+                pass
 
         # If the sub_part is supplied, limit to matching stock items
         part_id = self.get_param('part')
@@ -577,12 +612,15 @@ class BuildItemCreate(AjaxCreateView):
         """ Provide initial data for BomItem. Look for the folllowing in the GET data:
 
         - build: pk of the Build object
+        - part: pk of the Part object which we are assigning
+        - output: pk of the StockItem object into which the allocated stock will be installed
         """
 
         initials = super(AjaxCreateView, self).get_initial().copy()
 
         build_id = self.get_param('build')
         part_id = self.get_param('part')
+        output_id = self.get_param('install_into')
 
         # Reference to a Part object
         part = None
@@ -592,6 +630,9 @@ class BuildItemCreate(AjaxCreateView):
         
         # Reference to a Build object
         build = None
+
+        # Reference to a StockItem object
+        output = None
 
         if part_id:
             try:
@@ -623,7 +664,7 @@ class BuildItemCreate(AjaxCreateView):
         if item_id:
             try:
                 item = StockItem.objects.get(pk=item_id)
-            except:
+            except (ValueError, StockItem.DoesNotExist):
                 pass
 
         # If a StockItem is not selected, try to auto-select one
@@ -638,6 +679,17 @@ class BuildItemCreate(AjaxCreateView):
                 quantity = item.unallocated_quantity()
             else:
                 quantity = min(quantity, item.unallocated_quantity())
+
+        # If the output has been specified
+        print("output_id:", output_id)
+        if output_id:
+            try:
+                output = StockItem.objects.get(pk=output_id)
+                initials['install_into'] = output
+                print("Output:", output)
+            except (ValueError, StockItem.DoesNotExist):
+                pass
+                print("no output found")
 
         if quantity is not None:
             initials['quantity'] = quantity
