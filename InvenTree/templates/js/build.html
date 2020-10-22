@@ -100,6 +100,7 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
             return "{% trans "No BOM items found" %}";
         },
         name: 'build-allocation',
+        uniqueId: 'sub_part',
         onPostBody: setupCallbacks,
         onLoadSuccess: function(tableData) {
             // Once the BOM data are loaded, request allocation data for this build output
@@ -111,11 +112,38 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                 },
                 {
                     success: function(data) {
-                        // TODO
+                        // Iterate through the returned data, and group by the part they point to
+                        var allocations = {};
+
+                        data.forEach(function(item) {
+
+                            // Group BuildItem objects by part
+                            var part = item.part;
+                            var key = parseInt(part);
+
+                            if (!(key in allocations)) {
+                                allocations[key] = new Array();
+                            }
+
+                            allocations[key].push(item);
+                        });
+
+                        // Now update the allocations for each row in the table
+                        for (var key in allocations) {
+                            // Select the associated row in the table
+                            var tableRow = $(table).bootstrapTable('getRowByUniqueId', key);
+
+                            // Set the allocation list for that row
+                            tableRow.allocations = allocations[key];
+
+                            // Push the updated row back into the main table
+                            $(table).bootstrapTable('updateByUniqueId', key, tableRow, true);
+                        }
                     }
                 }
             );
         },
+        sortable: true,
         showColumns: false,
         detailViewByClick: true,
         detailView: true,
@@ -123,8 +151,99 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
             return row.allocations != null;
         },
         detailFormatter: function(index, row, element) {
-            // TODO
-            return '---';
+            // Contruct an 'inner table' which shows which stock items have been allocated
+
+            var subTableId = `allocation-table-${row.pk}`;
+
+            var html = `<div class='sub-table'><table class='table table-condensed table-striped' id='${subTableId}'></table></div>`;
+
+            element.html(html);
+
+            var lineItem = row;
+
+            var subTable = $(`#${subTableId}`);
+
+            subTable.bootstrapTable({
+                data: row.allocations,
+                showHeader: true,
+                columns: [
+                    {
+                        width: '50%',
+                        field: 'quantity',
+                        title: '{% trans "Assigned Stock" %}',
+                        formatter: function(value, row, index, field) {
+                            var text = '';
+
+                            var url = '';
+
+                            if (row.serial && row.quantity == 1) {
+                                text = `{% trans "Serial Number" %}: ${row.serial}`;
+                            } else {
+                                text = `{% trans "Quantity" %}: ${row.quantity}`;
+                            }
+
+                            {% if build.status == BuildStatus.COMPLETE %}
+                            url = `/stock/item/${row.pk}/`;
+                            {% else %}
+                            url = `/stock/item/${row.stock_item}/`;
+                            {% endif %}
+
+                            return renderLink(text, url);
+                        }
+                    },
+                    {
+                        field: 'location',
+                        title: '{% trans "Location" %}',
+                        formatter: function(value, row, index, field) {
+                            if (row.stock_item_detail.location) {
+                                var text = row.stock_item_detail.location_name;
+                                var url = `/stock/location/${row.stock_item_detail.location}/`;
+                                
+                                return renderLink(text, url);
+                            } else {
+                                return '<i>{% trans "No location set" %}</i>';
+                            }
+                        }
+                    },
+                    {
+                        field: 'actions',
+                        formatter: function(value, row, index, field) {
+                            /* Actions available for a particular stock item allocation:
+                             * 
+                             * - Edit the allocation quantity
+                             * - Delete the allocation
+                             */
+
+                            var pk = row.pk;
+
+                            var html = `<div class='btn-group float-right' role='group'>`;
+
+                            html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
+
+                            html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
+
+                            html += `</div>`;
+
+                            return html;
+                        }
+                    }
+                ]
+            });
+
+            // Assign button callbacks to the newly created allocation buttons
+            subTable.find('.button-allocation-edit').click(function() {
+                var pk = $(this).attr('pk');
+                launchModalForm(`/build/item/${pk}/edit/`, {
+                    success: reloadTable,
+                });
+            });
+
+            subTable.find('.button-allocation-delete').click(function() {
+                var pk = $(this).attr('pk');
+                launchModalForm(`/build/item/${pk}/delete/`, {
+                    success: reloadTable,
+                });
+            });
         },
         columns: [
             {
@@ -148,12 +267,21 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
             {
                 field: 'reference',
                 title: '{% trans "Reference" %}',
+                sortable: true,
             },
             {
                 field: 'allocated',
                 title: '{% trans "Allocated" %}',
+                sortable: true,
                 formatter: function(value, row, index, field) {
-                    var allocated = value || 0;
+                    var allocated = 0;
+
+                    if (row.allocations) {
+                        row.allocations.forEach(function(item) {
+                            allocated += item.quantity;
+                        });
+                    }
+
                     var required = row.quantity * output.quantity;
 
                     return makeProgressBar(allocated, required);
