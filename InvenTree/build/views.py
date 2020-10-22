@@ -700,7 +700,7 @@ class BuildItemEdit(AjaxUpdateView):
     """ View to edit a BuildItem object """
 
     model = BuildItem
-    ajax_template_name = 'modal_form.html'
+    ajax_template_name = 'build/edit_build_item.html'
     form_class = forms.EditBuildItemForm
     ajax_form_title = _('Edit Stock Allocation')
     role_required = 'build.change'
@@ -720,14 +720,9 @@ class BuildItemEdit(AjaxUpdateView):
 
         form = super(BuildItemEdit, self).get_form()
 
-        query = StockItem.objects.all()
-        
-        if build_item.stock_item:
-            part_id = build_item.stock_item.part.id
-            query = query.filter(part=part_id)
-
-        form.fields['stock_item'].queryset = query
-
-        form.fields['build'].widget = HiddenInput()
+        # Hide fields which we do not wish the user to edit
+        for field in ['build', 'stock_item', 'install_into']:
+            if form[field].value():
+                form.fields[field].widget = HiddenInput()
 
         return form

@@ -252,7 +252,7 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
             },
             {
                 field: 'sub_part_detail.full_name',
-                title: "{% trans "Required Part" %}",
+                title: '{% trans "Required Part" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     var url = `/part/${row.sub_part}/`;
@@ -326,7 +326,7 @@ function loadBuildTable(table, options) {
     $(table).inventreeTable({
         method: 'get',
         formatNoMatches: function() {
-            return "{% trans "No builds matching query" %}";
+            return '{% trans "No builds matching query" %}';
         },
         url: options.url,
         queryParams: filters,

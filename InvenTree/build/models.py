@@ -22,7 +22,7 @@ from markdownx.models import MarkdownxField
 from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus
-from InvenTree.helpers import increment, getSetting
+from InvenTree.helpers import increment, getSetting, normalize
 from InvenTree.validators import validate_build_order_reference
 
 import InvenTree.fields
@@ -589,8 +589,8 @@ class BuildItem(models.Model):
             
             if self.quantity > self.stock_item.quantity:
                 errors['quantity'] = [_("Allocated quantity ({n}) must not exceed available quantity ({q})".format(
-                    n=self.quantity,
-                    q=self.stock_item.quantity
+                    n=normalize(self.quantity),
+                    q=normalize(self.stock_item.quantity)
                 ))]
 
             if self.stock_item.quantity - self.stock_item.allocation_count() + self.quantity < self.quantity:
