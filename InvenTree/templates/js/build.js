@@ -107,6 +107,21 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
         $(table).bootstrapTable('refresh');
     }
 
+    function sumAllocations(row) {
+        // Calculat total allocations for a given row
+        if (!row.allocations) {
+            return 0;
+        }
+
+        var quantity = 0;
+
+        row.allocations.forEach(function(item) {
+            quantity += item.quantity;
+        });
+
+        return quantity;
+    }
+
     function setupCallbacks() {
         // Register button callbacks once table data are loaded
 
@@ -196,11 +211,7 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                             tableRow.allocations = allocations[key];
 
                             // Calculate the total allocated quantity
-                            var allocatedQuantity = 0;
-
-                            tableRow.allocations.forEach(function (allocation) {
-                                allocatedQuantity += allocation.quantity;
-                            });
+                            var allocatedQuantity = sumAllocations(tableRow);
 
                             // Is this line item fully allocated?
                             if (allocatedQuantity >= (tableRow.quantity * output.quantity)) {
@@ -355,6 +366,11 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                 sortable: true,
             },
             {
+                field: 'quantity',
+                title: '{% trans "Quantity Per" %}',
+                sortable: true,
+            },
+            {
                 field: 'allocated',
                 title: '{% trans "Allocated" %}',
                 sortable: true,
@@ -370,6 +386,22 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                     var required = row.quantity * output.quantity;
 
                     return makeProgressBar(allocated, required);
+                },
+                sorter: function(valA, valB, rowA, rowB) {
+                    var aA = sumAllocations(rowA);
+                    var aB = sumAllocations(rowB);
+                
+                    var qA = rowA.quantity * output.quantity;
+                    var qB = rowB.quantity * output.quantity;
+
+                    if (aA == 0 && aB == 0) {
+                        return (qA > qB) ? 1 : -1;
+                    }
+                    
+                    var progressA = parseFloat(aA) / qA;
+                    var progressB = parseFloat(aB) / qB;
+    
+                    return (progressA < progressB) ? 1 : -1;
                 }
             },
             {
