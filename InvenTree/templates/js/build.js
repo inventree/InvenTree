@@ -32,7 +32,7 @@ function newBuildOrder(options={}) {
 }
 
 
-function makeBuildOutputActionButtons(output) {
+function makeBuildOutputActionButtons(output, buildId) {
     /* Generate action buttons for a build output.
      */
 
@@ -72,7 +72,15 @@ function makeBuildOutputActionButtons(output) {
 
     // Add callbacks for the buttons
     $(panel).find(`#button-output-auto-${outputId}`).click(function() {
-        // TODO
+        // Launch modal dialog to perform auto-allocation
+        launchModalForm(`/build/${buildId}/auto-allocate/`,
+            {
+                data: {
+                    output: outputId,
+                },
+                reload: true,
+            }
+        );
     });
 
     $(panel).find(`#button-output-complete-${outputId}`).click(function() {
@@ -234,7 +242,7 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
 
                         // Update the available actions for this build output
 
-                        makeBuildOutputActionButtons(output);
+                        makeBuildOutputActionButtons(output, buildId);
                     }
                 }
             );
