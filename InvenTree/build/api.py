@@ -122,11 +122,19 @@ class BuildItemList(generics.ListCreateAPIView):
 
         queryset = super().filter_queryset(queryset)
 
+        params = self.request.query_params
+
         # Does the user wish to filter by part?
-        part_pk = self.request.query_params.get('part', None)
+        part_pk = params.get('part', None)
 
         if part_pk:
             queryset = queryset.filter(stock_item__part=part_pk)
+
+        # Filter by output target
+        output = params.get('output', None)
+
+        if output:
+            queryset = queryset.filter(install_into=output)
 
         return queryset
 
