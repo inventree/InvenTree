@@ -566,14 +566,18 @@ class BuildItemCreate(AjaxCreateView):
         # If the sub_part is supplied, limit to matching stock items
         part_id = self.get_param('part')
 
+        # We need to precisely control which StockItem objects the user can choose to allocate
+        stock_filter = form.fields['stock_item'].queryset
+
+        # Restrict to only items which are "in stock"
+        stock_filter = stock_filter.filter(StockItem.IN_STOCK_FILTER)
+
         if part_id:
             try:
                 self.part = Part.objects.get(pk=part_id)
-
-                query = form.fields['stock_item'].queryset
-                
+       
                 # Only allow StockItem objects which match the current part
-                query = query.filter(part=part_id)
+                stock_filter = stock_filter.filter(part=part_id)
 
                 if build_id is not None:
                     try:
@@ -581,30 +585,25 @@ class BuildItemCreate(AjaxCreateView):
                         
                         if build.take_from is not None:
                             # Limit query to stock items that are downstream of the 'take_from' location
-                            query = query.filter(location__in=[loc for loc in build.take_from.getUniqueChildren()])
+                            stock_filter = stock_filter.filter(location__in=[loc for loc in build.take_from.getUniqueChildren()])
                             
                     except Build.DoesNotExist:
                         pass
 
                     # Exclude StockItem objects which are already allocated to this build and part
-                    query = query.exclude(id__in=[item.stock_item.id for item in BuildItem.objects.filter(build=build_id, stock_item__part=part_id)])
-
-                form.fields['stock_item'].queryset = query
-
-                stocks = query.all()
-                self.available_stock = stocks
-
-                # If there is only one item selected, select it
-                if len(stocks) == 1:
-                    form.fields['stock_item'].initial = stocks[0].id
-                # There is no stock available
-                elif len(stocks) == 0:
-                    # TODO - Add a message to the form describing the problem
-                    pass
+                    stock_filter = stock_filter.exclude(id__in=[item.stock_item.id for item in BuildItem.objects.filter(build=build_id, stock_item__part=part_id)])
 
             except Part.DoesNotExist:
                 self.part = None
                 pass
+
+        form.fields['stock_item'].query = stock_filter
+
+        self.available_stock = stock_filter.all()
+
+        # If there is only a single stockitem available, select it!
+        if len(self.available_stock) == 1:
+            form.fields['stock_item'].initial = self.available_stock[0].pk
 
         return form
 
