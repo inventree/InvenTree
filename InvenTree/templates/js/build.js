@@ -52,13 +52,19 @@ function makeBuildOutputActionButtons(output, buildId) {
     // Add a button to "auto allocate" against the particular build output
     html += makeIconButton(
         'fa-clipboard-check icon-blue', 'button-output-auto', outputId,
-        '{% trans "Allocate stock items to this output" %}'
+        '{% trans "Allocate stock items to this output" %}',
+        {
+            disabled: true,
+        }
     );
 
     if (output.quantity > 1) {
         html += makeIconButton(
             'fa-random icon-blue', 'button-output-split', outputId,
             '{% trans "Split build output into separate items" %}',
+            {
+                disabled: true
+            }
         );
     }
 
@@ -66,6 +72,9 @@ function makeBuildOutputActionButtons(output, buildId) {
     html += makeIconButton(
         'fa-tools icon-green', 'button-output-complete', outputId,
         '{% trans "Complete build output" %}',
+        {
+            disabled: true
+        }
     );
 
     // Add a button to "cancel" the particular build output (unallocate)
@@ -116,6 +125,17 @@ function makeBuildOutputActionButtons(output, buildId) {
         );
     });
 
+    $(panel).find(`#button-output-delete-${outputId}`).click(function() {
+        launchModalForm(
+            `/build/${buildId}/delete-output/`,
+            {
+                reload: true,
+                data: {
+                    output: outputId
+                }
+            }
+        );
+    });
 }
 
 

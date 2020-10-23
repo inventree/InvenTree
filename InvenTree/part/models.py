@@ -954,7 +954,8 @@ class Part(MPTTModel):
         return parts
 
     def get_allowed_bom_items(self):
-        """ Return a list of parts which can be added to a BOM for this part.
+        """
+        Return a list of parts which can be added to a BOM for this part.
 
         - Exclude parts which are not 'component' parts
         - Exclude parts which this part is in the BOM for

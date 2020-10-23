@@ -141,6 +141,56 @@ class BuildAutoAllocate(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data, context=self.get_context_data())
 
 
+class BuildOutputDelete(AjaxUpdateView):
+    """
+    Delete a build output (StockItem) for a given build.
+
+    Form is a simple confirmation dialog
+    """
+
+    model = Build
+    form_class = forms.BuildOutputDeleteForm
+    ajax_form_title = _('Delete build output')
+    role_required = 'build.delete'
+
+    def get_initial(self):
+
+        initials = super().get_initial()
+
+        output = self.get_param('output')
+
+        initials['output_id'] = output
+
+        return initials
+
+    def post(self, request, *args, **kwargs):
+
+        build = self.get_object()
+        form = self.get_form()
+
+        confirm = request.POST.get('confirm', False)
+
+        output_id = request.POST.get('output_id', None)
+
+        try:
+            output = StockItem.objects.get(pk=output_id)
+        except (ValueError, StockItem.DoesNotExist):
+            output = None
+
+        valid = False
+
+        if output:
+            build.deleteBuildOutput(output)
+            valid = True
+        else:
+            form.non_field_errors = [_('Build or output not specified')]
+
+        data = {
+            'form_valid': valid,
+        }
+
+        return self.renderJsonResponse(request, form, data)
+
 class BuildUnallocate(AjaxUpdateView):
     """ View to un-allocate all parts from a build.
 
@@ -151,7 +201,7 @@ class BuildUnallocate(AjaxUpdateView):
     form_class = forms.UnallocateBuildForm
     ajax_form_title = _("Unallocate Stock")
     ajax_template_name = "build/unallocate.html"
-    form_required = 'build.change'
+    role_required = 'build.change'
 
     def get_initial(self):
 
@@ -161,13 +211,7 @@ class BuildUnallocate(AjaxUpdateView):
         output = self.get_param('output')
 
         if output:
-            try:
-                output = StockItem.objects.get(pk=output)
-            except (ValueError, StockItem.DoesNotExist):
-                output = None
-
-        if output:
-            initials['output_id'] = output.pk
+            initials['output_id'] = output
 
         return initials
 

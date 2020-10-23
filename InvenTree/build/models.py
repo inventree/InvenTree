@@ -380,6 +380,29 @@ class Build(MPTTModel):
         # Remove all the allocations
         allocations.delete()
 
+    def deleteBuildOutput(self, output):
+        """
+        Remove a build output from the database:
+
+        - Unallocate any build items against the output
+        - Delete the output StockItem
+        """
+
+        if not output:
+            raise ValidationError(_("No build output specified"))
+
+        if not output.is_building:
+            raise ValidationError(_("Build output is already completed"))
+
+        if not output.build == self:
+            raise ValidationError(_("Build output does not match Build Order"))
+
+        # Unallocate all build items against the output
+        self.unallocateStock(output)
+
+        # Remove the build output from the database
+        output.delete()
+
     @transaction.atomic
     def autoAllocate(self):
         """ Run auto-allocation routine to allocate StockItems to this Build.

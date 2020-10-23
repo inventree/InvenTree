@@ -46,6 +46,29 @@ class EditBuildForm(HelperForm):
         ]
 
 
+class BuildOutputDeleteForm(HelperForm):
+    """
+    Form for deleting a build output.
+    """
+
+    confirm = forms.BooleanField(
+        required=False,
+        help_text=_('Confirm deletion of build output')
+    )
+
+    output_id = forms.IntegerField(
+        required=True,
+        widget=forms.HiddenInput()
+    )
+
+    class Meta:
+        model = Build
+        fields = [
+            'confirm',
+            'output_id',
+        ]
+
+
 class UnallocateBuildForm(HelperForm):
     """
     Form for auto-de-allocation of stock from a build
