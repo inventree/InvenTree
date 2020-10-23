@@ -39,6 +39,10 @@ function makeBuildOutputActionButtons(output, buildId) {
     var outputId = output.pk;
 
     var panel = `#allocation-panel-${outputId}`;
+
+    function reloadTable() {
+        $(panel).find(`#allocation-table-${outputId}`).bootstrapTable('refresh');
+    }
     
     // Find the div where the buttons will be displayed
     var buildActions = $(panel).find(`#output-actions-${outputId}`);
@@ -51,6 +55,13 @@ function makeBuildOutputActionButtons(output, buildId) {
         '{% trans "Allocate stock items to this output" %}'
     );
 
+    if (output.quantity > 1) {
+        html += makeIconButton(
+            'fa-random icon-blue', 'button-output-split', outputId,
+            '{% trans "Split build output into separate items" %}',
+        );
+    }
+
     // Add a button to "complete" the particular build output
     html += makeIconButton(
         'fa-tools icon-green', 'button-output-complete', outputId,
@@ -59,8 +70,14 @@ function makeBuildOutputActionButtons(output, buildId) {
 
     // Add a button to "cancel" the particular build output (unallocate)
     html += makeIconButton(
-        'fa-times-circle icon-red', 'button-output-cancel', outputId,
-        '{% trans "Cancel build output" %}',
+        'fa-times-circle icon-red', 'button-output-unallocate', outputId,
+        '{% trans "Unallocate stock from build output" %}',
+    );
+
+    // Add a button to "delete" the particular build output
+    html += makeIconButton(
+        'fa-trash-alt icon-red', 'button-output-delete', outputId,
+        '{% trans "Delete build output" %}',
     );
 
     // Add a button to "destroy" the particular build output (mark as damaged, scrap)
@@ -87,8 +104,16 @@ function makeBuildOutputActionButtons(output, buildId) {
         // TODO
     });
 
-    $(panel).find(`#button-output-cancel-${outputId}`).click(function() {
-        // TODO
+    $(panel).find(`#button-output-unallocate-${outputId}`).click(function() {
+        launchModalForm(
+            `/build/${buildId}/unallocate/`,
+            {
+                success: reloadTable,
+                data: {
+                    output: outputId,
+                }
+            }
+        );
     });
 
 }

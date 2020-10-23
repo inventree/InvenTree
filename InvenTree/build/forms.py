@@ -46,6 +46,25 @@ class EditBuildForm(HelperForm):
         ]
 
 
+class UnallocateBuildForm(HelperForm):
+    """
+    Form for auto-de-allocation of stock from a build
+    """
+
+    confirm = forms.BooleanField(required=False, help_text=_('Confirm unallocation of stock'))
+
+    output_id = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput()
+    )
+
+    class Meta:
+        model = Build
+        fields = [
+            'confirm',
+        ]
+
+
 class ConfirmBuildForm(HelperForm):
     """ Form for auto-allocation of stock to a build """
 

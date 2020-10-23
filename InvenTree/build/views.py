@@ -148,10 +148,28 @@ class BuildUnallocate(AjaxUpdateView):
     """
 
     model = Build
-    form_class = forms.ConfirmBuildForm
+    form_class = forms.UnallocateBuildForm
     ajax_form_title = _("Unallocate Stock")
     ajax_template_name = "build/unallocate.html"
     form_required = 'build.change'
+
+    def get_initial(self):
+
+        initials = super().get_initial()
+
+        # Pointing to a particular build output?
+        output = self.get_param('output')
+
+        if output:
+            try:
+                output = StockItem.objects.get(pk=output)
+            except (ValueError, StockItem.DoesNotExist):
+                output = None
+
+        if output:
+            initials['output_id'] = output.pk
+
+        return initials
 
     def post(self, request, *args, **kwargs):
 
@@ -160,13 +178,20 @@ class BuildUnallocate(AjaxUpdateView):
         
         confirm = request.POST.get('confirm', False)
 
+        output_id = request.POST.get('output_id', None)
+
+        try:
+            output = StockItem.objects.get(pk=output_id)
+        except (ValueError, StockItem.DoesNotExist):
+            output = None
+
         valid = False
 
         if confirm is False:
             form.errors['confirm'] = [_('Confirm unallocation of build stock')]
             form.non_field_errors = [_('Check the confirmation box')]
         else:
-            build.unallocateStock()
+            build.unallocateStock(output=output)
             valid = True
 
         data = {

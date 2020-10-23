@@ -363,10 +363,22 @@ class Build(MPTTModel):
         return allocations
 
     @transaction.atomic
-    def unallocateStock(self):
-        """ Deletes all stock allocations for this build. """
+    def unallocateStock(self, output=None):
+        """
+        Deletes all stock allocations for this build.
+        
+        Args:
+            output: Specify which build output to delete allocations (optional)
 
-        BuildItem.objects.filter(build=self.id).delete()
+        """
+
+        allocations = BuildItem.objects.filter(build=self.pk)
+
+        if output:
+            allocations = allocations.filter(install_into=output.pk)
+
+        # Remove all the allocations
+        allocations.delete()
 
     @transaction.atomic
     def autoAllocate(self):
@@ -681,6 +693,8 @@ class BuildItem(models.Model):
             raise ValidationError(errors)
 
     def complete_allocation(self, user):
+
+        # TODO : This required much reworking!!
 
         item = self.stock_item
 
