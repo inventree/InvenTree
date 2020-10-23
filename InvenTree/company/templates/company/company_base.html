@@ -23,23 +23,27 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
 <hr>
 <h4>
     {{ company.name }}
-    {% if user.is_staff and roles.company.change %}
+    {% if user.is_staff and perms.company.change_company %}
     <a  href="{% url 'admin:company_company_change' company.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
     {% endif %}
 </h4>
 <p>{{ company.description }}</p>
 <div class='btn-group action-buttons'>
-    {% if company.is_supplier %}
+    {% if company.is_supplier and roles.purchase_order.add %}
     <button type='button' class='btn btn-default' id='company-order-2' title='Create purchase order'>
         <span class='fas fa-shopping-cart'/>
     </button>
     {% endif %}
+    {% if perms.company.change_company %}
     <button type='button' class='btn btn-default' id='company-edit' title='Edit company information'>
         <span class='fas fa-edit icon-green'/>
     </button>
+    {% endif %}
+    {% if perms.company.delete_company %}
     <button type='button' class='btn btn-default' id='company-delete' title='Delete company'>
         <span class='fas fa-trash-alt icon-red'/>
     </button>
+    {% endif %}
 </div>
 {% endblock %}
 
