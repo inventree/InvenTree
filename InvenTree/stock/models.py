@@ -139,6 +139,7 @@ class StockItem(MPTTModel):
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
     IN_STOCK_FILTER = Q(
+        quantity__gt=0,
         sales_order=None,
         build_order=None,
         belongs_to=None,

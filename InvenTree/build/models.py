@@ -551,6 +551,39 @@ class Build(MPTTModel):
 
         return parts
 
+    def getAvailableStockItems(self, part=None, output=None):
+        """
+        Return available stock items for the build.
+        """
+
+        items = StockModels.StockItem.objects.filter(StockModels.StockItem.IN_STOCK_FILTER)
+
+        if part:
+            # Filter items which match the given Part
+            items = items.filter(part=part)
+
+            if output:
+                # Exclude items which are already allocated to the particular build output
+
+                to_exclude = BuildItem.objects.filter(
+                    build=self,
+                    stock_item__part=part,
+                    install_into=output
+                )
+
+                items = items.exclude(
+                    id__in=[item.stock_item.id for item in to_exclude.all()]
+                )
+
+        # Limit query to stock items which are "downstream" of the source location
+        if self.take_from is not None:
+            items = items.filter(
+                location__in=[loc for loc in self.take_from.getUniqueChildren()]
+            )
+
+        return items
+
+
     @property
     def can_build(self):
         """ Return true if there are enough parts to supply build """
@@ -597,7 +630,7 @@ class BuildItem(models.Model):
 
     class Meta:
         unique_together = [
-            ('build', 'stock_item'),
+            ('build', 'stock_item', 'install_into'),
         ]
 
     def clean(self):
@@ -613,23 +646,33 @@ class BuildItem(models.Model):
         errors = {}
 
         try:
+            # Allocated part must be in the BOM for the master part
             if self.stock_item.part not in self.build.part.getRequiredParts(recursive=False):
                 errors['stock_item'] = [_("Selected stock item not found in BOM for part '{p}'".format(p=self.build.part.full_name))]
             
+            # Allocated quantity cannot exceed available stock quantity
             if self.quantity > self.stock_item.quantity:
                 errors['quantity'] = [_("Allocated quantity ({n}) must not exceed available quantity ({q})".format(
                     n=normalize(self.quantity),
                     q=normalize(self.stock_item.quantity)
                 ))]
 
+            # Allocated quantity cannot cause the stock item to be over-allocated
             if self.stock_item.quantity - self.stock_item.allocation_count() + self.quantity < self.quantity:
                 errors['quantity'] = _('StockItem is over-allocated')
 
+            # Allocated quantity must be positive
             if self.quantity <= 0:
                 errors['quantity'] = _('Allocation quantity must be greater than zero')
 
+            # Quantity must be 1 for serialized stock
             if self.stock_item.serial and not self.quantity == 1:
                 errors['quantity'] = _('Quantity must be 1 for serialized stock')
+
+            # Part reference must match between output stock item and built part
+            if self.install_into is not None:
+                if not self.install_into.part == self.build.part:
+                    errors['install_into'] = _('Part reference differs between build and build output')
 
         except (StockModels.StockItem.DoesNotExist, PartModels.Part.DoesNotExist):
             pass

@@ -535,6 +535,10 @@ class BuildItemCreate(AjaxCreateView):
 
         form = super(AjaxCreateView, self).get_form()
 
+        self.build = None
+        self.part = None
+        self.output = None
+
         # If the Build object is specified, hide the input field.
         # We do not want the users to be able to move a BuildItem to a different build
         build_id = form['build'].value()
@@ -546,13 +550,12 @@ class BuildItemCreate(AjaxCreateView):
             """
             form.fields['build'].widget = HiddenInput()
             form.fields['install_into'].queryset = StockItem.objects.filter(build=build_id, is_building=True)
+            self.build = Build.objects.get(pk=build_id)
         else:
             """
             Build has *not* been selected
             """
             pass
-
-        self.output = None
 
         # If the output stock item is specified, hide the input field
         output_id = form['install_into'].value()
@@ -568,47 +571,18 @@ class BuildItemCreate(AjaxCreateView):
         # If the sub_part is supplied, limit to matching stock items
         part_id = self.get_param('part')
 
-        # We need to precisely control which StockItem objects the user can choose to allocate
-        stock_filter = form.fields['stock_item'].queryset
-
-        # Restrict to only items which are "in stock"
-        stock_filter = stock_filter.filter(StockItem.IN_STOCK_FILTER)
-
         if part_id:
             try:
                 self.part = Part.objects.get(pk=part_id)
        
-                # Only allow StockItem objects which match the current part
-                stock_filter = stock_filter.filter(part=part_id)
-
-                if build_id is not None:
-                    try:
-                        build = Build.objects.get(id=build_id)
-                        
-                        if build.take_from is not None:
-                            # Limit query to stock items that are downstream of the 'take_from' location
-                            stock_filter = stock_filter.filter(location__in=[loc for loc in build.take_from.getUniqueChildren()])
-                            
-                    except Build.DoesNotExist:
-                        pass
-
-                    # Exclude StockItem objects which are already allocated to this build and part
-                    to_exclude = BuildItem.objects.filter(build=build_id, stock_item__part=part_id)
-                    if self.output:
-                        to_exclude = to_exclude.filter(install_into=self.output)
-
-                    stock_filter = stock_filter.exclude(id__in=[item.stock_item.id for item in to_exclude.all()])
-
-            except Part.DoesNotExist:
-                self.part = None
+            except (ValueError, Part.DoesNotExist):
                 pass
 
-        else:
-            self.part = None
+        if self.build and self.part:
+            available_items = self.build.getAvailableStockItems(part=self.part, output=self.output)
+            form.fields['stock_item'].queryset = available_items
 
-        form.fields['stock_item'].queryset = stock_filter
-
-        self.available_stock = stock_filter.all()
+        self.available_stock = form.fields['stock_item'].queryset.all()
 
         # If there is only a single stockitem available, select it!
         if len(self.available_stock) == 1:
