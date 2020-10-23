@@ -552,6 +552,8 @@ class BuildItemCreate(AjaxCreateView):
             """
             pass
 
+        self.output = None
+
         # If the output stock item is specified, hide the input field
         output_id = form['install_into'].value()
 
@@ -591,11 +593,11 @@ class BuildItemCreate(AjaxCreateView):
                         pass
 
                     # Exclude StockItem objects which are already allocated to this build and part
-                    stock_filter = stock_filter.exclude(
-                        id__in=[
-                            item.stock_item.id for item in BuildItem.objects.filter(build=build_id, stock_item__part=part_id)
-                        ]
-                    )
+                    to_exclude = BuildItem.objects.filter(build=build_id, stock_item__part=part_id)
+                    if self.output:
+                        to_exclude = to_exclude.filter(install_into=self.output)
+
+                    stock_filter = stock_filter.exclude(id__in=[item.stock_item.id for item in to_exclude.all()])
 
             except Part.DoesNotExist:
                 self.part = None
@@ -654,15 +656,26 @@ class BuildItemCreate(AjaxCreateView):
             except Build.DoesNotExist:
                 pass
 
+        # If the output has been specified
+        if output_id:
+            try:
+                output = StockItem.objects.get(pk=output_id)
+                initials['install_into'] = output
+            except (ValueError, StockItem.DoesNotExist):
+                pass
+
+        # Work out how much stock is required
+        if build and part:
+            required_quantity = build.getUnallocatedQuantity(part, output=output)
+        else:
+            required_quantity = None
+
         quantity = self.request.GET.get('quantity', None)
 
         if quantity is not None:
             quantity = float(quantity)
-
-        if quantity is None:
-            # Work out how many parts remain to be alloacted for the build
-            if part:
-                quantity = build.getUnallocatedQuantity(part)
+        elif required_quantity is not None:
+            quantity = required_quantity
                 
         item_id = self.get_param('item')
 
@@ -685,14 +698,6 @@ class BuildItemCreate(AjaxCreateView):
                 quantity = item.unallocated_quantity()
             else:
                 quantity = min(quantity, item.unallocated_quantity())
-
-        # If the output has been specified
-        if output_id:
-            try:
-                output = StockItem.objects.get(pk=output_id)
-                initials['install_into'] = output
-            except (ValueError, StockItem.DoesNotExist):
-                pass
 
         if quantity is not None:
             initials['quantity'] = quantity

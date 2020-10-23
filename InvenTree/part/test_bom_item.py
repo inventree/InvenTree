@@ -28,9 +28,11 @@ class BomItemTest(TestCase):
         self.assertEqual(self.bob.bom_count, 4)
 
     def test_in_bom(self):
-        parts = self.bob.required_parts()
+        parts = self.bob.getRequiredParts()
 
         self.assertIn(self.orphan, parts)
+
+    # TODO: Tests for multi-level BOMs
 
     def test_used_in(self):
         self.assertEqual(self.bob.used_in_count, 0)

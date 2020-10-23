@@ -473,8 +473,13 @@ class Build(MPTTModel):
 
         return self.getAllocatedQuantity(part) >= self.getRequiredQuantity(part)
 
-    def getRequiredQuantity(self, part):
-        """ Calculate the quantity of <part> required to make this build.
+    def getRequiredQuantity(self, part, output=None):
+        """
+        Calculate the quantity of <part> required to make this build.
+
+        Args:
+            part: The 'Part' archetype reference
+            output: A particular build output (StockItem) (or None to specify the entire build)
         """
 
         try:
@@ -483,27 +488,51 @@ class Build(MPTTModel):
         except PartModels.BomItem.DoesNotExist:
             q = 0
 
-        return q * self.quantity
+        if output:
+            return q * output.quantity
+        else:
+            return q * self.quantity
 
-    def getAllocatedQuantity(self, part):
-        """ Calculate the total number of <part> currently allocated to this build
+    def getAllocatedQuantity(self, part, output=None):
+        """
+        Calculate the total number of <part> currently allocated to this build.
+
+        Args:
+            part: The 'Part' archetype reference
+            output: A particular build output (StockItem) (or None to specify the entire build)
         """
 
-        allocated = BuildItem.objects.filter(build=self.id, stock_item__part=part.id).aggregate(q=Coalesce(Sum('quantity'), 0))
+        allocations = BuildItem.objects.filter(
+            build=self.id,
+            stock_item__part=part.id
+        )
+
+        # Optionally, filter by the specified build output StockItem
+        if output is not None:
+            allocations = allocations.filter(
+                install_into=output
+            )
+
+        allocated = allocations.aggregate(q=Coalesce(Sum('quantity'), 0))
 
         return allocated['q']
 
-    def getUnallocatedQuantity(self, part):
-        """ Calculate the quantity of <part> which still needs to be allocated to this build.
+    def getUnallocatedQuantity(self, part, output=None):
+        """
+        Calculate the quantity of <part> which still needs to be allocated to this build.
 
         Args:
-            Part - the part to be tested
+            part - the part to be tested
+            output - A particular build output (StockItem) (or None to specify the entire build)
 
         Returns:
             The remaining allocated quantity
         """
 
-        return max(self.getRequiredQuantity(part) - self.getAllocatedQuantity(part), 0)
+        required = self.getRequiredQuantity(part, output=output)
+        allocated = self.getAllocatedQuantity(part, output=output)
+
+        return max(required-allocated, 0)
 
     @property
     def required_parts(self):
