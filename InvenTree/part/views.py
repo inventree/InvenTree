@@ -2127,7 +2127,7 @@ class BomItemCreate(AjaxCreateView):
             query = query.filter(active=True)
             
             # Eliminate any options that are already in the BOM!
-            query = query.exclude(id__in=[item.id for item in part.required_parts()])
+            query = query.exclude(id__in=[item.id for item in part.getRequiredParts()])
             
             form.fields['sub_part'].queryset = query
 
@@ -2195,7 +2195,7 @@ class BomItemEdit(AjaxUpdateView):
             except ValueError:
                 sub_part_id = -1
 
-            existing = [item.pk for item in part.required_parts()]
+            existing = [item.pk for item in part.getRequiredParts()]
 
             if sub_part_id in existing:
                 existing.remove(sub_part_id)

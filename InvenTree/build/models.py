@@ -584,7 +584,7 @@ class BuildItem(models.Model):
         errors = {}
 
         try:
-            if self.stock_item.part not in self.build.part.required_parts():
+            if self.stock_item.part not in self.build.part.getRequiredParts(recursive=False):
                 errors['stock_item'] = [_("Selected stock item not found in BOM for part '{p}'".format(p=self.build.part.full_name))]
             
             if self.quantity > self.stock_item.quantity:

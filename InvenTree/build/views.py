@@ -493,7 +493,7 @@ class BuildItemDelete(AjaxDeleteView):
 
 class BuildItemCreate(AjaxCreateView):
     """
-    View for allocating a StockItems to a build output.    
+    View for allocating a StockItems to a build output.
     """
 
     model = BuildItem
@@ -591,13 +591,20 @@ class BuildItemCreate(AjaxCreateView):
                         pass
 
                     # Exclude StockItem objects which are already allocated to this build and part
-                    stock_filter = stock_filter.exclude(id__in=[item.stock_item.id for item in BuildItem.objects.filter(build=build_id, stock_item__part=part_id)])
+                    stock_filter = stock_filter.exclude(
+                        id__in=[
+                            item.stock_item.id for item in BuildItem.objects.filter(build=build_id, stock_item__part=part_id)
+                        ]
+                    )
 
             except Part.DoesNotExist:
                 self.part = None
                 pass
 
-        form.fields['stock_item'].query = stock_filter
+        else:
+            self.part = None
+
+        form.fields['stock_item'].queryset = stock_filter
 
         self.available_stock = stock_filter.all()
 
@@ -708,12 +715,11 @@ class BuildItemEdit(AjaxUpdateView):
         }
 
     def get_form(self):
-        """ Create form for editing a BuildItem.
+        """
+        Create form for editing a BuildItem.
 
         - Limit the StockItem options to items that match the part
         """
-
-        build_item = self.get_object()
 
         form = super(BuildItemEdit, self).get_form()
 

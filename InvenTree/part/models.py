@@ -931,13 +931,26 @@ class Part(MPTTModel):
 
         self.bom_items.all().delete()
 
-    def required_parts(self):
-        """ Return a list of parts required to make this part (list of BOM items) """
-        parts = []
+    def getRequiredParts(self, recursive=False, parts=set()):
+        """
+        Return a list of parts required to make this part (i.e. BOM items).
 
-        for bom in self.bom_items.all().select_related('sub_part'):
-            parts.append(bom.sub_part)
-        
+        Args:
+            recursive: If True iterate down through sub-assemblies
+            parts: Set of parts already found (to prevent recursion issues)
+        """
+
+        for bom_item in self.bom_items.all().select_related('sub_part'):
+
+            sub_part = bom_item.sub_part
+
+            if sub_part not in parts:
+
+                parts.add(sub_part)
+
+                if recursive:
+                    sub_part.getRequiredParts(recursive=True, parts=parts)
+
         return parts
 
     def get_allowed_bom_items(self):
