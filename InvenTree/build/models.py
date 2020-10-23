@@ -567,7 +567,7 @@ class Build(MPTTModel):
         required = self.getRequiredQuantity(part, output=output)
         allocated = self.getAllocatedQuantity(part, output=output)
 
-        return max(required-allocated, 0)
+        return max(required - allocated, 0)
 
     @property
     def required_parts(self):
@@ -617,7 +617,6 @@ class Build(MPTTModel):
             )
 
         return items
-
 
     @property
     def can_build(self):

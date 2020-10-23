@@ -37,13 +37,13 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 
 {% for allocation in item.sales_order_allocations.all %}
 <div class='alert alert-block alert-info'>
-    {% trans "This stock item is allocated to Sales Order" %} <a href="{% url 'so-detail' allocation.line.order.id %}"><b>#{{ allocation.line.order.reference }}</b></a> ({% trans "Quantity" %}: {% decimal allocation.quantity %})
+    {% trans "This stock item is allocated to Sales Order" %} <a href="{% url 'so-detail' allocation.line.order.id %}"><b>#{{ allocation.line.order }}</b></a> ({% trans "Quantity" %}: {% decimal allocation.quantity %})
 </div>
 {% endfor %}
 
 {% for allocation in item.allocations.all %}
 <div class='alert alert-block alert-info'>
-    {% trans "This stock item is allocated to Build" %} <a href="{% url 'build-detail' allocation.build.id %}"><b>#{{ allocation.build.id }}</b></a> ({% trans "Quantity" %}: {% decimal allocation.quantity %})
+    {% trans "This stock item is allocated to Build" %} <a href="{% url 'build-detail' allocation.build.id %}"><b>#{{ allocation.build }}</b></a> ({% trans "Quantity" %}: {% decimal allocation.quantity %})
 </div>
 {% endfor %}
 

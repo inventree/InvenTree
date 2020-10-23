@@ -276,7 +276,11 @@ function loadStockTable(table, options) {
         // URL (optional)
         var url = '';
         
-        if (row.belongs_to) {
+        if (row.is_building && row.build) {
+            // StockItem is currently being built!
+            text = "{% trans "In production" %}";
+            url = `/build/${row.build}/`;
+        } else if (row.belongs_to) {
             // StockItem is installed inside a different StockItem
             text = `{% trans "Installed in Stock Item" %} ${row.belongs_to}`;
             url = `/stock/item/${row.belongs_to}/installed/`;
@@ -288,10 +292,6 @@ function loadStockTable(table, options) {
             // StockItem has been assigned to a sales order
             text = "{% trans "Assigned to Sales Order" %}";
             url = `/order/sales-order/${row.sales_order}/`;
-        } else if (row.is_building && row.build) {
-            // StockItem is currently being built!
-            text = "{% trans "In production" %}";
-            url = `/build/${row.build}/`;
         } else if (row.location) {
             text = row.location_detail.pathstring;
             url = `/stock/location/${row.location}/`;
@@ -507,33 +507,35 @@ function loadStockTable(table, options) {
 
                     var html = renderLink(val, `/stock/item/${row.pk}/`);
                     
-                    if (row.allocated) {
-                        html += `<span class='fas fa-bookmark label-right' title='{% trans "Stock item has been allocated" %}'></span>`;
+                    if (row.is_building) {
+                        html += makeIconBadge('fa-tools', '{% trans "Stock item is in production" %}');
+                    } 
+
+                    if (row.sales_order) {
+                        // Stock item has been assigned to a sales order
+                        html += makeIconBadge('fa-truck', '{% trans "Stock item assigned to sales order" %}');
+                    } else if (row.customer) {
+                        // StockItem has been assigned to a customer
+                        html += makeIconBadge('fa-user', '{% trans "Stock item assigned to customer" %}');
                     }
 
-                    if (row.customer) {
-                        html += `<span class='fas fa-user-tie label-right' title='{% trans "Stock item has been assigned to customer" %}'></span>`;
-                    } else {
-                        if (row.build_order) {
-                            html += `<span class='fas fa-tools label-right' title='{% trans "Stock item was assigned to a build order" %}'></span>`;
-                        } else if (row.sales_order) {
-                            html += `<span class='fas fa-dollar-sign label-right' title='{% trans "Stock item was assigned to a sales order" %}'></span>`;
-                        }
+                    if (row.allocated) {
+                        html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been allocated" %}');
                     }
 
                     if (row.belongs_to) {
-                        html += `<span class='fas fa-box label-right' title='{% trans "Stock item has been installed in another item" %}'></span>`;
+                        html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
                     }
 
                     // Special stock status codes
 
                     // 65 = "REJECTED"
                     if (row.status == 65) {
-                        html += `<span class='fas fa-times-circle label-right' title='{% trans "Stock item has been rejected" %}'></span>`;
+                        html += makeIconButton('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
                     }
                     // 70 = "LOST"
                     else if (row.status == 70) {
-                        html += `<span class='fas fa-question-circle label-right' title='{% trans "Stock item is lost" %}'></span>`;
+                        html += makeIconButton('fa-question-circle','{% trans "Stock item is lost" %}');
                     }
 
                     if (row.quantity <= 0) {

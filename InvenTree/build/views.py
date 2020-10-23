@@ -179,17 +179,22 @@ class BuildOutputDelete(AjaxUpdateView):
 
         valid = False
 
-        if output:
-            build.deleteBuildOutput(output)
-            valid = True
+        if confirm:
+            if output:
+                build.deleteBuildOutput(output)
+                valid = True
+            else:
+                form.non_field_errors = [_('Build or output not specified')]
         else:
-            form.non_field_errors = [_('Build or output not specified')]
+            form.errors['confirm'] = [_('Confirm unallocation of build stock')]
+            form.non_field_errors = [_('Check the confirmation box')]
 
         data = {
             'form_valid': valid,
         }
 
         return self.renderJsonResponse(request, form, data)
+
 
 class BuildUnallocate(AjaxUpdateView):
     """ View to un-allocate all parts from a build.
