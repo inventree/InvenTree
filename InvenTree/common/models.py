@@ -34,7 +34,7 @@ class InvenTreeSetting(models.Model):
 
     Each global setting has the following parameters:
     
-    - name: Translatable string name of the setting (required) 
+    - name: Translatable string name of the setting (required)
     - description: Translatable string description of the setting (required)
     - default: Default value (optional)
     - units: Units of the particular setting (optional)
@@ -148,7 +148,6 @@ class InvenTreeSetting(models.Model):
         else:
             return ''
 
-
     @classmethod
     def get_default_value(cls, key):
         """
@@ -178,7 +177,7 @@ class InvenTreeSetting(models.Model):
         try:
             setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
             return setting.pk
-        except InvenTreeSettingSetting.DoesNotExist:
+        except InvenTreeSetting.DoesNotExist:
             return None
 
     @classmethod

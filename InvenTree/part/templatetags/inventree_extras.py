@@ -94,6 +94,7 @@ def settings_name(key, *args, **kwargs):
 
     return InvenTreeSetting.get_setting_name(key)
 
+
 @register.simple_tag()
 def settings_description(key, *args, **kwargs):
     """
@@ -101,6 +102,7 @@ def settings_description(key, *args, **kwargs):
     """
 
     return InvenTreeSetting.get_setting_description(key)
+
 
 @register.simple_tag()
 def settings_units(key, *args, **kwargs):
@@ -110,6 +112,7 @@ def settings_units(key, *args, **kwargs):
 
     return InvenTreeSetting.get_setting_units(key)
 
+
 @register.simple_tag()
 def settings_value(key, *args, **kwargs):
     """
@@ -117,6 +120,7 @@ def settings_value(key, *args, **kwargs):
     """
 
     return InvenTreeSetting.get_setting(key, backup_value=kwargs.get('backup', None))
+
 
 @register.simple_tag()
 def settings_pk(key, *args, **kwargs):
