@@ -504,15 +504,17 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                     // Generate action buttons for this build output
                     var html = `<div class='btn-group float-right' role='group'>`;
 
-                    if (row.sub_part_detail.assembly) {
-                        html += makeIconButton('fa-tools icon-blue', 'button-build', row.sub_part, '{% trans "Build stock" %}');
-                    }
+                    if (sumAllocations(row) < requiredQuantity(row)) {
+                        if (row.sub_part_detail.assembly) {
+                            html += makeIconButton('fa-tools icon-blue', 'button-build', row.sub_part, '{% trans "Build stock" %}');
+                        }
 
-                    if (row.sub_part_detail.purchaseable) {
-                        html += makeIconButton('fa-shopping-cart icon-blue', 'button-buy', row.sub_part, '{% trans "Order stock" %}', {disabled: true});
-                    }
+                        if (row.sub_part_detail.purchaseable) {
+                            html += makeIconButton('fa-shopping-cart icon-blue', 'button-buy', row.sub_part, '{% trans "Order stock" %}', {disabled: true});
+                        }
 
-                    html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', row.sub_part, '{% trans "Allocate stock" %}');
+                        html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', row.sub_part, '{% trans "Allocate stock" %}');
+                    }
 
                     html += makeIconButton('fa-times-circle icon-red', 'button-unallocate', row.sub_part, '{% trans "Unallocate stock" %}');
 
