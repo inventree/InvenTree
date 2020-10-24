@@ -166,6 +166,22 @@ class InvenTreeSetting(models.Model):
             return ''
 
     @classmethod
+    def get_setting_pk(cls, key):
+        """
+        Return the primary-key value for a given setting.
+
+        If the setting does not exist, return None
+        """
+
+        key = str(key).strip().upper()
+
+        try:
+            setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
+            return setting.pk
+        except InvenTreeSettingSetting.DoesNotExist:
+            return None
+
+    @classmethod
     def get_setting(cls, key, backup_value=None):
         """
         Get the value of a particular setting.

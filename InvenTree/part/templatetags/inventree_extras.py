@@ -115,7 +115,16 @@ def settings_value(key, *args, **kwargs):
     """
     Returns the value of a GLOBAL_SETTINGS object
     """
+
     return InvenTreeSetting.get_setting(key, backup_value=kwargs.get('backup', None))
+
+@register.simple_tag()
+def settings_pk(key, *args, **kwargs):
+    """
+    Return the ID (pk) of a GLOBAL_SETTINGS Object
+    """
+
+    return InvenTreeSetting.get_setting_pk(key)
 
 
 @register.simple_tag()
