@@ -15,6 +15,7 @@ from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 
+import InvenTree.helpers
 import InvenTree.fields
 
 
@@ -66,18 +67,21 @@ class InvenTreeSetting(models.Model):
             'name': _('Copy Part BOM Data'),
             'description': _('Copy BOM data by default when duplicating a part'),
             'default': True,
+            'validator': bool,
         },
 
         'PART_COPY_PARAMETERS': {
             'name': _('Copy Part Parameter Data'),
             'description': _('Copy parameter data by default when duplicating a part'),
             'default': True,
+            'validator': bool,
         },
 
         'PART_COPY_TESTS': {
             'name': _('Copy Part Test Data'),
             'description': _('Copy test data by default when duplicating a part'),
             'default': True,
+            'validator': bool
         },
 
         'BUILDORDER_REFERENCE_PREFIX': {
@@ -153,6 +157,22 @@ class InvenTreeSetting(models.Model):
             return setting.get('units', '')
         else:
             return ''
+
+    @classmethod
+    def get_setting_validator(cls, key):
+        """
+        Return the validator for a particular setting.
+
+        If it does not exist, return None
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('validator', None)
+        else:
+            return None
 
     @classmethod
     def get_default_value(cls, key):
@@ -238,6 +258,49 @@ class InvenTreeSetting(models.Model):
     key = models.CharField(max_length=50, blank=False, unique=True, help_text=_('Settings key (must be unique - case insensitive'))
 
     value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
+
+    def clean(self):
+        """
+        If a validator (or multiple validators) are defined for a particular setting key,
+        run them against the 'value' field.
+        """
+
+        super().clean()
+
+        validator = InvenTreeSetting.get_setting_validator(self.key)
+
+        if validator is not None:
+            self.run_validator(validator)
+
+    def run_validator(self, validator):
+        """
+        Run a validator against the 'value' field for this InvenTreeSetting object.
+        """
+
+        if validator is None:
+            return
+
+        # If a list of validators is supplied, iterate through each one
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                self.run_validator(v)
+            
+            return
+
+        print("Running validator:", validator, self.key, self.value)
+
+        # Check if a 'type' has been specified for this value
+        if type(validator) == type:
+            if validator == bool:
+                if InvenTree.helpers.is_bool(self.value):
+                    # Coerce into either "True" or "False"
+                    self.value = str(InvenTree.helpers.str2bool(self.value))
+                else:
+                    raise ValidationError({
+                        'value': _('Value must be a boolean value')
+                    })
+
+
 
     def validate_unique(self, exclude=None):
         """ Ensure that the key:value pair is unique.
