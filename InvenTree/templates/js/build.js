@@ -464,7 +464,15 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                     // Generate action buttons for this build output
                     var html = `<div class='btn-group float-right' role='group'>`;
 
-                    html += makeIconButton('fa-plus icon-green', 'button-add', row.sub_part, '{% trans "Allocate stock" %}');
+                    if (row.sub_part_detail.assembly) {
+                        html += makeIconButton('fa-tools icon-blue', 'button-build', row.sub_part, '{% trans "Build stock" %}', {disabled: true});
+                    }
+
+                    if (row.sub_part_detail.purchaseable) {
+                        html += makeIconButton('fa-shopping-cart icon-blue', 'button-buy', row.sub_part, '{% trans "Order stock" %}', {disabled: true});
+                    }
+
+                    html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', row.sub_part, '{% trans "Allocate stock" %}');
 
                     html += '</div>';
 
