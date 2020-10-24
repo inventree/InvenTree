@@ -32,7 +32,7 @@ class CommonConfig(AppConfig):
                 return
 
             # Default instance name
-            instance_name = 'InvenTree Server'
+            instance_name = InvenTreeSetting.get_default_value('INVENTREE_INSTANCE')
 
             # Use the old name if it exists
             if InvenTreeSetting.objects.filter(key='InstanceName').exists():
@@ -59,12 +59,12 @@ class CommonConfig(AppConfig):
 
         from .models import InvenTreeSetting
 
-        for key in InvenTreeSetting.DEFAULT_VALUES.keys():
+        for key in InvenTreeSetting.GLOBAL_SETTINGS.keys():
             try:
                 settings = InvenTreeSetting.objects.filter(key__iexact=key)
 
                 if settings.count() == 0:
-                    value = InvenTreeSetting.DEFAULT_VALUES[key]
+                    value = InvenTreeSetting.get_default_value(key)
 
                     print(f"Creating default setting for {key} -> '{value}'")
 

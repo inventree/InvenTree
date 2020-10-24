@@ -1,0 +1,15 @@
+{% load inventree_extras %}
+{% load i18n %}
+
+<tr>
+    <td><b>{% settings_name key %}</b></td>
+    <td><b>{% settings_value key %}</b>{% settings_units key %}</td>
+    <td>{% settings_description key %}</td>
+    <td>
+        <div class='btn-group float-right'>
+            <button class='btn btn-default btn-glyph btn-edit-setting' setting='{{ key }}' title='{% trans "Edit setting" %}'>
+                <span class='fas fa-edit icon-green'></span>
+            </button>
+        </div>
+    </td>
+</tr>

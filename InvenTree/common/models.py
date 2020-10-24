@@ -27,33 +27,143 @@ class InvenTreeSetting(models.Model):
     even if that key does not exist.
     """
 
-    # Dict of default values for various internal settings
-    DEFAULT_VALUES = {
-        # Global inventree settings
-        'INVENTREE_INSTANCE': 'InvenTree Server',
+    """
+    Dict of all global settings values:
 
-        # Part settings
-        'PART_IPN_REGEX': '',
-        'PART_COPY_BOM': True,
-        'PART_COPY_PARAMETERS': True,
-        'PART_COPY_TESTS': True,
+    The key of each item is the name of the value as it appears in the database.
 
-        # Stock settings
+    Each global setting has the following parameters:
+    
+    - name: Translatable string name of the setting (required) 
+    - description: Translatable string description of the setting (required)
+    - default: Default value (optional)
+    - units: Units of the particular setting (optional)
+    - validator: Validation function for the setting (optional)
 
-        # Build Order settings
-        'BUILDORDER_REFERENCE_PREFIX': 'BO',
-        'BUILDORDER_REFERENCE_REGEX': '',
+    The keys must be upper-case
+    """
 
-        # Purchase Order Settings
-        'PURCHASEORDER_REFERENCE_PREFIX': 'PO',
+    GLOBAL_SETTINGS = {
 
-        # Sales Order Settings
-        'SALESORDER_REFERENCE_PREFIX': 'SO',
+        'INVENTREE_INSTANCE': {
+            'name': _('InvenTree Instance Name'),
+            'default': 'InvenTree server',
+            'description': _('String descriptor for the server instance'),
+        },
+
+        'PART_IPN_REGEX': {
+            'name': _('IPN Regex'),
+            'description': _('Regular expression pattern for matching Part IPN')
+        },
+
+        'PART_COPY_BOM': {
+            'name': _('Copy Part BOM Data'),
+            'description': _('Copy BOM data by default when duplicating a part'),
+            'default': True,
+        },
+
+        'PART_COPY_PARAMETERS': {
+            'name': _('Copy Part Parameter Data'),
+            'description': _('Copy parameter data by default when duplicating a part'),
+            'default': True,
+        },
+
+        'PART_COPY_TESTS': {
+            'name': _('Copy Part Test Data'),
+            'description': _('Copy test data by default when duplicating a part'),
+            'default': True,
+        },
+
+        'BUILDORDER_REFERENCE_PREFIX': {
+            'name': _('Build Order Reference Prefix'),
+            'description': _('Prefix value for build order reference'),
+            'default': 'BO',
+        },
+
+        'BUILDORDER_REFERENCE_REGEX': {
+            'name': _('Build Order Reference Regex'),
+            'description': _('Regular expression pattern for matching build order reference')
+        },
+
+        'SALESORDER_REFERENCE_PREFIX': {
+            'name': _('Sales Order Reference Prefix'),
+            'description': _('Prefix value for sales order reference'),
+        },
+
+        'PURCHASEORDER_REFERENCE_PREFIX': {
+            'name': _('Purchase Order Reference Prefix'),
+            'description': _('Prefix value for purchase order reference'),
+        },
     }
 
     class Meta:
         verbose_name = "InvenTree Setting"
         verbose_name_plural = "InvenTree Settings"
+
+    @classmethod
+    def get_setting_name(cls, key):
+        """
+        Return the name of a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('name', '')
+        else:
+            return ''
+
+    @classmethod
+    def get_setting_description(cls, key):
+        """
+        Return the description for a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('description', '')
+        else:
+            return ''
+
+    @classmethod
+    def get_setting_units(cls, key):
+        """
+        Return the units for a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('units', '')
+        else:
+            return ''
+
+
+    @classmethod
+    def get_default_value(cls, key):
+        """
+        Return the default value for a particular setting.
+
+        If it does not exist, return an empty string
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('default', '')
+        else:
+            return ''
 
     @classmethod
     def get_setting(cls, key, backup_value=None):
@@ -64,7 +174,7 @@ class InvenTreeSetting(models.Model):
 
         # If no backup value is specified, atttempt to retrieve a "default" value
         if backup_value is None:
-            backup_value = InvenTreeSetting.DEFAULT_VALUES.get(key, None)
+            backup_value = cls.get_default_value(key)
 
         try:
             settings = InvenTreeSetting.objects.filter(key__iexact=key)
