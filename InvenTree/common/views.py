@@ -46,3 +46,20 @@ class SettingEdit(AjaxUpdateView):
     model = models.InvenTreeSetting
     ajax_form_title = _('Change Setting')
     form_class = forms.SettingEditForm
+    ajax_template_name = "common/edit_setting.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        Add extra context information about the particular setting object.
+        """
+
+        ctx = super().get_context_data(**kwargs)
+
+        setting = self.get_object()
+
+        ctx['key'] = setting.key
+        ctx['value'] = setting.value
+        ctx['name'] = models.InvenTreeSetting.get_setting_name(setting.key)
+        ctx['description'] = models.InvenTreeSetting.get_setting_description(setting.key)
+
+        return ctx
