@@ -160,6 +160,12 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
         $(table).bootstrapTable('refresh');
     }
 
+    function requiredQuantity(row) {
+        // Return the requied quantity for a given row
+
+        return row.quantity * output.quantity;
+    }
+
     function sumAllocations(row) {
         // Calculat total allocations for a given row
         if (!row.allocations) {
@@ -185,8 +191,8 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
             var pk = $(this).attr('pk');
 
             // Extract row data from the table
-            var idx = $(this).closest('tr').attr('data-index');
-            var row = $(table).bootstrapTable('getData')[idx];
+            //var idx = $(this).closest('tr').attr('data-index');
+            //var row = $(table).bootstrapTable('getData')[idx];
 
             // Launch form to allocate new stock against this output
             launchModalForm("{% url 'build-item-create' %}", {
@@ -208,6 +214,36 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                 },
             ]
             });
+        });
+
+        // Callback for 'build' button
+        $(table).find('.button-build').click(function() {
+            var pk = $(this).attr('pk');
+
+            // Launch form to create a new build order
+            launchModalForm('{% url "build-create" %}', {
+                follow: true,
+                data: {
+                    part: pk,
+                    parent: buildId,
+                    quantity: 123,  // TODO - Fix this quantity!
+                }
+            });
+        });
+
+        // Callback for 'unallocate' button
+        $(table).find('.button-unallocate').click(function() {
+            var pk = $(this).attr('pk');
+
+            launchModalForm(`/build/${buildId}/unallocate/`,
+                {
+                    success: reloadTable,
+                    data: {
+                        output: outputId,
+                        part: pk,
+                    }
+                }
+            );
         });
     }
 
@@ -424,6 +460,10 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                 sortable: true,
             },
             {
+                field: 'sub_part_detail.stock',
+                title: '{% trans "Available" %}',
+            },
+            {
                 field: 'allocated',
                 title: '{% trans "Allocated" %}',
                 sortable: true,
@@ -436,7 +476,7 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                         });
                     }
 
-                    var required = row.quantity * output.quantity;
+                    var required = requiredQuantity(row);
 
                     return makeProgressBar(allocated, required);
                 },
@@ -465,7 +505,7 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                     var html = `<div class='btn-group float-right' role='group'>`;
 
                     if (row.sub_part_detail.assembly) {
-                        html += makeIconButton('fa-tools icon-blue', 'button-build', row.sub_part, '{% trans "Build stock" %}', {disabled: true});
+                        html += makeIconButton('fa-tools icon-blue', 'button-build', row.sub_part, '{% trans "Build stock" %}');
                     }
 
                     if (row.sub_part_detail.purchaseable) {
@@ -473,6 +513,8 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
                     }
 
                     html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', row.sub_part, '{% trans "Allocate stock" %}');
+
+                    html += makeIconButton('fa-times-circle icon-red', 'button-unallocate', row.sub_part, '{% trans "Unallocate stock" %}');
 
                     html += '</div>';
 

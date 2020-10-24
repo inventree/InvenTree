@@ -218,6 +218,12 @@ class BuildUnallocate(AjaxUpdateView):
         if output:
             initials['output_id'] = output
 
+        # Pointing to a particular part?
+        part = self.get_param('part')
+
+        if part:
+            initials['part_id'] = part
+
         return initials
 
     def post(self, request, *args, **kwargs):
@@ -234,13 +240,20 @@ class BuildUnallocate(AjaxUpdateView):
         except (ValueError, StockItem.DoesNotExist):
             output = None
 
+        part_id = request.POST.get('part_id', None)
+
+        try:
+            part = Part.objects.get(pk=part_id)
+        except (ValueError, Part.DoesNotExist):
+            part = None
+
         valid = False
 
         if confirm is False:
             form.errors['confirm'] = [_('Confirm unallocation of build stock')]
             form.non_field_errors = [_('Check the confirmation box')]
         else:
-            build.unallocateStock(output=output)
+            build.unallocateStock(output=output, part=part)
             valid = True
 
         data = {

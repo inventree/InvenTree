@@ -363,7 +363,7 @@ class Build(MPTTModel):
         return allocations
 
     @transaction.atomic
-    def unallocateStock(self, output=None):
+    def unallocateStock(self, output=None, part=None):
         """
         Deletes all stock allocations for this build.
         
@@ -376,6 +376,9 @@ class Build(MPTTModel):
 
         if output:
             allocations = allocations.filter(install_into=output.pk)
+
+        if part:
+            allocations = allocations.filter(stock_item__part=part)
 
         # Remove all the allocations
         allocations.delete()

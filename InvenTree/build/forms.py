@@ -81,6 +81,11 @@ class UnallocateBuildForm(HelperForm):
         widget=forms.HiddenInput()
     )
 
+    part_id = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(),
+    )
+
     class Meta:
         model = Build
         fields = [
