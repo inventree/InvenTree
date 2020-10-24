@@ -190,10 +190,6 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
             // Primary key of the 'sub_part'
             var pk = $(this).attr('pk');
 
-            // Extract row data from the table
-            //var idx = $(this).closest('tr').attr('data-index');
-            //var row = $(table).bootstrapTable('getData')[idx];
-
             // Launch form to allocate new stock against this output
             launchModalForm("{% url 'build-item-create' %}", {
                 success: reloadTable,
@@ -220,13 +216,17 @@ function loadBuildOutputAllocationTable(buildId, partId, output, options={}) {
         $(table).find('.button-build').click(function() {
             var pk = $(this).attr('pk');
 
+            // Extract row data from the table
+            var idx = $(this).closest('tr').attr('data-index');
+            var row = $(table).bootstrapTable('getData')[idx];
+
             // Launch form to create a new build order
             launchModalForm('{% url "build-create" %}', {
                 follow: true,
                 data: {
                     part: pk,
                     parent: buildId,
-                    quantity: 123,  // TODO - Fix this quantity!
+                    quantity: requiredQuantity(row) - sumAllocations(row),
                 }
             });
         });
