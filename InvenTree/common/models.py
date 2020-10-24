@@ -51,6 +51,12 @@ class InvenTreeSetting(models.Model):
             'description': _('String descriptor for the server instance'),
         },
 
+        'INVENTREE_COMPANY_NAME': {
+            'name': _('Company name'),
+            'description': _('Internal company name'),
+            'default': 'My company name',
+        },
+
         'PART_IPN_REGEX': {
             'name': _('IPN Regex'),
             'description': _('Regular expression pattern for matching Part IPN')
