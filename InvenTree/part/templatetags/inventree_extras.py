@@ -6,7 +6,7 @@ import os
 from django import template
 from InvenTree import version, settings
 
-import InvenTree.helpers
+from InvenTree.helpers import decimal2string
 
 from common.models import InvenTreeSetting, ColorTheme
 
@@ -17,7 +17,7 @@ register = template.Library()
 def decimal(x, *args, **kwargs):
     """ Simplified rendering of a decimal number """
 
-    return InvenTree.helpers.decimal2string(x)
+    return decimal2string(x)
 
 
 @register.simple_tag()
