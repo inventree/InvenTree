@@ -529,9 +529,23 @@ class Part(MPTTModel):
             pass
 
     def clean(self):
-        """ Perform cleaning operations for the Part model """
+        """
+        Perform cleaning operations for the Part model
+        
+        Update trackable status:
+            If this part is trackable, and it is used in the BOM
+            for a parent part which is *not* trackable,
+            then we will force the parent part to be trackable.
+        """
 
         super().clean()
+
+        if self.trackable:
+            for parent_part in self.used_in.all():
+                if not parent_part.trackable:
+                    parent_part.trackable = True
+                    parent_part.clean()
+                    parent_part.save()
 
     name = models.CharField(max_length=100, blank=False,
                             help_text=_('Part name'),
@@ -1612,12 +1626,15 @@ class BomItem(models.Model):
         return self.get_item_hash() == self.checksum
 
     def clean(self):
-        """ Check validity of the BomItem model.
+        """
+        Check validity of the BomItem model.
 
         Performs model checks beyond simple field validation.
 
         - A part cannot refer to itself in its BOM
         - A part cannot refer to a part which refers to it
+
+        - If the "sub_part" is trackable, then the "part" must be trackable too!
         """
 
         # If the sub_part is 'trackable' then the 'quantity' field must be an integer
@@ -1627,6 +1644,13 @@ class BomItem(models.Model):
                     raise ValidationError({
                         "quantity": _("Quantity must be integer value for trackable parts")
                     })
+
+                # Force the upstream part to be trackable if the sub_part is trackable
+                if not self.part.trackable:
+                    self.part.trackable = True
+                    self.part.clean()
+                    self.part.save()
+
         except Part.DoesNotExist:
             pass
 
