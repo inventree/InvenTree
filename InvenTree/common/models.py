@@ -192,6 +192,23 @@ class InvenTreeSetting(models.Model):
             return ''
 
     @classmethod
+    def get_setting_object(cls, key):
+        """
+        Return an InvenTreeSetting object matching the given key.
+
+        - Key is case-insensitive
+        - Returns None if no match is made
+        """
+
+        key = str(key).strip().upper()
+
+        try:
+            setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
+            return setting
+        except (InvenTreeSetting.DoesNotExist):
+            return None
+
+    @classmethod
     def get_setting_pk(cls, key):
         """
         Return the primary-key value for a given setting.
@@ -199,12 +216,11 @@ class InvenTreeSetting(models.Model):
         If the setting does not exist, return None
         """
 
-        key = str(key).strip().upper()
+        setting = InvenTreeSetting.get_setting_object(cls)
 
-        try:
-            setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
+        if setting:
             return setting.pk
-        except InvenTreeSetting.DoesNotExist:
+        else:
             return None
 
     @classmethod
@@ -218,14 +234,11 @@ class InvenTreeSetting(models.Model):
         if backup_value is None:
             backup_value = cls.get_default_value(key)
 
-        try:
-            settings = InvenTreeSetting.objects.filter(key__iexact=key)
+        setting = InvenTreeSetting.get_setting_object(key)
 
-            if len(settings) > 0:
-                return settings[0].value
-            else:
-                return backup_value
-        except InvenTreeSetting.DoesNotExist:
+        if setting:
+            return setting.value
+        else:
             return backup_value
 
     @classmethod
@@ -324,6 +337,15 @@ class InvenTreeSetting(models.Model):
         validator = InvenTreeSetting.get_setting_validator(self.key)
 
         return validator == bool
+
+    def as_bool(self):
+        """
+        Return the value of this setting converted to a boolean value.
+
+        Warning: Only use on values where is_bool evaluates to true!
+        """
+
+        return InvenTree.helpers.str2bool(self.value)
 
 
 class Currency(models.Model):

@@ -1,10 +1,24 @@
 {% load inventree_extras %}
 {% load i18n %}
 
+{% setting_object key as setting %}
 <tr>
     <td><b>{% settings_name key %}</b></td>
-    <td><b>{% settings_value key %}</b>{% settings_units key %}</td>
-    <td>{% settings_description key %}</td>
+    <td>
+        {% if setting.is_bool %}
+        <div>
+            <input fieldname='{{ setting.key }}' class='slidey' type='checkbox' data-offstyle='warning' data-onstyle='success' data-size='small' data-toggle='toggle' disabled autocomplete='off' {% if setting.as_bool %}checked=''{% endif %}>
+        </div>
+        {% else %}
+        {% if setting.value %}
+        <b>{% settings_value key %}</b>{% settings_units key %}</td>
+        {% else %}
+        <i>{% trans "No value set" %}</i>
+        {% endif %}
+        {% endif %}
+    <td>
+        {% settings_description key %}
+    </td>
     <td>
         <div class='btn-group float-right'>
             <button class='btn btn-default btn-glyph btn-edit-setting' pk='{% settings_pk key %}' setting='{{ key }}' title='{% trans "Edit setting" %}'>
