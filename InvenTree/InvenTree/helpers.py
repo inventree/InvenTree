@@ -120,6 +120,19 @@ def str2bool(text, test=True):
         return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
 
 
+def is_bool(text):
+    """
+    Determine if a string value 'looks' like a boolean.
+    """
+
+    if str2bool(text, True):
+        return True
+    elif str2bool(text, False):
+        return True
+    else:
+        return False
+
+
 def isNull(text):
     """
     Test if a string 'looks' like a null value.

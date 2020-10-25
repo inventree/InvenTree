@@ -12,7 +12,7 @@ import math
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, UniqueConstraint
 
 from django.apps import apps
 from django.urls import reverse
@@ -81,8 +81,11 @@ class Company(models.Model):
 
     class Meta:
         ordering = ['name', ]
+        constraints = [
+            UniqueConstraint(fields=['name', 'email'], name='unique_name_email_pair')
+        ]
 
-    name = models.CharField(max_length=100, blank=False, unique=True,
+    name = models.CharField(max_length=100, blank=False,
                             help_text=_('Company name'),
                             verbose_name=_('Company name'))
 
@@ -98,7 +101,8 @@ class Company(models.Model):
                              verbose_name=_('Phone number'),
                              blank=True, help_text=_('Contact phone number'))
 
-    email = models.EmailField(blank=True, verbose_name=_('Email'), help_text=_('Contact email address'))
+    email = models.EmailField(blank=True, null=True,
+                              verbose_name=_('Email'), help_text=_('Contact email address'))
 
     contact = models.CharField(max_length=100,
                                verbose_name=_('Contact'),
