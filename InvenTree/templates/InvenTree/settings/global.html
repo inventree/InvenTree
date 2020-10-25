@@ -3,11 +3,11 @@
 {% load inventree_extras %}
 
 {% block tabs %}
-{% include "InvenTree/settings/tabs.html" with tab='build' %}
+{% include "InvenTree/settings/tabs.html" with tab='global' %}
 {% endblock %}
 
 {% block subtitle %}
-{% trans "Build Order Settings" %}
+{% trans "Global InvenTree Settings" %}
 {% endblock %}
 
 {% block settings %}
@@ -15,8 +15,8 @@
 <table class='table table-striped table-condensed'>
     <thead></thead>
     <tbody>
-        {% include "InvenTree/settings/setting.html" with key="BUILDORDER_REFERENCE_PREFIX" %}
-        {% include "InvenTree/settings/setting.html" with key="BUILDORDER_REFERENCE_REGEX" %}
+        {% include "InvenTree/settings/setting.html" with key="INVENTREE_INSTANCE" %}
+        {% include "InvenTree/settings/setting.html" with key="INVENTREE_COMPANY_NAME" %}
     </tbody>
 </table>
 

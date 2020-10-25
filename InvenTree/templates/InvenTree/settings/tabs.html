@@ -9,8 +9,12 @@
         <a href="{% url 'settings-theme' %}"><span class='fas fa-fill'></span> {% trans "Theme" %}</a>
     </li>
 </ul>
+{% if user.is_staff %}
 <h4><span class='fas fa-cogs'></span> {% trans "InvenTree Settings" %}</h4>
 <ul class='nav nav-pills nav-stacked'>
+    <li {% if tab == 'global' %} class='active' {% endif %}>
+        <a href='{% url "settings-global" %}'><span class='fas fa-globe'></span> {% trans "Global" %}</a>
+    </li>
     <li{% ifequal tab 'currency' %} class='active'{% endifequal %}>
         <a href="{% url 'settings-currency' %}"><span class='fas fa-dollar-sign'></span> {% trans "Currency" %}</a>
     </li>
@@ -30,3 +34,4 @@
         <a href="{% url 'settings-so' %}"><span class='fas fa-truck'></span> {% trans "Sales Orders" %}</a>
     </li>
 </ul>
+{% endif %}

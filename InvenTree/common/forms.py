@@ -33,6 +33,5 @@ class SettingEditForm(HelperForm):
         model = InvenTreeSetting
 
         fields = [
-            'key',
             'value'
         ]
