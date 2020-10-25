@@ -273,6 +273,18 @@ class InvenTreeSetting(models.Model):
 
     value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
 
+    @property
+    def name(self):
+        return InvenTreeSetting.get_setting_name(self.key)
+
+    @property
+    def description(self):
+        return InvenTreeSetting.get_setting_description(self.key)
+
+    @property
+    def units(self):
+        return InvenTreeSetting.get_setting_units(self.key)
+
     def clean(self):
         """
         If a validator (or multiple validators) are defined for a particular setting key,

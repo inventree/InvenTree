@@ -102,53 +102,7 @@ def setting_object(key, *args, **kwargs):
 
     setting = InvenTreeSetting.get_setting_object(key)
 
-    print("Setting:", key, setting)
-
     return setting
-
-@register.simple_tag()
-def settings_name(key, *args, **kwargs):
-    """
-    Returns the name of a GLOBAL_SETTINGS object
-    """
-
-    return InvenTreeSetting.get_setting_name(key)
-
-
-@register.simple_tag()
-def settings_description(key, *args, **kwargs):
-    """
-    Returns the description of a GLOBAL_SETTINGS object
-    """
-
-    return InvenTreeSetting.get_setting_description(key)
-
-
-@register.simple_tag()
-def settings_units(key, *args, **kwargs):
-    """
-    Return the units of a GLOBAL_SETTINGS object
-    """
-
-    return InvenTreeSetting.get_setting_units(key)
-
-
-@register.simple_tag()
-def settings_value(key, *args, **kwargs):
-    """
-    Returns the value of a GLOBAL_SETTINGS object
-    """
-
-    return InvenTreeSetting.get_setting(key, backup_value=kwargs.get('backup', None))
-
-
-@register.simple_tag()
-def settings_pk(key, *args, **kwargs):
-    """
-    Return the ID (pk) of a GLOBAL_SETTINGS Object
-    """
-
-    return InvenTreeSetting.get_setting_pk(key)
 
 
 @register.simple_tag()

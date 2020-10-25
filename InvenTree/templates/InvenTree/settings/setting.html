@@ -3,7 +3,7 @@
 
 {% setting_object key as setting %}
 <tr>
-    <td><b>{% settings_name key %}</b></td>
+    <td><b>{{ setting.name }}</b></td>
     <td>
         {% if setting.is_bool %}
         <div>
@@ -11,17 +11,17 @@
         </div>
         {% else %}
         {% if setting.value %}
-        <b>{% settings_value key %}</b>{% settings_units key %}</td>
+        <b>{{ setting.value }}</b>{{ setting.units }}</td>
         {% else %}
         <i>{% trans "No value set" %}</i>
         {% endif %}
         {% endif %}
     <td>
-        {% settings_description key %}
+        {{ setting.description }}
     </td>
     <td>
         <div class='btn-group float-right'>
-            <button class='btn btn-default btn-glyph btn-edit-setting' pk='{% settings_pk key %}' setting='{{ key }}' title='{% trans "Edit setting" %}'>
+            <button class='btn btn-default btn-glyph btn-edit-setting' pk='{{ setting.pk }}' setting='{{ key }}' title='{% trans "Edit setting" %}'>
                 <span class='fas fa-edit icon-green'></span>
             </button>
         </div>
