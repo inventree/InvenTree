@@ -3,7 +3,6 @@
 from django.test import TestCase
 
 from django.core.exceptions import ValidationError
-from django.db import transaction
 from django.db.utils import IntegrityError
 
 from build.models import Build, BuildItem
@@ -144,13 +143,15 @@ class BuildTest(TestCase):
             quantity=q21
         )
 
-        with transaction.atomic():
-            with self.assertRaises(IntegrityError):
-                BuildItem.objects.create(
-                    build=self.build,
-                    stock_item=self.stock_2_1,
-                    quantity=99
-                )
+        # Attempt to create another identical BuildItem
+        b = BuildItem(
+            build=self.build,
+            stock_item=self.stock_2_1,
+            quantity=q21
+        )
+
+        with self.assertRaises(ValidationError):
+            b.clean()
 
         self.assertEqual(BuildItem.objects.count(), 3)
 

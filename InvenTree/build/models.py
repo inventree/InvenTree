@@ -670,6 +670,28 @@ class BuildItem(models.Model):
             ('build', 'stock_item', 'install_into'),
         ]
 
+    def validate_unique(self, exclude=None):
+        """
+        Test that this BuildItem object is "unique".
+        Essentially we do not want a stock_item being allocated to a Build multiple times.
+        """
+
+        super().validate_unique(exclude)
+
+        items = BuildItem.objects.exclude(id=self.id).filter(
+            build=self.build,
+            stock_item=self.stock_item,
+            install_into=self.install_into
+        )
+
+        if items.exists():
+            msg = _("BuildItem must be unique for build, stock_item and install_into")
+            raise ValidationError({
+                'build': msg,
+                'stock_item': msg,
+                'install_into': msg
+            })
+
     def clean(self):
         """ Check validity of the BuildItem model.
         The following checks are performed:
@@ -677,8 +699,10 @@ class BuildItem(models.Model):
         - StockItem.part must be in the BOM of the Part object referenced by Build
         - Allocation quantity cannot exceed available quantity
         """
+
+        self.validate_unique()
         
-        super(BuildItem, self).clean()
+        super().clean()
 
         errors = {}
 
@@ -710,6 +734,14 @@ class BuildItem(models.Model):
             if self.install_into is not None:
                 if not self.install_into.part == self.build.part:
                     errors['install_into'] = _('Part reference differs between build and build output')
+
+            # A trackable StockItem *must* point to a build output
+            if self.stock_item.part.trackable and self.install_into is None:
+                errors['install_into'] = _('Trackable BuildItem must reference a build output')
+
+            # A non-trackable StockItem *must not* point to a build output
+            if not self.stock_item.part.trackable and self.install_into is not None:
+                errors['install_into'] = _('Non-trackable BuildItem must not reference a build output')
 
         except (StockModels.StockItem.DoesNotExist, PartModels.Part.DoesNotExist):
             pass
