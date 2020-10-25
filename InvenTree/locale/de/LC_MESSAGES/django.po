@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-24 21:17+0000\n"
+"POT-Creation-Date: 2020-10-25 10:54+0000\n"
 "PO-Revision-Date: 2020-05-03 11:32+0200\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -49,35 +49,35 @@ msgstr ""
 msgid "Apply Theme"
 msgstr ""
 
-#: InvenTree/helpers.py:348 order/models.py:187 order/models.py:261
+#: InvenTree/helpers.py:361 order/models.py:187 order/models.py:261
 msgid "Invalid quantity provided"
 msgstr "Keine gültige Menge"
 
-#: InvenTree/helpers.py:351
+#: InvenTree/helpers.py:364
 msgid "Empty serial number string"
 msgstr "Keine Seriennummer angegeben"
 
-#: InvenTree/helpers.py:372
+#: InvenTree/helpers.py:385
 #, python-brace-format
 msgid "Duplicate serial: {n}"
 msgstr "Doppelte Seriennummer: {n}"
 
-#: InvenTree/helpers.py:376 InvenTree/helpers.py:379 InvenTree/helpers.py:382
+#: InvenTree/helpers.py:389 InvenTree/helpers.py:392 InvenTree/helpers.py:395
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Ungültige Gruppe: {g}"
 
-#: InvenTree/helpers.py:387
+#: InvenTree/helpers.py:400
 #, fuzzy, python-brace-format
 #| msgid "Duplicate serial: {n}"
 msgid "Duplicate serial: {g}"
 msgstr "Doppelte Seriennummer: {n}"
 
-#: InvenTree/helpers.py:395
+#: InvenTree/helpers.py:408
 msgid "No serial numbers found"
 msgstr "Keine Seriennummern gefunden"
 
-#: InvenTree/helpers.py:399
+#: InvenTree/helpers.py:412
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr ""
@@ -298,7 +298,7 @@ msgstr "Bauauftrag"
 #: build/models.py:55 build/templates/build/index.html:6
 #: build/templates/build/index.html:14 order/templates/order/so_builds.html:11
 #: order/templates/order/so_tabs.html:9 part/templates/part/tabs.html:31
-#: templates/InvenTree/settings/tabs.html:27 users/models.py:30
+#: templates/InvenTree/settings/tabs.html:28 users/models.py:30
 msgid "Build Orders"
 msgstr "Bauaufträge"
 
@@ -881,147 +881,151 @@ msgstr "Teilzuordnung bearbeiten"
 msgid "Updated Build Item"
 msgstr "Bauobjekt aktualisiert"
 
-#: common/models.py:49
+#: common/models.py:51
 #, fuzzy
 #| msgid "Instance Name"
 msgid "InvenTree Instance Name"
 msgstr "Instanzname"
 
-#: common/models.py:51
+#: common/models.py:53
 #, fuzzy
 #| msgid "Brief description of the build"
 msgid "String descriptor for the server instance"
 msgstr "Kurze Beschreibung des Baus"
 
-#: common/models.py:55 company/models.py:89 company/models.py:90
+#: common/models.py:57 company/models.py:89 company/models.py:90
 msgid "Company name"
 msgstr "Firmenname"
 
-#: common/models.py:56
+#: common/models.py:58
 #, fuzzy
 #| msgid "Company name"
 msgid "Internal company name"
 msgstr "Firmenname"
 
-#: common/models.py:61
+#: common/models.py:63
 msgid "IPN Regex"
 msgstr ""
 
-#: common/models.py:62
+#: common/models.py:64
 msgid "Regular expression pattern for matching Part IPN"
 msgstr ""
 
-#: common/models.py:66
+#: common/models.py:68
 #, fuzzy
 #| msgid "Import BOM data"
 msgid "Copy Part BOM Data"
 msgstr "Stückliste importieren"
 
-#: common/models.py:67
+#: common/models.py:69
 msgid "Copy BOM data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:72
+#: common/models.py:75
 #, fuzzy
 #| msgid "Parameters"
 msgid "Copy Part Parameter Data"
 msgstr "Parameter"
 
-#: common/models.py:73
+#: common/models.py:76
 msgid "Copy parameter data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:78
+#: common/models.py:82
 #, fuzzy
 #| msgid "Parameters"
 msgid "Copy Part Test Data"
 msgstr "Parameter"
 
-#: common/models.py:79
+#: common/models.py:83
 msgid "Copy test data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:84
+#: common/models.py:89
 #, fuzzy
 #| msgid "Order Reference"
 msgid "Build Order Reference Prefix"
 msgstr "Bestellreferenz"
 
-#: common/models.py:85
+#: common/models.py:90
 #, fuzzy
 #| msgid "Order reference"
 msgid "Prefix value for build order reference"
 msgstr "Bestell-Referenz"
 
-#: common/models.py:90
+#: common/models.py:95
 #, fuzzy
 #| msgid "Order Reference"
 msgid "Build Order Reference Regex"
 msgstr "Bestellreferenz"
 
-#: common/models.py:91
+#: common/models.py:96
 msgid "Regular expression pattern for matching build order reference"
 msgstr ""
 
-#: common/models.py:95
+#: common/models.py:100
 #, fuzzy
 #| msgid "Sales Order Reference"
 msgid "Sales Order Reference Prefix"
 msgstr "Bestellungsreferenz"
 
-#: common/models.py:96
+#: common/models.py:101
 #, fuzzy
 #| msgid "Order reference"
 msgid "Prefix value for sales order reference"
 msgstr "Bestell-Referenz"
 
-#: common/models.py:100
+#: common/models.py:105
 #, fuzzy
 #| msgid "Order reference"
 msgid "Purchase Order Reference Prefix"
 msgstr "Bestell-Referenz"
 
-#: common/models.py:101
+#: common/models.py:106
 #, fuzzy
 #| msgid "Order reference"
 msgid "Prefix value for purchase order reference"
 msgstr "Bestell-Referenz"
 
-#: common/models.py:238
+#: common/models.py:272
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 "Einstellungs-Schlüssel (muss einzigartig sein, Groß-/ Kleinschreibung wird "
 "nicht beachtet)"
 
-#: common/models.py:240
+#: common/models.py:274
 msgid "Settings value"
 msgstr "Einstellungs-Wert"
 
-#: common/models.py:253
+#: common/models.py:326
+msgid "Value must be a boolean value"
+msgstr ""
+
+#: common/models.py:340
 msgid "Key string must be unique"
 msgstr "Schlüsseltext muss eindeutig sein"
 
-#: common/models.py:274
+#: common/models.py:379
 msgid "Currency Symbol e.g. $"
 msgstr "Währungs-Symbol (z.B. €)"
 
-#: common/models.py:276
+#: common/models.py:381
 msgid "Currency Suffix e.g. AUD"
 msgstr "Währungs-Suffix (z.B. EUR)"
 
-#: common/models.py:278
+#: common/models.py:383
 msgid "Currency Description"
 msgstr "Währungs-Beschreibung"
 
-#: common/models.py:280
+#: common/models.py:385
 msgid "Currency Value"
 msgstr "Währungs-Wert"
 
-#: common/models.py:282
+#: common/models.py:387
 msgid "Use this currency as the base currency"
 msgstr "Benutze diese Währung als Basis-Währung"
 
-#: common/models.py:365
+#: common/models.py:470
 #, fuzzy
 #| msgid "Default Location"
 msgid "Default"
@@ -1033,19 +1037,19 @@ msgstr "Standard-Lagerort"
 msgid "Current value"
 msgstr "Währungs-Wert"
 
-#: common/views.py:21
+#: common/views.py:23
 msgid "Create new Currency"
 msgstr "Neues Währung hinzufügen"
 
-#: common/views.py:29
+#: common/views.py:31
 msgid "Edit Currency"
 msgstr "Währung bearbeiten"
 
-#: common/views.py:36
+#: common/views.py:38
 msgid "Delete Currency"
 msgstr "Währung entfernen"
 
-#: common/views.py:47
+#: common/views.py:49
 #, fuzzy
 #| msgid "Settings"
 msgid "Change Setting"
@@ -1301,7 +1305,7 @@ msgstr ""
 #: order/templates/order/purchase_orders.html:7
 #: order/templates/order/purchase_orders.html:12
 #: part/templates/part/orders.html:9 part/templates/part/tabs.html:48
-#: templates/InvenTree/settings/tabs.html:30 templates/navbar.html:33
+#: templates/InvenTree/settings/tabs.html:31 templates/navbar.html:33
 #: users/models.py:31
 msgid "Purchase Orders"
 msgstr "Bestellungen"
@@ -1321,7 +1325,7 @@ msgstr "Neue Bestellung"
 #: order/templates/order/sales_orders.html:7
 #: order/templates/order/sales_orders.html:12
 #: part/templates/part/sales_orders.html:9 part/templates/part/tabs.html:56
-#: templates/InvenTree/settings/tabs.html:33 templates/navbar.html:42
+#: templates/InvenTree/settings/tabs.html:34 templates/navbar.html:42
 #: users/models.py:32
 msgid "Sales Orders"
 msgstr "Bestellungen"
@@ -1431,7 +1435,7 @@ msgstr "Bepreisung"
 #: company/templates/company/supplier_part_tabs.html:8
 #: company/templates/company/tabs.html:12 part/templates/part/tabs.html:18
 #: stock/templates/stock/location.html:17 templates/InvenTree/search.html:155
-#: templates/InvenTree/settings/tabs.html:24 templates/js/part.html:124
+#: templates/InvenTree/settings/tabs.html:25 templates/js/part.html:124
 #: templates/js/part.html:372 templates/js/stock.html:453
 #: templates/navbar.html:22 users/models.py:29
 msgid "Stock"
@@ -1445,7 +1449,7 @@ msgstr "Bestellungen"
 #: order/templates/order/receive_parts.html:14 part/models.py:294
 #: part/templates/part/cat_link.html:7 part/templates/part/category.html:94
 #: part/templates/part/category_tabs.html:6
-#: templates/InvenTree/settings/tabs.html:21 templates/navbar.html:19
+#: templates/InvenTree/settings/tabs.html:22 templates/navbar.html:19
 #: templates/stats.html:8 templates/stats.html:17 users/models.py:28
 msgid "Parts"
 msgstr "Teile"
@@ -4520,7 +4524,11 @@ msgstr "Vorlage löschen"
 msgid "Purchase Order Settings"
 msgstr "Bestelldetails"
 
-#: templates/InvenTree/settings/setting.html:10
+#: templates/InvenTree/settings/setting.html:16
+msgid "No value set"
+msgstr ""
+
+#: templates/InvenTree/settings/setting.html:24
 #, fuzzy
 #| msgid "Settings"
 msgid "Edit setting"
@@ -4558,17 +4566,17 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: templates/InvenTree/settings/tabs.html:12
+#: templates/InvenTree/settings/tabs.html:13
 #, fuzzy
 #| msgid "InvenTree Version"
 msgid "InvenTree Settings"
 msgstr "InvenTree-Version"
 
-#: templates/InvenTree/settings/tabs.html:15
+#: templates/InvenTree/settings/tabs.html:16
 msgid "Global"
 msgstr ""
 
-#: templates/InvenTree/settings/tabs.html:18
+#: templates/InvenTree/settings/tabs.html:19
 #, fuzzy
 #| msgid "Edit Currency"
 msgid "Currency"
