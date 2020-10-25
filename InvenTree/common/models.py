@@ -11,6 +11,7 @@ import decimal
 
 from django.db import models
 from django.conf import settings
+
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
@@ -287,11 +288,11 @@ class InvenTreeSetting(models.Model):
             
             return
 
-        print("Running validator:", validator, self.key, self.value)
-
         # Check if a 'type' has been specified for this value
         if type(validator) == type:
+
             if validator == bool:
+                # Value must "look like" a boolean value
                 if InvenTree.helpers.is_bool(self.value):
                     # Coerce into either "True" or "False"
                     self.value = str(InvenTree.helpers.str2bool(self.value))
@@ -299,8 +300,6 @@ class InvenTreeSetting(models.Model):
                     raise ValidationError({
                         'value': _('Value must be a boolean value')
                     })
-
-
 
     def validate_unique(self, exclude=None):
         """ Ensure that the key:value pair is unique.
@@ -316,6 +315,15 @@ class InvenTreeSetting(models.Model):
                 raise ValidationError({'key': _('Key string must be unique')})
         except InvenTreeSetting.DoesNotExist:
             pass
+
+    def is_bool(self):
+        """
+        Check if this setting is required to be a boolean value
+        """
+
+        validator = InvenTreeSetting.get_setting_validator(self.key)
+
+        return validator == bool
 
 
 class Currency(models.Model):
