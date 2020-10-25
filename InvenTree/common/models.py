@@ -204,9 +204,14 @@ class InvenTreeSetting(models.Model):
 
         try:
             setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
-            return setting
         except (InvenTreeSetting.DoesNotExist):
-            return None
+            # Create the setting if it does not exist
+            setting = InvenTreeSetting.create(
+                key=key,
+                value=InvenTreeSetting.get_default_value(key)
+            )
+
+        return setting
 
     @classmethod
     def get_setting_pk(cls, key):
