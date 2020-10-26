@@ -33,16 +33,16 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Is Serialized" %}',
             },
             serial_gte: {
-                title: "{% trans "Serial number GTE" %}",
-                description: "{% trans "Serial number greater than or equal to" %}"
+                title: '{% trans "Serial number GTE" %}',
+                description: '{% trans "Serial number greater than or equal to" %}'
             },
             serial_lte: {
-                title: "{% trans "Serial number LTE" %}",
-                description: "{% trans "Serial number less than or equal to" %}",
+                title: '{% trans "Serial number LTE" %}',
+                description: '{% trans "Serial number less than or equal to" %}',
             },
             serial: {
-                title: "{% trans "Serial number" %}",
-                description: "{% trans "Serial number" %}"
+                title: '{% trans "Serial number" %}',
+                description: '{% trans "Serial number" %}'
             },
             batch: {
                 title: '{% trans "Batch" %}',
@@ -99,16 +99,16 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Is Serialized" %}',
             },
             serial: {
-                title: "{% trans "Serial number" %}",
-                description: "{% trans "Serial number" %}"
+                title: '{% trans "Serial number" %}',
+                description: '{% trans "Serial number" %}'
             },
             serial_gte: {
-                title: "{% trans "Serial number GTE" %}",
-                description: "{% trans "Serial number greater than or equal to" %}"
+                title: '{% trans "Serial number GTE" %}',
+                description: '{% trans "Serial number greater than or equal to" %}'
             },
             serial_lte: {
-                title: "{% trans "Serial number LTE" %}",
-                description: "{% trans "Serial number less than or equal to" %}",
+                title: '{% trans "Serial number LTE" %}',
+                description: '{% trans "Serial number less than or equal to" %}',
             },
             status: {
                 options: stockCodes,
@@ -127,7 +127,7 @@ function getAvailableTableFilters(tableKey) {
         return {
             result: {
                 type: 'bool',
-                title: "{% trans 'Test result' %}",
+                title: '{% trans "Test result" %}',
             },
         };
     }
@@ -137,7 +137,7 @@ function getAvailableTableFilters(tableKey) {
         return {
             required: {
                 type: 'bool',
-                title: "{% trans "Required" %}",
+                title: '{% trans "Required" %}',
             }
         };
     }

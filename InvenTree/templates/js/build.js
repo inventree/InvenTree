@@ -11,22 +11,22 @@ function newBuildOrder(options={}) {
             follow: true,
             data: options.data || {},
             callback: [
-            {
-                field: 'part',
-                action: function(value) {
-                    inventreeGet(
-                        `/api/part/${value}/`, {},
-                        {
-                            success: function(response) {
+                {
+                    field: 'part',
+                    action: function(value) {
+                        inventreeGet(
+                            `/api/part/${value}/`, {},
+                            {
+                                success: function(response) {
 
-                                //enableField('serial_numbers', response.trackable);
-                                //clearField('serial_numbers');
+                                    //enableField('serial_numbers', response.trackable);
+                                    //clearField('serial_numbers');
+                                }
                             }
-                        }
-                    );
-                },
-            }
-        ],
+                        );
+                    },
+                }
+            ],
         }
     )
 }

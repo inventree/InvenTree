@@ -5,6 +5,7 @@ Build database model definitions
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 from datetime import datetime
 
 from django.contrib.auth.models import User
@@ -24,6 +25,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from InvenTree.status_codes import BuildStatus
 from InvenTree.helpers import increment, getSetting, normalize
 from InvenTree.validators import validate_build_order_reference
+from InvenTree.models import InvenTreeAttachment
 
 import InvenTree.fields
 
@@ -646,6 +648,17 @@ class Build(MPTTModel):
         """ Returns True if the build status is COMPLETE """
 
         return self.status == BuildStatus.COMPLETE
+
+
+class BuildOrderAttachment(InvenTreeAttachment):
+    """
+    Model for storing file attachments against a BuildOrder object
+    """
+
+    def getSubdir(self):
+        return os.path.join('bo_files', str(self.build.id))
+
+    build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
 class BuildItem(models.Model):
