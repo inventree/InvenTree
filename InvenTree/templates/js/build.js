@@ -535,10 +535,18 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 sorter: function(valA, valB, rowA, rowB) {
                     var aA = sumAllocations(rowA);
                     var aB = sumAllocations(rowB);
-                
-                    var qA = rowA.quantity * output.quantity;
-                    var qB = rowB.quantity * output.quantity;
 
+                    var qA = rowA.quantity;
+                    var qB = rowB.quantity;
+
+                    if (output) {
+                        qA *= output.quantity;
+                        qB *= output.quantity;
+                    } else {
+                        qA *= buildInfo.quantity;
+                        qB *= buildInfo.quantity;
+                    }
+                
                     if (aA == 0 && aB == 0) {
                         return (qA > qB) ? 1 : -1;
                     }
