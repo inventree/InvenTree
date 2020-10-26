@@ -576,7 +576,13 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', row.sub_part, '{% trans "Allocate stock" %}');
                     }
 
-                    html += makeIconButton('fa-times-circle icon-red', 'button-unallocate', row.sub_part, '{% trans "Unallocate stock" %}');
+                    html += makeIconButton(
+                        'fa-minus-circle icon-red', 'button-unallocate', row.sub_part,
+                        '{% trans "Unallocate stock" %}',
+                        {
+                            disabled: row.allocations == null
+                        }
+                    );
 
                     html += '</div>';
 
