@@ -177,4 +177,4 @@ class EditBuildAttachmentForm(HelperForm):
             'build',
             'attachment',
             'comment'
-        ] 
+        ]

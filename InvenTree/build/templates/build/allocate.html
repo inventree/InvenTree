@@ -25,29 +25,39 @@ InvenTree | Allocate Parts
     <table class='table table-striped table-condensed' id='build-item-list' data-toolbar='#build-item-toolbar'></table>   
 -->
 
-
+<h4>{% trans "Untracked Parts" %}</h4>
 <div class="panel-group" id="build-output-accordion" role="tablist" aria-multiselectable="true">
-    {% for item in build.incomplete_outputs %}
-    {% include "build/allocation_card.html" with item=item complete=False %}
-    {% endfor %}
+    {% include "build/allocation_card.html" %}
 </div>
 
+{% if build.incomplete_outputs %}
+<h4>{% trans "Tracked Build Ouputs" %}</h4>
+<div class="panel-group" id="build-output-accordion" role="tablist" aria-multiselectable="true">
+    {% for item in build.incomplete_outputs %}
+    {% include "build/allocation_card.html" with item=item %}
+    {% endfor %}
+</div>
+{% endif %}
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
 
-    {% for item in build.incomplete_outputs %}
+    var buildInfo = {
+        pk: {{ build.pk }},
+        quantity: {{ build.quantity }},
+        completed: {{ build.completed }},
+        part: {{ build.part.pk }},
+    };
 
+    loadBuildOutputAllocationTable(buildInfo, null);
+
+    {% for item in build.incomplete_outputs %}
     // Get the build output as a javascript object
     inventreeGet('{% url 'api-stock-detail' item.pk %}', {},
         {
             success: function(response) {
-                loadBuildOutputAllocationTable(
-                    {{ build.pk }},
-                    {{ build.part.pk }},
-                    response
-                );
+                loadBuildOutputAllocationTable(buildInfo, response);
             }
         }
     );

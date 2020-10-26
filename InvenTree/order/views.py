@@ -91,7 +91,7 @@ class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
 
 class PurchaseOrderAttachmentCreate(AjaxCreateView):
     """
-    View for creating a new PurchaseOrderAtt
+    View for creating a new PurchaseOrderAttachment
     """
 
     model = PurchaseOrderAttachment

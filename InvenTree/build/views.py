@@ -646,6 +646,16 @@ class BuildItemCreate(AjaxCreateView):
             """
             pass
 
+        # If the sub_part is supplied, limit to matching stock items
+        part_id = self.get_param('part')
+
+        if part_id:
+            try:
+                self.part = Part.objects.get(pk=part_id)
+       
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # If the output stock item is specified, hide the input field
         output_id = form['install_into'].value()
 
@@ -657,15 +667,10 @@ class BuildItemCreate(AjaxCreateView):
             except (ValueError, StockItem.DoesNotExist):
                 pass
 
-        # If the sub_part is supplied, limit to matching stock items
-        part_id = self.get_param('part')
-
-        if part_id:
-            try:
-                self.part = Part.objects.get(pk=part_id)
-       
-            except (ValueError, Part.DoesNotExist):
-                pass
+        else:
+            # If the output is not specified, but we know that the part is non-trackable, hide the install_into field
+            if self.part and not self.part.trackable:
+                form.fields['install_into'].widget = HiddenInput()
 
         if self.build and self.part:
             available_items = self.build.getAvailableStockItems(part=self.part, output=self.output)

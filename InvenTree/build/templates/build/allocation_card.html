@@ -1,33 +1,44 @@
 {% load i18n %}
+{% load inventree_extras %}
 
-<div class="panel panel-default" id='allocation-panel-{{ item.pk }}'>
-    <div class="panel-heading" role="tab" id="heading-{{ item.pk }}">
+{% if item %}
+{% define item.pk as pk %}
+{% else %}
+{% define 'untracked' as pk %}
+{% endif %}
+
+<div class="panel panel-default" id='allocation-panel-{{ pk }}'>
+    <div class="panel-heading" role="tab" id="heading-{{ pk }}">
       <div class="panel-title">
           <div class='row'>
             <div class='col-sm-6'>
-                <a role="button" data-toggle="collapse" data-parent="#build-output-accordion" href="#collapse-{{ item.pk }}" aria-expanded="true" aria-controls="collapse-{{ item.pk }}">
+                <a role="button" data-toggle="collapse" data-parent="#build-output-accordion" href="#collapse-{{ pk }}" aria-expanded="true" aria-controls="collapse-{{ pk }}">
+                    {% if item %}
                     {{ item }} 
+                    {% else %}
+                    {% trans "Untracked items" %}
+                    {% endif %}
                 </div>
             </a>
             <div class='col-sm-3'>
                 <div>
                     {% trans "Completed lines" %}: 
-                    <div id='output-progress-{{ item.pk }}'>
+                    <div id='output-progress-{{ pk }}'>
                         <span class='fas fa-spin fa-spinner'></span>
                     </div>
                 </div>
             </div>
             <div class='col-sm-3'>
-                <div class='btn-group float-right' id='output-actions-{{ item.pk }}'>
+                <div class='btn-group float-right' id='output-actions-{{ pk }}'>
                     <span class='fas fa-spin fa-spinner'></span>
                 </div>
             </div>
         </div>
     </div>
     </div>
-    <div id="collapse-{{ item.pk }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-{{ item.pk }}">
+    <div id="collapse-{{ pk }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-{{ pk }}">
       <div class="panel-body">
-          <table class='table table-striped table-condensed' id='allocation-table-{{ item.pk }}'></table>
+          <table class='table table-striped table-condensed' id='allocation-table-{{ pk }}'></table>
       </div>
     </div>
   </div>
