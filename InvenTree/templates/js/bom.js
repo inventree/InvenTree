@@ -102,8 +102,31 @@ function loadBomTable(table, options) {
      * 
      * BOM data are retrieved from the server via AJAX query
      */
+    
+    var params = {
+        part: options.parent_id,
+        ordering: 'name',
+    }
 
-    // Construct the table columns
+    if (options.part_detail) {
+        params.part_detail = true;
+    }
+
+    if (options.sub_part_detail) {
+        params.sub_part_detail = true;
+    }
+
+    var filters = {};
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters("bom");
+    }
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList("bom", $(table));
 
     var cols = [];
 
@@ -128,7 +151,7 @@ function loadBomTable(table, options) {
                 var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, url);
 
                 if (row.sub_part_detail.trackable) {
-                    html += `<span title='{% trans "Trackable part" %}' class='fas fa-route label-right'></span>`;
+                    html += `<span title='{% trans "Trackable part" %}' class='fas fa-directions label-right'></span>`;
                 }
 
                 // Display an extra icon if this part is an assembly
@@ -270,21 +293,6 @@ function loadBomTable(table, options) {
         });
     }
 
-    // Configure the table (bootstrap-table)
-
-    var params = {
-        part: options.parent_id,
-        ordering: 'name',
-    }
-
-    if (options.part_detail) {
-        params.part_detail = true;
-    }
-
-    if (options.sub_part_detail) {
-        params.sub_part_detail = true;
-    }
-
     // Function to request BOM data for sub-items
     // This function may be called recursively for multi-level BOMs
     function requestSubItems(bom_pk, part_pk) {
@@ -337,7 +345,8 @@ function loadBomTable(table, options) {
         },
         formatNoMatches: function() { return "{% trans "No BOM items found" %}"; },
         clickToSelect: true,
-        queryParams: params,
+        queryParams: filters,
+        original: params,
         columns: cols,
         url: options.bom_url,
         onPostBody: function() {

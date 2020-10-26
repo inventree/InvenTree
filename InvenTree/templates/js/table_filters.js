@@ -11,6 +11,16 @@ function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
 
+    // Filters for Bill of Materials table
+    if (tableKey == "bom") {
+        return {
+            trackable: {
+                type: 'bool',
+                title: '{% trans "Trackable Part" %}'
+            }
+        };
+    }
+
     // Filters for the "customer stock" table (really a subset of "stock")
     if (tableKey == "customerstock") {
         return {

@@ -47,6 +47,9 @@
     {% endif %}
     <button title='{% trans "Export Bill of Materials" %}' class='btn btn-default action-button' id='download-bom' type='button'><span class='fas fa-file-download'></span></button>
     {% endif %}
+    <div class='filter-list' id='filter-list-bom'>
+        <!-- Empty div (will be filled out with avilable BOM filters) -->
+    </div>
 </div>
 
 <table class='table table-striped table-condensed' data-toolbar="#button-toolbar" id='bom-table'>
