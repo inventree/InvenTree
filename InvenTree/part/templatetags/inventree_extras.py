@@ -120,6 +120,15 @@ def setting_object(key, *args, **kwargs):
 
 
 @register.simple_tag()
+def settings_value(key, *args, **kwargs):
+    """
+    Return a settings value specified by the given key
+    """
+
+    return InvenTreeSetting.get_setting(key)
+
+
+@register.simple_tag()
 def get_color_theme_css(username):
     try:
         user_theme = ColorTheme.objects.filter(user=username).get()
