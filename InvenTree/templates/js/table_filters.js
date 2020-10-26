@@ -17,7 +17,11 @@ function getAvailableTableFilters(tableKey) {
             trackable: {
                 type: 'bool',
                 title: '{% trans "Trackable Part" %}'
-            }
+            },
+            validated: {
+                type: 'bool',
+                title: '{% trans "Validated" %}',
+            },
         };
     }
 

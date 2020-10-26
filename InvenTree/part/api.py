@@ -768,6 +768,25 @@ class BomList(generics.ListCreateAPIView):
             trackable = str2bool(trackable)
             queryset = queryset.filter(sub_part__trackable=trackable)
 
+        # Filter by whether the BOM line has been validated
+        validated = params.get('validated', None)
+
+        if validated is not None:
+
+            validated = str2bool(validated)
+
+            # Work out which lines have actually been validated
+            pks = []
+
+            for bom_item in queryset.all():
+                if bom_item.is_line_valid:
+                    pks.append(bom_item.pk)
+
+            if validated:
+                queryset = queryset.filter(pk__in=pks)
+            else:
+                queryset = queryset.exclude(pk__in=pks)
+
         return queryset
 
     filter_backends = [
