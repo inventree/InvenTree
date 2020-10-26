@@ -322,9 +322,14 @@ class AjaxCreateView(AjaxMixin, CreateView):
         """
         pass
 
-    def post_save(self, new_object, request, **kwargs):
+    def post_save(self, **kwargs):
         """
         Hook for doing something with the created object after it is saved
+
+        kwargs:
+            request - The request object
+            new_object - The newly created object
+
         """
         pass
 
@@ -356,7 +361,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
             self.pre_save(self.form, request)
             self.object = self.form.save()
-            self.post_save(self.object, request)
+            self.post_save(new_object=self.object, request=request)
 
             # Return the PK of the newly-created object
             data['pk'] = self.object.pk
@@ -411,7 +416,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             # Include context data about the updated object
             data['pk'] = obj.id
 
-            self.post_save(obj)
+            self.post_save(new_object=obj, request=request)
 
             try:
                 data['url'] = obj.get_absolute_url()
@@ -420,7 +425,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
 
         return self.renderJsonResponse(request, form, data)
 
-    def post_save(self, obj, *args, **kwargs):
+    def post_save(self, **kwargs):
         """
         Hook called after the form data is saved.
         (Optional)

@@ -12,7 +12,7 @@ from django.forms import HiddenInput
 from django.urls import reverse
 
 from part.models import Part
-from .models import Build, BuildItem
+from .models import Build, BuildItem, BuildOrderAttachment
 from . import forms
 from stock.models import StockLocation, StockItem
 
@@ -527,12 +527,14 @@ class BuildCreate(AjaxCreateView):
             'success': _('Created new build'),
         }
         
-    def post_save(self, new_object, request, **kwargs):
+    def post_save(self, **kwargs):
         """
         Called immediately after a new Build object is created.
         """
 
-        build = new_object
+        build = kwargs['new_object']
+        request = kwargs['request']
+        
         build.createInitialStockItem(request.user)
 
 
@@ -795,3 +797,86 @@ class BuildItemEdit(AjaxUpdateView):
                 form.fields[field].widget = HiddenInput()
 
         return form
+
+
+class BuildAttachmentCreate(AjaxCreateView):
+    """
+    View for creating a BuildAttachment
+    """
+
+    model = BuildOrderAttachment
+    form_class = forms.EditBuildAttachmentForm
+    ajax_form_title = _('Add Build Order Attachment')
+    role_required = 'build.add'
+
+    def post_save(self, **kwargs):
+        self.object.user = self.request.user
+        self.object.save()
+
+    def get_data(self):
+        return {
+            'success': _('Added attachment')
+        }
+
+    def get_initial(self):
+        """
+        Get initial data for creating an attachment
+        """
+
+        initials = super().get_initial()
+
+        try:
+            initials['build'] = Build.objects.get(pk=self.request.GET.get('build', -1))
+        except (ValueError, Build.DoesNotExist):
+            pass
+
+        return initials
+
+    def get_form(self):
+        """
+        Hide the 'build' field if specified
+        """
+
+        form = super().get_form()
+
+        form.fields['build'].widget = HiddenInput()
+    
+        return form
+
+
+class BuildAttachmentEdit(AjaxUpdateView):
+    """
+    View for editing a BuildAttachment object
+    """
+
+    model = BuildOrderAttachment
+    form_class = forms.EditBuildAttachmentForm
+    ajax_form_title = _('Edit Attachment')
+    role_required = 'build.change'
+
+    def get_form(self):
+        form = super().get_form()
+        form.fields['build'].widget = HiddenInput()
+
+        return form
+
+    def get_data(self):
+        return {
+            'success': _('Attachment updated')
+        }
+
+
+class BuildAttachmentDelete(AjaxDeleteView):
+    """
+    View for deleting a BuildAttachment
+    """
+
+    model = BuildOrderAttachment
+    ajax_form_title = _('Delete Attachment')
+    context_object_name = 'attachment'
+    role_required = 'build.delete'
+
+    def get_data(self):
+        return {
+            'danger': _('Deleted attachment')
+        }

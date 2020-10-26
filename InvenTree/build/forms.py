@@ -11,7 +11,7 @@ from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 
 from django import forms
-from .models import Build, BuildItem
+from .models import Build, BuildItem, BuildOrderAttachment
 from stock.models import StockLocation
 
 
@@ -164,3 +164,17 @@ class EditBuildItemForm(HelperForm):
             'quantity',
             'install_into',
         ]
+
+
+class EditBuildAttachmentForm(HelperForm):
+    """
+    Form for creating / editing a BuildAttachment object
+    """
+
+    class Meta:
+        model = BuildOrderAttachment
+        fields = [
+            'build',
+            'attachment',
+            'comment'
+        ] 

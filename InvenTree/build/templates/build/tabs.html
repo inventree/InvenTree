@@ -13,4 +13,7 @@
     <li{% if tab == 'notes' %} class='active'{% endif %}>
         <a href="{% url 'build-notes' build.id %}">{% trans "Notes" %}{% if build.notes %} <span class='fas fa-info-circle'></span>{% endif %}</a>
     </li>
+    <li {% if tab == 'attachments' %} class='active'{% endif %}>
+        <a href='{% url "build-attachments" build.id %}'>{% trans "Attachments" %}</a>
+    </li>
 </ul>
