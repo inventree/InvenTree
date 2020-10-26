@@ -5,7 +5,8 @@ import os
 
 from django import template
 from InvenTree import version, settings
-from InvenTree.helpers import decimal2string
+
+import InvenTree.helpers
 
 from common.models import InvenTreeSetting, ColorTheme
 
@@ -29,7 +30,14 @@ def define(value, *args, **kwargs):
 def decimal(x, *args, **kwargs):
     """ Simplified rendering of a decimal number """
 
-    return decimal2string(x)
+    return InvenTree.helpers.decimal2string(x)
+
+
+@register.simple_tag()
+def str2bool(x, *args, **kwargs):
+    """ Convert a string to a boolean value """
+
+    return InvenTree.helpers.str2bool(x)
 
 
 @register.simple_tag()
@@ -41,7 +49,7 @@ def inrange(n, *args, **kwargs):
 @register.simple_tag()
 def multiply(x, y, *args, **kwargs):
     """ Multiply two numbers together """
-    return decimal2string(x * y)
+    return InvenTree.helpers.decimal2string(x * y)
 
 
 @register.simple_tag()
@@ -54,7 +62,7 @@ def add(x, y, *args, **kwargs):
 def part_allocation_count(build, part, *args, **kwargs):
     """ Return the total number of <part> allocated to <build> """
 
-    return decimal2string(build.getAllocatedQuantity(part))
+    return InvenTree.helpers.decimal2string(build.getAllocatedQuantity(part))
 
 
 @register.simple_tag()
@@ -100,8 +108,15 @@ def inventree_docs_url(*args, **kwargs):
 
 
 @register.simple_tag()
-def inventree_setting(key, *args, **kwargs):
-    return InvenTreeSetting.get_setting(key, backup_value=kwargs.get('backup', None))
+def setting_object(key, *args, **kwargs):
+    """
+    Return a setting object speciifed by the given key
+    (Or return None if the setting does not exist)
+    """
+
+    setting = InvenTreeSetting.get_setting_object(key)
+
+    return setting
 
 
 @register.simple_tag()

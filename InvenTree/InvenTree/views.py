@@ -128,8 +128,12 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
 
     def has_permission(self):
         """
-        Determine if the current user
+        Determine if the current user has specified permissions
         """
+
+        if self.permission_required:
+            # Ignore role-based permissions
+            return super().has_permission()
 
         roles_required = []
 

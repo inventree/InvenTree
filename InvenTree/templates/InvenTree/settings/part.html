@@ -11,6 +11,16 @@
 
 {% block settings %}
 
+<table class='table table-striped table-condensed'>
+    <thead></thead>
+    <tbody>
+        {% include "InvenTree/settings/setting.html" with key="PART_IPN_REGEX" %}
+        {% include "InvenTree/settings/setting.html" with key="PART_COPY_BOM" %}
+        {% include "InvenTree/settings/setting.html" with key="PART_COPY_PARAMETERS" %}
+        {% include "InvenTree/settings/setting.html" with key="PART_COPY_TESTS" %}
+    </tbody>
+</table>
+
 <h4>{% trans "Part Parameter Templates" %}</h4>
 
 <div id='param-buttons'>
@@ -53,7 +63,7 @@
                     var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
                     var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
-                    var html = "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
+                    var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
 
                     return html;
                 }

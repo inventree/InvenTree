@@ -139,7 +139,7 @@ function loadPurchaseOrderTable(table, options) {
                 title: '{% trans "Purchase Order" %}',
                 formatter: function(value, row, index, field) {
 
-                    var prefix = "{% inventree_setting 'PURCHASEORDER_REFERENCE_PREFIX' %}";
+                    var prefix = "{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}";
 
                     if (prefix) {
                         value = `${prefix}${value}`;
@@ -221,7 +221,7 @@ function loadSalesOrderTable(table, options) {
                 title: '{% trans "Sales Order" %}',
                 formatter: function(value, row, index, field) {
 
-                    var prefix = "{% inventree_setting 'SALESORDER_REFERENCE_PREFIX' %}";
+                    var prefix = "{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}";
 
                     if (prefix) {
                         value = `${prefix}${value}`;
