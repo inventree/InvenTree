@@ -172,7 +172,7 @@ class BuildTest(TestCase):
 
         self.assertEqual(len(allocations), 1)
 
-        self.build.autoAllocate()
+        self.build.auto_allocate()
         self.assertEqual(BuildItem.objects.count(), 1)
         self.assertTrue(self.build.isPartFullyAllocated(self.sub_part_2))
 

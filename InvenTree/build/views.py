@@ -93,11 +93,23 @@ class BuildAutoAllocate(AjaxUpdateView):
     """
 
     model = Build
-    form_class = forms.ConfirmBuildForm
+    form_class = forms.AutoAllocateForm
     context_object_name = 'build'
     ajax_form_title = _('Allocate Stock')
     ajax_template_name = 'build/auto_allocate.html'
     role_required = 'build.change'
+
+    def get_initial(self):
+
+        initials = super().get_initial()
+
+        # Pointing to a particular build output?
+        output = self.get_param('output')
+
+        if output:
+            initials['output_id'] = output
+
+        return initials
 
     def get_context_data(self, *args, **kwargs):
         """ Get the context data for form rendering. """
@@ -125,14 +137,23 @@ class BuildAutoAllocate(AjaxUpdateView):
 
         confirm = request.POST.get('confirm', False)
 
+        output = None
+        output_id = request.POST.get('output_id', None)
+
+        if output_id:
+            try:
+                output = StockItem.objects.get(pk=output_id)
+            except (ValueError, StockItem.DoesNotExist):
+                pass
+
         valid = False
 
-        if confirm is False:
+        if confirm:
+            build.auto_allocate(output)
+            valid = True
+        else:
             form.errors['confirm'] = [_('Confirm stock allocation')]
             form.non_field_errors = [_('Check the confirmation box at the bottom of the list')]
-        else:
-            build.autoAllocate()
-            valid = True
 
         data = {
             'form_valid': valid,

@@ -55,21 +55,23 @@ function makeBuildOutputActionButtons(output, buildInfo) {
 
     // Add a button to "auto allocate" against the particular build output
     html += makeIconButton(
-        'fa-clipboard-check icon-blue', 'button-output-auto', outputId,
-        '{% trans "Allocate stock items to this output" %}',
+        'fa-magic icon-blue', 'button-output-auto', outputId,
+        '{% trans "Auto-allocate stock items to this output" %}',
         {
             disabled: true,
         }
     );
 
-    // Add a button to "complete" the particular build output
-    html += makeIconButton(
-        'fa-tools icon-green', 'button-output-complete', outputId,
-        '{% trans "Complete build output" %}',
-        {
-            disabled: true
-        }
-    );
+    if (output) {
+        // Add a button to "complete" the particular build output
+        html += makeIconButton(
+            'fa-check icon-green', 'button-output-complete', outputId,
+            '{% trans "Complete build output" %}',
+            {
+                disabled: true
+            }
+        );
+    }
 
     // Add a button to "cancel" the particular build output (unallocate)
     html += makeIconButton(
@@ -77,14 +79,18 @@ function makeBuildOutputActionButtons(output, buildInfo) {
         '{% trans "Unallocate stock from build output" %}',
     );
 
-    // Add a button to "delete" the particular build output
-    html += makeIconButton(
-        'fa-trash-alt icon-red', 'button-output-delete', outputId,
-        '{% trans "Delete build output" %}',
-    );
+    if (output) {
+        // Add a button to "delete" the particular build output
+        html += makeIconButton(
+            'fa-trash-alt icon-red', 'button-output-delete', outputId,
+            '{% trans "Delete build output" %}',
+        );
 
-    // Add a button to "destroy" the particular build output (mark as damaged, scrap)
-    // TODO
+        // Add a button to "destroy" the particular build output (mark as damaged, scrap)
+        // TODO
+
+    }
+
 
     html += '</div>';
 

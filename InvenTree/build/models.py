@@ -306,7 +306,7 @@ class Build(MPTTModel):
         self.status = BuildStatus.CANCELLED
         self.save()
 
-    def getAutoAllocations(self):
+    def getAutoAllocations(self, output):
         """ Return a list of parts which will be allocated
         using the 'AutoAllocate' function.
 
@@ -316,12 +316,18 @@ class Build(MPTTModel):
         - Take as many parts as available (up to the quantity required for the BOM)
         - If there are multiple StockItems available, ignore (leave up to the user)
 
+        Args:
+            output: A stock item (build output) to auto-allocate against
+
         Returns:
             A list object containing the StockItem objects to be allocated (and the quantities)
         """
 
         allocations = []
 
+        """
+        Iterate through each item in the BOM
+        """
         for item in self.part.bom_items.all().prefetch_related('sub_part'):
 
             # How many parts required for this build?
@@ -409,8 +415,12 @@ class Build(MPTTModel):
         output.delete()
 
     @transaction.atomic
-    def autoAllocate(self):
-        """ Run auto-allocation routine to allocate StockItems to this Build.
+    def auto_allocate(self, output=None):
+        """
+        Run auto-allocation routine to allocate StockItems to this Build.
+
+        Args:
+            output: If specified, only auto-allocate against the given built output
 
         Returns a list of dict objects with keys like:
 
@@ -422,7 +432,7 @@ class Build(MPTTModel):
         See: getAutoAllocations()
         """
 
-        allocations = self.getAutoAllocations()
+        allocations = self.getAutoAllocations(output)
 
         for item in allocations:
             # Create a new allocation

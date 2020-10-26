@@ -90,18 +90,26 @@ class UnallocateBuildForm(HelperForm):
         model = Build
         fields = [
             'confirm',
+            'output_id',
+            'part_id',
         ]
 
 
-class ConfirmBuildForm(HelperForm):
+class AutoAllocateForm(HelperForm):
     """ Form for auto-allocation of stock to a build """
 
     confirm = forms.BooleanField(required=False, help_text=_('Confirm'))
 
+    output_id = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput()
+    )
+
     class Meta:
         model = Build
         fields = [
-            'confirm'
+            'confirm',
+            'output_id',
         ]
 
 
