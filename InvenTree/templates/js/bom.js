@@ -127,6 +127,10 @@ function loadBomTable(table, options) {
                 var url = `/part/${row.sub_part}/`;
                 var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, url);
 
+                if (row.sub_part_detail.trackable) {
+                    html += `<span title='{% trans "Trackable part" %}' class='fas fa-route label-right'></span>`;
+                }
+
                 // Display an extra icon if this part is an assembly
                 if (row.sub_part_detail.assembly) {
                     var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream label-right'></span>`;
