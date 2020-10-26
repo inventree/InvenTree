@@ -621,7 +621,7 @@ function loadBuildTable(table, options) {
                 switchable: false,
                 formatter: function(value, row, index, field) {
 
-                    var prefix = "{% inventree_setting 'BUILDORDER_REFERENCE_PREFIX' %}";
+                    var prefix = "{% settings_value 'BUILDORDER_REFERENCE_PREFIX' %}";
 
                     if (prefix) {
                         value = `${prefix}${value}`;
