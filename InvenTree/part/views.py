@@ -510,7 +510,7 @@ class PartCreate(AjaxCreateView):
     model = Part
     form_class = part_forms.EditPartForm
 
-    ajax_form_title = _('Create new part')
+    ajax_form_title = _('Create New Part')
     ajax_template_name = 'part/create_part.html'
 
     role_required = 'part.add'
