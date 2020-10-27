@@ -53,14 +53,13 @@ function makeBuildOutputActionButtons(output, buildInfo) {
 
     var html = `<div class='btn-group float-right' role='group'>`;
 
-    // Add a button to "auto allocate" against the particular build output
-    html += makeIconButton(
-        'fa-magic icon-blue', 'button-output-auto', outputId,
-        '{% trans "Auto-allocate stock items to this output" %}',
-        {
-            disabled: true,
-        }
-    );
+    // Add a button to "auto allocate" against the build
+    if (!output) {
+        html += makeIconButton(
+            'fa-magic icon-blue', 'button-output-auto', outputId,
+            '{% trans "Auto-allocate stock items to this output" %}',
+        );
+    }
 
     if (output) {
         // Add a button to "complete" the particular build output
@@ -75,7 +74,7 @@ function makeBuildOutputActionButtons(output, buildInfo) {
 
     // Add a button to "cancel" the particular build output (unallocate)
     html += makeIconButton(
-        'fa-times-circle icon-red', 'button-output-unallocate', outputId,
+        'fa-minus-circle icon-red', 'button-output-unallocate', outputId,
         '{% trans "Unallocate stock from build output" %}',
     );
 
@@ -239,9 +238,18 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                                 `/api/stock/${value}/`, {},
                                 {
                                     success: function(response) {
+
+                                        // How many items are actually available for the given stock item?
                                         var available = response.quantity - response.allocated;
 
-                                        console.log('available: ' + available);
+                                        var field = getFieldByName('#modal-form', 'quantity');
+
+                                        // Allocation quantity initial value
+                                        var initial = field.attr('value');
+
+                                        if (available < initial) {
+                                            field.val(available);
+                                        }
                                     }
                                 }
                             )
