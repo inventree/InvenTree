@@ -24,6 +24,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus
 from InvenTree.helpers import increment, getSetting, normalize
+from InvenTree.helpers import ExtractSerialNumbers
 from InvenTree.validators import validate_build_order_reference
 from InvenTree.models import InvenTreeAttachment
 
@@ -269,21 +270,46 @@ class Build(MPTTModel):
 
         return new_ref
 
-    def createInitialStockItem(self, user):
+    def createInitialStockItem(self, serial_numbers, user):
         """
         Create an initial output StockItem to be completed by this build.
         """
 
-        output = StockModels.StockItem.objects.create(
-            part=self.part,  # Link to the parent part
-            location=None,  # No location (yet) until it is completed
-            quantity=self.quantity,
-            batch='',  # The 'batch' code is not set until the item is completed
-            build=self,  # Point back to this build
-            is_building=True,  # Mark this StockItem as building
-        )
+        if self.part.trackable:
+            # Trackable part? Create individual build outputs?
 
-        output.save()
+            # Serial numbers specified for the build?
+            if serial_numbers:
+                serials = ExtractSerialNumbers(serial_numbers, self.quantity)
+            else:
+                serials = [None] * self.quantity
+
+            for serial in serials:
+                output = StockModels.StockItem.objects.create(
+                    part=self.part,
+                    location=self.destination,
+                    quantity=1,
+                    batch=self.batch,
+                    serial=serial,
+                    build=self,
+                    is_building=True
+                )
+
+                output.save()
+
+        else:
+            # Create a single build output
+
+            output = StockModels.StockItem.objects.create(
+                part=self.part,  # Link to the parent part
+                location=None,  # No location (yet) until it is completed
+                quantity=self.quantity,
+                batch='',  # The 'batch' code is not set until the item is completed
+                build=self,  # Point back to this build
+                is_building=True,  # Mark this StockItem as building
+            )
+
+            output.save()
 
         # TODO - Add a transaction note to the new StockItem
 

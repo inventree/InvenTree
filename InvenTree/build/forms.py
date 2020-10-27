@@ -23,12 +23,19 @@ class EditBuildForm(HelperForm):
         'reference': 'BO',
         'link': 'fa-link',
         'batch': 'fa-layer-group',
+        'serial-numbers': 'fa-hashtag',
         'location': 'fa-map-marker-alt',
     }
 
     field_placeholder = {
         'reference': _('Build Order reference')
     }
+
+    serial_numbers = forms.CharField(
+        label=_('Serial Numbers'),
+        help_text=_('Serial numbers for build outputs'),
+        required=False,
+    )
 
     class Meta:
         model = Build
@@ -38,6 +45,7 @@ class EditBuildForm(HelperForm):
             'part',
             'quantity',
             'batch',
+            'serial_numbers',
             'take_from',
             'destination',
             'parent',

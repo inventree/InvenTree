@@ -387,7 +387,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
             self.pre_save(self.form, request)
             self.object = self.form.save()
-            self.post_save(new_object=self.object, request=request)
+            self.post_save(new_object=self.object, request=request, form=self.form, data=self.form.cleaned_data)
 
             # Return the PK of the newly-created object
             data['pk'] = self.object.pk

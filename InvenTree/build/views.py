@@ -512,6 +512,18 @@ class BuildCreate(AjaxCreateView):
     ajax_template_name = 'modal_form.html'
     role_required = 'build.add'
 
+    def get_form(self):
+        form = super().get_form()
+
+        if form['part'].value():
+            part = Part.objects.get(pk=form['part'].value())
+
+            # Part is not trackable - hide serial numbers
+            if not part.trackable: 
+                form.fields['serial_numbers'].widget = HiddenInput()
+
+        return form
+
     def get_initial(self):
         """ Get initial parameters for Build creation.
 
@@ -547,6 +559,33 @@ class BuildCreate(AjaxCreateView):
         return {
             'success': _('Created new build'),
         }
+
+    def validate(self, cleaned_data, **kwargs):
+        """
+        Perform extra form validation.
+
+        - If part is trackable, check that either batch or serial numbers are calculated
+
+        By this point form.is_valid() has been executed
+        """
+
+        part = cleaned_data['part']
+
+        if part.trackable:
+            # For a trackable part, either batch or serial nubmber must be specified
+            if not cleaned_data['batch'] and not cleaned_data['serial_numbers']:
+                raise ValidationError({
+                    'part': _('Trackable part must have either batch or serial number specified')
+                }) 
+
+            # If serial numbers are set...
+            serials = cleaned_data['serial_numbers']
+            quantity = cleaned_data['quantity']
+
+            extracted = ExtractSerialNumbers(serials, quantity)
+
+        # Ok, no errors...
+        return True
         
     def post_save(self, **kwargs):
         """
@@ -555,8 +594,11 @@ class BuildCreate(AjaxCreateView):
 
         build = kwargs['new_object']
         request = kwargs['request']
+        data = kwargs['data']
+
+        serials = data['serial_numbers']
         
-        build.createInitialStockItem(request.user)
+        build.createInitialStockItem(serials, request.user)
 
 
 class BuildUpdate(AjaxUpdateView):
