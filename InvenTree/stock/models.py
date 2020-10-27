@@ -200,6 +200,13 @@ class StockItem(MPTTModel):
 
         super(StockItem, self).validate_unique(exclude)
 
+        # If the part is trackable, either serial number or batch number must be set
+        if self.part.trackable:
+            if not self.serial and not self.batch:
+                msg = _('Serial or batch number must be specified for trackable stock')
+                raise ValidationError(msg)
+
+        # If the serial number is set, make sure it is not a duplicate
         if self.serial is not None:
             # Query to look for duplicate serial numbers
             parts = PartModels.Part.objects.filter(tree_id=self.part.tree_id)
