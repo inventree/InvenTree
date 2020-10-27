@@ -5,7 +5,7 @@
         <a href="{% url 'build-detail' build.id %}">{% trans "Details" %}</a>
     </li>
     <li{% if tab == 'allocate' %} class='active'{% endif %}>
-        <a href="{% url 'build-allocate' build.id %}">{% trans "Allocated Parts" %}</a>
+        <a href="{% url 'build-allocate' build.id %}">{% trans "Allocate Parts" %}</a>
     </li>
     <li{% if tab == 'output' %} class='active'{% endif %}>
         <a href="{% url 'build-output' build.id %}">{% trans "Build Outputs" %}{% if build.output_count > 0%}<span class='badge'>{{ build.output_count }}</span>{% endif %}</a>

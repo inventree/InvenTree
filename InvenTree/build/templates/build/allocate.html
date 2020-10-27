@@ -12,8 +12,7 @@ InvenTree | Allocate Parts
 {% include "build/tabs.html" with tab='allocate' %}
 
 
-{% if build.incomplete_outputs %}
-<h4>{% trans "Tracked Build Ouputs" %}</h4>
+<h4>{% trans "Incomplete Build Ouputs" %}</h4>
 <div class="panel-group" id="build-output-accordion" role="tablist" aria-multiselectable="true">
     {% for item in build.incomplete_outputs %}
     {% include "build/allocation_card.html" with item=item %}
@@ -21,8 +20,7 @@ InvenTree | Allocate Parts
 </div>
 
 <hr>
-<h4>{% trans "Untracked Parts" %}</h4>
-{% endif %}
+<h4>{% trans "Assigned Stock" %}</h4>
 
 <div id='build-item-toolbar'>
     {% if build.status == BuildStatus.PENDING %}

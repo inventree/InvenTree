@@ -573,9 +573,9 @@ class BuildCreate(AjaxCreateView):
 
         if part.trackable:
             # For a trackable part, either batch or serial nubmber must be specified
-            if not cleaned_data['batch'] and not cleaned_data['serial_numbers']:
+            if not cleaned_data['serial_numbers']:
                 raise ValidationError({
-                    'part': _('Trackable part must have either batch or serial number specified')
+                    'serial_numbers': _('Trackable part must have serial numbers specified')
                 }) 
 
             # If serial numbers are set...
