@@ -1,15 +1,23 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load i18n %}
 {% block details %}
 
 {% include 'part/tabs.html' with tab='build' %}
 
-<h3>Part Builds</h3>
+<h3>{% trans "Part Builds" %}</h3>
 
 <div id='button-toolbar'>
-    {% if part.active %}
-    <button class="btn btn-success" id='start-build'>Start New Build</button>
-    {% endif %}
+    <div class='button-toolbar container-flui' style='float: right';>
+        {% if part.active %}
+        {% if roles.build.add %}
+        <button class="btn btn-success" id='start-build'>{% trans "Start New Build" %}</button>
+        {% endif %}
+        {% endif %}
+        <div class='filter-list' id='filter-list-build'>
+            <!-- Empty div for filters -->
+        </div>
+    </div>
 </div>
 
 <table class='table table-striped table-condensed' data-toolbar='#button-toolbar' id='build-table'>
@@ -31,39 +39,12 @@
                         });
     });
 
-    $("#build-table").inventreeTable({
-        queryParams: function(p) {
-            return {
-                part: {{ part.id }},
-            }
-        },
-        columns: [
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-            },
-            {
-                field: 'title',
-                title: 'Title',
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url);
-                }
-            },
-            {
-                field: 'quantity',
-                title: 'Quantity',
-            },
-            {
-                field: 'status',
-                title: 'Status',
-            },
-            {
-                field: 'completion_date',
-                title: 'Completed'
-            }
-        ],
-        url: "{% url 'api-build-list' %}",  
+    loadBuildTable($("#build-table"), {
+        url: "{% url 'api-build-list' %}",
+        params: {
+            part_detail: "true",
+            part: {{ part.id }},
+        }
     });
         
 {% endblock %}

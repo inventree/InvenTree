@@ -1,11 +1,12 @@
 {% extends "company/company_base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block details %}
 
 {% include "company/tabs.html" with tab='stock' %}
 
-<h4>Supplier Stock</h4>
+<h4>{% trans "Supplier Stock" %}</h4>
 
 <hr>
 
@@ -18,18 +19,20 @@
     loadStockTable($('#stock-table'), {
         url: "{% url 'api-stock-list' %}",
         params: {
-            supplier: {{ company.id }},
+            company: {{ company.id }},
             part_detail: true,
+            supplier_detail: true,
             location_detail: true,
         },
         buttons: [
             '#stock-options',
-        ]
+        ],
+        filterKey: "companystock",
     });
 
     $("#stock-export").click(function() {
         launchModalForm("{% url 'stock-export-options' %}", {
-            submit_text: "Export",
+            submit_text: '{% trans "Export" %}',
             success: function(response) {
                 var url = "{% url 'stock-export' %}";
 

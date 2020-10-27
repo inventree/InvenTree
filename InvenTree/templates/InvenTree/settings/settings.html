@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 
+{% load i18n %}
 {% load static %}
 
 {% block page_title %}
-InvenTree | Settings
+InvenTree | {% trans "Settings" %}
 {% endblock %}
 
 {% block content %}
 <div class='settings-container'>
 
-    <h3>InvenTree Settings</h3>
+    <h3>InvenTree {% trans "Settings" %}</h3>
     <hr>
 
     <div class='settings-nav'>
@@ -19,6 +20,12 @@ InvenTree | Settings
     </div>
     
     <div class='settings-content'>
+        <h3>
+            {% block subtitle %}
+            SUBTITLE GOES HERE
+            {% endblock %}
+        </h3>
+        <hr>
         {% block settings %}
         {% endblock %}
     </div>
@@ -29,4 +36,21 @@ InvenTree | Settings
 
 {% block js_load %}
 {{ block.super }}
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$('table').find('.btn-edit-setting').click(function() {
+    var setting = $(this).attr('setting');
+    var pk = $(this).attr('pk');
+
+    launchModalForm(
+        `/settings/${pk}/edit/`,
+        {
+            reload: true,
+        }
+    );
+});
+
 {% endblock %}

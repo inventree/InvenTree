@@ -7,8 +7,9 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, UpdateView
 from django.forms import HiddenInput
+from django.urls import reverse
 
 from part.models import Part
 from .models import Build, BuildItem
@@ -16,16 +17,18 @@ from . import forms
 from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
+from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.helpers import str2bool, ExtractSerialNumbers
 from InvenTree.status_codes import BuildStatus
 
 
-class BuildIndex(ListView):
+class BuildIndex(InvenTreeRoleMixin, ListView):
     """ View for displaying list of Builds
     """
     model = Build
     template_name = 'build/index.html'
     context_object_name = 'builds'
+    role_required = 'build.view'
 
     def get_queryset(self):
         """ Return all Build objects (order by date, newest first) """
@@ -52,9 +55,10 @@ class BuildCancel(AjaxUpdateView):
 
     model = Build
     ajax_template_name = 'build/cancel.html'
-    ajax_form_title = 'Cancel Build'
+    ajax_form_title = _('Cancel Build')
     context_object_name = 'build'
     form_class = forms.CancelBuildForm
+    role_required = 'build.change'
 
     def post(self, request, *args, **kwargs):
         """ Handle POST request. Mark the build status as CANCELLED """
@@ -70,12 +74,12 @@ class BuildCancel(AjaxUpdateView):
         if confirm:
             build.cancelBuild(request.user)
         else:
-            form.errors['confirm_cancel'] = ['Confirm build cancellation']
+            form.errors['confirm_cancel'] = [_('Confirm build cancellation')]
             valid = False
 
         data = {
             'form_valid': valid,
-            'danger': 'Build was cancelled'
+            'danger': _('Build was cancelled')
         }
 
         return self.renderJsonResponse(request, form, data=data)
@@ -91,8 +95,9 @@ class BuildAutoAllocate(AjaxUpdateView):
     model = Build
     form_class = forms.ConfirmBuildForm
     context_object_name = 'build'
-    ajax_form_title = 'Allocate Stock'
+    ajax_form_title = _('Allocate Stock')
     ajax_template_name = 'build/auto_allocate.html'
+    role_required = 'build.change'
 
     def get_context_data(self, *args, **kwargs):
         """ Get the context data for form rendering. """
@@ -104,7 +109,7 @@ class BuildAutoAllocate(AjaxUpdateView):
             context['build'] = build
             context['allocations'] = build.getAutoAllocations()
         except Build.DoesNotExist:
-            context['error'] = 'No matching build found'
+            context['error'] = _('No matching build found')
 
         return context
 
@@ -123,8 +128,8 @@ class BuildAutoAllocate(AjaxUpdateView):
         valid = False
 
         if confirm is False:
-            form.errors['confirm'] = ['Confirm stock allocation']
-            form.non_field_errors = 'Check the confirmation box at the bottom of the list'
+            form.errors['confirm'] = [_('Confirm stock allocation')]
+            form.non_field_errors = [_('Check the confirmation box at the bottom of the list')]
         else:
             build.autoAllocate()
             valid = True
@@ -144,8 +149,9 @@ class BuildUnallocate(AjaxUpdateView):
 
     model = Build
     form_class = forms.ConfirmBuildForm
-    ajax_form_title = "Unallocate Stock"
+    ajax_form_title = _("Unallocate Stock")
     ajax_template_name = "build/unallocate.html"
+    form_required = 'build.change'
 
     def post(self, request, *args, **kwargs):
 
@@ -157,8 +163,8 @@ class BuildUnallocate(AjaxUpdateView):
         valid = False
 
         if confirm is False:
-            form.errors['confirm'] = ['Confirm unallocation of build stock']
-            form.non_field_errors = 'Check the confirmation box'
+            form.errors['confirm'] = [_('Confirm unallocation of build stock')]
+            form.non_field_errors = [_('Check the confirmation box')]
         else:
             build.unallocateStock()
             valid = True
@@ -181,8 +187,9 @@ class BuildComplete(AjaxUpdateView):
     model = Build
     form_class = forms.CompleteBuildForm
     context_object_name = "build"
-    ajax_form_title = "Complete Build"
+    ajax_form_title = _("Complete Build")
     ajax_template_name = "build/complete.html"
+    role_required = 'build.change'
 
     def get_form(self):
         """ Get the form object.
@@ -195,6 +202,11 @@ class BuildComplete(AjaxUpdateView):
 
         if not build.part.trackable:
             form.fields.pop('serial_numbers')
+        else:
+
+            form.field_placeholder['serial_numbers'] = build.part.getSerialNumberString(build.quantity)
+
+            form.rebuild_layout()
 
         return form
 
@@ -207,6 +219,7 @@ class BuildComplete(AjaxUpdateView):
         initials = super(BuildComplete, self).get_initial().copy()
 
         build = self.get_object()
+
         if build.part.default_location is not None:
             try:
                 location = StockLocation.objects.get(pk=build.part.default_location.id)
@@ -254,19 +267,19 @@ class BuildComplete(AjaxUpdateView):
 
         if confirm is False:
             form.errors['confirm'] = [
-                'Confirm completion of build',
+                _('Confirm completion of build'),
             ]
         else:
             try:
                 location = StockLocation.objects.get(id=loc_id)
                 valid = True
-            except StockLocation.DoesNotExist:
-                form.errors['location'] = ['Invalid location selected']
+            except (ValueError, StockLocation.DoesNotExist):
+                form.errors['location'] = [_('Invalid location selected')]
 
             serials = []
 
             if build.part.trackable:
-                # A build for a trackable part must specify serial numbers
+                # A build for a trackable part may optionally specify serial numbers.
 
                 sn = request.POST.get('serial_numbers', '')
 
@@ -281,7 +294,7 @@ class BuildComplete(AjaxUpdateView):
                         existing = []
 
                         for serial in serials:
-                            if not StockItem.check_serial_number(build.part, serial):
+                            if build.part.checkIfSerialNumberExists(serial):
                                 existing.append(serial)
 
                         if len(existing) > 0:
@@ -294,7 +307,9 @@ class BuildComplete(AjaxUpdateView):
                         valid = False
 
             if valid:
-                build.completeBuild(location, serials, request.user)
+                if not build.completeBuild(location, serials, request.user):
+                    form.non_field_errors = [('Build could not be completed')]
+                    valid = False
 
         data = {
             'form_valid': valid,
@@ -305,15 +320,40 @@ class BuildComplete(AjaxUpdateView):
     def get_data(self):
         """ Provide feedback data back to the form """
         return {
-            'info': 'Build marked as COMPLETE'
+            'info': _('Build marked as COMPLETE')
         }
+
+
+class BuildNotes(UpdateView):
+    """ View for editing the 'notes' field of a Build object.
+    """
+
+    context_object_name = 'build'
+    template_name = 'build/notes.html'
+    model = Build
+    role_required = 'build.view'
+
+    fields = ['notes']
+
+    def get_success_url(self):
+        return reverse('build-notes', kwargs={'pk': self.get_object().id})
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+        
+        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
+
+        return ctx
 
 
 class BuildDetail(DetailView):
     """ Detail view of a single Build object. """
+
     model = Build
     template_name = 'build/detail.html'
     context_object_name = 'build'
+    role_required = 'build.view'
 
     def get_context_data(self, **kwargs):
 
@@ -332,6 +372,7 @@ class BuildAllocate(DetailView):
     model = Build
     context_object_name = 'build'
     template_name = 'build/allocate.html'
+    role_required = ['build.change']
 
     def get_context_data(self, **kwargs):
         """ Provide extra context information for the Build allocation page """
@@ -359,8 +400,9 @@ class BuildCreate(AjaxCreateView):
     model = Build
     context_object_name = 'build'
     form_class = forms.EditBuildForm
-    ajax_form_title = 'Start new Build'
+    ajax_form_title = _('New Build Order')
     ajax_template_name = 'modal_form.html'
+    role_required = 'build.add'
 
     def get_initial(self):
         """ Get initial parameters for Build creation.
@@ -370,19 +412,23 @@ class BuildCreate(AjaxCreateView):
 
         initials = super(BuildCreate, self).get_initial().copy()
 
-        part_id = self.request.GET.get('part', None)
+        # User has provided a Part ID
+        initials['part'] = self.request.GET.get('part', None)
 
-        if part_id:
-            try:
-                initials['part'] = Part.objects.get(pk=part_id)
-            except Part.DoesNotExist:
-                pass
+        initials['reference'] = Build.getNextBuildNumber()
+
+        initials['parent'] = self.request.GET.get('parent', None)
+
+        # User has provided a SalesOrder ID
+        initials['sales_order'] = self.request.GET.get('sales_order', None)
+
+        initials['quantity'] = self.request.GET.get('quantity', 1)
 
         return initials
 
     def get_data(self):
         return {
-            'success': 'Created new build',
+            'success': _('Created new build'),
         }
 
 
@@ -392,12 +438,13 @@ class BuildUpdate(AjaxUpdateView):
     model = Build
     form_class = forms.EditBuildForm
     context_object_name = 'build'
-    ajax_form_title = 'Edit Build Details'
+    ajax_form_title = _('Edit Build Details')
     ajax_template_name = 'modal_form.html'
+    role_required = 'build.change'
 
     def get_data(self):
         return {
-            'info': 'Edited build',
+            'info': _('Edited build'),
         }
 
 
@@ -406,7 +453,8 @@ class BuildDelete(AjaxDeleteView):
 
     model = Build
     ajax_template_name = 'build/delete_build.html'
-    ajax_form_title = 'Delete Build'
+    ajax_form_title = _('Delete Build')
+    role_required = 'build.delete'
 
 
 class BuildItemDelete(AjaxDeleteView):
@@ -416,12 +464,13 @@ class BuildItemDelete(AjaxDeleteView):
 
     model = BuildItem
     ajax_template_name = 'build/delete_build_item.html'
-    ajax_form_title = 'Unallocate Stock'
+    ajax_form_title = _('Unallocate Stock')
     context_object_name = 'item'
+    role_required = 'build.delete'
 
     def get_data(self):
         return {
-            'danger': 'Removed parts from build allocation'
+            'danger': _('Removed parts from build allocation')
         }
 
 
@@ -431,7 +480,8 @@ class BuildItemCreate(AjaxCreateView):
     model = BuildItem
     form_class = forms.EditBuildItemForm
     ajax_template_name = 'build/create_build_item.html'
-    ajax_form_title = 'Allocate new Part'
+    ajax_form_title = _('Allocate new Part')
+    role_required = 'build.add'
 
     part = None
     available_stock = None
@@ -517,26 +567,63 @@ class BuildItemCreate(AjaxCreateView):
         build_id = self.get_param('build')
         part_id = self.get_param('part')
 
+        # Reference to a Part object
+        part = None
+
+        # Reference to a StockItem object
+        item = None
+        
+        # Reference to a Build object
+        build = None
+
         if part_id:
             try:
                 part = Part.objects.get(pk=part_id)
+                initials['part'] = part
             except Part.DoesNotExist:
-                part = None
-        else:
-            part = None
+                pass
 
         if build_id:
             try:
                 build = Build.objects.get(pk=build_id)
                 initials['build'] = build
-
-                # Try to work out how many parts to allocate
-                if part:
-                    unallocated = build.getUnallocatedQuantity(part)
-                    initials['quantity'] = unallocated
-
             except Build.DoesNotExist:
                 pass
+
+        quantity = self.request.GET.get('quantity', None)
+
+        if quantity is not None:
+            quantity = float(quantity)
+
+        if quantity is None:
+            # Work out how many parts remain to be alloacted for the build
+            if part:
+                quantity = build.getUnallocatedQuantity(part)
+                
+        item_id = self.get_param('item')
+
+        # If the request specifies a particular StockItem
+        if item_id:
+            try:
+                item = StockItem.objects.get(pk=item_id)
+            except:
+                pass
+
+        # If a StockItem is not selected, try to auto-select one
+        if item is None and part is not None:
+            items = StockItem.objects.filter(part=part)
+            if items.count() == 1:
+                item = items.first()
+
+        # Finally, if a StockItem is selected, ensure the quantity is not too much
+        if item is not None:
+            if quantity is None:
+                quantity = item.unallocated_quantity()
+            else:
+                quantity = min(quantity, item.unallocated_quantity())
+
+        if quantity is not None:
+            initials['quantity'] = quantity
 
         return initials
 
@@ -547,11 +634,12 @@ class BuildItemEdit(AjaxUpdateView):
     model = BuildItem
     ajax_template_name = 'modal_form.html'
     form_class = forms.EditBuildItemForm
-    ajax_form_title = 'Edit Stock Allocation'
+    ajax_form_title = _('Edit Stock Allocation')
+    role_required = 'build.change'
 
     def get_data(self):
         return {
-            'info': 'Updated Build Item',
+            'info': _('Updated Build Item'),
         }
 
     def get_form(self):

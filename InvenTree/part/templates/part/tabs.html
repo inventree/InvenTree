@@ -6,17 +6,19 @@
         <a href="{% url 'part-detail' part.id %}">{% trans "Details" %}</a>
     </li>
     <li{% ifequal tab 'params' %} class='active'{% endifequal %}>
-        <a href="{% url 'part-params' part.id %}">{% trans "Parameters" %} <span class='badge'>{{ part.parameters.count }}</span></a>
+        <a href="{% url 'part-params' part.id %}">{% trans "Parameters" %}<span class='badge'>{{ part.parameters.count }}</span></a>
     </li>
     {% if part.is_template %}
     <li{% ifequal tab 'variants' %} class='active'{% endifequal %}>
         <a href="{% url 'part-variants' part.id %}">{% trans "Variants" %} <span class='badge'>{{ part.variants.count }}</span></span></a>
     </li>
     {% endif %}
+    {% if not part.virtual %}
     <li{% ifequal tab 'stock' %} class="active"{% endifequal %}>
         <a href="{% url 'part-stock' part.id %}">{% trans "Stock" %} <span class="badge">{% decimal part.total_stock %}</span></a>
     </li>
-    {% if part.component or part.used_in_count > 0 %}
+    {% endif %}
+    {% if part.component or part.salable or part.used_in_count > 0 %}
     <li{% ifequal tab 'allocation' %} class="active"{% endifequal %}>
         <a href="{% url 'part-allocation' part.id %}">{% trans "Allocated" %} <span class="badge">{% decimal part.allocation_count %}</span></a>
     </li>
@@ -24,14 +26,17 @@
     {% if part.assembly %}
     <li{% ifequal tab 'bom' %} class="active"{% endifequal %}>
         <a href="{% url 'part-bom' part.id %}">{% trans "BOM" %}<span class="badge{% if part.is_bom_valid == False %} badge-alert{% endif %}">{{ part.bom_count }}</span></a></li>
+    {% if roles.build.view %}
     <li{% ifequal tab 'build' %} class="active"{% endifequal %}>
-        <a href="{% url 'part-build' part.id %}">{% trans "Build" %}<span class='badge'>{{ part.active_builds|length }}</span></a></li>
+        <a href="{% url 'part-build' part.id %}">{% trans "Build Orders" %}<span class='badge'>{{ part.builds.count }}</span></a>
+    </li>
+    {% endif %}
     {% endif %}
     {% if part.component or part.used_in_count > 0 %}
     <li{% ifequal tab 'used' %} class="active"{% endifequal %}>
         <a href="{% url 'part-used-in' part.id %}">{% trans "Used In" %} {% if part.used_in_count > 0 %}<span class="badge">{{ part.used_in_count }}</span>{% endif %}</a></li>
     {% endif %}
-    {% if part.purchaseable %}
+    {% if part.purchaseable and roles.purchase_order.view %}
     {% if part.is_template == False %}
     <li{% ifequal tab 'suppliers' %} class="active"{% endifequal %}>
         <a href="{% url 'part-suppliers' part.id %}">{% trans "Suppliers" %}
@@ -43,15 +48,25 @@
         <a href="{% url 'part-orders' part.id %}">{% trans "Purchase Orders" %} <span class='badge'>{{ part.purchase_orders|length }}</span></a>
     </li>
     {% endif %}
-    {% if part.trackable and 0 %}
-    <li{% ifequal tab 'track' %} class="active"{% endifequal %}>
-        <a href="{% url 'part-track' part.id %}">{% trans "Tracking" %}
-        {% if parts.serials.all|length > 0 %}
-        <span class="badge">{{ part.serials.all|length }}</span>
-        {% endif %}
-    </a></li>
+    {% if part.salable and roles.sales_order.view %}
+    <li {% if tab == 'sales-prices' %}class='active'{% endif %}>
+        <a href="{% url 'part-sale-prices' part.id %}">{% trans "Sale Price" %}</a>
+    </li>
+    <li{% ifequal tab 'sales-orders' %} class='active'{% endifequal %}>
+        <a href="{% url 'part-sales-orders' part.id %}">{% trans "Sales Orders" %} <span class='badge'>{{ part.sales_orders|length }}</span></a>
+    </li>
+    {% endif %}
+    {% if part.trackable %}
+    <li{% ifequal tab 'tests' %} class='active'{% endifequal %}>
+        <a href='{% url "part-test-templates" part.id %}'>{% trans "Tests" %}
+            {% if part.getTestTemplates.count > 0 %}<span class='badge'>{{ part.getTestTemplates.count }}</span>{% endif %}
+        </a>
+    </li>
     {% endif %}
     <li{% ifequal tab 'attachments' %} class="active"{% endifequal %}>
         <a href="{% url 'part-attachments' part.id %}">{% trans "Attachments" %} {% if part.attachment_count > 0 %}<span class="badge">{{ part.attachment_count }}</span>{% endif %}</a>
+    </li>
+    <li{% ifequal tab 'notes' %} class="active"{% endifequal %}>
+        <a href="{% url 'part-notes' part.id %}">{% trans "Notes" %}{% if part.notes %} <span class='fas fa-info-circle'></span>{% endif %}</a>
     </li>
 </ul>

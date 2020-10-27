@@ -1,7 +1,15 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
+
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
+from part.models import Part
+from stock.models import StockItem
+from company.models import Company
+
+from InvenTree.status_codes import StockStatus
 
 
 class PartAPITest(APITestCase):
@@ -16,12 +24,32 @@ class PartAPITest(APITestCase):
         'part',
         'location',
         'bom',
+        'test_templates',
     ]
 
     def setUp(self):
         # Create a user for auth
         User = get_user_model()
-        User.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@testing.com',
+            password='password'
+        )
+
+        # Put the user into a group with the correct permissions
+        group = Group.objects.create(name='mygroup')
+        self.user.groups.add(group)
+
+        # Give the group *all* the permissions!
+        for rule in group.rule_sets.all():
+            rule.can_view = True
+            rule.can_change = True
+            rule.can_add = True
+            rule.can_delete = True
+
+            rule.save()
+
+        group.save()
 
         self.client.login(username='testuser', password='password')
 
@@ -82,9 +110,10 @@ class PartAPITest(APITestCase):
 
     def test_get_all_parts(self):
         url = reverse('api-part-list')
-        response = self.client.get(url, format='json')
+        data = {'cascade': True}
+        response = self.client.get(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 8)
+        self.assertEqual(len(response.data), 13)
 
     def test_get_parts_by_cat(self):
         url = reverse('api-part-list')
@@ -103,7 +132,7 @@ class PartAPITest(APITestCase):
         If provided, parts are provided for ANY child category (recursive)
         """
         url = reverse('api-part-list')
-        data = {'category': 1}
+        data = {'category': 1, 'cascade': True}
 
         # Now request to include child categories
         response = self.client.get(url, data, format='json')
@@ -158,3 +187,130 @@ class PartAPITest(APITestCase):
         data['part'] = 2
         data['sub_part'] = 2
         response = self.client.post(url, data, format='json')
+
+    def test_test_templates(self):
+
+        url = reverse('api-part-test-template-list')
+
+        # List ALL items
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 7)
+
+        # Request for a particular part
+        response = self.client.get(url, data={'part': 10000})
+        self.assertEqual(len(response.data), 5)
+
+        response = self.client.get(url, data={'part': 10004})
+        self.assertEqual(len(response.data), 7)
+
+        # Try to post a new object (should succeed)
+        response = self.client.post(
+            url,
+            data={
+                'part': 10000,
+                'test_name': 'New Test',
+                'required': True,
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Try to post a new test with the same name (should fail)
+        response = self.client.post(
+            url,
+            data={
+                'part': 10004,
+                'test_name': "   newtest"
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Try to post a new test against a non-trackable part (should fail)
+        response = self.client.post(
+            url,
+            data={
+                'part': 1,
+                'test_name': 'A simple test',
+            }
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class PartAPIAggregationTest(APITestCase):
+    """
+    Tests to ensure that the various aggregation annotations are working correctly...
+    """
+
+    fixtures = [
+        'category',
+        'company',
+        'part',
+        'location',
+        'bom',
+        'test_templates',
+    ]
+
+    def setUp(self):
+        # Create a user for auth
+        User = get_user_model()
+        User.objects.create_user('testuser', 'test@testing.com', 'password')
+
+        self.client.login(username='testuser', password='password')
+
+        # Add a new part
+        self.part = Part.objects.create(
+            name='Banana',
+        )
+
+        # Create some stock items associated with the part
+
+        # First create 600 units which are OK
+        StockItem.objects.create(part=self.part, quantity=100)
+        StockItem.objects.create(part=self.part, quantity=200)
+        StockItem.objects.create(part=self.part, quantity=300)
+
+        # Now create another 400 units which are LOST
+        StockItem.objects.create(part=self.part, quantity=400, status=StockStatus.LOST)
+
+    def get_part_data(self):
+        url = reverse('api-part-list')
+
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        for part in response.data:
+            if part['pk'] == self.part.pk:
+                return part
+
+        # We should never get here!
+        self.assertTrue(False)
+
+    def test_stock_quantity(self):
+        """
+        Simple test for the stock quantity
+        """
+
+        data = self.get_part_data()
+
+        self.assertEqual(data['in_stock'], 600)
+        self.assertEqual(data['stock_item_count'], 4)
+    
+        # Add some more stock items!!
+        for i in range(100):
+            StockItem.objects.create(part=self.part, quantity=5)
+
+        # Add another stock item which is assigned to a customer (and shouldn't count)
+        customer = Company.objects.get(pk=4)
+        StockItem.objects.create(part=self.part, quantity=9999, customer=customer)
+
+        data = self.get_part_data()
+
+        self.assertEqual(data['in_stock'], 1100)
+        self.assertEqual(data['stock_item_count'], 105)

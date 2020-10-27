@@ -1,13 +1,15 @@
 {% extends "modal_form.html" %}
 
+{% load i18n %}
+
 {% block form %}
 
 <h4>
-    Step 2 of 2 - Select Purchase Orders
+    {% trans "Step 2 of 2 - Select Purchase Orders" %}
 </h4>
 
 <div class='alert alert-info alert-block' role='alert'>
-    Select existing purchase orders, or create new orders.
+    {% trans "Select existing purchase orders, or create new orders." %}
 </div>
 
 <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
@@ -25,9 +27,9 @@
 
     <table class='table table-condensed table-striped' id='order-wizard-po-table'>
         <tr>
-            <th>Supplier</th>
-            <th>Items</th>
-            <th colspan='2'>Select Purchase Order</th>
+            <th>{% trans "Supplier" %}</th>
+            <th>{% trans "Items" %}</th>
+            <th colspan='2'>{% trans "Select Purchase Order" %}</th>
         </tr>
         {% for supplier in suppliers %}
         <tr id='suppier_row_{{ supplier.id }}'>
@@ -43,7 +45,7 @@
                     title='Create new purchase order for {{ supplier.name }}'
                     type='button'
                     onclick='newPurchaseOrderFromOrderWizard()'>
-                    <span supplier-id='{{ supplier.id }}' class='glyphicon glyphicon-small glyphicon-plus'></span>
+                    <span supplier-id='{{ supplier.id }}' class='fas fa-plus-circle'></span>
                 </button>
             </td>
             <td>
@@ -62,7 +64,7 @@
                         </select>
                     </div>
                     {% if not supplier.selected_purchase_order %}
-                    <span class='help-inline'>Select a purchase order for {{ supplier.name }}</span>
+                    <span class='help-inline'>{% trans "Select a purchase order for" %} {{ supplier.name }}</span>
                     {% endif %}
                 </div>
             </td>

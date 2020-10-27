@@ -1,21 +1,34 @@
 # Construct build objects 
 
 - model: build.build
+  pk: 1
   fields:
     part: 25
     batch: 'B1'
+    reference: "0001"
     title: 'Building 7 parts'
     quantity: 7
     notes: 'Some simple notes'
     status: 10  # PENDING
     creation_date: '2019-03-16'
+    link: http://www.google.com
+    level: 0
+    lft: 0
+    rght: 0
+    tree_id: 0
 
 - model: build.build
+  pk: 2
   fields:
     part: 50
+    reference: "0002"
     title: 'Making things'
     batch: 'B2'
     status: 40  # COMPLETE
     quantity: 21
     notes: 'Some more simple notes'
     creation_date: '2019-03-16'
+    level: 0
+    lft: 0
+    rght: 0
+    tree_id: 1

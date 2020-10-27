@@ -1,0 +1,44 @@
+{% extends "company/supplier_part_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block details %}
+
+{% include "company/supplier_part_tabs.html" with tab='details' %}
+
+<hr>
+
+<h4>{% trans "Supplier Part Details" %}</h4>
+<table class="table table-striped table-condensed">
+    <tr>
+        <td>{% trans "Internal Part" %}</td>
+        <td>
+            {% if part.part %}
+            <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.full_name }}</a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr><td>{% trans "Supplier" %}</td><td><a href="{% url 'company-detail-parts' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
+    <tr><td>{% trans "SKU" %}</td><td>{{ part.SKU }}</tr></tr>
+{% if part.link %}
+    <tr><td>{% trans "External Link" %}</td><td><a href="{{ part.link }}">{{ part.link }}</a></td></tr>
+{% endif %}
+{% if part.description %}
+    <tr><td>{% trans "Description" %}</td><td>{{ part.description }}</td></tr>
+{% endif %}
+{% if part.manufacturer %}
+    <tr><td>{% trans "Manufacturer" %}</td><td>{{ part.manufacturer }}</td></tr>
+    <tr><td>{% trans "MPN" %}</td><td>{{ part.MPN }}</td></tr>
+{% endif %}
+{% if part.note %}
+    <tr><td>{% trans "Note" %}</td><td>{{ part.note }}</td></tr>
+{% endif %}
+</table>
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+    
+
+{% endblock %}

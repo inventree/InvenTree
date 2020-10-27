@@ -13,7 +13,11 @@
 {% if form.non_field_errors %}
 <div class='alert alert-danger alert-block' role='alert'>
   <b>Error Submitting Form:</b>
-  {{ form.non_field_errors }}
+  <ul>
+    {% for error in form.non_field_errors %}
+    {{ error }}
+    {% endfor %}
+  </ul>
 </div>
 {% endif %}
 {% endblock %}

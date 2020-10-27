@@ -6,9 +6,14 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+inventree-env/
 ./build/
 develop-eggs/
 dist/
+bin/
+lib64
+pyvenv.cfg
+share/
 downloads/
 eggs/
 .eggs/
@@ -27,15 +32,12 @@ var/
 local_settings.py
 *.sqlite3
 *.backup
+*.old
 
 # Sphinx files
 docs/_build
 
 # Local static and media file storage (only when running in development mode)
-InvenTree/media
-InvenTree/static
-media
-static
 inventree_media
 inventree_static
 

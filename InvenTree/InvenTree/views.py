@@ -8,19 +8,24 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse_lazy
+
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from django.views import View
-from django.views.generic import UpdateView, CreateView
+from django.views.generic import UpdateView, CreateView, FormView
 from django.views.generic.base import TemplateView
 
-from part.models import Part
-from common.models import InvenTreeSetting
+from part.models import Part, PartCategory
+from stock.models import StockLocation, StockItem
+from common.models import InvenTreeSetting, ColorTheme
+from users.models import check_user_role, RuleSet
 
-from .forms import DeleteForm, EditUserForm, SetPasswordForm
+from .forms import DeleteForm, EditUserForm, SetPasswordForm, ColorThemeSelectForm
 from .helpers import str2bool
-from .version import inventreeVersion
 
 from rest_framework import views
 
@@ -103,18 +108,86 @@ class TreeSerializer(views.APIView):
         return JsonResponse(response, safe=False)
 
 
-class AjaxMixin(object):
+class InvenTreeRoleMixin(PermissionRequiredMixin):
+    """
+    Permission class based on user roles, not user 'permissions'.
+
+    To specify which role is required for the mixin,
+    set the class attribute 'role_required' to something like the following:
+
+    role_required = 'part.add'
+    role_required = [
+        'part.change',
+        'build.add',
+    ]
+    """
+
+    # By default, no roles are required
+    # Roles must be specified
+    role_required = None
+
+    def has_permission(self):
+        """
+        Determine if the current user has specified permissions
+        """
+
+        if self.permission_required:
+            # Ignore role-based permissions
+            return super().has_permission()
+
+        roles_required = []
+
+        if type(self.role_required) is str:
+            roles_required.append(self.role_required)
+        elif type(self.role_required) in [list, tuple]:
+            roles_required = self.role_required
+
+        user = self.request.user
+
+        # Superuser can have any permissions they desire
+        if user.is_superuser:
+            return True
+
+        for required in roles_required:
+
+            (role, permission) = required.split('.')
+
+            if role not in RuleSet.RULESET_NAMES:
+                raise ValueError(f"Role '{role}' is not a valid role")
+            
+            if permission not in RuleSet.RULESET_PERMISSIONS:
+                raise ValueError(f"Permission '{permission}' is not a valid permission")
+
+            # Return False if the user does not have *any* of the required roles
+            if not check_user_role(user, role, permission):
+                return False
+
+        # We did not fail any required checks
+        return True
+
+
+class AjaxMixin(InvenTreeRoleMixin):
     """ AjaxMixin provides basic functionality for rendering a Django form to JSON.
     Handles jsonResponse rendering, and adds extra data for the modal forms to process
     on the client side.
+
+    Any view which inherits the AjaxMixin will need
+    correct permissions set using the 'role_required' attribute
+
     """
+
+    # By default, allow *any* role
+    role_required = None
 
     # By default, point to the modal_form template
     # (this can be overridden by a child class)
     ajax_template_name = 'modal_form.html'
 
-    ajax_form_action = ''
     ajax_form_title = ''
+
+    def get_form_title(self):
+        """ Default implementation - return the ajax_form_title variable """
+        return self.ajax_form_title
 
     def get_param(self, name, method='GET'):
         """ Get a request query parameter value from URL e.g. ?part=3
@@ -162,12 +235,19 @@ class AjaxMixin(object):
             except AttributeError:
                 context = {}
 
+        # If no 'form' argument is supplied, look at the underlying class
+        if form is None:
+            try:
+                form = self.get_form()
+            except AttributeError:
+                pass
+
         if form:
             context['form'] = form
         else:
             context['form'] = None
 
-        data['title'] = self.ajax_form_title
+        data['title'] = self.get_form_title()
 
         data['html_form'] = render_to_string(
             self.ajax_template_name,
@@ -335,12 +415,21 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             # Include context data about the updated object
             data['pk'] = obj.id
 
+            self.post_save(obj)
+
             try:
                 data['url'] = obj.get_absolute_url()
             except AttributeError:
                 pass
 
         return self.renderJsonResponse(request, form, data)
+
+    def post_save(self, obj, *args, **kwargs):
+        """
+        Hook called after the form data is saved.
+        (Optional)
+        """
+        pass
 
 
 class AjaxDeleteView(AjaxMixin, UpdateView):
@@ -411,21 +500,6 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
         return self.renderJsonResponse(request, form, data=data, context=context)
 
 
-class InfoView(AjaxView):
-    """ Simple JSON endpoint for InvenTree information.
-    Use to confirm that the server is running, etc.
-    """
-
-    def get(self, request, *args, **kwargs):
-
-        data = {
-            'server': 'InvenTree',
-            'version': inventreeVersion()
-        }
-
-        return JsonResponse(data)
-
-
 class EditUserView(AjaxUpdateView):
     """ View for editing user information """
 
@@ -488,15 +562,16 @@ class IndexView(TemplateView):
 
         context = super(TemplateView, self).get_context_data(**kwargs)
 
-        context['starred'] = [star.part for star in self.request.user.starred_parts.all()]
+        # TODO - Re-implement this when a less expensive method is worked out
+        # context['starred'] = [star.part for star in self.request.user.starred_parts.all()]
 
         # Generate a list of orderable parts which have stock below their minimum values
         # TODO - Is there a less expensive way to get these from the database
-        context['to_order'] = [part for part in Part.objects.filter(purchaseable=True) if part.need_to_restock()]
+        # context['to_order'] = [part for part in Part.objects.filter(purchaseable=True) if part.need_to_restock()]
     
         # Generate a list of assembly parts which have stock below their minimum values
         # TODO - Is there a less expensive way to get these from the database
-        context['to_build'] = [part for part in Part.objects.filter(assembly=True) if part.need_to_restock()]
+        # context['to_build'] = [part for part in Part.objects.filter(assembly=True) if part.need_to_restock()]
 
         return context
 
@@ -524,6 +599,17 @@ class SearchView(TemplateView):
         return super(TemplateView, self).render_to_response(context)
 
 
+class DynamicJsView(TemplateView):
+    """
+    View for returning javacsript files,
+    which instead of being served dynamically,
+    are passed through the django translation engine!
+    """
+
+    template_name = ""
+    content_type = 'text/javascript'
+    
+
 class SettingsView(TemplateView):
     """ View for configuring User settings
     """
@@ -535,5 +621,110 @@ class SettingsView(TemplateView):
         ctx = super().get_context_data(**kwargs).copy()
 
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
+
+        return ctx
+
+
+class ColorThemeSelectView(FormView):
+    """ View for selecting a color theme """
+
+    form_class = ColorThemeSelectForm
+    success_url = reverse_lazy('settings-theme')
+    template_name = "InvenTree/settings/theme.html"
+
+    def get_user_theme(self):
+        """ Get current user color theme """
+        try:
+            user_theme = ColorTheme.objects.filter(user=self.request.user).get()
+        except ColorTheme.DoesNotExist:
+            user_theme = None
+
+        return user_theme
+
+    def get_initial(self):
+        """ Select current user color theme as initial choice """
+
+        initial = super(ColorThemeSelectView, self).get_initial()
+
+        user_theme = self.get_user_theme()
+        if user_theme:
+            initial['name'] = user_theme.name
+        return initial
+
+    def get(self, request, *args, **kwargs):
+        """ Check if current color theme exists, else display alert box """
+
+        context = {}
+
+        form = self.get_form()
+        context['form'] = form
+
+        user_theme = self.get_user_theme()
+        if user_theme:
+            # Check color theme is a valid choice
+            if not ColorTheme.is_valid_choice(user_theme):
+                user_color_theme_name = user_theme.name
+                if not user_color_theme_name:
+                    user_color_theme_name = 'default'
+
+                context['invalid_color_theme'] = user_color_theme_name
+
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        """ Save user color theme selection """
+
+        form = self.get_form()
+
+        # Get current user theme
+        user_theme = self.get_user_theme()
+
+        # Create theme entry if user did not select one yet
+        if not user_theme:
+            user_theme = ColorTheme()
+            user_theme.user = request.user
+
+        if form.is_valid():
+            theme_selected = form.cleaned_data['name']
+            
+            # Set color theme to form selection
+            user_theme.name = theme_selected
+            user_theme.save()
+
+            return self.form_valid(form)
+        else:
+            # Set color theme to default
+            user_theme.name = ColorTheme.default_color_theme[0]
+            user_theme.save()
+
+            return self.form_invalid(form)
+
+
+class DatabaseStatsView(AjaxView):
+    """ View for displaying database statistics """
+
+    ajax_template_name = "stats.html"
+    ajax_form_title = _("Database Statistics")
+
+    def get_context_data(self, **kwargs):
+
+        ctx = {}
+
+        # Part stats
+        ctx['part_count'] = Part.objects.count()
+        ctx['part_cat_count'] = PartCategory.objects.count()
+        
+        # Stock stats
+        ctx['stock_item_count'] = StockItem.objects.count()
+        ctx['stock_loc_count'] = StockLocation.objects.count()
+
+        """
+        TODO: Other ideas for database metrics
+
+        - "Popular" parts (used to make other parts?)
+        - Most ordered part
+        - Most sold part
+        - etc etc etc
+        """
 
         return ctx

@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from .models import Part, PartCategory
+from .models import Part, PartCategory, PartParameter, PartParameterTemplate
 
 
 class CategoryTest(TestCase):
@@ -15,6 +15,7 @@ class CategoryTest(TestCase):
         'category',
         'part',
         'location',
+        'params',
     ]
 
     def setUp(self):
@@ -88,11 +89,36 @@ class CategoryTest(TestCase):
 
         self.assertEqual(self.electronics.partcount(), 3)
 
-        self.assertEqual(self.mechanical.partcount(), 4)
-        self.assertEqual(self.mechanical.partcount(active=True), 3)
-        self.assertEqual(self.mechanical.partcount(False), 2)
+        self.assertEqual(self.mechanical.partcount(), 9)
+        self.assertEqual(self.mechanical.partcount(active=True), 8)
+        self.assertEqual(self.mechanical.partcount(False), 7)
 
         self.assertEqual(self.electronics.item_count, self.electronics.partcount())
+
+    def test_parameters(self):
+        """ Test that the Category parameters are correctly fetched """
+
+        # Check number of SQL queries to iterate other parameters
+        with self.assertNumQueries(3):
+            # Prefetch: 3 queries (parts, parameters and parameters_template)
+            fasteners = self.fasteners.prefetch_parts_parameters()
+            # Iterate through all parts and parameters
+            for fastener in fasteners:
+                self.assertIsInstance(fastener, Part)
+                for parameter in fastener.parameters.all():
+                    self.assertIsInstance(parameter, PartParameter)
+                    self.assertIsInstance(parameter.template, PartParameterTemplate)
+
+            # Test number of unique parameters
+            self.assertEqual(len(self.fasteners.get_unique_parameters(prefetch=fasteners)), 1)
+            # Test number of parameters found for each part
+            parts_parameters = self.fasteners.get_parts_parameters(prefetch=fasteners)
+            part_infos = ['pk', 'name', 'description']
+            for part_parameter in parts_parameters:
+                # Remove part informations
+                for item in part_infos:
+                    part_parameter.pop(item)
+                self.assertEqual(len(part_parameter), 1)
 
     def test_invalid_name(self):
         # Test that an illegal character is prohibited in a category name

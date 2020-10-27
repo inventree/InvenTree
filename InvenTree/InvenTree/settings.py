@@ -17,6 +17,8 @@ import logging
 import tempfile
 import yaml
 
+from datetime import datetime
+
 from django.utils.translation import gettext_lazy as _
 
 
@@ -70,6 +72,51 @@ if DEBUG:
         format='%(asctime)s %(levelname)s %(message)s',
     )
 
+# Web URL endpoint for served static files
+STATIC_URL = '/static/'
+
+# The filesystem location for served static files
+STATIC_ROOT = os.path.abspath(CONFIG.get('static_root', os.path.join(BASE_DIR, 'static')))
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'InvenTree', 'static'),
+]
+
+# Color Themes Directory
+STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
+
+# Web URL endpoint for served media files
+MEDIA_URL = '/media/'
+
+# The filesystem location for served static files
+MEDIA_ROOT = os.path.abspath(CONFIG.get('media_root', os.path.join(BASE_DIR, 'media')))
+
+if DEBUG:
+    print("InvenTree running in DEBUG mode")
+    print("MEDIA_ROOT:", MEDIA_ROOT)
+    print("STATIC_ROOT:", STATIC_ROOT)
+
+# Does the user wish to use the sentry.io integration?
+sentry_opts = CONFIG.get('sentry', {})
+
+if sentry_opts.get('enabled', False):
+    dsn = sentry_opts.get('dsn', None)
+
+    if dsn is not None:
+        # Try to import required modules (exit if not installed)
+        try:
+            import sentry_sdk
+            from sentry_sdk.integrations.django import DjangoIntegration
+
+            sentry_sdk.init(dsn=dsn, integrations=[DjangoIntegration()], send_default_pii=True)
+
+        except ModuleNotFoundError:
+            print("sentry_sdk module not found. Install using 'pip install sentry-sdk'")
+            sys.exit(-1)
+
+    else:
+        print("Warning: Sentry.io DSN not specified")
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -83,12 +130,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # InvenTree apps
-    'common.apps.CommonConfig',
-    'part.apps.PartConfig',
-    'stock.apps.StockConfig',
-    'company.apps.CompanyConfig',
     'build.apps.BuildConfig',
+    'common.apps.CommonConfig',
+    'company.apps.CompanyConfig',
+    'label.apps.LabelConfig',
     'order.apps.OrderConfig',
+    'part.apps.PartConfig',
+    'report.apps.ReportConfig',
+    'stock.apps.StockConfig',
+    'users.apps.UsersConfig',
 
     # Third part add-ons
     'django_filters',               # Extended filter functionality
@@ -101,6 +151,10 @@ INSTALLED_APPS = [
     'django_cleanup',               # Automatically delete orphaned MEDIA files
     'qr_code',                      # Generate QR codes
     'mptt',                         # Modified Preorder Tree Traversal
+    'markdownx',                    # Markdown editing
+    'markdownify',                  # Markdown template rendering
+    'django_tex',                   # LaTeX output
+    'django_admin_shell',           # Python shell for the admin interface
 ]
 
 LOGGING = {
@@ -114,7 +168,7 @@ LOGGING = {
     },
 }
 
-MIDDLEWARE = [
+MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -124,27 +178,49 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware',
-]
+    'InvenTree.middleware.AuthRequiredMiddleware'
+])
 
-if CONFIG.get('log_queries', False):
-    MIDDLEWARE.append('InvenTree.middleware.QueryCountMiddleware')
+AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
+    'django.contrib.auth.backends.ModelBackend'
+])
+
+# If the debug toolbar is enabled, add the modules
+if DEBUG and CONFIG.get('debug_toolbar', False):
+    print("Running with DEBUG_TOOLBAR enabled")
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 ROOT_URLCONF = 'InvenTree.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            # Allow templates in the reporting directory to be accessed
+            os.path.join(MEDIA_ROOT, 'report'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'InvenTree.context.status_codes',
+                'InvenTree.context.user_roles',
             ],
         },
+    },
+    # Backend for LaTeX report rendering
+    {
+        'NAME': 'tex',
+        'BACKEND': 'django_tex.engine.TeXEngine',
+        'DIRS': [
+            os.path.join(MEDIA_ROOT, 'report'),
+        ]
     },
 ]
 
@@ -156,10 +232,45 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.DjangoModelPermissions',
+    ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
+
+# Markdownx configuration
+# Ref: https://neutronx.github.io/django-markdownx/customization/
+MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
+
+# Markdownify configuration
+# Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
+
+MARKDOWNIFY_WHITELIST_TAGS = [
+    'a',
+    'abbr',
+    'b',
+    'blockquote',
+    'em',
+    'h1', 'h2', 'h3',
+    'i',
+    'img',
+    'li',
+    'ol',
+    'p',
+    'strong',
+    'ul'
+]
+
+MARKDOWNIFY_WHITELIST_ATTRS = [
+    'href',
+    'src',
+    'alt',
+]
+
+MARKDOWNIFY_BLEACH = False
 
 DATABASES = {}
 
@@ -168,10 +279,12 @@ When running unit tests, enforce usage of sqlite3 database,
 so that the tests can be run in RAM without any setup requirements
 """
 if 'test' in sys.argv:
-    eprint('Running tests - Using sqlite3 memory database')
+    eprint('InvenTree: Running tests - Using sqlite3 memory database')
     DATABASES['default'] = {
+        # Ensure sqlite3 backend is being used
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'test_db.sqlite3'
+        # Doesn't matter what the database is called, it is executed in RAM
+        'NAME': 'ram_test_db.sqlite3',
     }
 
 # Database backend selection
@@ -242,8 +355,7 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale/'),
 )
 
-
-TIME_ZONE = 'UTC'
+TIME_ZONE = CONFIG.get('timezone', 'UTC')
 
 USE_I18N = True
 
@@ -255,28 +367,24 @@ DATE_INPUT_FORMATS = [
     "%Y-%m-%d",
 ]
 
+# LaTeX rendering settings (django-tex)
+LATEX_SETTINGS = CONFIG.get('latex', {})
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.10/howto/static-files/
+# Is LaTeX rendering enabled? (Off by default)
+LATEX_ENABLED = LATEX_SETTINGS.get('enabled', False)
 
-# Web URL endpoint for served static files
-STATIC_URL = '/static/'
+# Set the latex interpreter in the config.yaml settings file
+LATEX_INTERPRETER = LATEX_SETTINGS.get('interpreter', 'pdflatex')
 
-# The filesystem location for served static files
-STATIC_ROOT = CONFIG.get('static_root', os.path.join(BASE_DIR, 'static'))
+LATEX_INTERPRETER_OPTIONS = LATEX_SETTINGS.get('options', '')
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'InvenTree', 'static'),
+LATEX_GRAPHICSPATH = [
+    # Allow LaTeX files to access the report assets directory
+    os.path.join(MEDIA_ROOT, "report", "assets"),
 ]
 
-# Web URL endpoint for served media files
-MEDIA_URL = '/media/'
-
-# The filesystem location for served static files
-MEDIA_ROOT = CONFIG.get('media_root', os.path.join(BASE_DIR, 'media'))
-
 # crispy forms use the bootstrap templates
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
@@ -286,3 +394,8 @@ DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
 DBBACKUP_STORAGE_OPTIONS = {
     'location': CONFIG.get('backup_dir', tempfile.gettempdir()),
 }
+
+# Internal IP addresses allowed to see the debug toolbar
+INTERNAL_IPS = [
+    '127.0.0.1',
+]

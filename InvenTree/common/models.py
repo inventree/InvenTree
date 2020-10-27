@@ -6,10 +6,18 @@ These models are 'generic' and do not fit a particular business logic object.
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+import decimal
+
 from django.db import models
+from django.conf import settings
+
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+
+import InvenTree.helpers
+import InvenTree.fields
 
 
 class InvenTreeSetting(models.Model):
@@ -21,6 +29,205 @@ class InvenTreeSetting(models.Model):
     even if that key does not exist.
     """
 
+    """
+    Dict of all global settings values:
+
+    The key of each item is the name of the value as it appears in the database.
+
+    Each global setting has the following parameters:
+    
+    - name: Translatable string name of the setting (required)
+    - description: Translatable string description of the setting (required)
+    - default: Default value (optional)
+    - units: Units of the particular setting (optional)
+    - validator: Validation function for the setting (optional)
+
+    The keys must be upper-case
+    """
+
+    GLOBAL_SETTINGS = {
+
+        'INVENTREE_INSTANCE': {
+            'name': _('InvenTree Instance Name'),
+            'default': 'InvenTree server',
+            'description': _('String descriptor for the server instance'),
+        },
+
+        'INVENTREE_COMPANY_NAME': {
+            'name': _('Company name'),
+            'description': _('Internal company name'),
+            'default': 'My company name',
+        },
+
+        'PART_IPN_REGEX': {
+            'name': _('IPN Regex'),
+            'description': _('Regular expression pattern for matching Part IPN')
+        },
+
+        'PART_COPY_BOM': {
+            'name': _('Copy Part BOM Data'),
+            'description': _('Copy BOM data by default when duplicating a part'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PART_COPY_PARAMETERS': {
+            'name': _('Copy Part Parameter Data'),
+            'description': _('Copy parameter data by default when duplicating a part'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PART_COPY_TESTS': {
+            'name': _('Copy Part Test Data'),
+            'description': _('Copy test data by default when duplicating a part'),
+            'default': True,
+            'validator': bool
+        },
+
+        'BUILDORDER_REFERENCE_PREFIX': {
+            'name': _('Build Order Reference Prefix'),
+            'description': _('Prefix value for build order reference'),
+            'default': 'BO',
+        },
+
+        'BUILDORDER_REFERENCE_REGEX': {
+            'name': _('Build Order Reference Regex'),
+            'description': _('Regular expression pattern for matching build order reference')
+        },
+
+        'SALESORDER_REFERENCE_PREFIX': {
+            'name': _('Sales Order Reference Prefix'),
+            'description': _('Prefix value for sales order reference'),
+        },
+
+        'PURCHASEORDER_REFERENCE_PREFIX': {
+            'name': _('Purchase Order Reference Prefix'),
+            'description': _('Prefix value for purchase order reference'),
+        },
+    }
+
+    class Meta:
+        verbose_name = "InvenTree Setting"
+        verbose_name_plural = "InvenTree Settings"
+
+    @classmethod
+    def get_setting_name(cls, key):
+        """
+        Return the name of a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('name', '')
+        else:
+            return ''
+
+    @classmethod
+    def get_setting_description(cls, key):
+        """
+        Return the description for a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('description', '')
+        else:
+            return ''
+
+    @classmethod
+    def get_setting_units(cls, key):
+        """
+        Return the units for a particular setting.
+
+        If it does not exist, return an empty string.
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('units', '')
+        else:
+            return ''
+
+    @classmethod
+    def get_setting_validator(cls, key):
+        """
+        Return the validator for a particular setting.
+
+        If it does not exist, return None
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('validator', None)
+        else:
+            return None
+
+    @classmethod
+    def get_default_value(cls, key):
+        """
+        Return the default value for a particular setting.
+
+        If it does not exist, return an empty string
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            return setting.get('default', '')
+        else:
+            return ''
+
+    @classmethod
+    def get_setting_object(cls, key):
+        """
+        Return an InvenTreeSetting object matching the given key.
+
+        - Key is case-insensitive
+        - Returns None if no match is made
+        """
+
+        key = str(key).strip().upper()
+
+        try:
+            setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
+        except (InvenTreeSetting.DoesNotExist):
+            # Create the setting if it does not exist
+            setting = InvenTreeSetting.create(
+                key=key,
+                value=InvenTreeSetting.get_default_value(key)
+            )
+
+        return setting
+
+    @classmethod
+    def get_setting_pk(cls, key):
+        """
+        Return the primary-key value for a given setting.
+
+        If the setting does not exist, return None
+        """
+
+        setting = InvenTreeSetting.get_setting_object(cls)
+
+        if setting:
+            return setting.pk
+        else:
+            return None
+
     @classmethod
     def get_setting(cls, key, backup_value=None):
         """
@@ -28,10 +235,15 @@ class InvenTreeSetting(models.Model):
         If it does not exist, return the backup value (default = None)
         """
 
-        try:
-            setting = InvenTreeSetting.objects.get(key__iexact=key)
+        # If no backup value is specified, atttempt to retrieve a "default" value
+        if backup_value is None:
+            backup_value = cls.get_default_value(key)
+
+        setting = InvenTreeSetting.get_setting_object(key)
+
+        if setting:
             return setting.value
-        except InvenTreeSetting.DoesNotExist:
+        else:
             return backup_value
 
     @classmethod
@@ -59,14 +271,65 @@ class InvenTreeSetting(models.Model):
             else:
                 return
             
-        setting.value = value
+        setting.value = str(value)
         setting.save()
 
     key = models.CharField(max_length=50, blank=False, unique=True, help_text=_('Settings key (must be unique - case insensitive'))
 
     value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
 
-    description = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings description'))
+    @property
+    def name(self):
+        return InvenTreeSetting.get_setting_name(self.key)
+
+    @property
+    def description(self):
+        return InvenTreeSetting.get_setting_description(self.key)
+
+    @property
+    def units(self):
+        return InvenTreeSetting.get_setting_units(self.key)
+
+    def clean(self):
+        """
+        If a validator (or multiple validators) are defined for a particular setting key,
+        run them against the 'value' field.
+        """
+
+        super().clean()
+
+        validator = InvenTreeSetting.get_setting_validator(self.key)
+
+        if validator is not None:
+            self.run_validator(validator)
+
+    def run_validator(self, validator):
+        """
+        Run a validator against the 'value' field for this InvenTreeSetting object.
+        """
+
+        if validator is None:
+            return
+
+        # If a list of validators is supplied, iterate through each one
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                self.run_validator(v)
+            
+            return
+
+        # Check if a 'type' has been specified for this value
+        if type(validator) == type:
+
+            if validator == bool:
+                # Value must "look like" a boolean value
+                if InvenTree.helpers.is_bool(self.value):
+                    # Coerce into either "True" or "False"
+                    self.value = str(InvenTree.helpers.str2bool(self.value))
+                else:
+                    raise ValidationError({
+                        'value': _('Value must be a boolean value')
+                    })
 
     def validate_unique(self, exclude=None):
         """ Ensure that the key:value pair is unique.
@@ -82,6 +345,24 @@ class InvenTreeSetting(models.Model):
                 raise ValidationError({'key': _('Key string must be unique')})
         except InvenTreeSetting.DoesNotExist:
             pass
+
+    def is_bool(self):
+        """
+        Check if this setting is required to be a boolean value
+        """
+
+        validator = InvenTreeSetting.get_setting_validator(self.key)
+
+        return validator == bool
+
+    def as_bool(self):
+        """
+        Return the value of this setting converted to a boolean value.
+
+        Warning: Only use on values where is_bool evaluates to true!
+        """
+
+        return InvenTree.helpers.str2bool(self.value)
 
 
 class Currency(models.Model):
@@ -150,3 +431,85 @@ class Currency(models.Model):
             self.value = 1.0
 
         super().save(*args, **kwargs)
+
+
+class PriceBreak(models.Model):
+    """
+    Represents a PriceBreak model
+    """
+
+    class Meta:
+        abstract = True
+
+    quantity = InvenTree.fields.RoundingDecimalField(max_digits=15, decimal_places=5, default=1, validators=[MinValueValidator(1)])
+
+    cost = InvenTree.fields.RoundingDecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
+
+    currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
+
+    @property
+    def symbol(self):
+        return self.currency.symbol if self.currency else ''
+
+    @property
+    def suffix(self):
+        return self.currency.suffix if self.currency else ''
+
+    @property
+    def converted_cost(self):
+        """
+        Return the cost of this price break, converted to the base currency
+        """
+
+        scaler = decimal.Decimal(1.0)
+
+        if self.currency:
+            scaler = self.currency.value
+
+        return self.cost * scaler
+
+
+class ColorTheme(models.Model):
+    """ Color Theme Setting """
+
+    default_color_theme = ('', _('Default'))
+
+    name = models.CharField(max_length=20,
+                            default='',
+                            blank=True)
+
+    user = models.CharField(max_length=150,
+                            unique=True)
+
+    @classmethod
+    def get_color_themes_choices(cls):
+        """ Get all color themes from static folder """
+
+        # Get files list from css/color-themes/ folder
+        files_list = []
+        for file in os.listdir(settings.STATIC_COLOR_THEMES_DIR):
+            files_list.append(os.path.splitext(file))
+
+        # Get color themes choices (CSS sheets)
+        choices = [(file_name.lower(), _(file_name.replace('-', ' ').title()))
+                   for file_name, file_ext in files_list
+                   if file_ext == '.css' and file_name.lower() != 'default']
+
+        # Add default option as empty option
+        choices.insert(0, cls.default_color_theme)
+
+        return choices
+
+    @classmethod
+    def is_valid_choice(cls, user_color_theme):
+        """ Check if color theme is valid choice """
+        try:
+            user_color_theme_name = user_color_theme.name
+        except AttributeError:
+            return False
+
+        for color_theme in cls.get_color_themes_choices():
+            if user_color_theme_name == color_theme[0]:
+                return True
+
+        return False

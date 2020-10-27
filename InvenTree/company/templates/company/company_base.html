@@ -1,105 +1,107 @@
-{% extends "base.html" %}
+{% extends "two_column.html" %}
 
 {% load static %}
+{% load i18n %}
 
 {% block page_title %}
-InvenTree | Company - {{ company.name }}
+InvenTree | {% trans "Company" %} - {{ company.name }}
 {% endblock %}
 
-{% block content %}
-
-<div class="row">
-    <div class="col-sm-6">
-        <div class="media">
-            <div class='media-left'>
-                <div class='dropzone' id='company-thumb'>
-                    <img class="part-thumb"
-                    {% if company.image %}
-                    src="{{ company.image.url }}"
-                    {% else %}
-                    src="{% static 'img/blank_image.png' %}"
-                    {% endif %}/>
-                </div>
-            </div>
-            <div class='media-body'>
-              <h4>{{ company.name }}</h4>
-              <p>{{ company.description }}</p>
-              <div class='btn-group'>
-                  {% if company.is_supplier %}
-                  <button type='button' class='btn btn-default btn-glyph' id='company-order-2' title='Create purchase order'>
-                      <span class='glyphicon glyphicon-shopping-cart'/>
-                  </button>
-                  {% endif %}
-                  <button type='button' class='btn btn-default btn-glyph' id='company-edit' title='Edit company information'>
-                      <span class='glyphicon glyphicon-edit'/>
-                  </button>
-                  <button type='button' class='btn btn-default btn-glyph' id='company-delete' title='Delete company'>
-                      <span class='glyphicon glyphicon-trash'/>
-                  </button>
-              </div>
-          </div>
-      </div>
-    </div>
-    <div class="col-sm-6">
-        <table class="table">
-        {% if company.website %}
-        <tr>
-            <td>Website</td><td><a href="{{ company.website }}">{{ company.website }}</a></td>
-        </tr>
-        {% endif %}
-        {% if company.address %}
-        <tr>
-            <td>Address</td><td>{{ company.address }}</td>
-        </tr>
-        {% endif %}
-        {% if company.phone %}
-        <tr>
-            <td>Phone</td><td>{{ company.phone }}</td>
-        </tr>
-        {% endif %}
-        {% if company.email %}
-        <tr>
-            <td>Email</td><td>{{ company.email }}</td>
-        </tr>
-        {% endif %}
-        {% if company.contact %}
-        <tr>
-            <td>Contact</td><td>{{ company.contact }}</td>
-        </tr>
-        {% endif %}
-        </table>
-    </div>
+{% block thumbnail %}
+<div class='dropzone' id='company-thumb'>
+    <img class="part-thumb"
+    {% if company.image %}
+    src="{{ company.image.url }}"
+    {% else %}
+    src="{% static 'img/blank_image.png' %}"
+    {% endif %}/>
 </div>
+{% endblock %}
 
+{% block page_data %}
+<h3>{% trans "Company" %}</h3>
 <hr>
-
-<div class='container-fluid'>
-
-{% block details %}
-
-{% endblock %}
-
+<h4>
+    {{ company.name }}
+    {% if user.is_staff and perms.company.change_company %}
+    <a  href="{% url 'admin:company_company_change' company.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
+    {% endif %}
+</h4>
+<p>{{ company.description }}</p>
+<div class='btn-group action-buttons'>
+    {% if company.is_supplier and roles.purchase_order.add %}
+    <button type='button' class='btn btn-default' id='company-order-2' title='Create purchase order'>
+        <span class='fas fa-shopping-cart'/>
+    </button>
+    {% endif %}
+    {% if perms.company.change_company %}
+    <button type='button' class='btn btn-default' id='company-edit' title='Edit company information'>
+        <span class='fas fa-edit icon-green'/>
+    </button>
+    {% endif %}
+    {% if perms.company.delete_company %}
+    <button type='button' class='btn btn-default' id='company-delete' title='Delete company'>
+        <span class='fas fa-trash-alt icon-red'/>
+    </button>
+    {% endif %}
 </div>
-
 {% endblock %}
 
-{% block js_load %}
-{{ block.super }}
-<script type='text/javascript' src="{% static 'script/inventree/stock.js' %}"></script>
+{% block page_details %}
+<h4>{% trans "Company Details" %}</h4>
+<table class="table">
+    <col width='25'>
+{% if company.website %}
+<tr>
+    <td><span class='fas fa-globe'></span></td>
+    <td>{% trans "Website" %}</td>
+    <td><a href="{{ company.website }}">{{ company.website }}</a></td>
+</tr>
+{% endif %}
+{% if company.address %}
+<tr>
+    <td><span class='fas fa-map-marked-alt'></span></td>
+    <td>{% trans "Address" %}</td>
+    <td>{{ company.address }}</td>
+</tr>
+{% endif %}
+{% if company.phone %}
+<tr>
+    <td><span class='fas fa-phone'></span></td>
+    <td>{% trans "Phone" %}</td>
+    <td>{{ company.phone }}</td>
+</tr>
+{% endif %}
+{% if company.email %}
+<tr>
+    <td><span class='fas fa-at'></span></td>
+    <td>{% trans "Email" %}</td>
+    <td>{{ company.email }}</td>
+</tr>
+{% endif %}
+{% if company.contact %}
+<tr>
+    <td><span class='fas fa-user'></span></td>
+    <td>{% trans "Contact" %}</td>
+    <td>{{ company.contact }}</td>
+</tr>
+{% endif %}
+</table>
 {% endblock %}
 
 {% block js_ready %}
+{{ block.super }}
 
     $('#company-edit').click(function() {
         launchModalForm(
-                        "{% url 'company-edit' company.id %}",
-                        {
-                            reload: true
-                        });
+            "{% url 'company-edit' company.id %}",
+            {
+                reload: true
+            });
     });
 
     $("#company-order-2").click(function() {
-        launchModalForm("{% url 'purchase-order-create' %}",
+        launchModalForm("{% url 'po-create' %}",
         {
             data: {
                 supplier: {{ company.id }},
@@ -111,10 +113,10 @@ InvenTree | Company - {{ company.name }}
 
     $('#company-delete').click(function() {
         launchModalForm(
-                        "{% url 'company-delete' company.id %}",
-                        {
-                            redirect: "{% url 'company-index' %}"
-                        });
+            "{% url 'company-delete' company.id %}",
+            {
+                redirect: "{% url 'company-index' %}"
+            });
     });
 
     enableDragAndDrop(
@@ -130,11 +132,11 @@ InvenTree | Company - {{ company.name }}
 
     $("#company-thumb").click(function() {
         launchModalForm(
-                        "{% url 'company-image' company.id %}",
-                        {
-                            reload: true
-                        }
-                        );
+            "{% url 'company-image' company.id %}",
+            {
+                reload: true
+            }
+        );
     });
 
 {% endblock %}

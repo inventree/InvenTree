@@ -1,0 +1,15 @@
+{% extends "collapse_index.html" %}
+
+{% load i18n %}
+
+{% block collapse_title %}
+<span class='fas fa-newspaper icon-header'></span>
+{% trans "Latest Parts" %}<span class='badge' id='latest-parts-count'><span class='fas fa-spin fa-hourglass-half'></span></span>
+{% endblock %}
+
+{% block collapse_content %}
+
+<table class='table table-striped table-condensed' id='latest-parts-table'>
+</table>
+
+{% endblock %}

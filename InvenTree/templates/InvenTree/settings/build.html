@@ -1,0 +1,23 @@
+{% extends "InvenTree/settings/settings.html" %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block tabs %}
+{% include "InvenTree/settings/tabs.html" with tab='build' %}
+{% endblock %}
+
+{% block subtitle %}
+{% trans "Build Order Settings" %}
+{% endblock %}
+
+{% block settings %}
+
+<table class='table table-striped table-condensed'>
+    <thead></thead>
+    <tbody>
+        {% include "InvenTree/settings/setting.html" with key="BUILDORDER_REFERENCE_PREFIX" %}
+        {% include "InvenTree/settings/setting.html" with key="BUILDORDER_REFERENCE_REGEX" %}
+    </tbody>
+</table>
+
+{% endblock %}

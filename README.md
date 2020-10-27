@@ -1,4 +1,4 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/inventree/InvenTree.svg?branch=master)](https://travis-ci.org/inventree/InvenTree) [![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest) [![Coverage Status](https://coveralls.io/repos/github/inventree/InvenTree/badge.svg)](https://coveralls.io/github/inventree/InvenTree)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/inventree/InvenTree.svg?branch=master)](https://travis-ci.org/inventree/InvenTree) [![Coverage Status](https://coveralls.io/repos/github/inventree/InvenTree/badge.svg)](https://coveralls.io/github/inventree/InvenTree)
 
 <img src="images/logo/inventree.png" alt="InvenTree" width="128"/>
 
@@ -9,14 +9,29 @@ InvenTree is designed to be lightweight and easy to use for SME or hobbyist appl
 
 However, powerful business logic works in the background to ensure that stock tracking history is maintained, and users have ready access to stock level information.
 
-## User Documentation
+# Documentation
 
-For InvenTree documentation, refer to the [user documentation](https://inventree.github.io).
-
-## Developer Documentation
-
-For site administrator and project code documentation, refer to the [developer documentation](http://inventree.readthedocs.io/en/latest/). This includes auto-generated documentation of the InvenTree python codebase.
+For InvenTree documentation, refer to the [InvenTree documentation website](https://inventree.readthedocs.io/en/latest/).
 
 ## Getting Started
 
-Refer to the [getting started guide](https://inventree.readthedocs.io/en/latest/start.html) for installation and setup instructions.
+Refer to the [getting started guide](https://inventree.readthedocs.io/en/latest/start/install/) for installation and setup instructions.
+
+## Integration
+
+InvenTree is designed to be extensible, and provides multiple options for integration with external applications or addition of custom plugins:
+
+* [InvenTree API](https://inventree.readthedocs.io/en/latest/extend/api/)
+* [Python module](https://inventree.readthedocs.io/en/latest/extend/python)
+* [Plugin interface](https://inventree.readthedocs.io/en/latest/extend/plugins)
+* [Third party](https://inventree.readthedocs.io/en/latest/extend/integrate)
+
+# Contributing
+
+Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://inventree.readthedocs.io/en/latest/contribute/).
+
+# Donate
+
+If you use InvenTree and find it to be useful, please consider making a donation toward its continued development. 
+
+[Donate via PayPal](https://paypal.me/inventree?locale.x=en_AU)

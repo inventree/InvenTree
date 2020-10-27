@@ -1,0 +1,67 @@
+{% extends "stock/item_base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block details %}
+
+{% include "stock/tabs.html" with tab='attachments' %}
+
+<h4>{% trans "Stock Item Attachments" %}</h4>
+<hr>
+
+{% include "attachment_table.html" with attachments=item.attachments.all %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+enableDragAndDrop(
+        '#attachment-dropzone',
+        "{% url 'stock-item-attachment-create' %}",
+        {
+            data: {
+                stock_item: {{ item.id }},
+            },
+            label: 'attachment',
+            success: function(data, status, xhr) {
+                location.reload();
+            }
+        }
+    );
+
+$("#new-attachment").click(function() {
+    launchModalForm("{% url 'stock-item-attachment-create' %}?item={{ item.id }}",
+        {
+            reload: true, 
+        });
+});
+
+$("#attachment-table").on('click', '.attachment-edit-button', function() {
+    var button = $(this);
+
+    var url = `/stock/item/attachment/${button.attr('pk')}/edit/`;
+
+    launchModalForm(url, 
+        {
+            reload: true,
+        });
+});
+
+$("#attachment-table").on('click', '.attachment-delete-button', function() {
+    var button = $(this);
+
+    var url = `/stock/item/attachment/${button.attr('pk')}/delete/`;
+
+    launchModalForm(url, {
+        success: function() {
+            location.reload();
+        }
+    });
+});
+
+$("#attachment-table").inventreeTable({
+});
+
+{% endblock %}

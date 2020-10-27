@@ -10,15 +10,20 @@ from .models import Build, BuildItem
 class BuildAdmin(ImportExportModelAdmin):
 
     list_display = (
+        'reference',
+        'title',
         'part',
         'status',
         'batch',
         'quantity',
-        'creation_date',
-        'completion_date',
-        'title',
-        'notes',
     )
+
+    search_fields = [
+        'reference',
+        'title',
+        'part__name',
+        'part__description',
+    ]
 
 
 class BuildItemAdmin(admin.ModelAdmin):

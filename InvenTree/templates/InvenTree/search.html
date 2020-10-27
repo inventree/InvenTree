@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load i18n %}
 
 {% block page_title %}
-InvenTree | Search Results
+InvenTree | {% trans "Search Results" %}
 {% endblock %}
 
 {% block content %}
 
-<h3>Search Results</h3>
+<h3>{% trans "Search Results" %}</h3>
 
 <div>
 {% include "search_form.html" with query_text=query %}
@@ -17,8 +18,10 @@ InvenTree | Search Results
 <br><br>
 <hr>
 
+{% if query %}
+
 <div id='no-search-results'>
-    <h4><i>No results found</i></h4>
+<h4><i>{% trans "No results found for " %}'{{ query }}'</i></h4>
 </div>
 
 {% include "InvenTree/search_part_category.html" with collapse_id="categories" %}
@@ -31,6 +34,16 @@ InvenTree | Search Results
 
 {% include "InvenTree/search_stock_location.html" with collapse_id="locations" %}
 
+{% include "InvenTree/search_stock_items.html" with collapse_id="stock" %}
+
+{% else %}
+    
+<div id='empty-search-query'>
+<h4><i>{% trans "Enter a search query" %}</i></h4>
+</div>
+
+{% endif %}
+
 {% endblock %}
 
 {% block js_load %}
@@ -41,9 +54,8 @@ InvenTree | Search Results
 {% block js_ready %}
 {{ block.super }}
 
-    $(".panel-group").hide();
-
     function onSearchResults(table, output) {
+
         $(table).on('load-success.bs.table', function() {
 
             var panel = $(output).closest('.panel-group');
@@ -55,7 +67,6 @@ InvenTree | Search Results
                 text = '<i>No results</i>'
 
                 $(panel).hide();
-                
 
             } else {
                 text = n + ' result';
@@ -66,17 +77,23 @@ InvenTree | Search Results
 
                 $(panel).show();
 
+                var collapse = panel.find('.panel-collapse');
+
+                collapse.collapse('show');
+
                 $("#no-search-results").hide();
             }
 
-            $(output).html(text);
+            $(output).html(`<i>${text}</i>`);
         });
     }
 
     onSearchResults("#category-results-table", "#category-results-count");
     
     onSearchResults("#location-results-table", "#location-results-count");
-
+    
+    onSearchResults("#stock-results-table", "#stock-results-count");
+    
     onSearchResults('#part-results-table', '#part-result-count');
 
     onSearchResults('#company-results-table', '#company-result-count');
@@ -103,6 +120,86 @@ InvenTree | Search Results
         ],
     });
 
+    $('#stock-results-table').inventreeTable({
+        url: "{% url 'api-stock-list' %}",
+        queryParams: {
+            search: "{{ query }}",
+            part_detail: true,
+            location_detail: true,
+        },
+        columns: [
+            {
+                field: 'part',
+                title: "{% trans "Part" %}",
+                sortable: true,
+                formatter: function(value, row) {
+                    var url = `/stock/item/${row.pk}/`;
+                    var thumb = row.part_detail.thumbnail;
+                    var name = row.part_detail.full_name;
+
+                    html = imageHoverIcon(thumb) + renderLink(name, url);
+                    
+                    return html;
+                }
+            },
+            {
+                field: 'part_description',
+                title: '{% trans "Description" %}',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return row.part_detail.description;
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Stock" %}',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+
+                    var val = parseFloat(value);
+
+                    // If there is a single unit with a serial number, use the serial number
+                    if (row.serial && row.quantity == 1) {
+                        val = '# ' + row.serial;
+                    } else {
+                        val = +val.toFixed(5);
+                    }
+
+                    var html = renderLink(val, `/stock/item/${row.pk}/`);
+
+                    return html;
+                }
+            },
+            {
+                field: 'status',
+                title: '{% trans "Status" %}',
+                sortable: 'true',
+                formatter: function(value, row, index, field) {
+                    return stockStatusDisplay(value);
+                },
+            },
+            {
+                field: 'location_detail.pathstring',
+                title: '{% trans "Location" %}',
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    if (value) {
+                        return renderLink(value, `/stock/location/${row.location}/`);
+                    }
+                    else {
+                        if (row.customer) {
+                            var text = "{% trans "Shipped to customer" %}";
+                            return renderLink(text, `/company/${row.customer}/assigned-stock/`);
+                        } else {
+                            return '<i>{% trans "No stock location set" %}</i>';
+                        }
+                    }
+                }
+            },
+        ]
+    });
+
+
     $("#location-results-table").inventreeTable({
         url: "{% url 'api-location-list' %}",
         queryParams: {
@@ -113,7 +210,7 @@ InvenTree | Search Results
                 field: 'name',
                 title: 'Name',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, '/stock/location/' + row.pk + '/');
+                    return renderLink(row.pathstring, '/stock/location/' + row.pk + '/');
                 },
             },
             {
@@ -123,66 +220,36 @@ InvenTree | Search Results
         ],
     });
 
+
     loadPartTable("#part-results-table",
         "{% url 'api-part-list' %}",
         {
-            query: {
+            params: {
                 search: "{{ query }}",
             },
-            allowInactive: true,
             checkbox: false,
+            disableFilters: true,
+        }
+    );
+    
+
+    loadCompanyTable('#company-results-table', "{% url 'api-company-list' %}", {
+        params: {
+            search: "{{ query }}",
+        }
+    });
+
+    loadSupplierPartTable(
+        "#supplier-part-results-table",
+        "{% url 'api-supplier-part-list' %}",
+        {
+            params: {
+                search: "{{ query }}",
+                part_detail: true,
+                supplier_detail: true,
+                manufacturer_detail: true
+            },
         }
     );
 
-    $("#company-results-table").inventreeTable({
-        url: "{% url 'api-company-list' %}",
-        queryParams: {
-            search: "{{ query }}",
-        },
-        columns: [
-            {
-                field: 'name',
-                title: 'Name',
-                formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.image) + renderLink(value, row.url);
-                },
-            },
-            {
-                field: 'description',
-                title: 'Description',
-            },
-        ]
-    });
-
-    $("#supplier-part-results-table").inventreeTable({
-        url: "{% url 'api-part-supplier-list' %}",
-        queryParams: {
-            search: "{{ query }}",
-        },
-        columns: [
-            {
-                field: 'supplier_name',
-                title: 'Supplier',
-                formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.supplier_logo) + renderLink(value, '/company/' + row.supplier + '/');
-                }
-            },
-            {
-                field: 'SKU',
-                title: 'SKU',
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url);
-                }
-            },
-            {
-                field: 'manufacturer',
-                title: 'Manufacturer',
-            },
-            {
-                field: 'MPN',
-                title: 'MPN',
-            }
-        ]
-    });
-    
 {% endblock %}

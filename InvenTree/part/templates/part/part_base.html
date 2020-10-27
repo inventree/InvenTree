@@ -6,90 +6,101 @@
 
 {% block content %}
 
-{% if part.active == False %}
-<div class='alert alert-danger alert-block'>
-    {% trans "This part is not active" %}"
+{% if part.virtual %}
+<div class='alert alert-info alert-block'>
+    {% trans "This part is a virtual part" %}
 </div>
 {% endif %}
 {% if part.is_template %}
 <div class='alert alert-info alert-block'>
-    This part is a <i>template part</i>.<br>
-    It is not a <i>real</i> part, but real parts can be based on this template.
+    {% trans "This part is a template part." %}
 </div>
 {% endif %}
 {% if part.variant_of %}
 <div class='alert alert-info alert-block'>
-    This part is a variant of <b><a href="{% url 'part-detail' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></b>
+    {% trans "This part is a variant of" %} <b><a href="{% url 'part-variants' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></b>
 </div>
 {% endif %}
 
 <div class="row">
 <div class="col-sm-6">
-    <div class="media">
-      <div class="media-left">
-        <div class='dropzone' id='part-thumb'>
-                <img class="part-thumb"
-                {% if part.image %}
-                src="{{ part.image.url }}"
-                {% else %}
-                src="{% static 'img/blank_image.png' %}"
-                {% endif %}/>
-        </div>
-      </div>
+    {% include "part/part_thumb.html" %}
     <div class="media-body">
-        <h4>
+        <h3>
             {{ part.full_name }}
-        </h4>   
-        <p><i>{{ part.description }}</i></p>
-        <p>
-            <div class='btn-row'>
-                <div class='btn-group'>
-                    <button type='button' class='btn btn-default btn-glyph' id='toggle-starred' title='{% trans "Star this part" %}'>
-                        <span id='part-star-icon' class='starred-part glyphicon {% if starred %}glyphicon-star{% else %}glyphicon-star-empty{% endif %}'/>
-                    </button>
-                    {% if part.is_template == False %}
-                    {% include "qr_button.html" %}
-                    {% if part.active %}
-                    <button type='button' class='btn btn-default btn-glyph' id='price-button' title='{% trans "Show pricing information" %}'>
-                        <span id='part-price-icon' class='part-price glyphicon glyphicon-usd'/>
-                    </button>
-                    {% if not part.virtual %}
-                    <button type='button' class='btn btn-default btn-glyph' id='part-count' title='Count part stock'>
-                        <span class='glyphicon glyphicon-ok-circle'/>
-                    </button>
-                    {% endif %}
-                    {% if part.purchaseable %}
-                    <button type='button' class='btn btn-default btn-glyph' id='part-order' title='Order part'>
-                        <span id='part-order-icon' class='part-order glyphicon glyphicon-shopping-cart'/>
-                    </button>
-                    {% endif %}
-                    {% endif %}
-                    {% endif %}
-                    <button type='button' class='btn btn-default btn-glyph' id='part-duplicate' title='Duplicate part'>
-                        <span id='part-duplicate-icon' class='part-duplicate glyphicon glyphicon-duplicate'/>
-                    </button>
-                    <button type='button' class='btn btn-default btn-glyph' id='part-edit' title='Edit part'>
-                        <span id='part-edit-icon' class='glyphicon glyphicon-edit'/>
-                    </button>
-                    {% if not part.active %}
-                    <button type='button' class='btn btn-default btn-glyph' id='part-delete' title='Delete part'>
-                        <span id='part-delete-icon' class='glyphicon glyphicon-trash'/>
-                    </button>
-                    {% endif %}
-                </div>
+            {% if user.is_staff and roles.part.change %}
+            <a  href="{% url 'admin:part_part_change' part.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
+            {% endif %}
+            {% if not part.active %}
+            <div class='label label-large label-large-red'>
+                {% trans 'Inactive' %}
             </div>
-        </p>
+            {% endif %}
+        </h3>   
+        <p><i>{{ part.description }}</i></p>
+
+        <div class='btn-group action-buttons' role='group'>
+            <button type='button' class='btn btn-default' id='toggle-starred' title='{% trans "Star this part" %}'>
+                <span id='part-star-icon' class='fas fa-star {% if starred %}icon-yellow{% endif %}'/>
+            </button>
+
+            <!-- Barcode actions menu -->
+            <div class='btn-group'>
+                <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
+                <ul class='dropdown-menu'>
+                    <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+                    <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+                </ul>
+            </div>
+            {% if part.active %}
+            <button type='button' class='btn btn-default' id='price-button' title='{% trans "Show pricing information" %}'>
+                <span id='part-price-icon' class='fas fa-dollar-sign'/>
+            </button>
+            {% if roles.stock.change %}
+            <button type='button' class='btn btn-default' id='part-count' title='{% trans "Count part stock" %}'>
+                <span class='fas fa-clipboard-list'/>
+            </button>
+            {% endif %}
+            {% if part.purchaseable %}
+            {% if roles.purchase_order.add %}
+            <button type='button' class='btn btn-default' id='part-order' title='{% trans "Order part" %}'>
+                <span id='part-order-icon' class='fas fa-shopping-cart'/>
+            </button>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+            <!-- Part actions -->
+            {% if roles.part.add or roles.part.change or roles.part.delete %}
+            <div class='btn-group'>
+                <button id='part-actions' title='{% trans "Part actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'> <span class='fas fa-shapes'></span> <span class='caret'></span></button>
+                <ul class='dropdown-menu'>
+                    {% if roles.part.add %}
+                    <li><a href='#' id='part-duplicate'><span class='fas fa-copy'></span> {% trans "Duplicate part" %}</a></li>
+                    {% endif %}
+                    {% if roles.part.change %}
+                    <li><a href='#' id='part-edit'><span class='fas fa-edit icon-blue'></span> {% trans "Edit part" %}</a></li>
+                    {% endif %}
+                    {% if not part.active and roles.part.delete %}
+                    <li><a href='#' id='part-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete part" %}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
         <table class='table table-condensed'>
+            <col width='25'>
             {% if part.IPN %}
             <tr>
+                <td></td>
                 <td>{% trans "IPN" %}</td>
                 <td>{{ part.IPN }}</td>
             </tr>
             {% endif %}
-            {% if part.URL %}
+            {% if part.link %}
             <tr>
-                <td>{% trans "URL" %}</td>
-                <td><a href="{{ part.URL }}">{{ part.URL }}</a></td>
+                <td><span class='fas fa-link'></span></td>
+                <td>{% trans "External Link" %}</td>
+                <td><a href="{{ part.link }}">{{ part.link }}</a></td>
             </tr>
             {% endif %}
             <tr>
@@ -100,25 +111,37 @@
 </div>
 <div class="col-sm-6">
     <table class="table table-striped">
+        <col width='25'>
         <tr>
+            <td><span class='fas fa-boxes'></span></td>
             <td>
                 <h4>{% trans "Available Stock" %}</h4>
             </td>
             <td><h4>{% decimal part.available_stock %} {{ part.units }}</h4></td>
         </tr>
         <tr>
+            <td><span class='fas fa-map-marker-alt'></span></td>
             <td>{% trans "In Stock" %}</td>
-            <td>{% decimal part.total_stock %}</td>
+            <td>{% include "part/stock_count.html" %}</td>
         </tr>
         {% if not part.is_template %}
-        {% if part.allocation_count > 0 %}
+        {% if part.build_order_allocation_count > 0 %}
         <tr>
-            <td>{% trans "Allocated" %}</td>
-            <td>{% decimal part.allocation_count %}</td>
+            <td><span class='fas fa-dolly'></span></td>
+            <td>{% trans "Allocated to Build Orders" %}</td>
+            <td>{% decimal part.build_order_allocation_count %}</td>
+        </tr>
+        {% endif %}
+        {% if part.sales_order_allocation_count > 0 %}
+        <tr>
+            <td><span class='fas fa-dolly'></span></td>
+            <td>{% trans "Allocated to Sales Orders" %}</td>
+            <td>{% decimal part.sales_order_allocation_count %}</td>
         </tr>
         {% endif %}
         {% if part.on_order > 0 %}
         <tr>
+            <td><span class='fas fa-shopping-cart'></span></td>
             <td>{% trans "On Order" %}</td>
             <td>{% decimal part.on_order %}</td>
         </tr>
@@ -127,16 +150,19 @@
         {% if not part.is_template %}
         {% if part.assembly %}
         <tr>
+            <td><span class='fas fa-tools'></span></td>
             <td colspan='2'>
                 <b>{% trans "Build Status" %}</b>
             </td>
         </tr>
         <tr>
+            <td></td>
             <td>{% trans "Can Build" %}</td>
             <td>{% decimal part.can_build %}</td>
         </tr>
         {% if part.quantity_being_built > 0 %}
         <tr>
+            <td></td>
             <td>{% trans "Underway" %}</td>
             <td>{% decimal part.quantity_being_built %}</td>
         </tr>
@@ -163,7 +189,7 @@
 
     enableDragAndDrop(
         '#part-thumb',
-        "{% url 'part-image' part.id %}",
+        "{% url 'part-image-upload' part.id %}",
         {
             label: 'image',
             success: function(data, status, xhr) {
@@ -208,15 +234,57 @@
         });
     });
 
-    $("#part-thumb").click(function() {
-        launchModalForm(
-                        "{% url 'part-image' part.id %}",
-                        {
-                            reload: true
-                        }
-                        );
+    $("#part-image-upload").click(function() {
+        launchModalForm("{% url 'part-image-upload' part.id %}",
+            {
+                reload: true
+            }
+        );
     });
 
+
+    function onSelectImage(response) {
+        // Callback when the image-selection modal form is displayed
+        // Populate the form with image data (requested via AJAX)
+        
+        $("#modal-form").find("#image-select-table").bootstrapTable({
+            pagination: true,
+            pageSize: 25,
+            url: "{% url 'api-part-thumbs' %}",
+            showHeader: false,
+            clickToSelect: true,
+            singleSelect: true,
+            columns: [
+                {
+                    checkbox: true,
+                },
+                {
+                    field: 'image',
+                    title: 'Image',
+                    formatter: function(value, row, index, field) {
+                        return "<img src='/media/" + value + "' class='grid-image'/>"
+                    }
+                }
+            ],
+            onCheck: function(row, element) {
+
+                // Update the selected image in the form
+                var ipt = $("#modal-form").find("#image-input");
+                ipt.val(row.image);
+
+            }
+        });
+    }
+
+    $("#part-image-select").click(function() {
+        launchModalForm("{% url 'part-image-select' part.id %}",
+                        {
+                            reload: true,
+                            after_render: onSelectImage
+                        });
+    });
+
+    {% if roles.part.change %}
     $("#part-edit").click(function() {
         launchModalForm(
             "{% url 'part-edit' part.id %}",
@@ -225,15 +293,18 @@
             }
         );
     });
+    {% endif %}
 
     $("#part-order").click(function() {
         launchModalForm("{% url 'order-parts' %}", {
             data: {
                 part: {{ part.id }},
-            }
+            },
+            reload: true,
         });
     });
 
+    {% if roles.part.add %}
     $("#part-duplicate").click(function() {
         launchModalForm(
             "{% url 'part-duplicate' part.id %}",
@@ -242,8 +313,9 @@
             }
         );
     });
+    {% endif %}
 
-    {% if not part.active %}
+    {% if not part.active and roles.part.delete %}
     $("#part-delete").click(function() {
         launchModalForm(
             "{% url 'part-delete' part.id %}",

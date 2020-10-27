@@ -2,18 +2,28 @@
 
 # 4,000 screws in the dining room
 - model: stock.stockitem
+  pk: 1
   fields:
     part: 1
     location: 3
     batch: 'B123'
     quantity: 4000
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
 
 # 5,000 screws in the bathroom
 - model: stock.stockitem
+  pk: 2
   fields:
     part: 1
     location: 2
     quantity: 5000
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
 
 # 1234 2K2 resistors in 'Drawer_1'
 - model: stock.stockitem
@@ -22,6 +32,10 @@
     part: 3
     location: 5
     quantity: 1234
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
 
 # Some widgets in drawer 3
 - model: stock.stockitem
@@ -31,6 +45,10 @@
     location: 7
     quantity: 10
     delete_on_deplete: False
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
 
 - model: stock.stockitem
   pk: 101
@@ -38,6 +56,10 @@
     part: 25
     location: 7
     quantity: 5
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
 
 - model: stock.stockitem
   pk: 102
@@ -45,3 +67,175 @@
     part: 25
     location: 7
     quantity: 3
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 105
+  fields:
+    part: 25
+    location: 7
+    quantity: 1
+    serial: 1000
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+# Stock items for template / variant parts
+- model: stock.stockitem
+  pk: 500
+  fields:
+    part: 10001
+    location: 7
+    quantity: 5
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 501
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 1
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 501
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 1
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 502
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 2
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 503
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 3
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 504
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 4
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 505
+  fields:
+    part: 10001
+    location: 7
+    quantity: 1
+    serial: 5
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 510
+  fields:
+    part: 10002
+    location: 7
+    quantity: 1
+    serial: 10
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 511
+  fields:
+    part: 10002
+    location: 7
+    quantity: 1
+    serial: 11
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 512
+  fields:
+    part: 10002
+    location: 7
+    quantity: 1
+    serial: 12
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 520
+  fields:
+    part: 10004
+    location: 7
+    quantity: 1
+    serial: 20
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 521
+  fields:
+    part: 10004
+    location: 7
+    quantity: 1
+    serial: 21
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 522
+  fields:
+    part: 10004
+    location: 7
+    quantity: 1
+    serial: 22
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0

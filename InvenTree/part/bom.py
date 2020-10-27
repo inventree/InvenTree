@@ -3,9 +3,11 @@ Functionality for Bill of Material (BOM) management.
 Primarily BOM upload tools.
 """
 
-from fuzzywuzzy import fuzz
+from rapidfuzz import fuzz
 import tablib
 import os
+
+from collections import OrderedDict
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -14,6 +16,7 @@ from InvenTree.helpers import DownloadFile, GetExportFormats
 
 from .admin import BomItemResource
 from .models import BomItem
+from company.models import SupplierPart
 
 
 def IsValidBOMFormat(fmt):
@@ -30,8 +33,14 @@ def MakeBomTemplate(fmt):
     if not IsValidBOMFormat(fmt):
         fmt = 'csv'
 
+    # Create an "empty" queryset, essentially.
+    # This will then export just the row headers!
     query = BomItem.objects.filter(pk=None)
-    dataset = BomItemResource().export(queryset=query)
+
+    dataset = BomItemResource().export(
+        queryset=query,
+        importing=True
+    )
 
     data = dataset.export(fmt)
 
@@ -40,16 +49,177 @@ def MakeBomTemplate(fmt):
     return DownloadFile(data, filename)
 
 
-def ExportBom(part, fmt='csv'):
+def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=False, stock_data=False, supplier_data=False):
     """ Export a BOM (Bill of Materials) for a given part.
+
+    Args:
+        fmt: File format (default = 'csv')
+        cascade: If True, multi-level BOM output is supported. Otherwise, a flat top-level-only BOM is exported.
     """
 
     if not IsValidBOMFormat(fmt):
         fmt = 'csv'
 
-    bom_items = part.bom_items.all().order_by('id')
+    bom_items = []
 
-    dataset = BomItemResource().export(queryset=bom_items)
+    uids = []
+
+    def add_items(items, level):
+        # Add items at a given layer
+        for item in items:
+
+            item.level = str(int(level))
+            
+            # Avoid circular BOM references
+            if item.pk in uids:
+                continue
+
+            bom_items.append(item)
+
+            if item.sub_part.assembly:
+                if max_levels is None or level < max_levels:
+                    add_items(item.sub_part.bom_items.all().order_by('id'), level + 1)
+        
+    if cascade:
+        # Cascading (multi-level) BOM
+
+        # Start with the top level
+        items_to_process = part.bom_items.all().order_by('id')
+
+        add_items(items_to_process, 1)
+
+    else:
+        # No cascading needed - just the top-level items
+        bom_items = [item for item in part.bom_items.all().order_by('id')]
+
+    dataset = BomItemResource().export(queryset=bom_items, cascade=cascade)
+
+    def add_columns_to_dataset(columns, column_size):
+        try:
+            for header, column_dict in columns.items():
+                # Construct column tuple
+                col = tuple(column_dict.get(c_idx, '') for c_idx in range(column_size))
+                # Add column to dataset
+                dataset.append_col(col, header=header)
+        except AttributeError:
+            pass
+
+    if parameter_data:
+        """
+        If requested, add extra columns for each PartParameter associated with each line item
+        """
+
+        parameter_cols = {}
+
+        for b_idx, bom_item in enumerate(bom_items):
+            # Get part parameters
+            parameters = bom_item.sub_part.get_parameters()
+            # Add parameters to columns
+            if parameters:
+                for parameter in parameters:
+                    name = parameter.template.name
+                    value = parameter.data
+
+                    try:
+                        parameter_cols[name].update({b_idx: value})
+                    except KeyError:
+                        parameter_cols[name] = {b_idx: value}
+                
+        # Add parameter columns to dataset
+        parameter_cols_ordered = OrderedDict(sorted(parameter_cols.items(), key=lambda x: x[0]))
+        add_columns_to_dataset(parameter_cols_ordered, len(bom_items))
+
+    if stock_data:
+        """
+        If requested, add extra columns for stock data associated with each line item
+        """
+
+        stock_headers = [
+            _('Default Location'),
+            _('Available Stock'),
+        ]
+
+        stock_cols = {}
+
+        for b_idx, bom_item in enumerate(bom_items):
+            stock_data = []
+            # Get part default location
+            try:
+                stock_data.append(bom_item.sub_part.get_default_location().name)
+            except AttributeError:
+                stock_data.append('')
+            # Get part current stock
+            stock_data.append(bom_item.sub_part.available_stock)
+
+            for s_idx, header in enumerate(stock_headers):
+                try:
+                    stock_cols[header].update({b_idx: stock_data[s_idx]})
+                except KeyError:
+                    stock_cols[header] = {b_idx: stock_data[s_idx]}
+
+        # Add stock columns to dataset
+        add_columns_to_dataset(stock_cols, len(bom_items))
+
+    if supplier_data:
+        """
+        If requested, add extra columns for each SupplierPart associated with each line item
+        """
+
+        # Expand dataset with manufacturer parts
+        manufacturer_headers = [
+            _('Supplier'),
+            _('SKU'),
+            _('Manufacturer'),
+            _('MPN'),
+        ]
+
+        manufacturer_cols = {}
+
+        for b_idx, bom_item in enumerate(bom_items):
+            # Get part instance
+            b_part = bom_item.sub_part
+
+            # Filter supplier parts
+            supplier_parts = SupplierPart.objects.filter(part__pk=b_part.pk)
+            
+            for idx, supplier_part in enumerate(supplier_parts):
+
+                if supplier_part.supplier:
+                    supplier_name = supplier_part.supplier.name
+                else:
+                    supplier_name = ''
+
+                supplier_sku = supplier_part.SKU
+
+                if supplier_part.manufacturer:
+                    manufacturer_name = supplier_part.manufacturer.name
+                else:
+                    manufacturer_name = ''
+
+                manufacturer_mpn = supplier_part.MPN
+
+                # Add manufacturer data to the manufacturer columns
+
+                # Generate column names for this supplier
+                k_sup = manufacturer_headers[0] + "_" + str(idx)
+                k_sku = manufacturer_headers[1] + "_" + str(idx)
+                k_man = manufacturer_headers[2] + "_" + str(idx)
+                k_mpn = manufacturer_headers[3] + "_" + str(idx)
+
+                try:
+                    manufacturer_cols[k_sup].update({b_idx: supplier_name})
+                    manufacturer_cols[k_sku].update({b_idx: supplier_sku})
+                    manufacturer_cols[k_man].update({b_idx: manufacturer_name})
+                    manufacturer_cols[k_mpn].update({b_idx: manufacturer_mpn})
+                except KeyError:
+                    manufacturer_cols[k_sup] = {b_idx: supplier_name}
+                    manufacturer_cols[k_sku] = {b_idx: supplier_sku}
+                    manufacturer_cols[k_man] = {b_idx: manufacturer_name}
+                    manufacturer_cols[k_mpn] = {b_idx: manufacturer_mpn}
+
+        # Add manufacturer columns to dataset
+        add_columns_to_dataset(manufacturer_cols, len(bom_items))
+
     data = dataset.export(fmt)
 
     filename = '{n}_BOM.{fmt}'.format(n=part.full_name, fmt=fmt)
@@ -62,26 +232,23 @@ class BomUploadManager:
 
     # Fields which are absolutely necessary for valid upload
     REQUIRED_HEADERS = [
-        'Part',
+        'Part_Name',
         'Quantity'
     ]
     
     # Fields which would be helpful but are not required
     OPTIONAL_HEADERS = [
+        'Part_IPN',
+        'Part_ID',
         'Reference',
-        'Notes',
+        'Note',
         'Overage',
-        'Description',
-        'Category',
-        'Supplier',
-        'Manufacturer',
-        'MPN',
-        'IPN',
     ]
 
     EDITABLE_HEADERS = [
         'Reference',
-        'Notes'
+        'Note',
+        'Overage'
     ]
 
     HEADERS = REQUIRED_HEADERS + OPTIONAL_HEADERS
@@ -129,6 +296,11 @@ class BomUploadManager:
         # Try for a case-insensitive match
         for h in self.HEADERS:
             if h.lower() == header.lower():
+                return h
+
+        # Try for a case-insensitive match with space replacement
+        for h in self.HEADERS:
+            if h.lower() == header.lower().replace(' ', '_'):
                 return h
 
         # Finally, look for a close match using fuzzy matching

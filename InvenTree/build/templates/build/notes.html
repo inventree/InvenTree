@@ -1,0 +1,56 @@
+{% extends "build/build_base.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load markdownify %}
+
+{% block details %}
+
+{% include "build/tabs.html" with tab='notes' %}
+
+
+{% if editing %}
+<h4>{% trans "Build Notes" %}</h4>
+<hr>
+<form method='POST'>
+    {% csrf_token %}
+        
+    {{ form }}
+    <hr>
+    <input type="submit" value='{% trans "Save" %}'/>
+    
+</form>
+
+{{ form.media }}
+
+{% else %}
+
+<div class='row'>
+        <div class='col-sm-6'>
+            <h4>{% trans "Build Notes" %}</h4>
+        </div>
+        <div class='col-sm-6'>
+            <button title='{% trans "Edit notes" %}' class='btn btn-default action-button float-right' id='edit-notes'><span class='fas fa-edit'></span></button>
+        </div>
+    </div>
+    <hr>
+    <div class='panel panel-default'>
+        <div class='panel-content'>
+            {{ build.notes | markdownify }}
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+{% if editing %}
+{% else %}
+$("#edit-notes").click(function() {
+    location.href = "{% url 'build-notes' build.id %}?edit=1";
+});
+{% endif %}
+
+{% endblock %}

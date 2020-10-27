@@ -8,12 +8,13 @@ from import_export.resources import ModelResource
 from import_export.fields import Field
 import import_export.widgets as widgets
 
-from .models import StockLocation, StockItem
+from .models import StockLocation, StockItem, StockItemAttachment
 from .models import StockItemTracking
+from .models import StockItemTestResult
 
 from build.models import Build
 from company.models import Company, SupplierPart
-from order.models import PurchaseOrder
+from order.models import PurchaseOrder, SalesOrder
 from part.models import Part
 
 
@@ -58,11 +59,13 @@ class StockItemResource(ModelResource):
     # Custom manaegrs for ForeignKey fields
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
-    part_name = Field(attribute='part__full_ame', readonly=True)
+    part_name = Field(attribute='part__full_name', readonly=True)
 
     supplier_part = Field(attribute='supplier_part', widget=widgets.ForeignKeyWidget(SupplierPart))
 
     supplier = Field(attribute='supplier_part__supplier__id', readonly=True)
+
+    customer = Field(attribute='customer', widget=widgets.ForeignKeyWidget(Company))
 
     supplier_name = Field(attribute='supplier_part__supplier__name', readonly=True)
 
@@ -74,9 +77,13 @@ class StockItemResource(ModelResource):
 
     belongs_to = Field(attribute='belongs_to', widget=widgets.ForeignKeyWidget(StockItem))
 
-    customer = Field(attribute='customer', widget=widgets.ForeignKeyWidget(Company))
-
     build = Field(attribute='build', widget=widgets.ForeignKeyWidget(Build))
+
+    parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(StockItem))
+
+    sales_order = Field(attribute='sales_order', widget=widgets.ForeignKeyWidget(SalesOrder))
+
+    build_order = Field(attribute='build_order', widget=widgets.ForeignKeyWidget(Build))
 
     purchase_order = Field(attribute='purchase_order', widget=widgets.ForeignKeyWidget(PurchaseOrder))
 
@@ -85,11 +92,23 @@ class StockItemResource(ModelResource):
     
     stocktake_date = Field(attribute='stocktake_date', widget=widgets.DateWidget())
 
+    def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
+
+        super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
+
+        # Rebuild the StockItem tree(s)
+        StockItem.objects.rebuild()
+
     class Meta:
         model = StockItem
         skip_unchanged = True
         report_skipped = False
         clean_model_instance = True
+
+        exclude = [
+            # Exclude MPTT internal model fields
+            'lft', 'rght', 'tree_id', 'level',
+        ]
 
 
 class StockItemAdmin(ImportExportModelAdmin):
@@ -98,11 +117,31 @@ class StockItemAdmin(ImportExportModelAdmin):
 
     list_display = ('part', 'quantity', 'location', 'status', 'updated')
 
+    # A list of search fields which can be used for lookup on matching 'autocomplete' fields
+    search_fields = [
+        'part__name',
+        'part__description',
+        'serial',
+        'batch',
+    ]
+
+
+class StockAttachmentAdmin(admin.ModelAdmin):
+
+    list_display = ('stock_item', 'attachment', 'comment')
+    
 
 class StockTrackingAdmin(ImportExportModelAdmin):
     list_display = ('item', 'date', 'title')
 
 
+class StockItemTestResultAdmin(admin.ModelAdmin):
+
+    list_display = ('stock_item', 'test', 'result', 'value')
+
+
 admin.site.register(StockLocation, LocationAdmin)
 admin.site.register(StockItem, StockItemAdmin)
 admin.site.register(StockItemTracking, StockTrackingAdmin)
+admin.site.register(StockItemAttachment, StockAttachmentAdmin)
+admin.site.register(StockItemTestResult, StockItemTestResultAdmin)

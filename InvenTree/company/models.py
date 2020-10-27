@@ -8,20 +8,25 @@ from __future__ import unicode_literals
 import os
 
 import math
-from decimal import Decimal
 
+from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Q, UniqueConstraint
 
 from django.apps import apps
 from django.urls import reverse
-from django.conf import settings
-from django.contrib.staticfiles.templatetags.staticfiles import static
 
+from markdownx.models import MarkdownxField
+
+from stdimage.models import StdImageField
+
+from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
+from InvenTree.helpers import normalize
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.status_codes import OrderStatus
-from common.models import Currency
+from InvenTree.status_codes import PurchaseOrderStatus
+
+import common.models
 
 
 def rename_company_image(instance, filename):
@@ -52,7 +57,12 @@ def rename_company_image(instance, filename):
 
 class Company(models.Model):
     """ A Company object represents an external company.
-    It may be a supplier or a customer (or both).
+    It may be a supplier or a customer or a manufacturer (or a combination)
+
+    - A supplier is a company from which parts can be purchased
+    - A customer is a company to which parts can be sold
+    - A manufacturer is a company which manufactures a raw good (they may or may not be a "supplier" also)
+
 
     Attributes:
         name: Brief name of the company
@@ -61,40 +71,60 @@ class Company(models.Model):
         address: Postal address
         phone: contact phone number
         email: contact email address
-        URL: Secondary URL e.g. for link to internal Wiki page
+        link: Secondary URL e.g. for link to internal Wiki page
         image: Company image / logo
         notes: Extra notes about the company
         is_customer: boolean value, is this company a customer
         is_supplier: boolean value, is this company a supplier
+        is_manufacturer: boolean value, is this company a manufacturer
     """
 
-    name = models.CharField(max_length=100, blank=False, unique=True,
-                            help_text='Company name')
+    class Meta:
+        ordering = ['name', ]
+        constraints = [
+            UniqueConstraint(fields=['name', 'email'], name='unique_name_email_pair')
+        ]
 
-    description = models.CharField(max_length=500, help_text='Description of the company')
+    name = models.CharField(max_length=100, blank=False,
+                            help_text=_('Company name'),
+                            verbose_name=_('Company name'))
 
-    website = models.URLField(blank=True, help_text='Company website URL')
+    description = models.CharField(max_length=500, verbose_name=_('Company description'), help_text=_('Description of the company'))
+
+    website = models.URLField(blank=True, verbose_name=_('Website'), help_text=_('Company website URL'))
 
     address = models.CharField(max_length=200,
-                               blank=True, help_text='Company address')
+                               verbose_name=_('Address'),
+                               blank=True, help_text=_('Company address'))
 
     phone = models.CharField(max_length=50,
-                             blank=True, help_text='Contact phone number')
+                             verbose_name=_('Phone number'),
+                             blank=True, help_text=_('Contact phone number'))
 
-    email = models.EmailField(blank=True, help_text='Contact email address')
+    email = models.EmailField(blank=True, null=True,
+                              verbose_name=_('Email'), help_text=_('Contact email address'))
 
     contact = models.CharField(max_length=100,
-                               blank=True, help_text='Point of contact')
+                               verbose_name=_('Contact'),
+                               blank=True, help_text=_('Point of contact'))
 
-    URL = InvenTreeURLField(blank=True, help_text='Link to external company information')
+    link = InvenTreeURLField(blank=True, help_text=_('Link to external company information'))
 
-    image = models.ImageField(upload_to=rename_company_image, max_length=255, null=True, blank=True)
+    image = StdImageField(
+        upload_to=rename_company_image,
+        null=True,
+        blank=True,
+        variations={'thumbnail': (128, 128)},
+        delete_orphans=True,
+    )
 
-    notes = models.TextField(blank=True)
+    notes = MarkdownxField(blank=True)
 
-    is_customer = models.BooleanField(default=False, help_text='Do you sell items to this company?')
+    is_customer = models.BooleanField(default=False, help_text=_('Do you sell items to this company?'))
 
-    is_supplier = models.BooleanField(default=True, help_text='Do you purchase items from this company?')
+    is_supplier = models.BooleanField(default=True, help_text=_('Do you purchase items from this company?'))
+
+    is_manufacturer = models.BooleanField(default=False, help_text=_('Does this company manufacture parts?'))
 
     def __str__(self):
         """ Get string representation of a Company """
@@ -108,39 +138,69 @@ class Company(models.Model):
         """ Return the URL of the image for this company """
 
         if self.image:
-            return os.path.join(settings.MEDIA_URL, str(self.image.url))
+            return getMediaUrl(self.image.url)
         else:
-            return static('/img/blank_image.png')
+            return getBlankImage()
+
+    def get_thumbnail_url(self):
+        """ Return the URL for the thumbnail image for this Company """
+
+        if self.image:
+            return getMediaUrl(self.image.thumbnail.url)
+        else:
+            return getBlankThumbnail()
+            
+    @property
+    def manufactured_part_count(self):
+        """ The number of parts manufactured by this company """
+        return self.manufactured_parts.count()
+
+    @property
+    def has_manufactured_parts(self):
+        return self.manufactured_part_count > 0
+
+    @property
+    def supplied_part_count(self):
+        """ The number of parts supplied by this company """
+        return self.supplied_parts.count()
+
+    @property
+    def has_supplied_parts(self):
+        """ Return True if this company supplies any parts """
+        return self.supplied_part_count > 0
+
+    @property
+    def parts(self):
+        """ Return SupplierPart objects which are supplied or manufactured by this company """
+        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer=self.id))
 
     @property
     def part_count(self):
-        """ The number of parts supplied by this company """
+        """ The number of parts manufactured (or supplied) by this Company """
         return self.parts.count()
 
     @property
     def has_parts(self):
-        """ Return True if this company supplies any parts """
         return self.part_count > 0
 
     @property
     def stock_items(self):
-        """ Return a list of all stock items supplied by this company """
+        """ Return a list of all stock items supplied or manufactured by this company """
         stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(supplier_part__supplier=self.id).all()
+        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer=self.id)).all()
 
     @property
     def stock_count(self):
-        """ Return the number of stock items supplied by this company """
-        stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(supplier_part__supplier=self.id).count()
+        """ Return the number of stock items supplied or manufactured by this company """
+        return self.stock_items.count()
 
     def outstanding_purchase_orders(self):
         """ Return purchase orders which are 'outstanding' """
-        return self.purchase_orders.filter(status__in=OrderStatus.OPEN)
+        return self.purchase_orders.filter(status__in=PurchaseOrderStatus.OPEN)
 
     def pending_purchase_orders(self):
         """ Return purchase orders which are PENDING (not yet issued) """
-        return self.purchase_orders.filter(status=OrderStatus.PENDING)
+        return self.purchase_orders.filter(status=PurchaseOrderStatus.PENDING)
 
     def closed_purchase_orders(self):
         """ Return purchase orders which are not 'outstanding'
@@ -150,15 +210,15 @@ class Company(models.Model):
         - Returned
         """
 
-        return self.purchase_orders.exclude(status__in=OrderStatus.OPEN)
+        return self.purchase_orders.exclude(status__in=PurchaseOrderStatus.OPEN)
 
     def complete_purchase_orders(self):
-        return self.purchase_orders.filter(status=OrderStatus.COMPLETE)
+        return self.purchase_orders.filter(status=PurchaseOrderStatus.COMPLETE)
 
     def failed_purchase_orders(self):
         """ Return any purchase orders which were not successful """
 
-        return self.purchase_orders.filter(status__in=OrderStatus.FAILED)
+        return self.purchase_orders.filter(status__in=PurchaseOrderStatus.FAILED)
 
 
 class Contact(models.Model):
@@ -198,9 +258,9 @@ class SupplierPart(models.Model):
         part: Link to the master Part
         supplier: Company that supplies this SupplierPart object
         SKU: Stock keeping unit (supplier part number)
-        manufacturer: Manufacturer name
+        manufacturer: Company that manufactures the SupplierPart (leave blank if it is the sample as the Supplier!)
         MPN: Manufacture part number
-        URL: Link to external website for this part
+        link: Link to external website for this part
         description: Descriptive notes field
         note: Longer form note field
         base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
@@ -220,36 +280,44 @@ class SupplierPart(models.Model):
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='supplier_parts',
+                             verbose_name=_('Base Part'),
                              limit_choices_to={
                                  'purchaseable': True,
                                  'is_template': False,
                              },
-                             help_text='Select part',
+                             help_text=_('Select part'),
                              )
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
-                                 related_name='parts',
+                                 related_name='supplied_parts',
                                  limit_choices_to={'is_supplier': True},
-                                 help_text='Select supplier',
+                                 help_text=_('Select supplier'),
                                  )
 
-    SKU = models.CharField(max_length=100, help_text='Supplier stock keeping unit')
+    SKU = models.CharField(max_length=100, help_text=_('Supplier stock keeping unit'))
 
-    manufacturer = models.CharField(max_length=100, blank=True, help_text='Manufacturer')
+    manufacturer = models.ForeignKey(
+        Company,
+        on_delete=models.SET_NULL,
+        related_name='manufactured_parts',
+        limit_choices_to={'is_manufacturer': True},
+        help_text=_('Select manufacturer'),
+        null=True, blank=True
+    )
 
-    MPN = models.CharField(max_length=100, blank=True, help_text='Manufacturer part number')
+    MPN = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer part number'))
 
-    URL = InvenTreeURLField(blank=True, help_text='URL for external supplier part link')
+    link = InvenTreeURLField(blank=True, help_text=_('URL for external supplier part link'))
 
-    description = models.CharField(max_length=250, blank=True, help_text='Supplier part description')
+    description = models.CharField(max_length=250, blank=True, help_text=_('Supplier part description'))
 
-    note = models.CharField(max_length=100, blank=True, help_text='Notes')
+    note = models.CharField(max_length=100, blank=True, help_text=_('Notes'))
 
-    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text='Minimum charge (e.g. stocking fee)')
+    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text=_('Minimum charge (e.g. stocking fee)'))
 
-    packaging = models.CharField(max_length=50, blank=True, help_text='Part packaging')
+    packaging = models.CharField(max_length=50, blank=True, help_text=_('Part packaging'))
     
-    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text='Order multiple')
+    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text=('Order multiple'))
 
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
     # lead_time = models.DurationField(blank=True, null=True)
@@ -263,7 +331,7 @@ class SupplierPart(models.Model):
         items = []
 
         if self.manufacturer:
-            items.append(self.manufacturer)
+            items.append(self.manufacturer.name)
         if self.MPN:
             items.append(self.MPN)
 
@@ -319,7 +387,7 @@ class SupplierPart(models.Model):
 
         if pb_found:
             cost = pb_cost * quantity
-            return cost + self.base_cost
+            return normalize(cost + self.base_cost)
         else:
             return None
 
@@ -328,7 +396,7 @@ class SupplierPart(models.Model):
         limited to purchase orders that are open / outstanding.
         """
 
-        return self.purchase_order_line_items.prefetch_related('order').filter(order__status__in=OrderStatus.OPEN)
+        return self.purchase_order_line_items.prefetch_related('order').filter(order__status__in=PurchaseOrderStatus.OPEN)
 
     def on_order(self):
         """ Return the total quantity of items currently on order.
@@ -354,18 +422,26 @@ class SupplierPart(models.Model):
 
         return [line.order for line in self.purchase_order_line_items.all().prefetch_related('order')]
 
+    @property
+    def pretty_name(self):
+        return str(self)
+
     def __str__(self):
-        s = "{supplier} ({sku})".format(
-            sku=self.SKU,
-            supplier=self.supplier.name)
+        s = ''
+
+        if self.part.IPN:
+            s += f'{self.part.IPN}'
+            s += ' | '
+
+        s += f'{self.supplier.name} | {self.SKU}'
 
         if self.manufacturer_string:
-            s = s + ' - ' + self.manufacturer_string
+            s = s + ' | ' + self.manufacturer_string
         
         return s
 
 
-class SupplierPriceBreak(models.Model):
+class SupplierPriceBreak(common.models.PriceBreak):
     """ Represents a quantity price break for a SupplierPart.
     - Suppliers can offer discounts at larger quantities
     - SupplierPart(s) may have zero-or-more associated SupplierPriceBreak(s)
@@ -378,23 +454,6 @@ class SupplierPriceBreak(models.Model):
     """
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks')
-
-    quantity = models.DecimalField(max_digits=15, decimal_places=5, default=1, validators=[MinValueValidator(1)])
-
-    cost = models.DecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
-
-    currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
-
-    @property
-    def converted_cost(self):
-        """ Return the cost of this price break, converted to the base currency """
-
-        scaler = Decimal(1.0)
-
-        if self.currency:
-            scaler = self.currency.value
-
-        return self.cost * scaler
 
     class Meta:
         unique_together = ("part", "quantity")

@@ -6,6 +6,7 @@ Django Forms for interacting with Company app
 from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
+from InvenTree.fields import RoundingDecimalFormField
 
 from .models import Company
 from .models import SupplierPart
@@ -14,6 +15,14 @@ from .models import SupplierPriceBreak
 
 class EditCompanyForm(HelperForm):
     """ Form for editing a Company object """
+
+    field_prefix = {
+        'website': 'fa-globe-asia',
+        'email': 'fa-at',
+        'address': 'fa-envelope',
+        'contact': 'fa-user-tie',
+        'phone': 'fa-phone',
+    }
 
     class Meta:
         model = Company
@@ -25,9 +34,9 @@ class EditCompanyForm(HelperForm):
             'phone',
             'email',
             'contact',
-            'is_customer',
             'is_supplier',
-            'notes'
+            'is_manufacturer',
+            'is_customer',
         ]
 
 
@@ -44,6 +53,13 @@ class CompanyImageForm(HelperForm):
 class EditSupplierPartForm(HelperForm):
     """ Form for editing a SupplierPart object """
 
+    field_prefix = {
+        'link': 'fa-link',
+        'MPN': 'fa-hashtag',
+        'SKU': 'fa-hashtag',
+        'note': 'fa-pencil-alt',
+    }
+
     class Meta:
         model = SupplierPart
         fields = [
@@ -53,17 +69,20 @@ class EditSupplierPartForm(HelperForm):
             'description',
             'manufacturer',
             'MPN',
-            'URL',
+            'link',
             'note',
             'base_cost',
             'multiple',
             'packaging',
-            # 'lead_time'
         ]
 
 
 class EditPriceBreakForm(HelperForm):
     """ Form for creating / editing a supplier price break """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    cost = RoundingDecimalFormField(max_digits=10, decimal_places=5)
 
     class Meta:
         model = SupplierPriceBreak

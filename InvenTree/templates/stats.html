@@ -1,0 +1,33 @@
+{% load static %}
+{% load inventree_extras %}
+{% load i18n %}
+
+<table class='table table-striped table-condensed'>
+    <col width='25'>
+    <tr>
+        <td colspan='3'><b>{% trans "Parts" %}</b></td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-sitemap'></span></td>
+        <td>{% trans "Part Categories" %}</td>
+        <td>{{ part_cat_count }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-shapes'></span></td>
+        <td>{% trans "Parts" %}</td>
+        <td>{{ part_count }}</td>
+    </tr>
+    <tr>
+        <td colspan="3"><b>{% trans "Stock Items" %}</b></td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-map-marker-alt'></span></td>
+        <td>{% trans "Stock Locations" %}</td>
+        <td>{{ stock_loc_count }}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-boxes'></span></td>
+        <td>{% trans "Stock Items" %}</td>
+        <td>{{ stock_item_count }}</td>
+    </tr>
+</table>

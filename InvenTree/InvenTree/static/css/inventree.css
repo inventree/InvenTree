@@ -3,8 +3,69 @@
     --secondary-color: #b69c80;
     --highlight-color: #f5efe8;
     --basic-color: #333;
+
+    --label-red: #e35a57;
+    --label-blue: #4194bd;
+    --label-green: #50aa51;
+    --label-grey: #aaa;
+    --label-yellow: #fdc82a;
 }
 
+.markdownx .row {
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #cce;
+    border-radius: 4px;
+}
+
+.markdownx-editor {
+    width: 100%;
+    border: 1px solid #cce;
+    border-radius: 3px;
+    padding: 10px;
+}
+
+.panel-content {
+    padding: 10px;
+}
+
+.markdownx-preview {
+    border: 1px solid #cce;
+    border-radius: 3px;
+    padding: 10px;
+}
+
+/* Progress bars */
+
+.progress {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0px;
+    background: #eeeef5;
+}
+
+.progress-bar {
+    opacity: 60%;
+    background: #2aa02a;
+}
+
+.progress-bar-under {
+    background: #eeaa33;
+}
+
+.progress-bar-over {
+    background: #337ab7;
+}
+
+.progress-value {
+    width: 100%;
+    color: #333;
+    position: absolute;
+    text-align: center;
+    top: 0px;
+    left: 0px;
+    font-size: 110%;
+}
 
 .qr-code {
     max-width: 400px;
@@ -21,12 +82,41 @@
     float: left;
 }
 
+#navbar-barcode-li {
+    border-left: none;
+    border-right: none;
+    padding-right: 5px;
+}
+
+.navbar-nav > li {
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-color: #eee;
+}
+
+.navbar-form {
+    padding-right: 3px;
+}
+
+#barcode-scan {
+    margin-top: 8px;
+}
+
+.icon-header {
+    margin-right: 10px;
+}
+
 .glyphicon {
     font-size: 18px;
 }
 
+
 .glyphicon-small {
     font-size: 12px;
+}
+
+.glyphicon-right {
+    float: right;
 }
 
 .starred-part {
@@ -41,24 +131,20 @@
     color: rgb(13, 245, 25);
 }
 
-.glyphicon-ok {
-    color: #5C5;
+.icon-red {
+    color: #c55;
 }
 
-.glyphicon-ok-circle {
+.icon-green {
+    color: #43bb43;
+}
+
+.icon-blue {
     color: #55c;
 }
 
-.glyphicon-remove {
-    color: #C55;
-}
-
-.glyphicon-trash {
-    color: #C55;
-}
-
-.glyphicon-plus {
-    color: #5C5;
+.icon-yellow {
+    color: #CC2;
 }
 
 /* CSS overrides for treeview */
@@ -83,12 +169,79 @@
 .label-large {
     margin: 3px;
     font-size: 100%;
+    border: 3px solid;
+    border-radius: 15px;
+    background: none;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.label-large-red {
+    color: var(--label-red);
+    border-color: var(--label-red);
+}
+
+.label-red {
+    background: var(--label-red);
+}
+
+.label-large-blue {
+    color: var(--label-blue);
+    border-color: var(--label-blue);
+}
+
+.label-blue {
+    background: var(--label-blue);
+}
+
+.label-large-green {
+    color: var(--label-green);
+    border-color: var(--label-green);
+}
+
+.label-green {
+    background: var(--label-green);
+}
+
+.label-large-grey {
+    color: var(--label-grey);
+    border-color: var(--label-grey);
+}
+
+.label-grey {
+    background: var(--label-grey);
+}
+
+.label-large-yellow {
+    color: var(--label-yellow);
+    border-color: var(--label-yellow);
+}
+
+.label-yellow {
+    background: var(--label-yellow);
+}
+
+.label-right {
+    float: right;
+    margin-left: 3px;
+    margin-right: 3px;
 }
 
 /* Bootstrap table overrides */
 
 .stock-sub-group td {
     background-color: #ebf4f4;
+}
+
+.sub-table {
+    margin-left: 45px;
+    margin-right: 45px;
+}
+
+.detail-icon .glyphicon {
+    color: #98d296;
 }
 
 /* Force select2 elements in modal forms to be full width */
@@ -113,6 +266,76 @@
 .rowinvalid {
     color: #A00; 
     font-style: italic;
+}
+
+.dropdown {
+    padding-left: 1px;
+    margin-left: 1px;
+}
+
+.dropdown-buttons {
+    display: inline-block
+}
+
+.dropdown-menu .open{
+    z-index: 1000;
+    position: relative;
+    overflow: visible;
+}
+
+/* Styles for table buttons and filtering */
+.button-toolbar .btn {
+    margin-left: 1px;
+    margin-right: 1px;
+}
+
+.filter-list {
+    display: inline-block;
+    *display: inline;
+    margin-bottom: 1px;
+    margin-top: 1px;
+    vertical-align: middle;
+    margin: 1px;
+    padding: 2px;
+    background: #eee;
+    border: 1px solid #eee;
+    border-radius: 3px;
+}
+
+.filter-list .close {
+    cursor: pointer;
+    right: 0%;
+    padding-right: 2px;
+    padding-left: 2px;
+    transform: translate(0%, -25%);
+}
+  
+.filter-list .close:hover {background: #bbb;}
+
+.filter-tag {
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    background: #eee;
+    margin: 1px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.filter-input {
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+}
+
+.filter-tag:hover {
+    background: #ddd;
 }
 
 /* Part image icons with full-display on mouse hover */
@@ -144,13 +367,14 @@
 
 /* dropzone class - for Drag-n-Drop file uploads */
 .dropzone {
-    border: 1px solid #555;
     z-index: 2;
 }
 
+/*
 .dropzone * {
     pointer-events: none;
 }
+*/
 
 .dragover {
     background-color: #55A;
@@ -160,12 +384,52 @@
     -webkit-opacity: 10%;
 }
 
+/* grid display for part images */
+
+.table-img-grid tr {
+    display: inline;
+}
+
+.table-img-grid td {
+    padding: 10px;
+    margin: 10px;
+}
+
+.table-img-grid .grid-image {
+
+    height: 128px;
+    width: 128px;
+    object-fit: contain;
+    background: #eee;
+}
 
 .btn-glyph {
     padding-left: 6px;
     padding-right: 6px;
     padding-top: 3px;
     padding-bottom: 2px;
+}
+
+.action-button {
+    font-size: 125%;
+}
+
+.btn-group {
+    padding-bottom: 5px;
+}
+
+.action-buttons .btn {
+    font-size: 175%;
+    align-content: center;
+    vertical-align: middle;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 3px;
+    padding-bottom: 2px;
+};
+
+.panel-heading .badge {
+    float: right;
 }
 
 .badge {
@@ -186,6 +450,22 @@
     margin: 2px;
     padding: 3px;
     object-fit: contain;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+}
+
+.part-thumb-container:hover .part-thumb-overlay {
+    opacity: 1;
+}
+
+.part-thumb-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: .25s ease;
+    padding: 15px;
+    margin: 5px;
 }
 
 .checkbox {
@@ -199,10 +479,12 @@
 
 .media {
     padding-top: 15px;
+    overflow: visible;
 }
 
 .media-body {
     padding-top: 10px;
+    overflow: visible;
 }
 
 .navigation {
@@ -303,6 +585,12 @@
 
 .modal input {
     width: 100%;
+}
+
+input[type="submit"] {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
 }
 
 .modal textarea {

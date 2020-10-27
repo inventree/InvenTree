@@ -17,16 +17,29 @@ class EditBuildForm(HelperForm):
     """ Form for editing a Build object.
     """
 
+    field_prefix = {
+        'reference': 'BO',
+        'link': 'fa-link',
+        'batch': 'fa-layer-group',
+        'location': 'fa-map-marker-alt',
+    }
+
+    field_placeholder = {
+        'reference': _('Build Order reference')
+    }
+
     class Meta:
         model = Build
         fields = [
+            'reference',
             'title',
             'part',
             'quantity',
+            'parent',
+            'sales_order',
             'take_from',
             'batch',
-            'URL',
-            'notes',
+            'link',
         ]
 
 
@@ -45,12 +58,23 @@ class ConfirmBuildForm(HelperForm):
 class CompleteBuildForm(HelperForm):
     """ Form for marking a Build as complete """
 
+    field_prefix = {
+        'serial_numbers': 'fa-hashtag',
+    }
+
+    field_placeholder = {
+    }
+
     location = forms.ModelChoiceField(
         queryset=StockLocation.objects.all(),
-        help_text='Location of completed parts',
+        help_text=_('Location of completed parts'),
     )
 
-    serial_numbers = forms.CharField(label='Serial numbers', required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
+    serial_numbers = forms.CharField(
+        label=_('Serial numbers'),
+        required=False,
+        help_text=_('Enter unique serial numbers (or leave blank)')
+    )
 
     confirm = forms.BooleanField(required=False, help_text=_('Confirm build completion'))
 

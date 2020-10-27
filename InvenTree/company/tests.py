@@ -56,13 +56,13 @@ class CompanySimpleTest(TestCase):
         zerg = Company.objects.get(pk=3)
         
         self.assertTrue(acme.has_parts)
-        self.assertEqual(acme.part_count, 4)
+        self.assertEqual(acme.supplied_part_count, 4)
 
         self.assertTrue(appel.has_parts)
-        self.assertEqual(appel.part_count, 2)
+        self.assertEqual(appel.supplied_part_count, 2)
 
         self.assertTrue(zerg.has_parts)
-        self.assertEqual(zerg.part_count, 1)
+        self.assertEqual(zerg.supplied_part_count, 1)
 
     def test_price_breaks(self):
         
@@ -96,8 +96,8 @@ class CompanySimpleTest(TestCase):
     def test_part_pricing(self):
         m2x4 = Part.objects.get(name='M2x4 LPHS')
 
-        self.assertEqual(m2x4.get_price_info(10), "70.00000 - 75.00000")
-        self.assertEqual(m2x4.get_price_info(100), "125.00000 - 350.00000")
+        self.assertEqual(m2x4.get_price_info(10), "70 - 75")
+        self.assertEqual(m2x4.get_price_info(100), "125 - 350")
 
         pmin, pmax = m2x4.get_price_range(5)
         self.assertEqual(pmin, 35)
@@ -113,17 +113,17 @@ class ContactSimpleTest(TestCase):
 
     def setUp(self):
         # Create a simple company
-        c = Company.objects.create(name='Test Corp.', description='We make stuff good')
+        self.c = Company.objects.create(name='Test Corp.', description='We make stuff good')
 
         # Add some contacts
-        Contact.objects.create(name='Joe Smith', company=c)
-        Contact.objects.create(name='Fred Smith', company=c)
-        Contact.objects.create(name='Sally Smith', company=c)
+        Contact.objects.create(name='Joe Smith', company=self.c)
+        Contact.objects.create(name='Fred Smith', company=self.c)
+        Contact.objects.create(name='Sally Smith', company=self.c)
 
     def test_exists(self):
         self.assertEqual(Contact.objects.count(), 3)
 
     def test_delete(self):
         # Remove the parent company
-        Company.objects.get(pk=1).delete()
+        Company.objects.get(pk=self.c.pk).delete()
         self.assertEqual(Contact.objects.count(), 0)

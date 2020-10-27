@@ -6,27 +6,34 @@ Stock database model definitions
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from django.db import models, transaction
+from django.db.models import Sum, Q
+from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from mptt.models import TreeForeignKey
+from markdownx.models import MarkdownxField
+
+from mptt.models import MPTTModel, TreeForeignKey
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
 from InvenTree import helpers
 
 from InvenTree.status_codes import StockStatus
-from InvenTree.models import InvenTreeTree
+from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 
-from part.models import Part
+from company import models as CompanyModels
+from part import models as PartModels
 
 
 class StockLocation(InvenTreeTree):
@@ -38,16 +45,17 @@ class StockLocation(InvenTreeTree):
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
 
-    def format_barcode(self):
+    def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this StockLocation object """
 
         return helpers.MakeBarcode(
-            'StockLocation',
-            self.id,
-            reverse('api-location-detail', kwargs={'pk': self.id}),
+            'stocklocation',
+            self.pk,
             {
-                'name': self.name,
-            }
+                "name": self.name,
+                "url": reverse('api-location-detail', kwargs={'pk': self.id}),
+            },
+            **kwargs
         )
 
     def get_stock_items(self, cascade=True):
@@ -100,18 +108,20 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
         child.save()
 
 
-class StockItem(models.Model):
+class StockItem(MPTTModel):
     """
     A StockItem object represents a quantity of physical instances of a part.
     
     Attributes:
+        parent: Link to another StockItem from which this StockItem was created
+        uid: Field containing a unique-id which is mapped to a third-party identifier (e.g. a barcode)
         part: Link to the master abstract part that this StockItem is an instance of
         supplier_part: Link to a specific SupplierPart (optional)
         location: Where this StockItem is located
         quantity: Number of stocked units
         batch: Batch number for this StockItem
         serial: Unique serial number for this StockItem
-        URL: Optional URL to link to external resource
+        link: Optional URL to link to external resource
         updated: Date that this stock item was last updated (auto)
         stocktake_date: Date of last stocktake for this item
         stocktake_user: User that performed the most recent stocktake
@@ -120,14 +130,39 @@ class StockItem(models.Model):
         status: Status of this StockItem (ref: InvenTree.status_codes.StockStatus)
         notes: Extra notes field
         build: Link to a Build (if this stock item was created from a build)
+        is_building: Boolean field indicating if this stock item is currently being built
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
+        sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
+        build_order: Link to a BuildOrder object (if the StockItem has been assigned to a BuildOrder)
     """
 
+    # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
+    IN_STOCK_FILTER = Q(
+        sales_order=None,
+        build_order=None,
+        belongs_to=None,
+        customer=None,
+        is_building=False,
+        status__in=StockStatus.AVAILABLE_CODES
+    )
+
     def save(self, *args, **kwargs):
+        """
+        Save this StockItem to the database. Performs a number of checks:
+
+        - Unique serial number requirement
+        - Adds a transaction note when the item is first created.
+        """
+
+        self.validate_unique()
+        self.clean()
+
         if not self.pk:
+            # StockItem has not yet been saved
             add_note = True
         else:
+            # StockItem has already been saved
             add_note = False
 
         user = kwargs.pop('user', None)
@@ -155,59 +190,26 @@ class StockItem(models.Model):
         """ Return True if this StockItem is serialized """
         return self.serial is not None and self.quantity == 1
 
-    @classmethod
-    def check_serial_number(cls, part, serial_number):
-        """ Check if a new stock item can be created with the provided part_id
-
-        Args:
-            part: The part to be checked
+    def validate_unique(self, exclude=None):
+        """
+        Test that this StockItem is "unique".
+        If the StockItem is serialized, the same serial number.
+        cannot exist for the same part (or part tree).
         """
 
-        if not part.trackable:
-            return False
-
-        # Return False if an invalid serial number is supplied
-        try:
-            serial_number = int(serial_number)
-        except ValueError:
-            return False
-
-        items = StockItem.objects.filter(serial=serial_number)
-
-        # Is this part a variant? If so, check S/N across all sibling variants
-        if part.variant_of is not None:
-            items = items.filter(part__variant_of=part.variant_of)
-        else:
-            items = items.filter(part=part)
-
-        # An existing serial number exists
-        if items.exists():
-            return False
-
-        return True
-
-    def validate_unique(self, exclude=None):
         super(StockItem, self).validate_unique(exclude)
 
-        # If the Part object is a variant (of a template part),
-        # ensure that the serial number is unique
-        # across all variants of the same template part
+        if self.serial is not None:
+            # Query to look for duplicate serial numbers
+            parts = PartModels.Part.objects.filter(tree_id=self.part.tree_id)
+            stock = StockItem.objects.filter(part__in=parts, serial=self.serial)
 
-        try:
-            if self.serial is not None:
-                # This is a variant part (check S/N across all sibling variants)
-                if self.part.variant_of is not None:
-                    if StockItem.objects.filter(part__variant_of=self.part.variant_of, serial=self.serial).exclude(id=self.id).exists():
-                        raise ValidationError({
-                            'serial': _('A stock item with this serial number already exists for template part {part}'.format(part=self.part.variant_of))
-                        })
-                else:
-                    if StockItem.objects.filter(part=self.part, serial=self.serial).exclude(id=self.id).exists():
-                        raise ValidationError({
-                            'serial': _('A stock item with this serial number already exists')
-                        })
-        except Part.DoesNotExist:
-            pass
+            # Exclude myself from the search
+            if self.pk is not None:
+                stock = stock.exclude(pk=self.pk)
+
+            if stock.exists():
+                raise ValidationError({"serial": _("StockItem with this serial number already exists")})
 
     def clean(self):
         """ Validate the StockItem object (separate to field validation)
@@ -218,6 +220,26 @@ class StockItem(models.Model):
         - The 'part' does not belong to itself
         - Quantity must be 1 if the StockItem has a serial number
         """
+
+        super().clean()
+
+        try:
+            if self.part.trackable:
+                # Trackable parts must have integer values for quantity field!
+                if not self.quantity == int(self.quantity):
+                    raise ValidationError({
+                        'quantity': _('Quantity must be integer value for trackable parts')
+                    })
+        except PartModels.Part.DoesNotExist:
+            # For some reason the 'clean' process sometimes throws errors because self.part does not exist
+            # It *seems* that this only occurs in unit testing, though.
+            # Probably should investigate this at some point.
+            pass
+
+        if self.quantity < 0:
+            raise ValidationError({
+                'quantity': _('Quantity must be greater than zero')
+            })
 
         # The 'supplier_part' field must point to the same part!
         try:
@@ -248,19 +270,29 @@ class StockItem(models.Model):
                     # Serial numbered items cannot be deleted on depletion
                     self.delete_on_deplete = False
 
-                # A template part cannot be instantiated as a StockItem
-                if self.part.is_template:
-                    raise ValidationError({'part': _('Stock item cannot be created for a template Part')})
-
-        except Part.DoesNotExist:
+        except PartModels.Part.DoesNotExist:
             # This gets thrown if self.supplier_part is null
             # TODO - Find a test than can be perfomed...
             pass
 
+        # Ensure that the item cannot be assigned to itself
         if self.belongs_to and self.belongs_to.pk == self.pk:
             raise ValidationError({
                 'belongs_to': _('Item cannot belong to itself')
             })
+
+        # If the item is marked as "is_building", it must point to a build!
+        if self.is_building and not self.build:
+            raise ValidationError({
+                'build': _("Item must have a build reference if is_building=True")
+            })
+
+        # If the item points to a build, check that the Part references match
+        if self.build:
+            if not self.part == self.build.part:
+                raise ValidationError({
+                    'build': _("Build reference does not point to the same part object")
+                })
 
     def get_absolute_url(self):
         return reverse('stock-item-detail', kwargs={'pk': self.id})
@@ -268,12 +300,7 @@ class StockItem(models.Model):
     def get_part_name(self):
         return self.part.full_name
 
-    class Meta:
-        unique_together = [
-            ('part', 'serial'),
-        ]
-
-    def format_barcode(self):
+    def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this StockItem.
         Can be used to perform lookup of a stockitem using barcode
 
@@ -285,62 +312,125 @@ class StockItem(models.Model):
         """
 
         return helpers.MakeBarcode(
-            'StockItem',
+            "stockitem",
             self.id,
-            reverse('api-stock-detail', kwargs={'pk': self.id}),
             {
-                'part_id': self.part.id,
-                'part_name': self.part.full_name
-            }
+                "url": reverse('api-stock-detail', kwargs={'pk': self.id}),
+            },
+            **kwargs
         )
 
-    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
-                             related_name='stock_items', help_text=_('Base part'),
-                             limit_choices_to={
-                                 'is_template': False,
-                                 'active': True,
-                             })
+    uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
 
-    supplier_part = models.ForeignKey('company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
-                                      help_text=_('Select a matching supplier part for this stock item'))
+    parent = TreeForeignKey(
+        'self',
+        verbose_name=_('Parent Stock Item'),
+        on_delete=models.DO_NOTHING,
+        blank=True, null=True,
+        related_name='children'
+    )
 
-    location = TreeForeignKey(StockLocation, on_delete=models.DO_NOTHING,
-                              related_name='stock_items', blank=True, null=True,
-                              help_text=_('Where is this stock item located?'))
+    part = models.ForeignKey(
+        'part.Part', on_delete=models.CASCADE,
+        verbose_name=_('Base Part'),
+        related_name='stock_items', help_text=_('Base part'),
+        limit_choices_to={
+            'active': True,
+            'virtual': False
+        })
 
-    belongs_to = models.ForeignKey('self', on_delete=models.DO_NOTHING,
-                                   related_name='owned_parts', blank=True, null=True,
-                                   help_text=_('Is this item installed in another item?'))
+    supplier_part = models.ForeignKey(
+        'company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
+        verbose_name=_('Supplier Part'),
+        help_text=_('Select a matching supplier part for this stock item')
+    )
 
-    customer = models.ForeignKey('company.Company', on_delete=models.SET_NULL,
-                                 related_name='stockitems', blank=True, null=True,
-                                 help_text=_('Item assigned to customer?'))
+    location = TreeForeignKey(
+        StockLocation, on_delete=models.DO_NOTHING,
+        verbose_name=_('Stock Location'),
+        related_name='stock_items',
+        blank=True, null=True,
+        help_text=_('Where is this stock item located?')
+    )
 
-    serial = models.PositiveIntegerField(blank=True, null=True,
-                                         help_text=_('Serial number for this item'))
+    belongs_to = models.ForeignKey(
+        'self',
+        verbose_name=_('Installed In'),
+        on_delete=models.DO_NOTHING,
+        related_name='installed_parts', blank=True, null=True,
+        help_text=_('Is this item installed in another item?')
+    )
+
+    customer = models.ForeignKey(
+        CompanyModels.Company,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        limit_choices_to={'is_customer': True},
+        related_name='assigned_stock',
+        help_text=_("Customer"),
+        verbose_name=_("Customer"),
+    )
+
+    serial = models.CharField(
+        verbose_name=_('Serial Number'),
+        max_length=100, blank=True, null=True,
+        help_text=_('Serial number for this item')
+    )
  
-    URL = InvenTreeURLField(max_length=125, blank=True)
+    link = InvenTreeURLField(
+        verbose_name=_('External Link'),
+        max_length=125, blank=True,
+        help_text=_("Link to external URL")
+    )
 
-    batch = models.CharField(max_length=100, blank=True, null=True,
-                             help_text=_('Batch code for this stock item'))
+    batch = models.CharField(
+        verbose_name=_('Batch Code'),
+        max_length=100, blank=True, null=True,
+        help_text=_('Batch code for this stock item')
+    )
 
-    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
+    quantity = models.DecimalField(
+        verbose_name=_("Stock Quantity"),
+        max_digits=15, decimal_places=5, validators=[MinValueValidator(0)],
+        default=1
+    )
 
     updated = models.DateField(auto_now=True, null=True)
 
     build = models.ForeignKey(
         'build.Build', on_delete=models.SET_NULL,
+        verbose_name=_('Source Build'),
         blank=True, null=True,
         help_text=_('Build for this stock item'),
         related_name='build_outputs',
     )
 
+    is_building = models.BooleanField(
+        default=False,
+    )
+
     purchase_order = models.ForeignKey(
         'order.PurchaseOrder',
         on_delete=models.SET_NULL,
+        verbose_name=_('Source Purchase Order'),
         related_name='stock_items',
         blank=True, null=True,
         help_text=_('Purchase order for this stock item')
+    )
+
+    sales_order = models.ForeignKey(
+        'order.SalesOrder',
+        on_delete=models.SET_NULL,
+        verbose_name=_("Destination Sales Order"),
+        related_name='stock_items',
+        null=True, blank=True)
+
+    build_order = models.ForeignKey(
+        'build.Build',
+        on_delete=models.SET_NULL,
+        verbose_name=_("Destination Build Order"),
+        related_name='stock_items',
+        null=True, blank=True
     )
 
     # last time the stock was checked / counted
@@ -358,36 +448,310 @@ class StockItem(models.Model):
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
 
-    notes = models.CharField(max_length=250, blank=True, help_text=_('Stock Item Notes'))
+    notes = MarkdownxField(
+        blank=True, null=True,
+        verbose_name=_("Notes"),
+        help_text=_('Stock Item Notes')
+    )
+
+    def clearAllocations(self):
+        """
+        Clear all order allocations for this StockItem:
+
+        - SalesOrder allocations
+        - Build allocations
+        """
+
+        # Delete outstanding SalesOrder allocations
+        self.sales_order_allocations.all().delete()
+
+        # Delete outstanding BuildOrder allocations
+        self.allocations.all().delete()
+
+    def allocateToCustomer(self, customer, quantity=None, order=None, user=None, notes=None):
+        """
+        Allocate a StockItem to a customer.
+
+        This action can be called by the following processes:
+        - Completion of a SalesOrder
+        - User manually assigns a StockItem to the customer
+
+        Args:
+            customer: The customer (Company) to assign the stock to
+            quantity: Quantity to assign (if not supplied, total quantity is used)
+            order: SalesOrder reference
+            user: User that performed the action
+            notes: Notes field
+        """
+
+        if quantity is None:
+            quantity = self.quantity
+
+        if quantity >= self.quantity:
+            item = self
+        else:
+            item = self.splitStock(quantity, None, user)
+
+        # Update StockItem fields with new information
+        item.sales_order = order
+        item.customer = customer
+        item.location = None
+
+        item.save()
+
+        # TODO - Remove any stock item allocations from this stock item
+
+        item.addTransactionNote(
+            _("Assigned to Customer"),
+            user,
+            notes=_("Manually assigned to customer") + " " + customer.name,
+            system=True
+        )
+
+        # Return the reference to the stock item
+        return item
+
+    def returnFromCustomer(self, location, user=None):
+        """
+        Return stock item from customer, back into the specified location.
+        """
+
+        self.addTransactionNote(
+            _("Returned from customer") + " " + self.customer.name,
+            user,
+            notes=_("Returned to location") + " " + location.name,
+            system=True
+        )
+
+        self.customer = None
+        self.location = location
+
+        self.save()
 
     # If stock item is incoming, an (optional) ETA field
     # expected_arrival = models.DateField(null=True, blank=True)
 
     infinite = models.BooleanField(default=False)
 
+    def is_allocated(self):
+        """
+        Return True if this StockItem is allocated to a SalesOrder or a Build
+        """
+
+        # TODO - For now this only checks if the StockItem is allocated to a SalesOrder
+        # TODO - In future, once the "build" is working better, check this too
+
+        if self.allocations.count() > 0:
+            return True
+
+        if self.sales_order_allocations.count() > 0:
+            return True
+
+        return False
+
+    def build_allocation_count(self):
+        """
+        Return the total quantity allocated to builds
+        """
+
+        query = self.allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['q']
+
+    def sales_order_allocation_count(self):
+        """
+        Return the total quantity allocated to SalesOrders
+        """
+
+        query = self.sales_order_allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['q']
+
+    def allocation_count(self):
+        """
+        Return the total quantity allocated to builds or orders
+        """
+
+        return self.build_allocation_count() + self.sales_order_allocation_count()
+
+    def unallocated_quantity(self):
+        """
+        Return the quantity of this StockItem which is *not* allocated
+        """
+
+        return max(self.quantity - self.allocation_count(), 0)
+
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
 
+        - Has child StockItems
         - Has a serial number and is tracked
         - Is installed inside another StockItem
+        - It has been assigned to a SalesOrder
+        - It has been assigned to a BuildOrder
         """
+
+        if self.child_count > 0:
+            return False
 
         if self.part.trackable and self.serial is not None:
             return False
 
+        if self.sales_order is not None:
+            return False
+
+        if self.build_order is not None:
+            return False
+
         return True
+
+    def installedItemCount(self):
+        """
+        Return the number of stock items installed inside this one.
+        """
+
+        return self.installed_parts.count()
+
+    def hasInstalledItems(self):
+        """
+        Returns true if this stock item has other stock items installed in it.
+        """
+
+        return self.installedItemCount() > 0
+
+    @transaction.atomic
+    def installStockItem(self, otherItem, quantity, user, notes):
+        """
+        Install another stock item into this stock item.
+
+        Args
+            otherItem: The stock item to install into this stock item
+            quantity: The quantity of stock to install
+            user: The user performing the operation
+            notes: Any notes associated with the operation
+        """
+
+        # Cannot be already installed in another stock item!
+        if self.belongs_to is not None:
+            return False
+
+        # If the quantity is less than the stock item, split the stock!
+        stock_item = otherItem.splitStock(quantity, None, user)
+
+        if stock_item is None:
+            stock_item = otherItem
+
+        # Assign the other stock item into this one
+        stock_item.belongs_to = self
+        stock_item.save()
+
+        # Add a transaction note to the other item
+        stock_item.addTransactionNote(
+            _('Installed into stock item') + ' ' + str(self.pk),
+            user,
+            notes=notes,
+            url=self.get_absolute_url()
+        )
+
+        # Add a transaction note to this item
+        self.addTransactionNote(
+            _('Installed stock item') + ' ' + str(stock_item.pk),
+            user, notes=notes,
+            url=stock_item.get_absolute_url()
+        )
+
+    @transaction.atomic
+    def uninstallIntoLocation(self, location, user, notes):
+        """
+        Uninstall this stock item from another item, into a location.
+
+        Args:
+            location: The stock location where the item will be moved
+            user: The user performing the operation
+            notes: Any notes associated with the operation
+        """
+
+        # If the stock item is not installed in anything, ignore
+        if self.belongs_to is None:
+            return False
+
+        # TODO - Are there any other checks that need to be performed at this stage?
+
+        # Add a transaction note to the parent item
+        self.belongs_to.addTransactionNote(
+            _("Uninstalled stock item") + ' ' + str(self.pk),
+            user,
+            notes=notes,
+            url=self.get_absolute_url(),
+        )
+
+        # Mark this stock item as *not* belonging to anyone
+        self.belongs_to = None
+        self.location = location
+
+        self.save()
+
+        if location:
+            url = location.get_absolute_url()
+        else:
+            url = ''
+
+        # Add a transaction note!
+        self.addTransactionNote(
+            _('Uninstalled into location') + ' ' + str(location),
+            user,
+            notes=notes,
+            url=url
+        )
+
+    @property
+    def children(self):
+        """ Return a list of the child items which have been split from this stock item """
+        return self.get_descendants(include_self=False)
+
+    @property
+    def child_count(self):
+        """ Return the number of 'child' items associated with this StockItem.
+        A child item is one which has been split from this one.
+        """
+        return self.children.count()
 
     @property
     def in_stock(self):
 
-        if self.belongs_to or self.customer:
+        # Not 'in stock' if it has been installed inside another StockItem
+        if self.belongs_to is not None:
+            return False
+            
+        # Not 'in stock' if it has been sent to a customer
+        if self.sales_order is not None:
+            return False
+
+        # Not 'in stock' if it has been allocated to a BuildOrder
+        if self.build_order is not None:
+            return False
+
+        # Not 'in stock' if it has been assigned to a customer
+        if self.customer is not None:
+            return False
+
+        # Not 'in stock' if it is building
+        if self.is_building:
+            return False
+
+        # Not 'in stock' if the status code makes it unavailable
+        if self.status in StockStatus.UNAVAILABLE_CODES:
             return False
 
         return True
 
     @property
+    def tracking_info_count(self):
+        return self.tracking_info.count()
+
+    @property
     def has_tracking_info(self):
-        return self.tracking_info.count() > 0
+        return self.tracking_info_count > 0
 
     def addTransactionNote(self, title, user, notes='', url='', system=True):
         """ Generation a stock transaction note for this item.
@@ -402,7 +766,7 @@ class StockItem(models.Model):
             quantity=self.quantity,
             date=datetime.now().date(),
             notes=notes,
-            URL=url,
+            link=url,
             system=system
         )
 
@@ -428,6 +792,9 @@ class StockItem(models.Model):
         if self.serialized:
             return
 
+        if not self.part.trackable:
+            raise ValidationError({"part": _("Part is not set as trackable")})
+
         # Quantity must be a valid integer value
         try:
             quantity = int(quantity)
@@ -443,9 +810,6 @@ class StockItem(models.Model):
         if not type(serials) in [list, tuple]:
             raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
 
-        if any([type(i) is not int for i in serials]):
-            raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
-
         if not quantity == len(serials):
             raise ValidationError({"quantity": _("Quantity does not match serial numbers")})
 
@@ -453,7 +817,7 @@ class StockItem(models.Model):
         existing = []
 
         for serial in serials:
-            if not StockItem.check_serial_number(self.part, serial):
+            if self.part.checkIfSerialNumberExists(serial):
                 existing.append(serial)
 
         if len(existing) > 0:
@@ -467,6 +831,7 @@ class StockItem(models.Model):
             new_item.quantity = 1
             new_item.serial = serial
             new_item.pk = None
+            new_item.parent = self
 
             if location:
                 new_item.location = location
@@ -477,6 +842,9 @@ class StockItem(models.Model):
             # Copy entire transaction history
             new_item.copyHistoryFrom(self)
 
+            # Copy test result history
+            new_item.copyTestResultsFrom(self)
+
             # Create a new stock tracking item
             new_item.addTransactionNote(_('Add serial number'), user, notes=notes)
 
@@ -485,7 +853,7 @@ class StockItem(models.Model):
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
-        """ Copy stock history from another part """
+        """ Copy stock history from another StockItem """
 
         for item in other.tracking_info.all():
             
@@ -494,13 +862,25 @@ class StockItem(models.Model):
             item.save()
 
     @transaction.atomic
-    def splitStock(self, quantity, user):
+    def copyTestResultsFrom(self, other, filters={}):
+        """ Copy all test results from another StockItem """
+
+        for result in other.test_results.all().filter(**filters):
+
+            # Create a copy of the test result by nulling-out the pk
+            result.pk = None
+            result.stock_item = self
+            result.save()
+
+    @transaction.atomic
+    def splitStock(self, quantity, location, user):
         """ Split this stock item into two items, in the same location.
         Stock tracking notes for this StockItem will be duplicated,
         and added to the new StockItem.
 
         Args:
             quantity: Number of stock items to remove from this entity, and pass to the next
+            location: Where to move the new StockItem to
 
         Notes:
             The provided quantity will be subtracted from this item and given to the new one.
@@ -509,30 +889,41 @@ class StockItem(models.Model):
 
         # Do not split a serialized part
         if self.serialized:
-            return
+            return self
 
         try:
             quantity = Decimal(quantity)
         except (InvalidOperation, ValueError):
-            return
+            return self
 
         # Doesn't make sense for a zero quantity
         if quantity <= 0:
-            return
+            return self
 
         # Also doesn't make sense to split the full amount
         if quantity >= self.quantity:
-            return
+            return self
 
         # Create a new StockItem object, duplicating relevant fields
         # Nullify the PK so a new record is created
         new_stock = StockItem.objects.get(pk=self.pk)
         new_stock.pk = None
+        new_stock.parent = self
         new_stock.quantity = quantity
+
+        # Move to the new location if specified, otherwise use current location
+        if location:
+            new_stock.location = location
+        else:
+            new_stock.location = self.location
+
         new_stock.save()
 
         # Copy the transaction history of this part into the new one
         new_stock.copyHistoryFrom(self)
+
+        # Copy the test results of this part to the new one
+        new_stock.copyTestResultsFrom(self)
 
         # Add a new tracking item for the new stock item
         new_stock.addTransactionNote(
@@ -543,9 +934,17 @@ class StockItem(models.Model):
         # Remove the specified quantity from THIS stock item
         self.take_stock(quantity, user, 'Split {n} items into new stock item'.format(n=quantity))
 
+        # Return a copy of the "new" stock item
+        return new_stock
+
     @transaction.atomic
     def move(self, location, notes, user, **kwargs):
         """ Move part to a new location.
+
+        If less than the available quantity is to be moved,
+        a new StockItem is created, with the defined quantity,
+        and that new StockItem is moved.
+        The quantity is also subtracted from the existing StockItem.
 
         Args:
             location: Destination location (cannot be null)
@@ -559,6 +958,9 @@ class StockItem(models.Model):
             quantity = Decimal(kwargs.get('quantity', self.quantity))
         except InvalidOperation:
             return False
+
+        if not self.in_stock:
+            raise ValidationError(_("StockItem cannot be moved as it is not in stock"))
 
         if quantity <= 0:
             return False
@@ -574,8 +976,10 @@ class StockItem(models.Model):
         if quantity < self.quantity:
             # We need to split the stock!
 
-            # Leave behind certain quantity
-            self.splitStock(self.quantity - quantity, user)
+            # Split the existing StockItem in two
+            self.splitStock(quantity, location, user)
+
+            return True
 
         msg = "Moved to {loc}".format(loc=str(location))
 
@@ -584,10 +988,11 @@ class StockItem(models.Model):
 
         self.location = location
 
-        self.addTransactionNote(msg,
-                                user,
-                                notes=notes,
-                                system=True)
+        self.addTransactionNote(
+            msg,
+            user,
+            notes=notes,
+            system=True)
 
         self.save()
 
@@ -724,6 +1129,143 @@ class StockItem(models.Model):
 
         return s
 
+    def getTestResults(self, test=None, result=None, user=None):
+        """
+        Return all test results associated with this StockItem.
+
+        Optionally can filter results by:
+        - Test name
+        - Test result
+        - User
+        """
+
+        results = self.test_results
+
+        if test:
+            # Filter by test name
+            results = results.filter(test=test)
+
+        if result is not None:
+            # Filter by test status
+            results = results.filter(result=result)
+
+        if user:
+            # Filter by user
+            results = results.filter(user=user)
+
+        return results
+
+    def testResultMap(self, **kwargs):
+        """
+        Return a map of test-results using the test name as the key.
+        Where multiple test results exist for a given name,
+        the *most recent* test is used.
+
+        This map is useful for rendering to a template (e.g. a test report),
+        as all named tests are accessible.
+        """
+
+        # Filter results by "date", so that newer results
+        # will override older ones.
+        results = self.getTestResults(**kwargs).order_by('date')
+
+        result_map = {}
+
+        for result in results:
+            key = helpers.generateTestKey(result.test)
+            result_map[key] = result
+
+        return result_map
+
+    def testResultList(self, **kwargs):
+        """
+        Return a list of test-result objects for this StockItem
+        """
+
+        return self.testResultMap(**kwargs).values()
+
+    def requiredTestStatus(self):
+        """
+        Return the status of the tests required for this StockItem.
+
+        return:
+            A dict containing the following items:
+            - total: Number of required tests
+            - passed: Number of tests that have passed
+            - failed: Number of tests that have failed
+        """
+
+        # All the tests required by the part object
+        required = self.part.getRequiredTests()
+
+        results = self.testResultMap()
+
+        total = len(required)
+        passed = 0
+        failed = 0
+
+        for test in required:
+            key = helpers.generateTestKey(test.test_name)
+
+            if key in results:
+                result = results[key]
+
+                if result.result:
+                    passed += 1
+                else:
+                    failed += 1
+
+        return {
+            'total': total,
+            'passed': passed,
+            'failed': failed,
+        }
+
+    @property
+    def required_test_count(self):
+        return self.part.getRequiredTests().count()
+
+    def hasRequiredTests(self):
+        return self.part.getRequiredTests().count() > 0
+
+    def passedAllRequiredTests(self):
+
+        status = self.requiredTestStatus()
+
+        return status['passed'] >= status['total']
+
+
+@receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
+def before_delete_stock_item(sender, instance, using, **kwargs):
+    """ Receives pre_delete signal from StockItem object.
+
+    Before a StockItem is deleted, ensure that each child object is updated,
+    to point to the new parent item.
+    """
+
+    # Update each StockItem parent field
+    for child in instance.children.all():
+        child.parent = instance.parent
+        child.save()
+
+    # Rebuild the MPTT tree
+    StockItem.objects.rebuild()
+
+
+class StockItemAttachment(InvenTreeAttachment):
+    """
+    Model for storing file attachments against a StockItem object.
+    """
+
+    def getSubdir(self):
+        return os.path.join("stock_files", str(self.stock_item.id))
+
+    stock_item = models.ForeignKey(
+        StockItem,
+        on_delete=models.CASCADE,
+        related_name='attachments'
+    )
+
 
 class StockItemTracking(models.Model):
     """ Stock tracking entry - breacrumb for keeping track of automated stock transactions
@@ -733,7 +1275,7 @@ class StockItemTracking(models.Model):
         date: Date that this tracking info was created
         title: Title of this tracking info (generated by system)
         notes: Associated notes (input by user)
-        URL: Optional URL to external page
+        link: Optional URL to external page
         user: The user associated with this tracking info
         quantity: The StockItem quantity at this point in time
     """
@@ -751,7 +1293,7 @@ class StockItemTracking(models.Model):
 
     notes = models.CharField(blank=True, max_length=512, help_text=_('Entry notes'))
 
-    URL = InvenTreeURLField(blank=True, help_text=_('Link to external page for further information'))
+    link = InvenTreeURLField(blank=True, help_text=_('Link to external page for further information'))
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
@@ -764,3 +1306,112 @@ class StockItemTracking(models.Model):
 
     # TODO
     # file = models.FileField()
+
+
+def rename_stock_item_test_result_attachment(instance, filename):
+
+    return os.path.join('stock_files', str(instance.stock_item.pk), os.path.basename(filename))
+
+
+class StockItemTestResult(models.Model):
+    """
+    A StockItemTestResult records results of custom tests against individual StockItem objects.
+    This is useful for tracking unit acceptance tests, and particularly useful when integrated
+    with automated testing setups.
+
+    Multiple results can be recorded against any given test, allowing tests to be run many times.
+    
+    Attributes:
+        stock_item: Link to StockItem
+        test: Test name (simple string matching)
+        result: Test result value (pass / fail / etc)
+        value: Recorded test output value (optional)
+        attachment: Link to StockItem attachment (optional)
+        notes: Extra user notes related to the test (optional)
+        user: User who uploaded the test result
+        date: Date the test result was recorded
+    """
+
+    def save(self, *args, **kwargs):
+
+        super().clean()
+        super().validate_unique()
+        super().save(*args, **kwargs)
+
+    def clean(self):
+
+        super().clean()
+
+        # If this test result corresponds to a template, check the requirements of the template
+        key = self.key
+
+        templates = self.stock_item.part.getTestTemplates()
+
+        for template in templates:
+            if key == template.key:
+                
+                if template.requires_value:
+                    if not self.value:
+                        raise ValidationError({
+                            "value": _("Value must be provided for this test"),
+                        })
+
+                if template.requires_attachment:
+                    if not self.attachment:
+                        raise ValidationError({
+                            "attachment": _("Attachment must be uploaded for this test"),
+                        })
+
+                break
+
+    @property
+    def key(self):
+        return helpers.generateTestKey(self.test)
+
+    stock_item = models.ForeignKey(
+        StockItem,
+        on_delete=models.CASCADE,
+        related_name='test_results'
+    )
+
+    test = models.CharField(
+        blank=False, max_length=100,
+        verbose_name=_('Test'),
+        help_text=_('Test name')
+    )
+
+    result = models.BooleanField(
+        default=False,
+        verbose_name=_('Result'),
+        help_text=_('Test result')
+    )
+
+    value = models.CharField(
+        blank=True, max_length=500,
+        verbose_name=_('Value'),
+        help_text=_('Test output value')
+    )
+
+    attachment = models.FileField(
+        null=True, blank=True,
+        upload_to=rename_stock_item_test_result_attachment,
+        verbose_name=_('Attachment'),
+        help_text=_('Test result attachment'),
+    )
+
+    notes = models.CharField(
+        blank=True, max_length=500,
+        verbose_name=_('Notes'),
+        help_text=_("Test notes"),
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True
+    )
+
+    date = models.DateTimeField(
+        auto_now_add=True,
+        editable=False
+    )

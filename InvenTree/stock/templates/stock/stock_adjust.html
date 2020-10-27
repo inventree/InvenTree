@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block pre_form_content %}
 
@@ -14,10 +15,9 @@
       <tr>
           <th>{% trans "Stock Item" %}</th>
           <th>{% trans "Location" %}</th>
+          <th>{% trans "Quantity" %}</th>
           {% if edit_quantity %}
           <th>{{ stock_action_title }}</th>
-          {% else %}
-          <th>{% trans "Quantity" %}</th>
           {% endif %}
           <th></th>
       </tr>
@@ -26,21 +26,21 @@
           <td>{% include "hover_image.html" with image=item.part.image hover=True %}
             {{ item.part.full_name }} <small><i>{{ item.part.description }}</i></small></td> 
           <td>{{ item.location.pathstring }}</td> 
+          <td>{% decimal item.quantity %}</td>
           <td>
             {% if edit_quantity %}
             <input class='numberinput'
               min='0'
               {% if stock_action == 'take' or stock_action == 'move' %} max='{{ item.quantity }}' {% endif %}
-              value='{{ item.new_quantity }}' type='number' name='stock-id-{{ item.id }}' id='stock-id-{{ item.id }}'/>
+              value='{% decimal item.new_quantity %}' type='number' name='stock-id-{{ item.id }}' id='stock-id-{{ item.id }}'/>
             {% if item.error %}
             <br><span class='help-inline'>{{ item.error }}</span>
             {% endif %}
             {% else %}
-            {{ item.new_quantity }}
             <input type='hidden' name='stock-id-{{ item.id }}' value='{{ item.new_quantity }}'/>
             {% endif %}  
           </td>
-          <td><button class='btn btn-default btn-remove' onclick='removeStockRow()' id='del-{{ item.id }}' title='Remove item' type='button'><span row='stock-row-{{ item.id }}' class='glyphicon glyphicon-small glyphicon-remove'></span></button></td>
+          <td><button class='btn btn-default btn-remove' onclick='removeStockRow()' id='del-{{ item.id }}' title='Remove item' type='button'><span row='stock-row-{{ item.id }}' class='fas fa-trash-alt icon-red'></span></button></td>
       </tr>
       {% endfor %}
     </table>

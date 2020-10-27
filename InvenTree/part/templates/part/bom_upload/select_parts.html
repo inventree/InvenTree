@@ -1,23 +1,24 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load i18n %}
 {% load inventree_extras %}
 
 {% block details %}
 {% include "part/tabs.html" with tab="bom" %}
-<h4>Upload Bill of Materials</h4>
+<h4>{% trans "Upload Bill of Materials" %}</h4>
 
-<p>Step 3 - Select Parts</p>
+<p>{% trans "Step 3 - Select Parts" %}</p>
 <hr>
 
 {% if form_errors %}
 <div class='alert alert-danger alert-block' role='alert'>
-    Errors exist in the submitted data.
+    {% trans "Errors exist in the submitted data" %}
 </div>
 {% endif %}
 
 <form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
 
-    <button type="submit" class="save btn btn-default">Submit BOM</button>
+    <button type="submit" class="save btn btn-default">{% trans "Submit BOM" %}</button>
 
     {% csrf_token %}
     {% load crispy_forms_tags %}
@@ -29,7 +30,8 @@
             <tr>
                 <th></th>
                 <th></th>
-                <th>Row</th>
+                <th>{% trans "Row" %}</th>
+                <th>{% trans "Select Part" %}</th>
                 {% for col in bom_columns %}
                 <th>
                     <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
@@ -48,37 +50,42 @@
             <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-name='{{ row.part_name }}' part-description='{{ row.description }}' part-select='#select_part_{{ row.index }}'>
                 <td>
                     <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='Remove row'>
-                            <span row_id='{{ forloop.counter }}' class='glyphicon glyphicon-small glyphicon-remove'></span>
+                            <span row_id='{{ forloop.counter }}' class='fas fa-trash-alt icon-red'></span>
                     </button>
                 </td>
-                <td>
-                </td>
+                <td></td>
                 <td>{% add row.index 1 %}</td>
+                <td>
+                    <button class='btn btn-default btn-create'  onClick='newPartFromBomWizard()' id='new_part_row_{{ row.index }}' title='Create new part' type='button'>
+                        <span row_id='{{ row.index }}' class='fas fa-plus icon-green'/>
+                    </button>
+                    <select class='select bomselect' id='select_part_{{ row.index }}' name='part_{{ row.index }}'>
+                        <option value=''>--- {% trans "Select Part" %} ---</option>
+                        {% for part in row.part_options %}
+                        <option value='{{ part.id }}' {% if part.id == row.part.id %} selected='selected' {% elif part.id == row.part_match.id %} selected='selected' {% endif %}>
+                            {{ part }} - {{ part.available_stock }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    {% if row.errors.part %}
+                    <p class='help-inline'>{{ row.errors.part }}</p>
+                    {% endif %}
+                </td>
                 {% for item in row.data %}
                 <td>
                     {% if item.column.guess == 'Part' %}
-                    <button class='btn btn-default btn-create'  onClick='newPartFromBomWizard()' id='new_part_row_{{ row.index }}' title='Create new part' type='button'>
-                        <span row_id='{{ row.index }}' class='glyphicon glyphicon-small glyphicon-plus'/>
-                    </button>
-
-                    <select class='select bomselect' id='select_part_{{ row.index }}' name='part_{{ row.index }}'>
-                        <option value=''>---------</option>
-                        {% for part in row.part_options %}
-                        <option value='{{ part.id }}'{% if part.id == row.part.id %} selected='selected'{% endif %}>{{ part.full_name }} - {{ part.description }}</option>
-                        {% endfor %}
-                    </select>
                     <i>{{ item.cell }}</i>
                     {% if row.errors.part %}
                     <p class='help-inline'>{{ row.errors.part }}</p>
                     {% endif %}
                     {% elif item.column.guess == 'Quantity' %}
-                    <input name='quantity_{{ row.index }}' class='numberinput' type='number' min='1' value='{{ row.quantity }}'/>
+                    <input name='quantity_{{ row.index }}' class='numberinput' type='number' min='1' step='any' value='{% decimal row.quantity %}'/>
                     {% if row.errors.quantity %}
                     <p class='help-inline'>{{ row.errors.quantity }}</p>
                     {% endif %}
                     {% elif item.column.guess == 'Reference' %}
                     <input name='reference_{{ row.index }}' value='{{ row.reference }}'/>
-                    {% elif item.column.guess == 'Notes' %}
+                    {% elif item.column.guess == 'Note' %}
                     <input name='notes_{{ row.index }}' value='{{ row.notes }}'/>
                     {% elif item.column.guess == 'Overage' %}
                     <input name='overage_{{ row.index }}' value='{{ row.overage }}'/>

@@ -2,6 +2,7 @@
 
 # 10 x M2x4 LPHS
 - model: part.bomitem
+  pk: 1
   fields:
     part: 100
     sub_part: 1
@@ -9,6 +10,7 @@
 
 # 40 x R_2K2_0805
 - model: part.bomitem
+  pk: 2
   fields:
     part: 100
     sub_part: 3
@@ -16,6 +18,7 @@
 
 # 25 x C_22N_0805
 - model: part.bomitem
+  pk: 3
   fields:
     part: 100
     sub_part: 5
@@ -23,6 +26,7 @@
 
 # 3 x Orphan
 - model: part.bomitem
+  pk: 4
   fields:
     part: 100
     sub_part: 50

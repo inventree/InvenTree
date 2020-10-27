@@ -1,0 +1,15 @@
+{% extends "collapse_index.html" %}
+
+{% load i18n %}
+
+{% block collapse_title %}
+<span class='fas fa-cogs icon-header'></span>
+{% trans "Pending Builds" %}<span class='badge' id='build-pending-count'><span class='fas fa-spin fa-hourglass-half'></span></span>
+{% endblock %}
+
+{% block collapse_content %}
+
+<table class='table table-striped table-condensed' id='build-pending-table'>
+</table>
+
+{% endblock %}

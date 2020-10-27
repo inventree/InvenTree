@@ -6,14 +6,8 @@ InvenTree Source Documentation
    :maxdepth: 2
    :caption: Index
    :hidden:
-
-   Getting Started<start>
-   Configuration<config>
-   Deployment<deploy>
-   Migrate Data<migrate>
-   Update InvenTree<update>
+   
    Translations<translate>
-   Backup and Restore<backup>
    Modal Forms<forms>
    Tables<tables>
    REST API<rest>

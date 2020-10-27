@@ -6,8 +6,8 @@ Are you sure you want to delete company '{{ company.name }}'?
 
 <br>
 
-{% if company.part_count > 0 %}
-<p>There are {{ company.part_count }} parts sourced from this company.<br>
+{% if company.supplied_part_count > 0 %}
+<p>There are {{ company.supplied_part_count }} parts sourced from this company.<br>
 If this supplier is deleted, these supplier part entries will also be deleted.</p>
 <ul class='list-group'>
 {% for part in company.parts.all %}

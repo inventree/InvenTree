@@ -7,9 +7,10 @@ from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework import generics, permissions
+from rest_framework import generics
 
 from django.conf.urls import url, include
+from django.db.models import Q
 
 from InvenTree.helpers import str2bool
 
@@ -31,10 +32,14 @@ class CompanyList(generics.ListCreateAPIView):
 
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+        queryset = CompanySerializer.annotate_queryset(queryset)
+
+        return queryset
+    
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -42,9 +47,10 @@ class CompanyList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'name',
         'is_customer',
+        'is_manufacturer',
         'is_supplier',
+        'name',
     ]
 
     search_fields = [
@@ -64,11 +70,14 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
-    
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+        queryset = CompanySerializer.annotate_queryset(queryset)
+
+        return queryset
+    
 
 class SupplierPartList(generics.ListCreateAPIView):
     """ API endpoint for list view of SupplierPart object
@@ -79,31 +88,79 @@ class SupplierPartList(generics.ListCreateAPIView):
 
     queryset = SupplierPart.objects.all().prefetch_related(
         'part',
-        'part__category',
-        'part__stock_items',
-        'part__bom_items',
-        'part__builds',
         'supplier',
-        'pricebreaks')
+        'manufacturer'
+    )
+
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+
+        return queryset
+
+    def filter_queryset(self, queryset):
+        """
+        Custom filtering for the queryset.
+        """
+
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        # Filter by manufacturer
+        manufacturer = params.get('manufacturer', None)
+
+        if manufacturer is not None:
+            queryset = queryset.filter(manufacturer=manufacturer)
+
+        # Filter by supplier
+        supplier = params.get('supplier', None)
+
+        if supplier is not None:
+            queryset = queryset.filter(supplier=supplier)
+
+        # Filter by EITHER manufacturer or supplier
+        company = params.get('company', None)
+
+        if company is not None:
+            queryset = queryset.filter(Q(manufacturer=company) | Q(supplier=company))
+
+        # Filter by parent part?
+        part = params.get('part', None)
+
+        if part is not None:
+            queryset = queryset.filter(part=part)
+
+        return queryset
 
     def get_serializer(self, *args, **kwargs):
 
         # Do we wish to include extra detail?
         try:
-            part_detail = str2bool(self.request.GET.get('part_detail', None))
+            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', None))
         except AttributeError:
-            part_detail = None
+            pass
+        
+        try:
+            kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', None))
+        except AttributeError:
+            pass
 
-        kwargs['part_detail'] = part_detail
+        try:
+            kwargs['manufacturer_detail'] = str2bool(self.request.query_params.get('manufacturer_detail', None))
+        except AttributeError:
+            pass
+
+        try:
+            kwargs['pretty'] = str2bool(self.request.query_params.get('pretty', None))
+        except AttributeError:
+            pass
+        
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
 
     serializer_class = SupplierPartSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -112,14 +169,12 @@ class SupplierPartList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'part',
-        'supplier'
     ]
 
     search_fields = [
         'SKU',
         'supplier__name',
-        'manufacturer',
+        'manufacturer__name',
         'description',
         'MPN',
     ]
@@ -135,7 +190,6 @@ class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = SupplierPart.objects.all()
     serializer_class = SupplierPartSerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
     read_only_fields = [
     ]
@@ -151,10 +205,6 @@ class SupplierPriceBreakList(generics.ListCreateAPIView):
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -169,15 +219,15 @@ supplier_part_api_urls = [
     url(r'^(?P<pk>\d+)/?', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
 
     # Catch anything else
-    url(r'^.*$', SupplierPartList.as_view(), name='api-part-supplier-list'),
+    url(r'^.*$', SupplierPartList.as_view(), name='api-supplier-part-list'),
 ]
 
 
 company_api_urls = [
     
-    url(r'^part/?', include(supplier_part_api_urls)),
+    url(r'^part/', include(supplier_part_api_urls)),
 
-    url(r'^price-break/?', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
+    url(r'^price-break/', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),
 
     url(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
 

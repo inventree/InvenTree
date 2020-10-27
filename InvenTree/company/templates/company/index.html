@@ -1,22 +1,24 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load i18n %}
 
 {% block page_title %}
-InvenTree | Supplier List 
+InvenTree | {% trans "Supplier List" %} 
 {% endblock %}
 
 {% block content %}
 
-<h3>Supplier List</h3>
+<h3>{{ title }}</h3>
 <hr>
 
+{% if pagetype == 'manufacturers' and roles.purchase_order.add or pagetype == 'suppliers' and roles.purchase_order.add or pagetype == 'customers' and roles.sales_order.add %}
 <div id='button-toolbar'>
     <div class='btn-group'>
-        <button type='button' class="btn btn-success" id='new-company' title='Add new supplier'>New Supplier</button>
+        <button type='button' class="btn btn-success" id='new-company'>{{ button_text }}</button>
     </div>
 </div>
-
+{% endif %}
 
 <table class='table table-striped' id='company-table' data-toolbar='#button-toolbar'>
 </table>
@@ -25,54 +27,18 @@ InvenTree | Supplier List
 {% block js_ready %}
 {{ block.super }}
     $('#new-company').click(function () {
-        launchModalForm(
-                        "{% url 'company-create' %}",
-                        {
-                            follow: true
-                        });
+        launchModalForm("{{ create_url }}", {
+            follow: true
+        });
     });
 
-    $("#company-table").inventreeTable({
-        formatNoMatches: function() { return "No company information found"; },
-        columns: [
-            {
-                field: 'pk',
-                title: 'ID',
-                visible: false,
-            },
-            {
-                field: 'name',
-                title: 'Supplier',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.image) + renderLink(value, row.url);
-                }
-            },
-            {
-                field: 'description',
-                title: 'Description',
-                sortable: true,
-            },
-            {
-                field: 'website',
-                title: 'Website',
-                formatter: function(value, row, index, field) {
-                    if (value) {
-                        return renderLink(value, value);
-                    }
-                    return '';
-                }
-            },
-            {
-                field: 'part_count',
-                title: 'Parts',
-                sortable: true,
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url + 'parts/');
-                }
-            },
-        ],
-        url: "{% url 'api-company-list' %}"
-    });
+    loadCompanyTable("#company-table", "{% url 'api-company-list' %}",
+        {
+            pagetype: '{{ pagetype }}',
+            params: {
+                {% for key,value in filters.items %}{{ key }}: "{{ value }}",{% endfor %}
+            }
+        }
+    );
 
 {% endblock %}

@@ -6,13 +6,17 @@ Django views for interacting with Company app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.views.generic import DetailView, ListView
+from django.utils.translation import ugettext as _
+from django.views.generic import DetailView, ListView, UpdateView
 
+from django.urls import reverse
 from django.forms import HiddenInput
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
-from InvenTree.status_codes import OrderStatus
 from InvenTree.helpers import str2bool
+from InvenTree.views import InvenTreeRoleMixin
+
+from common.models import Currency
 
 from .models import Company
 from .models import SupplierPart
@@ -26,7 +30,7 @@ from .forms import EditSupplierPartForm
 from .forms import EditPriceBreakForm
 
 
-class CompanyIndex(ListView):
+class CompanyIndex(InvenTreeRoleMixin, ListView):
     """ View for displaying list of companies
     """
 
@@ -34,6 +38,61 @@ class CompanyIndex(ListView):
     template_name = 'company/index.html'
     context_object_name = 'companies'
     paginate_by = 50
+    permission_required = 'company.view_company'
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+
+        # Provide custom context data to the template,
+        # based on the URL we use to access this page
+
+        lookup = {
+            reverse('supplier-index'): {
+                'title': _('Suppliers'),
+                'button_text': _('New Supplier'),
+                'filters': {'is_supplier': 'true'},
+                'create_url': reverse('supplier-create'),
+                'pagetype': 'suppliers',
+            },
+            reverse('manufacturer-index'): {
+                'title': _('Manufacturers'),
+                'button_text': _('New Manufacturer'),
+                'filters': {'is_manufacturer': 'true'},
+                'create_url': reverse('manufacturer-create'),
+                'pagetype': 'manufacturers',
+            },
+            reverse('customer-index'): {
+                'title': _('Customers'),
+                'button_text': _('New Customer'),
+                'filters': {'is_customer': 'true'},
+                'create_url': reverse('customer-create'),
+                'pagetype': 'customers',
+            }
+        }
+
+        default = {
+            'title': _('Companies'),
+            'button_text': _('New Company'),
+            'filters': {},
+            'create_url': reverse('company-create'),
+            'pagetype': 'companies'
+        }
+
+        context = None
+
+        for item in lookup:
+            if self.request.path == item:
+                context = lookup[item]
+                break
+        
+        if context is None:
+            context = default
+
+        for key, value in context.items():
+            ctx[key] = value
+
+        return ctx
 
     def get_queryset(self):
         """ Retrieve the Company queryset based on HTTP request parameters.
@@ -52,16 +111,38 @@ class CompanyIndex(ListView):
         return queryset
 
 
+class CompanyNotes(UpdateView):
+    """ View for editing the 'notes' field of a Company object.
+    """
+
+    context_object_name = 'company'
+    template_name = 'company/notes.html'
+    model = Company
+    fields = ['notes']
+    permission_required = 'company.view_company'
+
+    def get_success_url(self):
+        return reverse('company-notes', kwargs={'pk': self.get_object().id})
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+
+        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
+
+        return ctx
+
+
 class CompanyDetail(DetailView):
     """ Detail view for Company object """
     context_obect_name = 'company'
     template_name = 'company/detail.html'
     queryset = Company.objects.all()
     model = Company
+    permission_required = 'company.view_company'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['OrderStatus'] = OrderStatus
 
         return ctx
 
@@ -70,12 +151,13 @@ class CompanyImage(AjaxUpdateView):
     """ View for uploading an image for the Company """
     model = Company
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Update Company Image'
+    ajax_form_title = _('Update Company Image')
     form_class = CompanyImageForm
+    permission_required = 'company.change_company'
 
     def get_data(self):
         return {
-            'success': 'Updated company image',
+            'success': _('Updated company image'),
         }
 
 
@@ -85,11 +167,12 @@ class CompanyEdit(AjaxUpdateView):
     form_class = EditCompanyForm
     context_object_name = 'company'
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Company'
+    ajax_form_title = _('Edit Company')
+    permission_required = 'company.change_company'
 
     def get_data(self):
         return {
-            'info': 'Edited company information',
+            'info': _('Edited company information'),
         }
 
 
@@ -99,11 +182,49 @@ class CompanyCreate(AjaxCreateView):
     context_object_name = 'company'
     form_class = EditCompanyForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = "Create new Company"
+    permission_required = 'company.add_company'
+
+    def get_form_title(self):
+
+        url = self.request.path
+
+        if url == reverse('supplier-create'):
+            return _("Create new Supplier")
+        
+        if url == reverse('manufacturer-create'):
+            return _('Create new Manufacturer')
+
+        if url == reverse('customer-create'):
+            return _('Create new Customer')
+
+        return _('Create new Company')
+
+    def get_initial(self):
+        """ Initial values for the form data """
+        initials = super().get_initial().copy()
+
+        url = self.request.path
+
+        if url == reverse('supplier-create'):
+            initials['is_supplier'] = True
+            initials['is_customer'] = False
+            initials['is_manufacturer'] = False
+        
+        elif url == reverse('manufacturer-create'):
+            initials['is_manufacturer'] = True
+            initials['is_supplier'] = True
+            initials['is_customer'] = False
+
+        elif url == reverse('customer-create'):
+            initials['is_customer'] = True
+            initials['is_manufacturer'] = False
+            initials['is_supplier'] = False
+
+        return initials
 
     def get_data(self):
         return {
-            'success': "Created new company",
+            'success': _("Created new company"),
         }
 
 
@@ -113,25 +234,26 @@ class CompanyDelete(AjaxDeleteView):
     model = Company
     success_url = '/company/'
     ajax_template_name = 'company/delete.html'
-    ajax_form_title = 'Delete Company'
+    ajax_form_title = _('Delete Company')
     context_object_name = 'company'
+    permission_required = 'company.delete_company'
 
     def get_data(self):
         return {
-            'danger': 'Company was deleted',
+            'danger': _('Company was deleted'),
         }
 
 
 class SupplierPartDetail(DetailView):
     """ Detail view for SupplierPart """
     model = SupplierPart
-    template_name = 'company/partdetail.html'
+    template_name = 'company/supplier_part_detail.html'
     context_object_name = 'part'
     queryset = SupplierPart.objects.all()
+    permission_required = 'purchase_order.view'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['OrderStatus'] = OrderStatus
 
         return ctx
 
@@ -143,7 +265,8 @@ class SupplierPartEdit(AjaxUpdateView):
     context_object_name = 'part'
     form_class = EditSupplierPartForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Edit Supplier Part'
+    ajax_form_title = _('Edit Supplier Part')
+    role_required = 'purchase_order.change'
 
 
 class SupplierPartCreate(AjaxCreateView):
@@ -152,18 +275,15 @@ class SupplierPartCreate(AjaxCreateView):
     model = SupplierPart
     form_class = EditSupplierPartForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = 'Create new Supplier Part'
+    ajax_form_title = _('Create new Supplier Part')
     context_object_name = 'part'
+    role_required = 'purchase_order.add'
 
     def get_form(self):
         """ Create Form instance to create a new SupplierPart object.
         Hide some fields if they are not appropriate in context
         """
         form = super(AjaxCreateView, self).get_form()
-        
-        if form.initial.get('supplier', None):
-            # Hide the supplier field
-            form.fields['supplier'].widget = HiddenInput()
 
         if form.initial.get('part', None):
             # Hide the part field
@@ -179,20 +299,27 @@ class SupplierPartCreate(AjaxCreateView):
         """
         initials = super(SupplierPartCreate, self).get_initial().copy()
 
+        manufacturer_id = self.get_param('manufacturer')
         supplier_id = self.get_param('supplier')
         part_id = self.get_param('part')
 
         if supplier_id:
             try:
                 initials['supplier'] = Company.objects.get(pk=supplier_id)
-            except Company.DoesNotExist:
-                initials['supplier'] = None
+            except (ValueError, Company.DoesNotExist):
+                pass
+
+        if manufacturer_id:
+            try:
+                initials['manufacturer'] = Company.objects.get(pk=manufacturer_id)
+            except (ValueError, Company.DoesNotExist):
+                pass
         
         if part_id:
             try:
                 initials['part'] = Part.objects.get(pk=part_id)
-            except Part.DoesNotExist:
-                initials['part'] = None
+            except (ValueError, Part.DoesNotExist):
+                pass
         
         return initials
 
@@ -209,7 +336,8 @@ class SupplierPartDelete(AjaxDeleteView):
 
     success_url = '/supplier/'
     ajax_template_name = 'company/partdelete.html'
-    ajax_form_title = 'Delete Supplier Part'
+    ajax_form_title = _('Delete Supplier Part')
+    role_required = 'purchase_order.delete'
 
     parts = []
 
@@ -279,12 +407,13 @@ class PriceBreakCreate(AjaxCreateView):
 
     model = SupplierPriceBreak
     form_class = EditPriceBreakForm
-    ajax_form_title = 'Add Price Break'
+    ajax_form_title = _('Add Price Break')
     ajax_template_name = 'modal_form.html'
+    role_required = 'purchase_order.add'
 
     def get_data(self):
         return {
-            'success': 'Added new price break'
+            'success': _('Added new price break')
         }
 
     def get_part(self):
@@ -306,6 +435,13 @@ class PriceBreakCreate(AjaxCreateView):
 
         initials['part'] = self.get_part()
 
+        # Pre-select the default currency
+        try:
+            base = Currency.objects.get(base=True)
+            initials['currency'] = base
+        except Currency.DoesNotExist:
+            pass
+
         return initials
 
 
@@ -314,8 +450,9 @@ class PriceBreakEdit(AjaxUpdateView):
 
     model = SupplierPriceBreak
     form_class = EditPriceBreakForm
-    ajax_form_title = 'Edit Price Break'
+    ajax_form_title = _('Edit Price Break')
     ajax_template_name = 'modal_form.html'
+    role_required = 'purchase_order.change'
 
     def get_form(self):
 
@@ -329,5 +466,6 @@ class PriceBreakDelete(AjaxDeleteView):
     """ View for deleting a supplier price break """
 
     model = SupplierPriceBreak
-    ajax_form_title = "Delete Price Break"
+    ajax_form_title = _("Delete Price Break")
     ajax_template_name = 'modal_delete_form.html'
+    role_required = 'purchase_order.delete'

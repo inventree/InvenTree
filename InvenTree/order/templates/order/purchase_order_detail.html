@@ -1,230 +1,59 @@
-{% extends "base.html" %}
+{% extends "order/order_base.html" %}
 
+{% load inventree_extras %}
+{% load status_codes %}
 {% load i18n %}
 {% load static %}
-{% load inventree_extras %}
 
-{% block page_title %}
-InvenTree | {{ order }}
-{% endblock %}
+{% block details %}
 
-{% block content %}
-<div class='row'>
-    <div class='col-sm-6'>
-        <div class='media'>
-            <div class='media-left'>
-                <img class='part-thumb'
-                {% if order.supplier.image %}
-                src="{{ order.supplier.image.url }}"
-                {% else %}
-                src="{% static 'img/blank_image.png' %}"
-                {% endif %}
-                />
-            </div>
-            <div class='media-body'>
-                <h4>{{ order }}</h4>
-                <p>{{ order.description }}</p>
-                {% if order.URL %}
-                <a href="{{ order.URL }}">{{ order.URL }}</a>
-                {% endif %}
-                <p>
-                    <div class='btn-row'>
-                        <div class='btn-group'>
-                            <button type='button' class='btn btn-default btn-glyph' id='edit-order' title='Edit order information'>
-                                <span class='glyphicon glyphicon-edit'></span>
-                            </button>
-                            <button type='button' class='btn btn-default btn-glyph' id='export-order' title='Export order to file'>
-                                <span class='glyphicon glyphicon-download-alt'></span>
-                            </button>
-                            {% if order.status == OrderStatus.PENDING and order.lines.count > 0 %}
-                            <button type='button' class='btn btn-default btn-glyph' id='place-order' title='Place order'>
-                                <span class='glyphicon glyphicon-send'></span>
-                            </button>
-                            {% elif order.status == OrderStatus.PLACED %}
-                            <button type='button' class='btn btn-default btn-glyph' id='receive-order' title='Receive items'>
-                                <span class='glyphicon glyphicon-check'></span>
-                            </button>
-                            {% endif %}
-                            {% if order.status == OrderStatus.PENDING or order.status == OrderStatus.PLACED %}
-                            <button type='button' class='btn btn-default btn-glyph' id='cancel-order' title='Cancel order'>
-                                <span class='glyphicon glyphicon-remove'></span>
-                            </button>
-                            {% endif %}
-                        </div>
-                    </div>
-                </p>
-            </div>
-        </div>
-    </div>
-    <div class='col-sm-6'>
-        <h4>{% trans "Purchase Order Details" %}</h4>
-        <table class='table'>
-            <tr>
-                <td>{% trans "Supplier" %}</td>
-                <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier }}</a></td>
-            </tr>
-            <tr>
-                <td>{% trans "Status" %}</td>
-                <td>{% include "order/order_status.html" %}</td>
-            </tr>
-            <tr>
-                <td>{% trans "Created" %}</td>
-                <td>{{ order.creation_date }}<span class='badge'>{{ order.created_by }}</span></td>
-            </tr>
-            {% if order.issue_date %}
-            <tr>
-                <td>{% trans "Issued" %}</td>
-                <td>{{ order.issue_date }}</td>
-            </tr>
-            {% endif %}
-            {% if order.status == OrderStatus.COMPLETE %}
-            <tr>
-                <td>{% trans "Received" %}</td>
-                <td>{{ order.complete_date }}<span class='badge'>{{ order.received_by }}</span></td>
-            </tr>
-            {% endif %}
-        </table>
-    </div>
-</div>
+{% include 'order/po_tabs.html' with tab='details' %}
 
 <hr>
 
 <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-    {% if order.status == OrderStatus.PENDING %}
-    <button type='button' class='btn btn-default' id='new-po-line'>Add Line Item</button>
+    {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
+    <button type='button' class='btn btn-primary' id='new-po-line'>{% trans "Add Line Item" %}</button>
     {% endif %}
 </div>
 
-<h4>Order Items</h4>
+<h4>{% trans "Purchase Order Items" %}</h4>
 
-<table class='table table-striped table-condensed' id='po-lines-table' data-toolbar='#order-toolbar-buttons'>
-    <thead>
-    <tr>
-        <th data-sortable='true'>{% trans "Line" %}</th>
-        <th data-sortable='true'>{% trans "Part" %}</th>
-        <th>{% trans "Description" %}</th>
-        <th data-sortable='true'>{% trans "Order Code" %}</th>
-        <th data-sortable='true'>{% trans "Reference" %}</th>
-        <th data-sortable='true'>{% trans "Quantity" %}</th>
-        {% if not order.status == OrderStatus.PENDING %}
-        <th data-sortable='true'>{% trans "Received" %}</th>
-        {% endif %}
-        <th>{% trans "Note" %}</th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for line in order.lines.all %}
-    <tr{% if order.status == OrderStatus.PLACED %} class={% if line.received < line.quantity %}'rowinvalid'{% else %}'rowvalid'{% endif %}{% endif %}>
-        <td>
-            {{ forloop.counter }}
-        </td>
-        {% if line.part %}
-        <td>
-            {% include "hover_image.html" with image=line.part.part.image hover=True %}
-            <a href="{% url 'part-detail' line.part.part.id %}">{{ line.part.part.full_name }}</a>
-        </td>
-        <td>{{ line.part.part.description }}</td>
-        <td><a href="{% url 'supplier-part-detail' line.part.id %}">{{ line.part.SKU }}</a></td>
-        {% else %}
-        <td colspan='3'><strong>Warning: Part has been deleted.</strong></td>
-        {% endif %}
-        <td>{{ line.reference }}</td>
-        <td>{% decimal line.quantity %}</td>
-        {% if not order.status == OrderStatus.PENDING %}
-        <td>{% decimal line.received %}</td>
-        {% endif %}
-        <td>
-            {{ line.notes }}
-        </td>
-        <td>
-            <div class='btn-group'>
-                {% if order.status == OrderStatus.PENDING %}
-                <button class='btn btn-default btn-glyph' line='{{ line.id }}' id='edit-line-item-{{ line.id }} title='Edit line item' onclick='editPurchaseOrderLineItem()'>
-                    <span url="{% url 'po-line-item-edit' line.id %}" line='{{ line.id }}' class='glyphicon glyphicon-edit'></span>
-                </button>
-                <button class='btn btn-default btn-glyph' line='{{ line.id }}' id='remove-line-item-{{ line.id }' title='Remove line item' type='button' onclick='removePurchaseOrderLineItem()'>
-                    <span url="{% url 'po-line-item-delete' line.id %}" line='{{ line.id }}' class='glyphicon glyphicon-remove'></span>
-                </button>
-                {% endif %}
-                {% if order.status == OrderStatus.PLACED and line.received < line.quantity %}
-                <button class='btn btn-default btn-glyph line-receive' pk='{{ line.pk }}' title='Receive item(s)'>
-                    <span class='glyphicon glyphicon-check'></span>
-                </button>
-                {% endif %}
-            </div>
-        </td>
-    </tr>
-    {% endfor %}
-    </tbody>
+<table class='table table-striped table-condensed' id='po-table' data-toolbar='#order-toolbar-buttons'>
 </table>
-
-{% if order.notes %}
-<hr>
-<div class='panel panel-default'>
-    <div class='panel-heading'><b>{% trans "Notes" %}</b></div>
-    <div class='panel-body'>{{ order.notes }}</div>
-</div>
-{% endif %}
 
 {% endblock %}
 
 {% block js_ready %}
 
-$("#place-order").click(function() {
-    launchModalForm("{% url 'purchase-order-issue' order.id %}",
-    {
-        reload: true,
-    });
-});
+{{ block.super }}
 
-$("#edit-order").click(function() {
-    launchModalForm("{% url 'purchase-order-edit' order.id %}",
-        {
-            reload: true,
-        }
-    );
-});
-
-$("#cancel-order").click(function() {
-    launchModalForm("{% url 'purchase-order-cancel' order.id %}", {
-        reload: true,
-    });
-});
-
-$("#po-lines-table").on('click', ".line-receive", function() {
-
-    var button = $(this);
-
-    console.log('clicked! ' + button.attr('pk'));
-
-    launchModalForm("{% url 'purchase-order-receive' order.id %}", {
-        reload: true,
-        data: {
-            line: button.attr('pk')
-        }
-    });
-});
 
 $("#receive-order").click(function() {
-    launchModalForm("{% url 'purchase-order-receive' order.id %}", {
+    launchModalForm("{% url 'po-receive' order.id %}", {
         reload: true,
         secondary: [
             {
                 field: 'location',
-                label: 'New Location',
-                title: 'Create new stock location',
+                label: '{% trans "New Location" %}',
+                title: '{% trans "Create new stock location" %}',
                 url: "{% url 'stock-location-create' %}",
             },
         ]
     });
 });
 
-$("#export-order").click(function() {
-    location.href = "{% url 'purchase-order-export' order.id %}";
+$("#complete-order").click(function() {
+    launchModalForm("{% url 'po-complete' order.id %}", {
+        reload: true,
+    });
 });
 
-{% if order.status == OrderStatus.PENDING %}
+$("#export-order").click(function() {
+    location.href = "{% url 'po-export' order.id %}";
+});
+
+{% if order.status == PurchaseOrderStatus.PENDING %}
 $('#new-po-line').click(function() {
     launchModalForm("{% url 'po-line-item-create' %}",
         {
@@ -235,8 +64,8 @@ $('#new-po-line').click(function() {
             secondary: [
                 {
                     field: 'part',
-                    label: 'New Supplier Part',
-                    title: 'Create new supplier part',
+                    label: '{% trans "New Supplier Part" %}',
+                    title: '{% trans "Create new supplier part" %}',
                     url: "{% url 'supplier-part-create' %}",
                     data: {
                         supplier: {{ order.supplier.id }},
@@ -248,7 +77,155 @@ $('#new-po-line').click(function() {
 });
 {% endif %}
 
-$("#po-lines-table").inventreeTable({
+function reloadTable() {
+    $("#po-table").bootstrapTable("refresh");
+}
+
+function setupCallbacks() {
+    // Setup callbacks for the line buttons
+
+    var table = $("#po-table");
+
+    {% if order.status == PurchaseOrderStatus.PENDING %}
+    table.find(".button-line-edit").click(function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm(`/order/purchase-order/line/${pk}/edit/`, {
+            success: reloadTable,
+        });
+    });
+
+    table.find(".button-line-delete").click(function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm(`/order/purchase-order/line/${pk}/delete/`, {
+            success: reloadTable,
+        });
+    });
+    {% endif %}
+
+    table.find(".button-line-receive").click(function() {
+        var pk = $(this).attr('pk');
+
+        launchModalForm("{% url 'po-receive' order.id %}", {
+            success: reloadTable,
+            data: {
+                line: pk,
+            },
+            secondary: [
+                {
+                    field: 'location',
+                    label: '{% trans "New Location" %}',
+                    title: '{% trans "Create new stock location" %}',
+                    url: "{% url 'stock-location-create' %}",
+                },
+            ]
+        });
+    });
+
+}
+
+$("#po-table").inventreeTable({
+    onPostBody: setupCallbacks,
+    name: 'purchaseorder',
+    formatNoMatches: function() { return "{% trans 'No line items found' %}"; },
+    queryParams: {
+        order: {{ order.id }},
+        part_detail: true,
+    },
+    url: "{% url 'api-po-line-list' %}",
+    columns: [
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+            switchable: false,
+        },
+        {
+            field: 'part',
+            sortable: true,
+            title: '{% trans "Part" %}',
+            formatter: function(value, row, index, field) {
+                if (row.part) {
+                    return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
+                } else { 
+                    return '-';
+                }
+            },
+        },
+        {
+            sortable: true,
+            field: 'part_detail.description',
+            title: '{% trans "Description" %}',
+        },
+        {
+            sortable: true,
+            field: 'supplier_part_detail.SKU',
+            title: '{% trans "Order Code" %}',
+            formatter: function(value, row, index, field) {
+                return renderLink(value, `/supplier-part/${row.part}/`);
+            },
+        },
+        {
+            sortable: true,
+            field: 'reference',
+            title: '{% trans "Reference" %}',
+        },
+        {
+            sortable: true,
+            field: 'quantity',
+            title: '{% trans "Quantity" %}'
+        },
+        {
+            sortable: true,
+            field: 'received',
+            title: '{% trans "Received" %}',
+            formatter: function(value, row, index, field) {
+                return makeProgressBar(row.received, row.quantity, {
+                    id: `order-line-progress-${row.pk}`,
+                });
+            },
+            sorter: function(valA, valB, rowA, rowB) {
+                
+                if (rowA.received == 0 && rowB.received == 0) {
+                    return (rowA.quantity > rowB.quantity) ? 1 : -1;
+                }
+                
+                var progressA = parseFloat(rowA.received) / rowA.quantity;
+                var progressB = parseFloat(rowB.received) / rowB.quantity;
+
+                return (progressA < progressB) ? 1 : -1;
+            }
+        },
+        {
+            field: 'notes',
+            title: '{% trans "Notes" %}',
+        },
+        {
+            field: 'buttons',
+            title: '',
+            formatter: function(value, row, index, field) {
+                var html = `<div class='btn-group'>`;
+
+                var pk = row.pk;
+
+                {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.delete %}
+                html += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
+                html += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
+                {% endif %}
+
+                {% if order.status == PurchaseOrderStatus.PLACED and roles.purchase_order.change %}
+                if (row.received < row.quantity) {
+                    html += makeIconButton('fa-clipboard-check', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+                }
+                {% endif %}
+
+                html += `</div>`;
+
+                return html;
+            },
+        }
+    ]
 });
 
 

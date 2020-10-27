@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -30,6 +31,20 @@ class BuildTestSimple(TestCase):
         User.objects.create_user('testuser', 'test@testing.com', 'password')
 
         self.user = User.objects.get(username='testuser')
+
+        g = Group.objects.create(name='builders')
+        self.user.groups.add(g)
+
+        for rule in g.rule_sets.all():
+            if rule.name == 'build':
+                rule.can_change = True
+                rule.can_add = True
+                rule.can_delete = True
+
+                rule.save()
+
+        g.save()
+
         self.client.login(username='testuser', password='password')
 
     def test_build_objects(self):
@@ -39,7 +54,7 @@ class BuildTestSimple(TestCase):
         self.assertEqual(b.batch, 'B2')
         self.assertEqual(b.quantity, 21)
 
-        self.assertEqual(str(b), 'Build 21 x Orphan - A part without a category')
+        self.assertEqual(str(b), 'BO0002')
 
     def test_url(self):
         b1 = Build.objects.get(pk=1)
@@ -94,7 +109,20 @@ class TestBuildAPI(APITestCase):
     def setUp(self):
         # Create a user for auth
         User = get_user_model()
-        User.objects.create_user('testuser', 'test@testing.com', 'password')
+        user = User.objects.create_user('testuser', 'test@testing.com', 'password')
+
+        g = Group.objects.create(name='builders')
+        user.groups.add(g)
+
+        for rule in g.rule_sets.all():
+            if rule.name == 'build':
+                rule.can_change = True
+                rule.can_add = True
+                rule.can_delete = True
+
+                rule.save()
+
+        g.save()
 
         self.client.login(username='testuser', password='password')
 
@@ -131,7 +159,20 @@ class TestBuildViews(TestCase):
 
         # Create a user
         User = get_user_model()
-        User.objects.create_user('username', 'user@email.com', 'password')
+        user = User.objects.create_user('username', 'user@email.com', 'password')
+
+        g = Group.objects.create(name='builders')
+        user.groups.add(g)
+
+        for rule in g.rule_sets.all():
+            if rule.name == 'build':
+                rule.can_change = True
+                rule.can_add = True
+                rule.can_delete = True
+
+                rule.save()
+
+        g.save()
 
         self.client.login(username='username', password='password')
 
@@ -140,12 +181,6 @@ class TestBuildViews(TestCase):
 
         response = self.client.get(reverse('build-index'))
         self.assertEqual(response.status_code, 200)
-
-        content = str(response.content)
-
-        # Content should contain build titles
-        for build in Build.objects.all():
-            self.assertIn(build.title, content)
 
     def test_build_detail(self):
         """ Test the detail view for a Build object """

@@ -6,6 +6,8 @@ Django Forms for interacting with Part objects
 from __future__ import unicode_literals
 
 from InvenTree.forms import HelperForm
+from InvenTree.helpers import GetExportFormats
+from InvenTree.fields import RoundingDecimalFormField
 
 from mptt.fields import TreeNodeChoiceField
 from django import forms
@@ -14,6 +16,9 @@ from django.utils.translation import ugettext as _
 from .models import Part, PartCategory, PartAttachment
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
+from .models import PartTestTemplate
+from .models import PartSellPriceBreak
+
 
 from common.models import Currency
 
@@ -26,6 +31,50 @@ class PartImageForm(HelperForm):
         fields = [
             'image',
         ]
+
+
+class EditPartTestTemplateForm(HelperForm):
+    """ Class for creating / editing a PartTestTemplate object """
+
+    class Meta:
+        model = PartTestTemplate
+
+        fields = [
+            'part',
+            'test_name',
+            'description',
+            'required',
+            'requires_value',
+            'requires_attachment',
+        ]
+
+
+class BomExportForm(forms.Form):
+    """ Simple form to let user set BOM export options,
+    before exporting a BOM (bill of materials) file.
+    """
+
+    file_format = forms.ChoiceField(label=_("File Format"), help_text=_("Select output file format"))
+
+    cascading = forms.BooleanField(label=_("Cascading"), required=False, initial=True, help_text=_("Download cascading / multi-level BOM"))
+
+    levels = forms.IntegerField(label=_("Levels"), required=True, initial=0, help_text=_("Select maximum number of BOM levels to export (0 = all levels)"))
+
+    parameter_data = forms.BooleanField(label=_("Include Parameter Data"), required=False, initial=False, help_text=_("Include part parameters data in exported BOM"))
+
+    stock_data = forms.BooleanField(label=_("Include Stock Data"), required=False, initial=False, help_text=_("Include part stock data in exported BOM"))
+
+    supplier_data = forms.BooleanField(label=_("Include Supplier Data"), required=False, initial=True, help_text=_("Include part supplier data in exported BOM"))
+
+    def get_choices(self):
+        """ BOM export format choices """
+
+        return [(x, x.upper()) for x in GetExportFormats()]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['file_format'].choices = self.get_choices()
 
 
 class BomValidateForm(HelperForm):
@@ -76,10 +125,23 @@ class SetPartCategoryForm(forms.Form):
 class EditPartForm(HelperForm):
     """ Form for editing a Part object """
 
-    deep_copy = forms.BooleanField(required=False,
-                                   initial=True,
-                                   help_text=_("Perform 'deep copy' which will duplicate all BOM data for this part"),
-                                   widget=forms.HiddenInput())
+    field_prefix = {
+        'keywords': 'fa-key',
+        'link': 'fa-link',
+        'IPN': 'fa-hashtag',
+    }
+
+    bom_copy = forms.BooleanField(required=False,
+                                  initial=True,
+                                  help_text=_("Duplicate all BOM data for this part"),
+                                  label=_('Copy BOM'),
+                                  widget=forms.HiddenInput())
+
+    parameters_copy = forms.BooleanField(required=False,
+                                         initial=True,
+                                         help_text=_("Duplicate all parameter data for this part"),
+                                         label=_('Copy Parameters'),
+                                         widget=forms.HiddenInput())
 
     confirm_creation = forms.BooleanField(required=False,
                                           initial=False,
@@ -89,7 +151,8 @@ class EditPartForm(HelperForm):
     class Meta:
         model = Part
         fields = [
-            'deep_copy',
+            'bom_copy',
+            'parameters_copy',
             'confirm_creation',
             'category',
             'name',
@@ -98,14 +161,11 @@ class EditPartForm(HelperForm):
             'revision',
             'keywords',
             'variant_of',
-            'is_template',
-            'URL',
+            'link',
             'default_location',
             'default_supplier',
             'units',
             'minimum_stock',
-            'notes',
-            'active',
         ]
 
 
@@ -135,6 +195,10 @@ class EditPartParameterForm(HelperForm):
 class EditCategoryForm(HelperForm):
     """ Form for editing a PartCategory object """
 
+    field_prefix = {
+        'default_keywords': 'fa-key',
+    }
+
     class Meta:
         model = PartCategory
         fields = [
@@ -146,8 +210,18 @@ class EditCategoryForm(HelperForm):
         ]
 
 
+class PartModelChoiceField(forms.ModelChoiceField):
+    """ Extending string representation of Part instance with available stock """
+    def label_from_instance(self, part):
+        return f'{part} - {part.available_stock}'
+
+
 class EditBomItemForm(HelperForm):
     """ Form for editing a BomItem object """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    sub_part = PartModelChoiceField(queryset=Part.objects.all())
 
     class Meta:
         model = BomItem
@@ -157,7 +231,8 @@ class EditBomItemForm(HelperForm):
             'quantity',
             'reference',
             'overage',
-            'note'
+            'note',
+            'optional',
         ]
 
         # Prevent editing of the part associated with this BomItem
@@ -179,5 +254,24 @@ class PartPriceForm(forms.Form):
         model = Part
         fields = [
             'quantity',
+            'currency',
+        ]
+
+
+class EditPartSalePriceBreakForm(HelperForm):
+    """
+    Form for creating / editing a sale price for a part
+    """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    cost = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    class Meta:
+        model = PartSellPriceBreak
+        fields = [
+            'part',
+            'quantity',
+            'cost',
             'currency',
         ]

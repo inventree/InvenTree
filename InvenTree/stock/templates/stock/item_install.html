@@ -1,0 +1,17 @@
+{% extends "modal_form.html" %}
+{% load i18n %}
+
+{% block pre_form_content %}
+
+<p>
+    {% trans "Install another StockItem into this item." %}
+</p>
+<p>
+    {% trans "Stock items can only be installed if they meet the following criteria" %}:
+
+    <ul>
+        <li>{% trans "The StockItem links to a Part which is in the BOM for this StockItem" %}</li>
+        <li>{% trans "The StockItem is currently in stock" %}</li>
+    </ul>
+</p>
+{% endblock %}

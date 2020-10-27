@@ -1,0 +1,15 @@
+{% extends "collapse_index.html" %}
+
+{% load i18n %}
+
+{% block collapse_title %}
+<span class='fas fa-sign-out-alt icon-header'></span>
+{% trans "Outstanding Sales Orders" %}<span class='badge' id='so-outstanding-count'><span class='fas fa-spin fa-hourglass-half'></span></span>
+{% endblock %}
+
+{% block collapse_content %}
+
+<table class='table table-striped table-condensed' id='so-outstanding-table'>
+</table>
+
+{% endblock %}

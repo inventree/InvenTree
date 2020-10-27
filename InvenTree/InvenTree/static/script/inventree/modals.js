@@ -1,7 +1,136 @@
-function makeOption(id, title) {
+function makeOption(text, value, title) {
     /* Format an option for a select element
      */
-    return "<option value='" + id + "'>" + title + "</option>";
+
+    var html = `<option value='${value || text}'`;
+
+    if (title) {
+        html += ` title='${title}'`;
+    }
+
+    html += `>${text}</option>`;
+
+    return html;
+}
+
+function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
+    /*
+     * Programatically generate a list of <option> elements,
+     * from the (assumed array) of elements.
+     * For each element, we pass the element to the supplied functions,
+     * which (in turn) generate display / value / title values.
+     * 
+     * Args:
+     * - elements: List of elements
+     * - textFunc: Function which takes an element and generates the text to be displayed 
+     * - valueFunc: optional function which takes an element and generates the value
+     * - titleFunc: optional function which takes an element and generates a title
+     */
+    
+    var options = [];
+
+    elements.forEach(function(element) {
+        
+        var text = textFunc(element);
+        var value = null;
+        var title = null;
+
+        if (valueFunc) {
+            value = valueFunc(element);
+        } else {
+            value = text;
+        }
+
+        if (titleFunc) {
+            title = titleFunc(element);
+        }
+
+        options.push(makeOption(text, value, title));
+    });
+
+    return options;
+}
+
+
+function setFieldOptions(fieldName, optionList, options={}) {
+    /* Set the options for a <select> field.
+     *
+     * Args:
+     * - fieldName: The name of the target field
+     * - Options: List of formatted <option> strings
+     * - append: If true, options will be appended, otherwise will replace existing options.
+     */
+
+    
+    var append = options.append || false;
+    
+    var modal = options.modal || '#modal-form';
+
+    var field = getFieldByName(modal, fieldName);
+
+    var addEmptyOption = options.addEmptyOption || true;
+
+    // If not appending, clear out the field... 
+    if (!append) {
+        field.find('option').remove();
+    }
+
+    if (addEmptyOption) {
+        // Add an 'empty' option at the top of the list
+        field.append(`<option value="">---------</option>`);
+    }
+
+    optionList.forEach(function(option) {
+        field.append(option);
+    });
+
+}
+
+
+function reloadFieldOptions(fieldName, options) {
+    /* Reload the options for a given field,
+     * using an AJAX request.
+     *
+     * Args:
+     * - fieldName: The name of the field
+     * - options: 
+     * -- url: Query url
+     * -- params: Query params
+     * -- value: A function which takes a returned option and returns the 'value' (if not specified, the `pk` field is used)
+     * -- text: A function which takes a returned option and returns the 'text'
+     * -- title: A function which takes a returned option and returns the 'title' (optional!)
+     */
+
+    inventreeGet(options.url, options.params, {
+        success: function(response) {
+            var opts = makeOptionsList(response,
+                function(item) {
+                    return options.text(item);
+                },
+                function(item) {
+                    if (options.value) {
+                        return options.value(item);
+                    } else {
+                        // Fallback is to use the 'pk' field
+                        return item.pk;
+                    }
+                },
+                function(item) {
+                    if (options.title) {
+                        return options.title(item);
+                    } else {
+                        return null;
+                    }
+                }
+            );
+
+            // Update the target field with the new options
+            setFieldOptions(fieldName, opts);
+        },
+        error: function(response) {
+            console.log("Error GETting field options");
+        }
+    });
 }
 
 
@@ -166,14 +295,28 @@ function modalSetContent(modal, content='') {
 }
 
 
+function modalSetSubmitText(modal, text) {
+    if (text) {
+        $(modal).find('#modal-form-submit').html(text);
+    }
+}
+
+
+function modalSetCloseText(modal, text) {
+    if (text) {
+        $(modal).find('#modal-form-close').html(text);
+    }
+}
+
+
 function modalSetButtonText(modal, submit_text, close_text) {
     /* Set the button text for a modal form
      * 
      * submit_text - text for the form submit button
      * close_text - text for the form dismiss button
      */
-    $(modal).find("#modal-form-submit").html(submit_text);
-    $(modal).find("#modal-form-close").html(close_text);
+    modalSetSubmitText(modal, submit_text);
+    modalSetCloseText(modal, close_text);
 }
 
 
@@ -211,7 +354,7 @@ function renderErrorMessage(xhr) {
     
     var html = '<b>' + xhr.statusText + '</b><br>';
     
-    html += '<b>Status Code - ' + xhr.status + '</b><br><hr>';
+    html += '<b>Error Code - ' + xhr.status + '</b><br><hr>';
     
     html += `
     <div class='panel-group'>
@@ -326,6 +469,9 @@ function openModal(options) {
 
     $(modal).on('shown.bs.modal', function() {
         $(modal + ' .modal-form-content').scrollTop(0);
+        if (options.focus) {
+            getFieldByName(modal, options.focus).focus();
+        }
     });
 
     // Prevent 'enter' key from submitting the form using the normal method
@@ -380,6 +526,13 @@ function injectModalForm(modal, form_html) {
     $(modal).find('.modal-form-content').html(form_html);
     attachSelect(modal);
     attachToggle(modal);
+}
+
+
+function getFieldByName(modal, name) {
+    /* Find the field (with the given name) within the modal */
+
+    return $(modal).find(`#id_${name}`);
 }
 
 
@@ -442,7 +595,8 @@ function attachSecondaryModal(modal, options) {
                      */
 
                     var select = '#id_' + options.field;
-                    var option = new Option(response.text, response.pk, true, true)
+                    
+                    var option = new Option(response.text, response.pk, true, true);
                     
                     $(modal).find(select).append(option).trigger('change');
                 }
@@ -457,6 +611,39 @@ function attachSecondaries(modal, secondaries) {
 
     for (var i = 0; i < secondaries.length; i++) {
         attachSecondaryModal(modal, secondaries[i]);
+    }
+}
+
+
+function attachFieldCallback(modal, callback) {
+    /* Attach a 'callback' function to a given field in the modal form.
+     * When the value of that field is changed, the callback function is performed.
+     * 
+     * options:
+     * - field: The name of the field to attach to
+     * - action: A function to perform
+     */
+
+     // Find the field input in the form
+     var field = getFieldByName(modal, callback.field);
+
+    field.change(function() {
+
+        if (callback.action) {
+            // Run the callback function with the new value of the field!
+            callback.action(field.val(), field);
+        } else {
+            console.log(`Value changed for field ${callback.field} - ${field.val()}`);
+        }
+    });
+}
+
+
+function attachCallbacks(modal, callbacks) {
+    /* Attach a provided list of callback functions */
+
+    for (var i = 0; i < callbacks.length; i++) {
+        attachFieldCallback(modal, callbacks[i]);
     }
 }
 
@@ -560,6 +747,8 @@ function launchModalForm(url, options = {}) {
      * no_post - If true, only display form data, hide submit button, and disallow POST
      * after_render - Callback function to run after form is rendered
      * secondary - List of secondary modals to attach
+     * callback - List of callback functions to attach to inputs
+     * focus - Select which field to focus on by default
      */
 
     var modal = options.modal || '#modal-form';
@@ -578,6 +767,7 @@ function launchModalForm(url, options = {}) {
                 modal: modal,
                 submit_text: submit_text,
                 close_text: close_text,
+                focus: options.focus
             });
         },
         success: function(response) {
@@ -600,6 +790,10 @@ function launchModalForm(url, options = {}) {
                     attachSecondaries(modal, options.secondary);
                 }
 
+                if (options.callback) {
+                    attachCallbacks(modal, options.callback);
+                }
+
                 if (options.no_post) {
                     modalShowSubmitButton(modal, false);
                 } else {
@@ -613,8 +807,41 @@ function launchModalForm(url, options = {}) {
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
+
             $(modal).modal('hide');
-            showAlertDialog('Error requesting form data', renderErrorMessage(xhr));
+
+            // Permission denied!
+            if (xhr.status == 400) {
+                showAlertDialog(
+                    "Error 400: Bad Request",
+                    "Server returned error code 400"
+                );
+            } else if (xhr.status == 401) {
+                showAlertDialog(
+                    "Error 401: Not Authenticated",
+                    "Authentication credentials not supplied"
+                );
+            } else if (xhr.status == 403) {
+                showAlertDialog(
+                    "Error 403: Permission Denied",
+                    "You do not have the required permissions to access this function"
+                );
+            } else if (xhr.status == 404) {
+                showAlertDialog(
+                    "Error 404: Resource Not Found",
+                    "The requested resource could not be located on the server"
+                );
+            } else if (xhr.status == 408) {
+                showAlertDialog(
+                    "Error 408: Timeout",
+                    "Connection timeout while requesting data from server"
+                );
+            } else {
+                showAlertDialog('Error requesting form data', renderErrorMessage(xhr));
+            }
+
+            console.log("Modal form error: " + xhr.status);
+            console.log("Message: " + xhr.responseText);
         }
     };
 

@@ -12,6 +12,10 @@ from .models import PartCategory, Part
 from .models import PartAttachment, PartStar
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
+from .models import PartTestTemplate
+from .models import PartSellPriceBreak
+
+from InvenTree.helpers import normalize
 
 from stock.models import StockLocation
 from company.models import SupplierPart
@@ -50,7 +54,8 @@ class PartResource(ModelResource):
         report_skipped = False
         clean_model_instances = True
         exclude = [
-            'bom_checksum', 'bom_checked_by', 'bom_checked_date'
+            'bom_checksum', 'bom_checked_by', 'bom_checked_date',
+            'lft', 'rght', 'tree_id', 'level',
         ]
 
     def get_queryset(self):
@@ -69,7 +74,7 @@ class PartResource(ModelResource):
 
 
 class PartAdmin(ImportExportModelAdmin):
-
+    
     resource_class = PartResource
 
     list_display = ('full_name', 'description', 'total_stock', 'category')
@@ -126,18 +131,91 @@ class PartStarAdmin(admin.ModelAdmin):
     list_display = ('part', 'user')
 
 
+class PartTestTemplateAdmin(admin.ModelAdmin):
+
+    list_display = ('part', 'test_name', 'required')
+
+
 class BomItemResource(ModelResource):
     """ Class for managing BomItem data import/export """
 
-    part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
+    level = Field(attribute='level', readonly=True)
 
-    part_name = Field(attribute='part__full_name', readonly=True)
+    bom_id = Field(attribute='pk')
 
-    sub_part = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
+    # ID of the parent part
+    parent_part_id = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
-    sub_part_name = Field(attribute='sub_part__full_name', readonly=True)
+    # IPN of the parent part
+    parent_part_ipn = Field(attribute='part__IPN', readonly=True)
 
-    stock = Field(attribute='sub_part__total_stock', readonly=True)
+    # Name of the parent part
+    parent_part_name = Field(attribute='part__name', readonly=True)
+
+    # ID of the sub-part
+    part_id = Field(attribute='sub_part', widget=widgets.ForeignKeyWidget(Part))
+
+    # IPN of the sub-part
+    part_ipn = Field(attribute='sub_part__IPN', readonly=True)
+
+    # Name of the sub-part
+    part_name = Field(attribute='sub_part__name', readonly=True)
+
+    # Description of the sub-part
+    part_description = Field(attribute='sub_part__description', readonly=True)
+
+    # Is the sub-part itself an assembly?
+    sub_assembly = Field(attribute='sub_part__assembly', readonly=True)
+
+    def dehydrate_quantity(self, item):
+        """
+        Special consideration for the 'quantity' field on data export.
+        We do not want a spreadsheet full of "1.0000" (we'd rather "1")
+
+        Ref: https://django-import-export.readthedocs.io/en/latest/getting_started.html#advanced-data-manipulation-on-export
+        """
+        return normalize(item.quantity)
+
+    def before_export(self, queryset, *args, **kwargs):
+
+        self.is_importing = kwargs.get('importing', False)
+
+    def get_fields(self, **kwargs):
+        """
+        If we are exporting for the purposes of generating
+        a 'bom-import' template, there are some fields which
+        we are not interested in.
+        """
+
+        fields = super().get_fields(**kwargs)
+
+        # If we are not generating an "import" template,
+        # just return the complete list of fields
+        if not self.is_importing:
+            return fields
+
+        # Otherwise, remove some fields we are not interested in
+
+        idx = 0
+
+        to_remove = [
+            'level',
+            'bom_id',
+            'parent_part_id',
+            'parent_part_ipn',
+            'parent_part_name',
+            'part_description',
+            'sub_assembly'
+        ]
+
+        while idx < len(fields):
+
+            if fields[idx].column_name.lower() in to_remove:
+                del fields[idx]
+            else:
+                idx += 1
+
+        return fields
 
     class Meta:
         model = BomItem
@@ -145,7 +223,12 @@ class BomItemResource(ModelResource):
         report_skipped = False
         clean_model_instances = True
 
-        exclude = ('checksum')
+        exclude = [
+            'checksum',
+            'id',
+            'part',
+            'sub_part',
+        ]
 
 
 class BomItemAdmin(ImportExportModelAdmin):
@@ -186,6 +269,14 @@ class ParameterAdmin(ImportExportModelAdmin):
     list_display = ('part', 'template', 'data')
 
 
+class PartSellPriceBreakAdmin(admin.ModelAdmin):
+
+    class Meta:
+        model = PartSellPriceBreak
+
+    list_display = ('part', 'quantity', 'cost', 'currency')
+
+
 admin.site.register(Part, PartAdmin)
 admin.site.register(PartCategory, PartCategoryAdmin)
 admin.site.register(PartAttachment, PartAttachmentAdmin)
@@ -193,3 +284,5 @@ admin.site.register(PartStar, PartStarAdmin)
 admin.site.register(BomItem, BomItemAdmin)
 admin.site.register(PartParameterTemplate, ParameterTemplateAdmin)
 admin.site.register(PartParameter, ParameterAdmin)
+admin.site.register(PartTestTemplate, PartTestTemplateAdmin)
+admin.site.register(PartSellPriceBreak, PartSellPriceBreakAdmin)

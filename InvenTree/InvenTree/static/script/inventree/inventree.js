@@ -41,6 +41,13 @@ function inventreeDocReady() {
 
         modal.modal('show');
     });
+
+    // Callback to launch the 'Database Stats' window
+    $('#launch-stats').click(function() {
+        launchModalForm("/stats/", {
+            no_post: true,
+        });
+    });
 }
 
 function isFileTransfer(transfer) {
@@ -71,6 +78,74 @@ function getImageUrlFromTransfer(transfer) {
     return url;
 }
 
+function makeIconButton(icon, cls, pk, title) {
+    // Construct an 'icon button' using the fontawesome set
+
+    var classes = `btn btn-default btn-glyph ${cls}`;
+
+    var id = `${cls}-${pk}`;
+
+    var html = '';
+    
+    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}'>`;
+    html += `<span class='fas ${icon}'></span>`;
+    html += `</button>`;
+
+    return html;
+}
+
+function makeProgressBar(value, maximum, opts) {
+    /*
+     * Render a progessbar!
+     * 
+     * @param value is the current value of the progress bar
+     * @param maximum is the maximum value of the progress bar
+     */
+
+    var options = opts || {};
+
+    value = parseFloat(value);
+
+    var percent = 100;
+
+    // Prevent div-by-zero or null value
+    if (maximum && maximum > 0) {
+        maximum = parseFloat(maximum);
+        percent = parseInt(value / maximum * 100);
+    }
+
+    if (percent > 100) {
+        percent = 100;
+    }
+
+    var extraclass = '';
+
+    if (maximum) {
+        // TODO - Special color?
+    }
+    else if (value > maximum) {
+        extraclass='progress-bar-over';
+    } else if (value < maximum) {
+        extraclass = 'progress-bar-under';
+    }
+
+    var text = value;
+
+    if (maximum) {
+        text += ' / ';
+        text += maximum;
+    }
+
+    var id = options.id || 'progress-bar';
+
+    return `
+    <div id='${id}' class='progress'>
+        <div class='progress-bar ${extraclass}' role='progressbar' aria-valuenow='${percent}' aria-valuemin='0' aria-valuemax='100' style='width:${percent}%'></div>
+        <div class='progress-value'>${text}</div>
+    </div>
+    `;
+}
+
 
 function enableDragAndDrop(element, url, options) {
     /* Enable drag-and-drop file uploading for a given element.
@@ -80,9 +155,12 @@ function enableDragAndDrop(element, url, options) {
         url - URL to POST the file to
         options - object with following possible values:
             label - Label of the file to upload (default='file')
+            data - Other form data to upload
             success - Callback function in case of success
             error - Callback function in case of error
     */
+
+    data = options.data || {};
 
     $(element).on('drop', function(event) {
 
@@ -91,6 +169,11 @@ function enableDragAndDrop(element, url, options) {
         var label = options.label || 'file';
 
         var formData = new FormData();
+
+        // Add the extra data
+        for (var key in data) {
+            formData.append(key, data[key]);
+        }
 
         if (isFileTransfer(transfer)) {
             formData.append(label, transfer.files[0]);

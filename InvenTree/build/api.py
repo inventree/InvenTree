@@ -7,9 +7,12 @@ from __future__ import unicode_literals
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework import generics, permissions
+from rest_framework import generics
 
 from django.conf.urls import url, include
+
+from InvenTree.helpers import str2bool
+from InvenTree.status_codes import BuildStatus
 
 from .models import Build, BuildItem
 from .serializers import BuildSerializer, BuildItemSerializer
@@ -25,10 +28,6 @@ class BuildList(generics.ListCreateAPIView):
     queryset = Build.objects.all()
     serializer_class = BuildSerializer
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -36,8 +35,58 @@ class BuildList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'part',
+        'sales_order',
     ]
+
+    def get_queryset(self):
+        """
+        Override the queryset filtering,
+        as some of the fields don't natively play nicely with DRF
+        """
+
+        queryset = super().get_queryset().prefetch_related('part')
+
+        return queryset
+    
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
+
+        # Filter by build status?
+        status = self.request.query_params.get('status', None)
+
+        if status is not None:
+            queryset = queryset.filter(status=status)
+
+        # Filter by "active" status
+        active = self.request.query_params.get('active', None)
+
+        if active is not None:
+            active = str2bool(active)
+
+            if active:
+                queryset = queryset.filter(status__in=BuildStatus.ACTIVE_CODES)
+            else:
+                queryset = queryset.exclude(status__in=BuildStatus.ACTIVE_CODES)
+
+        # Filter by associated part?
+        part = self.request.query_params.get('part', None)
+
+        if part is not None:
+            queryset = queryset.filter(part=part)
+
+        return queryset
+
+    def get_serializer(self, *args, **kwargs):
+
+        try:
+            part_detail = str2bool(self.request.GET.get('part_detail', None))
+        except AttributeError:
+            part_detail = None
+
+        kwargs['part_detail'] = part_detail
+
+        return self.serializer_class(*args, **kwargs)
 
 
 class BuildDetail(generics.RetrieveUpdateAPIView):
@@ -45,10 +94,6 @@ class BuildDetail(generics.RetrieveUpdateAPIView):
 
     queryset = Build.objects.all()
     serializer_class = BuildSerializer
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
 
 class BuildItemList(generics.ListCreateAPIView):
@@ -65,23 +110,24 @@ class BuildItemList(generics.ListCreateAPIView):
         to allow filtering by stock_item.part
         """
 
-        # Does the user wish to filter by part?
-        part_pk = self.request.query_params.get('part', None)
-
         query = BuildItem.objects.all()
 
         query = query.select_related('stock_item')
         query = query.prefetch_related('stock_item__part')
         query = query.prefetch_related('stock_item__part__category')
 
-        if part_pk:
-            query = query.filter(stock_item__part=part_pk)
-
         return query
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+
+        # Does the user wish to filter by part?
+        part_pk = self.request.query_params.get('part', None)
+
+        if part_pk:
+            queryset = queryset.filter(stock_item__part=part_pk)
+
+        return queryset
 
     filter_backends = [
         DjangoFilterBackend,
@@ -98,7 +144,7 @@ build_item_api_urls = [
 ]
 
 build_api_urls = [
-    url(r'^item/?', include(build_item_api_urls)),
+    url(r'^item/', include(build_item_api_urls)),
 
     url(r'^(?P<pk>\d+)/', BuildDetail.as_view(), name='api-build-detail'),
 

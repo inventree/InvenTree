@@ -4,8 +4,12 @@ Generic models which provide extra functionality over base Django model types.
 
 from __future__ import unicode_literals
 
+import os
+
 from django.db import models
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import gettext_lazy as _
 
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -13,6 +17,65 @@ from django.dispatch import receiver
 from mptt.models import MPTTModel, TreeForeignKey
 
 from .validators import validate_tree_name
+
+
+def rename_attachment(instance, filename):
+    """
+    Function for renaming an attachment file.
+    The subdirectory for the uploaded file is determined by the implementing class.
+
+        Args:
+        instance: Instance of a PartAttachment object
+        filename: name of uploaded file
+
+    Returns:
+        path to store file, format: '<subdir>/<id>/filename'
+    """
+
+    # Construct a path to store a file attachment for a given model type
+    return os.path.join(instance.getSubdir(), filename)
+
+
+class InvenTreeAttachment(models.Model):
+    """ Provides an abstracted class for managing file attachments.
+
+    Attributes:
+        attachment: File
+        comment: String descriptor for the attachment
+        user: User associated with file upload
+        upload_date: Date the file was uploaded
+    """
+    def getSubdir(self):
+        """
+        Return the subdirectory under which attachments should be stored.
+        Note: Re-implement this for each subclass of InvenTreeAttachment
+        """
+
+        return "attachments"
+
+    def __str__(self):
+        return os.path.basename(self.attachment.name)
+
+    attachment = models.FileField(upload_to=rename_attachment,
+                                  help_text=_('Select file to attach'))
+
+    comment = models.CharField(blank=True, max_length=100, help_text=_('File comment'))
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        help_text=_('User'),
+    )
+
+    upload_date = models.DateField(auto_now_add=True, null=True, blank=True)
+
+    @property
+    def basename(self):
+        return os.path.basename(self.attachment.name)
+
+    class Meta:
+        abstract = True
 
 
 class InvenTreeTree(MPTTModel):
@@ -29,6 +92,8 @@ class InvenTreeTree(MPTTModel):
 
     class Meta:
         abstract = True
+
+        # Names must be unique at any given level in the tree
         unique_together = ('name', 'parent')
 
     class MPTTMeta:
@@ -37,13 +102,14 @@ class InvenTreeTree(MPTTModel):
     name = models.CharField(
         blank=False,
         max_length=100,
-        unique=True,
-        validators=[validate_tree_name]
+        validators=[validate_tree_name],
+        help_text=_("Name"),
     )
 
     description = models.CharField(
-        blank=False,
-        max_length=250
+        blank=True,
+        max_length=250,
+        help_text=_("Description (optional)")
     )
 
     # When a category is deleted, graft the children onto its parent

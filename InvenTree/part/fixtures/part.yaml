@@ -6,6 +6,11 @@
     name: 'M2x4 LPHS'
     description: 'M2x4 low profile head screw'
     category: 8
+    link: www.acme.com/parts/m2x4lphs
+    tree_id: 0
+    level: 0
+    lft: 0
+    rght: 0
 
 - model: part.part
   pk: 2
@@ -13,6 +18,10 @@
     name: 'M3x12 SHCS'
     description: 'M3x12 socket head cap screw'
     category: 8
+    tree_id: 0
+    level: 0
+    lft: 0
+    rght: 0
 
 # Create some resistors
 
@@ -22,20 +31,35 @@
     name: 'R_2K2_0805'
     description: '2.2kOhm resistor in 0805 package'
     category: 2
+    tree_id: 0
+    level: 0
+    lft: 0
+    rght: 0
+
 
 - model: part.part
+  pk: 4
   fields:
     name: 'R_4K7_0603'
     description: '4.7kOhm resistor in 0603 package'
     category: 2
     default_location: 2  # Home/Bathroom
+    tree_id: 0
+    level: 0
+    lft: 0
+    rght: 0
 
 # Create some capacitors
 - model: part.part
+  pk: 5
   fields:
     name: 'C_22N_0805'
     description: '22nF capacitor in 0805 package'
     category: 3
+    tree_id: 0
+    level: 0
+    lft: 0
+    rght: 0
 
 - model: part.part
   pk: 25
@@ -44,6 +68,10 @@
     description: 'A watchamacallit'
     category: 7
     trackable: true
+    tree_id: 0
+    level: 0
+    lft: 0
+    rght: 0
 
 - model: part.part
   pk: 50
@@ -51,6 +79,10 @@
     name: 'Orphan'
     description: 'A part without a category'
     category: null
+    tree_id: 0
+    level: 0
+    lft: 0
+    rght: 0
 
 # A part that can be made from other parts
 - model: part.part
@@ -64,3 +96,69 @@
     active: False
     IPN: BOB
     revision: A2
+    tree_id: 0
+    level: 0
+    lft: 0
+    rght: 0
+
+# A 'template' part
+- model: part.part
+  pk: 10000
+  fields:
+    name: 'Chair Template'
+    description: 'A chair'
+    is_template: True
+    trackable: true
+    category: 7
+    tree_id: 1
+    level: 0
+    lft: 0
+    rght: 0
+
+- model: part.part
+  pk: 10001
+  fields:
+    name: 'Blue Chair'
+    variant_of: 10000
+    trackable: true
+    category: 7
+    tree_id: 1
+    level: 0
+    lft: 0
+    rght: 0
+
+- model: part.part
+  pk: 10002
+  fields:
+    name: 'Red chair'
+    variant_of: 10000
+    trackable: true
+    category: 7
+    tree_id: 1
+    level: 0
+    lft: 0
+    rght: 0
+
+- model: part.part
+  pk: 10003
+  fields:
+    name: 'Green chair'
+    variant_of: 10000
+    category: 7
+    trackable: true
+    tree_id: 1
+    level: 0
+    lft: 0
+    rght: 0
+
+- model: part.part
+  pk: 10004
+  fields:
+    name: 'Green chair variant'
+    variant_of: 10003
+    category: 7
+    trackable: true
+    tree_id: 1
+    level: 0
+    lft: 0
+    rght: 0

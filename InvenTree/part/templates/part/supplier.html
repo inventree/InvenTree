@@ -1,20 +1,22 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load i18n %}
 {% block details %}
 
 {% include 'part/tabs.html' with tab='suppliers' %}
 
-<h4>Part Suppliers</h4>
+<h4>{% trans "Part Suppliers" %}</h4>
 <hr>
 
 <div id='button-toolbar'>
-    <button class="btn btn-success" id='supplier-create'>New Supplier Part</button>
-    <div id='opt-dropdown' class="dropdown" style='float: right;'>
-        <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Options
-            <span class="caret"></span></button>
+    <div class='btn-group'>
+        <button class="btn btn-success" id='supplier-create'>{% trans "New Supplier Part" %}</button>
+        <div id='opt-dropdown' class="btn-group">
+            <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
             <ul class="dropdown-menu">
-                <li><a href='#' id='supplier-part-delete' title='Delete supplier parts'>Delete</a></li>
+                <li><a href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>{% trans "Delete" %}</a></li>
             </ul>
+        </div>
     </div>
 </div>
 
@@ -40,9 +42,15 @@
                 secondary: [
                     {
                         field: 'supplier',
-                        label: 'New Supplier',
-                        title: 'Create new supplier',
-                        url: "{% url 'company-create' %}"
+                        label: '{% trans "New Supplier" %}',
+                        title: '{% trans "Create new supplier" %}',
+                        url: "{% url 'supplier-create' %}"
+                    },
+                    {
+                        field: 'manufacturer',
+                        label: '{% trans "New Manufacturer" %}',
+                        title: '{% trans "Create new manufacturer" %}',
+                        url: "{% url 'manufacturer-create' %}",
                     }
                 ]
             });
@@ -66,58 +74,18 @@
         });
     });
 
-    $("#supplier-table").inventreeTable({
-        formatNoMatches: function() { return "No supplier parts available for {{ part.full_name }}"; },
-        queryParams: function(p) {
-            return {
-                part: {{ part.id }}
-            }
-        },
-        columns: [
-            {
-                checkbox: true,
+    loadSupplierPartTable(
+        "#supplier-table",
+        "{% url 'api-supplier-part-list' %}",
+        {
+            params: {
+                part: {{ part.id }},
+                part_detail: true,
+                supplier_detail: true,
+                manufacturer_detail: true,
             },
-            {
-                sortable: true,
-                field: 'supplier_name',
-                title: 'Supplier',
-                formatter: function(value, row, index, field) {
-                    return imageHoverIcon(row.supplier_logo) + renderLink(value, '/company/' + row.supplier + '/');
-                }
-            },
-            {
-                sortable: true,
-                field: 'SKU',
-                title: 'SKU',
-                formatter: function(value, row, index, field) {
-                    return renderLink(value, row.url);
-                }
-            },
-            {
-                sortable: true,
-                field: 'manufacturer',
-                title: 'Manufacturer',
-            },
-            {
-                sortable: true,
-                field: 'MPN',
-                title: 'MPN',
-            },
-            {
-                sortable: true,
-                field: 'pricing',
-                title: 'Price',
-                formatter: function(value, row, index, field) {
-                    if (value) {
-                        return value;
-                    } else {
-                        return "<span class='warning-msg'><i>No pricing available</i></span>";
-                    }
-                },
-            }
-        ],
-        url: "{% url 'api-part-supplier-list' %}"
-    });
+        }
+    );
 
     linkButtonsToSelection($("#supplier-table"), ['#supplier-part-options'])
 

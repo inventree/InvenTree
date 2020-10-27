@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block page_title %}
-InvenTree | Build List 
+InvenTree | {% trans "Build Orders" %} 
 {% endblock %}
 
 {% block content %}
@@ -10,24 +11,26 @@ InvenTree | Build List
 
 <div class='row'>
     <div class='col-sm-6'>
-        <h3>Part Builds</h3>
+        <h3>{% trans "Build Orders" %}</h3>
     </div>
     <div class='col-sm-6'>
-        <div class='container' id='active-build-toolbar' style='float: right;'>
-            <div class='btn-group' style='float: right;'>
-                <button type='button' class="btn btn-success" id='new-build'>Start New Build</button>
+
+    </div>
+    
+    <hr>
+    
+    <div id='button-toolbar'>
+        <div class='button-toolbar container-fluid' style='float: right;'>
+            <button type='button' class="btn btn-success" id='new-build'>{% trans "New Build Order" %}</button>
+            <div class='filter-list' id='filter-list-build'>
+                <!-- An empty div in which the filter list will be constructed -->
             </div>
         </div>
     </div>
 </div>
 
-<hr>
-
-{% include "build/build_list.html" with builds=active title="Active Builds" completed=False collapse_id='active' %}
-
-{% include "build/build_list.html" with builds=completed completed=True title="Completed Builds" collapse_id="complete" %}
-
-{% include "build/build_list.html" with builds=cancelled title="Cancelled Builds" completed=False collapse_id="cancelled" %}
+<table class='table table-striped table-condensed' id='build-table' data-toolbar='#button-toolbar'>
+</table>
 
 {% endblock %}
 
@@ -38,38 +41,18 @@ InvenTree | Build List
 
     $("#new-build").click(function() {
         launchModalForm(
-                        "{% url 'build-create' %}",
-                        {
-                            follow: true
-                        });
+            "{% url 'build-create' %}",
+            {
+                follow: true
+            }
+        );
     });
 
-    $(".build-table").inventreeTable({
-        formatNoMatches: function() { return 'No builds found'; },
-        columns: [
-            {
-                field: 'name',
-                title: 'Build',
-                sortable: true,
-            },
-            {
-                field: 'part',
-                title: 'Part',
-                sortable: true,
-            },
-            {
-                title: 'Quantity',
-                sortable: true,
-                searchable: false
-            },
-            {
-                title: 'Status',
-                sortable: true,
-            },
-            {
-                sortable: true,
-            },
-        ]
+    loadBuildTable($("#build-table"), {
+        url: "{% url 'api-build-list' %}",
+        params: {
+            part_detail: "true",
+        },
     });
 
 {% endblock %}

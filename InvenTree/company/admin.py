@@ -32,6 +32,11 @@ class CompanyAdmin(ImportExportModelAdmin):
 
     list_display = ('name', 'website', 'contact')
 
+    search_fields = [
+        'name',
+        'description',
+    ]
+
 
 class SupplierPartResource(ModelResource):
     """ Class for managing SupplierPart data import/export """
@@ -56,6 +61,13 @@ class SupplierPartAdmin(ImportExportModelAdmin):
     resource_class = SupplierPartResource
 
     list_display = ('part', 'supplier', 'SKU')
+
+    search_fields = [
+        'company__name',
+        'part__name',
+        'MPN',
+        'SKU',
+    ]
 
 
 class SupplierPriceBreakResource(ModelResource):

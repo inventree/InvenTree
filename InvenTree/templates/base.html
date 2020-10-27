@@ -1,4 +1,6 @@
 {% load static %}
+{% load i18n %}
+{% load inventree_extras %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,13 +30,18 @@
 <meta name="theme-color" content="#ffffff">
 
 <!-- CSS -->
+<link rel='stylesheet' href='{% static "treegrid/css/jquery.treegrid.css" %}'>
+<link rel="stylesheet" href="{% static 'fontawesome/css/brands.css' %}">
+<link rel="stylesheet" href="{% static 'fontawesome/css/solid.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap_3.3.7_css_bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap-table.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap-table-group-by.css' %}">
 <link rel="stylesheet" href="{% static 'css/select2.css' %}">
 <link rel="stylesheet" href="{% static 'css/select2-bootstrap.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap-toggle.css' %}">
+<link rel="stylesheet" href="{% static 'css/bootstrap-table-filter-control.css' %}">
 <link rel="stylesheet" href="{% static 'css/inventree.css' %}">
+<link rel="stylesheet" href="{% get_color_theme_css user.get_username %}">
 
 {% block css %}
 {% endblock %}
@@ -93,22 +100,38 @@ InvenTree
 <script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-table-en-US.min.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-table-group-by.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-toggle.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-table-filter-control.js' %}"></script>
+<!-- <script type='text/javascript' src="{% static 'script/bootstrap/filter-control-utils.js' %}"></script> -->
 
 <script type="text/javascript" src="{% static 'script/select2/select2.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
 
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/bom.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/inventree/filters.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/tables.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/modals.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/order.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/sidenav.js' %}"></script>
+
+<script type='text/javascript' src="{% url 'barcode.js' %}"></script>
+<script type='text/javascript' src="{% url 'bom.js' %}"></script>
+<script type='text/javascript' src="{% url 'company.js' %}"></script>
+<script type='text/javascript' src="{% url 'part.js' %}"></script>
+<script type='text/javascript' src="{% url 'stock.js' %}"></script>
+<script type='text/javascript' src="{% url 'build.js' %}"></script>
+<script type='text/javascript' src="{% url 'order.js' %}"></script>
+<script type='text/javascript' src="{% url 'table_filters.js' %}"></script>
+
+<script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
+<script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>
+<script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.js' %}"></script>
+
 {% block js_load %}
 {% endblock %}
 
 <script type='text/javascript'>
+
 $(document).ready(function () {
 {% block js_ready %}
 {% endblock %}
@@ -116,7 +139,13 @@ $(document).ready(function () {
     inventreeDocReady();
     
     showCachedAlerts();
+
+    $('#barcode-scan').click(function() {
+        barcodeScanDialog();
+    });
+
 });
+
 </script>
 
 {% block js %}

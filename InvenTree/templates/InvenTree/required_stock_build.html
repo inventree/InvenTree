@@ -1,0 +1,15 @@
+{% extends "collapse_index.html" %}
+
+{% load i18n %}
+
+{% block collapse_title %}
+<span class='fas fa-bullhorn icon-header'></span>
+{% trans "Require Stock To Complete Build" %}<span class='badge' id='stock-to-build-count'><span class='fas fa-spin fa-hourglass-half'></span></span>
+{% endblock %}
+
+{% block collapse_content %}
+
+<table class='table table-striped table-condensed' id='stock-to-build-table'>
+</table>
+
+{% endblock %}

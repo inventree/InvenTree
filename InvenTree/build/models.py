@@ -14,85 +14,209 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.db import models, transaction
 from django.db.models import Sum
+from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
+from markdownx.models import MarkdownxField
+
+from mptt.models import MPTTModel, TreeForeignKey
+
 from InvenTree.status_codes import BuildStatus
-from InvenTree.fields import InvenTreeURLField
+from InvenTree.helpers import increment, getSetting
+from InvenTree.validators import validate_build_order_reference
 
-from stock.models import StockItem
-from part.models import Part, BomItem
+import InvenTree.fields
+
+from stock import models as StockModels
+from part import models as PartModels
 
 
-class Build(models.Model):
+class Build(MPTTModel):
     """ A Build object organises the creation of new parts from the component parts.
 
     Attributes:
         part: The part to be built (from component BOM items)
+        reference: Build order reference (required, must be unique)
         title: Brief title describing the build (required)
         quantity: Number of units to be built
+        parent: Reference to a Build object for which this Build is required
+        sales_order: References to a SalesOrder object for which this Build is required (e.g. the output of this build will be used to fulfil a sales order)
         take_from: Location to take stock from to make this build (if blank, can take from anywhere)
         status: Build status code
         batch: Batch code transferred to build parts (optional)
         creation_date: Date the build was created (auto)
         completion_date: Date the build was completed
-        URL: External URL for extra information
+        link: External URL for extra information
         notes: Text notes
     """
 
+    class Meta:
+        verbose_name = _("Build Order")
+        verbose_name_plural = _("Build Orders")
+
     def __str__(self):
-        return "Build {q} x {part}".format(q=self.quantity, part=str(self.part))
+
+        prefix = getSetting("BUILDORDER_REFERENCE_PREFIX")
+
+        return f"{prefix}{self.reference}"
 
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.id})
 
+    def clean(self):
+        """
+        Validation for Build object.
+        """
+
+        super().clean()
+
+        try:
+            if self.part.trackable:
+                if not self.quantity == int(self.quantity):
+                    raise ValidationError({
+                        'quantity': _("Build quantity must be integer value for trackable parts")
+                    })
+        except PartModels.Part.DoesNotExist:
+            pass
+
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        help_text=_('Build Order Reference'),
+        verbose_name=_('Reference'),
+        validators=[
+            validate_build_order_reference
+        ]
+    )
+
     title = models.CharField(
+        verbose_name=_('Description'),
         blank=False,
         max_length=100,
-        help_text=_('Brief description of the build'))
+        help_text=_('Brief description of the build')
+    )
 
-    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
-                             related_name='builds',
-                             limit_choices_to={
-                                 'is_template': False,
-                                 'assembly': True,
-                                 'active': True
-                             },
-                             help_text=_('Select part to build'),
-                             )
+    parent = TreeForeignKey(
+        'self',
+        on_delete=models.DO_NOTHING,
+        blank=True, null=True,
+        related_name='children',
+        verbose_name=_('Parent Build'),
+        help_text=_('Parent build to which this build is allocated'),
+    )
+
+    part = models.ForeignKey(
+        'part.Part',
+        verbose_name=_('Part'),
+        on_delete=models.CASCADE,
+        related_name='builds',
+        limit_choices_to={
+            'is_template': False,
+            'assembly': True,
+            'active': True,
+            'virtual': False,
+        },
+        help_text=_('Select part to build'),
+    )
+
+    sales_order = models.ForeignKey(
+        'order.SalesOrder',
+        verbose_name=_('Sales Order Reference'),
+        on_delete=models.SET_NULL,
+        related_name='builds',
+        null=True, blank=True,
+        help_text=_('SalesOrder to which this build is allocated')
+    )
     
-    take_from = models.ForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
-                                  related_name='sourcing_builds',
-                                  null=True, blank=True,
-                                  help_text=_('Select location to take stock from for this build (leave blank to take from any stock location)')
-                                  )
+    take_from = models.ForeignKey(
+        'stock.StockLocation',
+        verbose_name=_('Source Location'),
+        on_delete=models.SET_NULL,
+        related_name='sourcing_builds',
+        null=True, blank=True,
+        help_text=_('Select location to take stock from for this build (leave blank to take from any stock location)')
+    )
     
     quantity = models.PositiveIntegerField(
+        verbose_name=_('Build Quantity'),
         default=1,
         validators=[MinValueValidator(1)],
         help_text=_('Number of parts to build')
     )
 
-    status = models.PositiveIntegerField(default=BuildStatus.PENDING,
-                                         choices=BuildStatus.items(),
-                                         validators=[MinValueValidator(0)],
-                                         help_text=_('Build status'))
+    status = models.PositiveIntegerField(
+        verbose_name=_('Build Status'),
+        default=BuildStatus.PENDING,
+        choices=BuildStatus.items(),
+        validators=[MinValueValidator(0)],
+        help_text=_('Build status code')
+    )
     
-    batch = models.CharField(max_length=100, blank=True, null=True,
-                             help_text=_('Batch code for this build output'))
+    batch = models.CharField(
+        verbose_name=_('Batch Code'),
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text=_('Batch code for this build output')
+    )
     
-    creation_date = models.DateField(auto_now=True, editable=False)
+    creation_date = models.DateField(auto_now_add=True, editable=False)
     
     completion_date = models.DateField(null=True, blank=True)
 
-    completed_by = models.ForeignKey(User,
-                                     on_delete=models.SET_NULL,
-                                     blank=True, null=True,
-                                     related_name='builds_completed'
-                                     )
+    completed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        related_name='builds_completed'
+    )
     
-    URL = InvenTreeURLField(blank=True, help_text=_('Link to external URL'))
+    link = InvenTree.fields.InvenTreeURLField(
+        verbose_name=_('External Link'),
+        blank=True, help_text=_('Link to external URL')
+    )
 
-    notes = models.TextField(blank=True, help_text=_('Extra build notes'))
+    notes = MarkdownxField(
+        verbose_name=_('Notes'),
+        blank=True, help_text=_('Extra build notes')
+    )
+
+    @property
+    def output_count(self):
+        return self.build_outputs.count()
+
+    @classmethod
+    def getNextBuildNumber(cls):
+        """
+        Try to predict the next Build Order reference:
+        """
+
+        if cls.objects.count() == 0:
+            return None
+
+        build = cls.objects.last()
+        ref = build.reference
+
+        if not ref:
+            return None
+
+        tries = set()
+
+        while 1:
+            new_ref = increment(ref)
+
+            if new_ref in tries:
+                # We are potentially stuck in a loop - simply return the original reference
+                return ref
+
+            if cls.objects.filter(reference=new_ref).exists():
+                tries.add(new_ref)
+                new_ref = increment(new_ref)
+            else:
+                break
+
+        return new_ref
 
     @transaction.atomic
     def cancelBuild(self, user):
@@ -134,7 +258,11 @@ class Build(models.Model):
             # How many parts required for this build?
             q_required = item.quantity * self.quantity
 
-            stock = StockItem.objects.filter(part=item.sub_part)
+            # Grab a list of StockItem objects which are "in stock"
+            stock = StockModels.StockItem.objects.filter(StockModels.StockItem.IN_STOCK_FILTER)
+            
+            # Filter by part reference
+            stock = stock.filter(part=item.sub_part)
 
             # Ensure that the available stock items are in the correct location
             if self.take_from is not None:
@@ -206,36 +334,24 @@ class Build(models.Model):
         - Delete pending BuildItem objects
         """
 
-        for item in self.allocated_stock.all().prefetch_related('stock_item'):
-            
-            # Subtract stock from the item
-            item.stock_item.take_stock(
-                item.quantity,
-                user,
-                'Removed {n} items to build {m} x {part}'.format(
-                    n=item.quantity,
-                    m=self.quantity,
-                    part=self.part.full_name
-                )
-            )
+        # Complete the build allocation for each BuildItem
+        for build_item in self.allocated_stock.all().prefetch_related('stock_item'):
+            build_item.complete_allocation(user)
 
-            # Delete the item
-            item.delete()
-
-        # Mark the date of completion
-        self.completion_date = datetime.now().date()
-
-        self.completed_by = user
+            # Check that the stock-item has been assigned to this build, and remove the builditem from the database
+            if build_item.stock_item.build_order == self:
+                build_item.delete()
 
         notes = 'Built {q} on {now}'.format(
             q=self.quantity,
             now=str(datetime.now().date())
         )
 
-        if self.part.trackable:
+        # Generate the build outputs
+        if self.part.trackable and serial_numbers:
             # Add new serial numbers
             for serial in serial_numbers:
-                item = StockItem.objects.create(
+                item = StockModels.StockItem.objects.create(
                     part=self.part,
                     build=self,
                     location=location,
@@ -249,7 +365,7 @@ class Build(models.Model):
 
         else:
             # Add stock of the newly created item
-            item = StockItem.objects.create(
+            item = StockModels.StockItem.objects.create(
                 part=self.part,
                 build=self,
                 location=location,
@@ -261,31 +377,54 @@ class Build(models.Model):
             item.save()
 
         # Finally, mark the build as complete
+        self.completion_date = datetime.now().date()
+        self.completed_by = user
         self.status = BuildStatus.COMPLETE
         self.save()
+
+        return True
+
+    def isFullyAllocated(self):
+        """
+        Return True if this build has been fully allocated.
+        """
+
+        bom_items = self.part.bom_items.all()
+
+        for item in bom_items:
+            part = item.sub_part
+
+            if not self.isPartFullyAllocated(part):
+                return False
+
+        return True
+
+    def isPartFullyAllocated(self, part):
+        """
+        Check if a given Part is fully allocated for this Build
+        """
+
+        return self.getAllocatedQuantity(part) >= self.getRequiredQuantity(part)
 
     def getRequiredQuantity(self, part):
         """ Calculate the quantity of <part> required to make this build.
         """
 
         try:
-            item = BomItem.objects.get(part=self.part.id, sub_part=part.id)
-            return item.get_required_quantity(self.quantity)
-        except BomItem.DoesNotExist:
-            return 0
+            item = PartModels.BomItem.objects.get(part=self.part.id, sub_part=part.id)
+            q = item.quantity
+        except PartModels.BomItem.DoesNotExist:
+            q = 0
+
+        return q * self.quantity
 
     def getAllocatedQuantity(self, part):
         """ Calculate the total number of <part> currently allocated to this build
         """
 
-        allocated = BuildItem.objects.filter(build=self.id, stock_item__part=part.id).aggregate(Sum('quantity'))
+        allocated = BuildItem.objects.filter(build=self.id, stock_item__part=part.id).aggregate(q=Coalesce(Sum('quantity'), 0))
 
-        q = allocated['quantity__sum']
-
-        if q:
-            return int(q)
-        else:
-            return 0
+        return allocated['q']
 
     def getUnallocatedQuantity(self, part):
         """ Calculate the quantity of <part> which still needs to be allocated to this build.
@@ -305,11 +444,12 @@ class Build(models.Model):
         parts = []
 
         for item in self.part.bom_items.all().prefetch_related('sub_part'):
-            part = {'part': item.sub_part,
-                    'per_build': item.quantity,
-                    'quantity': item.quantity * self.quantity,
-                    'allocated': self.getAllocatedQuantity(item.sub_part)
-                    }
+            part = {
+                'part': item.sub_part,
+                'per_build': item.quantity,
+                'quantity': item.quantity * self.quantity,
+                'allocated': self.getAllocatedQuantity(item.sub_part)
+            }
 
             parts.append(part)
 
@@ -385,14 +525,37 @@ class BuildItem(models.Model):
                     q=self.stock_item.quantity
                 ))]
 
-        except StockItem.DoesNotExist:
-            pass
+            if self.stock_item.quantity - self.stock_item.allocation_count() + self.quantity < self.quantity:
+                errors['quantity'] = _('StockItem is over-allocated')
 
-        except Part.DoesNotExist:
+            if self.quantity <= 0:
+                errors['quantity'] = _('Allocation quantity must be greater than zero')
+
+            if self.stock_item.serial and not self.quantity == 1:
+                errors['quantity'] = _('Quantity must be 1 for serialized stock')
+
+        except (StockModels.StockItem.DoesNotExist, PartModels.Part.DoesNotExist):
             pass
 
         if len(errors) > 0:
             raise ValidationError(errors)
+
+    def complete_allocation(self, user):
+
+        item = self.stock_item
+
+        # Split the allocated stock if there are more available than allocated
+        if item.quantity > self.quantity:
+            item = item.splitStock(self.quantity, None, user)
+
+            # Update our own reference to the new item
+            self.stock_item = item
+            self.save()
+
+        # TODO - If the item__part object is not trackable, delete the stock item here
+        
+        item.build_order = self.build
+        item.save()
 
     build = models.ForeignKey(
         Build,
@@ -406,12 +569,17 @@ class BuildItem(models.Model):
         on_delete=models.CASCADE,
         related_name='allocations',
         help_text=_('Stock Item to allocate to build'),
+        limit_choices_to={
+            'build_order': None,
+            'sales_order': None,
+            'belongs_to': None,
+        }
     )
 
     quantity = models.DecimalField(
         decimal_places=5,
         max_digits=15,
         default=1,
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(0)],
         help_text=_('Stock quantity to allocate to build')
     )

@@ -1,10 +1,11 @@
 {% extends "part/part_base.html" %}
 {% load static %}
+{% load i18n %}
 {% block details %}
 
 {% include 'part/tabs.html' with tab='stock' %}
 
-<h4>Part Stock</h4>
+<h4>{% trans "Part Stock" %}</h4>
 <hr>
 
 {% if part.is_template %}
@@ -24,14 +25,12 @@
 {{ block.super }}
 
     $('#add-stock-item').click(function () {
-        launchModalForm(
-                        "{% url 'stock-item-create' %}",
-                        {
-                            reload: true,
-                            data: {
-                                part: {{ part.id }}
-                            }
-                        });
+        createNewStockItem({
+            reload: true,
+            data: {
+                part: {{ part.id }},
+            }
+        });
     });
 
     loadStockTable($("#stock-table"), {
@@ -49,7 +48,7 @@
 
     $("#stock-export").click(function() {
         launchModalForm("{% url 'stock-export-options' %}", {
-            submit_text: "Export",
+            submit_text: "{% trans 'Export' %}",
             success: function(response) {
                 var url = "{% url 'stock-export' %}";
 
@@ -63,37 +62,12 @@
     });
 
     $('#item-create').click(function () {
-        launchModalForm("{% url 'stock-item-create' %}", {
+        createNewStockItem({
             reload: true,
             data: {
-                part: {{ part.id }}
-            },
-            secondary: [
-                {
-                    field: 'part',
-                    label: 'New Part',
-                    title: 'Create New Part',
-                    url: "{% url 'part-create' %}",
-                },
-                {
-                    field: 'supplier_part',
-                    label: 'New Supplier Part',
-                    title: 'Create new Supplier Part',
-                    url: "{% url 'supplier-part-create' %}",
-                    data: {
-                        part: {{ part.id }}
-                    },
-                },
-                {
-                    field: 'location',
-                    label: 'New Location',
-                    title: 'Create New Location',
-                    url: "{% url 'stock-location-create' %}",
-                }
-            ]
+                part: {{ part.id }},
+            }
         });
-
-        return false;
     });
 
 {% endblock %}
