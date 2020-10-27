@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
+from django.core.exceptions import ValidationError
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 
@@ -320,6 +321,15 @@ class AjaxCreateView(AjaxMixin, CreateView):
     - Handles form validation via AJAX POST requests
     """
 
+    def validate(self, cleaned_data, **kwargs):
+        """
+        Hook for performing any extra validation, over and above the regular form.is_valid
+
+        If any errors exist, raise a ValidationError
+
+        """
+        return True
+
     def pre_save(self, form, request, **kwargs):
         """
         Hook for doing something before the form is validated
@@ -356,12 +366,24 @@ class AjaxCreateView(AjaxMixin, CreateView):
         self.request = request
         self.form = self.get_form()
 
+        # Perform regular form validation
+        valid = self.form.is_valid()
+
+        # Perform any extra validation steps
+        if valid:
+            try:
+                valid = valid and self.validate(self.form.cleaned_data)
+            except ValidationError as e:
+                valid = False
+
+                self.form.add_error(None, e)
+
         # Extra JSON data sent alongside form
         data = {
-            'form_valid': self.form.is_valid(),
+            'form_valid': valid
         }
 
-        if self.form.is_valid():
+        if valid:
 
             self.pre_save(self.form, request)
             self.object = self.form.save()

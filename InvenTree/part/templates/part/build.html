@@ -11,7 +11,7 @@
     <div class='button-toolbar container-flui' style='float: right';>
         {% if part.active %}
         {% if roles.build.add %}
-        <button class="btn btn-success" id='start-build'>{% trans "Start New Build" %}</button>
+        <button class="btn btn-success" id='start-build'><span class='fas fa-tools'></span> {% trans "Start New Build" %}</button>
         {% endif %}
         {% endif %}
         <div class='filter-list' id='filter-list-build'>
