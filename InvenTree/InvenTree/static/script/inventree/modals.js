@@ -719,6 +719,11 @@ function handleModalForm(url, options) {
                     }
                     // Form was returned, invalid!
                     else {
+
+                        var warningDiv = $(modal).find('#form-validation-warning');
+
+                        warningDiv.css('display', 'block');
+
                         if (response.html_form) {
                             injectModalForm(modal, response.html_form);
 
