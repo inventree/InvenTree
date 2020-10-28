@@ -11,7 +11,9 @@
 
 <div id='button-bar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
-        <button class='btn btn-primary' type='button' id='part-order2' title='{% trans "Order part" %}'>{% trans "Order Part" %}</button>
+        <button class='btn btn-primary' type='button' id='part-order2' title='{% trans "Order part" %}'>
+            <span class='fas fa-shopping-cart'></span> {% trans "Order Part" %}
+        </button>
         <div class='filter-list' id='filter-list-purchaseorder'>
             <!-- An empty div in which the filter list will be constructed -->
         </div>

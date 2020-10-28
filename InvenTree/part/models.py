@@ -576,7 +576,7 @@ class Part(MPTTModel):
 
     revision = models.CharField(max_length=100, blank=True, null=True, help_text=_('Part revision or version number'))
 
-    link = InvenTreeURLField(blank=True, null=True, help_text=_('Link to extenal URL'))
+    link = InvenTreeURLField(blank=True, null=True, help_text=_('Link to external URL'))
 
     image = StdImageField(
         upload_to=rename_part_image,

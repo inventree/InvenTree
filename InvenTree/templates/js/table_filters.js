@@ -14,13 +14,23 @@ function getAvailableTableFilters(tableKey) {
     // Filters for Bill of Materials table
     if (tableKey == "bom") {
         return {
-            trackable: {
+            sub_part_trackable: {
                 type: 'bool',
                 title: '{% trans "Trackable Part" %}'
             },
             validated: {
                 type: 'bool',
                 title: '{% trans "Validated" %}',
+            },
+        };
+    }
+
+    // Filters for the "used in" table
+    if (tableKey == 'usedin') {
+        return {
+            'part_active': {
+                type: 'bool',
+                title: '{% trans "Active" %}',
             },
         };
     }

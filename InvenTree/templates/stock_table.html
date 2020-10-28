@@ -3,11 +3,15 @@
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
         <div class='btn-group'>
-            <button class='btn btn-default' id='stock-export' title='{% trans "Export Stock Information" %}'><span class='fas fa-file-download'></span> {% trans "Export" %}</button>
+            <button class='btn btn-default' id='stock-export' title='{% trans "Export Stock Information" %}'>
+                <span class='fas fa-file-download'></span> {% trans "Export" %}
+            </button>
             {% if read_only %}
             {% else %}
             {% if roles.stock.add %}
-            <button class="btn btn-success" id='item-create'><span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}</button>
+            <button class="btn btn-success" id='item-create'>
+                <span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}
+            </button>
             {% endif %}
             {% if roles.stock.change or roles.stock.delete %}
             <div class="btn-group">

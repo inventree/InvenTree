@@ -14,10 +14,16 @@
     <div class='button-toolbar container-fluid' style="float: right;">
         <div class='btn-group' role='group'>
             {% if user.is_staff %}
-            <button type='button' class='btn btn-danger' id='delete-test-results'>{% trans "Delete Test Data" %}</button>
+            <button type='button' class='btn btn-danger' id='delete-test-results'>
+                <span class='fas fa-trash-alt'></span> {% trans "Delete Test Data" %}
+            </button>
             {% endif %}
-            <button type='button' class='btn btn-success' id='add-test-result'>{% trans "Add Test Data" %}</button>
-            <button type='button' class='btn btn-default' id='test-report'>{% trans "Test Report" %} <span class='fas fa-tasks'></span></button>
+            <button type='button' class='btn btn-success' id='add-test-result'>
+                <span class='fas fa-plus-circle'></span> {% trans "Add Test Data" %}
+            </button>
+            <button type='button' class='btn btn-default' id='test-report'>
+                <span class='fas fa-tasks'></span> {% trans "Test Report" %}
+            </button>
         </div>
         <div class='filter-list' id='filter-list-stocktests'>
             <!-- Empty div -->
