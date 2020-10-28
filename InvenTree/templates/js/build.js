@@ -300,7 +300,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         queryParams: {
             part: partId,
             sub_part_detail: true,
-            trackable: outputId != null,
+            sub_part_trackable: outputId != null,
         },
         formatNoMatches: function() { 
             return '{% trans "No BOM items found" %}';
