@@ -3,6 +3,8 @@ from common.models import InvenTreeSetting
 from common.signals import admin_nav_event
 from django.utils.translation import gettext_lazy as _
 from itertools import groupby
+from django.apps import apps
+from django.shortcuts import redirect
 
 class SettingsBaseView(TemplateView):
     def get_context_data(self, **kwargs):
@@ -73,31 +75,24 @@ class ExtensionsView(SettingsBaseView):
         from InvenTree.extensions import get_all_extensions
 
         context = super().get_context_data(**kwargs)
-        extensions_available = [e for e in get_all_extensions(self) if not
+        extensions_available = [e.app.name for e in get_all_extensions(self) if not
                    e.name.startswith('.') and getattr(e, 'visible', True)]
 
+        print(extensions_available)
 
-        with transaction.atomic():
-            #allow_restricted = request.user.has_active_staff_session(request.session.session_key)
-            allow_restricted = True
+        for key, value in request.POST.items():
+            if key.startswith("extension:"):
+                module = key.split(":")[1]
+                app_name = key.split(":")[1].split(".")[-1]
+                app =  apps.get_app_config(app_name)
+                print (module)
+                if value == "enable" and module in extensions_available:
+                    print ("Enable")
+                    app.enable()
+                else:
+                    print ("Disable")
+                    app.disable()
 
-            for key, value in request.POST.items():
-                if key.startswith("extension:"):
-                    module = key.split(":")[1]
-                    if value == "enable" and module in extensions_available:
-                        if getattr(extensions_available[module], 'restricted', False):
-                            if not allow_restricted:
-                                continue
-
-                        #self.request.event.log_action('inventree.event.extensions.enabled', user=self.request.user,
-                        #                              data={'extension': module})
-                        self.object.enable_extension(module, allow_restricted=allow_restricted)
-                    else:
-                        #self.request.event.log_action('inventree.event.extensions.disabled', user=self.request.user,
-                         #                             data={'extension': module})
-                        self.object.disable_extension(module)
-            self.object.save()
-#        messages.success(self.request, _('Your changes have been saved.'))
         return redirect(request.path_info)
 
 

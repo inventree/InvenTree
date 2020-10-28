@@ -68,13 +68,7 @@
                                         {% endif %}
                                     </td>
                                     <td class="text-right flip" width="20%">
-                                        {% if extension.app.compatibility_errors %}
-                                            <button class="btn disabled btn-block btn-default"
-                                                    disabled="disabled">{% trans "Incompatible" %}</button>
-                                            {% elif extension.restricted and not staff_session %}
-                                            <button class="btn disabled btn-block btn-default"
-                                                    disabled="disabled">{% trans "Not available" %}</button>
-                                            {% elif extension.module in extensions_active %}
+                                        {% if extension.app.enabled %}
                                             <button class="btn btn-default btn-block" name="extension:{{ extension.module }}"
                                                     value="disable">{% trans "Disable" %}</button>
                                         {% else %}
