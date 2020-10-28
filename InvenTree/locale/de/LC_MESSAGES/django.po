@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-28 07:12+0000\n"
+"POT-Creation-Date: 2020-10-28 07:30+0000\n"
 "PO-Revision-Date: 2020-05-03 11:32+0200\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -96,7 +96,7 @@ msgstr "Datei-Kommentar"
 msgid "User"
 msgstr "Benutzer"
 
-#: InvenTree/models.py:106 part/templates/part/params.html:22
+#: InvenTree/models.py:106 part/templates/part/params.html:24
 #: templates/js/part.js:81
 msgid "Name"
 msgstr "Name"
@@ -471,8 +471,8 @@ msgid "Stock quantity to allocate to build"
 msgstr "Lagerobjekt-Anzahl dem Bau zuweisen"
 
 #: build/templates/build/allocate.html:17
-#: company/templates/company/detail_part.html:22 order/views.py:804
-#: part/templates/part/category.html:122
+#: company/templates/company/detail_part.html:28 order/views.py:804
+#: part/templates/part/category.html:125
 msgid "Order Parts"
 msgstr "Teile bestellen"
 
@@ -488,7 +488,7 @@ msgstr "Automatisches Zuweisen"
 msgid "Unallocate"
 msgstr "Zuweisung aufheben"
 
-#: build/templates/build/allocate.html:87 templates/stock_table.html:10
+#: build/templates/build/allocate.html:87 templates/stock_table.html:13
 msgid "New Stock Item"
 msgstr "Neues Lagerobjekt"
 
@@ -1212,64 +1212,64 @@ msgstr "Kunde"
 msgid "Supplier Parts"
 msgstr "Zulieferer-Teile"
 
-#: company/templates/company/detail_part.html:15
+#: company/templates/company/detail_part.html:17
 #: order/templates/order/purchase_order_detail.html:68
 msgid "Create new supplier part"
 msgstr "Neues Zuliefererteil anlegen"
 
-#: company/templates/company/detail_part.html:15
+#: company/templates/company/detail_part.html:18
 #: order/templates/order/purchase_order_detail.html:67
-#: part/templates/part/supplier.html:13 templates/js/stock.js:798
+#: part/templates/part/supplier.html:14 templates/js/stock.js:798
 msgid "New Supplier Part"
 msgstr "Neues Zulieferer-Teil"
 
-#: company/templates/company/detail_part.html:18
-#: part/templates/part/category.html:117 part/templates/part/supplier.html:15
-#: templates/stock_table.html:14
+#: company/templates/company/detail_part.html:23
+#: part/templates/part/category.html:120 part/templates/part/supplier.html:17
+#: templates/stock_table.html:18
 msgid "Options"
 msgstr "Optionen"
 
-#: company/templates/company/detail_part.html:22
-#: part/templates/part/category.html:122
+#: company/templates/company/detail_part.html:28
+#: part/templates/part/category.html:125
 #, fuzzy
 #| msgid "Order part"
 msgid "Order parts"
 msgstr "Teil bestellen"
 
-#: company/templates/company/detail_part.html:25
+#: company/templates/company/detail_part.html:31
 #, fuzzy
 #| msgid "Delete Parts"
 msgid "Delete parts"
 msgstr "Teile löschen"
 
-#: company/templates/company/detail_part.html:25
+#: company/templates/company/detail_part.html:31
 msgid "Delete Parts"
 msgstr "Teile löschen"
 
-#: company/templates/company/detail_part.html:51
-#: part/templates/part/category.html:114 templates/js/stock.js:792
+#: company/templates/company/detail_part.html:60
+#: part/templates/part/category.html:116 templates/js/stock.js:792
 msgid "New Part"
 msgstr "Neues Teil"
 
-#: company/templates/company/detail_part.html:52
+#: company/templates/company/detail_part.html:61
 msgid "Create new Part"
 msgstr "Neues Teil hinzufügen"
 
-#: company/templates/company/detail_part.html:57 company/views.py:53
-#: part/templates/part/supplier.html:45
+#: company/templates/company/detail_part.html:66 company/views.py:53
+#: part/templates/part/supplier.html:47
 msgid "New Supplier"
 msgstr "Neuer Zulieferer"
 
-#: company/templates/company/detail_part.html:58 company/views.py:192
+#: company/templates/company/detail_part.html:67 company/views.py:192
 msgid "Create new Supplier"
 msgstr "Neuen Zulieferer anlegen"
 
-#: company/templates/company/detail_part.html:63 company/views.py:60
-#: part/templates/part/supplier.html:51
+#: company/templates/company/detail_part.html:72 company/views.py:60
+#: part/templates/part/supplier.html:53
 msgid "New Manufacturer"
 msgstr "Neuer Hersteller"
 
-#: company/templates/company/detail_part.html:64 company/views.py:195
+#: company/templates/company/detail_part.html:73 company/views.py:195
 msgid "Create new Manufacturer"
 msgstr "Neuen Hersteller anlegen"
 
@@ -1279,9 +1279,9 @@ msgstr "Zuliefererbestand"
 
 #: company/templates/company/detail_stock.html:35
 #: company/templates/company/supplier_part_stock.html:33
-#: part/templates/part/bom.html:57 part/templates/part/category.html:112
-#: part/templates/part/category.html:123 part/templates/part/stock.html:51
-#: templates/stock_table.html:6
+#: part/templates/part/bom.html:62 part/templates/part/category.html:112
+#: part/templates/part/category.html:126 part/templates/part/stock.html:51
+#: templates/stock_table.html:7
 msgid "Export"
 msgstr "Exportieren"
 
@@ -1314,7 +1314,7 @@ msgstr "Bestellungen"
 msgid "Create new purchase order"
 msgstr "Neue Bestellung anlegen"
 
-#: company/templates/company/purchase_orders.html:15
+#: company/templates/company/purchase_orders.html:16
 #: order/templates/order/purchase_orders.html:18
 msgid "New Purchase Order"
 msgstr "Neue Bestellung"
@@ -1334,8 +1334,8 @@ msgstr "Bestellungen"
 msgid "Create new sales order"
 msgstr "Neuen Auftrag anlegen"
 
-#: company/templates/company/sales_orders.html:15
-#: order/templates/order/sales_orders.html:18
+#: company/templates/company/sales_orders.html:16
+#: order/templates/order/sales_orders.html:19
 msgid "New Sales Order"
 msgstr "Neuer Auftrag"
 
@@ -1855,7 +1855,7 @@ msgstr "Bestellpositionen"
 
 #: order/templates/order/purchase_order_detail.html:38
 #: order/templates/order/purchase_order_detail.html:118
-#: part/templates/part/category.html:171 part/templates/part/category.html:213
+#: part/templates/part/category.html:173 part/templates/part/category.html:215
 #: templates/js/stock.js:804
 msgid "New Location"
 msgstr "Neuer Standort"
@@ -2585,31 +2585,31 @@ msgstr "Bearbeitung beenden"
 msgid "Edit BOM"
 msgstr "Stückliste bearbeiten"
 
-#: part/templates/part/bom.html:52 part/templates/part/params.html:36
+#: part/templates/part/bom.html:53 part/templates/part/params.html:38
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: part/templates/part/bom.html:54
+#: part/templates/part/bom.html:56
 msgid "Validate Bill of Materials"
 msgstr "Stückliste validieren"
 
-#: part/templates/part/bom.html:54
+#: part/templates/part/bom.html:57
 #, fuzzy
 #| msgid "Validate BOM"
 msgid "Validate"
 msgstr "BOM validieren"
 
-#: part/templates/part/bom.html:57 part/views.py:1642
+#: part/templates/part/bom.html:61 part/views.py:1642
 msgid "Export Bill of Materials"
 msgstr "Stückliste exportieren"
 
-#: part/templates/part/bom.html:116
+#: part/templates/part/bom.html:122
 #, fuzzy
 #| msgid "Remove selected BOM items"
 msgid "Delete selected BOM items?"
 msgstr "Ausgewählte Stücklistenpositionen entfernen"
 
-#: part/templates/part/bom.html:117
+#: part/templates/part/bom.html:123
 #, fuzzy
 #| msgid "Remove selected BOM items"
 msgid "All selected BOM items will be deleted"
@@ -2755,57 +2755,57 @@ msgstr "Unter-Kategorien"
 msgid "Parts (Including subcategories)"
 msgstr "Teile (inklusive Unter-Kategorien)"
 
-#: part/templates/part/category.html:112
+#: part/templates/part/category.html:111
 msgid "Export Part Data"
 msgstr ""
 
-#: part/templates/part/category.html:114
+#: part/templates/part/category.html:115
 msgid "Create new part"
 msgstr "Neues Teil anlegen"
 
-#: part/templates/part/category.html:120
+#: part/templates/part/category.html:123
 #, fuzzy
 #| msgid "Part category"
 msgid "Set category"
 msgstr "Teile-Kategorie"
 
-#: part/templates/part/category.html:120
+#: part/templates/part/category.html:123
 #, fuzzy
 #| msgid "Set Part Category"
 msgid "Set Category"
 msgstr "Teilkategorie auswählen"
 
-#: part/templates/part/category.html:123
+#: part/templates/part/category.html:126
 #, fuzzy
 #| msgid "Export"
 msgid "Export Data"
 msgstr "Exportieren"
 
-#: part/templates/part/category.html:172
+#: part/templates/part/category.html:174
 #, fuzzy
 #| msgid "Create New Location"
 msgid "Create new location"
 msgstr "Neuen Standort anlegen"
 
-#: part/templates/part/category.html:177 part/templates/part/category.html:207
+#: part/templates/part/category.html:179 part/templates/part/category.html:209
 #, fuzzy
 #| msgid "Category"
 msgid "New Category"
 msgstr "Kategorie"
 
-#: part/templates/part/category.html:178
+#: part/templates/part/category.html:180
 #, fuzzy
 #| msgid "Create new part category"
 msgid "Create new category"
 msgstr "Teilkategorie anlegen"
 
-#: part/templates/part/category.html:208
+#: part/templates/part/category.html:210
 #, fuzzy
 #| msgid "Create new part category"
 msgid "Create new Part Category"
 msgstr "Teilkategorie anlegen"
 
-#: part/templates/part/category.html:214 stock/views.py:1343
+#: part/templates/part/category.html:216 stock/views.py:1343
 msgid "Create new Stock Location"
 msgstr "Neuen Lager-Standort erstellen"
 
@@ -2853,7 +2853,7 @@ msgstr "Kategorie"
 msgid "Default Supplier"
 msgstr "Standard-Zulieferer"
 
-#: part/templates/part/detail.html:102 part/templates/part/params.html:24
+#: part/templates/part/detail.html:102 part/templates/part/params.html:26
 msgid "Units"
 msgstr "Einheiten"
 
@@ -2979,7 +2979,7 @@ msgstr "Dieses Teil ist nicht aktiv"
 msgid "Part Notes"
 msgstr "Teil-Bemerkungen"
 
-#: part/templates/part/orders.html:14
+#: part/templates/part/orders.html:15
 msgid "Order Part"
 msgstr "Teil bestellen"
 
@@ -2991,16 +2991,16 @@ msgstr "Teilparameter"
 msgid "Add new parameter"
 msgstr "Parameter hinzufügen"
 
-#: part/templates/part/params.html:14 templates/InvenTree/settings/part.html:27
+#: part/templates/part/params.html:15 templates/InvenTree/settings/part.html:27
 msgid "New Parameter"
 msgstr "Neuer Parameter"
 
-#: part/templates/part/params.html:23 stock/models.py:1391
+#: part/templates/part/params.html:25 stock/models.py:1391
 #: templates/js/stock.js:112
 msgid "Value"
 msgstr "Wert"
 
-#: part/templates/part/params.html:39 part/templates/part/supplier.html:17
+#: part/templates/part/params.html:41 part/templates/part/supplier.html:19
 #: users/models.py:145
 msgid "Delete"
 msgstr "Löschen"
@@ -3169,19 +3169,19 @@ msgstr "Niedriger Bestand"
 msgid "Part Suppliers"
 msgstr "Zulieferer"
 
-#: part/templates/part/supplier.html:17
+#: part/templates/part/supplier.html:19
 #, fuzzy
 #| msgid "Delete supplier part"
 msgid "Delete supplier parts"
 msgstr "Zuliefererteil entfernen"
 
-#: part/templates/part/supplier.html:46
+#: part/templates/part/supplier.html:48
 #, fuzzy
 #| msgid "Create new Supplier"
 msgid "Create new supplier"
 msgstr "Neuen Zulieferer anlegen"
 
-#: part/templates/part/supplier.html:52
+#: part/templates/part/supplier.html:54
 #, fuzzy
 #| msgid "Create new Manufacturer"
 msgid "Create new manufacturer"
@@ -3237,7 +3237,7 @@ msgstr "Varianten"
 msgid "Add part attachment"
 msgstr "Teilanhang hinzufügen"
 
-#: part/views.py:131 templates/attachment_table.html:32
+#: part/views.py:131 templates/attachment_table.html:34
 msgid "Edit attachment"
 msgstr "Anhang bearbeiten"
 
@@ -3803,6 +3803,12 @@ msgstr "Bermerkungen bearbeiten"
 msgid "Stock Tracking Information"
 msgstr "Informationen zum Lagerbestands-Tracking"
 
+#: stock/templates/stock/item.html:18
+#, fuzzy
+#| msgid "Category"
+msgid "New Entry"
+msgstr "Kategorie"
+
 #: stock/templates/stock/item_attachments.html:10
 #, fuzzy
 #| msgid "Stock Item Notes"
@@ -3858,15 +3864,15 @@ msgid "Stock adjustment actions"
 msgstr "Bestands-Anpassung bestätigen"
 
 #: stock/templates/stock/item_base.html:108
-#: stock/templates/stock/location.html:41 templates/stock_table.html:19
+#: stock/templates/stock/location.html:41 templates/stock_table.html:23
 msgid "Count stock"
 msgstr "Bestand zählen"
 
-#: stock/templates/stock/item_base.html:109 templates/stock_table.html:17
+#: stock/templates/stock/item_base.html:109 templates/stock_table.html:21
 msgid "Add stock"
 msgstr "Bestand hinzufügen"
 
-#: stock/templates/stock/item_base.html:110 templates/stock_table.html:18
+#: stock/templates/stock/item_base.html:110 templates/stock_table.html:22
 msgid "Remove stock"
 msgstr "Bestand entfernen"
 
@@ -4025,17 +4031,17 @@ msgstr ""
 msgid "Test Data"
 msgstr ""
 
-#: stock/templates/stock/item_tests.html:17
+#: stock/templates/stock/item_tests.html:18
 #, fuzzy
 #| msgid "Delete Template"
 msgid "Delete Test Data"
 msgstr "Vorlage löschen"
 
-#: stock/templates/stock/item_tests.html:19
+#: stock/templates/stock/item_tests.html:22
 msgid "Add Test Data"
 msgstr ""
 
-#: stock/templates/stock/item_tests.html:20
+#: stock/templates/stock/item_tests.html:25
 msgid "Test Report"
 msgstr ""
 
@@ -4696,23 +4702,23 @@ msgstr "Code auf GitHub ansehen"
 msgid "Submit Bug Report"
 msgstr "Fehlerbericht senden"
 
-#: templates/attachment_table.html:6
+#: templates/attachment_table.html:7
 msgid "Add Attachment"
 msgstr "Anhang hinzufügen"
 
-#: templates/attachment_table.html:15
+#: templates/attachment_table.html:17
 msgid "File"
 msgstr "Datei"
 
-#: templates/attachment_table.html:16
+#: templates/attachment_table.html:18
 msgid "Comment"
 msgstr "Kommentar"
 
-#: templates/attachment_table.html:17
+#: templates/attachment_table.html:19
 msgid "Uploaded"
 msgstr ""
 
-#: templates/attachment_table.html:35
+#: templates/attachment_table.html:37
 msgid "Delete attachment"
 msgstr "Anhang löschen"
 
@@ -5318,51 +5324,51 @@ msgstr "Suche"
 msgid "Export Stock Information"
 msgstr "Lagerobjekt-Standort bearbeiten"
 
-#: templates/stock_table.html:17
+#: templates/stock_table.html:21
 #, fuzzy
 #| msgid "Added stock to {n} items"
 msgid "Add to selected stock items"
 msgstr "Vorrat zu {n} Lagerobjekten hinzugefügt"
 
-#: templates/stock_table.html:18
+#: templates/stock_table.html:22
 #, fuzzy
 #| msgid "Remove selected BOM items"
 msgid "Remove from selected stock items"
 msgstr "Ausgewählte Stücklistenpositionen entfernen"
 
-#: templates/stock_table.html:19
+#: templates/stock_table.html:23
 #, fuzzy
 #| msgid "Delete Stock Item"
 msgid "Stocktake selected stock items"
 msgstr "Lagerobjekt löschen"
 
-#: templates/stock_table.html:20
+#: templates/stock_table.html:24
 #, fuzzy
 #| msgid "Delete Stock Item"
 msgid "Move selected stock items"
 msgstr "Lagerobjekt löschen"
 
-#: templates/stock_table.html:20
+#: templates/stock_table.html:24
 msgid "Move stock"
 msgstr "Bestand bewegen"
 
-#: templates/stock_table.html:21
+#: templates/stock_table.html:25
 #, fuzzy
 #| msgid "Remove selected BOM items"
 msgid "Order selected items"
 msgstr "Ausgewählte Stücklistenpositionen entfernen"
 
-#: templates/stock_table.html:21
+#: templates/stock_table.html:25
 msgid "Order stock"
 msgstr "Bestand bestellen"
 
-#: templates/stock_table.html:24
+#: templates/stock_table.html:28
 #, fuzzy
 #| msgid "Delete line item"
 msgid "Delete selected items"
 msgstr "Position löschen"
 
-#: templates/stock_table.html:24
+#: templates/stock_table.html:28
 msgid "Delete Stock"
 msgstr "Bestand löschen"
 
