@@ -49,12 +49,18 @@
         </button>
         {% elif part.active %}
         {% if roles.part.change %}
-        <button class='btn btn-primary' type='button' title='{% trans "Edit BOM" %}' id='edit-bom'><span class='fas fa-edit'></span> {% trans "Edit" %}</button>
+        <button class='btn btn-primary' type='button' title='{% trans "Edit BOM" %}' id='edit-bom'>
+            <span class='fas fa-edit'></span> {% trans "Edit" %}
+        </button>
         {% if part.is_bom_valid == False %}
-        <button class='btn btn-success' id='validate-bom' title='{% trans "Validate Bill of Materials" %}' type='button'><span class='fas fa-clipboard-check'></span> {% trans "Validate" %}</button>
+        <button class='btn btn-success' id='validate-bom' title='{% trans "Validate Bill of Materials" %}' type='button'>
+            <span class='fas fa-clipboard-check'></span> {% trans "Validate" %}
+        </button>
         {% endif %}
         {% endif %}
-        <button title='{% trans "Export Bill of Materials" %}' class='btn btn-default' id='download-bom' type='button'><span class='fas fa-file-download'></span> {% trans "Export" %}</button>
+        <button title='{% trans "Export Bill of Materials" %}' class='btn btn-default' id='download-bom' type='button'>
+            <span class='fas fa-file-download'></span> {% trans "Export" %}
+        </button>
         {% endif %}
     </div>
     <div class='filter-list' id='filter-list-bom'>

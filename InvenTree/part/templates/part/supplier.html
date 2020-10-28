@@ -10,7 +10,9 @@
 
 <div id='button-toolbar'>
     <div class='btn-group'>
-        <button class="btn btn-success" id='supplier-create'>{% trans "New Supplier Part" %}</button>
+        <button class="btn btn-success" id='supplier-create'>
+            <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
+        </button>
         <div id='opt-dropdown' class="btn-group">
             <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
             <ul class="dropdown-menu">
