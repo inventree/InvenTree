@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% load signal %}
 <nav class="navbar navbar-xs navbar-default navbar-fixed-top ">
   <div class="container-fluid">
     <div class="navbar-header clearfix content-heading">
@@ -43,6 +44,13 @@
           </ul>
         </li>
         {% endif %}
+        {% get_extension_navbar as extension_navbar %}
+	    {% for i in extension_navbar %}
+	    <li {% if i.active %} class='active' {% endif %}>
+            <a href='{{ i.url }}' {% if i.target %}target="{{ i.target }}"{% endif %}><span class='{{ i.icon }}'></span> {{ i.label }}</a>
+            </li>
+        {% endfor %}
+
       </ul>
       <ul class="nav navbar-nav navbar-right">
           {% include "search_form.html" %}

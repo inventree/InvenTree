@@ -2,7 +2,7 @@ import importlib
 
 from django import template
 from django.utils.safestring import mark_safe
-
+from ..signals import nav_topbar
 
 register = template.Library()
 
@@ -23,3 +23,12 @@ def signal(signame: str, request, **kwargs):
         if response:
             _html.append(response)
     return mark_safe("".join(_html))
+
+@register.simple_tag(takes_context=True)
+def get_extension_navbar(context):
+    tabs = sorted(
+        sum((list(a[1]) for a in nav_topbar.send(context.request,
+                                                 request=context.request)), []),
+        key=lambda r: (1 if r.get('parent') else 0, r['label'])
+    )
+    return tabs
