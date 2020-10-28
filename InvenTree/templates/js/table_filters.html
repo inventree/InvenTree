@@ -11,6 +11,30 @@ function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
 
+    // Filters for Bill of Materials table
+    if (tableKey == "bom") {
+        return {
+            sub_part_trackable: {
+                type: 'bool',
+                title: '{% trans "Trackable Part" %}'
+            },
+            validated: {
+                type: 'bool',
+                title: '{% trans "Validated" %}',
+            },
+        };
+    }
+
+    // Filters for the "used in" table
+    if (tableKey == 'usedin') {
+        return {
+            'part_active': {
+                type: 'bool',
+                title: '{% trans "Active" %}',
+            },
+        };
+    }
+
     // Filters for the "customer stock" table (really a subset of "stock")
     if (tableKey == "customerstock") {
         return {
