@@ -1,19 +1,23 @@
 {% extends "modal_form.html" %}
+{% load inventree_extras %}
+{% load i18n %}
 
 {% block pre_form_content %}
 
 {{ block.super }}
 
 {% if matches %}
-<b>Possible Matching Parts</b>
-<p>The new part may be a duplicate of these existing parts:</p>
-<ul class='list-group'>
-{% for match in matches %}
-<li class='list-group-item list-group-item-condensed'>
-    {{ match.part.full_name }} - <i>{{ match.part.description }}</i> ({{ match.ratio }}%)
-</li>
-{% endfor %}
+<div class='alert alert-block alert-warning'>
+    <b>{% trans "Possible Matching Parts" %}</b>
+    <p>{% trans "The new part may be a duplicate of these existing parts" %}:</p>
+    <ul class='list-group'>
+    {% for match in matches %}
+    <li class='list-group-item list-group-item-condensed'>
+        {{ match.part.full_name }} - <i>{{ match.part.description }}</i> ({% decimal match.ratio %}% {% trans "match" %})
+    </li>
+    {% endfor %}
 </ul>
+</div>
 {% endif %}
 
 {% endblock %}

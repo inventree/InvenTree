@@ -467,6 +467,9 @@ function openModal(options) {
 
     var modal = options.modal || '#modal-form';
 
+    // Ensure that the 'warning' div is hidden
+    $(modal).find('#form-validation-warning').css('display', 'none');
+
     $(modal).on('shown.bs.modal', function() {
         $(modal + ' .modal-form-content').scrollTop(0);
         if (options.focus) {
