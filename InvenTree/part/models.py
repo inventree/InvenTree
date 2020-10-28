@@ -360,7 +360,7 @@ class Part(MPTTModel):
             # And recursively check too
             item.sub_part.checkAddToBOM(parent)
 
-    def checkIfSerialNumberExists(self, sn):
+    def checkIfSerialNumberExists(self, sn, exclude_self=False):
         """
         Check if a serial number exists for this Part.
 
@@ -369,9 +369,26 @@ class Part(MPTTModel):
         """
 
         parts = Part.objects.filter(tree_id=self.tree_id)
+
         stock = StockModels.StockItem.objects.filter(part__in=parts, serial=sn)
 
+        if exclude_self:
+            stock = stock.exclude(pk=self.pk)
+
         return stock.exists()
+
+    def find_conflicting_serial_numbers(self, serials):
+        """
+        For a provided list of serials, return a list of those which are conflicting.
+        """
+
+        conflicts = []
+
+        for serial in serials:
+            if self.checkIfSerialNumberExists(serial, exclude_self=True):
+                conflicts.append(serial)
+
+        return conflicts
 
     def getLatestSerialNumber(self):
         """
