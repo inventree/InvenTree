@@ -447,7 +447,7 @@ class PartDuplicate(AjaxCreateView):
 
                 if not confirmed:
                     msg = _('Possible matches exist - confirm creation of new part')
-                    form.add_error('confirm_creation', msg)                    
+                    form.add_error('confirm_creation', msg)
                     form.pre_form_warning = msg
                     valid = False
 

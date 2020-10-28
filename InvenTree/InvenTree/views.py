@@ -10,7 +10,6 @@ from __future__ import unicode_literals
 
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
-from django.core.exceptions import ValidationError
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 

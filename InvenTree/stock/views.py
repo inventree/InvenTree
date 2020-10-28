@@ -1641,7 +1641,7 @@ class StockItemCreate(AjaxCreateView):
                         try:
                             serials = ExtractSerialNumbers(sn, quantity)
 
-                            existing = part.find_conflicting_serial_numbers(serial)
+                            existing = part.find_conflicting_serial_numbers(serials)
 
                             if len(existing) > 0:
                                 exists = ",".join([str(x) for x in existing])

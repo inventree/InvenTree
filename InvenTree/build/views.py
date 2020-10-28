@@ -513,7 +513,7 @@ class BuildCreate(AjaxCreateView):
             part = Part.objects.get(pk=form['part'].value())
 
             # Part is not trackable - hide serial numbers
-            if not part.trackable: 
+            if not part.trackable:
                 form.fields['serial_numbers'].widget = HiddenInput()
 
         return form
@@ -576,7 +576,7 @@ class BuildCreate(AjaxCreateView):
 
                 # Check that the provided serial numbers are sensible
                 try:
-                    extracted = ExtractSerialNumbers(serials, quantity)                
+                    extracted = ExtractSerialNumbers(serials, quantity)
                 except ValidationError as e:
                     extracted = None
                     form.add_error('serial_numbers', e.messages)

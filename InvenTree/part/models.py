@@ -390,7 +390,6 @@ class Part(MPTTModel):
 
         return conflicts
 
-
     def getLatestSerialNumber(self):
         """
         Return the "latest" serial number for this Part.
