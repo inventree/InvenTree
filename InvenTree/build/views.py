@@ -887,9 +887,11 @@ class BuildItemEdit(AjaxUpdateView):
         form = super(BuildItemEdit, self).get_form()
 
         # Hide fields which we do not wish the user to edit
-        for field in ['build', 'stock_item', 'install_into']:
+        for field in ['build', 'stock_item']:
             if form[field].value():
                 form.fields[field].widget = HiddenInput()
+
+        form.fields['install_into'].widget = HiddenInput()
 
         return form
 

@@ -568,8 +568,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     var progressA = parseFloat(aA) / qA;
                     var progressB = parseFloat(aB) / qB;
 
-                    // Handle the case where both are at 100%
-                    if (progressA == 1.0 && progressB == 1.0) {
+                    // Handle the case where both ratios are equal
+                    if (progressA == progressB) {
                         return (qA < qB) ? 1 : -1;
                     }
     
