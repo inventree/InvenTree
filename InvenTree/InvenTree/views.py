@@ -321,14 +321,14 @@ class AjaxCreateView(AjaxMixin, CreateView):
     - Handles form validation via AJAX POST requests
     """
 
-    def validate(self, cleaned_data, **kwargs):
+    def validate(self, request, form, cleaned_data, **kwargs):
         """
         Hook for performing any extra validation, over and above the regular form.is_valid
 
-        If any errors exist, raise a ValidationError
+        If any errors exist, add them to the form, using form.add_error
 
         """
-        return True
+        pass
 
     def pre_save(self, form, request, **kwargs):
         """
@@ -370,13 +370,10 @@ class AjaxCreateView(AjaxMixin, CreateView):
         valid = self.form.is_valid()
 
         # Perform any extra validation steps
-        if valid:
-            try:
-                valid = valid and self.validate(self.form.cleaned_data)
-            except ValidationError as e:
-                valid = False
-
-                self.form.add_error(None, e)
+        self.validate(request, self.form, self.form.cleaned_data)
+        
+        # Check if form is valid again (after performing any custom validation)
+        valid = self.form.is_valid()
 
         # Extra JSON data sent alongside form
         data = {
@@ -467,7 +464,7 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
     """
 
     form_class = DeleteForm
-    ajax_form_title = "Delete Item"
+    ajax_form_title = _("Delete Item")
     ajax_template_name = "modal_delete_form.html"
     context_object_name = 'item'
 
@@ -516,7 +513,7 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
         if confirmed:
             obj.delete()
         else:
-            form.errors['confirm_delete'] = ['Check box to confirm item deletion']
+            form.add_error('confirm_delete', _('Check box to confirm item deletion'))
             context[self.context_object_name] = self.get_object()
 
         data = {
@@ -531,7 +528,7 @@ class EditUserView(AjaxUpdateView):
     """ View for editing user information """
 
     ajax_template_name = "modal_form.html"
-    ajax_form_title = "Edit User Information"
+    ajax_form_title = _("Edit User Information")
     form_class = EditUserForm
 
     def get_object(self):
@@ -542,7 +539,7 @@ class SetPasswordView(AjaxUpdateView):
     """ View for setting user password """
 
     ajax_template_name = "InvenTree/password.html"
-    ajax_form_title = "Set Password"
+    ajax_form_title = _("Set Password")
     form_class = SetPasswordForm
 
     def get_object(self):
@@ -561,9 +558,9 @@ class SetPasswordView(AjaxUpdateView):
             # Passwords must match
 
             if not p1 == p2:
-                error = 'Password fields must match'
-                form.errors['enter_password'] = [error]
-                form.errors['confirm_password'] = [error]
+                error = _('Password fields must match')
+                form.add_error('enter_password', error)
+                form.add_error('confirm_password', error)
 
                 valid = False
 

@@ -407,6 +407,13 @@ class VariantTest(StockTest):
 
         self.assertEqual(chair.getLatestSerialNumber(), '22')
 
+        # Check for conflicting serial numbers
+        to_check = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+        conflicts = chair.find_conflicting_serial_numbers(to_check)
+
+        self.assertEqual(len(conflicts), 6)
+
         # Same operations on a sub-item
         variant = Part.objects.get(pk=10003)
         self.assertEqual(variant.getLatestSerialNumber(), '22')

@@ -415,7 +415,7 @@ class PurchaseOrderCancel(AjaxUpdateView):
         valid = False
 
         if not confirm:
-            form.errors['confirm'] = [_('Confirm order cancellation')]
+            form.add_error('confirm', _('Confirm order cancellation'))
         else:
             valid = True
 
@@ -448,13 +448,13 @@ class SalesOrderCancel(AjaxUpdateView):
         valid = False
 
         if not confirm:
-            form.errors['confirm'] = [_('Confirm order cancellation')]
+            form.add_error('confirm', _('Confirm order cancellation'))
         else:
             valid = True
 
         if valid:
             if not order.cancel_order():
-                form.non_field_errors = [_('Could not cancel order')]
+                form.add_error(None, _('Could not cancel order'))
                 valid = False
 
         data = {
@@ -484,7 +484,7 @@ class PurchaseOrderIssue(AjaxUpdateView):
         valid = False
 
         if not confirm:
-            form.errors['confirm'] = [_('Confirm order placement')]
+            form.add_error('confirm', _('Confirm order placement'))
         else:
             valid = True
 
@@ -558,13 +558,13 @@ class SalesOrderShip(AjaxUpdateView):
         valid = False
 
         if not confirm:
-            form.errors['confirm'] = [_('Confirm order shipment')]
+            form.add_error('confirm', _('Confirm order shipment'))
         else:
             valid = True
 
         if valid:
             if not order.ship_order(request.user):
-                form.non_field_errors = [_('Could not ship order')]
+                form.add_error(None, _('Could not ship order'))
                 valid = False
 
         data = {
@@ -1135,7 +1135,7 @@ class POLineItemCreate(AjaxCreateView):
             order = PurchaseOrder.objects.get(id=order_id)
         except (ValueError, PurchaseOrder.DoesNotExist):
             order = None
-            form.errors['order'] = [_('Invalid Purchase Order')]
+            form.add_error('order', _('Invalid Purchase Order'))
             valid = False
 
         try:
@@ -1143,12 +1143,12 @@ class POLineItemCreate(AjaxCreateView):
 
             if order is not None:
                 if not sp.supplier == order.supplier:
-                    form.errors['part'] = [_('Supplier must match for Part and Order')]
+                    form.add_error('part', _('Supplier must match for Part and Order'))
                     valid = False
 
         except (SupplierPart.DoesNotExist, ValueError):
             valid = False
-            form.errors['part'] = [_('Invalid SupplierPart selection')]
+            form.add_error('part', _('Invalid SupplierPart selection'))
 
         data = {
             'form_valid': valid,

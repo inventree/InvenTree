@@ -74,7 +74,7 @@ class BuildCancel(AjaxUpdateView):
         if confirm:
             build.cancelBuild(request.user)
         else:
-            form.errors['confirm_cancel'] = [_('Confirm build cancellation')]
+            form.add_error('confirm_cancel', _('Confirm build cancellation'))
             valid = False
 
         data = {
@@ -152,8 +152,8 @@ class BuildAutoAllocate(AjaxUpdateView):
             build.auto_allocate(output)
             valid = True
         else:
-            form.errors['confirm'] = [_('Confirm stock allocation')]
-            form.non_field_errors = [_('Check the confirmation box at the bottom of the list')]
+            form.add_error('confirm', _('Confirm stock allocation'))
+            form.add_error(None, _('Check the confirmation box at the bottom of the list'))
 
         data = {
             'form_valid': valid,
@@ -205,10 +205,10 @@ class BuildOutputDelete(AjaxUpdateView):
                 build.deleteBuildOutput(output)
                 valid = True
             else:
-                form.non_field_errors = [_('Build or output not specified')]
+                form.add_error(None, _('Build or output not specified'))
         else:
-            form.errors['confirm'] = [_('Confirm unallocation of build stock')]
-            form.non_field_errors = [_('Check the confirmation box')]
+            form.add_error('confirm', _('Confirm unallocation of build stock'))
+            form.add_error(None, _('Check the confirmation box'))
 
         data = {
             'form_valid': valid,
@@ -271,8 +271,8 @@ class BuildUnallocate(AjaxUpdateView):
         valid = False
 
         if confirm is False:
-            form.errors['confirm'] = [_('Confirm unallocation of build stock')]
-            form.non_field_errors = [_('Check the confirmation box')]
+            form.add_error('confirm', _('Confirm unallocation of build stock'))
+            form.add_error(None, _('Check the confirmation box'))
         else:
             build.unallocateStock(output=output, part=part)
             valid = True
@@ -374,15 +374,13 @@ class BuildComplete(AjaxUpdateView):
         valid = False
 
         if confirm is False:
-            form.errors['confirm'] = [
-                _('Confirm completion of build'),
-            ]
+            form.add_error('confirm', _('Confirm completion of build'))
         else:
             try:
                 location = StockLocation.objects.get(id=loc_id)
                 valid = True
             except (ValueError, StockLocation.DoesNotExist):
-                form.errors['location'] = [_('Invalid location selected')]
+                form.add_error('location', _('Invalid location selected'))
 
             serials = []
 
@@ -399,24 +397,20 @@ class BuildComplete(AjaxUpdateView):
                         # Exctract a list of provided serial numbers
                         serials = ExtractSerialNumbers(sn, build.quantity)
 
-                        existing = []
-
-                        for serial in serials:
-                            if build.part.checkIfSerialNumberExists(serial):
-                                existing.append(serial)
+                        existing = build.part.find_conflicting_serial_numbers(serials)
 
                         if len(existing) > 0:
                             exists = ",".join([str(x) for x in existing])
-                            form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                            form.add_error('serial_numbers', _('The following serial numbers already exist: ({sn})'.format(sn=exists)))
                             valid = False
 
                     except ValidationError as e:
-                        form.errors['serial_numbers'] = e.messages
+                        form.add_error('serial_numbers', e.messages)
                         valid = False
 
             if valid:
                 if not build.completeBuild(location, serials, request.user):
-                    form.non_field_errors = [('Build could not be completed')]
+                    form.add_error(None, _('Build could not be completed'))
                     valid = False
 
         data = {
@@ -560,7 +554,7 @@ class BuildCreate(AjaxCreateView):
             'success': _('Created new build'),
         }
 
-    def validate(self, cleaned_data, **kwargs):
+    def validate(self, request, form, cleaned_data, **kwargs):
         """
         Perform extra form validation.
 
@@ -574,18 +568,29 @@ class BuildCreate(AjaxCreateView):
         if part.trackable:
             # For a trackable part, either batch or serial nubmber must be specified
             if not cleaned_data['serial_numbers']:
-                raise ValidationError({
-                    'serial_numbers': _('Trackable part must have serial numbers specified')
-                }) 
+                form.add_error('serial_numbers', _('Trackable part must have serial numbers specified'))
+            else:
+                # If serial numbers are set...
+                serials = cleaned_data['serial_numbers']
+                quantity = cleaned_data['quantity']
 
-            # If serial numbers are set...
-            serials = cleaned_data['serial_numbers']
-            quantity = cleaned_data['quantity']
+                # Check that the provided serial numbers are sensible
+                try:
+                    extracted = ExtractSerialNumbers(serials, quantity)                
+                except ValidationError as e:
+                    extracted = None
+                    form.add_error('serial_numbers', e.messages)
 
-            extracted = ExtractSerialNumbers(serials, quantity)
+                if extracted:
+                    # Check that the provided serial numbers are not duplicates
+                    conflicts = part.find_conflicting_serial_numbers(extracted)
 
-        # Ok, no errors...
-        return True
+                    if len(conflicts) > 0:
+                        msg = ",".join([str(c) for c in conflicts])
+                        form.add_error(
+                            'serial_numbers',
+                            _('Serial numbers already exist') + ': ' + msg
+                        )
         
     def post_save(self, **kwargs):
         """

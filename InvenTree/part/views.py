@@ -445,9 +445,9 @@ class PartDuplicate(AjaxCreateView):
                 confirmed = str2bool(request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
-                    
-                    form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
+                    msg = _('Possible matches exist - confirm creation of new part')
+                    form.add_error('confirm_creation', msg)                    
+                    form.pre_form_warning = msg
                     valid = False
 
         data = {
@@ -575,9 +575,10 @@ class PartCreate(AjaxCreateView):
                 confirmed = str2bool(request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
+                    msg = _('Possible matches exist - confirm creation of new part')
+                    form.add_error('confirm_creation', msg)
                     
-                    form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
+                    form.pre_form_warning = msg
                     valid = False
 
         data = {
@@ -862,7 +863,7 @@ class BomValidate(AjaxUpdateView):
         if confirmed:
             part.validate_bom(request.user)
         else:
-            form.errors['validate'] = ['Confirm that the BOM is valid']
+            form.add_error('validate', _('Confirm that the BOM is valid'))
 
         data = {
             'form_valid': confirmed
@@ -1001,7 +1002,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
         bom_file_valid = False
 
         if bom_file is None:
-            self.form.errors['bom_file'] = [_('No BOM file provided')]
+            self.form.add_error('bom_file', _('No BOM file provided'))
         else:
             # Create a BomUploadManager object - will perform initial data validation
             # (and raise a ValidationError if there is something wrong with the file)
@@ -1012,7 +1013,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 errors = e.error_dict
 
                 for k, v in errors.items():
-                    self.form.errors[k] = v
+                    self.form.add_error(k, v)
 
         if bom_file_valid:
             # BOM file is valid? Proceed to the next step!
