@@ -184,6 +184,14 @@ class Build(MPTTModel):
     )
 
     @property
+    def remaining(self):
+        """
+        Return the number of outputs remaining to be completed.
+        """
+
+        return max(0, self.quantity - self.completed)
+
+    @property
     def output_count(self):
         return self.build_outputs.count()
 
@@ -333,20 +341,25 @@ class Build(MPTTModel):
         self.save()
 
     def getAutoAllocations(self, output):
-        """ Return a list of parts which will be allocated
+        """
+        Return a list of StockItem objects which will be allocated
         using the 'AutoAllocate' function.
 
-        For each item in the BOM for the attached Part:
+        For each item in the BOM for the attached Part,
+        the following tests must *all* evaluate to True,
+        for the part to be auto-allocated:
 
-        - If there is a single StockItem, use that StockItem
-        - Take as many parts as available (up to the quantity required for the BOM)
-        - If there are multiple StockItems available, ignore (leave up to the user)
-
-        Args:
-            output: A stock item (build output) to auto-allocate against
-
+        - The sub_item in the BOM line must *not* be trackable
+        - There is only a single stock item available (which has not already been allocated to this build)
+        - The stock item has an availability greater than zero
+        
         Returns:
-            A list object containing the StockItem objects to be allocated (and the quantities)
+            A list object containing the StockItem objects to be allocated (and the quantities).
+            Each item in the list is a dict as follows:
+            {
+                'stock_item': stock_item,
+                'quantity': stock_quantity,
+            }
         """
 
         allocations = []
@@ -354,16 +367,34 @@ class Build(MPTTModel):
         """
         Iterate through each item in the BOM
         """
-        for item in self.part.bom_items.all().prefetch_related('sub_part'):
 
-            # How many parts required for this build?
-            q_required = item.quantity * self.quantity
+        # Only look at the "untracked" BOM items
+        # Tracked BOM items must be handled separately
+        untracked_bom_items = self.part.bom_items.filter(sub_part__trackable=False)
+
+        for item in untracked_bom_items.prefetch_related('sub_part'):
+
+            # How many parts are still required for this build?
+            #q_required = item.quantity * self.remaining
+            q_required = self.getUnallocatedQuantity(item.sub_part)
 
             # Grab a list of StockItem objects which are "in stock"
-            stock = StockModels.StockItem.objects.filter(StockModels.StockItem.IN_STOCK_FILTER)
+            stock = StockModels.StockItem.objects.filter(
+                StockModels.StockItem.IN_STOCK_FILTER
+            )
             
             # Filter by part reference
             stock = stock.filter(part=item.sub_part)
+
+            # Exclude any stock items which have already been allocated to this build
+            allocated = BuildItem.objects.filter(
+                build=self,
+                stock_item__part=item.sub_part
+            )
+
+            stock = stock.exclude(
+                pk__in=[build_item.stock_item.pk for build_item in allocated]
+            )
 
             # Ensure that the available stock items are in the correct location
             if self.take_from is not None:
@@ -371,7 +402,7 @@ class Build(MPTTModel):
                 stock = stock.filter(location__in=[loc for loc in self.take_from.getUniqueChildren()])
 
             # Only one StockItem to choose from? Default to that one!
-            if len(stock) == 1:
+            if stock.count() == 1:
                 stock_item = stock[0]
 
                 # Check that we have not already allocated this stock-item against this build
@@ -567,7 +598,7 @@ class Build(MPTTModel):
         if output:
             return q * output.quantity
         else:
-            return q * self.quantity
+            return q * self.remaining
 
     def getAllocatedQuantity(self, part, output=None):
         """

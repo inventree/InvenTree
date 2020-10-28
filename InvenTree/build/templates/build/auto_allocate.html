@@ -7,8 +7,14 @@
 
 <div class='alert alert-block alert-info'>
 <b>{% trans "Automatically Allocate Stock" %}</b><br>
-{% trans "Stock Items are selected for automatic allocation if there is only a single stock item available." %}<br>
-{% trans "The following stock items will be allocated to the build:" %}<br>
+{% trans "Where the following conditions are met, stock will be automatically allocated to this build" %}:<br>
+<hr>
+{% trans "For each part in the BOM, the following tests are performed" %}:<br>
+<ul>
+    <li>{% trans "The part is not marked as trackable" %}</li>
+    <li>{% trans "Only single stock items exists" %}</li>
+    <li>{% trans "The stock item is not already allocated to this build" %}</li>
+</ul>
 </div>
 
 {% if allocations %}

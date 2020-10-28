@@ -172,6 +172,8 @@ class EditBuildItemForm(HelperForm):
 
     quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, help_text=_('Select quantity of stock to allocate'))
 
+    part_id = forms.IntegerField(required=False, widget=forms.HiddenInput())
+
     class Meta:
         model = BuildItem
         fields = [

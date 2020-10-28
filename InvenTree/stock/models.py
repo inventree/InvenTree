@@ -726,6 +726,15 @@ class StockItem(MPTTModel):
 
     @property
     def in_stock(self):
+        """
+        Returns True if this item is in stock
+
+        See also: IN_STOCK_FILTER
+        """
+
+        # Quantity must be above zero (unless infinite)
+        if self.quantity <= 0 and not self.infinite:
+            return False
 
         # Not 'in stock' if it has been installed inside another StockItem
         if self.belongs_to is not None:

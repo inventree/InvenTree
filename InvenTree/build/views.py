@@ -18,7 +18,7 @@ from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
-from InvenTree.helpers import str2bool, ExtractSerialNumbers
+from InvenTree.helpers import str2bool, ExtractSerialNumbers, normalize
 from InvenTree.status_codes import BuildStatus
 
 
@@ -116,10 +116,12 @@ class BuildAutoAllocate(AjaxUpdateView):
 
         context = {}
 
+        output = self.get_form()['output_id'].value()
+
         try:
             build = Build.objects.get(id=self.kwargs['pk'])
             context['build'] = build
-            context['allocations'] = build.getAutoAllocations()
+            context['allocations'] = build.getAutoAllocations(output)
         except Build.DoesNotExist:
             context['error'] = _('No matching build found')
 
@@ -687,6 +689,26 @@ class BuildItemCreate(AjaxCreateView):
 
         return ctx
 
+    def validate(self, request, form, data):
+        """
+        Extra validation steps as required
+        """
+
+        stock_item = data.get('stock_item', None)
+        quantity = data.get('quantity', None)
+
+        if stock_item:
+            # Stock item must actually be in stock!
+            if not stock_item.in_stock:
+                form.add_error('stock_item', _('Item must be currently in stock'))
+
+            # Check that there are enough items available
+            if quantity is not None:
+                available = stock_item.unallocated_quantity()
+                if quantity > available:
+                    form.add_error('stock_item', _('Stock item is over-allocated'))
+                    form.add_error('quantity', _('Avaialabe') + ': ' + str(normalize(available)))
+
     def get_form(self):
         """ Create Form for making / editing new Part object """
 
@@ -715,7 +737,7 @@ class BuildItemCreate(AjaxCreateView):
             pass
 
         # If the sub_part is supplied, limit to matching stock items
-        part_id = self.get_param('part')
+        part_id = form['part_id'].value()
 
         if part_id:
             try:
@@ -781,7 +803,7 @@ class BuildItemCreate(AjaxCreateView):
         if part_id:
             try:
                 part = Part.objects.get(pk=part_id)
-                initials['part'] = part
+                initials['part_id'] = part.pk
             except Part.DoesNotExist:
                 pass
 

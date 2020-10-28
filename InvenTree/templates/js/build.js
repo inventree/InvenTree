@@ -555,12 +555,23 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         qB *= buildInfo.quantity;
                     }
                 
-                    if (aA == 0 && aB == 0) {
+                    // Handle the case where both numerators are zero
+                    if ((aA == 0) && (aB == 0)) {
                         return (qA > qB) ? 1 : -1;
+                    }
+
+                    // Handle the case where either denominator is zero
+                    if ((qA == 0) || (qB == 0)) {
+                        return 1;
                     }
                     
                     var progressA = parseFloat(aA) / qA;
                     var progressB = parseFloat(aB) / qB;
+
+                    // Handle the case where both are at 100%
+                    if (progressA == 1.0 && progressB == 1.0) {
+                        return (qA < qB) ? 1 : -1;
+                    }
     
                     return (progressA < progressB) ? 1 : -1;
                 }
