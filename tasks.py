@@ -171,7 +171,7 @@ def translate(c):
     or after adding translations for existing strings.
     """
 
-    manage(c, "makemessages")
+    manage(c, "makemessages -e html -e py -e js")
     manage(c, "compilemessages")
 
 @task

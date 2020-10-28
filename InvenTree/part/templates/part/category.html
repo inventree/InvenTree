@@ -107,22 +107,24 @@
 <hr>
 
 <div id='button-toolbar'>
-    <div class='button-toolbar container-fluid' style="float: right;">
+    <div class='btn-group'>
+        <button class='btn btn-default' id='part-export' title='{% trans "Export Part Data" %}'>
+            <span class='fas fa-file-download'></span> {% trans "Export" %}
+        </button>
+        {% if roles.part.add %}
+        <button class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>
+            <span class='fas fa-plus-circle'></span> {% trans "New Part" %}
+        </button>
+        {% endif %}
         <div class='btn-group'>
-            <button class='btn btn-default' id='part-export' title='{% trans "Export Part Data" %}'>{% trans "Export" %}</button>
-            {% if roles.part.add %}
-            <button class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>{% trans "New Part" %}</button>
-            {% endif %}
-            <div class='btn-group'>
-                <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown">{% trans "Options" %}<span class='caret'></span></button>
-                <ul class='dropdown-menu'>
-                    {% if roles.part.change %}
-                    <li><a href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
-                    {% endif %}
-                    <li><a href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
-                    <li><a href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
-                </ul>
-            </div>
+            <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown">{% trans "Options" %}<span class='caret'></span></button>
+            <ul class='dropdown-menu'>
+                {% if roles.part.change %}
+                <li><a href='#' id='multi-part-category' title='{% trans "Set category" %}'>{% trans "Set Category" %}</a></li>
+                {% endif %}
+                <li><a href='#' id='multi-part-order' title='{% trans "Order parts" %}'>{% trans "Order Parts" %}</a></li>
+                <li><a href='#' id='multi-part-export' title='{% trans "Export" %}'>{% trans "Export Data" %}</a></li>
+            </ul>
         </div>
     </div>
     <div class='filter-list' id='filter-list-parts'>

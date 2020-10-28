@@ -32,21 +32,40 @@
 </div>
 {% endif %}
 
-<div id='button-toolbar' class="btn-group" role="group" aria-label="...">
-    {% if editing_enabled %}
-    <button class='btn btn-default action-button' type='button' title='{% trans "Remove selected BOM items" %}' id='bom-item-delete'><span class='fas fa-trash-alt'></span></button>
-    <button class='btn btn-default action-button' type='button' title='{% trans "Import BOM data" %}' id='bom-upload'><span class='fas fa-file-upload'></span></button>
-    <button class='btn btn-default action-button' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'><span class='fas fa-plus-circle'></span></button>
-    <button class='btn btn-default action-button' type='button' title='{% trans "Finish Editing" %}' id='editing-finished'><span class='fas fa-check-circle'></span></button>
-    {% elif part.active %}
-    {% if roles.part.change %}
-    <button class='btn btn-default action-button' type='button' title='{% trans "Edit BOM" %}' id='edit-bom'><span class='fas fa-edit'></span></button>
-    {% if part.is_bom_valid == False %}
-    <button class='btn btn-default action-button' id='validate-bom' title='{% trans "Validate Bill of Materials" %}' type='button'><span class='fas fa-clipboard-check'></span></button>
-    {% endif %}
-    {% endif %}
-    <button title='{% trans "Export Bill of Materials" %}' class='btn btn-default action-button' id='download-bom' type='button'><span class='fas fa-file-download'></span></button>
-    {% endif %}
+<div id='button-toolbar'>
+    <div class="btn-group" role="group" aria-label="...">
+        {% if editing_enabled %}
+        <button class='btn btn-default' type='button' title='{% trans "Remove selected BOM items" %}' id='bom-item-delete'>
+            <span class='fas fa-trash-alt'></span>
+        </button>
+        <button class='btn btn-primary' type='button' title='{% trans "Import BOM data" %}' id='bom-upload'>
+            <span class='fas fa-file-upload'></span> {% trans "Upload" %}
+        </button>
+        <button class='btn btn-default' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'>
+            <span class='fas fa-plus-circle'></span> {% trans "Add Item" %}
+        </button>
+        <button class='btn btn-success' type='button' title='{% trans "Finish Editing" %}' id='editing-finished'>
+            <span class='fas fa-check-circle'></span> {% trans "Finished" %}
+        </button>
+        {% elif part.active %}
+        {% if roles.part.change %}
+        <button class='btn btn-primary' type='button' title='{% trans "Edit BOM" %}' id='edit-bom'>
+            <span class='fas fa-edit'></span> {% trans "Edit" %}
+        </button>
+        {% if part.is_bom_valid == False %}
+        <button class='btn btn-success' id='validate-bom' title='{% trans "Validate Bill of Materials" %}' type='button'>
+            <span class='fas fa-clipboard-check'></span> {% trans "Validate" %}
+        </button>
+        {% endif %}
+        {% endif %}
+        <button title='{% trans "Export Bill of Materials" %}' class='btn btn-default' id='download-bom' type='button'>
+            <span class='fas fa-file-download'></span> {% trans "Export" %}
+        </button>
+        {% endif %}
+    </div>
+    <div class='filter-list' id='filter-list-bom'>
+        <!-- Empty div (will be filled out with avilable BOM filters) -->
+    </div>
 </div>
 
 <table class='table table-striped table-condensed' data-toolbar="#button-toolbar" id='bom-table'>
