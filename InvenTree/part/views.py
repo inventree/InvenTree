@@ -15,7 +15,7 @@ from django.views.generic import DetailView, ListView, FormView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
-
+from django.views.generic.base import ContextMixin
 import os
 
 from rapidfuzz import fuzz
@@ -35,6 +35,7 @@ from . import forms as part_forms
 from .bom import MakeBomTemplate, BomUploadManager, ExportBom, IsValidBOMFormat
 
 from .admin import PartResource
+from .signals import part_tab_event
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
@@ -643,7 +644,7 @@ class PartNotes(UpdateView):
 
     def get_success_url(self):
         """ Return the success URL for this form """
-        
+
         return reverse('part-notes', kwargs={'pk': self.get_object().id})
 
     def get_context_data(self, **kwargs):
@@ -651,6 +652,11 @@ class PartNotes(UpdateView):
         part = self.get_object()
 
         ctx = super().get_context_data(**kwargs)
+        ctx['extension_tabs'] = sorted(
+			sum((list(a[1]) for a in part_tab_event.send(part, request=self.request)), []),
+			key=lambda r: (1 if r.get('parent') else 0, r['label'])
+		)
+
 
         ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
 
@@ -660,7 +666,7 @@ class PartNotes(UpdateView):
         return ctx
 
 
-class PartDetail(InvenTreeRoleMixin, DetailView):
+class PartDetail(InvenTreeRoleMixin,  DetailView):
     """ Detail view for Part object
     """
 
@@ -679,6 +685,10 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         context = super(PartDetail, self).get_context_data(**kwargs)
         
         part = self.get_object()
+        context['extension_tabs'] = sorted(
+			sum((list(a[1]) for a in part_tab_event.send(part, request=self.request)), []),
+			key=lambda r: (1 if r.get('parent') else 0, r['label'])
+		)
 
         if str2bool(self.request.GET.get('edit', '')):
             # Allow BOM editing if the part is active

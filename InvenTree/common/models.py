@@ -35,7 +35,7 @@ class InvenTreeSetting(models.Model):
     The key of each item is the name of the value as it appears in the database.
 
     Each global setting has the following parameters:
-    
+
     - name: Translatable string name of the setting (required)
     - description: Translatable string description of the setting (required)
     - default: Default value (optional)
@@ -363,6 +363,55 @@ class InvenTreeSetting(models.Model):
         """
 
         return InvenTree.helpers.str2bool(self.value)
+
+class ExtensionSetting(models.Model):
+    """
+    An ExtensionSetting object represents a setting for a particular
+    extension.  Each extension can have multiple settings.
+
+    Attributes:
+        extension: Name of the extension
+        setting: Name of the setting
+        value: The setting value
+        type: The setting type
+        label: The label string for the setting
+        description: The description string for the label
+    """
+    class Meta:
+        verbose_name = "InvenTree Extension Setting"
+        verbose_name_plural = "InvenTree Extension Settings"
+
+    extension = models.CharField(max_length=100, blank=False, unique=False,
+                                 help_text=_('Name of the extension'))
+    setting = models.CharField(max_length=100, blank=False, unique=False,
+                               help_text=_('Name of the setting'))
+    value = models.CharField(max_length=100, blank=False, unique=False,
+                             help_text=_('Setting value'))
+    type = models.CharField(max_length=100, blank=False, unique=False,
+                             help_text=_('Setting type'))
+
+    label = models.CharField(max_length=100, blank=False, unique=False,
+                             help_text=_('Setting label'))
+    description = models.CharField(max_length=100, blank=False, unique=False,
+                             help_text=_('Setting description'))
+
+    def get_label(self):
+        return _(self.label)
+    def get_description(self):
+        return _(self.description)
+    def is_bool(self):
+        return (self.type == "bool")
+
+    def as_bool(self):
+        """
+        Return the value of this setting converted to a boolean value.
+
+        Warning: Only use on values where is_bool evaluates to true!
+        """
+
+        return InvenTree.helpers.str2bool(self.value)
+
+
 
 
 class Currency(models.Model):

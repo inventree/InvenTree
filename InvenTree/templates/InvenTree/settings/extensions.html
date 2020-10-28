@@ -1,0 +1,93 @@
+{% extends "InvenTree/settings/settings.html" %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block tabs %}
+{% include "InvenTree/settings/tabs.html" with tab='extensions' %}
+{% endblock %}
+
+{% block subtitle %}
+{% trans "InvenTree Extension Settings" %}
+{% endblock %}
+
+{% block settings %}
+
+    <form action="" method="post" class="form-horizontal form-extensions">
+        {% csrf_token %}
+        {% if "success" in request.GET %}
+            <div class="alert alert-success">
+                {% trans "Your changes have been saved." %}
+            </div>
+        {% endif %}
+        <div class="tabbed-form">
+            {% for cat, catlabel, elist in extensions %}
+                <fieldset>
+                    <legend>{{ catlabel }}</legend>
+                    <div class="table-responsive">
+                        <table class="table">
+                            {% for extension in elist %}
+                                <tr class="{% if extension.app.compatibility_errors %}warning{% elif extension.module in extensions_active %}success{% else %}default{% endif %}">
+                                    <td>
+                                        <strong>{{ extension.name }}</strong>
+                                        {% if extension.author %}
+                                            <p class="meta text-muted">
+                                                {% blocktrans trimmed with v=extension.version a=extension.author %}
+                                                    Version {{ v }} by <em>{{ a }}</em>
+                                                {% endblocktrans %}</p>
+                                        {% else %}
+                                            <p class="meta text-muted">
+                                                {% blocktrans trimmed with v=extension.version a=extension.author %}
+                                                    Version {{ v }}
+                                                {% endblocktrans %}</p>
+                                        {% endif %}
+                                        <p>{{ extension.description }}</p>
+                                        {% if extension.restricted and not request.user.is_staff %}
+                                            <span class="text-muted">
+                                                {% trans "This extension needs to be enabled by a system administrator for your event." %}
+                                            </span>
+                                        {% endif %}
+                                        {% if extension.app.compatibility_errors %}
+                                            <div class="alert alert-warning">
+                                                {% trans "This extension cannot be enabled for the following reasons:" %}
+                                                <ul>
+                                                    {% for e in extension.app.compatibility_errors %}
+                                                        <li>{{ e }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                        {% if extension.app.compatibility_warnings %}
+                                            <div class="alert alert-warning">
+                                                {% trans "This extension reports the following problems:" %}
+                                                <ul>
+                                                    {% for e in extension.app.compatibility_warnings %}
+                                                        <li>{{ e }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-right flip" width="20%">
+                                        {% if extension.app.compatibility_errors %}
+                                            <button class="btn disabled btn-block btn-default"
+                                                    disabled="disabled">{% trans "Incompatible" %}</button>
+                                            {% elif extension.restricted and not staff_session %}
+                                            <button class="btn disabled btn-block btn-default"
+                                                    disabled="disabled">{% trans "Not available" %}</button>
+                                            {% elif extension.module in extensions_active %}
+                                            <button class="btn btn-default btn-block" name="extension:{{ extension.module }}"
+                                                    value="disable">{% trans "Disable" %}</button>
+                                        {% else %}
+                                            <button class="btn btn-default btn-block" name="extension:{{ extension.module }}"
+                                                    value="enable">{% trans "Enable" %}</button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </fieldset>
+            {% endfor %}
+        </div>
+    </form>
+{% endblock %}

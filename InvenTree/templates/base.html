@@ -1,6 +1,7 @@
 {% load static %}
 {% load i18n %}
 {% load inventree_extras %}
+{% load signal %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -74,6 +75,7 @@ InvenTree
 </div>
     
 <div class="container container-fluid inventree-content" id='inventree-content'>
+{% signal "common.signals.html_page_start" request %}
 {% block content %}
 <!-- Each view fills in here.. -->
 {% endblock %}

@@ -18,16 +18,20 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views import View
 from django.views.generic import UpdateView, CreateView, FormView
 from django.views.generic.base import TemplateView
+from django.db import transaction
+
 
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
-from common.models import InvenTreeSetting, ColorTheme
+from common.models import ColorTheme
 from users.models import check_user_role, RuleSet
 
-from .forms import DeleteForm, EditUserForm, SetPasswordForm, ColorThemeSelectForm
-from .helpers import str2bool
+from ..forms import DeleteForm, EditUserForm, SetPasswordForm, ColorThemeSelectForm
+from ..helpers import str2bool
 
 from rest_framework import views
+
+
 
 
 class TreeSerializer(views.APIView):
@@ -608,21 +612,7 @@ class DynamicJsView(TemplateView):
 
     template_name = ""
     content_type = 'text/javascript'
-    
 
-class SettingsView(TemplateView):
-    """ View for configuring User settings
-    """
-
-    template_name = "InvenTree/settings.html"
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs).copy()
-
-        ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
-
-        return ctx
 
 
 class ColorThemeSelectView(FormView):

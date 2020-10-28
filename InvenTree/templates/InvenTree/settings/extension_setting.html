@@ -1,0 +1,30 @@
+{% load inventree_extras %}
+{% load i18n %}
+
+<tr>
+    <td><b>{{ setting.get_label }}</b></td>
+    <td>
+        {% if setting.is_bool %}
+        <div>
+            <input fieldname='{{ setting.key }}' class='slidey' type='checkbox' data-offstyle='warning' data-onstyle='success' data-size='small' data-toggle='toggle' disabled autocomplete='off' {% if setting.as_bool %}checked=''{% endif %}>
+        </div>
+        {% else %}
+        {% if setting.value %}
+        <b>{{ setting.value }}</b>{{ setting.units }}</td>
+        {% else %}
+        <i>{% trans "no value set" %}</i>
+        {% endif %}
+        {% endif %}
+    <td>
+        {{ setting.get_description }}
+    </td>
+    <td>
+        <div class='btn-group float-right'>
+            <button class='btn btn-default btn-glyph btn-edit-extension-setting' pk='{{ setting.pk }}' 
+                extension='{{ setting.extension }}'
+                setting='{{ setting.setting }}' title='{% trans "edit setting" %}'>
+                <span class='fas fa-edit icon-green'></span>
+            </button>
+        </div>
+    </td>
+</tr> 

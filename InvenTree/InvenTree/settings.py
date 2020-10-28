@@ -18,6 +18,8 @@ import tempfile
 import yaml
 
 from datetime import datetime
+from pkg_resources import iter_entry_points
+
 
 from django.utils.translation import gettext_lazy as _
 
@@ -156,6 +158,15 @@ INSTALLED_APPS = [
     'django_tex',                   # LaTeX output
     'django_admin_shell',           # Python shell for the admin interface
 ]
+
+EXTENSIONS_EXCLUDE = CONFIG.get('extensions_exclude', "").split(',')
+
+EXTENSIONS = []
+for entry_point in iter_entry_points(group='extension', name=None):
+    if entry_point.module_name in EXTENSIONS_EXCLUDE:
+        continue
+    EXTENSIONS.append(entry_point.module_name)
+    INSTALLED_APPS.append(entry_point.module_name)
 
 LOGGING = {
     'version': 1,

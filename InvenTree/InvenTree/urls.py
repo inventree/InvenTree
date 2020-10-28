@@ -4,12 +4,15 @@ Top-level URL lookup for InvenTree application.
 Passes URL lookup downstream to each app as required.
 """
 
+import importlib.util
 
 from django.conf.urls import url, include
 from django.urls import path
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from qr_code import urls as qr_code_urls
+from django.apps import apps
+
 
 from company.urls import company_urls
 from company.urls import supplier_part_urls
@@ -36,10 +39,11 @@ from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
 
 from .views import IndexView, SearchView, DatabaseStatsView
-from .views import SettingsView, EditUserView, SetPasswordView, ColorThemeSelectView
+from .views import EditUserView, SetPasswordView, ColorThemeSelectView
+from .views.settings import SettingsView, ExtensionsView
 from .views import DynamicJsView
 
-from common.views import SettingEdit
+from common.views import SettingEdit, ExtensionSettingEdit
 
 from .api import InfoView
 from .api import ActionPluginView
@@ -72,7 +76,7 @@ settings_urls = [
 
     url(r'^user/?', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings-user'),
     url(r'^theme/?', ColorThemeSelectView.as_view(), name='settings-theme'),
-   
+
     url(r'^global/?', SettingsView.as_view(template_name='InvenTree/settings/global.html'), name='settings-global'),
     url(r'^currency/?', SettingsView.as_view(template_name='InvenTree/settings/currency.html'), name='settings-currency'),
     url(r'^part/?', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
@@ -80,7 +84,11 @@ settings_urls = [
     url(r'^build/?', SettingsView.as_view(template_name='InvenTree/settings/build.html'), name='settings-build'),
     url(r'^purchase-order/?', SettingsView.as_view(template_name='InvenTree/settings/po.html'), name='settings-po'),
     url(r'^sales-order/?', SettingsView.as_view(template_name='InvenTree/settings/so.html'), name='settings-so'),
+    url(r'^extensions/?',
+        ExtensionsView.as_view(template_name='InvenTree/settings/extensions.html'),
+        name='settings-extensions'),
 
+    url(r'^extension-setting/(?P<pk>\d+)/edit/?', ExtensionSettingEdit.as_view(), name='setting-edit'),
     url(r'^(?P<pk>\d+)/edit/?', SettingEdit.as_view(), name='setting-edit'),
 
     # Catch any other urls
@@ -98,8 +106,27 @@ dynamic_javascript_urls = [
     url(r'^bom.js', DynamicJsView.as_view(template_name='js/bom.html'), name='bom.js'),
     url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/table_filters.html'), name='table_filters.js'),
 ]
+urlpatterns = []
+raw_extension_patterns = []
+for app in apps.get_app_configs():
+    if hasattr(app, 'InvenTreeExtensionMeta'):
+        if importlib.util.find_spec(app.name + '.urls'):
+            urlmod = importlib.import_module(app.name + '.urls')
+            single_extension_patterns = []
+            if hasattr(urlmod, 'urlpatterns'):
+                single_extension_patterns += urlmod.urlpatterns
 
-urlpatterns = [
+            raw_extension_patterns.append(
+                url(r'', include((single_extension_patterns, app.label)))
+            )
+
+extension_patterns = [
+    url(r'', include((raw_extension_patterns, 'extensions')))
+]
+
+urlpatterns += extension_patterns
+
+urlpatterns += [
     url(r'^part/', include(part_urls)),
     url(r'^supplier-part/', include(supplier_part_urls)),
     url(r'^price-break/', include(price_break_urls)),
@@ -153,6 +180,8 @@ if settings.DEBUG and 'debug_toolbar' in settings.INSTALLED_APPS:
     urlpatterns = [
         path('__debug/', include(debug_toolbar.urls)),
     ] + urlpatterns
+
+
 
 # Send any unknown URLs to the parts page
 urlpatterns += [url(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]

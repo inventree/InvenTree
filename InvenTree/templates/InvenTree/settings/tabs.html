@@ -33,5 +33,13 @@
     <li {% if tab == 'so' %} class='active'{% endif %}>
         <a href="{% url 'settings-so' %}"><span class='fas fa-truck'></span> {% trans "Sales Orders" %}</a>
     </li>
+    <li {% if tab == 'extensions' %} class='active' {% endif %}>
+        <a href='{% url "settings-extensions" %}'><span class='fas fa-plug'></span> {% trans "Extensions" %}</a>
+    </li>
+    {% for i in extension_nav %}
+    <li {% if i.active %} class='active' {% endif %}>
+        <a href='{{ i.url }}'><span class='{{ i.icon }}'></span> {{ i.label }}</a>
+    </li>
+    {% endfor %}
 </ul>
 {% endif %}

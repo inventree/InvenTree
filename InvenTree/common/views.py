@@ -92,3 +92,57 @@ class SettingEdit(AjaxUpdateView):
             form.fields['value'].help_text = description
 
         return form
+
+class ExtensionSettingEdit(AjaxUpdateView):
+    """
+    View for editing an InvenTree key:value settings object,
+    (or creating it if the key does not already exist)
+    """
+
+    model = models.ExtensionSetting
+    ajax_form_title = _('Change Setting')
+    form_class = forms.SettingEditForm
+    ajax_template_name = "common/edit_setting.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        Add extra context information about the particular setting object.
+        """
+
+        ctx = super().get_context_data(**kwargs)
+
+        setting = self.get_object()
+
+        ctx['key'] = setting.setting
+        ctx['value'] = setting.value
+        ctx['name'] = setting.get_label()
+        ctx['description'] = setting.get_description()
+
+        return ctx
+
+    def get_form(self):
+        """
+        Override default get_form behaviour
+        """
+
+        form = super().get_form()
+        
+        setting = self.get_object()
+
+        if setting.is_bool():
+            form.fields['value'].widget = CheckboxInput()
+
+            self.object.value = str2bool(setting.value)
+            form.fields['value'].value = str2bool(setting.value)
+
+        name = setting.get_label()
+
+        if name:
+            form.fields['value'].label = name
+
+        description = setting.get_description()
+
+        if description:
+            form.fields['value'].help_text = description
+
+        return form

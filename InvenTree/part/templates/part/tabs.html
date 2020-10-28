@@ -69,4 +69,9 @@
     <li{% ifequal tab 'notes' %} class="active"{% endifequal %}>
         <a href="{% url 'part-notes' part.id %}">{% trans "Notes" %}{% if part.notes %} <span class='fas fa-info-circle'></span>{% endif %}</a>
     </li>
+    {% for i in extension_tabs %}
+    <li {% if i.active %} class='active' {% endif %}>
+        <a href='{{ i.url }}'><span class='{{ i.icon }}'></span> {{ i.label }}</a>
+    </li>
+    {% endfor %}
 </ul>

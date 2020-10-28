@@ -53,4 +53,17 @@ $('table').find('.btn-edit-setting').click(function() {
     );
 });
 
+$('table').find('.btn-edit-extension-setting').click(function() {
+    var extension = $(this).attr('extension');
+    var setting = $(this).attr('setting');
+    var pk = $(this).attr('pk');
+
+    launchModalForm(
+        `/settings/extension-setting/${pk}/edit/`,
+        {
+            reload: true,
+        }
+    );
+});
+
 {% endblock %}
