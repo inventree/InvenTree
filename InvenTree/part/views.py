@@ -436,7 +436,8 @@ class PartDuplicate(AjaxCreateView):
             matches = match_part_names(name)
 
             if len(matches) > 0:
-                context['matches'] = matches
+                # Display the first five closest matches
+                context['matches'] = matches[:5]
             
                 # Enforce display of the checkbox
                 form.fields['confirm_creation'].widget = CheckboxInput()

@@ -245,7 +245,7 @@ def match_part_names(match, threshold=80, reverse=True, compare_length=False):
         if ratio >= threshold:
             matches.append({
                 'part': part,
-                'ratio': ratio
+                'ratio': round(ratio, 1)
             })
 
     matches = sorted(matches, key=lambda item: item['ratio'], reverse=reverse)
