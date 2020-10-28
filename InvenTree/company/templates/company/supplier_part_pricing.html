@@ -13,7 +13,9 @@
 
 {% if roles.purchase_order.add %}
 <div id='price-break-toolbar' class='btn-group'>
-    <button class='btn btn-primary' id='new-price-break' type='button'>{% trans "Add Price Break" %}</button>
+    <button class='btn btn-primary' id='new-price-break' type='button'>
+        <span class='fas fa-plus-circle'></span> {% trans "Add Price Break" %}
+    </button>
 </div>
 {% endif %}
 
