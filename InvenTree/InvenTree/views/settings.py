@@ -78,19 +78,14 @@ class ExtensionsView(SettingsBaseView):
         extensions_available = [e.app.name for e in get_all_extensions(self) if not
                    e.name.startswith('.') and getattr(e, 'visible', True)]
 
-        print(extensions_available)
-
         for key, value in request.POST.items():
             if key.startswith("extension:"):
                 module = key.split(":")[1]
                 app_name = key.split(":")[1].split(".")[-1]
                 app =  apps.get_app_config(app_name)
-                print (module)
                 if value == "enable" and module in extensions_available:
-                    print ("Enable")
                     app.enable()
                 else:
-                    print ("Disable")
                     app.disable()
 
         return redirect(request.path_info)
