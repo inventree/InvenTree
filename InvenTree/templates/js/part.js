@@ -301,7 +301,7 @@ function loadPartTable(table, url, options={}) {
     if (options.checkbox) {
         columns.push({
             checkbox: true,
-            title: '{% trans 'Select' %}',
+            title: '{% trans "Select" %}',
             searchable: false,
             switchable: false,
         });
@@ -315,8 +315,9 @@ function loadPartTable(table, url, options={}) {
 
     columns.push({
         field: 'name',
-        title: '{% trans 'Part' %}',
+        title: '{% trans "Part" %}',
         sortable: true,
+        switchable: false,
         formatter: function(value, row, index, field) {
 
             var name = '';
@@ -380,7 +381,7 @@ function loadPartTable(table, url, options={}) {
     columns.push({
         sortable: true,
         field: 'description',
-        title: '{% trans 'Description' %}',
+        title: '{% trans "Description" %}',
         formatter: function(value, row, index, field) {
 
             if (row.is_template) {
@@ -394,7 +395,7 @@ function loadPartTable(table, url, options={}) {
     columns.push({
         sortable: true,
         field: 'category_detail',
-        title: '{% trans 'Category' %}',
+        title: '{% trans "Category" %}',
         formatter: function(value, row, index, field) {
             if (row.category) {
                 return renderLink(value.pathstring, "/part/category/" + row.category + "/");
