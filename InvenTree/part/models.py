@@ -60,13 +60,18 @@ class PartCategory(InvenTreeTree):
     """
 
     default_location = TreeForeignKey(
-        'stock.StockLocation', related_name="default_categories",
-        null=True, blank=True,
+        'stock.StockLocation',
+        related_name="default_categories",
+        null=True,
+        blank=True,
         on_delete=models.SET_NULL,
-        help_text=_('Default location for parts in this category')
-    )
+        help_text=_('Default location for parts in this category'))
 
-    default_keywords = models.CharField(null=True, blank=True, max_length=250, help_text=_('Default keywords for parts in this category'))
+    default_keywords = models.CharField(
+        null=True,
+        blank=True,
+        max_length=250,
+        help_text=_('Default keywords for parts in this category'))
 
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={'pk': self.id})
@@ -84,7 +89,8 @@ class PartCategory(InvenTreeTree):
 
         if cascade:
             """ Select any parts which exist in this category or any child categories """
-            query = Part.objects.filter(category__in=self.getUniqueChildren(include_self=True))
+            query = Part.objects.filter(category__in=self.getUniqueChildren(
+                include_self=True))
         else:
             query = Part.objects.filter(category=self.pk)
 
@@ -114,7 +120,8 @@ class PartCategory(InvenTreeTree):
     def prefetch_parts_parameters(self, cascade=True):
         """ Prefectch parts parameters """
 
-        return self.get_parts(cascade=cascade).prefetch_related('parameters', 'parameters__template').all()
+        return self.get_parts(cascade=cascade).prefetch_related(
+            'parameters', 'parameters__template').all()
 
     def get_unique_parameters(self, cascade=True, prefetch=None):
         """ Get all unique parameter names for all parts from this category """
@@ -164,7 +171,9 @@ class PartCategory(InvenTreeTree):
         return category_parameters
 
 
-@receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
+@receiver(pre_delete,
+          sender=PartCategory,
+          dispatch_uid='partcategory_delete_log')
 def before_delete_part_category(sender, instance, using, **kwargs):
     """ Receives before_delete signal for PartCategory object
 
@@ -243,10 +252,7 @@ def match_part_names(match, threshold=80, reverse=True, compare_length=False):
             ratio *= (l_min / l_max)
 
         if ratio >= threshold:
-            matches.append({
-                'part': part,
-                'ratio': round(ratio, 1)
-            })
+            matches.append({'part': part, 'ratio': round(ratio, 1)})
 
     matches = sorted(matches, key=lambda item: item['ratio'], reverse=reverse)
 
@@ -288,11 +294,12 @@ class Part(MPTTModel):
         creation_user: User who added this part to the database
         responsible: User who is responsible for this part (optional)
     """
-
     class Meta:
         verbose_name = _("Part")
         verbose_name_plural = _("Parts")
-        ordering = ['name', ]
+        ordering = [
+            'name',
+        ]
 
     class MPTTMeta:
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
@@ -311,7 +318,8 @@ class Part(MPTTModel):
 
             if previous.image and not self.image == previous.image:
                 # Are there any (other) parts which reference the image?
-                n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
+                n_refs = Part.objects.filter(image=previous.image).exclude(
+                    pk=self.pk).count()
 
                 if n_refs == 0:
                     previous.image.delete(save=False)
@@ -342,20 +350,22 @@ class Part(MPTTModel):
             return
 
         if self.pk == parent.pk:
-            raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)".format(
-                p1=str(self),
-                p2=str(parent)
-            ))})
+            raise ValidationError({
+                'sub_part':
+                _("Part '{p1}' is  used in BOM for '{p2}' (recursive)".format(
+                    p1=str(self), p2=str(parent)))
+            })
 
         # Ensure that the parent part does not appear under any child BOM item!
         for item in self.bom_items.all():
 
             # Check for simple match
             if item.sub_part == parent:
-                raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)".format(
-                    p1=str(parent),
-                    p2=str(self)
-                ))})
+                raise ValidationError({
+                    'sub_part':
+                    _("Part '{p1}' is  used in BOM for '{p2}' (recursive)".
+                      format(p1=str(parent), p2=str(self)))
+                })
 
             # And recursively check too
             item.sub_part.checkAddToBOM(parent)
@@ -385,8 +395,9 @@ class Part(MPTTModel):
         """
 
         parts = Part.objects.filter(tree_id=self.tree_id)
-        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None)
-        
+        stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(
+            serial=None)
+
         # There are no matchin StockItem objects (skip further tests)
         if not stock.exists():
             return None
@@ -394,7 +405,9 @@ class Part(MPTTModel):
         # Attempt to coerce the returned serial numbers to integers
         # If *any* are not integers, fail!
         try:
-            ordered = sorted(stock.all(), reverse=True, key=lambda n: int(n.serial))
+            ordered = sorted(stock.all(),
+                             reverse=True,
+                             key=lambda n: int(n.serial))
 
             if len(ordered) > 0:
                 return ordered[0].serial
@@ -430,7 +443,8 @@ class Part(MPTTModel):
         if type(latest) is int:
 
             if quantity >= 2:
-                text = '{n} - {m}'.format(n=latest + 1, m=latest + 1 + quantity)
+                text = '{n} - {m}'.format(n=latest + 1,
+                                          m=latest + 1 + quantity)
 
                 return _('Next available serial numbers are') + ' ' + text
             else:
@@ -458,7 +472,7 @@ class Part(MPTTModel):
 
         if self.IPN:
             elements.append(self.IPN)
-        
+
         elements.append(self.name)
 
         if self.revision:
@@ -533,36 +547,57 @@ class Part(MPTTModel):
 
         super().clean()
 
-    name = models.CharField(max_length=100, blank=False,
+    name = models.CharField(max_length=100,
+                            blank=False,
                             help_text=_('Part name'),
-                            validators=[validators.validate_part_name]
-                            )
+                            validators=[validators.validate_part_name])
 
-    is_template = models.BooleanField(default=False, help_text=_('Is this part a template part?'))
+    is_template = models.BooleanField(
+        default=False, help_text=_('Is this part a template part?'))
 
-    variant_of = models.ForeignKey('part.Part', related_name='variants',
-                                   null=True, blank=True,
-                                   limit_choices_to={
-                                       'is_template': True,
-                                       'active': True,
-                                   },
-                                   on_delete=models.SET_NULL,
-                                   help_text=_('Is this part a variant of another part?'))
+    variant_of = models.ForeignKey(
+        'part.Part',
+        related_name='variants',
+        null=True,
+        blank=True,
+        limit_choices_to={
+            'is_template': True,
+            'active': True,
+        },
+        on_delete=models.SET_NULL,
+        help_text=_('Is this part a variant of another part?'))
 
-    description = models.CharField(max_length=250, blank=False, help_text=_('Part description'))
+    description = models.CharField(max_length=250,
+                                   blank=False,
+                                   help_text=_('Part description'))
 
-    keywords = models.CharField(max_length=250, blank=True, null=True, help_text=_('Part keywords to improve visibility in search results'))
+    keywords = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        help_text=_('Part keywords to improve visibility in search results'))
 
-    category = TreeForeignKey(PartCategory, related_name='parts',
-                              null=True, blank=True,
+    category = TreeForeignKey(PartCategory,
+                              related_name='parts',
+                              null=True,
+                              blank=True,
                               on_delete=models.DO_NOTHING,
                               help_text=_('Part category'))
 
-    IPN = models.CharField(max_length=100, blank=True, null=True, help_text=_('Internal Part Number'), validators=[validators.validate_part_ipn])
+    IPN = models.CharField(max_length=100,
+                           blank=True,
+                           null=True,
+                           help_text=_('Internal Part Number'),
+                           validators=[validators.validate_part_ipn])
 
-    revision = models.CharField(max_length=100, blank=True, null=True, help_text=_('Part revision or version number'))
+    revision = models.CharField(max_length=100,
+                                blank=True,
+                                null=True,
+                                help_text=_('Part revision or version number'))
 
-    link = InvenTreeURLField(blank=True, null=True, help_text=_('Link to external URL'))
+    link = InvenTreeURLField(blank=True,
+                             null=True,
+                             help_text=_('Link to external URL'))
 
     image = StdImageField(
         upload_to=rename_part_image,
@@ -572,10 +607,13 @@ class Part(MPTTModel):
         delete_orphans=True,
     )
 
-    default_location = TreeForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
-                                      blank=True, null=True,
-                                      help_text=_('Where is this item normally stored?'),
-                                      related_name='default_parts')
+    default_location = TreeForeignKey(
+        'stock.StockLocation',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        help_text=_('Where is this item normally stored?'),
+        related_name='default_parts')
 
     def get_default_location(self):
         """ Get the default location for a Part (may be None).
@@ -589,7 +627,8 @@ class Part(MPTTModel):
             return self.default_location
         elif self.category:
             # Traverse up the category tree until we find a default location
-            cats = self.category.get_ancestors(ascending=True, include_self=True)
+            cats = self.category.get_ancestors(ascending=True,
+                                               include_self=True)
 
             for cat in cats:
                 if cat.default_location:
@@ -617,55 +656,93 @@ class Part(MPTTModel):
 
     default_supplier = models.ForeignKey(SupplierPart,
                                          on_delete=models.SET_NULL,
-                                         blank=True, null=True,
+                                         blank=True,
+                                         null=True,
                                          help_text=_('Default supplier part'),
                                          related_name='default_parts')
 
-    minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text=_('Minimum allowed stock level'))
+    minimum_stock = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text=_('Minimum allowed stock level'))
 
-    units = models.CharField(max_length=20, default="", blank=True, null=True, help_text=_('Stock keeping units for this part'))
+    units = models.CharField(max_length=20,
+                             default="",
+                             blank=True,
+                             null=True,
+                             help_text=_('Stock keeping units for this part'))
 
-    assembly = models.BooleanField(default=False, verbose_name='Assembly', help_text=_('Can this part be built from other parts?'))
+    assembly = models.BooleanField(
+        default=False,
+        verbose_name='Assembly',
+        help_text=_('Can this part be built from other parts?'))
 
-    component = models.BooleanField(default=True, verbose_name='Component', help_text=_('Can this part be used to build other parts?'))
+    component = models.BooleanField(
+        default=True,
+        verbose_name='Component',
+        help_text=_('Can this part be used to build other parts?'))
 
-    trackable = models.BooleanField(default=False, help_text=_('Does this part have tracking for unique items?'))
+    trackable = models.BooleanField(
+        default=False,
+        help_text=_('Does this part have tracking for unique items?'))
 
-    purchaseable = models.BooleanField(default=True, help_text=_('Can this part be purchased from external suppliers?'))
+    purchaseable = models.BooleanField(
+        default=True,
+        help_text=_('Can this part be purchased from external suppliers?'))
 
-    salable = models.BooleanField(default=False, help_text=_("Can this part be sold to customers?"))
+    salable = models.BooleanField(
+        default=False, help_text=_("Can this part be sold to customers?"))
 
-    active = models.BooleanField(default=True, help_text=_('Is this part active?'))
+    active = models.BooleanField(default=True,
+                                 help_text=_('Is this part active?'))
 
-    virtual = models.BooleanField(default=False, help_text=_('Is this a virtual part, such as a software product or license?'))
+    virtual = models.BooleanField(
+        default=False,
+        help_text=_(
+            'Is this a virtual part, such as a software product or license?'))
 
-    notes = MarkdownxField(blank=True, null=True, help_text=_('Part notes - supports Markdown formatting'))
+    notes = MarkdownxField(
+        blank=True,
+        null=True,
+        help_text=_('Part notes - supports Markdown formatting'))
 
-    bom_checksum = models.CharField(max_length=128, blank=True, help_text=_('Stored BOM checksum'))
+    bom_checksum = models.CharField(max_length=128,
+                                    blank=True,
+                                    help_text=_('Stored BOM checksum'))
 
-    bom_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
+    bom_checked_by = models.ForeignKey(User,
+                                       on_delete=models.SET_NULL,
+                                       blank=True,
+                                       null=True,
                                        related_name='boms_checked')
 
     bom_checked_date = models.DateField(blank=True, null=True)
 
-    creation_date = models.DateField(auto_now_add=True, editable=False, blank=True, null=True)
+    creation_date = models.DateField(auto_now_add=True,
+                                     editable=False,
+                                     blank=True,
+                                     null=True)
 
-    creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='parts_created')
+    creation_user = models.ForeignKey(User,
+                                      on_delete=models.SET_NULL,
+                                      blank=True,
+                                      null=True,
+                                      related_name='parts_created')
 
-    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='parts_responible')
+    responsible = models.ForeignKey(User,
+                                    on_delete=models.SET_NULL,
+                                    blank=True,
+                                    null=True,
+                                    related_name='parts_responible')
 
     def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this Part object """
 
         return helpers.MakeBarcode(
-            "part",
-            self.id,
-            {
+            "part", self.id, {
                 "name": self.full_name,
                 "url": reverse('api-part-detail', kwargs={'pk': self.id}),
-            },
-            **kwargs
-        )
+            }, **kwargs)
 
     @property
     def category_path(self):
@@ -732,7 +809,8 @@ class Part(MPTTModel):
         then we need to restock.
         """
 
-        return (self.total_stock + self.on_order - self.allocation_count) < self.minimum_stock
+        return (self.total_stock + self.on_order -
+                self.allocation_count) < self.minimum_stock
 
     @property
     def can_build(self):
@@ -746,7 +824,8 @@ class Part(MPTTModel):
         total = None
 
         # Calculate the minimum number of parts that can be built using each sub-part
-        for item in self.bom_items.all().prefetch_related('sub_part__stock_items'):
+        for item in self.bom_items.all().prefetch_related(
+                'sub_part__stock_items'):
             stock = item.sub_part.available_stock
 
             # If (by some chance) we get here but the BOM item quantity is invalid,
@@ -761,7 +840,7 @@ class Part(MPTTModel):
 
         if total is None:
             total = 0
-        
+
         return max(total, 0)
 
     @property
@@ -787,8 +866,7 @@ class Part(MPTTModel):
         stock_items = self.stock_items.filter(is_building=True)
 
         query = stock_items.aggregate(
-            quantity=Coalesce(Sum('quantity'), Decimal(0))
-        )
+            quantity=Coalesce(Sum('quantity'), Decimal(0)))
 
         return query['quantity']
 
@@ -797,14 +875,16 @@ class Part(MPTTModel):
         Return all 'BuildItem' objects which allocate this part to Build objects
         """
 
-        return BuildModels.BuildItem.objects.filter(stock_item__part__id=self.id)
+        return BuildModels.BuildItem.objects.filter(
+            stock_item__part__id=self.id)
 
     def build_order_allocation_count(self):
         """
         Return the total amount of this part allocated to build orders
         """
 
-        query = self.build_order_allocations().aggregate(total=Coalesce(Sum('quantity'), 0))
+        query = self.build_order_allocations().aggregate(
+            total=Coalesce(Sum('quantity'), 0))
 
         return query['total']
 
@@ -813,14 +893,16 @@ class Part(MPTTModel):
         Return all sales-order-allocation objects which allocate this part to a SalesOrder
         """
 
-        return OrderModels.SalesOrderAllocation.objects.filter(item__part__id=self.id)
+        return OrderModels.SalesOrderAllocation.objects.filter(
+            item__part__id=self.id)
 
     def sales_order_allocation_count(self):
         """
         Return the tutal quantity of this part allocated to sales orders
         """
 
-        query = self.sales_order_allocations().aggregate(total=Coalesce(Sum('quantity'), 0))
+        query = self.sales_order_allocations().aggregate(
+            total=Coalesce(Sum('quantity'), 0))
 
         return query['total']
 
@@ -845,7 +927,8 @@ class Part(MPTTModel):
         """
 
         if include_variants:
-            query = StockModels.StockItem.objects.filter(part__in=self.get_descendants(include_self=True))
+            query = StockModels.StockItem.objects.filter(
+                part__in=self.get_descendants(include_self=True))
         else:
             query = self.stock_items
 
@@ -995,7 +1078,7 @@ class Part(MPTTModel):
         return "{a} - {b}".format(a=min_price, b=max_price)
 
     def get_supplier_price_range(self, quantity=1):
-        
+
         min_price = None
         max_price = None
 
@@ -1062,7 +1145,6 @@ class Part(MPTTModel):
         return (min_price, max_price)
 
     def get_price_range(self, quantity=1, buy=True, bom=True):
-        
         """ Return the price range for this part. This price can be either:
 
         - Supplier price (if purchased from suppliers)
@@ -1072,7 +1154,8 @@ class Part(MPTTModel):
             Minimum of the supplier price or BOM price. If no pricing available, returns None
         """
 
-        buy_price_range = self.get_supplier_price_range(quantity) if buy else None
+        buy_price_range = self.get_supplier_price_range(
+            quantity) if buy else None
         bom_price_range = self.get_bom_price_range(quantity) if bom else None
 
         if buy_price_range is None:
@@ -1082,10 +1165,8 @@ class Part(MPTTModel):
             return buy_price_range
 
         else:
-            return (
-                min(buy_price_range[0], bom_price_range[0]),
-                max(buy_price_range[1], bom_price_range[1])
-            )
+            return (min(buy_price_range[0], bom_price_range[0]),
+                    max(buy_price_range[1], bom_price_range[1]))
 
     def deepCopy(self, other, **kwargs):
         """ Duplicates non-field data from another part.
@@ -1145,7 +1226,8 @@ class Part(MPTTModel):
         """
 
         if include_parent:
-            tests = PartTestTemplate.objects.filter(part__in=self.get_ancestors(include_self=True))
+            tests = PartTestTemplate.objects.filter(
+                part__in=self.get_ancestors(include_self=True))
         else:
             tests = self.test_templates
 
@@ -1153,7 +1235,7 @@ class Part(MPTTModel):
             tests = tests.filter(required=required)
 
         return tests
-    
+
     def getRequiredTests(self):
         # Return the tests which are required by this part
         return self.getTestTemplates(required=True)
@@ -1190,7 +1272,8 @@ class Part(MPTTModel):
 
         orders = []
 
-        for line in self.sales_order_line_items.all().prefetch_related('order'):
+        for line in self.sales_order_line_items.all().prefetch_related(
+                'order'):
             if line.order not in orders:
                 orders.append(line.order)
 
@@ -1201,7 +1284,8 @@ class Part(MPTTModel):
 
         orders = []
 
-        for part in self.supplier_parts.all().prefetch_related('purchase_order_line_items'):
+        for part in self.supplier_parts.all().prefetch_related(
+                'purchase_order_line_items'):
             for order in part.purchase_orders():
                 if order not in orders:
                     orders.append(order)
@@ -1211,21 +1295,28 @@ class Part(MPTTModel):
     def open_purchase_orders(self):
         """ Return a list of open purchase orders against this part """
 
-        return [order for order in self.purchase_orders() if order.status in PurchaseOrderStatus.OPEN]
+        return [
+            order for order in self.purchase_orders()
+            if order.status in PurchaseOrderStatus.OPEN
+        ]
 
     def closed_purchase_orders(self):
         """ Return a list of closed purchase orders against this part """
 
-        return [order for order in self.purchase_orders() if order.status not in PurchaseOrderStatus.OPEN]
+        return [
+            order for order in self.purchase_orders()
+            if order.status not in PurchaseOrderStatus.OPEN
+        ]
 
     @property
     def on_order(self):
         """ Return the total number of items on order for this part. """
 
-        orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=PurchaseOrderStatus.OPEN).aggregate(
-            quantity=Sum('purchase_order_line_items__quantity'),
-            received=Sum('purchase_order_line_items__received')
-        )
+        orders = self.supplier_parts.filter(
+            purchase_order_line_items__order__status__in=PurchaseOrderStatus.
+            OPEN).aggregate(
+                quantity=Sum('purchase_order_line_items__quantity'),
+                received=Sum('purchase_order_line_items__received'))
 
         quantity = orders['quantity']
         received = orders['received']
@@ -1273,11 +1364,11 @@ class PartAttachment(InvenTreeAttachment):
     """
     Model for storing file attachments against a Part object
     """
-    
     def getSubdir(self):
         return os.path.join("part_files", str(self.part.id))
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE,
+    part = models.ForeignKey(Part,
+                             on_delete=models.CASCADE,
                              related_name='attachments')
 
 
@@ -1286,11 +1377,10 @@ class PartSellPriceBreak(common.models.PriceBreak):
     Represents a price break for selling this part
     """
 
-    part = models.ForeignKey(
-        Part, on_delete=models.CASCADE,
-        related_name='salepricebreaks',
-        limit_choices_to={'salable': True}
-    )
+    part = models.ForeignKey(Part,
+                             on_delete=models.CASCADE,
+                             related_name='salepricebreaks',
+                             limit_choices_to={'salable': True})
 
     class Meta:
         unique_together = ('part', 'quantity')
@@ -1307,9 +1397,13 @@ class PartStar(models.Model):
         user: Link to a User object
     """
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='starred_users')
+    part = models.ForeignKey(Part,
+                             on_delete=models.CASCADE,
+                             related_name='starred_users')
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='starred_parts')
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                             related_name='starred_parts')
 
     class Meta:
         unique_together = ['part', 'user']
@@ -1329,7 +1423,6 @@ class PartTestTemplate(models.Model):
     To enable generation of unique lookup-keys for each test, there are some validation tests
     run on the model (refer to the validate_unique function).
     """
-
     def save(self, *args, **kwargs):
 
         self.clean()
@@ -1350,13 +1443,13 @@ class PartTestTemplate(models.Model):
 
         if not self.part.trackable:
             raise ValidationError({
-                'part': _('Test templates can only be created for trackable parts')
+                'part':
+                _('Test templates can only be created for trackable parts')
             })
 
         # Get a list of all tests "above" this one
         tests = PartTestTemplate.objects.filter(
-            part__in=self.part.get_ancestors(include_self=True)
-        )
+            part__in=self.part.get_ancestors(include_self=True))
 
         # If this item is already in the database, exclude it from comparison!
         if self.pk is not None:
@@ -1367,7 +1460,8 @@ class PartTestTemplate(models.Model):
         for test in tests:
             if test.key == key:
                 raise ValidationError({
-                    'test_name': _("Test with this name already exists for this part")
+                    'test_name':
+                    _("Test with this name already exists for this part")
                 })
 
         super().validate_unique(exclude)
@@ -1384,35 +1478,35 @@ class PartTestTemplate(models.Model):
         limit_choices_to={'trackable': True},
     )
 
-    test_name = models.CharField(
-        blank=False, max_length=100,
-        verbose_name=_("Test Name"),
-        help_text=_("Enter a name for the test")
-    )
+    test_name = models.CharField(blank=False,
+                                 max_length=100,
+                                 verbose_name=_("Test Name"),
+                                 help_text=_("Enter a name for the test"))
 
     description = models.CharField(
-        blank=False, null=True, max_length=100,
+        blank=False,
+        null=True,
+        max_length=100,
         verbose_name=_("Test Description"),
-        help_text=_("Enter description for this test")
-    )
+        help_text=_("Enter description for this test"))
 
     required = models.BooleanField(
         default=True,
         verbose_name=_("Required"),
-        help_text=_("Is this test required to pass?")
-    )
+        help_text=_("Is this test required to pass?"))
 
     requires_value = models.BooleanField(
         default=False,
         verbose_name=_("Requires Value"),
-        help_text=_("Does this test require a value when adding a test result?")
-    )
+        help_text=_(
+            "Does this test require a value when adding a test result?"))
 
     requires_attachment = models.BooleanField(
         default=False,
         verbose_name=_("Requires Attachment"),
-        help_text=_("Does this test require a file attachment when adding a test result?")
-    )
+        help_text=
+        _("Does this test require a file attachment when adding a test result?"
+          ))
 
 
 class PartParameterTemplate(models.Model):
@@ -1426,7 +1520,6 @@ class PartParameterTemplate(models.Model):
         name: The name (key) of the Parameter [string]
         units: The units of the Parameter [string]
     """
-
     def __str__(self):
         s = str(self.name)
         if self.units:
@@ -1441,7 +1534,8 @@ class PartParameterTemplate(models.Model):
         super().validate_unique(exclude)
 
         try:
-            others = PartParameterTemplate.objects.filter(name__iexact=self.name).exclude(pk=self.pk)
+            others = PartParameterTemplate.objects.filter(
+                name__iexact=self.name).exclude(pk=self.pk)
 
             if others.exists():
                 msg = _("Parameter template name must be unique")
@@ -1449,9 +1543,13 @@ class PartParameterTemplate(models.Model):
         except PartParameterTemplate.DoesNotExist:
             pass
 
-    name = models.CharField(max_length=100, help_text=_('Parameter Name'), unique=True)
+    name = models.CharField(max_length=100,
+                            help_text=_('Parameter Name'),
+                            unique=True)
 
-    units = models.CharField(max_length=25, help_text=_('Parameter Units'), blank=True)
+    units = models.CharField(max_length=25,
+                             help_text=_('Parameter Units'),
+                             blank=True)
 
 
 class PartParameter(models.Model):
@@ -1463,23 +1561,27 @@ class PartParameter(models.Model):
         template: Reference to a single PartParameterTemplate object
         data: The data (value) of the Parameter [string]
     """
-
     def __str__(self):
         # String representation of a PartParameter (used in the admin interface)
         return "{part} : {param} = {data}{units}".format(
             part=str(self.part.full_name),
             param=str(self.template.name),
             data=str(self.data),
-            units=str(self.template.units)
-        )
+            units=str(self.template.units))
 
     class Meta:
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', help_text=_('Parent Part'))
+    part = models.ForeignKey(Part,
+                             on_delete=models.CASCADE,
+                             related_name='parameters',
+                             help_text=_('Parent Part'))
 
-    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', help_text=_('Parameter Template'))
+    template = models.ForeignKey(PartParameterTemplate,
+                                 on_delete=models.CASCADE,
+                                 related_name='instances',
+                                 help_text=_('Parameter Template'))
 
     data = models.CharField(max_length=500, help_text=_('Parameter Value'))
 
@@ -1506,7 +1608,6 @@ class BomItem(models.Model):
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
     """
-
     def save(self, *args, **kwargs):
 
         self.clean()
@@ -1517,7 +1618,9 @@ class BomItem(models.Model):
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='bom_items',
+    part = models.ForeignKey(Part,
+                             on_delete=models.CASCADE,
+                             related_name='bom_items',
                              help_text=_('Select parent part'),
                              limit_choices_to={
                                  'assembly': True,
@@ -1525,27 +1628,44 @@ class BomItem(models.Model):
 
     # A link to the child item (sub-part)
     # Each part will get a reverse lookup field 'used_in'
-    sub_part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='used_in',
+    sub_part = models.ForeignKey(Part,
+                                 on_delete=models.CASCADE,
+                                 related_name='used_in',
                                  help_text=_('Select part to be used in BOM'),
                                  limit_choices_to={
                                      'component': True,
                                  })
 
     # Quantity required
-    quantity = models.DecimalField(default=1.0, max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], help_text=_('BOM quantity for this BOM item'))
+    quantity = models.DecimalField(
+        default=1.0,
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        help_text=_('BOM quantity for this BOM item'))
 
-    optional = models.BooleanField(default=False, help_text=_("This BOM item is optional"))
+    optional = models.BooleanField(default=False,
+                                   help_text=_("This BOM item is optional"))
 
-    overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
-                               help_text=_('Estimated build wastage quantity (absolute or percentage)')
-                               )
+    overage = models.CharField(
+        max_length=24,
+        blank=True,
+        validators=[validators.validate_overage],
+        help_text=_(
+            'Estimated build wastage quantity (absolute or percentage)'))
 
-    reference = models.CharField(max_length=500, blank=True, help_text=_('BOM item reference'))
+    reference = models.CharField(max_length=500,
+                                 blank=True,
+                                 help_text=_('BOM item reference'))
 
     # Note attached to this BOM line item
-    note = models.CharField(max_length=500, blank=True, help_text=_('BOM item notes'))
+    note = models.CharField(max_length=500,
+                            blank=True,
+                            help_text=_('BOM item notes'))
 
-    checksum = models.CharField(max_length=128, blank=True, help_text=_('BOM line checksum'))
+    checksum = models.CharField(max_length=128,
+                                blank=True,
+                                help_text=_('BOM line checksum'))
 
     def get_item_hash(self):
         """ Calculate the checksum hash of this BOM line item:
@@ -1609,7 +1729,8 @@ class BomItem(models.Model):
             if self.sub_part.trackable:
                 if not self.quantity == int(self.quantity):
                     raise ValidationError({
-                        "quantity": _("Quantity must be integer value for trackable parts")
+                        "quantity":
+                        _("Quantity must be integer value for trackable parts")
                     })
         except Part.DoesNotExist:
             pass
@@ -1634,9 +1755,9 @@ class BomItem(models.Model):
         Return the available stock items for the referenced sub_part
         """
 
-        query = self.sub_part.stock_items.filter(StockModels.StockItem.IN_STOCK_FILTER).aggregate(
-            available=Coalesce(Sum('quantity'), 0)
-        )
+        query = self.sub_part.stock_items.filter(
+            StockModels.StockItem.IN_STOCK_FILTER).aggregate(
+                available=Coalesce(Sum('quantity'), 0))
 
         return query['available']
 

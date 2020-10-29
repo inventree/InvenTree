@@ -88,9 +88,7 @@ class PartAttachmentCreate(AjaxCreateView):
         self.object.save()
 
     def get_data(self):
-        return {
-            'success': _('Added attachment')
-        }
+        return {'success': _('Added attachment')}
 
     def get_initial(self):
         """ Get initial data for new PartAttachment object.
@@ -103,7 +101,8 @@ class PartAttachmentCreate(AjaxCreateView):
 
         # TODO - If the proper part was not sent, return an error message
         try:
-            initials['part'] = Part.objects.get(id=self.request.GET.get('part', None))
+            initials['part'] = Part.objects.get(
+                id=self.request.GET.get('part', None))
         except (ValueError, Part.DoesNotExist):
             pass
 
@@ -124,18 +123,16 @@ class PartAttachmentCreate(AjaxCreateView):
 
 class PartAttachmentEdit(AjaxUpdateView):
     """ View for editing a PartAttachment object """
-    
+
     model = PartAttachment
     form_class = part_forms.EditPartAttachmentForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit attachment')
 
     role_required = 'part.change'
-    
+
     def get_data(self):
-        return {
-            'success': _('Part attachment updated')
-        }
+        return {'success': _('Part attachment updated')}
 
     def get_form(self):
         form = super(AjaxUpdateView, self).get_form()
@@ -156,9 +153,7 @@ class PartAttachmentDelete(AjaxDeleteView):
     role_required = 'part.delete'
 
     def get_data(self):
-        return {
-            'danger': _('Deleted part attachment')
-        }
+        return {'danger': _('Deleted part attachment')}
 
 
 class PartTestTemplateCreate(AjaxCreateView):
@@ -169,7 +164,7 @@ class PartTestTemplateCreate(AjaxCreateView):
     ajax_form_title = _("Create Test Template")
 
     role_required = 'part.add'
-    
+
     def get_initial(self):
 
         initials = super().get_initial()
@@ -227,18 +222,21 @@ class PartSetCategory(AjaxUpdateView):
 
     category = None
     parts = []
-    
+
     def get(self, request, *args, **kwargs):
         """ Respond to a GET request to this view """
 
         self.request = request
 
         if 'parts[]' in request.GET:
-            self.parts = Part.objects.filter(id__in=request.GET.getlist('parts[]'))
+            self.parts = Part.objects.filter(
+                id__in=request.GET.getlist('parts[]'))
         else:
             self.parts = []
 
-        return self.renderJsonResponse(request, form=self.get_form(), context=self.get_context_data())
+        return self.renderJsonResponse(request,
+                                       form=self.get_form(),
+                                       context=self.get_context_data())
 
     def post(self, request, *args, **kwargs):
         """ Respond to a POST request to this view """
@@ -270,13 +268,17 @@ class PartSetCategory(AjaxUpdateView):
 
         data = {
             'form_valid': valid,
-            'success': _('Set category for {n} parts'.format(n=len(self.parts)))
+            'success':
+            _('Set category for {n} parts'.format(n=len(self.parts)))
         }
 
         if valid:
             self.set_category()
 
-        return self.renderJsonResponse(request, data=data, form=self.get_form(), context=self.get_context_data())
+        return self.renderJsonResponse(request,
+                                       data=data,
+                                       form=self.get_form(),
+                                       context=self.get_context_data())
 
     @transaction.atomic
     def set_category(self):
@@ -292,7 +294,7 @@ class PartSetCategory(AjaxUpdateView):
         ctx['category'] = self.category
 
         return ctx
-        
+
 
 class MakePartVariant(AjaxCreateView):
     """ View for creating a new variant based on an existing template Part
@@ -357,10 +359,13 @@ class MakePartVariant(AjaxCreateView):
             data['url'] = part.get_absolute_url()
 
             bom_copy = str2bool(request.POST.get('bom_copy', False))
-            parameters_copy = str2bool(request.POST.get('parameters_copy', False))
+            parameters_copy = str2bool(
+                request.POST.get('parameters_copy', False))
 
             # Copy relevent information from the template part
-            part.deepCopy(part_template, bom=bom_copy, parameters=parameters_copy)
+            part.deepCopy(part_template,
+                          bom=bom_copy,
+                          parameters=parameters_copy)
 
         return self.renderJsonResponse(request, form, data, context=context)
 
@@ -391,9 +396,7 @@ class PartDuplicate(AjaxCreateView):
     role_required = 'part.add'
 
     def get_data(self):
-        return {
-            'success': _('Copied part')
-        }
+        return {'success': _('Copied part')}
 
     def get_part_to_copy(self):
         try:
@@ -402,9 +405,7 @@ class PartDuplicate(AjaxCreateView):
             return None
 
     def get_context_data(self):
-        return {
-            'part': self.get_part_to_copy()
-        }
+        return {'part': self.get_part_to_copy()}
 
     def get_form(self):
         form = super(AjaxCreateView, self).get_form()
@@ -431,29 +432,30 @@ class PartDuplicate(AjaxCreateView):
         valid = form.is_valid()
 
         name = request.POST.get('name', None)
-        
+
         if name:
             matches = match_part_names(name)
 
             if len(matches) > 0:
                 # Display the first five closest matches
                 context['matches'] = matches[:5]
-            
+
                 # Enforce display of the checkbox
                 form.fields['confirm_creation'].widget = CheckboxInput()
-                
+
                 # Check if the user has checked the 'confirm_creation' input
-                confirmed = str2bool(request.POST.get('confirm_creation', False))
+                confirmed = str2bool(
+                    request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
-                    
+                    form.errors['confirm_creation'] = [
+                        'Possible matches exist - confirm creation of new part'
+                    ]
+
                     form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
                     valid = False
 
-        data = {
-            'form_valid': valid
-        }
+        data = {'form_valid': valid}
 
         if valid:
             # Create the new Part
@@ -466,12 +468,15 @@ class PartDuplicate(AjaxCreateView):
             data['text'] = str(part)
 
             bom_copy = str2bool(request.POST.get('bom_copy', False))
-            parameters_copy = str2bool(request.POST.get('parameters_copy', False))
+            parameters_copy = str2bool(
+                request.POST.get('parameters_copy', False))
 
             original = self.get_part_to_copy()
 
             if original:
-                part.deepCopy(original, bom=bom_copy, parameters=parameters_copy)
+                part.deepCopy(original,
+                              bom=bom_copy,
+                              parameters=parameters_copy)
 
             try:
                 data['url'] = part.get_absolute_url()
@@ -494,9 +499,11 @@ class PartDuplicate(AjaxCreateView):
         else:
             initials = super(AjaxCreateView, self).get_initial()
 
-        initials['bom_copy'] = str2bool(InvenTreeSetting.get_setting('PART_COPY_BOM', True))
-        
-        initials['parameters_copy'] = str2bool(InvenTreeSetting.get_setting('PART_COPY_PARAMETERS', True))
+        initials['bom_copy'] = str2bool(
+            InvenTreeSetting.get_setting('PART_COPY_BOM', True))
+
+        initials['parameters_copy'] = str2bool(
+            InvenTreeSetting.get_setting('PART_COPY_PARAMETERS', True))
 
         return initials
 
@@ -560,30 +567,31 @@ class PartCreate(AjaxCreateView):
         context = {}
 
         valid = form.is_valid()
-        
+
         name = request.POST.get('name', None)
-        
+
         if name:
             matches = match_part_names(name)
 
             if len(matches) > 0:
                 context['matches'] = matches
-            
+
                 # Enforce display of the checkbox
                 form.fields['confirm_creation'].widget = CheckboxInput()
-                
+
                 # Check if the user has checked the 'confirm_creation' input
-                confirmed = str2bool(request.POST.get('confirm_creation', False))
+                confirmed = str2bool(
+                    request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
-                    
+                    form.errors['confirm_creation'] = [
+                        'Possible matches exist - confirm creation of new part'
+                    ]
+
                     form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
                     valid = False
 
-        data = {
-            'form_valid': valid
-        }
+        data = {'form_valid': valid}
 
         if valid:
             # Create the new Part
@@ -619,7 +627,7 @@ class PartCreate(AjaxCreateView):
                 initials['keywords'] = category.default_keywords
             except (PartCategory.DoesNotExist, ValueError):
                 pass
-        
+
         # Allow initial data to be passed through as arguments
         for label in ['name', 'IPN', 'description', 'revision', 'keywords']:
             if label in self.request.GET:
@@ -644,7 +652,7 @@ class PartNotes(UpdateView):
 
     def get_success_url(self):
         """ Return the success URL for this form """
-        
+
         return reverse('part-notes', kwargs={'pk': self.get_object().id})
 
     def get_context_data(self, **kwargs):
@@ -678,7 +686,7 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         - If '?editing=True', set 'editing_enabled' context variable
         """
         context = super(PartDetail, self).get_context_data(**kwargs)
-        
+
         part = self.get_object()
 
         if str2bool(self.request.GET.get('edit', '')):
@@ -717,7 +725,7 @@ class PartDetailFromIPN(PartDetail):
                 pass
             except queryset.model.DoesNotExist:
                 pass
-        
+
         return None
 
     def get(self, request, *args, **kwargs):
@@ -826,7 +834,8 @@ class PartEdit(AjaxUpdateView):
 
         part = self.get_object()
 
-        form.fields['default_supplier'].queryset = SupplierPart.objects.filter(part=part)
+        form.fields['default_supplier'].queryset = SupplierPart.objects.filter(
+            part=part)
 
         return form
 
@@ -851,7 +860,9 @@ class BomValidate(AjaxUpdateView):
 
         form = self.get_form()
 
-        return self.renderJsonResponse(request, form, context=self.get_context())
+        return self.renderJsonResponse(request,
+                                       form,
+                                       context=self.get_context())
 
     def post(self, request, *args, **kwargs):
 
@@ -865,11 +876,12 @@ class BomValidate(AjaxUpdateView):
         else:
             form.errors['validate'] = ['Confirm that the BOM is valid']
 
-        data = {
-            'form_valid': confirmed
-        }
+        data = {'form_valid': confirmed}
 
-        return self.renderJsonResponse(request, form, data, context=self.get_context())
+        return self.renderJsonResponse(request,
+                                       form,
+                                       data,
+                                       context=self.get_context())
 
 
 class BomUpload(InvenTreeRoleMixin, FormView):
@@ -941,19 +953,30 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 })
 
             rows.append({
-                'index': row.get('index', -1),
-                'data': data,
-                'part_match': row.get('part_match', None),
-                'part_options': row.get('part_options', self.allowed_parts),
+                'index':
+                row.get('index', -1),
+                'data':
+                data,
+                'part_match':
+                row.get('part_match', None),
+                'part_options':
+                row.get('part_options', self.allowed_parts),
 
                 # User-input (passed between client and server)
-                'quantity': row.get('quantity', None),
-                'description': row.get('description', ''),
-                'part_name': row.get('part_name', ''),
-                'part': row.get('part', None),
-                'reference': row.get('reference', ''),
-                'notes': row.get('notes', ''),
-                'errors': row.get('errors', ''),
+                'quantity':
+                row.get('quantity', None),
+                'description':
+                row.get('description', ''),
+                'part_name':
+                row.get('part_name', ''),
+                'part':
+                row.get('part', None),
+                'reference':
+                row.get('reference', ''),
+                'notes':
+                row.get('notes', ''),
+                'errors':
+                row.get('errors', ''),
             })
 
         ctx['part'] = self.part
@@ -1122,12 +1145,15 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 matches = []
 
                 for part in self.allowed_parts:
-                    ratio = fuzz.partial_ratio(part.name + part.description, part_name)
+                    ratio = fuzz.partial_ratio(part.name + part.description,
+                                               part_name)
                     matches.append({'part': part, 'match': ratio})
 
                 # Sort matches by the 'strength' of the match ratio
                 if len(matches) > 0:
-                    matches = sorted(matches, key=lambda item: item['match'], reverse=True)
+                    matches = sorted(matches,
+                                     key=lambda item: item['match'],
+                                     reverse=True)
 
                     part_options = [m['part'] for m in matches]
 
@@ -1146,7 +1172,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
             # Check if there is a column corresponding to "Note" field
             if n_idx >= 0:
                 row['note'] = row['data'][n_idx]
-        
+
             # Supply list of part options for each row, sorted by how closely they match the part name
             row['part_options'] = part_options
 
@@ -1160,8 +1186,11 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 # Otherwise, check to see if there is a matching IPN
                 try:
                     if row['part_ipn']:
-                        part_matches = [part for part in self.allowed_parts if row['part_ipn'].lower() == part.IPN.lower()]
-    
+                        part_matches = [
+                            part for part in self.allowed_parts
+                            if row['part_ipn'].lower() == part.IPN.lower()
+                        ]
+
                         # Check for single match
                         if len(part_matches) == 1:
                             row['part_match'] = part_matches[0]
@@ -1237,7 +1266,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                     col_id = int(s[3])
                 except ValueError:
                     continue
-                
+
                 if row_id not in self.row_data:
                     self.row_data[row_id] = {}
 
@@ -1276,13 +1305,11 @@ class BomUpload(InvenTreeRoleMixin, FormView):
             else:
                 guess = None
 
-            header = ({
-                'name': self.column_names[col],
-                'guess': guess
-            })
+            header = ({'name': self.column_names[col], 'guess': guess})
 
             if guess:
-                n = list(self.column_selections.values()).count(self.column_selections[col])
+                n = list(self.column_selections.values()).count(
+                    self.column_selections[col])
                 if n > 1:
                     header['duplicate'] = True
                     self.duplicates = True
@@ -1306,7 +1333,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
         self.getTableDataFromPost()
 
         valid = len(self.missing_columns) == 0 and not self.duplicates
-        
+
         if valid:
             # Try to extract meaningful data
             self.preFillSelections()
@@ -1317,7 +1344,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
         return self.render_to_response(self.get_context_data(form=None))
 
     def handlePartSelection(self):
-        
+
         # Extract basic table data from POST request
         self.getTableDataFromPost()
 
@@ -1343,19 +1370,22 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                     try:
                         q = Decimal(value)
                         if q < 0:
-                            row['errors']['quantity'] = _('Quantity must be greater than zero')
+                            row['errors']['quantity'] = _(
+                                'Quantity must be greater than zero')
 
                         if 'part' in row.keys():
                             if row['part'].trackable:
                                 # Trackable parts must use integer quantities
                                 if not q == int(q):
-                                    row['errors']['quantity'] = _('Quantity must be integer value for trackable parts')
+                                    row['errors']['quantity'] = _(
+                                        'Quantity must be integer value for trackable parts'
+                                    )
 
                     except (ValueError, InvalidOperation):
                         row['errors']['quantity'] = _('Enter a valid quantity')
 
                     row['quantity'] = q
-                     
+
                 except ValueError:
                     continue
 
@@ -1401,14 +1431,16 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                         q = row['quantity']
 
                         if not q == int(q):
-                            row['errors']['quantity'] = _('Quantity must be integer value for trackable parts')
+                            row['errors']['quantity'] = _(
+                                'Quantity must be integer value for trackable parts'
+                            )
 
             # Extract other fields which do not require further validation
             for field in ['reference', 'notes']:
                 if key.startswith(field + '_'):
                     try:
                         row_id = int(key.replace(field + '_', ''))
-                        
+
                         row = self.getRowByIndex(row_id)
 
                         if row:
@@ -1430,7 +1462,8 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 try:
                     part.checkAddToBOM(self.part)
                 except ValidationError:
-                    row['errors']['part'] = _('Selected part creates a circular BOM')
+                    row['errors']['part'] = _(
+                        'Selected part creates a circular BOM')
 
             # Has a quantity been specified?
             if row.get('quantity', None) is None:
@@ -1456,25 +1489,24 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 notes = row.get('notes', '')
 
                 # Create a new BOM item!
-                item = BomItem(
-                    part=self.part,
-                    sub_part=part,
-                    quantity=quantity,
-                    reference=reference,
-                    note=notes
-                )
+                item = BomItem(part=self.part,
+                               sub_part=part,
+                               quantity=quantity,
+                               reference=reference,
+                               note=notes)
 
                 item.save()
 
             # Redirect to the BOM view
-            return HttpResponseRedirect(reverse('part-bom', kwargs={'pk': self.part.id}))
+            return HttpResponseRedirect(
+                reverse('part-bom', kwargs={'pk': self.part.id}))
         else:
             ctx['form_errors'] = True
 
         return self.render_to_response(ctx)
 
     def getRowByIndex(self, idx):
-        
+
         for row in self.bom_rows:
             if row['index'] == idx:
                 return row
@@ -1492,7 +1524,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
         self.form = self.get_form(self.get_form_class())
 
         # Did the user POST a file named bom_file?
-        
+
         form_step = request.POST.get('form_step', None)
 
         if form_step == 'select_file':
@@ -1573,7 +1605,6 @@ class BomUploadTemplate(AjaxView):
     Provide a BOM upload template file for download.
     - Generates a template file in the provided format e.g. ?format=csv
     """
-
     def get(self, request, *args, **kwargs):
 
         export_format = request.GET.get('format', 'csv')
@@ -1629,9 +1660,7 @@ class BomDownload(AjaxView):
                          supplier_data=supplier_data)
 
     def get_data(self):
-        return {
-            'info': 'Exported BOM'
-        }
+        return {'info': 'Exported BOM'}
 
 
 class BomExport(AjaxView):
@@ -1712,7 +1741,7 @@ class PartPricing(AjaxView):
     form_class = part_forms.PartPriceForm
 
     role_required = ['sales_order.view', 'part.view']
-    
+
     def get_part(self):
         try:
             return Part.objects.get(id=self.kwargs['pk'])
@@ -1743,7 +1772,7 @@ class PartPricing(AjaxView):
             scaler = Decimal(currency.value)
 
         part = self.get_part()
-        
+
         ctx = {
             'part': part,
             'quantity': quantity,
@@ -1791,7 +1820,7 @@ class PartPricing(AjaxView):
                 if min_bom_price:
                     ctx['min_total_bom_price'] = min_bom_price
                     ctx['min_unit_bom_price'] = min_bom_price / quantity
-                
+
                 if max_bom_price:
                     ctx['max_total_bom_price'] = max_bom_price
                     ctx['max_unit_bom_price'] = max_bom_price / quantity
@@ -1800,7 +1829,9 @@ class PartPricing(AjaxView):
 
     def get(self, request, *args, **kwargs):
 
-        return self.renderJsonResponse(request, self.form_class(), context=self.get_pricing())
+        return self.renderJsonResponse(request,
+                                       self.form_class(),
+                                       context=self.get_pricing())
 
     def post(self, request, *args, **kwargs):
 
@@ -1824,7 +1855,11 @@ class PartPricing(AjaxView):
             'form_valid': False,
         }
 
-        return self.renderJsonResponse(request, self.form_class(), data=data, context=self.get_pricing(quantity, currency))
+        return self.renderJsonResponse(request,
+                                       self.form_class(),
+                                       data=data,
+                                       context=self.get_pricing(
+                                           quantity, currency))
 
 
 class PartParameterTemplateCreate(AjaxCreateView):
@@ -1898,7 +1933,9 @@ class PartParameterCreate(AjaxCreateView):
 
                 query = form.fields['template'].queryset
 
-                query = query.exclude(id__in=[param.template.id for param in part.parameters.all()])
+                query = query.exclude(id__in=[
+                    param.template.id for param in part.parameters.all()
+                ])
 
                 form.fields['template'].queryset = query
 
@@ -1932,7 +1969,7 @@ class PartParameterDelete(AjaxDeleteView):
     model = PartParameter
     ajax_template_name = 'part/param_delete.html'
     ajax_form_title = _('Delete Part Parameter')
-    
+
 
 class CategoryDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view for PartCategory """
@@ -1963,7 +2000,8 @@ class CategoryParametric(CategoryDetail):
 
     def get_context_data(self, **kwargs):
 
-        context = super(CategoryParametric, self).get_context_data(**kwargs).copy()
+        context = super(CategoryParametric,
+                        self).get_context_data(**kwargs).copy()
 
         # Get current category
         category = kwargs.get('object', None)
@@ -1971,16 +2009,17 @@ class CategoryParametric(CategoryDetail):
         if category:
             cascade = kwargs.get('cascade', True)
             # Prefetch parts parameters
-            parts_parameters = category.prefetch_parts_parameters(cascade=cascade)
+            parts_parameters = category.prefetch_parts_parameters(
+                cascade=cascade)
             # Get table headers (unique parameters names)
-            context['headers'] = category.get_unique_parameters(cascade=cascade,
-                                                                prefetch=parts_parameters)
+            context['headers'] = category.get_unique_parameters(
+                cascade=cascade, prefetch=parts_parameters)
             # Insert part information
             context['headers'].insert(0, 'description')
             context['headers'].insert(0, 'part')
             # Get parameters data
-            context['parameters'] = category.get_parts_parameters(cascade=cascade,
-                                                                  prefetch=parts_parameters)
+            context['parameters'] = category.get_parts_parameters(
+                cascade=cascade, prefetch=parts_parameters)
 
         return context
 
@@ -2009,14 +2048,15 @@ class CategoryEdit(AjaxUpdateView):
 
         Limit the choices for 'parent' field to those which make sense
         """
-        
+
         form = super(AjaxUpdateView, self).get_form()
-        
+
         category = self.get_object()
 
         # Remove any invalid choices for the parent category part
         parent_choices = PartCategory.objects.all()
-        parent_choices = parent_choices.exclude(id__in=category.getUniqueChildren())
+        parent_choices = parent_choices.exclude(
+            id__in=category.getUniqueChildren())
 
         form.fields['parent'].queryset = parent_choices
 
@@ -2122,14 +2162,15 @@ class BomItemCreate(AjaxCreateView):
 
             # Don't allow selection of sub_part objects which are already added to the Bom!
             query = form.fields['sub_part'].queryset
-            
+
             # Don't allow a part to be added to its own BOM
             query = query.exclude(id=part.id)
             query = query.filter(active=True)
-            
+
             # Eliminate any options that are already in the BOM!
-            query = query.exclude(id__in=[item.id for item in part.required_parts()])
-            
+            query = query.exclude(
+                id__in=[item.id for item in part.required_parts()])
+
             form.fields['sub_part'].queryset = query
 
             form.fields['part'].widget = HiddenInput()
@@ -2229,18 +2270,16 @@ class PartSalePriceBreakCreate(AjaxCreateView):
     ajax_form_title = _('Add Price Break')
 
     role_required = 'part.add'
-    
+
     def get_data(self):
-        return {
-            'success': _('Added new price break')
-        }
+        return {'success': _('Added new price break')}
 
     def get_part(self):
         try:
             part = Part.objects.get(id=self.request.GET.get('part'))
         except (ValueError, Part.DoesNotExist):
             part = None
-        
+
         if part is None:
             try:
                 part = Part.objects.get(id=self.request.POST.get('part'))
@@ -2288,7 +2327,7 @@ class PartSalePriceBreakEdit(AjaxUpdateView):
 
         return form
 
-    
+
 class PartSalePriceBreakDelete(AjaxDeleteView):
     """ View for deleting a sale price break """
 

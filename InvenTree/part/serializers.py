@@ -49,12 +49,7 @@ class PartAttachmentSerializer(InvenTreeModelSerializer):
     class Meta:
         model = PartAttachment
 
-        fields = [
-            'pk',
-            'part',
-            'attachment',
-            'comment'
-        ]
+        fields = ['pk', 'part', 'attachment', 'comment']
 
 
 class PartTestTemplateSerializer(InvenTreeModelSerializer):
@@ -117,7 +112,6 @@ class PartThumbSerializer(serializers.Serializer):
 
 class PartThumbSerializerUpdate(InvenTreeModelSerializer):
     """ Serializer for updating Part thumbnail """
-
     def validate_image(self, value):
         """
         Check that file is an image.
@@ -139,8 +133,9 @@ class PartThumbSerializerUpdate(InvenTreeModelSerializer):
 class PartBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Part (brief detail) """
 
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
-    
+    thumbnail = serializers.CharField(source='get_thumbnail_url',
+                                      read_only=True)
+
     stock = serializers.FloatField(source='total_stock')
 
     class Meta:
@@ -168,7 +163,6 @@ class PartSerializer(InvenTreeModelSerializer):
     """ Serializer for complete detail information of a part.
     Used when displaying all details of a single component.
     """
-
     def __init__(self, *args, **kwargs):
         """
         Custom initialization method for PartSerializer,
@@ -212,47 +206,37 @@ class PartSerializer(InvenTreeModelSerializer):
         """
 
         # Annotate with the total 'in stock' quantity
-        queryset = queryset.annotate(
-            in_stock=Coalesce(
-                SubquerySum('stock_items__quantity', filter=StockItem.IN_STOCK_FILTER),
-                Decimal(0)
-            ),
-        )
+        queryset = queryset.annotate(in_stock=Coalesce(
+            SubquerySum('stock_items__quantity',
+                        filter=StockItem.IN_STOCK_FILTER), Decimal(0)), )
 
         # Annotate with the total number of stock items
         queryset = queryset.annotate(
-            stock_item_count=SubqueryCount('stock_items')
-        )
+            stock_item_count=SubqueryCount('stock_items'))
 
         # Filter to limit builds to "active"
-        build_filter = Q(
-            status__in=BuildStatus.ACTIVE_CODES
-        )
+        build_filter = Q(status__in=BuildStatus.ACTIVE_CODES)
 
         # Annotate with the total 'building' quantity
-        queryset = queryset.annotate(
-            building=Coalesce(
-                SubquerySum('builds__quantity', filter=build_filter),
-                Decimal(0),
-            )
-        )
-        
+        queryset = queryset.annotate(building=Coalesce(
+            SubquerySum('builds__quantity', filter=build_filter),
+            Decimal(0),
+        ))
+
         # Filter to limit orders to "open"
-        order_filter = Q(
-            order__status__in=PurchaseOrderStatus.OPEN
-        )
+        order_filter = Q(order__status__in=PurchaseOrderStatus.OPEN)
 
         # Annotate with the total 'on order' quantity
-        queryset = queryset.annotate(
-            ordering=Coalesce(
-                SubquerySum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter),
-                Decimal(0),
-            ) - Coalesce(
-                SubquerySum('supplier_parts__purchase_order_line_items__received', filter=order_filter),
-                Decimal(0),
-            )
-        )
-        
+        queryset = queryset.annotate(ordering=Coalesce(
+            SubquerySum('supplier_parts__purchase_order_line_items__quantity',
+                        filter=order_filter),
+            Decimal(0),
+        ) - Coalesce(
+            SubquerySum('supplier_parts__purchase_order_line_items__received',
+                        filter=order_filter),
+            Decimal(0),
+        ))
+
         return queryset
 
     def get_starred(self, part):
@@ -263,7 +247,9 @@ class PartSerializer(InvenTreeModelSerializer):
         return part in self.starred_parts
 
     # Extra detail for the category
-    category_detail = CategorySerializer(source='category', many=False, read_only=True)
+    category_detail = CategorySerializer(source='category',
+                                         many=False,
+                                         read_only=True)
 
     # Calculated fields
     in_stock = serializers.FloatField(read_only=True)
@@ -272,11 +258,13 @@ class PartSerializer(InvenTreeModelSerializer):
     stock_item_count = serializers.IntegerField(read_only=True)
 
     image = serializers.CharField(source='get_image_url', read_only=True)
-    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    thumbnail = serializers.CharField(source='get_thumbnail_url',
+                                      read_only=True)
     starred = serializers.SerializerMethodField()
 
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
-    category = serializers.PrimaryKeyRelatedField(queryset=PartCategory.objects.all())
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.all())
 
     # TODO - Include annotation for the following fields:
     # allocated_stock = serializers.FloatField(source='allocation_count', read_only=True)
@@ -347,15 +335,22 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
 
-    part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
-    
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(
+        assembly=True))
 
-    sub_part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(component=True))
+    part_detail = PartBriefSerializer(source='part',
+                                      many=False,
+                                      read_only=True)
 
-    sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
+    sub_part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(
+        component=True))
 
-    validated = serializers.BooleanField(read_only=True, source='is_line_valid')
+    sub_part_detail = PartBriefSerializer(source='sub_part',
+                                          many=False,
+                                          read_only=True)
+
+    validated = serializers.BooleanField(read_only=True,
+                                         source='is_line_valid')
 
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
@@ -381,7 +376,8 @@ class BomItemSerializer(InvenTreeModelSerializer):
         queryset = queryset.prefetch_related('sub_part')
         queryset = queryset.prefetch_related('sub_part__category')
         queryset = queryset.prefetch_related('sub_part__stock_items')
-        queryset = queryset.prefetch_related('sub_part__supplier_parts__pricebreaks')
+        queryset = queryset.prefetch_related(
+            'sub_part__supplier_parts__pricebreaks')
         return queryset
 
     class Meta:
@@ -404,20 +400,13 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
 class PartParameterSerializer(InvenTreeModelSerializer):
     """ JSON serializers for the PartParameter model """
-
     class Meta:
         model = PartParameter
-        fields = [
-            'pk',
-            'part',
-            'template',
-            'data'
-        ]
+        fields = ['pk', 'part', 'template', 'data']
 
 
 class PartParameterTemplateSerializer(InvenTreeModelSerializer):
     """ JSON serializer for the PartParameterTemplate model """
-
     class Meta:
         model = PartParameterTemplate
         fields = [

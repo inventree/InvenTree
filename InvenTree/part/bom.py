@@ -37,10 +37,7 @@ def MakeBomTemplate(fmt):
     # This will then export just the row headers!
     query = BomItem.objects.filter(pk=None)
 
-    dataset = BomItemResource().export(
-        queryset=query,
-        importing=True
-    )
+    dataset = BomItemResource().export(queryset=query, importing=True)
 
     data = dataset.export(fmt)
 
@@ -49,7 +46,13 @@ def MakeBomTemplate(fmt):
     return DownloadFile(data, filename)
 
 
-def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=False, stock_data=False, supplier_data=False):
+def ExportBom(part,
+              fmt='csv',
+              cascade=False,
+              max_levels=None,
+              parameter_data=False,
+              stock_data=False,
+              supplier_data=False):
     """ Export a BOM (Bill of Materials) for a given part.
 
     Args:
@@ -69,7 +72,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
         for item in items:
 
             item.level = str(int(level))
-            
+
             # Avoid circular BOM references
             if item.pk in uids:
                 continue
@@ -78,8 +81,9 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
             if item.sub_part.assembly:
                 if max_levels is None or level < max_levels:
-                    add_items(item.sub_part.bom_items.all().order_by('id'), level + 1)
-        
+                    add_items(item.sub_part.bom_items.all().order_by('id'),
+                              level + 1)
+
     if cascade:
         # Cascading (multi-level) BOM
 
@@ -98,7 +102,8 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
         try:
             for header, column_dict in columns.items():
                 # Construct column tuple
-                col = tuple(column_dict.get(c_idx, '') for c_idx in range(column_size))
+                col = tuple(
+                    column_dict.get(c_idx, '') for c_idx in range(column_size))
                 # Add column to dataset
                 dataset.append_col(col, header=header)
         except AttributeError:
@@ -124,9 +129,10 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
                         parameter_cols[name].update({b_idx: value})
                     except KeyError:
                         parameter_cols[name] = {b_idx: value}
-                
+
         # Add parameter columns to dataset
-        parameter_cols_ordered = OrderedDict(sorted(parameter_cols.items(), key=lambda x: x[0]))
+        parameter_cols_ordered = OrderedDict(
+            sorted(parameter_cols.items(), key=lambda x: x[0]))
         add_columns_to_dataset(parameter_cols_ordered, len(bom_items))
 
     if stock_data:
@@ -145,7 +151,8 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
             stock_data = []
             # Get part default location
             try:
-                stock_data.append(bom_item.sub_part.get_default_location().name)
+                stock_data.append(
+                    bom_item.sub_part.get_default_location().name)
             except AttributeError:
                 stock_data.append('')
             # Get part current stock
@@ -181,7 +188,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
             # Filter supplier parts
             supplier_parts = SupplierPart.objects.filter(part__pk=b_part.pk)
-            
+
             for idx, supplier_part in enumerate(supplier_parts):
 
                 if supplier_part.supplier:
@@ -225,17 +232,14 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
     filename = '{n}_BOM.{fmt}'.format(n=part.full_name, fmt=fmt)
 
     return DownloadFile(data, filename)
-    
+
 
 class BomUploadManager:
     """ Class for managing an uploaded BOM file """
 
     # Fields which are absolutely necessary for valid upload
-    REQUIRED_HEADERS = [
-        'Part_Name',
-        'Quantity'
-    ]
-    
+    REQUIRED_HEADERS = ['Part_Name', 'Quantity']
+
     # Fields which would be helpful but are not required
     OPTIONAL_HEADERS = [
         'Part_IPN',
@@ -245,17 +249,13 @@ class BomUploadManager:
         'Overage',
     ]
 
-    EDITABLE_HEADERS = [
-        'Reference',
-        'Note',
-        'Overage'
-    ]
+    EDITABLE_HEADERS = ['Reference', 'Note', 'Overage']
 
     HEADERS = REQUIRED_HEADERS + OPTIONAL_HEADERS
 
     def __init__(self, bom_file):
         """ Initialize the BomUpload class with a user-uploaded file object """
-        
+
         self.process(bom_file)
 
     def process(self, bom_file):
@@ -265,20 +265,26 @@ class BomUploadManager:
 
         ext = os.path.splitext(bom_file.name)[-1].lower()
 
-        if ext in ['.csv', '.tsv', ]:
+        if ext in [
+                '.csv',
+                '.tsv',
+        ]:
             # These file formats need string decoding
             raw_data = bom_file.read().decode('utf-8')
         elif ext in ['.xls', '.xlsx']:
             raw_data = bom_file.read()
         else:
-            raise ValidationError({'bom_file': _('Unsupported file format: {f}'.format(f=ext))})
+            raise ValidationError(
+                {'bom_file': _('Unsupported file format: {f}'.format(f=ext))})
 
         try:
             self.data = tablib.Dataset().load(raw_data)
         except tablib.UnsupportedFormat:
-            raise ValidationError({'bom_file': _('Error reading BOM file (invalid data)')})
+            raise ValidationError(
+                {'bom_file': _('Error reading BOM file (invalid data)')})
         except tablib.core.InvalidDimensions:
-            raise ValidationError({'bom_file': _('Error reading BOM file (incorrect row size)')})
+            raise ValidationError(
+                {'bom_file': _('Error reading BOM file (incorrect row size)')})
 
     def guess_header(self, header, threshold=80):
         """ Try to match a header (from the file) to a list of known headers
@@ -312,11 +318,13 @@ class BomUploadManager:
                 matches.append({'header': h, 'match': ratio})
 
         if len(matches) > 0:
-            matches = sorted(matches, key=lambda item: item['match'], reverse=True)
+            matches = sorted(matches,
+                             key=lambda item: item['match'],
+                             reverse=True)
             return matches[0]['header']
 
         return None
-    
+
     def columns(self):
         """ Return a list of headers for the thingy """
         headers = []
@@ -369,10 +377,7 @@ class BomUploadManager:
             if empty:
                 continue
 
-            row = {
-                'data': data,
-                'index': i
-            }
+            row = {'data': data, 'index': i}
 
             rows.append(row)
 

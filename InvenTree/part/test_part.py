@@ -16,7 +16,6 @@ from .templatetags import inventree_extras
 
 class TemplateTagTest(TestCase):
     """ Tests for the custom template tag code """
-
     def test_multiply(self):
         self.assertEqual(int(inventree_extras.multiply(3, 5)), 15)
 
@@ -35,7 +34,8 @@ class TemplateTagTest(TestCase):
         self.assertIn('github.com', inventree_extras.inventree_github_url())
 
     def test_docs(self):
-        self.assertIn('inventree.readthedocs.io', inventree_extras.inventree_docs_url())
+        self.assertIn('inventree.readthedocs.io',
+                      inventree_extras.inventree_docs_url())
 
 
 class PartTest(TestCase):
@@ -76,7 +76,8 @@ class PartTest(TestCase):
         self.assertEqual(self.R1.get_absolute_url(), '/part/3/')
 
     def test_category(self):
-        self.assertEqual(str(self.C1.category), 'Electronics/Capacitors - Capacitors')
+        self.assertEqual(str(self.C1.category),
+                         'Electronics/Capacitors - Capacitors')
 
         orphan = Part.objects.get(name='Orphan')
         self.assertIsNone(orphan.category)
@@ -85,7 +86,7 @@ class PartTest(TestCase):
     def test_rename_img(self):
         img = rename_part_image(self.R1, 'hello.png')
         self.assertEqual(img, os.path.join('part_images', 'hello.png'))
-        
+
     def test_stock(self):
         # No stock of any resistors
         res = Part.objects.filter(description__contains='resistor')
@@ -131,7 +132,8 @@ class TestTemplateTest(TestCase):
         variant = Part.objects.get(pk=10004)
 
         self.assertEqual(variant.getTestTemplates().count(), 7)
-        self.assertEqual(variant.getTestTemplates(include_parent=False).count(), 1)
+        self.assertEqual(
+            variant.getTestTemplates(include_parent=False).count(), 1)
         self.assertEqual(variant.getTestTemplates(required=True).count(), 5)
 
     def test_uniqueness(self):
@@ -140,27 +142,22 @@ class TestTemplateTest(TestCase):
         variant = Part.objects.get(pk=10004)
 
         with self.assertRaises(ValidationError):
-            PartTestTemplate.objects.create(
-                part=variant,
-                test_name='Record weight'
-            )
+            PartTestTemplate.objects.create(part=variant,
+                                            test_name='Record weight')
 
         with self.assertRaises(ValidationError):
             PartTestTemplate.objects.create(
-                part=variant,
-                test_name='Check that chair is especially green'
-            )
+                part=variant, test_name='Check that chair is especially green')
 
         # Also should fail if we attempt to create a test that would generate the same key
         with self.assertRaises(ValidationError):
-            PartTestTemplate.objects.create(
-                part=variant,
-                test_name='ReCoRD       weiGHT  '
-            )
+            PartTestTemplate.objects.create(part=variant,
+                                            test_name='ReCoRD       weiGHT  ')
 
         # But we should be able to create a new one!
         n = variant.getTestTemplates().count()
 
-        PartTestTemplate.objects.create(part=variant, test_name='A Sample Test')
+        PartTestTemplate.objects.create(part=variant,
+                                        test_name='A Sample Test')
 
         self.assertEqual(variant.getTestTemplates().count(), n + 1)

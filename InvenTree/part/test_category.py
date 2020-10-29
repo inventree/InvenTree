@@ -59,7 +59,7 @@ class CategoryTest(TestCase):
 
     def test_unique_parents(self):
         """ Test the 'unique_parents' functionality """
-        
+
         parents = [item.pk for item in self.transceivers.getUniqueParents()]
 
         self.assertIn(self.electronics.id, parents)
@@ -69,13 +69,16 @@ class CategoryTest(TestCase):
     def test_path_string(self):
         """ Test that the category path string works correctly """
 
-        self.assertEqual(str(self.resistors), 'Electronics/Resistors - Resistors')
-        self.assertEqual(str(self.transceivers.pathstring), 'Electronics/IC/Transceivers')
+        self.assertEqual(str(self.resistors),
+                         'Electronics/Resistors - Resistors')
+        self.assertEqual(str(self.transceivers.pathstring),
+                         'Electronics/IC/Transceivers')
 
     def test_url(self):
         """ Test that the PartCategory URL works """
 
-        self.assertEqual(self.capacitors.get_absolute_url(), '/part/category/3/')
+        self.assertEqual(self.capacitors.get_absolute_url(),
+                         '/part/category/3/')
 
     def test_part_count(self):
         """ Test that the Category part count works """
@@ -93,7 +96,8 @@ class CategoryTest(TestCase):
         self.assertEqual(self.mechanical.partcount(active=True), 8)
         self.assertEqual(self.mechanical.partcount(False), 7)
 
-        self.assertEqual(self.electronics.item_count, self.electronics.partcount())
+        self.assertEqual(self.electronics.item_count,
+                         self.electronics.partcount())
 
     def test_parameters(self):
         """ Test that the Category parameters are correctly fetched """
@@ -107,12 +111,16 @@ class CategoryTest(TestCase):
                 self.assertIsInstance(fastener, Part)
                 for parameter in fastener.parameters.all():
                     self.assertIsInstance(parameter, PartParameter)
-                    self.assertIsInstance(parameter.template, PartParameterTemplate)
+                    self.assertIsInstance(parameter.template,
+                                          PartParameterTemplate)
 
             # Test number of unique parameters
-            self.assertEqual(len(self.fasteners.get_unique_parameters(prefetch=fasteners)), 1)
+            self.assertEqual(
+                len(self.fasteners.get_unique_parameters(prefetch=fasteners)),
+                1)
             # Test number of parameters found for each part
-            parts_parameters = self.fasteners.get_parts_parameters(prefetch=fasteners)
+            parts_parameters = self.fasteners.get_parts_parameters(
+                prefetch=fasteners)
             part_infos = ['pk', 'name', 'description']
             for part_parameter in parts_parameters:
                 # Remove part informations
@@ -123,14 +131,17 @@ class CategoryTest(TestCase):
     def test_invalid_name(self):
         # Test that an illegal character is prohibited in a category name
 
-        cat = PartCategory(name='test/with/illegal/chars', description='Test category', parent=None)
+        cat = PartCategory(name='test/with/illegal/chars',
+                           description='Test category',
+                           parent=None)
 
         with self.assertRaises(ValidationError) as err:
             cat.full_clean()
             cat.save()
-            
-        self.assertIn('Illegal character in name', str(err.exception.error_dict.get('name')))
-        
+
+        self.assertIn('Illegal character in name',
+                      str(err.exception.error_dict.get('name')))
+
         cat.name = 'good name'
         cat.save()
 
@@ -158,11 +169,13 @@ class CategoryTest(TestCase):
     def test_default_locations(self):
         """ Test traversal for default locations """
 
-        self.assertEqual(str(self.fasteners.default_location), 'Office/Drawer_1 - In my desk')
+        self.assertEqual(str(self.fasteners.default_location),
+                         'Office/Drawer_1 - In my desk')
 
         # Test that parts in this location return the same default location, too
         for p in self.fasteners.children.all():
-            self.assert_equal(p.get_default_location().pathstring, 'Office/Drawer_1')
+            self.assert_equal(p.get_default_location().pathstring,
+                              'Office/Drawer_1')
 
         # Any part under electronics should default to 'Home'
         R1 = Part.objects.get(name='R_2K2_0805')

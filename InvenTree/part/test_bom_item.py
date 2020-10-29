@@ -41,7 +41,9 @@ class BomItemTest(TestCase):
 
         with self.assertRaises(django_exceptions.ValidationError):
             # A validation error should be raised here
-            item = BomItem.objects.create(part=self.bob, sub_part=self.bob, quantity=7)
+            item = BomItem.objects.create(part=self.bob,
+                                          sub_part=self.bob,
+                                          quantity=7)
             item.clean()
 
     def test_integer_quantity(self):
@@ -49,7 +51,10 @@ class BomItemTest(TestCase):
         Test integer validation for BomItem
         """
 
-        p = Part.objects.create(name="test", description="d", component=True, trackable=True)
+        p = Part.objects.create(name="test",
+                                description="d",
+                                component=True,
+                                trackable=True)
 
         # Creation of a BOMItem with a non-integer quantity of a trackable Part should fail
         with self.assertRaises(django_exceptions.ValidationError):
@@ -62,7 +67,7 @@ class BomItemTest(TestCase):
         """ Test that BOM line overages are calculated correctly """
 
         item = BomItem.objects.get(part=100, sub_part=50)
-        
+
         q = 300
 
         item.quantity = q
@@ -75,7 +80,7 @@ class BomItemTest(TestCase):
         item.overage = 'asf234?'
         n = item.get_overage_quantity(q)
         self.assertEqual(n, 0)
-        
+
         # Test absolute overage
         item.overage = '3'
         n = item.get_overage_quantity(q)
@@ -98,7 +103,7 @@ class BomItemTest(TestCase):
         """ Test BOM item hash encoding """
 
         item = BomItem.objects.get(part=100, sub_part=50)
-        
+
         h1 = item.get_item_hash()
 
         # Change data - the hash must change

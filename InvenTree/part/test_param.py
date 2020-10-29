@@ -11,12 +11,7 @@ from .models import PartParameter, PartParameterTemplate
 
 class TestParams(TestCase):
 
-    fixtures = [
-        'location',
-        'category',
-        'part',
-        'params'
-    ]
+    fixtures = ['location', 'category', 'part', 'params']
 
     def test_str(self):
 
@@ -27,7 +22,7 @@ class TestParams(TestCase):
         self.assertEqual(str(p1), "M2x4 LPHS : Length = 4mm")
 
     def test_validate(self):
-        
+
         n = PartParameterTemplate.objects.all().count()
 
         t1 = PartParameterTemplate(name='abcde', units='dd')

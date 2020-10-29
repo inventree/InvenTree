@@ -30,11 +30,9 @@ class PartAPITest(APITestCase):
     def setUp(self):
         # Create a user for auth
         User = get_user_model()
-        self.user = User.objects.create_user(
-            username='testuser',
-            email='test@testing.com',
-            password='password'
-        )
+        self.user = User.objects.create_user(username='testuser',
+                                             email='test@testing.com',
+                                             password='password')
 
         # Put the user into a group with the correct permissions
         group = Group.objects.create(name='mygroup')
@@ -62,15 +60,12 @@ class PartAPITest(APITestCase):
 
     def test_add_categories(self):
         """ Check that we can add categories """
-        data = {
-            'name': 'Animals',
-            'description': 'All animals go here'
-        }
+        data = {'name': 'Animals', 'description': 'All animals go here'}
 
         url = reverse('api-part-category-list')
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        
+
         parent = response.data['pk']
 
         # Add some sub-categories to the top-level 'Animals' category
@@ -105,7 +100,8 @@ class PartAPITest(APITestCase):
         data['description'] = 'Changing the description'
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['description'], 'Changing the description')
+        self.assertEqual(response.data['description'],
+                         'Changing the description')
         self.assertIsNone(response.data['parent'])
 
     def test_get_all_parts(self):
@@ -231,13 +227,11 @@ class PartAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # Try to post a new test against a non-trackable part (should fail)
-        response = self.client.post(
-            url,
-            data={
-                'part': 1,
-                'test_name': 'A simple test',
-            }
-        )
+        response = self.client.post(url,
+                                    data={
+                                        'part': 1,
+                                        'test_name': 'A simple test',
+                                    })
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -264,9 +258,7 @@ class PartAPIAggregationTest(APITestCase):
         self.client.login(username='testuser', password='password')
 
         # Add a new part
-        self.part = Part.objects.create(
-            name='Banana',
-        )
+        self.part = Part.objects.create(name='Banana', )
 
         # Create some stock items associated with the part
 
@@ -276,7 +268,9 @@ class PartAPIAggregationTest(APITestCase):
         StockItem.objects.create(part=self.part, quantity=300)
 
         # Now create another 400 units which are LOST
-        StockItem.objects.create(part=self.part, quantity=400, status=StockStatus.LOST)
+        StockItem.objects.create(part=self.part,
+                                 quantity=400,
+                                 status=StockStatus.LOST)
 
     def get_part_data(self):
         url = reverse('api-part-list')
@@ -301,14 +295,16 @@ class PartAPIAggregationTest(APITestCase):
 
         self.assertEqual(data['in_stock'], 600)
         self.assertEqual(data['stock_item_count'], 4)
-    
+
         # Add some more stock items!!
         for i in range(100):
             StockItem.objects.create(part=self.part, quantity=5)
 
         # Add another stock item which is assigned to a customer (and shouldn't count)
         customer = Company.objects.get(pk=4)
-        StockItem.objects.create(part=self.part, quantity=9999, customer=customer)
+        StockItem.objects.create(part=self.part,
+                                 quantity=9999,
+                                 customer=customer)
 
         data = self.get_part_data()
 
