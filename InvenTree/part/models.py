@@ -809,8 +809,8 @@ class Part(MPTTModel):
         then we need to restock.
         """
 
-        return (self.total_stock + self.on_order -
-                self.allocation_count) < self.minimum_stock
+        return (self.total_stock + self.on_order
+                - self.allocation_count) < self.minimum_stock
 
     @property
     def can_build(self):
@@ -1504,7 +1504,7 @@ class PartTestTemplate(models.Model):
     requires_attachment = models.BooleanField(
         default=False,
         verbose_name=_("Requires Attachment"),
-        help_text=
+        help_text= # noqa : E251
         _("Does this test require a file attachment when adding a test result?"
           ))
 

@@ -348,7 +348,7 @@ class PartList(generics.ListCreateAPIView):
                     'parts',
                     'parent',
                     'children',
-                )
+                ) # noqa : E123
 
             category_map = {}
 
