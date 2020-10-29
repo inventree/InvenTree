@@ -110,7 +110,7 @@ function loadSupplierPartTable(table, url, options) {
     // Query parameters
     var params = options.params || {};
 
-    // Load 'user' filters
+    // Load filters
     var filters = loadTableFilters("supplier-part");
 
     for (var key in params) {

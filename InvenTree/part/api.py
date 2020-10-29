@@ -461,8 +461,8 @@ class PartList(generics.ListCreateAPIView):
             else:
                 queryset = queryset.exclude(pk__in=starred_parts)
 
-        # Cascade?
-        cascade = str2bool(params.get('cascade', None))
+        # Cascade? (Default = True)
+        cascade = str2bool(params.get('cascade', True))
 
         # Does the user wish to filter by category?
         cat_id = params.get('category', None)

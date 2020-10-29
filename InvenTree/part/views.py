@@ -2098,7 +2098,7 @@ class BomItemCreate(AjaxCreateView):
     model = BomItem
     form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Create BOM item')
+    ajax_form_title = _('Create BOM Item')
 
     role_required = 'part.add'
 

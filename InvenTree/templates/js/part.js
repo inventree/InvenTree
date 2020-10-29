@@ -61,13 +61,22 @@ function toggleStar(options) {
 }
 
 
-function loadPartVariantTable(table, partId, options) {
+function loadPartVariantTable(table, partId, options={}) {
     /* Load part variant table
      */
 
-    var params = {
-        ancestor: partId,
-    };
+    var params = options.params || {};
+
+    params.ancestor = partId;
+
+    // Load filters
+    var filters = loadTableFilters("variants");
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList("variants", $(table));
 
     var cols = [
         {
@@ -104,16 +113,36 @@ function loadPartVariantTable(table, partId, options) {
                 html += imageHoverIcon(row.thumbnail);
                 html += renderLink(name, `/part/${row.pk}/`);
 
+                if (row.trackable) {
+                    html += makeIconBadge('fa-directions', '{% trans "Trackable part" %}');
+                }
+
+                if (row.virtual) {
+                    html += makeIconBadge('fa-ghost', '{% trans "Virtual part" %}');
+                }
+
+                if (row.is_template) {
+                    html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
+                }
+                
+                if (row.assembly) {
+                    html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
+                }
+
+                if (!row.active) {
+                    html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
+                }
+
                 return html;
             },
         },
         {
             field: 'IPN',
-            title: '{% trans 'IPN' %}',
+            title: '{% trans "IPN" %}',
         },
         {
             field: 'revision',
-            title: '{% trans 'Revision' %}',
+            title: '{% trans "Revision" %}',
         },
         {
             field: 'description',
@@ -133,7 +162,7 @@ function loadPartVariantTable(table, partId, options) {
         name: 'partvariants',
         showColumns: true,
         original: params,
-        queryParams: params,
+        queryParams: filters,
         formatNoMatches: function() { return "{% trans "No variants found" %}"; },
         columns: cols,
         treeEnable: true,
@@ -310,20 +339,29 @@ function loadPartTable(table, url, options={}) {
 
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
             
+            if (row.trackable) {
+                display += makeIconBadge('fa-directions', '{% trans "Trackable part" %}');
+            }
+
+            if (row.virtual) {
+                display += makeIconBadge('fa-ghost', '{% trans "Virtual part" %}');
+            }
+
+
             if (row.is_template) {
-                display += `<span class='fas fa-clone label-right' title='{% trans "Template part" %}'></span>`;
+                display += makeIconBadge('fa-clone', '{% trans "Template part" %}');
             }
             
             if (row.assembly) {
-                display += `<span class='fas fa-tools label-right' title='{% trans "Assembled part" %}'></span>`;
+                display += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
             }
 
             if (row.starred) {
-                display += `<span class='fas fa-star label-right' title='{% trans "Starred part" %}'></span>`;
+                display += makeIconBadge('fa-star', '{% trans "Starred part" %}');
             }
 
             if (row.salable) {
-                display += `<span class='fas fa-dollar-sign label-right' title='{% trans "Salable part" %}'></span>`;
+                display += makeIconBadge('fa-dollar-sign', title='{% trans "Salable part" %}');
             }
 
             /*
