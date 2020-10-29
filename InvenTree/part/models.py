@@ -1087,6 +1087,35 @@ class Part(MPTTModel):
                 max(buy_price_range[1], bom_price_range[1])
             )
 
+    @transaction.atomic
+    def copy_bom_from(self, other, clear=True, **kwargs):
+        """
+        Copy the BOM from another part.
+
+        args:
+            other - The part to copy the BOM from
+            clear - Remove existing BOM items first (default=True)
+        """
+
+        if clear:
+            # Remove existing BOM items
+            self.bom_items.all().delete()
+
+        for bom_item in other.bom_items.all():
+            # If this part already has a BomItem pointing to the same sub-part,
+            # delete that BomItem from this part first!
+
+            try:
+                existing = BomItem.objects.get(part=self, sub_part=bom_item.sub_part)
+                existing.delete()
+            except (BomItem.DoesNotExist):
+                pass
+
+            bom_item.part = self
+            bom_item.pk = None
+
+            bom_item.save()
+
     def deepCopy(self, other, **kwargs):
         """ Duplicates non-field data from another part.
         Does not alter the normal fields of this part,
@@ -1106,12 +1135,7 @@ class Part(MPTTModel):
 
         # Copy the BOM data
         if kwargs.get('bom', False):
-            for item in other.bom_items.all():
-                # Point the item to THIS part.
-                # Set the pk to None so a new entry is created.
-                item.part = self
-                item.pk = None
-                item.save()
+            self.copy_bom_from(other)
 
         # Copy the parameters data
         if kwargs.get('parameters', True):

@@ -213,6 +213,39 @@ class AjaxMixin(InvenTreeRoleMixin):
         """
         return {}
 
+    def pre_save(self, obj, form, **kwargs):
+        """
+        Hook for doing something *before* an object is saved.
+
+        obj: The object to be saved
+        form: The cleaned form
+        """
+
+        # Do nothing by default
+        pass
+
+    def post_save(self, obj, form, **kwargs):
+        """
+        Hook for doing something *after* an object is saved.
+
+        """
+
+        # Do nothing by default
+        pass
+
+    def validate(self, obj, form, **kwargs):
+        """
+        Hook for performing custom form validation steps.
+
+        If a form error is detected, add it to the form,
+        with 'form.add_error()'
+
+        Ref: https://docs.djangoproject.com/en/dev/topics/forms/
+        """
+
+        # Do nothing by default
+        pass
+
     def renderJsonResponse(self, request, form=None, data={}, context=None):
         """ Render a JSON response based on specific class context.
 
@@ -320,18 +353,6 @@ class AjaxCreateView(AjaxMixin, CreateView):
     - Handles form validation via AJAX POST requests
     """
 
-    def pre_save(self, **kwargs):
-        """
-        Hook for doing something before the form is validated
-        """
-        pass
-
-    def post_save(self, **kwargs):
-        """
-        Hook for doing something with the created object after it is saved
-        """
-        pass
-
     def get(self, request, *args, **kwargs):
         """ Creates form with initial data, and renders JSON response """
 
@@ -351,16 +372,29 @@ class AjaxCreateView(AjaxMixin, CreateView):
         self.request = request
         self.form = self.get_form()
 
+        # Perform initial form validation
+        self.form.is_valid()
+
+        # Perform custom validation (no object can be provided yet)
+        self.validate(None, self.form)
+
+        valid = self.form.is_valid()
+
         # Extra JSON data sent alongside form
         data = {
-            'form_valid': self.form.is_valid(),
+            'form_valid': valid
         }
 
-        if self.form.is_valid():
+        if valid:
 
-            self.pre_save()
+            # Perform (optional) pre-save step
+            self.pre_save(None, self.form)
+
+            # Save the object to the database
             self.object = self.form.save()
-            self.post_save()
+
+            # Perform (optional) post-save step
+            self.post_save(self.object, self.form)
 
             # Return the PK of the newly-created object
             data['pk'] = self.object.pk
@@ -400,22 +434,40 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         - Otherwise, return sucess status
         """
 
+        self.request = request
+
         # Make sure we have an object to point to
         self.object = self.get_object()
 
         form = self.get_form()
 
+        # Perform initial form validation
+        form.is_valid()
+
+        # Perform custom validation
+        self.validate(self.object, form)
+
+        valid = form.is_valid()
+
         data = {
-            'form_valid': form.is_valid()
+            'form_valid': valid
         }
 
-        if form.is_valid():
+        if valid:
+
+            # Perform (optional) pre-save step
+            self.pre_save(self.object, form)
+
+            # Save the updated objec to the database
             obj = form.save()
 
-            # Include context data about the updated object
-            data['pk'] = obj.id
+            # Perform (optional) post-save step
+            self.post_save(obj, form)
 
-            self.post_save(obj)
+            # Include context data about the updated object
+            data['pk'] = obj.pk
+
+            self.post_save(obj, form)
 
             try:
                 data['url'] = obj.get_absolute_url()
@@ -423,13 +475,6 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
                 pass
 
         return self.renderJsonResponse(request, form, data)
-
-    def post_save(self, obj, *args, **kwargs):
-        """
-        Hook called after the form data is saved.
-        (Optional)
-        """
-        pass
 
 
 class AjaxDeleteView(AjaxMixin, UpdateView):
