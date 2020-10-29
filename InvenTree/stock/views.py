@@ -164,11 +164,11 @@ class StockItemAttachmentCreate(AjaxCreateView):
     ajax_template_name = "modal_form.html"
     role_required = 'stock.add'
 
-    def post_save(self, **kwargs):
+    def post_save(self, attachment, form, **kwargs):
         """ Record the user that uploaded the attachment """
         
-        self.object.user = self.request.user
-        self.object.save()
+        attachment.user = self.request.user
+        attachment.save()
 
     def get_data(self):
         return {
@@ -440,11 +440,11 @@ class StockItemTestResultCreate(AjaxCreateView):
     ajax_form_title = _("Add Test Result")
     role_required = 'stock.add'
 
-    def post_save(self, **kwargs):
+    def post_save(self, result, form, **kwargs):
         """ Record the user that uploaded the test result """
 
-        self.object.user = self.request.user
-        self.object.save()
+        result.user = self.request.user
+        result.save()
 
     def get_initial(self):
 
