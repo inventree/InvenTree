@@ -16,10 +16,17 @@
 <hr>
 
 <div id='button-toolbar'>
-    <div class='btn-group'>
-        {% if part.is_template and part.active %}
-        <button class='btn btn-success' id='new-variant' title='{% trans "Create new variant" %}'>{% trans "New Variant" %}</button>
-        {% endif %}
+    <div class='button-toolbar container-fluid'>
+        <div class='btn-group' role='group'>
+            {% if part.is_template and part.active %}
+            <button class='btn btn-success' id='new-variant' title='{% trans "Create new variant" %}'>
+                <span class='fas fa-plus-circle'></span> {% trans "New Variant" %}
+            </button>
+            {% endif %}
+        </div>
+        <div class='filter-list' id='filter-list-variants'>
+            <!-- Empty div (will be filled out with available BOM filters) -->
+        </div>
     </div>
 </div>
 

@@ -247,7 +247,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     {% endif %}
     {% if item.batch %}
     <tr>
-        <td></td>
+        <td><span class='fas fa-layer-group'></span></td>
         <td>{% trans "Batch" %}</td>
         <td>{{ item.batch }}</td>
     </tr>
@@ -261,7 +261,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     {% endif %}
     {% if item.purchase_order %}
     <tr>
-        <td></td>
+        <td><span class='fas fa-shopping-cart'></span></td>
         <td>{% trans "Purchase Order" %}</td>
         <td><a href="{% url 'po-detail' item.purchase_order.id %}">{{ item.purchase_order }}</a></td>
     </tr>

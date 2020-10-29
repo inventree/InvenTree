@@ -11,6 +11,28 @@ function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
 
+    // Filters for "variant" table
+    if (tableKey == "variants") {
+        return {
+            active: {
+                type: 'bool',
+                title: '{% trans "Active" %}',
+            },
+            template: {
+                type: 'bool',
+                title: '{% trans "Template" %}',
+            },
+            virtual: {
+                type: 'bool',
+                title: '{% trans "Virtual" %}',
+            },
+            trackable: {
+                type: 'bool',
+                title: '{% trans "Trackable" %}',
+            },
+        };
+    }
+
     // Filters for Bill of Materials table
     if (tableKey == "bom") {
         return {
@@ -191,6 +213,15 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Outstanding" %}',
             },
+        };
+    }
+
+    if (tableKey == 'supplier-part') {
+        return {
+            active: {
+                type: 'bool',
+                title: '{% trans "Active parts" %}',
+            }
         };
     }
 
