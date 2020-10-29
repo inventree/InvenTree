@@ -127,11 +127,29 @@ function loadBomTable(table, options) {
                 var url = `/part/${row.sub_part}/`;
                 var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, url);
 
+                var sub_part = row.sub_part_detail;
+
+                if (sub_part.trackable) {
+                    html += makeIconBadge('fa-directions', '{% trans "Trackable part" %}');
+                }
+
+                if (sub_part.virtual) {
+                    html += makeIconBadge('fa-ghost', '{% trans "Virtual part" %}');
+                }
+
+                if (sub_part.is_template) {
+                    html += makeIconBadge('fa-clone', '{% trans "Templat part" %}');
+                }
+
                 // Display an extra icon if this part is an assembly
-                if (row.sub_part_detail.assembly) {
+                if (sub_part.assembly) {
                     var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream label-right'></span>`;
                     
                     html += renderLink(text, `/part/${row.sub_part}/bom/`);
+                }
+
+                if (!sub_part.active) {
+                    html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`;
                 }
 
                 return html;

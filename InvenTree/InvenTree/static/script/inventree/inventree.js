@@ -78,7 +78,15 @@ function getImageUrlFromTransfer(transfer) {
     return url;
 }
 
-function makeIconButton(icon, cls, pk, title) {
+function makeIconBadge(icon, title) {
+    // Construct an 'icon badge' which floats to the right of an object
+
+    var html = `<span class='fas ${icon} label-right' title='${title}'></span>`;
+
+    return html;
+}
+
+function makeIconButton(icon, cls, pk, title, options={}) {
     // Construct an 'icon button' using the fontawesome set
 
     var classes = `btn btn-default btn-glyph ${cls}`;
@@ -86,15 +94,21 @@ function makeIconButton(icon, cls, pk, title) {
     var id = `${cls}-${pk}`;
 
     var html = '';
+
+    var extraProps = '';
+
+    if (options.disabled) {
+        extraProps += "disabled='true' ";
+    }
     
-    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}'>`;
+    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
     html += `<span class='fas ${icon}'></span>`;
     html += `</button>`;
 
     return html;
 }
 
-function makeProgressBar(value, maximum, opts) {
+function makeProgressBar(value, maximum, opts={}) {
     /*
      * Render a progessbar!
      * 

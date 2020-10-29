@@ -436,7 +436,8 @@ class PartDuplicate(AjaxCreateView):
             matches = match_part_names(name)
 
             if len(matches) > 0:
-                context['matches'] = matches
+                # Display the first five closest matches
+                context['matches'] = matches[:5]
             
                 # Enforce display of the checkbox
                 form.fields['confirm_creation'].widget = CheckboxInput()
@@ -2097,7 +2098,7 @@ class BomItemCreate(AjaxCreateView):
     model = BomItem
     form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Create BOM item')
+    ajax_form_title = _('Create BOM Item')
 
     role_required = 'part.add'
 
