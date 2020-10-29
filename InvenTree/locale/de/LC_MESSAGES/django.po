@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-29 02:17+0000\n"
+"POT-Creation-Date: 2020-10-29 02:25+0000\n"
 "PO-Revision-Date: 2020-05-03 11:32+0200\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -315,7 +315,7 @@ msgid "Build Order Reference"
 msgstr "Bestellreferenz"
 
 #: build/models.py:87 build/templates/build/allocate.html:342
-#: order/templates/order/purchase_order_detail.html:173 templates/js/bom.js:154
+#: order/templates/order/purchase_order_detail.html:173 templates/js/bom.js:172
 msgid "Reference"
 msgstr "Referenz"
 
@@ -324,10 +324,10 @@ msgstr "Referenz"
 #: company/templates/company/supplier_part_detail.html:27
 #: order/templates/order/purchase_order_detail.html:160
 #: part/templates/part/detail.html:51 part/templates/part/set_category.html:14
-#: templates/InvenTree/search.html:147 templates/js/bom.js:147
-#: templates/js/bom.js:486 templates/js/build.js:56 templates/js/company.js:56
+#: templates/InvenTree/search.html:147 templates/js/bom.js:165
+#: templates/js/bom.js:504 templates/js/build.js:56 templates/js/company.js:56
 #: templates/js/order.js:167 templates/js/order.js:249 templates/js/part.js:149
-#: templates/js/part.js:232 templates/js/part.js:383 templates/js/part.js:564
+#: templates/js/part.js:232 templates/js/part.js:384 templates/js/part.js:565
 #: templates/js/stock.js:445 templates/js/stock.js:672
 msgid "Description"
 msgstr "Beschreibung"
@@ -353,7 +353,7 @@ msgstr "Eltern-Bau, dem dieser Bau zugewiesen ist"
 #: order/templates/order/receive_parts.html:19 part/models.py:293
 #: part/templates/part/part_app_base.html:7
 #: part/templates/part/set_category.html:13 templates/InvenTree/search.html:133
-#: templates/js/barcode.js:336 templates/js/bom.js:124 templates/js/bom.js:471
+#: templates/js/barcode.js:336 templates/js/bom.js:124 templates/js/bom.js:489
 #: templates/js/build.js:61 templates/js/company.js:138
 #: templates/js/part.js:213 templates/js/part.js:318 templates/js/stock.js:421
 #: templates/js/stock.js:978
@@ -426,7 +426,7 @@ msgstr "Link zu einer externen URL"
 #: order/templates/order/so_tabs.html:23 part/templates/part/tabs.html:70
 #: stock/forms.py:306 stock/forms.py:338 stock/forms.py:366 stock/models.py:453
 #: stock/models.py:1404 stock/templates/stock/tabs.html:26
-#: templates/js/barcode.js:391 templates/js/bom.js:223
+#: templates/js/barcode.js:391 templates/js/bom.js:241
 #: templates/js/stock.js:116 templates/js/stock.js:544
 msgid "Notes"
 msgstr "Notizen"
@@ -519,7 +519,7 @@ msgstr "Seriennummer"
 #: stock/templates/stock/item_base.html:32
 #: stock/templates/stock/item_base.html:184
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:338
-#: templates/js/bom.js:162 templates/js/build.js:72 templates/js/stock.js:691
+#: templates/js/bom.js:180 templates/js/build.js:72 templates/js/stock.js:691
 #: templates/js/stock.js:906
 msgid "Quantity"
 msgstr "Anzahl"
@@ -543,12 +543,12 @@ msgstr "Lagerobjekt-Standort bearbeiten"
 msgid "Delete stock allocation"
 msgstr "Zuweisung löschen"
 
-#: build/templates/build/allocate.html:238 templates/js/bom.js:334
+#: build/templates/build/allocate.html:238 templates/js/bom.js:352
 msgid "No BOM items found"
 msgstr "Keine BOM-Einträge gefunden"
 
 #: build/templates/build/allocate.html:347 part/models.py:1401
-#: templates/js/part.js:568 templates/js/table_filters.js:167
+#: templates/js/part.js:569 templates/js/table_filters.js:167
 msgid "Required"
 msgstr "benötigt"
 
@@ -1410,7 +1410,7 @@ msgid "No price break information found"
 msgstr "Keine Firmeninformation gefunden"
 
 #: company/templates/company/supplier_part_pricing.html:80
-#: part/templates/part/sale_prices.html:85 templates/js/bom.js:207
+#: part/templates/part/sale_prices.html:85 templates/js/bom.js:225
 msgid "Price"
 msgstr "Preis"
 
@@ -1440,7 +1440,7 @@ msgstr "Bepreisung"
 #: company/templates/company/tabs.html:12 part/templates/part/tabs.html:18
 #: stock/templates/stock/location.html:17 templates/InvenTree/search.html:155
 #: templates/InvenTree/settings/tabs.html:25 templates/js/part.js:153
-#: templates/js/part.js:410 templates/js/stock.js:453 templates/navbar.html:22
+#: templates/js/part.js:411 templates/js/stock.js:453 templates/navbar.html:22
 #: users/models.py:29
 msgid "Stock"
 msgstr "Lagerbestand"
@@ -1902,7 +1902,7 @@ msgid "Select parts to receive against this order"
 msgstr ""
 
 #: order/templates/order/receive_parts.html:21
-#: part/templates/part/part_base.html:145 templates/js/part.js:426
+#: part/templates/part/part_base.html:145 templates/js/part.js:427
 msgid "On Order"
 msgstr "bestellt"
 
@@ -2406,7 +2406,7 @@ msgstr ""
 "Ein Teil mit dieser Seriennummer existiert bereits für die Teilevorlage "
 "{part}"
 
-#: part/models.py:1389 templates/js/part.js:559 templates/js/stock.js:92
+#: part/models.py:1389 templates/js/part.js:560 templates/js/stock.js:92
 #, fuzzy
 #| msgid "Instance Name"
 msgid "Test Name"
@@ -2434,7 +2434,7 @@ msgstr "Kurze Beschreibung des Baus"
 msgid "Is this test required to pass?"
 msgstr ""
 
-#: part/models.py:1407 templates/js/part.js:576
+#: part/models.py:1407 templates/js/part.js:577
 #, fuzzy
 #| msgid "Required Parts"
 msgid "Requires Value"
@@ -2444,7 +2444,7 @@ msgstr "benötigte Teile"
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:1413 templates/js/part.js:583
+#: part/models.py:1413 templates/js/part.js:584
 #, fuzzy
 #| msgid "Delete Attachment"
 msgid "Requires Attachment"
@@ -2867,7 +2867,7 @@ msgid "Variant Of"
 msgstr "Variante von"
 
 #: part/templates/part/detail.html:70 part/templates/part/set_category.html:15
-#: templates/js/part.js:397
+#: templates/js/part.js:398
 msgid "Category"
 msgstr "Kategorie"
 
@@ -3042,8 +3042,9 @@ msgstr "Dieses Teil ist eine Vorlage."
 msgid "This part is a variant of"
 msgstr "Dieses Teil ist eine Variante von"
 
-#: part/templates/part/part_base.html:36 templates/js/company.js:155
-#: templates/js/part.js:133 templates/js/part.js:374
+#: part/templates/part/part_base.html:36 templates/js/bom.js:152
+#: templates/js/company.js:155 templates/js/part.js:133
+#: templates/js/part.js:375
 msgid "Inactive"
 msgstr "Inaktiv"
 
@@ -3173,8 +3174,8 @@ msgstr "Teil entfernen"
 msgid "Part Stock"
 msgstr "Teilbestand"
 
-#: part/templates/part/stock_count.html:7 templates/js/bom.js:197
-#: templates/js/part.js:434
+#: part/templates/part/stock_count.html:7 templates/js/bom.js:215
+#: templates/js/part.js:435
 msgid "No Stock"
 msgstr "Kein Bestand"
 
@@ -4864,55 +4865,73 @@ msgstr "Vorrat zu {n} Lagerobjekten hinzugefügt"
 msgid "Barcode does not match Stock Item"
 msgstr "Neues Lagerobjekt hinzufügen"
 
-#: templates/js/bom.js:132
+#: templates/js/bom.js:133 templates/js/part.js:117 templates/js/part.js:344
+#, fuzzy
+#| msgid "Trackable"
+msgid "Trackable part"
+msgstr "nachverfolgbar"
+
+#: templates/js/bom.js:137 templates/js/part.js:121 templates/js/part.js:348
+#, fuzzy
+#| msgid "Virtual"
+msgid "Virtual part"
+msgstr "Virtuell"
+
+#: templates/js/bom.js:141
+#, fuzzy
+#| msgid "Template part"
+msgid "Templat part"
+msgstr "Vorlagenteil"
+
+#: templates/js/bom.js:146
 msgid "Open subassembly"
 msgstr "Unterbaugruppe öffnen"
 
-#: templates/js/bom.js:173
+#: templates/js/bom.js:191
 #, fuzzy
 #| msgid "Options"
 msgid "Optional"
 msgstr "Optionen"
 
-#: templates/js/bom.js:188 templates/js/build.js:133
+#: templates/js/bom.js:206 templates/js/build.js:133
 msgid "Available"
 msgstr "verfügbar"
 
-#: templates/js/bom.js:213
+#: templates/js/bom.js:231
 msgid "No pricing available"
 msgstr "Keine Preisinformation verfügbar"
 
-#: templates/js/bom.js:232
+#: templates/js/bom.js:250
 #, fuzzy
 #| msgid "Options"
 msgid "Actions"
 msgstr "Optionen"
 
-#: templates/js/bom.js:240
+#: templates/js/bom.js:258
 msgid "Validate BOM Item"
 msgstr "BOM-Position validieren"
 
-#: templates/js/bom.js:242
+#: templates/js/bom.js:260
 msgid "This line has been validated"
 msgstr "Diese Position wurde validiert"
 
-#: templates/js/bom.js:244
+#: templates/js/bom.js:262
 msgid "Edit BOM Item"
 msgstr "BOM-Position bearbeiten"
 
-#: templates/js/bom.js:246
+#: templates/js/bom.js:264
 msgid "Delete BOM Item"
 msgstr "BOM-Position löschen"
 
-#: templates/js/bom.js:478
+#: templates/js/bom.js:496
 msgid "INACTIVE"
 msgstr "INAKTIV"
 
-#: templates/js/bom.js:492
+#: templates/js/bom.js:510
 msgid "Uses"
 msgstr ""
 
-#: templates/js/bom.js:503
+#: templates/js/bom.js:521
 #, fuzzy
 #| msgid "No matching action found"
 msgid "No matching parts found"
@@ -4947,12 +4966,12 @@ msgid "No supplier parts found"
 msgstr "Keine Zuliefererteile gefunden"
 
 #: templates/js/company.js:147 templates/js/part.js:125
-#: templates/js/part.js:352
+#: templates/js/part.js:353
 msgid "Template part"
 msgstr "Vorlagenteil"
 
 #: templates/js/company.js:151 templates/js/part.js:129
-#: templates/js/part.js:356
+#: templates/js/part.js:357
 msgid "Assembled part"
 msgstr "Baugruppe"
 
@@ -4976,25 +4995,13 @@ msgstr "Keine Aufträge gefunden"
 msgid "Shipment Date"
 msgstr "Versanddatum"
 
-#: templates/js/part.js:117 templates/js/part.js:343
-#, fuzzy
-#| msgid "Trackable"
-msgid "Trackable part"
-msgstr "nachverfolgbar"
-
-#: templates/js/part.js:121 templates/js/part.js:347
-#, fuzzy
-#| msgid "Virtual"
-msgid "Virtual part"
-msgstr "Virtuell"
-
 #: templates/js/part.js:166
 #, fuzzy
 #| msgid "No parts found"
 msgid "No variants found"
 msgstr "Keine Teile gefunden"
 
-#: templates/js/part.js:252 templates/js/part.js:449
+#: templates/js/part.js:252 templates/js/part.js:450
 msgid "No parts found"
 msgstr "Keine Teile gefunden"
 
@@ -5002,53 +5009,53 @@ msgstr "Keine Teile gefunden"
 msgid "Select"
 msgstr "Auswählen"
 
-#: templates/js/part.js:360
+#: templates/js/part.js:361
 msgid "Starred part"
 msgstr "Favoritenteil"
 
-#: templates/js/part.js:364
+#: templates/js/part.js:365
 msgid "Salable part"
 msgstr "Verkäufliches Teil"
 
-#: templates/js/part.js:403
+#: templates/js/part.js:404
 msgid "No category"
 msgstr "Keine Kategorie"
 
-#: templates/js/part.js:421 templates/js/table_filters.js:251
+#: templates/js/part.js:422 templates/js/table_filters.js:251
 msgid "Low stock"
 msgstr "Bestand niedrig"
 
-#: templates/js/part.js:430
+#: templates/js/part.js:431
 msgid "Building"
 msgstr "Im Bau"
 
-#: templates/js/part.js:509
+#: templates/js/part.js:510
 msgid "YES"
 msgstr ""
 
-#: templates/js/part.js:511
+#: templates/js/part.js:512
 msgid "NO"
 msgstr ""
 
-#: templates/js/part.js:545
+#: templates/js/part.js:546
 #, fuzzy
 #| msgid "No stock items matching query"
 msgid "No test templates matching query"
 msgstr "Keine zur Anfrage passenden Lagerobjekte"
 
-#: templates/js/part.js:596 templates/js/stock.js:63
+#: templates/js/part.js:597 templates/js/stock.js:63
 #, fuzzy
 #| msgid "Edit Sales Order"
 msgid "Edit test result"
 msgstr "Auftrag bearbeiten"
 
-#: templates/js/part.js:597 templates/js/stock.js:64
+#: templates/js/part.js:598 templates/js/stock.js:64
 #, fuzzy
 #| msgid "Delete attachment"
 msgid "Delete test result"
 msgstr "Anhang löschen"
 
-#: templates/js/part.js:603
+#: templates/js/part.js:604
 msgid "This test is defined for a parent part"
 msgstr ""
 
