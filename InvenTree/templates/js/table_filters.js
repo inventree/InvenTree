@@ -189,6 +189,15 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
+    if (tableKey == 'supplier-part') {
+        return {
+            active: {
+                type: 'bool',
+                title: '{% trans "Active parts" %}',
+            }
+        };
+    }
+
     // Filters for the "Parts" table
     if (tableKey == "parts") {
         return {
