@@ -16,6 +16,7 @@ from django.utils.translation import ugettext as _
 from .models import Part, PartCategory, PartAttachment
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
+from .models import PartCategoryParameterTemplate
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
@@ -244,6 +245,18 @@ class EditCategoryForm(HelperForm):
             'description',
             'default_location',
             'default_keywords',
+        ]
+
+
+class EditCategoryParameterTemplateForm(HelperForm):
+    """ Form for editing a PartParameterTemplate object """
+
+    class Meta:
+        model = PartCategoryParameterTemplate
+        fields = [
+            'category',
+            'parameter_template',
+            'default_value',
         ]
 
 

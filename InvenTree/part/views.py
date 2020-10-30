@@ -23,6 +23,7 @@ from decimal import Decimal, InvalidOperation
 
 from .models import PartCategory, Part, PartAttachment
 from .models import PartParameterTemplate, PartParameter
+from .models import PartCategoryParameterTemplate
 from .models import BomItem
 from .models import match_part_names
 from .models import PartTestTemplate
@@ -2135,6 +2136,45 @@ class CategoryCreate(AjaxCreateView):
                 pass
 
         return initials
+
+
+class CategoryParameterTemplateCreate(AjaxCreateView):
+    """ View for creating a new PartCategoryParameterTemplate """
+
+    role_required = 'part.add'
+
+    model = PartCategoryParameterTemplate
+    form_class = part_forms.EditCategoryParameterTemplateForm
+    ajax_form_title = _('Create Category Parameter Template')
+
+    def get_initial(self):
+        """ Get initial data for Category """
+        initials = super().get_initial().copy()
+
+        category_id = self.kwargs.get('pk', None)
+
+        if category_id:
+            try:
+                initials['category'] = PartCategory.objects.get(pk=category_id)
+            except (PartCategory.DoesNotExist, ValueError):
+                pass
+
+        return initials
+
+    def get_form(self):
+        """ Create a form to upload a new CategoryParameterTemplate
+        - Hide the 'category' field (parent part)
+        - Display parameter templates which are not yet related
+        """
+
+        form = super(AjaxCreateView, self).get_form()
+        
+        form.fields['category'].widget = HiddenInput()
+
+        if form.is_valid():
+            form.cleaned_data['category'] = self.kwargs.get('pk', None)
+
+        return form
 
 
 class BomItemDetail(InvenTreeRoleMixin, DetailView):
