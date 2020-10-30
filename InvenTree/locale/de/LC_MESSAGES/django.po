@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-29 23:05+0000\n"
+"POT-Creation-Date: 2020-10-30 04:52+0000\n"
 "PO-Revision-Date: 2020-05-03 11:32+0200\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -315,7 +315,7 @@ msgid "Build Order Reference"
 msgstr "Bestellreferenz"
 
 #: build/models.py:87 build/templates/build/allocate.html:342
-#: order/templates/order/purchase_order_detail.html:173 templates/js/bom.js:172
+#: order/templates/order/purchase_order_detail.html:173 templates/js/bom.js:195
 msgid "Reference"
 msgstr "Referenz"
 
@@ -324,8 +324,8 @@ msgstr "Referenz"
 #: company/templates/company/supplier_part_detail.html:27
 #: order/templates/order/purchase_order_detail.html:160
 #: part/templates/part/detail.html:51 part/templates/part/set_category.html:14
-#: templates/InvenTree/search.html:147 templates/js/bom.js:165
-#: templates/js/bom.js:504 templates/js/build.js:56 templates/js/company.js:56
+#: templates/InvenTree/search.html:147 templates/js/bom.js:188
+#: templates/js/bom.js:515 templates/js/build.js:56 templates/js/company.js:56
 #: templates/js/order.js:167 templates/js/order.js:249 templates/js/part.js:149
 #: templates/js/part.js:232 templates/js/part.js:384 templates/js/part.js:565
 #: templates/js/stock.js:445 templates/js/stock.js:672
@@ -353,7 +353,7 @@ msgstr "Eltern-Bau, dem dieser Bau zugewiesen ist"
 #: order/templates/order/receive_parts.html:19 part/models.py:293
 #: part/templates/part/part_app_base.html:7
 #: part/templates/part/set_category.html:13 templates/InvenTree/search.html:133
-#: templates/js/barcode.js:336 templates/js/bom.js:124 templates/js/bom.js:489
+#: templates/js/barcode.js:336 templates/js/bom.js:147 templates/js/bom.js:500
 #: templates/js/build.js:61 templates/js/company.js:138
 #: templates/js/part.js:213 templates/js/part.js:318 templates/js/stock.js:421
 #: templates/js/stock.js:978
@@ -426,7 +426,7 @@ msgstr "Link zu einer externen URL"
 #: order/templates/order/so_tabs.html:23 part/templates/part/tabs.html:70
 #: stock/forms.py:306 stock/forms.py:338 stock/forms.py:366 stock/models.py:453
 #: stock/models.py:1404 stock/templates/stock/tabs.html:26
-#: templates/js/barcode.js:391 templates/js/bom.js:241
+#: templates/js/barcode.js:391 templates/js/bom.js:264
 #: templates/js/stock.js:116 templates/js/stock.js:544
 msgid "Notes"
 msgstr "Notizen"
@@ -519,7 +519,7 @@ msgstr "Seriennummer"
 #: stock/templates/stock/item_base.html:32
 #: stock/templates/stock/item_base.html:184
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:338
-#: templates/js/bom.js:180 templates/js/build.js:72 templates/js/stock.js:691
+#: templates/js/bom.js:203 templates/js/build.js:72 templates/js/stock.js:691
 #: templates/js/stock.js:906
 msgid "Quantity"
 msgstr "Anzahl"
@@ -543,7 +543,7 @@ msgstr "Lagerobjekt-Standort bearbeiten"
 msgid "Delete stock allocation"
 msgstr "Zuweisung löschen"
 
-#: build/templates/build/allocate.html:238 templates/js/bom.js:352
+#: build/templates/build/allocate.html:238 templates/js/bom.js:362
 msgid "No BOM items found"
 msgstr "Keine BOM-Einträge gefunden"
 
@@ -1398,7 +1398,7 @@ msgid "Pricing Information"
 msgstr "Preisinformationen ansehen"
 
 #: company/templates/company/supplier_part_pricing.html:17 company/views.py:410
-#: part/templates/part/sale_prices.html:13 part/views.py:2278
+#: part/templates/part/sale_prices.html:13 part/views.py:2281
 msgid "Add Price Break"
 msgstr "Preisstaffel hinzufügen"
 
@@ -1410,7 +1410,7 @@ msgid "No price break information found"
 msgstr "Keine Firmeninformation gefunden"
 
 #: company/templates/company/supplier_part_pricing.html:80
-#: part/templates/part/sale_prices.html:85 templates/js/bom.js:225
+#: part/templates/part/sale_prices.html:85 templates/js/bom.js:248
 msgid "Price"
 msgstr "Preis"
 
@@ -1531,17 +1531,17 @@ msgstr "Neues Zuliefererteil anlegen"
 msgid "Delete Supplier Part"
 msgstr "Zuliefererteil entfernen"
 
-#: company/views.py:416 part/views.py:2284
+#: company/views.py:416 part/views.py:2287
 #, fuzzy
 #| msgid "Add Price Break"
 msgid "Added new price break"
 msgstr "Preisstaffel hinzufügen"
 
-#: company/views.py:453 part/views.py:2329
+#: company/views.py:453 part/views.py:2332
 msgid "Edit Price Break"
 msgstr "Preisstaffel bearbeiten"
 
-#: company/views.py:469 part/views.py:2345
+#: company/views.py:469 part/views.py:2348
 msgid "Delete Price Break"
 msgstr "Preisstaffel löschen"
 
@@ -1646,7 +1646,7 @@ msgstr ""
 msgid "Date order was completed"
 msgstr "Bestellung als vollständig markieren"
 
-#: order/models.py:185 order/models.py:259 part/views.py:1395
+#: order/models.py:185 order/models.py:259 part/views.py:1398
 #: stock/models.py:241 stock/models.py:805
 msgid "Quantity must be greater than zero"
 msgstr "Anzahl muss größer Null sein"
@@ -2531,7 +2531,7 @@ msgstr "Notizen zum Stücklisten-Objekt"
 msgid "BOM line checksum"
 msgstr "Prüfsumme der Stückliste"
 
-#: part/models.py:1636 part/views.py:1401 part/views.py:1453
+#: part/models.py:1636 part/views.py:1404 part/views.py:1456
 #: stock/models.py:231
 #, fuzzy
 #| msgid "Overage must be an integer value or a percentage"
@@ -2634,7 +2634,7 @@ msgstr "Stückliste validieren"
 msgid "Validate"
 msgstr "BOM validieren"
 
-#: part/templates/part/bom.html:66 part/views.py:1692
+#: part/templates/part/bom.html:66 part/views.py:1695
 msgid "Export Bill of Materials"
 msgstr "Stückliste exportieren"
 
@@ -2756,7 +2756,7 @@ msgstr "Neuen Bau beginnen"
 msgid "All parts"
 msgstr "Alle Teile"
 
-#: part/templates/part/category.html:24 part/views.py:2095
+#: part/templates/part/category.html:24 part/views.py:2098
 msgid "Create new part category"
 msgstr "Teilkategorie anlegen"
 
@@ -3077,7 +3077,7 @@ msgstr "Dieses Teil ist eine Vorlage."
 msgid "This part is a variant of"
 msgstr "Dieses Teil ist eine Variante von"
 
-#: part/templates/part/part_base.html:36 templates/js/bom.js:152
+#: part/templates/part/part_base.html:36 templates/js/bom.js:175
 #: templates/js/company.js:155 templates/js/part.js:133
 #: templates/js/part.js:375
 msgid "Inactive"
@@ -3209,7 +3209,7 @@ msgstr "Teil entfernen"
 msgid "Part Stock"
 msgstr "Teilbestand"
 
-#: part/templates/part/stock_count.html:7 templates/js/bom.js:215
+#: part/templates/part/stock_count.html:7 templates/js/bom.js:238
 #: templates/js/part.js:435
 msgid "No Stock"
 msgstr "Kein Bestand"
@@ -3385,105 +3385,105 @@ msgstr "Teileigenschaften bearbeiten"
 msgid "Duplicate BOM"
 msgstr "Teil duplizieren"
 
-#: part/views.py:871
+#: part/views.py:872
 #, fuzzy
 #| msgid "Confirm unallocation of build stock"
 msgid "Confirm duplication of BOM from parent"
 msgstr "Zuweisungsaufhebung bestätigen"
 
-#: part/views.py:887
+#: part/views.py:890
 msgid "Validate BOM"
 msgstr "BOM validieren"
 
-#: part/views.py:1054
+#: part/views.py:1057
 msgid "No BOM file provided"
 msgstr "Keine Stückliste angegeben"
 
-#: part/views.py:1404
+#: part/views.py:1407
 msgid "Enter a valid quantity"
 msgstr "Bitte eine gültige Anzahl eingeben"
 
-#: part/views.py:1429 part/views.py:1432
+#: part/views.py:1432 part/views.py:1435
 msgid "Select valid part"
 msgstr "Bitte ein gültiges Teil auswählen"
 
-#: part/views.py:1438
+#: part/views.py:1441
 msgid "Duplicate part selected"
 msgstr "Teil doppelt ausgewählt"
 
-#: part/views.py:1476
+#: part/views.py:1479
 msgid "Select a part"
 msgstr "Teil auswählen"
 
-#: part/views.py:1482
+#: part/views.py:1485
 #, fuzzy
 #| msgid "Select part to be used in BOM"
 msgid "Selected part creates a circular BOM"
 msgstr "Teil für die Nutzung in der Stückliste auswählen"
 
-#: part/views.py:1486
+#: part/views.py:1489
 msgid "Specify quantity"
 msgstr "Anzahl angeben"
 
-#: part/views.py:1742
+#: part/views.py:1745
 msgid "Confirm Part Deletion"
 msgstr "Löschen des Teils bestätigen"
 
-#: part/views.py:1751
+#: part/views.py:1754
 msgid "Part was deleted"
 msgstr "Teil wurde gelöscht"
 
-#: part/views.py:1760
+#: part/views.py:1763
 msgid "Part Pricing"
 msgstr "Teilbepreisung"
 
-#: part/views.py:1886
+#: part/views.py:1889
 msgid "Create Part Parameter Template"
 msgstr "Teilparametervorlage anlegen"
 
-#: part/views.py:1896
+#: part/views.py:1899
 msgid "Edit Part Parameter Template"
 msgstr "Teilparametervorlage bearbeiten"
 
-#: part/views.py:1905
+#: part/views.py:1908
 msgid "Delete Part Parameter Template"
 msgstr "Teilparametervorlage löschen"
 
-#: part/views.py:1915
+#: part/views.py:1918
 msgid "Create Part Parameter"
 msgstr "Teilparameter anlegen"
 
-#: part/views.py:1967
+#: part/views.py:1970
 msgid "Edit Part Parameter"
 msgstr "Teilparameter bearbeiten"
 
-#: part/views.py:1983
+#: part/views.py:1986
 msgid "Delete Part Parameter"
 msgstr "Teilparameter löschen"
 
-#: part/views.py:2042
+#: part/views.py:2045
 msgid "Edit Part Category"
 msgstr "Teilkategorie bearbeiten"
 
-#: part/views.py:2079
+#: part/views.py:2082
 msgid "Delete Part Category"
 msgstr "Teilkategorie löschen"
 
-#: part/views.py:2087
+#: part/views.py:2090
 msgid "Part category was deleted"
 msgstr "Teilekategorie wurde gelöscht"
 
-#: part/views.py:2150
+#: part/views.py:2153
 #, fuzzy
 #| msgid "Create BOM item"
 msgid "Create BOM Item"
 msgstr "BOM-Position anlegen"
 
-#: part/views.py:2218
+#: part/views.py:2221
 msgid "Edit BOM item"
 msgstr "BOM-Position beaarbeiten"
 
-#: part/views.py:2268
+#: part/views.py:2271
 msgid "Confim BOM item deletion"
 msgstr "Löschung von BOM-Position bestätigen"
 
@@ -4912,73 +4912,72 @@ msgstr "Vorrat zu {n} Lagerobjekten hinzugefügt"
 msgid "Barcode does not match Stock Item"
 msgstr "Neues Lagerobjekt hinzufügen"
 
-#: templates/js/bom.js:133 templates/js/part.js:117 templates/js/part.js:344
+#: templates/js/bom.js:156 templates/js/part.js:117 templates/js/part.js:344
 #, fuzzy
 #| msgid "Trackable"
 msgid "Trackable part"
 msgstr "nachverfolgbar"
 
-#: templates/js/bom.js:137 templates/js/part.js:121 templates/js/part.js:348
+#: templates/js/bom.js:160 templates/js/part.js:121 templates/js/part.js:348
 #, fuzzy
 #| msgid "Virtual"
 msgid "Virtual part"
 msgstr "Virtuell"
 
-#: templates/js/bom.js:141
-#, fuzzy
-#| msgid "Template part"
-msgid "Templat part"
+#: templates/js/bom.js:164 templates/js/company.js:147 templates/js/part.js:125
+#: templates/js/part.js:353
+msgid "Template part"
 msgstr "Vorlagenteil"
 
-#: templates/js/bom.js:146
+#: templates/js/bom.js:169
 msgid "Open subassembly"
 msgstr "Unterbaugruppe öffnen"
 
-#: templates/js/bom.js:191
+#: templates/js/bom.js:214
 #, fuzzy
 #| msgid "Options"
 msgid "Optional"
 msgstr "Optionen"
 
-#: templates/js/bom.js:206 templates/js/build.js:133
+#: templates/js/bom.js:229 templates/js/build.js:133
 msgid "Available"
 msgstr "verfügbar"
 
-#: templates/js/bom.js:231
+#: templates/js/bom.js:254
 msgid "No pricing available"
 msgstr "Keine Preisinformation verfügbar"
 
-#: templates/js/bom.js:250
+#: templates/js/bom.js:273
 #, fuzzy
 #| msgid "Options"
 msgid "Actions"
 msgstr "Optionen"
 
-#: templates/js/bom.js:258
+#: templates/js/bom.js:281
 msgid "Validate BOM Item"
 msgstr "BOM-Position validieren"
 
-#: templates/js/bom.js:260
+#: templates/js/bom.js:283
 msgid "This line has been validated"
 msgstr "Diese Position wurde validiert"
 
-#: templates/js/bom.js:262
+#: templates/js/bom.js:285
 msgid "Edit BOM Item"
 msgstr "BOM-Position bearbeiten"
 
-#: templates/js/bom.js:264
+#: templates/js/bom.js:287
 msgid "Delete BOM Item"
 msgstr "BOM-Position löschen"
 
-#: templates/js/bom.js:496
+#: templates/js/bom.js:507
 msgid "INACTIVE"
 msgstr "INAKTIV"
 
-#: templates/js/bom.js:510
+#: templates/js/bom.js:521
 msgid "Uses"
 msgstr ""
 
-#: templates/js/bom.js:521
+#: templates/js/bom.js:532
 #, fuzzy
 #| msgid "No matching action found"
 msgid "No matching parts found"
@@ -5011,11 +5010,6 @@ msgstr "Keine Firmeninformation gefunden"
 #: templates/js/company.js:129
 msgid "No supplier parts found"
 msgstr "Keine Zuliefererteile gefunden"
-
-#: templates/js/company.js:147 templates/js/part.js:125
-#: templates/js/part.js:353
-msgid "Template part"
-msgstr "Vorlagenteil"
 
 #: templates/js/company.js:151 templates/js/part.js:129
 #: templates/js/part.js:357
@@ -5546,6 +5540,11 @@ msgstr ""
 #| msgid "Remove selected BOM items"
 msgid "Permission to delete items"
 msgstr "Ausgewählte Stücklistenpositionen entfernen"
+
+#, fuzzy
+#~| msgid "Template part"
+#~ msgid "Templat part"
+#~ msgstr "Vorlagenteil"
 
 #~ msgid "Link to extenal URL"
 #~ msgstr "Link zu einer Externen URL"
