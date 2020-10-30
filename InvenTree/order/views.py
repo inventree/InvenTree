@@ -100,9 +100,9 @@ class PurchaseOrderAttachmentCreate(AjaxCreateView):
     ajax_template_name = "modal_form.html"
     role_required = 'purchase_order.add'
 
-    def post_save(self, **kwargs):
-        self.object.user = self.request.user
-        self.object.save()
+    def post_save(self, attachment, form, **kwargs):
+        attachment.user = self.request.user
+        attachment.save()
 
     def get_data(self):
         return {
@@ -148,7 +148,7 @@ class SalesOrderAttachmentCreate(AjaxCreateView):
     ajax_form_title = _('Add Sales Order Attachment')
     role_required = 'sales_order.add'
 
-    def post_save(self, **kwargs):
+    def post_save(self, attachment, form, **kwargs):
         self.object.user = self.request.user
         self.object.save()
 
@@ -319,11 +319,11 @@ class PurchaseOrderCreate(AjaxCreateView):
 
         return initials
 
-    def post_save(self, **kwargs):
+    def post_save(self, order, form, **kwargs):
         # Record the user who created this purchase order
 
-        self.object.created_by = self.request.user
-        self.object.save()
+        order.created_by = self.request.user
+        order.save()
 
 
 class SalesOrderCreate(AjaxCreateView):
@@ -351,10 +351,10 @@ class SalesOrderCreate(AjaxCreateView):
 
         return initials
 
-    def post_save(self, **kwargs):
+    def post_save(self, order, form, **kwargs):
         # Record the user who created this sales order
-        self.object.created_by = self.request.user
-        self.object.save()
+        order.created_by = self.request.user
+        order.save()
 
 
 class PurchaseOrderEdit(AjaxUpdateView):

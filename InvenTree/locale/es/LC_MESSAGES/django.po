@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-29 02:25+0000\n"
+"POT-Creation-Date: 2020-10-29 23:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -204,7 +204,7 @@ msgstr ""
 msgid "Overage must be an integer value or a percentage"
 msgstr ""
 
-#: InvenTree/views.py:707
+#: InvenTree/views.py:752
 msgid "Database Statistics"
 msgstr ""
 
@@ -520,7 +520,7 @@ msgstr ""
 msgid "No BOM items found"
 msgstr ""
 
-#: build/templates/build/allocate.html:347 part/models.py:1401
+#: build/templates/build/allocate.html:347 part/models.py:1425
 #: templates/js/part.js:569 templates/js/table_filters.js:167
 msgid "Required"
 msgstr ""
@@ -1192,7 +1192,7 @@ msgstr ""
 
 #: company/templates/company/detail_stock.html:35
 #: company/templates/company/supplier_part_stock.html:33
-#: part/templates/part/bom.html:62 part/templates/part/category.html:112
+#: part/templates/part/bom.html:67 part/templates/part/category.html:112
 #: part/templates/part/category.html:126 part/templates/part/stock.html:51
 #: templates/stock_table.html:7
 msgid "Export"
@@ -1310,7 +1310,7 @@ msgid "Pricing Information"
 msgstr ""
 
 #: company/templates/company/supplier_part_pricing.html:17 company/views.py:410
-#: part/templates/part/sale_prices.html:13 part/views.py:2229
+#: part/templates/part/sale_prices.html:13 part/views.py:2278
 msgid "Add Price Break"
 msgstr ""
 
@@ -1437,15 +1437,15 @@ msgstr ""
 msgid "Delete Supplier Part"
 msgstr ""
 
-#: company/views.py:416 part/views.py:2235
+#: company/views.py:416 part/views.py:2284
 msgid "Added new price break"
 msgstr ""
 
-#: company/views.py:453 part/views.py:2280
+#: company/views.py:453 part/views.py:2329
 msgid "Edit Price Break"
 msgstr ""
 
-#: company/views.py:469 part/views.py:2296
+#: company/views.py:469 part/views.py:2345
 msgid "Delete Price Break"
 msgstr ""
 
@@ -1538,7 +1538,7 @@ msgstr ""
 msgid "Date order was completed"
 msgstr ""
 
-#: order/models.py:185 order/models.py:259 part/views.py:1346
+#: order/models.py:185 order/models.py:259 part/views.py:1395
 #: stock/models.py:241 stock/models.py:805
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -1815,6 +1815,7 @@ msgstr ""
 
 #: order/templates/order/sales_order_cancel.html:8
 #: order/templates/order/sales_order_ship.html:9
+#: part/templates/part/bom_duplicate.html:12
 #: stock/templates/stock/stockitem_convert.html:13
 msgid "Warning"
 msgstr ""
@@ -2039,91 +2040,107 @@ msgstr ""
 msgid "Error reading BOM file (incorrect row size)"
 msgstr ""
 
-#: part/forms.py:57 stock/forms.py:254
+#: part/forms.py:62 stock/forms.py:254
 msgid "File Format"
 msgstr ""
 
-#: part/forms.py:57 stock/forms.py:254
+#: part/forms.py:62 stock/forms.py:254
 msgid "Select output file format"
 msgstr ""
 
-#: part/forms.py:59
+#: part/forms.py:64
 msgid "Cascading"
 msgstr ""
 
-#: part/forms.py:59
+#: part/forms.py:64
 msgid "Download cascading / multi-level BOM"
 msgstr ""
 
-#: part/forms.py:61
+#: part/forms.py:66
 msgid "Levels"
 msgstr ""
 
-#: part/forms.py:61
+#: part/forms.py:66
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
 msgstr ""
 
-#: part/forms.py:63
+#: part/forms.py:68
 msgid "Include Parameter Data"
 msgstr ""
 
-#: part/forms.py:63
+#: part/forms.py:68
 msgid "Include part parameters data in exported BOM"
 msgstr ""
 
-#: part/forms.py:65
+#: part/forms.py:70
 msgid "Include Stock Data"
 msgstr ""
 
-#: part/forms.py:65
+#: part/forms.py:70
 msgid "Include part stock data in exported BOM"
 msgstr ""
 
-#: part/forms.py:67
+#: part/forms.py:72
 msgid "Include Supplier Data"
 msgstr ""
 
-#: part/forms.py:67
+#: part/forms.py:72
 msgid "Include part supplier data in exported BOM"
 msgstr ""
 
-#: part/forms.py:86
+#: part/forms.py:93 part/models.py:1504
+msgid "Parent Part"
+msgstr ""
+
+#: part/forms.py:94 part/templates/part/bom_duplicate.html:7
+msgid "Select parent part to copy BOM from"
+msgstr ""
+
+#: part/forms.py:100
+msgid "Clear existing BOM items"
+msgstr ""
+
+#: part/forms.py:105
+msgid "Confirm BOM duplication"
+msgstr ""
+
+#: part/forms.py:123
 msgid "Confirm that the BOM is correct"
 msgstr ""
 
-#: part/forms.py:98
+#: part/forms.py:135
 msgid "Select BOM file to upload"
 msgstr ""
 
-#: part/forms.py:122
+#: part/forms.py:159
 msgid "Select part category"
 msgstr ""
 
-#: part/forms.py:136
+#: part/forms.py:173
 msgid "Duplicate all BOM data for this part"
 msgstr ""
 
-#: part/forms.py:137
+#: part/forms.py:174
 msgid "Copy BOM"
 msgstr ""
 
-#: part/forms.py:142
+#: part/forms.py:179
 msgid "Duplicate all parameter data for this part"
 msgstr ""
 
-#: part/forms.py:143
+#: part/forms.py:180
 msgid "Copy Parameters"
 msgstr ""
 
-#: part/forms.py:148
+#: part/forms.py:185
 msgid "Confirm part creation"
 msgstr ""
 
-#: part/forms.py:248
+#: part/forms.py:279
 msgid "Input quantity for price calculation"
 msgstr ""
 
-#: part/forms.py:251
+#: part/forms.py:282
 msgid "Select currency for price calculation"
 msgstr ""
 
@@ -2249,112 +2266,108 @@ msgstr ""
 msgid "Stored BOM checksum"
 msgstr ""
 
-#: part/models.py:1353
+#: part/models.py:1377
 msgid "Test templates can only be created for trackable parts"
 msgstr ""
 
-#: part/models.py:1370
+#: part/models.py:1394
 msgid "Test with this name already exists for this part"
 msgstr ""
 
-#: part/models.py:1389 templates/js/part.js:560 templates/js/stock.js:92
+#: part/models.py:1413 templates/js/part.js:560 templates/js/stock.js:92
 msgid "Test Name"
 msgstr ""
 
-#: part/models.py:1390
+#: part/models.py:1414
 msgid "Enter a name for the test"
 msgstr ""
 
-#: part/models.py:1395
+#: part/models.py:1419
 msgid "Test Description"
 msgstr ""
 
-#: part/models.py:1396
+#: part/models.py:1420
 msgid "Enter description for this test"
 msgstr ""
 
-#: part/models.py:1402
+#: part/models.py:1426
 msgid "Is this test required to pass?"
 msgstr ""
 
-#: part/models.py:1407 templates/js/part.js:577
+#: part/models.py:1431 templates/js/part.js:577
 msgid "Requires Value"
 msgstr ""
 
-#: part/models.py:1408
+#: part/models.py:1432
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:1413 templates/js/part.js:584
+#: part/models.py:1437 templates/js/part.js:584
 msgid "Requires Attachment"
 msgstr ""
 
-#: part/models.py:1414
+#: part/models.py:1438
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr ""
 
-#: part/models.py:1447
+#: part/models.py:1471
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:1452
+#: part/models.py:1476
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:1454
+#: part/models.py:1478
 msgid "Parameter Units"
 msgstr ""
 
-#: part/models.py:1480
-msgid "Parent Part"
-msgstr ""
-
-#: part/models.py:1482
+#: part/models.py:1506
 msgid "Parameter Template"
 msgstr ""
 
-#: part/models.py:1484
+#: part/models.py:1508
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:1521
+#: part/models.py:1545
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:1529
+#: part/models.py:1553
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:1535
+#: part/models.py:1559
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:1537
+#: part/models.py:1561
 msgid "This BOM item is optional"
 msgstr ""
 
-#: part/models.py:1540
+#: part/models.py:1564
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:1543
+#: part/models.py:1567
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:1546
+#: part/models.py:1570
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:1548
+#: part/models.py:1572
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:1612 part/views.py:1352 part/views.py:1404
+#: part/models.py:1636 part/views.py:1401 part/views.py:1453
 #: stock/models.py:231
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:1621
+#: part/models.py:1645
 msgid "BOM Item"
 msgstr ""
 
@@ -2396,52 +2409,64 @@ msgid "Import BOM data"
 msgstr ""
 
 #: part/templates/part/bom.html:42
-msgid "Upload"
-msgstr ""
-
-#: part/templates/part/bom.html:44
-msgid "New BOM Item"
+msgid "Import from File"
 msgstr ""
 
 #: part/templates/part/bom.html:45
+msgid "Copy BOM from parent part"
+msgstr ""
+
+#: part/templates/part/bom.html:46
+msgid "Copy from Parent"
+msgstr ""
+
+#: part/templates/part/bom.html:49
+msgid "New BOM Item"
+msgstr ""
+
+#: part/templates/part/bom.html:50
 msgid "Add Item"
 msgstr ""
 
-#: part/templates/part/bom.html:47
+#: part/templates/part/bom.html:52
 msgid "Finish Editing"
 msgstr ""
 
-#: part/templates/part/bom.html:48
+#: part/templates/part/bom.html:53
 msgid "Finished"
 msgstr ""
 
-#: part/templates/part/bom.html:52
+#: part/templates/part/bom.html:57
 msgid "Edit BOM"
 msgstr ""
 
-#: part/templates/part/bom.html:53 part/templates/part/params.html:38
+#: part/templates/part/bom.html:58 part/templates/part/params.html:38
 #: templates/InvenTree/settings/user.html:19
 msgid "Edit"
 msgstr ""
 
-#: part/templates/part/bom.html:56
+#: part/templates/part/bom.html:61
 msgid "Validate Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom.html:57
+#: part/templates/part/bom.html:62
 msgid "Validate"
 msgstr ""
 
-#: part/templates/part/bom.html:61 part/views.py:1643
+#: part/templates/part/bom.html:66 part/views.py:1692
 msgid "Export Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom.html:122
+#: part/templates/part/bom.html:127
 msgid "Delete selected BOM items?"
 msgstr ""
 
-#: part/templates/part/bom.html:123
+#: part/templates/part/bom.html:128
 msgid "All selected BOM items will be deleted"
+msgstr ""
+
+#: part/templates/part/bom_duplicate.html:13
+msgid "This part already has a Bill of Materials"
 msgstr ""
 
 #: part/templates/part/bom_upload/select_fields.html:8
@@ -2524,7 +2549,7 @@ msgstr ""
 msgid "All parts"
 msgstr ""
 
-#: part/templates/part/category.html:24 part/views.py:2046
+#: part/templates/part/category.html:24 part/views.py:2095
 msgid "Create new part category"
 msgstr ""
 
@@ -2670,98 +2695,98 @@ msgstr ""
 msgid "Responsible User"
 msgstr ""
 
-#: part/templates/part/detail.html:136 templates/js/table_filters.js:27
+#: part/templates/part/detail.html:138 templates/js/table_filters.js:27
 msgid "Virtual"
 msgstr ""
 
-#: part/templates/part/detail.html:139
+#: part/templates/part/detail.html:141
 msgid "Part is virtual (not a physical part)"
 msgstr ""
 
-#: part/templates/part/detail.html:141
+#: part/templates/part/detail.html:143
 msgid "Part is not a virtual part"
 msgstr ""
 
-#: part/templates/part/detail.html:145 stock/forms.py:248
+#: part/templates/part/detail.html:148 stock/forms.py:248
 #: templates/js/table_filters.js:23 templates/js/table_filters.js:243
 msgid "Template"
 msgstr ""
 
-#: part/templates/part/detail.html:148
+#: part/templates/part/detail.html:151
 msgid "Part is a template part (variants can be made from this part)"
 msgstr ""
 
-#: part/templates/part/detail.html:150
+#: part/templates/part/detail.html:153
 msgid "Part is not a template part"
 msgstr ""
 
-#: part/templates/part/detail.html:154 templates/js/table_filters.js:255
+#: part/templates/part/detail.html:158 templates/js/table_filters.js:255
 msgid "Assembly"
 msgstr ""
 
-#: part/templates/part/detail.html:157
+#: part/templates/part/detail.html:161
 msgid "Part can be assembled from other parts"
 msgstr ""
 
-#: part/templates/part/detail.html:159
+#: part/templates/part/detail.html:163
 msgid "Part cannot be assembled from other parts"
 msgstr ""
 
-#: part/templates/part/detail.html:163 templates/js/table_filters.js:259
+#: part/templates/part/detail.html:168 templates/js/table_filters.js:259
 msgid "Component"
 msgstr ""
 
-#: part/templates/part/detail.html:166
+#: part/templates/part/detail.html:171
 msgid "Part can be used in assemblies"
 msgstr ""
 
-#: part/templates/part/detail.html:168
+#: part/templates/part/detail.html:173
 msgid "Part cannot be used in assemblies"
 msgstr ""
 
-#: part/templates/part/detail.html:172 templates/js/table_filters.js:31
+#: part/templates/part/detail.html:178 templates/js/table_filters.js:31
 #: templates/js/table_filters.js:271
 msgid "Trackable"
 msgstr ""
 
-#: part/templates/part/detail.html:175
+#: part/templates/part/detail.html:181
 msgid "Part stock is tracked by serial number"
 msgstr ""
 
-#: part/templates/part/detail.html:177
+#: part/templates/part/detail.html:183
 msgid "Part stock is not tracked by serial number"
 msgstr ""
 
-#: part/templates/part/detail.html:181
+#: part/templates/part/detail.html:188
 msgid "Purchaseable"
 msgstr ""
 
-#: part/templates/part/detail.html:184 part/templates/part/detail.html:186
+#: part/templates/part/detail.html:191 part/templates/part/detail.html:193
 msgid "Part can be purchased from external suppliers"
 msgstr ""
 
-#: part/templates/part/detail.html:190 templates/js/table_filters.js:267
+#: part/templates/part/detail.html:198 templates/js/table_filters.js:267
 msgid "Salable"
 msgstr ""
 
-#: part/templates/part/detail.html:193
+#: part/templates/part/detail.html:201
 msgid "Part can be sold to customers"
 msgstr ""
 
-#: part/templates/part/detail.html:195
+#: part/templates/part/detail.html:203
 msgid "Part cannot be sold to customers"
 msgstr ""
 
-#: part/templates/part/detail.html:199 templates/js/table_filters.js:19
+#: part/templates/part/detail.html:214 templates/js/table_filters.js:19
 #: templates/js/table_filters.js:55 templates/js/table_filters.js:238
 msgid "Active"
 msgstr ""
 
-#: part/templates/part/detail.html:202
+#: part/templates/part/detail.html:217
 msgid "Part is active"
 msgstr ""
 
-#: part/templates/part/detail.html:204
+#: part/templates/part/detail.html:219
 msgid "Part is not active"
 msgstr ""
 
@@ -3069,95 +3094,103 @@ msgstr ""
 msgid "Edit Part Properties"
 msgstr ""
 
-#: part/views.py:838
+#: part/views.py:841
+msgid "Duplicate BOM"
+msgstr ""
+
+#: part/views.py:871
+msgid "Confirm duplication of BOM from parent"
+msgstr ""
+
+#: part/views.py:887
 msgid "Validate BOM"
 msgstr ""
 
-#: part/views.py:1005
+#: part/views.py:1054
 msgid "No BOM file provided"
 msgstr ""
 
-#: part/views.py:1355
+#: part/views.py:1404
 msgid "Enter a valid quantity"
 msgstr ""
 
-#: part/views.py:1380 part/views.py:1383
+#: part/views.py:1429 part/views.py:1432
 msgid "Select valid part"
 msgstr ""
 
-#: part/views.py:1389
+#: part/views.py:1438
 msgid "Duplicate part selected"
 msgstr ""
 
-#: part/views.py:1427
+#: part/views.py:1476
 msgid "Select a part"
 msgstr ""
 
-#: part/views.py:1433
+#: part/views.py:1482
 msgid "Selected part creates a circular BOM"
 msgstr ""
 
-#: part/views.py:1437
+#: part/views.py:1486
 msgid "Specify quantity"
 msgstr ""
 
-#: part/views.py:1693
+#: part/views.py:1742
 msgid "Confirm Part Deletion"
 msgstr ""
 
-#: part/views.py:1702
+#: part/views.py:1751
 msgid "Part was deleted"
 msgstr ""
 
-#: part/views.py:1711
+#: part/views.py:1760
 msgid "Part Pricing"
 msgstr ""
 
-#: part/views.py:1837
+#: part/views.py:1886
 msgid "Create Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1847
+#: part/views.py:1896
 msgid "Edit Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1856
+#: part/views.py:1905
 msgid "Delete Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1866
+#: part/views.py:1915
 msgid "Create Part Parameter"
 msgstr ""
 
-#: part/views.py:1918
+#: part/views.py:1967
 msgid "Edit Part Parameter"
 msgstr ""
 
-#: part/views.py:1934
+#: part/views.py:1983
 msgid "Delete Part Parameter"
 msgstr ""
 
-#: part/views.py:1993
+#: part/views.py:2042
 msgid "Edit Part Category"
 msgstr ""
 
-#: part/views.py:2030
+#: part/views.py:2079
 msgid "Delete Part Category"
 msgstr ""
 
-#: part/views.py:2038
+#: part/views.py:2087
 msgid "Part category was deleted"
 msgstr ""
 
-#: part/views.py:2101
+#: part/views.py:2150
 msgid "Create BOM Item"
 msgstr ""
 
-#: part/views.py:2169
+#: part/views.py:2218
 msgid "Edit BOM item"
 msgstr ""
 
-#: part/views.py:2219
+#: part/views.py:2268
 msgid "Confim BOM item deletion"
 msgstr ""
 
