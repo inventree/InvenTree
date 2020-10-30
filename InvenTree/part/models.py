@@ -1133,6 +1133,31 @@ class Part(MPTTModel):
 
             bom_item.save()
 
+    @transaction.atomic
+    def copy_parameters_from(self, other, **kwargs):
+        
+        clear = kwargs.get('clear', True)
+
+        if clear:
+            self.get_parameters().delete()
+
+        for parameter in other.get_parameters.all():
+
+            # If this part already has a parameter pointing to the same template,
+            # delete that parameter from this part first!
+
+            try:
+                existing = PartParameter.objects.get(part=self, template=parameter.template)
+                existing.delete()
+            except (PartParameter.DoesNotExist):
+                pass
+
+            parameter.part = self
+            parameter.pk = None
+
+            parameter.save()
+
+    @transaction.atomic
     def deepCopy(self, other, **kwargs):
         """ Duplicates non-field data from another part.
         Does not alter the normal fields of this part,
@@ -1156,15 +1181,8 @@ class Part(MPTTModel):
 
         # Copy the parameters data
         if kwargs.get('parameters', True):
-            # Get template part parameters
-            parameters = other.get_parameters()
-            # Copy template part parameters to new variant part
-            for parameter in parameters:
-                PartParameter.create(part=self,
-                                     template=parameter.template,
-                                     data=parameter.data,
-                                     save=True)
-
+            self.copy_parameters_from(other)
+        
         # Copy the fields that aren't available in the duplicate form
         self.salable = other.salable
         self.assembly = other.assembly

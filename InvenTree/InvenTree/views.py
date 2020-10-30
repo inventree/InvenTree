@@ -362,6 +362,17 @@ class AjaxCreateView(AjaxMixin, CreateView):
         form = self.get_form()
         return self.renderJsonResponse(request, form)
 
+    def do_save(self, form):
+        """
+        Method for actually saving the form to the database.
+        Default implementation is very simple,
+        but can be overridden if required.
+        """
+
+        self.object = form.save()
+
+        return self.object
+
     def post(self, request, *args, **kwargs):
         """ Responds to form POST. Validates POST data and returns status info.
 
@@ -385,13 +396,17 @@ class AjaxCreateView(AjaxMixin, CreateView):
             'form_valid': valid
         }
 
+        # Add in any extra class data
+        for value, key in enumerate(self.get_data()):
+            data[key] = value
+
         if valid:
 
             # Perform (optional) pre-save step
             self.pre_save(None, self.form)
 
             # Save the object to the database
-            self.object = self.form.save()
+            self.do_save(self.form)
 
             # Perform (optional) post-save step
             self.post_save(self.object, self.form)
@@ -425,6 +440,17 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         
         return self.renderJsonResponse(request, self.get_form(), context=self.get_context_data())
 
+    def do_save(self, form):
+        """
+        Method for updating the object in the database.
+        Default implementation is very simple,
+        but can be overridden if required.
+        """
+
+        self.object = form.save()
+
+        return self.object
+
     def post(self, request, *args, **kwargs):
         """ Respond to POST request.
 
@@ -453,13 +479,17 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             'form_valid': valid
         }
 
+        # Add in any extra class data
+        for value, key in enumerate(self.get_data()):
+            data[key] = value
+
         if valid:
 
             # Perform (optional) pre-save step
             self.pre_save(self.object, form)
 
             # Save the updated objec to the database
-            obj = form.save()
+            obj = self.do_save(form)
 
             # Perform (optional) post-save step
             self.post_save(obj, form)

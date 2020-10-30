@@ -1126,6 +1126,20 @@ class StockItem(MPTTModel):
 
         return s
 
+    @transaction.atomic
+    def clear_test_results(self, **kwargs):
+        """
+        Remove all test results
+        """
+
+        # All test results
+        results = self.test_results.all()
+
+        # TODO - Perhaps some filtering options supplied by kwargs?
+
+        results.delete()
+
+
     def getTestResults(self, test=None, result=None, user=None):
         """
         Return all test results associated with this StockItem.

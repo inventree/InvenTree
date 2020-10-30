@@ -371,6 +371,8 @@ class MakePartVariant(AjaxCreateView):
         initials = model_to_dict(part_template)
         initials['is_template'] = False
         initials['variant_of'] = part_template
+        initials['bom_copy'] = InvenTreeSetting.get_setting('PART_COPY_BOM')
+        initials['parameters_copy'] = InvenTreeSetting.get_seting('PART_COPY_PARAMETERS')
 
         return initials
 
@@ -906,23 +908,21 @@ class BomValidate(AjaxUpdateView):
 
         return self.renderJsonResponse(request, form, context=self.get_context())
 
-    def post(self, request, *args, **kwargs):
+    def validate(self, part, form, **kwargs):
 
-        form = self.get_form()
-        part = self.get_object()
+        confirm = str2bool(form.cleaned_data.get('validate', False))
 
-        confirmed = str2bool(request.POST.get('validate', False))
-
-        if confirmed:
-            part.validate_bom(request.user)
-        else:
+        if not confirm:
             form.add_error('validate', _('Confirm that the BOM is valid'))
 
-        data = {
-            'form_valid': confirmed
-        }
+    def post_save(self, part, form, **kwargs):
 
-        return self.renderJsonResponse(request, form, data, context=self.get_context())
+        part.validate_bom(self.request.user)
+
+    def get_data(self):
+        return {
+            'success': _('Validated Bill of Materials')
+        }
 
 
 class BomUpload(InvenTreeRoleMixin, FormView):
