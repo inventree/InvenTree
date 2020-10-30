@@ -213,6 +213,39 @@ class AjaxMixin(InvenTreeRoleMixin):
         """
         return {}
 
+    def pre_save(self, obj, form, **kwargs):
+        """
+        Hook for doing something *before* an object is saved.
+
+        obj: The object to be saved
+        form: The cleaned form
+        """
+
+        # Do nothing by default
+        pass
+
+    def post_save(self, obj, form, **kwargs):
+        """
+        Hook for doing something *after* an object is saved.
+
+        """
+
+        # Do nothing by default
+        pass
+
+    def validate(self, obj, form, **kwargs):
+        """
+        Hook for performing custom form validation steps.
+
+        If a form error is detected, add it to the form,
+        with 'form.add_error()'
+
+        Ref: https://docs.djangoproject.com/en/dev/topics/forms/
+        """
+
+        # Do nothing by default
+        pass
+
     def renderJsonResponse(self, request, form=None, data={}, context=None):
         """ Render a JSON response based on specific class context.
 
@@ -320,32 +353,6 @@ class AjaxCreateView(AjaxMixin, CreateView):
     - Handles form validation via AJAX POST requests
     """
 
-    def validate(self, request, form, cleaned_data, **kwargs):
-        """
-        Hook for performing any extra validation, over and above the regular form.is_valid
-
-        If any errors exist, add them to the form, using form.add_error
-
-        """
-        pass
-
-    def pre_save(self, form, request, **kwargs):
-        """
-        Hook for doing something before the form is validated
-        """
-        pass
-
-    def post_save(self, **kwargs):
-        """
-        Hook for doing something with the created object after it is saved
-
-        kwargs:
-            request - The request object
-            new_object - The newly created object
-
-        """
-        pass
-
     def get(self, request, *args, **kwargs):
         """ Creates form with initial data, and renders JSON response """
 
@@ -354,6 +361,17 @@ class AjaxCreateView(AjaxMixin, CreateView):
         self.request = request
         form = self.get_form()
         return self.renderJsonResponse(request, form)
+
+    def do_save(self, form):
+        """
+        Method for actually saving the form to the database.
+        Default implementation is very simple,
+        but can be overridden if required.
+        """
+
+        self.object = form.save()
+
+        return self.object
 
     def post(self, request, *args, **kwargs):
         """ Responds to form POST. Validates POST data and returns status info.
@@ -365,13 +383,12 @@ class AjaxCreateView(AjaxMixin, CreateView):
         self.request = request
         self.form = self.get_form()
 
-        # Perform regular form validation
-        valid = self.form.is_valid()
+        # Perform initial form validation
+        self.form.is_valid()
 
-        # Perform any extra validation steps
-        self.validate(request, self.form, self.form.cleaned_data)
-        
-        # Check if form is valid again (after performing any custom validation)
+        # Perform custom validation (no object can be provided yet)
+        self.validate(None, self.form)
+
         valid = self.form.is_valid()
 
         # Extra JSON data sent alongside form
@@ -379,11 +396,20 @@ class AjaxCreateView(AjaxMixin, CreateView):
             'form_valid': valid
         }
 
+        # Add in any extra class data
+        for value, key in enumerate(self.get_data()):
+            data[key] = value
+
         if valid:
 
-            self.pre_save(self.form, request)
-            self.object = self.form.save()
-            self.post_save(new_object=self.object, request=request, form=self.form, data=self.form.cleaned_data)
+            # Perform (optional) pre-save step
+            self.pre_save(None, self.form)
+
+            # Save the object to the database
+            self.do_save(self.form)
+
+            # Perform (optional) post-save step
+            self.post_save(self.object, self.form)
 
             # Return the PK of the newly-created object
             data['pk'] = self.object.pk
@@ -414,6 +440,17 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         
         return self.renderJsonResponse(request, self.get_form(), context=self.get_context_data())
 
+    def do_save(self, form):
+        """
+        Method for updating the object in the database.
+        Default implementation is very simple,
+        but can be overridden if required.
+        """
+
+        self.object = form.save()
+
+        return self.object
+
     def post(self, request, *args, **kwargs):
         """ Respond to POST request.
 
@@ -423,22 +460,44 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         - Otherwise, return sucess status
         """
 
+        self.request = request
+
         # Make sure we have an object to point to
         self.object = self.get_object()
 
         form = self.get_form()
 
+        # Perform initial form validation
+        form.is_valid()
+
+        # Perform custom validation
+        self.validate(self.object, form)
+
+        valid = form.is_valid()
+
         data = {
-            'form_valid': form.is_valid()
+            'form_valid': valid
         }
 
-        if form.is_valid():
-            obj = form.save()
+        # Add in any extra class data
+        for value, key in enumerate(self.get_data()):
+            data[key] = value
+
+        if valid:
+
+            # Perform (optional) pre-save step
+            self.pre_save(self.object, form)
+
+            # Save the updated objec to the database
+            obj = self.do_save(form)
+
+            # Perform (optional) post-save step
+            self.post_save(obj, form)
 
             # Include context data about the updated object
-            data['pk'] = obj.id
+            data['pk'] = obj.pk
 
-            self.post_save(new_object=obj, request=request)
+            self.post_save(obj, form)
 
             try:
                 data['url'] = obj.get_absolute_url()
@@ -446,13 +505,6 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
                 pass
 
         return self.renderJsonResponse(request, form, data)
-
-    def post_save(self, **kwargs):
-        """
-        Hook called after the form data is saved.
-        (Optional)
-        """
-        pass
 
 
 class AjaxDeleteView(AjaxMixin, UpdateView):

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-29 04:20+0000\n"
+"POT-Creation-Date: 2020-10-30 11:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgstr ""
 msgid "Apply Theme"
 msgstr ""
 
-#: InvenTree/helpers.py:361 order/models.py:187 order/models.py:261
+#: InvenTree/helpers.py:361 order/models.py:187 order/models.py:269
 msgid "Invalid quantity provided"
 msgstr ""
 
@@ -202,27 +202,27 @@ msgstr ""
 msgid "Overage must be an integer value or a percentage"
 msgstr ""
 
-#: InvenTree/views.py:466
+#: InvenTree/views.py:518
 msgid "Delete Item"
 msgstr ""
 
-#: InvenTree/views.py:515
+#: InvenTree/views.py:567
 msgid "Check box to confirm item deletion"
 msgstr ""
 
-#: InvenTree/views.py:530 templates/InvenTree/settings/user.html:18
+#: InvenTree/views.py:582 templates/InvenTree/settings/user.html:18
 msgid "Edit User Information"
 msgstr ""
 
-#: InvenTree/views.py:541 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:593 templates/InvenTree/settings/user.html:22
 msgid "Set Password"
 msgstr ""
 
-#: InvenTree/views.py:560
+#: InvenTree/views.py:612
 msgid "Password fields must match"
 msgstr ""
 
-#: InvenTree/views.py:730
+#: InvenTree/views.py:782
 msgid "Database Statistics"
 msgstr ""
 
@@ -302,7 +302,7 @@ msgstr ""
 msgid "Confirm build completion"
 msgstr ""
 
-#: build/forms.py:159 build/views.py:77
+#: build/forms.py:159 build/views.py:68
 msgid "Confirm build cancellation"
 msgstr ""
 
@@ -364,7 +364,7 @@ msgstr ""
 #: build/models.py:98 build/templates/build/allocate.html:366
 #: build/templates/build/auto_allocate.html:25
 #: build/templates/build/build_base.html:73
-#: build/templates/build/detail.html:24 order/models.py:501
+#: build/templates/build/detail.html:24 order/models.py:519
 #: order/templates/order/order_wizard/select_parts.html:30
 #: order/templates/order/purchase_order_detail.html:148
 #: order/templates/order/receive_parts.html:19 part/models.py:293
@@ -456,7 +456,7 @@ msgstr ""
 #: order/templates/order/purchase_order_detail.html:203
 #: order/templates/order/so_tabs.html:23 part/templates/part/tabs.html:70
 #: stock/forms.py:306 stock/forms.py:338 stock/forms.py:366 stock/models.py:461
-#: stock/models.py:1418 stock/templates/stock/tabs.html:26
+#: stock/models.py:1434 stock/templates/stock/tabs.html:26
 #: templates/js/barcode.js:391 templates/js/bom.js:264
 #: templates/js/stock.js:116 templates/js/stock.js:571
 msgid "Notes"
@@ -492,11 +492,11 @@ msgstr ""
 msgid "Allocated quantity ({n}) must not exceed available quantity ({q})"
 msgstr ""
 
-#: build/models.py:803 order/models.py:585
+#: build/models.py:803 order/models.py:603
 msgid "StockItem is over-allocated"
 msgstr ""
 
-#: build/models.py:807 order/models.py:588
+#: build/models.py:807 order/models.py:606
 msgid "Allocation quantity must be greater than zero"
 msgstr ""
 
@@ -543,7 +543,7 @@ msgid "Assigned Stock"
 msgstr ""
 
 #: build/templates/build/allocate.html:28
-#: company/templates/company/detail_part.html:28 order/views.py:804
+#: company/templates/company/detail_part.html:28 order/views.py:774
 #: part/templates/part/category.html:125
 msgid "Order Parts"
 msgstr ""
@@ -565,7 +565,7 @@ msgstr ""
 msgid "New Stock Item"
 msgstr ""
 
-#: build/templates/build/allocate.html:125 stock/views.py:1459
+#: build/templates/build/allocate.html:125 stock/views.py:1450
 #: templates/js/build.js:226
 msgid "Create new Stock Item"
 msgstr ""
@@ -624,7 +624,7 @@ msgstr ""
 msgid "No BOM items found"
 msgstr ""
 
-#: build/templates/build/allocate.html:384 part/models.py:1448
+#: build/templates/build/allocate.html:384 part/models.py:1490
 #: templates/js/part.js:569 templates/js/table_filters.js:172
 msgid "Required"
 msgstr ""
@@ -716,7 +716,7 @@ msgstr ""
 msgid "Edit Build"
 msgstr ""
 
-#: build/templates/build/build_base.html:50 build/views.py:300
+#: build/templates/build/build_base.html:50 build/views.py:295
 msgid "Complete Build"
 msgstr ""
 
@@ -724,7 +724,7 @@ msgstr ""
 msgid "Cancel Build"
 msgstr ""
 
-#: build/templates/build/build_base.html:59 build/views.py:632
+#: build/templates/build/build_base.html:59 build/views.py:627
 msgid "Delete Build"
 msgstr ""
 
@@ -748,7 +748,7 @@ msgid "Progress"
 msgstr ""
 
 #: build/templates/build/build_base.html:101
-#: build/templates/build/detail.html:82 order/models.py:499
+#: build/templates/build/detail.html:82 order/models.py:517
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:33
 #: order/templates/order/sales_order_notes.html:10
@@ -879,7 +879,7 @@ msgstr ""
 msgid "Alter the quantity of stock allocated to the build output"
 msgstr ""
 
-#: build/templates/build/index.html:25 build/views.py:507
+#: build/templates/build/index.html:25 build/views.py:502
 msgid "New Build Order"
 msgstr ""
 
@@ -918,137 +918,137 @@ msgstr ""
 msgid "All incomplete stock allocations will be removed from the build"
 msgstr ""
 
-#: build/views.py:82
+#: build/views.py:79
 msgid "Build was cancelled"
 msgstr ""
 
-#: build/views.py:98
+#: build/views.py:93
 msgid "Allocate Stock"
 msgstr ""
 
-#: build/views.py:126
+#: build/views.py:121
 msgid "No matching build found"
 msgstr ""
 
-#: build/views.py:157
+#: build/views.py:152
 msgid "Confirm stock allocation"
 msgstr ""
 
-#: build/views.py:158
+#: build/views.py:153
 msgid "Check the confirmation box at the bottom of the list"
 msgstr ""
 
-#: build/views.py:176 templates/js/build.js:85
+#: build/views.py:171 templates/js/build.js:85
 msgid "Delete build output"
 msgstr ""
 
-#: build/views.py:210
+#: build/views.py:205
 msgid "Build or output not specified"
 msgstr ""
 
-#: build/views.py:212 build/views.py:276
+#: build/views.py:207 build/views.py:271
 msgid "Confirm unallocation of build stock"
 msgstr ""
 
-#: build/views.py:213 build/views.py:277 stock/views.py:421
+#: build/views.py:208 build/views.py:272 stock/views.py:412
 msgid "Check the confirmation box"
 msgstr ""
 
-#: build/views.py:230 build/views.py:643
+#: build/views.py:225 build/views.py:638
 msgid "Unallocate Stock"
 msgstr ""
 
-#: build/views.py:379
+#: build/views.py:374
 msgid "Confirm completion of build"
 msgstr ""
 
-#: build/views.py:385
+#: build/views.py:380
 msgid "Invalid location selected"
 msgstr ""
 
-#: build/views.py:406
+#: build/views.py:401
 #, python-brace-format
 msgid "The following serial numbers already exist: ({sn})"
 msgstr ""
 
-#: build/views.py:415
+#: build/views.py:410
 msgid "Build could not be completed"
 msgstr ""
 
-#: build/views.py:427
+#: build/views.py:422
 msgid "Build marked as COMPLETE"
 msgstr ""
 
-#: build/views.py:556
+#: build/views.py:551
 msgid "Created new build"
 msgstr ""
 
-#: build/views.py:573
+#: build/views.py:568
 msgid "Trackable part must have serial numbers specified"
 msgstr ""
 
-#: build/views.py:594 stock/models.py:838 stock/views.py:1650
+#: build/views.py:589 stock/models.py:838 stock/views.py:1641
 msgid "Serial numbers already exist"
 msgstr ""
 
-#: build/views.py:617
+#: build/views.py:612
 msgid "Edit Build Details"
 msgstr ""
 
-#: build/views.py:623
+#: build/views.py:618
 msgid "Edited build"
 msgstr ""
 
-#: build/views.py:649
+#: build/views.py:644
 msgid "Removed parts from build allocation"
 msgstr ""
 
-#: build/views.py:661
+#: build/views.py:656
 msgid "Allocate stock to build output"
 msgstr ""
 
-#: build/views.py:703
+#: build/views.py:698
 msgid "Item must be currently in stock"
 msgstr ""
 
-#: build/views.py:709
+#: build/views.py:704
 msgid "Stock item is over-allocated"
 msgstr ""
 
-#: build/views.py:710
+#: build/views.py:705
 msgid "Avaialabe"
 msgstr ""
 
-#: build/views.py:872
+#: build/views.py:867
 msgid "Edit Stock Allocation"
 msgstr ""
 
-#: build/views.py:877
+#: build/views.py:872
 msgid "Updated Build Item"
 msgstr ""
 
-#: build/views.py:906
+#: build/views.py:901
 msgid "Add Build Order Attachment"
 msgstr ""
 
-#: build/views.py:915 order/views.py:109 order/views.py:157 part/views.py:92
+#: build/views.py:910 order/views.py:109 order/views.py:157 part/views.py:92
 #: stock/views.py:175
 msgid "Added attachment"
 msgstr ""
 
-#: build/views.py:951 order/views.py:184 order/views.py:206
+#: build/views.py:946 order/views.py:184 order/views.py:206
 msgid "Edit Attachment"
 msgstr ""
 
-#: build/views.py:962 order/views.py:189 order/views.py:211
+#: build/views.py:957 order/views.py:189 order/views.py:211
 msgid "Attachment updated"
 msgstr ""
 
-#: build/views.py:972 order/views.py:226 order/views.py:241
+#: build/views.py:967 order/views.py:226 order/views.py:241
 msgid "Delete Attachment"
 msgstr ""
 
-#: build/views.py:978 order/views.py:233 order/views.py:248 stock/views.py:233
+#: build/views.py:973 order/views.py:233 order/views.py:248 stock/views.py:233
 msgid "Deleted attachment"
 msgstr ""
 
@@ -1403,7 +1403,7 @@ msgstr ""
 
 #: company/templates/company/detail_stock.html:35
 #: company/templates/company/supplier_part_stock.html:33
-#: part/templates/part/bom.html:62 part/templates/part/category.html:112
+#: part/templates/part/bom.html:67 part/templates/part/category.html:112
 #: part/templates/part/category.html:126 part/templates/part/stock.html:51
 #: templates/stock_table.html:7
 msgid "Export"
@@ -1521,7 +1521,7 @@ msgid "Pricing Information"
 msgstr ""
 
 #: company/templates/company/supplier_part_pricing.html:17 company/views.py:410
-#: part/templates/part/sale_prices.html:13 part/views.py:2230
+#: part/templates/part/sale_prices.html:13 part/views.py:2282
 msgid "Add Price Break"
 msgstr ""
 
@@ -1648,15 +1648,15 @@ msgstr ""
 msgid "Delete Supplier Part"
 msgstr ""
 
-#: company/views.py:416 part/views.py:2236
+#: company/views.py:416 part/views.py:2288
 msgid "Added new price break"
 msgstr ""
 
-#: company/views.py:453 part/views.py:2281
+#: company/views.py:453 part/views.py:2333
 msgid "Edit Price Break"
 msgstr ""
 
-#: company/views.py:469 part/views.py:2297
+#: company/views.py:469 part/views.py:2349
 msgid "Delete Price Break"
 msgstr ""
 
@@ -1729,7 +1729,7 @@ msgstr ""
 msgid "Order notes"
 msgstr ""
 
-#: order/models.py:140 order/models.py:318
+#: order/models.py:140 order/models.py:326
 msgid "Purchase order status"
 msgstr ""
 
@@ -1749,7 +1749,7 @@ msgstr ""
 msgid "Date order was completed"
 msgstr ""
 
-#: order/models.py:185 order/models.py:259 part/views.py:1347
+#: order/models.py:185 order/models.py:267 part/views.py:1399
 #: stock/models.py:249 stock/models.py:822
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -1758,69 +1758,69 @@ msgstr ""
 msgid "Part supplier must match PO supplier"
 msgstr ""
 
-#: order/models.py:254
+#: order/models.py:262
 msgid "Lines can only be received against an order marked as 'Placed'"
 msgstr ""
 
-#: order/models.py:314
+#: order/models.py:322
 msgid "Company to which the items are being sold"
 msgstr ""
 
-#: order/models.py:320
+#: order/models.py:328
 msgid "Customer order reference code"
 msgstr ""
 
-#: order/models.py:359
+#: order/models.py:367
 msgid "SalesOrder cannot be shipped as it is not currently pending"
 msgstr ""
 
-#: order/models.py:436
+#: order/models.py:454
 msgid "Item quantity"
 msgstr ""
 
-#: order/models.py:438
+#: order/models.py:456
 msgid "Line item reference"
 msgstr ""
 
-#: order/models.py:440
+#: order/models.py:458
 msgid "Line item notes"
 msgstr ""
 
-#: order/models.py:466 order/templates/order/order_base.html:9
+#: order/models.py:484 order/templates/order/order_base.html:9
 #: order/templates/order/order_base.html:24
 #: stock/templates/stock/item_base.html:265 templates/js/order.js:139
 msgid "Purchase Order"
 msgstr ""
 
-#: order/models.py:479
+#: order/models.py:497
 msgid "Supplier part"
 msgstr ""
 
-#: order/models.py:482
+#: order/models.py:500
 msgid "Number of items received"
 msgstr ""
 
-#: order/models.py:576
+#: order/models.py:594
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr ""
 
-#: order/models.py:578
+#: order/models.py:596
 msgid "Cannot allocate stock to a line without a part"
 msgstr ""
 
-#: order/models.py:581
+#: order/models.py:599
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr ""
 
-#: order/models.py:591
+#: order/models.py:609
 msgid "Quantity must be 1 for serialized stock item"
 msgstr ""
 
-#: order/models.py:608
+#: order/models.py:626
 msgid "Select stock item to allocate"
 msgstr ""
 
-#: order/models.py:611
+#: order/models.py:629
 msgid "Enter stock allocation quantity"
 msgstr ""
 
@@ -1938,8 +1938,8 @@ msgid "Line Items"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:17
-#: order/templates/order/sales_order_detail.html:19 order/views.py:1117
-#: order/views.py:1232
+#: order/templates/order/sales_order_detail.html:19 order/views.py:1087
+#: order/views.py:1171
 msgid "Add Line Item"
 msgstr ""
 
@@ -2021,6 +2021,7 @@ msgstr ""
 
 #: order/templates/order/sales_order_cancel.html:8
 #: order/templates/order/sales_order_ship.html:9
+#: part/templates/part/bom_duplicate.html:12
 #: stock/templates/stock/stockitem_convert.html:13
 msgid "Warning"
 msgstr ""
@@ -2107,99 +2108,107 @@ msgstr ""
 msgid "Cancel Order"
 msgstr ""
 
-#: order/views.py:418 order/views.py:451
+#: order/views.py:412 order/views.py:436
 msgid "Confirm order cancellation"
 msgstr ""
 
-#: order/views.py:436
+#: order/views.py:415 order/views.py:439
+msgid "Order cannot be cancelled"
+msgstr ""
+
+#: order/views.py:426
 msgid "Cancel sales order"
 msgstr ""
 
-#: order/views.py:457
-msgid "Could not cancel order"
-msgstr ""
-
-#: order/views.py:471
+#: order/views.py:450
 msgid "Issue Order"
 msgstr ""
 
-#: order/views.py:487
+#: order/views.py:460
 msgid "Confirm order placement"
 msgstr ""
 
-#: order/views.py:508
+#: order/views.py:468
+msgid "Purchase order issued"
+msgstr ""
+
+#: order/views.py:479
 msgid "Complete Order"
 msgstr ""
 
-#: order/views.py:544
+#: order/views.py:496
+msgid "Confirm order completion"
+msgstr ""
+
+#: order/views.py:504
+msgid "Purchase order completed"
+msgstr ""
+
+#: order/views.py:514
 msgid "Ship Order"
 msgstr ""
 
-#: order/views.py:561
+#: order/views.py:531
 msgid "Confirm order shipment"
 msgstr ""
 
-#: order/views.py:567
+#: order/views.py:537
 msgid "Could not ship order"
 msgstr ""
 
-#: order/views.py:619
+#: order/views.py:589
 msgid "Receive Parts"
 msgstr ""
 
-#: order/views.py:687
+#: order/views.py:657
 msgid "Items received"
 msgstr ""
 
-#: order/views.py:701
+#: order/views.py:671
 msgid "No destination set"
 msgstr ""
 
-#: order/views.py:746
+#: order/views.py:716
 msgid "Error converting quantity to number"
 msgstr ""
 
-#: order/views.py:752
+#: order/views.py:722
 msgid "Receive quantity less than zero"
 msgstr ""
 
-#: order/views.py:758
+#: order/views.py:728
 msgid "No lines specified"
 msgstr ""
 
-#: order/views.py:1138
-msgid "Invalid Purchase Order"
+#: order/views.py:1097
+msgid "Supplier part must be specified"
 msgstr ""
 
-#: order/views.py:1146
+#: order/views.py:1103
 msgid "Supplier must match for Part and Order"
 msgstr ""
 
-#: order/views.py:1151
-msgid "Invalid SupplierPart selection"
-msgstr ""
-
-#: order/views.py:1284 order/views.py:1303
+#: order/views.py:1223 order/views.py:1242
 msgid "Edit Line Item"
 msgstr ""
 
-#: order/views.py:1320 order/views.py:1333
+#: order/views.py:1259 order/views.py:1272
 msgid "Delete Line Item"
 msgstr ""
 
-#: order/views.py:1326 order/views.py:1339
+#: order/views.py:1265 order/views.py:1278
 msgid "Deleted line item"
 msgstr ""
 
-#: order/views.py:1348
+#: order/views.py:1287
 msgid "Allocate Stock to Order"
 msgstr ""
 
-#: order/views.py:1418
+#: order/views.py:1357
 msgid "Edit Allocation Quantity"
 msgstr ""
 
-#: order/views.py:1434
+#: order/views.py:1373
 msgid "Remove allocation"
 msgstr ""
 
@@ -2225,91 +2234,107 @@ msgstr ""
 msgid "Error reading BOM file (incorrect row size)"
 msgstr ""
 
-#: part/forms.py:57 stock/forms.py:254
+#: part/forms.py:62 stock/forms.py:254
 msgid "File Format"
 msgstr ""
 
-#: part/forms.py:57 stock/forms.py:254
+#: part/forms.py:62 stock/forms.py:254
 msgid "Select output file format"
 msgstr ""
 
-#: part/forms.py:59
+#: part/forms.py:64
 msgid "Cascading"
 msgstr ""
 
-#: part/forms.py:59
+#: part/forms.py:64
 msgid "Download cascading / multi-level BOM"
 msgstr ""
 
-#: part/forms.py:61
+#: part/forms.py:66
 msgid "Levels"
 msgstr ""
 
-#: part/forms.py:61
+#: part/forms.py:66
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
 msgstr ""
 
-#: part/forms.py:63
+#: part/forms.py:68
 msgid "Include Parameter Data"
 msgstr ""
 
-#: part/forms.py:63
+#: part/forms.py:68
 msgid "Include part parameters data in exported BOM"
 msgstr ""
 
-#: part/forms.py:65
+#: part/forms.py:70
 msgid "Include Stock Data"
 msgstr ""
 
-#: part/forms.py:65
+#: part/forms.py:70
 msgid "Include part stock data in exported BOM"
 msgstr ""
 
-#: part/forms.py:67
+#: part/forms.py:72
 msgid "Include Supplier Data"
 msgstr ""
 
-#: part/forms.py:67
+#: part/forms.py:72
 msgid "Include part supplier data in exported BOM"
 msgstr ""
 
-#: part/forms.py:86
+#: part/forms.py:93 part/models.py:1569
+msgid "Parent Part"
+msgstr ""
+
+#: part/forms.py:94 part/templates/part/bom_duplicate.html:7
+msgid "Select parent part to copy BOM from"
+msgstr ""
+
+#: part/forms.py:100
+msgid "Clear existing BOM items"
+msgstr ""
+
+#: part/forms.py:105
+msgid "Confirm BOM duplication"
+msgstr ""
+
+#: part/forms.py:123
 msgid "Confirm that the BOM is correct"
 msgstr ""
 
-#: part/forms.py:98
+#: part/forms.py:135
 msgid "Select BOM file to upload"
 msgstr ""
 
-#: part/forms.py:122
+#: part/forms.py:159
 msgid "Select part category"
 msgstr ""
 
-#: part/forms.py:136
+#: part/forms.py:173
 msgid "Duplicate all BOM data for this part"
 msgstr ""
 
-#: part/forms.py:137
+#: part/forms.py:174
 msgid "Copy BOM"
 msgstr ""
 
-#: part/forms.py:142
+#: part/forms.py:179
 msgid "Duplicate all parameter data for this part"
 msgstr ""
 
-#: part/forms.py:143
+#: part/forms.py:180
 msgid "Copy Parameters"
 msgstr ""
 
-#: part/forms.py:148
+#: part/forms.py:185
 msgid "Confirm part creation"
 msgstr ""
 
-#: part/forms.py:248
+#: part/forms.py:279
 msgid "Input quantity for price calculation"
 msgstr ""
 
-#: part/forms.py:251
+#: part/forms.py:282
 msgid "Select currency for price calculation"
 msgstr ""
 
@@ -2435,112 +2460,108 @@ msgstr ""
 msgid "Stored BOM checksum"
 msgstr ""
 
-#: part/models.py:1400
+#: part/models.py:1442
 msgid "Test templates can only be created for trackable parts"
 msgstr ""
 
-#: part/models.py:1417
+#: part/models.py:1459
 msgid "Test with this name already exists for this part"
 msgstr ""
 
-#: part/models.py:1436 templates/js/part.js:560 templates/js/stock.js:92
+#: part/models.py:1478 templates/js/part.js:560 templates/js/stock.js:92
 msgid "Test Name"
 msgstr ""
 
-#: part/models.py:1437
+#: part/models.py:1479
 msgid "Enter a name for the test"
 msgstr ""
 
-#: part/models.py:1442
+#: part/models.py:1484
 msgid "Test Description"
 msgstr ""
 
-#: part/models.py:1443
+#: part/models.py:1485
 msgid "Enter description for this test"
 msgstr ""
 
-#: part/models.py:1449
+#: part/models.py:1491
 msgid "Is this test required to pass?"
 msgstr ""
 
-#: part/models.py:1454 templates/js/part.js:577
+#: part/models.py:1496 templates/js/part.js:577
 msgid "Requires Value"
 msgstr ""
 
-#: part/models.py:1455
+#: part/models.py:1497
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:1460 templates/js/part.js:584
+#: part/models.py:1502 templates/js/part.js:584
 msgid "Requires Attachment"
 msgstr ""
 
-#: part/models.py:1461
+#: part/models.py:1503
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr ""
 
-#: part/models.py:1494
+#: part/models.py:1536
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:1499
+#: part/models.py:1541
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:1501
+#: part/models.py:1543
 msgid "Parameter Units"
 msgstr ""
 
-#: part/models.py:1527
-msgid "Parent Part"
-msgstr ""
-
-#: part/models.py:1529
+#: part/models.py:1571
 msgid "Parameter Template"
 msgstr ""
 
-#: part/models.py:1531
+#: part/models.py:1573
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:1568
+#: part/models.py:1610
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:1576
+#: part/models.py:1618
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:1582
+#: part/models.py:1624
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:1584
+#: part/models.py:1626
 msgid "This BOM item is optional"
 msgstr ""
 
-#: part/models.py:1587
+#: part/models.py:1629
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:1590
+#: part/models.py:1632
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:1593
+#: part/models.py:1635
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:1595
+#: part/models.py:1637
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:1662 part/views.py:1353 part/views.py:1405
+#: part/models.py:1704 part/views.py:1405 part/views.py:1457
 #: stock/models.py:239
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:1678
+#: part/models.py:1720
 msgid "BOM Item"
 msgstr ""
 
@@ -2582,52 +2603,64 @@ msgid "Import BOM data"
 msgstr ""
 
 #: part/templates/part/bom.html:42
-msgid "Upload"
-msgstr ""
-
-#: part/templates/part/bom.html:44
-msgid "New BOM Item"
+msgid "Import from File"
 msgstr ""
 
 #: part/templates/part/bom.html:45
+msgid "Copy BOM from parent part"
+msgstr ""
+
+#: part/templates/part/bom.html:46
+msgid "Copy from Parent"
+msgstr ""
+
+#: part/templates/part/bom.html:49
+msgid "New BOM Item"
+msgstr ""
+
+#: part/templates/part/bom.html:50
 msgid "Add Item"
 msgstr ""
 
-#: part/templates/part/bom.html:47
+#: part/templates/part/bom.html:52
 msgid "Finish Editing"
 msgstr ""
 
-#: part/templates/part/bom.html:48
+#: part/templates/part/bom.html:53
 msgid "Finished"
 msgstr ""
 
-#: part/templates/part/bom.html:52
+#: part/templates/part/bom.html:57
 msgid "Edit BOM"
 msgstr ""
 
-#: part/templates/part/bom.html:53 part/templates/part/params.html:38
+#: part/templates/part/bom.html:58 part/templates/part/params.html:38
 #: templates/InvenTree/settings/user.html:19
 msgid "Edit"
 msgstr ""
 
-#: part/templates/part/bom.html:56
+#: part/templates/part/bom.html:61
 msgid "Validate Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom.html:57
+#: part/templates/part/bom.html:62
 msgid "Validate"
 msgstr ""
 
-#: part/templates/part/bom.html:61 part/views.py:1644
+#: part/templates/part/bom.html:66 part/views.py:1696
 msgid "Export Bill of Materials"
 msgstr ""
 
-#: part/templates/part/bom.html:122
+#: part/templates/part/bom.html:127
 msgid "Delete selected BOM items?"
 msgstr ""
 
-#: part/templates/part/bom.html:123
+#: part/templates/part/bom.html:128
 msgid "All selected BOM items will be deleted"
+msgstr ""
+
+#: part/templates/part/bom_duplicate.html:13
+msgid "This part already has a Bill of Materials"
 msgstr ""
 
 #: part/templates/part/bom_upload/select_fields.html:8
@@ -2710,7 +2743,7 @@ msgstr ""
 msgid "All parts"
 msgstr ""
 
-#: part/templates/part/category.html:24 part/views.py:2047
+#: part/templates/part/category.html:24 part/views.py:2099
 msgid "Create new part category"
 msgstr ""
 
@@ -2782,7 +2815,7 @@ msgstr ""
 msgid "Create new Part Category"
 msgstr ""
 
-#: part/templates/part/category.html:216 stock/views.py:1343
+#: part/templates/part/category.html:216 stock/views.py:1334
 msgid "Create new Stock Location"
 msgstr ""
 
@@ -2967,7 +3000,7 @@ msgstr ""
 msgid "New Parameter"
 msgstr ""
 
-#: part/templates/part/params.html:25 stock/models.py:1405
+#: part/templates/part/params.html:25 stock/models.py:1421
 #: templates/js/stock.js:112
 msgid "Value"
 msgstr ""
@@ -3215,143 +3248,155 @@ msgstr ""
 msgid "Create Variant"
 msgstr ""
 
-#: part/views.py:388
+#: part/views.py:390
 msgid "Duplicate Part"
 msgstr ""
 
-#: part/views.py:395
+#: part/views.py:397
 msgid "Copied part"
 msgstr ""
 
-#: part/views.py:449 part/views.py:579
+#: part/views.py:451 part/views.py:581
 msgid "Possible matches exist - confirm creation of new part"
 msgstr ""
 
-#: part/views.py:514 templates/js/stock.js:833
+#: part/views.py:516 templates/js/stock.js:833
 msgid "Create New Part"
 msgstr ""
 
-#: part/views.py:521
+#: part/views.py:523
 msgid "Created new part"
 msgstr ""
 
-#: part/views.py:737
+#: part/views.py:739
 msgid "Part QR Code"
 msgstr ""
 
-#: part/views.py:756
+#: part/views.py:758
 msgid "Upload Part Image"
 msgstr ""
 
-#: part/views.py:764 part/views.py:801
+#: part/views.py:766 part/views.py:803
 msgid "Updated part image"
 msgstr ""
 
-#: part/views.py:773
+#: part/views.py:775
 msgid "Select Part Image"
 msgstr ""
 
-#: part/views.py:804
+#: part/views.py:806
 msgid "Part image not found"
 msgstr ""
 
-#: part/views.py:815
+#: part/views.py:817
 msgid "Edit Part Properties"
 msgstr ""
 
-#: part/views.py:839
+#: part/views.py:844
+msgid "Duplicate BOM"
+msgstr ""
+
+#: part/views.py:875
+msgid "Confirm duplication of BOM from parent"
+msgstr ""
+
+#: part/views.py:893
 msgid "Validate BOM"
 msgstr ""
 
-#: part/views.py:867
+#: part/views.py:916
 msgid "Confirm that the BOM is valid"
 msgstr ""
 
-#: part/views.py:1006
+#: part/views.py:924
+msgid "Validated Bill of Materials"
+msgstr ""
+
+#: part/views.py:1058
 msgid "No BOM file provided"
 msgstr ""
 
-#: part/views.py:1356
+#: part/views.py:1408
 msgid "Enter a valid quantity"
 msgstr ""
 
-#: part/views.py:1381 part/views.py:1384
+#: part/views.py:1433 part/views.py:1436
 msgid "Select valid part"
 msgstr ""
 
-#: part/views.py:1390
+#: part/views.py:1442
 msgid "Duplicate part selected"
 msgstr ""
 
-#: part/views.py:1428
+#: part/views.py:1480
 msgid "Select a part"
 msgstr ""
 
-#: part/views.py:1434
+#: part/views.py:1486
 msgid "Selected part creates a circular BOM"
 msgstr ""
 
-#: part/views.py:1438
+#: part/views.py:1490
 msgid "Specify quantity"
 msgstr ""
 
-#: part/views.py:1694
+#: part/views.py:1746
 msgid "Confirm Part Deletion"
 msgstr ""
 
-#: part/views.py:1703
+#: part/views.py:1755
 msgid "Part was deleted"
 msgstr ""
 
-#: part/views.py:1712
+#: part/views.py:1764
 msgid "Part Pricing"
 msgstr ""
 
-#: part/views.py:1838
+#: part/views.py:1890
 msgid "Create Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1848
+#: part/views.py:1900
 msgid "Edit Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1857
+#: part/views.py:1909
 msgid "Delete Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1867
+#: part/views.py:1919
 msgid "Create Part Parameter"
 msgstr ""
 
-#: part/views.py:1919
+#: part/views.py:1971
 msgid "Edit Part Parameter"
 msgstr ""
 
-#: part/views.py:1935
+#: part/views.py:1987
 msgid "Delete Part Parameter"
 msgstr ""
 
-#: part/views.py:1994
+#: part/views.py:2046
 msgid "Edit Part Category"
 msgstr ""
 
-#: part/views.py:2031
+#: part/views.py:2083
 msgid "Delete Part Category"
 msgstr ""
 
-#: part/views.py:2039
+#: part/views.py:2091
 msgid "Part category was deleted"
 msgstr ""
 
-#: part/views.py:2102
+#: part/views.py:2154
 msgid "Create BOM Item"
 msgstr ""
 
-#: part/views.py:2170
+#: part/views.py:2222
 msgid "Edit BOM item"
 msgstr ""
 
-#: part/views.py:2220
+#: part/views.py:2272
 msgid "Confim BOM item deletion"
 msgstr ""
 
@@ -3431,7 +3476,7 @@ msgstr ""
 msgid "Add note (required)"
 msgstr ""
 
-#: stock/forms.py:370 stock/views.py:921 stock/views.py:1119
+#: stock/forms.py:370 stock/views.py:912 stock/views.py:1110
 msgid "Confirm stock adjustment"
 msgstr ""
 
@@ -3619,55 +3664,55 @@ msgstr ""
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:1306
+#: stock/models.py:1322
 msgid "Tracking entry title"
 msgstr ""
 
-#: stock/models.py:1308
+#: stock/models.py:1324
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:1310
+#: stock/models.py:1326
 msgid "Link to external page for further information"
 msgstr ""
 
-#: stock/models.py:1370
+#: stock/models.py:1386
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:1376
+#: stock/models.py:1392
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:1393
+#: stock/models.py:1409
 msgid "Test"
 msgstr ""
 
-#: stock/models.py:1394
+#: stock/models.py:1410
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:1399
+#: stock/models.py:1415
 msgid "Result"
 msgstr ""
 
-#: stock/models.py:1400 templates/js/table_filters.js:162
+#: stock/models.py:1416 templates/js/table_filters.js:162
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:1406
+#: stock/models.py:1422
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:1412
+#: stock/models.py:1428
 msgid "Attachment"
 msgstr ""
 
-#: stock/models.py:1413
+#: stock/models.py:1429
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:1419
+#: stock/models.py:1435
 msgid "Test notes"
 msgstr ""
 
@@ -3937,7 +3982,7 @@ msgstr ""
 msgid "The following stock items will be uninstalled"
 msgstr ""
 
-#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:1315
+#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:1306
 msgid "Convert Stock Item"
 msgstr ""
 
@@ -3993,190 +4038,194 @@ msgstr ""
 msgid "Assign to Customer"
 msgstr ""
 
-#: stock/views.py:281
+#: stock/views.py:253
+msgid "Customer must be specified"
+msgstr ""
+
+#: stock/views.py:277
 msgid "Return to Stock"
 msgstr ""
 
-#: stock/views.py:301
+#: stock/views.py:287
 msgid "Specify a valid location"
 msgstr ""
 
-#: stock/views.py:305
+#: stock/views.py:298
 msgid "Stock item returned from customer"
 msgstr ""
 
-#: stock/views.py:317
+#: stock/views.py:308
 msgid "Select Label Template"
 msgstr ""
 
-#: stock/views.py:340
+#: stock/views.py:331
 msgid "Select valid label"
 msgstr ""
 
-#: stock/views.py:404
+#: stock/views.py:395
 msgid "Delete All Test Data"
 msgstr ""
 
-#: stock/views.py:420
+#: stock/views.py:411
 msgid "Confirm test data deletion"
 msgstr ""
 
-#: stock/views.py:440
+#: stock/views.py:431
 msgid "Add Test Result"
 msgstr ""
 
-#: stock/views.py:478
+#: stock/views.py:469
 msgid "Edit Test Result"
 msgstr ""
 
-#: stock/views.py:496
+#: stock/views.py:487
 msgid "Delete Test Result"
 msgstr ""
 
-#: stock/views.py:508
+#: stock/views.py:499
 msgid "Select Test Report Template"
 msgstr ""
 
-#: stock/views.py:523
+#: stock/views.py:514
 msgid "Select valid template"
 msgstr ""
 
-#: stock/views.py:576
+#: stock/views.py:567
 msgid "Stock Export Options"
 msgstr ""
 
-#: stock/views.py:698
+#: stock/views.py:689
 msgid "Stock Item QR Code"
 msgstr ""
 
-#: stock/views.py:724
+#: stock/views.py:715
 msgid "Install Stock Item"
 msgstr ""
 
-#: stock/views.py:824
+#: stock/views.py:815
 msgid "Uninstall Stock Items"
 msgstr ""
 
-#: stock/views.py:932
+#: stock/views.py:923
 msgid "Uninstalled stock items"
 msgstr ""
 
-#: stock/views.py:957
+#: stock/views.py:948
 msgid "Adjust Stock"
 msgstr ""
 
-#: stock/views.py:1067
+#: stock/views.py:1058
 msgid "Move Stock Items"
 msgstr ""
 
-#: stock/views.py:1068
+#: stock/views.py:1059
 msgid "Count Stock Items"
 msgstr ""
 
-#: stock/views.py:1069
+#: stock/views.py:1060
 msgid "Remove From Stock"
 msgstr ""
 
-#: stock/views.py:1070
+#: stock/views.py:1061
 msgid "Add Stock Items"
 msgstr ""
 
-#: stock/views.py:1071
+#: stock/views.py:1062
 msgid "Delete Stock Items"
 msgstr ""
 
-#: stock/views.py:1099
+#: stock/views.py:1090
 msgid "Must enter integer value"
 msgstr ""
 
-#: stock/views.py:1104
+#: stock/views.py:1095
 msgid "Quantity must be positive"
 msgstr ""
 
-#: stock/views.py:1111
+#: stock/views.py:1102
 #, python-brace-format
 msgid "Quantity must not exceed {x}"
 msgstr ""
 
-#: stock/views.py:1190
+#: stock/views.py:1181
 #, python-brace-format
 msgid "Added stock to {n} items"
 msgstr ""
 
-#: stock/views.py:1205
+#: stock/views.py:1196
 #, python-brace-format
 msgid "Removed stock from {n} items"
 msgstr ""
 
-#: stock/views.py:1218
+#: stock/views.py:1209
 #, python-brace-format
 msgid "Counted stock for {n} items"
 msgstr ""
 
-#: stock/views.py:1246
+#: stock/views.py:1237
 msgid "No items were moved"
 msgstr ""
 
-#: stock/views.py:1249
+#: stock/views.py:1240
 #, python-brace-format
 msgid "Moved {n} items to {dest}"
 msgstr ""
 
-#: stock/views.py:1268
+#: stock/views.py:1259
 #, python-brace-format
 msgid "Deleted {n} stock items"
 msgstr ""
 
-#: stock/views.py:1280
+#: stock/views.py:1271
 msgid "Edit Stock Item"
 msgstr ""
 
-#: stock/views.py:1365
+#: stock/views.py:1356
 msgid "Serialize Stock"
 msgstr ""
 
-#: stock/views.py:1558
+#: stock/views.py:1549
 msgid "Duplicate Stock Item"
 msgstr ""
 
-#: stock/views.py:1624
+#: stock/views.py:1615
 msgid "Invalid quantity"
 msgstr ""
 
-#: stock/views.py:1627
+#: stock/views.py:1618
 msgid "Quantity cannot be less than zero"
 msgstr ""
 
-#: stock/views.py:1631
+#: stock/views.py:1622
 msgid "Invalid part selection"
 msgstr ""
 
-#: stock/views.py:1679
+#: stock/views.py:1670
 #, python-brace-format
 msgid "Created {n} new stock items"
 msgstr ""
 
-#: stock/views.py:1698 stock/views.py:1714
+#: stock/views.py:1689 stock/views.py:1705
 msgid "Created new stock item"
 msgstr ""
 
-#: stock/views.py:1733
+#: stock/views.py:1724
 msgid "Delete Stock Location"
 msgstr ""
 
-#: stock/views.py:1747
+#: stock/views.py:1738
 msgid "Delete Stock Item"
 msgstr ""
 
-#: stock/views.py:1759
+#: stock/views.py:1750
 msgid "Delete Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:1778
+#: stock/views.py:1769
 msgid "Edit Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:1788
+#: stock/views.py:1779
 msgid "Add Stock Tracking Entry"
 msgstr ""
 
@@ -4525,8 +4574,9 @@ msgstr ""
 msgid "Virtual part"
 msgstr ""
 
-#: templates/js/bom.js:164
-msgid "Templat part"
+#: templates/js/bom.js:164 templates/js/company.js:147 templates/js/part.js:125
+#: templates/js/part.js:353
+msgid "Template part"
 msgstr ""
 
 #: templates/js/bom.js:169
@@ -4631,11 +4681,6 @@ msgstr ""
 
 #: templates/js/company.js:129
 msgid "No supplier parts found"
-msgstr ""
-
-#: templates/js/company.js:147 templates/js/part.js:125
-#: templates/js/part.js:353
-msgid "Template part"
 msgstr ""
 
 #: templates/js/company.js:151 templates/js/part.js:129

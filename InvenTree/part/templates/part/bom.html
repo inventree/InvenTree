@@ -39,8 +39,13 @@
             <span class='fas fa-trash-alt'></span>
         </button>
         <button class='btn btn-primary' type='button' title='{% trans "Import BOM data" %}' id='bom-upload'>
-            <span class='fas fa-file-upload'></span> {% trans "Upload" %}
+            <span class='fas fa-file-upload'></span> {% trans "Import from File" %}
         </button>
+        {% if part.variant_of %}
+        <button class='btn btn-default' type='button' title='{% trans "Copy BOM from parent part" %}' id='bom-duplicate'>
+            <span class='fas fa-clone'></span> {% trans "Copy from Parent" %}
+        </button>
+        {% endif %}
         <button class='btn btn-default' type='button' title='{% trans "New BOM Item" %}' id='bom-item-new'>
             <span class='fas fa-plus-circle'></span> {% trans "Add Item" %}
         </button>
@@ -155,6 +160,17 @@
 
     $('#bom-upload').click(function() {
         location.href = "{% url 'upload-bom' part.id %}";
+    });
+
+    $('#bom-duplicate').click(function() {
+        launchModalForm(
+            "{% url 'duplicate-bom' part.id %}",
+            {
+                success: function() {
+                    $('#bom-table').bootstrapTable('refresh');
+                }
+            }
+        );
     });
 
     $("#bom-item-new").click(function () {

@@ -209,6 +209,7 @@ class PurchaseOrder(Order):
 
         line.save()
 
+    @transaction.atomic
     def place_order(self):
         """ Marks the PurchaseOrder as PLACED. Order must be currently PENDING. """
 
@@ -217,6 +218,7 @@ class PurchaseOrder(Order):
             self.issue_date = datetime.now().date()
             self.save()
 
+    @transaction.atomic
     def complete_order(self):
         """ Marks the PurchaseOrder as COMPLETE. Order must be currently PLACED. """
 
@@ -225,10 +227,16 @@ class PurchaseOrder(Order):
             self.complete_date = datetime.now().date()
             self.save()
 
+    def can_cancel(self):
+        return self.status not in [
+            PurchaseOrderStatus.PLACED,
+            PurchaseOrderStatus.PENDING
+        ]
+
     def cancel_order(self):
         """ Marks the PurchaseOrder as CANCELLED. """
 
-        if self.status in [PurchaseOrderStatus.PLACED, PurchaseOrderStatus.PENDING]:
+        if self.can_cancel():
             self.status = PurchaseOrderStatus.CANCELLED
             self.save()
 
@@ -377,6 +385,16 @@ class SalesOrder(Order):
 
         return True
 
+    def can_cancel(self):
+        """
+        Return True if this order can be cancelled
+        """
+
+        if not self.status == SalesOrderStatus.PENDING:
+            return False
+
+        return True
+
     @transaction.atomic
     def cancel_order(self):
         """
@@ -386,7 +404,7 @@ class SalesOrder(Order):
         - Delete any StockItems which have been allocated
         """
 
-        if not self.status == SalesOrderStatus.PENDING:
+        if not self.can_cancel():
             return False
 
         self.status = SalesOrderStatus.CANCELLED

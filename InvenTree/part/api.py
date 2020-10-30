@@ -786,12 +786,11 @@ class BomList(generics.ListCreateAPIView):
         validated = params.get('validated', None)
 
         if validated is not None:
-
             validated = str2bool(validated)
 
             # Work out which lines have actually been validated
             pks = []
-
+            
             for bom_item in queryset.all():
                 if bom_item.is_line_valid:
                     pks.append(bom_item.pk)

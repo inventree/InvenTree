@@ -102,7 +102,7 @@ function loadBomTable(table, options) {
      * 
      * BOM data are retrieved from the server via AJAX query
      */
-    
+
     var params = {
         part: options.parent_id,
         ordering: 'name',
@@ -111,22 +111,22 @@ function loadBomTable(table, options) {
     if (options.part_detail) {
         params.part_detail = true;
     }
-
-    if (options.sub_part_detail) {
-        params.sub_part_detail = true;
-    }
-
+    
+    params.sub_part_detail = true;
+    
     var filters = {};
 
     if (!options.disableFilters) {
-        filters = loadTableFilters("bom");
+        filters = loadTableFilters('bom');
     }
 
     for (var key in params) {
         filters[key] = params[key];
     }
 
-    setupFilterList("bom", $(table));
+    setupFilterList('bom', $(table));
+
+    // Construct the table columns
 
     var cols = [];
 
@@ -161,7 +161,7 @@ function loadBomTable(table, options) {
                 }
 
                 if (sub_part.is_template) {
-                    html += makeIconBadge('fa-clone', '{% trans "Templat part" %}');
+                    html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
                 }
 
                 // Display an extra icon if this part is an assembly
@@ -357,7 +357,7 @@ function loadBomTable(table, options) {
                 return {classes: 'rowinvalid'};
             }
         },
-        formatNoMatches: function() { return "{% trans "No BOM items found" %}"; },
+        formatNoMatches: function() { return '{% trans "No BOM items found" %}'; },
         clickToSelect: true,
         queryParams: filters,
         original: params,

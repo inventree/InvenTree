@@ -164,11 +164,11 @@ class StockItemAttachmentCreate(AjaxCreateView):
     ajax_template_name = "modal_form.html"
     role_required = 'stock.add'
 
-    def post_save(self, **kwargs):
+    def post_save(self, attachment, form, **kwargs):
         """ Record the user that uploaded the attachment """
         
-        self.object.user = self.request.user
-        self.object.save()
+        attachment.user = self.request.user
+        attachment.save()
 
     def get_data(self):
         return {
@@ -245,31 +245,27 @@ class StockItemAssignToCustomer(AjaxUpdateView):
     form_class = StockForms.AssignStockItemToCustomerForm
     role_required = 'stock.change'
 
-    def post(self, request, *args, **kwargs):
+    def validate(self, item, form, **kwargs):
 
-        customer = request.POST.get('customer', None)
+        customer = form.cleaned_data.get('customer', None)
+
+        if not customer:
+            form.add_error('customer', _('Customer must be specified'))
+
+    def post_save(self, item, form, **kwargs):
+        """
+        Assign the stock item to the customer.
+        """
+
+        customer = form.cleaned_data.get('customer', None)
 
         if customer:
-            try:
-                customer = Company.objects.get(pk=customer)
-            except (ValueError, Company.DoesNotExist):
-                customer = None
-
-        if customer is not None:
-            stock_item = self.get_object()
-
-            item = stock_item.allocateToCustomer(
+            item = item.allocateToCustomer(
                 customer,
-                user=request.user
+                user=self.request.user
             )
 
             item.clearAllocations()
-
-        data = {
-            'form_valid': True,
-        }
-
-        return self.renderJsonResponse(request, self.get_form(), data)
 
 
 class StockItemReturnToStock(AjaxUpdateView):
@@ -283,29 +279,24 @@ class StockItemReturnToStock(AjaxUpdateView):
     form_class = StockForms.ReturnStockItemForm
     role_required = 'stock.change'
 
-    def post(self, request, *args, **kwargs):
+    def validate(self, item, form, **kwargs):
 
-        location = request.POST.get('location', None)
+        location = form.cleaned_data.get('location', None)
+
+        if not location:
+            form.add_error('location', _('Specify a valid location'))
+
+    def post_save(self, item, form, **kwargs):
+
+        location = form.cleaned_data.get('location', None)
 
         if location:
-            try:
-                location = StockLocation.objects.get(pk=location)
-            except (ValueError, StockLocation.DoesNotExist):
-                location = None
+            item.returnFromCustomer(location, self.request.user)
 
-        if location:
-            stock_item = self.get_object()
-
-            stock_item.returnFromCustomer(location, request.user)
-        else:
-            raise ValidationError({'location': _("Specify a valid location")})
-
-        data = {
-            'form_valid': True,
-            'success': _("Stock item returned from customer")
+    def get_data(self):
+        return {
+            'success': _('Stock item returned from customer')
         }
-
-        return self.renderJsonResponse(request, self.get_form(), data)
 
 
 class StockItemSelectLabels(AjaxView):
@@ -440,11 +431,11 @@ class StockItemTestResultCreate(AjaxCreateView):
     ajax_form_title = _("Add Test Result")
     role_required = 'stock.add'
 
-    def post_save(self, **kwargs):
+    def post_save(self, result, form, **kwargs):
         """ Record the user that uploaded the test result """
 
-        self.object.user = self.request.user
-        self.object.save()
+        result.user = self.request.user
+        result.save()
 
     def get_initial(self):
 

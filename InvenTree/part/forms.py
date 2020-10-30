@@ -19,8 +19,13 @@ from .models import PartParameterTemplate, PartParameter
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
-
 from common.models import Currency
+
+
+class PartModelChoiceField(forms.ModelChoiceField):
+    """ Extending string representation of Part instance with available stock """
+    def label_from_instance(self, part):
+        return f'{part} - {part.available_stock}'
 
 
 class PartImageForm(HelperForm):
@@ -75,6 +80,38 @@ class BomExportForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.fields['file_format'].choices = self.get_choices()
+
+
+class BomDuplicateForm(HelperForm):
+    """
+    Simple confirmation form for BOM duplication.
+
+    Select which parent to select from.
+    """
+
+    parent = PartModelChoiceField(
+        label=_('Parent Part'),
+        help_text=_('Select parent part to copy BOM from'),
+        queryset=Part.objects.filter(is_template=True),
+    )
+
+    clear = forms.BooleanField(
+        required=False, initial=True,
+        help_text=_('Clear existing BOM items')
+    )
+
+    confirm = forms.BooleanField(
+        required=False, initial=False,
+        help_text=_('Confirm BOM duplication')
+    )
+
+    class Meta:
+        model = Part
+        fields = [
+            'parent',
+            'clear',
+            'confirm',
+        ]
 
 
 class BomValidateForm(HelperForm):
@@ -208,12 +245,6 @@ class EditCategoryForm(HelperForm):
             'default_location',
             'default_keywords',
         ]
-
-
-class PartModelChoiceField(forms.ModelChoiceField):
-    """ Extending string representation of Part instance with available stock """
-    def label_from_instance(self, part):
-        return f'{part} - {part.available_stock}'
 
 
 class EditBomItemForm(HelperForm):

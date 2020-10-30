@@ -60,29 +60,24 @@ class BuildCancel(AjaxUpdateView):
     form_class = forms.CancelBuildForm
     role_required = 'build.change'
 
-    def post(self, request, *args, **kwargs):
-        """ Handle POST request. Mark the build status as CANCELLED """
+    def validate(self, build, form, **kwargs):
 
-        build = self.get_object()
+        confirm = str2bool(form.cleaned_data.get('confirm_cancel', False))
 
-        form = self.get_form()
-
-        valid = form.is_valid()
-
-        confirm = str2bool(request.POST.get('confirm_cancel', False))
-
-        if confirm:
-            build.cancelBuild(request.user)
-        else:
+        if not confirm:
             form.add_error('confirm_cancel', _('Confirm build cancellation'))
-            valid = False
 
-        data = {
-            'form_valid': valid,
+    def post_save(self, build, form, **kwargs):
+        """
+        Cancel the build.
+        """
+
+        build.cancelBuild(self.request.user)
+
+    def get_data(self):
+        return {
             'danger': _('Build was cancelled')
         }
-
-        return self.renderJsonResponse(request, form, data=data)
 
 
 class BuildAutoAllocate(AjaxUpdateView):
