@@ -1130,6 +1130,9 @@ class StockItem(MPTTModel):
     def clear_test_results(self, **kwargs):
         """
         Remove all test results
+
+        kwargs:
+            TODO
         """
 
         # All test results
@@ -1138,7 +1141,6 @@ class StockItem(MPTTModel):
         # TODO - Perhaps some filtering options supplied by kwargs?
 
         results.delete()
-
 
     def getTestResults(self, test=None, result=None, user=None):
         """

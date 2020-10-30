@@ -1141,7 +1141,7 @@ class Part(MPTTModel):
         if clear:
             self.get_parameters().delete()
 
-        for parameter in other.get_parameters.all():
+        for parameter in other.get_parameters():
 
             # If this part already has a parameter pointing to the same template,
             # delete that parameter from this part first!

@@ -454,7 +454,7 @@ class PurchaseOrderIssue(AjaxUpdateView):
 
     def validate(self, order, form, **kwargs):
 
-        confirm = str2bool(form.cleaned_data.get('confirm', False))
+        confirm = str2bool(self.request.POST.get('confirm', False))
 
         if not confirm:
             form.add_error('confirm', _('Confirm order placement'))
@@ -503,6 +503,7 @@ class PurchaseOrderComplete(AjaxUpdateView):
         return {
             'success': _('Purchase order completed')
         }
+
 
 class SalesOrderShip(AjaxUpdateView):
     """ View for 'shipping' a SalesOrder """

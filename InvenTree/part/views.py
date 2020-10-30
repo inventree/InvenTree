@@ -372,7 +372,7 @@ class MakePartVariant(AjaxCreateView):
         initials['is_template'] = False
         initials['variant_of'] = part_template
         initials['bom_copy'] = InvenTreeSetting.get_setting('PART_COPY_BOM')
-        initials['parameters_copy'] = InvenTreeSetting.get_seting('PART_COPY_PARAMETERS')
+        initials['parameters_copy'] = InvenTreeSetting.get_setting('PART_COPY_PARAMETERS')
 
         return initials
 
