@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from django.db import models, transaction
-from django.db.models import Sum
+from django.db.models import Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
@@ -162,6 +162,22 @@ class PartCategory(InvenTreeTree):
             category_parameters.append(part_parameters)
 
         return category_parameters
+
+    @classmethod
+    def get_parent_categories(cls):
+        """ Return tuple list of parent (root) categories """
+
+        # Store parent categories (add empty label)
+        parent_categories = [
+            ('', '-' * 10)
+        ]
+        # Get root nodes
+        root_categories = cls.objects.filter(level=0)
+
+        for category in root_categories:
+            parent_categories.append((category.id, category.name))
+
+        return parent_categories
 
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
@@ -1548,6 +1564,48 @@ class PartParameter(models.Model):
         if save:
             part_parameter.save()
         return part_parameter
+
+
+class PartCategoryParameterTemplate(models.Model):
+    """
+    A PartCategoryParameterTemplate creates a unique relationship between a PartCategory
+    and a PartParameterTemplate.
+    Multiple PartParameterTemplate instances can be associated to a PartCategory to drive
+    a default list of parameter templates attached to a Part instance upon creation.
+
+    Attributes:
+        category: Reference to a single PartCategory object
+        parameter_template: Reference to a single PartParameterTemplate object
+        default_value: The default value for the parameter in the context of the selected
+                       category
+    """
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['category', 'parameter_template'],
+                             name='unique_category_parameter_template_pair')
+        ]
+
+    def __str__(self):
+        """ String representation of a PartCategoryParameterTemplate (admin interface) """
+        if self.default_value:
+            return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
+        else:
+            return f'{self.category.name} | {self.parameter_template.name}'
+
+    category = models.ForeignKey(PartCategory,
+                                 on_delete=models.CASCADE,
+                                 related_name='parameter_templates',
+                                 help_text=_('Part Category'))
+
+    parameter_template = models.ForeignKey(PartParameterTemplate,
+                                           on_delete=models.CASCADE,
+                                           related_name='part_categories',
+                                           help_text=_('Parameter Template'))
+
+    default_value = models.CharField(max_length=500,
+                                     blank=True,
+                                     help_text=_('Default Parameter Value'))
 
 
 class BomItem(models.Model):
