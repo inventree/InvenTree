@@ -814,14 +814,11 @@ class StockItem(MPTTModel):
             raise ValidationError({"quantity": _("Quantity does not match serial numbers")})
 
         # Test if each of the serial numbers are valid
-        existing = []
-
-        for serial in serials:
-            if self.part.checkIfSerialNumberExists(serial):
-                existing.append(serial)
+        existing = self.part.find_conflicting_serial_numbers(serials)
 
         if len(existing) > 0:
-            raise ValidationError({"serial_numbers": _("Serial numbers already exist: ") + str(existing)})
+            exists = ','.join([str(x) for x in existing])
+            raise ValidationError({"serial_numbers": _("Serial numbers already exist") + ': ' + exists})
 
         # Create a new stock item for each unique serial number
         for serial in serials:
@@ -1128,6 +1125,22 @@ class StockItem(MPTTModel):
             s += ' @ {loc}'.format(loc=self.location.name)
 
         return s
+
+    @transaction.atomic
+    def clear_test_results(self, **kwargs):
+        """
+        Remove all test results
+
+        kwargs:
+            TODO
+        """
+
+        # All test results
+        results = self.test_results.all()
+
+        # TODO - Perhaps some filtering options supplied by kwargs?
+
+        results.delete()
 
     def getTestResults(self, test=None, result=None, user=None):
         """

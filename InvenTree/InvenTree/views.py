@@ -362,6 +362,17 @@ class AjaxCreateView(AjaxMixin, CreateView):
         form = self.get_form()
         return self.renderJsonResponse(request, form)
 
+    def do_save(self, form):
+        """
+        Method for actually saving the form to the database.
+        Default implementation is very simple,
+        but can be overridden if required.
+        """
+
+        self.object = form.save()
+
+        return self.object
+
     def post(self, request, *args, **kwargs):
         """ Responds to form POST. Validates POST data and returns status info.
 
@@ -385,13 +396,17 @@ class AjaxCreateView(AjaxMixin, CreateView):
             'form_valid': valid
         }
 
+        # Add in any extra class data
+        for value, key in enumerate(self.get_data()):
+            data[key] = value
+
         if valid:
 
             # Perform (optional) pre-save step
             self.pre_save(None, self.form)
 
             # Save the object to the database
-            self.object = self.form.save()
+            self.do_save(self.form)
 
             # Perform (optional) post-save step
             self.post_save(self.object, self.form)
@@ -425,6 +440,17 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         
         return self.renderJsonResponse(request, self.get_form(), context=self.get_context_data())
 
+    def do_save(self, form):
+        """
+        Method for updating the object in the database.
+        Default implementation is very simple,
+        but can be overridden if required.
+        """
+
+        self.object = form.save()
+
+        return self.object
+
     def post(self, request, *args, **kwargs):
         """ Respond to POST request.
 
@@ -453,13 +479,17 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             'form_valid': valid
         }
 
+        # Add in any extra class data
+        for value, key in enumerate(self.get_data()):
+            data[key] = value
+
         if valid:
 
             # Perform (optional) pre-save step
             self.pre_save(self.object, form)
 
             # Save the updated objec to the database
-            obj = form.save()
+            obj = self.do_save(form)
 
             # Perform (optional) post-save step
             self.post_save(obj, form)
@@ -485,7 +515,7 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
     """
 
     form_class = DeleteForm
-    ajax_form_title = "Delete Item"
+    ajax_form_title = _("Delete Item")
     ajax_template_name = "modal_delete_form.html"
     context_object_name = 'item'
 
@@ -534,7 +564,7 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
         if confirmed:
             obj.delete()
         else:
-            form.errors['confirm_delete'] = ['Check box to confirm item deletion']
+            form.add_error('confirm_delete', _('Check box to confirm item deletion'))
             context[self.context_object_name] = self.get_object()
 
         data = {
@@ -549,7 +579,7 @@ class EditUserView(AjaxUpdateView):
     """ View for editing user information """
 
     ajax_template_name = "modal_form.html"
-    ajax_form_title = "Edit User Information"
+    ajax_form_title = _("Edit User Information")
     form_class = EditUserForm
 
     def get_object(self):
@@ -560,7 +590,7 @@ class SetPasswordView(AjaxUpdateView):
     """ View for setting user password """
 
     ajax_template_name = "InvenTree/password.html"
-    ajax_form_title = "Set Password"
+    ajax_form_title = _("Set Password")
     form_class = SetPasswordForm
 
     def get_object(self):
@@ -579,9 +609,9 @@ class SetPasswordView(AjaxUpdateView):
             # Passwords must match
 
             if not p1 == p2:
-                error = 'Password fields must match'
-                form.errors['enter_password'] = [error]
-                form.errors['confirm_password'] = [error]
+                error = _('Password fields must match')
+                form.add_error('enter_password', error)
+                form.add_error('confirm_password', error)
 
                 valid = False
 

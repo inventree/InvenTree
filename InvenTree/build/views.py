@@ -60,29 +60,24 @@ class BuildCancel(AjaxUpdateView):
     form_class = forms.CancelBuildForm
     role_required = 'build.change'
 
-    def post(self, request, *args, **kwargs):
-        """ Handle POST request. Mark the build status as CANCELLED """
+    def validate(self, build, form, **kwargs):
 
-        build = self.get_object()
+        confirm = str2bool(form.cleaned_data.get('confirm_cancel', False))
 
-        form = self.get_form()
+        if not confirm:
+            form.add_error('confirm_cancel', _('Confirm build cancellation'))
 
-        valid = form.is_valid()
+    def post_save(self, build, form, **kwargs):
+        """
+        Cancel the build.
+        """
 
-        confirm = str2bool(request.POST.get('confirm_cancel', False))
+        build.cancelBuild(self.request.user)
 
-        if confirm:
-            build.cancelBuild(request.user)
-        else:
-            form.errors['confirm_cancel'] = [_('Confirm build cancellation')]
-            valid = False
-
-        data = {
-            'form_valid': valid,
+    def get_data(self):
+        return {
             'danger': _('Build was cancelled')
         }
-
-        return self.renderJsonResponse(request, form, data=data)
 
 
 class BuildAutoAllocate(AjaxUpdateView):
@@ -128,8 +123,8 @@ class BuildAutoAllocate(AjaxUpdateView):
         valid = False
 
         if confirm is False:
-            form.errors['confirm'] = [_('Confirm stock allocation')]
-            form.non_field_errors = [_('Check the confirmation box at the bottom of the list')]
+            form.add_error('confirm', _('Confirm stock allocation'))
+            form.add_error(None, _('Check the confirmation box at the bottom of the list'))
         else:
             build.autoAllocate()
             valid = True
@@ -163,8 +158,8 @@ class BuildUnallocate(AjaxUpdateView):
         valid = False
 
         if confirm is False:
-            form.errors['confirm'] = [_('Confirm unallocation of build stock')]
-            form.non_field_errors = [_('Check the confirmation box')]
+            form.add_error('confirm', _('Confirm unallocation of build stock'))
+            form.add_error(None, _('Check the confirmation box'))
         else:
             build.unallocateStock()
             valid = True
@@ -266,15 +261,13 @@ class BuildComplete(AjaxUpdateView):
         valid = False
 
         if confirm is False:
-            form.errors['confirm'] = [
-                _('Confirm completion of build'),
-            ]
+            form.add_error('confirm', _('Confirm completion of build'))
         else:
             try:
                 location = StockLocation.objects.get(id=loc_id)
                 valid = True
             except (ValueError, StockLocation.DoesNotExist):
-                form.errors['location'] = [_('Invalid location selected')]
+                form.add_error('location', _('Invalid location selected'))
 
             serials = []
 
@@ -291,24 +284,20 @@ class BuildComplete(AjaxUpdateView):
                         # Exctract a list of provided serial numbers
                         serials = ExtractSerialNumbers(sn, build.quantity)
 
-                        existing = []
-
-                        for serial in serials:
-                            if build.part.checkIfSerialNumberExists(serial):
-                                existing.append(serial)
+                        existing = build.part.find_conflicting_serial_numbers(serials)
 
                         if len(existing) > 0:
                             exists = ",".join([str(x) for x in existing])
-                            form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                            form.add_error('serial_numbers', _('The following serial numbers already exist: ({sn})'.format(sn=exists)))
                             valid = False
 
                     except ValidationError as e:
-                        form.errors['serial_numbers'] = e.messages
+                        form.add_error('serial_numbers', e.messages)
                         valid = False
 
             if valid:
                 if not build.completeBuild(location, serials, request.user):
-                    form.non_field_errors = [('Build could not be completed')]
+                    form.add_error(None, _('Build could not be completed'))
                     valid = False
 
         data = {

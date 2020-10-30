@@ -404,29 +404,19 @@ class PurchaseOrderCancel(AjaxUpdateView):
     form_class = order_forms.CancelPurchaseOrderForm
     role_required = 'purchase_order.change'
 
-    def post(self, request, *args, **kwargs):
-        """ Mark the PO as 'CANCELLED' """
-
-        order = self.get_object()
-        form = self.get_form()
-
-        confirm = str2bool(request.POST.get('confirm', False))
-
-        valid = False
+    def validate(self, order, form, **kwargs):
+        
+        confirm = str2bool(form.cleaned_data.get('confirm', False))
 
         if not confirm:
-            form.errors['confirm'] = [_('Confirm order cancellation')]
-        else:
-            valid = True
+            form.add_error('confirm', _('Confirm order cancellation'))
 
-        data = {
-            'form_valid': valid
-        }
+        if not order.can_cancel():
+            form.add_error(None, _('Order cannot be cancelled'))
 
-        if valid:
-            order.cancel_order()
+    def post_save(self, order, form, **kwargs):
 
-        return self.renderJsonResponse(request, form, data)
+        order.cancel_order()
 
 
 class SalesOrderCancel(AjaxUpdateView):
@@ -438,30 +428,19 @@ class SalesOrderCancel(AjaxUpdateView):
     form_class = order_forms.CancelSalesOrderForm
     role_required = 'sales_order.change'
 
-    def post(self, request, *args, **kwargs):
+    def validate(self, order, form, **kwargs):
 
-        order = self.get_object()
-        form = self.get_form()
-
-        confirm = str2bool(request.POST.get('confirm', False))
-
-        valid = False
+        confirm = str2bool(form.cleaned_data.get('confirm', False))
 
         if not confirm:
-            form.errors['confirm'] = [_('Confirm order cancellation')]
-        else:
-            valid = True
+            form.add_error('confirm', _('Confirm order cancellation'))
 
-        if valid:
-            if not order.cancel_order():
-                form.non_field_errors = [_('Could not cancel order')]
-                valid = False
+        if not order.can_cancel():
+            form.add_error(None, _('Order cannot be cancelled'))
 
-        data = {
-            'form_valid': valid,
-        }
+    def post_save(self, order, form, **kwargs):
 
-        return self.renderJsonResponse(request, form, data)
+        order.cancel_order()
 
 
 class PurchaseOrderIssue(AjaxUpdateView):
@@ -473,29 +452,21 @@ class PurchaseOrderIssue(AjaxUpdateView):
     form_class = order_forms.IssuePurchaseOrderForm
     role_required = 'purchase_order.change'
 
-    def post(self, request, *args, **kwargs):
-        """ Mark the purchase order as 'PLACED' """
+    def validate(self, order, form, **kwargs):
 
-        order = self.get_object()
-        form = self.get_form()
-
-        confirm = str2bool(request.POST.get('confirm', False))
-
-        valid = False
+        confirm = str2bool(self.request.POST.get('confirm', False))
 
         if not confirm:
-            form.errors['confirm'] = [_('Confirm order placement')]
-        else:
-            valid = True
+            form.add_error('confirm', _('Confirm order placement'))
 
-        data = {
-            'form_valid': valid,
+    def post_save(self, order, form, **kwargs):
+
+        order.place_order()
+
+    def get_data(self):
+        return {
+            'success': _('Purchase order issued')
         }
-
-        if valid:
-            order.place_order()
-
-        return self.renderJsonResponse(request, form, data)
 
 
 class PurchaseOrderComplete(AjaxUpdateView):
@@ -517,22 +488,21 @@ class PurchaseOrderComplete(AjaxUpdateView):
 
         return ctx
 
-    def post(self, request, *args, **kwargs):
+    def validate(self, order, form, **kwargs):
 
-        confirm = str2bool(request.POST.get('confirm', False))
+        confirm = str2bool(form.cleaned_data.get('confirm', False))
 
-        if confirm:
-            po = self.get_object()
-            po.status = PurchaseOrderStatus.COMPLETE
-            po.save()
+        if not confirm:
+            form.add_error('confirm', _('Confirm order completion'))
 
-        data = {
-            'form_valid': confirm
+    def post_save(self, order, form, **kwargs):
+
+        order.complete_order()
+
+    def get_data(self):
+        return {
+            'success': _('Purchase order completed')
         }
-
-        form = self.get_form()
-
-        return self.renderJsonResponse(request, form, data)
 
 
 class SalesOrderShip(AjaxUpdateView):
@@ -558,13 +528,13 @@ class SalesOrderShip(AjaxUpdateView):
         valid = False
 
         if not confirm:
-            form.errors['confirm'] = [_('Confirm order shipment')]
+            form.add_error('confirm', _('Confirm order shipment'))
         else:
             valid = True
 
         if valid:
             if not order.ship_order(request.user):
-                form.non_field_errors = [_('Could not ship order')]
+                form.add_error(None, _('Could not ship order'))
                 valid = False
 
         data = {
@@ -1117,52 +1087,21 @@ class POLineItemCreate(AjaxCreateView):
     ajax_form_title = _('Add Line Item')
     role_required = 'purchase_order.add'
 
-    def post(self, request, *arg, **kwargs):
+    def validate(self, item, form, **kwargs):
 
-        self.request = request
+        order = form.cleaned_data.get('order', None)
 
-        form = self.get_form()
+        part = form.cleaned_data.get('part', None)
 
-        valid = form.is_valid()
+        if not part:
+            form.add_error('part', _('Supplier part must be specified'))
 
-        # Extract the SupplierPart ID from the form
-        part_id = form['part'].value()
-
-        # Extract the Order ID from the form
-        order_id = form['order'].value()
-
-        try:
-            order = PurchaseOrder.objects.get(id=order_id)
-        except (ValueError, PurchaseOrder.DoesNotExist):
-            order = None
-            form.errors['order'] = [_('Invalid Purchase Order')]
-            valid = False
-
-        try:
-            sp = SupplierPart.objects.get(id=part_id)
-
-            if order is not None:
-                if not sp.supplier == order.supplier:
-                    form.errors['part'] = [_('Supplier must match for Part and Order')]
-                    valid = False
-
-        except (SupplierPart.DoesNotExist, ValueError):
-            valid = False
-            form.errors['part'] = [_('Invalid SupplierPart selection')]
-
-        data = {
-            'form_valid': valid,
-        }
-
-        if valid:
-            self.object = form.save()
-
-            data['pk'] = self.object.pk
-            data['text'] = str(self.object)
-        else:
-            self.object = None
-        
-        return self.renderJsonResponse(request, form, data,)
+        if part and order:
+            if not part.supplier == order.supplier:
+                form.add_error(
+                    'part',
+                    _('Supplier must match for Part and Order')
+                )
 
     def get_form(self):
         """ Limit choice options based on the selected order, etc

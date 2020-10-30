@@ -245,31 +245,27 @@ class StockItemAssignToCustomer(AjaxUpdateView):
     form_class = StockForms.AssignStockItemToCustomerForm
     role_required = 'stock.change'
 
-    def post(self, request, *args, **kwargs):
+    def validate(self, item, form, **kwargs):
 
-        customer = request.POST.get('customer', None)
+        customer = form.cleaned_data.get('customer', None)
+
+        if not customer:
+            form.add_error('customer', _('Customer must be specified'))
+
+    def post_save(self, item, form, **kwargs):
+        """
+        Assign the stock item to the customer.
+        """
+
+        customer = form.cleaned_data.get('customer', None)
 
         if customer:
-            try:
-                customer = Company.objects.get(pk=customer)
-            except (ValueError, Company.DoesNotExist):
-                customer = None
-
-        if customer is not None:
-            stock_item = self.get_object()
-
-            item = stock_item.allocateToCustomer(
+            item = item.allocateToCustomer(
                 customer,
-                user=request.user
+                user=self.request.user
             )
 
             item.clearAllocations()
-
-        data = {
-            'form_valid': True,
-        }
-
-        return self.renderJsonResponse(request, self.get_form(), data)
 
 
 class StockItemReturnToStock(AjaxUpdateView):
@@ -283,29 +279,24 @@ class StockItemReturnToStock(AjaxUpdateView):
     form_class = StockForms.ReturnStockItemForm
     role_required = 'stock.change'
 
-    def post(self, request, *args, **kwargs):
+    def validate(self, item, form, **kwargs):
 
-        location = request.POST.get('location', None)
+        location = form.cleaned_data.get('location', None)
+
+        if not location:
+            form.add_error('location', _('Specify a valid location'))
+
+    def post_save(self, item, form, **kwargs):
+
+        location = form.cleaned_data.get('location', None)
 
         if location:
-            try:
-                location = StockLocation.objects.get(pk=location)
-            except (ValueError, StockLocation.DoesNotExist):
-                location = None
+            item.returnFromCustomer(location, self.request.user)
 
-        if location:
-            stock_item = self.get_object()
-
-            stock_item.returnFromCustomer(location, request.user)
-        else:
-            raise ValidationError({'location': _("Specify a valid location")})
-
-        data = {
-            'form_valid': True,
-            'success': _("Stock item returned from customer")
+    def get_data(self):
+        return {
+            'success': _('Stock item returned from customer')
         }
-
-        return self.renderJsonResponse(request, self.get_form(), data)
 
 
 class StockItemSelectLabels(AjaxView):
@@ -417,8 +408,8 @@ class StockItemDeleteTestData(AjaxUpdateView):
         confirm = str2bool(request.POST.get('confirm', False))
 
         if confirm is not True:
-            form.errors['confirm'] = [_('Confirm test data deletion')]
-            form.non_field_errors = [_('Check the confirmation box')]
+            form.add_error('confirm', _('Confirm test data deletion'))
+            form.add_error(None, _('Check the confirmation box'))
         else:
             stock_item.test_results.all().delete()
             valid = True
@@ -918,7 +909,7 @@ class StockItemUninstall(AjaxView, FormMixin):
 
         if not confirmed:
             valid = False
-            form.errors['confirm'] = [_('Confirm stock adjustment')]
+            form.add_error('confirm', _('Confirm stock adjustment'))
 
         data = {
             'form_valid': valid,
@@ -1116,7 +1107,7 @@ class StockAdjust(AjaxView, FormMixin):
 
         if not confirmed:
             valid = False
-            form.errors['confirm'] = [_('Confirm stock adjustment')]
+            form.add_error('confirm', _('Confirm stock adjustment'))
 
         data = {
             'form_valid': valid,
@@ -1416,7 +1407,7 @@ class StockItemSerialize(AjaxUpdateView):
         try:
             numbers = ExtractSerialNumbers(serials, quantity)
         except ValidationError as e:
-            form.errors['serial_numbers'] = e.messages
+            form.add_error('serial_numbers', e.messages)
             valid = False
             numbers = []
         
@@ -1428,9 +1419,9 @@ class StockItemSerialize(AjaxUpdateView):
                 
                 for k in messages.keys():
                     if k in ['quantity', 'destination', 'serial_numbers']:
-                        form.errors[k] = messages[k]
+                        form.add_error(k, messages[k])
                     else:
-                        form.non_field_errors = [messages[k]]
+                        form.add_error(None, messages[k])
 
                 valid = False
 
@@ -1622,14 +1613,14 @@ class StockItemCreate(AjaxCreateView):
                 part = None
                 quantity = 1
                 valid = False
-                form.errors['quantity'] = [_('Invalid quantity')]
+                form.add_error('quantity', _('Invalid quantity'))
 
             if quantity < 0:
-                form.errors['quantity'] = [_('Quantity cannot be less than zero')]
+                form.add_error('quantity', _('Quantity cannot be less than zero'))
                 valid = False
 
             if part is None:
-                form.errors['part'] = [_('Invalid part selection')]
+                form.add_error('part', _('Invalid part selection'))
             else:
                 # A trackable part must provide serial numbesr
                 if part.trackable:
@@ -1642,15 +1633,14 @@ class StockItemCreate(AjaxCreateView):
                         try:
                             serials = ExtractSerialNumbers(sn, quantity)
 
-                            existing = []
-
-                            for serial in serials:
-                                if part.checkIfSerialNumberExists(serial):
-                                    existing.append(serial)
+                            existing = part.find_conflicting_serial_numbers(serials)
 
                             if len(existing) > 0:
                                 exists = ",".join([str(x) for x in existing])
-                                form.errors['serial_numbers'] = [_('The following serial numbers already exist: ({sn})'.format(sn=exists))]
+                                form.add_error(
+                                    'serial_numbers',
+                                    _('Serial numbers already exist') + ': ' + exists
+                                )
                                 valid = False
 
                             else:
@@ -1682,7 +1672,7 @@ class StockItemCreate(AjaxCreateView):
                                     valid = True
 
                         except ValidationError as e:
-                            form.errors['serial_numbers'] = e.messages
+                            form.add_error('serial_numbers', e.messages)
                             valid = False
 
                     else:

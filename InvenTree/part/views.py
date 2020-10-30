@@ -371,6 +371,8 @@ class MakePartVariant(AjaxCreateView):
         initials = model_to_dict(part_template)
         initials['is_template'] = False
         initials['variant_of'] = part_template
+        initials['bom_copy'] = InvenTreeSetting.get_setting('PART_COPY_BOM')
+        initials['parameters_copy'] = InvenTreeSetting.get_setting('PART_COPY_PARAMETERS')
 
         return initials
 
@@ -446,9 +448,9 @@ class PartDuplicate(AjaxCreateView):
                 confirmed = str2bool(request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
-                    
-                    form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
+                    msg = _('Possible matches exist - confirm creation of new part')
+                    form.add_error('confirm_creation', msg)
+                    form.pre_form_warning = msg
                     valid = False
 
         data = {
@@ -576,9 +578,10 @@ class PartCreate(AjaxCreateView):
                 confirmed = str2bool(request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
+                    msg = _('Possible matches exist - confirm creation of new part')
+                    form.add_error('confirm_creation', msg)
                     
-                    form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
+                    form.pre_form_warning = msg
                     valid = False
 
         data = {
@@ -905,23 +908,21 @@ class BomValidate(AjaxUpdateView):
 
         return self.renderJsonResponse(request, form, context=self.get_context())
 
-    def post(self, request, *args, **kwargs):
+    def validate(self, part, form, **kwargs):
 
-        form = self.get_form()
-        part = self.get_object()
+        confirm = str2bool(form.cleaned_data.get('validate', False))
 
-        confirmed = str2bool(request.POST.get('validate', False))
+        if not confirm:
+            form.add_error('validate', _('Confirm that the BOM is valid'))
 
-        if confirmed:
-            part.validate_bom(request.user)
-        else:
-            form.errors['validate'] = ['Confirm that the BOM is valid']
+    def post_save(self, part, form, **kwargs):
 
-        data = {
-            'form_valid': confirmed
+        part.validate_bom(self.request.user)
+
+    def get_data(self):
+        return {
+            'success': _('Validated Bill of Materials')
         }
-
-        return self.renderJsonResponse(request, form, data, context=self.get_context())
 
 
 class BomUpload(InvenTreeRoleMixin, FormView):
@@ -1054,7 +1055,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
         bom_file_valid = False
 
         if bom_file is None:
-            self.form.errors['bom_file'] = [_('No BOM file provided')]
+            self.form.add_error('bom_file', _('No BOM file provided'))
         else:
             # Create a BomUploadManager object - will perform initial data validation
             # (and raise a ValidationError if there is something wrong with the file)
@@ -1065,7 +1066,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 errors = e.error_dict
 
                 for k, v in errors.items():
-                    self.form.errors[k] = v
+                    self.form.add_error(k, v)
 
         if bom_file_valid:
             # BOM file is valid? Proceed to the next step!
