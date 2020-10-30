@@ -41,6 +41,7 @@
 - model: stock.stockitem
   pk: 100
   fields:
+    batch: "B1234"
     part: 25
     location: 7
     quantity: 10
@@ -54,6 +55,7 @@
   pk: 101
   fields:
     part: 25
+    batch: "B2345"
     location: 7
     quantity: 5
     level: 0

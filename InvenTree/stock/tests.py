@@ -197,6 +197,10 @@ class StockTest(TestCase):
     def test_partial_move(self):
         w1 = StockItem.objects.get(pk=100)
 
+        # A batch code is required to split partial stock!
+        w1.batch = 'BW1'
+        w1.save()
+
         # Move 6 of the units
         self.assertTrue(w1.move(self.diningroom, 'Moved', None, quantity=6))
 
@@ -339,6 +343,7 @@ class StockTest(TestCase):
         # Item will deplete when deleted
         item = StockItem.objects.get(pk=100)
         item.delete_on_deplete = True
+
         item.save()
 
         n = StockItem.objects.filter(part=25).count()
