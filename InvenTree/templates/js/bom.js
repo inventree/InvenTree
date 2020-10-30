@@ -161,7 +161,7 @@ function loadBomTable(table, options) {
                 }
 
                 if (sub_part.is_template) {
-                    html += makeIconBadge('fa-clone', '{% trans "Templat part" %}');
+                    html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
                 }
 
                 // Display an extra icon if this part is an assembly
