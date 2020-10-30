@@ -103,6 +103,29 @@ function loadBomTable(table, options) {
      * BOM data are retrieved from the server via AJAX query
      */
 
+    var params = {
+        part: options.parent_id,
+        ordering: 'name',
+    }
+
+    if (options.part_detail) {
+        params.part_detail = true;
+    }
+    
+    params.sub_part_detail = true;
+    
+    var filters = {};
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters('bom');
+    }
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList('bom', $(table));
+
     // Construct the table columns
 
     var cols = [];
@@ -286,19 +309,6 @@ function loadBomTable(table, options) {
 
     // Configure the table (bootstrap-table)
 
-    var params = {
-        part: options.parent_id,
-        ordering: 'name',
-    }
-
-    if (options.part_detail) {
-        params.part_detail = true;
-    }
-
-    if (options.sub_part_detail) {
-        params.sub_part_detail = true;
-    }
-
     // Function to request BOM data for sub-items
     // This function may be called recursively for multi-level BOMs
     function requestSubItems(bom_pk, part_pk) {
@@ -349,9 +359,10 @@ function loadBomTable(table, options) {
                 return {classes: 'rowinvalid'};
             }
         },
-        formatNoMatches: function() { return "{% trans "No BOM items found" %}"; },
+        formatNoMatches: function() { return '{% trans "No BOM items found" %}'; },
         clickToSelect: true,
-        queryParams: params,
+        queryParams: filters,
+        original: params,
         columns: cols,
         url: options.bom_url,
         onPostBody: function() {
