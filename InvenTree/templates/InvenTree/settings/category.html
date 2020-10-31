@@ -37,6 +37,33 @@
 {{ block.super }}
 {% if category %}
 
+	$("#param-table").inventreeTable({
+        url: "{% url 'api-part-category-parameters' category %}",
+        queryParams: {
+            ordering: 'name',
+        },
+        formatNoMatches: function() { return '{% trans "No category parameter templates found" %}'; },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'parameter_template_detail.name',
+                title: 'Parameter Template',
+                sortable: 'true',
+            },
+            {
+                field: 'default_value',
+                title: 'Default Value',
+                sortable: 'true',
+            },
+        ]
+    });
+
+
 	$("#new-param").click(function() {
         launchModalForm("{% url 'category-param-template-create' category %}", {
             success: function() {
@@ -44,6 +71,6 @@
             },
         });
     });
-    
+
 {% endif %}
 {% endblock %}
