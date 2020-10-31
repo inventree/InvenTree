@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block tabs %}
-{% include "InvenTree/settings/tabs.html" with tab='part' %}
+{% include "InvenTree/settings/tabs.html" with tab='category' %}
 {% endblock %}
 
 {% block subtitle %}
@@ -11,9 +11,16 @@
 
 {% block settings %}
 
-<h4>{% trans "Category Parameter Templates" %}</h4>
+<form action="{% url 'settings-category' %}" method="post">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+    {% crispy form %}
+</form>
 
-<h5>{% trans "Category: XXX (id = 1)" %}</h5>
+{% if category %}
+<hr>
+
+<h4>{% trans "Category Parameter Templates" %}</h4>
 
 <div id='param-buttons'>
     <button class='btn btn-success' id='new-param'>
@@ -23,18 +30,20 @@
 
 <table class='table table-striped table-condensed' id='param-table' data-toolbar='#param-buttons'>
 </table>
-
+{% endif %}
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
+{% if category %}
 
 	$("#new-param").click(function() {
-        launchModalForm("{% url 'category-param-template-create' 1 %}", {
+        launchModalForm("{% url 'category-param-template-create' category %}", {
             success: function() {
                 $("#param-table").bootstrapTable('refresh');
             },
         });
     });
-
+    
+{% endif %}
 {% endblock %}

@@ -179,6 +179,11 @@ class PartCategory(InvenTreeTree):
 
         return parent_categories
 
+    def get_parameter_templates(self):
+        """ Return parameter templates associated to category """
+
+        return PartCategoryParameterTemplate.objects.filter(category=self.id)
+
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
 def before_delete_part_category(sender, instance, using, **kwargs):

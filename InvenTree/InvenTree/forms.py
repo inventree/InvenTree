@@ -12,6 +12,7 @@ from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
 from django.contrib.auth.models import User
 from common.models import ColorTheme
+from part.models import PartCategory
 
 
 class HelperForm(forms.ModelForm):
@@ -190,6 +191,39 @@ class ColorThemeSelectForm(forms.ModelForm):
                     css_class='col-sm-6',
                     style='width: 200px;'),
                 Div(StrictButton(_('Apply Theme'), css_class='btn btn-primary', type='submit'),
+                    css_class='col-sm-6',
+                    style='width: auto;'),
+                css_class='row',
+            ),
+        )
+
+
+class SettingCategorySelectForm(forms.ModelForm):
+    """ Form for setting category settings """
+
+    name = forms.ChoiceField(choices=(), required=False)
+
+    class Meta:
+        model = PartCategory
+        fields = [
+            'name'
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super(SettingCategorySelectForm, self).__init__(*args, **kwargs)
+
+        # Populate category choices
+        self.fields['name'].choices = PartCategory.get_parent_categories()
+
+        self.helper = FormHelper()
+        # Form rendering
+        self.helper.form_show_labels = False
+        self.helper.layout = Layout(
+            Div(
+                Div(Field('name'),
+                    css_class='col-sm-6',
+                    style='width: 200px;'),
+                Div(StrictButton(_('Select Category'), css_class='btn btn-primary', type='submit'),
                     css_class='col-sm-6',
                     style='width: auto;'),
                 css_class='row',
