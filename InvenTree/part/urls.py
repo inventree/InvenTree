@@ -76,15 +76,15 @@ part_detail_urls = [
 
 category_parameter_urls = [
     url(r'^new/', views.CategoryParameterTemplateCreate.as_view(), name='category-param-template-create'),
-    # url(r'^(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='category-param-template-edit'),
-    # url(r'^(?P<pk>\d+)/delete/', views.PartParameterTemplateDelete.as_view(), name='category-param-template-edit'),
+    url(r'^(?P<pid>\d+)/edit/', views.CategoryParameterTemplateEdit.as_view(), name='category-param-template-edit'),
+    url(r'^(?P<pid>\d+)/delete/', views.CategoryParameterTemplateDelete.as_view(), name='category-param-template-delete'),
 ]
 
 part_category_urls = [
     url(r'^edit/?', views.CategoryEdit.as_view(), name='category-edit'),
     url(r'^delete/?', views.CategoryDelete.as_view(), name='category-delete'),
 
-    url(r'^template/', include(category_parameter_urls)),
+    url(r'^parameters/', include(category_parameter_urls)),
 
     url(r'^parametric/?', views.CategoryParametric.as_view(), name='category-parametric'),
     url(r'^.*$', views.CategoryDetail.as_view(), name='category-detail'),

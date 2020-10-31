@@ -2174,7 +2174,95 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
         if form.is_valid():
             form.cleaned_data['category'] = self.kwargs.get('pk', None)
 
+        try:
+            # Get category
+            category = self.get_initial()['category']
+
+            # Get existing related parts
+            parameters = [template.parameter_template.pk
+                          for template in category.get_parameter_templates()]
+
+            # Exclude templates already linked to category
+            updated_choices = []
+            for choice in form.fields["parameter_template"].choices:
+                if (choice[0] not in parameters):
+                    updated_choices.append(choice)
+
+            # Update choices for related part
+            form.fields['parameter_template'].choices = updated_choices
+        except KeyError:
+            pass
+
         return form
+
+
+class CategoryParameterTemplateEdit(AjaxUpdateView):
+    """ View for editing a PartCategoryParameterTemplate """
+
+    role_required = 'part.change'
+
+    model = PartCategoryParameterTemplate
+    form_class = part_forms.EditCategoryParameterTemplateForm
+    ajax_form_title = _('Edit Category Parameter Template')
+
+    def get_object(self):
+        try:
+            self.object = self.model.objects.get(pk=self.kwargs['pid'])
+        except:
+            return None
+
+        return self.object
+
+    def get_form(self):
+        """ Create a form to upload a new CategoryParameterTemplate
+        - Hide the 'category' field (parent part)
+        - Display parameter templates which are not yet related
+        """
+
+        form = super(AjaxUpdateView, self).get_form()
+        
+        form.fields['category'].widget = HiddenInput()
+
+        if form.is_valid():
+            form.cleaned_data['category'] = self.kwargs.get('pk', None)
+
+        try:
+            # Get category
+            category = PartCategory.objects.get(pk=self.kwargs.get('pk', None))
+
+            # Get existing related parts
+            parameters = [template.parameter_template.pk
+                          for template in category.get_parameter_templates()]
+
+            # Exclude templates already linked to category
+            updated_choices = []
+            for choice in form.fields["parameter_template"].choices:
+                if (choice[0] not in parameters):
+                    updated_choices.append(choice)
+
+            # Update choices for related part
+            form.fields['parameter_template'].choices = updated_choices
+        except KeyError:
+            pass
+
+        return form
+
+
+class CategoryParameterTemplateDelete(AjaxDeleteView):
+    """ View for deleting an existing PartCategoryParameterTemplate """
+
+    role_required = 'part.delete'
+
+    model = PartCategoryParameterTemplate
+    ajax_form_title = _("Delete Category Parameter Template")
+
+    def get_object(self):
+        try:
+            self.object = self.model.objects.get(pk=self.kwargs['pid'])
+        except:
+            return None
+
+        return self.object
 
 
 class BomItemDetail(InvenTreeRoleMixin, DetailView):

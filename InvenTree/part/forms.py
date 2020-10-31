@@ -249,7 +249,7 @@ class EditCategoryForm(HelperForm):
 
 
 class EditCategoryParameterTemplateForm(HelperForm):
-    """ Form for editing a PartParameterTemplate object """
+    """ Form for editing a PartCategoryParameterTemplate object """
 
     class Meta:
         model = PartCategoryParameterTemplate
