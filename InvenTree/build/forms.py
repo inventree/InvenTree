@@ -6,13 +6,14 @@ Django Forms for interacting with Build objects
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
+from django import forms
 
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 
-from django import forms
 from .models import Build, BuildItem, BuildOrderAttachment
-from stock.models import StockLocation
+
+from stock.models import StockLocation, StockItem
 
 
 class EditBuildForm(HelperForm):
@@ -106,18 +107,18 @@ class UnallocateBuildForm(HelperForm):
 class AutoAllocateForm(HelperForm):
     """ Form for auto-allocation of stock to a build """
 
-    confirm = forms.BooleanField(required=False, help_text=_('Confirm'))
+    confirm = forms.BooleanField(required=True, help_text=_('Confirm stock allocation'))
 
-    output_id = forms.IntegerField(
-        required=False,
-        widget=forms.HiddenInput()
+    # Keep track of which build output we are interested in
+    output = forms.ModelChoiceField(
+        queryset=StockItem.objects.all(),
     )
 
     class Meta:
         model = Build
         fields = [
             'confirm',
-            'output_id',
+            'output',
         ]
 
 
@@ -136,20 +137,25 @@ class CompleteBuildForm(HelperForm):
         help_text=_('Location of completed parts'),
     )
 
-    serial_numbers = forms.CharField(
-        label=_('Serial numbers'),
+    confirm_incomplete = forms.BooleanField(
         required=False,
-        help_text=_('Enter unique serial numbers (or leave blank)')
+        help_text=_("Confirm completion with incomplete stock allocation")
     )
 
-    confirm = forms.BooleanField(required=False, help_text=_('Confirm build completion'))
+    confirm = forms.BooleanField(required=True, help_text=_('Confirm build completion'))
+
+    output = forms.ModelChoiceField(
+        queryset=StockItem.objects.all(),  # Queryset is narrowed in the view
+        widget=forms.HiddenInput(),
+    )
 
     class Meta:
         model = Build
         fields = [
-            'serial_numbers',
             'location',
-            'confirm'
+            'output',
+            'confirm',
+            'confirm_incomplete',
         ]
 
 

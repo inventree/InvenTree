@@ -82,12 +82,10 @@ class BuildTest(TestCase):
         self.assertEqual(self.build.getRequiredQuantity(self.sub_part_1), 100)
         self.assertEqual(self.build.getRequiredQuantity(self.sub_part_2), 250)
 
-        self.assertTrue(self.build.can_build)
         self.assertFalse(self.build.is_complete)
 
         # Delete some stock and see if the build can still be completed
         self.stock_2_1.delete()
-        self.assertFalse(self.build.can_build)
 
     def test_build_item_clean(self):
         # Ensure that dodgy BuildItem objects cannot be created

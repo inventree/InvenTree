@@ -61,6 +61,45 @@ function toggleStar(options) {
 }
 
 
+function makePartIcons(part, options={}) {
+    /* Render a set of icons for the given part.
+     */
+
+    var html = '';
+
+    if (part.trackable) {
+        html += makeIconBadge('fa-directions', '{% trans "Trackable part" %}');
+    }
+
+    if (part.virtual) {
+        html += makeIconBadge('fa-ghost', '{% trans "Virtual part" %}');
+    }
+
+    if (part.is_template) {
+        html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
+    }
+    
+    if (part.assembly) {
+        html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
+    }
+
+    if (part.starred) {
+        html += makeIconBadge('fa-star', '{% trans "Starred part" %}');
+    }
+
+    if (part.salable) {
+        html += makeIconBadge('fa-dollar-sign', title='{% trans "Salable part" %}');
+    }
+    
+    if (!part.active) {
+        html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
+    }
+
+    return html;
+    
+}
+
+
 function loadPartVariantTable(table, partId, options={}) {
     /* Load part variant table
      */
@@ -340,40 +379,8 @@ function loadPartTable(table, url, options={}) {
 
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
             
-            if (row.trackable) {
-                display += makeIconBadge('fa-directions', '{% trans "Trackable part" %}');
-            }
+            display += makePartIcons(row);
 
-            if (row.virtual) {
-                display += makeIconBadge('fa-ghost', '{% trans "Virtual part" %}');
-            }
-
-
-            if (row.is_template) {
-                display += makeIconBadge('fa-clone', '{% trans "Template part" %}');
-            }
-            
-            if (row.assembly) {
-                display += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
-            }
-
-            if (row.starred) {
-                display += makeIconBadge('fa-star', '{% trans "Starred part" %}');
-            }
-
-            if (row.salable) {
-                display += makeIconBadge('fa-dollar-sign', title='{% trans "Salable part" %}');
-            }
-
-            /*
-            if (row.component) {
-                display = display + `<span class='fas fa-cogs label-right' title='Component part'></span>`;
-            }
-            */
-            
-            if (!row.active) {
-                display += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
-            }
             return display; 
         }
     });

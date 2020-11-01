@@ -908,7 +908,7 @@ function loadInstalledInTable(table, options) {
             url: "{% url 'api-bom-list' %}",
             queryParams: {
                 part: options.part,
-                trackable: true,
+                sub_part_trackable: true,
                 sub_part_detail: true,
             },
             showColumns: false,

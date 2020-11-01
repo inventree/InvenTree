@@ -905,6 +905,18 @@ class Part(MPTTModel):
     def has_bom(self):
         return self.bom_count > 0
 
+    def has_trackable_parts(self):
+        """
+        Return True if any parts linked in the Bill of Materials are trackable.
+        This is important when building the part.
+        """
+
+        for bom_item in self.bom_items.all():
+            if bom_item.sub_part.trackable:
+                return True
+
+        return False
+
     @property
     def bom_count(self):
         """ Return the number of items contained in the BOM for this part """
@@ -1188,7 +1200,7 @@ class Part(MPTTModel):
             parameter.save()
 
     @transaction.atomic
-    def deepCopy(self, other, **kwargs):
+    def deep_copy(self, other, **kwargs):
         """ Duplicates non-field data from another part.
         Does not alter the normal fields of this part,
         but can be used to copy other data linked by ForeignKey refernce.

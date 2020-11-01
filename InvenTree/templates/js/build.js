@@ -36,11 +36,8 @@ function makeBuildOutputActionButtons(output, buildInfo) {
     /* Generate action buttons for a build output.
      */
 
-    var outputId = 'untracked';
-
-    if (output) {
-        outputId = output.pk;
-    }
+    var buildId = buildInfo.pk;
+    var outputId = output.pk;
 
     var panel = `#allocation-panel-${outputId}`;
 
@@ -54,23 +51,19 @@ function makeBuildOutputActionButtons(output, buildInfo) {
     var html = `<div class='btn-group float-right' role='group'>`;
 
     // Add a button to "auto allocate" against the build
-    if (!output) {
-        html += makeIconButton(
-            'fa-magic icon-blue', 'button-output-auto', outputId,
-            '{% trans "Auto-allocate stock items to this output" %}',
-        );
-    }
+    html += makeIconButton(
+        'fa-magic icon-blue', 'button-output-auto', outputId,
+        '{% trans "Auto-allocate stock items to this output" %}',
+    );
 
-    if (output) {
-        // Add a button to "complete" the particular build output
-        html += makeIconButton(
-            'fa-check icon-green', 'button-output-complete', outputId,
-            '{% trans "Complete build output" %}',
-            {
-                disabled: true
-            }
-        );
-    }
+    // Add a button to "complete" the particular build output
+    html += makeIconButton(
+        'fa-check icon-green', 'button-output-complete', outputId,
+        '{% trans "Complete build output" %}',
+        {
+            //disabled: true
+        }
+    );
 
     // Add a button to "cancel" the particular build output (unallocate)
     html += makeIconButton(
@@ -78,18 +71,14 @@ function makeBuildOutputActionButtons(output, buildInfo) {
         '{% trans "Unallocate stock from build output" %}',
     );
 
-    if (output) {
-        // Add a button to "delete" the particular build output
-        html += makeIconButton(
-            'fa-trash-alt icon-red', 'button-output-delete', outputId,
-            '{% trans "Delete build output" %}',
-        );
+    // Add a button to "delete" the particular build output
+    html += makeIconButton(
+        'fa-trash-alt icon-red', 'button-output-delete', outputId,
+        '{% trans "Delete build output" %}',
+    );
 
-        // Add a button to "destroy" the particular build output (mark as damaged, scrap)
-        // TODO
-
-    }
-
+    // Add a button to "destroy" the particular build output (mark as damaged, scrap)
+    // TODO
 
     html += '</div>';
 
@@ -103,13 +92,21 @@ function makeBuildOutputActionButtons(output, buildInfo) {
                 data: {
                     output: outputId,
                 },
-                reload: true,
+                success: reloadTable,
             }
         );
     });
 
     $(panel).find(`#button-output-complete-${outputId}`).click(function() {
-        // TODO
+        launchModalForm(
+            `/build/${buildId}/complete/`,
+            {
+                success: reloadTable,
+                data: {
+                    output: outputId,
+                }
+            }
+        );  
     });
 
     $(panel).find(`#button-output-unallocate-${outputId}`).click(function() {
@@ -155,18 +152,12 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     var outputId = null;
     
-    if (output) {
-        outputId = output.pk;
-    }
+    outputId = output.pk;
 
     var table = options.table;
     
     if (options.table == null) {
-        if (outputId != null) {
-            table = `#allocation-table-${outputId}`;
-        } else {
-            table = `#allocation-table-untracked`;
-        }
+        table = `#allocation-table-${outputId}`;
     }
     
     function reloadTable() {
@@ -177,14 +168,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     function requiredQuantity(row) {
         // Return the requied quantity for a given row
 
-        if (output) {
-            // Tracked stock allocated against a particular BuildOutput
-            return row.quantity * output.quantity;
-        } else {
-            // Untrack stock allocated against the build
-            return row.quantity * (buildInfo.quantity - buildInfo.completed);
-        }
-
+        return row.quantity * output.quantity;
     }
 
     function sumAllocations(row) {
@@ -300,7 +284,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         queryParams: {
             part: partId,
             sub_part_detail: true,
-            sub_part_trackable: outputId != null,
         },
         formatNoMatches: function() { 
             return '{% trans "No BOM items found" %}';
@@ -357,14 +340,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                             var allocatedQuantity = sumAllocations(tableRow);
 
                             // Is this line item fully allocated?
-                            if (output) {
-                                if (allocatedQuantity >= (tableRow.quantity * output.quantity)) {
-                                    allocatedLines += 1;
-                                }
-                            } else {
-                                if (allocatedQuantity >= (tableRow.quantity * (buildInfo.quantity - buildInfo.completed))) {
-                                    allocatedLines += 1;
-                                }
+                            if (allocatedQuantity >= (tableRow.quantity * output.quantity)) {
+                                allocatedLines += 1;
                             }
 
                             // Push the updated row back into the main table
@@ -506,6 +483,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                     var html = imageHoverIcon(thumb) + renderLink(name, url);
 
+                    html += makePartIcons(row.sub_part_detail);
+
                     return html;
                 }
             },
@@ -547,13 +526,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     var qA = rowA.quantity;
                     var qB = rowB.quantity;
 
-                    if (output) {
-                        qA *= output.quantity;
-                        qB *= output.quantity;
-                    } else {
-                        qA *= buildInfo.quantity;
-                        qB *= buildInfo.quantity;
-                    }
+                    qA *= output.quantity;
+                    qB *= output.quantity;
                 
                     // Handle the case where both numerators are zero
                     if ((aA == 0) && (aB == 0)) {

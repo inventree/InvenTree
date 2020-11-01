@@ -360,7 +360,7 @@ class MakePartVariant(AjaxCreateView):
             parameters_copy = str2bool(request.POST.get('parameters_copy', False))
 
             # Copy relevent information from the template part
-            part.deepCopy(part_template, bom=bom_copy, parameters=parameters_copy)
+            part.deep_copy(part_template, bom=bom_copy, parameters=parameters_copy)
 
         return self.renderJsonResponse(request, form, data, context=context)
 
@@ -473,7 +473,7 @@ class PartDuplicate(AjaxCreateView):
             original = self.get_part_to_copy()
 
             if original:
-                part.deepCopy(original, bom=bom_copy, parameters=parameters_copy)
+                part.deep_copy(original, bom=bom_copy, parameters=parameters_copy)
 
             try:
                 data['url'] = part.get_absolute_url()

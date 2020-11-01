@@ -11,6 +11,9 @@ InvenTree | Allocate Parts
 
 {% include "build/tabs.html" with tab='allocate' %}
 
+<div class='btn-group' role='group'>
+    
+</div>
 
 <h4>{% trans "Incomplete Build Ouputs" %}</h4>
 <div class="panel-group" id="build-output-accordion" role="tablist" aria-multiselectable="true">
@@ -19,20 +22,17 @@ InvenTree | Allocate Parts
     {% endfor %}
 </div>
 
-<hr>
-<h4>{% trans "Assigned Stock" %}</h4>
-
-<div id='build-item-toolbar'>
-    {% if build.status == BuildStatus.PENDING %}
-    <div class='btn-group'>
-        <button class='btn btn-primary' type='button' id='btn-order-parts' title='Order Parts'><span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}</button>
-        <button class='btn btn-primary' type='button' id='btn-allocate' title='{% trans "Automatically allocate stock" %}'><span class='fas fa-magic'></span> {% trans "Auto Allocate" %}</button>
-        <button class='btn btn-danger' type='button' id='btn-unallocate' title='Unallocate Stock'><span class='fas fa-minus-circle'></span> {% trans "Unallocate" %}</button>
+<!---
+    <div id='build-item-toolbar'>
+        {% if build.status == BuildStatus.PENDING %}
+        <div class='btn-group'>
+            <button class='btn btn-primary' type='button' id='btn-order-parts' title='Order Parts'><span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}</button>
+            <button class='btn btn-primary' type='button' id='btn-allocate' title='{% trans "Automatically allocate stock" %}'><span class='fas fa-magic'></span> {% trans "Auto Allocate" %}</button>
+            <button class='btn btn-danger' type='button' id='btn-unallocate' title='Unallocate Stock'><span class='fas fa-minus-circle'></span> {% trans "Unallocate" %}</button>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-</div>
-
-<table class='table table-striped table-condensed' id='build-item-list' data-toolbar='#build-item-toolbar'></table>   
+-->
 
 {% endblock %}
 
@@ -45,14 +45,6 @@ InvenTree | Allocate Parts
         completed: {{ build.completed }},
         part: {{ build.part.pk }},
     };
-
-    loadBuildOutputAllocationTable(
-        buildInfo,
-        null,
-        {
-            table: '#build-item-list',
-        }
-    );
 
     {% for item in build.incomplete_outputs %}
     // Get the build output as a javascript object
