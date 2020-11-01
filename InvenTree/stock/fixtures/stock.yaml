@@ -67,6 +67,7 @@
   pk: 102
   fields:
     part: 25
+    batch: 'ABCDE'
     location: 7
     quantity: 3
     level: 0
@@ -93,6 +94,7 @@
     part: 10001
     location: 7
     quantity: 5
+    batch: "AAA"
     level: 0
     tree_id: 0
     lft: 0
@@ -103,6 +105,7 @@
   fields:
     part: 10001
     location: 7
+    batch: "AAA"
     quantity: 1
     serial: 1
     level: 0

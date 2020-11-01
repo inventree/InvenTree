@@ -528,6 +528,7 @@ class TestResultTest(StockTest):
         item.pk = None
         item.serial = None
         item.quantity = 50
+        item.batch = "B344"
 
         item.save()
 
