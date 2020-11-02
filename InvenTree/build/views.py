@@ -404,6 +404,23 @@ class BuildComplete(AjaxUpdateView):
     ajax_form_title = _('Complete Build Order')
     ajax_template_name = 'build/complete.html'
 
+    def validate(self, build, form, **kwargs):
+
+        if not build.can_complete:
+            form.add_error(None, _('Build order cannot be completed'))
+
+    def save(self, build, form, **kwargs):
+        """
+        Perform the build completion step
+        """
+
+        build.complete_build(self.request.user)
+
+    def get_data(self):
+        return {
+            'success': _('Completed build order')
+        }
+
 
 class BuildOutputComplete(AjaxUpdateView):
     """
@@ -731,6 +748,34 @@ class BuildUpdate(AjaxUpdateView):
     ajax_template_name = 'modal_form.html'
     role_required = 'build.change'
 
+    def get_form(self):
+
+        form = super().get_form()
+
+        build = self.get_object()
+
+        # Fields which are included in the form, but hidden
+        hidden = [
+            'parent',
+            'sales_order',
+        ]
+
+        if build.is_complete:
+            # Fields which cannot be edited once the build has been completed
+
+            hidden += [
+                'part',
+                'quantity',
+                'batch',
+                'take_from',
+                'destination',
+            ]
+
+        for field in hidden:
+            form.fields[field].widget = HiddenInput()
+
+        return form
+
     def get_data(self):
         return {
             'info': _('Edited build'),
@@ -765,7 +810,7 @@ class BuildItemDelete(AjaxDeleteView):
 
 class BuildItemCreate(AjaxCreateView):
     """
-    View for allocating a StockItems to a build output.
+    View for allocating a StockItem to a build output.
     """
 
     model = BuildItem

@@ -383,9 +383,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
         if valid:
 
             # Save the object to the database
-            self.save(self.form)
-
-            self.object = self.get_object()
+            self.object = self.save(self.form)
 
             # Return the PK of the newly-created object
             data['pk'] = self.object.pk

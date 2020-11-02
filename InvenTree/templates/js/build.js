@@ -101,10 +101,10 @@ function makeBuildOutputActionButtons(output, buildInfo) {
         launchModalForm(
             `/build/${buildId}/complete-output/`,
             {
-                success: reloadTable,
                 data: {
                     output: outputId,
-                }
+                },
+                reload: true,
             }
         );  
     });

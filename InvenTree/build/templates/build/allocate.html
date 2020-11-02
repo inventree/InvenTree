@@ -15,6 +15,11 @@ InvenTree | Allocate Parts
 
 <hr>
 
+{% if build.is_complete %}
+<div class='alert alert-block alert-success'>
+    {% trans "Build order has been completed" %}
+</div>
+{% else %}
 <div class='btn-group' role='group'>
     <button class='btn btn-primary' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
         <span class='fas fa-plus-circle'></span> {% trans "Create New Output" %}
@@ -22,25 +27,27 @@ InvenTree | Allocate Parts
     <button class='btn btn-primary' type='button' id='btn-order-parts' title='{% trans "Order required parts" %}'>
         <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
     </button>
+    <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
+        <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
+    </button>
 </div>
 
+<hr>
+{% if build.incomplete_outputs %}
 <div class="panel-group" id="build-output-accordion" role="tablist" aria-multiselectable="true">
     {% for item in build.incomplete_outputs %}
     {% include "build/allocation_card.html" with item=item %}
     {% endfor %}
 </div>
+{% else %}
+<div class='alert alert-block alert-info'>
+    <b>{% trans "Create a new build output" %}</b><br>
+    {% trans "No incomplete build outputs remain." %}<br>
+    {% trans "Create a new build output using the button above" %}
+</div>
+{% endif %}
 
-<!---
-    <div id='build-item-toolbar'>
-        {% if build.status == BuildStatus.PENDING %}
-        <div class='btn-group'>
-            <button class='btn btn-primary' type='button' id='btn-order-parts' title='Order Parts'><span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}</button>
-            <button class='btn btn-primary' type='button' id='btn-allocate' title='{% trans "Automatically allocate stock" %}'><span class='fas fa-magic'></span> {% trans "Auto Allocate" %}</button>
-            <button class='btn btn-danger' type='button' id='btn-unallocate' title='Unallocate Stock'><span class='fas fa-minus-circle'></span> {% trans "Unallocate" %}</button>
-        </div>
-        {% endif %}
-    </div>
--->
+{% endif %} 
 
 {% endblock %}
 

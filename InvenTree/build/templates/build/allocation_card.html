@@ -7,11 +7,19 @@
     <div class="panel-heading" role="tab" id="heading-{{ pk }}">
       <div class="panel-title">
           <div class='row'>
-            <div class='col-sm-6'>
-                <a class='collapsed' aria-expanded='false' role="button" data-toggle="collapse" data-parent="#build-output-accordion" href="#collapse-{{ pk }}" aria-controls="collapse-{{ pk }}">
-                    <span class='fas fa-caret-right'></span> {{ item }} 
-                </a>
-            </div>
+              <a class='collapsed' aria-expanded='false' role="button" data-toggle="collapse" data-parent="#build-output-accordion" href="#collapse-{{ pk }}" aria-controls="collapse-{{ pk }}">
+                <div class='col-sm-4'>
+                    <span class='fas fa-caret-right'></span>
+                    {{ item.part.full_name }}
+                </div>
+                <div class='col-sm-2'>
+                    {% if item.serial %}
+                    # {{ item.serial }}
+                    {% else %}
+                    {{ item.quantity }}
+                    {% endif %}
+                </div>
+            </a>
             <div class='col-sm-3'>
                 <div>
                     <div id='output-progress-{{ pk }}'>

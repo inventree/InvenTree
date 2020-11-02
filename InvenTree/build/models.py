@@ -322,7 +322,8 @@ class Build(MPTTModel):
         # No issues!
         return True
 
-    def completeBuild(self, user):
+    @transaction.atomic
+    def complete_build(self, user):
         """
         Mark this build as complete
         """
@@ -334,6 +335,11 @@ class Build(MPTTModel):
         self.completed_by = user
         self.status = BuildStatus.COMPLETE
         self.save()
+
+        # Ensure that there are no longer any BuildItem objects
+        # which point to thie Build Order
+        self.allocated_stock.all().delete()
+
 
     @transaction.atomic
     def cancelBuild(self, user):
