@@ -201,8 +201,7 @@ class ColorThemeSelectForm(forms.ModelForm):
 class SettingCategorySelectForm(forms.ModelForm):
     """ Form for setting category settings """
 
-    name = forms.ChoiceField(choices=[('', '-' * 10)] + PartCategory.get_parent_categories(),
-                             required=False)
+    name = forms.ChoiceField(required=False)
 
     class Meta:
         model = PartCategory
@@ -212,6 +211,9 @@ class SettingCategorySelectForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SettingCategorySelectForm, self).__init__(*args, **kwargs)
+
+        # Populate category choices
+        self.fields['name'].choices = [('', '-' * 10)] + PartCategory.get_parent_categories()
 
         self.helper = FormHelper()
         # Form rendering
