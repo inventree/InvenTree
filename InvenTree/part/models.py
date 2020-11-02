@@ -167,13 +167,10 @@ class PartCategory(InvenTreeTree):
     def get_parent_categories(cls):
         """ Return tuple list of parent (root) categories """
 
-        # Store parent categories (add empty label)
-        parent_categories = [
-            ('', '-' * 10)
-        ]
         # Get root nodes
         root_categories = cls.objects.filter(level=0)
 
+        parent_categories = []
         for category in root_categories:
             parent_categories.append((category.id, category.name))
 

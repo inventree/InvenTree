@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
@@ -2178,7 +2179,7 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
             # Get category
             category = self.get_initial()['category']
 
-            # Get existing related parts
+            # Get existing parameter templates
             parameters = [template.parameter_template.pk
                           for template in category.get_parameter_templates()]
 
@@ -2188,12 +2189,50 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
                 if (choice[0] not in parameters):
                     updated_choices.append(choice)
 
-            # Update choices for related part
+            # Update choices for parameter templates
             form.fields['parameter_template'].choices = updated_choices
         except KeyError:
             pass
 
         return form
+
+    def post(self, request, *args, **kwargs):
+        """ Capture the POST request
+
+        - If the add_to_all_categories object is set, link parameter template to
+          all categories
+        """
+
+        form = self.get_form()
+
+        valid = form.is_valid()
+
+        if valid:
+            all_categories = form.cleaned_data['add_to_all_categories']
+
+            if all_categories:
+                selected_category = int(self.kwargs.get('pk', 0))
+                parameter_template = form.cleaned_data['parameter_template']
+                default_value = form.cleaned_data['default_value']
+
+                # Add parameter template and default value to all categories
+                for category_id, category_name in PartCategory.get_parent_categories():
+                    # Change category_id type to integer
+                    category_id = int(category_id)
+                    # Skip selected category (will be processed in the post call)
+                    if category_id != selected_category:
+                        # Get category
+                        category = PartCategory.objects.get(pk=category_id)
+                        try:
+                            cat_template = PartCategoryParameterTemplate.objects.create(category=category,
+                                                                                        parameter_template=parameter_template,
+                                                                                        default_value=default_value)
+                            cat_template.save()
+                        except IntegrityError:
+                            # Parameter template is already linked to category
+                            pass
+
+        return super().post(request, *args, **kwargs)
 
 
 class CategoryParameterTemplateEdit(AjaxUpdateView):
@@ -2230,7 +2269,7 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
             # Get category
             category = PartCategory.objects.get(pk=self.kwargs.get('pk', None))
 
-            # Get existing related parts
+            # Get existing parameter templates
             parameters = [template.parameter_template.pk
                           for template in category.get_parameter_templates()]
 
@@ -2240,7 +2279,7 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
                 if (choice[0] not in parameters):
                     updated_choices.append(choice)
 
-            # Update choices for related part
+            # Update choices for parameter templates
             form.fields['parameter_template'].choices = updated_choices
         except KeyError:
             pass
