@@ -188,7 +188,8 @@ class EditPartForm(HelperForm):
 
     category_templates = forms.BooleanField(required=False,
                                             initial=False,
-                                            help_text=_('Create parameters from category templates'),
+                                            help_text=_('Create parameters based on default category templates'),
+                                            label=_('Copy category parameter templates'),
                                             widget=forms.HiddenInput())
 
     class Meta:

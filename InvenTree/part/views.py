@@ -2168,7 +2168,7 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
 
     def get_initial(self):
         """ Get initial data for Category """
-        initials = super().get_initial().copy()
+        initials = super().get_initial()
 
         category_id = self.kwargs.get('pk', None)
 
@@ -2194,7 +2194,7 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
             form.cleaned_data['category'] = self.kwargs.get('pk', None)
 
         try:
-            # Get category
+            # Get selected category
             category = self.get_initial()['category']
 
             # Get existing parameter templates
@@ -2284,12 +2284,15 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
             form.cleaned_data['category'] = self.kwargs.get('pk', None)
 
         try:
-            # Get category
+            # Get selected category
             category = PartCategory.objects.get(pk=self.kwargs.get('pk', None))
+            # Get selected template
+            selected_template = self.get_object().parameter_template
 
             # Get existing parameter templates
             parameters = [template.parameter_template.pk
-                          for template in category.get_parameter_templates()]
+                          for template in category.get_parameter_templates()
+                          if template.parameter_template.pk != selected_template.pk]
 
             # Exclude templates already linked to category
             updated_choices = []
@@ -2299,6 +2302,8 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
 
             # Update choices for parameter templates
             form.fields['parameter_template'].choices = updated_choices
+            # Set initial choice to current template
+            form.fields['parameter_template'].initial = selected_template
         except KeyError:
             pass
 
