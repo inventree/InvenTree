@@ -844,8 +844,13 @@ function launchModalForm(url, options = {}) {
 
             $(modal).modal('hide');
 
-            // Permission denied!
-            if (xhr.status == 400) {
+            if (xhr.status == 0) {
+                // No response from the server
+                showAlertDialog(
+                    "No Response",
+                    "No response from the InvenTree server",
+                );
+            } else if (xhr.status == 400) {
                 showAlertDialog(
                     "Error 400: Bad Request",
                     "Server returned error code 400"
