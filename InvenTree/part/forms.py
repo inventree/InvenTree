@@ -186,6 +186,11 @@ class EditPartForm(HelperForm):
                                           help_text=_('Confirm part creation'),
                                           widget=forms.HiddenInput())
 
+    category_templates = forms.BooleanField(required=False,
+                                            initial=False,
+                                            help_text=_('Create parameters from category templates'),
+                                            widget=forms.HiddenInput())
+
     class Meta:
         model = Part
         fields = [
@@ -193,6 +198,7 @@ class EditPartForm(HelperForm):
             'parameters_copy',
             'confirm_creation',
             'category',
+            'category_templates',
             'name',
             'IPN',
             'description',

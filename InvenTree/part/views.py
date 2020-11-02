@@ -555,6 +555,9 @@ class PartCreate(AjaxCreateView):
         # Hide the default_supplier field (there are no matching supplier parts yet!)
         form.fields['default_supplier'].widget = HiddenInput()
 
+        # Force display of the 'category_templates' widget
+        form.fields['category_templates'].widget = CheckboxInput()
+
         return form
 
     def post(self, request, *args, **kwargs):
@@ -607,6 +610,18 @@ class PartCreate(AjaxCreateView):
             except AttributeError:
                 pass
 
+            # Create part parameters
+            category_templates = form.cleaned_data['category_templates']
+            if category_templates:
+                # Get category parent
+                category = form.cleaned_data['category'].get_root()
+
+                for template in category.get_parameter_templates():
+                    PartParameter.create(part=part,
+                                         template=template.parameter_template,
+                                         data=template.default_value,
+                                         save=True)
+
         return self.renderJsonResponse(request, form, data, context=context)
 
     def get_initial(self):
@@ -629,6 +644,9 @@ class PartCreate(AjaxCreateView):
         for label in ['name', 'IPN', 'description', 'revision', 'keywords']:
             if label in self.request.GET:
                 initials[label] = self.request.GET.get(label)
+
+        # Automatically create part parameters from category templates
+        initials['category_templates'] = str2bool(InvenTreeSetting.get_setting('PART_CATEGORY_PARAMETERS', False))
 
         return initials
 
