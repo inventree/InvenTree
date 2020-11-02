@@ -905,6 +905,7 @@ class Part(MPTTModel):
     def has_bom(self):
         return self.bom_count > 0
 
+    @property
     def has_trackable_parts(self):
         """
         Return True if any parts linked in the Bill of Materials are trackable.

@@ -92,14 +92,14 @@ function makeBuildOutputActionButtons(output, buildInfo) {
                 data: {
                     output: outputId,
                 },
-                success: reloadTable,
+                reload: true,
             }
         );
     });
 
     $(panel).find(`#button-output-complete-${outputId}`).click(function() {
         launchModalForm(
-            `/build/${buildId}/complete/`,
+            `/build/${buildId}/complete-output/`,
             {
                 success: reloadTable,
                 data: {

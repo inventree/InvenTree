@@ -210,7 +210,7 @@ class TestSerialNumberExtraction(TestCase):
 
     def test_simple(self):
 
-        e = helpers.ExtractSerialNumbers
+        e = helpers.extract_serial_numbers
 
         sn = e("1-5", 5)
         self.assertEqual(len(sn), 5)
@@ -226,7 +226,7 @@ class TestSerialNumberExtraction(TestCase):
 
     def test_failures(self):
 
-        e = helpers.ExtractSerialNumbers
+        e = helpers.extract_serial_numbers
 
         # Test duplicates
         with self.assertRaises(ValidationError):

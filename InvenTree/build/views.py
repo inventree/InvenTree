@@ -18,7 +18,7 @@ from stock.models import StockLocation, StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxCreateView, AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
-from InvenTree.helpers import str2bool, ExtractSerialNumbers, normalize
+from InvenTree.helpers import str2bool, extract_serial_numbers, normalize
 from InvenTree.status_codes import BuildStatus
 
 
@@ -67,10 +67,12 @@ class BuildCancel(AjaxUpdateView):
         if not confirm:
             form.add_error('confirm_cancel', _('Confirm build cancellation'))
 
-    def post_save(self, build, form, **kwargs):
+    def save(self, form, **kwargs):
         """
         Cancel the build.
         """
+
+        build = self.get_object()
 
         build.cancelBuild(self.request.user)
 
@@ -156,13 +158,12 @@ class BuildAutoAllocate(AjaxUpdateView):
         if not output:
             form.add_error(None, _('Build output must be specified'))
 
-    def post_save(self, build, form, **kwargs):
+    def save(self, build, form, **kwargs):
         """
         Once the form has been validated,
         perform auto-allocations
         """
 
-        build = self.get_object()
         output = form.cleaned_data.get('output', None)
 
         build.autoAllocate(output)
@@ -171,6 +172,99 @@ class BuildAutoAllocate(AjaxUpdateView):
         return {
             'success': _('Allocated stock to build output'),
         }
+
+
+class BuildOutputCreate(AjaxUpdateView):
+    """
+    Create a new build output (StockItem) for a given build.
+    """
+
+    model = Build
+    form_class = forms.BuildOutputCreateForm
+    ajax_template_name = 'build/build_output_create.html'
+    ajax_form_title = _('Create Build Output')
+    role_required = 'build.change'
+
+    def validate(self, build, form, **kwargs):
+        """
+        Validation for the form:
+        """
+
+        quantity = form.cleaned_data.get('quantity', None)
+        serials = form.cleaned_data.get('serial_numbers', None)
+
+        # Check that the serial numbers are valid
+        if serials:
+            try:
+                extracted = extract_serial_numbers(serials, quantity)
+
+                if extracted:
+                    # Check for conflicting serial numbers
+                    conflicts = build.part.find_conflicting_serial_numbers(extracted)
+
+                    if len(conflicts) > 0:
+                        msg = ",".join([str(c) for c in conflicts])
+                        form.add_error(
+                            'serial_numbers',
+                            _('Serial numbers already exist') + ': ' + msg,
+                        )
+
+            except ValidationError as e:
+                form.add_error('serial_numbers', e.messages)
+
+        else:
+            # If no serial numbers are provided, should they be?
+            if build.part.trackable:
+                form.add_error('serial_numbers', _('Serial numbers required for trackable build output'))
+
+    def save(self, build, form, **kwargs):
+        """
+        Create a new build output
+        """
+
+        data = form.cleaned_data
+
+        quantity = data.get('quantity', None)
+        batch = data.get('batch', None)
+
+        serials = data.get('serial_numbers', None)
+
+        if serials:
+            serial_numbers = extract_serial_numbers(serials, quantity)
+        else:
+            serial_numbers = None
+
+        build.create_build_output(
+            quantity,
+            serials=serial_numbers,
+            batch=batch,
+        )
+
+
+    def get_initial(self):
+
+        initials = super().get_initial()
+
+        build = self.get_object()
+
+        # Calculate the required quantity
+        quantity = max(0, build.remaining - build.incomplete_count)
+        initials['quantity'] = quantity
+
+        return initials
+
+    def get_form(self):
+
+        form = super().get_form()
+
+        build = self.get_object()
+        part = build.part
+
+        # If the part is not trackable, hide the serial number input
+        if not part.trackable:
+            form.fields['serial_numbers'] = HiddenInput()
+
+        return form
 
 
 class BuildOutputDelete(AjaxUpdateView):
@@ -182,7 +276,7 @@ class BuildOutputDelete(AjaxUpdateView):
 
     model = Build
     form_class = forms.BuildOutputDeleteForm
-    ajax_form_title = _('Delete build output')
+    ajax_form_title = _('Delete Build Output')
     role_required = 'build.delete'
 
     def get_initial(self):
@@ -296,7 +390,24 @@ class BuildUnallocate(AjaxUpdateView):
 
 
 class BuildComplete(AjaxUpdateView):
-    """ View to mark a build as Complete.
+    """
+    View to mark the build as complete.
+
+    Requirements:
+    - There can be no outstanding build outputs
+    - The "completed" value must meet or exceed the "quantity" value
+    """
+
+    model = Build
+    form_class = forms.CompleteBuildForm
+    role_required = 'build.change'
+    ajax_form_title = _('Complete Build Order')
+    ajax_template_name = 'build/complete.html'
+
+
+class BuildOutputComplete(AjaxUpdateView):
+    """
+    View to mark a particular build output as Complete.
 
     - Notifies the user of which parts will be removed from stock.
     - Removes allocated items from stock
@@ -304,10 +415,10 @@ class BuildComplete(AjaxUpdateView):
     """
 
     model = Build
-    form_class = forms.CompleteBuildForm
+    form_class = forms.CompleteBuildOutputForm
     context_object_name = "build"
     ajax_form_title = _("Complete Build Output")
-    ajax_template_name = "build/complete.html"
+    ajax_template_name = "build/complete_output.html"
     role_required = 'build.change'
 
     def get_form(self):
@@ -422,7 +533,7 @@ class BuildComplete(AjaxUpdateView):
 
         return context
 
-    def post_save(self, build, form, **kwargs):
+    def save(self, build, form, **kwargs):
 
         data = form.cleaned_data
 
@@ -593,7 +704,7 @@ class BuildCreate(AjaxCreateView):
 
                 # Check that the provided serial numbers are sensible
                 try:
-                    extracted = ExtractSerialNumbers(serials, quantity)
+                    extracted = extract_serial_numbers(serials, quantity)
                 except ValidationError as e:
                     extracted = None
                     form.add_error('serial_numbers', e.messages)
@@ -912,9 +1023,14 @@ class BuildAttachmentCreate(AjaxCreateView):
     ajax_form_title = _('Add Build Order Attachment')
     role_required = 'build.add'
 
-    def post_save(self, **kwargs):
-        self.object.user = self.request.user
-        self.object.save()
+    def save(self, form, **kwargs):
+        """
+        Add information on the user that uploaded the attachment
+        """
+
+        attachment = form.save(commit=False)
+        attachment.user = self.request.user
+        attachment.save()
 
     def get_data(self):
         return {

@@ -82,10 +82,14 @@ class PartAttachmentCreate(AjaxCreateView):
 
     role_required = 'part.add'
 
-    def post_save(self):
-        """ Record the user that uploaded the attachment """
-        self.object.user = self.request.user
-        self.object.save()
+    def save(self, form, **kwargs):
+        """
+        Record the user that uploaded this attachment
+        """
+
+        attachment = form.save(commit=False)
+        attachment.user = self.request.user
+        attachment.save()
 
     def get_data(self):
         return {
@@ -874,7 +878,10 @@ class BomDuplicate(AjaxUpdateView):
         if not confirm:
             form.add_error('confirm', _('Confirm duplication of BOM from parent'))
 
-    def post_save(self, part, form):
+    def save(self, part, form):
+        """
+        Duplicate BOM from the specified parent
+        """
 
         parent = form.cleaned_data.get('parent', None)
 
@@ -915,7 +922,10 @@ class BomValidate(AjaxUpdateView):
         if not confirm:
             form.add_error('validate', _('Confirm that the BOM is valid'))
 
-    def post_save(self, part, form, **kwargs):
+    def save(self, part, form, **kwargs):
+        """
+        Mark the BOM as validated
+        """
 
         part.validate_bom(self.request.user)
 

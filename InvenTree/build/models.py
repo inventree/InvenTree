@@ -250,7 +250,7 @@ class Build(MPTTModel):
     @property
     def incomplete_outputs(self):
         """
-        Return all the "incomplete" build outputs"
+        Return all the "incomplete" build outputs
         """
 
         outputs = self.get_build_outputs(complete=False)
@@ -258,6 +258,19 @@ class Build(MPTTModel):
         # TODO - Order by how "complete" they are?
 
         return outputs
+
+    @property
+    def incomplete_count(self):
+        """
+        Return the total number of "incomplete" outputs
+        """
+
+        quantity = 0
+
+        for output in self.incomplete_outputs:
+            quantity += output.quantity
+
+        return quantity
 
     @classmethod
     def getNextBuildNumber(cls):
@@ -290,6 +303,37 @@ class Build(MPTTModel):
                 break
 
         return new_ref
+
+    @property
+    def can_complete(self):
+        """
+        Returns True if this build can be "completed"
+
+        - Must not have any outstanding build outputs
+        - 'completed' value must meet (or exceed) the 'quantity' value
+        """
+
+        if self.incomplete_count > 0:
+            return False
+
+        if self.completed < self.quantity:
+            return False
+
+        # No issues!
+        return True
+
+    def completeBuild(self, user):
+        """
+        Mark this build as complete
+        """
+
+        if not self.can_complete:
+            return
+
+        self.completion_date = datetime.now().date()
+        self.completed_by = user
+        self.status = BuildStatus.COMPLETE
+        self.save()
 
     @transaction.atomic
     def cancelBuild(self, user):
@@ -408,6 +452,77 @@ class Build(MPTTModel):
         # Remove all the allocations
         allocations.delete()
 
+    @transaction.atomic
+    def create_build_output(self, quantity, **kwargs):
+        """
+        Create a new build output against this BuildOrder.
+
+        args:
+            quantity: The quantity of the item to produce
+
+        kwargs:
+            batch: Override batch code
+            serials: Serial numbers
+            location: Override location
+        """
+
+        batch = kwargs.get('batch', self.batch)
+        location = kwargs.get('location', self.destination)
+        serials = kwargs.get('serials', None)
+
+        """
+        Determine if we can create a single output (with quantity > 0),
+        or multiple outputs (with quantity = 1)
+        """
+
+        multiple = False
+
+        # Serial numbers are provided? We need to split!
+        if serials:
+            multiple = True
+
+        # BOM has trackable parts, so we must split!
+        if self.part.has_trackable_parts:
+            multiple = True
+
+        if multiple:
+            """
+            Create multiple build outputs with a single quantity of 1
+            """
+
+            for ii in range(quantity):
+
+                if serials:
+                    serial = serials[ii]
+                else:
+                    serial = None
+
+                output = StockModels.StockItem.objects.create(
+                    quantity=1,
+                    location=location,
+                    part=self.part,
+                    build=self,
+                    batch=batch,
+                    serial=serial,
+                    is_building=True,
+                )
+
+        else:
+            """
+            Create a single build output of the given quantity
+            """
+
+            output = StockModels.StockItem.objects.create(
+                quantity=quantity,
+                location=location,
+                part=self.part,
+                build=self,
+                batch=batch,
+                is_building=True
+            )
+
+
+    @transaction.atomic
     def deleteBuildOutput(self, output):
         """
         Remove a build output from the database:

@@ -100,7 +100,9 @@ class PurchaseOrderAttachmentCreate(AjaxCreateView):
     ajax_template_name = "modal_form.html"
     role_required = 'purchase_order.add'
 
-    def post_save(self, attachment, form, **kwargs):
+    def save(self, form, **kwargs):
+
+        attachment = form.save(commit=False)
         attachment.user = self.request.user
         attachment.save()
 
@@ -148,9 +150,14 @@ class SalesOrderAttachmentCreate(AjaxCreateView):
     ajax_form_title = _('Add Sales Order Attachment')
     role_required = 'sales_order.add'
 
-    def post_save(self, attachment, form, **kwargs):
-        self.object.user = self.request.user
-        self.object.save()
+    def save(self, form, **kwargs):
+        """
+        Save the user that uploaded the attachment
+        """
+        
+        attachment = form.save(commit=False)
+        attachment.user = self.request.user
+        attachment.save()
 
     def get_data(self):
         return {
@@ -295,7 +302,9 @@ class SalesOrderNotes(InvenTreeRoleMixin, UpdateView):
 
 
 class PurchaseOrderCreate(AjaxCreateView):
-    """ View for creating a new PurchaseOrder object using a modal form """
+    """
+    View for creating a new PurchaseOrder object using a modal form
+    """
 
     model = PurchaseOrder
     ajax_form_title = _("Create Purchase Order")
@@ -319,9 +328,12 @@ class PurchaseOrderCreate(AjaxCreateView):
 
         return initials
 
-    def post_save(self, order, form, **kwargs):
-        # Record the user who created this purchase order
+    def save(self, form, **kwargs):
+        """
+        Record the user who created this PurchaseOrder
+        """
 
+        order = form.save(commit=False)
         order.created_by = self.request.user
         order.save()
 
@@ -351,8 +363,12 @@ class SalesOrderCreate(AjaxCreateView):
 
         return initials
 
-    def post_save(self, order, form, **kwargs):
-        # Record the user who created this sales order
+    def save(self, form, **kwargs):
+        """
+        Record the user who created this SalesOrder
+        """
+
+        order = form.save(commit=False)
         order.created_by = self.request.user
         order.save()
 
@@ -414,7 +430,10 @@ class PurchaseOrderCancel(AjaxUpdateView):
         if not order.can_cancel():
             form.add_error(None, _('Order cannot be cancelled'))
 
-    def post_save(self, order, form, **kwargs):
+    def save(self, order, form, **kwargs):
+        """
+        Cancel the PurchaseOrder
+        """
 
         order.cancel_order()
 
@@ -438,7 +457,10 @@ class SalesOrderCancel(AjaxUpdateView):
         if not order.can_cancel():
             form.add_error(None, _('Order cannot be cancelled'))
 
-    def post_save(self, order, form, **kwargs):
+    def save(self, order, form, **kwargs):
+        """
+        Once the form has been validated, cancel the SalesOrder
+        """
 
         order.cancel_order()
 
@@ -459,8 +481,10 @@ class PurchaseOrderIssue(AjaxUpdateView):
         if not confirm:
             form.add_error('confirm', _('Confirm order placement'))
 
-    def post_save(self, order, form, **kwargs):
-
+    def save(self, order, form, **kwargs):
+        """
+        Once the form has been validated, place the order.
+        """
         order.place_order()
 
     def get_data(self):
@@ -495,7 +519,10 @@ class PurchaseOrderComplete(AjaxUpdateView):
         if not confirm:
             form.add_error('confirm', _('Confirm order completion'))
 
-    def post_save(self, order, form, **kwargs):
+    def save(self, order, form, **kwargs):
+        """
+        Complete the PurchaseOrder
+        """
 
         order.complete_order()
 

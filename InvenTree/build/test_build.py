@@ -10,7 +10,7 @@ from stock.models import StockItem
 from part.models import Part, BomItem
 from InvenTree import status_codes as status
 
-from InvenTree.helpers import ExtractSerialNumbers
+from InvenTree.helpers import extract_serial_numbers
 
 
 class BuildTest(TestCase):
@@ -188,7 +188,7 @@ class BuildTest(TestCase):
         self.assertTrue(self.build.isFullyAllocated())
 
         # Generate some serial numbers!
-        serials = ExtractSerialNumbers("1-10", 10)
+        serials = extract_serial_numbers("1-10", 10)
 
         self.build.completeBuild(None, serials, None)
 

@@ -32,12 +32,6 @@ class EditBuildForm(HelperForm):
         'reference': _('Build Order reference')
     }
 
-    serial_numbers = forms.CharField(
-        label=_('Serial Numbers'),
-        help_text=_('Serial numbers for build outputs'),
-        required=False,
-    )
-
     class Meta:
         model = Build
         fields = [
@@ -46,12 +40,47 @@ class EditBuildForm(HelperForm):
             'part',
             'quantity',
             'batch',
-            'serial_numbers',
             'take_from',
             'destination',
             'parent',
             'sales_order',
             'link',
+        ]
+
+
+class BuildOutputCreateForm(HelperForm):
+    """
+    Form for creating a new build output.
+    """
+
+    field_prefix = {
+        'serial_numbers': 'fa-hashtag',
+    }
+
+    quantity = forms.IntegerField(
+        label=_('Quantity'),
+        help_text=_('Enter quantity for build output'),
+    )
+
+    serial_numbers = forms.CharField(
+        label=_('Serial numbers'),
+        required=False,
+        help_text=_('Enter serial numbers for build outputs'),
+    )
+
+    confirm = forms.BooleanField(
+        required=True,
+        label=_('Confirm'),
+        help_text=_('Confirm creation of build outut'),
+    )
+
+    class Meta:
+        model = Build
+        fields = [
+            'quantity',
+            'batch',
+            'serial_numbers',
+            'confirm',
         ]
 
 
@@ -123,7 +152,27 @@ class AutoAllocateForm(HelperForm):
 
 
 class CompleteBuildForm(HelperForm):
-    """ Form for marking a Build as complete """
+    """
+    Form for marking a build as complete
+    """
+
+    confirm = forms.BooleanField(
+        required=True,
+        label=_('Confirm'),
+        help_text=_('Mark build as complete'),
+    )
+
+    class Meta:
+        model = Build
+        fields = [
+            'confirm',
+        ]
+
+
+class CompleteBuildOutputForm(HelperForm):
+    """
+    Form for completing a single build output
+    """
 
     field_prefix = {
         'serial_numbers': 'fa-hashtag',
