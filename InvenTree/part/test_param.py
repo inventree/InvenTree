@@ -6,7 +6,9 @@ from __future__ import unicode_literals
 from django.test import TestCase
 import django.core.exceptions as django_exceptions
 
+from .models import PartCategory
 from .models import PartParameter, PartParameterTemplate
+from .models import PartCategoryParameterTemplate
 
 
 class TestParams(TestCase):
@@ -24,7 +26,10 @@ class TestParams(TestCase):
         self.assertEquals(str(t1), 'Length (mm)')
 
         p1 = PartParameter.objects.get(pk=1)
-        self.assertEqual(str(p1), "M2x4 LPHS : Length = 4mm")
+        self.assertEqual(str(p1), 'M2x4 LPHS : Length = 4mm')
+
+        c1 = PartCategoryParameterTemplate.objects.get(pk=1)
+        self.assertEqual(str(c1), 'Mechanical | Length | 2.8')
 
     def test_validate(self):
         
@@ -40,3 +45,16 @@ class TestParams(TestCase):
             t3 = PartParameterTemplate(name='aBcde', units='dd')
             t3.full_clean()
             t3.save()
+
+        n = PartCategoryParameterTemplate.objects.all().count()
+        self.assertEqual(n, 2)
+
+        parent_category = PartCategory.objects.get(pk=8).get_root()
+        self.assertEqual(parent_category.pk, 7)
+
+        c1 = PartCategoryParameterTemplate(category=parent_category,
+                                           parameter_template=t1,
+                                           default_value='xyz')
+        c1.save()
+
+        self.assertEqual(n + 1, PartCategoryParameterTemplate.objects.filter(category=7).count())
