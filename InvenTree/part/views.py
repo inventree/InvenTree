@@ -714,20 +714,21 @@ class PartCreate(AjaxCreateView):
             # Create part parameters for parent category
             category_templates = form.cleaned_data['parent_category_templates']
             if category_templates:
-                # Get parent category
-                category = form.cleaned_data['category'].get_root()
+                # Get parent categories
+                parent_categories = form.cleaned_data['category'].get_ancestors()
 
-                for template in category.get_parameter_templates():
-                    # Check that template wasn't already added
-                    if template.parameter_template not in template_list:
-                        try:
-                            PartParameter.create(part=part,
-                                                 template=template.parameter_template,
-                                                 data=template.default_value,
-                                                 save=True)
-                        except IntegrityError:
-                            # PartParameter already exists
-                            pass
+                for category in parent_categories:
+                    for template in category.get_parameter_templates():
+                        # Check that template wasn't already added
+                        if template.parameter_template not in template_list:
+                            try:
+                                PartParameter.create(part=part,
+                                                     template=template.parameter_template,
+                                                     data=template.default_value,
+                                                     save=True)
+                            except IntegrityError:
+                                # PartParameter already exists
+                                pass
 
         return self.renderJsonResponse(request, form, data, context=context)
 
