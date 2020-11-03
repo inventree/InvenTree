@@ -201,6 +201,29 @@ class PartTests(PartViewTestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class PartRelatedTests(PartViewTestCase):
+
+    def test_valid_create(self):
+        """ test creation of an attachment for a valid part """
+
+        response = self.client.get(reverse('part-related-create'), {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+        # TODO - Create a new attachment using this view
+
+    def test_invalid_create(self):
+        """ test creation of an attachment for an invalid part """
+
+        # TODO
+        pass
+
+    def test_edit(self):
+        """ test editing an attachment """
+
+        # TODO
+        pass
+
+
 class PartAttachmentTests(PartViewTestCase):
 
     def test_valid_create(self):

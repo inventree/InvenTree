@@ -13,7 +13,7 @@ from mptt.fields import TreeNodeChoiceField
 from django import forms
 from django.utils.translation import ugettext as _
 
-from .models import Part, PartCategory, PartAttachment
+from .models import Part, PartCategory, PartAttachment, PartRelated
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartTestTemplate
@@ -139,6 +139,25 @@ class BomUploadSelectFile(HelperForm):
         fields = [
             'bom_file',
         ]
+
+
+class CreatePartRelatedForm(HelperForm):
+    """ Form for creating a PartRelated object """
+
+    class Meta:
+        model = PartRelated
+        fields = [
+            'part_1',
+            'part_2',
+        ]
+        labels = {
+            'part_2': _('Related Part'),
+        }
+
+    def save(self):
+        """ Disable model saving """
+
+        return super(CreatePartRelatedForm, self).save(commit=False)
 
 
 class EditPartAttachmentForm(HelperForm):

@@ -1356,6 +1356,32 @@ class Part(MPTTModel):
 
         return self.get_descendants(include_self=False)
 
+    def get_related_parts(self):
+        """ Return list of tuples for all related parts:
+            - first value is PartRelated object
+            - second value is matching Part object
+        """
+
+        related_parts = []
+
+        related_parts_1 = self.related_parts_1.filter(part_1__id=self.pk)
+
+        related_parts_2 = self.related_parts_2.filter(part_2__id=self.pk)
+
+        for related_part in related_parts_1:
+            # Add to related parts list
+            related_parts.append((related_part, related_part.part_2))
+
+        for related_part in related_parts_2:
+            # Add to related parts list
+            related_parts.append((related_part, related_part.part_1))
+
+        return related_parts
+
+    @property
+    def related_count(self):
+        return len(self.get_related_parts())
+
 
 def attach_file(instance, filename):
     """ Function for storing a file for a PartAttachment
@@ -1835,3 +1861,71 @@ class BomItem(models.Model):
         pmax = decimal2string(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
+
+
+class PartRelated(models.Model):
+    """ Store and handle related parts (eg. mating connector, crimps, etc.) """
+
+    part_1 = models.ForeignKey(Part, related_name='related_parts_1',
+                               on_delete=models.DO_NOTHING)
+
+    part_2 = models.ForeignKey(Part, related_name='related_parts_2',
+                               on_delete=models.DO_NOTHING,
+                               help_text=_('Select Related Part'))
+
+    def __str__(self):
+        return f'{self.part_1} <--> {self.part_2}'
+
+    def validate(self, part_1, part_2):
+        ''' Validate that the two parts relationship is unique '''
+
+        validate = True
+
+        parts = Part.objects.all()
+        related_parts = PartRelated.objects.all()
+
+        # Check if part exist and there are not the same part
+        if (part_1 in parts and part_2 in parts) and (part_1.pk != part_2.pk):
+            # Check if relation exists already
+            for relation in related_parts:
+                if (part_1 == relation.part_1 and part_2 == relation.part_2) \
+                   or (part_1 == relation.part_2 and part_2 == relation.part_1):
+                    validate = False
+                    break
+        else:
+            validate = False
+
+        return validate
+
+    def clean(self):
+        ''' Overwrite clean method to check that relation is unique '''
+
+        validate = self.validate(self.part_1, self.part_2)
+
+        if not validate:
+            error_message = _('Error creating relationship: check that '
+                              'the part is not related to itself '
+                              'and that the relationship is unique')
+
+            raise ValidationError(error_message)
+
+    def create_relationship(self, part_1, part_2):
+        ''' Create relationship between two parts '''
+
+        validate = self.validate(part_1, part_2)
+
+        if validate:
+            # Add relationship
+            self.part_1 = part_1
+            self.part_2 = part_2
+            self.save()
+
+        return validate
+
+    @classmethod
+    def create(cls, part_1, part_2):
+        ''' Create PartRelated object and relationship between two parts '''
+
+        related_part = cls()
+        related_part.create_relationship(part_1, part_2)
+        return related_part
