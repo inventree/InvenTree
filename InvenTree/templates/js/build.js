@@ -92,7 +92,7 @@ function makeBuildOutputActionButtons(output, buildInfo) {
                 data: {
                     output: outputId,
                 },
-                reload: true,
+                success: reloadTable,
             }
         );
     });

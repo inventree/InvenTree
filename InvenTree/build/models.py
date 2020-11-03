@@ -597,11 +597,17 @@ class Build(MPTTModel):
 
         for build_item in allocated_items:
 
-            # Complete the allocation of stock for that item
-            build_item.completeAllocation(user)
+            # TODO: This is VERY SLOW as each deletion from the database takes ~1 second to complete
+            # TODO: Use celery / redis to offload the actual object deletion...
+            # REF: https://www.botreetechnologies.com/blog/implementing-celery-using-django-for-background-task-processing
+            # REF: https://code.tutsplus.com/tutorials/using-celery-with-django-for-background-task-processing--cms-28732
 
-            # Remove the build item from the database
-            build_item.delete()
+
+            # Complete the allocation of stock for that item
+            build_item.complete_allocation(user)
+
+        # Delete the BuildItem objects from the database
+        allocated_items.all().delete()
 
         # Ensure that the output is updated correctly
         output.build = self
@@ -900,7 +906,7 @@ class BuildItem(models.Model):
             raise ValidationError(errors)
 
     @transaction.atomic
-    def completeAllocation(self, user):
+    def complete_allocation(self, user):
         """
         Complete the allocation of this BuildItem into the output stock item.
 
@@ -910,21 +916,22 @@ class BuildItem(models.Model):
 
         item = self.stock_item
 
-        # Split the allocated stock if there are more available than allocated
-        if item.quantity > self.quantity:
-            item = item.splitStock(self.quantity, None, user)
-
-            # Update our own reference to the new item
-            self.stock_item = item
-            self.save()
-
+        # For a trackable part, special consideration needed!
         if item.part.trackable:
-            # If the part is trackable, install into the build output
+            # Split the allocated stock if there are more available than allocated
+            if item.quantity > self.quantity:
+                item = item.splitStock(self.quantity, None, user)
+
+                # Make sure we are pointing to the new item
+                self.stock_item = item
+                self.save()
+
+            # Install the stock item into the output
             item.belongs_to = self.install_into
             item.save()
         else:
-            # Part is *not* trackable, so just delete it
-            item.delete()
+            # Simply remove the items from stock
+            item.take_stock(self.quantity, user)
 
     build = models.ForeignKey(
         Build,
