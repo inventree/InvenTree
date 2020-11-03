@@ -46,6 +46,7 @@ class TestParams(TestCase):
             t3.full_clean()
             t3.save()
 
+        # Category templates
         n = PartCategoryParameterTemplate.objects.all().count()
         self.assertEqual(n, 2)
 

@@ -212,7 +212,7 @@ class EditPartForm(HelperForm):
 
     parent_category_templates = forms.BooleanField(required=False,
                                                    initial=False,
-                                                   label=_('Include parent category parameter templates'),
+                                                   label=_('Include parent categories parameter templates'),
                                                    widget=forms.HiddenInput())
 
     class Meta:
