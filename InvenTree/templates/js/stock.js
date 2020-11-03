@@ -324,11 +324,16 @@ function loadStockTable(table, options) {
 
             var row = data[0];
 
-            if (field == 'part_detail.name') {
+            if (field == 'part_detail.full_name') {
 
-                var name = row.part_detail.full_name;
+                var html = imageHoverIcon(row.part_detail.thumbnail);
 
-                return imageHoverIcon(row.part_detail.thumbnail) + name + ' <i>(' + data.length + ' items)</i>';
+                html += row.part_detail.full_name;
+                html += ` <i>(${data.length} items)</i>`;
+
+                html += makePartIcons(row.part_detail);
+
+                return html;
             }
             else if (field == 'part_detail.IPN') {
                 return row.part_detail.IPN;
@@ -471,6 +476,8 @@ function loadStockTable(table, options) {
 
                     html = imageHoverIcon(thumb) + renderLink(name, url);
                     
+                    html += makePartIcons(row.part_detail);
+
                     return html;
                 }
             },

@@ -595,7 +595,7 @@ function loadBuildTable(table, options) {
     var filters = {};
     
     if (!options.disableFilters) {
-        loadTableFilters("build");
+        filters = loadTableFilters("build");
     }
 
     for (var key in params) {
