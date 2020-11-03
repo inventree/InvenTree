@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
-from .models import Part
+from .models import Part, PartRelated
 
 
 class PartViewTestCase(TestCase):
@@ -204,25 +204,18 @@ class PartTests(PartViewTestCase):
 class PartRelatedTests(PartViewTestCase):
 
     def test_valid_create(self):
-        """ test creation of an attachment for a valid part """
+        """ test creation of a related part """
 
-        response = self.client.get(reverse('part-related-create'), {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(reverse('part-related-create'), {'part': 1},
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
-        # TODO - Create a new attachment using this view
+        response = self.client.post(reverse('part-related-create'), {'part_1': 1, 'part_2': 2},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
 
-    def test_invalid_create(self):
-        """ test creation of an attachment for an invalid part """
-
-        # TODO
-        pass
-
-    def test_edit(self):
-        """ test editing an attachment """
-
-        # TODO
-        pass
-
+        n = PartRelated.objects.all().count()
+        self.assertEqual(n, 1)
 
 class PartAttachmentTests(PartViewTestCase):
 
