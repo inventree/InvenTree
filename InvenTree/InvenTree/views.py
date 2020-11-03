@@ -333,6 +333,12 @@ class AjaxCreateView(AjaxMixin, CreateView):
     - Handles form validation via AJAX POST requests
     """
 
+    def post_save(self, **kwargs):
+        """
+        Hook for doing something with the created object after it is saved
+        """
+        pass
+
     def get(self, request, *args, **kwargs):
         """ Creates form with initial data, and renders JSON response """
 
@@ -386,6 +392,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
             # Save the object to the database
             self.object = self.save(self.form)
+            self.post_save()
 
             # Return the PK of the newly-created object
             data['pk'] = self.object.pk
