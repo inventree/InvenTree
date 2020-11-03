@@ -205,11 +205,15 @@ class EditPartForm(HelperForm):
                                           help_text=_('Confirm part creation'),
                                           widget=forms.HiddenInput())
 
-    category_templates = forms.BooleanField(required=False,
-                                            initial=False,
-                                            help_text=_('Create parameters based on default category templates'),
-                                            label=_('Copy category parameter templates'),
-                                            widget=forms.HiddenInput())
+    selected_category_templates = forms.BooleanField(required=False,
+                                                     initial=False,
+                                                     label=_('Include selected category parameter templates'),
+                                                     widget=forms.HiddenInput())
+
+    parent_category_templates = forms.BooleanField(required=False,
+                                                   initial=False,
+                                                   label=_('Include parent category parameter templates'),
+                                                   widget=forms.HiddenInput())
 
     class Meta:
         model = Part
@@ -218,7 +222,8 @@ class EditPartForm(HelperForm):
             'parameters_copy',
             'confirm_creation',
             'category',
-            'category_templates',
+            'selected_category_templates',
+            'parent_category_templates',
             'name',
             'IPN',
             'description',

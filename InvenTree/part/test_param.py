@@ -49,10 +49,9 @@ class TestParams(TestCase):
         n = PartCategoryParameterTemplate.objects.all().count()
         self.assertEqual(n, 2)
 
-        parent_category = PartCategory.objects.get(pk=8).get_root()
-        self.assertEqual(parent_category.pk, 7)
+        category = PartCategory.objects.get(pk=7)
 
-        c1 = PartCategoryParameterTemplate(category=parent_category,
+        c1 = PartCategoryParameterTemplate(category=category,
                                            parameter_template=t1,
                                            default_value='xyz')
         c1.save()

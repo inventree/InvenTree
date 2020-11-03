@@ -638,8 +638,9 @@ class PartCreate(AjaxCreateView):
         # Hide the default_supplier field (there are no matching supplier parts yet!)
         form.fields['default_supplier'].widget = HiddenInput()
 
-        # Force display of the 'category_templates' widget
-        form.fields['category_templates'].widget = CheckboxInput()
+        # Display category templates widgets
+        form.fields['selected_category_templates'].widget = CheckboxInput()
+        form.fields['parent_category_templates'].widget = CheckboxInput()
 
         return form
 
@@ -693,17 +694,40 @@ class PartCreate(AjaxCreateView):
             except AttributeError:
                 pass
 
-            # Create part parameters
-            category_templates = form.cleaned_data['category_templates']
+            # Store templates added to part
+            template_list = []
+
+            # Create part parameters for selected category
+            category_templates = form.cleaned_data['selected_category_templates']
             if category_templates:
-                # Get category parent
+                # Get selected category
+                category = form.cleaned_data['category']
+
+                for template in category.get_parameter_templates():
+                    parameter = PartParameter.create(part=part,
+                                                     template=template.parameter_template,
+                                                     data=template.default_value,
+                                                     save=True)
+                    if parameter:
+                        template_list.append(template.parameter_template)
+
+            # Create part parameters for parent category
+            category_templates = form.cleaned_data['parent_category_templates']
+            if category_templates:
+                # Get parent category
                 category = form.cleaned_data['category'].get_root()
 
                 for template in category.get_parameter_templates():
-                    PartParameter.create(part=part,
-                                         template=template.parameter_template,
-                                         data=template.default_value,
-                                         save=True)
+                    # Check that template wasn't already added
+                    if template.parameter_template not in template_list:
+                        try:
+                            PartParameter.create(part=part,
+                                                 template=template.parameter_template,
+                                                 data=template.default_value,
+                                                 save=True)
+                        except IntegrityError:
+                            # PartParameter already exists
+                            pass
 
         return self.renderJsonResponse(request, form, data, context=context)
 
@@ -729,7 +753,8 @@ class PartCreate(AjaxCreateView):
                 initials[label] = self.request.GET.get(label)
 
         # Automatically create part parameters from category templates
-        initials['category_templates'] = str2bool(InvenTreeSetting.get_setting('PART_CATEGORY_PARAMETERS', False))
+        initials['selected_category_templates'] = str2bool(InvenTreeSetting.get_setting('PART_CATEGORY_PARAMETERS', False))
+        initials['parent_category_templates'] = initials['selected_category_templates']
 
         return initials
 
@@ -2323,13 +2348,9 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
                 default_value = form.cleaned_data['default_value']
 
                 # Add parameter template and default value to all categories
-                for category_id, category_name in PartCategory.get_parent_categories():
-                    # Change category_id type to integer
-                    category_id = int(category_id)
+                for category in PartCategory.objects.all():
                     # Skip selected category (will be processed in the post call)
-                    if category_id != selected_category:
-                        # Get category
-                        category = PartCategory.objects.get(pk=category_id)
+                    if category.pk != selected_category:
                         try:
                             cat_template = PartCategoryParameterTemplate.objects.create(category=category,
                                                                                         parameter_template=parameter_template,
@@ -2368,6 +2389,7 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
         form = super(AjaxUpdateView, self).get_form()
         
         form.fields['category'].widget = HiddenInput()
+        form.fields['add_to_all_categories'].widget = HiddenInput()
 
         if form.is_valid():
             form.cleaned_data['category'] = self.kwargs.get('pk', None)
