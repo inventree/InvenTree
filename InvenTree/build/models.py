@@ -526,6 +526,10 @@ class Build(MPTTModel):
                 is_building=True
             )
 
+        if self.status == BuildStatus.PENDING:
+            self.status = BuildStatus.PRODUCTION
+            self.save()
+
     @transaction.atomic
     def deleteBuildOutput(self, output):
         """
