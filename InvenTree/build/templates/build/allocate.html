@@ -24,9 +24,11 @@ InvenTree | Allocate Parts
     <button class='btn btn-primary' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
         <span class='fas fa-plus-circle'></span> {% trans "Create New Output" %}
     </button>
-    <button class='btn btn-primary' type='button' id='btn-order-parts' title='{% trans "Order required parts" %}'>
-        <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
-    </button>
+    <!--
+        <button class='btn btn-primary' type='button' id='btn-order-parts' title='{% trans "Order required parts" %}'>
+            <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
+        </button>
+    -->
     <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
         <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
     </button>
@@ -86,7 +88,7 @@ InvenTree | Allocate Parts
         launchModalForm(
             "{% url 'build-unallocate' build.id %}",
             {
-                success: reloadTable,
+                reload: true,
             }
         );
     });

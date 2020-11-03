@@ -286,37 +286,42 @@ class BuildOutputDelete(AjaxUpdateView):
 
         return initials
 
-    def post(self, request, *args, **kwargs):
+    def validate(self, build, form, **kwargs):
 
-        build = self.get_object()
-        form = self.get_form()
+        data = form.cleaned_data
 
-        confirm = request.POST.get('confirm', False)
+        confirm = data.get('confirm', False)
 
-        output_id = request.POST.get('output_id', None)
+        if not confirm:
+            form.add_error('confirm', _('Confirm unallocation of build stock'))
+            form.add_error(None, _('Check the confirmation box'))
+
+        output_id = data.get('output_id', None)
+        output = None
 
         try:
             output = StockItem.objects.get(pk=output_id)
         except (ValueError, StockItem.DoesNotExist):
-            output = None
+            pass
 
-        valid = False
-
-        if confirm:
-            if output:
-                build.deleteBuildOutput(output)
-                valid = True
-            else:
-                form.add_error(None, _('Build or output not specified'))
+        if output:
+            if not output.build == build:
+                form.add_error(None, _('Build output does not match build'))
         else:
-            form.add_error('confirm', _('Confirm unallocation of build stock'))
-            form.add_error(None, _('Check the confirmation box'))
+            form.add_error(None, _('Build output must be specified'))
 
-        data = {
-            'form_valid': valid,
+    def save(self, build, form, **kwargs):
+
+        output_id = form.cleaned_data.get('output_id')
+
+        output = StockItem.objects.get(pk=output_id)
+
+        build.deleteBuildOutput(output)
+
+    def get_data(self):
+        return {
+            'danger': _('Build output deleted'),
         }
-
-        return self.renderJsonResponse(request, form, data)
 
 
 class BuildUnallocate(AjaxUpdateView):

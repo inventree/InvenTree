@@ -910,9 +910,10 @@ class OrderParts(AjaxView):
             try:
                 build = Build.objects.get(id=build_id)
 
-                parts = build.part.required_parts()
+                parts = build.required_parts
 
                 for part in parts:
+                    
                     # If ordering from a Build page, ignore parts that we have enough of
                     if part.quantity_to_order <= 0:
                         continue

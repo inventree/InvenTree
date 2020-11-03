@@ -658,14 +658,14 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'quantity',
-                title: '{% trans "Quantity" %}',
+                title: '{% trans "Completed" %}',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     return makeProgressBar(
                         row.completed,
                         row.quantity,
                         {
-                            style: 'max',
+                            //style: 'max',
                         }
                     );
                 }
