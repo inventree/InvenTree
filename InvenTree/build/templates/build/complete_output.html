@@ -1,0 +1,48 @@
+{% extends "modal_form.html" %}
+{% load inventree_extras %}
+{% load i18n %}
+
+{% block pre_form_content %}
+
+{% if fully_allocated %}
+<div class='alert alert-block alert-info'>
+    <h4>{% trans "Stock allocation is complete" %}</h4>
+</div>
+{% else %}
+<div class='alert alert-block alert-danger'>
+    <h4>{% trans "Stock allocation is incomplete" %}</h4>
+
+    <div class='panel-group'>
+        <div class='panel panel-default'>
+            <div class='panel panel-heading'>
+                <a data-toggle='collapse' href='#collapse-unallocated'>
+                    {{ unallocated_parts|length }} {% trans "parts have not been fully allocated" %}
+                </a>
+            </div>
+            <div class='panel-collapse collapse' id='collapse-unallocated'>
+                <div class='panel-body'>
+                    <ul class='list-group'>
+                        {% for part in unallocated_parts %}
+                        <li class='list-group-item'>
+                            {% include "hover_image.html" with image=part.image %} {{ part }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class='panel panel-info'>
+    <div class='panel-heading'>
+        {% trans "The following items will be created" %}
+    </div>
+    <div class='panel-content'>
+        {% include "hover_image.html" with image=build.part.image hover=True %}
+        {% decimal output.quantity %} x {{ output.part.full_name }}
+    </div>
+</div>
+
+{% endblock %}

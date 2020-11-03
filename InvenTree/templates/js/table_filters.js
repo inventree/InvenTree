@@ -11,6 +11,52 @@ function getAvailableTableFilters(tableKey) {
 
     tableKey = tableKey.toLowerCase();
 
+    // Filters for "variant" table
+    if (tableKey == "variants") {
+        return {
+            active: {
+                type: 'bool',
+                title: '{% trans "Active" %}',
+            },
+            template: {
+                type: 'bool',
+                title: '{% trans "Template" %}',
+            },
+            virtual: {
+                type: 'bool',
+                title: '{% trans "Virtual" %}',
+            },
+            trackable: {
+                type: 'bool',
+                title: '{% trans "Trackable" %}',
+            },
+        };
+    }
+
+    // Filters for Bill of Materials table
+    if (tableKey == "bom") {
+        return {
+            sub_part_trackable: {
+                type: 'bool',
+                title: '{% trans "Trackable Part" %}'
+            },
+            validated: {
+                type: 'bool',
+                title: '{% trans "Validated" %}',
+            },
+        };
+    }
+
+    // Filters for the "used in" table
+    if (tableKey == 'usedin') {
+        return {
+            'part_active': {
+                type: 'bool',
+                title: '{% trans "Active" %}',
+            },
+        };
+    }
+
     // Filters for the "customer stock" table (really a subset of "stock")
     if (tableKey == "customerstock") {
         return {
@@ -19,16 +65,16 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Is Serialized" %}',
             },
             serial_gte: {
-                title: "{% trans "Serial number GTE" %}",
-                description: "{% trans "Serial number greater than or equal to" %}"
+                title: '{% trans "Serial number GTE" %}',
+                description: '{% trans "Serial number greater than or equal to" %}'
             },
             serial_lte: {
-                title: "{% trans "Serial number LTE" %}",
-                description: "{% trans "Serial number less than or equal to" %}",
+                title: '{% trans "Serial number LTE" %}',
+                description: '{% trans "Serial number less than or equal to" %}',
             },
             serial: {
-                title: "{% trans "Serial number" %}",
-                description: "{% trans "Serial number" %}"
+                title: '{% trans "Serial number" %}',
+                description: '{% trans "Serial number" %}'
             },
             batch: {
                 title: '{% trans "Batch" %}',
@@ -65,6 +111,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "In Stock" %}',
                 description: '{% trans "Show items which are in stock" %}',
             },
+            is_building: {
+                type: 'bool',
+                title: '{% trans "In Production" %}',
+                description: '{% trans "Show items which are in production" %}',
+            },
             installed: {
                 type: 'bool',
                 title: '{% trans "Installed" %}',
@@ -80,16 +131,16 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Is Serialized" %}',
             },
             serial: {
-                title: "{% trans "Serial number" %}",
-                description: "{% trans "Serial number" %}"
+                title: '{% trans "Serial number" %}',
+                description: '{% trans "Serial number" %}'
             },
             serial_gte: {
-                title: "{% trans "Serial number GTE" %}",
-                description: "{% trans "Serial number greater than or equal to" %}"
+                title: '{% trans "Serial number GTE" %}',
+                description: '{% trans "Serial number greater than or equal to" %}'
             },
             serial_lte: {
-                title: "{% trans "Serial number LTE" %}",
-                description: "{% trans "Serial number less than or equal to" %}",
+                title: '{% trans "Serial number LTE" %}',
+                description: '{% trans "Serial number less than or equal to" %}',
             },
             status: {
                 options: stockCodes,
@@ -108,7 +159,7 @@ function getAvailableTableFilters(tableKey) {
         return {
             result: {
                 type: 'bool',
-                title: "{% trans 'Test result' %}",
+                title: '{% trans "Test result" %}',
             },
         };
     }
@@ -118,7 +169,7 @@ function getAvailableTableFilters(tableKey) {
         return {
             required: {
                 type: 'bool',
-                title: "{% trans "Required" %}",
+                title: '{% trans "Required" %}',
             }
         };
     }
@@ -130,9 +181,9 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Build status" %}',
                 options: buildCodes,
             },
-            pending: {
+            active: {
                 type: 'bool',
-                title: '{% trans "Pending" %}',
+                title: '{% trans "Active" %}',
             }
         };
     }
@@ -162,6 +213,15 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Outstanding" %}',
             },
+        };
+    }
+
+    if (tableKey == 'supplier-part') {
+        return {
+            active: {
+                type: 'bool',
+                title: '{% trans "Active parts" %}',
+            }
         };
     }
 

@@ -99,7 +99,7 @@ class PartTest(TestCase):
         self.assertIn(self.R1.name, barcode)
 
     def test_copy(self):
-        self.R2.deepCopy(self.R1, image=True, bom=True)
+        self.R2.deep_copy(self.R1, image=True, bom=True)
 
     def test_match_names(self):
 

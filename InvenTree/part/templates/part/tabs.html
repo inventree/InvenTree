@@ -63,6 +63,9 @@
         </a>
     </li>
     {% endif %}
+    <li{% ifequal tab 'related-parts' %} class="active"{% endifequal %}>
+        <a href="{% url 'part-related' part.id %}">{% trans "Related" %} {% if part.related_count > 0 %}<span class="badge">{{ part.related_count }}</span>{% endif %}</a>
+    </li>
     <li{% ifequal tab 'attachments' %} class="active"{% endifequal %}>
         <a href="{% url 'part-attachments' part.id %}">{% trans "Attachments" %} {% if part.attachment_count > 0 %}<span class="badge">{{ part.attachment_count }}</span>{% endif %}</a>
     </li>

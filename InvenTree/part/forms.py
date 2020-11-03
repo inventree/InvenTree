@@ -13,14 +13,19 @@ from mptt.fields import TreeNodeChoiceField
 from django import forms
 from django.utils.translation import ugettext as _
 
-from .models import Part, PartCategory, PartAttachment
+from .models import Part, PartCategory, PartAttachment, PartRelated
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
-
 from common.models import Currency
+
+
+class PartModelChoiceField(forms.ModelChoiceField):
+    """ Extending string representation of Part instance with available stock """
+    def label_from_instance(self, part):
+        return f'{part} - {part.available_stock}'
 
 
 class PartImageForm(HelperForm):
@@ -77,6 +82,38 @@ class BomExportForm(forms.Form):
         self.fields['file_format'].choices = self.get_choices()
 
 
+class BomDuplicateForm(HelperForm):
+    """
+    Simple confirmation form for BOM duplication.
+
+    Select which parent to select from.
+    """
+
+    parent = PartModelChoiceField(
+        label=_('Parent Part'),
+        help_text=_('Select parent part to copy BOM from'),
+        queryset=Part.objects.filter(is_template=True),
+    )
+
+    clear = forms.BooleanField(
+        required=False, initial=True,
+        help_text=_('Clear existing BOM items')
+    )
+
+    confirm = forms.BooleanField(
+        required=False, initial=False,
+        help_text=_('Confirm BOM duplication')
+    )
+
+    class Meta:
+        model = Part
+        fields = [
+            'parent',
+            'clear',
+            'confirm',
+        ]
+
+
 class BomValidateForm(HelperForm):
     """ Simple confirmation form for BOM validation.
     User is presented with a single checkbox input,
@@ -102,6 +139,25 @@ class BomUploadSelectFile(HelperForm):
         fields = [
             'bom_file',
         ]
+
+
+class CreatePartRelatedForm(HelperForm):
+    """ Form for creating a PartRelated object """
+
+    class Meta:
+        model = PartRelated
+        fields = [
+            'part_1',
+            'part_2',
+        ]
+        labels = {
+            'part_2': _('Related Part'),
+        }
+
+    def save(self):
+        """ Disable model saving """
+
+        return super(CreatePartRelatedForm, self).save(commit=False)
 
 
 class EditPartAttachmentForm(HelperForm):
@@ -208,12 +264,6 @@ class EditCategoryForm(HelperForm):
             'default_location',
             'default_keywords',
         ]
-
-
-class PartModelChoiceField(forms.ModelChoiceField):
-    """ Extending string representation of Part instance with available stock """
-    def label_from_instance(self, part):
-        return f'{part} - {part.available_stock}'
 
 
 class EditBomItemForm(HelperForm):

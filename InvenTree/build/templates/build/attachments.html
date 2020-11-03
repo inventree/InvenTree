@@ -1,0 +1,78 @@
+{% extends "build/build_base.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load markdownify %}
+
+{% block details %}
+
+{% include "build/tabs.html" with tab='attachments' %}
+
+<h4>{% trans "Attachments" %}</h4>
+<hr>
+
+{% include "attachment_table.html" with attachments=build.attachments.all %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+enableDragAndDrop(
+    '#attachment-dropzone',
+    '{% url "build-attachment-create" %}',
+    {
+        data: {
+            build: {{ build.id }},
+        },
+        label: 'attachment',
+        success: function(data, status, xhr) {
+            location.reload();
+        }
+    }
+);
+
+// Callback for creating a new attachment
+$('#new-attachment').click(function() {
+    launchModalForm(
+        '{% url "build-attachment-create" %}',
+        {
+            reload: true,
+            data: {
+                build: {{ build.pk }},
+            }
+        }
+    );
+});
+
+// Callback for editing an attachment
+$("#attachment-table").on('click', '.attachment-edit-button', function() {
+    var pk = $(this).attr('pk');
+
+    var url = `/build/attachment/${pk}/edit/`;
+
+    launchModalForm(
+        url,
+        {
+            reload: true,
+        }
+    );
+});
+
+// Callback for deleting an attachment
+$("#attachment-table").on('click', '.attachment-delete-button', function() {
+    var pk = $(this).attr('pk');
+
+    var url = `/build/attachment/${pk}/delete/`;
+
+    launchModalForm(
+        url,
+        {
+            reload: true,
+        }
+    );
+});
+
+$("#attachment-table").inventreeTable({});
+
+{% endblock %}

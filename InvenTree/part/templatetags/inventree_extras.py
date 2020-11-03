@@ -14,6 +14,19 @@ register = template.Library()
 
 
 @register.simple_tag()
+def define(value, *args, **kwargs):
+    """
+    Shortcut function to overcome the shortcomings of the django templating language
+
+    Use as follows: {% define "hello_world" as hello %}
+
+    Ref: https://stackoverflow.com/questions/1070398/how-to-set-a-value-of-a-variable-inside-a-template-code
+    """
+
+    return value
+
+
+@register.simple_tag()
 def decimal(x, *args, **kwargs):
     """ Simplified rendering of a decimal number """
 
@@ -104,6 +117,15 @@ def setting_object(key, *args, **kwargs):
     setting = InvenTreeSetting.get_setting_object(key)
 
     return setting
+
+
+@register.simple_tag()
+def settings_value(key, *args, **kwargs):
+    """
+    Return a settings value specified by the given key
+    """
+
+    return InvenTreeSetting.get_setting(key)
 
 
 @register.simple_tag()

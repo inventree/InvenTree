@@ -110,7 +110,7 @@ function loadSupplierPartTable(table, url, options) {
     // Query parameters
     var params = options.params || {};
 
-    // Load 'user' filters
+    // Load filters
     var filters = loadTableFilters("supplier-part");
 
     for (var key in params) {
@@ -122,6 +122,7 @@ function loadSupplierPartTable(table, url, options) {
     $(table).inventreeTable({
         url: url,
         method: 'get',
+        original: params,
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
@@ -135,6 +136,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
+                switchable: false,
                 formatter: function(value, row, index, field) {
 
                     var url = `/part/${row.part}/`;

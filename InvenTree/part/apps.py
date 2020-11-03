@@ -16,8 +16,15 @@ class PartConfig(AppConfig):
         """
 
         self.generate_part_thumbnails()
+        self.update_trackable_status()
 
     def generate_part_thumbnails(self):
+        """
+        Generate thumbnail images for any Part that does not have one.
+        This function exists mainly for legacy support,
+        as any *new* image uploaded will have a thumbnail generated automatically.
+        """
+
         from .models import Part
 
         print("InvenTree: Checking Part image thumbnails")
@@ -37,4 +44,27 @@ class PartConfig(AppConfig):
                             part.image = None
                             part.save()
         except (OperationalError, ProgrammingError):
+            # Exception if the database has not been migrated yet
+            pass
+
+    def update_trackable_status(self):
+        """
+        Check for any instances where a trackable part is used in the BOM
+        for a non-trackable part.
+
+        In such a case, force the top-level part to be trackable too.
+        """
+
+        from .models import BomItem
+
+        try:
+            items = BomItem.objects.filter(part__trackable=False, sub_part__trackable=True)
+
+            for item in items:
+                print(f"Marking part '{item.part.name}' as trackable")
+                item.part.trackable = True
+                item.part.clean()
+                item.part.save()
+        except (OperationalError, ProgrammingError):
+            # Exception if the database has not been migrated yet
             pass

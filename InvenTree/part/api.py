@@ -461,8 +461,8 @@ class PartList(generics.ListCreateAPIView):
             else:
                 queryset = queryset.exclude(pk__in=starred_parts)
 
-        # Cascade?
-        cascade = str2bool(params.get('cascade', None))
+        # Cascade? (Default = True)
+        cascade = str2bool(params.get('cascade', True))
 
         # Does the user wish to filter by category?
         cat_id = params.get('category', None)
@@ -761,12 +761,44 @@ class BomList(generics.ListCreateAPIView):
         if sub_part is not None:
             queryset = queryset.filter(sub_part=sub_part)
 
-        # Filter by "trackable" status of the sub-part
-        trackable = params.get('trackable', None)
+        # Filter by "active" status of the part
+        part_active = params.get('part_active', None)
 
-        if trackable is not None:
-            trackable = str2bool(trackable)
-            queryset = queryset.filter(sub_part__trackable=trackable)
+        if part_active is not None:
+            part_active = str2bool(part_active)
+            queryset = queryset.filter(part__active=part_active)
+
+        # Filter by "trackable" status of the part
+        part_trackable = params.get('part_trackable', None)
+
+        if part_trackable is not None:
+            part_trackable = str2bool(part_trackable)
+            queryset = queryset.filter(part__trackable=part_trackable)
+
+        # Filter by "trackable" status of the sub-part
+        sub_part_trackable = params.get('sub_part_trackable', None)
+
+        if sub_part_trackable is not None:
+            sub_part_trackable = str2bool(sub_part_trackable)
+            queryset = queryset.filter(sub_part__trackable=sub_part_trackable)
+
+        # Filter by whether the BOM line has been validated
+        validated = params.get('validated', None)
+
+        if validated is not None:
+            validated = str2bool(validated)
+
+            # Work out which lines have actually been validated
+            pks = []
+            
+            for bom_item in queryset.all():
+                if bom_item.is_line_valid:
+                    pks.append(bom_item.pk)
+
+            if validated:
+                queryset = queryset.filter(pk__in=pks)
+            else:
+                queryset = queryset.exclude(pk__in=pks)
 
         return queryset
 

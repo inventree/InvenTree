@@ -5,6 +5,11 @@
 
 {{ block.super }}
 
-{% trans "Are you sure you wish to unallocate all stock for this build?" %}
+
+<div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you wish to unallocate all stock for this build?" %}
+    <br>
+    {% trans "All incomplete stock allocations will be removed from the build" %}
+</div>
 
 {% endblock %}
