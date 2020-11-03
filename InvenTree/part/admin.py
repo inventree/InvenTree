@@ -9,7 +9,7 @@ from import_export.fields import Field
 import import_export.widgets as widgets
 
 from .models import PartCategory, Part
-from .models import PartAttachment, PartStar
+from .models import PartAttachment, PartStar, PartRelated
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
 from .models import PartCategoryParameterTemplate
@@ -120,6 +120,11 @@ class PartCategoryAdmin(ImportExportModelAdmin):
     list_display = ('name', 'pathstring', 'description')
 
     search_fields = ('name', 'description')
+
+
+class PartRelatedAdmin(admin.ModelAdmin):
+    ''' Class to manage PartRelated objects '''
+    pass
 
 
 class PartAttachmentAdmin(admin.ModelAdmin):
@@ -292,6 +297,7 @@ class PartSellPriceBreakAdmin(admin.ModelAdmin):
 
 admin.site.register(Part, PartAdmin)
 admin.site.register(PartCategory, PartCategoryAdmin)
+admin.site.register(PartRelated, PartRelatedAdmin)
 admin.site.register(PartAttachment, PartAttachmentAdmin)
 admin.site.register(PartStar, PartStarAdmin)
 admin.site.register(BomItem, BomItemAdmin)

@@ -214,26 +214,6 @@ class AjaxMixin(InvenTreeRoleMixin):
         """
         return {}
 
-    def pre_save(self, obj, form, **kwargs):
-        """
-        Hook for doing something *before* an object is saved.
-
-        obj: The object to be saved
-        form: The cleaned form
-        """
-
-        # Do nothing by default
-        pass
-
-    def post_save(self, obj, form, **kwargs):
-        """
-        Hook for doing something *after* an object is saved.
-
-        """
-
-        # Do nothing by default
-        pass
-
     def validate(self, obj, form, **kwargs):
         """
         Hook for performing custom form validation steps.
@@ -363,7 +343,7 @@ class AjaxCreateView(AjaxMixin, CreateView):
         form = self.get_form()
         return self.renderJsonResponse(request, form)
 
-    def do_save(self, form):
+    def save(self, form):
         """
         Method for actually saving the form to the database.
         Default implementation is very simple,
@@ -394,7 +374,9 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
         # Extra JSON data sent alongside form
         data = {
-            'form_valid': valid
+            'form_valid': valid,
+            'form_errors': self.form.errors.as_json(),
+            'non_field_errors': self.form.non_field_errors().as_json(),
         }
 
         # Add in any extra class data
@@ -403,14 +385,8 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
         if valid:
 
-            # Perform (optional) pre-save step
-            self.pre_save(None, self.form)
-
             # Save the object to the database
-            self.do_save(self.form)
-
-            # Perform (optional) post-save step
-            self.post_save(self.object, self.form)
+            self.object = self.save(self.form)
 
             # Return the PK of the newly-created object
             data['pk'] = self.object.pk
@@ -441,11 +417,14 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         
         return self.renderJsonResponse(request, self.get_form(), context=self.get_context_data())
 
-    def do_save(self, form):
+    def save(self, object, form, **kwargs):
         """
         Method for updating the object in the database.
-        Default implementation is very simple,
-        but can be overridden if required.
+        Default implementation is very simple, but can be overridden if required.
+
+        Args:
+            object - The current object, to be updated
+            form - The validated form
         """
 
         self.object = form.save()
@@ -477,7 +456,9 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         valid = form.is_valid()
 
         data = {
-            'form_valid': valid
+            'form_valid': valid,
+            'form_errors': form.errors.as_json(),
+            'non_field_errors': form.non_field_errors().as_json(),
         }
 
         # Add in any extra class data
@@ -486,22 +467,16 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
 
         if valid:
 
-            # Perform (optional) pre-save step
-            self.pre_save(self.object, form)
-
             # Save the updated objec to the database
-            obj = self.do_save(form)
+            self.save(self.object, form)
 
-            # Perform (optional) post-save step
-            self.post_save(obj, form)
+            self.object = self.get_object()
 
             # Include context data about the updated object
-            data['pk'] = obj.pk
-
-            self.post_save(obj, form)
+            data['pk'] = self.object.pk
 
             try:
-                data['url'] = obj.get_absolute_url()
+                data['url'] = self.object.get_absolute_url()
             except AttributeError:
                 pass
 

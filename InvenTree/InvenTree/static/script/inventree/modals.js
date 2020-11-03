@@ -134,6 +134,32 @@ function reloadFieldOptions(fieldName, options) {
 }
 
 
+function enableField(fieldName, enabled, options={}) {
+    /* Enable (or disable) a particular field in a modal.
+     * 
+     * Args:
+     * - fieldName: The name of the field
+     * - enabled: boolean enabled / disabled status
+     * - options:
+     */
+
+    var modal = options.modal || '#modal-form';
+
+    var field = getFieldByName(modal, fieldName);
+
+    field.prop("disabled", !enabled);
+}
+
+function clearField(fieldName, options={}) {
+
+    var modal = options.modal || '#modal-form';
+
+    var field = getFieldByName(modal, fieldName);
+
+    field.val("");
+}
+
+
 function partialMatcher(params, data) {
     /* Replacement function for the 'matcher' parameter for a select2 dropdown.
 
@@ -696,6 +722,11 @@ function handleModalForm(url, options) {
                     }
                     // Form was returned, invalid!
                     else {
+
+                        var warningDiv = $(modal).find('#form-validation-warning');
+
+                        warningDiv.css('display', 'block');
+
                         if (response.html_form) {
                             injectModalForm(modal, response.html_form);
 
@@ -813,8 +844,13 @@ function launchModalForm(url, options = {}) {
 
             $(modal).modal('hide');
 
-            // Permission denied!
-            if (xhr.status == 400) {
+            if (xhr.status == 0) {
+                // No response from the server
+                showAlertDialog(
+                    "No Response",
+                    "No response from the InvenTree server",
+                );
+            } else if (xhr.status == 400) {
                 showAlertDialog(
                     "Error 400: Bad Request",
                     "Server returned error code 400"

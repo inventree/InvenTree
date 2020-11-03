@@ -12,6 +12,11 @@ from django.conf.urls import url, include
 
 from . import views
 
+part_related_urls = [
+    url(r'^new/?', views.PartRelatedCreate.as_view(), name='part-related-create'),
+    url(r'^(?P<pk>\d+)/delete/?', views.PartRelatedDelete.as_view(), name='part-related-delete'),
+]
+
 part_attachment_urls = [
     url(r'^new/?', views.PartAttachmentCreate.as_view(), name='part-attachment-create'),
     url(r'^(?P<pk>\d+)/edit/?', views.PartAttachmentEdit.as_view(), name='part-attachment-edit'),
@@ -61,6 +66,7 @@ part_detail_urls = [
     url(r'^sale-prices/', views.PartDetail.as_view(template_name='part/sale_prices.html'), name='part-sale-prices'),
     url(r'^tests/', views.PartDetail.as_view(template_name='part/part_tests.html'), name='part-test-templates'),
     url(r'^track/?', views.PartDetail.as_view(template_name='part/track.html'), name='part-track'),
+    url(r'^related-parts/?', views.PartDetail.as_view(template_name='part/related.html'), name='part-related'),
     url(r'^attachments/?', views.PartDetail.as_view(template_name='part/attachments.html'), name='part-attachments'),
     url(r'^notes/?', views.PartNotes.as_view(), name='part-notes'),
     
@@ -120,6 +126,9 @@ part_urls = [
 
     # Part category
     url(r'^category/(?P<pk>\d+)/', include(part_category_urls)),
+
+    # Part related
+    url(r'^related-parts/', include(part_related_urls)),
 
     # Part attachments
     url(r'^attachment/', include(part_attachment_urls)),

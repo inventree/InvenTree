@@ -57,6 +57,7 @@ class RuleSet(models.Model):
             'part_parttesttemplate',
             'part_partparametertemplate',
             'part_partparameter',
+            'part_partrelated',
             'part_partcategoryparametertemplate',
         ],
         'stock': [
@@ -72,6 +73,7 @@ class RuleSet(models.Model):
             'part_bomitem',
             'build_build',
             'build_builditem',
+            'build_buildorderattachment',
             'stock_stockitem',
             'stock_stocklocation',
         ],

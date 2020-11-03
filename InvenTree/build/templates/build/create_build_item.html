@@ -1,9 +1,22 @@
 {% extends "modal_form.html" %}
+{% load i18n %}
 
 {% block pre_form_content %}
+<div class='alert alert-block alert-info'>
+    <p>
+        {% trans "Select a stock item to allocate to the selected build output" %}
+    </p>
+    {% if output %}
+    <p>
+        {% trans "The allocated stock will be installed into the following build output:" %}
+        <br>
+        <i>{{ output }}</i>
+    </p>
+    {% endif %}
+</div>
 {% if no_stock %}
 <div class='alert alert-danger alert-block' role='alert'>
-    No stock available for {{ part }}
+    {% trans "No stock available for" %} {{ part }}
 </div>
 {% endif %}
 {% endblock %}

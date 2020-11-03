@@ -214,25 +214,25 @@ class BuildStatus(StatusCode):
 
     # Build status codes
     PENDING = 10  # Build is pending / active
-    ALLOCATED = 20  # Parts have been removed from stock
+    PRODUCTION = 20  # BuildOrder is in production
     CANCELLED = 30  # Build was cancelled
     COMPLETE = 40  # Build is complete
 
     options = {
         PENDING: _("Pending"),
-        ALLOCATED: _("Allocated"),
+        PRODUCTION: _("Production"),
         CANCELLED: _("Cancelled"),
         COMPLETE: _("Complete"),
     }
 
     colors = {
         PENDING: 'blue',
-        ALLOCATED: 'blue',
+        PRODUCTION: 'blue',
         COMPLETE: 'green',
         CANCELLED: 'red',
     }
 
     ACTIVE_CODES = [
         PENDING,
-        ALLOCATED
+        PRODUCTION,
     ]

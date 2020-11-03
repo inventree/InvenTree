@@ -493,6 +493,12 @@ class StockList(generics.ListCreateAPIView):
         if build_order:
             queryset = queryset.filter(build_order=build_order)
 
+        is_building = params.get('is_building', None)
+
+        if is_building:
+            is_building = str2bool(is_building)
+            queryset = queryset.filter(is_building=is_building)
+
         sales_order = params.get('sales_order', None)
 
         if sales_order:

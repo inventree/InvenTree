@@ -130,7 +130,7 @@ class StockItem(MPTTModel):
         status: Status of this StockItem (ref: InvenTree.status_codes.StockStatus)
         notes: Extra notes field
         build: Link to a Build (if this stock item was created from a build)
-        is_building: Boolean field indicating if this stock item is currently being built
+        is_building: Boolean field indicating if this stock item is currently being built (or is "in production")
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
@@ -139,6 +139,7 @@ class StockItem(MPTTModel):
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
     IN_STOCK_FILTER = Q(
+        quantity__gt=0,
         sales_order=None,
         build_order=None,
         belongs_to=None,
@@ -174,7 +175,7 @@ class StockItem(MPTTModel):
         if add_note:
             # This StockItem is being saved for the first time
             self.addTransactionNote(
-                'Created stock item',
+                _('Created stock item'),
                 user,
                 notes="Created new stock item for part '{p}'".format(p=str(self.part)),
                 system=True
@@ -198,7 +199,8 @@ class StockItem(MPTTModel):
         """
 
         super(StockItem, self).validate_unique(exclude)
-
+        
+        # If the serial number is set, make sure it is not a duplicate
         if self.serial is not None:
             # Query to look for duplicate serial numbers
             parts = PartModels.Part.objects.filter(tree_id=self.part.tree_id)
@@ -718,6 +720,15 @@ class StockItem(MPTTModel):
 
     @property
     def in_stock(self):
+        """
+        Returns True if this item is in stock
+
+        See also: IN_STOCK_FILTER
+        """
+
+        # Quantity must be above zero (unless infinite)
+        if self.quantity <= 0 and not self.infinite:
+            return False
 
         # Not 'in stock' if it has been installed inside another StockItem
         if self.belongs_to is not None:
@@ -1049,7 +1060,7 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(count):
 
-            self.addTransactionNote('Stocktake - counted {n} items'.format(n=count),
+            self.addTransactionNote('Stocktake - counted {n} items'.format(n=helpers.normalize(count)),
                                     user,
                                     notes=notes,
                                     system=True)
@@ -1078,7 +1089,7 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(self.quantity + quantity):
             
-            self.addTransactionNote('Added {n} items to stock'.format(n=quantity),
+            self.addTransactionNote('Added {n} items to stock'.format(n=helpers.normalize(quantity)),
                                     user,
                                     notes=notes,
                                     system=True)
@@ -1104,7 +1115,7 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(self.quantity - quantity):
 
-            self.addTransactionNote('Removed {n} items from stock'.format(n=quantity),
+            self.addTransactionNote('Removed {n} items from stock'.format(n=helpers.normalize(quantity)),
                                     user,
                                     notes=notes,
                                     system=True)
