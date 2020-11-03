@@ -252,10 +252,16 @@ class BuildOutputCreate(AjaxUpdateView):
 
     def get_form(self):
 
-        form = super().get_form()
-
         build = self.get_object()
         part = build.part
+
+        context = self.get_form_kwargs()
+
+        # Pass the 'part' through to the form,
+        # so we can add the next serial number as a placeholder
+        context['build'] = build
+
+        form = self.form_class(**context)
 
         # If the part is not trackable, hide the serial number input
         if not part.trackable:

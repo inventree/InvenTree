@@ -53,6 +53,15 @@ class BuildOutputCreateForm(HelperForm):
     Form for creating a new build output.
     """
 
+    def __init__(self, *args, **kwargs):
+
+        build = kwargs.pop('build', None)
+
+        if build:
+            self.field_placeholder['serial_numbers'] = build.part.getSerialNumberString()
+
+        super().__init__(*args, **kwargs)
+
     field_prefix = {
         'serial_numbers': 'fa-hashtag',
     }
