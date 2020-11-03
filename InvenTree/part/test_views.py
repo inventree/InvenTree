@@ -217,6 +217,7 @@ class PartRelatedTests(PartViewTestCase):
         n = PartRelated.objects.all().count()
         self.assertEqual(n, 1)
 
+
 class PartAttachmentTests(PartViewTestCase):
 
     def test_valid_create(self):
