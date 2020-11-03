@@ -340,7 +340,6 @@ class Build(MPTTModel):
         # which point to thie Build Order
         self.allocated_stock.all().delete()
 
-
     @transaction.atomic
     def cancelBuild(self, user):
         """ Mark the Build as CANCELLED
@@ -503,7 +502,7 @@ class Build(MPTTModel):
                 else:
                     serial = None
 
-                output = StockModels.StockItem.objects.create(
+                StockModels.StockItem.objects.create(
                     quantity=1,
                     location=location,
                     part=self.part,
@@ -518,7 +517,7 @@ class Build(MPTTModel):
             Create a single build output of the given quantity
             """
 
-            output = StockModels.StockItem.objects.create(
+            StockModels.StockItem.objects.create(
                 quantity=quantity,
                 location=location,
                 part=self.part,
@@ -526,7 +525,6 @@ class Build(MPTTModel):
                 batch=batch,
                 is_building=True
             )
-
 
     @transaction.atomic
     def deleteBuildOutput(self, output):
@@ -601,7 +599,6 @@ class Build(MPTTModel):
             # TODO: Use celery / redis to offload the actual object deletion...
             # REF: https://www.botreetechnologies.com/blog/implementing-celery-using-django-for-background-task-processing
             # REF: https://code.tutsplus.com/tutorials/using-celery-with-django-for-background-task-processing--cms-28732
-
 
             # Complete the allocation of stock for that item
             build_item.complete_allocation(user)

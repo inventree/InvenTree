@@ -16,7 +16,7 @@
                     {% if item.serial %}
                     # {{ item.serial }}
                     {% else %}
-                    {{ item.quantity }}
+                    {% decimal item.quantity %}
                     {% endif %}
                 </div>
             </a>

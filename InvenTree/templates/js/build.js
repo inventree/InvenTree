@@ -648,9 +648,12 @@ function loadBuildTable(table, options) {
                 sortable: true,
                 formatter: function(value, row, index, field) {
 
-                    var name = row.part_detail.full_name;
+                    var html = imageHoverIcon(row.part_detail.thumbnail);
 
-                    return imageHoverIcon(row.part_detail.thumbnail) + renderLink(name, '/part/' + row.part + '/');
+                    html += renderLink(row.part_detail.full_name, `/part/${row.part}/`);
+                    html += makePartIcons(row.part_detail);
+
+                    return html;
                 }
             },
             {

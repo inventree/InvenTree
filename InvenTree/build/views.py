@@ -240,7 +240,6 @@ class BuildOutputCreate(AjaxUpdateView):
             batch=batch,
         )
 
-
     def get_initial(self):
 
         initials = super().get_initial()
@@ -262,7 +261,7 @@ class BuildOutputCreate(AjaxUpdateView):
 
         # If the part is not trackable, hide the serial number input
         if not part.trackable:
-            form.fields['serial_numbers'] = HiddenInput()
+            form.fields['serial_numbers'].widget = HiddenInput()
 
         return form
 
@@ -655,11 +654,7 @@ class BuildCreate(AjaxCreateView):
         form = super().get_form()
 
         if form['part'].value():
-            part = Part.objects.get(pk=form['part'].value())
-
-            # Part is not trackable - hide serial numbers
-            if not part.trackable:
-                form.fields['serial_numbers'].widget = HiddenInput()
+            form.fields['part'].widget = HiddenInput()
 
         return form
 
@@ -699,7 +694,7 @@ class BuildCreate(AjaxCreateView):
             'success': _('Created new build'),
         }
 
-    def validate(self, request, form, cleaned_data, **kwargs):
+    def validate(self, build, form, **kwargs):
         """
         Perform extra form validation.
 
@@ -708,34 +703,7 @@ class BuildCreate(AjaxCreateView):
         By this point form.is_valid() has been executed
         """
 
-        part = cleaned_data['part']
-
-        if part.trackable:
-            # For a trackable part, either batch or serial nubmber must be specified
-            if not cleaned_data['serial_numbers']:
-                form.add_error('serial_numbers', _('Trackable part must have serial numbers specified'))
-            else:
-                # If serial numbers are set...
-                serials = cleaned_data['serial_numbers']
-                quantity = cleaned_data['quantity']
-
-                # Check that the provided serial numbers are sensible
-                try:
-                    extracted = extract_serial_numbers(serials, quantity)
-                except ValidationError as e:
-                    extracted = None
-                    form.add_error('serial_numbers', e.messages)
-
-                if extracted:
-                    # Check that the provided serial numbers are not duplicates
-                    conflicts = part.find_conflicting_serial_numbers(extracted)
-
-                    if len(conflicts) > 0:
-                        msg = ",".join([str(c) for c in conflicts])
-                        form.add_error(
-                            'serial_numbers',
-                            _('Serial numbers already exist') + ': ' + msg
-                        )
+        pass
 
 
 class BuildUpdate(AjaxUpdateView):

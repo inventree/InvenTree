@@ -10,7 +10,8 @@
 
 {% include 'part/tabs.html' with tab='bom' %}
 
-<h3>{% trans "Bill of Materials" %}</h3>
+<h4>{% trans "Bill of Materials" %}</h4>
+<hr>
 
 {% if part.bom_checked_date %}
 {% if part.is_bom_valid %}
