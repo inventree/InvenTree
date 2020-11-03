@@ -10,13 +10,9 @@
 
 {% include 'part/tabs.html' with tab='bom' %}
 
-<h3>{% trans "Bill of Materials" %}</h3>
+<h4>{% trans "Bill of Materials" %}</h4>
+<hr>
 
-{% if part.has_complete_bom_pricing == False %}
-<div class='alert alert-block alert-warning'>
-    The BOM for <i>{{ part.full_name }}</i> does not have complete pricing information
-</div>
-{% endif %}
 {% if part.bom_checked_date %}
 {% if part.is_bom_valid %}
 <div class='alert alert-block alert-info'>

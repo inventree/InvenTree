@@ -21,7 +21,7 @@ from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.forms import ConfirmForm
 
 from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
-from InvenTree.helpers import ExtractSerialNumbers
+from InvenTree.helpers import extract_serial_numbers
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
@@ -164,9 +164,10 @@ class StockItemAttachmentCreate(AjaxCreateView):
     ajax_template_name = "modal_form.html"
     role_required = 'stock.add'
 
-    def post_save(self, attachment, form, **kwargs):
+    def save(self, form, **kwargs):
         """ Record the user that uploaded the attachment """
         
+        attachment = form.save(commit=False)
         attachment.user = self.request.user
         attachment.save()
 
@@ -252,7 +253,7 @@ class StockItemAssignToCustomer(AjaxUpdateView):
         if not customer:
             form.add_error('customer', _('Customer must be specified'))
 
-    def post_save(self, item, form, **kwargs):
+    def save(self, item, form, **kwargs):
         """
         Assign the stock item to the customer.
         """
@@ -286,7 +287,7 @@ class StockItemReturnToStock(AjaxUpdateView):
         if not location:
             form.add_error('location', _('Specify a valid location'))
 
-    def post_save(self, item, form, **kwargs):
+    def save(self, item, form, **kwargs):
 
         location = form.cleaned_data.get('location', None)
 
@@ -431,9 +432,12 @@ class StockItemTestResultCreate(AjaxCreateView):
     ajax_form_title = _("Add Test Result")
     role_required = 'stock.add'
 
-    def post_save(self, result, form, **kwargs):
-        """ Record the user that uploaded the test result """
+    def save(self, form, **kwargs):
+        """
+        Record the user that uploaded the test result
+        """
 
+        result = form.save(commit=False)
         result.user = self.request.user
         result.save()
 
@@ -1405,7 +1409,7 @@ class StockItemSerialize(AjaxUpdateView):
             destination = None
 
         try:
-            numbers = ExtractSerialNumbers(serials, quantity)
+            numbers = extract_serial_numbers(serials, quantity)
         except ValidationError as e:
             form.add_error('serial_numbers', e.messages)
             valid = False
@@ -1501,11 +1505,8 @@ class StockItemCreate(AjaxCreateView):
             # form.fields['part'].widget = HiddenInput()
 
             # Trackable parts get special consideration:
-            if part.trackable:
-                form.fields['delete_on_deplete'].widget = HiddenInput()
-                form.fields['delete_on_deplete'].initial = False
-            else:
-                form.fields['serial_numbers'].widget = HiddenInput()
+            form.fields['delete_on_deplete'].disabled = not part.trackable
+            form.fields['serial_numbers'].disabled = not part.trackable
 
             # If the part is NOT purchaseable, hide the supplier_part field
             if not part.purchaseable:
@@ -1529,6 +1530,8 @@ class StockItemCreate(AjaxCreateView):
             # No Part has been selected!
             # We must not provide *any* options for SupplierPart
             form.fields['supplier_part'].queryset = SupplierPart.objects.none()
+
+            form.fields['serial_numbers'].disabled = True
 
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
         if form['supplier_part'].value() is not None:
@@ -1631,7 +1634,7 @@ class StockItemCreate(AjaxCreateView):
                     # If user has specified a range of serial numbers
                     if len(sn) > 0:
                         try:
-                            serials = ExtractSerialNumbers(sn, quantity)
+                            serials = extract_serial_numbers(sn, quantity)
 
                             existing = part.find_conflicting_serial_numbers(serials)
 

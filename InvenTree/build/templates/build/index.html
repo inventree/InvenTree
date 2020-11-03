@@ -41,12 +41,7 @@ InvenTree | {% trans "Build Orders" %}
     $("#collapse-item-active").collapse().show();
 
     $("#new-build").click(function() {
-        launchModalForm(
-            "{% url 'build-create' %}",
-            {
-                follow: true
-            }
-        );
+        newBuildOrder();
     });
 
     loadBuildTable($("#build-table"), {

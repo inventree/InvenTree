@@ -546,9 +546,23 @@ class Part(MPTTModel):
             pass
 
     def clean(self):
-        """ Perform cleaning operations for the Part model """
+        """
+        Perform cleaning operations for the Part model
+        
+        Update trackable status:
+            If this part is trackable, and it is used in the BOM
+            for a parent part which is *not* trackable,
+            then we will force the parent part to be trackable.
+        """
 
         super().clean()
+
+        if self.trackable:
+            for parent_part in self.used_in.all():
+                if not parent_part.trackable:
+                    parent_part.trackable = True
+                    parent_part.clean()
+                    parent_part.save()
 
     name = models.CharField(max_length=100, blank=False,
                             help_text=_('Part name'),
@@ -892,6 +906,19 @@ class Part(MPTTModel):
         return self.bom_count > 0
 
     @property
+    def has_trackable_parts(self):
+        """
+        Return True if any parts linked in the Bill of Materials are trackable.
+        This is important when building the part.
+        """
+
+        for bom_item in self.bom_items.all():
+            if bom_item.sub_part.trackable:
+                return True
+
+        return False
+
+    @property
     def bom_count(self):
         """ Return the number of items contained in the BOM for this part """
         return self.bom_items.count()
@@ -948,15 +975,31 @@ class Part(MPTTModel):
 
         self.bom_items.all().delete()
 
-    def required_parts(self):
-        """ Return a list of parts required to make this part (list of BOM items) """
-        parts = []
-        for bom in self.bom_items.all().select_related('sub_part'):
-            parts.append(bom.sub_part)
+    def getRequiredParts(self, recursive=False, parts=set()):
+        """
+        Return a list of parts required to make this part (i.e. BOM items).
+
+        Args:
+            recursive: If True iterate down through sub-assemblies
+            parts: Set of parts already found (to prevent recursion issues)
+        """
+
+        for bom_item in self.bom_items.all().select_related('sub_part'):
+
+            sub_part = bom_item.sub_part
+
+            if sub_part not in parts:
+
+                parts.add(sub_part)
+
+                if recursive:
+                    sub_part.getRequiredParts(recursive=True, parts=parts)
+
         return parts
 
     def get_allowed_bom_items(self):
-        """ Return a list of parts which can be added to a BOM for this part.
+        """
+        Return a list of parts which can be added to a BOM for this part.
 
         - Exclude parts which are not 'component' parts
         - Exclude parts which this part is in the BOM for
@@ -1158,7 +1201,7 @@ class Part(MPTTModel):
             parameter.save()
 
     @transaction.atomic
-    def deepCopy(self, other, **kwargs):
+    def deep_copy(self, other, **kwargs):
         """ Duplicates non-field data from another part.
         Does not alter the normal fields of this part,
         but can be used to copy other data linked by ForeignKey refernce.
@@ -1681,12 +1724,15 @@ class BomItem(models.Model):
         return self.get_item_hash() == self.checksum
 
     def clean(self):
-        """ Check validity of the BomItem model.
+        """
+        Check validity of the BomItem model.
 
         Performs model checks beyond simple field validation.
 
         - A part cannot refer to itself in its BOM
         - A part cannot refer to a part which refers to it
+
+        - If the "sub_part" is trackable, then the "part" must be trackable too!
         """
 
         # If the sub_part is 'trackable' then the 'quantity' field must be an integer
@@ -1696,6 +1742,13 @@ class BomItem(models.Model):
                     raise ValidationError({
                         "quantity": _("Quantity must be integer value for trackable parts")
                     })
+
+                # Force the upstream part to be trackable if the sub_part is trackable
+                if not self.part.trackable:
+                    self.part.trackable = True
+                    self.part.clean()
+                    self.part.save()
+
         except Part.DoesNotExist:
             pass
 

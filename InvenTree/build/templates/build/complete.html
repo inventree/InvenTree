@@ -3,35 +3,21 @@
 
 {% block pre_form_content %}
 
-<h4>{% trans "Build" %} - {{ build }}</h4>
-
-{% if build.isFullyAllocated %}
-<div class='alert alert-block alert-info'>
-    <h4>{% trans "Build order allocation is complete" %}</h4>
+{% if build.can_complete %}
+<div class='alert alert-block alert-success'>
+    {% trans "Build can be completed" %}
 </div>
 {% else %}
 <div class='alert alert-block alert-danger'>
-    <h4>{% trans "Warning: Build order allocation is not complete" %}</h4>
-    {% trans "Build Order has not been fully allocated. Ensure that all Stock Items have been allocated to the Build" %}
-</div>
-{% endif %}
-
-<div class='alert alert-block alert-success'>
-    <h4>{% trans "The following actions will be performed:" %}</h4>
+    <b>{% trans "Build cannot be completed" %}</b><br>
     <ul>
-        <li>{% trans "Remove allocated items from stock" %}</li>
-        <li>{% trans "Add completed items to stock" %}</li>
+        {% if build.incomplete_count > 0 %}
+        <li>{% trans "Incompleted build outputs remain" %}</li>
+        {% endif %}
+        {% if build.completed < build.quantity %}
+        <li>{% trans "Required build quantity has not been completed" %}</li>
+        {% endif %}
     </ul>
 </div>
-
-<div class='panel panel-default'>
-    <div class='panel-heading'>
-        {% trans "The following items will be created" %}
-    </div>
-    <div class='panel-content'>
-        {% include "hover_image.html" with image=build.part.image hover=True %}
-        {{ build.quantity }} x {{ build.part.full_name }}
-    </div>
-</div>
-
+{% endif %}
 {% endblock %}

@@ -161,10 +161,14 @@ class PartAttachmentCreate(AjaxCreateView):
 
     role_required = 'part.add'
 
-    def post_save(self):
-        """ Record the user that uploaded the attachment """
-        self.object.user = self.request.user
-        self.object.save()
+    def save(self, form, **kwargs):
+        """
+        Record the user that uploaded this attachment
+        """
+
+        attachment = form.save(commit=False)
+        attachment.user = self.request.user
+        attachment.save()
 
     def get_data(self):
         return {
@@ -439,7 +443,7 @@ class MakePartVariant(AjaxCreateView):
             parameters_copy = str2bool(request.POST.get('parameters_copy', False))
 
             # Copy relevent information from the template part
-            part.deepCopy(part_template, bom=bom_copy, parameters=parameters_copy)
+            part.deep_copy(part_template, bom=bom_copy, parameters=parameters_copy)
 
         return self.renderJsonResponse(request, form, data, context=context)
 
@@ -552,7 +556,7 @@ class PartDuplicate(AjaxCreateView):
             original = self.get_part_to_copy()
 
             if original:
-                part.deepCopy(original, bom=bom_copy, parameters=parameters_copy)
+                part.deep_copy(original, bom=bom_copy, parameters=parameters_copy)
 
             try:
                 data['url'] = part.get_absolute_url()
@@ -953,7 +957,10 @@ class BomDuplicate(AjaxUpdateView):
         if not confirm:
             form.add_error('confirm', _('Confirm duplication of BOM from parent'))
 
-    def post_save(self, part, form):
+    def save(self, part, form):
+        """
+        Duplicate BOM from the specified parent
+        """
 
         parent = form.cleaned_data.get('parent', None)
 
@@ -994,7 +1001,10 @@ class BomValidate(AjaxUpdateView):
         if not confirm:
             form.add_error('validate', _('Confirm that the BOM is valid'))
 
-    def post_save(self, part, form, **kwargs):
+    def save(self, part, form, **kwargs):
+        """
+        Mark the BOM as validated
+        """
 
         part.validate_bom(self.request.user)
 
@@ -2260,7 +2270,7 @@ class BomItemCreate(AjaxCreateView):
             query = query.filter(active=True)
             
             # Eliminate any options that are already in the BOM!
-            query = query.exclude(id__in=[item.id for item in part.required_parts()])
+            query = query.exclude(id__in=[item.id for item in part.getRequiredParts()])
             
             form.fields['sub_part'].queryset = query
 
@@ -2328,7 +2338,7 @@ class BomItemEdit(AjaxUpdateView):
             except ValueError:
                 sub_part_id = -1
 
-            existing = [item.pk for item in part.required_parts()]
+            existing = [item.pk for item in part.getRequiredParts()]
 
             if sub_part_id in existing:
                 existing.remove(sub_part_id)

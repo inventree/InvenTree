@@ -32,3 +32,51 @@
     lft: 0
     rght: 0
     tree_id: 1
+
+- model: build.build
+  pk: 3
+  fields:
+    part: 50
+    reference: "0003"
+    title: 'Making things'
+    batch: 'B2'
+    status: 40  # COMPLETE
+    quantity: 21
+    notes: 'Some even more simple notes'
+    creation_date: '2019-03-16'
+    level: 0
+    lft: 0
+    rght: 0
+    tree_id: 1
+
+- model: build.build
+  pk: 4
+  fields:
+    part: 50
+    reference: "0004"
+    title: 'Making things'
+    batch: 'B4'
+    status: 40  # COMPLETE
+    quantity: 21
+    notes: 'Some even even more simple notes'
+    creation_date: '2019-03-16'
+    level: 0
+    lft: 0
+    rght: 0
+    tree_id: 1
+
+- model: build.build
+  pk: 5
+  fields:
+    part: 25
+    reference: "0005"
+    title: "Building some Widgets"
+    batch: "B10"
+    status: 40 # Complete
+    quantity: 10
+    creation_date: '2019-03-16'
+    notes: "A thing"
+    level: 0
+    lft: 0
+    rght: 0
+    tree_id: 1
