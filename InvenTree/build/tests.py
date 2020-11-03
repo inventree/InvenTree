@@ -299,7 +299,7 @@ class TestBuildViews(TestCase):
         # Firstly, check that the build cannot be completed!
         self.assertFalse(self.build.can_complete)
 
-        url = reverse('build-output-complete', args=(self.output.pk,))
+        url = reverse('build-output-complete', args=(1,))
 
         # Test without confirmation
         response = self.client.post(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
