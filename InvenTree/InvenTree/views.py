@@ -373,7 +373,9 @@ class AjaxCreateView(AjaxMixin, CreateView):
 
         # Extra JSON data sent alongside form
         data = {
-            'form_valid': valid
+            'form_valid': valid,
+            'form_errors': self.form.errors.as_json(),
+            'non_field_errors': self.form.non_field_errors().as_json(),
         }
 
         # Add in any extra class data
@@ -453,7 +455,9 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         valid = form.is_valid()
 
         data = {
-            'form_valid': valid
+            'form_valid': valid,
+            'form_errors': form.errors.as_json(),
+            'non_field_errors': form.non_field_errors().as_json(),
         }
 
         # Add in any extra class data

@@ -67,12 +67,10 @@ class BuildCancel(AjaxUpdateView):
         if not confirm:
             form.add_error('confirm_cancel', _('Confirm build cancellation'))
 
-    def save(self, form, **kwargs):
+    def save(self, build, form, **kwargs):
         """
         Cancel the build.
         """
-
-        build = self.get_object()
 
         build.cancelBuild(self.request.user)
 

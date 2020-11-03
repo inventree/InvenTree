@@ -1060,7 +1060,7 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(count):
 
-            self.addTransactionNote('Stocktake - counted {n} items'.format(n=count),
+            self.addTransactionNote('Stocktake - counted {n} items'.format(n=helpers.normalize(count)),
                                     user,
                                     notes=notes,
                                     system=True)
@@ -1089,7 +1089,7 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(self.quantity + quantity):
             
-            self.addTransactionNote('Added {n} items to stock'.format(n=quantity),
+            self.addTransactionNote('Added {n} items to stock'.format(n=helpers.normalize(quantity)),
                                     user,
                                     notes=notes,
                                     system=True)
@@ -1115,7 +1115,7 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(self.quantity - quantity):
 
-            self.addTransactionNote('Removed {n} items from stock'.format(n=quantity),
+            self.addTransactionNote('Removed {n} items from stock'.format(n=helpers.normalize(quantity)),
                                     user,
                                     notes=notes,
                                     system=True)

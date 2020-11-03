@@ -213,7 +213,7 @@ class Build(MPTTModel):
             in_stock = (True / False) - If supplied, filter by 'in-stock' status
         """
 
-        outputs = self.build_outputs
+        outputs = self.build_outputs.all()
 
         # Filter by 'in stock' status
         in_stock = kwargs.get('in_stock', None)
@@ -836,6 +836,13 @@ class BuildItem(models.Model):
             ('build', 'stock_item', 'install_into'),
         ]
 
+    def save(self, *args, **kwargs):
+
+        self.validate_unique()
+        self.clean()
+
+        super().save()
+
     def validate_unique(self, exclude=None):
         """
         Test that this BuildItem object is "unique".
@@ -871,6 +878,9 @@ class BuildItem(models.Model):
         super().clean()
 
         errors = {}
+
+        if not self.install_into:
+            raise ValidationError(_('Build item must specify a build output'))
 
         try:
             # Allocated part must be in the BOM for the master part

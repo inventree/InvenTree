@@ -12,6 +12,7 @@ from rest_framework import status
 import json
 
 from .models import Build
+from stock.models import StockItem
 
 from InvenTree.status_codes import BuildStatus
 
@@ -49,7 +50,7 @@ class BuildTestSimple(TestCase):
 
     def test_build_objects(self):
         # Ensure the Build objects were correctly created
-        self.assertEqual(Build.objects.count(), 2)
+        self.assertEqual(Build.objects.count(), 5)
         b = Build.objects.get(pk=2)
         self.assertEqual(b.batch, 'B2')
         self.assertEqual(b.quantity, 21)
@@ -127,10 +128,36 @@ class TestBuildAPI(APITestCase):
         self.client.login(username='testuser', password='password')
 
     def test_get_build_list(self):
-        """ Test that we can retrieve list of build objects """
+        """
+        Test that we can retrieve list of build objects
+        """
+
         url = reverse('api-build-list')
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(len(response.data), 5)
+
+        # Filter query by build status
+        response = self.client.get(url, {'status': 40}, format='json')
+
+        self.assertEqual(len(response.data), 4)
+
+        # Filter by "active" status
+        response = self.client.get(url, {'active': True}, format='json')
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], 1)
+
+        response = self.client.get(url, {'active': False}, format='json')
+        self.assertEqual(len(response.data), 4)
+
+        # Filter by 'part' status
+        response = self.client.get(url, {'part': 25}, format='json')
+        self.assertEqual(len(response.data), 2)
+
+        # Filter by an invalid part
+        response = self.client.get(url, {'part': 99999}, format='json')
+        self.assertEqual(len(response.data), 0)
 
     def test_get_build_item_list(self):
         """ Test that we can retrieve list of BuildItem objects """
@@ -175,6 +202,16 @@ class TestBuildViews(TestCase):
         g.save()
 
         self.client.login(username='username', password='password')
+
+        # Create a build output for build # 1
+        self.build = Build.objects.get(pk=1)
+
+        self.output = StockItem.objects.create(
+            part=self.build.part,
+            quantity=self.build.quantity,
+            build=self.build,
+            is_building=True,
+        )
 
     def test_build_index(self):
         """ test build index view """
@@ -254,10 +291,15 @@ class TestBuildViews(TestCase):
         # url = reverse('build-item-edit')
         pass
 
-    def test_build_complete(self):
-        """ Test the build completion form """
+    def test_build_output_complete(self):
+        """
+        Test the build output completion form
+        """
 
-        url = reverse('build-complete', args=(1,))
+        # Firstly, check that the build cannot be completed!
+        self.assertFalse(self.build.can_complete)
+
+        url = reverse('build-output-complete', args=(self.output.pk,))
 
         # Test without confirmation
         response = self.client.post(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -267,11 +309,25 @@ class TestBuildViews(TestCase):
         self.assertFalse(data['form_valid'])
 
         # Test with confirmation, valid location
-        response = self.client.post(url, {'confirm': 1, 'location': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.post(
+            url,
+            {
+                'confirm': 1,
+                'confirm_incomplete': 1,
+                'location': 1,
+                'output': self.output.pk,
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+
         self.assertEqual(response.status_code, 200)
-        
+
         data = json.loads(response.content)
         self.assertTrue(data['form_valid'])
+
+        # Now the build should be able to be completed
+        self.build.refresh_from_db()
+        self.assertTrue(self.build.can_complete)
 
         # Test with confirmation, invalid location
         response = self.client.post(url, {'confirm': 1, 'location': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')

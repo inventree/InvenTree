@@ -67,6 +67,7 @@
     name: 'Widget'
     description: 'A watchamacallit'
     category: 7
+    assembly: true
     trackable: true
     tree_id: 0
     level: 0
