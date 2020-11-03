@@ -765,7 +765,7 @@ class SettingCategorySelectView(FormView):
 
         category = self.request.GET.get('category', None)
         if category:
-            initial['name'] = category
+            initial['category'] = category
 
         return initial
 
@@ -778,11 +778,9 @@ class SettingCategorySelectView(FormView):
         form = self.get_form()
 
         if form.is_valid():
-            category = form.cleaned_data['name']
-
             context = self.get_context_data()
 
-            context['category'] = category
+            context['category'] = form.cleaned_data['category']
 
             return super(SettingCategorySelectView, self).render_to_response(context)
 

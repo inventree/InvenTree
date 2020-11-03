@@ -14,7 +14,9 @@
 <form action="{% url 'settings-category' %}" method="post">
     {% csrf_token %}
     {% load crispy_forms_tags %}
-    {% crispy form %}
+    <div id="category-select">
+        {% crispy form %}
+    </div>
 </form>
 
 {% if category %}
@@ -35,10 +37,14 @@
 
 {% block js_ready %}
 {{ block.super }}
-{% if category %}
 
+    $(document).ready(function() {
+        attachSelect('#category-select');
+    });
+
+{% if category %}
 	$("#param-table").inventreeTable({
-        url: "{% url 'api-part-category-parameters' category %}",
+        url: "{% url 'api-part-category-parameters' category.pk %}",
         queryParams: {
             ordering: 'name',
         },
@@ -74,7 +80,7 @@
 
 
 	$("#new-param").click(function() {
-        launchModalForm("{% url 'category-param-template-create' category %}", {
+        launchModalForm("{% url 'category-param-template-create' category.pk %}", {
             success: function() {
                 $("#param-table").bootstrapTable('refresh');
             },
@@ -84,7 +90,7 @@
     $("#param-table").on('click', '.template-edit', function() {
         var button = $(this);
 
-        var url = "/part/category/{{ category }}/parameters/" + button.attr('pk') + "/edit/";
+        var url = "/part/category/{{ category.pk }}/parameters/" + button.attr('pk') + "/edit/";
 
         launchModalForm(url, {
             success: function() {
@@ -96,7 +102,7 @@
     $("#param-table").on('click', '.template-delete', function() {
         var button = $(this);
 
-        var url = "/part/category/{{ category }}/parameters/" + button.attr('pk') + "/delete/";
+        var url = "/part/category/{{ category.pk }}/parameters/" + button.attr('pk') + "/delete/";
         
         launchModalForm(url, {
             success: function() {
