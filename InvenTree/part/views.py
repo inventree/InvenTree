@@ -2305,6 +2305,8 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
 
         - If the add_to_all_categories object is set, link parameter template to
           all categories
+        - If the add_to_same_level_categories object is set, link parameter template to
+          same level categories
         """
 
         form = self.get_form()
@@ -2312,17 +2314,26 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
         valid = form.is_valid()
 
         if valid:
-            all_categories = form.cleaned_data['add_to_all_categories']
+            add_to_same_level_categories = form.cleaned_data['add_to_same_level_categories']
+            add_to_all_categories = form.cleaned_data['add_to_all_categories']
 
-            if all_categories:
-                selected_category = int(self.kwargs.get('pk', 0))
-                parameter_template = form.cleaned_data['parameter_template']
-                default_value = form.cleaned_data['default_value']
+            selected_category = PartCategory.objects.get(pk=int(self.kwargs['pk']))
+            parameter_template = form.cleaned_data['parameter_template']
+            default_value = form.cleaned_data['default_value']
 
-                # Add parameter template and default value to all categories
-                for category in PartCategory.objects.all():
+            categories = PartCategory.objects.all()
+
+            if add_to_same_level_categories and not add_to_all_categories:
+                # Get level
+                level = selected_category.level
+                # Filter same level categories
+                categories = categories.filter(level=level)
+
+            if add_to_same_level_categories or add_to_all_categories:
+                # Add parameter template and default value to categories
+                for category in categories:
                     # Skip selected category (will be processed in the post call)
-                    if category.pk != selected_category:
+                    if category.pk != selected_category.pk:
                         try:
                             cat_template = PartCategoryParameterTemplate.objects.create(category=category,
                                                                                         parameter_template=parameter_template,
@@ -2362,6 +2373,7 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
         
         form.fields['category'].widget = HiddenInput()
         form.fields['add_to_all_categories'].widget = HiddenInput()
+        form.fields['add_to_same_level_categories'].widget = HiddenInput()
 
         if form.is_valid():
             form.cleaned_data['category'] = self.kwargs.get('pk', None)

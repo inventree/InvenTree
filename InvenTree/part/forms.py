@@ -282,16 +282,21 @@ class EditCategoryForm(HelperForm):
 class EditCategoryParameterTemplateForm(HelperForm):
     """ Form for editing a PartCategoryParameterTemplate object """
 
+    add_to_same_level_categories = forms.BooleanField(required=False,
+                                                      initial=False,
+                                                      help_text=_('Add parameter template to same level categories'))
+
     add_to_all_categories = forms.BooleanField(required=False,
                                                initial=False,
                                                help_text=_('Add parameter template to all categories'))
-
+    
     class Meta:
         model = PartCategoryParameterTemplate
         fields = [
             'category',
             'parameter_template',
             'default_value',
+            'add_to_same_level_categories',
             'add_to_all_categories',
         ]
 
