@@ -1908,24 +1908,3 @@ class PartRelated(models.Model):
                               'and that the relationship is unique')
 
             raise ValidationError(error_message)
-
-    def create_relationship(self, part_1, part_2):
-        ''' Create relationship between two parts '''
-
-        validate = self.validate(part_1, part_2)
-
-        if validate:
-            # Add relationship
-            self.part_1 = part_1
-            self.part_2 = part_2
-            self.save()
-
-        return validate
-
-    @classmethod
-    def create(cls, part_1, part_2):
-        ''' Create PartRelated object and relationship between two parts '''
-
-        related_part = cls()
-        related_part.create_relationship(part_1, part_2)
-        return related_part
