@@ -277,14 +277,7 @@ class ParameterAdmin(ImportExportModelAdmin):
 
 class PartCategoryParameterAdmin(admin.ModelAdmin):
 
-    def get_form(self, request, obj=None, **kwargs):
-        """ Display only parent categories as choices for category field """
-
-        form = super().get_form(request, obj, **kwargs)
-
-        form.base_fields['category'].choices = PartCategory.get_parent_categories()
-
-        return form
+    pass
 
 
 class PartSellPriceBreakAdmin(admin.ModelAdmin):

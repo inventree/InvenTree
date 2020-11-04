@@ -42,7 +42,7 @@
     default_value: '2.8'
 
 - model: part.PartCategoryParameterTemplate
-  pk: 3
+  pk: 2
   fields:
     category: 7
     parameter_template: 3

@@ -207,7 +207,7 @@ class EditPartForm(HelperForm):
 
     selected_category_templates = forms.BooleanField(required=False,
                                                      initial=False,
-                                                     label=_('Include selected category parameter templates'),
+                                                     label=_('Include category parameter templates'),
                                                      widget=forms.HiddenInput())
 
     parent_category_templates = forms.BooleanField(required=False,

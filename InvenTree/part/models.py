@@ -180,7 +180,9 @@ class PartCategory(InvenTreeTree):
     def get_parameter_templates(self):
         """ Return parameter templates associated to category """
 
-        return PartCategoryParameterTemplate.objects.filter(category=self.id)
+        prefetch = PartCategoryParameterTemplate.objects.prefetch_related('category', 'parameter_template')
+
+        return prefetch.filter(category=self.id)
 
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
@@ -1701,6 +1703,7 @@ class PartCategoryParameterTemplate(models.Model):
 
     def __str__(self):
         """ String representation of a PartCategoryParameterTemplate (admin interface) """
+
         if self.default_value:
             return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
         else:
