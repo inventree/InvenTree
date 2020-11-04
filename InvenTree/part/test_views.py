@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
-from .models import Part
+from .models import Part, PartRelated
 
 
 class PartViewTestCase(TestCase):
@@ -204,24 +204,31 @@ class PartTests(PartViewTestCase):
 class PartRelatedTests(PartViewTestCase):
 
     def test_valid_create(self):
-        """ test creation of an attachment for a valid part """
+        """ test creation of a related part """
 
-        response = self.client.get(reverse('part-related-create'), {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        # Test GET view
+        response = self.client.get(reverse('part-related-create'), {'part': 1},
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
-        # TODO - Create a new attachment using this view
+        # Test POST view with valid form data
+        response = self.client.post(reverse('part-related-create'), {'part_1': 1, 'part_2': 2},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertContains(response, '"form_valid": true', status_code=200)
 
-    def test_invalid_create(self):
-        """ test creation of an attachment for an invalid part """
+        # Try to create the same relationship with part_1 and part_2 pks reversed
+        response = self.client.post(reverse('part-related-create'), {'part_1': 2, 'part_2': 1},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertContains(response, '"form_valid": false', status_code=200)
 
-        # TODO
-        pass
-
-    def test_edit(self):
-        """ test editing an attachment """
-
-        # TODO
-        pass
+        # Try to create part related to itself
+        response = self.client.post(reverse('part-related-create'), {'part_1': 1, 'part_2': 1},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertContains(response, '"form_valid": false', status_code=200)
+        
+        # Check final count
+        n = PartRelated.objects.all().count()
+        self.assertEqual(n, 1)
 
 
 class PartAttachmentTests(PartViewTestCase):

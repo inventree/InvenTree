@@ -154,11 +154,6 @@ class CreatePartRelatedForm(HelperForm):
             'part_2': _('Related Part'),
         }
 
-    def save(self):
-        """ Disable model saving """
-
-        return super(CreatePartRelatedForm, self).save(commit=False)
-
 
 class EditPartAttachmentForm(HelperForm):
     """ Form for editing a PartAttachment object """
