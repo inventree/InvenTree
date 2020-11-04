@@ -219,10 +219,10 @@ class SettingCategorySelectForm(forms.ModelForm):
             Div(
                 Div(Field('category'),
                     css_class='col-sm-6',
-                    style='width: 30%;'),
+                    style='width: 70%;'),
                 Div(StrictButton(_('Select Category'), css_class='btn btn-primary', type='submit'),
                     css_class='col-sm-6',
-                    style='width: auto; padding-left: 0;'),
+                    style='width: 30%; padding-left: 0;'),
                 css_class='row',
             ),
         )

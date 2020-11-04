@@ -37,7 +37,8 @@
 
 {% block js_ready %}
 {{ block.super }}
-
+    
+    {# Convert dropdown to select2 format #}
     $(document).ready(function() {
         attachSelect('#category-select');
     });
@@ -78,7 +79,6 @@
         ]
     });
 
-
 	$("#new-param").click(function() {
         launchModalForm("{% url 'category-param-template-create' category.pk %}", {
             success: function() {
@@ -110,6 +110,5 @@
             }
         });
     });
-
 {% endif %}
 {% endblock %}

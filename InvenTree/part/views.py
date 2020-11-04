@@ -684,7 +684,14 @@ class PartCreate(AjaxCreateView):
             # Record the user who created this part
             part.creation_user = request.user
 
-            part.save()
+            # Store category templates settings
+            add_category_templates = {
+                'main': form.cleaned_data['selected_category_templates'],
+                'parent': form.cleaned_data['parent_category_templates'],
+            }
+
+            # Save part and pass category template settings
+            part.save(**{'add_category_templates': add_category_templates})
 
             data['pk'] = part.pk
             data['text'] = str(part)
@@ -693,42 +700,6 @@ class PartCreate(AjaxCreateView):
                 data['url'] = part.get_absolute_url()
             except AttributeError:
                 pass
-
-            # Store templates added to part
-            template_list = []
-
-            # Create part parameters for selected category
-            category_templates = form.cleaned_data['selected_category_templates']
-            if category_templates:
-                # Get selected category
-                category = form.cleaned_data['category']
-
-                for template in category.get_parameter_templates():
-                    parameter = PartParameter.create(part=part,
-                                                     template=template.parameter_template,
-                                                     data=template.default_value,
-                                                     save=True)
-                    if parameter:
-                        template_list.append(template.parameter_template)
-
-            # Create part parameters for parent category
-            category_templates = form.cleaned_data['parent_category_templates']
-            if category_templates:
-                # Get parent categories
-                parent_categories = form.cleaned_data['category'].get_ancestors()
-
-                for category in parent_categories:
-                    for template in category.get_parameter_templates():
-                        # Check that template wasn't already added
-                        if template.parameter_template not in template_list:
-                            try:
-                                PartParameter.create(part=part,
-                                                     template=template.parameter_template,
-                                                     data=template.default_value,
-                                                     save=True)
-                            except IntegrityError:
-                                # PartParameter already exists
-                                pass
 
         return self.renderJsonResponse(request, form, data, context=context)
 

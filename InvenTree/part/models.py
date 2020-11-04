@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from django.db import models, transaction
+from django.db.utils import IntegrityError
 from django.db.models import Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
@@ -324,6 +325,9 @@ class Part(MPTTModel):
         If not, it is considered "orphaned" and will be deleted.
         """
 
+        # Get category templates settings
+        add_category_templates = kwargs.pop('add_category_templates', None)
+
         if self.pk:
             previous = Part.objects.get(pk=self.pk)
 
@@ -338,6 +342,44 @@ class Part(MPTTModel):
         self.validate_unique()
 
         super().save(*args, **kwargs)
+
+        if add_category_templates:
+            # Get part category
+            category = self.category
+
+            if add_category_templates:
+                # Store templates added to part
+                template_list = []
+
+                # Create part parameters for selected category
+                category_templates = add_category_templates['main']
+                if category_templates:
+                    for template in category.get_parameter_templates():
+                        parameter = PartParameter.create(part=self,
+                                                         template=template.parameter_template,
+                                                         data=template.default_value,
+                                                         save=True)
+                        if parameter:
+                            template_list.append(template.parameter_template)
+
+                # Create part parameters for parent category
+                category_templates = add_category_templates['parent']
+                if category_templates:
+                    # Get parent categories
+                    parent_categories = category.get_ancestors()
+
+                    for category in parent_categories:
+                        for template in category.get_parameter_templates():
+                            # Check that template wasn't already added
+                            if template.parameter_template not in template_list:
+                                try:
+                                    PartParameter.create(part=self,
+                                                         template=template.parameter_template,
+                                                         data=template.default_value,
+                                                         save=True)
+                                except IntegrityError:
+                                    # PartParameter already exists
+                                    pass
 
     def __str__(self):
         return f"{self.full_name} - {self.description}"
