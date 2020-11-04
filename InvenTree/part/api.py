@@ -217,9 +217,21 @@ class PartTestTemplateList(generics.ListCreateAPIView):
 
 
 class PartThumbs(generics.ListAPIView):
-    """ API endpoint for retrieving information on available Part thumbnails """
+    """
+    API endpoint for retrieving information on available Part thumbnails
+    """
 
+    queryset = Part.objects.all()
     serializer_class = part_serializers.PartThumbSerializer
+
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+
+        # Get all Parts which have an associated image
+        queryset = queryset.exclude(image='')
+        
+        return queryset
 
     def list(self, request, *args, **kwargs):
         """
@@ -227,8 +239,7 @@ class PartThumbs(generics.ListAPIView):
         - Images may be used for multiple parts!
         """
 
-        # Get all Parts which have an associated image
-        queryset = Part.objects.all().exclude(image='')
+        queryset = self.get_queryset()
 
         # TODO - We should return the thumbnails here, not the full image!
 
