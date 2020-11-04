@@ -241,6 +241,17 @@ class PartAPITest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_get_thumbs(self):
+        """
+        Return list of part thumbnails
+        """
+
+        url = reverse('api-part-thumbs')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class PartAPIAggregationTest(APITestCase):
     """
