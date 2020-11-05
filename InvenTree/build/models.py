@@ -594,6 +594,9 @@ class Build(MPTTModel):
         - Mark the output as complete
         """
 
+        # Select the location for the build output
+        location = kwargs.get('location', self.destination)
+
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
 
@@ -613,6 +616,7 @@ class Build(MPTTModel):
         # Ensure that the output is updated correctly
         output.build = self
         output.is_building = False
+        output.location = location
 
         output.save()
 
