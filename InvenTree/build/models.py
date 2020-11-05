@@ -183,6 +183,14 @@ class Build(MPTTModel):
     )
 
     @property
+    def active(self):
+        """
+        Return True if this build is active
+        """
+
+        return self.status in BuildStatus.ACTIVE_CODES
+
+    @property
     def bom_items(self):
         """
         Returns the BOM items for the part referenced by this BuildOrder
@@ -594,6 +602,9 @@ class Build(MPTTModel):
         - Mark the output as complete
         """
 
+        # Select the location for the build output
+        location = kwargs.get('location', self.destination)
+
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
 
@@ -613,6 +624,7 @@ class Build(MPTTModel):
         # Ensure that the output is updated correctly
         output.build = self
         output.is_building = False
+        output.location = location
 
         output.save()
 
