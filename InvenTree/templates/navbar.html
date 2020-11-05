@@ -16,41 +16,33 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        {% if roles.part.view %}
-        <li><a href="{% url 'part-index' %}"><span class='fas fa-shapes icon-header'></span>{% trans "Parts" %}</a></li>
-        {% endif %}
-        {% if roles.stock.view %}
-        <li><a href="{% url 'stock-index' %}"><span class='fas fa-boxes icon-header'></span>{% trans "Stock" %}</a></li>
-        {% endif %}
-        {% if roles.build.view %}
-        <li><a href="{% url 'build-index' %}"><span class='fas fa-tools icon-header'></span>{% trans "Build" %}</a></li>
-        {% endif %}
-        {% if roles.purchase_order.view %}
-        <li class='nav navbar-nav'>
-          <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-shopping-cart icon-header'></span>{% trans "Buy" %}</a>
-          <ul class='dropdown-menu'>
-            <li><a href="{% url 'supplier-index' %}"><span class='fas fa-building icon-header'></span>{% trans "Suppliers" %}</a></li>
-            <li><a href="{% url 'manufacturer-index' %}"><span class='fas fa-industry icon-header'></span>{% trans "Manufacturers" %}</a></li>
-            <li><a href="{% url 'po-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
-          </ul>
-        </li>
-        {% endif %}
-        {% if roles.sales_order.view %}
-        <li class='nav navbar-nav'>
-          <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-truck icon-header'></span>{% trans "Sell" %}</a>
-          <ul class='dropdown-menu'>
-            <li><a href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
-            <li><a href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
-          </ul>
-        </li>
-        {% endif %}
-        {% get_extension_navbar as extension_navbar %}
-	    {% for i in extension_navbar %}
-	    <li {% if i.active %} class='active' {% endif %}>
-            <a href='{{ i.url }}' {% if i.target %}target="{{ i.target }}"{% endif %}><span class='{{ i.icon }}'></span> {{ i.label }}</a>
-            </li>
-        {% endfor %}
-
+		{% for nav in nav_items %}
+			<li {% if nav.children %}class="dropdown"{% endif %}>
+				<a href="{{ nav.url }}" title="{{ nav.title }}" {% if nav.active %}class="active"{% endif %}
+					{% if nav.children %}class="dropdown-toggle" data-toggle="dropdown"{% endif %}>
+					{% if nav.icon %}
+						<span class="{{ nav.icon }}  icon-header"></span>
+					{% endif %}
+					{{ nav.label }}
+				</a>
+				{% if nav.children %}
+					<ul class="dropdown-menu" role="menu">
+						{% for item in nav.children %}
+							<li>
+								<a {% if item.url %}href="{{ item.url }}"{% endif %}
+										{% if item.external %}target="_blank"{% endif %}
+										{% if item.active %}class="active"{% endif %}>
+									{% if item.icon %}
+										<span class="fa-fw {{ item.icon }} icon-header"></span>
+									{% endif %}
+									{{ item.label|safe }}
+								</a>
+							</li>
+						{% endfor %}
+					</ul>
+						{% endif %}
+				</li>
+			{% endfor %}
       </ul>
       <ul class="nav navbar-nav navbar-right">
           {% include "search_form.html" %}

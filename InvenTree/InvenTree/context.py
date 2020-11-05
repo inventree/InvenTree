@@ -8,7 +8,7 @@ from InvenTree.status_codes import SalesOrderStatus, PurchaseOrderStatus
 from InvenTree.status_codes import BuildStatus, StockStatus
 
 from users.models import RuleSet
-
+from InvenTree.navigation import get_global_navigation
 
 def status_codes(request):
 
@@ -67,4 +67,13 @@ def user_roles(request):
                 roles[rule.name]['change'] |= rule.can_change
                 roles[rule.name]['delete'] |= rule.can_delete
 
+    request._roles = roles
     return {'roles': roles}
+
+def extension_globals(request):
+    ctx = {}
+
+    ctx['nav_items'] = get_global_navigation(request)
+
+
+    return ctx

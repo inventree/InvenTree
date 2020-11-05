@@ -222,6 +222,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',
+                'InvenTree.context.extension_globals',
             ],
         },
     },
