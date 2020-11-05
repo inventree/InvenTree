@@ -188,7 +188,7 @@ class BuildOutputCreate(AjaxUpdateView):
         Validation for the form:
         """
 
-        quantity = form.cleaned_data.get('quantity', None)
+        quantity = form.cleaned_data.get('output_quantity', None)
         serials = form.cleaned_data.get('serial_numbers', None)
 
         # Check that the serial numbers are valid
@@ -222,7 +222,7 @@ class BuildOutputCreate(AjaxUpdateView):
 
         data = form.cleaned_data
 
-        quantity = data.get('quantity', None)
+        quantity = data.get('output_quantity', None)
         batch = data.get('batch', None)
 
         serials = data.get('serial_numbers', None)
