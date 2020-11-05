@@ -183,6 +183,14 @@ class Build(MPTTModel):
     )
 
     @property
+    def active(self):
+        """
+        Return True if this build is active
+        """
+
+        return self.status in BuildStatus.ACTIVE_CODES
+
+    @property
     def bom_items(self):
         """
         Returns the BOM items for the part referenced by this BuildOrder
