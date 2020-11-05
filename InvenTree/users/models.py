@@ -316,7 +316,8 @@ def update_group_roles(group, debug=False):
 
         permission = get_permission_object(perm)
 
-        group.permissions.add(permission)
+        if permission:
+            group.permissions.add(permission)
 
         if debug:
             print(f"Adding permission {perm} to group {group.name}")
