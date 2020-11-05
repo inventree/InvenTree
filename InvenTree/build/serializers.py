@@ -38,6 +38,7 @@ class BuildSerializer(InvenTreeModelSerializer):
             'url',
             'title',
             'creation_date',
+            'completed',
             'completion_date',
             'part',
             'part_detail',
@@ -51,9 +52,10 @@ class BuildSerializer(InvenTreeModelSerializer):
         ]
 
         read_only_fields = [
-            'status',
+            'completed',
             'creation_date',
             'completion_data',
+            'status',
             'status_text',
         ]
 
@@ -73,6 +75,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'build',
+            'install_into',
             'part',
             'part_name',
             'part_image',

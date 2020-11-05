@@ -29,6 +29,12 @@ timezone: UTC
 # Set debug to False to run in production mode
 debug: True
 
+# Set debug_toolbar to True to enable a debugging toolbar for InvenTree
+# Note: This will only be displayed if DEBUG mode is enabled, 
+#       and only if InvenTree is accessed from a local IP (127.0.0.1)
+debug_toolbar: False
+
+
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
 # Default behaviour is to allow all hosts (THIS IS NOT SECURE!)
@@ -62,11 +68,6 @@ static_root: '../inventree_static'
 #  - mailto
 #  - git
 #  - ssh
-
-# Set debug_toolbar to True to enable a debugging toolbar for InvenTree
-# Note: This will only be displayed if DEBUG mode is enabled, 
-#       and only if InvenTree is accessed from a local IP (127.0.0.1)
-debug_toolbar: False
 
 # Backup options
 # Set the backup_dir parameter to store backup files in a specific location

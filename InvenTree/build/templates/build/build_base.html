@@ -69,11 +69,6 @@ src="{% static 'img/blank_image.png' %}"
 <h4>{% trans "Build Details" %}</h4>
 <table class='table table-striped table-condensed'>
     <tr>
-        <td><span class='fas fa-hashtag'></span></td>
-        <td>{% trans "Build Order Reference" %}</td>
-        <td>{{ build }}</td>
-    </tr>
-    <tr>
         <td><span class='fas fa-shapes'></span></td>
         <td>{% trans "Part" %}</td>
         <td><a href="{% url 'part-detail' build.part.id %}">{{ build.part.full_name }}</a></td>
@@ -87,6 +82,11 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
         <td>{% build_status_label build.status %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-spinner'></span></td>
+        <td>{% trans "Progress" %}</td>
+        <td> {{ build.completed }} / {{ build.quantity }}</td>
     </tr>
     {% if build.parent %}
     <tr>
@@ -102,20 +102,6 @@ src="{% static 'img/blank_image.png' %}"
         <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></td>
     </tr>
     {% endif %}
-    <tr>
-        <td><span class='fas fa-dollar-sign'></span></td>
-        <td>{% trans "BOM Price" %}</td>
-        <td>
-            {% if bom_price %}
-            {{ bom_price }}
-            {% if build.part.has_complete_bom_pricing == False %}
-            <br><span class='warning-msg'><i>{% trans "BOM pricing is incomplete" %}</i></span>
-            {% endif %}
-            {% else %}
-            <span class='warning-msg'><i>{% trans "No pricing information" %}</i></span>
-            {% endif %}
-        </td>
-    </tr>
 </table>
 {% endblock %}
 

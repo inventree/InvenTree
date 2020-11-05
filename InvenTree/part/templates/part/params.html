@@ -11,7 +11,9 @@
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
         {% if roles.part.add %}
-        <button title='{% trans "Add new parameter" %}' class='btn btn-success' id='param-create'>{% trans "New Parameter" %}</button>
+        <button title='{% trans "Add new parameter" %}' class='btn btn-success' id='param-create'>
+            <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
+        </button>
         {% endif %}
     </div>
 </div>

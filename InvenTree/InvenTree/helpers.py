@@ -337,7 +337,7 @@ def DownloadFile(data, filename, content_type='application/text'):
     return response
 
 
-def ExtractSerialNumbers(serials, expected_quantity):
+def extract_serial_numbers(serials, expected_quantity):
     """ Attempt to extract serial numbers from an input string.
     - Serial numbers must be integer values
     - Serial numbers must be positive

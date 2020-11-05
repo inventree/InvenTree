@@ -113,6 +113,7 @@ class POTests(OrderViewTestCase):
         self.assertEqual(response.status_code, 200)
         
         data = json.loads(response.content)
+
         self.assertFalse(data['form_valid'])
 
         # Test WITH confirmation
@@ -151,7 +152,6 @@ class POTests(OrderViewTestCase):
         response = self.client.post(url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         data = json.loads(response.content)
         self.assertFalse(data['form_valid'])
-        self.assertIn('Invalid Purchase Order', str(data['html_form']))
 
         # POST with a part that does not match the purchase order
         post_data['order'] = 1
@@ -159,14 +159,12 @@ class POTests(OrderViewTestCase):
         response = self.client.post(url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         data = json.loads(response.content)
         self.assertFalse(data['form_valid'])
-        self.assertIn('must match for Part and Order', str(data['html_form']))
 
         # POST with an invalid part
         post_data['part'] = 12345
         response = self.client.post(url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         data = json.loads(response.content)
         self.assertFalse(data['form_valid'])
-        self.assertIn('Invalid SupplierPart selection', str(data['html_form']))
 
         # POST the form with valid data
         post_data['part'] = 100

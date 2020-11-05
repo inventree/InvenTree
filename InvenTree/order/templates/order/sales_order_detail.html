@@ -15,7 +15,9 @@
 
 {% if roles.sales_order.change %}
 <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-    <button type='button' class='btn btn-default' id='new-so-line'>{% trans "Add Line Item" %}</button>
+    <button type='button' class='btn btn-success' id='new-so-line'>
+        <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
+    </button>
 </div>
 {% endif %}
 

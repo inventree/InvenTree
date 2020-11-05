@@ -245,7 +245,7 @@ def match_part_names(match, threshold=80, reverse=True, compare_length=False):
         if ratio >= threshold:
             matches.append({
                 'part': part,
-                'ratio': ratio
+                'ratio': round(ratio, 1)
             })
 
     matches = sorted(matches, key=lambda item: item['ratio'], reverse=reverse)
@@ -360,7 +360,7 @@ class Part(MPTTModel):
             # And recursively check too
             item.sub_part.checkAddToBOM(parent)
 
-    def checkIfSerialNumberExists(self, sn):
+    def checkIfSerialNumberExists(self, sn, exclude_self=False):
         """
         Check if a serial number exists for this Part.
 
@@ -369,9 +369,26 @@ class Part(MPTTModel):
         """
 
         parts = Part.objects.filter(tree_id=self.tree_id)
+
         stock = StockModels.StockItem.objects.filter(part__in=parts, serial=sn)
 
+        if exclude_self:
+            stock = stock.exclude(pk=self.pk)
+
         return stock.exists()
+
+    def find_conflicting_serial_numbers(self, serials):
+        """
+        For a provided list of serials, return a list of those which are conflicting.
+        """
+
+        conflicts = []
+
+        for serial in serials:
+            if self.checkIfSerialNumberExists(serial, exclude_self=True):
+                conflicts.append(serial)
+
+        return conflicts
 
     def getLatestSerialNumber(self):
         """
@@ -529,9 +546,23 @@ class Part(MPTTModel):
             pass
 
     def clean(self):
-        """ Perform cleaning operations for the Part model """
+        """
+        Perform cleaning operations for the Part model
+        
+        Update trackable status:
+            If this part is trackable, and it is used in the BOM
+            for a parent part which is *not* trackable,
+            then we will force the parent part to be trackable.
+        """
 
         super().clean()
+
+        if self.trackable:
+            for parent_part in self.used_in.all():
+                if not parent_part.trackable:
+                    parent_part.trackable = True
+                    parent_part.clean()
+                    parent_part.save()
 
     name = models.CharField(max_length=100, blank=False,
                             help_text=_('Part name'),
@@ -875,6 +906,19 @@ class Part(MPTTModel):
         return self.bom_count > 0
 
     @property
+    def has_trackable_parts(self):
+        """
+        Return True if any parts linked in the Bill of Materials are trackable.
+        This is important when building the part.
+        """
+
+        for bom_item in self.bom_items.all():
+            if bom_item.sub_part.trackable:
+                return True
+
+        return False
+
+    @property
     def bom_count(self):
         """ Return the number of items contained in the BOM for this part """
         return self.bom_items.count()
@@ -931,15 +975,31 @@ class Part(MPTTModel):
 
         self.bom_items.all().delete()
 
-    def required_parts(self):
-        """ Return a list of parts required to make this part (list of BOM items) """
-        parts = []
-        for bom in self.bom_items.all().select_related('sub_part'):
-            parts.append(bom.sub_part)
+    def getRequiredParts(self, recursive=False, parts=set()):
+        """
+        Return a list of parts required to make this part (i.e. BOM items).
+
+        Args:
+            recursive: If True iterate down through sub-assemblies
+            parts: Set of parts already found (to prevent recursion issues)
+        """
+
+        for bom_item in self.bom_items.all().select_related('sub_part'):
+
+            sub_part = bom_item.sub_part
+
+            if sub_part not in parts:
+
+                parts.add(sub_part)
+
+                if recursive:
+                    sub_part.getRequiredParts(recursive=True, parts=parts)
+
         return parts
 
     def get_allowed_bom_items(self):
-        """ Return a list of parts which can be added to a BOM for this part.
+        """
+        Return a list of parts which can be added to a BOM for this part.
 
         - Exclude parts which are not 'component' parts
         - Exclude parts which this part is in the BOM for
@@ -1087,7 +1147,61 @@ class Part(MPTTModel):
                 max(buy_price_range[1], bom_price_range[1])
             )
 
-    def deepCopy(self, other, **kwargs):
+    @transaction.atomic
+    def copy_bom_from(self, other, clear=True, **kwargs):
+        """
+        Copy the BOM from another part.
+
+        args:
+            other - The part to copy the BOM from
+            clear - Remove existing BOM items first (default=True)
+        """
+
+        if clear:
+            # Remove existing BOM items
+            self.bom_items.all().delete()
+
+        for bom_item in other.bom_items.all():
+            # If this part already has a BomItem pointing to the same sub-part,
+            # delete that BomItem from this part first!
+
+            try:
+                existing = BomItem.objects.get(part=self, sub_part=bom_item.sub_part)
+                existing.delete()
+            except (BomItem.DoesNotExist):
+                pass
+
+            bom_item.part = self
+            bom_item.pk = None
+
+            bom_item.save()
+
+    @transaction.atomic
+    def copy_parameters_from(self, other, **kwargs):
+        
+        clear = kwargs.get('clear', True)
+
+        if clear:
+            self.get_parameters().delete()
+
+        for parameter in other.get_parameters():
+
+            # If this part already has a parameter pointing to the same template,
+            # delete that parameter from this part first!
+
+            try:
+                existing = PartParameter.objects.get(part=self, template=parameter.template)
+                existing.delete()
+            except (PartParameter.DoesNotExist):
+                pass
+
+            parameter.part = self
+            parameter.pk = None
+
+            parameter.save()
+
+    @transaction.atomic
+    def deep_copy(self, other, **kwargs):
         """ Duplicates non-field data from another part.
         Does not alter the normal fields of this part,
         but can be used to copy other data linked by ForeignKey refernce.
@@ -1106,24 +1220,12 @@ class Part(MPTTModel):
 
         # Copy the BOM data
         if kwargs.get('bom', False):
-            for item in other.bom_items.all():
-                # Point the item to THIS part.
-                # Set the pk to None so a new entry is created.
-                item.part = self
-                item.pk = None
-                item.save()
+            self.copy_bom_from(other)
 
         # Copy the parameters data
         if kwargs.get('parameters', True):
-            # Get template part parameters
-            parameters = other.get_parameters()
-            # Copy template part parameters to new variant part
-            for parameter in parameters:
-                PartParameter.create(part=self,
-                                     template=parameter.template,
-                                     data=parameter.data,
-                                     save=True)
-
+            self.copy_parameters_from(other)
+        
         # Copy the fields that aren't available in the duplicate form
         self.salable = other.salable
         self.assembly = other.assembly
@@ -1253,6 +1355,32 @@ class Part(MPTTModel):
         """ Return all Part object which exist as a variant under this part. """
 
         return self.get_descendants(include_self=False)
+
+    def get_related_parts(self):
+        """ Return list of tuples for all related parts:
+            - first value is PartRelated object
+            - second value is matching Part object
+        """
+
+        related_parts = []
+
+        related_parts_1 = self.related_parts_1.filter(part_1__id=self.pk)
+
+        related_parts_2 = self.related_parts_2.filter(part_2__id=self.pk)
+
+        for related_part in related_parts_1:
+            # Add to related parts list
+            related_parts.append((related_part, related_part.part_2))
+
+        for related_part in related_parts_2:
+            # Add to related parts list
+            related_parts.append((related_part, related_part.part_1))
+
+        return related_parts
+
+    @property
+    def related_count(self):
+        return len(self.get_related_parts())
 
 
 def attach_file(instance, filename):
@@ -1596,12 +1724,15 @@ class BomItem(models.Model):
         return self.get_item_hash() == self.checksum
 
     def clean(self):
-        """ Check validity of the BomItem model.
+        """
+        Check validity of the BomItem model.
 
         Performs model checks beyond simple field validation.
 
         - A part cannot refer to itself in its BOM
         - A part cannot refer to a part which refers to it
+
+        - If the "sub_part" is trackable, then the "part" must be trackable too!
         """
 
         # If the sub_part is 'trackable' then the 'quantity' field must be an integer
@@ -1611,6 +1742,13 @@ class BomItem(models.Model):
                     raise ValidationError({
                         "quantity": _("Quantity must be integer value for trackable parts")
                     })
+
+                # Force the upstream part to be trackable if the sub_part is trackable
+                if not self.part.trackable:
+                    self.part.trackable = True
+                    self.part.clean()
+                    self.part.save()
+
         except Part.DoesNotExist:
             pass
 
@@ -1723,3 +1861,50 @@ class BomItem(models.Model):
         pmax = decimal2string(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
+
+
+class PartRelated(models.Model):
+    """ Store and handle related parts (eg. mating connector, crimps, etc.) """
+
+    part_1 = models.ForeignKey(Part, related_name='related_parts_1',
+                               on_delete=models.DO_NOTHING)
+
+    part_2 = models.ForeignKey(Part, related_name='related_parts_2',
+                               on_delete=models.DO_NOTHING,
+                               help_text=_('Select Related Part'))
+
+    def __str__(self):
+        return f'{self.part_1} <--> {self.part_2}'
+
+    def validate(self, part_1, part_2):
+        ''' Validate that the two parts relationship is unique '''
+
+        validate = True
+
+        parts = Part.objects.all()
+        related_parts = PartRelated.objects.all()
+
+        # Check if part exist and there are not the same part
+        if (part_1 in parts and part_2 in parts) and (part_1.pk != part_2.pk):
+            # Check if relation exists already
+            for relation in related_parts:
+                if (part_1 == relation.part_1 and part_2 == relation.part_2) \
+                   or (part_1 == relation.part_2 and part_2 == relation.part_1):
+                    validate = False
+                    break
+        else:
+            validate = False
+
+        return validate
+
+    def clean(self):
+        ''' Overwrite clean method to check that relation is unique '''
+
+        validate = self.validate(self.part_1, self.part_2)
+
+        if not validate:
+            error_message = _('Error creating relationship: check that '
+                              'the part is not related to itself '
+                              'and that the relationship is unique')
+
+            raise ValidationError(error_message)

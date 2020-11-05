@@ -17,15 +17,15 @@
 </tr>
 {% for allocation in part.build_order_allocations %}
 <tr>
-    <td><a href="{% url 'build-detail' allocation.build.id %}">{% trans "Build Order" %}: {{ allocation.build.pk }}</a></td>
-    <td><a href="{% url 'stock-item-detail' allocation.stock_item.id %}">{% trans "Stock Item" %}: {{ allocation.stock_item.id }}</a></td>
+    <td><a href="{% url 'build-detail' allocation.build.id %}">{% trans "Build Order" %}: {{ allocation.build }}</a></td>
+    <td><a href="{% url 'stock-item-detail' allocation.stock_item.id %}">{% trans "Stock Item" %}: {{ allocation.stock_item }}</a></td>
     <td>{% decimal allocation.quantity %}</td>
 </tr>
 {% endfor %}
 {% for allocation in part.sales_order_allocations %}
 <tr>
-    <td><a href="{% url 'so-detail' allocation.line.order.id %}">{% trans "Sales Order" %}: {{ allocation.line.order.pk }}</a></td>
-    <td><a href="{% url 'stock-item-detail' allocation.item.id %}">{% trans "Stock Item" %}: {{ allocation.item.id }}</a></td>
+    <td><a href="{% url 'so-detail' allocation.line.order.id %}">{% trans "Sales Order" %}: {{ allocation.line.order }}</a></td>
+    <td><a href="{% url 'stock-item-detail' allocation.item.id %}">{% trans "Stock Item" %}: {{ allocation.item }}</a></td>
     <td>{% decimal allocation.quantity %}</td>
 </tr>
 {% endfor %}

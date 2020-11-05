@@ -21,7 +21,7 @@ import os
 from rapidfuzz import fuzz
 from decimal import Decimal, InvalidOperation
 
-from .models import PartCategory, Part, PartAttachment
+from .models import PartCategory, Part, PartAttachment, PartRelated
 from .models import PartParameterTemplate, PartParameter
 from .models import BomItem
 from .models import match_part_names
@@ -71,6 +71,74 @@ class PartIndex(InvenTreeRoleMixin, ListView):
         return context
 
 
+class PartRelatedCreate(AjaxCreateView):
+    """ View for creating a new PartRelated object
+
+    - The view only makes sense if a Part object is passed to it
+    """
+    model = PartRelated
+    form_class = part_forms.CreatePartRelatedForm
+    ajax_form_title = _("Add Related Part")
+    ajax_template_name = "modal_form.html"
+    role_required = 'part.change'
+
+    def get_initial(self):
+        """ Set parent part as part_1 field """
+
+        initials = {}
+
+        part_id = self.request.GET.get('part', None)
+
+        if part_id:
+            try:
+                initials['part_1'] = Part.objects.get(pk=part_id)
+            except (Part.DoesNotExist, ValueError):
+                pass
+
+        return initials
+
+    def get_form(self):
+        """ Create a form to upload a new PartRelated
+
+        - Hide the 'part_1' field (parent part)
+        - Display parts which are not yet related
+        """
+
+        form = super(AjaxCreateView, self).get_form()
+
+        form.fields['part_1'].widget = HiddenInput()
+
+        try:
+            # Get parent part
+            parent_part = self.get_initial()['part_1']
+            # Get existing related parts
+            related_parts = [related_part[1].pk for related_part in parent_part.get_related_parts()]
+
+            # Build updated choice list excluding
+            # - parts already related to parent part
+            # - the parent part itself
+            updated_choices = []
+            for choice in form.fields["part_2"].choices:
+                if (choice[0] not in related_parts) and (choice[0] != parent_part.pk):
+                    updated_choices.append(choice)
+
+            # Update choices for related part
+            form.fields['part_2'].choices = updated_choices
+        except KeyError:
+            pass
+
+        return form
+
+
+class PartRelatedDelete(AjaxDeleteView):
+    """ View for deleting a PartRelated object """
+
+    model = PartRelated
+    ajax_form_title = _("Delete Related Part")
+    context_object_name = "related"
+    role_required = 'part.change'
+
+
 class PartAttachmentCreate(AjaxCreateView):
     """ View for creating a new PartAttachment object
 
@@ -83,10 +151,14 @@ class PartAttachmentCreate(AjaxCreateView):
 
     role_required = 'part.add'
 
-    def post_save(self):
-        """ Record the user that uploaded the attachment """
-        self.object.user = self.request.user
-        self.object.save()
+    def save(self, form, **kwargs):
+        """
+        Record the user that uploaded this attachment
+        """
+
+        attachment = form.save(commit=False)
+        attachment.user = self.request.user
+        attachment.save()
 
     def get_data(self):
         return {
@@ -361,7 +433,7 @@ class MakePartVariant(AjaxCreateView):
             parameters_copy = str2bool(request.POST.get('parameters_copy', False))
 
             # Copy relevent information from the template part
-            part.deepCopy(part_template, bom=bom_copy, parameters=parameters_copy)
+            part.deep_copy(part_template, bom=bom_copy, parameters=parameters_copy)
 
         return self.renderJsonResponse(request, form, data, context=context)
 
@@ -372,6 +444,8 @@ class MakePartVariant(AjaxCreateView):
         initials = model_to_dict(part_template)
         initials['is_template'] = False
         initials['variant_of'] = part_template
+        initials['bom_copy'] = InvenTreeSetting.get_setting('PART_COPY_BOM')
+        initials['parameters_copy'] = InvenTreeSetting.get_setting('PART_COPY_PARAMETERS')
 
         return initials
 
@@ -437,7 +511,8 @@ class PartDuplicate(AjaxCreateView):
             matches = match_part_names(name)
 
             if len(matches) > 0:
-                context['matches'] = matches
+                # Display the first five closest matches
+                context['matches'] = matches[:5]
             
                 # Enforce display of the checkbox
                 form.fields['confirm_creation'].widget = CheckboxInput()
@@ -446,9 +521,9 @@ class PartDuplicate(AjaxCreateView):
                 confirmed = str2bool(request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
-                    
-                    form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
+                    msg = _('Possible matches exist - confirm creation of new part')
+                    form.add_error('confirm_creation', msg)
+                    form.pre_form_warning = msg
                     valid = False
 
         data = {
@@ -471,7 +546,7 @@ class PartDuplicate(AjaxCreateView):
             original = self.get_part_to_copy()
 
             if original:
-                part.deepCopy(original, bom=bom_copy, parameters=parameters_copy)
+                part.deep_copy(original, bom=bom_copy, parameters=parameters_copy)
 
             try:
                 data['url'] = part.get_absolute_url()
@@ -576,9 +651,10 @@ class PartCreate(AjaxCreateView):
                 confirmed = str2bool(request.POST.get('confirm_creation', False))
 
                 if not confirmed:
-                    form.errors['confirm_creation'] = ['Possible matches exist - confirm creation of new part']
+                    msg = _('Possible matches exist - confirm creation of new part')
+                    form.add_error('confirm_creation', msg)
                     
-                    form.pre_form_warning = 'Possible matches exist - confirm creation of new part'
+                    form.pre_form_warning = msg
                     valid = False
 
         data = {
@@ -840,8 +916,63 @@ class PartEdit(AjaxUpdateView):
         return form
 
 
+class BomDuplicate(AjaxUpdateView):
+    """
+    View for duplicating BOM from a parent item.
+    """
+
+    model = Part
+    context_object_name = 'part'
+    ajax_form_title = _('Duplicate BOM')
+    ajax_template_name = 'part/bom_duplicate.html'
+    form_class = part_forms.BomDuplicateForm
+    role_required = 'part.change'
+    
+    def get_form(self):
+
+        form = super().get_form()
+
+        # Limit choices to parents of the current part
+        parents = self.get_object().get_ancestors()
+
+        form.fields['parent'].queryset = parents
+
+        return form
+
+    def get_initial(self):
+        initials = super().get_initial()
+
+        parents = self.get_object().get_ancestors()
+
+        if parents.count() == 1:
+            initials['parent'] = parents[0]
+
+        return initials
+
+    def validate(self, part, form):
+
+        confirm = str2bool(form.cleaned_data.get('confirm', False))
+
+        if not confirm:
+            form.add_error('confirm', _('Confirm duplication of BOM from parent'))
+
+    def save(self, part, form):
+        """
+        Duplicate BOM from the specified parent
+        """
+
+        parent = form.cleaned_data.get('parent', None)
+
+        clear = str2bool(form.cleaned_data.get('clear', True))
+
+        if parent:
+            part.copy_bom_from(parent, clear=clear)
+
+
 class BomValidate(AjaxUpdateView):
-    """ Modal form view for validating a part BOM """
+    """
+    Modal form view for validating a part BOM
+    """
 
     model = Part
     ajax_form_title = _("Validate BOM")
@@ -862,23 +993,24 @@ class BomValidate(AjaxUpdateView):
 
         return self.renderJsonResponse(request, form, context=self.get_context())
 
-    def post(self, request, *args, **kwargs):
+    def validate(self, part, form, **kwargs):
 
-        form = self.get_form()
-        part = self.get_object()
+        confirm = str2bool(form.cleaned_data.get('validate', False))
 
-        confirmed = str2bool(request.POST.get('validate', False))
+        if not confirm:
+            form.add_error('validate', _('Confirm that the BOM is valid'))
 
-        if confirmed:
-            part.validate_bom(request.user)
-        else:
-            form.errors['validate'] = ['Confirm that the BOM is valid']
+    def save(self, part, form, **kwargs):
+        """
+        Mark the BOM as validated
+        """
 
-        data = {
-            'form_valid': confirmed
+        part.validate_bom(self.request.user)
+
+    def get_data(self):
+        return {
+            'success': _('Validated Bill of Materials')
         }
-
-        return self.renderJsonResponse(request, form, data, context=self.get_context())
 
 
 class BomUpload(InvenTreeRoleMixin, FormView):
@@ -1011,7 +1143,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
         bom_file_valid = False
 
         if bom_file is None:
-            self.form.errors['bom_file'] = [_('No BOM file provided')]
+            self.form.add_error('bom_file', _('No BOM file provided'))
         else:
             # Create a BomUploadManager object - will perform initial data validation
             # (and raise a ValidationError if there is something wrong with the file)
@@ -1022,7 +1154,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 errors = e.error_dict
 
                 for k, v in errors.items():
-                    self.form.errors[k] = v
+                    self.form.add_error(k, v)
 
         if bom_file_valid:
             # BOM file is valid? Proceed to the next step!
@@ -2107,7 +2239,7 @@ class BomItemCreate(AjaxCreateView):
     model = BomItem
     form_class = part_forms.EditBomItemForm
     ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Create BOM item')
+    ajax_form_title = _('Create BOM Item')
 
     role_required = 'part.add'
 
@@ -2137,7 +2269,7 @@ class BomItemCreate(AjaxCreateView):
             query = query.filter(active=True)
             
             # Eliminate any options that are already in the BOM!
-            query = query.exclude(id__in=[item.id for item in part.required_parts()])
+            query = query.exclude(id__in=[item.id for item in part.getRequiredParts()])
             
             form.fields['sub_part'].queryset = query
 
@@ -2205,7 +2337,7 @@ class BomItemEdit(AjaxUpdateView):
             except ValueError:
                 sub_part_id = -1
 
-            existing = [item.pk for item in part.required_parts()]
+            existing = [item.pk for item in part.getRequiredParts()]
 
             if sub_part_id in existing:
                 existing.remove(sub_part_id)

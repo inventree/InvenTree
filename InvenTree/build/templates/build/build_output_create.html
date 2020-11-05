@@ -1,0 +1,20 @@
+{% extends "modal_form.html" %}
+{% load i18n %}
+{% block pre_form_content %}
+
+{% if build.part.has_trackable_parts %}
+<div class='alert alert-block alert-warning'>
+    {% trans "The Bill of Materials contains trackable parts" %}<br>
+    {% trans "Build outputs must be generated individually." %}<br>
+    {% trans "Multiple build outputs will be created based on the quantity specified." %}
+</div>
+{% endif %}
+
+{% if build.part.trackable %}
+<div class='alert alert-block alert-info'>
+    {% trans "Trackable parts can have serial numbers specified" %}<br>
+    {% trans "Enter serial numbers to generate multiple single build outputs" %}
+</div>
+{% endif %}
+
+{% endblock %}

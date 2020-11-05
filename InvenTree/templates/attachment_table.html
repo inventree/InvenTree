@@ -3,7 +3,9 @@
 {% if roles.stock.change %}
 <div id='attachment-buttons'>
     <div class='btn-group'>
-        <button type='button' class='btn btn-success' id='new-attachment'>{% trans "Add Attachment" %}</button>
+        <button type='button' class='btn btn-success' id='new-attachment'>
+            <span class='fas fa-plus-circle'></span> {% trans "Add Attachment" %}
+        </button>
     </div>
 </div>
 {% endif %}

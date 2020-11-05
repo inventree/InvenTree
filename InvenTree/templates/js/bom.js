@@ -103,6 +103,29 @@ function loadBomTable(table, options) {
      * BOM data are retrieved from the server via AJAX query
      */
 
+    var params = {
+        part: options.parent_id,
+        ordering: 'name',
+    }
+
+    if (options.part_detail) {
+        params.part_detail = true;
+    }
+    
+    params.sub_part_detail = true;
+    
+    var filters = {};
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters('bom');
+    }
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList('bom', $(table));
+
     // Construct the table columns
 
     var cols = [];
@@ -127,8 +150,12 @@ function loadBomTable(table, options) {
                 var url = `/part/${row.sub_part}/`;
                 var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, url);
 
+                var sub_part = row.sub_part_detail;
+
+                html += makePartIcons(row.sub_part_detail);
+
                 // Display an extra icon if this part is an assembly
-                if (row.sub_part_detail.assembly) {
+                if (sub_part.assembly) {
                     var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream label-right'></span>`;
                     
                     html += renderLink(text, `/part/${row.sub_part}/bom/`);
@@ -266,21 +293,6 @@ function loadBomTable(table, options) {
         });
     }
 
-    // Configure the table (bootstrap-table)
-
-    var params = {
-        part: options.parent_id,
-        ordering: 'name',
-    }
-
-    if (options.part_detail) {
-        params.part_detail = true;
-    }
-
-    if (options.sub_part_detail) {
-        params.sub_part_detail = true;
-    }
-
     // Function to request BOM data for sub-items
     // This function may be called recursively for multi-level BOMs
     function requestSubItems(bom_pk, part_pk) {
@@ -331,9 +343,10 @@ function loadBomTable(table, options) {
                 return {classes: 'rowinvalid'};
             }
         },
-        formatNoMatches: function() { return "{% trans "No BOM items found" %}"; },
+        formatNoMatches: function() { return '{% trans "No BOM items found" %}'; },
         clickToSelect: true,
-        queryParams: params,
+        queryParams: filters,
+        original: params,
         columns: cols,
         url: options.bom_url,
         onPostBody: function() {
@@ -427,4 +440,86 @@ function loadBomTable(table, options) {
             );
         });
     }
+}
+
+function loadUsedInTable(table, options) {
+    /* Load a table which displays all the parts that the given part is used in.
+     */
+
+    var params = {
+        sub_part: options.part_id,
+        ordering: 'name',
+    }
+
+    if (options.part_detail) {
+        params.part_detail = true;
+    }
+
+    if (options.sub_part_detail) {
+        params.sub_part_detail = true;
+    }
+
+    var filters = {};
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters("usedin");
+    }
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList("usedin", $(table));
+
+    // Columns to display in the table
+    var cols = [
+        {
+            field: 'pk',
+            title: 'ID',
+            visible: false,
+            switchable: false,
+        },
+        {
+            field: 'part_detail.full_name',
+            title: '{% trans "Part" %}',
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                var link = `/part/${row.part}/bom/`;
+                var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, link);
+
+                if (!row.part_detail.active) {
+                    html += "<span class='label label-warning' style='float: right;'>{% trans 'INACTIVE' %}</span>";
+                }
+
+                return html;
+            }
+        },
+        {
+            field: 'part_detail.description',
+            title: '{% trans "Description" %}',
+            sortable: true,
+        },
+        {
+            sortable: true,
+            field: 'quantity',
+            title: '{% trans "Uses" %}',
+            formatter: function(value, row, index, field) {
+                return parseFloat(value);
+            },
+        }
+    ];
+
+    // Load the table
+    $(table).inventreeTable({
+        url: "{% url 'api-bom-list' %}",
+        formatNoMatches: function() {
+            return '{% trans "No matching parts found" %}';
+        },
+        columns: cols,
+        showColumns: true,
+        sortable: true,
+        serach: true,
+        queryParams: filters,
+        original: params,
+    });
 }

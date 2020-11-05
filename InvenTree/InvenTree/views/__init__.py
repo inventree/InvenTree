@@ -217,6 +217,19 @@ class AjaxMixin(InvenTreeRoleMixin):
         """
         return {}
 
+    def validate(self, obj, form, **kwargs):
+        """
+        Hook for performing custom form validation steps.
+
+        If a form error is detected, add it to the form,
+        with 'form.add_error()'
+
+        Ref: https://docs.djangoproject.com/en/dev/topics/forms/
+        """
+
+        # Do nothing by default
+        pass
+
     def renderJsonResponse(self, request, form=None, data={}, context=None):
         """ Render a JSON response based on specific class context.
 
@@ -324,18 +337,6 @@ class AjaxCreateView(AjaxMixin, CreateView):
     - Handles form validation via AJAX POST requests
     """
 
-    def pre_save(self, **kwargs):
-        """
-        Hook for doing something before the form is validated
-        """
-        pass
-
-    def post_save(self, **kwargs):
-        """
-        Hook for doing something with the created object after it is saved
-        """
-        pass
-
     def get(self, request, *args, **kwargs):
         """ Creates form with initial data, and renders JSON response """
 
@@ -344,6 +345,17 @@ class AjaxCreateView(AjaxMixin, CreateView):
         self.request = request
         form = self.get_form()
         return self.renderJsonResponse(request, form)
+
+    def save(self, form):
+        """
+        Method for actually saving the form to the database.
+        Default implementation is very simple,
+        but can be overridden if required.
+        """
+
+        self.object = form.save()
+
+        return self.object
 
     def post(self, request, *args, **kwargs):
         """ Responds to form POST. Validates POST data and returns status info.
@@ -355,16 +367,29 @@ class AjaxCreateView(AjaxMixin, CreateView):
         self.request = request
         self.form = self.get_form()
 
+        # Perform initial form validation
+        self.form.is_valid()
+
+        # Perform custom validation (no object can be provided yet)
+        self.validate(None, self.form)
+
+        valid = self.form.is_valid()
+
         # Extra JSON data sent alongside form
         data = {
-            'form_valid': self.form.is_valid(),
+            'form_valid': valid,
+            'form_errors': self.form.errors.as_json(),
+            'non_field_errors': self.form.non_field_errors().as_json(),
         }
 
-        if self.form.is_valid():
+        # Add in any extra class data
+        for value, key in enumerate(self.get_data()):
+            data[key] = value
 
-            self.pre_save()
-            self.object = self.form.save()
-            self.post_save()
+        if valid:
+
+            # Save the object to the database
+            self.object = self.save(self.form)
 
             # Return the PK of the newly-created object
             data['pk'] = self.object.pk
@@ -395,6 +420,20 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         
         return self.renderJsonResponse(request, self.get_form(), context=self.get_context_data())
 
+    def save(self, object, form, **kwargs):
+        """
+        Method for updating the object in the database.
+        Default implementation is very simple, but can be overridden if required.
+
+        Args:
+            object - The current object, to be updated
+            form - The validated form
+        """
+
+        self.object = form.save()
+
+        return self.object
+
     def post(self, request, *args, **kwargs):
         """ Respond to POST request.
 
@@ -404,36 +443,47 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         - Otherwise, return sucess status
         """
 
+        self.request = request
+
         # Make sure we have an object to point to
         self.object = self.get_object()
 
         form = self.get_form()
 
+        # Perform initial form validation
+        form.is_valid()
+
+        # Perform custom validation
+        self.validate(self.object, form)
+
+        valid = form.is_valid()
+
         data = {
-            'form_valid': form.is_valid()
+            'form_valid': valid,
+            'form_errors': form.errors.as_json(),
+            'non_field_errors': form.non_field_errors().as_json(),
         }
 
-        if form.is_valid():
-            obj = form.save()
+        # Add in any extra class data
+        for value, key in enumerate(self.get_data()):
+            data[key] = value
+
+        if valid:
+
+            # Save the updated objec to the database
+            self.save(self.object, form)
+
+            self.object = self.get_object()
 
             # Include context data about the updated object
-            data['pk'] = obj.id
-
-            self.post_save(obj)
+            data['pk'] = self.object.pk
 
             try:
-                data['url'] = obj.get_absolute_url()
+                data['url'] = self.object.get_absolute_url()
             except AttributeError:
                 pass
 
         return self.renderJsonResponse(request, form, data)
-
-    def post_save(self, obj, *args, **kwargs):
-        """
-        Hook called after the form data is saved.
-        (Optional)
-        """
-        pass
 
 
 class AjaxDeleteView(AjaxMixin, UpdateView):
@@ -444,7 +494,7 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
     """
 
     form_class = DeleteForm
-    ajax_form_title = "Delete Item"
+    ajax_form_title = _("Delete Item")
     ajax_template_name = "modal_delete_form.html"
     context_object_name = 'item'
 
@@ -493,7 +543,7 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
         if confirmed:
             obj.delete()
         else:
-            form.errors['confirm_delete'] = ['Check box to confirm item deletion']
+            form.add_error('confirm_delete', _('Check box to confirm item deletion'))
             context[self.context_object_name] = self.get_object()
 
         data = {
@@ -508,7 +558,7 @@ class EditUserView(AjaxUpdateView):
     """ View for editing user information """
 
     ajax_template_name = "modal_form.html"
-    ajax_form_title = "Edit User Information"
+    ajax_form_title = _("Edit User Information")
     form_class = EditUserForm
 
     def get_object(self):
@@ -519,7 +569,7 @@ class SetPasswordView(AjaxUpdateView):
     """ View for setting user password """
 
     ajax_template_name = "InvenTree/password.html"
-    ajax_form_title = "Set Password"
+    ajax_form_title = _("Set Password")
     form_class = SetPasswordForm
 
     def get_object(self):
@@ -538,9 +588,9 @@ class SetPasswordView(AjaxUpdateView):
             # Passwords must match
 
             if not p1 == p2:
-                error = 'Password fields must match'
-                form.errors['enter_password'] = [error]
-                form.errors['confirm_password'] = [error]
+                error = _('Password fields must match')
+                form.add_error('enter_password', error)
+                form.add_error('confirm_password', error)
 
                 valid = False
 

@@ -21,7 +21,8 @@ InvenTree | {% trans "Build Orders" %}
     
     <div id='button-toolbar'>
         <div class='button-toolbar container-fluid' style='float: right;'>
-            <button type='button' class="btn btn-success" id='new-build'>{% trans "New Build Order" %}</button>
+            <button type='button' class="btn btn-success" id='new-build'>
+                <span class='fas fa-tools'></span> {% trans "New Build Order" %}</button>
             <div class='filter-list' id='filter-list-build'>
                 <!-- An empty div in which the filter list will be constructed -->
             </div>
@@ -40,12 +41,7 @@ InvenTree | {% trans "Build Orders" %}
     $("#collapse-item-active").collapse().show();
 
     $("#new-build").click(function() {
-        launchModalForm(
-            "{% url 'build-create' %}",
-            {
-                follow: true
-            }
-        );
+        newBuildOrder();
     });
 
     loadBuildTable($("#build-table"), {
