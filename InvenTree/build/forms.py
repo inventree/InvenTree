@@ -66,7 +66,7 @@ class BuildOutputCreateForm(HelperForm):
         'serial_numbers': 'fa-hashtag',
     }
 
-    quantity = forms.IntegerField(
+    output_quantity = forms.IntegerField(
         label=_('Quantity'),
         help_text=_('Enter quantity for build output'),
     )
@@ -86,7 +86,7 @@ class BuildOutputCreateForm(HelperForm):
     class Meta:
         model = Build
         fields = [
-            'quantity',
+            'output_quantity',
             'batch',
             'serial_numbers',
             'confirm',
