@@ -7,11 +7,10 @@ from common.signals import (
 
 def get_global_navigation(request):
     url = request.resolver_match
-    print (url.url_name)
     roles = request._roles
     if not url:
         return []
-#    has_staff_session = request.user.has_active_staff_session(request.session.session_key)
+
     nav = [
         {
             'label': _('Parts'),
