@@ -117,6 +117,15 @@ if sentry_opts.get('enabled', False):
     else:
         print("Warning: Sentry.io DSN not specified")
 
+
+# Celery Configuration Options
+CELERY_TIMEZONE = "UTC"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'default'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -155,6 +164,8 @@ INSTALLED_APPS = [
     'markdownify',                  # Markdown template rendering
     'django_tex',                   # LaTeX output
     'django_admin_shell',           # Python shell for the admin interface
+    'django_celery_results',        # Django ORM/Cache for Celery
+    'django_celery_beat',           # Django database backend for periodic tasks
 ]
 
 LOGGING = {
