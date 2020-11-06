@@ -249,6 +249,19 @@ def rabbitmq(c):
 
     c.run('sudo apt-get install rabbitmq-server')
 
+@task
+def redis(c):
+    """
+    Install packages required for using InvenTree with Redis for the Celery
+    broker.
+    """
+    
+    print('Installing packages required for Redis')
+
+    c.run('sudo apt-get install redis-server')
+    c.run('pip3 install -U "celery[redis]"')
+
+
 
 @task
 def backup(c):
