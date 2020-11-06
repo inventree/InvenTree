@@ -15,7 +15,8 @@ InvenTree | {% trans "Sales Orders" %}
 <div id='table-buttons'>
     <div class='button-toolbar container-fluid' style='float: right;'>
         {% if roles.sales_order.add %}
-        <button class='btn btn-primary' type='button' id='so-create' title='{% trans "Create new sales order" %}'>{% trans "New Sales Order" %}</button>
+        <button class='btn btn-primary' type='button' id='so-create' title='{% trans "Create new sales order" %}'>
+            <span class='fas fa-plus-circle'></span> {% trans "New Sales Order" %}</button>
         {% endif %}
         <div class='filter-list' id='filter-list-salesorder'>
             <!-- An empty div in which the filter list will be constructed -->

@@ -15,7 +15,7 @@
     <table class='table table-striped'>
         <col width='25'>
         <tr>
-            <td></td>
+            <td><span class='fas fa-font'></span></td>
             <td><b>{% trans "Part name" %}</b></td>
             <td>{{ part.name }}</td>
         </tr>
@@ -28,7 +28,7 @@
         {% endif %}
         {% if part.revision %}
         <tr>
-            <td></td>
+            <td><span class='fas fa-code-branch'></span></td>
             <td><b>{% trans "Revision" %}</b></td>
             <td>{{ part.revision }}</td>
         </tr>
@@ -41,7 +41,7 @@
                 {% if part.getLatestSerialNumber %}
                 {{ part.getLatestSerialNumber }}
                 {% else %}
-                {% trans "No serial numbers recorded" %}
+                <i>{% trans "No serial numbers recorded" %}</i>
                 {% endif %}
             </td>
         </tr>
@@ -132,7 +132,9 @@
     </div>
     <div class='col-sm-6'>
     <table class='table table-striped'>
+        <col width='25'>
         <tr>
+            <td><span class='fas fa-ghost'%></span></td>
             <td><b>{% trans "Virtual" %}</b></td>
             <td>{% include "slide.html" with state=part.virtual field='virtual' %}</td>
             {% if part.virtual %}
@@ -142,6 +144,7 @@
             {% endif %}
         </tr>
         <tr>
+            <td><span class='fas fa-clone'></span></td>
             <td><b>{% trans "Template" %}</b></td>
             <td>{% include "slide.html" with state=part.is_template field='is_template' %}</td>
             {% if part.is_template %}
@@ -151,6 +154,7 @@
             {% endif %}
         </tr>
         <tr>
+            <td><span class='fas fa-tools'></span></td>
             <td><b>{% trans "Assembly" %}</b></td>
             <td>{% include "slide.html" with state=part.assembly field='assembly' %}</td>   
             {% if part.assembly %}
@@ -160,6 +164,7 @@
             {% endif %}
         </tr>
         <tr>
+            <td><span class='fas fa-th'></span></td>
             <td><b>{% trans "Component" %}</b></td>
             <td>{% include "slide.html" with state=part.component field='component' %}</td>   
             {% if part.component %}
@@ -169,6 +174,7 @@
             {% endif %}
         </tr>
         <tr>
+            <td><span class='fas fa-directions'></span></td>
             <td><b>{% trans "Trackable" %}</b></td>
             <td>{% include "slide.html" with state=part.trackable field='trackable' %}</td>   
             {% if part.trackable %}
@@ -178,6 +184,7 @@
             {% endif %}
         </tr>
         <tr>
+            <td><span class='fas fa-shopping-cart'></span></td>
             <td><b>{% trans "Purchaseable" %}</b></td> 
             <td>{% include "slide.html" with state=part.purchaseable field='purchaseable' %}</td>   
             {% if part.purchaseable %}
@@ -187,6 +194,7 @@
             {% endif %}
         </tr>
         <tr>
+            <td><span class='fas fa-dollar-sign'></span></td>
             <td><b>{% trans "Salable" %}</b></td>
             <td>{% include "slide.html" with state=part.salable field='salable' %}</td>
             {% if part.salable %}
@@ -196,6 +204,13 @@
             {% endif %}
         </tr>
         <tr>
+            <td>
+                {% if part.active %}
+                <span class='fas fa-check-square'></span>
+                {% else %}
+                <span class='fas fa-times-square'></span>
+                {% endif %}
+            </td>
             <td><b>{% trans "Active" %}</b></td>
             <td>{% include "slide.html" with state=part.active field='active' disabled=False %}</td>
             {% if part.active %}

@@ -12,7 +12,8 @@
 {% if roles.purchase_order.add %}
 <div id='button-bar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
-        <button class='btn btn-primary' type='button' id='company-order2' title='{% trans "Create new purchase order" %}'>{% trans "New Purchase Order" %}</button>
+        <button class='btn btn-primary' type='button' id='company-order2' title='{% trans "Create new purchase order" %}'>
+            <span class='fas fa-plus-circle'></span> {% trans "New Purchase Order" %}</button>
         <div class='filter-list' id='filter-list-purchaseorder'>
             <!-- Empty div -->
         </div>

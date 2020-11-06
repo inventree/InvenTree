@@ -3,7 +3,12 @@
 {% load inventree_extras %}
 
 {% block pre_form_content %}
-{% trans "Are you sure you want to unallocate these parts?" %}
-<br>
-This will remove {% decimal item.quantity %} parts from build '{{ item.build.title }}'.
+<div class='alert alert-block alert-danger'>
+    <p>
+        {% trans "Are you sure you want to unallocate this stock?" %}
+    </p>
+    <p>
+        {% trans "The selected stock will be unallocated from the build output" %}
+    </p>
+</div>
 {% endblock %}

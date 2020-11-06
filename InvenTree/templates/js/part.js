@@ -61,13 +61,61 @@ function toggleStar(options) {
 }
 
 
-function loadPartVariantTable(table, partId, options) {
+function makePartIcons(part, options={}) {
+    /* Render a set of icons for the given part.
+     */
+
+    var html = '';
+
+    if (part.trackable) {
+        html += makeIconBadge('fa-directions', '{% trans "Trackable part" %}');
+    }
+
+    if (part.virtual) {
+        html += makeIconBadge('fa-ghost', '{% trans "Virtual part" %}');
+    }
+
+    if (part.is_template) {
+        html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
+    }
+    
+    if (part.assembly) {
+        html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
+    }
+
+    if (part.starred) {
+        html += makeIconBadge('fa-star', '{% trans "Starred part" %}');
+    }
+
+    if (part.salable) {
+        html += makeIconBadge('fa-dollar-sign', title='{% trans "Salable part" %}');
+    }
+    
+    if (!part.active) {
+        html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
+    }
+
+    return html;
+    
+}
+
+
+function loadPartVariantTable(table, partId, options={}) {
     /* Load part variant table
      */
 
-    var params = {
-        ancestor: partId,
-    };
+    var params = options.params || {};
+
+    params.ancestor = partId;
+
+    // Load filters
+    var filters = loadTableFilters("variants");
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList("variants", $(table));
 
     var cols = [
         {
@@ -104,16 +152,36 @@ function loadPartVariantTable(table, partId, options) {
                 html += imageHoverIcon(row.thumbnail);
                 html += renderLink(name, `/part/${row.pk}/`);
 
+                if (row.trackable) {
+                    html += makeIconBadge('fa-directions', '{% trans "Trackable part" %}');
+                }
+
+                if (row.virtual) {
+                    html += makeIconBadge('fa-ghost', '{% trans "Virtual part" %}');
+                }
+
+                if (row.is_template) {
+                    html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
+                }
+                
+                if (row.assembly) {
+                    html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
+                }
+
+                if (!row.active) {
+                    html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
+                }
+
                 return html;
             },
         },
         {
             field: 'IPN',
-            title: '{% trans 'IPN' %}',
+            title: '{% trans "IPN" %}',
         },
         {
             field: 'revision',
-            title: '{% trans 'Revision' %}',
+            title: '{% trans "Revision" %}',
         },
         {
             field: 'description',
@@ -133,7 +201,7 @@ function loadPartVariantTable(table, partId, options) {
         name: 'partvariants',
         showColumns: true,
         original: params,
-        queryParams: params,
+        queryParams: filters,
         formatNoMatches: function() { return "{% trans "No variants found" %}"; },
         columns: cols,
         treeEnable: true,
@@ -272,7 +340,7 @@ function loadPartTable(table, url, options={}) {
     if (options.checkbox) {
         columns.push({
             checkbox: true,
-            title: '{% trans 'Select' %}',
+            title: '{% trans "Select" %}',
             searchable: false,
             switchable: false,
         });
@@ -286,8 +354,9 @@ function loadPartTable(table, url, options={}) {
 
     columns.push({
         field: 'name',
-        title: '{% trans 'Part' %}',
+        title: '{% trans "Part" %}',
         sortable: true,
+        switchable: false,
         formatter: function(value, row, index, field) {
 
             var name = '';
@@ -310,31 +379,8 @@ function loadPartTable(table, url, options={}) {
 
             var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
             
-            if (row.is_template) {
-                display += `<span class='fas fa-clone label-right' title='{% trans "Template part" %}'></span>`;
-            }
-            
-            if (row.assembly) {
-                display += `<span class='fas fa-tools label-right' title='{% trans "Assembled part" %}'></span>`;
-            }
+            display += makePartIcons(row);
 
-            if (row.starred) {
-                display += `<span class='fas fa-star label-right' title='{% trans "Starred part" %}'></span>`;
-            }
-
-            if (row.salable) {
-                display += `<span class='fas fa-dollar-sign label-right' title='{% trans "Salable part" %}'></span>`;
-            }
-
-            /*
-            if (row.component) {
-                display = display + `<span class='fas fa-cogs label-right' title='Component part'></span>`;
-            }
-            */
-            
-            if (!row.active) {
-                display += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
-            }
             return display; 
         }
     });
@@ -342,7 +388,7 @@ function loadPartTable(table, url, options={}) {
     columns.push({
         sortable: true,
         field: 'description',
-        title: '{% trans 'Description' %}',
+        title: '{% trans "Description" %}',
         formatter: function(value, row, index, field) {
 
             if (row.is_template) {
@@ -356,7 +402,7 @@ function loadPartTable(table, url, options={}) {
     columns.push({
         sortable: true,
         field: 'category_detail',
-        title: '{% trans 'Category' %}',
+        title: '{% trans "Category" %}',
         formatter: function(value, row, index, field) {
             if (row.category) {
                 return renderLink(value.pathstring, "/part/category/" + row.category + "/");

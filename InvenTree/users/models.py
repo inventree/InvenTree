@@ -57,6 +57,7 @@ class RuleSet(models.Model):
             'part_parttesttemplate',
             'part_partparametertemplate',
             'part_partparameter',
+            'part_partrelated',
         ],
         'stock': [
             'stock_stockitem',
@@ -71,6 +72,7 @@ class RuleSet(models.Model):
             'part_bomitem',
             'build_build',
             'build_builditem',
+            'build_buildorderattachment',
             'stock_stockitem',
             'stock_stocklocation',
         ],
@@ -314,7 +316,8 @@ def update_group_roles(group, debug=False):
 
         permission = get_permission_object(perm)
 
-        group.permissions.add(permission)
+        if permission:
+            group.permissions.add(permission)
 
         if debug:
             print(f"Adding permission {perm} to group {group.name}")
@@ -328,7 +331,8 @@ def update_group_roles(group, debug=False):
 
         permission = get_permission_object(perm)
 
-        group.permissions.remove(permission)
+        if permission:
+            group.permissions.remove(permission)
 
         if debug:
             print(f"Removing permission {perm} from group {group.name}")

@@ -15,7 +15,9 @@ InvenTree | {% trans "Supplier List" %}
 {% if pagetype == 'manufacturers' and roles.purchase_order.add or pagetype == 'suppliers' and roles.purchase_order.add or pagetype == 'customers' and roles.sales_order.add %}
 <div id='button-toolbar'>
     <div class='btn-group'>
-        <button type='button' class="btn btn-success" id='new-company'>{{ button_text }}</button>
+        <button type='button' class="btn btn-success" id='new-company'>
+            <span class='fas fa-plus-circle'></span> {{ button_text }}
+        </button>
     </div>
 </div>
 {% endif %}

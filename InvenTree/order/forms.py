@@ -21,7 +21,7 @@ from .models import SalesOrderAllocation
 
 class IssuePurchaseOrderForm(HelperForm):
 
-    confirm = forms.BooleanField(required=False, help_text=_('Place order'))
+    confirm = forms.BooleanField(required=True, initial=False, help_text=_('Place order'))
 
     class Meta:
         model = PurchaseOrder
@@ -32,7 +32,7 @@ class IssuePurchaseOrderForm(HelperForm):
 
 class CompletePurchaseOrderForm(HelperForm):
 
-    confirm = forms.BooleanField(required=False, help_text=_("Mark order as complete"))
+    confirm = forms.BooleanField(required=True, help_text=_("Mark order as complete"))
 
     class Meta:
         model = PurchaseOrder
@@ -43,7 +43,7 @@ class CompletePurchaseOrderForm(HelperForm):
 
 class CancelPurchaseOrderForm(HelperForm):
 
-    confirm = forms.BooleanField(required=False, help_text=_('Cancel order'))
+    confirm = forms.BooleanField(required=True, help_text=_('Cancel order'))
 
     class Meta:
         model = PurchaseOrder
@@ -54,7 +54,7 @@ class CancelPurchaseOrderForm(HelperForm):
 
 class CancelSalesOrderForm(HelperForm):
 
-    confirm = forms.BooleanField(required=False, help_text=_('Cancel order'))
+    confirm = forms.BooleanField(required=True, help_text=_('Cancel order'))
 
     class Meta:
         model = SalesOrder
@@ -65,7 +65,7 @@ class CancelSalesOrderForm(HelperForm):
 
 class ShipSalesOrderForm(HelperForm):
 
-    confirm = forms.BooleanField(required=False, help_text=_('Ship order'))
+    confirm = forms.BooleanField(required=True, help_text=_('Ship order'))
 
     class Meta:
         model = SalesOrder

@@ -89,14 +89,14 @@ settings_urls = [
 
 # Some javascript files are served 'dynamically', allowing them to pass through the Django translation layer
 dynamic_javascript_urls = [
-    url(r'^barcode.js', DynamicJsView.as_view(template_name='js/barcode.html'), name='barcode.js'),
-    url(r'^part.js', DynamicJsView.as_view(template_name='js/part.html'), name='part.js'),
-    url(r'^stock.js', DynamicJsView.as_view(template_name='js/stock.html'), name='stock.js'),
-    url(r'^build.js', DynamicJsView.as_view(template_name='js/build.html'), name='build.js'),
-    url(r'^order.js', DynamicJsView.as_view(template_name='js/order.html'), name='order.js'),
-    url(r'^company.js', DynamicJsView.as_view(template_name='js/company.html'), name='company.js'),
-    url(r'^bom.js', DynamicJsView.as_view(template_name='js/bom.html'), name='bom.js'),
-    url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/table_filters.html'), name='table_filters.js'),
+    url(r'^barcode.js', DynamicJsView.as_view(template_name='js/barcode.js'), name='barcode.js'),
+    url(r'^bom.js', DynamicJsView.as_view(template_name='js/bom.js'), name='bom.js'),
+    url(r'^build.js', DynamicJsView.as_view(template_name='js/build.js'), name='build.js'),
+    url(r'^company.js', DynamicJsView.as_view(template_name='js/company.js'), name='company.js'),
+    url(r'^order.js', DynamicJsView.as_view(template_name='js/order.js'), name='order.js'),
+    url(r'^part.js', DynamicJsView.as_view(template_name='js/part.js'), name='part.js'),
+    url(r'^stock.js', DynamicJsView.as_view(template_name='js/stock.js'), name='stock.js'),
+    url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/table_filters.js'), name='table_filters.js'),
 ]
 
 urlpatterns = [

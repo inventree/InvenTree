@@ -52,14 +52,16 @@ class BuildList(generics.ListCreateAPIView):
 
         queryset = super().filter_queryset(queryset)
 
+        params = self.request.query_params
+
         # Filter by build status?
-        status = self.request.query_params.get('status', None)
+        status = params.get('status', None)
 
         if status is not None:
             queryset = queryset.filter(status=status)
 
-        # Filter by "active" status
-        active = self.request.query_params.get('active', None)
+        # Filter by "pending" status
+        active = params.get('active', None)
 
         if active is not None:
             active = str2bool(active)
@@ -70,7 +72,7 @@ class BuildList(generics.ListCreateAPIView):
                 queryset = queryset.exclude(status__in=BuildStatus.ACTIVE_CODES)
 
         # Filter by associated part?
-        part = self.request.query_params.get('part', None)
+        part = params.get('part', None)
 
         if part is not None:
             queryset = queryset.filter(part=part)
@@ -119,13 +121,22 @@ class BuildItemList(generics.ListCreateAPIView):
         return query
 
     def filter_queryset(self, queryset):
+
         queryset = super().filter_queryset(queryset)
 
+        params = self.request.query_params
+
         # Does the user wish to filter by part?
-        part_pk = self.request.query_params.get('part', None)
+        part_pk = params.get('part', None)
 
         if part_pk:
             queryset = queryset.filter(stock_item__part=part_pk)
+
+        # Filter by output target
+        output = params.get('output', None)
+
+        if output:
+            queryset = queryset.filter(install_into=output)
 
         return queryset
 
@@ -135,7 +146,8 @@ class BuildItemList(generics.ListCreateAPIView):
 
     filter_fields = [
         'build',
-        'stock_item'
+        'stock_item',
+        'install_into',
     ]
 
 

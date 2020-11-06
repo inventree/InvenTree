@@ -4,13 +4,29 @@
     <li{% if tab == 'details' %} class='active'{% endif %}>
         <a href="{% url 'build-detail' build.id %}">{% trans "Details" %}</a>
     </li>
+    {% if build.active %}
     <li{% if tab == 'allocate' %} class='active'{% endif %}>
-        <a href="{% url 'build-allocate' build.id %}">{% trans "Allocated Parts" %}</a>
+        <a href="{% url 'build-allocate' build.id %}">
+            {% trans "Incomplete" %}
+            <span class='badge'>{{ build.incomplete_outputs.count }}</span>
+        </a>
     </li>
+    {% endif %}
     <li{% if tab == 'output' %} class='active'{% endif %}>
-        <a href="{% url 'build-output' build.id %}">{% trans "Build Outputs" %}{% if build.output_count > 0%}<span class='badge'>{{ build.output_count }}</span>{% endif %}</a>
+        <a href="{% url 'build-output' build.id %}">
+            {% trans "Build Outputs" %}
+            <span class='badge'>{{ build.output_count }}</span>
+        </a>
     </li>
     <li{% if tab == 'notes' %} class='active'{% endif %}>
-        <a href="{% url 'build-notes' build.id %}">{% trans "Notes" %}{% if build.notes %} <span class='fas fa-info-circle'></span>{% endif %}</a>
+        <a href="{% url 'build-notes' build.id %}">
+            {% trans "Notes" %}
+            {% if build.notes %} <span class='fas fa-info-circle'></span>{% endif %}
+        </a>
+    </li>
+    <li {% if tab == 'attachments' %} class='active'{% endif %}>
+        <a href='{% url "build-attachments" build.id %}'>
+            {% trans "Attachments" %}
+        </a>
     </li>
 </ul>
