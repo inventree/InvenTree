@@ -109,6 +109,15 @@ class RuleSet(models.Model):
         'report_reportasset',
         'report_testreport',
         'part_partstar',
+
+        # Celery integration models
+        'django_celery_beat_periodictasks',
+        'django_celery_beat_crontabschedule',
+        'django_celery_beat_periodictask',
+        'django_celery_beat_clockedschedule',
+        'django_celery_beat_intervalschedule',
+        'django_celery_beat_solarschedule',
+        'django_celery_results_taskresult',
     ]
 
     RULE_OPTIONS = [
