@@ -22,5 +22,5 @@ task_urls = [
 
 common_urls = [
     url(r'currency/', include(currency_urls)),
-    url(r'tasks/',  include(task_urls)),
+    url(r'tasks/', include(task_urls)),
 ]

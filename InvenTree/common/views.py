@@ -97,18 +97,20 @@ class SettingEdit(AjaxUpdateView):
 
         return form
 
+
 def run_task(request):
     if request.POST:
         task_name = request.POST.get("name")
         task = celery_app.send_task(task_name)
         return JsonResponse({"task_id": task.id}, status=202)
-    return JsonResponse({"message":"Bad Request"})
+    return JsonResponse({"message": "Bad Request"})
+
 
 def get_task(request, pk):
     task_result = AsyncResult(pk)
     result = {
-       "task_id": pk,
-       "task_status": task_result.status,
-       "task_result": task_result.result
+        "task_id": pk,
+        "task_status": task_result.status,
+        "task_result": task_result.result
     }
     return JsonResponse(result, status=200)
