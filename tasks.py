@@ -239,6 +239,31 @@ def postgresql(c):
     c.run('pip3 install psycopg2')
 
 @task
+def rabbitmq(c):
+    """
+    Install packages required for using InvenTree with RabbitMQ for the Celery
+    broker.
+    """
+    
+    print('Installing packages required for RabbitMQ Broker')
+
+    c.run('sudo apt-get install rabbitmq-server')
+
+@task
+def redis(c):
+    """
+    Install packages required for using InvenTree with Redis for the Celery
+    broker.
+    """
+    
+    print('Installing packages required for Redis')
+
+    c.run('sudo apt-get install redis-server')
+    c.run('pip3 install -U "celery[redis]"')
+
+
+
+@task
 def backup(c):
     """
     Create a backup of database models and uploaded media files.
@@ -259,3 +284,10 @@ def server(c, address="127.0.0.1:8000"):
     """
 
     manage(c, "runserver {address}".format(address=address), pty=True)
+
+@task
+def worker(c):
+    """
+    Launch a (development) Celery worker
+    """
+    c.run('celery -A InvenTree worker -B -l DEBUG')
