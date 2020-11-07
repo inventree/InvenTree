@@ -5,12 +5,19 @@ from common.signals import (
 	nav_topbar
 )
 
+def has_role(request,obj,action):
+    roles = request._roles
+    if obj in roles:
+        if action in roles[obj]:
+            return roles[obj][action]
+
+    return False
+
+
 def get_global_navigation(request):
     url = request.resolver_match
-    roles = request._roles
     if not url:
         return []
-
     nav = [
         {
             'label': _('Parts'),
@@ -31,7 +38,7 @@ def get_global_navigation(request):
             'icon': 'fas fa-tools',
         }
     ]
-    if roles['purchase_order']['view']:
+    if has_role(request,'purchase_order','view'):
         nav.append({
             'label': _('Buy'),
 #            'url': reverse('control:users'),
@@ -58,8 +65,7 @@ def get_global_navigation(request):
                 },
             ]
         })
-
-    if roles['sales_order']['view']:
+    if has_role(request,'sales_order','view'):
         nav.append({
             'label': _('Sell'),
 #            'url': reverse('control:users'),
