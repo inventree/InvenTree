@@ -1247,12 +1247,21 @@ class StockItem(MPTTModel):
 
     @property
     def required_test_count(self):
+        """
+        Return the number of 'required tests' for this StockItem
+        """
         return self.part.getRequiredTests().count()
 
     def hasRequiredTests(self):
+        """
+        Return True if there are any 'required tests' associated with this StockItem
+        """
         return self.part.getRequiredTests().count() > 0
 
     def passedAllRequiredTests(self):
+        """
+        Returns True if this StockItem has passed all required tests
+        """
 
         status = self.requiredTestStatus()
 

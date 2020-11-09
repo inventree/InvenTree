@@ -249,3 +249,28 @@ class PartSettingsTest(TestCase):
             self.assertEqual(part.trackable, val)
     
             Part.objects.filter(pk=part.pk).delete()
+
+    def test_duplicate_ipn(self):
+        """
+        Test the setting which controls duplicate IPN values
+        """
+
+        # Create a part
+        Part.objects.create(name='Hello', description='A thing', IPN='IPN123')
+
+        # Attempt to create a duplicate item (should fail)
+        with self.assertRaises(ValidationError):
+            Part.objects.create(name='Hello', description='A thing', IPN='IPN123')
+
+        # Attempt to create item with duplicate IPN (should be allowed by default)
+        Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='B')
+
+        # And attempt again with the same values (should fail)
+        with self.assertRaises(ValidationError):
+            Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='B')
+
+        # Now update the settings so duplicate IPN values are *not* allowed
+        InvenTreeSetting.set_setting('PART_ALLOW_DUPLICATE_IPN', False, self.user)
+
+        with self.assertRaises(ValidationError):
+            Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='C')
