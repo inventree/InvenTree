@@ -700,11 +700,6 @@ class PartCreate(AjaxCreateView):
             if label in self.request.GET:
                 initials[label] = self.request.GET.get(label)
 
-        # Default values for part options
-        initials['purchaseable'] = str2bool(InvenTreeSetting.get_setting('PART_PURCHASEABLE'))
-        initials['salable'] = str2bool(InvenTreeSetting.get_setting('PART_SALABLE'))
-        initials['trackable'] = str2bool(InvenTreeSetting.get_setting('PART_TRACKABLE'))
-
         return initials
 
 

@@ -263,9 +263,11 @@ class InvenTreeSetting(models.Model):
         setting = InvenTreeSetting.get_setting_object(key)
 
         if setting:
-            return setting.value
+            value = setting.value
         else:
-            return backup_value
+            value = backup_value
+
+        return value
 
     @classmethod
     def set_setting(cls, key, value, user, create=True):
