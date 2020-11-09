@@ -85,6 +85,27 @@ class InvenTreeSetting(models.Model):
             'validator': bool
         },
 
+        'PART_PURCHASEABLE': {
+            'name': _('Purchaseable'),
+            'description': _('Parts are purchaseable by default'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PART_SALABLE': {
+            'name': _('Salable'),
+            'description': _('Parts are salable by default'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PART_TRACKABLE': {
+            'name': _('Trackable'),
+            'description': _('Parts are trackable by default'),
+            'default': False,
+            'validator': bool,
+        },
+
         'BUILDORDER_REFERENCE_PREFIX': {
             'name': _('Build Order Reference Prefix'),
             'description': _('Prefix value for build order reference'),
