@@ -529,6 +529,18 @@ class Part(MPTTModel):
         """
         super().validate_unique(exclude)
 
+        # User can decide whether duplicate IPN (Internal Part Number) values are allowed
+        allow_duplicate_ipn = common.models.InvenTreeSetting.get_setting('PART_ALLOW_DUPLICATE_IPN')
+
+        if not allow_duplicate_ipn:
+            parts = Part.objects.filter(IPN__iexact=self.IPN)
+            parts = parts.exclude(pk=self.pk)
+
+            if parts.exists():
+                raise ValidationError({
+                    'IPN': _('Duplicate IPN not allowed in part settings'),
+                })
+
         # Part name uniqueness should be case insensitive
         try:
             parts = Part.objects.exclude(id=self.id).filter(

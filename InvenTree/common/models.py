@@ -64,6 +64,13 @@ class InvenTreeSetting(models.Model):
             'description': _('Regular expression pattern for matching Part IPN')
         },
 
+        'PART_ALLOW_DUPLICATE_IPN': {
+            'name': _('Allow Duplicate IPN'),
+            'description': _('Allow multiple parts to share the same IPN'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PART_COPY_BOM': {
             'name': _('Copy Part BOM Data'),
             'description': _('Copy BOM data by default when duplicating a part'),
@@ -305,6 +312,10 @@ class InvenTreeSetting(models.Model):
                 setting = InvenTreeSetting(key=key)
             else:
                 return
+
+        # Enforce standard boolean representation
+        if setting.is_bool():
+            value = InvenTree.helpers.str2bool(value)
             
         setting.value = str(value)
         setting.save()
@@ -316,6 +327,10 @@ class InvenTreeSetting(models.Model):
     @property
     def name(self):
         return InvenTreeSetting.get_setting_name(self.key)
+
+    @property
+    def default_value(self):
+        return InvenTreeSetting.get_default_value(self.key)
 
     @property
     def description(self):
