@@ -69,4 +69,4 @@ class SettingsTest(TestCase):
 
             InvenTreeSetting.set_setting(key, value, self.user)
 
-            self.assertEqual(str(value), InvenTreeSetting.get_setting(key))
+            self.assertEqual(value, InvenTreeSetting.get_setting(key))
