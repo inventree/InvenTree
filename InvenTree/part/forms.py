@@ -174,7 +174,9 @@ class SetPartCategoryForm(forms.Form):
 
 
 class EditPartForm(HelperForm):
-    """ Form for editing a Part object """
+    """
+    Form for editing a Part object.
+    """
 
     field_prefix = {
         'keywords': 'fa-key',
@@ -202,14 +204,14 @@ class EditPartForm(HelperForm):
     class Meta:
         model = Part
         fields = [
-            'bom_copy',
-            'parameters_copy',
-            'confirm_creation',
             'category',
             'name',
             'IPN',
             'description',
             'revision',
+            'bom_copy',
+            'parameters_copy',
+            'confirm_creation',
             'keywords',
             'variant_of',
             'link',
@@ -217,6 +219,9 @@ class EditPartForm(HelperForm):
             'default_supplier',
             'units',
             'minimum_stock',
+            'trackable',
+            'purchaseable',
+            'salable',
         ]
 
 

@@ -47,6 +47,7 @@ from company.models import SupplierPart
 from stock import models as StockModels
 
 import common.models
+import part.settings as part_settings
 
 
 class PartCategory(InvenTreeTree):
@@ -656,19 +657,42 @@ class Part(MPTTModel):
 
     units = models.CharField(max_length=20, default="", blank=True, null=True, help_text=_('Stock keeping units for this part'))
 
-    assembly = models.BooleanField(default=False, verbose_name='Assembly', help_text=_('Can this part be built from other parts?'))
+    assembly = models.BooleanField(
+        default=False,
+        verbose_name=_('Assembly'),
+        help_text=_('Can this part be built from other parts?')
+    )
 
-    component = models.BooleanField(default=True, verbose_name='Component', help_text=_('Can this part be used to build other parts?'))
+    component = models.BooleanField(
+        default=part_settings.part_component_default,
+        verbose_name=_('Component'),
+        help_text=_('Can this part be used to build other parts?')
+    )
 
-    trackable = models.BooleanField(default=False, help_text=_('Does this part have tracking for unique items?'))
+    trackable = models.BooleanField(
+        default=part_settings.part_trackable_default,
+        verbose_name=_('Trackable'),
+        help_text=_('Does this part have tracking for unique items?'))
 
-    purchaseable = models.BooleanField(default=True, help_text=_('Can this part be purchased from external suppliers?'))
+    purchaseable = models.BooleanField(
+        default=part_settings.part_purchaseable_default,
+        verbose_name=_('Purchaseable'),
+        help_text=_('Can this part be purchased from external suppliers?'))
 
-    salable = models.BooleanField(default=False, help_text=_("Can this part be sold to customers?"))
+    salable = models.BooleanField(
+        default=part_settings.part_salable_default,
+        verbose_name=_('Salable'),
+        help_text=_("Can this part be sold to customers?"))
 
-    active = models.BooleanField(default=True, help_text=_('Is this part active?'))
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this part active?'))
 
-    virtual = models.BooleanField(default=False, help_text=_('Is this a virtual part, such as a software product or license?'))
+    virtual = models.BooleanField(
+        default=False,
+        verbose_name=_('Virtual'),
+        help_text=_('Is this a virtual part, such as a software product or license?'))
 
     notes = MarkdownxField(blank=True, null=True, help_text=_('Part notes - supports Markdown formatting'))
 

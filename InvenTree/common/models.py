@@ -85,6 +85,34 @@ class InvenTreeSetting(models.Model):
             'validator': bool
         },
 
+        'PART_COMPONENT': {
+            'name': _('Component'),
+            'description': _('Parts can be used as sub-components by default'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PART_PURCHASEABLE': {
+            'name': _('Purchaseable'),
+            'description': _('Parts are purchaseable by default'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PART_SALABLE': {
+            'name': _('Salable'),
+            'description': _('Parts are salable by default'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PART_TRACKABLE': {
+            'name': _('Trackable'),
+            'description': _('Parts are trackable by default'),
+            'default': False,
+            'validator': bool,
+        },
+
         'BUILDORDER_REFERENCE_PREFIX': {
             'name': _('Build Order Reference Prefix'),
             'description': _('Prefix value for build order reference'),
@@ -242,9 +270,16 @@ class InvenTreeSetting(models.Model):
         setting = InvenTreeSetting.get_setting_object(key)
 
         if setting:
-            return setting.value
+            value = setting.value
+
+            # If the particular setting is defined as a boolean, cast the value to a boolean
+            if setting.is_bool():
+                value = InvenTree.helpers.str2bool(value)
+
         else:
-            return backup_value
+            value = backup_value
+
+        return value
 
     @classmethod
     def set_setting(cls, key, value, user, create=True):
