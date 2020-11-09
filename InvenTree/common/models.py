@@ -85,6 +85,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool
         },
 
+        'PART_COMPONENT': {
+            'name': _('Component'),
+            'description': _('Parts can be used as sub-components by default'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PART_PURCHASEABLE': {
             'name': _('Purchaseable'),
             'description': _('Parts are purchaseable by default'),
@@ -264,6 +271,11 @@ class InvenTreeSetting(models.Model):
 
         if setting:
             value = setting.value
+
+            # If the particular setting is defined as a boolean, cast the value to a boolean
+            if setting.is_bool():
+                value = InvenTree.helpers.str2bool(value)
+
         else:
             value = backup_value
 

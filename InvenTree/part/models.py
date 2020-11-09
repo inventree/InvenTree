@@ -664,7 +664,7 @@ class Part(MPTTModel):
     )
 
     component = models.BooleanField(
-        default=True,
+        default=part_settings.part_component_default,
         verbose_name=_('Component'),
         help_text=_('Can this part be used to build other parts?')
     )
