@@ -13,6 +13,7 @@ from django.db import models
 from django.conf import settings
 
 import djmoney.settings
+from djmoney.models.fields import MoneyField
 
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -535,6 +536,15 @@ class PriceBreak(models.Model):
     cost = InvenTree.fields.RoundingDecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
 
     currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
+
+    price = MoneyField(
+        max_digits=19,
+        decimal_places=4,
+        default_currency='USD',
+        null=True,
+        verbose_name=_('Price'),
+        help_text=_('Unit price at specified quantity'),
+    )
 
     @property
     def symbol(self):
