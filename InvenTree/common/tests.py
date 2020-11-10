@@ -69,4 +69,14 @@ class SettingsTest(TestCase):
 
             InvenTreeSetting.set_setting(key, value, self.user)
 
-            self.assertEqual(str(value), InvenTreeSetting.get_setting(key))
+            self.assertEqual(value, InvenTreeSetting.get_setting(key))
+
+            # Any fields marked as 'boolean' must have a default value specified
+            setting = InvenTreeSetting.get_setting_object(key)
+
+            if setting.is_bool():
+                if setting.default_value in ['', None]:
+                    raise ValueError(f'Default value for boolean setting {key} not provided')
+
+                if setting.default_value not in [True, False]:
+                    raise ValueError(f'Non-boolean default value specified for {key}')

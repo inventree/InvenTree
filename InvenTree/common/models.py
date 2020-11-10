@@ -64,6 +64,13 @@ class InvenTreeSetting(models.Model):
             'description': _('Regular expression pattern for matching Part IPN')
         },
 
+        'PART_ALLOW_DUPLICATE_IPN': {
+            'name': _('Allow Duplicate IPN'),
+            'description': _('Allow multiple parts to share the same IPN'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PART_COPY_BOM': {
             'name': _('Copy Part BOM Data'),
             'description': _('Copy BOM data by default when duplicating a part'),
@@ -83,6 +90,34 @@ class InvenTreeSetting(models.Model):
             'description': _('Copy test data by default when duplicating a part'),
             'default': True,
             'validator': bool
+        },
+
+        'PART_COMPONENT': {
+            'name': _('Component'),
+            'description': _('Parts can be used as sub-components by default'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PART_PURCHASEABLE': {
+            'name': _('Purchaseable'),
+            'description': _('Parts are purchaseable by default'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PART_SALABLE': {
+            'name': _('Salable'),
+            'description': _('Parts are salable by default'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PART_TRACKABLE': {
+            'name': _('Trackable'),
+            'description': _('Parts are trackable by default'),
+            'default': False,
+            'validator': bool,
         },
 
         'BUILDORDER_REFERENCE_PREFIX': {
@@ -242,9 +277,16 @@ class InvenTreeSetting(models.Model):
         setting = InvenTreeSetting.get_setting_object(key)
 
         if setting:
-            return setting.value
+            value = setting.value
+
+            # If the particular setting is defined as a boolean, cast the value to a boolean
+            if setting.is_bool():
+                value = InvenTree.helpers.str2bool(value)
+
         else:
-            return backup_value
+            value = backup_value
+
+        return value
 
     @classmethod
     def set_setting(cls, key, value, user, create=True):
@@ -270,6 +312,10 @@ class InvenTreeSetting(models.Model):
                 setting = InvenTreeSetting(key=key)
             else:
                 return
+
+        # Enforce standard boolean representation
+        if setting.is_bool():
+            value = InvenTree.helpers.str2bool(value)
             
         setting.value = str(value)
         setting.save()
@@ -281,6 +327,10 @@ class InvenTreeSetting(models.Model):
     @property
     def name(self):
         return InvenTreeSetting.get_setting_name(self.key)
+
+    @property
+    def default_value(self):
+        return InvenTreeSetting.get_default_value(self.key)
 
     @property
     def description(self):

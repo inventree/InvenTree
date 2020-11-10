@@ -335,7 +335,8 @@ class PurchaseOrderCreate(AjaxCreateView):
 
         order = form.save(commit=False)
         order.created_by = self.request.user
-        order.save()
+        
+        return super().save(form)
 
 
 class SalesOrderCreate(AjaxCreateView):
@@ -370,7 +371,8 @@ class SalesOrderCreate(AjaxCreateView):
 
         order = form.save(commit=False)
         order.created_by = self.request.user
-        order.save()
+        
+        return super().save(form)
 
 
 class PurchaseOrderEdit(AjaxUpdateView):
@@ -428,7 +430,7 @@ class PurchaseOrderCancel(AjaxUpdateView):
             form.add_error('confirm', _('Confirm order cancellation'))
 
         if not order.can_cancel():
-            form.add_error(None, _('Order cannot be cancelled'))
+            form.add_error(None, _('Order cannot be cancelled as either pending or placed'))
 
     def save(self, order, form, **kwargs):
         """
