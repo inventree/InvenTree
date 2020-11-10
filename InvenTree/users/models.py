@@ -108,6 +108,8 @@ class RuleSet(models.Model):
         'report_reportasset',
         'report_testreport',
         'part_partstar',
+        'exchange_rate',
+        'exchange_exchangebackend',
     ]
 
     RULE_OPTIONS = [
