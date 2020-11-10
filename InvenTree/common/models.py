@@ -12,6 +12,8 @@ import decimal
 from django.db import models
 from django.conf import settings
 
+import djmoney.settings
+
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
@@ -57,6 +59,13 @@ class InvenTreeSetting(models.Model):
             'name': _('Company name'),
             'description': _('Internal company name'),
             'default': 'My company name',
+        },
+
+        'INVENTREE_DEFAULT_CURRENCY': {
+            'name': _('Default Currency'),
+            'description': _('Default currency'),
+            'default': 'USD',
+            'choices': djmoney.settings.CURRENCY_CHOICES,
         },
 
         'PART_IPN_REGEX': {
@@ -227,6 +236,29 @@ class InvenTreeSetting(models.Model):
             return ''
 
     @classmethod
+    def get_setting_choices(cls, key):
+        """
+        Return the validator choices available for a particular setting.
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            setting = cls.GLOBAL_SETTINGS[key]
+            choices = setting.get('choices', None)
+        else:
+            choices = None
+
+        """
+        TODO:
+        if type(choices) is function:
+            # Evaluate the function (we expect it will return a list of tuples...)
+            return choices()
+        """
+        
+        return choices
+
+    @classmethod
     def get_setting_object(cls, key):
         """
         Return an InvenTreeSetting object matching the given key.
@@ -395,6 +427,13 @@ class InvenTreeSetting(models.Model):
                 raise ValidationError({'key': _('Key string must be unique')})
         except InvenTreeSetting.DoesNotExist:
             pass
+
+    def choices(self):
+        """
+        Return the available choices for this setting (or None if no choices are defined)
+        """
+
+        return InvenTreeSetting.get_setting_choices(self.key)
 
     def is_bool(self):
         """
