@@ -13,7 +13,6 @@ from django.conf import settings
 
 import djmoney.settings
 from djmoney.models.fields import MoneyField
-from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 

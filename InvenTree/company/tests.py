@@ -9,6 +9,7 @@ from part.models import Part
 from InvenTree.exchange import InvenTreeManualExchangeBackend
 from djmoney.contrib.exchange.models import Rate
 
+
 class CompanySimpleTest(TestCase):
 
     fixtures = [

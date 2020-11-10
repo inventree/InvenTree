@@ -7,19 +7,6 @@ from django.contrib.auth import get_user_model
 from .models import InvenTreeSetting
 
 
-class CurrencyTest(TestCase):
-    """ Tests for Currency model """
-
-    fixtures = [
-        'currency',
-    ]
-
-    def test_currency(self):
-        # Simple test for now (improve this later!)
-
-        self.assertEqual(Currency.objects.count(), 2)
-
-
 class SettingsTest(TestCase):
     """
     Tests for the 'settings' model
