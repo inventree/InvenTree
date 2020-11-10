@@ -155,6 +155,7 @@ INSTALLED_APPS = [
     'markdownify',                  # Markdown template rendering
     'django_tex',                   # LaTeX output
     'django_admin_shell',           # Python shell for the admin interface
+    'djmoney',                      # django-money integration
 ]
 
 LOGGING = {

@@ -124,6 +124,7 @@ class CreateStockItemForm(HelperForm):
         fields = [
             'part',
             'supplier_part',
+            'purchase_price',
             'location',
             'quantity',
             'batch',
@@ -399,6 +400,7 @@ class EditStockItemForm(HelperForm):
             'serial',
             'batch',
             'status',
+            'purchase_price',
             'link',
             'delete_on_deplete',
         ]

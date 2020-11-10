@@ -266,6 +266,13 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td><a href="{% url 'po-detail' item.purchase_order.id %}">{{ item.purchase_order }}</a></td>
     </tr>
     {% endif %}
+    {% if item.purchase_price %}
+    <tr>
+        <td><span class='fas fa-dollar-sign'></span></td>
+        <td>{% trans "Purchase Price" %}</td>
+        <td>{{ item.purchase_price }}</td>
+    </tr>
+    {% endif %}
     {% if item.parent %}
     <tr>
         <td><span class='fas fa-sitemap'></span></td>

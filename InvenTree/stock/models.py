@@ -24,6 +24,8 @@ from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from djmoney.models.fields import MoneyField
+
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
 from InvenTree import helpers
@@ -135,6 +137,7 @@ class StockItem(MPTTModel):
         infinite: If True this StockItem can never be exhausted
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
         build_order: Link to a BuildOrder object (if the StockItem has been assigned to a BuildOrder)
+        purchase_price: The unit purchase price for this StockItem - this is the unit price at time of purchase (if this item was purchased from an external supplier)
     """
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
@@ -454,6 +457,15 @@ class StockItem(MPTTModel):
         blank=True, null=True,
         verbose_name=_("Notes"),
         help_text=_('Stock Item Notes')
+    )
+
+    purchase_price = MoneyField(
+        max_digits=19,
+        decimal_places=4,
+        default_currency='USD',
+        null=True,
+        verbose_name=_('Purchase Price'),
+        help_text=_('Single unit purchase price at time of purchase'),
     )
 
     def clearAllocations(self):
