@@ -352,6 +352,14 @@ LANGUAGES = [
     ('pk', _('Polish')),
 ]
 
+# Currencies available for use
+CURRENCIES = CONFIG.get(
+    'currencies',
+    [
+        'AUD', 'CAD', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
+    ],
+)
+
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale/'),
 )
