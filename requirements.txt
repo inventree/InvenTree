@@ -27,5 +27,6 @@ django-weasyprint==1.0.1        # HTML PDF export
 django-debug-toolbar==2.2       # Debug / profiling toolbar
 django-admin-shell==0.1.2       # Python shell for the admin interface
 django-money==1.1               # Django app for currency management
+certifi                         # Certifi is (most likely) installed through one of the requirements above
 
 inventree                       # Install the latest version of the InvenTree API python library

@@ -7,16 +7,18 @@ These models are 'generic' and do not fit a particular business logic object.
 from __future__ import unicode_literals
 
 import os
-import decimal
 
 from django.db import models
 from django.conf import settings
 
 import djmoney.settings
 from djmoney.models.fields import MoneyField
+from djmoney.money import Money
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.contrib.exchange.exceptions import MissingRate
 
 from django.utils.translation import ugettext as _
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
 import InvenTree.helpers
@@ -455,74 +457,6 @@ class InvenTreeSetting(models.Model):
         return InvenTree.helpers.str2bool(self.value)
 
 
-class Currency(models.Model):
-    """
-    A Currency object represents a particular unit of currency.
-    Each Currency has a scaling factor which relates it to the base currency.
-    There must be one (and only one) currency which is selected as the base currency,
-    and each other currency is calculated relative to it.
-
-    Attributes:
-        symbol: Currency symbol e.g. $
-        suffix: Currency suffix e.g. AUD
-        description: Long-form description e.g. "Australian Dollars"
-        value: The value of this currency compared to the base currency.
-        base: True if this currency is the base currency
-
-    """
-
-    symbol = models.CharField(max_length=10, blank=False, unique=False, help_text=_('Currency Symbol e.g. $'))
-
-    suffix = models.CharField(max_length=10, blank=False, unique=True, help_text=_('Currency Suffix e.g. AUD'))
-
-    description = models.CharField(max_length=100, blank=False, help_text=_('Currency Description'))
-
-    value = models.DecimalField(default=1.0, max_digits=10, decimal_places=5, validators=[MinValueValidator(0.00001), MaxValueValidator(100000)], help_text=_('Currency Value'))
-
-    base = models.BooleanField(default=False, help_text=_('Use this currency as the base currency'))
-
-    class Meta:
-        verbose_name_plural = 'Currencies'
-
-    def __str__(self):
-        """ Format string for currency representation """
-        s = "{sym} {suf} - {desc}".format(
-            sym=self.symbol,
-            suf=self.suffix,
-            desc=self.description
-        )
-
-        if self.base:
-            s += " (Base)"
-        
-        else:
-            s += " = {v}".format(v=self.value)
-
-        return s
-
-    def save(self, *args, **kwargs):
-        """ Validate the model before saving
-
-        - Ensure that there is only one base currency!
-        """
-
-        # If this currency is set as the base currency, ensure no others are
-        if self.base:
-            for cur in Currency.objects.filter(base=True).exclude(pk=self.pk):
-                cur.base = False
-                cur.save()
-
-        # If there are no currencies set as the base currency, set this as base
-        if not Currency.objects.exclude(pk=self.pk).filter(base=True).exists():
-            self.base = True
-
-        # If this is the base currency, ensure value is set to unity
-        if self.base:
-            self.value = 1.0
-
-        super().save(*args, **kwargs)
-
-
 class PriceBreak(models.Model):
     """
     Represents a PriceBreak model
@@ -533,10 +467,6 @@ class PriceBreak(models.Model):
 
     quantity = InvenTree.fields.RoundingDecimalField(max_digits=15, decimal_places=5, default=1, validators=[MinValueValidator(1)])
 
-    cost = InvenTree.fields.RoundingDecimalField(max_digits=10, decimal_places=5, validators=[MinValueValidator(0)])
-
-    currency = models.ForeignKey(Currency, blank=True, null=True, on_delete=models.SET_NULL)
-
     price = MoneyField(
         max_digits=19,
         decimal_places=4,
@@ -546,26 +476,21 @@ class PriceBreak(models.Model):
         help_text=_('Unit price at specified quantity'),
     )
 
-    @property
-    def symbol(self):
-        return self.currency.symbol if self.currency else ''
-
-    @property
-    def suffix(self):
-        return self.currency.suffix if self.currency else ''
-
-    @property
-    def converted_cost(self):
+    def convert_to(self, currency_code):
         """
-        Return the cost of this price break, converted to the base currency
+        Convert the unit-price at this price break to the specified currency code.
+
+        Args:
+            currency_code - The currency code to convert to (e.g "USD" or "AUD")
         """
 
-        scaler = decimal.Decimal(1.0)
+        try:
+            converted = convert_money(self.price, currency_code)
+        except MissingRate:
+            print(f"WARNING: No currency conversion rate available for {self.price_currency} -> {currency_code}")
+            return self.price.amount
 
-        if self.currency:
-            scaler = self.currency.value
-
-        return self.cost * scaler
+        return converted.amount
 
 
 class ColorTheme(models.Model):

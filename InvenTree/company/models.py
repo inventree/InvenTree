@@ -350,7 +350,7 @@ class SupplierPart(models.Model):
     def unit_pricing(self):
         return self.get_price(1)
 
-    def get_price(self, quantity, moq=True, multiples=True):
+    def get_price(self, quantity, moq=True, multiples=True, currency=None):
         """ Calculate the supplier price based on quantity price breaks.
 
         - Don't forget to add in flat-fee cost (base_cost field)
@@ -372,6 +372,10 @@ class SupplierPart(models.Model):
         pb_quantity = -1
         pb_cost = 0.0
 
+        if currency is None:
+            # Default currency selection
+            currency = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+
         for pb in self.price_breaks.all():
             # Ignore this pricebreak (quantity is too high)
             if pb.quantity > quantity:
@@ -382,8 +386,9 @@ class SupplierPart(models.Model):
             # If this price-break quantity is the largest so far, use it!
             if pb.quantity > pb_quantity:
                 pb_quantity = pb.quantity
-                # Convert everything to base currency
-                pb_cost = pb.converted_cost
+
+                # Convert everything to the selected currency
+                pb_cost = pb.convert_to(currency)
 
         if pb_found:
             cost = pb_cost * quantity
@@ -462,7 +467,4 @@ class SupplierPriceBreak(common.models.PriceBreak):
         db_table = 'part_supplierpricebreak'
 
     def __str__(self):
-        return "{mpn} - {cost} @ {quan}".format(
-            mpn=self.part.MPN,
-            cost=self.cost,
-            quan=self.quantity)
+        return f'{self.part.MPN} - {self.price} @ {self.quantity}'

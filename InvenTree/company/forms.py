@@ -82,13 +82,10 @@ class EditPriceBreakForm(HelperForm):
 
     quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
 
-    cost = RoundingDecimalFormField(max_digits=10, decimal_places=5)
-
     class Meta:
         model = SupplierPriceBreak
         fields = [
             'part',
             'quantity',
-            'cost',
-            'currency',
+            'price',
         ]

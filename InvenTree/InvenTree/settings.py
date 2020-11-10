@@ -156,6 +156,7 @@ INSTALLED_APPS = [
     'django_tex',                   # LaTeX output
     'django_admin_shell',           # Python shell for the admin interface
     'djmoney',                      # django-money integration
+    'djmoney.contrib.exchange',     # django-money exchange rates
 ]
 
 LOGGING = {
@@ -359,6 +360,9 @@ CURRENCIES = CONFIG.get(
         'AUD', 'CAD', 'EUR', 'GBP', 'JPY', 'NZD', 'USD',
     ],
 )
+
+# TODO - Allow live web-based backends in the future
+EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeManualExchangeBackend'
 
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale/'),

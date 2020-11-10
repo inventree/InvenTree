@@ -12,11 +12,11 @@ from django.views.generic import DetailView, ListView, UpdateView
 from django.urls import reverse
 from django.forms import HiddenInput
 
+from moneyed import CURRENCIES
+
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import str2bool
 from InvenTree.views import InvenTreeRoleMixin
-
-from common.models import Currency
 
 from .models import Company
 from .models import SupplierPart
@@ -28,6 +28,8 @@ from .forms import EditCompanyForm
 from .forms import CompanyImageForm
 from .forms import EditSupplierPartForm
 from .forms import EditPriceBreakForm
+
+import common.models
 
 
 class CompanyIndex(InvenTreeRoleMixin, ListView):
@@ -435,12 +437,11 @@ class PriceBreakCreate(AjaxCreateView):
 
         initials['part'] = self.get_part()
 
-        # Pre-select the default currency
-        try:
-            base = Currency.objects.get(base=True)
-            initials['currency'] = base
-        except Currency.DoesNotExist:
-            pass
+        default_currency = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+        currency = CURRENCIES.get(default_currency, None)
+
+        if currency is not None:
+            initials['price'] = [1.0, currency]
 
         return initials
 
