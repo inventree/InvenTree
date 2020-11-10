@@ -27,11 +27,13 @@ def migrate_currencies(apps, schema_editor):
     cursor = connection.cursor()
 
     # The 'suffix' field denotes the currency code
-    response = cursor.execute('SELECT id, suffix, description from common_currency;').fetchall()
+    response = cursor.execute('SELECT id, suffix, description from common_currency;')
+    
+    results = cursor.fetchall()
 
     remap = {}
 
-    for index, row in enumerate(response):
+    for index, row in enumerate(results):
         pk, suffix, description = row
 
         suffix = suffix.strip().upper()
@@ -49,11 +51,13 @@ def migrate_currencies(apps, schema_editor):
             remap[pk] = suffix
 
     # Now iterate through each SupplierPriceBreak and update the rows
-    response = cursor.execute('SELECT id, cost, currency_id, price, price_currency from part_supplierpricebreak;').fetchall()
+    response = cursor.execute('SELECT id, cost, currency_id, price, price_currency from part_supplierpricebreak;')
+    
+    results = cursor.fetchall()
 
     count = 0
 
-    for index, row in enumerate(response):
+    for index, row in enumerate(results):
         pk, cost, currency_id, price, price_currency = row
 
         # Copy the 'cost' field across to the 'price' field
@@ -82,11 +86,13 @@ def reverse_currencies(apps, schema_editor):
     cursor = connection.cursor()
 
     # Extract a list of currency codes which are in use
-    response = cursor.execute(f'SELECT id, price, price_currency from part_supplierpricebreak;').fetchall()
+    response = cursor.execute(f'SELECT id, price, price_currency from part_supplierpricebreak;')
+    
+    results = cursor.fetchall()
 
     codes_in_use = set()
 
-    for index, row in enumerate(response):
+    for index, row in enumerate(results):
         pk, price, code = row
 
         codes_in_use.add(code)
