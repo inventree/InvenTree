@@ -621,7 +621,6 @@ class SalesOrderAllocation(models.Model):
             'part__salable': True,
             'belongs_to': None,
             'sales_order': None,
-            'build_order': None,
         },
         help_text=_('Select stock item to allocate')
     )

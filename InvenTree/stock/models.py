@@ -136,7 +136,6 @@ class StockItem(MPTTModel):
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
-        build_order: Link to a BuildOrder object (if the StockItem has been assigned to a BuildOrder)
         purchase_price: The unit purchase price for this StockItem - this is the unit price at time of purchase (if this item was purchased from an external supplier)
     """
 
@@ -144,7 +143,6 @@ class StockItem(MPTTModel):
     IN_STOCK_FILTER = Q(
         quantity__gt=0,
         sales_order=None,
-        build_order=None,
         belongs_to=None,
         customer=None,
         is_building=False,
@@ -430,14 +428,6 @@ class StockItem(MPTTModel):
         related_name='stock_items',
         null=True, blank=True)
 
-    build_order = models.ForeignKey(
-        'build.Build',
-        on_delete=models.SET_NULL,
-        verbose_name=_("Destination Build Order"),
-        related_name='stock_items',
-        null=True, blank=True
-    )
-
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)
 
@@ -614,9 +604,6 @@ class StockItem(MPTTModel):
         if self.sales_order is not None:
             return False
 
-        if self.build_order is not None:
-            return False
-
         return True
 
     def installedItemCount(self):
@@ -748,10 +735,6 @@ class StockItem(MPTTModel):
             
         # Not 'in stock' if it has been sent to a customer
         if self.sales_order is not None:
-            return False
-
-        # Not 'in stock' if it has been allocated to a BuildOrder
-        if self.build_order is not None:
             return False
 
         # Not 'in stock' if it has been assigned to a customer
