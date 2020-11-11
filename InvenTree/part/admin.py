@@ -12,6 +12,7 @@ from .models import PartCategory, Part
 from .models import PartAttachment, PartStar, PartRelated
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
+from .models import PartCategoryParameterTemplate
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
@@ -274,6 +275,11 @@ class ParameterAdmin(ImportExportModelAdmin):
     list_display = ('part', 'template', 'data')
 
 
+class PartCategoryParameterAdmin(admin.ModelAdmin):
+
+    pass
+
+
 class PartSellPriceBreakAdmin(admin.ModelAdmin):
 
     class Meta:
@@ -290,5 +296,6 @@ admin.site.register(PartStar, PartStarAdmin)
 admin.site.register(BomItem, BomItemAdmin)
 admin.site.register(PartParameterTemplate, ParameterTemplateAdmin)
 admin.site.register(PartParameter, ParameterAdmin)
+admin.site.register(PartCategoryParameterTemplate, PartCategoryParameterAdmin)
 admin.site.register(PartTestTemplate, PartTestTemplateAdmin)
 admin.site.register(PartSellPriceBreak, PartSellPriceBreakAdmin)

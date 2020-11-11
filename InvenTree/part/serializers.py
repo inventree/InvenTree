@@ -15,7 +15,7 @@ from stock.models import StockItem
 
 from .models import (BomItem, Part, PartAttachment, PartCategory,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
-                     PartStar, PartTestTemplate)
+                     PartStar, PartTestTemplate, PartCategoryParameterTemplate)
 
 
 class CategorySerializer(InvenTreeModelSerializer):
@@ -424,4 +424,22 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
             'pk',
             'name',
             'units',
+        ]
+
+
+class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
+    """ Serializer for PartCategoryParameterTemplate """
+
+    parameter_template_detail = PartParameterTemplateSerializer(source='parameter_template',
+                                                                many=False,
+                                                                read_only=True)
+
+    class Meta:
+        model = PartCategoryParameterTemplate
+        fields = [
+            'pk',
+            'category',
+            'parameter_template',
+            'parameter_template_detail',
+            'default_value',
         ]

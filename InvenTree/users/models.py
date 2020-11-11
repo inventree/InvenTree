@@ -58,6 +58,7 @@ class RuleSet(models.Model):
             'part_partparametertemplate',
             'part_partparameter',
             'part_partrelated',
+            'part_partcategoryparametertemplate',
         ],
         'stock': [
             'stock_stockitem',

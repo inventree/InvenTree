@@ -92,6 +92,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool
         },
 
+        'PART_CATEGORY_PARAMETERS': {
+            'name': _('Copy Category Parameter Templates'),
+            'description': _('Copy category parameter templates when creating a part'),
+            'default': True,
+            'validator': bool
+        },
+      
         'PART_COMPONENT': {
             'name': _('Component'),
             'description': _('Parts can be used as sub-components by default'),
