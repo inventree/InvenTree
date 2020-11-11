@@ -26,5 +26,6 @@ django-tex==1.1.7               # LaTeX PDF export
 django-weasyprint==1.0.1        # HTML PDF export
 django-debug-toolbar==2.2       # Debug / profiling toolbar
 django-admin-shell==0.1.2       # Python shell for the admin interface
+django-error-report==0.2.0      # Error report viewer for the admin interface
 
 inventree                       # Install the latest version of the InvenTree API python library
