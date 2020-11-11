@@ -8,6 +8,12 @@ from __future__ import unicode_literals
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 
+from django.utils.translation import ugettext as _
+
+from djmoney.forms.fields import MoneyField
+
+from common.models import InvenTreeSetting
+
 from .models import Company
 from .models import SupplierPart
 from .models import SupplierPriceBreak
@@ -60,6 +66,15 @@ class EditSupplierPartForm(HelperForm):
         'note': 'fa-pencil-alt',
     }
 
+    single_pricing = MoneyField(
+        label=_('Single Price'),
+        default_currency=InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY'),
+        help_text=_('Single quantity price'),
+        decimal_places=4,
+        max_digits=19,
+        required=False,
+    )
+
     class Meta:
         model = SupplierPart
         fields = [
@@ -71,8 +86,9 @@ class EditSupplierPartForm(HelperForm):
             'MPN',
             'link',
             'note',
-            'base_cost',
-            'multiple',
+            'single_pricing',
+            # 'base_cost',
+            # 'multiple',
             'packaging',
         ]
 
