@@ -7,7 +7,7 @@ import part.settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('part', '0053_merge_20201103_1028'),
+        ('part', '0053_partcategoryparametertemplate'),
     ]
 
     operations = [
