@@ -109,6 +109,9 @@ class RuleSet(models.Model):
         'report_reportasset',
         'report_testreport',
         'part_partstar',
+
+        # Third-party tables
+        'error_report_error',
     ]
 
     RULE_OPTIONS = [

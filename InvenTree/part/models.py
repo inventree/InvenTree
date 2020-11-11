@@ -571,7 +571,8 @@ class Part(MPTTModel):
         super().clean()
 
         if self.trackable:
-            for parent_part in self.used_in.all():
+            for item in self.used_in.all():
+                parent_part = item.part
                 if not parent_part.trackable:
                     parent_part.trackable = True
                     parent_part.clean()
@@ -1041,8 +1042,16 @@ class Part(MPTTModel):
         - Exclude parts which this part is in the BOM for
         """
 
-        parts = Part.objects.filter(component=True).exclude(id=self.id)
-        parts = parts.exclude(id__in=[part.id for part in self.used_in.all()])
+        # Start with a list of all parts designated as 'sub components'
+        parts = Part.objects.filter(component=True)
+        
+        # Exclude this part
+        parts = parts.exclude(id=self.id)
+
+        # Exclude any parts that this part is used *in* (to prevent recursive BOMs)
+        used_in = self.used_in.all()
+
+        parts = parts.exclude(id__in=[item.part.id for item in used_in])
 
         return parts
 
