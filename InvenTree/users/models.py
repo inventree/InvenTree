@@ -110,6 +110,9 @@ class RuleSet(models.Model):
         'report_reportasset',
         'report_testreport',
         'part_partstar',
+
+        # Third-party tables
+        'error_report_error',
     ]
 
     RULE_OPTIONS = [
@@ -317,7 +320,8 @@ def update_group_roles(group, debug=False):
 
         permission = get_permission_object(perm)
 
-        group.permissions.add(permission)
+        if permission:
+            group.permissions.add(permission)
 
         if debug:
             print(f"Adding permission {perm} to group {group.name}")
@@ -331,7 +335,8 @@ def update_group_roles(group, debug=False):
 
         permission = get_permission_object(perm)
 
-        group.permissions.remove(permission)
+        if permission:
+            group.permissions.remove(permission)
 
         if debug:
             print(f"Removing permission {perm} from group {group.name}")

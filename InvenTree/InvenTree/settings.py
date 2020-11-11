@@ -155,6 +155,8 @@ INSTALLED_APPS = [
     'markdownify',                  # Markdown template rendering
     'django_tex',                   # LaTeX output
     'django_admin_shell',           # Python shell for the admin interface
+    'error_report',                 # Error reporting in the admin interface
+
 ]
 
 LOGGING = {
@@ -180,6 +182,9 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'InvenTree.middleware.AuthRequiredMiddleware'
 ])
+
+# Error reporting middleware
+MIDDLEWARE.append('error_report.middleware.ExceptionProcessor')
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'django.contrib.auth.backends.ModelBackend'

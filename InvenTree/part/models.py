@@ -48,6 +48,7 @@ from company.models import SupplierPart
 from stock import models as StockModels
 
 import common.models
+import part.settings as part_settings
 
 
 class PartCategory(InvenTreeTree):
@@ -590,6 +591,18 @@ class Part(MPTTModel):
         """
         super().validate_unique(exclude)
 
+        # User can decide whether duplicate IPN (Internal Part Number) values are allowed
+        allow_duplicate_ipn = common.models.InvenTreeSetting.get_setting('PART_ALLOW_DUPLICATE_IPN')
+
+        if not allow_duplicate_ipn:
+            parts = Part.objects.filter(IPN__iexact=self.IPN)
+            parts = parts.exclude(pk=self.pk)
+
+            if parts.exists():
+                raise ValidationError({
+                    'IPN': _('Duplicate IPN not allowed in part settings'),
+                })
+
         # Part name uniqueness should be case insensitive
         try:
             parts = Part.objects.exclude(id=self.id).filter(
@@ -620,7 +633,8 @@ class Part(MPTTModel):
         super().clean()
 
         if self.trackable:
-            for parent_part in self.used_in.all():
+            for item in self.used_in.all():
+                parent_part = item.part
                 if not parent_part.trackable:
                     parent_part.trackable = True
                     parent_part.clean()
@@ -718,19 +732,42 @@ class Part(MPTTModel):
 
     units = models.CharField(max_length=20, default="", blank=True, null=True, help_text=_('Stock keeping units for this part'))
 
-    assembly = models.BooleanField(default=False, verbose_name='Assembly', help_text=_('Can this part be built from other parts?'))
+    assembly = models.BooleanField(
+        default=False,
+        verbose_name=_('Assembly'),
+        help_text=_('Can this part be built from other parts?')
+    )
 
-    component = models.BooleanField(default=True, verbose_name='Component', help_text=_('Can this part be used to build other parts?'))
+    component = models.BooleanField(
+        default=part_settings.part_component_default,
+        verbose_name=_('Component'),
+        help_text=_('Can this part be used to build other parts?')
+    )
 
-    trackable = models.BooleanField(default=False, help_text=_('Does this part have tracking for unique items?'))
+    trackable = models.BooleanField(
+        default=part_settings.part_trackable_default,
+        verbose_name=_('Trackable'),
+        help_text=_('Does this part have tracking for unique items?'))
 
-    purchaseable = models.BooleanField(default=True, help_text=_('Can this part be purchased from external suppliers?'))
+    purchaseable = models.BooleanField(
+        default=part_settings.part_purchaseable_default,
+        verbose_name=_('Purchaseable'),
+        help_text=_('Can this part be purchased from external suppliers?'))
 
-    salable = models.BooleanField(default=False, help_text=_("Can this part be sold to customers?"))
+    salable = models.BooleanField(
+        default=part_settings.part_salable_default,
+        verbose_name=_('Salable'),
+        help_text=_("Can this part be sold to customers?"))
 
-    active = models.BooleanField(default=True, help_text=_('Is this part active?'))
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this part active?'))
 
-    virtual = models.BooleanField(default=False, help_text=_('Is this a virtual part, such as a software product or license?'))
+    virtual = models.BooleanField(
+        default=False,
+        verbose_name=_('Virtual'),
+        help_text=_('Is this a virtual part, such as a software product or license?'))
 
     notes = MarkdownxField(blank=True, null=True, help_text=_('Part notes - supports Markdown formatting'))
 
@@ -1067,8 +1104,16 @@ class Part(MPTTModel):
         - Exclude parts which this part is in the BOM for
         """
 
-        parts = Part.objects.filter(component=True).exclude(id=self.id)
-        parts = parts.exclude(id__in=[part.id for part in self.used_in.all()])
+        # Start with a list of all parts designated as 'sub components'
+        parts = Part.objects.filter(component=True)
+        
+        # Exclude this part
+        parts = parts.exclude(id=self.id)
+
+        # Exclude any parts that this part is used *in* (to prevent recursive BOMs)
+        used_in = self.used_in.all()
+
+        parts = parts.exclude(id__in=[item.part.id for item in used_in])
 
         return parts
 
@@ -2013,24 +2058,3 @@ class PartRelated(models.Model):
                               'and that the relationship is unique')
 
             raise ValidationError(error_message)
-
-    def create_relationship(self, part_1, part_2):
-        ''' Create relationship between two parts '''
-
-        validate = self.validate(part_1, part_2)
-
-        if validate:
-            # Add relationship
-            self.part_1 = part_1
-            self.part_2 = part_2
-            self.save()
-
-        return validate
-
-    @classmethod
-    def create(cls, part_1, part_2):
-        ''' Create PartRelated object and relationship between two parts '''
-
-        related_part = cls()
-        related_part.create_relationship(part_1, part_2)
-        return related_part

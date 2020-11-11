@@ -4,6 +4,8 @@
 
 from __future__ import unicode_literals
 
+from django.contrib.auth import get_user_model
+
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
@@ -12,6 +14,10 @@ import os
 from .models import Part, PartTestTemplate
 from .models import rename_part_image, match_part_names
 from .templatetags import inventree_extras
+
+import part.settings
+
+from common.models import InvenTreeSetting
 
 
 class TemplateTagTest(TestCase):
@@ -164,3 +170,107 @@ class TestTemplateTest(TestCase):
         PartTestTemplate.objects.create(part=variant, test_name='A Sample Test')
 
         self.assertEqual(variant.getTestTemplates().count(), n + 1)
+
+
+class PartSettingsTest(TestCase):
+    """
+    Tests to ensure that the user-configurable default values work as expected.
+
+    Some fields for the Part model can have default values specified by the user.
+    """
+    
+    def setUp(self):
+        # Create a user for auth
+        User = get_user_model()
+
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@testing.com',
+            password='password',
+            is_staff=True
+        )
+
+    def make_part(self):
+        """
+        Helper function to create a simple part
+        """
+
+        part = Part.objects.create(
+            name='Test Part',
+            description='I am but a humble test part',
+            IPN='IPN-123',
+        )
+
+        return part
+
+    def test_defaults(self):
+        """
+        Test that the default values for the part settings are correct
+        """
+
+        self.assertTrue(part.settings.part_component_default())
+        self.assertFalse(part.settings.part_purchaseable_default())
+        self.assertFalse(part.settings.part_salable_default())
+        self.assertFalse(part.settings.part_trackable_default())
+
+    def test_initial(self):
+        """
+        Test the 'initial' default values (no default values have been set)
+        """
+
+        part = self.make_part()
+
+        self.assertTrue(part.component)
+        self.assertFalse(part.purchaseable)
+        self.assertFalse(part.salable)
+        self.assertFalse(part.trackable)
+
+    def test_custom(self):
+        """
+        Update some of the part values and re-test
+        """
+
+        for val in [True, False]:
+            InvenTreeSetting.set_setting('PART_COMPONENT', val, self.user)
+            InvenTreeSetting.set_setting('PART_PURCHASEABLE', val, self.user)
+            InvenTreeSetting.set_setting('PART_SALABLE', val, self.user)
+            InvenTreeSetting.set_setting('PART_TRACKABLE', val, self.user)
+
+            self.assertEqual(val, InvenTreeSetting.get_setting('PART_COMPONENT'))
+            self.assertEqual(val, InvenTreeSetting.get_setting('PART_PURCHASEABLE'))
+            self.assertEqual(val, InvenTreeSetting.get_setting('PART_SALABLE'))
+            self.assertEqual(val, InvenTreeSetting.get_setting('PART_TRACKABLE'))
+
+            part = self.make_part()
+
+            self.assertEqual(part.component, val)
+            self.assertEqual(part.purchaseable, val)
+            self.assertEqual(part.salable, val)
+            self.assertEqual(part.trackable, val)
+    
+            Part.objects.filter(pk=part.pk).delete()
+
+    def test_duplicate_ipn(self):
+        """
+        Test the setting which controls duplicate IPN values
+        """
+
+        # Create a part
+        Part.objects.create(name='Hello', description='A thing', IPN='IPN123')
+
+        # Attempt to create a duplicate item (should fail)
+        with self.assertRaises(ValidationError):
+            Part.objects.create(name='Hello', description='A thing', IPN='IPN123')
+
+        # Attempt to create item with duplicate IPN (should be allowed by default)
+        Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='B')
+
+        # And attempt again with the same values (should fail)
+        with self.assertRaises(ValidationError):
+            Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='B')
+
+        # Now update the settings so duplicate IPN values are *not* allowed
+        InvenTreeSetting.set_setting('PART_ALLOW_DUPLICATE_IPN', False, self.user)
+
+        with self.assertRaises(ValidationError):
+            Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='C')

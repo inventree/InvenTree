@@ -21,6 +21,7 @@ InvenTree | Allocate Parts
 </div>
 {% else %}
 <div class='btn-group' role='group'>
+    {% if build.active %}
     <button class='btn btn-primary' type='button' id='btn-create-output' title='{% trans "Create new build output" %}'>
         <span class='fas fa-plus-circle'></span> {% trans "Create New Output" %}
     </button>
@@ -32,6 +33,7 @@ InvenTree | Allocate Parts
     <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
         <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
     </button>
+    {% endif %}
 </div>
 
 <hr>
@@ -74,7 +76,7 @@ InvenTree | Allocate Parts
     );
     {% endfor %}
 
-    {% if build.status == BuildStatus.PENDING %}
+    {% if build.active %}
     $("#btn-allocate").on('click', function() {
         launchModalForm(
             "{% url 'build-auto-allocate' build.id %}",

@@ -130,17 +130,6 @@ class PartRelatedCreate(AjaxCreateView):
 
         return form
 
-    def post_save(self):
-        """ Save PartRelated model (POST method does not) """
-
-        form = self.get_form()
-
-        if form.is_valid():
-            part_1 = form.cleaned_data['part_1']
-            part_2 = form.cleaned_data['part_2']
-
-            PartRelated.create(part_1, part_2)
-
 
 class PartRelatedDelete(AjaxDeleteView):
     """ View for deleting a PartRelated object """
