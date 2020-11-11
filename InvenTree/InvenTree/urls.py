@@ -126,6 +126,7 @@ urlpatterns = [
     url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     url(r'^set-password/', SetPasswordView.as_view(), name='set-password'),
 
+    url(r'^admin/error_log/', include('error_report.urls')),
     url(r'^admin/shell/', include('django_admin_shell.urls')),
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
 
