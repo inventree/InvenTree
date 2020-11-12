@@ -300,6 +300,9 @@ def import_fixtures(c):
         # Build model
         'build',
         
+        # Common models
+        'settings',
+
         # Company model
         'company',
         'price_breaks',
