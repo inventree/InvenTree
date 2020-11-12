@@ -40,7 +40,6 @@ class SettingsTest(TestCase):
         # Check object lookup (case insensitive)
         self.assertEqual(InvenTreeSetting.get_setting_object('iNvEnTrEE_inSTanCE').pk, 1)
 
-
     def test_required_values(self):
         """
         - Ensure that every global setting has a name.

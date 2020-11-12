@@ -39,13 +39,13 @@ script:
     - invoke translate
     - invoke style
     # Create an empty database and fill it with test data
-    - rm inventree_db.sqlite3
+    - rm inventree_default_db.sqlite3
     - invoke migrate
     - invoke import-fixtures
     # Export database records
     - invoke export-records -f data.json
     # Create a new empty database and import the saved data
-    - rm inventree_db.sqlite3
+    - rm inventree_default_db.sqlite3
     - invoke import-records -f data.json
 
 after_success:
