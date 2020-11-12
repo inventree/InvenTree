@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
+
 from django.apps import AppConfig
-from django.db.utils import OperationalError, ProgrammingError, IntegrityError
 
 
 class CommonConfig(AppConfig):
