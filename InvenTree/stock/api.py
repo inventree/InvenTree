@@ -617,10 +617,10 @@ class StockList(generics.ListCreateAPIView):
                 queryset = queryset.exclude(quantity__lte=0)
 
         # Filter by internal part number
-        IPN = params.get('IPN', None)
+        ipn = params.get('IPN', None)
 
-        if IPN is not None:
-            queryset = queryset.filter(part__IPN=IPN)
+        if ipn is not None:
+            queryset = queryset.filter(part__IPN=ipn)
 
         # Does the client wish to filter by the Part ID?
         part_id = params.get('part', None)

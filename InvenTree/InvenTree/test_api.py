@@ -27,8 +27,7 @@ class APITests(APITestCase):
     def setUp(self):
 
         # Create a user (but do not log in!)
-        User = get_user_model()
-        User.objects.create_user(self.username, 'user@email.com', self.password)
+        get_user_model().objects.create_user(self.username, 'user@email.com', self.password)
 
     def basicAuth(self):
         # Use basic authentication

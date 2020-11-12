@@ -621,12 +621,12 @@ class StockItem(MPTTModel):
         return self.installedItemCount() > 0
 
     @transaction.atomic
-    def installStockItem(self, otherItem, quantity, user, notes):
+    def installStockItem(self, other_item, quantity, user, notes):
         """
         Install another stock item into this stock item.
 
         Args
-            otherItem: The stock item to install into this stock item
+            other_item: The stock item to install into this stock item
             quantity: The quantity of stock to install
             user: The user performing the operation
             notes: Any notes associated with the operation
@@ -637,10 +637,10 @@ class StockItem(MPTTModel):
             return False
 
         # If the quantity is less than the stock item, split the stock!
-        stock_item = otherItem.splitStock(quantity, None, user)
+        stock_item = other_item.splitStock(quantity, None, user)
 
         if stock_item is None:
-            stock_item = otherItem
+            stock_item = other_item
 
         # Assign the other stock item into this one
         stock_item.belongs_to = self

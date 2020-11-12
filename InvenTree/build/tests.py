@@ -28,10 +28,10 @@ class BuildTestSimple(TestCase):
 
     def setUp(self):
         # Create a user for auth
-        User = get_user_model()
-        User.objects.create_user('testuser', 'test@testing.com', 'password')
+        user = get_user_model()
+        user.objects.create_user('testuser', 'test@testing.com', 'password')
 
-        self.user = User.objects.get(username='testuser')
+        self.user = user.objects.get(username='testuser')
 
         g = Group.objects.create(name='builders')
         self.user.groups.add(g)
@@ -109,11 +109,11 @@ class TestBuildAPI(APITestCase):
 
     def setUp(self):
         # Create a user for auth
-        User = get_user_model()
-        user = User.objects.create_user('testuser', 'test@testing.com', 'password')
+        user = get_user_model()
+        self.user = user.objects.create_user('testuser', 'test@testing.com', 'password')
 
         g = Group.objects.create(name='builders')
-        user.groups.add(g)
+        self.user.groups.add(g)
 
         for rule in g.rule_sets.all():
             if rule.name == 'build':
@@ -185,11 +185,11 @@ class TestBuildViews(TestCase):
         super().setUp()
 
         # Create a user
-        User = get_user_model()
-        user = User.objects.create_user('username', 'user@email.com', 'password')
+        user = get_user_model()
+        self.user = user.objects.create_user('username', 'user@email.com', 'password')
 
         g = Group.objects.create(name='builders')
-        user.groups.add(g)
+        self.user.groups.add(g)
 
         for rule in g.rule_sets.all():
             if rule.name == 'build':

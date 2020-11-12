@@ -38,12 +38,12 @@ class StockTest(TestCase):
         self.drawer3 = StockLocation.objects.get(name='Drawer_3')
 
         # Create a user
-        User = get_user_model()
-        User.objects.create_user('username', 'user@email.com', 'password')
+        user = get_user_model()
+        user.objects.create_user('username', 'user@email.com', 'password')
 
         self.client.login(username='username', password='password')
 
-        self.user = User.objects.get(username='username')
+        self.user = user.objects.get(username='username')
 
         # Ensure the MPTT objects are correctly rebuild
         Part.objects.rebuild()
@@ -221,21 +221,21 @@ class StockTest(TestCase):
     def test_split_stock(self):
         # Split the 1234 x 2K2 resistors in Drawer_1
 
-        N = StockItem.objects.filter(part=3).count()
+        n = StockItem.objects.filter(part=3).count()
 
         stock = StockItem.objects.get(id=1234)
         stock.splitStock(1000, None, self.user)
         self.assertEqual(stock.quantity, 234)
 
         # There should be a new stock item too!
-        self.assertEqual(StockItem.objects.filter(part=3).count(), N + 1)
+        self.assertEqual(StockItem.objects.filter(part=3).count(), n + 1)
 
         # Try to split a negative quantity
         stock.splitStock(-10, None, self.user)
-        self.assertEqual(StockItem.objects.filter(part=3).count(), N + 1)
+        self.assertEqual(StockItem.objects.filter(part=3).count(), n + 1)
 
         stock.splitStock(stock.quantity, None, self.user)
-        self.assertEqual(StockItem.objects.filter(part=3).count(), N + 1)
+        self.assertEqual(StockItem.objects.filter(part=3).count(), n + 1)
 
     def test_stocktake(self):
         # Perform stocktake

@@ -32,8 +32,7 @@ class OrderViewTestCase(TestCase):
         super().setUp()
 
         # Create a user
-        User = get_user_model()
-        user = User.objects.create_user('username', 'user@email.com', 'password')
+        user = get_user_model().objects.create_user('username', 'user@email.com', 'password')
 
         # Ensure that the user has the correct permissions!
         g = Group.objects.create(name='orders')

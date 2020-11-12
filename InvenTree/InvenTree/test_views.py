@@ -16,8 +16,7 @@ class ViewTests(TestCase):
     def setUp(self):
 
         # Create a user
-        User = get_user_model()
-        User.objects.create_user(self.username, 'user@email.com', self.password)
+        get_user_model().objects.create_user(self.username, 'user@email.com', self.password)
 
         self.client.login(username=self.username, password=self.password)
 
