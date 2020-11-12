@@ -16,6 +16,7 @@ from djmoney.models.fields import MoneyField
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
+from django.db.utils import OperationalError
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
@@ -280,12 +281,20 @@ class InvenTreeSetting(models.Model):
 
         try:
             setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
-        except (InvenTreeSetting.DoesNotExist):
-            # Create the setting if it does not exist
-            setting = InvenTreeSetting.create(
-                key=key,
-                value=InvenTreeSetting.get_default_value(key)
-            )
+        except OperationalError:
+            # Settings table has not been created yet!
+            return None
+        except (ValueError, InvenTreeSetting.DoesNotExist):
+            
+            try:
+                # Attempt Create the setting if it does not exist
+                setting = InvenTreeSetting.create(
+                    key=key,
+                    value=InvenTreeSetting.get_default_value(key)
+                )
+            except OperationalError:
+                # Settings table has not been created yet
+                setting = None
 
         return setting
 
