@@ -6,6 +6,7 @@ from shutil import copyfile
 import random
 import string
 import os
+import sys
 
 def apps():
     """
@@ -257,11 +258,11 @@ def export_records(c, filename='data.json'):
 
         if response not in ['y', 'yes']:
             print("Cancelled export operation")
-            return 0
+            sys.exit(1)
 
-        cmd = f'dumpdata --exclude contenttypes --exclude auth.permission --indent 2 --output {filename}'
+    cmd = f'dumpdata --exclude contenttypes --exclude auth.permission --indent 2 --output {filename}'
 
-        manage(c, cmd, pty=True)
+    manage(c, cmd, pty=True)
 
 @task(help={'filename': 'Input filename'})
 def import_records(c, filename='data.json'):
@@ -275,7 +276,7 @@ def import_records(c, filename='data.json'):
 
     if not os.path.exists(filename):
         print(f"Error: File '{filename}' does not exist")
-        return -1
+        sys.exit(1)
 
     print(f"Importing database records from '{filename}'")
 
