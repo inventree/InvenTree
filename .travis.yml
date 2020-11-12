@@ -46,6 +46,7 @@ script:
     - invoke export-records -f data.json
     # Create a new empty database and import the saved data
     - rm inventree_default_db.sqlite3
+    - invoke migrate
     - invoke import-records -f data.json
 
 after_success:
