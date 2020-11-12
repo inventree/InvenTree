@@ -50,17 +50,10 @@ class CompanyViewTestBase(TestCase):
 
         self.client.login(username='username', password='password')
 
-
-class SupplierPartViewTests(CompanyViewTestBase):
-    """
-    Tests for the SupplierPart views.
-    """
-
-    def post(self, data, valid=None):
+    def post(self, url, data, valid=None):
         """
         POST against this form and return the response (as a JSON object)
         """
-        url = reverse('supplier-part-create')
 
         response = self.client.post(url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
@@ -78,6 +71,14 @@ class SupplierPartViewTests(CompanyViewTestBase):
         form_errors = json.loads(json_data['form_errors'])
 
         return json_data, form_errors
+
+
+
+class SupplierPartViewTests(CompanyViewTestBase):
+    """
+    Tests for the SupplierPart views.
+    """
+
 
     def test_supplier_part_create(self):
         """
@@ -103,13 +104,13 @@ class SupplierPartViewTests(CompanyViewTestBase):
         }
 
         # SKU is required! (form should fail)
-        (response, errors) = self.post(data, valid=False)
+        (response, errors) = self.post(url, data, valid=False)
 
         self.assertIsNotNone(errors.get('SKU', None))
 
         data['SKU'] = 'TEST-ME-123'
 
-        (response, errors) = self.post(data, valid=True)
+        (response, errors) = self.post(url, data, valid=True)
 
         # Check that the SupplierPart was created!
         self.assertEqual(n + 1, SupplierPart.objects.all().count())
@@ -120,7 +121,7 @@ class SupplierPartViewTests(CompanyViewTestBase):
         self.assertEqual(supplier_part.price_breaks.count(), 0)
 
         # Duplicate SKU is prohibited
-        (response, errors) = self.post(data, valid=False)
+        (response, errors) = self.post(url, data, valid=False)
 
         self.assertIsNotNone(errors.get('__all__', None))
 
@@ -129,7 +130,7 @@ class SupplierPartViewTests(CompanyViewTestBase):
         data['single_pricing_0'] = '123.4'
         data['single_pricing_1'] = 'CAD'
 
-        (response, errors) = self.post(data, valid=True)
+        (response, errors) = self.post(url, data, valid=True)
 
         pk = response.get('pk')
 
@@ -186,3 +187,20 @@ class CompanyViewTest(CompanyViewTestBase):
 
         response = self.client.get(reverse('company-index'))
         self.assertEqual(response.status_code, 200)
+
+    def test_company_create(self):
+        """
+        Test the view for creating a company
+        """
+
+        url = reverse('company-create')
+
+        # Check that different company types return different form titles
+        response = self.client.get(reverse('supplier-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertContains(response, 'Create new Supplier')
+
+        response = self.client.get(reverse('manufacturer-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertContains(response, 'Create new Manufacturer')
+
+        response = self.client.get(reverse('customer-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertContains(response, 'Create new Customer')
