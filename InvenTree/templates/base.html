@@ -57,7 +57,10 @@ InvenTree
 </head>
 
 <body>
-
+    {% csrf_token %}
+    <script>
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    </script>
 {% include "navbar.html" %}
 
 <div class='main body wrapper'>
@@ -115,6 +118,7 @@ InvenTree
 <script type='text/javascript' src="{% static 'script/inventree/modals.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/sidenav.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/inventree/tasks.js' %}"></script>
 
 <script type='text/javascript' src="{% url 'barcode.js' %}"></script>
 <script type='text/javascript' src="{% url 'bom.js' %}"></script>

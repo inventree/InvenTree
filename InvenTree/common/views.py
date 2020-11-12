@@ -7,9 +7,13 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.forms import CheckboxInput
+from django.http import JsonResponse
 
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import str2bool
+from InvenTree.celery import celery_app
+from celery.result import AsyncResult
+
 
 from . import models
 from . import forms
@@ -146,3 +150,20 @@ class ExtensionSettingEdit(AjaxUpdateView):
             form.fields['value'].help_text = description
 
         return form
+
+def run_task(request):
+    if request.POST:
+        task_name = request.POST.get("name")
+        task = celery_app.send_task(task_name)
+        return JsonResponse({"task_id": task.id}, status=202)
+    return JsonResponse({"message": "Bad Request"})
+
+
+def get_task(request, pk):
+    task_result = AsyncResult(pk)
+    result = {
+        "task_id": pk,
+        "task_status": task_result.status,
+        "task_result": task_result.result
+    }
+    return JsonResponse(result, status=200)
