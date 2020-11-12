@@ -187,7 +187,7 @@ function loadSupplierPartTable(table, url, options) {
                 field: 'manufacturer',
                 title: '{% trans "Manufacturer" %}',
                 formatter: function(value, row, index, field) {
-                    if (value) {
+                    if (value && row.manufacturer_detail) {
                         var name = row.manufacturer_detail.name;
                         var url = `/company/${value}/`;
                         var html = imageHoverIcon(row.manufacturer_detail.image) + renderLink(name, url);
