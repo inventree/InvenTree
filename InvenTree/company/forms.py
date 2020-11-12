@@ -9,10 +9,13 @@ from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 
 from django.utils.translation import ugettext as _
+import django.forms
 
+import djmoney.settings
 from djmoney.forms.fields import MoneyField
 
 from common.models import InvenTreeSetting
+import common.settings
 
 from .models import Company
 from .models import SupplierPart
@@ -30,6 +33,13 @@ class EditCompanyForm(HelperForm):
         'phone': 'fa-phone',
     }
 
+    currency = django.forms.ChoiceField(
+        required=False,
+        help_text=_('Default currency used for this company'),
+        choices=[('', '----------')] + djmoney.settings.CURRENCY_CHOICES,
+        initial=common.settings.currency_code_default,
+    )
+
     class Meta:
         model = Company
         fields = [
@@ -37,6 +47,7 @@ class EditCompanyForm(HelperForm):
             'description',
             'website',
             'address',
+            'currency',
             'phone',
             'email',
             'contact',

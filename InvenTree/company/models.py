@@ -26,6 +26,8 @@ from InvenTree.helpers import normalize
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import PurchaseOrderStatus
 
+import InvenTree.validators
+
 import common.models
 
 
@@ -77,6 +79,7 @@ class Company(models.Model):
         is_customer: boolean value, is this company a customer
         is_supplier: boolean value, is this company a supplier
         is_manufacturer: boolean value, is this company a manufacturer
+        currency_code: Specifies the default currency for the company
     """
 
     class Meta:
@@ -125,6 +128,14 @@ class Company(models.Model):
     is_supplier = models.BooleanField(default=True, help_text=_('Do you purchase items from this company?'))
 
     is_manufacturer = models.BooleanField(default=False, help_text=_('Does this company manufacture parts?'))
+
+    currency = models.CharField(
+        max_length=3,
+        verbose_name=_('Currency'),
+        blank=True,
+        help_text=_('Default currency used for this company'),
+        validators=[InvenTree.validators.validate_currency_code],
+    )
 
     def __str__(self):
         """ Get string representation of a Company """

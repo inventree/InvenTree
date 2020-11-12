@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 
 import os
 
@@ -118,6 +119,30 @@ class CompanySimpleTest(TestCase):
 
         self.assertIsNone(m3x12.get_price_info(3))
         self.assertIsNotNone(m3x12.get_price_info(50))
+
+    def test_currency_validation(self):
+        """
+        Test validation for currency selection
+        """
+
+        # Create a company with a valid currency code (should pass)
+        company = Company.objects.create(
+            name='Test',
+            description='Toast',
+            currency='AUD',
+        )
+
+        company.full_clean()
+
+        # Create a company with an invalid currency code (should fail)
+        company = Company.objects.create(
+            name='test',
+            description='Toasty',
+            currency='XZY',
+        )
+
+        with self.assertRaises(ValidationError):
+            company.full_clean()
 
 
 class ContactSimpleTest(TestCase):
