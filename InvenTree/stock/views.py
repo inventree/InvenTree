@@ -14,6 +14,8 @@ from django.urls import reverse
 
 from django.utils.translation import ugettext as _
 
+from moneyed import CURRENCIES
+
 from InvenTree.views import AjaxView
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
@@ -31,6 +33,8 @@ from part.models import Part
 from report.models import TestReport
 from label.models import StockItemLabel
 from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
+
+import common.settings
 
 from .admin import StockItemResource
 
@@ -1572,6 +1576,8 @@ class StockItemCreate(AjaxCreateView):
             initials['location'] = part.get_default_location()
             initials['supplier_part'] = part.default_supplier
 
+        currency_code = common.settings.currency_code_default()
+
         # SupplierPart field has been specified
         # It must match the Part, if that has been supplied
         if sup_part_id:
@@ -1580,6 +1586,8 @@ class StockItemCreate(AjaxCreateView):
 
                 if part is None or supplier_part.part == part:
                     initials['supplier_part'] = supplier_part
+
+                    currency_code = supplier_part.supplier.currency_code
 
             except (ValueError, SupplierPart.DoesNotExist):
                 pass
@@ -1591,6 +1599,11 @@ class StockItemCreate(AjaxCreateView):
                 initials['location'] = location
             except (ValueError, StockLocation.DoesNotExist):
                 pass
+
+        currency = CURRENCIES.get(currency_code, None)
+
+        if currency:
+            initials['purchase_price'] = (None, currency)
 
         return initials
 
