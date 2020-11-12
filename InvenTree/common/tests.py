@@ -37,7 +37,8 @@ class SettingsTest(TestCase):
         self.assertEqual(instance_name.key, 'INVENTREE_INSTANCE')
         self.assertEqual(instance_name.value, 'My very first InvenTree Instance')
 
-        self.assertEqual(InvenTreeSetting.get_setting_object('iNvEnTrEE_inSTanCE').pk, 21)
+        # Check object lookup (case insensitive)
+        self.assertEqual(InvenTreeSetting.get_setting_object('iNvEnTrEE_inSTanCE').pk, 1)
 
 
     def test_required_values(self):
