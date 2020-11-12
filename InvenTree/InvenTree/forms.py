@@ -29,11 +29,6 @@ class HelperForm(forms.ModelForm):
 
         self.helper.form_tag = False
 
-        # Check for errors from model validation
-        # If none, disable crispy form errors
-        if not self.errors:
-            self.helper.form_show_errors = False
-
         """
         Create a default 'layout' for this form.
         Ref: https://django-crispy-forms.readthedocs.io/en/latest/layouts.html
@@ -43,6 +38,17 @@ class HelperForm(forms.ModelForm):
         """
 
         self.rebuild_layout()
+
+    def is_valid(self):
+
+        valid = super(HelperForm, self).is_valid()
+
+        # Check for errors from model validation
+        # If none, disable crispy form errors
+        if not self.errors:
+            self.helper.form_show_errors = False
+
+        return valid
 
     def rebuild_layout(self):
 
