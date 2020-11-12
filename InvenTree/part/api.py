@@ -21,6 +21,7 @@ from .models import Part, PartCategory, BomItem, PartStar
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak
+from .models import PartCategoryParameterTemplate
 
 from build.models import Build
 
@@ -109,6 +110,36 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single PartCategory object """
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+
+class CategoryParameters(generics.ListAPIView):
+    """ API endpoint for accessing a list of PartCategory objects.
+
+    - GET: Return a list of PartCategory objects
+    """
+
+    queryset = PartCategoryParameterTemplate.objects.all()
+    serializer_class = part_serializers.CategoryParameterTemplateSerializer
+
+    def get_queryset(self):
+        """
+        Custom filtering:
+        - Allow filtering by "null" parent to retrieve top-level part categories
+        """
+
+        cat_id = self.kwargs.get('pk', None)
+
+        queryset = super().get_queryset()
+
+        if cat_id is not None:
+            
+            try:
+                cat_id = int(cat_id)
+                queryset = queryset.filter(category=cat_id)
+            except ValueError:
+                pass
+
+        return queryset
 
 
 class PartSalePriceList(generics.ListCreateAPIView):
@@ -864,6 +895,7 @@ part_api_urls = [
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
+        url(r'^(?P<pk>\d+)/parameters/?', CategoryParameters.as_view(), name='api-part-category-parameters'),
         url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
         url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
     ])),

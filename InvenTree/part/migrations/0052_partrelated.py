@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-
+import InvenTree.fields
 
 class Migration(migrations.Migration):
 
@@ -18,5 +18,10 @@ class Migration(migrations.Migration):
                 ('part_1', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='related_parts_1', to='part.Part')),
                 ('part_2', models.ForeignKey(help_text='Select Related Part', on_delete=django.db.models.deletion.DO_NOTHING, related_name='related_parts_2', to='part.Part')),
             ],
+        ),
+        migrations.AlterField(
+            model_name='part',
+            name='link',
+            field=InvenTree.fields.InvenTreeURLField(blank=True, help_text='Link to external URL', null=True),
         ),
     ]

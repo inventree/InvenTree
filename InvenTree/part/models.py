@@ -12,7 +12,8 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from django.db import models, transaction
-from django.db.models import Sum
+from django.db.utils import IntegrityError
+from django.db.models import Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
@@ -164,6 +165,26 @@ class PartCategory(InvenTreeTree):
 
         return category_parameters
 
+    @classmethod
+    def get_parent_categories(cls):
+        """ Return tuple list of parent (root) categories """
+
+        # Get root nodes
+        root_categories = cls.objects.filter(level=0)
+
+        parent_categories = []
+        for category in root_categories:
+            parent_categories.append((category.id, category.name))
+
+        return parent_categories
+
+    def get_parameter_templates(self):
+        """ Return parameter templates associated to category """
+
+        prefetch = PartCategoryParameterTemplate.objects.prefetch_related('category', 'parameter_template')
+
+        return prefetch.filter(category=self.id)
+
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
 def before_delete_part_category(sender, instance, using, **kwargs):
@@ -307,6 +328,9 @@ class Part(MPTTModel):
         If not, it is considered "orphaned" and will be deleted.
         """
 
+        # Get category templates settings
+        add_category_templates = kwargs.pop('add_category_templates', None)
+
         if self.pk:
             previous = Part.objects.get(pk=self.pk)
 
@@ -321,6 +345,44 @@ class Part(MPTTModel):
         self.validate_unique()
 
         super().save(*args, **kwargs)
+
+        if add_category_templates:
+            # Get part category
+            category = self.category
+
+            if add_category_templates:
+                # Store templates added to part
+                template_list = []
+
+                # Create part parameters for selected category
+                category_templates = add_category_templates['main']
+                if category_templates:
+                    for template in category.get_parameter_templates():
+                        parameter = PartParameter.create(part=self,
+                                                         template=template.parameter_template,
+                                                         data=template.default_value,
+                                                         save=True)
+                        if parameter:
+                            template_list.append(template.parameter_template)
+
+                # Create part parameters for parent category
+                category_templates = add_category_templates['parent']
+                if category_templates:
+                    # Get parent categories
+                    parent_categories = category.get_ancestors()
+
+                    for category in parent_categories:
+                        for template in category.get_parameter_templates():
+                            # Check that template wasn't already added
+                            if template.parameter_template not in template_list:
+                                try:
+                                    PartParameter.create(part=self,
+                                                         template=template.parameter_template,
+                                                         data=template.default_value,
+                                                         save=True)
+                                except IntegrityError:
+                                    # PartParameter already exists
+                                    pass
 
     def __str__(self):
         return f"{self.full_name} - {self.description}"
@@ -1662,6 +1724,49 @@ class PartParameter(models.Model):
         if save:
             part_parameter.save()
         return part_parameter
+
+
+class PartCategoryParameterTemplate(models.Model):
+    """
+    A PartCategoryParameterTemplate creates a unique relationship between a PartCategory
+    and a PartParameterTemplate.
+    Multiple PartParameterTemplate instances can be associated to a PartCategory to drive
+    a default list of parameter templates attached to a Part instance upon creation.
+
+    Attributes:
+        category: Reference to a single PartCategory object
+        parameter_template: Reference to a single PartParameterTemplate object
+        default_value: The default value for the parameter in the context of the selected
+                       category
+    """
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['category', 'parameter_template'],
+                             name='unique_category_parameter_template_pair')
+        ]
+
+    def __str__(self):
+        """ String representation of a PartCategoryParameterTemplate (admin interface) """
+
+        if self.default_value:
+            return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
+        else:
+            return f'{self.category.name} | {self.parameter_template.name}'
+
+    category = models.ForeignKey(PartCategory,
+                                 on_delete=models.CASCADE,
+                                 related_name='parameter_templates',
+                                 help_text=_('Part Category'))
+
+    parameter_template = models.ForeignKey(PartParameterTemplate,
+                                           on_delete=models.CASCADE,
+                                           related_name='part_categories',
+                                           help_text=_('Parameter Template'))
+
+    default_value = models.CharField(max_length=500,
+                                     blank=True,
+                                     help_text=_('Default Parameter Value'))
 
 
 class BomItem(models.Model):

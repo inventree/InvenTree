@@ -24,8 +24,8 @@ class BarcodeAPITest(APITestCase):
 
     def setUp(self):
         # Create a user for auth
-        User = get_user_model()
-        User.objects.create_user('testuser', 'test@testing.com', 'password')
+        user = get_user_model()
+        user.objects.create_user('testuser', 'test@testing.com', 'password')
 
         self.client.login(username='testuser', password='password')
 

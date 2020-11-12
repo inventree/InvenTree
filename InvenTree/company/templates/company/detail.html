@@ -8,25 +8,64 @@
 <h4>{% trans "Company Details" %}</h4>
 <hr>
 
-<table class='table table-striped'>
-    <col width='25'>
-    <col>
-    <tr>
-        <td><span class='fas fa-industry'></span></td>
-        <td>{% trans "Manufacturer" %}</td>
-        <td>{% include "yesnolabel.html" with value=company.is_manufacturer %}</td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-building'></span></td>
-        <td>{% trans "Supplier" %}</td>
-        <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-user-tie'></span></td>
-        <td>{% trans "Customer" %}</td>
-        <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
-    </tr>
-</table>
+<div class='row'>
+    <div class='col-sm-6'>
+        <table class='table table-striped'>
+            <col width='25'>
+            <col>
+            <tr>
+                <td><span class='fas fa-font'></span></td>
+                <td>{% trans "Company Name" %}</td>
+                <td>{{ company.name }}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-info'></span></td>
+                <td>{% trans "Description" %}</td>
+                <td>{{ company.description }}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-globe'></span></td>
+                <td>{% trans "Website" %}</td>
+                <td>
+                    {% if company.website %}<a href='{{ company.website }}'>{{ company.website }}</a>
+                    {% else %}<i>{% trans "No website specified" %}</i>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-dollar-sign'></span></td>
+                <td>{% trans "Currency" %}</td>
+                <td>
+                    {% if company.currency %}{{ company.currency }}
+                    {% else %}<i>{% trans "Uses default currency" %}</i>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class='col-sm-6'>
+        <table class='table table-striped'>
+            <col width='25'>
+            <col>
+            <tr>
+                <td><span class='fas fa-industry'></span></td>
+                <td>{% trans "Manufacturer" %}</td>
+                <td>{% include "yesnolabel.html" with value=company.is_manufacturer %}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-building'></span></td>
+                <td>{% trans "Supplier" %}</td>
+                <td>{% include 'yesnolabel.html' with value=company.is_supplier %}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-user-tie'></span></td>
+                <td>{% trans "Customer" %}</td>
+                <td>{% include 'yesnolabel.html' with value=company.is_customer %}</td>
+            </tr>
+        </table>
+
+    </div>
+</div>
 
 {% endblock %}
 {% block js_ready %}

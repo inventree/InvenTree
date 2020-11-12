@@ -267,17 +267,17 @@ class BuildTest(TestCase):
         # New stock items should have been created!
         self.assertEqual(StockItem.objects.count(), 4)
 
-        A = StockItem.objects.get(pk=self.stock_1_1.pk)
+        a = StockItem.objects.get(pk=self.stock_1_1.pk)
 
         # This stock item has been depleted!
         with self.assertRaises(StockItem.DoesNotExist):
             StockItem.objects.get(pk=self.stock_1_2.pk)
         
-        C = StockItem.objects.get(pk=self.stock_2_1.pk)
+        c = StockItem.objects.get(pk=self.stock_2_1.pk)
 
         # Stock should have been subtracted from the original items
-        self.assertEqual(A.quantity, 900)
-        self.assertEqual(C.quantity, 4500)
+        self.assertEqual(a.quantity, 900)
+        self.assertEqual(c.quantity, 4500)
         
         # And 10 new stock items created for the build output
         outputs = StockItem.objects.filter(build=self.build)

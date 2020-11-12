@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.shortcuts import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
@@ -16,6 +17,8 @@ from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
 
+from moneyed import CURRENCIES
+
 import os
 
 from rapidfuzz import fuzz
@@ -23,12 +26,13 @@ from decimal import Decimal, InvalidOperation
 
 from .models import PartCategory, Part, PartAttachment, PartRelated
 from .models import PartParameterTemplate, PartParameter
+from .models import PartCategoryParameterTemplate
 from .models import BomItem
 from .models import match_part_names
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
-from common.models import Currency, InvenTreeSetting
+from common.models import InvenTreeSetting
 from company.models import SupplierPart
 
 from . import forms as part_forms
@@ -625,6 +629,10 @@ class PartCreate(AjaxCreateView):
         # Hide the default_supplier field (there are no matching supplier parts yet!)
         form.fields['default_supplier'].widget = HiddenInput()
 
+        # Display category templates widgets
+        form.fields['selected_category_templates'].widget = CheckboxInput()
+        form.fields['parent_category_templates'].widget = CheckboxInput()
+
         return form
 
     def post(self, request, *args, **kwargs):
@@ -667,7 +675,14 @@ class PartCreate(AjaxCreateView):
             # Record the user who created this part
             part.creation_user = request.user
 
-            part.save()
+            # Store category templates settings
+            add_category_templates = {
+                'main': form.cleaned_data['selected_category_templates'],
+                'parent': form.cleaned_data['parent_category_templates'],
+            }
+
+            # Save part and pass category template settings
+            part.save(**{'add_category_templates': add_category_templates})
 
             data['pk'] = part.pk
             data['text'] = str(part)
@@ -699,6 +714,10 @@ class PartCreate(AjaxCreateView):
         for label in ['name', 'IPN', 'description', 'revision', 'keywords']:
             if label in self.request.GET:
                 initials[label] = self.request.GET.get(label)
+
+        # Automatically create part parameters from category templates
+        initials['selected_category_templates'] = str2bool(InvenTreeSetting.get_setting('PART_CATEGORY_PARAMETERS', False))
+        initials['parent_category_templates'] = initials['selected_category_templates']
 
         return initials
 
@@ -1860,18 +1879,11 @@ class PartPricing(AjaxView):
         if quantity < 1:
             quantity = 1
 
-        if currency is None:
-            # No currency selected? Try to select a default one
-            try:
-                currency = Currency.objects.get(base=1)
-            except Currency.DoesNotExist:
-                currency = None
+        # TODO - Capacity for price comparison in different currencies
+        currency = None
 
         # Currency scaler
         scaler = Decimal(1.0)
-
-        if currency is not None:
-            scaler = Decimal(currency.value)
 
         part = self.get_part()
         
@@ -1942,13 +1954,8 @@ class PartPricing(AjaxView):
         except ValueError:
             quantity = 1
 
-        try:
-            currency_id = int(self.request.POST.get('currency', None))
-
-            if currency_id:
-                currency = Currency.objects.get(pk=currency_id)
-        except (ValueError, Currency.DoesNotExist):
-            currency = None
+        # TODO - How to handle pricing in different currencies?
+        currency = None
 
         # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)
         data = {
@@ -2215,6 +2222,185 @@ class CategoryCreate(AjaxCreateView):
         return initials
 
 
+class CategoryParameterTemplateCreate(AjaxCreateView):
+    """ View for creating a new PartCategoryParameterTemplate """
+
+    role_required = 'part.add'
+
+    model = PartCategoryParameterTemplate
+    form_class = part_forms.EditCategoryParameterTemplateForm
+    ajax_form_title = _('Create Category Parameter Template')
+
+    def get_initial(self):
+        """ Get initial data for Category """
+        initials = super().get_initial()
+
+        category_id = self.kwargs.get('pk', None)
+
+        if category_id:
+            try:
+                initials['category'] = PartCategory.objects.get(pk=category_id)
+            except (PartCategory.DoesNotExist, ValueError):
+                pass
+
+        return initials
+
+    def get_form(self):
+        """ Create a form to upload a new CategoryParameterTemplate
+        - Hide the 'category' field (parent part)
+        - Display parameter templates which are not yet related
+        """
+
+        form = super(AjaxCreateView, self).get_form()
+        
+        form.fields['category'].widget = HiddenInput()
+
+        if form.is_valid():
+            form.cleaned_data['category'] = self.kwargs.get('pk', None)
+
+        try:
+            # Get selected category
+            category = self.get_initial()['category']
+
+            # Get existing parameter templates
+            parameters = [template.parameter_template.pk
+                          for template in category.get_parameter_templates()]
+
+            # Exclude templates already linked to category
+            updated_choices = []
+            for choice in form.fields["parameter_template"].choices:
+                if (choice[0] not in parameters):
+                    updated_choices.append(choice)
+
+            # Update choices for parameter templates
+            form.fields['parameter_template'].choices = updated_choices
+        except KeyError:
+            pass
+
+        return form
+
+    def post(self, request, *args, **kwargs):
+        """ Capture the POST request
+
+        - If the add_to_all_categories object is set, link parameter template to
+          all categories
+        - If the add_to_same_level_categories object is set, link parameter template to
+          same level categories
+        """
+
+        form = self.get_form()
+
+        valid = form.is_valid()
+
+        if valid:
+            add_to_same_level_categories = form.cleaned_data['add_to_same_level_categories']
+            add_to_all_categories = form.cleaned_data['add_to_all_categories']
+
+            selected_category = PartCategory.objects.get(pk=int(self.kwargs['pk']))
+            parameter_template = form.cleaned_data['parameter_template']
+            default_value = form.cleaned_data['default_value']
+
+            categories = PartCategory.objects.all()
+
+            if add_to_same_level_categories and not add_to_all_categories:
+                # Get level
+                level = selected_category.level
+                # Filter same level categories
+                categories = categories.filter(level=level)
+
+            if add_to_same_level_categories or add_to_all_categories:
+                # Add parameter template and default value to categories
+                for category in categories:
+                    # Skip selected category (will be processed in the post call)
+                    if category.pk != selected_category.pk:
+                        try:
+                            cat_template = PartCategoryParameterTemplate.objects.create(category=category,
+                                                                                        parameter_template=parameter_template,
+                                                                                        default_value=default_value)
+                            cat_template.save()
+                        except IntegrityError:
+                            # Parameter template is already linked to category
+                            pass
+
+        return super().post(request, *args, **kwargs)
+
+
+class CategoryParameterTemplateEdit(AjaxUpdateView):
+    """ View for editing a PartCategoryParameterTemplate """
+
+    role_required = 'part.change'
+
+    model = PartCategoryParameterTemplate
+    form_class = part_forms.EditCategoryParameterTemplateForm
+    ajax_form_title = _('Edit Category Parameter Template')
+
+    def get_object(self):
+        try:
+            self.object = self.model.objects.get(pk=self.kwargs['pid'])
+        except:
+            return None
+
+        return self.object
+
+    def get_form(self):
+        """ Create a form to upload a new CategoryParameterTemplate
+        - Hide the 'category' field (parent part)
+        - Display parameter templates which are not yet related
+        """
+
+        form = super(AjaxUpdateView, self).get_form()
+        
+        form.fields['category'].widget = HiddenInput()
+        form.fields['add_to_all_categories'].widget = HiddenInput()
+        form.fields['add_to_same_level_categories'].widget = HiddenInput()
+
+        if form.is_valid():
+            form.cleaned_data['category'] = self.kwargs.get('pk', None)
+
+        try:
+            # Get selected category
+            category = PartCategory.objects.get(pk=self.kwargs.get('pk', None))
+            # Get selected template
+            selected_template = self.get_object().parameter_template
+
+            # Get existing parameter templates
+            parameters = [template.parameter_template.pk
+                          for template in category.get_parameter_templates()
+                          if template.parameter_template.pk != selected_template.pk]
+
+            # Exclude templates already linked to category
+            updated_choices = []
+            for choice in form.fields["parameter_template"].choices:
+                if (choice[0] not in parameters):
+                    updated_choices.append(choice)
+
+            # Update choices for parameter templates
+            form.fields['parameter_template'].choices = updated_choices
+            # Set initial choice to current template
+            form.fields['parameter_template'].initial = selected_template
+        except KeyError:
+            pass
+
+        return form
+
+
+class CategoryParameterTemplateDelete(AjaxDeleteView):
+    """ View for deleting an existing PartCategoryParameterTemplate """
+
+    role_required = 'part.delete'
+
+    model = PartCategoryParameterTemplate
+    ajax_form_title = _("Delete Category Parameter Template")
+
+    def get_object(self):
+        try:
+            self.object = self.model.objects.get(pk=self.kwargs['pid'])
+        except:
+            return None
+
+        return self.object
+
+
 class BomItemDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view for BomItem """
     context_object_name = 'item'
@@ -2393,12 +2579,11 @@ class PartSalePriceBreakCreate(AjaxCreateView):
 
         initials['part'] = self.get_part()
 
-        # Pre-select the default currency
-        try:
-            base = Currency.objects.get(base=True)
-            initials['currency'] = base
-        except Currency.DoesNotExist:
-            pass
+        default_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+        currency = CURRENCIES.get(default_currency, None)
+
+        if currency is not None:
+            initials['price'] = [1.0, currency]
 
         return initials
 

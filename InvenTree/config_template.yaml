@@ -26,6 +26,17 @@ language: en-us
 # Select an option from the "TZ database name" column
 timezone: UTC
 
+# List of currencies supported by default.
+# Add other currencies here to allow use in InvenTree
+currencies:
+  - AUD
+  - CAD
+  - EUR
+  - GBP
+  - JPY
+  - NZD
+  - USD
+
 # Set debug to False to run in production mode
 debug: True
 

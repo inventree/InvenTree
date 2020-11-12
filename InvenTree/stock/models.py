@@ -24,6 +24,8 @@ from markdownx.models import MarkdownxField
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from djmoney.models.fields import MoneyField
+
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
 from InvenTree import helpers
@@ -134,14 +136,13 @@ class StockItem(MPTTModel):
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         infinite: If True this StockItem can never be exhausted
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
-        build_order: Link to a BuildOrder object (if the StockItem has been assigned to a BuildOrder)
+        purchase_price: The unit purchase price for this StockItem - this is the unit price at time of purchase (if this item was purchased from an external supplier)
     """
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
     IN_STOCK_FILTER = Q(
         quantity__gt=0,
         sales_order=None,
-        build_order=None,
         belongs_to=None,
         customer=None,
         is_building=False,
@@ -427,14 +428,6 @@ class StockItem(MPTTModel):
         related_name='stock_items',
         null=True, blank=True)
 
-    build_order = models.ForeignKey(
-        'build.Build',
-        on_delete=models.SET_NULL,
-        verbose_name=_("Destination Build Order"),
-        related_name='stock_items',
-        null=True, blank=True
-    )
-
     # last time the stock was checked / counted
     stocktake_date = models.DateField(blank=True, null=True)
 
@@ -454,6 +447,15 @@ class StockItem(MPTTModel):
         blank=True, null=True,
         verbose_name=_("Notes"),
         help_text=_('Stock Item Notes')
+    )
+
+    purchase_price = MoneyField(
+        max_digits=19,
+        decimal_places=4,
+        default_currency='USD',
+        null=True,
+        verbose_name=_('Purchase Price'),
+        help_text=_('Single unit purchase price at time of purchase'),
     )
 
     def clearAllocations(self):
@@ -602,9 +604,6 @@ class StockItem(MPTTModel):
         if self.sales_order is not None:
             return False
 
-        if self.build_order is not None:
-            return False
-
         return True
 
     def installedItemCount(self):
@@ -622,12 +621,12 @@ class StockItem(MPTTModel):
         return self.installedItemCount() > 0
 
     @transaction.atomic
-    def installStockItem(self, otherItem, quantity, user, notes):
+    def installStockItem(self, other_item, quantity, user, notes):
         """
         Install another stock item into this stock item.
 
         Args
-            otherItem: The stock item to install into this stock item
+            other_item: The stock item to install into this stock item
             quantity: The quantity of stock to install
             user: The user performing the operation
             notes: Any notes associated with the operation
@@ -638,10 +637,10 @@ class StockItem(MPTTModel):
             return False
 
         # If the quantity is less than the stock item, split the stock!
-        stock_item = otherItem.splitStock(quantity, None, user)
+        stock_item = other_item.splitStock(quantity, None, user)
 
         if stock_item is None:
-            stock_item = otherItem
+            stock_item = other_item
 
         # Assign the other stock item into this one
         stock_item.belongs_to = self
@@ -736,10 +735,6 @@ class StockItem(MPTTModel):
             
         # Not 'in stock' if it has been sent to a customer
         if self.sales_order is not None:
-            return False
-
-        # Not 'in stock' if it has been allocated to a BuildOrder
-        if self.build_order is not None:
             return False
 
         # Not 'in stock' if it has been assigned to a customer

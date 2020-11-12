@@ -4,20 +4,7 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from .models import Currency, InvenTreeSetting
-
-
-class CurrencyTest(TestCase):
-    """ Tests for Currency model """
-
-    fixtures = [
-        'currency',
-    ]
-
-    def test_currency(self):
-        # Simple test for now (improve this later!)
-
-        self.assertEqual(Currency.objects.count(), 2)
+from .models import InvenTreeSetting
 
 
 class SettingsTest(TestCase):
@@ -25,15 +12,33 @@ class SettingsTest(TestCase):
     Tests for the 'settings' model
     """
 
+    fixtures = [
+        'settings',
+    ]
+
     def setUp(self):
 
-        User = get_user_model()
+        user = get_user_model()
         
-        self.user = User.objects.create_user('username', 'user@email.com', 'password')
+        self.user = user.objects.create_user('username', 'user@email.com', 'password')
         self.user.is_staff = True
         self.user.save()
 
         self.client.login(username='username', password='password')
+
+    def test_settings_objects(self):
+
+        # There should be two settings objects in the database
+        settings = InvenTreeSetting.objects.all()
+
+        self.assertEqual(settings.count(), 2)
+
+        instance_name = InvenTreeSetting.objects.get(pk=1)
+        self.assertEqual(instance_name.key, 'INVENTREE_INSTANCE')
+        self.assertEqual(instance_name.value, 'My very first InvenTree Instance')
+
+        # Check object lookup (case insensitive)
+        self.assertEqual(InvenTreeSetting.get_setting_object('iNvEnTrEE_inSTanCE').pk, 1)
 
     def test_required_values(self):
         """

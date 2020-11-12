@@ -4,6 +4,10 @@ Order model definitions
 
 # -*- coding: utf-8 -*-
 
+import os
+from datetime import datetime
+from decimal import Decimal
+
 from django.db import models, transaction
 from django.db.models import F, Sum
 from django.db.models.functions import Coalesce
@@ -15,9 +19,7 @@ from django.utils.translation import ugettext as _
 
 from markdownx.models import MarkdownxField
 
-import os
-from datetime import datetime
-from decimal import Decimal
+from djmoney.models.fields import MoneyField
 
 from part import models as PartModels
 from stock import models as stock_models
@@ -499,6 +501,15 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     received = models.DecimalField(decimal_places=5, max_digits=15, default=0, help_text=_('Number of items received'))
 
+    purchase_price = MoneyField(
+        max_digits=19,
+        decimal_places=4,
+        default_currency='USD',
+        null=True, blank=True,
+        verbose_name=_('Purchase Price'),
+        help_text=_('Unit purchase price'),
+    )
+
     def remaining(self):
         """ Calculate the number of items remaining to be received """
         r = self.quantity - self.received
@@ -621,7 +632,6 @@ class SalesOrderAllocation(models.Model):
             'part__salable': True,
             'belongs_to': None,
             'sales_order': None,
-            'build_order': None,
         },
         help_text=_('Select stock item to allocate')
     )
