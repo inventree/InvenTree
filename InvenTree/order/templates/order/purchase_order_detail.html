@@ -180,6 +180,14 @@ $("#po-table").inventreeTable({
         },
         {
             sortable: true,
+            field: 'purchase_price',
+            title: '{% trans "Unit Price" %}',
+            formatter: function(value, row) {
+                return row.purchase_price_string || row.purchase_price;
+            }
+        },
+        {
+            sortable: true,
             field: 'received',
             switchable: false,
             title: '{% trans "Received" %}',
