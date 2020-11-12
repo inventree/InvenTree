@@ -17,6 +17,8 @@ from django.db.models import Sum, Q, UniqueConstraint
 from django.apps import apps
 from django.urls import reverse
 
+from moneyed import CURRENCIES
+
 from markdownx.models import MarkdownxField
 
 from stdimage.models import StdImageField
@@ -26,7 +28,10 @@ from InvenTree.helpers import normalize
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.status_codes import PurchaseOrderStatus
 
+import InvenTree.validators
+
 import common.models
+import common.settings
 
 
 def rename_company_image(instance, filename):
@@ -77,6 +82,7 @@ class Company(models.Model):
         is_customer: boolean value, is this company a customer
         is_supplier: boolean value, is this company a supplier
         is_manufacturer: boolean value, is this company a manufacturer
+        currency_code: Specifies the default currency for the company
     """
 
     class Meta:
@@ -125,6 +131,30 @@ class Company(models.Model):
     is_supplier = models.BooleanField(default=True, help_text=_('Do you purchase items from this company?'))
 
     is_manufacturer = models.BooleanField(default=False, help_text=_('Does this company manufacture parts?'))
+
+    currency = models.CharField(
+        max_length=3,
+        verbose_name=_('Currency'),
+        blank=True,
+        help_text=_('Default currency used for this company'),
+        validators=[InvenTree.validators.validate_currency_code],
+    )
+
+    @property
+    def currency_code(self):
+        """
+        Return the currency code associated with this company.
+        
+        - If the currency code is invalid, use the default currency
+        - If the currency code is not specified, use the default currency
+        """
+
+        code = self.currency
+
+        if code not in CURRENCIES:
+            code = common.settings.currency_code_default()
+
+        return code
 
     def __str__(self):
         """ Get string representation of a Company """
@@ -350,7 +380,26 @@ class SupplierPart(models.Model):
     def unit_pricing(self):
         return self.get_price(1)
 
-    def get_price(self, quantity, moq=True, multiples=True):
+    def add_price_break(self, quantity, price):
+        """
+        Create a new price break for this part
+
+        args:
+            quantity - Numerical quantity
+            price - Must be a Money object
+        """
+
+        # Check if a price break at that quantity already exists...
+        if self.price_breaks.filter(quantity=quantity, part=self.pk).exists():
+            return
+
+        SupplierPriceBreak.objects.create(
+            part=self,
+            quantity=quantity,
+            price=price
+        )
+
+    def get_price(self, quantity, moq=True, multiples=True, currency=None):
         """ Calculate the supplier price based on quantity price breaks.
 
         - Don't forget to add in flat-fee cost (base_cost field)
@@ -372,6 +421,10 @@ class SupplierPart(models.Model):
         pb_quantity = -1
         pb_cost = 0.0
 
+        if currency is None:
+            # Default currency selection
+            currency = common.models.InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+
         for pb in self.price_breaks.all():
             # Ignore this pricebreak (quantity is too high)
             if pb.quantity > quantity:
@@ -382,8 +435,9 @@ class SupplierPart(models.Model):
             # If this price-break quantity is the largest so far, use it!
             if pb.quantity > pb_quantity:
                 pb_quantity = pb.quantity
-                # Convert everything to base currency
-                pb_cost = pb.converted_cost
+
+                # Convert everything to the selected currency
+                pb_cost = pb.convert_to(currency)
 
         if pb_found:
             cost = pb_cost * quantity
@@ -462,7 +516,4 @@ class SupplierPriceBreak(common.models.PriceBreak):
         db_table = 'part_supplierpricebreak'
 
     def __str__(self):
-        return "{mpn} - {cost} @ {quan}".format(
-            mpn=self.part.MPN,
-            cost=self.cost,
-            quan=self.quantity)
+        return f'{self.part.MPN} - {self.price} @ {self.quantity}'

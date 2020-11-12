@@ -103,7 +103,6 @@ class RuleSet(models.Model):
 
         # Models which currently do not require permissions
         'common_colortheme',
-        'common_currency',
         'common_inventreesetting',
         'company_contact',
         'label_stockitemlabel',
@@ -113,6 +112,8 @@ class RuleSet(models.Model):
 
         # Third-party tables
         'error_report_error',
+        'exchange_rate',
+        'exchange_exchangebackend',
     ]
 
     RULE_OPTIONS = [

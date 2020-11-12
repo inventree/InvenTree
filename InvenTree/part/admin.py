@@ -285,7 +285,7 @@ class PartSellPriceBreakAdmin(admin.ModelAdmin):
     class Meta:
         model = PartSellPriceBreak
 
-    list_display = ('part', 'quantity', 'cost', 'currency')
+    list_display = ('part', 'quantity', 'price',)
 
 
 admin.site.register(Part, PartAdmin)

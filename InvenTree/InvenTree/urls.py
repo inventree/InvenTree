@@ -75,7 +75,6 @@ settings_urls = [
     url(r'^theme/?', ColorThemeSelectView.as_view(), name='settings-theme'),
    
     url(r'^global/?', SettingsView.as_view(template_name='InvenTree/settings/global.html'), name='settings-global'),
-    url(r'^currency/?', SettingsView.as_view(template_name='InvenTree/settings/currency.html'), name='settings-currency'),
     url(r'^category/?', SettingCategorySelectView.as_view(), name='settings-category'),
     url(r'^part/?', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
     url(r'^stock/?', SettingsView.as_view(template_name='InvenTree/settings/stock.html'), name='settings-stock'),

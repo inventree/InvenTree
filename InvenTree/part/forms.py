@@ -20,8 +20,6 @@ from .models import PartCategoryParameterTemplate
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
-from common.models import Currency
-
 
 class PartModelChoiceField(forms.ModelChoiceField):
     """ Extending string representation of Part instance with available stock """
@@ -333,13 +331,10 @@ class PartPriceForm(forms.Form):
         help_text=_('Input quantity for price calculation')
     )
 
-    currency = forms.ModelChoiceField(queryset=Currency.objects.all(), label='Currency', help_text=_('Select currency for price calculation'))
-
     class Meta:
         model = Part
         fields = [
             'quantity',
-            'currency',
         ]
 
 
@@ -350,13 +345,10 @@ class EditPartSalePriceBreakForm(HelperForm):
 
     quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
 
-    cost = RoundingDecimalFormField(max_digits=10, decimal_places=5)
-
     class Meta:
         model = PartSellPriceBreak
         fields = [
             'part',
             'quantity',
-            'cost',
-            'currency',
+            'price',
         ]

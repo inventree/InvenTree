@@ -17,6 +17,8 @@ from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
 
+from moneyed import CURRENCIES
+
 import os
 
 from rapidfuzz import fuzz
@@ -30,7 +32,7 @@ from .models import match_part_names
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
-from common.models import Currency, InvenTreeSetting
+from common.models import InvenTreeSetting
 from company.models import SupplierPart
 
 from . import forms as part_forms
@@ -1877,18 +1879,11 @@ class PartPricing(AjaxView):
         if quantity < 1:
             quantity = 1
 
-        if currency is None:
-            # No currency selected? Try to select a default one
-            try:
-                currency = Currency.objects.get(base=1)
-            except Currency.DoesNotExist:
-                currency = None
+        # TODO - Capacity for price comparison in different currencies
+        currency = None
 
         # Currency scaler
         scaler = Decimal(1.0)
-
-        if currency is not None:
-            scaler = Decimal(currency.value)
 
         part = self.get_part()
         
@@ -1959,13 +1954,8 @@ class PartPricing(AjaxView):
         except ValueError:
             quantity = 1
 
-        try:
-            currency_id = int(self.request.POST.get('currency', None))
-
-            if currency_id:
-                currency = Currency.objects.get(pk=currency_id)
-        except (ValueError, Currency.DoesNotExist):
-            currency = None
+        # TODO - How to handle pricing in different currencies?
+        currency = None
 
         # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)
         data = {
@@ -2589,12 +2579,11 @@ class PartSalePriceBreakCreate(AjaxCreateView):
 
         initials['part'] = self.get_part()
 
-        # Pre-select the default currency
-        try:
-            base = Currency.objects.get(base=True)
-            initials['currency'] = base
-        except Currency.DoesNotExist:
-            pass
+        default_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
+        currency = CURRENCIES.get(default_currency, None)
+
+        if currency is not None:
+            initials['price'] = [1.0, currency]
 
         return initials
 
