@@ -73,12 +73,10 @@ class CompanyViewTestBase(TestCase):
         return json_data, form_errors
 
 
-
 class SupplierPartViewTests(CompanyViewTestBase):
     """
     Tests for the SupplierPart views.
     """
-
 
     def test_supplier_part_create(self):
         """
@@ -192,8 +190,6 @@ class CompanyViewTest(CompanyViewTestBase):
         """
         Test the view for creating a company
         """
-
-        url = reverse('company-create')
 
         # Check that different company types return different form titles
         response = self.client.get(reverse('supplier-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
