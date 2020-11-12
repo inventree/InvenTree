@@ -215,6 +215,7 @@ class EditPartForm(HelperForm):
     class Meta:
         model = Part
         fields = [
+            'confirm_creation',
             'category',
             'selected_category_templates',
             'parent_category_templates',
@@ -224,7 +225,6 @@ class EditPartForm(HelperForm):
             'revision',
             'bom_copy',
             'parameters_copy',
-            'confirm_creation',
             'keywords',
             'variant_of',
             'link',
