@@ -306,11 +306,14 @@ class SupplierPartCreate(AjaxCreateView):
         supplier_id = self.get_param('supplier')
         part_id = self.get_param('part')
 
+        supplier = None
+
         if supplier_id:
             try:
-                initials['supplier'] = Company.objects.get(pk=supplier_id)
+                supplier = Company.objects.get(pk=supplier_id)
+                initials['supplier'] = supplier
             except (ValueError, Company.DoesNotExist):
-                pass
+                supplier = None
 
         if manufacturer_id:
             try:
@@ -323,6 +326,17 @@ class SupplierPartCreate(AjaxCreateView):
                 initials['part'] = Part.objects.get(pk=part_id)
             except (ValueError, Part.DoesNotExist):
                 pass
+
+        # Initial value for single pricing
+        if supplier:
+            currency_code = supplier.currency_code
+        else:
+            currency_code = common.settings.currency_code_default()
+
+        currency = CURRENCIES.get(currency_code, None)
+
+        if currency_code:
+            initials['single_pricing'] = ('', currency)
         
         return initials
 

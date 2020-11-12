@@ -79,7 +79,7 @@ class EditSupplierPartForm(HelperForm):
 
     single_pricing = MoneyField(
         label=_('Single Price'),
-        default_currency=InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY'),
+        default_currency='USD',
         help_text=_('Single quantity price'),
         decimal_places=4,
         max_digits=19,

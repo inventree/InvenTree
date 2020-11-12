@@ -505,7 +505,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         max_digits=19,
         decimal_places=4,
         default_currency='USD',
-        null=True,
+        null=True, blank=True,
         verbose_name=_('Purchase Price'),
         help_text=_('Unit purchase price'),
     )
