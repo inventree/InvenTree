@@ -17,6 +17,8 @@ from django.db.models import Sum, Q, UniqueConstraint
 from django.apps import apps
 from django.urls import reverse
 
+from moneyed import CURRENCIES
+
 from markdownx.models import MarkdownxField
 
 from stdimage.models import StdImageField
@@ -29,6 +31,7 @@ from InvenTree.status_codes import PurchaseOrderStatus
 import InvenTree.validators
 
 import common.models
+import common.settings
 
 
 def rename_company_image(instance, filename):
@@ -136,6 +139,22 @@ class Company(models.Model):
         help_text=_('Default currency used for this company'),
         validators=[InvenTree.validators.validate_currency_code],
     )
+
+    @property
+    def currency_code(self):
+        """
+        Return the currency code associated with this company.
+        
+        - If the currency code is invalid, use the default currency
+        - If the currency code is not specified, use the default currency
+        """
+
+        code = self.currency
+
+        if code not in CURRENCIES:
+            code = common.settings.currency_code_default()
+
+        return code
 
     def __str__(self):
         """ Get string representation of a Company """

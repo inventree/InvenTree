@@ -107,7 +107,12 @@ class EditSupplierPartForm(HelperForm):
 class EditPriceBreakForm(HelperForm):
     """ Form for creating / editing a supplier price break """
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    quantity = RoundingDecimalFormField(
+        max_digits=10,
+        decimal_places=5,
+        label=_('Quantity'),
+        help_text=_('Price break quantity'),
+    )
 
     class Meta:
         model = SupplierPriceBreak

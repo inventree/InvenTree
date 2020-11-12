@@ -464,7 +464,14 @@ class PriceBreak(models.Model):
     class Meta:
         abstract = True
 
-    quantity = InvenTree.fields.RoundingDecimalField(max_digits=15, decimal_places=5, default=1, validators=[MinValueValidator(1)])
+    quantity = InvenTree.fields.RoundingDecimalField(
+        max_digits=15,
+        decimal_places=5,
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name=_('Quantity'),
+        help_text=_('Price break quantity'),
+    )
 
     price = MoneyField(
         max_digits=19,
