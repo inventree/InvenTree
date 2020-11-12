@@ -271,6 +271,14 @@ class SupplierPartEdit(AjaxUpdateView):
     ajax_form_title = _('Edit Supplier Part')
     role_required = 'purchase_order.change'
 
+    def get_form(self):
+        form = super().get_form()
+
+        # Hide the single-pricing field (only for creating a new SupplierPart!)
+        form.fields['single_pricing'].widget = HiddenInput()
+
+        return form
+
 
 class SupplierPartCreate(AjaxCreateView):
     """ Create view for making new SupplierPart """
@@ -281,6 +289,30 @@ class SupplierPartCreate(AjaxCreateView):
     ajax_form_title = _('Create new Supplier Part')
     context_object_name = 'part'
     role_required = 'purchase_order.add'
+
+    def validate(self, part, form):
+
+        single_pricing = form.cleaned_data.get('single_pricing', None)
+
+        if single_pricing:
+            # TODO - What validation steps can be performed on the single_pricing field?
+            pass
+
+    def save(self, form):
+        """
+        If single_pricing is defined, add a price break for quantity=1
+        """
+
+        # Save the supplier part object
+        supplier_part = super().save(form)
+
+        single_pricing = form.cleaned_data.get('single_pricing', None)
+
+        if single_pricing:
+
+            supplier_part.add_price_break(1, single_pricing)
+
+        return supplier_part
 
     def get_form(self):
         """ Create Form instance to create a new SupplierPart object.

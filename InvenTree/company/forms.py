@@ -14,7 +14,6 @@ import django.forms
 import djmoney.settings
 from djmoney.forms.fields import MoneyField
 
-from common.models import InvenTreeSetting
 import common.settings
 
 from .models import Company

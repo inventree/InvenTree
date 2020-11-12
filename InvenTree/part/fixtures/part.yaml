@@ -8,6 +8,7 @@
     category: 8
     link: www.acme.com/parts/m2x4lphs
     tree_id: 0
+    purchaseable: True
     level: 0
     lft: 0
     rght: 0
