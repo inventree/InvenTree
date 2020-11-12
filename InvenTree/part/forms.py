@@ -16,6 +16,7 @@ from django.utils.translation import ugettext as _
 from .models import Part, PartCategory, PartAttachment, PartRelated
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
+from .models import PartCategoryParameterTemplate
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
@@ -199,10 +200,22 @@ class EditPartForm(HelperForm):
                                           help_text=_('Confirm part creation'),
                                           widget=forms.HiddenInput())
 
+    selected_category_templates = forms.BooleanField(required=False,
+                                                     initial=False,
+                                                     label=_('Include category parameter templates'),
+                                                     widget=forms.HiddenInput())
+
+    parent_category_templates = forms.BooleanField(required=False,
+                                                   initial=False,
+                                                   label=_('Include parent categories parameter templates'),
+                                                   widget=forms.HiddenInput())
+
     class Meta:
         model = Part
         fields = [
             'category',
+            'selected_category_templates',
+            'parent_category_templates',
             'name',
             'IPN',
             'description',
@@ -261,6 +274,28 @@ class EditCategoryForm(HelperForm):
             'description',
             'default_location',
             'default_keywords',
+        ]
+
+
+class EditCategoryParameterTemplateForm(HelperForm):
+    """ Form for editing a PartCategoryParameterTemplate object """
+
+    add_to_same_level_categories = forms.BooleanField(required=False,
+                                                      initial=False,
+                                                      help_text=_('Add parameter template to same level categories'))
+
+    add_to_all_categories = forms.BooleanField(required=False,
+                                               initial=False,
+                                               help_text=_('Add parameter template to all categories'))
+    
+    class Meta:
+        model = PartCategoryParameterTemplate
+        fields = [
+            'category',
+            'parameter_template',
+            'default_value',
+            'add_to_same_level_categories',
+            'add_to_all_categories',
         ]
 
 

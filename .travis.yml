@@ -30,11 +30,24 @@ before_install:
 script:
     - cd InvenTree && python3 manage.py makemigrations && cd ..
     - python3 ci/check_migration_files.py
+    # Run unit testing / code coverage tests
     - invoke coverage
+    # Run unit test for SQL database backend
     - cd InvenTree && python3 manage.py test --settings=InvenTree.ci_mysql && cd ..
+    # Run unit test for PostgreSQL database backend
     - cd InvenTree && python3 manage.py test --settings=InvenTree.ci_postgresql && cd ..
     - invoke translate
     - invoke style
+    # Create an empty database and fill it with test data
+    - rm inventree_default_db.sqlite3
+    - invoke migrate
+    - invoke import-fixtures
+    # Export database records
+    - invoke export-records -f data.json
+    # Create a new empty database and import the saved data
+    - rm inventree_default_db.sqlite3
+    - invoke migrate
+    - invoke import-records -f data.json
 
 after_success:
     - coveralls

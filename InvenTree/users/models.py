@@ -58,6 +58,7 @@ class RuleSet(models.Model):
             'part_partparametertemplate',
             'part_partparameter',
             'part_partrelated',
+            'part_partcategoryparametertemplate',
         ],
         'stock': [
             'stock_stockitem',
@@ -108,6 +109,9 @@ class RuleSet(models.Model):
         'report_reportasset',
         'report_testreport',
         'part_partstar',
+
+        # Third-party tables
+        'error_report_error',
         'exchange_rate',
         'exchange_exchangebackend',
     ]

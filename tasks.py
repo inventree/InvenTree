@@ -6,6 +6,7 @@ from shutil import copyfile
 import random
 import string
 import os
+import sys
 
 def apps():
     """
@@ -237,6 +238,96 @@ def postgresql(c):
 
     c.run('sudo apt-get install postgresql postgresql-contrib libpq-dev')
     c.run('pip3 install psycopg2')
+
+@task(help={'filename': "Output filename (default = 'data.json')"})
+def export_records(c, filename='data.json'):
+    """
+    Export all database records to a file
+    """
+
+    # Get an absolute path to the file
+    if not os.path.isabs(filename):
+        filename = os.path.join(localDir(), filename)
+        filename = os.path.abspath(filename) 
+
+    print(f"Exporting database records to file '{filename}'")
+
+    if os.path.exists(filename):
+        response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
+        response = str(response).strip().lower()
+
+        if response not in ['y', 'yes']:
+            print("Cancelled export operation")
+            sys.exit(1)
+
+    cmd = f'dumpdata --exclude contenttypes --exclude auth.permission --indent 2 --output {filename}'
+
+    manage(c, cmd, pty=True)
+
+@task(help={'filename': 'Input filename'})
+def import_records(c, filename='data.json'):
+    """
+    Import database records from a file
+    """
+
+    # Get an absolute path to the supplied filename
+    if not os.path.isabs(filename):
+        filename = os.path.join(localDir(), filename)
+
+    if not os.path.exists(filename):
+        print(f"Error: File '{filename}' does not exist")
+        sys.exit(1)
+
+    print(f"Importing database records from '{filename}'")
+
+    cmd = f'loaddata {filename}'
+
+    manage(c, cmd, pty=True)
+
+@task
+def import_fixtures(c):
+    """
+    Import fixture data into the database.
+
+    This command imports all existing test fixture data into the database.
+
+    Warning:
+        - Intended for testing / development only!
+        - Running this command may overwrite existing database data!!
+        - Don't say you were not warned...
+    """
+
+    fixtures = [
+        # Build model
+        'build',
+        
+        # Common models
+        'settings',
+
+        # Company model
+        'company',
+        'price_breaks',
+        'supplier_part',
+
+        # Order model
+        'order',
+
+        # Part model
+        'bom',
+        'category',
+        'params',
+        'part',
+        'test_templates',
+
+        # Stock model
+        'location',
+        'stock_tests',
+        'stock',
+    ]
+
+    command = 'loaddata ' + ' '.join(fixtures)
+
+    manage(c, command, pty=True)
 
 @task
 def backup(c):

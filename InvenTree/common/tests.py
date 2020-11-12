@@ -12,6 +12,10 @@ class SettingsTest(TestCase):
     Tests for the 'settings' model
     """
 
+    fixtures = [
+        'settings',
+    ]
+
     def setUp(self):
 
         User = get_user_model()
@@ -21,6 +25,20 @@ class SettingsTest(TestCase):
         self.user.save()
 
         self.client.login(username='username', password='password')
+
+    def test_settings_objects(self):
+
+        # There should be two settings objects in the database
+        settings = InvenTreeSetting.objects.all()
+
+        self.assertEqual(settings.count(), 2)
+
+        instance_name = InvenTreeSetting.objects.get(pk=1)
+        self.assertEqual(instance_name.key, 'INVENTREE_INSTANCE')
+        self.assertEqual(instance_name.value, 'My very first InvenTree Instance')
+
+        # Check object lookup (case insensitive)
+        self.assertEqual(InvenTreeSetting.get_setting_object('iNvEnTrEE_inSTanCE').pk, 1)
 
     def test_required_values(self):
         """

@@ -2,36 +2,27 @@
 {% load i18n %}
 
 {% block tabs %}
-{% include "InvenTree/settings/tabs.html" with tab='part' %}
+{% include "InvenTree/settings/tabs.html" with tab='category' %}
 {% endblock %}
 
 {% block subtitle %}
-{% trans "Part Settings" %}
+{% trans "Category Settings" %}
 {% endblock %}
 
 {% block settings %}
 
-<h4>{% trans "Part Options" %}</h4>
+<form action="{% url 'settings-category' %}" method="post">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+    <div id="category-select">
+        {% crispy form %}
+    </div>
+</form>
 
-<table class='table table-striped table-condensed'>
-    <thead></thead>
-    <tbody>
-        {% include "InvenTree/settings/setting.html" with key="PART_IPN_REGEX" %}
-        {% include "InvenTree/settings/setting.html" with key="PART_ALLOW_DUPLICATE_IPN" %}
-        <tr><td colspan='4'></td></tr>
-        {% include "InvenTree/settings/setting.html" with key="PART_COMPONENT" %}
-        {% include "InvenTree/settings/setting.html" with key="PART_PURCHASEABLE" %}
-        {% include "InvenTree/settings/setting.html" with key="PART_SALABLE" %}
-        {% include "InvenTree/settings/setting.html" with key="PART_TRACKABLE" %}
-        <tr><td colspan='4'></td></tr>
-        {% include "InvenTree/settings/setting.html" with key="PART_COPY_BOM" %}
-        {% include "InvenTree/settings/setting.html" with key="PART_COPY_PARAMETERS" %}
-        {% include "InvenTree/settings/setting.html" with key="PART_COPY_TESTS" %}
-        {% include "InvenTree/settings/setting.html" with key="PART_CATEGORY_PARAMETERS" %}
-    </tbody>
-</table>
+{% if category %}
+<hr>
 
-<h4>{% trans "Part Parameter Templates" %}</h4>
+<h4>{% trans "Category Parameter Templates" %}</h4>
 
 <div id='param-buttons'>
     <button class='btn btn-success' id='new-param'>
@@ -41,18 +32,24 @@
 
 <table class='table table-striped table-condensed' id='param-table' data-toolbar='#param-buttons'>
 </table>
-
+{% endif %}
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
+    
+    {# Convert dropdown to select2 format #}
+    $(document).ready(function() {
+        attachSelect('#category-select');
+    });
 
-    $("#param-table").inventreeTable({
-        url: "{% url 'api-part-param-template-list' %}",
+{% if category %}
+	$("#param-table").inventreeTable({
+        url: "{% url 'api-part-category-parameters' category.pk %}",
         queryParams: {
             ordering: 'name',
         },
-        formatNoMatches: function() { return '{% trans "No part parameter templates found" %}'; },
+        formatNoMatches: function() { return '{% trans "No category parameter templates found" %}'; },
         columns: [
             {
                 field: 'pk',
@@ -61,21 +58,20 @@
                 switchable: false,
             },
             {
-                field: 'name',
-                title: 'Name',
+                field: 'parameter_template_detail.name',
+                title: '{% trans "Parameter Template" %}',
                 sortable: 'true',
             },
             {
-                field: 'units',
-                title: 'Units',
+                field: 'default_value',
+                title: '{% trans "Default Value" %}',
                 sortable: 'true',
-            },
-            {
-                formatter: function(value, row, index, field) {
+				formatter: function(value, row, index, field) {
                     var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
                     var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
-                    var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
+                    var html = value
+                    html += "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
 
                     return html;
                 }
@@ -83,8 +79,8 @@
         ]
     });
 
-    $("#new-param").click(function() {
-        launchModalForm("{% url 'part-param-template-create' %}", {
+	$("#new-param").click(function() {
+        launchModalForm("{% url 'category-param-template-create' category.pk %}", {
             success: function() {
                 $("#param-table").bootstrapTable('refresh');
             },
@@ -94,7 +90,7 @@
     $("#param-table").on('click', '.template-edit', function() {
         var button = $(this);
 
-        var url = "/part/parameter/template/" + button.attr('pk') + "/edit/";
+        var url = "/part/category/{{ category.pk }}/parameters/" + button.attr('pk') + "/edit/";
 
         launchModalForm(url, {
             success: function() {
@@ -106,7 +102,7 @@
     $("#param-table").on('click', '.template-delete', function() {
         var button = $(this);
 
-        var url = "/part/parameter/template/" + button.attr('pk') + "/delete/";
+        var url = "/part/category/{{ category.pk }}/parameters/" + button.attr('pk') + "/delete/";
         
         launchModalForm(url, {
             success: function() {
@@ -114,5 +110,5 @@
             }
         });
     });
-
+{% endif %}
 {% endblock %}
