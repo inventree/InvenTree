@@ -165,6 +165,11 @@ class InvenTreeSetting(models.Model):
         verbose_name = "InvenTree Setting"
         verbose_name_plural = "InvenTree Settings"
 
+    def save(self, *args, **kwargs):
+
+        self.clean()
+        super().save(*args, **kwargs)
+
     @classmethod
     def get_setting_name(cls, key):
         """
@@ -281,20 +286,15 @@ class InvenTreeSetting(models.Model):
 
         try:
             setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
-        except OperationalError:
-            # Settings table has not been created yet!
-            return None
         except (ValueError, InvenTreeSetting.DoesNotExist):
-            
-            try:
-                # Attempt Create the setting if it does not exist
-                setting = InvenTreeSetting.create(
-                    key=key,
-                    value=InvenTreeSetting.get_default_value(key)
-                )
-            except OperationalError:
-                # Settings table has not been created yet
-                setting = None
+            setting = None
+
+        if not setting:
+            # Attempt Create the setting if it does not exist
+            setting = InvenTreeSetting.objects.create(
+                key=key,
+                value=InvenTreeSetting.get_default_value(key)
+            )
 
         return setting
 
@@ -402,6 +402,9 @@ class InvenTreeSetting(models.Model):
 
         if validator is not None:
             self.run_validator(validator)
+
+        if self.is_bool():
+            self.value = InvenTree.helpers.str2bool(self.value)
 
     def run_validator(self, validator):
         """
