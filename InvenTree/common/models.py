@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 
 import os
 
-from django.db import models
+from django.db import models, transaction
 from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
@@ -288,13 +288,14 @@ class InvenTreeSetting(models.Model):
 
         # Setting does not exist! (Try to create it)
         if not setting:
-            try:
-                # Attempt to create a new settin object
-                setting = InvenTreeSetting.objects.create(key=key, value=InvenTreeSetting.get_setting_default(key))
+
+            setting = InvenTreeSetting(key=key, value=InvenTreeSetting.get_setting_default(key))
+
+            with transaction.atomic():
+                setting.save()
             except (IntegrityError, OperationalError):
                 # It might be the case that the database isn't created yet
-                # In such a case, return the object (but do not save it!)
-                setting = InvenTreeSetting(key=key, value=InvenTreeSetting.get_setting_default(key))
+                pass
 
         return setting
 
