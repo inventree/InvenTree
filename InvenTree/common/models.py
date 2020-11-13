@@ -235,7 +235,7 @@ class InvenTreeSetting(models.Model):
             return None
 
     @classmethod
-    def get_default_value(cls, key):
+    def get_setting_default(cls, key):
         """
         Return the default value for a particular setting.
 
@@ -293,7 +293,7 @@ class InvenTreeSetting(models.Model):
             # Attempt Create the setting if it does not exist
             setting = InvenTreeSetting.objects.create(
                 key=key,
-                value=InvenTreeSetting.get_default_value(key)
+                value=InvenTreeSetting.get_setting_default(key)
             )
 
         return setting
@@ -322,7 +322,7 @@ class InvenTreeSetting(models.Model):
 
         # If no backup value is specified, atttempt to retrieve a "default" value
         if backup_value is None:
-            backup_value = cls.get_default_value(key)
+            backup_value = cls.get_setting_default(key)
 
         setting = InvenTreeSetting.get_setting_object(key)
 
@@ -380,7 +380,7 @@ class InvenTreeSetting(models.Model):
 
     @property
     def default_value(self):
-        return InvenTreeSetting.get_default_value(self.key)
+        return InvenTreeSetting.get_setting_default(self.key)
 
     @property
     def description(self):
