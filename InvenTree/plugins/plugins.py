@@ -3,10 +3,14 @@
 import inspect
 import importlib
 import pkgutil
+import logging
 
 # Action plugins
 import plugins.action as action
 from plugins.action.action import ActionPlugin
+
+
+logger = logging.getLogger(__name__)
 
 
 def iter_namespace(pkg):
@@ -52,14 +56,14 @@ def load_action_plugins():
     Return a list of all registered action plugins
     """
 
-    print("Loading action plugins")
+    logger.debug("Loading action plugins")
 
     plugins = get_plugins(action, ActionPlugin)
 
     if len(plugins) > 0:
-        print("Discovered {n} action plugins:".format(n=len(plugins)))
+        logger.info("Discovered {n} action plugins:".format(n=len(plugins)))
 
         for ap in plugins:
-            print(" - {ap}".format(ap=ap.PLUGIN_NAME))
+            logger.debug(" - {ap}".format(ap=ap.PLUGIN_NAME))
 
     return plugins

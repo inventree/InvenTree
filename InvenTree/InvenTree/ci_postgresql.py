@@ -6,7 +6,7 @@ from InvenTree.settings import *
 
 # Override the 'test' database
 if 'test' in sys.argv:
-    eprint('InvenTree: Running tests - Using PostGreSQL test database')
+    print('InvenTree: Running tests - Using PostGreSQL test database')
     
     DATABASES['default'] = {
         # Ensure postgresql backend is being used
