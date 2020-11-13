@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 import os
 
 from django.db import models
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
 import djmoney.settings
@@ -17,7 +17,6 @@ from djmoney.models.fields import MoneyField
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
-from django.db.utils import OperationalError
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
@@ -284,16 +283,18 @@ class InvenTreeSetting(models.Model):
             setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
         except (ValueError, InvenTreeSetting.DoesNotExist):
             setting = None
-        except (IntegrityError):
+        except (IntegrityError, OperationalError):
             setting = None
 
+        # Setting does not exist! (Try to create it)
         if not setting:
-            # Return a new setting object if it does not already exist
-            # Do not save it to the database, though
-            setting = InvenTreeSetting(
-                key=key,
-                value=InvenTreeSetting.get_setting_default(key)
-            )
+            try:
+                # Attempt to create a new settin object
+                setting = InvenTreeSetting.objects.create(key=key, value=InvenTreeSetting.get_setting_default(key))
+            except (IntegrityError, OperationalError):
+                # It might be the case that the database isn't created yet
+                # In such a case, return the object (but do not save it!)
+                setting = InvenTreeSetting(key=key, value=InvenTreeSetting.get_setting_default(key))
 
         return setting
 

@@ -82,7 +82,7 @@ class SettingsViewTest(TestCase):
 
         url = self.get_url(setting.pk)
 
-        response = self.get(url)
+        self.get(url)
 
         new_name = 'A new instance name!'
 
