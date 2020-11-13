@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import os
 
 from django.db import models
+from django.db.utils import IntegrityError
 from django.conf import settings
 
 import djmoney.settings
@@ -283,10 +284,13 @@ class InvenTreeSetting(models.Model):
             setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
         except (ValueError, InvenTreeSetting.DoesNotExist):
             setting = None
+        except (IntegrityError):
+            setting = None
 
         if not setting:
-            # Attempt Create the setting if it does not exist
-            setting = InvenTreeSetting.objects.create(
+            # Return a new setting object if it does not already exist
+            # Do not save it to the database, though
+            setting = InvenTreeSetting(
                 key=key,
                 value=InvenTreeSetting.get_setting_default(key)
             )
