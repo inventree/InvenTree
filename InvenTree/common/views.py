@@ -72,3 +72,32 @@ class SettingEdit(AjaxUpdateView):
             form.fields['value'].help_text = description
 
         return form
+
+    def validate(self, setting, form):
+        """
+        Perform custom validation checks on the form data.
+        """
+
+        data = form.cleaned_data
+
+        value = data.get('value', None)
+
+        if setting.choices():
+            """
+            If a set of choices are provided for a given setting,
+            the provided value must be one of those choices.
+            """
+
+            choices = [choice[0] for choice in setting.choices()]
+
+            if value not in choices:
+                form.add_error('value', _('Supplied value is not allowed'))
+
+        if setting.is_bool():
+            """
+            If a setting is defined as a boolean setting,
+            the provided value must look somewhat like a boolean value!
+            """
+
+            if not str2bool(value, test=True) and not str2bool(value, test=False):
+                form.add_error('value', _('Supplied value must be a boolean'))
