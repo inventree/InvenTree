@@ -291,8 +291,10 @@ class InvenTreeSetting(models.Model):
 
             setting = InvenTreeSetting(key=key, value=InvenTreeSetting.get_setting_default(key))
 
-            with transaction.atomic():
-                setting.save()
+            try:
+                # Wrap this statement in "atomic", so it can be rolled back if it fails
+                with transaction.atomic():
+                    setting.save()
             except (IntegrityError, OperationalError):
                 # It might be the case that the database isn't created yet
                 pass
