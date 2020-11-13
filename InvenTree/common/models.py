@@ -165,11 +165,6 @@ class InvenTreeSetting(models.Model):
         verbose_name = "InvenTree Setting"
         verbose_name_plural = "InvenTree Settings"
 
-    def save(self, *args, **kwargs):
-
-        self.clean()
-        super().save(*args, **kwargs)
-
     @classmethod
     def get_setting_name(cls, key):
         """
