@@ -1,10 +1,14 @@
 from __future__ import unicode_literals
 
 import os
+import logging
 
 from django.db.utils import OperationalError, ProgrammingError
 from django.apps import AppConfig
 from django.conf import settings
+
+
+logger = logging.getLogger(__name__)
 
 
 class PartConfig(AppConfig):
@@ -27,7 +31,7 @@ class PartConfig(AppConfig):
 
         from .models import Part
 
-        print("InvenTree: Checking Part image thumbnails")
+        logger.debug("InvenTree: Checking Part image thumbnails")
 
         try:
             for part in Part.objects.all():
@@ -36,11 +40,11 @@ class PartConfig(AppConfig):
                     loc = os.path.join(settings.MEDIA_ROOT, url)
                     
                     if not os.path.exists(loc):
-                        print("InvenTree: Generating thumbnail for Part '{p}'".format(p=part.name))
+                        logger.info("InvenTree: Generating thumbnail for Part '{p}'".format(p=part.name))
                         try:
                             part.image.render_variations(replace=False)
                         except FileNotFoundError:
-                            print("Image file missing")
+                            logger.warning("Image file missing")
                             part.image = None
                             part.save()
         except (OperationalError, ProgrammingError):

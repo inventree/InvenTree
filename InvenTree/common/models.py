@@ -8,7 +8,8 @@ from __future__ import unicode_literals
 
 import os
 
-from django.db import models
+from django.db import models, transaction
+from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
 
 import djmoney.settings
@@ -16,7 +17,6 @@ from djmoney.models.fields import MoneyField
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
-from django.db.utils import OperationalError
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
@@ -230,7 +230,7 @@ class InvenTreeSetting(models.Model):
             return None
 
     @classmethod
-    def get_default_value(cls, key):
+    def get_setting_default(cls, key):
         """
         Return the default value for a particular setting.
 
@@ -281,20 +281,23 @@ class InvenTreeSetting(models.Model):
 
         try:
             setting = InvenTreeSetting.objects.filter(key__iexact=key).first()
-        except OperationalError:
-            # Settings table has not been created yet!
-            return None
         except (ValueError, InvenTreeSetting.DoesNotExist):
-            
+            setting = None
+        except (IntegrityError, OperationalError):
+            setting = None
+
+        # Setting does not exist! (Try to create it)
+        if not setting:
+
+            setting = InvenTreeSetting(key=key, value=InvenTreeSetting.get_setting_default(key))
+
             try:
-                # Attempt Create the setting if it does not exist
-                setting = InvenTreeSetting.create(
-                    key=key,
-                    value=InvenTreeSetting.get_default_value(key)
-                )
-            except OperationalError:
-                # Settings table has not been created yet
-                setting = None
+                # Wrap this statement in "atomic", so it can be rolled back if it fails
+                with transaction.atomic():
+                    setting.save()
+            except (IntegrityError, OperationalError):
+                # It might be the case that the database isn't created yet
+                pass
 
         return setting
 
@@ -322,7 +325,7 @@ class InvenTreeSetting(models.Model):
 
         # If no backup value is specified, atttempt to retrieve a "default" value
         if backup_value is None:
-            backup_value = cls.get_default_value(key)
+            backup_value = cls.get_setting_default(key)
 
         setting = InvenTreeSetting.get_setting_object(key)
 
@@ -380,7 +383,7 @@ class InvenTreeSetting(models.Model):
 
     @property
     def default_value(self):
-        return InvenTreeSetting.get_default_value(self.key)
+        return InvenTreeSetting.get_setting_default(self.key)
 
     @property
     def description(self):
@@ -402,6 +405,9 @@ class InvenTreeSetting(models.Model):
 
         if validator is not None:
             self.run_validator(validator)
+
+        if self.is_bool():
+            self.value = InvenTree.helpers.str2bool(self.value)
 
     def run_validator(self, validator):
         """

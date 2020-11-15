@@ -5,6 +5,8 @@ Main JSON interface views
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import logging
+
 from django.utils.translation import ugettext as _
 from django.http import JsonResponse
 
@@ -21,7 +23,10 @@ from .version import inventreeVersion, inventreeInstanceName
 from plugins import plugins as inventree_plugins
 
 
-print("Loading action plugins")
+logger = logging.getLogger(__name__)
+
+
+logger.info("Loading action plugins...")
 action_plugins = inventree_plugins.load_action_plugins()
 
 

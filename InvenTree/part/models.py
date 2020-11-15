@@ -350,7 +350,7 @@ class Part(MPTTModel):
             # Get part category
             category = self.category
 
-            if add_category_templates:
+            if category and add_category_templates:
                 # Store templates added to part
                 template_list = []
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import hashlib
+import logging
 
 from InvenTree import plugins as InvenTreePlugins
 from barcode import plugins as BarcodePlugins
@@ -8,6 +9,9 @@ from barcode import plugins as BarcodePlugins
 from stock.models import StockItem
 from stock.serializers import StockItemSerializer, LocationSerializer
 from part.serializers import PartSerializer
+
+
+logger = logging.getLogger(__name__)
 
 
 def hash_barcode(barcode_data):
@@ -130,18 +134,17 @@ def load_barcode_plugins(debug=False):
     Function to load all barcode plugins
     """
 
-    if debug:
-        print("Loading barcode plugins")
+    logger.debug("Loading barcode plugins")
 
     plugins = InvenTreePlugins.get_plugins(BarcodePlugins, BarcodePlugin)
 
     if debug:
         if len(plugins) > 0:
-            print("Discovered {n} plugins:".format(n=len(plugins)))
+            logger.info(f"Discovered {len(plugins)} barcode plugins")
 
             for p in plugins:
-                print(" - {p}".format(p=p.PLUGIN_NAME))
+                logger.debug(" - {p}".format(p=p.PLUGIN_NAME))
         else:
-            print("No barcode plugins found")
+            logger.debug("No barcode plugins found")
 
     return plugins

@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 import plugins.plugin as plugin
+
+
+logger = logging.getLogger(__name__)
 
 
 class ActionPlugin(plugin.InvenTreePlugin):

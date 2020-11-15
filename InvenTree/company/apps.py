@@ -1,10 +1,14 @@
 from __future__ import unicode_literals
 
 import os
+import logging
 
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
 from django.conf import settings
+
+
+logger = logging.getLogger(__name__)
 
 
 class CompanyConfig(AppConfig):
@@ -21,7 +25,7 @@ class CompanyConfig(AppConfig):
 
         from .models import Company
 
-        print("InvenTree: Checking Company image thumbnails")
+        logger.debug("Checking Company image thumbnails")
 
         try:
             for company in Company.objects.all():
@@ -30,11 +34,11 @@ class CompanyConfig(AppConfig):
                     loc = os.path.join(settings.MEDIA_ROOT, url)
 
                     if not os.path.exists(loc):
-                        print("InvenTree: Generating thumbnail for Company '{c}'".format(c=company.name))
+                        logger.info("InvenTree: Generating thumbnail for Company '{c}'".format(c=company.name))
                         try:
                             company.image.render_variations(replace=False)
                         except FileNotFoundError:
-                            print("Image file missing")
+                            logger.warning("Image file missing")
                             company.image = None
                             company.save()
         except (OperationalError, ProgrammingError):

@@ -1320,8 +1320,6 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 except KeyError:
                     pass
 
-            print(row, row['part_match'], len(row['part_options']))
-
     def extractDataFromFile(self, bom):
         """ Read data from the BOM file """
 

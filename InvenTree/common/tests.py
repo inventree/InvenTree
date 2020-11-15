@@ -70,7 +70,7 @@ class SettingsTest(TestCase):
 
         for key in InvenTreeSetting.GLOBAL_SETTINGS.keys():
 
-            value = InvenTreeSetting.get_default_value(key)
+            value = InvenTreeSetting.get_setting_default(key)
 
             InvenTreeSetting.set_setting(key, value, self.user)
 
