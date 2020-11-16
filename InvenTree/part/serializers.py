@@ -423,9 +423,8 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
 class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
     """ Serializer for PartCategoryParameterTemplate """
 
-    parameter_template_detail = PartParameterTemplateSerializer(source='parameter_template',
-                                                                many=False,
-                                                                read_only=True)
+    parameter_template = PartParameterTemplateSerializer(many=False,
+                                                         read_only=True)
 
     class Meta:
         model = PartCategoryParameterTemplate
@@ -433,6 +432,5 @@ class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
             'pk',
             'category',
             'parameter_template',
-            'parameter_template_detail',
             'default_value',
         ]
