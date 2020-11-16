@@ -113,9 +113,9 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CategoryParameters(generics.ListAPIView):
-    """ API endpoint for accessing a list of PartCategory objects.
+    """ API endpoint for accessing a list of PartCategoryParameterTemplate objects.
 
-    - GET: Return a list of PartCategory objects
+    - GET: Return a list of PartCategoryParameterTemplate objects
     """
 
     queryset = PartCategoryParameterTemplate.objects.all()
@@ -124,21 +124,36 @@ class CategoryParameters(generics.ListAPIView):
     def get_queryset(self):
         """
         Custom filtering:
-        - Allow filtering by "null" parent to retrieve top-level part categories
+        - Allow filtering by "null" parent to retrieve all categories parameter templates
+        - Allow filtering by category
+        - Allow traversing all parent categories
         """
 
-        cat_id = self.kwargs.get('pk', None)
+        try:
+            cat_id = int(self.request.query_params.get('category', None))
+        except TypeError:
+            cat_id = None
+        fetch_parent = str2bool(self.request.query_params.get('fetch_parent', 'true'))
 
         queryset = super().get_queryset()
 
-        if cat_id is not None:
-            
-            try:
-                cat_id = int(cat_id)
-                queryset = queryset.filter(category=cat_id)
-            except ValueError:
-                pass
+        if isinstance(cat_id, int):
 
+            try:
+                category = PartCategory.objects.get(pk=cat_id)
+            except PartCategory.DoesNotExist:
+                # Return empty queryset
+                return PartCategoryParameterTemplate.objects.none()
+
+            category_list = [cat_id]
+
+            if fetch_parent:
+                parent_categories = category.get_ancestors()
+                for parent in parent_categories:
+                    category_list.append(parent.pk)
+                
+            queryset = queryset.filter(category__in=category_list)
+                
         return queryset
 
 
@@ -895,8 +910,8 @@ part_api_urls = [
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
-        url(r'^(?P<pk>\d+)/parameters/?', CategoryParameters.as_view(), name='api-part-category-parameters'),
         url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
+        url(r'^parameters/?', CategoryParameters.as_view(), name='api-part-category-parameters'),
         url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
     ])),
 
