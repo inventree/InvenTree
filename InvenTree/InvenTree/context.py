@@ -8,6 +8,28 @@ from InvenTree.status_codes import SalesOrderStatus, PurchaseOrderStatus
 from InvenTree.status_codes import BuildStatus, StockStatus
 
 from users.models import RuleSet
+from django.contrib import messages
+from InvenTree.celery import celery_app
+
+
+def celery_check(request):
+    celery_worker_message_displayed = False
+    if not hasattr(request, '_celery_checked'):
+        request._celery_checked = True
+        status = celery_app.control.inspect().active()
+        if status is None:
+            storage = messages.get_messages(request)
+            for message in storage:
+                if str(message) == 'Celery worker not running!':
+                    celery_worker_message_displayed = True
+
+            storage.used = False
+
+            if not celery_worker_message_displayed:
+                messages.error(request, 'Celery worker not running!')
+                celery_worker_message_displayed = True
+
+    return []
 
 
 def status_codes(request):

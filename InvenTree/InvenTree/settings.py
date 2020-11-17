@@ -20,6 +20,7 @@ import yaml
 from datetime import datetime
 
 from django.utils.translation import gettext_lazy as _
+from django.contrib.messages import constants as messages
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -110,9 +111,17 @@ MEDIA_URL = '/media/'
 # The filesystem location for served static files
 MEDIA_ROOT = os.path.abspath(CONFIG.get('media_root', os.path.join(BASE_DIR, 'media')))
 
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
 if DEBUG:
     logger.info("InvenTree running in DEBUG mode")
-    
+
 logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
 
@@ -242,6 +251,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',
+                'InvenTree.context.celery_check',
             ],
         },
     },
