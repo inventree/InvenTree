@@ -73,7 +73,6 @@ class StockItemSerializer(InvenTreeModelSerializer):
         return queryset.prefetch_related(
             'belongs_to',
             'build',
-            'build_order',
             'customer',
             'sales_order',
             'supplier_part',
@@ -155,7 +154,6 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'batch',
             'belongs_to',
             'build',
-            'build_order',
             'customer',
             'in_stock',
             'is_building',

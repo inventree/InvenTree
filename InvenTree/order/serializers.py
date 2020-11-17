@@ -95,6 +95,8 @@ class POLineItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
     
+    purchase_price_string = serializers.CharField(source='purchase_price', read_only=True)
+
     class Meta:
         model = PurchaseOrderLineItem
 
@@ -108,6 +110,9 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'part_detail',
             'supplier_part_detail',
             'received',
+            'purchase_price',
+            'purchase_price_currency',
+            'purchase_price_string',
         ]
 
 

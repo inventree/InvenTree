@@ -391,14 +391,15 @@ class AjaxCreateView(AjaxMixin, CreateView):
             # Save the object to the database
             self.object = self.save(self.form)
 
-            # Return the PK of the newly-created object
-            data['pk'] = self.object.pk
-            data['text'] = str(self.object)
+            if self.object:
+                # Return the PK of the newly-created object
+                data['pk'] = self.object.pk
+                data['text'] = str(self.object)
 
-            try:
-                data['url'] = self.object.get_absolute_url()
-            except AttributeError:
-                pass
+                try:
+                    data['url'] = self.object.get_absolute_url()
+                except AttributeError:
+                    pass
 
         return self.renderJsonResponse(request, self.form, data)
 

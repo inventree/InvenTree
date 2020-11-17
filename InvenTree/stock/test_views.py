@@ -23,8 +23,9 @@ class StockViewTestCase(TestCase):
         super().setUp()
 
         # Create a user
-        User = get_user_model()
-        self.user = User.objects.create_user(
+        user = get_user_model()
+        
+        self.user = user.objects.create_user(
             username='username',
             email='user@email.com',
             password='password'

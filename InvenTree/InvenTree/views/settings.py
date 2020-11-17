@@ -1,10 +1,14 @@
 from django.views.generic.base import TemplateView
+from django.views.generic import UpdateView, CreateView, FormView
 from common.models import InvenTreeSetting
 from common.signals import admin_nav_event
 from django.utils.translation import gettext_lazy as _
 from itertools import groupby
 from django.apps import apps
 from django.shortcuts import redirect
+from ..forms import SettingCategorySelectForm
+from ..helpers import str2bool
+from django.urls import reverse_lazy
 
 class SettingsBaseView(TemplateView):
     def get_context_data(self, **kwargs):
@@ -89,5 +93,40 @@ class ExtensionsView(SettingsBaseView):
                     app.disable()
 
         return redirect(request.path_info)
+
+class SettingCategorySelectView(FormView):
+    """ View for selecting categories in settings """
+
+    form_class = SettingCategorySelectForm
+    success_url = reverse_lazy('settings-category')
+    template_name = "InvenTree/settings/category.html"
+
+    def get_initial(self):
+        """ Set category selection """
+
+        initial = super(SettingCategorySelectView, self).get_initial()
+
+        category = self.request.GET.get('category', None)
+        if category:
+            initial['category'] = category
+
+        return initial
+
+    def post(self, request, *args, **kwargs):
+        """ Handle POST request (which contains category selection).
+
+        Pass the selected category to the page template
+        """
+
+        form = self.get_form()
+
+        if form.is_valid():
+            context = self.get_context_data()
+
+            context['category'] = form.cleaned_data['category']
+
+            return super(SettingCategorySelectView, self).render_to_response(context)
+
+        return self.form_invalid(form)
 
 

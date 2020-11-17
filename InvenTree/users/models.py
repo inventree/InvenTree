@@ -58,6 +58,7 @@ class RuleSet(models.Model):
             'part_partparametertemplate',
             'part_partparameter',
             'part_partrelated',
+            'part_partcategoryparametertemplate',
         ],
         'stock': [
             'stock_stockitem',
@@ -102,7 +103,6 @@ class RuleSet(models.Model):
 
         # Models which currently do not require permissions
         'common_colortheme',
-        'common_currency',
         'common_inventreesetting',
         'company_contact',
         'label_stockitemlabel',
@@ -118,6 +118,11 @@ class RuleSet(models.Model):
         'django_celery_beat_intervalschedule',
         'django_celery_beat_solarschedule',
         'django_celery_results_taskresult',
+
+        # Third-party tables
+        'error_report_error',
+        'exchange_rate',
+        'exchange_exchangebackend',
     ]
 
     RULE_OPTIONS = [

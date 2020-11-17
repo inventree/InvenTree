@@ -962,7 +962,6 @@ class BuildItem(models.Model):
         related_name='allocations',
         help_text=_('Source stock item'),
         limit_choices_to={
-            'build_order': None,
             'sales_order': None,
             'belongs_to': None,
         }

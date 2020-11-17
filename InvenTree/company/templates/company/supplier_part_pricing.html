@@ -76,18 +76,11 @@ $('#price-break-table').inventreeTable({
             sortable: true,
         },
         {
-            field: 'cost',
+            field: 'price',
             title: '{% trans "Price" %}',
             sortable: true,
             formatter: function(value, row, index) {
-                var html = '';
-
-                html += row.symbol || '';
-                html += value;
-
-                if (row.suffix) {
-                    html += ' ' + row.suffix || '';
-                }
+                var html = value;
 
                 html += `<div class='btn-group float-right' role='group'>`
 

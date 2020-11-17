@@ -6,7 +6,7 @@ from InvenTree.settings import *
 
 # Override the 'test' database
 if 'test' in sys.argv:
-    eprint('InvenTree: Running tests - Using MySQL test database')
+    print('InvenTree: Running tests - Using MySQL test database')
     
     DATABASES['default'] = {
         # Ensure mysql backend is being used

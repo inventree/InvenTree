@@ -11,13 +11,23 @@
 
 {% block settings %}
 
+<h4>{% trans "Part Options" %}</h4>
+
 <table class='table table-striped table-condensed'>
     <thead></thead>
     <tbody>
         {% include "InvenTree/settings/setting.html" with key="PART_IPN_REGEX" %}
+        {% include "InvenTree/settings/setting.html" with key="PART_ALLOW_DUPLICATE_IPN" %}
+        <tr><td colspan='4'></td></tr>
+        {% include "InvenTree/settings/setting.html" with key="PART_COMPONENT" %}
+        {% include "InvenTree/settings/setting.html" with key="PART_PURCHASEABLE" %}
+        {% include "InvenTree/settings/setting.html" with key="PART_SALABLE" %}
+        {% include "InvenTree/settings/setting.html" with key="PART_TRACKABLE" %}
+        <tr><td colspan='4'></td></tr>
         {% include "InvenTree/settings/setting.html" with key="PART_COPY_BOM" %}
         {% include "InvenTree/settings/setting.html" with key="PART_COPY_PARAMETERS" %}
         {% include "InvenTree/settings/setting.html" with key="PART_COPY_TESTS" %}
+        {% include "InvenTree/settings/setting.html" with key="PART_CATEGORY_PARAMETERS" %}
     </tbody>
 </table>
 

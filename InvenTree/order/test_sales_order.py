@@ -120,12 +120,12 @@ class SalesOrderTest(TestCase):
         # There should now be 4 stock items
         self.assertEqual(StockItem.objects.count(), 4)
 
-        Sa = StockItem.objects.get(pk=self.Sa.pk)
-        Sb = StockItem.objects.get(pk=self.Sb.pk)
+        sa = StockItem.objects.get(pk=self.Sa.pk)
+        sb = StockItem.objects.get(pk=self.Sb.pk)
 
         # 25 units subtracted from each of the original items
-        self.assertEqual(Sa.quantity, 75)
-        self.assertEqual(Sb.quantity, 175)
+        self.assertEqual(sa.quantity, 75)
+        self.assertEqual(sb.quantity, 175)
 
         # And 2 items created which are associated with the order
         outputs = StockItem.objects.filter(sales_order=self.order)
@@ -134,8 +134,8 @@ class SalesOrderTest(TestCase):
         for item in outputs.all():
             self.assertEqual(item.quantity, 25)
     
-        self.assertEqual(Sa.sales_order, None)
-        self.assertEqual(Sb.sales_order, None)
+        self.assertEqual(sa.sales_order, None)
+        self.assertEqual(sb.sales_order, None)
 
         # And no allocations
         self.assertEqual(SalesOrderAllocation.objects.count(), 0)

@@ -165,14 +165,14 @@ class CategoryTest(TestCase):
             self.assert_equal(p.get_default_location().pathstring, 'Office/Drawer_1')
 
         # Any part under electronics should default to 'Home'
-        R1 = Part.objects.get(name='R_2K2_0805')
-        self.assertIsNone(R1.default_location)
-        self.assertEqual(R1.get_default_location().name, 'Home')
+        r1 = Part.objects.get(name='R_2K2_0805')
+        self.assertIsNone(r1.default_location)
+        self.assertEqual(r1.get_default_location().name, 'Home')
 
         # But one part has a default_location set
-        R2 = Part.objects.get(name='R_4K7_0603')
-        self.assertEqual(R2.get_default_location().name, 'Bathroom')
+        r2 = Part.objects.get(name='R_4K7_0603')
+        self.assertEqual(r2.get_default_location().name, 'Bathroom')
 
         # And one part should have no default location at all
-        W = Part.objects.get(name='Widget')
-        self.assertIsNone(W.get_default_location())
+        w = Part.objects.get(name='Widget')
+        self.assertIsNone(w.get_default_location())

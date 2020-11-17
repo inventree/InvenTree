@@ -13,7 +13,6 @@ from .models import SupplierPart
 from .models import SupplierPriceBreak
 
 from part.models import Part
-from common.models import Currency
 
 
 class CompanyResource(ModelResource):
@@ -75,8 +74,6 @@ class SupplierPriceBreakResource(ModelResource):
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(SupplierPart))
 
-    currency = Field(attribute='currency', widget=widgets.ForeignKeyWidget(Currency))
-
     supplier_id = Field(attribute='part__supplier__pk', readonly=True)
 
     supplier_name = Field(attribute='part__supplier__name', readonly=True)
@@ -98,7 +95,7 @@ class SupplierPriceBreakAdmin(ImportExportModelAdmin):
 
     resource_class = SupplierPriceBreakResource
 
-    list_display = ('part', 'quantity', 'cost')
+    list_display = ('part', 'quantity', 'price')
 
 
 admin.site.register(Company, CompanyAdmin)

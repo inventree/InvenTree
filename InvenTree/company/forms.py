@@ -8,6 +8,14 @@ from __future__ import unicode_literals
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 
+from django.utils.translation import ugettext as _
+import django.forms
+
+import djmoney.settings
+from djmoney.forms.fields import MoneyField
+
+import common.settings
+
 from .models import Company
 from .models import SupplierPart
 from .models import SupplierPriceBreak
@@ -24,6 +32,13 @@ class EditCompanyForm(HelperForm):
         'phone': 'fa-phone',
     }
 
+    currency = django.forms.ChoiceField(
+        required=False,
+        help_text=_('Default currency used for this company'),
+        choices=[('', '----------')] + djmoney.settings.CURRENCY_CHOICES,
+        initial=common.settings.currency_code_default,
+    )
+
     class Meta:
         model = Company
         fields = [
@@ -31,6 +46,7 @@ class EditCompanyForm(HelperForm):
             'description',
             'website',
             'address',
+            'currency',
             'phone',
             'email',
             'contact',
@@ -60,6 +76,15 @@ class EditSupplierPartForm(HelperForm):
         'note': 'fa-pencil-alt',
     }
 
+    single_pricing = MoneyField(
+        label=_('Single Price'),
+        default_currency='USD',
+        help_text=_('Single quantity price'),
+        decimal_places=4,
+        max_digits=19,
+        required=False,
+    )
+
     class Meta:
         model = SupplierPart
         fields = [
@@ -71,8 +96,9 @@ class EditSupplierPartForm(HelperForm):
             'MPN',
             'link',
             'note',
-            'base_cost',
-            'multiple',
+            'single_pricing',
+            # 'base_cost',
+            # 'multiple',
             'packaging',
         ]
 
@@ -80,15 +106,17 @@ class EditSupplierPartForm(HelperForm):
 class EditPriceBreakForm(HelperForm):
     """ Form for creating / editing a supplier price break """
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
-
-    cost = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    quantity = RoundingDecimalFormField(
+        max_digits=10,
+        decimal_places=5,
+        label=_('Quantity'),
+        help_text=_('Price break quantity'),
+    )
 
     class Meta:
         model = SupplierPriceBreak
         fields = [
             'part',
             'quantity',
-            'cost',
-            'currency',
+            'price',
         ]

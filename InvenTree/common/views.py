@@ -6,10 +6,10 @@ Django views for interacting with common models
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
-from django.forms import CheckboxInput
+from django.forms import CheckboxInput, Select
 from django.http import JsonResponse
 
-from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
+from InvenTree.views import AjaxUpdateView
 from InvenTree.helpers import str2bool
 from InvenTree.celery import celery_app
 from celery.result import AsyncResult
@@ -17,30 +17,6 @@ from celery.result import AsyncResult
 
 from . import models
 from . import forms
-
-
-class CurrencyCreate(AjaxCreateView):
-    """ View for creating a new Currency object """
-
-    model = models.Currency
-    form_class = forms.CurrencyEditForm
-    ajax_form_title = _('Create new Currency')
-
-
-class CurrencyEdit(AjaxUpdateView):
-    """ View for editing an existing Currency object """
-
-    model = models.Currency
-    form_class = forms.CurrencyEditForm
-    ajax_form_title = _('Edit Currency')
-
-
-class CurrencyDelete(AjaxDeleteView):
-    """ View for deleting an existing Currency object """
-
-    model = models.Currency
-    ajax_form_title = _('Delete Currency')
-    ajax_template_name = "common/delete_currency.html"
 
 
 class SettingEdit(AjaxUpdateView):
@@ -79,7 +55,11 @@ class SettingEdit(AjaxUpdateView):
         
         setting = self.get_object()
 
-        if setting.is_bool():
+        choices = setting.choices()
+
+        if choices is not None:
+            form.fields['value'].widget = Select(choices=choices)
+        elif setting.is_bool():
             form.fields['value'].widget = CheckboxInput()
 
             self.object.value = str2bool(setting.value)
@@ -96,6 +76,37 @@ class SettingEdit(AjaxUpdateView):
             form.fields['value'].help_text = description
 
         return form
+
+    def validate(self, setting, form):
+        """
+        Perform custom validation checks on the form data.
+        """
+
+        data = form.cleaned_data
+
+        value = data.get('value', None)
+
+        if setting.choices():
+            """
+            If a set of choices are provided for a given setting,
+            the provided value must be one of those choices.
+            """
+
+            choices = [choice[0] for choice in setting.choices()]
+
+            if value not in choices:
+                form.add_error('value', _('Supplied value is not allowed'))
+
+        if setting.is_bool():
+            """
+            If a setting is defined as a boolean setting,
+            the provided value must look somewhat like a boolean value!
+            """
+
+            if not str2bool(value, test=True) and not str2bool(value, test=False):
+                form.add_error('value', _('Supplied value must be a boolean'))
+
+
 
 class ExtensionSettingEdit(AjaxUpdateView):
     """
@@ -130,7 +141,7 @@ class ExtensionSettingEdit(AjaxUpdateView):
         """
 
         form = super().get_form()
-        
+
         setting = self.get_object()
 
         if setting.is_bool():
@@ -150,6 +161,7 @@ class ExtensionSettingEdit(AjaxUpdateView):
             form.fields['value'].help_text = description
 
         return form
+
 
 def run_task(request):
     if request.POST:

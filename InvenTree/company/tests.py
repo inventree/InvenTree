@@ -1,10 +1,14 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 
 import os
 
 from .models import Company, Contact, SupplierPart
 from .models import rename_company_image
 from part.models import Part
+
+from InvenTree.exchange import InvenTreeManualExchangeBackend
+from djmoney.contrib.exchange.models import Rate
 
 
 class CompanySimpleTest(TestCase):
@@ -31,6 +35,14 @@ class CompanySimpleTest(TestCase):
         self.acme0002 = SupplierPart.objects.get(SKU='ACME0002')
         self.zerglphs = SupplierPart.objects.get(SKU='ZERGLPHS')
         self.zergm312 = SupplierPart.objects.get(SKU='ZERGM312')
+
+        InvenTreeManualExchangeBackend().update_rates()
+
+        Rate.objects.create(
+            currency='AUD',
+            value='1.35',
+            backend_id='inventree',
+        )
 
     def test_company_model(self):
         c = Company.objects.get(name='ABC Co.')
@@ -107,6 +119,30 @@ class CompanySimpleTest(TestCase):
 
         self.assertIsNone(m3x12.get_price_info(3))
         self.assertIsNotNone(m3x12.get_price_info(50))
+
+    def test_currency_validation(self):
+        """
+        Test validation for currency selection
+        """
+
+        # Create a company with a valid currency code (should pass)
+        company = Company.objects.create(
+            name='Test',
+            description='Toast',
+            currency='AUD',
+        )
+
+        company.full_clean()
+
+        # Create a company with an invalid currency code (should fail)
+        company = Company.objects.create(
+            name='test',
+            description='Toasty',
+            currency='XZY',
+        )
+
+        with self.assertRaises(ValidationError):
+            company.full_clean()
 
 
 class ContactSimpleTest(TestCase):
