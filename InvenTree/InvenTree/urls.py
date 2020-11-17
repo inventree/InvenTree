@@ -36,7 +36,8 @@ from django.views.generic.base import RedirectView
 from rest_framework.documentation import include_docs_urls
 
 from .views import IndexView, SearchView, DatabaseStatsView
-from .views import SettingsView, EditUserView, SetPasswordView, ColorThemeSelectView
+from .views import SettingsView, EditUserView, SetPasswordView
+from .views import ColorThemeSelectView, SettingCategorySelectView
 from .views import DynamicJsView
 
 from common.views import SettingEdit
@@ -74,14 +75,14 @@ settings_urls = [
     url(r'^theme/?', ColorThemeSelectView.as_view(), name='settings-theme'),
    
     url(r'^global/?', SettingsView.as_view(template_name='InvenTree/settings/global.html'), name='settings-global'),
-    url(r'^currency/?', SettingsView.as_view(template_name='InvenTree/settings/currency.html'), name='settings-currency'),
+    url(r'^category/?', SettingCategorySelectView.as_view(), name='settings-category'),
     url(r'^part/?', SettingsView.as_view(template_name='InvenTree/settings/part.html'), name='settings-part'),
     url(r'^stock/?', SettingsView.as_view(template_name='InvenTree/settings/stock.html'), name='settings-stock'),
     url(r'^build/?', SettingsView.as_view(template_name='InvenTree/settings/build.html'), name='settings-build'),
     url(r'^purchase-order/?', SettingsView.as_view(template_name='InvenTree/settings/po.html'), name='settings-po'),
     url(r'^sales-order/?', SettingsView.as_view(template_name='InvenTree/settings/so.html'), name='settings-so'),
 
-    url(r'^(?P<pk>\d+)/edit/?', SettingEdit.as_view(), name='setting-edit'),
+    url(r'^(?P<pk>\d+)/edit/', SettingEdit.as_view(), name='setting-edit'),
 
     # Catch any other urls
     url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/user.html'), name='settings'),
@@ -126,6 +127,7 @@ urlpatterns = [
     url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     url(r'^set-password/', SetPasswordView.as_view(), name='set-password'),
 
+    url(r'^admin/error_log/', include('error_report.urls')),
     url(r'^admin/shell/', include('django_admin_shell.urls')),
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
 

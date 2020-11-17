@@ -18,6 +18,7 @@ django-import-export==2.0.0     # Data import / export for admin interface
 django-cleanup==4.0.0           # Manage deletion of old / unused uploaded files
 django-qr-code==1.2.0           # Generate QR codes
 flake8==3.8.3                   # PEP checking
+pep8-naming==0.11.1             # PEP naming convention extension
 coverage==5.3                   # Unit test coverage
 coveralls==2.1.2                # Coveralls linking (for Travis)
 rapidfuzz==0.7.6                # Fuzzy string matching
@@ -28,4 +29,8 @@ django-debug-toolbar==2.2       # Debug / profiling toolbar
 django-admin-shell==0.1.2       # Python shell for the admin interface
 django-celery-results           # Django ORM/Cache for Celery
 django-celery-beat              # Django celery beat interface
+django-money==1.1               # Django app for currency management
+certifi                         # Certifi is (most likely) installed through one of the requirements above
+django-error-report==0.2.0     # Error report viewer for the admin interface
+
 inventree                       # Install the latest version of the InvenTree API python library

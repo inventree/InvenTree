@@ -22,8 +22,9 @@ class StockAPITestCase(APITestCase):
 
     def setUp(self):
         # Create a user for auth
-        User = get_user_model()
-        self.user = User.objects.create_user('testuser', 'test@testing.com', 'password')
+        user = get_user_model()
+        
+        self.user = user.objects.create_user('testuser', 'test@testing.com', 'password')
 
         # Add the necessary permissions to the user
         perms = [

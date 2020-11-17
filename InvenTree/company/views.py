@@ -12,11 +12,11 @@ from django.views.generic import DetailView, ListView, UpdateView
 from django.urls import reverse
 from django.forms import HiddenInput
 
+from moneyed import CURRENCIES
+
 from InvenTree.views import AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import str2bool
 from InvenTree.views import InvenTreeRoleMixin
-
-from common.models import Currency
 
 from .models import Company
 from .models import SupplierPart
@@ -28,6 +28,9 @@ from .forms import EditCompanyForm
 from .forms import CompanyImageForm
 from .forms import EditSupplierPartForm
 from .forms import EditPriceBreakForm
+
+import common.models
+import common.settings
 
 
 class CompanyIndex(InvenTreeRoleMixin, ListView):
@@ -268,6 +271,14 @@ class SupplierPartEdit(AjaxUpdateView):
     ajax_form_title = _('Edit Supplier Part')
     role_required = 'purchase_order.change'
 
+    def get_form(self):
+        form = super().get_form()
+
+        # Hide the single-pricing field (only for creating a new SupplierPart!)
+        form.fields['single_pricing'].widget = HiddenInput()
+
+        return form
+
 
 class SupplierPartCreate(AjaxCreateView):
     """ Create view for making new SupplierPart """
@@ -278,6 +289,30 @@ class SupplierPartCreate(AjaxCreateView):
     ajax_form_title = _('Create new Supplier Part')
     context_object_name = 'part'
     role_required = 'purchase_order.add'
+
+    def validate(self, part, form):
+
+        single_pricing = form.cleaned_data.get('single_pricing', None)
+
+        if single_pricing:
+            # TODO - What validation steps can be performed on the single_pricing field?
+            pass
+
+    def save(self, form):
+        """
+        If single_pricing is defined, add a price break for quantity=1
+        """
+
+        # Save the supplier part object
+        supplier_part = super().save(form)
+
+        single_pricing = form.cleaned_data.get('single_pricing', None)
+
+        if single_pricing:
+
+            supplier_part.add_price_break(1, single_pricing)
+
+        return supplier_part
 
     def get_form(self):
         """ Create Form instance to create a new SupplierPart object.
@@ -303,11 +338,14 @@ class SupplierPartCreate(AjaxCreateView):
         supplier_id = self.get_param('supplier')
         part_id = self.get_param('part')
 
+        supplier = None
+
         if supplier_id:
             try:
-                initials['supplier'] = Company.objects.get(pk=supplier_id)
+                supplier = Company.objects.get(pk=supplier_id)
+                initials['supplier'] = supplier
             except (ValueError, Company.DoesNotExist):
-                pass
+                supplier = None
 
         if manufacturer_id:
             try:
@@ -320,6 +358,17 @@ class SupplierPartCreate(AjaxCreateView):
                 initials['part'] = Part.objects.get(pk=part_id)
             except (ValueError, Part.DoesNotExist):
                 pass
+
+        # Initial value for single pricing
+        if supplier:
+            currency_code = supplier.currency_code
+        else:
+            currency_code = common.settings.currency_code_default()
+
+        currency = CURRENCIES.get(currency_code, None)
+
+        if currency_code:
+            initials['single_pricing'] = ('', currency)
         
         return initials
 
@@ -417,10 +466,23 @@ class PriceBreakCreate(AjaxCreateView):
         }
 
     def get_part(self):
+        """
+        Attempt to extract SupplierPart object from the supplied data.
+        """
+
         try:
-            return SupplierPart.objects.get(id=self.request.GET.get('part'))
-        except SupplierPart.DoesNotExist:
-            return SupplierPart.objects.get(id=self.request.POST.get('part'))
+            supplier_part = SupplierPart.objects.get(pk=self.request.GET.get('part'))
+            return supplier_part
+        except (ValueError, SupplierPart.DoesNotExist):
+            pass
+
+        try:
+            supplier_part = SupplierPart.objects.get(pk=self.request.POST.get('part'))
+            return supplier_part
+        except (ValueError, SupplierPart.DoesNotExist):
+            pass
+
+        return None
 
     def get_form(self):
 
@@ -433,14 +495,20 @@ class PriceBreakCreate(AjaxCreateView):
 
         initials = super(AjaxCreateView, self).get_initial()
 
+        supplier_part = self.get_part()
+
         initials['part'] = self.get_part()
 
-        # Pre-select the default currency
-        try:
-            base = Currency.objects.get(base=True)
-            initials['currency'] = base
-        except Currency.DoesNotExist:
-            pass
+        if supplier_part is not None:
+            currency_code = supplier_part.supplier.currency_code
+        else:
+            currency_code = common.settings.currency_code_default()
+
+        # Extract the currency object associated with the code
+        currency = CURRENCIES.get(currency_code, None)
+        
+        if currency:
+            initials['price'] = [1.0, currency]
 
         return initials
 

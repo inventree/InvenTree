@@ -83,8 +83,6 @@ class StockItemResource(ModelResource):
 
     sales_order = Field(attribute='sales_order', widget=widgets.ForeignKeyWidget(SalesOrder))
 
-    build_order = Field(attribute='build_order', widget=widgets.ForeignKeyWidget(Build))
-
     purchase_order = Field(attribute='purchase_order', widget=widgets.ForeignKeyWidget(PurchaseOrder))
 
     # Date management

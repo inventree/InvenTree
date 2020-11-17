@@ -18,7 +18,7 @@
     name: Thickness
     units: mm
 
-# And some parameters (requires part.yaml)
+# Add some parameters to parts (requires part.yaml)
 - model: part.PartParameter
   pk: 1
   fields:
@@ -32,3 +32,18 @@
     part: 2
     template: 1
     data: 12
+
+# Add some template parameters to categories (requires category.yaml)
+- model: part.PartCategoryParameterTemplate
+  pk: 1
+  fields:
+    category: 7
+    parameter_template: 1
+    default_value: '2.8'
+
+- model: part.PartCategoryParameterTemplate
+  pk: 2
+  fields:
+    category: 7
+    parameter_template: 3
+    default_value: '0.5'

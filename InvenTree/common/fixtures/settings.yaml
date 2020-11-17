@@ -1,0 +1,13 @@
+# Sample settings objects
+
+- model: common.InvenTreeSetting
+  pk: 1
+  fields:
+    key: INVENTREE_INSTANCE
+    value: "My very first InvenTree Instance"
+
+- model: common.InvenTreeSetting
+  pk: 2
+  fields:
+    key: INVENTREE_COMPANY_NAME
+    value: "ACME Pty Ltd"

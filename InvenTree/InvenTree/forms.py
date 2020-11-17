@@ -12,6 +12,7 @@ from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
 from django.contrib.auth.models import User
 from common.models import ColorTheme
+from part.models import PartCategory
 
 
 class HelperForm(forms.ModelForm):
@@ -27,7 +28,6 @@ class HelperForm(forms.ModelForm):
         self.helper = FormHelper()
 
         self.helper.form_tag = False
-        self.helper.form_show_errors = False
 
         """
         Create a default 'layout' for this form.
@@ -38,6 +38,17 @@ class HelperForm(forms.ModelForm):
         """
 
         self.rebuild_layout()
+
+    def is_valid(self):
+
+        valid = super(HelperForm, self).is_valid()
+
+        # Check for errors from model validation
+        # If none, disable crispy form errors
+        if not self.errors:
+            self.helper.form_show_errors = False
+
+        return valid
 
     def rebuild_layout(self):
 
@@ -193,6 +204,36 @@ class ColorThemeSelectForm(forms.ModelForm):
                 Div(StrictButton(_('Apply Theme'), css_class='btn btn-primary', type='submit'),
                     css_class='col-sm-6',
                     style='width: auto;'),
+                css_class='row',
+            ),
+        )
+
+
+class SettingCategorySelectForm(forms.ModelForm):
+    """ Form for setting category settings """
+
+    category = forms.ModelChoiceField(queryset=PartCategory.objects.all())
+
+    class Meta:
+        model = PartCategory
+        fields = [
+            'category'
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super(SettingCategorySelectForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        # Form rendering
+        self.helper.form_show_labels = False
+        self.helper.layout = Layout(
+            Div(
+                Div(Field('category'),
+                    css_class='col-sm-6',
+                    style='width: 70%;'),
+                Div(StrictButton(_('Select Category'), css_class='btn btn-primary', type='submit'),
+                    css_class='col-sm-6',
+                    style='width: 30%; padding-left: 0;'),
                 css_class='row',
             ),
         )

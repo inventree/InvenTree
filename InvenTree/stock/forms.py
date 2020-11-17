@@ -128,6 +128,7 @@ class CreateStockItemForm(HelperForm):
             'quantity',
             'batch',
             'serial_numbers',
+            'purchase_price',
             'link',
             'delete_on_deplete',
             'status',
@@ -399,6 +400,7 @@ class EditStockItemForm(HelperForm):
             'serial',
             'batch',
             'status',
+            'purchase_price',
             'link',
             'delete_on_deplete',
         ]

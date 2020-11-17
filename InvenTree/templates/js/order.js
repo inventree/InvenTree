@@ -137,6 +137,7 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 field: 'reference',
                 title: '{% trans "Purchase Order" %}',
+                switchable: false,
                 formatter: function(value, row, index, field) {
 
                     var prefix = "{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}";

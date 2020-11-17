@@ -12,7 +12,8 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from django.db import models, transaction
-from django.db.models import Sum
+from django.db.utils import IntegrityError
+from django.db.models import Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
@@ -47,6 +48,7 @@ from company.models import SupplierPart
 from stock import models as StockModels
 
 import common.models
+import part.settings as part_settings
 
 
 class PartCategory(InvenTreeTree):
@@ -162,6 +164,26 @@ class PartCategory(InvenTreeTree):
             category_parameters.append(part_parameters)
 
         return category_parameters
+
+    @classmethod
+    def get_parent_categories(cls):
+        """ Return tuple list of parent (root) categories """
+
+        # Get root nodes
+        root_categories = cls.objects.filter(level=0)
+
+        parent_categories = []
+        for category in root_categories:
+            parent_categories.append((category.id, category.name))
+
+        return parent_categories
+
+    def get_parameter_templates(self):
+        """ Return parameter templates associated to category """
+
+        prefetch = PartCategoryParameterTemplate.objects.prefetch_related('category', 'parameter_template')
+
+        return prefetch.filter(category=self.id)
 
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
@@ -306,6 +328,9 @@ class Part(MPTTModel):
         If not, it is considered "orphaned" and will be deleted.
         """
 
+        # Get category templates settings
+        add_category_templates = kwargs.pop('add_category_templates', None)
+
         if self.pk:
             previous = Part.objects.get(pk=self.pk)
 
@@ -320,6 +345,44 @@ class Part(MPTTModel):
         self.validate_unique()
 
         super().save(*args, **kwargs)
+
+        if add_category_templates:
+            # Get part category
+            category = self.category
+
+            if category and add_category_templates:
+                # Store templates added to part
+                template_list = []
+
+                # Create part parameters for selected category
+                category_templates = add_category_templates['main']
+                if category_templates:
+                    for template in category.get_parameter_templates():
+                        parameter = PartParameter.create(part=self,
+                                                         template=template.parameter_template,
+                                                         data=template.default_value,
+                                                         save=True)
+                        if parameter:
+                            template_list.append(template.parameter_template)
+
+                # Create part parameters for parent category
+                category_templates = add_category_templates['parent']
+                if category_templates:
+                    # Get parent categories
+                    parent_categories = category.get_ancestors()
+
+                    for category in parent_categories:
+                        for template in category.get_parameter_templates():
+                            # Check that template wasn't already added
+                            if template.parameter_template not in template_list:
+                                try:
+                                    PartParameter.create(part=self,
+                                                         template=template.parameter_template,
+                                                         data=template.default_value,
+                                                         save=True)
+                                except IntegrityError:
+                                    # PartParameter already exists
+                                    pass
 
     def __str__(self):
         return f"{self.full_name} - {self.description}"
@@ -528,6 +591,18 @@ class Part(MPTTModel):
         """
         super().validate_unique(exclude)
 
+        # User can decide whether duplicate IPN (Internal Part Number) values are allowed
+        allow_duplicate_ipn = common.models.InvenTreeSetting.get_setting('PART_ALLOW_DUPLICATE_IPN')
+
+        if not allow_duplicate_ipn:
+            parts = Part.objects.filter(IPN__iexact=self.IPN)
+            parts = parts.exclude(pk=self.pk)
+
+            if parts.exists():
+                raise ValidationError({
+                    'IPN': _('Duplicate IPN not allowed in part settings'),
+                })
+
         # Part name uniqueness should be case insensitive
         try:
             parts = Part.objects.exclude(id=self.id).filter(
@@ -558,7 +633,8 @@ class Part(MPTTModel):
         super().clean()
 
         if self.trackable:
-            for parent_part in self.used_in.all():
+            for item in self.used_in.all():
+                parent_part = item.part
                 if not parent_part.trackable:
                     parent_part.trackable = True
                     parent_part.clean()
@@ -656,19 +732,42 @@ class Part(MPTTModel):
 
     units = models.CharField(max_length=20, default="", blank=True, null=True, help_text=_('Stock keeping units for this part'))
 
-    assembly = models.BooleanField(default=False, verbose_name='Assembly', help_text=_('Can this part be built from other parts?'))
+    assembly = models.BooleanField(
+        default=False,
+        verbose_name=_('Assembly'),
+        help_text=_('Can this part be built from other parts?')
+    )
 
-    component = models.BooleanField(default=True, verbose_name='Component', help_text=_('Can this part be used to build other parts?'))
+    component = models.BooleanField(
+        default=part_settings.part_component_default,
+        verbose_name=_('Component'),
+        help_text=_('Can this part be used to build other parts?')
+    )
 
-    trackable = models.BooleanField(default=False, help_text=_('Does this part have tracking for unique items?'))
+    trackable = models.BooleanField(
+        default=part_settings.part_trackable_default,
+        verbose_name=_('Trackable'),
+        help_text=_('Does this part have tracking for unique items?'))
 
-    purchaseable = models.BooleanField(default=True, help_text=_('Can this part be purchased from external suppliers?'))
+    purchaseable = models.BooleanField(
+        default=part_settings.part_purchaseable_default,
+        verbose_name=_('Purchaseable'),
+        help_text=_('Can this part be purchased from external suppliers?'))
 
-    salable = models.BooleanField(default=False, help_text=_("Can this part be sold to customers?"))
+    salable = models.BooleanField(
+        default=part_settings.part_salable_default,
+        verbose_name=_('Salable'),
+        help_text=_("Can this part be sold to customers?"))
 
-    active = models.BooleanField(default=True, help_text=_('Is this part active?'))
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this part active?'))
 
-    virtual = models.BooleanField(default=False, help_text=_('Is this a virtual part, such as a software product or license?'))
+    virtual = models.BooleanField(
+        default=False,
+        verbose_name=_('Virtual'),
+        help_text=_('Is this a virtual part, such as a software product or license?'))
 
     notes = MarkdownxField(blank=True, null=True, help_text=_('Part notes - supports Markdown formatting'))
 
@@ -1005,8 +1104,16 @@ class Part(MPTTModel):
         - Exclude parts which this part is in the BOM for
         """
 
-        parts = Part.objects.filter(component=True).exclude(id=self.id)
-        parts = parts.exclude(id__in=[part.id for part in self.used_in.all()])
+        # Start with a list of all parts designated as 'sub components'
+        parts = Part.objects.filter(component=True)
+        
+        # Exclude this part
+        parts = parts.exclude(id=self.id)
+
+        # Exclude any parts that this part is used *in* (to prevent recursive BOMs)
+        used_in = self.used_in.all()
+
+        parts = parts.exclude(id__in=[item.part.id for item in used_in])
 
         return parts
 
@@ -1617,6 +1724,49 @@ class PartParameter(models.Model):
         if save:
             part_parameter.save()
         return part_parameter
+
+
+class PartCategoryParameterTemplate(models.Model):
+    """
+    A PartCategoryParameterTemplate creates a unique relationship between a PartCategory
+    and a PartParameterTemplate.
+    Multiple PartParameterTemplate instances can be associated to a PartCategory to drive
+    a default list of parameter templates attached to a Part instance upon creation.
+
+    Attributes:
+        category: Reference to a single PartCategory object
+        parameter_template: Reference to a single PartParameterTemplate object
+        default_value: The default value for the parameter in the context of the selected
+                       category
+    """
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['category', 'parameter_template'],
+                             name='unique_category_parameter_template_pair')
+        ]
+
+    def __str__(self):
+        """ String representation of a PartCategoryParameterTemplate (admin interface) """
+
+        if self.default_value:
+            return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
+        else:
+            return f'{self.category.name} | {self.parameter_template.name}'
+
+    category = models.ForeignKey(PartCategory,
+                                 on_delete=models.CASCADE,
+                                 related_name='parameter_templates',
+                                 help_text=_('Part Category'))
+
+    parameter_template = models.ForeignKey(PartParameterTemplate,
+                                           on_delete=models.CASCADE,
+                                           related_name='part_categories',
+                                           help_text=_('Parameter Template'))
+
+    default_value = models.CharField(max_length=500,
+                                     blank=True,
+                                     help_text=_('Default Parameter Value'))
 
 
 class BomItem(models.Model):

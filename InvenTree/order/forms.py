@@ -175,6 +175,7 @@ class EditPurchaseOrderLineItemForm(HelperForm):
             'part',
             'quantity',
             'reference',
+            'purchase_price',
             'notes',
         ]
 
