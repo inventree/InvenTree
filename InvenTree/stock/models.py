@@ -453,6 +453,7 @@ class StockItem(MPTTModel):
         max_digits=19,
         decimal_places=4,
         default_currency='USD',
+        blank=True,
         null=True,
         verbose_name=_('Purchase Price'),
         help_text=_('Single unit purchase price at time of purchase'),

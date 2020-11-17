@@ -1607,127 +1607,101 @@ class StockItemCreate(AjaxCreateView):
 
         return initials
 
-    def post(self, request, *args, **kwargs):
-        """ Handle POST of StockItemCreate form.
-
-        - Manage serial-number valdiation for tracked parts
+    def validate(self, item, form):
+        """
+        Extra form validation steps
         """
 
-        part = None
+        data = form.cleaned_data
 
-        form = self.get_form()
+        part = data['part']
+        
+        quantity = data.get('quantity', None)
 
-        data = {}
+        if not quantity:
+            return
 
-        valid = form.is_valid()
+        try:
+            quantity = Decimal(quantity)
+        except (ValueError, InvalidOperation):
+            form.add_error('quantity', _('Invalid quantity provided'))
+            return
 
-        if valid:
-            part_id = form['part'].value()
-            try:
-                part = Part.objects.get(id=part_id)
-                quantity = Decimal(form['quantity'].value())
+        if quantity < 0:
+            form.add_error('quantity', _('Quantity cannot be negative'))
 
-            except (Part.DoesNotExist, ValueError, InvalidOperation):
-                part = None
-                quantity = 1
-                valid = False
-                form.add_error('quantity', _('Invalid quantity'))
+        # Trackable parts are treated differently
+        if part.trackable:
+            sn = data.get('serial_numbers', '')
+            sn = str(sn).strip()
 
-            if quantity < 0:
-                form.add_error('quantity', _('Quantity cannot be less than zero'))
-                valid = False
+            if len(sn) > 0:
+                serials = extract_serial_numbers(sn, quantity)
 
-            if part is None:
-                form.add_error('part', _('Invalid part selection'))
+                existing = part.find_conflicting_serial_numbers(serials)
+
+                if len(existing) > 0:
+                    exists = ','.join([str(x) for x in existing])
+
+                    form.add_error(
+                        'serial_numbers',
+                        _('Serial numbers already exist') + ': ' + exists
+                    )
+
+    def save(self, form, **kwargs):
+        """
+        Create a new StockItem based on the provided form data.
+        """
+
+        data = form.cleaned_data
+
+        part = data['part']
+
+        quantity = data['quantity']
+
+        if part.trackable:
+            sn = data.get('serial_numbers', '')
+            sn = str(sn).strip()
+
+            # Create a single stock item for each provided serial number
+            if len(sn) > 0:
+                serials = extract_serial_numbers(sn, quantity)
+
+                for serial in serials:
+                    item = StockItem(
+                        part=part,
+                        quantity=1,
+                        serial=serial,
+                        supplier_part=data.get('supplier_part', None),
+                        location=data.get('location', None),
+                        batch=data.get('batch', None),
+                        delete_on_deplete=False,
+                        status=data.get('status'),
+                        link=data.get('link', ''),
+                    )
+
+                    item.save(user=self.request.user)
+                
+            # Create a single StockItem of the specified quantity
             else:
-                # A trackable part must provide serial numbesr
-                if part.trackable:
-                    sn = request.POST.get('serial_numbers', '')
+                form._post_clean()
 
-                    sn = str(sn).strip()
+                item = form.save(commit=False)
+                item.user = self.request.user
+                item.save()
 
-                    # If user has specified a range of serial numbers
-                    if len(sn) > 0:
-                        try:
-                            serials = extract_serial_numbers(sn, quantity)
+                return item
+            
+        # Non-trackable part
+        else:
 
-                            existing = part.find_conflicting_serial_numbers(serials)
+            form._post_clean()
+            
+            item = form.save(commit=False)
+            item.user = self.request.user
+            item.save()
 
-                            if len(existing) > 0:
-                                exists = ",".join([str(x) for x in existing])
-                                form.add_error(
-                                    'serial_numbers',
-                                    _('Serial numbers already exist') + ': ' + exists
-                                )
-                                valid = False
-
-                            else:
-                                # At this point we have a list of serial numbers which we know are valid,
-                                # and do not currently exist
-                                form.clean()
-
-                                form_data = form.cleaned_data
-
-                                if form.is_valid():
-
-                                    for serial in serials:
-                                        # Create a new stock item for each serial number
-                                        item = StockItem(
-                                            part=part,
-                                            quantity=1,
-                                            serial=serial,
-                                            supplier_part=form_data.get('supplier_part'),
-                                            location=form_data.get('location'),
-                                            batch=form_data.get('batch'),
-                                            delete_on_deplete=False,
-                                            status=form_data.get('status'),
-                                            link=form_data.get('link'),
-                                        )
-
-                                        item.save(user=request.user)
-
-                                    data['success'] = _('Created {n} new stock items'.format(n=len(serials)))
-                                    valid = True
-
-                        except ValidationError as e:
-                            form.add_error('serial_numbers', e.messages)
-                            valid = False
-
-                    else:
-                        # We have a serialized part, but no serial numbers specified...
-                        form.clean()
-                        form._post_clean()
-
-                        if form.is_valid():
-
-                            item = form.save(commit=False)
-                            item.save(user=request.user)
-
-                            data['pk'] = item.pk
-                            data['url'] = item.get_absolute_url()
-                            data['success'] = _("Created new stock item")
-
-                            valid = True
-
-                else:  # Referenced Part object is not marked as "trackable"
-                    # For non-serialized items, simply save the form.
-                    # We need to call _post_clean() here because it is prevented in the form implementation
-                    form.clean()
-                    form._post_clean()
-
-                    if form.is_valid:
-                        item = form.save(commit=False)
-                        item.save(user=request.user)
-
-                        data['pk'] = item.pk
-                        data['url'] = item.get_absolute_url()
-                        data['success'] = _("Created new stock item")
-
-                        valid = True
-
-        data['form_valid'] = valid and form.is_valid()
-
-        return self.renderJsonResponse(request, form, data=data)
+            return item
 
 
 class StockLocationDelete(AjaxDeleteView):
