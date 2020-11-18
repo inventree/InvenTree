@@ -182,6 +182,7 @@ class StockStatus(StatusCode):
         ATTENTION: 'yellow',
         DAMAGED: 'red',
         DESTROYED: 'red',
+        LOST: 'grey',
         REJECTED: 'red',
     }
 
