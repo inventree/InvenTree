@@ -13,12 +13,13 @@ python:
 addons:
     apt-packages:
         - sqlite3
+    apt:
+        - rabbitmq-server 
 
 before_install:
     - sudo apt-get update
     - sudo apt-get install gettext
     - sudo apt-get install mysql-server libmysqlclient-dev
-    - sudo apt-get install rabbitmq
     - sudo apt-get install libpq-dev
     - pip3 install invoke
     - pip3 install mysqlclient
