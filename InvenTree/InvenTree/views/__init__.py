@@ -18,8 +18,6 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views import View
 from django.views.generic import UpdateView, CreateView, FormView
 from django.views.generic.base import TemplateView
-from django.db import transaction
-
 
 from part.models import Part, PartCategory
 from stock.models import StockLocation, StockItem
@@ -30,8 +28,6 @@ from ..forms import DeleteForm, EditUserForm, SetPasswordForm, ColorThemeSelectF
 from ..helpers import str2bool
 
 from rest_framework import views
-
-
 
 
 class TreeSerializer(views.APIView):
@@ -663,7 +659,6 @@ class DynamicJsView(TemplateView):
 
     template_name = ""
     content_type = 'text/javascript'
-
 
 
 class ColorThemeSelectView(FormView):

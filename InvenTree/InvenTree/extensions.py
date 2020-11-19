@@ -1,11 +1,8 @@
-import os
-import sys
-from enum import Enum
 from typing import List
 
-from django.apps import AppConfig, apps
+from django.apps import apps
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
+
 
 def get_all_extensions(event=None) -> List[type]:
     """
@@ -29,4 +26,3 @@ def get_all_extensions(event=None) -> List[type]:
         extensions,
         key=lambda m: (0 if m.module.startswith('pretix.') else 1, str(m.name).lower().replace('pretix ', ''))
     )
-

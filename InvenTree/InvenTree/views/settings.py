@@ -1,5 +1,5 @@
 from django.views.generic.base import TemplateView
-from django.views.generic import UpdateView, CreateView, FormView
+from django.views.generic import FormView
 from common.models import InvenTreeSetting
 from common.signals import admin_nav_event
 from django.utils.translation import gettext_lazy as _
@@ -7,8 +7,8 @@ from itertools import groupby
 from django.apps import apps
 from django.shortcuts import redirect
 from ..forms import SettingCategorySelectForm
-from ..helpers import str2bool
 from django.urls import reverse_lazy
+
 
 class SettingsBaseView(TemplateView):
     def get_context_data(self, **kwargs):
@@ -16,11 +16,12 @@ class SettingsBaseView(TemplateView):
         ctx = super().get_context_data(**kwargs).copy()
         request = self.request
         ctx['extension_nav'] = sorted(
-			sum((list(a[1]) for a in admin_nav_event.send(self, request=request)), []),
-			key=lambda r: (1 if r.get('parent') else 0, r['label'])
-		)
+            sum((list(a[1]) for a in admin_nav_event.send(self, request=request)), []),
+            key=lambda r: (1 if r.get('parent') else 0, r['label'])
+        )
 
         return ctx
+
 
 class SettingsView(SettingsBaseView):
     """ View for configuring User settings
@@ -36,6 +37,7 @@ class SettingsView(SettingsBaseView):
 
         return ctx
 
+
 class ExtensionsView(SettingsBaseView):
     """ View for managing extensions
     """
@@ -47,7 +49,7 @@ class ExtensionsView(SettingsBaseView):
 
         context = super().get_context_data(**kwargs)
         extensions = [e for e in get_all_extensions(self) if not
-                   e.name.startswith('.') and getattr(e, 'visible', True)]
+                      e.name.startswith('.') and getattr(e, 'visible', True)]
 
         order = [
             'FEATURE',
@@ -78,21 +80,21 @@ class ExtensionsView(SettingsBaseView):
     def post(self, request, *args, **kwargs):
         from InvenTree.extensions import get_all_extensions
 
-        context = super().get_context_data(**kwargs)
         extensions_available = [e.app.name for e in get_all_extensions(self) if not
-                   e.name.startswith('.') and getattr(e, 'visible', True)]
+                                e.name.startswith('.') and getattr(e, 'visible', True)]
 
         for key, value in request.POST.items():
             if key.startswith("extension:"):
                 module = key.split(":")[1]
                 app_name = key.split(":")[1].split(".")[-1]
-                app =  apps.get_app_config(app_name)
+                app = apps.get_app_config(app_name)
                 if value == "enable" and module in extensions_available:
                     app.enable()
                 else:
                     app.disable()
 
         return redirect(request.path_info)
+
 
 class SettingCategorySelectView(FormView):
     """ View for selecting categories in settings """
@@ -128,5 +130,3 @@ class SettingCategorySelectView(FormView):
             return super(SettingCategorySelectView, self).render_to_response(context)
 
         return self.form_invalid(form)
-
-

@@ -16,7 +16,6 @@ from django.views.generic import DetailView, ListView, FormView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput, CheckboxInput
 from django.conf import settings
-from django.views.generic.base import ContextMixin
 from moneyed import CURRENCIES
 
 import os
@@ -748,10 +747,9 @@ class PartNotes(UpdateView):
 
         ctx = super().get_context_data(**kwargs)
         ctx['extension_tabs'] = sorted(
-			sum((list(a[1]) for a in part_tab_event.send(part, request=self.request)), []),
-			key=lambda r: (1 if r.get('parent') else 0, r['label'])
-		)
-
+            sum((list(a[1]) for a in part_tab_event.send(part, request=self.request)), []),
+            key=lambda r: (1 if r.get('parent') else 0, r['label'])
+        )
 
         ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
 
@@ -761,7 +759,7 @@ class PartNotes(UpdateView):
         return ctx
 
 
-class PartDetail(InvenTreeRoleMixin,  DetailView):
+class PartDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view for Part object
     """
 
@@ -781,9 +779,9 @@ class PartDetail(InvenTreeRoleMixin,  DetailView):
         
         part = self.get_object()
         context['extension_tabs'] = sorted(
-			sum((list(a[1]) for a in part_tab_event.send(part, request=self.request)), []),
-			key=lambda r: (1 if r.get('parent') else 0, r['label'])
-		)
+            sum((list(a[1]) for a in part_tab_event.send(part, request=self.request)), []),
+            key=lambda r: (1 if r.get('parent') else 0, r['label'])
+        )
 
         if str2bool(self.request.GET.get('edit', '')):
             # Allow BOM editing if the part is active

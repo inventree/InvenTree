@@ -17,5 +17,3 @@ in pretix.
 As with all plugin signals, the ``sender`` keyword argument will contain the
 part.
 """
-
-

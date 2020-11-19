@@ -7,7 +7,6 @@ from ..signals import nav_topbar
 register = template.Library()
 
 
-
 @register.simple_tag
 def signal(signame: str, request, **kwargs):
     """
@@ -23,6 +22,7 @@ def signal(signame: str, request, **kwargs):
         if response:
             _html.append(response)
     return mark_safe("".join(_html))
+
 
 @register.simple_tag(takes_context=True)
 def get_extension_navbar(context):

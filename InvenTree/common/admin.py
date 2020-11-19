@@ -12,6 +12,7 @@ class SettingsAdmin(ImportExportModelAdmin):
 
     list_display = ('key', 'value')
 
+
 class ExtensionSettingsAdmin(ImportExportModelAdmin):
 
     list_display = ('extension', 'setting', 'type', 'value', 'label',

@@ -1,11 +1,12 @@
-from django.utils.translation import gettext_lazy as _, pgettext_lazy
+from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
 from common.signals import (
-	nav_topbar
+    nav_topbar
 )
 
-def has_role(request,obj,action):
+
+def has_role(request, obj, action):
     roles = request._roles
     if obj in roles:
         if action in roles[obj]:
@@ -38,10 +39,9 @@ def get_global_navigation(request):
             'icon': 'fas fa-tools',
         }
     ]
-    if has_role(request,'purchase_order','view'):
+    if has_role(request, 'purchase_order', 'view'):
         nav.append({
             'label': _('Buy'),
-#            'url': reverse('control:users'),
             'active': False,
             'icon': 'fas fa-shopping-cart',
             'children': [
@@ -65,10 +65,9 @@ def get_global_navigation(request):
                 },
             ]
         })
-    if has_role(request,'sales_order','view'):
+    if has_role(request, 'sales_order', 'view'):
         nav.append({
             'label': _('Sell'),
-#            'url': reverse('control:users'),
             'active': False,
             'icon': 'fas fa-truck',
             'children': [

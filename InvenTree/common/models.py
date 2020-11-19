@@ -477,6 +477,7 @@ class InvenTreeSetting(models.Model):
 
         return InvenTree.helpers.str2bool(self.value)
 
+
 class ExtensionSetting(models.Model):
     """
     An ExtensionSetting object represents a setting for a particular
@@ -501,17 +502,19 @@ class ExtensionSetting(models.Model):
     value = models.CharField(max_length=100, blank=False, unique=False,
                              help_text=_('Setting value'))
     type = models.CharField(max_length=100, blank=False, unique=False,
-                             help_text=_('Setting type'))
+                            help_text=_('Setting type'))
 
     label = models.CharField(max_length=100, blank=False, unique=False,
                              help_text=_('Setting label'))
     description = models.CharField(max_length=100, blank=False, unique=False,
-                             help_text=_('Setting description'))
+                                   help_text=_('Setting description'))
 
     def get_label(self):
         return _(self.label)
+
     def get_description(self):
         return _(self.description)
+
     def is_bool(self):
         return (self.type == "bool")
 
@@ -523,8 +526,6 @@ class ExtensionSetting(models.Model):
         """
 
         return InvenTree.helpers.str2bool(self.value)
-
-
 
 
 class PriceBreak(models.Model):

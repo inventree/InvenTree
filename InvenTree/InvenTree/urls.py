@@ -184,6 +184,5 @@ if settings.DEBUG and 'debug_toolbar' in settings.INSTALLED_APPS:
     ] + urlpatterns
 
 
-
 # Send any unknown URLs to the parts page
 urlpatterns += [url(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]

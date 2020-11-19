@@ -35,6 +35,7 @@ def celery_check(request):
 
     return []
 
+
 def health_status(request):
 
     return {
@@ -102,10 +103,10 @@ def user_roles(request):
     request._roles = roles
     return {'roles': roles}
 
+
 def extension_globals(request):
     ctx = {}
 
     ctx['nav_items'] = get_global_navigation(request)
-
 
     return ctx

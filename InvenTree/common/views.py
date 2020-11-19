@@ -107,7 +107,6 @@ class SettingEdit(AjaxUpdateView):
                 form.add_error('value', _('Supplied value must be a boolean'))
 
 
-
 class ExtensionSettingEdit(AjaxUpdateView):
     """
     View for editing an InvenTree key:value settings object,

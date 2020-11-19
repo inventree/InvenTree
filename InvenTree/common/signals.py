@@ -1,6 +1,5 @@
 from django.dispatch import Signal
 
-#from pretix.base.signals import DeprecatedSignal, EventPluginSignal
 
 html_page_start = Signal(
     providing_args=[]
