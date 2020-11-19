@@ -3,6 +3,7 @@ dist: xenial
 services:
     - mysql
     - postgresql
+    - rabbitmq
 
 language: python
 python:
