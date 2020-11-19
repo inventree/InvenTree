@@ -536,13 +536,17 @@ function loadStockTable(table, options) {
 
                     // Special stock status codes
 
-                    // 65 = "REJECTED"
-                    if (row.status == 65) {
-                        html += makeIconButton('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
+                    // REJECTED
+                    if (row.status == {{ StockStatus.REJECTED }}) {
+                        console.log("REJECTED - {{ StockStatus.REJECTED }}");
+                        html += makeIconBadge('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
                     }
-                    // 70 = "LOST"
-                    else if (row.status == 70) {
-                        html += makeIconButton('fa-question-circle','{% trans "Stock item is lost" %}');
+                    // LOST
+                    else if (row.status == {{ StockStatus.LOST }}) {
+                        html += makeIconBadge('fa-question-circle','{% trans "Stock item is lost" %}');
+                    }
+                    else if (row.status == {{ StockStatus.DESTROYED }}) {
+                        html += makeIconBadge('fa-skull-crossbones', '{% trans "Stock item is destroyed" %}');
                     }
 
                     if (row.quantity <= 0) {

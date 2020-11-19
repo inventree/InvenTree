@@ -67,7 +67,7 @@ def migrate_currencies(apps, schema_editor):
         currency_code = remap.get(currency_id, 'USD')
 
         # Update the currency code
-        response = cursor.execute(f'UPDATE part_partsellpricebreak set price_currency= "{currency_code}" where id={pk};')
+        response = cursor.execute(f"UPDATE part_partsellpricebreak set price_currency='{currency_code}' where id={pk};")
 
         count += 1
 
@@ -105,7 +105,7 @@ def reverse_currencies(apps, schema_editor):
 
     # For each currency code in use, check if we have a matching Currency object
     for code in codes_in_use:
-        response = cursor.execute(f'SELECT id, suffix from common_currency where suffix="{code}";')
+        response = cursor.execute(f"SELECT id, suffix from common_currency where suffix='{code}';")
         row = response.fetchone()
 
         if row is not None:
@@ -120,7 +120,7 @@ def reverse_currencies(apps, schema_editor):
             print(f"Creating new Currency object for {code}")
         
             # Construct a query to create a new Currency object
-            query = f'INSERT into common_currency (symbol, suffix, description, value, base) VALUES ("$", "{code}", "{description}", 1.0, False);'
+            query = f"INSERT into common_currency (symbol, suffix, description, value, base) VALUES ('$', '{code}', '{description}', 1.0, False);"
 
             response = cursor.execute(query)
 
@@ -133,7 +133,7 @@ def reverse_currencies(apps, schema_editor):
         # Update the table to point to the Currency objects
         print(f"Currency {suffix} -> pk {pk}")
 
-        response = cursor.execute(f'UPDATE part_partsellpricebreak set currency_id={pk} where price_currency="{suffix}";')
+        response = cursor.execute(f"UPDATE part_partsellpricebreak set currency_id={pk} where price_currency='{suffix}';")
 
 
 class Migration(migrations.Migration):

@@ -249,6 +249,7 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'InvenTree.context.health_status',
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',
                 'InvenTree.context.celery_check',
