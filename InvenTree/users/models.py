@@ -104,6 +104,7 @@ class RuleSet(models.Model):
         # Models which currently do not require permissions
         'common_colortheme',
         'common_inventreesetting',
+        'common_extensionsetting',
         'company_contact',
         'label_stockitemlabel',
         'report_reportasset',
