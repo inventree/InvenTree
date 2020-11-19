@@ -7,7 +7,16 @@ Provides extra global data to all templates.
 from InvenTree.status_codes import SalesOrderStatus, PurchaseOrderStatus
 from InvenTree.status_codes import BuildStatus, StockStatus
 
+import InvenTree.status
+
 from users.models import RuleSet
+
+
+def health_status(request):
+
+    return {
+        "system_healthy": InvenTree.status.check_system_health(),
+    }
 
 
 def status_codes(request):
