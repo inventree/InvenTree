@@ -117,6 +117,7 @@ class RuleSet(models.Model):
         'django_celery_beat_clockedschedule',
         'django_celery_beat_intervalschedule',
         'django_celery_beat_solarschedule',
+        'django_celery_results_chordcounter',
         'django_celery_results_taskresult',
 
         # Third-party tables
