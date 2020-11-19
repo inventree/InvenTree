@@ -4,6 +4,33 @@
 
 <table class='table table-striped table-condensed'>
     <col width='25'>
+
+    <tr>
+        <td colspan="3"><b>{% trans "Server" %}</b></td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-server'></span></td>
+        <td>{% trans "Instance Name" %}</td>
+        <td>{% inventree_instance_name %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-exclamation-triangle'></span></td>
+        <td>{% trans "Server status" %}</td>
+        <td>
+            {% if system_healthy %}
+            <span class='label label-green'>{% trans "Healthy" %}</span>
+            {% else %}
+            <span class='label label-red'>{% trans "Issues detected" %}</span>
+            {% endif %}
+        </td>
+    </tr>
+
+    {% if not system_healthy %}
+    {% for issue in system_issues %}
+    <!-- TODO - Enumerate system issues here! -->
+    {% endfor %}
+    {% endif %}
+
     <tr>
         <td colspan='3'><b>{% trans "Parts" %}</b></td>
     </tr>

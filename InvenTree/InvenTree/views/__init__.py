@@ -745,7 +745,7 @@ class DatabaseStatsView(AjaxView):
     """ View for displaying database statistics """
 
     ajax_template_name = "stats.html"
-    ajax_form_title = _("Database Statistics")
+    ajax_form_title = _("System Information")
 
     def get_context_data(self, **kwargs):
 
