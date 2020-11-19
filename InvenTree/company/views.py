@@ -274,6 +274,12 @@ class SupplierPartEdit(AjaxUpdateView):
     def get_form(self):
         form = super().get_form()
 
+        supplier_part = self.get_object()
+
+        # It appears that hiding a MoneyField fails validation
+        # Therefore the idea to set the value before hiding
+        if form.is_valid():
+             form.cleaned_data['single_pricing'] = supplier_part.unit_pricing
         # Hide the single-pricing field (only for creating a new SupplierPart!)
         form.fields['single_pricing'].widget = HiddenInput()
 
