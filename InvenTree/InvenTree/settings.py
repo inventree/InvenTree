@@ -206,7 +206,6 @@ INSTALLED_APPS = [
     'djmoney.contrib.exchange',     # django-money exchange rates
     'error_report',                 # Error reporting in the admin interface
 
-    'extensions.opencart',
 ]
 
 EXTENSIONS_EXCLUDE = CONFIG.get('extensions_exclude', "").split(',')
