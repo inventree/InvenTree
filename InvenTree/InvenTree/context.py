@@ -13,6 +13,22 @@ from users.models import RuleSet
 
 
 def health_status(request):
+    """
+    Provide system health status information to the global context.
+
+    - Not required for AJAX requests
+    - Do not provide if it is already provided to the context
+    """
+
+    if request.path.endswith('.js'):
+        # Do not provide to script requests
+        return {}
+
+    if hasattr(request, '_inventree_health_status'):
+        # Do not duplicate efforts
+        return {}
+
+    request._inventree_health_status = True
 
     return {
         "system_healthy": InvenTree.status.check_system_health(),
@@ -20,6 +36,15 @@ def health_status(request):
 
 
 def status_codes(request):
+    """
+    Provide status code enumerations.
+    """
+
+    if hasattr(request, '_inventree_status_codes'):
+        # Do not duplicate efforts
+        return {}
+
+    request._inventree_status_codes = True
 
     return {
         # Expose the StatusCode classes to the templates
