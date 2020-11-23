@@ -2497,6 +2497,8 @@ class BomItemEdit(AjaxUpdateView):
         - Remove any part items that are already in the BOM
         """
 
+        item = self.get_object()
+
         form = super().get_form()
 
         part_id = form['part'].value()
@@ -2504,9 +2506,14 @@ class BomItemEdit(AjaxUpdateView):
         try:
             part = Part.objects.get(pk=part_id)
 
-            query = form.fields['sub_part'].queryset
+            # Construct a queryset
+            query = Part.objects.filter(component=True)
 
-            # Reduce the available selection options
+            # Limit to "active" items, *unless* the currently selected item is not active
+            if item.sub_part.active:
+                query = query.filter(active=True)
+
+            # Prevent the parent part from being selected
             query = query.exclude(pk=part_id)
 
             # Eliminate any options that are already in the BOM,
