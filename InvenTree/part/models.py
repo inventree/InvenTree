@@ -1086,7 +1086,7 @@ class Part(MPTTModel):
         for bom_item in self.bom_items.all().select_related('sub_part'):
 
             sub_part = bom_item.sub_part
-
+            
             if sub_part not in parts:
 
                 parts.add(sub_part)
@@ -1885,25 +1885,28 @@ class BomItem(models.Model):
         - If the "sub_part" is trackable, then the "part" must be trackable too!
         """
 
-        # If the sub_part is 'trackable' then the 'quantity' field must be an integer
         try:
-            if self.sub_part.trackable:
-                if not self.quantity == int(self.quantity):
-                    raise ValidationError({
-                        "quantity": _("Quantity must be integer value for trackable parts")
-                    })
+            # Check for circular BOM references
+            if self.sub_part:
+                self.sub_part.checkAddToBOM(self.part)
+                
+                # If the sub_part is 'trackable' then the 'quantity' field must be an integer
+                if self.sub_part.trackable:
+                    if not self.quantity == int(self.quantity):
+                        raise ValidationError({
+                            "quantity": _("Quantity must be integer value for trackable parts")
+                        })
 
-                # Force the upstream part to be trackable if the sub_part is trackable
-                if not self.part.trackable:
-                    self.part.trackable = True
-                    self.part.clean()
-                    self.part.save()
-
+                    # Force the upstream part to be trackable if the sub_part is trackable
+                    if not self.part.trackable:
+                        self.part.trackable = True
+                        self.part.clean()
+                        self.part.save()
+            else:
+                raise ValidationError({'sub_part': _('Sub part must be specified')})
         except Part.DoesNotExist:
-            pass
+                raise ValidationError({'sub_part': _('Sub part must be specified')})
 
-        # Check for circular BOM references
-        self.sub_part.checkAddToBOM(self.part)
 
     class Meta:
         verbose_name = _("BOM Item")
