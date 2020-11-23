@@ -1083,10 +1083,12 @@ class Part(MPTTModel):
             parts: Set of parts already found (to prevent recursion issues)
         """
 
-        for bom_item in self.bom_items.all().select_related('sub_part'):
+        items = self.bom_items.all().prefetch_related('sub_part')
+
+        for bom_item in items:
 
             sub_part = bom_item.sub_part
-            
+
             if sub_part not in parts:
 
                 parts.add(sub_part)
