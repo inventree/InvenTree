@@ -2428,29 +2428,34 @@ class BomItemCreate(AjaxCreateView):
 
         part_id = form['part'].value()
 
+        # Construct a queryset for the part field
+        part_query = Part.objects.filter(active=True)
+
+        # Construct a queryset for the sub_part field
+        sub_part_query = Part.objects.filter(
+            component=True,
+            active=True
+        )
+
         try:
             part = Part.objects.get(id=part_id)
-
-            # Only allow active parts to be selected
-            query = form.fields['part'].queryset.filter(active=True)
-            form.fields['part'].queryset = query
-
-            # Don't allow selection of sub_part objects which are already added to the Bom!
-            query = form.fields['sub_part'].queryset
             
-            # Don't allow a part to be added to its own BOM
-            query = query.exclude(id=part.id)
-            query = query.filter(active=True)
+            # Hide the 'part' field
+            form.fields['part'].widget = HiddenInput()
+
+            # Exclude the part from its own BOM
+            sub_part_query = sub_part_query.exclude(id=part.id)
             
             # Eliminate any options that are already in the BOM!
-            query = query.exclude(id__in=[item.id for item in part.getRequiredParts()])
-            
-            form.fields['sub_part'].queryset = query
+            sub_part_query = sub_part_query.exclude(id__in=[item.id for item in part.getRequiredParts()])
 
-            form.fields['part'].widget = HiddenInput()
 
         except (ValueError, Part.DoesNotExist):
             pass
+
+        # Set the querysets for the fields
+        form.fields['part'].queryset = part_query
+        form.fields['sub_part'].queryset = sub_part_query
 
         return form
 
