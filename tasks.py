@@ -102,6 +102,16 @@ def install(c):
         print("Config file 'config.yaml' does not exist - copying from template.")
         copyfile(CONFIG_TEMPLATE_FILE, CONFIG_FILE)
 
+
+@task
+def shell(c):
+    """
+    Open a python shell with access to the InvenTree database models.
+    """
+
+    manage(c, 'shell', pty=True)
+
+
 @task
 def superuser(c):
     """
