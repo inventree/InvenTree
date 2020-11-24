@@ -228,6 +228,12 @@ function loadBomTable(table, options) {
             }
         });
 
+        /*
+
+        // TODO - Re-introduce the pricing column at a later stage,
+        //        once the pricing has been "fixed"
+        //        O.W. 2020-11-24
+        
         cols.push(
         {
             field: 'price_range',
@@ -241,6 +247,7 @@ function loadBomTable(table, options) {
                 }
             }
         });
+        */
     }
     
     // Part notes
