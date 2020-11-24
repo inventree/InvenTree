@@ -2449,7 +2449,6 @@ class BomItemCreate(AjaxCreateView):
             # Eliminate any options that are already in the BOM!
             sub_part_query = sub_part_query.exclude(id__in=[item.id for item in part.getRequiredParts()])
 
-
         except (ValueError, Part.DoesNotExist):
             pass
 

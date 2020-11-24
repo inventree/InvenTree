@@ -1907,8 +1907,7 @@ class BomItem(models.Model):
             else:
                 raise ValidationError({'sub_part': _('Sub part must be specified')})
         except Part.DoesNotExist:
-                raise ValidationError({'sub_part': _('Sub part must be specified')})
-
+            raise ValidationError({'sub_part': _('Sub part must be specified')})
 
     class Meta:
         verbose_name = _("BOM Item")
