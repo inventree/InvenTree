@@ -336,7 +336,7 @@ class PartStarSerializer(InvenTreeModelSerializer):
 class BomItemSerializer(InvenTreeModelSerializer):
     """ Serializer for BomItem object """
 
-    price_range = serializers.CharField(read_only=True)
+    # price_range = serializers.CharField(read_only=True)
 
     quantity = serializers.FloatField()
 
@@ -387,7 +387,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'sub_part_detail',
             'quantity',
             'reference',
-            'price_range',
+            # 'price_range',
             'optional',
             'overage',
             'note',

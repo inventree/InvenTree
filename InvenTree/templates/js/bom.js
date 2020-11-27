@@ -140,6 +140,12 @@ function loadBomTable(table, options) {
         });
     }
 
+    // Set the parent ID of the multi-level table.
+    // We prepend this with the literal string value 'top-level-',
+    // because otherwise the unfortunate situation where BomItem.pk == BomItem.part.pk
+    // AND THIS BREAKS EVERYTHING
+    var parent_id = `top-level-${options.parent_id}`;
+
     // Part column
     cols.push(
         {
@@ -197,11 +203,11 @@ function loadBomTable(table, options) {
             text = parseFloat(text);
 
             if (row.optional) {
-                text += " ({% trans "Optional" %})";    
+                text += ' ({% trans "Optional" %})';    
             }
 
             if (row.overage) {
-                text += "<small> (+" + row.overage + ")    </small>";
+                text += `<small> (${row.overage})    </small>`;
             }
 
             return text;
@@ -228,6 +234,12 @@ function loadBomTable(table, options) {
             }
         });
 
+        /*
+
+        // TODO - Re-introduce the pricing column at a later stage,
+        //        once the pricing has been "fixed"
+        //        O.W. 2020-11-24
+
         cols.push(
         {
             field: 'price_range',
@@ -241,6 +253,7 @@ function loadBomTable(table, options) {
                 }
             }
         });
+        */
     }
     
     // Part notes
@@ -327,9 +340,8 @@ function loadBomTable(table, options) {
     
     table.inventreeTable({
         treeEnable: !options.editable,
-        rootParentId: options.parent_id,
+        rootParentId: parent_id,
         idField: 'pk',
-        //uniqueId: 'pk',
         parentIdField: 'parentId',
         treeShowField: 'sub_part',
         showColumns: true,
@@ -338,12 +350,18 @@ function loadBomTable(table, options) {
         search: true,
         rowStyle: function(row, index) {
             if (row.validated) {
-                return {classes: 'rowvalid'};
+                return {
+                    classes: 'rowvalid'
+                };
             } else {
-                return {classes: 'rowinvalid'};
+                return {
+                    classes: 'rowinvalid'
+                };
             }
         },
-        formatNoMatches: function() { return '{% trans "No BOM items found" %}'; },
+        formatNoMatches: function() {
+            return '{% trans "No BOM items found" %}';
+        },
         clickToSelect: true,
         queryParams: filters,
         original: params,
@@ -376,7 +394,7 @@ function loadBomTable(table, options) {
                     }
 
                     // Set the parent ID of the top-level rows
-                    row.parentId = options.parent_id;
+                    row.parentId = parent_id;
 
                     table.bootstrapTable('updateRow', idx, row, true);
 

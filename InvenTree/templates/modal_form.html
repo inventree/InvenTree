@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <div>
 {% if form.pre_form_info %}
 <div class='alert alert-info alert-block' role='alert'>
@@ -9,18 +11,6 @@
 {{ form.pre_form_warning }}
 </div>
 {% endif %}
-{% block non_field_error %}
-{% if form.non_field_errors %}
-<div class='alert alert-danger alert-block' role='alert'>
-  <b>Error Submitting Form:</b>
-  <ul>
-    {% for error in form.non_field_errors %}
-    {{ error }}
-    {% endfor %}
-  </ul>
-</div>
-{% endif %}
-{% endblock %}
 </div>
 
 {% block pre_form_content %}

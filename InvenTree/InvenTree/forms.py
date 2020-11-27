@@ -28,6 +28,7 @@ class HelperForm(forms.ModelForm):
         self.helper = FormHelper()
 
         self.helper.form_tag = False
+        self.helper.form_show_errors = True
 
         """
         Create a default 'layout' for this form.
@@ -42,11 +43,6 @@ class HelperForm(forms.ModelForm):
     def is_valid(self):
 
         valid = super(HelperForm, self).is_valid()
-
-        # Check for errors from model validation
-        # If none, disable crispy form errors
-        if not self.errors:
-            self.helper.form_show_errors = False
 
         return valid
 

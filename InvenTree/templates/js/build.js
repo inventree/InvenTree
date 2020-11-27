@@ -243,6 +243,22 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             });
         });
 
+        // Callback for 'buy' button
+        $(table).find('.button-buy').click(function() {
+            var pk = $(this).attr('pk');
+
+            var idx = $(this).closest('tr').attr('data-index');
+            var row = $(table).bootstrapTable('getData')[idx];
+
+            launchModalForm('{% url "order-parts" %}', {
+                data: {
+                    parts: [
+                        pk,
+                    ]
+                }
+            });
+        });
+
         // Callback for 'build' button
         $(table).find('.button-build').click(function() {
             var pk = $(this).attr('pk');
@@ -563,7 +579,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         }
 
                         if (row.sub_part_detail.purchaseable) {
-                            html += makeIconButton('fa-shopping-cart icon-blue', 'button-buy', row.sub_part, '{% trans "Order stock" %}', {disabled: true});
+                            html += makeIconButton('fa-shopping-cart icon-blue', 'button-buy', row.sub_part, '{% trans "Order stock" %}');
                         }
 
                         html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', row.sub_part, '{% trans "Allocate stock" %}');
