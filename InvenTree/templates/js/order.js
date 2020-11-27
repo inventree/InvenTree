@@ -21,9 +21,16 @@ function newSupplierPartFromOrderWizard(e) {
 
     e = e || window.event;
 
-    var src = e.target || e.srcElement;
+    var src = e.srcElement || e.target;
 
-    var part = $(src).attr('part-id');
+    var part = $(src).attr('part');
+
+    console.log('part: ' + part);
+
+    if (!part) {
+        part = $(src).closest('button').attr('part');
+        console.log('parent: ' + part);
+    }
 
     launchModalForm("/supplier-part/new/", {
         modal: '#modal-form-secondary',
@@ -125,7 +132,7 @@ function loadPurchaseOrderTable(table, options) {
         name: 'purchaseorder',
         groupBy: false,
         original: options.params,
-        formatNoMatches: function() { return "{% trans "No purchase orders found" %}"; },
+        formatNoMatches: function() { return '{% trans "No purchase orders found" %}'; },
         columns: [
             {
                 field: 'pk',
@@ -208,7 +215,7 @@ function loadSalesOrderTable(table, options) {
         name: 'salesorder',
         groupBy: false,
         original: options.params,
-        formatNoMatches: function() { return "{% trans "No sales orders found" %}"; },
+        formatNoMatches: function() { return '{% trans "No sales orders found" %}'; },
         columns: [
             {
                 field: 'pk',
@@ -265,7 +272,7 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'shipment_date',
-                title: "{% trans "Shipment Date" %}",
+                title: '{% trans "Shipment Date" %}',
             },
             {
                 sortable: true,

@@ -291,7 +291,7 @@ class SupplierPartCreate(AjaxCreateView):
 
     model = SupplierPart
     form_class = EditSupplierPartForm
-    ajax_template_name = 'modal_form.html'
+    ajax_template_name = 'company/supplier_part_create.html'
     ajax_form_title = _('Create new Supplier Part')
     context_object_name = 'part'
     role_required = 'purchase_order.add'
@@ -303,6 +303,27 @@ class SupplierPartCreate(AjaxCreateView):
         if single_pricing:
             # TODO - What validation steps can be performed on the single_pricing field?
             pass
+
+    def get_context_data(self):
+        """
+        Supply context data to the form
+        """
+
+        ctx = super().get_context_data()
+
+        # Add 'part' object
+        form = self.get_form()
+
+        part = form['part'].value()
+
+        try:
+            part = Part.objects.get(pk=part)
+        except (ValueError, Part.DoesNotExist):
+            part = None
+
+        ctx['part'] = part
+
+        return ctx
 
     def save(self, form):
         """
