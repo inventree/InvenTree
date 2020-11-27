@@ -11,11 +11,11 @@
 
 {% if parts|length > 0 %}
 <div class='alert alert-info alert-block' role='alert'>
-    {% trans "Select suppliers." %}
+    {% trans "Select suppliers" %}
 </div>
 {% else %}
 <div class='alert alert-warning alert-block' role='alert'>
-    {% trans "No purchaseable parts selected." %}
+    {% trans "No purchaseable parts selected" %}
 </div>
 {% endif %}
 
@@ -39,8 +39,8 @@
                 {{ part.full_name }} <small><i>{{ part.description }}</i></small>
             </td>
             <td>
-                <button class='btn btn-default btn-create' onClick='newSupplierPartFromOrderWizard()' id='new_supplier_part_{{ part.id }}' title='Create new supplier part for {{ part }}' type='button'>
-                    <span part-id='{{ part.id }}' class='fas fa-plus-circle'></span>
+                <button class='btn btn-default btn-create' onClick='newSupplierPartFromOrderWizard()' id='new_supplier_part_{{ part.id }}' part='{{ part.pk }}' title='{% trans "Create new supplier part" $}' type='button'>
+                    <span part='{{ part.pk }}' class='fas fa-plus-circle'></span>
                 </button>
             </td>
             <td>
