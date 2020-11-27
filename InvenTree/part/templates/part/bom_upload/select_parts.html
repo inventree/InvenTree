@@ -63,7 +63,7 @@
                         <option value=''>--- {% trans "Select Part" %} ---</option>
                         {% for part in row.part_options %}
                         <option value='{{ part.id }}' {% if part.id == row.part.id %} selected='selected' {% elif part.id == row.part_match.id %} selected='selected' {% endif %}>
-                            {{ part }} - {{ part.available_stock }}
+                            {{ part }}
                         </option>
                         {% endfor %}
                     </select>
