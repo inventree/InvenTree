@@ -99,7 +99,6 @@
 </div>
 </h3>
 </div>
-</div>
 
 {% if location and location.children.all|length > 0 %}
 {% include 'stock/location_list.html' with children=location.children.all collapse_id="locations" %}
@@ -110,6 +109,7 @@
 <hr>
 
 {% include "stock_table.html" %}
+</div>
 
 {% endblock %}
 
