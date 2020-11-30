@@ -83,9 +83,10 @@ class Build(MPTTModel):
         help_text=_('Brief description of the build')
     )
 
+    # TODO - Perhaps delete the build "tree"
     parent = TreeForeignKey(
         'self',
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='children',
         verbose_name=_('Parent Build'),
