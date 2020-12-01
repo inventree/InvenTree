@@ -13,7 +13,8 @@
 
 <!-- Check permissions and owner -->
 {% setting_object 'STOCK_OWNER' as owner_enable %}
-{% if user.is_superuser or roles.stock.change and item.owner == user and owner_enable.value == "True" %}
+{% if owner_enable.value == "False" or owner_enable.value == "True" and item.owner == user %}
+{% if roles.stock.change and not item.is_building %}
 <div id='table-toolbar'>  
     <div class='btn-group'>
         <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>
@@ -21,6 +22,7 @@
         </button>
     </div>
 </div>
+{% endif %}
 {% endif %}
 <table class='table table-condensed table-striped' id='track-table' data-toolbar='#table-toolbar'>
 </table>
