@@ -139,6 +139,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'STOCK_OWNER': {
+            'name': _('Stock Owner Changes'),
+            'description': _('Allow only owner of stock location and item to make changes'),
+            'default': False,
+            'validator': bool,
+        },
+
         'BUILDORDER_REFERENCE_PREFIX': {
             'name': _('Build Order Reference Prefix'),
             'description': _('Prefix value for build order reference'),

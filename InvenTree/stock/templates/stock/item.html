@@ -11,7 +11,9 @@
 <h4>{% trans "Stock Tracking Information" %}</h4>
 <hr>
 
-{% if roles.stock.change %}
+<!-- Check permissions and owner -->
+{% setting_object 'STOCK_OWNER' as owner_enable %}
+{% if user.is_superuser or roles.stock.change and item.owner == user and owner_enable.value == "True" %}
 <div id='table-toolbar'>  
     <div class='btn-group'>
         <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>

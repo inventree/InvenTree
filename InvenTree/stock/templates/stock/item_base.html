@@ -112,7 +112,10 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         </ul>
     </div>
     <!-- Stock adjustment menu -->
-    {% if roles.stock.change and not item.is_building %}
+    <!-- Check permissions and owner -->
+    {% setting_object 'STOCK_OWNER' as owner_enable %}
+    {% if user.is_superuser or roles.stock.change and item.owner == user and owner_enable.value == "True" %}
+    {% if not item.is_building %}
     <div class='btn-group'>
         <button id='stock-options' title='{% trans "Stock adjustment actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
@@ -160,6 +163,8 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
             {% endif %}
         </ul>
     </div>
+    {% endif %}
+    <!-- Check permissions and owner -->
     {% endif %}
     <button type='button' class='btn btn-default' id='stock-test-report' title='{% trans "Generate test report" %}'>
         <span class='fas fa-file-invoice'/>
