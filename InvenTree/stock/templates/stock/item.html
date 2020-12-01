@@ -8,21 +8,22 @@
 
 {% include "stock/tabs.html" with tab="tracking" %}
 
+{% setting_object 'STOCK_OWNER' as owner_enable %}
+
 <h4>{% trans "Stock Tracking Information" %}</h4>
 <hr>
 
 <!-- Check permissions and owner -->
-{% setting_object 'STOCK_OWNER' as owner_enable %}
 {% if owner_enable.value == "False" or owner_enable.value == "True" and item.owner == user %}
-{% if roles.stock.change and not item.is_building %}
-<div id='table-toolbar'>  
-    <div class='btn-group'>
-        <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>
-            <span class='fas fa-plus-circle'></span> {% trans "New Entry" %}
-        </button>
+    {% if roles.stock.change and not item.is_building %}
+    <div id='table-toolbar'>  
+        <div class='btn-group'>
+            <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>
+                <span class='fas fa-plus-circle'></span> {% trans "New Entry" %}
+            </button>
+        </div>
     </div>
-</div>
-{% endif %}
+    {% endif %}
 {% endif %}
 <table class='table table-condensed table-striped' id='track-table' data-toolbar='#table-toolbar'>
 </table>
