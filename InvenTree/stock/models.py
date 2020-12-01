@@ -45,6 +45,7 @@ class StockLocation(InvenTreeTree):
     """
 
     owner = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True,
+                              help_text='Owner (Group)',
                               related_name='owner_stocklocations')
 
     def get_absolute_url(self):
@@ -463,6 +464,7 @@ class StockItem(MPTTModel):
     )
 
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
+                              help_text='Owner (User)',
                               related_name='owner_stockitems')
 
     def clearAllocations(self):

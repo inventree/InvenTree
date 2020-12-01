@@ -17,11 +17,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='stockitem',
             name='owner',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='owner_stockitems', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, help_text='Owner (User)', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='owner_stockitems', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='stocklocation',
             name='owner',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='owner_stocklocations', to='auth.Group'),
+            field=models.ForeignKey(blank=True, help_text='Owner (Group)', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='owner_stocklocations', to='auth.Group'),
         ),
     ]
