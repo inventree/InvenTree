@@ -11,7 +11,7 @@ from django.views.generic import DetailView, ListView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 from django.urls import reverse
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 
 from django.utils.translation import ugettext as _
 
@@ -1419,18 +1419,20 @@ class StockLocationCreate(AjaxCreateView):
         if not stock_ownership_control:
             form.fields['owner'].widget = HiddenInput()
         else:
-            try:
-                parent_id = form['parent'].value()
-                parent = StockLocation.objects.get(pk=parent_id)
+            # If user did not selected owner, automatically match to parent's owner
+            if not form['owner'].data:
+                try:
+                    parent_id = form['parent'].value()
+                    parent = StockLocation.objects.get(pk=parent_id)
 
-                if parent:
-                    form.fields['owner'].initial = parent.owner
-                    form.fields['owner'].queryset = Group.objects.filter(pk=parent.owner.pk)
-                form.fields['owner'].disabled = True
-            except StockLocation.DoesNotExist:
-                pass
-            except ValueError:
-                pass
+                    if parent:
+                        form.fields['owner'].initial = parent.owner
+                        if not self.request.user.is_superuser:
+                            form.fields['owner'].disabled = True
+                except StockLocation.DoesNotExist:
+                    pass
+                except ValueError:
+                    pass
 
         return form
 
@@ -1450,7 +1452,7 @@ class StockLocationCreate(AjaxCreateView):
     def validate(self, item, form):
         """ Check that owner is set if stock ownership control is enabled """
 
-        # parent = form.cleaned_data.get('parent', None)
+        parent = form.cleaned_data.get('parent', None)
 
         owner = form.cleaned_data.get('owner', None)
 
@@ -1460,6 +1462,15 @@ class StockLocationCreate(AjaxCreateView):
         if stock_ownership_control:
             if not owner:
                 form.add_error('owner', _('Owner is required (ownership control is enabled)'))
+            else:
+                try:
+                    if parent.owner:
+                        if parent.owner != owner:
+                            error = f'Owner requires to be equivalent to parent\'s owner ({parent.owner})'
+                            form.add_error('owner', error)
+                except AttributeError:
+                    # No parent
+                    pass
 
 
 class StockItemSerialize(AjaxUpdateView):
@@ -1653,6 +1664,8 @@ class StockItemCreate(AjaxCreateView):
         try:
             loc_id = form['location'].value()
             location = StockLocation.objects.get(pk=loc_id)
+        except StockLocation.DoesNotExist:
+            pass
         except ValueError:
             pass
 
