@@ -4,9 +4,9 @@
 {% load i18n %}
 {% block content %}
 
-{% setting_object 'STOCK_OWNER' as owner_enable %}
+{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
 
-{% if location and owner_enable.value == "True" and not location.owner in user.groups.all and not user.is_superuser %}
+{% if location and owner_control.value == "True" and not location.owner in user.groups.all and not user.is_superuser %}
 <div class='alert alert-block alert-info'>
     {% trans "You are not in the list of owners of this location. This stock location cannot be edited." %}<br>
 </div>
@@ -27,7 +27,7 @@
     <p>{% trans "All stock items" %}</p>
     {% endif %}
     <div class='btn-group action-buttons' role='group'>
-        {% if owner_enable.value == "False" or owner_enable.value == "True" and location.owner in user.groups.all or user.is_superuser or not location %}
+        {% if owner_control.value == "False" or owner_control.value == "True" and location.owner in user.groups.all or user.is_superuser or not location %}
             {% if roles.stock.add %}
                 <button class='btn btn-default' id='location-create' title='{% trans "Create new stock location" %}'>
                 <span class='fas fa-plus-circle icon-green'/>
@@ -45,7 +45,7 @@
             </ul>
         </div>
              <!-- Check permissions and owner -->
-            {% if owner_enable.value == "False" or owner_enable.value == "True" and location.owner in user.groups.all or user.is_superuser %}
+            {% if owner_control.value == "False" or owner_control.value == "True" and location.owner in user.groups.all or user.is_superuser %}
                 {% if roles.stock.change %}
                 <div class='btn-group'>
                     <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>

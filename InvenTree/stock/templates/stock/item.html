@@ -8,13 +8,13 @@
 
 {% include "stock/tabs.html" with tab="tracking" %}
 
-{% setting_object 'STOCK_OWNER' as owner_enable %}
+{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
 
 <h4>{% trans "Stock Tracking Information" %}</h4>
 <hr>
 
 <!-- Check permissions and owner -->
-{% if owner_enable.value == "False" or owner_enable.value == "True" and item.owner == user %}
+{% if owner_control.value == "False" or owner_control.value == "True" and item.owner == user %}
     {% if roles.stock.change and not item.is_building %}
     <div id='table-toolbar'>  
         <div class='btn-group'>

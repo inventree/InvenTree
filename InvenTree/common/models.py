@@ -139,9 +139,9 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
-        'STOCK_OWNER': {
-            'name': _('Stock Owner Changes'),
-            'description': _('Allow only owner of stock location and item to make changes'),
+        'STOCK_OWNERSHIP_CONTROL': {
+            'name': _('Stock Ownership Control'),
+            'description': _('Enable ownership control over stock locations and items'),
             'default': False,
             'validator': bool,
         },

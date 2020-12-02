@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% setting_object 'STOCK_OWNER' as owner_enable %}
+{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
 
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style='float: right;'>
@@ -12,7 +12,7 @@
             {% if read_only %}
             {% else %}
                  <!-- Check permissions and owner -->
-                {% if owner_enable.value == "False" or owner_enable.value == "True" and location.owner in user.groups.all or user.is_superuser %}
+                {% if owner_control.value == "False" or owner_control.value == "True" and location.owner in user.groups.all or user.is_superuser %}
                     {% if roles.stock.add %}
                     <button class="btn btn-success" id='item-create'>
                         <span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}

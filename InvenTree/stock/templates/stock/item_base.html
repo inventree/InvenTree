@@ -15,7 +15,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% block pre_content %}
 {% include 'stock/loc_link.html' with location=item.location %}
 
-{% setting_object 'STOCK_OWNER' as owner_enable %}
+{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
 
 {% if item.is_building %}
 <div class='alert alert-block alert-info'>
@@ -31,7 +31,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 </div>
 {% endif %}
 
-{% if owner_enable.value == "True" and not item.owner == user and not user.is_superuser %}
+{% if owner_control.value == "True" and not item.owner == user and not user.is_superuser %}
 <div class='alert alert-block alert-info'>
     {% trans "You are not the owner of this item. This stock item cannot be edited." %}<br>
 </div>
@@ -77,7 +77,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 
 {% block page_data %}
 
-{% setting_object 'STOCK_OWNER' as owner_enable %}
+{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
 
 <h3>
     {% trans "Stock Item" %}
@@ -124,7 +124,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
     </div>
     <!-- Stock adjustment menu -->
     <!-- Check permissions and owner -->
-    {% if owner_enable.value == "False" or owner_enable.value == "True" and item.owner == user or user.is_superuser %}
+    {% if owner_control.value == "False" or owner_control.value == "True" and item.owner == user or user.is_superuser %}
         {% if roles.stock.change and not item.is_building %}
         <div class='btn-group'>
             <button id='stock-options' title='{% trans "Stock adjustment actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
