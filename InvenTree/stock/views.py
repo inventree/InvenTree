@@ -1716,8 +1716,6 @@ class StockItemCreate(AjaxCreateView):
         
         quantity = data.get('quantity', None)
 
-        location = data.get('location', None)
-
         owner = data.get('owner', None)
 
         if not part:
