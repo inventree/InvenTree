@@ -12,7 +12,7 @@
             {% if read_only %}
             {% else %}
                  <!-- Check permissions and owner -->
-                {% if owner_enable.value == "False" or owner_enable.value == "True" and location.owner in user.groups.all %}
+                {% if owner_enable.value == "False" or owner_enable.value == "True" and location.owner in user.groups.all or user.is_superuser %}
                     {% if roles.stock.add %}
                     <button class="btn btn-success" id='item-create'>
                         <span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}
