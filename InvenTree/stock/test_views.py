@@ -7,6 +7,9 @@ from django.contrib.auth.models import Group
 
 import json
 
+from common.models import InvenTreeSetting
+# from InvenTree.status_codes import StockStatus
+
 
 class StockViewTestCase(TestCase):
 
@@ -189,3 +192,82 @@ class StockItemTest(StockViewTestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertFalse(data['form_valid'])
+
+
+class StockOwnershipTest(StockViewTestCase):
+    """ Tests for stock ownership views """
+
+    def setUp(self):
+        """ Add another user for ownership tests """
+
+        super().setUp()
+
+        # Give original user the staff status
+        self.user.is_staff = True
+        self.user.save()
+
+        # Create a new user
+        user = get_user_model()
+        
+        self.new_user = user.objects.create_user(
+            username='john',
+            email='john@email.com',
+            password='custom123',
+        )
+
+        # Put the user into a new group with the correct permissions
+        group = Group.objects.create(name='new_group')
+        self.new_user.groups.add(group)
+
+        # Give the group *all* the permissions!
+        for rule in group.rule_sets.all():
+            rule.can_view = True
+            rule.can_change = True
+            rule.can_add = True
+            rule.can_delete = True
+
+            rule.save()
+
+    def enable_ownership(self):
+        # Enable stock location ownership
+
+        InvenTreeSetting.set_setting('STOCK_OWNERSHIP_CONTROL', True, self.user)
+        self.assertEqual(True, InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL'))
+
+    def test_set_stock_owner(self):
+
+        # Enable ownership control
+        self.enable_ownership()
+        
+        # Set ownership on location
+        response = self.client.post(reverse('stock-location-edit', args=(3,)),
+                                    {'name': 'Home', 'owner': self.user.groups.all()[0]},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertContains(response, '"form_valid": true', status_code=200)
+
+        # Set ownership on item
+        # response = self.client.post(reverse('stock-item-edit', args=(1,)),
+        #                             {'part': 1, 'status': StockStatus.OK, 'owner': self.user},
+        #                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        # print(response.content)
+        # self.assertContains(response, '"form_valid": true', status_code=200)
+
+    def test_owner_control(self):
+
+        # Enable ownership control
+        self.enable_ownership()
+
+        # Login with new user
+        self.client.login(username='john', password='custom123')
+
+        # Test location edit
+        response = self.client.post(reverse('stock-location-edit', args=(3,)),
+                                    {'owner': self.new_user.groups.all()[0]},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertContains(response, '"form_valid": false', status_code=200)
+
+        # Test item edit
+        # response = self.client.post(reverse('stock-item-edit', args=(1,)),
+        #                             {'owner': self.new_user},
+        #                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        # self.assertContains(response, '"form_valid": false', status_code=200)
