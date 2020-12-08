@@ -167,6 +167,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'quantity',
             'required_tests',
             'sales_order',
+            'expiry',
             'serial',
             'status',
             'status_text',

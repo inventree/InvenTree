@@ -128,6 +128,7 @@ class CreateStockItemForm(HelperForm):
             'quantity',
             'batch',
             'serial_numbers',
+            'expiry',
             'purchase_price',
             'link',
             'delete_on_deplete',
@@ -180,6 +181,7 @@ class SerializeStockForm(HelperForm):
         fields = [
             'quantity',
             'serial_numbers',
+            'expiry',
             'destination',
             'note',
         ]

@@ -402,6 +402,32 @@ function loadStockTable(table, options) {
                 } else {
                     return '-';
                 }
+            } else if (field == 'expiry') {
+                var expiries = [];
+
+                data.forEach(function(item) {
+                    var expiry = item.expiry;
+
+                    if (!expiry || expiry == '') {
+                        expiry = '-';
+                    }
+
+                    if (!expiries.includes(expiry)) {
+                        expiries.push(expiry);
+                    }
+                });
+
+                if (expiries.length > 1) {
+                    return "" + expiries.length + " expiries";
+                } else if (expiries.length == 1) {
+                    if (expiries[0]) {
+                        return expiries[0];
+                    } else {
+                        return '-';
+                    }
+                } else {
+                    return '-';
+                }
             } else if (field == 'location_detail.pathstring') {
                 /* Determine how many locations */
                 var locations = [];
@@ -567,6 +593,11 @@ function loadStockTable(table, options) {
             {
                 field: 'batch',
                 title: '{% trans "Batch" %}',
+                sortable: true,
+            },
+            {
+                field: 'expiry',
+                title: '{% trans "Expiry" %}',
                 sortable: true,
             },
             {

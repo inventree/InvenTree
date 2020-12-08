@@ -127,6 +127,12 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
             <li><a href='#' id='stock-serialize' title='{% trans "Serialize stock" %}'><span class='fas fa-hashtag'></span> {% trans "Serialize stock" %}</a> </li>
             {% endif %}
             {% endif %}
+            {% if item.expiry %}
+                <tr>
+                    <td>{% trans "Expiry" %}</td>
+                    <td>{{ item.expiry }}</td>
+                </tr>
+            {% endif %}
             {% if item.part.salable and not item.customer %}
             <li><a href='#' id='stock-assign-to-customer' title='{% trans "Assign to customer" %}'><span class='fas fa-user-tie'></span> {% trans "Assign to customer" %}</a></li>
             {% endif %}
@@ -244,6 +250,13 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td><span class='fas fa-layer-group'></span></td>
         <td>{% trans "Batch" %}</td>
         <td>{{ item.batch }}</td>
+    </tr>
+    {% endif %}
+    {% if item.expiry %}
+    <tr>
+        <td></td>
+        <td>{% trans "Expiry" %}</td>
+        <td>{{ item.expiry }}</td>
     </tr>
     {% endif %}
     {% if item.build %}
@@ -425,7 +438,7 @@ $("#stock-assign-to-customer").click(function() {
 });
 
 function itemAdjust(action) {
-    launchModalForm("/stock/adjust/", 
+    launchModalForm("/stock/adjust/",
         {
             data: {
                 action: action,

@@ -17,8 +17,9 @@ from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_init
 from django.dispatch import receiver
+from django.utils import timezone
 
 from markdownx.models import MarkdownxField
 
@@ -379,7 +380,11 @@ class StockItem(MPTTModel):
         max_length=100, blank=True, null=True,
         help_text=_('Serial number for this item')
     )
- 
+
+    expiry = models.DateField(
+        blank=True, null=True, help_text=_("Expiry date for this item")
+    )
+
     link = InvenTreeURLField(
         verbose_name=_('External Link'),
         max_length=125, blank=True,
@@ -1279,6 +1284,21 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
 
     # Rebuild the MPTT tree
     StockItem.objects.rebuild()
+
+
+@receiver(post_init, sender=StockItem, dispatch_uid="stock_item_post_init_log")
+def after_init_stock_item(sender, instance, **kwargs):
+    """ Receives post_init signal from StockItem object.
+
+    when we retrieve a StockItem, check to see if it has expired
+    """
+    if not instance.expiry:
+        return
+    days_until_expiry = (instance.expiry - timezone.now().date()).days
+    if days_until_expiry <= 30:
+        instance.status = (
+            StockStatus.STALE if days_until_expiry > 0 else StockStatus.EXPIRED
+        )
 
 
 class StockItemAttachment(InvenTreeAttachment):

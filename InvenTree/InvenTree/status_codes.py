@@ -16,7 +16,7 @@ class StatusCode:
         # If the key cannot be found, pass it back
         if key not in cls.options.keys():
             return key
-        
+
         value = cls.options.get(key, key)
         color = cls.colors.get(key, 'grey')
 
@@ -160,6 +160,8 @@ class StockStatus(StatusCode):
     DAMAGED = 55  # Item is damaged
     DESTROYED = 60  # Item is destroyed
     REJECTED = 65  # Item is rejected
+    STALE = 66
+    EXPIRED = 67
     LOST = 70  # Item has been lost
     RETURNED = 85  # Item has been returned from a customer
 
@@ -170,6 +172,8 @@ class StockStatus(StatusCode):
     options = {
         OK: _("OK"),
         ATTENTION: _("Attention needed"),
+        EXPIRED: _("Expired"),
+        STALE: _("Stale"),
         DAMAGED: _("Damaged"),
         DESTROYED: _("Destroyed"),
         LOST: _("Lost"),
@@ -184,6 +188,8 @@ class StockStatus(StatusCode):
         DESTROYED: 'red',
         LOST: 'grey',
         REJECTED: 'red',
+        EXPIRED: 'red',
+        STALE: 'yellow',
     }
 
     # The following codes correspond to parts that are 'available' or 'in stock'
@@ -192,6 +198,7 @@ class StockStatus(StatusCode):
         ATTENTION,
         DAMAGED,
         RETURNED,
+        STALE,
     ]
 
     # The following codes correspond to parts that are 'unavailable'
@@ -199,6 +206,7 @@ class StockStatus(StatusCode):
         DESTROYED,
         LOST,
         REJECTED,
+        EXPIRED,
     ]
 
     # The following codes are available for receiving goods
