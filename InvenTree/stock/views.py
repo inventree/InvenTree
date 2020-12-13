@@ -1292,6 +1292,7 @@ class StockItemEdit(AjaxUpdateView):
         # If the part cannot be purchased, hide the supplier_part field
         if not item.part.purchaseable:
             form.fields['supplier_part'].widget = HiddenInput()
+            form.fields['purchase_price'].widget = HiddenInput()
         else:
             query = form.fields['supplier_part'].queryset
             query = query.filter(part=item.part.id)
@@ -1504,6 +1505,9 @@ class StockItemCreate(AjaxCreateView):
             form.field_placeholder['serial_numbers'] = part.getSerialNumberString()
 
             form.rebuild_layout()
+
+            if not part.purchaseable:
+                form.fields['purchase_price'].widget = HiddenInput()
 
             # Hide the 'part' field (as a valid part is selected)
             # form.fields['part'].widget = HiddenInput()
