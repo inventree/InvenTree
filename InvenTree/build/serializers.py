@@ -5,12 +5,21 @@ JSON serializers for Build API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import datetime
+
+from django.db.models import Q
+from django.db.models import Case, When, Value
+from django.db.models import BooleanField
+
 from rest_framework import serializers
+
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.status_codes import BuildStatus
+
 from stock.serializers import StockItemSerializerBrief
+from part.serializers import PartBriefSerializer
 
 from .models import Build, BuildItem
-from part.serializers import PartBriefSerializer
 
 
 class BuildSerializer(InvenTreeModelSerializer):
@@ -22,6 +31,38 @@ class BuildSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     quantity = serializers.FloatField()
+
+    overdue = serializers.BooleanField()
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add custom annotations to the BuildSerializer queryset,
+        performing database queries as efficiently as possible.
+
+        The following annoted fields are added:
+
+        - overdue: True if the build is outstanding *and* the completion date has past
+
+        """
+
+        # Annotate a boolean 'overdue' flag
+
+        # Construct a filter for finding overdue builds
+        today = datetime.datetime.now().date()
+        overdue = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=today)
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    overdue, then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField())
+            )
+        )
+
+        return queryset
+
 
     def __init__(self, *args, **kwargs):
         part_detail = kwargs.pop('part_detail', False)
@@ -42,11 +83,13 @@ class BuildSerializer(InvenTreeModelSerializer):
             'completion_date',
             'part',
             'part_detail',
+            'overdue',
             'reference',
             'sales_order',
             'quantity',
             'status',
             'status_text',
+            'target_date',
             'notes',
             'link',
         ]

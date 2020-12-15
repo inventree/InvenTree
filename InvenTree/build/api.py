@@ -46,6 +46,8 @@ class BuildList(generics.ListCreateAPIView):
 
         queryset = super().get_queryset().prefetch_related('part')
 
+        queryset = BuildSerializer.annotate_queryset(queryset)
+
         return queryset
     
     def filter_queryset(self, queryset):

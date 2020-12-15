@@ -40,6 +40,7 @@ class EditBuildForm(HelperForm):
             'part',
             'quantity',
             'batch',
+            'target_date',
             'take_from',
             'destination',
             'parent',

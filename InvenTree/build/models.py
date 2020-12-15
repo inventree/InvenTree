@@ -47,7 +47,8 @@ class Build(MPTTModel):
         status: Build status code
         batch: Batch code transferred to build parts (optional)
         creation_date: Date the build was created (auto)
-        completion_date: Date the build was completed
+        target_date: Date the build will be overdue
+        completion_date: Date the build was completed (or, if incomplete, the expected date of completion)
         link: External URL for extra information
         notes: Text notes
     """
@@ -164,6 +165,12 @@ class Build(MPTTModel):
     
     creation_date = models.DateField(auto_now_add=True, editable=False)
     
+    target_date = models.DateField(
+        null=True, blank=True,
+        verbose_name=_('Target completion date'),
+        help_text=_('Target date for build completion. Build will be overdue after this date.')
+    )
+
     completion_date = models.DateField(null=True, blank=True)
 
     completed_by = models.ForeignKey(
@@ -182,6 +189,22 @@ class Build(MPTTModel):
         verbose_name=_('Notes'),
         blank=True, help_text=_('Extra build notes')
     )
+
+    def is_overdue(self):
+        """
+        Returns true if this build is "overdue":
+
+        - Not completed
+        - Target date is "in the past"
+        """
+
+        # Cannot be deemed overdue if target_date is not set
+        if self.target_date is None:
+            return False
+
+        today = datetime.now().date()
+
+        return self.active and self.target_date < today
 
     @property
     def active(self):
