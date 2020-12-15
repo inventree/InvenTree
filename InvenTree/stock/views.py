@@ -510,7 +510,22 @@ class StockItemTestReportSelect(AjaxView):
     def get_form(self):
 
         stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
-        return StockForms.TestReportFormatForm(stock_item)
+        form = StockForms.TestReportFormatForm(stock_item)
+
+        return form
+
+    def get_initial(self):
+
+        initials = super().get_initial()
+
+        form = self.get_form()
+        options = form.fields['template'].queryset
+
+        # If only a single template is available, pre-select it
+        if options.count() == 1:
+            initials['template'] = options[0]
+
+        return initials
 
     def post(self, request, *args, **kwargs):
 
