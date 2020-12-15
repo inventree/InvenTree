@@ -193,6 +193,9 @@ class TestReport(ReportTemplateBase):
 
         items = StockItem.objects.filter(**filters)
 
+        # Ensure the provided StockItem object matches the filters
+        items = items.filter(pk=item.pk)
+
         return items.exists()
 
     def get_context_data(self, request):
