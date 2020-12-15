@@ -1,0 +1,15 @@
+{% extends "collapse_index.html" %}
+
+{% load i18n %}
+
+{% block collapse_title %}
+<span class='fas fa-calendar-times icon-header'></span>
+{% trans "Overdue Builds" %}<span class='badge' id='build-overdue-count'><span class='fas fa-spin fa-spinner'></span></span>
+{% endblock %}
+
+{% block collapse_content %}
+
+<table class='table table-striped table-condensed' id='build-overdue-table'>
+</table>
+
+{% endblock %}
