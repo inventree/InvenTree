@@ -73,6 +73,17 @@ class BuildList(generics.ListCreateAPIView):
             else:
                 queryset = queryset.exclude(status__in=BuildStatus.ACTIVE_CODES)
 
+        # Filter by "overdue" status?
+        overdue = params.get('overdue', None)
+
+        if overdue is not None:
+            overdue = str2bool(overdue)
+
+            if overdue:
+                queryset = queryset.filter(Build.OVERDUE_FILTER)
+            else:
+                queryset = queryset.exclude(Build.OVERDUE_FILTER)
+
         # Filter by associated part?
         part = params.get('part', None)
 

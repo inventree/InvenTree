@@ -48,14 +48,10 @@ class BuildSerializer(InvenTreeModelSerializer):
 
         # Annotate a boolean 'overdue' flag
 
-        # Construct a filter for finding overdue builds
-        today = datetime.datetime.now().date()
-        overdue = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=today)
-
         queryset = queryset.annotate(
             overdue=Case(
                 When(
-                    overdue, then=Value(True, output_field=BooleanField()),
+                    Build.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField())
             )

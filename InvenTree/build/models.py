@@ -14,7 +14,7 @@ from django.core.exceptions import ValidationError
 
 from django.urls import reverse
 from django.db import models, transaction
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
@@ -52,6 +52,8 @@ class Build(MPTTModel):
         link: External URL for extra information
         notes: Text notes
     """
+
+    OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     class Meta:
         verbose_name = _("Build Order")
