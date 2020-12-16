@@ -608,7 +608,9 @@ function loadPartTestTemplateTable(table, options) {
 
                         return html;
                     } else {
-                        return '{% trans "This test is defined for a parent part" %}';
+                        var text = '{% trans "This test is defined for a parent part" %}';
+
+                        return renderLink(text, `/part/${row.part}/tests/`); 
                     }
                 }
             }
