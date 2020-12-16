@@ -32,6 +32,8 @@ class EditBuildForm(HelperForm):
         'reference': _('Build Order reference')
     }
 
+    # TODO: Make this a more "presentable" date picker
+    # TODO: Currently does not render super nicely with crispy forms
     target_date = forms.DateField(
         widget=forms.DateInput(
             attrs={'type': 'date'}
