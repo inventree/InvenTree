@@ -594,7 +594,7 @@ class Part(MPTTModel):
         # User can decide whether duplicate IPN (Internal Part Number) values are allowed
         allow_duplicate_ipn = common.models.InvenTreeSetting.get_setting('PART_ALLOW_DUPLICATE_IPN')
 
-        if not allow_duplicate_ipn:
+        if self.IPN is not None and not allow_duplicate_ipn:
             parts = Part.objects.filter(IPN__iexact=self.IPN)
             parts = parts.exclude(pk=self.pk)
 
