@@ -95,33 +95,26 @@
             <td>{% trans "Created" %}</td>
             <td>{{ build.creation_date }}</td>
         </tr>
-        </table>
-    </div>
-    <div class='col-sm-6'>
-        <table class='table table-striped'>
-            <col width='25'>
-            <tr>
-                <td><span class='fas fa-dollar-sign'></span></td>
-                <td>{% trans "BOM Price" %}</td>
-                <td>
-                    {% if bom_price %}
-                    {{ bom_price }}
-                    {% if build.part.has_complete_bom_pricing == False %}
-                    <br><span class='warning-msg'><i>{% trans "BOM pricing is incomplete" %}</i></span>
-                    {% endif %}
-                    {% else %}
-                    <span class='warning-msg'><i>{% trans "No pricing information" %}</i></span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% if build.completion_date %}
-            <tr>
-                <td><span class='fas fa-calendar-alt'></span></td>
-                <td>{% trans "Completed" %}</td>
-                <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
-            </tr>
+        <tr>
+            <td><span class='fas fa-calendar-alt'></span></td>
+            <td>{% trans "Target Date" %}</td>
+            {% if build.target_date %}
+            <td>
+                {{ build.target_date }}{% if build.is_overdue %} <span class='fas fa-calendar-times icon-red'></span>{% endif %}
+            </td>
+            {% else %}
+            <td><i>{% trans "No target date set" %}</i></td>
             {% endif %}
-    
+        </tr>
+        <tr>
+            <td><span class='fas fa-calendar-alt'></span></td>
+            <td>{% trans "Completed" %}</td>
+            {% if build.completion_date %}
+            <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
+            {% else %}
+            <td><i>{% trans "Build not complete" %}</i></td>
+            {% endif %}
+        </tr>
         </table>
     </div>
 </div>
