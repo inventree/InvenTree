@@ -202,7 +202,7 @@ function loadPartVariantTable(table, partId, options={}) {
         showColumns: true,
         original: params,
         queryParams: filters,
-        formatNoMatches: function() { return "{% trans "No variants found" %}"; },
+        formatNoMatches: function() { return '{% trans "No variants found" %}'; },
         columns: cols,
         treeEnable: true,
         rootParentId: partId,
@@ -249,7 +249,7 @@ function loadParametricPartTable(table, options={}) {
         if (header === 'part') {
             columns.push({
                 field: header,
-                title: '{% trans 'Part' %}',
+                title: '{% trans "Part" %}',
                 sortable: true,
                 sortName: 'name',
                 formatter: function(value, row, index, field) {
@@ -268,7 +268,7 @@ function loadParametricPartTable(table, options={}) {
         } else if (header === 'description') {
             columns.push({
                 field: header,
-                title: '{% trans 'Description' %}',
+                title: '{% trans "Description" %}',
                 sortable: true,
             });
         } else {
@@ -288,7 +288,7 @@ function loadParametricPartTable(table, options={}) {
         queryParams: table_headers,
         groupBy: false,
         name: options.name || 'parametric',
-        formatNoMatches: function() { return "{% trans "No parts found" %}"; },
+        formatNoMatches: function() { return '{% trans "No parts found" %}'; },
         columns: columns,
         showColumns: true,
         data: table_data,
@@ -454,7 +454,7 @@ function loadPartTable(table, url, options={}) {
         groupBy: false,
         name: options.name || 'part',
         original: params,
-        formatNoMatches: function() { return "{% trans "No parts found" %}"; },
+        formatNoMatches: function() { return '{% trans "No parts found" %}'; },
         columns: columns,
         showColumns: true,
     });
@@ -564,12 +564,12 @@ function loadPartTestTemplateTable(table, options) {
             },
             {
                 field: 'test_name',
-                title: "{% trans "Test Name" %}",
+                title: '{% trans "Test Name" %}',
                 sortable: true,
             },
             {
                 field: 'description',
-                title: "{% trans "Description" %}",
+                title: '{% trans "Description" %}',
             },
             {
                 field: 'required',
@@ -581,14 +581,14 @@ function loadPartTestTemplateTable(table, options) {
             },
             {
                 field: 'requires_value',
-                title: "{% trans "Requires Value" %}",
+                title: '{% trans "Requires Value" %}',
                 formatter: function(value) {
                     return yesNoLabel(value);
                 }
             },
             {
                 field: 'requires_attachment',
-                title: "{% trans "Requires Attachment" %}",
+                title: '{% trans "Requires Attachment" %}',
                 formatter: function(value) {
                     return yesNoLabel(value);
                 }
