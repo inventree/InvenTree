@@ -32,6 +32,12 @@ class EditBuildForm(HelperForm):
         'reference': _('Build Order reference')
     }
 
+    target_date = forms.DateField(
+        widget=forms.DateInput(     
+            attrs={'type': 'date'} 
+        )
+    )   
+
     class Meta:
         model = Build
         fields = [

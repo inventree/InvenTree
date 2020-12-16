@@ -37,7 +37,12 @@ src="{% static 'img/blank_image.png' %}"
     <a  href="{% url 'admin:build_build_change' build.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
     {% endif %}
 </h3>
-<h3>{% build_status_label build.status large=True %}</h3>
+<h3>
+    {% build_status_label build.status large=True %}
+    {% if build.is_overdue %}
+    <span class='label label-large label-large-red'>{% trans "Overdue" %}</span>
+    {% endif %}
+</h3>
 <hr>
 <p>{{ build.title }}</p>
 <div class='btn-row'>
@@ -81,7 +86,12 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
-        <td>{% build_status_label build.status %}</td>
+        <td>
+            {% build_status_label build.status %}
+            {% if build.is_overdue %}
+            <span title='{% trans "This build was due on "%} {{ build.target_date }}' class='label label-red'>{% trans "Overdue" %}</span>
+            {% endif %}
+        </td>
     </tr>
     <tr>
         <td><span class='fas fa-spinner'></span></td>
