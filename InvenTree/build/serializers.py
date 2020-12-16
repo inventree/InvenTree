@@ -5,16 +5,12 @@ JSON serializers for Build API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import datetime
-
-from django.db.models import Q
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField
 
 from rest_framework import serializers
 
 from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.status_codes import BuildStatus
 
 from stock.serializers import StockItemSerializerBrief
 from part.serializers import PartBriefSerializer
@@ -58,7 +54,6 @@ class BuildSerializer(InvenTreeModelSerializer):
         )
 
         return queryset
-
 
     def __init__(self, *args, **kwargs):
         part_detail = kwargs.pop('part_detail', False)

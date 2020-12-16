@@ -33,10 +33,10 @@ class EditBuildForm(HelperForm):
     }
 
     target_date = forms.DateField(
-        widget=forms.DateInput(     
-            attrs={'type': 'date'} 
+        widget=forms.DateInput(
+            attrs={'type': 'date'}
         )
-    )   
+    )
 
     class Meta:
         model = Build
