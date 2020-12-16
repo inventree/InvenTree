@@ -650,7 +650,13 @@ function loadBuildTable(table, options) {
                         value = `${prefix}${value}`;
                     }
 
-                    return renderLink(value, '/build/' + row.pk + '/');
+                    var html = renderLink(value, '/build/' + row.pk + '/');
+
+                    if (row.overdue) {
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Build order is overdue" %}');
+                    }
+
+                    return html;
                 }
             },
             {
@@ -697,6 +703,11 @@ function loadBuildTable(table, options) {
             {
                 field: 'creation_date',
                 title: '{% trans "Created" %}',
+                sortable: true,
+            },
+            {
+                field: 'target_date',
+                title: '{% trans "Target Date" %}',
                 sortable: true,
             },
             {

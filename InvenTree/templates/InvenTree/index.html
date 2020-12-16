@@ -16,6 +16,7 @@ InvenTree | {% trans "Index" %}
     {% endif %}
     {% if roles.build.view %}
     {% include "InvenTree/build_pending.html" with collapse_id="build_pending" %}
+    {% include "InvenTree/build_overdue.html" with collapse_id="build_overdue" %}
     {% endif %}
 </div>
 <div class='col-sm-6'>
@@ -72,6 +73,15 @@ loadBuildTable("#build-pending-table", {
     disableFilters: true,
 });
 
+loadBuildTable("#build-overdue-table", {
+    url: "{% url 'api-build-list' %}",
+    params: {
+        part_detail: true,
+        overdue: true,
+    },
+    disableFilters: true,
+});
+
 loadSimplePartTable("#low-stock-table", "{% url 'api-part-list' %}", {
     params: {
         low_stock: true,
@@ -124,6 +134,12 @@ $("#build-pending-table").on('load-success.bs.table', function() {
     var count = $("#build-pending-table").bootstrapTable('getData').length;
 
     $("#build-pending-count").html(count);
+});
+
+$("#build-overdue-table").on('load-success.bs.table', function() {
+    var count = $("#build-overdue-table").bootstrapTable('getData').length;
+
+    $("#build-overdue-count").html(count);
 });
 
 $("#low-stock-table").on('load-success.bs.table', function() {
