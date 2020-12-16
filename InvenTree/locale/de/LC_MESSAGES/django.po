@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-16 19:01+1100\n"
+"POT-Creation-Date: 2020-12-16 19:08+1100\n"
 "PO-Revision-Date: 2020-05-03 11:32+0200\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -804,7 +804,7 @@ msgstr "Bau fertigstellen"
 msgid "Cancel Build"
 msgstr "Bau abbrechen"
 
-#: build/templates/build/build_base.html:64 build/views.py:767
+#: build/templates/build/build_base.html:64
 msgid "Delete Build"
 msgstr "Bau entfernt"
 
@@ -1168,12 +1168,20 @@ msgid "Created new build"
 msgstr "Neuen Bau angelegt"
 
 #: build/views.py:724
-msgid "Edit Build Details"
+#, fuzzy
+#| msgid "Edit Build Details"
+msgid "Edit Build Order Details"
 msgstr "Baudetails bearbeiten"
 
 #: build/views.py:758
 msgid "Edited build"
 msgstr "Bau bearbeitet"
+
+#: build/views.py:767
+#, fuzzy
+#| msgid "Complete Build"
+msgid "Delete Build Order"
+msgstr "Bau fertigstellen"
 
 #: build/views.py:784
 msgid "Removed parts from build allocation"

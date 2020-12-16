@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-16 19:01+1100\n"
+"POT-Creation-Date: 2020-12-16 19:08+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -695,7 +695,7 @@ msgstr ""
 msgid "Cancel Build"
 msgstr ""
 
-#: build/templates/build/build_base.html:64 build/views.py:767
+#: build/templates/build/build_base.html:64
 msgid "Delete Build"
 msgstr ""
 
@@ -983,11 +983,15 @@ msgid "Created new build"
 msgstr ""
 
 #: build/views.py:724
-msgid "Edit Build Details"
+msgid "Edit Build Order Details"
 msgstr ""
 
 #: build/views.py:758
 msgid "Edited build"
+msgstr ""
+
+#: build/views.py:767
+msgid "Delete Build Order"
 msgstr ""
 
 #: build/views.py:784
