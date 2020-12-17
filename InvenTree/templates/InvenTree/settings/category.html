@@ -45,7 +45,7 @@
 
 {% if category %}
 	$("#param-table").inventreeTable({
-        url: "{% url 'api-part-category-parameters' category.pk %}",
+        url: "{% url 'api-part-category-parameters' pk=category.pk %}",
         queryParams: {
             ordering: 'name',
         },
@@ -58,7 +58,7 @@
                 switchable: false,
             },
             {
-                field: 'parameter_template_detail.name',
+                field: 'parameter_template.name',
                 title: '{% trans "Parameter Template" %}',
                 sortable: 'true',
             },
