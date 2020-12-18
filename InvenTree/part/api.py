@@ -130,7 +130,7 @@ class CategoryParameters(generics.ListAPIView):
         """
 
         try:
-            cat_id = int(self.request.query_params.get('category', None))
+            cat_id = int(self.kwargs.get('pk', None))
         except TypeError:
             cat_id = None
         fetch_parent = str2bool(self.request.query_params.get('fetch_parent', 'true'))
@@ -910,8 +910,8 @@ part_api_urls = [
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
+        url(r'^(?P<pk>\d+)/parameters/?', CategoryParameters.as_view(), name='api-part-category-parameters'),
         url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
-        url(r'^parameters/?', CategoryParameters.as_view(), name='api-part-category-parameters'),
         url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
     ])),
 
