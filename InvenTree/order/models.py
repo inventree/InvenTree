@@ -9,7 +9,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from django.db import models, transaction
-from django.db.models import F, Sum
+from django.db.models import Q, F, Sum
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
@@ -26,7 +26,7 @@ from stock import models as stock_models
 from company.models import Company, SupplierPart
 
 from InvenTree.fields import RoundingDecimalField
-from InvenTree.helpers import decimal2string, increment
+from InvenTree.helpers import decimal2string, increment, getSetting
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
 from InvenTree.models import InvenTreeAttachment
 
@@ -48,8 +48,6 @@ class Order(models.Model):
         complete_date: Date the order was completed
 
     """
-
-    ORDER_PREFIX = ""
 
     @classmethod
     def getNextOrderNumber(cls):
@@ -88,16 +86,6 @@ class Order(models.Model):
 
         return new_ref
 
-    def __str__(self):
-        el = []
-
-        if self.ORDER_PREFIX:
-            el.append(self.ORDER_PREFIX)
-
-        el.append(self.reference)
-
-        return " ".join(el)
-
     def save(self, *args, **kwargs):
         if not self.creation_date:
             self.creation_date = datetime.now().date()
@@ -132,11 +120,12 @@ class PurchaseOrder(Order):
         supplier_reference: Optional field for supplier order reference code
         received_by: User that received the goods
     """
-    
-    ORDER_PREFIX = "PO"
 
     def __str__(self):
-        return "PO {ref} - {company}".format(ref=self.reference, company=self.supplier.name)
+
+        prefix = getSetting('PURCHASEORDER_REFERENCE_PREFIX')
+
+        return f"{prefix}{self.reference} - {self.supplier.name}"
 
     status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING, choices=PurchaseOrderStatus.items(),
                                          help_text=_('Purchase order status'))
@@ -307,10 +296,16 @@ class SalesOrder(Order):
     Attributes:
         customer: Reference to the company receiving the goods in the order
         customer_reference: Optional field for customer order reference code
+        target_date: Target date for SalesOrder completion (optional)
     """
 
+    OVERDUE_FILTER = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+
     def __str__(self):
-        return "SO {ref} - {company}".format(ref=self.reference, company=self.customer.name)
+
+        prefix = getSetting('SALESORDER_REFERENCE_PREFIX')
+
+        return f"{prefix}{self.reference} - {self.customer.name}"
 
     def get_absolute_url(self):
         return reverse('so-detail', kwargs={'pk': self.id})
@@ -329,6 +324,12 @@ class SalesOrder(Order):
 
     customer_reference = models.CharField(max_length=64, blank=True, help_text=_("Customer order reference code"))
 
+    target_date = models.DateField(
+        null=True, blank=True,
+        verbose_name=_('Target completion date'),
+        help_text=_('Target date for order completion. Order will be overdue after this date.')
+    )
+
     shipment_date = models.DateField(blank=True, null=True)
 
     shipped_by = models.ForeignKey(
@@ -337,6 +338,23 @@ class SalesOrder(Order):
         blank=True, null=True,
         related_name='+'
     )
+
+    @property
+    def is_overdue(self):
+        """
+        Returns true if this SalesOrder is "overdue":
+
+        - Not completed
+        - Target date is "in the past"
+        """
+
+        # Order cannot be deemed overdue if target_date is not set
+        if self.target_date is None:
+            return False
+
+        today = datetime.now().date()
+
+        return self.is_pending and self.target_date < today
 
     @property
     def is_pending(self):
