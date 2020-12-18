@@ -160,11 +160,13 @@ class InvenTreeSetting(models.Model):
         'SALESORDER_REFERENCE_PREFIX': {
             'name': _('Sales Order Reference Prefix'),
             'description': _('Prefix value for sales order reference'),
+            'default': 'SO',
         },
 
         'PURCHASEORDER_REFERENCE_PREFIX': {
             'name': _('Purchase Order Reference Prefix'),
             'description': _('Prefix value for purchase order reference'),
+            'default': 'PO',
         },
     }
 

@@ -184,7 +184,11 @@ function getAvailableTableFilters(tableKey) {
             active: {
                 type: 'bool',
                 title: '{% trans "Active" %}',
-            }
+            },
+            overdue: {
+                type: 'bool',
+                title: '{% trans "Overdue" %}',
+            },
         };
     }
 
@@ -212,6 +216,10 @@ function getAvailableTableFilters(tableKey) {
             outstanding: {
                 type: 'bool',
                 title: '{% trans "Outstanding" %}',
+            },
+            overdue: {
+                type: 'bool',
+                title: '{% trans "Overdue" %}',
             },
         };
     }

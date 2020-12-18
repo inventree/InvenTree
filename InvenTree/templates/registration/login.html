@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -26,21 +27,24 @@
 
     <div class='login'>
     <div class="row">
-        <div class="col-md-2 col-md-offset-5">
+        <div class='container-fluid'>
             <div class='clearfix content-heading'>
-            <img class="pull-left" src="{% static 'img/inventree.png' %}" width="60" height="60"/> <h3>InvenTree</h3>
-        </div>
-            <hr>
+                <img class="pull-left" src="{% static 'img/inventree.png' %}" width="60" height="60"/> <h3>InvenTree</h3>
+            </div>
+                <hr>
 
-            <div class='container-fluid'>
-              <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button class='pull-right btn btn-primary' type="submit">Login</button>
-              </form>
+                <div class='container-fluid'>
+                <form method="post" action=''>
+                    {% csrf_token %}
+                    {% load crispy_forms_tags %}
+                    
+                    {{ form|crispy }}
+
+                    <button class='pull-right btn btn-primary' type="submit">{% trans "Login" %}</button>
+                </form>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
 </div>

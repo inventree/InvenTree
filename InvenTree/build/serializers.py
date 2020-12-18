@@ -5,12 +5,17 @@ JSON serializers for Build API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db.models import Case, When, Value
+from django.db.models import BooleanField
+
 from rest_framework import serializers
+
 from InvenTree.serializers import InvenTreeModelSerializer
+
 from stock.serializers import StockItemSerializerBrief
+from part.serializers import PartBriefSerializer
 
 from .models import Build, BuildItem
-from part.serializers import PartBriefSerializer
 
 
 class BuildSerializer(InvenTreeModelSerializer):
@@ -22,6 +27,33 @@ class BuildSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
     quantity = serializers.FloatField()
+
+    overdue = serializers.BooleanField()
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add custom annotations to the BuildSerializer queryset,
+        performing database queries as efficiently as possible.
+
+        The following annoted fields are added:
+
+        - overdue: True if the build is outstanding *and* the completion date has past
+
+        """
+
+        # Annotate a boolean 'overdue' flag
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    Build.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField())
+            )
+        )
+
+        return queryset
 
     def __init__(self, *args, **kwargs):
         part_detail = kwargs.pop('part_detail', False)
@@ -42,11 +74,13 @@ class BuildSerializer(InvenTreeModelSerializer):
             'completion_date',
             'part',
             'part_detail',
+            'overdue',
             'reference',
             'sales_order',
             'quantity',
             'status',
             'status_text',
+            'target_date',
             'notes',
             'link',
         ]

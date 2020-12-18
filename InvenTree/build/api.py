@@ -46,6 +46,8 @@ class BuildList(generics.ListCreateAPIView):
 
         queryset = super().get_queryset().prefetch_related('part')
 
+        queryset = BuildSerializer.annotate_queryset(queryset)
+
         return queryset
     
     def filter_queryset(self, queryset):
@@ -70,6 +72,17 @@ class BuildList(generics.ListCreateAPIView):
                 queryset = queryset.filter(status__in=BuildStatus.ACTIVE_CODES)
             else:
                 queryset = queryset.exclude(status__in=BuildStatus.ACTIVE_CODES)
+
+        # Filter by "overdue" status?
+        overdue = params.get('overdue', None)
+
+        if overdue is not None:
+            overdue = str2bool(overdue)
+
+            if overdue:
+                queryset = queryset.filter(Build.OVERDUE_FILTER)
+            else:
+                queryset = queryset.exclude(Build.OVERDUE_FILTER)
 
         # Filter by associated part?
         part = params.get('part', None)

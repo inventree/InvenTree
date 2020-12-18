@@ -538,7 +538,22 @@ class StockItemTestReportSelect(AjaxView):
     def get_form(self):
 
         stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
-        return StockForms.TestReportFormatForm(stock_item)
+        form = StockForms.TestReportFormatForm(stock_item)
+
+        return form
+
+    def get_initial(self):
+
+        initials = super().get_initial()
+
+        form = self.get_form()
+        options = form.fields['template'].queryset
+
+        # If only a single template is available, pre-select it
+        if options.count() == 1:
+            initials['template'] = options[0]
+
+        return initials
 
     def post(self, request, *args, **kwargs):
 
@@ -1320,6 +1335,7 @@ class StockItemEdit(AjaxUpdateView):
         # If the part cannot be purchased, hide the supplier_part field
         if not item.part.purchaseable:
             form.fields['supplier_part'].widget = HiddenInput()
+            form.fields['purchase_price'].widget = HiddenInput()
         else:
             query = form.fields['supplier_part'].queryset
             query = query.filter(part=item.part.id)
@@ -1621,6 +1637,9 @@ class StockItemCreate(AjaxCreateView):
             form.field_placeholder['serial_numbers'] = part.getSerialNumberString()
 
             form.rebuild_layout()
+
+            if not part.purchaseable:
+                form.fields['purchase_price'].widget = HiddenInput()
 
             # Hide the 'part' field (as a valid part is selected)
             # form.fields['part'].widget = HiddenInput()

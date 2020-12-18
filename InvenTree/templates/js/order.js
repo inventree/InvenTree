@@ -235,7 +235,13 @@ function loadSalesOrderTable(table, options) {
                         value = `${prefix}${value}`;
                     }
 
-                    return renderLink(value, `/order/sales-order/${row.pk}/`);
+                    var html = renderLink(value, `/order/sales-order/${row.pk}/`);
+
+                    if (row.overdue) {
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
+                    }
+
+                    return html;
                 },
             },
             {
@@ -268,6 +274,11 @@ function loadSalesOrderTable(table, options) {
                 sortable: true,
                 field: 'creation_date',
                 title: '{% trans "Creation Date" %}',
+            },
+            {
+                sortable: true,
+                field: 'target_date',
+                title: '{% trans "Target Date" %}',
             },
             {
                 sortable: true,

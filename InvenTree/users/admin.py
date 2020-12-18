@@ -87,6 +87,64 @@ class RoleGroupAdmin(admin.ModelAdmin):
         RuleSetInline,
     ]
 
+    list_display = ('name', 'admin', 'part', 'stock', 'build', 'purchase_order', 'sales_order')
+
+    def get_rule_set(self, obj, rule_set_type):
+        ''' Return list of permissions for the given ruleset '''
+
+        # Get all rulesets associated to object
+        rule_sets = RuleSet.objects.filter(group=obj.pk)
+
+        # Select ruleset based on type
+        for rule_set in rule_sets:
+            if rule_set.name == rule_set_type:
+                break
+
+        def append_permission_level(permission_level, next_level):
+            if not permission_level:
+                return next_level
+
+            if permission_level[:-1].endswith('|'):
+                permission_level += next_level
+            else:
+                permission_level += ' | ' + next_level
+
+            return permission_level
+
+        permission_level = ''
+
+        if rule_set.can_view:
+            permission_level = append_permission_level(permission_level, 'V')
+
+        if rule_set.can_add:
+            permission_level = append_permission_level(permission_level, 'A')
+
+        if rule_set.can_change:
+            permission_level = append_permission_level(permission_level, 'C')
+
+        if rule_set.can_delete:
+            permission_level = append_permission_level(permission_level, 'D')
+        
+        return permission_level
+
+    def admin(self, obj):
+        return self.get_rule_set(obj, 'admin')
+
+    def part(self, obj):
+        return self.get_rule_set(obj, 'part')
+
+    def stock(self, obj):
+        return self.get_rule_set(obj, 'stock')
+
+    def build(self, obj):
+        return self.get_rule_set(obj, 'build')
+
+    def purchase_order(self, obj):
+        return self.get_rule_set(obj, 'purchase_order')
+
+    def sales_order(self, obj):
+        return self.get_rule_set(obj, 'sales_order')
+
     def get_formsets_with_inlines(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
             # Hide RuleSetInline in the 'Add role' view

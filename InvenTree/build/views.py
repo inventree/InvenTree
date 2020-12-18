@@ -721,7 +721,7 @@ class BuildUpdate(AjaxUpdateView):
     model = Build
     form_class = forms.EditBuildForm
     context_object_name = 'build'
-    ajax_form_title = _('Edit Build Details')
+    ajax_form_title = _('Edit Build Order Details')
     ajax_template_name = 'modal_form.html'
     role_required = 'build.change'
 
@@ -764,7 +764,7 @@ class BuildDelete(AjaxDeleteView):
 
     model = Build
     ajax_template_name = 'build/delete_build.html'
-    ajax_form_title = _('Delete Build')
+    ajax_form_title = _('Delete Build Order')
     role_required = 'build.delete'
 
 
