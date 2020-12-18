@@ -266,6 +266,17 @@ class SOList(generics.ListCreateAPIView):
             else:
                 queryset = queryset.exclude(status__in=SalesOrderStatus.OPEN)
 
+        # Filter by 'overdue' status
+        overdue = params.get('overdue', None)
+
+        if overdue is not None:
+            overdue = str2bool(overdue)
+
+            if overdue:
+                queryset = queryset.filter(SalesOrder.OVERDUE_FILTER)
+            else:
+                queryset = queryset.exclude(SalesOrder.OVERDUE_FILTER)
+
         status = params.get('status', None)
 
         if status is not None:

@@ -29,6 +29,7 @@ InvenTree | {% trans "Index" %}
     {% endif %}
     {% if roles.sales_order.view %}
     {% include "InvenTree/so_outstanding.html" with collapse_id="so_outstanding" %}
+    {% include "InvenTree/so_overdue.html" with collapse_id="so_overdue" %}
     {% endif %}
 </div>
 
@@ -112,6 +113,14 @@ loadSalesOrderTable("#so-outstanding-table", {
     },
 });
 
+loadSalesOrderTable("#so-overdue-table", {
+    url: "{% url 'api-so-list' %}",
+    params: {
+        overdue: true,
+        customer_detail: true,
+    }
+});
+
 $("#latest-parts-table").on('load-success.bs.table', function() {
     var count = $("#latest-parts-table").bootstrapTable('getData').length;
 
@@ -164,6 +173,12 @@ $("#so-outstanding-table").on('load-success.bs.table', function() {
     var count = $("#so-outstanding-table").bootstrapTable('getData').length;
 
     $("#so-outstanding-count").html(count);
+});
+
+$("#so-overdue-table").on('load-success.bs.table', function() {
+    var count = $("#so-overdue-table").bootstrapTable('getData').length;
+
+    $("#so-overdue-count").html(count);
 });
 
 {% endblock %}
