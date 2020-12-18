@@ -31,11 +31,11 @@ class OrderTest(TestCase):
 
         self.assertEqual(order.get_absolute_url(), '/order/purchase-order/1/')
 
-        self.assertEqual(str(order), 'PO 0001 - ACME')
+        self.assertEqual(str(order), 'PO0001 - ACME')
         
         line = PurchaseOrderLineItem.objects.get(pk=1)
 
-        self.assertEqual(str(line), "100 x ACME0001 from ACME (for PO 0001 - ACME)")
+        self.assertEqual(str(line), "100 x ACME0001 from ACME (for PO0001 - ACME)")
 
     def test_increment(self):
 
