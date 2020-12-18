@@ -277,6 +277,11 @@ function loadSalesOrderTable(table, options) {
             },
             {
                 sortable: true,
+                field: 'target_date',
+                title: '{% trans "Target Date" %}',
+            },
+            {
+                sortable: true,
                 field: 'shipment_date',
                 title: '{% trans "Shipment Date" %}',
             },

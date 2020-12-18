@@ -188,7 +188,6 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
 
         fields = [
             'pk',
-            'shipment_date',
             'creation_date',
             'customer',
             'customer_detail',
@@ -202,6 +201,7 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
             'status',
             'status_text',
             'shipment_date',
+            'target_date',
         ]
 
         read_only_fields = [

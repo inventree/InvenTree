@@ -128,6 +128,13 @@ class EditSalesOrderForm(HelperForm):
 
         super().__init__(*args, **kwargs)
 
+    # TODO: Improve this using a better date picker
+    target_date = forms.DateField(
+        widget=forms.DateInput(
+            attrs={'type': 'date'},
+        )
+    )
+
     class Meta:
         model = SalesOrder
         fields = [
@@ -135,6 +142,7 @@ class EditSalesOrderForm(HelperForm):
             'customer',
             'customer_reference',
             'description',
+            'target_date',
             'link'
         ]
 
