@@ -1522,7 +1522,10 @@ class StockItemCreate(AjaxCreateView):
             form.rebuild_layout()
 
             if not part.purchaseable:
-                form.fields['purchase_price'].widget = HiddenInput()
+                # Disabling purchase_price field makes validation fail
+                # when form is called from the part detail page (Stock tab)
+                # form.fields['purchase_price'].widget = HiddenInput()
+                form.fields['purchase_price'].disabled = True
 
             # Hide the 'part' field (as a valid part is selected)
             # form.fields['part'].widget = HiddenInput()
