@@ -34,7 +34,7 @@ class InvenTreeURLField(models.URLField):
         })
 
 
-class InvenTreeDatePickerFormField(forms.DateField):
+class DatePickerFormField(forms.DateField):
     """
     Custom date-picker field
     """

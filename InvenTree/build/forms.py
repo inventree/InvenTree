@@ -10,7 +10,7 @@ from django import forms
 
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
-from InvenTree.fields import InvenTreeDatePickerFormField
+from InvenTree.fields import DatePickerFormField
 
 from .models import Build, BuildItem, BuildOrderAttachment
 
@@ -35,7 +35,7 @@ class EditBuildForm(HelperForm):
         'target_date': _('Order target date'),
     }
 
-    target_date = InvenTreeDatePickerFormField(
+    target_date = DatePickerFormField(
         help_text=_('Target date for build completion. Build will be overdue after this date.')
     )
 
