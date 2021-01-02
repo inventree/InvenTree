@@ -10,6 +10,7 @@ from django import forms
 
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
+from InvenTree.fields import InvenTreeDatePickerFormField
 
 from .models import Build, BuildItem, BuildOrderAttachment
 
@@ -26,18 +27,16 @@ class EditBuildForm(HelperForm):
         'batch': 'fa-layer-group',
         'serial-numbers': 'fa-hashtag',
         'location': 'fa-map-marker-alt',
+        'target_date': 'fa-calendar-alt',
     }
 
     field_placeholder = {
-        'reference': _('Build Order reference')
+        'reference': _('Build Order reference'),
+        'target_date': _('Order target date'),
     }
 
-    # TODO: Make this a more "presentable" date picker
-    # TODO: Currently does not render super nicely with crispy forms
-    target_date = forms.DateField(
-        widget=forms.DateInput(
-            attrs={'type': 'date'}
-        )
+    target_date = InvenTreeDatePickerFormField(
+        help_text=_('Target date for build completion. Build will be overdue after this date.')
     )
 
     class Meta:
