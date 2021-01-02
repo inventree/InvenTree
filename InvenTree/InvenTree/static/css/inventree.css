@@ -748,3 +748,6 @@ input[type="submit"] {
     to { transform: scale(1) rotate(360deg);}
 }
 
+input[type="date"].form-control, input[type="time"].form-control, input[type="datetime-local"].form-control, input[type="month"].form-control {
+	line-height: unset;
+}
