@@ -12,6 +12,7 @@ from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
+from InvenTree.fields import DatePickerFormField
 
 from stock.models import StockLocation
 from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
@@ -120,6 +121,7 @@ class EditSalesOrderForm(HelperForm):
         self.field_prefix = {
             'reference': 'SO',
             'link': 'fa-link',
+            'target_date': 'fa-calendar-alt',
         }
 
         self.field_placeholder = {
@@ -128,11 +130,8 @@ class EditSalesOrderForm(HelperForm):
 
         super().__init__(*args, **kwargs)
 
-    # TODO: Improve this using a better date picker
-    target_date = forms.DateField(
-        widget=forms.DateInput(
-            attrs={'type': 'date'},
-        )
+    target_date = DatePickerFormField(
+        help_text=_('Target date for order completion. Order will be overdue after this date.'),
     )
 
     class Meta:
