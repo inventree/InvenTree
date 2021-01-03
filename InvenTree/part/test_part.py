@@ -235,6 +235,8 @@ class PartSettingsTest(TestCase):
             InvenTreeSetting.set_setting('PART_PURCHASEABLE', val, self.user)
             InvenTreeSetting.set_setting('PART_SALABLE', val, self.user)
             InvenTreeSetting.set_setting('PART_TRACKABLE', val, self.user)
+            InvenTreeSetting.set_setting('PART_ASSEMBLY', val, self.user)
+            InvenTreeSetting.set_setting('PART_TEMPLATE', val, self.user)
 
             self.assertEqual(val, InvenTreeSetting.get_setting('PART_COMPONENT'))
             self.assertEqual(val, InvenTreeSetting.get_setting('PART_PURCHASEABLE'))
@@ -247,6 +249,8 @@ class PartSettingsTest(TestCase):
             self.assertEqual(part.purchaseable, val)
             self.assertEqual(part.salable, val)
             self.assertEqual(part.trackable, val)
+            self.assertEqual(part.assembly, val)
+            self.assertEqual(part.is_template, val)
     
             Part.objects.filter(pk=part.pk).delete()
 
