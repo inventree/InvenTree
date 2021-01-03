@@ -712,7 +712,8 @@ class Part(MPTTModel):
         delete_orphans=True,
     )
 
-    default_location = TreeForeignKey('stock.StockLocation',
+    default_location = TreeForeignKey(
+        'stock.StockLocation',
         on_delete=models.SET_NULL,
         blank=True, null=True,
         help_text=_('Where is this item normally stored?'),
