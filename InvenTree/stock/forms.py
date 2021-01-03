@@ -16,6 +16,7 @@ from mptt.fields import TreeNodeChoiceField
 from InvenTree.helpers import GetExportFormats
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
+from InvenTree.fields import DatePickerFormField
 
 from report.models import TestReport
 
@@ -392,6 +393,10 @@ class EditStockItemForm(HelperForm):
     part - Cannot be edited after creation
     """
 
+    expiry_date = DatePickerFormField(
+        help_text=('Expiration date for this stock item'),
+    )
+
     class Meta:
         model = StockItem
 
@@ -400,6 +405,7 @@ class EditStockItemForm(HelperForm):
             'serial',
             'batch',
             'status',
+            'expiry_date',
             'purchase_price',
             'link',
             'delete_on_deplete',
