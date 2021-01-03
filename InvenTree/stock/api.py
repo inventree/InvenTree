@@ -525,6 +525,17 @@ class StockList(generics.ListCreateAPIView):
                 # Exclude items which are instaled in another item
                 queryset = queryset.filter(belongs_to=None)
 
+        # Filter by 'expired' status
+        expired = params.get('expired', None)
+
+        if expired is not None:
+            expired = str2bool(expired)
+
+            if expired:
+                queryset = queryset.filter(StockItem.EXPIRED_FILTER)
+            else:
+                queryset = queryset.exclude(StockItem.EXPIRED_FILTER)
+
         # Filter by customer
         customer = params.get('customer', None)
 

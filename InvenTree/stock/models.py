@@ -150,6 +150,9 @@ class StockItem(MPTTModel):
         status__in=StockStatus.AVAILABLE_CODES
     )
 
+    # A query filter which can be used to filter StockItem objects which have expired
+    EXPIRED_FILTER = IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=datetime.now().date())
+
     def save(self, *args, **kwargs):
         """
         Save this StockItem to the database. Performs a number of checks:
