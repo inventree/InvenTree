@@ -230,9 +230,13 @@ class EditPartForm(HelperForm):
             'default_supplier',
             'units',
             'minimum_stock',
+            'component',
+            'assembly',
+            'is_template',
             'trackable',
             'purchaseable',
             'salable',
+            'virtual',
         ]
 
 
