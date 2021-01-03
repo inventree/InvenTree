@@ -319,7 +319,9 @@ class EditBomItemForm(HelperForm):
         ]
 
         # Prevent editing of the part associated with this BomItem
-        widgets = {'part': forms.HiddenInput()}
+        widgets = {
+            'part': forms.HiddenInput()
+        }
 
 
 class PartPriceForm(forms.Form):

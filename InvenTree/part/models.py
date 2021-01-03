@@ -1074,7 +1074,7 @@ class Part(MPTTModel):
 
         self.bom_items.all().delete()
 
-    def getRequiredParts(self, recursive=False, parts=set()):
+    def getRequiredParts(self, recursive=False, parts=None):
         """
         Return a list of parts required to make this part (i.e. BOM items).
 
@@ -1083,7 +1083,10 @@ class Part(MPTTModel):
             parts: Set of parts already found (to prevent recursion issues)
         """
 
-        items = self.bom_items.all().prefetch_related('sub_part')
+        if parts is None:
+            parts = set()
+
+        items = BomItem.objects.filter(part=self.pk)
 
         for bom_item in items:
 
