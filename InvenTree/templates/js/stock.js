@@ -532,6 +532,10 @@ function loadStockTable(table, options) {
                         html += makeIconBadge('fa-user', '{% trans "Stock item assigned to customer" %}');
                     }
 
+                    if (row.expired) {
+                        html += makeIconBadge('fa-stopwatch icon-red', '{% trans "Stock item has expired" %}');
+                    }
+
                     if (row.allocated) {
                         html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been allocated" %}');
                     }

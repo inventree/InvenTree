@@ -106,6 +106,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Depleted" %}',
                 description: '{% trans "Show stock items which are depleted" %}',
             },
+            expired: {
+                type: 'bool',
+                title: '{% trans "Expired" %}',
+                description: '{% trans "Show stock items which have expired" %}',
+            },
             in_stock: {
                 type: 'bool',
                 title: '{% trans "In Stock" %}',
