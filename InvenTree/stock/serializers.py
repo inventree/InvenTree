@@ -11,6 +11,9 @@ from .models import StockItemTestResult
 
 from django.db.models.functions import Coalesce
 
+from django.db.models import Case, When, Value
+from django.db.models import BooleanField
+
 from sql_util.utils import SubquerySum, SubqueryCount
 
 from decimal import Decimal
@@ -106,6 +109,16 @@ class StockItemSerializer(InvenTreeModelSerializer):
             tracking_items=SubqueryCount('tracking_info')
         )
 
+        # Add flag to indicate if the StockItem has expired
+        queryset = queryset.annotate(
+            expired=Case(
+                When(
+                    StockItem.EXPIRED_FILTER, then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField())
+            )
+        )
+
         return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -121,6 +134,8 @@ class StockItemSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
     
     allocated = serializers.FloatField(source='allocation_count', required=False)
+
+    expired = serializers.BooleanField()
 
     serial = serializers.CharField(required=False)
 
@@ -155,6 +170,8 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'belongs_to',
             'build',
             'customer',
+            'expired',
+            'expiry_date',
             'in_stock',
             'is_building',
             'link',
