@@ -125,6 +125,7 @@ class StockItem(MPTTModel):
         serial: Unique serial number for this StockItem
         link: Optional URL to link to external resource
         updated: Date that this stock item was last updated (auto)
+        expiry_date: Expiry date of the StockItem (optional)
         stocktake_date: Date of last stocktake for this item
         stocktake_user: User that performed the most recent stocktake
         review_needed: Flag if StockItem needs review
@@ -428,11 +429,19 @@ class StockItem(MPTTModel):
         related_name='stock_items',
         null=True, blank=True)
 
-    # last time the stock was checked / counted
+    expiry_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Expiry Date'),
+        help_text=_('Expiry date for stock item. Stock will be considered expired after this date'),
+    )
+
     stocktake_date = models.DateField(blank=True, null=True)
 
-    stocktake_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
-                                       related_name='stocktake_stock')
+    stocktake_user = models.ForeignKey(
+        User, on_delete=models.SET_NULL,
+        blank=True, null=True,
+        related_name='stocktake_stock'
+    )
 
     review_needed = models.BooleanField(default=False)
 
@@ -458,6 +467,27 @@ class StockItem(MPTTModel):
         verbose_name=_('Purchase Price'),
         help_text=_('Single unit purchase price at time of purchase'),
     )
+
+    def is_expired(self):
+        """
+        Returns true if this StockItem is "expired"
+
+        To be "expired", the following conditions must be met:
+
+        - Expiry date is not None
+        - Expiry date is "in the past"
+        - The StockItem is otherwise "in stock"
+        """
+
+        if self.expiry_date is None:
+            return False
+
+        if not self.in_stock:
+            return False
+
+        today = datetime.now().date()
+
+        return self.expiry_date < today
 
     def clearAllocations(self):
         """
@@ -721,36 +751,16 @@ class StockItem(MPTTModel):
     @property
     def in_stock(self):
         """
-        Returns True if this item is in stock
+        Returns True if this item is in stock.
 
         See also: IN_STOCK_FILTER
         """
 
-        # Quantity must be above zero (unless infinite)
-        if self.quantity <= 0 and not self.infinite:
-            return False
+        query = StockItem.objects.filter(pk=self.pk)
 
-        # Not 'in stock' if it has been installed inside another StockItem
-        if self.belongs_to is not None:
-            return False
-            
-        # Not 'in stock' if it has been sent to a customer
-        if self.sales_order is not None:
-            return False
+        query = query.filter(StockItem.IN_STOCK_FILTER)
 
-        # Not 'in stock' if it has been assigned to a customer
-        if self.customer is not None:
-            return False
-
-        # Not 'in stock' if it is building
-        if self.is_building:
-            return False
-
-        # Not 'in stock' if the status code makes it unavailable
-        if self.status in StockStatus.UNAVAILABLE_CODES:
-            return False
-
-        return True
+        return query.exists()
 
     @property
     def tracking_info_count(self):

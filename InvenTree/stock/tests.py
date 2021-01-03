@@ -49,6 +49,40 @@ class StockTest(TestCase):
         Part.objects.rebuild()
         StockItem.objects.rebuild()
 
+    def test_expiry(self):
+        """
+        Test expiry date functionality for StockItem model.
+        """
+
+        today = datetime.datetime.now().date()
+
+        item = StockItem.objects.create(
+            location=self.office,
+            part=Part.objects.get(pk=1),
+            quantity=10,
+        )
+
+        # Without an expiry_date set, item should not be "expired"
+        self.assertFalse(item.is_expired())
+
+        # Set the expiry date to today
+        item.expiry_date = today
+        item.save()
+
+        self.assertFalse(item.is_expired())
+
+        # Set the expiry date in the future
+        item.expiry_date = today + datetime.timedelta(days=5)
+        item.save()
+
+        self.assertFalse(item.is_expired())
+
+        # Set the expiry date in the past
+        item.expiry_date = today - datetime.timedelta(days=5)
+        item.save()
+
+        self.assertTrue(item.is_expired())
+
     def test_is_building(self):
         """
         Test that the is_building flag does not count towards stock.
