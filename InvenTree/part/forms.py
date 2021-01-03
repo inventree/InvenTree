@@ -236,6 +236,7 @@ class EditPartForm(HelperForm):
             'trackable',
             'purchaseable',
             'salable',
+            'virtual',
         ]
 
 

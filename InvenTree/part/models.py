@@ -802,11 +802,15 @@ class Part(MPTTModel):
         help_text=_('Is this part active?'))
 
     virtual = models.BooleanField(
-        default=False,
+        default=part_settings.part_virtual_default,
         verbose_name=_('Virtual'),
         help_text=_('Is this a virtual part, such as a software product or license?'))
 
-    notes = MarkdownxField(blank=True, null=True, help_text=_('Part notes - supports Markdown formatting'))
+    notes = MarkdownxField(
+        blank=True, null=True,
+        verbose_name=_('Notes'),
+        help_text=_('Part notes - supports Markdown formatting')
+    )
 
     bom_checksum = models.CharField(max_length=128, blank=True, help_text=_('Stored BOM checksum'))
 

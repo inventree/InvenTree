@@ -153,6 +153,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'PART_VIRTUAL': {
+            'name': _('Virtual'),
+            'description': _('Parts are virtual by default'),
+            'default': False,
+            'validator': bool,
+        },
+
         'BUILDORDER_REFERENCE_PREFIX': {
             'name': _('Build Order Reference Prefix'),
             'description': _('Prefix value for build order reference'),

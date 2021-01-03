@@ -24,6 +24,14 @@ def part_template_default():
     return InvenTreeSetting.get_setting('PART_TEMPLATE')
 
 
+def part_virtual_default():
+    """
+    Returns the default value for the 'is_virtual' field of Part object
+    """
+
+    return InvenTreeSetting.get_setting('PART_VIRTUAL')
+
+
 def part_component_default():
     """
     Returns the default value for the 'component' field of a Part object
