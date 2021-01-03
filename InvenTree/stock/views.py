@@ -1307,7 +1307,8 @@ class StockItemEdit(AjaxUpdateView):
         # If the part cannot be purchased, hide the supplier_part field
         if not item.part.purchaseable:
             form.fields['supplier_part'].widget = HiddenInput()
-            form.fields['purchase_price'].widget = HiddenInput()
+
+            form.fields.pop('purchase_price')
         else:
             query = form.fields['supplier_part'].queryset
             query = query.filter(part=item.part.id)
