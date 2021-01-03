@@ -134,6 +134,7 @@
   fields:
     name: 'Red chair'
     variant_of: 10000
+    IPN: "R.CH"
     trackable: true
     category: 7
     tree_id: 1

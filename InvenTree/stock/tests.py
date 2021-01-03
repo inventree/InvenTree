@@ -177,8 +177,10 @@ class StockTest(TestCase):
         # There should be 9000 screws in stock
         self.assertEqual(part.total_stock, 9000)
 
-        # There should be 18 widgets in stock
-        self.assertEqual(StockItem.objects.filter(part=25).aggregate(Sum('quantity'))['quantity__sum'], 19)
+        # There should be 16 widgets "in stock"
+        self.assertEqual(
+            StockItem.objects.filter(part=25).aggregate(Sum('quantity'))['quantity__sum'], 16
+        )
 
     def test_delete_location(self):
 

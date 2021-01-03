@@ -135,7 +135,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
     
     allocated = serializers.FloatField(source='allocation_count', required=False)
 
-    expired = serializers.BooleanField()
+    expired = serializers.BooleanField(required=False, read_only=True)
 
     serial = serializers.CharField(required=False)
 

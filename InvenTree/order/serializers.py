@@ -181,7 +181,7 @@ class SalesOrderSerializer(InvenTreeModelSerializer):
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
-    overdue = serializers.BooleanField()
+    overdue = serializers.BooleanField(required=False, read_only=True)
 
     class Meta:
         model = SalesOrder
