@@ -278,7 +278,7 @@ function loadStockTable(table, options) {
         
         if (row.is_building && row.build) {
             // StockItem is currently being built!
-            text = "{% trans "In production" %}";
+            text = '{% trans "In production" %}';
             url = `/build/${row.build}/`;
         } else if (row.belongs_to) {
             // StockItem is installed inside a different StockItem
@@ -286,17 +286,17 @@ function loadStockTable(table, options) {
             url = `/stock/item/${row.belongs_to}/installed/`;
         } else if (row.customer) {
             // StockItem has been assigned to a customer
-            text = "{% trans "Shipped to customer" %}";
+            text = '{% trans "Shipped to customer" %}';
             url = `/company/${row.customer}/assigned-stock/`;
         } else if (row.sales_order) {
             // StockItem has been assigned to a sales order
-            text = "{% trans "Assigned to Sales Order" %}";
+            text = '{% trans "Assigned to Sales Order" %}';
             url = `/order/sales-order/${row.sales_order}/`;
         } else if (row.location) {
             text = row.location_detail.pathstring;
             url = `/stock/location/${row.location}/`;
         } else {
-            text = "<i>{% trans "No stock location set" %}</i>";
+            text = '<i>{% trans "No stock location set" %}</i>';
             url = '';
         }
 
@@ -336,7 +336,13 @@ function loadStockTable(table, options) {
                 return html;
             }
             else if (field == 'part_detail.IPN') {
-                return row.part_detail.IPN;
+                var ipn = row.part_detail.IPN;
+
+                if (ipn) {
+                    return ipn;
+                } else {
+                    return '-';
+                }
             }
             else if (field == 'part_detail.description') {
                 return row.part_detail.description;
