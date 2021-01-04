@@ -35,6 +35,8 @@ from InvenTree.api import AttachmentMixin
 
 from decimal import Decimal, InvalidOperation
 
+from datetime import datetime, timedelta
+
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -342,8 +344,16 @@ class StockList(generics.ListCreateAPIView):
         # A location was *not* specified - try to infer it
         if 'location' not in request.data:
             location = item.part.get_default_location()
+            
             if location is not None:
                 item.location = location
+                item.save()
+
+        # An expiry date was *not* specified - try to infer it!
+        if 'expiry_date' not in request.data:
+            
+            if item.part.default_expiry > 0:
+                item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
                 item.save()
 
         # Return a response

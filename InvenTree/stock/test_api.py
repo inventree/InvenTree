@@ -368,6 +368,56 @@ class StockItemTest(StockAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_default_expiry(self):
+        """
+        Test that the "default_expiry" functionality works via the API.
+
+        - If an expiry_date is specified, use that
+        - Otherwise, check if the referenced part has a default_expiry defined
+            - If so, use that!
+            - Otherwise, no expiry
+        
+        Notes:
+            - Part <25> has a default_expiry of 10 days
+        
+        """
+
+        # First test - create a new StockItem without an expiry date
+        data = {
+            'part': 4,
+            'quantity': 10,
+        }
+
+        response = self.client.post(self.list_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.assertIsNone(response.data['expiry_date'])
+
+        # Second test - create a new StockItem with an explicit expiry date
+        data['expiry_date'] = '2022-12-12'
+
+        response = self.client.post(self.list_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.assertIsNotNone(response.data['expiry_date'])
+        self.assertEqual(response.data['expiry_date'], '2022-12-12')
+
+        # Third test - create a new StockItem for a Part which has a default expiry time
+        data = {
+            'part': 25,
+            'quantity': 10
+        }
+
+        response = self.client.post(self.list_url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Expected expiry date is 10 days in the future
+        expiry = datetime.now().date() + timedelta(10)
+
+        self.assertEqual(response.data['expiry_date'], expiry.isoformat())
+
 
 class StocktakeTest(StockAPITestCase):
     """
