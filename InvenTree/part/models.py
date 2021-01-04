@@ -291,11 +291,12 @@ class Part(MPTTModel):
         keywords: Optional keywords for improving part search results
         IPN: Internal part number (optional)
         revision: Part revision
-        is_template: If True, this part is a 'template' part and cannot be instantiated as a StockItem
+        is_template: If True, this part is a 'template' part
         link: Link to an external page with more information about this part (e.g. internal Wiki)
         image: Image of this part
         default_location: Where the item is normally stored (may be null)
         default_supplier: The default SupplierPart which should be used to procure and stock this part
+        default_expiry: The default expiry duration for any StockItem instances of this part
         minimum_stock: Minimum preferred quantity to keep in stock
         units: Units of measure for this part (default='pcs')
         salable: Can this part be sold to customers?
@@ -722,15 +723,34 @@ class Part(MPTTModel):
         # Default to None if there are multiple suppliers to choose from
         return None
 
-    default_supplier = models.ForeignKey(SupplierPart,
-                                         on_delete=models.SET_NULL,
-                                         blank=True, null=True,
-                                         help_text=_('Default supplier part'),
-                                         related_name='default_parts')
+    default_supplier = models.ForeignKey(
+        SupplierPart,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Default Supplier'),
+        help_text=_('Default supplier part'),
+        related_name='default_parts'
+    )
 
-    minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text=_('Minimum allowed stock level'))
+    default_expiry = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Default Expiry'),
+        help_text=_('Expiry time (in days) for stock items of this part'),
+    )
 
-    units = models.CharField(max_length=20, default="", blank=True, null=True, help_text=_('Stock keeping units for this part'))
+    minimum_stock = models.PositiveIntegerField(
+        default=0, validators=[MinValueValidator(0)],
+        verbose_name=_('Minimum Stock'),
+        help_text=_('Minimum allowed stock level')
+    )
+
+    units = models.CharField(
+        max_length=20, default="",
+        blank=True, null=True,
+        verbose_name=_('Units'),
+        help_text=_('Stock keeping units for this part')
+    )
 
     assembly = models.BooleanField(
         default=False,
