@@ -618,8 +618,8 @@ function loadStockTable(table, options) {
         if (action == 'move') {
             secondary.push({
                 field: 'destination',
-                label: 'New Location',
-                title: 'Create new location',
+                label: '{% trans "New Location" %}',
+                title: '{% trans "Create new location" %}',
                 url: "/stock/location/new/",
             });
         }
@@ -837,14 +837,25 @@ function createNewStockItem(options) {
                     }
                 );
 
-                // Disable serial number field if the part is not trackable
+                // Request part information from the server
                 inventreeGet(
                     `/api/part/${value}/`, {},
                     {
                         success: function(response) {
-
+                            
+                            // Disable serial number field if the part is not trackable
                             enableField('serial_numbers', response.trackable);
                             clearField('serial_numbers');
+
+                            // Populate the expiry date
+                            if (response.default_expiry <= 0) {
+                                // No expiry date
+                                clearField('expiry_date');
+                            } else {
+                                var expiry = moment().add(response.default_expiry, 'days');
+                                
+                                setFieldValue('expiry_date', expiry.format("YYYY-MM-DD"));
+                            }
                         }
                     }
                 );
