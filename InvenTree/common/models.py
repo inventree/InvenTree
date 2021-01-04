@@ -156,6 +156,10 @@ class InvenTreeSetting(models.Model):
         'PART_VIRTUAL': {
             'name': _('Virtual'),
             'description': _('Parts are virtual by default'),
+            'default': False,
+            'validator': bool,
+        },
+        
         'STOCK_ALLOW_EXPIRED_SALE': {
             'name': _('Sell Expired Stock'),
             'description': _('Allow sale of expired stock'),
