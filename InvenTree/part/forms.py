@@ -232,9 +232,13 @@ class EditPartForm(HelperForm):
             'default_expiry',
             'units',
             'minimum_stock',
+            'component',
+            'assembly',
+            'is_template',
             'trackable',
             'purchaseable',
             'salable',
+            'virtual',
         ]
 
 

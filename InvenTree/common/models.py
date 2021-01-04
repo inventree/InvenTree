@@ -110,7 +110,21 @@ class InvenTreeSetting(models.Model):
             'default': True,
             'validator': bool
         },
-      
+
+        'PART_TEMPLATE': {
+            'name': _('Template'),
+            'description': _('Parts are templates by default'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'PART_ASSEMBLY': {
+            'name': _('Assembly'),
+            'description': _('Parts can be assembled from other components by default'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PART_COMPONENT': {
             'name': _('Component'),
             'description': _('Parts can be used as sub-components by default'),
@@ -139,6 +153,9 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'PART_VIRTUAL': {
+            'name': _('Virtual'),
+            'description': _('Parts are virtual by default'),
         'STOCK_ALLOW_EXPIRED_SALE': {
             'name': _('Sell Expired Stock'),
             'description': _('Allow sale of expired stock'),
