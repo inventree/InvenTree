@@ -139,6 +139,20 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'STOCK_ALLOW_EXPIRED_SALE': {
+            'name': _('Sell Expired Stock'),
+            'description': _('Allow sale of expired stock'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'STOCK_ALLOW_EXPIRED_BUILD': {
+            'name': _('Build Expired Stock'),
+            'description': _('Allow building with expired stock'),
+            'default': False,
+            'validator': bool,
+        },
+
         'BUILDORDER_REFERENCE_PREFIX': {
             'name': _('Build Order Reference Prefix'),
             'description': _('Prefix value for build order reference'),
@@ -478,6 +492,19 @@ class InvenTreeSetting(models.Model):
         """
 
         return InvenTree.helpers.str2bool(self.value)
+
+    def is_int(self):
+        """
+        Check if the setting is required to be an integer value:
+
+        - int / 'int' = any integer value
+        - 'pos' / 'positive' = any positive integer value (including zero)
+        - 'neg' / 'negative' = any negative integer value (including zero)
+        """
+
+        valiator = InvenTreeSetting.get_setting_validator(self.key)
+
+        return validator in [int, 'int', 'pos', 'positive', 'neg', 'negative']
 
 
 class PriceBreak(models.Model):
