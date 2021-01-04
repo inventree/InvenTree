@@ -588,6 +588,11 @@ function loadStockTable(table, options) {
                 }
             },
             {
+                field: 'expiry_date',
+                title: '{% trans "Expiry Date" %}',
+                sortable: true,
+            },
+            {
                 field: 'notes',
                 title: '{% trans "Notes" %}',
             }
