@@ -159,7 +159,14 @@ class InvenTreeSetting(models.Model):
             'default': False,
             'validator': bool,
         },
-        
+
+        'STOCK_ENABLE_EXPIRY': {
+            'name': _('Stock Expiry'),
+            'description': _('Enable stock expiry functionality'),
+            'default': False,
+            'validator': bool,
+        },
+
         'STOCK_ALLOW_EXPIRED_SALE': {
             'name': _('Sell Expired Stock'),
             'description': _('Allow sale of expired stock'),
@@ -373,6 +380,10 @@ class InvenTreeSetting(models.Model):
             if setting.is_bool():
                 value = InvenTree.helpers.str2bool(value)
 
+            if setting.is_int():
+                # TODO - Coerce to an integer value
+                pass
+
         else:
             value = backup_value
 
@@ -523,7 +534,7 @@ class InvenTreeSetting(models.Model):
         - 'neg' / 'negative' = any negative integer value (including zero)
         """
 
-        valiator = InvenTreeSetting.get_setting_validator(self.key)
+        validator = InvenTreeSetting.get_setting_validator(self.key)
 
         return validator in [int, 'int', 'pos', 'positive', 'neg', 'negative']
 

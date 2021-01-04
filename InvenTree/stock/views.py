@@ -1302,6 +1302,10 @@ class StockItemEdit(AjaxUpdateView):
 
         form = super(AjaxUpdateView, self).get_form()
 
+        # Hide the "expiry date" field if the feature is not enabled
+        if not common.settings.stock_expiry_enabled():
+            form.fields.pop('expiry_date')
+
         item = self.get_object()
 
         # If the part cannot be purchased, hide the supplier_part field
@@ -1512,6 +1516,10 @@ class StockItemCreate(AjaxCreateView):
         """
 
         form = super().get_form()
+
+        # Hide the "expiry date" field if the feature is not enabled
+        if not common.settings.stock_expiry_enabled():
+            form.fields.pop('expiry_date')
 
         part = self.get_part(form=form)
 
