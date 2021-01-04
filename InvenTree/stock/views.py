@@ -26,7 +26,7 @@ from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
 from InvenTree.helpers import extract_serial_numbers
 
 from decimal import Decimal, InvalidOperation
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from company.models import Company, SupplierPart
 from part.models import Part
@@ -1595,6 +1595,11 @@ class StockItemCreate(AjaxCreateView):
             initials['part'] = part
             initials['location'] = part.get_default_location()
             initials['supplier_part'] = part.default_supplier
+
+            # If the part has a defined expiry period, extrapolate!
+            if part.default_expiry > 0:
+                expiry_date = datetime.now().date() + timedelta(days=part.default_expiry)
+                initials['expiry_date'] = expiry_date
 
         currency_code = common.settings.currency_code_default()
 

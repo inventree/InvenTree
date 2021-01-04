@@ -109,6 +109,10 @@ class ConvertStockItemForm(HelperForm):
 class CreateStockItemForm(HelperForm):
     """ Form for creating a new StockItem """
 
+    expiry_date = DatePickerFormField(
+        help_text=('Expiration date for this stock item'),
+    )
+
     serial_numbers = forms.CharField(label=_('Serial numbers'), required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
 
     def __init__(self, *args, **kwargs):
@@ -130,6 +134,7 @@ class CreateStockItemForm(HelperForm):
             'batch',
             'serial_numbers',
             'purchase_price',
+            'expiry_date',
             'link',
             'delete_on_deplete',
             'status',
