@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load inventree_extras %}
 {% load status_codes %}
 
 /* Stock API functions
@@ -587,11 +588,14 @@ function loadStockTable(table, options) {
                     return locationDetail(row);
                 }
             },
+            {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
+            {% if expiry %}
             {
                 field: 'expiry_date',
                 title: '{% trans "Expiry Date" %}',
                 sortable: true,
             },
+            {% endif %}
             {
                 field: 'notes',
                 title: '{% trans "Notes" %}',
