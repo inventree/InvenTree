@@ -24,6 +24,8 @@ from company.models import Company, SupplierPart
 from stock.models import StockItem, StockLocation
 from part.models import Part
 
+from common.models import InvenTreeSetting
+
 from . import forms as order_forms
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
@@ -1359,7 +1361,8 @@ class SalesOrderAllocationCreate(AjaxCreateView):
         try:
             line = SalesOrderLineItem.objects.get(pk=line_id)
 
-            queryset = form.fields['item'].queryset
+            # Construct a queryset for allowable stock items
+            queryset = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
 
             # Ensure the part reference matches
             queryset = queryset.filter(part=line.part)
@@ -1368,6 +1371,10 @@ class SalesOrderAllocationCreate(AjaxCreateView):
             allocated = [allocation.item.pk for allocation in line.allocations.all()]
 
             queryset = queryset.exclude(pk__in=allocated)
+
+            # Exclude stock items which have expired
+            if not InvenTreeSetting.get_setting('STOCK_ALLOW_EXPIRED_SALE'):
+                queryset = queryset.exclude(StockItem.EXPIRED_FILTER)
 
             form.fields['item'].queryset = queryset
 
