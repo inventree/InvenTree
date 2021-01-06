@@ -31,6 +31,7 @@ from datetime import datetime, timedelta
 from InvenTree import helpers
 
 import common.models
+import report.models
 
 from InvenTree.status_codes import StockStatus
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
@@ -1305,6 +1306,41 @@ class StockItem(MPTTModel):
         status = self.requiredTestStatus()
 
         return status['passed'] >= status['total']
+
+    def available_test_reports(self):
+        """
+        Return a list of TestReport objects which match this StockItem.
+        """
+
+        reports = []
+
+        item_query = StockItem.objects.filter(pk=self.pk)
+
+        for test_report in report.models.TestReport.objects.filter(enabled=True):
+
+            filters = helpers.validateFilterString(test_report.filters)
+
+            if item_query.filter(**filters).exists():
+                reports.append(test_report)
+
+        return reports
+
+    @property
+    def has_test_reports(self):
+        """
+        Return True if there are test reports available for this stock item
+        """
+
+        return len(self.available_test_reports()) > 0
+
+    @property
+    def has_labels(self):
+        """
+        Return True if there are any label templates available for this stock item
+        """
+
+        # TODO - Implement this
+        return True
 
 
 @receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
