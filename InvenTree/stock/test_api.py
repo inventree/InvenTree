@@ -15,6 +15,8 @@ from django.contrib.auth import get_user_model
 from InvenTree.helpers import addUserPermissions
 from InvenTree.status_codes import StockStatus
 
+from common.models import InvenTreeSetting
+
 from .models import StockItem, StockLocation
 
 
@@ -35,6 +37,9 @@ class StockAPITestCase(APITestCase):
         user = get_user_model()
         
         self.user = user.objects.create_user('testuser', 'test@testing.com', 'password')
+
+        self.user.is_staff = True
+        self.user.save()
 
         # Add the necessary permissions to the user
         perms = [
@@ -222,6 +227,13 @@ class StockItemListTest(StockAPITestCase):
         """
         Filter StockItem by expiry status
         """
+
+        # First, we can assume that the 'stock expiry' feature is disabled
+        response = self.get_stock(expired=1)
+        self.assertEqual(len(response), 19)
+
+        # Now, ensure that the expiry date feature is enabled!
+        InvenTreeSetting.set_setting('STOCK_ENABLE_EXPIRY', True, self.user)
 
         response = self.get_stock(expired=1)
         self.assertEqual(len(response), 1)
