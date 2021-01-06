@@ -27,8 +27,10 @@ from mptt.models import MPTTModel, TreeForeignKey
 from djmoney.models.fields import MoneyField
 
 from decimal import Decimal, InvalidOperation
-from datetime import datetime
+from datetime import datetime, timedelta
 from InvenTree import helpers
+
+import common.models
 
 from InvenTree.status_codes import StockStatus
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
@@ -471,9 +473,38 @@ class StockItem(MPTTModel):
         help_text=_('Single unit purchase price at time of purchase'),
     )
 
+    def is_stale(self):
+        """
+        Returns True if this Stock item is "stale".
+
+        To be "stale", the following conditions must be met:
+
+        - Expiry date is not None
+        - Expiry date will "expire" within the configured stale date
+        - The StockItem is otherwise "in stock"
+        """
+
+        if self.expiry_date is None:
+            return False
+
+        if not self.in_stock:
+            return False
+
+        today = datetime.now().date()
+
+        stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+
+        if stale_days <= 0:
+            return False
+
+        expiry_date = today + timedelta(days=stale_days)
+
+        return self.expiry_date < expiry_date
+
+
     def is_expired(self):
         """
-        Returns true if this StockItem is "expired"
+        Returns True if this StockItem is "expired".
 
         To be "expired", the following conditions must be met:
 
