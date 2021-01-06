@@ -566,10 +566,12 @@ class InvenTreeSetting(models.Model):
         """
 
         try:
-            value = int()
+            value = int(self.value)
         except (ValueError, TypeError):
-            return self.default_value()
+            value = self.default_value()
 
+        return value
+        
 
 class PriceBreak(models.Model):
     """

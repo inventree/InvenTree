@@ -501,7 +501,6 @@ class StockItem(MPTTModel):
 
         return self.expiry_date < expiry_date
 
-
     def is_expired(self):
         """
         Returns True if this StockItem is "expired".
