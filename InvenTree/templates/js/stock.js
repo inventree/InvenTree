@@ -534,7 +534,9 @@ function loadStockTable(table, options) {
                     }
 
                     if (row.expired) {
-                        html += makeIconBadge('fa-stopwatch icon-red', '{% trans "Stock item has expired" %}');
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Stock item has expired" %}');
+                    } else if (row.stale) {
+                        html += makeIconBadge('fa-stopwatch', '{% trans "Stock item will expire soon" %}');
                     }
 
                     if (row.allocated) {
