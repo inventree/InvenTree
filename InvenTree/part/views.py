@@ -35,6 +35,8 @@ from .models import PartSellPriceBreak
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
 
+import common.settings as inventree_settings
+
 from . import forms as part_forms
 from .bom import MakeBomTemplate, BomUploadManager, ExportBom, IsValidBOMFormat
 
@@ -626,6 +628,10 @@ class PartCreate(AjaxCreateView):
         """
         form = super(AjaxCreateView, self).get_form()
 
+        # Hide the "default expiry" field if the feature is not enabled
+        if not inventree_settings.stock_expiry_enabled():
+            form.fields.pop('default_expiry')
+
         # Hide the default_supplier field (there are no matching supplier parts yet!)
         form.fields['default_supplier'].widget = HiddenInput()
 
@@ -917,6 +923,10 @@ class PartEdit(AjaxUpdateView):
         """
 
         form = super(AjaxUpdateView, self).get_form()
+
+        # Hide the "default expiry" field if the feature is not enabled
+        if not inventree_settings.stock_expiry_enabled():
+            form.fields.pop('default_expiry')
 
         part = self.get_object()
 

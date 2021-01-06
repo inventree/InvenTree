@@ -1,0 +1,5 @@
+$("#{{ label }}-table").on('load-success.bs.table', function() {
+    var count = $("#{{ label }}-table").bootstrapTable('getData').length;
+
+    $("#{{ label }}-count").html(count);
+});

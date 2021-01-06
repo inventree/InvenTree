@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load inventree_extras %}
 {% block page_title %}
 InvenTree | {% trans "Index" %}
 {% endblock %}
@@ -8,7 +9,7 @@ InvenTree | {% trans "Index" %}
 <h3>InvenTree</h3>
 <hr>
 
-<div class='col-sm-6'>
+<div class='col-sm-4'>
     {% if roles.part.view %}
     {% include "InvenTree/latest_parts.html" with collapse_id="latest_parts" %}
     {% include "InvenTree/bom_invalid.html" with collapse_id="bom_invalid" %}
@@ -19,11 +20,18 @@ InvenTree | {% trans "Index" %}
     {% include "InvenTree/build_overdue.html" with collapse_id="build_overdue" %}
     {% endif %}
 </div>
-<div class='col-sm-6'>
+<div class='col-sm-4'>
     {% if roles.stock.view %}
     {% include "InvenTree/low_stock.html" with collapse_id="order" %}
+    {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
+    {% if expiry %}
+    {% include "InvenTree/expired_stock.html" with collapse_id="expired" %}
+    {% include "InvenTree/stale_stock.html" with collapse_id="stale" %}
+    {% endif %}
     {% include "InvenTree/required_stock_build.html" with collapse_id="stock_to_build" %}
     {% endif %}
+</div>
+<div class='col-sm-4'>
     {% if roles.purchase_order.view %}
     {% include "InvenTree/po_outstanding.html" with collapse_id="po_outstanding" %}
     {% endif %}
@@ -83,6 +91,23 @@ loadBuildTable("#build-overdue-table", {
     disableFilters: true,
 });
 
+loadStockTable($("#expired-stock-table"), {
+    params: {
+        expired: true,
+        location_detail: true,
+        part_detail: true,
+    },
+});
+
+loadStockTable($("#stale-stock-table"), {
+    params: {
+        stale: true,
+        expired: false,
+        location_detail: true,
+        part_detail: true,
+    },
+});
+
 loadSimplePartTable("#low-stock-table", "{% url 'api-part-list' %}", {
     params: {
         low_stock: true,
@@ -121,64 +146,19 @@ loadSalesOrderTable("#so-overdue-table", {
     }
 });
 
-$("#latest-parts-table").on('load-success.bs.table', function() {
-    var count = $("#latest-parts-table").bootstrapTable('getData').length;
+{% include "InvenTree/index/on_load.html" with label="latest-parts" %}
+{% include "InvenTree/index/on_load.html" with label="starred-parts" %}
+{% include "InvenTree/index/on_load.html" with label="bom-invalid" %}
+{% include "InvenTree/index/on_load.html" with label="build-pending" %}
+{% include "InvenTree/index/on_load.html" with label="build-overdue" %}
 
-    $("#latest-parts-count").html(count);
-});
+{% include "InvenTree/index/on_load.html" with label="expired-stock" %}
+{% include "InvenTree/index/on_load.html" with label="stale-stock" %}
+{% include "InvenTree/index/on_load.html" with label="low-stock" %}
+{% include "InvenTree/index/on_load.html" with label="stock-to-build" %}
 
-$("#starred-parts-table").on('load-success.bs.table', function() {
-    var count = $("#starred-parts-table").bootstrapTable('getData').length;
-
-    $("#starred-parts-count").html(count);
-});
-
-$("#bom-invalid-table").on('load-success.bs.table', function() {
-    var count = $("#bom-invalid-table").bootstrapTable('getData').length;
-
-    $("#bom-invalid-count").html(count);
-});
-
-$("#build-pending-table").on('load-success.bs.table', function() {
-    var count = $("#build-pending-table").bootstrapTable('getData').length;
-
-    $("#build-pending-count").html(count);
-});
-
-$("#build-overdue-table").on('load-success.bs.table', function() {
-    var count = $("#build-overdue-table").bootstrapTable('getData').length;
-
-    $("#build-overdue-count").html(count);
-});
-
-$("#low-stock-table").on('load-success.bs.table', function() {
-    var count = $("#low-stock-table").bootstrapTable('getData').length;
-
-    $("#low-stock-count").html(count);
-});
-
-$("#stock-to-build-table").on('load-success.bs.table', function() {
-    var count = $("#stock-to-build-table").bootstrapTable('getData').length;
-
-    $("#stock-to-build-count").html(count);
-});
-
-$("#po-outstanding-table").on('load-success.bs.table', function() {
-    var count = $("#po-outstanding-table").bootstrapTable('getData').length;
-
-    $("#po-outstanding-count").html(count);
-});
-
-$("#so-outstanding-table").on('load-success.bs.table', function() {
-    var count = $("#so-outstanding-table").bootstrapTable('getData').length;
-
-    $("#so-outstanding-count").html(count);
-});
-
-$("#so-overdue-table").on('load-success.bs.table', function() {
-    var count = $("#so-overdue-table").bootstrapTable('getData').length;
-
-    $("#so-overdue-count").html(count);
-});
+{% include "InvenTree/index/on_load.html" with label="po-outstanding" %}
+{% include "InvenTree/index/on_load.html" with label="so-outstanding" %}
+{% include "InvenTree/index/on_load.html" with label="so-overdue" %}
 
 {% endblock %}

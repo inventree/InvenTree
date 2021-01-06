@@ -109,6 +109,13 @@
             <td>{{ part.minimum_stock }}</td>
         </tr>
         {% endif %}
+        {% if part.default_expiry > 0 %}
+        <tr>
+            <td><span class='fas fa-stopwatch'></span></td>
+            <td><b>{% trans "Stock Expiry Time" %}</b></td>
+            <td>{{ part.default_expiry }} {% trans "days" %}</td>
+        </tr>
+        {% endif %}
         <tr>
             <td><span class='fas fa-calendar-alt'></span></td>
             <td><b>{% trans "Creation Date" %}</b></td>

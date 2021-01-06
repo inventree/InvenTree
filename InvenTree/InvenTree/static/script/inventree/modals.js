@@ -151,12 +151,17 @@ function enableField(fieldName, enabled, options={}) {
 }
 
 function clearField(fieldName, options={}) {
+    
+    setFieldValue(fieldName, '', options);
+}
+
+function setFieldValue(fieldName, value, options={}) {
 
     var modal = options.modal || '#modal-form';
 
     var field = getFieldByName(modal, fieldName);
 
-    field.val("");
+    field.val(value);
 }
 
 
