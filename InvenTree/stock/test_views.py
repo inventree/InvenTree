@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
+from common.models import InvenTreeSetting
+
 import json
 from datetime import datetime, timedelta
 
@@ -31,6 +33,9 @@ class StockViewTestCase(TestCase):
             email='user@email.com',
             password='password'
         )
+
+        self.user.is_staff = True
+        self.user.save()
 
         # Put the user into a group with the correct permissions
         group = Group.objects.create(name='mygroup')
@@ -162,6 +167,9 @@ class StockItemTest(StockViewTestCase):
         The initial value for the "expiry_date" field should be pre-filled,
         and should be in the future!
         """
+
+        # First, ensure that the expiry date feature is enabled!
+        InvenTreeSetting.set_setting('STOCK_ENABLE_EXPIRY', True, self.user)
 
         url = reverse('stock-item-create')
 
