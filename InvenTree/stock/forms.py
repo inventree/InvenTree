@@ -247,7 +247,7 @@ class TestReportFormatForm(HelperForm):
         templates = TestReport.objects.filter(enabled=True)
 
         for template in templates:
-            if template.matches_stock_item(self.stock_item):
+            if template.enabled and template.matches_stock_item(self.stock_item):
                 choices.append((template.pk, template))
 
         return choices

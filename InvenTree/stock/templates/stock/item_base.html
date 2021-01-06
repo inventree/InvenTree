@@ -108,16 +108,29 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
             <li><a href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
-            <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
             {% if roles.stock.change %}
-                {% if item.uid %}
-                <li><a href='#' id='unlink-barcode'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+            {% if item.uid %}
+            <li><a href='#' id='unlink-barcode'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
                 {% else %}
                 <li><a href='#' id='link-barcode'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
                 {% endif %}
-            {% endif %}
+                {% endif %}
+            </ul>
+        </div>
+        <!-- Document / label menu -->
+        {% if item.has_labels or item.has_test_reports %}
+        <div class='btn-group'>
+            <button id='document-options' title='{% trans "Document actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-file-alt'></span> <span class='caret'></span></button>
+            <ul class='dropdown-menu' role='menu'>
+                {% if item.has_labels %}
+                <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+                {% endif %}
+                {% if item.has_test_reports %}
+                <li><a href='#' id='stock-test-report'><span class='fas fa-file-pdf'></span> {% trans "Test Report" %}</a></li>
+                {% endif %}
         </ul>
     </div>
+    {% endif %}
     <!-- Stock adjustment menu -->
     {% if roles.stock.change and not item.is_building %}
     <div class='btn-group'>
@@ -168,9 +181,6 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         </ul>
     </div>
     {% endif %}
-    <button type='button' class='btn btn-default' id='stock-test-report' title='{% trans "Generate test report" %}'>
-        <span class='fas fa-file-invoice'/>
-    </button>
 </div>
 
 {% endblock %}
