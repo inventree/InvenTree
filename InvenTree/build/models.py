@@ -27,7 +27,7 @@ from InvenTree.helpers import increment, getSetting, normalize
 from InvenTree.validators import validate_build_order_reference
 from InvenTree.models import InvenTreeAttachment
 
-from common.models import InvenTreeSetting
+import common.models
 
 import InvenTree.fields
 
@@ -822,7 +822,7 @@ class Build(MPTTModel):
             )
 
         # Exclude expired stock items
-        if not InvenTreeSetting.get_setting('STOCK_ALLOW_EXPIRED_BUILD'):
+        if not common.models.InvenTreeSetting.get_setting('STOCK_ALLOW_EXPIRED_BUILD'):
             items = items.exclude(StockModels.StockItem.EXPIRED_FILTER)
 
         return items

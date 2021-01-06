@@ -174,6 +174,14 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'STOCK_STALE_DAYS': {
+            'name': _('Stock Stale Time'),
+            'description': _('Number of days stock items are considered stale before expiring'),
+            'default': 0,
+            'units': _('days'),
+            'validator': [int],
+        },
+
         'STOCK_ALLOW_EXPIRED_BUILD': {
             'name': _('Build Expired Stock'),
             'description': _('Allow building with expired stock'),
@@ -381,8 +389,10 @@ class InvenTreeSetting(models.Model):
                 value = InvenTree.helpers.str2bool(value)
 
             if setting.is_int():
-                # TODO - Coerce to an integer value
-                pass
+                try:
+                    value = int(value)
+                except (ValueError, TypeError):
+                    value = backup_value
 
         else:
             value = backup_value
@@ -472,18 +482,26 @@ class InvenTreeSetting(models.Model):
             
             return
 
-        # Check if a 'type' has been specified for this value
-        if type(validator) == type:
+        # Boolean validator
+        if validator == bool:
+            # Value must "look like" a boolean value
+            if InvenTree.helpers.is_bool(self.value):
+                # Coerce into either "True" or "False"
+                self.value = str(InvenTree.helpers.str2bool(self.value))
+            else:
+                raise ValidationError({
+                    'value': _('Value must be a boolean value')
+                })
 
-            if validator == bool:
-                # Value must "look like" a boolean value
-                if InvenTree.helpers.is_bool(self.value):
-                    # Coerce into either "True" or "False"
-                    self.value = str(InvenTree.helpers.str2bool(self.value))
-                else:
-                    raise ValidationError({
-                        'value': _('Value must be a boolean value')
-                    })
+        # Integer validator
+        if validator == int:
+            try:
+                # Coerce into an integer value
+                self.value = str(int(self.value))
+            except (ValueError, TypeError):
+                raise ValidationError({
+                    'value': _('Value must be an integer value'),
+                })
 
     def validate_unique(self, exclude=None):
         """ Ensure that the key:value pair is unique.
@@ -528,15 +546,29 @@ class InvenTreeSetting(models.Model):
     def is_int(self):
         """
         Check if the setting is required to be an integer value:
-
-        - int / 'int' = any integer value
-        - 'pos' / 'positive' = any positive integer value (including zero)
-        - 'neg' / 'negative' = any negative integer value (including zero)
         """
 
         validator = InvenTreeSetting.get_setting_validator(self.key)
 
-        return validator in [int, 'int', 'pos', 'positive', 'neg', 'negative']
+        if validator == int:
+            return True
+        
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                if v == int:
+                    return True
+
+    def as_int(self):
+        """
+        Return the value of this setting converted to a boolean value.
+        
+        If an error occurs, return the default value
+        """
+
+        try:
+            value = int()
+        except (ValueError, TypeError):
+            return self.default_value()
 
 
 class PriceBreak(models.Model):
