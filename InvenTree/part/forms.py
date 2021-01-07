@@ -181,6 +181,7 @@ class EditPartForm(HelperForm):
         'keywords': 'fa-key',
         'link': 'fa-link',
         'IPN': 'fa-hashtag',
+        'default_expiry': 'fa-stopwatch',
     }
 
     bom_copy = forms.BooleanField(required=False,
@@ -228,11 +229,16 @@ class EditPartForm(HelperForm):
             'link',
             'default_location',
             'default_supplier',
+            'default_expiry',
             'units',
             'minimum_stock',
+            'component',
+            'assembly',
+            'is_template',
             'trackable',
             'purchaseable',
             'salable',
+            'virtual',
         ]
 
 

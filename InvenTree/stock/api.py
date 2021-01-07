@@ -23,6 +23,9 @@ from part.serializers import PartBriefSerializer
 from company.models import SupplierPart
 from company.serializers import SupplierPartSerializer
 
+import common.settings
+import common.models
+
 from .serializers import StockItemSerializer
 from .serializers import LocationSerializer, LocationBriefSerializer
 from .serializers import StockTrackingSerializer
@@ -34,6 +37,8 @@ from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
 
 from decimal import Decimal, InvalidOperation
+
+from datetime import datetime, timedelta
 
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
@@ -342,8 +347,16 @@ class StockList(generics.ListCreateAPIView):
         # A location was *not* specified - try to infer it
         if 'location' not in request.data:
             location = item.part.get_default_location()
+            
             if location is not None:
                 item.location = location
+                item.save()
+
+        # An expiry date was *not* specified - try to infer it!
+        if 'expiry_date' not in request.data:
+            
+            if item.part.default_expiry > 0:
+                item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
                 item.save()
 
         # Return a response
@@ -524,6 +537,38 @@ class StockList(generics.ListCreateAPIView):
             else:
                 # Exclude items which are instaled in another item
                 queryset = queryset.filter(belongs_to=None)
+
+        if common.settings.stock_expiry_enabled():
+
+            # Filter by 'expired' status
+            expired = params.get('expired', None)
+
+            if expired is not None:
+                expired = str2bool(expired)
+
+                if expired:
+                    queryset = queryset.filter(StockItem.EXPIRED_FILTER)
+                else:
+                    queryset = queryset.exclude(StockItem.EXPIRED_FILTER)
+
+            # Filter by 'stale' status
+            stale = params.get('stale', None)
+
+            if stale is not None:
+                stale = str2bool(stale)
+
+                # How many days to account for "staleness"?
+                stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+
+                if stale_days > 0:
+                    stale_date = datetime.now().date() + timedelta(days=stale_days)
+                    
+                    stale_filter = StockItem.IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=stale_date)
+
+                    if stale:
+                        queryset = queryset.filter(stale_filter)
+                    else:
+                        queryset = queryset.exclude(stale_filter)
 
         # Filter by customer
         customer = params.get('customer', None)

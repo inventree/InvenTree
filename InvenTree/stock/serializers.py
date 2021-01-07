@@ -11,10 +11,17 @@ from .models import StockItemTestResult
 
 from django.db.models.functions import Coalesce
 
+from django.db.models import Case, When, Value
+from django.db.models import BooleanField
+from django.db.models import Q
+
 from sql_util.utils import SubquerySum, SubqueryCount
 
 from decimal import Decimal
 
+from datetime import datetime, timedelta
+
+import common.models
 from company.serializers import SupplierPartSerializer
 from part.serializers import PartBriefSerializer
 from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer
@@ -106,6 +113,30 @@ class StockItemSerializer(InvenTreeModelSerializer):
             tracking_items=SubqueryCount('tracking_info')
         )
 
+        # Add flag to indicate if the StockItem has expired
+        queryset = queryset.annotate(
+            expired=Case(
+                When(
+                    StockItem.EXPIRED_FILTER, then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField())
+            )
+        )
+
+        # Add flag to indicate if the StockItem is stale
+        stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+        stale_date = datetime.now().date() + timedelta(days=stale_days)
+        stale_filter = StockItem.IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=stale_date)
+
+        queryset = queryset.annotate(
+            stale=Case(
+                When(
+                    stale_filter, then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField()),
+            )
+        )
+
         return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -121,6 +152,10 @@ class StockItemSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
     
     allocated = serializers.FloatField(source='allocation_count', required=False)
+
+    expired = serializers.BooleanField(required=False, read_only=True)
+
+    stale = serializers.BooleanField(required=False, read_only=True)
 
     serial = serializers.CharField(required=False)
 
@@ -155,6 +190,8 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'belongs_to',
             'build',
             'customer',
+            'expired',
+            'expiry_date',
             'in_stock',
             'is_building',
             'link',
@@ -168,6 +205,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'required_tests',
             'sales_order',
             'serial',
+            'stale',
             'status',
             'status_text',
             'supplier_part',

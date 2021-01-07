@@ -152,6 +152,11 @@ class SalesOrderStatus(StatusCode):
         PENDING,
     ]
 
+    # Completed orders
+    COMPLETE = [
+        SHIPPED,
+    ]
+
 
 class StockStatus(StatusCode):
 

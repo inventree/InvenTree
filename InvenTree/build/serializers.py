@@ -28,7 +28,7 @@ class BuildSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
 
-    overdue = serializers.BooleanField()
+    overdue = serializers.BooleanField(required=False, read_only=True)
 
     @staticmethod
     def annotate_queryset(queryset):

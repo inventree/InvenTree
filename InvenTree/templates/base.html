@@ -40,6 +40,7 @@
 <link rel="stylesheet" href="{% static 'css/select2-bootstrap.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap-toggle.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap-table-filter-control.css' %}">
+<link rel="stylesheet" href="{% static 'fullcalendar/main.css' %}">
 <link rel="stylesheet" href="{% static 'css/inventree.css' %}">
 <link rel="stylesheet" href="{% get_color_theme_css user.get_username %}">
 
@@ -103,6 +104,7 @@ InvenTree
 <script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-table-filter-control.js' %}"></script>
 <!-- <script type='text/javascript' src="{% static 'script/bootstrap/filter-control-utils.js' %}"></script> -->
 
+<script type="text/javascript" src="{% static 'fullcalendar/main.js' %}"></script>
 <script type="text/javascript" src="{% static 'script/select2/select2.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
 
@@ -121,6 +123,7 @@ InvenTree
 <script type='text/javascript' src="{% url 'stock.js' %}"></script>
 <script type='text/javascript' src="{% url 'build.js' %}"></script>
 <script type='text/javascript' src="{% url 'order.js' %}"></script>
+<script type='text/javascript' src="{% url 'calendar.js' %}"></script>
 <script type='text/javascript' src="{% url 'table_filters.js' %}"></script>
 
 <script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>

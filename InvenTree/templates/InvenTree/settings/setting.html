@@ -3,6 +3,11 @@
 
 {% setting_object key as setting %}
 <tr>
+    <td>
+        {% if icon %}
+        <span class='fas {{ icon }}'></span>
+        {% endif %}
+    </td>
     <td><b>{{ setting.name }}</b></td>
     <td>
         {% if setting.is_bool %}
@@ -11,7 +16,9 @@
         </div>
         {% else %}
         {% if setting.value %}
-        <b>{{ setting.value }}</b>{{ setting.units }}</td>
+        <i><b>
+            {{ setting.value }}</b> {{ setting.units }}
+        </i>
         {% else %}
         <i>{% trans "No value set" %}</i>
         {% endif %}

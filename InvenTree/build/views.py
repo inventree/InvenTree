@@ -903,6 +903,7 @@ class BuildItemCreate(AjaxCreateView):
 
         if self.build and self.part:
             available_items = self.build.availableStockItems(self.part, self.output)
+
             form.fields['stock_item'].queryset = available_items
 
         self.available_stock = form.fields['stock_item'].queryset.all()

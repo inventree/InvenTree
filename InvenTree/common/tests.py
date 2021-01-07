@@ -31,7 +31,7 @@ class SettingsTest(TestCase):
         # There should be two settings objects in the database
         settings = InvenTreeSetting.objects.all()
 
-        self.assertEqual(settings.count(), 2)
+        self.assertTrue(settings.count() >= 2)
 
         instance_name = InvenTreeSetting.objects.get(pk=1)
         self.assertEqual(instance_name.key, 'INVENTREE_INSTANCE')

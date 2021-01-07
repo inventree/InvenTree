@@ -21,3 +21,11 @@ def currency_code_default():
         code = 'USD'
     
     return code
+
+
+def stock_expiry_enabled():
+    """
+    Returns True if the stock expiry feature is enabled
+    """
+
+    return InvenTreeSetting.get_setting('STOCK_ENABLE_EXPIRY')

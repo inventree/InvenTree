@@ -88,11 +88,20 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Status" %}</td>
         <td>
             {% build_status_label build.status %}
+        </td>
+    </tr>
+    {% if build.target_date %}
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Target Date" %}</td>
+        <td>
+            {{ build.target_date }}
             {% if build.is_overdue %}
             <span title='{% trans "This build was due on" %} {{ build.target_date }}' class='label label-red'>{% trans "Overdue" %}</span>
             {% endif %}
         </td>
     </tr>
+    {% endif %}
     <tr>
         <td><span class='fas fa-spinner'></span></td>
         <td>{% trans "Progress" %}</td>

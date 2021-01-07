@@ -16,7 +16,7 @@ from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 
-from stock.models import StockItem
+import stock.models
 
 from InvenTree.helpers import validateFilterString
 
@@ -191,7 +191,7 @@ class TestReport(ReportTemplateBase):
 
         filters = validateFilterString(self.filters)
 
-        items = StockItem.objects.filter(**filters)
+        items = stock.models.StockItem.objects.filter(**filters)
 
         # Ensure the provided StockItem object matches the filters
         items = items.filter(pk=item.pk)
