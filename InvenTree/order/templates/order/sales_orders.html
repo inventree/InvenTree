@@ -12,10 +12,7 @@ InvenTree | {% trans "Sales Orders" %}
 
 <h3>{% trans "Sales Orders" %}</h3>
 <hr>
-
-<div class='calendar-container' style="width: 80%; align-items: center; align-content: center;">
-    <div id='calendar'></div>
-</div>
+    
 
 <div id='table-buttons'>
     <div class='button-toolbar container-fluid' style='float: right;'>
@@ -23,6 +20,12 @@ InvenTree | {% trans "Sales Orders" %}
         <button class='btn btn-primary' type='button' id='so-create' title='{% trans "Create new sales order" %}'>
             <span class='fas fa-plus-circle'></span> {% trans "New Sales Order" %}</button>
         {% endif %}
+        <button class='btn btn-default' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
+            <span class='fas fa-calendar-alt'></span>
+        </button>
+        <button class='btn btn-default' type='button' id='view-list' title='{% trans "Display list view" %}'>
+            <span class='fas fa-th-list'></span>
+        </button>
         <div class='filter-list' id='filter-list-salesorder'>
             <!-- An empty div in which the filter list will be constructed -->
         </div>
@@ -31,6 +34,9 @@ InvenTree | {% trans "Sales Orders" %}
 
 <table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='sales-order-table'>
 </table>
+<div id='sales-order-calendar'></div>
+
+
 
 {% endblock %}
 
@@ -113,11 +119,11 @@ InvenTree | {% trans "Sales Orders" %}
     var calendar = null;
 
     document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
+        var calendarEl = document.getElementById('sales-order-calendar');
         calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             nowIndicator: true,
-            aspectRatio: 2,
+            aspectRatio: 2.5,
             width: '80%',
             datesSet: function() {
                 loadOrderEvents(calendar);
@@ -133,6 +139,32 @@ InvenTree | {% trans "Sales Orders" %}
 {% block js_ready %}
 {{ block.super }}
 
+$("#sales-order-calendar").hide();
+$("#view-list").hide();
+
+$('#view-calendar').click(function() {
+    // Hide the list view, show the calendar view
+    $("#sales-order-table").hide();
+    $("#view-calendar").hide();
+    $(".fixed-table-pagination").hide();
+    $(".columns-right").hide();
+    $(".search").hide();
+    
+    $("#sales-order-calendar").show();
+    $("#view-list").show();
+});
+
+$("#view-list").click(function() {
+    // Hide the calendar view, show the list view
+    $("#sales-order-calendar").hide();
+    $("#view-list").hide();
+
+    $(".fixed-table-pagination").show();
+    $(".columns-right").show();
+    $(".search").show();
+    $("#sales-order-table").show();
+    $("#view-calendar").show();
+});
 
 loadSalesOrderTable("#sales-order-table", {
     url: "{% url 'api-so-list' %}",
