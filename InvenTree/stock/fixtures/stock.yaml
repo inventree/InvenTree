@@ -81,7 +81,7 @@
     part: 25
     batch: 'ABCDE'
     location: 7
-    quantity: 3
+    quantity: 0
     level: 0
     tree_id: 0
     lft: 0
@@ -232,6 +232,7 @@
     tree_id: 0
     lft: 0
     rght: 0
+    expiry_date: "1990-10-10"
 
 - model: stock.stockitem
   pk: 521
@@ -244,6 +245,7 @@
     tree_id: 0
     lft: 0
     rght: 0
+    status: 60
 
 - model: stock.stockitem
   pk: 522
@@ -256,3 +258,5 @@
     tree_id: 0
     lft: 0
     rght: 0
+    expiry_date: "1990-10-10"
+    status: 70

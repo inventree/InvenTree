@@ -8,6 +8,30 @@ from __future__ import unicode_literals
 from common.models import InvenTreeSetting
 
 
+def part_assembly_default():
+    """
+    Returns the default value for the 'assembly' field of a Part object
+    """
+
+    return InvenTreeSetting.get_setting('PART_ASSEMBLY')
+
+
+def part_template_default():
+    """
+    Returns the default value for the 'is_template' field of a Part object
+    """
+
+    return InvenTreeSetting.get_setting('PART_TEMPLATE')
+
+
+def part_virtual_default():
+    """
+    Returns the default value for the 'is_virtual' field of Part object
+    """
+
+    return InvenTreeSetting.get_setting('PART_VIRTUAL')
+
+
 def part_component_default():
     """
     Returns the default value for the 'component' field of a Part object

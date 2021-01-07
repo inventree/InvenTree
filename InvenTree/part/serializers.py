@@ -289,6 +289,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'component',
             'description',
             'default_location',
+            'default_expiry',
             'full_name',
             'image',
             'in_stock',

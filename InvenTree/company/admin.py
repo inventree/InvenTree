@@ -38,7 +38,9 @@ class CompanyAdmin(ImportExportModelAdmin):
 
 
 class SupplierPartResource(ModelResource):
-    """ Class for managing SupplierPart data import/export """
+    """
+    Class for managing SupplierPart data import/export
+    """
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
@@ -51,7 +53,7 @@ class SupplierPartResource(ModelResource):
     class Meta:
         model = SupplierPart
         skip_unchanged = True
-        report_skipped = False
+        report_skipped = True
         clean_model_instances = True
 
 

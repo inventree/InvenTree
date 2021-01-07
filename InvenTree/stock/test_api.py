@@ -1,11 +1,23 @@
+"""
+Unit testing for the Stock API
+"""
+
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from datetime import datetime, timedelta
+
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
 from InvenTree.helpers import addUserPermissions
+from InvenTree.status_codes import StockStatus
 
-from .models import StockLocation
+from common.models import InvenTreeSetting
+
+from .models import StockItem, StockLocation
 
 
 class StockAPITestCase(APITestCase):
@@ -25,6 +37,9 @@ class StockAPITestCase(APITestCase):
         user = get_user_model()
         
         self.user = user.objects.create_user('testuser', 'test@testing.com', 'password')
+
+        self.user.is_staff = True
+        self.user.save()
 
         # Add the necessary permissions to the user
         perms = [
@@ -76,6 +91,177 @@ class StockLocationTest(StockAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
+class StockItemListTest(StockAPITestCase):
+    """
+    Tests for the StockItem API LIST endpoint
+    """
+
+    list_url = reverse('api-stock-list')
+
+    def get_stock(self, **kwargs):
+        """
+        Filter stock and return JSON object
+        """
+
+        response = self.client.get(self.list_url, format='json', data=kwargs)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Return JSON-ified data
+        return response.data
+
+    def test_get_stock_list(self):
+        """
+        List *all* StockItem objects.
+        """
+
+        response = self.get_stock()
+
+        self.assertEqual(len(response), 19)
+
+    def test_filter_by_part(self):
+        """
+        Filter StockItem by Part reference
+        """
+
+        response = self.get_stock(part=25)
+        
+        self.assertEqual(len(response), 7)
+
+        response = self.get_stock(part=10004)
+
+        self.assertEqual(len(response), 12)
+
+    def test_filter_by_IPN(self):
+        """
+        Filter StockItem by IPN reference
+        """
+
+        response = self.get_stock(IPN="R.CH")
+        self.assertEqual(len(response), 3)
+
+    def test_filter_by_location(self):
+        """
+        Filter StockItem by StockLocation reference
+        """
+
+        response = self.get_stock(location=5)
+        self.assertEqual(len(response), 1)
+
+        response = self.get_stock(location=1, cascade=0)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(location=1, cascade=1)
+        self.assertEqual(len(response), 2)
+
+        response = self.get_stock(location=7)
+        self.assertEqual(len(response), 16)
+
+    def test_filter_by_depleted(self):
+        """
+        Filter StockItem by depleted status
+        """
+
+        response = self.get_stock(depleted=1)
+        self.assertEqual(len(response), 1)
+
+        response = self.get_stock(depleted=0)
+        self.assertEqual(len(response), 18)
+
+    def test_filter_by_in_stock(self):
+        """
+        Filter StockItem by 'in stock' status
+        """
+
+        response = self.get_stock(in_stock=1)
+        self.assertEqual(len(response), 16)
+
+        response = self.get_stock(in_stock=0)
+        self.assertEqual(len(response), 3)
+
+    def test_filter_by_status(self):
+        """
+        Filter StockItem by 'status' field
+        """
+
+        codes = {
+            StockStatus.OK: 17,
+            StockStatus.DESTROYED: 1,
+            StockStatus.LOST: 1,
+            StockStatus.DAMAGED: 0,
+            StockStatus.REJECTED: 0,
+        }
+
+        for code in codes.keys():
+            num = codes[code]
+
+            response = self.get_stock(status=code)
+            self.assertEqual(len(response), num)
+
+    def test_filter_by_batch(self):
+        """
+        Filter StockItem by batch code
+        """
+
+        response = self.get_stock(batch='B123')
+        self.assertEqual(len(response), 1)
+
+    def test_filter_by_serialized(self):
+        """
+        Filter StockItem by serialized status
+        """
+
+        response = self.get_stock(serialized=1)
+        self.assertEqual(len(response), 12)
+
+        for item in response:
+            self.assertIsNotNone(item['serial'])
+
+        response = self.get_stock(serialized=0)
+        self.assertEqual(len(response), 7)
+
+        for item in response:
+            self.assertIsNone(item['serial'])
+
+    def test_filter_by_expired(self):
+        """
+        Filter StockItem by expiry status
+        """
+
+        # First, we can assume that the 'stock expiry' feature is disabled
+        response = self.get_stock(expired=1)
+        self.assertEqual(len(response), 19)
+
+        # Now, ensure that the expiry date feature is enabled!
+        InvenTreeSetting.set_setting('STOCK_ENABLE_EXPIRY', True, self.user)
+
+        response = self.get_stock(expired=1)
+        self.assertEqual(len(response), 1)
+
+        for item in response:
+            self.assertTrue(item['expired'])
+
+        response = self.get_stock(expired=0)
+        self.assertEqual(len(response), 18)
+
+        for item in response:
+            self.assertFalse(item['expired'])
+
+        # Mark some other stock items as expired
+        today = datetime.now().date()
+
+        for pk in [510, 511, 512]:
+            item = StockItem.objects.get(pk=pk)
+            item.expiry_date = today - timedelta(days=pk)
+            item.save()
+
+        response = self.get_stock(expired=1)
+        self.assertEqual(len(response), 4)
+
+        response = self.get_stock(expired=0)
+        self.assertEqual(len(response), 15)
+
+
 class StockItemTest(StockAPITestCase):
     """
     Series of API tests for the StockItem API
@@ -93,10 +279,6 @@ class StockItemTest(StockAPITestCase):
 
         StockLocation.objects.create(name='B', description='location b', parent=top)
         StockLocation.objects.create(name='C', description='location c', parent=top)
-
-    def test_get_stock_list(self):
-        response = self.client.get(self.list_url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_default_location(self):
         """
@@ -197,6 +379,56 @@ class StockItemTest(StockAPITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_default_expiry(self):
+        """
+        Test that the "default_expiry" functionality works via the API.
+
+        - If an expiry_date is specified, use that
+        - Otherwise, check if the referenced part has a default_expiry defined
+            - If so, use that!
+            - Otherwise, no expiry
+        
+        Notes:
+            - Part <25> has a default_expiry of 10 days
+        
+        """
+
+        # First test - create a new StockItem without an expiry date
+        data = {
+            'part': 4,
+            'quantity': 10,
+        }
+
+        response = self.client.post(self.list_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.assertIsNone(response.data['expiry_date'])
+
+        # Second test - create a new StockItem with an explicit expiry date
+        data['expiry_date'] = '2022-12-12'
+
+        response = self.client.post(self.list_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.assertIsNotNone(response.data['expiry_date'])
+        self.assertEqual(response.data['expiry_date'], '2022-12-12')
+
+        # Third test - create a new StockItem for a Part which has a default expiry time
+        data = {
+            'part': 25,
+            'quantity': 10
+        }
+
+        response = self.client.post(self.list_url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Expected expiry date is 10 days in the future
+        expiry = datetime.now().date() + timedelta(10)
+
+        self.assertEqual(response.data['expiry_date'], expiry.isoformat())
 
 
 class StocktakeTest(StockAPITestCase):

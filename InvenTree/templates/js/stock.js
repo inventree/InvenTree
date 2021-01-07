@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load inventree_extras %}
 {% load status_codes %}
 
 /* Stock API functions
@@ -278,7 +279,7 @@ function loadStockTable(table, options) {
         
         if (row.is_building && row.build) {
             // StockItem is currently being built!
-            text = "{% trans "In production" %}";
+            text = '{% trans "In production" %}';
             url = `/build/${row.build}/`;
         } else if (row.belongs_to) {
             // StockItem is installed inside a different StockItem
@@ -286,17 +287,17 @@ function loadStockTable(table, options) {
             url = `/stock/item/${row.belongs_to}/installed/`;
         } else if (row.customer) {
             // StockItem has been assigned to a customer
-            text = "{% trans "Shipped to customer" %}";
+            text = '{% trans "Shipped to customer" %}';
             url = `/company/${row.customer}/assigned-stock/`;
         } else if (row.sales_order) {
             // StockItem has been assigned to a sales order
-            text = "{% trans "Assigned to Sales Order" %}";
+            text = '{% trans "Assigned to Sales Order" %}';
             url = `/order/sales-order/${row.sales_order}/`;
         } else if (row.location) {
             text = row.location_detail.pathstring;
             url = `/stock/location/${row.location}/`;
         } else {
-            text = "<i>{% trans "No stock location set" %}</i>";
+            text = '<i>{% trans "No stock location set" %}</i>';
             url = '';
         }
 
@@ -336,7 +337,13 @@ function loadStockTable(table, options) {
                 return html;
             }
             else if (field == 'part_detail.IPN') {
-                return row.part_detail.IPN;
+                var ipn = row.part_detail.IPN;
+
+                if (ipn) {
+                    return ipn;
+                } else {
+                    return '-';
+                }
             }
             else if (field == 'part_detail.description') {
                 return row.part_detail.description;
@@ -526,6 +533,12 @@ function loadStockTable(table, options) {
                         html += makeIconBadge('fa-user', '{% trans "Stock item assigned to customer" %}');
                     }
 
+                    if (row.expired) {
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Stock item has expired" %}');
+                    } else if (row.stale) {
+                        html += makeIconBadge('fa-stopwatch', '{% trans "Stock item will expire soon" %}');
+                    }
+
                     if (row.allocated) {
                         html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been allocated" %}');
                     }
@@ -577,6 +590,14 @@ function loadStockTable(table, options) {
                     return locationDetail(row);
                 }
             },
+            {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
+            {% if expiry %}
+            {
+                field: 'expiry_date',
+                title: '{% trans "Expiry Date" %}',
+                sortable: true,
+            },
+            {% endif %}
             {
                 field: 'notes',
                 title: '{% trans "Notes" %}',
@@ -603,8 +624,8 @@ function loadStockTable(table, options) {
         if (action == 'move') {
             secondary.push({
                 field: 'destination',
-                label: 'New Location',
-                title: 'Create new location',
+                label: '{% trans "New Location" %}',
+                title: '{% trans "Create new location" %}',
                 url: "/stock/location/new/",
             });
         }
@@ -822,14 +843,25 @@ function createNewStockItem(options) {
                     }
                 );
 
-                // Disable serial number field if the part is not trackable
+                // Request part information from the server
                 inventreeGet(
                     `/api/part/${value}/`, {},
                     {
                         success: function(response) {
-
+                            
+                            // Disable serial number field if the part is not trackable
                             enableField('serial_numbers', response.trackable);
                             clearField('serial_numbers');
+
+                            // Populate the expiry date
+                            if (response.default_expiry <= 0) {
+                                // No expiry date
+                                clearField('expiry_date');
+                            } else {
+                                var expiry = moment().add(response.default_expiry, 'days');
+                                
+                                setFieldValue('expiry_date', expiry.format("YYYY-MM-DD"));
+                            }
                         }
                     }
                 );

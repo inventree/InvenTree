@@ -313,7 +313,6 @@ class SupplierPart(models.Model):
                              verbose_name=_('Base Part'),
                              limit_choices_to={
                                  'purchaseable': True,
-                                 'is_template': False,
                              },
                              help_text=_('Select part'),
                              )
@@ -321,31 +320,55 @@ class SupplierPart(models.Model):
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
                                  related_name='supplied_parts',
                                  limit_choices_to={'is_supplier': True},
+                                 verbose_name=_('Supplier'),
                                  help_text=_('Select supplier'),
                                  )
 
-    SKU = models.CharField(max_length=100, help_text=_('Supplier stock keeping unit'))
+    SKU = models.CharField(
+        max_length=100,
+        verbose_name=_('SKU'),
+        help_text=_('Supplier stock keeping unit')
+    )
 
     manufacturer = models.ForeignKey(
         Company,
         on_delete=models.SET_NULL,
         related_name='manufactured_parts',
-        limit_choices_to={'is_manufacturer': True},
+        limit_choices_to={
+            'is_manufacturer': True
+        },
+        verbose_name=_('Manufacturer'),
         help_text=_('Select manufacturer'),
         null=True, blank=True
     )
 
-    MPN = models.CharField(max_length=100, blank=True, help_text=_('Manufacturer part number'))
+    MPN = models.CharField(
+        max_length=100, blank=True, null=True,
+        verbose_name=_('MPN'),
+        help_text=_('Manufacturer part number')
+    )
 
-    link = InvenTreeURLField(blank=True, help_text=_('URL for external supplier part link'))
+    link = InvenTreeURLField(
+        blank=True, null=True,
+        verbose_name=_('Link'),
+        help_text=_('URL for external supplier part link')
+    )
 
-    description = models.CharField(max_length=250, blank=True, help_text=_('Supplier part description'))
+    description = models.CharField(
+        max_length=250, blank=True, null=True,
+        verbose_name=_('Description'),
+        help_text=_('Supplier part description')
+    )
 
-    note = models.CharField(max_length=100, blank=True, help_text=_('Notes'))
+    note = models.CharField(
+        max_length=100, blank=True, null=True,
+        verbose_name=_('Note'),
+        help_text=_('Notes')
+    )
 
     base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text=_('Minimum charge (e.g. stocking fee)'))
 
-    packaging = models.CharField(max_length=50, blank=True, help_text=_('Part packaging'))
+    packaging = models.CharField(max_length=50, blank=True, null=True, help_text=_('Part packaging'))
     
     multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text=('Order multiple'))
 

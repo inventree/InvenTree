@@ -27,7 +27,7 @@ from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
 from InvenTree.helpers import extract_serial_numbers
 
 from decimal import Decimal, InvalidOperation
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from company.models import Company, SupplierPart
 from part.models import Part
@@ -1330,12 +1330,17 @@ class StockItemEdit(AjaxUpdateView):
 
         form = super(AjaxUpdateView, self).get_form()
 
+        # Hide the "expiry date" field if the feature is not enabled
+        if not common.settings.stock_expiry_enabled():
+            form.fields.pop('expiry_date')
+
         item = self.get_object()
 
         # If the part cannot be purchased, hide the supplier_part field
         if not item.part.purchaseable:
             form.fields['supplier_part'].widget = HiddenInput()
-            form.fields['purchase_price'].widget = HiddenInput()
+
+            form.fields.pop('purchase_price')
         else:
             query = form.fields['supplier_part'].queryset
             query = query.filter(part=item.part.id)
@@ -1629,6 +1634,10 @@ class StockItemCreate(AjaxCreateView):
 
         form = super().get_form()
 
+        # Hide the "expiry date" field if the feature is not enabled
+        if not common.settings.stock_expiry_enabled():
+            form.fields.pop('expiry_date')
+
         part = self.get_part(form=form)
 
         if part is not None:
@@ -1639,8 +1648,8 @@ class StockItemCreate(AjaxCreateView):
             form.rebuild_layout()
 
             if not part.purchaseable:
-                form.fields['purchase_price'].widget = HiddenInput()
-
+                form.fields.pop('purchase_price')
+            
             # Hide the 'part' field (as a valid part is selected)
             # form.fields['part'].widget = HiddenInput()
 
@@ -1733,6 +1742,11 @@ class StockItemCreate(AjaxCreateView):
             initials['part'] = part
             initials['location'] = part.get_default_location()
             initials['supplier_part'] = part.default_supplier
+
+            # If the part has a defined expiry period, extrapolate!
+            if part.default_expiry > 0:
+                expiry_date = datetime.now().date() + timedelta(days=part.default_expiry)
+                initials['expiry_date'] = expiry_date
 
         currency_code = common.settings.currency_code_default()
 

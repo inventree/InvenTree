@@ -291,11 +291,12 @@ class Part(MPTTModel):
         keywords: Optional keywords for improving part search results
         IPN: Internal part number (optional)
         revision: Part revision
-        is_template: If True, this part is a 'template' part and cannot be instantiated as a StockItem
+        is_template: If True, this part is a 'template' part
         link: Link to an external page with more information about this part (e.g. internal Wiki)
         image: Image of this part
         default_location: Where the item is normally stored (may be null)
         default_supplier: The default SupplierPart which should be used to procure and stock this part
+        default_expiry: The default expiry duration for any StockItem instances of this part
         minimum_stock: Minimum preferred quantity to keep in stock
         units: Units of measure for this part (default='pcs')
         salable: Can this part be sold to customers?
@@ -640,36 +641,69 @@ class Part(MPTTModel):
                     parent_part.clean()
                     parent_part.save()
 
-    name = models.CharField(max_length=100, blank=False,
-                            help_text=_('Part name'),
-                            validators=[validators.validate_part_name]
-                            )
+    name = models.CharField(
+        max_length=100, blank=False,
+        help_text=_('Part name'),
+        verbose_name=_('Name'),
+        validators=[validators.validate_part_name]
+    )
 
-    is_template = models.BooleanField(default=False, help_text=_('Is this part a template part?'))
+    is_template = models.BooleanField(
+        default=part_settings.part_template_default,
+        verbose_name=_('Is Template'),
+        help_text=_('Is this part a template part?')
+    )
 
-    variant_of = models.ForeignKey('part.Part', related_name='variants',
-                                   null=True, blank=True,
-                                   limit_choices_to={
-                                       'is_template': True,
-                                       'active': True,
-                                   },
-                                   on_delete=models.SET_NULL,
-                                   help_text=_('Is this part a variant of another part?'))
+    variant_of = models.ForeignKey(
+        'part.Part', related_name='variants',
+        null=True, blank=True,
+        limit_choices_to={
+            'is_template': True,
+            'active': True,
+        },
+        on_delete=models.SET_NULL,
+        help_text=_('Is this part a variant of another part?'),
+        verbose_name=_('Variant Of'),
+    )
 
-    description = models.CharField(max_length=250, blank=False, help_text=_('Part description'))
+    description = models.CharField(
+        max_length=250, blank=False,
+        verbose_name=_('Description'),
+        help_text=_('Part description')
+    )
 
-    keywords = models.CharField(max_length=250, blank=True, null=True, help_text=_('Part keywords to improve visibility in search results'))
+    keywords = models.CharField(
+        max_length=250, blank=True, null=True,
+        verbose_name=_('Keywords'),
+        help_text=_('Part keywords to improve visibility in search results')
+    )
 
-    category = TreeForeignKey(PartCategory, related_name='parts',
-                              null=True, blank=True,
-                              on_delete=models.DO_NOTHING,
-                              help_text=_('Part category'))
+    category = TreeForeignKey(
+        PartCategory, related_name='parts',
+        null=True, blank=True,
+        on_delete=models.DO_NOTHING,
+        verbose_name=_('Category'),
+        help_text=_('Part category')
+    )
 
-    IPN = models.CharField(max_length=100, blank=True, null=True, help_text=_('Internal Part Number'), validators=[validators.validate_part_ipn])
+    IPN = models.CharField(
+        max_length=100, blank=True, null=True,
+        verbose_name=_('IPN'),
+        help_text=_('Internal Part Number'),
+        validators=[validators.validate_part_ipn]
+    )
 
-    revision = models.CharField(max_length=100, blank=True, null=True, help_text=_('Part revision or version number'))
+    revision = models.CharField(
+        max_length=100, blank=True, null=True,
+        help_text=_('Part revision or version number'),
+        verbose_name=_('Revision'),
+    )
 
-    link = InvenTreeURLField(blank=True, null=True, help_text=_('Link to external URL'))
+    link = InvenTreeURLField(
+        blank=True, null=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external URL')
+    )
 
     image = StdImageField(
         upload_to=rename_part_image,
@@ -679,10 +713,14 @@ class Part(MPTTModel):
         delete_orphans=True,
     )
 
-    default_location = TreeForeignKey('stock.StockLocation', on_delete=models.SET_NULL,
-                                      blank=True, null=True,
-                                      help_text=_('Where is this item normally stored?'),
-                                      related_name='default_parts')
+    default_location = TreeForeignKey(
+        'stock.StockLocation',
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        help_text=_('Where is this item normally stored?'),
+        related_name='default_parts',
+        verbose_name=_('Default Location'),
+    )
 
     def get_default_location(self):
         """ Get the default location for a Part (may be None).
@@ -722,18 +760,37 @@ class Part(MPTTModel):
         # Default to None if there are multiple suppliers to choose from
         return None
 
-    default_supplier = models.ForeignKey(SupplierPart,
-                                         on_delete=models.SET_NULL,
-                                         blank=True, null=True,
-                                         help_text=_('Default supplier part'),
-                                         related_name='default_parts')
+    default_supplier = models.ForeignKey(
+        SupplierPart,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Default Supplier'),
+        help_text=_('Default supplier part'),
+        related_name='default_parts'
+    )
 
-    minimum_stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)], help_text=_('Minimum allowed stock level'))
+    default_expiry = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Default Expiry'),
+        help_text=_('Expiry time (in days) for stock items of this part'),
+    )
 
-    units = models.CharField(max_length=20, default="", blank=True, null=True, help_text=_('Stock keeping units for this part'))
+    minimum_stock = models.PositiveIntegerField(
+        default=0, validators=[MinValueValidator(0)],
+        verbose_name=_('Minimum Stock'),
+        help_text=_('Minimum allowed stock level')
+    )
+
+    units = models.CharField(
+        max_length=20, default="",
+        blank=True, null=True,
+        verbose_name=_('Units'),
+        help_text=_('Stock keeping units for this part')
+    )
 
     assembly = models.BooleanField(
-        default=False,
+        default=part_settings.part_assembly_default,
         verbose_name=_('Assembly'),
         help_text=_('Can this part be built from other parts?')
     )
@@ -765,11 +822,15 @@ class Part(MPTTModel):
         help_text=_('Is this part active?'))
 
     virtual = models.BooleanField(
-        default=False,
+        default=part_settings.part_virtual_default,
         verbose_name=_('Virtual'),
         help_text=_('Is this a virtual part, such as a software product or license?'))
 
-    notes = MarkdownxField(blank=True, null=True, help_text=_('Part notes - supports Markdown formatting'))
+    notes = MarkdownxField(
+        blank=True, null=True,
+        verbose_name=_('Notes'),
+        help_text=_('Part notes - supports Markdown formatting')
+    )
 
     bom_checksum = models.CharField(max_length=128, blank=True, help_text=_('Stored BOM checksum'))
 
@@ -1074,7 +1135,7 @@ class Part(MPTTModel):
 
         self.bom_items.all().delete()
 
-    def getRequiredParts(self, recursive=False, parts=set()):
+    def getRequiredParts(self, recursive=False, parts=None):
         """
         Return a list of parts required to make this part (i.e. BOM items).
 
@@ -1083,7 +1144,10 @@ class Part(MPTTModel):
             parts: Set of parts already found (to prevent recursion issues)
         """
 
-        items = self.bom_items.all().prefetch_related('sub_part')
+        if parts is None:
+            parts = set()
+
+        items = BomItem.objects.filter(part=self.pk)
 
         for bom_item in items:
 

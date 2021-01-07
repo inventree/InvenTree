@@ -10,14 +10,16 @@
 {% endblock %}
 
 {% block settings %}
-
 <h4>{% trans "Stock Options" %}</h4>
 
 <table class='table table-striped table-condensed'>
-    <thead></thead>
+    {% include "InvenTree/settings/header.html" %}
     <tbody>
-        {% include "InvenTree/settings/setting.html" with key="STOCK_OWNERSHIP_CONTROL" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_ENABLE_EXPIRY" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_STALE_DAYS" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_ALLOW_EXPIRED_SALE" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_ALLOW_EXPIRED_BUILD" %}
+	{% include "InvenTree/settings/setting.html" with key="STOCK_OWNERSHIP_CONTROL" %}
     </tbody>
 </table>
-
 {% endblock %}

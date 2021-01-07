@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% load inventree_extras %}
 {% load static %}
 {% load i18n %}
 
@@ -18,6 +19,12 @@ InvenTree | {% trans "Sales Orders" %}
         <button class='btn btn-primary' type='button' id='so-create' title='{% trans "Create new sales order" %}'>
             <span class='fas fa-plus-circle'></span> {% trans "New Sales Order" %}</button>
         {% endif %}
+        <button class='btn btn-default' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
+            <span class='fas fa-calendar-alt'></span>
+        </button>
+        <button class='btn btn-default' type='button' id='view-list' title='{% trans "Display list view" %}'>
+            <span class='fas fa-th-list'></span>
+        </button>
         <div class='filter-list' id='filter-list-salesorder'>
             <!-- An empty div in which the filter list will be constructed -->
         </div>
@@ -27,10 +34,123 @@ InvenTree | {% trans "Sales Orders" %}
 <table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='sales-order-table'>
 </table>
 
+<div id='sales-order-calendar'></div>
+
+{% endblock %}
+
+{% block js_load %}
+{{ block.super }}
+
+<script type='text/javascript'>
+
+    function loadOrderEvents(calendar) {
+
+        var start = startDate(calendar);
+        var end = endDate(calendar);
+
+        clearEvents(calendar);
+
+        // Request orders from the server within specified date range
+        inventreeGet(
+            '{% url "api-so-list" %}',
+            {
+                customer_detail: true,
+                min_date: start,
+                max_date: end,
+            },
+            {
+                success: function(response) {
+
+                    var prefix = '{% settings_value "SALESORDER_REFERENCE_PREFIX" %}';
+
+                    for (var idx = 0; idx < response.length; idx++) {
+                        var order = response[idx];
+
+                        var date = order.creation_date;
+
+                        if (order.shipment_date) {
+                            date = order.shipment_date;
+                        } else if (order.target_date) {
+                            date = order.target_date;
+                        }
+
+                        var title = `${prefix}${order.reference} - ${order.customer_detail.name}`;
+
+                        // Default color is blue
+                        var color = '#4c68f5';
+
+                        // Overdue orders are red
+                        if (order.overdue) {
+                            color = '#c22525';
+                        } else if (order.status == {{ SalesOrderStatus.SHIPPED }}) {
+                            color = '#25c235';
+                        }
+
+                        var event = {
+                            title: title,
+                            start: date,
+                            end: date,
+                            url: `/order/sales-order/${order.pk}/`,
+                            backgroundColor: color,
+                        };
+
+                        calendar.addEvent(event);
+                    }
+                }
+            }
+        );
+    }
+
+    var calendar = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('sales-order-calendar');
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            nowIndicator: true,
+            aspectRatio: 2.5,
+            datesSet: function() {
+                loadOrderEvents(calendar);
+            },
+        });
+
+        calendar.render();
+
+    });
+</script>
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
+
+$("#sales-order-calendar").hide();
+$("#view-list").hide();
+
+$('#view-calendar').click(function() {
+    // Hide the list view, show the calendar view
+    $("#sales-order-table").hide();
+    $("#view-calendar").hide();
+    $(".fixed-table-pagination").hide();
+    $(".columns-right").hide();
+    $(".search").hide();
+    $('#filter-list-salesorder').hide();
+    
+    $("#sales-order-calendar").show();
+    $("#view-list").show();
+});
+
+$("#view-list").click(function() {
+    // Hide the calendar view, show the list view
+    $("#sales-order-calendar").hide();
+    $("#view-list").hide();
+    
+    $(".fixed-table-pagination").show();
+    $(".columns-right").show();
+    $(".search").show();
+    $("#sales-order-table").show();
+    $('#filter-list-salesorder').show();
+    $("#view-calendar").show();
+});
 
 loadSalesOrderTable("#sales-order-table", {
     url: "{% url 'api-so-list' %}",

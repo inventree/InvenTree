@@ -5,7 +5,10 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
+from common.models import InvenTreeSetting
+
 import json
+from datetime import datetime, timedelta
 
 from common.models import InvenTreeSetting
 from InvenTree.status_codes import StockStatus
@@ -33,6 +36,9 @@ class StockViewTestCase(TestCase):
             email='user@email.com',
             password='password'
         )
+
+        self.user.is_staff = True
+        self.user.save()
 
         # Put the user into a group with the correct permissions
         group = Group.objects.create(name='mygroup')
@@ -138,20 +144,55 @@ class StockItemTest(StockViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create_item(self):
-        # Test creation of StockItem
-        response = self.client.get(reverse('stock-item-create'), {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        """
+        Test creation of StockItem
+        """
+
+        url = reverse('stock-item-create')
+
+        response = self.client.get(url, {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get(reverse('stock-item-create'), {'part': 999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(url, {'part': 999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
         # Copy from a valid item, valid location
-        response = self.client.get(reverse('stock-item-create'), {'location': 1, 'copy': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(url, {'location': 1, 'copy': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
         # Copy from an invalid item, invalid location
-        response = self.client.get(reverse('stock-item-create'), {'location': 999, 'copy': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(url, {'location': 999, 'copy': 9999}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
+
+    def test_create_stock_with_expiry(self):
+        """
+        Test creation of stock item of a part with an expiry date.
+        The initial value for the "expiry_date" field should be pre-filled,
+        and should be in the future!
+        """
+
+        # First, ensure that the expiry date feature is enabled!
+        InvenTreeSetting.set_setting('STOCK_ENABLE_EXPIRY', True, self.user)
+
+        url = reverse('stock-item-create')
+
+        response = self.client.get(url, {'part': 25}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertEqual(response.status_code, 200)
+
+        # We are expecting 10 days in the future
+        expiry = datetime.now().date() + timedelta(10)
+
+        expected = f'name=\\\\"expiry_date\\\\" value=\\\\"{expiry.isoformat()}\\\\"'
+
+        self.assertIn(expected, str(response.content))
+
+        # Now check with a part which does *not* have a default expiry period
+        response = self.client.get(url, {'part': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        expected = 'name=\\\\"expiry_date\\\\" placeholder=\\\\"\\\\"'
+
+        self.assertIn(expected, str(response.content))
 
     def test_serialize_item(self):
         # Test the serialization view
