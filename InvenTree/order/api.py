@@ -9,6 +9,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework import filters
 
+from django.db.models import Q
+
 from django.conf.urls import url, include
 
 from InvenTree.helpers import str2bool
@@ -292,6 +294,13 @@ class SOList(generics.ListCreateAPIView):
                 queryset = queryset.filter(id__in=[so.id for so in part.sales_orders()])
             except (Part.DoesNotExist, ValueError):
                 pass
+
+        # Filter by 'date range'
+        min_date = params.get('min_date', None)
+        max_date = params.get('max_date', None)
+
+        if min_date is not None and max_date is not None:
+            queryset = SalesOrder.filter_interesting_orders(queryset, min_date, max_date)
 
         return queryset
 
