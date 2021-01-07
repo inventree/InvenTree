@@ -121,6 +121,44 @@ class PurchaseOrder(Order):
         received_by: User that received the goods
     """
 
+    @staticmethod
+    def filterByDate(queryset, min_date, max_date):
+        """
+        Filter by 'minimum and maximum date range'
+
+        - Specified as min_date, max_date
+        - Both must be specified for filter to be applied
+        - Determine which "interesting" orders exist bewteen these dates
+
+        To be "interesting":
+        - A "received" order where the received date lies within the date range
+        - TODO: A "pending" order where the target date lies within the date range
+        - TODO: An "overdue" order where the target date is in the past
+        """
+
+        date_fmt = '%Y-%m-%d'  # ISO format date string
+
+        # Ensure that both dates are valid
+        try:
+            min_date = datetime.strptime(str(min_date), date_fmt).date()
+            max_date = datetime.strptime(str(max_date), date_fmt).date()
+        except (ValueError, TypeError):
+            # Date processing error, return queryset unchanged
+            return queryset
+
+        # Construct a queryset for "received" orders within the range
+        received = Q(status=PurchaseOrderStatus.COMPLETE) & Q(complete_date__gte=min_date) & Q(complete_date__lte=max_date)
+
+        # TODO - Construct a queryset for "pending" orders within the range
+
+        # TODO - Construct a queryset for "overdue" orders within the range
+
+        flt = received
+
+        queryset = queryset.filter(flt)
+
+        return queryset
+
     def __str__(self):
 
         prefix = getSetting('PURCHASEORDER_REFERENCE_PREFIX')
@@ -302,7 +340,7 @@ class SalesOrder(Order):
     OVERDUE_FILTER = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     @staticmethod
-    def filter_interesting_orders(queryset, min_date, max_date):
+    def filterByDate(queryset, min_date, max_date):
         """
         Filter by "minimum and maximum date range"
 
@@ -332,7 +370,8 @@ class SalesOrder(Order):
         # Construct a queryset for "pending" orders within the range
         pending = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
-        # Construct a queryset for "overdue" orders within the range
+        # TODO: Construct a queryset for "overdue" orders within the range
+
         flt = completed | pending
 
         queryset = queryset.filter(flt)

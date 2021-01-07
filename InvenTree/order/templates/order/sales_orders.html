@@ -12,7 +12,6 @@ InvenTree | {% trans "Sales Orders" %}
 
 <h3>{% trans "Sales Orders" %}</h3>
 <hr>
-    
 
 <div id='table-buttons'>
     <div class='button-toolbar container-fluid' style='float: right;'>
@@ -34,9 +33,8 @@ InvenTree | {% trans "Sales Orders" %}
 
 <table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='sales-order-table'>
 </table>
+
 <div id='sales-order-calendar'></div>
-
-
 
 {% endblock %}
 
@@ -45,25 +43,12 @@ InvenTree | {% trans "Sales Orders" %}
 
 <script type='text/javascript'>
 
-    function startDate(calendar) {
-        return calendar.currentData.dateProfile.activeRange.start.toISOString().split("T")[0];
-    }
-
-    function endDate(calendar) {
-        return calendar.currentData.dateProfile.activeRange.end.toISOString().split("T")[0];
-    }
-
     function loadOrderEvents(calendar) {
 
         var start = startDate(calendar);
         var end = endDate(calendar);
 
-        // Clear existing orders from the calendar
-        var events = calendar.getEvents();
-
-        events.forEach(function(event) {
-            event.remove();
-        });
+        clearEvents(calendar);
 
         // Request orders from the server within specified date range
         inventreeGet(
@@ -124,7 +109,6 @@ InvenTree | {% trans "Sales Orders" %}
             initialView: 'dayGridMonth',
             nowIndicator: true,
             aspectRatio: 2.5,
-            width: '80%',
             datesSet: function() {
                 loadOrderEvents(calendar);
             },
@@ -149,6 +133,7 @@ $('#view-calendar').click(function() {
     $(".fixed-table-pagination").hide();
     $(".columns-right").hide();
     $(".search").hide();
+    $('#filter-list-salesorder').hide();
     
     $("#sales-order-calendar").show();
     $("#view-list").show();
@@ -158,11 +143,12 @@ $("#view-list").click(function() {
     // Hide the calendar view, show the list view
     $("#sales-order-calendar").hide();
     $("#view-list").hide();
-
+    
     $(".fixed-table-pagination").show();
     $(".columns-right").show();
     $(".search").show();
     $("#sales-order-table").show();
+    $('#filter-list-salesorder').show();
     $("#view-calendar").show();
 });
 

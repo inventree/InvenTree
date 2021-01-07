@@ -107,6 +107,13 @@ class POList(generics.ListCreateAPIView):
             except (ValueError, SupplierPart.DoesNotExist):
                 pass
 
+        # Filter by 'date range'
+        min_date = params.get('min_date', None)
+        max_date = params.get('max_date', None)
+
+        if min_date is not None and max_date is not None:
+            queryset = PurchaseOrder.filterByDate(queryset, min_date, max_date)
+
         return queryset
 
     filter_backends = [
@@ -298,7 +305,7 @@ class SOList(generics.ListCreateAPIView):
         max_date = params.get('max_date', None)
 
         if min_date is not None and max_date is not None:
-            queryset = SalesOrder.filter_interesting_orders(queryset, min_date, max_date)
+            queryset = SalesOrder.filterByDate(queryset, min_date, max_date)
 
         return queryset
 
