@@ -74,7 +74,15 @@ InvenTree | {% trans "Purchase Orders" %}
 
                         var title = `${prefix}${order.reference} - ${order.supplier_detail.name}`;
 
-                        var color = '#25c235';
+                        var color = '#4c68f5';
+                        
+                        if (order.complete_date) {
+                            color = '#25c235';
+                        } else if (order.overdue) {
+                            color = '#c22525';
+                        } else {
+                            color = '#4c68f5';
+                        }
 
                         var event = {
                             title: title,
@@ -106,7 +114,7 @@ InvenTree | {% trans "Purchase Orders" %}
         });
 
         calendar.render();
-    })
+    });
 
 </script>
 

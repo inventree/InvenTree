@@ -90,6 +90,13 @@ class BuildList(generics.ListCreateAPIView):
         if part is not None:
             queryset = queryset.filter(part=part)
 
+        # Filter by 'date range'
+        min_date = params.get('min_date', None)
+        max_date = params.get('max_date', None)
+
+        if min_date is not None and max_date is not None:
+            queryset = Build.filterByDate(queryset, min_date, max_date)
+
         return queryset
 
     def get_serializer(self, *args, **kwargs):

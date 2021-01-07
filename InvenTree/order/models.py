@@ -372,9 +372,7 @@ class SalesOrder(Order):
 
         # TODO: Construct a queryset for "overdue" orders within the range
 
-        flt = completed | pending
-
-        queryset = queryset.filter(flt)
+        queryset = queryset.filter(completed | pending)
 
         return queryset
 
