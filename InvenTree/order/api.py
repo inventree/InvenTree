@@ -9,8 +9,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework import filters
 
-from django.db.models import Q
-
 from django.conf.urls import url, include
 
 from InvenTree.helpers import str2bool

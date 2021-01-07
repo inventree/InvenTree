@@ -316,26 +316,26 @@ class SalesOrder(Order):
         - TODO: An "overdue" order where the target date is in the past
         """
 
-        DATE_FMT = '%Y-%m-%d'  # ISO format date string
+        date_fmt = '%Y-%m-%d'  # ISO format date string
 
         # Ensure that both dates are valid
         try:
-            min_date = datetime.strptime(str(min_date), DATE_FMT).date()
-            max_date = datetime.strptime(str(max_date), DATE_FMT).date()
+            min_date = datetime.strptime(str(min_date), date_fmt).date()
+            max_date = datetime.strptime(str(max_date), date_fmt).date()
         except (ValueError, TypeError):
             # Date processing error, return queryset unchanged
             return queryset
  
         # Construct a queryset for "completed" orders within the range
-        COMPLETED = Q(status__in=SalesOrderStatus.COMPLETE) & Q(shipment_date__gte=min_date) & Q(shipment_date__lte=max_date)
+        completed = Q(status__in=SalesOrderStatus.COMPLETE) & Q(shipment_date__gte=min_date) & Q(shipment_date__lte=max_date)
 
         # Construct a queryset for "pending" orders within the range
-        PENDING = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) &   Q(target_date__lte=max_date)
+        pending = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # Construct a queryset for "overdue" orders within the range
-        FILTER = COMPLETED | PENDING
+        flt = completed | pending
 
-        queryset = queryset.filter(FILTER)
+        queryset = queryset.filter(flt)
 
         return queryset
 
