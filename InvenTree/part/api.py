@@ -182,6 +182,10 @@ class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     queryset = PartAttachment.objects.all()
     serializer_class = part_serializers.PartAttachmentSerializer
 
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
     filter_fields = [
         'part',
     ]
