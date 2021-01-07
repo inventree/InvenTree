@@ -61,6 +61,37 @@ class Build(MPTTModel):
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
 
+    @staticmethod
+    def filterByDate(queryset, min_date, max_date):
+        """
+        Filter by 'minimum and maximum date range'
+
+        - Specified as min_date, max_date
+        - Both must be specified for filter to be applied
+        """
+
+        date_fmt = '%Y-%m-%d'  # ISO format date string
+
+        # Ensure that both dates are valid
+        try:
+            min_date = datetime.strptime(str(min_date), date_fmt).date()
+            max_date = datetime.strptime(str(max_date), date_fmt).date()
+        except (ValueError, TypeError):
+            # Date processing error, return queryset unchanged
+            return queryset
+
+        # Order was completed within the specified range
+        completed = Q(status=BuildStatus.COMPLETE) & Q(completion_date__gte=min_date) & Q(completion_date__lte=max_date)
+
+        # Order target date falls witin specified range
+        pending = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
+
+        # TODO - Construct a queryset for "overdue" orders
+
+        queryset = queryset.filter(completed | pending)
+
+        return queryset
+
     def __str__(self):
 
         prefix = getSetting("BUILDORDER_REFERENCE_PREFIX")
