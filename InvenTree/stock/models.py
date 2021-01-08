@@ -16,7 +16,7 @@ from django.db import models, transaction
 from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
@@ -46,6 +46,10 @@ class StockLocation(InvenTreeTree):
     A "StockLocation" can be considered a warehouse, or storage location
     Stock locations can be heirarchical as required
     """
+
+    owner = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True,
+                              help_text='Owner (Group)',
+                              related_name='owner_stocklocations')
 
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
@@ -473,6 +477,10 @@ class StockItem(MPTTModel):
         verbose_name=_('Purchase Price'),
         help_text=_('Single unit purchase price at time of purchase'),
     )
+
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
+                              help_text='Owner (User)',
+                              related_name='owner_stockitems')
 
     def is_stale(self):
         """

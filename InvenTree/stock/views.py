@@ -11,6 +11,7 @@ from django.views.generic import DetailView, ListView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 from django.utils.translation import ugettext as _
 
@@ -35,6 +36,7 @@ from label.models import StockItemLabel
 from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
 
 import common.settings
+from common.models import InvenTreeSetting
 
 from .admin import StockItemResource
 
@@ -127,6 +129,7 @@ class StockLocationEdit(AjaxUpdateView):
         """ Customize form data for StockLocation editing.
 
         Limit the choices for 'parent' field to those which make sense.
+        If ownership control is enabled and location has parent, disable owner field.
         """
 
         form = super(AjaxUpdateView, self).get_form()
@@ -139,7 +142,32 @@ class StockLocationEdit(AjaxUpdateView):
 
         form.fields['parent'].queryset = parent_choices
 
+        # Is ownership control enabled?
+        stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        if not stock_ownership_control:
+            form.fields['owner'].widget = HiddenInput()
+        else:
+            if location.parent:
+                form.fields['owner'].initial = location.parent.owner
+            if not self.request.user.is_superuser:
+                form.fields['owner'].disabled = True
+
         return form
+
+    def save(self, object, form, **kwargs):
+        """ If location has children and ownership control is enabled:
+            - update all children's owners with location's owner
+        """
+
+        self.object = form.save()
+
+        stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        if self.object.get_children() and stock_ownership_control:
+            for child in self.object.get_children():
+                child.owner = self.object.owner
+                child.save()
+
+        return self.object
 
 
 class StockLocationQRCode(QRCodeView):
@@ -1322,7 +1350,30 @@ class StockItemEdit(AjaxUpdateView):
         if not item.part.trackable and not item.serialized:
             form.fields['serial'].widget = HiddenInput()
 
+        location = item.location
+
+        # Is ownership control enabled?
+        stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        if not stock_ownership_control:
+            form.fields['owner'].widget = HiddenInput()
+        else:
+            if location:
+                # Check if location has owner
+                if location.owner:
+                    form.fields['owner'].queryset = User.objects.filter(groups=location.owner)
+
         return form
+
+    def validate(self, item, form):
+        """ Check that owner is set if stock ownership control is enabled """
+
+        owner = form.cleaned_data.get('owner', None)
+
+        # Is ownership control enabled?
+        stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
+        if not owner and stock_ownership_control:
+            form.add_error('owner', _('Owner is required (ownership control is enabled)'))
 
 
 class StockItemConvert(AjaxUpdateView):
@@ -1375,6 +1426,72 @@ class StockLocationCreate(AjaxCreateView):
                 pass
 
         return initials
+
+    def get_form(self):
+        """ Disable owner field when:
+            - creating child location
+            - and stock ownership control is enable
+        """
+
+        form = super().get_form()
+
+        # Is ownership control enabled?
+        stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        if not stock_ownership_control:
+            form.fields['owner'].widget = HiddenInput()
+        else:
+            # If user did not selected owner, automatically match to parent's owner
+            if not form['owner'].data:
+                try:
+                    parent_id = form['parent'].value()
+                    parent = StockLocation.objects.get(pk=parent_id)
+
+                    if parent:
+                        form.fields['owner'].initial = parent.owner
+                        if not self.request.user.is_superuser:
+                            form.fields['owner'].disabled = True
+                except StockLocation.DoesNotExist:
+                    pass
+                except ValueError:
+                    pass
+
+        return form
+
+    def save(self, form):
+        """ If parent location exists then use it to set the owner """
+
+        self.object = form.save(commit=False)
+
+        parent = form.cleaned_data.get('parent', None)
+        if parent:
+            self.object.owner = parent.owner
+        
+        self.object.save()
+
+        return self.object
+
+    def validate(self, item, form):
+        """ Check that owner is set if stock ownership control is enabled """
+
+        parent = form.cleaned_data.get('parent', None)
+
+        owner = form.cleaned_data.get('owner', None)
+
+        # Is ownership control enabled?
+        stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
+        if stock_ownership_control:
+            if not owner:
+                form.add_error('owner', _('Owner is required (ownership control is enabled)'))
+            else:
+                try:
+                    if parent.owner:
+                        if parent.owner != owner:
+                            error = f'Owner requires to be equivalent to parent\'s owner ({parent.owner})'
+                            form.add_error('owner', error)
+                except AttributeError:
+                    # No parent
+                    pass
 
 
 class StockItemSerialize(AjaxUpdateView):
@@ -1570,7 +1687,29 @@ class StockItemCreate(AjaxCreateView):
         # Otherwise if the user has selected a SupplierPart, we know what Part they meant!
         if form['supplier_part'].value() is not None:
             pass
-            
+
+        location = None
+        try:
+            loc_id = form['location'].value()
+            location = StockLocation.objects.get(pk=loc_id)
+        except StockLocation.DoesNotExist:
+            pass
+        except ValueError:
+            pass
+
+        # Is ownership control enabled?
+        stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        if not stock_ownership_control:
+            form.fields['owner'].widget = HiddenInput()
+        else:
+            if location:
+                # Check if location has owner
+                if location.owner:
+                    queryset = User.objects.filter(groups=location.owner)
+                    if self.request.user in queryset:
+                        form.fields['owner'].initial = self.request.user
+                    form.fields['owner'].queryset = queryset
+                
         return form
 
     def get_initial(self):
@@ -1647,9 +1786,14 @@ class StockItemCreate(AjaxCreateView):
 
         data = form.cleaned_data
 
-        part = data['part']
+        part = data.get('part', None)
         
         quantity = data.get('quantity', None)
+
+        owner = data.get('owner', None)
+
+        if not part:
+            return
 
         if not quantity:
             return
@@ -1680,6 +1824,15 @@ class StockItemCreate(AjaxCreateView):
                         'serial_numbers',
                         _('Serial numbers already exist') + ': ' + exists
                     )
+
+        # Is ownership control enabled?
+        stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
+        if stock_ownership_control:
+            # Check if owner is set
+            if not owner:
+                form.add_error('owner', _('Owner is required (ownership control is enabled)'))
+                return
 
     def save(self, form, **kwargs):
         """
