@@ -10,7 +10,6 @@ from common.models import InvenTreeSetting
 import json
 from datetime import datetime, timedelta
 
-from common.models import InvenTreeSetting
 from InvenTree.status_codes import StockStatus
 
 
