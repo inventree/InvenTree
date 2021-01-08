@@ -55,7 +55,11 @@ class LabelTemplate(models.Model):
         help_text=_('Label name'),
     )
 
-    description = models.CharField(max_length=250, help_text=_('Label description'), blank=True, null=True)
+    description = models.CharField(
+        max_length=250,
+        blank=True, null=True,
+        help_text=_('Label description'),
+    )
 
     label = models.FileField(
         upload_to=rename_label,
