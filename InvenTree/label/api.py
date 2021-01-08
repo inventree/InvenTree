@@ -131,6 +131,15 @@ class StockItemLabelList(LabelListView):
         return queryset
 
 
+class StockItemLabelDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for a single StockItemLabel object
+    """
+
+    queryset = StockItemLabel.objects.all()
+    serializer_class = StockItemLabelSerializer
+
+
 class StockLocationLabelList(LabelListView):
     """
     API endpoint for viewiing list of StockLocationLabel objects.
@@ -225,15 +234,36 @@ class StockLocationLabelList(LabelListView):
         return queryset
 
 
+class StockLocationLabelDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for a single StockLocationLabel object
+    """
+
+    queryset = StockLocationLabel.objects.all()
+    seiralizer_class = StockLocationLabelSerializer
+
+
 label_api_urls = [
 
     # Stock item labels
     url(r'stock/', include([
+        # Detail views
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'^.*$', StockItemLabelDetail.as_view(), name='api-stockitem-label-detail'),
+        ])),
+
+        # List view
         url(r'^.*$', StockItemLabelList.as_view(), name='api-stockitem-label-list'),
     ])),
 
     # Stock location labels
     url(r'location/', include([
+        # Detail views
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'^.*$', StockLocationLabelDetail.as_view(), name='api-stocklocation-label-detail'),
+        ])),
+
+        # List view
         url(r'^.*$', StockLocationLabelList.as_view(), name='api-stocklocation-label-list'),
     ])),
 ]
