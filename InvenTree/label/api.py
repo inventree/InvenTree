@@ -9,13 +9,33 @@ from rest_framework import generics, filters
 
 import InvenTree.helpers
 
-from stock.models import StockItem
+from stock.models import StockItem, StockLocation
 
-from .models import StockItemLabel
-from .serializers import StockItemLabelSerializer
+from .models import StockItemLabel, StockLocationLabel
+from .serializers import StockItemLabelSerializer, StockLocationLabelSerializer
 
 
-class StockItemLabelList(generics.ListAPIView):
+class LabelListView(generics.ListAPIView):
+    """
+    Generic API class for label templates
+    """
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter
+    ]
+
+    filter_fields = [
+        'enabled',
+    ]
+
+    search_fields = [
+        'name',
+        'description',
+    ]
+
+
+class StockItemLabelList(LabelListView):
     """
     API endpoint for viewing list of StockItemLabel objects.
 
@@ -23,7 +43,7 @@ class StockItemLabelList(generics.ListAPIView):
 
     - enabled: Filter by enabled / disabled status
     - item: Filter by single stock item
-    - items[]: Filter by list of stock items
+    - items: Filter by list of stock items
 
     """
 
@@ -88,7 +108,7 @@ class StockItemLabelList(generics.ListAPIView):
 
                 matches = True
 
-                # Filter string defined for the StockItem label
+                # Filter string defined for the StockItemLabel object
                 filters = InvenTree.helpers.validateFilterString(label.filters)
 
                 for item in items:
@@ -97,6 +117,7 @@ class StockItemLabelList(generics.ListAPIView):
 
                     if not item_query.filter(**filters).exists():
                         matches = False
+                        break
 
                 # Matched all items
                 if matches:
@@ -105,29 +126,114 @@ class StockItemLabelList(generics.ListAPIView):
                     continue
 
             # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[id for id in valid_label_ids])
+            queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter
-    ]
 
-    filter_fields = [
-        'enabled',
-    ]
+class StockLocationLabelList(LabelListView):
+    """
+    API endpoint for viewiing list of StockLocationLabel objects.
 
-    search_fields = [
-        'name',
-        'description',
-    ]
+    Filterable by:
+
+    - enabled: Filter by enabled / disabled status
+    - location: Filter by a single stock location
+    - locations: Filter by list of stock locations
+    """
+
+    queryset = StockLocationLabel.objects.all()
+    serializer_class = StockLocationLabelSerializer
+
+    def get_locations(self):
+        """
+        Return a list of requested stock locations
+        """
+
+        locations = []
+
+        params = self.request.query_params
+
+        if 'locations' in params:
+            locations = params.getlist('locations', [])
+        elif 'location' in params:
+            locations = [params.get('location', None)]
+
+        if type(locations) not in [list, tuple]:
+            locations = [locations]
+
+        valid_ids = []
+
+        for loc in locations:
+            try:
+                valid_ids.append(int(item))
+            except (ValueError):
+                pass
+
+        # List of StockLocation objects which match provided values
+        valid_locations = StockLocation.objects.filter(pk__in=valid_ids)
+
+        return valid_locations
+
+    def filter_queryset(self, queryset):
+        """
+        Filter the StockLocationLabel queryset
+        """
+
+        queryset = super().filter_queryset(queryset)
+        
+        # List of StockLocation objects to match against
+        locations = self.get_locations()
+
+        # We wish to filter by stock location(s)
+        if len(locations) > 0:
+            """
+            At this point, we are basically forced to be inefficient,
+            as we need to compare the 'filters' string of each label,
+            and see if it matches against each of the requested items.
+
+            TODO: In the future, if this becomes excessively slow, it
+                  will need to be readdressed.
+            """
+
+            valid_label_ids = set()
+
+            for label in queryset.all():
+
+                matches = True
+
+                # Filter string defined for the StockLocationLabel object
+                filters = InvenTree.helpers.validateFilterString(label.filters)
+
+                for loc in locations:
+
+                    loc_query = StockLocation.objects.filter(pk=loc.pk)
+
+                    if not loc_query.filter(**filters).exists():
+                        matches = False
+                        break
+
+                # Matched all items
+                if matches:
+                    valid_label_ids.add(label.pk)
+                else:
+                    continue
+
+            # Reduce queryset to only valid matches
+            queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
+
+        return queryset
 
 
 label_api_urls = [
 
     # Stock item labels
     url(r'stock/', include([
-        url(r'^.*$', StockItemLabelList.as_view(), name='api-stock-label-list'),
+        url(r'^.*$', StockItemLabelList.as_view(), name='api-stockitem-label-list'),
+    ])),
+
+    # Stock location labels
+    url(r'location/', include([
+        url(r'^.*$', StockLocationLabelList.as_view(), name='api-stocklocation-label-list'),
     ])),
 ]
