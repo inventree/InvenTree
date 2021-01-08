@@ -17,7 +17,7 @@ from django.utils.translation import gettext_lazy as _
 
 from InvenTree.helpers import validateFilterString, normalize
 
-from stock.models import StockItem
+from stock.models import StockItem, StockLocation
 
 
 def rename_label(instance, filename):
@@ -154,6 +154,42 @@ class StockItemLabel(LabelTemplate):
                 'pk': item.pk,
                 'qr_data': item.format_barcode(brief=True),
                 'tests': item.testResultMap()
+            })
+
+        return records
+
+
+class StockLocationLabel(LabelTemplate):
+    """
+    Template for printing StockLocation labels
+    """
+
+    SUBDIR = "stocklocation"
+
+    def matches_stock_location(self, location):
+        """
+        Test if this label template matches a given StockLocation object
+        """
+
+        filters = validateFilterString(self.filters)
+
+        locs = StockLocation.objects.filter(**filters)
+
+        locs = locs.filter(pk=location.pk)
+
+        return locs.exists()
+
+    def get_record_data(self, locations):
+        """
+        Generate context data for each provided StockLocation
+        """
+
+        records = []
+        
+        for loc in locations:
+
+            records.append({
+                'location': location,
             })
 
         return records
