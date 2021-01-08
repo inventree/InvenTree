@@ -189,7 +189,7 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
-	'STOCK_OWNERSHIP_CONTROL': {
+	    'STOCK_OWNERSHIP_CONTROL': {
             'name': _('Stock Ownership Control'),
             'description': _('Enable ownership control over stock locations and items'),
             'default': False,
