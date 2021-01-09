@@ -166,6 +166,15 @@ function setFieldValue(fieldName, value, options={}) {
     field.val(value);
 }
 
+function getFieldValue(fieldName, options={}) {
+
+    var modal = options.modal || '#modal-form';
+
+    var field = getFieldByName(modal, fieldName);
+
+    return field.val();
+}
+
 
 function partialMatcher(params, data) {
     /* Replacement function for the 'matcher' parameter for a select2 dropdown.

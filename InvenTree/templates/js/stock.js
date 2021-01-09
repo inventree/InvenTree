@@ -654,28 +654,7 @@ function loadStockTable(table, options) {
             items.push(item.pk);
         });
 
-        // Request available labels from the server
-        inventreeGet(
-            '{% url "api-stockitem-label-list" %}',
-            {
-                enabled: true,
-                items: items,
-            },
-            {
-                success: function(response) {
-
-                    if (response.length == 0) {
-                        showAlertDialog(
-                            '{% trans "No Labels Found" %}',
-                            '{% trans "No labels found which match selected stock item(s)" %}',
-                        );
-                        return;
-                    }
-
-                    var label = selectLabel(response);
-                }
-            }
-        );
+        printStockItemLabels(items);
     });
 
     $('#multi-item-stocktake').click(function() {

@@ -17,7 +17,7 @@ from django.utils.translation import gettext_lazy as _
 
 from InvenTree.helpers import validateFilterString, normalize
 
-from stock.models import StockItem, StockLocation
+import stock.models
 
 
 def rename_label(instance, filename):
@@ -128,7 +128,7 @@ class StockItemLabel(LabelTemplate):
 
         filters = validateFilterString(self.filters)
 
-        items = StockItem.objects.filter(**filters)
+        items = stock.models.StockItem.objects.filter(**filters)
 
         items = items.filter(pk=item.pk)
 
@@ -173,7 +173,7 @@ class StockLocationLabel(LabelTemplate):
 
         filters = validateFilterString(self.filters)
 
-        locs = StockLocation.objects.filter(**filters)
+        locs = stock.models.StockLocation.objects.filter(**filters)
 
         locs = locs.filter(pk=location.pk)
 

@@ -1,6 +1,45 @@
 {% load i18n %}
 
-function selectLabel(labels, options={}) {
+function printStockItemLabels(items, options={}) {
+    /**
+     * Print stock item labels for the given stock items
+     */
+
+    if (items.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Stock Items" %}',
+            '{% trans "Stock items must be selected before printing labels" %}'
+        );
+
+        return;
+    }
+
+    // Request available labels from the server
+    inventreeGet(
+        '{% url "api-stockitem-label-list" %}',
+        {
+            enabled: true,
+            items: items,
+        },
+        {
+            success: function(response) {
+
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Labels Found" %}',
+                        '{% trans "No labels found which match selected stock item(s)" %}',
+                    );
+                    return;
+                }
+
+                // Select label to print
+                selectLabel(response, items);
+            }
+        }
+    );
+}
+
+function selectLabel(labels, items, options={}) {
     /**
      * Present the user with the available labels,
      * and allow them to select which label to print.
@@ -8,6 +47,8 @@ function selectLabel(labels, options={}) {
      * The intent is that the available labels have been requested
      * (via AJAX) from the server.
      */
+
+    var stock_items = items;
 
     var modal = options.modal || '#modal-form';
 
@@ -29,6 +70,7 @@ function selectLabel(labels, options={}) {
 
     // Construct form
     var html = `
+
     <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
         <div class='form-group'>
             <label class='control-label requiredField' for='id_label'>
@@ -49,4 +91,23 @@ function selectLabel(labels, options={}) {
     modalEnable(modal, true);
     modalSetTitle(modal, '{% trans "Select Label Template" %}');
     modalSetContent(modal, html);
+
+    attachSelect(modal);
+
+    modalSubmit(modal, function() {
+
+        var label = $(modal).find('#id_label');
+
+        var pk = label.val();
+
+        closeModal(modal);
+
+        var href = `/api/label/stock/${pk}/print/?`;
+        
+        stock_items.forEach(function(item) {
+            href += `items[]=${item}&`;
+        });
+
+        window.location.href = href;
+    });
 }
