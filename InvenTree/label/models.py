@@ -189,7 +189,7 @@ class StockLocationLabel(LabelTemplate):
         for loc in locations:
 
             records.append({
-                'location': location,
+                'location': loc,
             })
 
         return records
