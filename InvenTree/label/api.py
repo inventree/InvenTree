@@ -291,7 +291,7 @@ class StockLocationLabelDetail(generics.RetrieveUpdateDestroyAPIView):
     """
 
     queryset = StockLocationLabel.objects.all()
-    seiralizer_class = StockLocationLabelSerializer
+    serializer_class = StockLocationLabelSerializer
 
 
 label_api_urls = [
