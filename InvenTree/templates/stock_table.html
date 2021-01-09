@@ -17,6 +17,7 @@
             <div class="btn-group">
                 <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
                 <ul class="dropdown-menu">
+                    <li><a href='#' id='multi-item-print-label' title='{% trans "Print labels" %}'><span class='fas fa-tags'></span> {% trans "Print labels" %}</a></li>
                     {% if roles.stock.change %}
                     <li><a href="#" id='multi-item-add' title='{% trans "Add to selected stock items" %}'><span class='fas fa-plus-circle'></span> {% trans "Add stock" %}</a></li>
                     <li><a href="#" id='multi-item-remove' title='{% trans "Remove from selected stock items" %}'><span class='fas fa-minus-circle'></span> {% trans "Remove stock" %}</a></li>

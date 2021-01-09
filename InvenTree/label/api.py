@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import sys
+
+from django.utils.translation import ugettext as _
 from django.conf.urls import url, include
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import generics, filters
+from rest_framework.response import Response
 
 import InvenTree.helpers
 
@@ -35,20 +39,10 @@ class LabelListView(generics.ListAPIView):
     ]
 
 
-class StockItemLabelList(LabelListView):
+class StockItemLabelMixin:
     """
-    API endpoint for viewing list of StockItemLabel objects.
-
-    Filterable by:
-
-    - enabled: Filter by enabled / disabled status
-    - item: Filter by single stock item
-    - items: Filter by list of stock items
-
+    Mixin for extracting stock items from query params
     """
-
-    queryset = StockItemLabel.objects.all()
-    serializer_class = StockItemLabelSerializer
 
     def get_items(self):
         """
@@ -59,8 +53,8 @@ class StockItemLabelList(LabelListView):
 
         params = self.request.query_params
 
-        if 'items' in params:
-            items = params.getlist('items', [])
+        if 'items[]' in params:
+            items = params.getlist('items[]', [])
         elif 'item' in params:
             items = [params.get('item', None)]
 
@@ -79,6 +73,22 @@ class StockItemLabelList(LabelListView):
         valid_items = StockItem.objects.filter(pk__in=valid_ids)
 
         return valid_items
+
+
+class StockItemLabelList(LabelListView, StockItemLabelMixin):
+    """
+    API endpoint for viewing list of StockItemLabel objects.
+
+    Filterable by:
+
+    - enabled: Filter by enabled / disabled status
+    - item: Filter by single stock item
+    - items: Filter by list of stock items
+
+    """
+
+    queryset = StockItemLabel.objects.all()
+    serializer_class = StockItemLabelSerializer
 
     def filter_queryset(self, queryset):
         """
@@ -140,6 +150,47 @@ class StockItemLabelDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = StockItemLabelSerializer
 
 
+class StockItemLabelPrint(generics.RetrieveAPIView, StockItemLabelMixin):
+    """
+    API endpoint for printing a StockItemLabel object
+    """
+
+    queryset = StockItemLabel.objects.all()
+    serializer_class = StockItemLabelSerializer
+
+    def get(self, request, *args, **kwargs):
+        """
+        Check if valid stock item(s) have been provided.
+        """
+
+        items = self.get_items()
+
+        if len(items) == 0:
+            # No valid items provided, return an error message
+            data = {
+                'error': _('Must provide valid StockItem(s)'),
+            }
+
+            return Response(data, status=400)
+
+        label = self.get_object()
+
+        try:
+            pdf = label.render(items)
+        except:
+
+            e = sys.exc_info()[1]
+            
+            data = {
+                'error': _('Error during label printing'),
+                'message': str(e),
+            }
+
+            return Response(data, status=400)
+
+        return InvenTree.helpers.DownloadFile(pdf.getbuffer(), 'stock_item_labels.pdf', content_type='application/pdf')
+
+
 class StockLocationLabelList(LabelListView):
     """
     API endpoint for viewiing list of StockLocationLabel objects.
@@ -163,7 +214,7 @@ class StockLocationLabelList(LabelListView):
 
         params = self.request.query_params
 
-        if 'locations' in params:
+        if 'locations[]' in params:
             locations = params.getlist('locations', [])
         elif 'location' in params:
             locations = [params.get('location', None)]
@@ -175,7 +226,7 @@ class StockLocationLabelList(LabelListView):
 
         for loc in locations:
             try:
-                valid_ids.append(int(item))
+                valid_ids.append(int(loc))
             except (ValueError):
                 pass
 
@@ -249,6 +300,7 @@ label_api_urls = [
     url(r'stock/', include([
         # Detail views
         url(r'^(?P<pk>\d+)/', include([
+            url(r'print/?', StockItemLabelPrint.as_view(), name='api-stockitem-label-print'),
             url(r'^.*$', StockItemLabelDetail.as_view(), name='api-stockitem-label-detail'),
         ])),
 
