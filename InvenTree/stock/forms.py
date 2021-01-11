@@ -10,7 +10,6 @@ from django.forms.utils import ErrorDict
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User, Group
 
 from mptt.fields import TreeNodeChoiceField
 
@@ -86,36 +85,14 @@ class EditStockItemTestResultForm(HelperForm):
 class EditStockLocationForm(HelperForm):
     """ Form for editing a StockLocation """
 
-    owner = forms.ChoiceField(
-        label=_('Owner'),
-        help_text=_('Select Owner')
-    )
-
     class Meta:
         model = StockLocation
         fields = [
             'name',
             'parent',
             'description',
+            'owner',
         ]
-
-    def get_owner_choices(self):
-
-        choices = [('', '-' * 10)]
-
-        for group in Group.objects.all():
-            choices.append((f'group_{group.name}', f'{group} (Group)'))
-
-        for user in User.objects.all():
-            choices.append((f'user_{user.username}', f'{user} (User)'))
-
-        return choices
-
-    def __init__(self, *args, **kwargs):
-
-        super().__init__(*args, **kwargs)
-
-        self.fields['owner'].choices = self.get_owner_choices()
 
 
 class ConvertStockItemForm(HelperForm):

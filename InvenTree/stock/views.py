@@ -11,7 +11,7 @@ from django.views.generic import DetailView, ListView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 from django.urls import reverse
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group, User
 
 from django.utils.translation import ugettext as _
 
@@ -125,24 +125,6 @@ class StockLocationEdit(AjaxUpdateView):
     ajax_form_title = _('Edit Stock Location')
     role_required = 'stock.change'
 
-    def get_owner_initial(self):
-
-        initial = ''
-
-        location = self.get_object()
-
-        owner = location.owner
-
-        if owner:
-            if type(owner) is Group:
-                group_name = owner.name
-                initial = f'group_{group_name}'
-            elif type(owner) is User:
-                user_name = owner.username
-                initial = f'user_{user_name}'
-
-        return initial
-
     def get_form(self):
         """ Customize form data for StockLocation editing.
 
@@ -162,12 +144,12 @@ class StockLocationEdit(AjaxUpdateView):
 
         # Is ownership control enabled?
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
-        owner_initial = self.get_owner_initial()
+        owner = location.owner
 
         if not stock_ownership_control:
             form.fields['owner'].widget = HiddenInput()
         else:
-            form.fields['owner'].initial = owner_initial
+            form.fields['owner'].initial = owner
             if location.parent:
                 form.fields['owner'].initial = location.parent.owner
             if not self.request.user.is_superuser:
@@ -180,21 +162,14 @@ class StockLocationEdit(AjaxUpdateView):
             - update all children's owners with location's owner
         """
 
-        self.object = form.save(commit=False)
-
-        # parent = form.cleaned_data.get('parent', None)
+        self.object = form.save()
         
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
         if stock_ownership_control:
-            owner = form.cleaned_data.get('owner', None)
-            self.object.save(**{'owner': owner})
-
             if self.object.get_children():
                 for child in self.object.get_children():
                     child.owner = self.object.owner
                     child.save()
-        else:
-            self.object.save()
 
         return self.object
 
@@ -1386,10 +1361,18 @@ class StockItemEdit(AjaxUpdateView):
         if not stock_ownership_control:
             form.fields['owner'].widget = HiddenInput()
         else:
-            if location:
-                # Check if location has owner
-                if location.owner:
-                    form.fields['owner'].queryset = User.objects.filter(groups=location.owner)
+            location_owner = location.owner
+            # Check if location has owner
+            if location_owner:
+                # Check location owner type and filter
+                if type(location_owner.owner) is Group:
+                    queryset = location_owner.get_users()
+                    if self.request.user in queryset:
+                        form.fields['owner'].initial = self.request.user
+                    form.fields['owner'].queryset = queryset
+                elif type(location_owner.owner) is User:
+                    form.fields['owner'].disabled = True
+                    form.fields['owner'].initial = location_owner
 
         return form
 
@@ -1492,13 +1475,12 @@ class StockLocationCreate(AjaxCreateView):
         self.object = form.save(commit=False)
 
         parent = form.cleaned_data.get('parent', None)
-        owner = form.cleaned_data.get('owner', None)
 
         if parent:
+            # Select parent's owner
             self.object.owner = parent.owner
-            self.object.save()
-        else:
-            self.object.save(**{'owner': owner})
+
+        self.object.save()
 
         return self.object
 
@@ -1734,13 +1716,17 @@ class StockItemCreate(AjaxCreateView):
         if not stock_ownership_control:
             form.fields['owner'].widget = HiddenInput()
         else:
-            if location:
-                # Check if location has owner
-                if location.owner:
-                    queryset = User.objects.filter(groups=location.owner)
+            location_owner = location.owner
+            if location_owner:
+                # Check location owner type and filter
+                if type(location_owner.owner) is Group:
+                    queryset = location_owner.get_users()
                     if self.request.user in queryset:
                         form.fields['owner'].initial = self.request.user
                     form.fields['owner'].queryset = queryset
+                elif type(location_owner.owner) is User:
+                    form.fields['owner'].disabled = True
+                    form.fields['owner'].initial = location_owner
                 
         return form
 

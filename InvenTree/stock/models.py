@@ -16,11 +16,9 @@ from django.db import models, transaction
 from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 
 from markdownx.models import MarkdownxField
 
@@ -39,6 +37,8 @@ from InvenTree.status_codes import StockStatus
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 
+from users.models import Owner
+
 from company import models as CompanyModels
 from part import models as PartModels
 
@@ -49,28 +49,9 @@ class StockLocation(InvenTreeTree):
     Stock locations can be heirarchical as required
     """
 
-    owner_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
-    owner_id = models.PositiveIntegerField(null=True, blank=True)
-    owner = GenericForeignKey('owner_type', 'owner_id')
-
-    def save(self, *args, **kwargs):
-        """ Custom save method to process StockLocation owner """
-    
-        # Extract owner
-        try:
-            owner = kwargs.pop('owner')
-        except KeyError:
-            owner = ''
-
-        # Set the owner
-        if owner.startswith('group'):
-            group_name = owner.replace('group_', '')
-            self.owner = Group.objects.get(name=group_name)
-        elif owner.startswith('user'):
-            user_name = owner.replace('user_', '')
-            self.owner = User.objects.get(username=user_name)
-
-        super(StockLocation, self).save(*args, **kwargs)
+    owner = models.ForeignKey(Owner, on_delete=models.CASCADE, blank=True, null=True,
+                              help_text='Select Owner',
+                              related_name='stock_locations')
 
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
@@ -499,9 +480,9 @@ class StockItem(MPTTModel):
         help_text=_('Single unit purchase price at time of purchase'),
     )
 
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
-                              help_text='Owner (User)',
-                              related_name='owner_stockitems')
+    owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
+                              help_text='Select Owner',
+                              related_name='stock_items')
 
     def is_stale(self):
         """

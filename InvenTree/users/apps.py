@@ -16,6 +16,11 @@ class UsersConfig(AppConfig):
         except (OperationalError, ProgrammingError):
             pass
 
+        try:
+            self.update_owners()
+        except (OperationalError, ProgrammingError):
+            pass
+
     def assign_permissions(self):
 
         from django.contrib.auth.models import Group
@@ -31,3 +36,9 @@ class UsersConfig(AppConfig):
         for group in Group.objects.all():
 
             update_group_roles(group)
+
+    def update_owners(self):
+
+        from users.models import create_owners
+
+        create_owners(full_update=True)

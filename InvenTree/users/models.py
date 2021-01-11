@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import User, Group, Permission
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import UniqueConstraint
+from django.db.utils import IntegrityError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -385,3 +388,79 @@ def check_user_role(user, role, permission):
 
     # No matching permissions found
     return False
+
+
+class Owner(models.Model):
+    """
+    An owner is either a group or user.
+    Owner can be associated to any InvenTree model (part, stock, etc.)
+    """
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['owner_type', 'owner_id'],
+                             name='unique_owner')
+        ]
+
+    owner_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+    owner_id = models.PositiveIntegerField(null=True, blank=True)
+    owner = GenericForeignKey('owner_type', 'owner_id')
+
+    def __str__(self):
+        return f'{self.owner} ({self.owner_type.name})'
+
+    def get_users(self):
+
+        owner_users = None
+
+        if type(self.owner) is Group:
+            users = User.objects.filter(groups__name=self.owner.name)
+            owner_users = Owner.objects.filter(owner_id__in=users,
+                                               owner_type=ContentType.objects.get_for_model(User).id)
+
+        return owner_users
+
+
+def create_owners(full_update=False, group=None, user=None):
+    """ Create all owners """
+    
+    if full_update:
+        # Create group owners
+        for group in Group.objects.all():
+            try:
+                Owner.objects.create(owner=group)
+            except IntegrityError:
+                pass
+
+        # Create user owners
+        for user in User.objects.all():
+            try:
+                Owner.objects.create(owner=user)
+            except IntegrityError:
+                pass
+    else:
+        if group:
+            try:
+                Owner.objects.create(owner=group)
+            except IntegrityError:
+                pass
+
+        if user:
+            try:
+                Owner.objects.create(owner=user)
+            except IntegrityError:
+                pass
+
+
+@receiver(post_save, sender=Group)
+def create_new_owner_group(sender, instance, **kwargs):
+    """ Called *after* a Group object is saved. """
+
+    create_owners(group=instance)
+
+
+@receiver(post_save, sender=User)
+def create_new_owner_user(sender, instance, **kwargs):
+    """ Called *after* a User object is saved. """
+
+    create_owners(user=instance)
