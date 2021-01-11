@@ -19,6 +19,8 @@ from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 from markdownx.models import MarkdownxField
 
@@ -47,9 +49,28 @@ class StockLocation(InvenTreeTree):
     Stock locations can be heirarchical as required
     """
 
-    owner = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True,
-                              help_text='Owner (Group)',
-                              related_name='owner_stocklocations')
+    owner_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+    owner_id = models.PositiveIntegerField(null=True, blank=True)
+    owner = GenericForeignKey('owner_type', 'owner_id')
+
+    def save(self, *args, **kwargs):
+        """ Custom save method to process StockLocation owner """
+    
+        # Extract owner
+        try:
+            owner = kwargs.pop('owner')
+        except KeyError:
+            owner = ''
+
+        # Set the owner
+        if owner.startswith('group'):
+            group_name = owner.replace('group_', '')
+            self.owner = Group.objects.get(name=group_name)
+        elif owner.startswith('user'):
+            user_name = owner.replace('user_', '')
+            self.owner = User.objects.get(username=user_name)
+
+        super(StockLocation, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
