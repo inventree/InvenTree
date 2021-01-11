@@ -338,6 +338,13 @@ class StockItem(MPTTModel):
             **kwargs
         )
 
+    @property
+    def barcode(self):
+        """
+        Brief payload data (e.g. for labels)
+        """
+        return self.format_barcode(brief=True)
+
     uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
 
     parent = TreeForeignKey(
