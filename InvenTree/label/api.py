@@ -182,28 +182,23 @@ class StockItemLabelPrint(generics.RetrieveAPIView, StockItemLabelMixin):
             e = sys.exc_info()[1]
             
             data = {
-                'error': _('Error during label printing'),
+                'error': _('Error during label rendering'),
                 'message': str(e),
             }
 
             return Response(data, status=400)
 
-        return InvenTree.helpers.DownloadFile(pdf.getbuffer(), 'stock_item_labels.pdf', content_type='application/pdf')
+        return InvenTree.helpers.DownloadFile(
+            pdf.getbuffer(),
+            'stock_item_label.pdf',
+            content_type='application/pdf'
+        )
 
 
-class StockLocationLabelList(LabelListView):
+class StockLocationLabelMixin:
     """
-    API endpoint for viewiing list of StockLocationLabel objects.
-
-    Filterable by:
-
-    - enabled: Filter by enabled / disabled status
-    - location: Filter by a single stock location
-    - locations: Filter by list of stock locations
+    Mixin for extracting stock locations from query params
     """
-
-    queryset = StockLocationLabel.objects.all()
-    serializer_class = StockLocationLabelSerializer
 
     def get_locations(self):
         """
@@ -215,7 +210,7 @@ class StockLocationLabelList(LabelListView):
         params = self.request.query_params
 
         if 'locations[]' in params:
-            locations = params.getlist('locations', [])
+            locations = params.getlist('locations[]', [])
         elif 'location' in params:
             locations = [params.get('location', None)]
 
@@ -234,6 +229,22 @@ class StockLocationLabelList(LabelListView):
         valid_locations = StockLocation.objects.filter(pk__in=valid_ids)
 
         return valid_locations
+
+
+
+class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
+    """
+    API endpoint for viewiing list of StockLocationLabel objects.
+
+    Filterable by:
+
+    - enabled: Filter by enabled / disabled status
+    - location: Filter by a single stock location
+    - locations: Filter by list of stock locations
+    """
+
+    queryset = StockLocationLabel.objects.all()
+    serializer_class = StockLocationLabelSerializer
 
     def filter_queryset(self, queryset):
         """
@@ -294,6 +305,49 @@ class StockLocationLabelDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = StockLocationLabelSerializer
 
 
+class StockLocationLabelPrint(generics.RetrieveAPIView, StockLocationLabelMixin):
+    """
+    API endpoint for printing a StockLocationLabel object
+    """
+
+    queryset = StockLocationLabel.objects.all()
+    seiralizers_class = StockLocationLabelSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        locations = self.get_locations()
+
+        if len(locations) == 0:
+            # No valid locations provided - return an error message
+
+            return Response(
+                {
+                    'error': _('Must provide valid StockLocation(s)'),
+                },
+                status=400,
+            )
+
+        label = self.get_object()
+
+        try:
+            pdf = label.render(locations)
+        except:
+            e = sys.exc_info()[1]
+
+            data = {
+                'error': _('Error during label rendering'),
+                'message': str(e),
+            }
+
+            return Response(data, status=400)
+
+        return InvenTree.helpers.DownloadFile(
+            pdf.getbuffer(),
+            'stock_location_label.pdf',
+            content_type='application/pdf'
+        )
+
+
 label_api_urls = [
 
     # Stock item labels
@@ -312,6 +366,7 @@ label_api_urls = [
     url(r'location/', include([
         # Detail views
         url(r'^(?P<pk>\d+)/', include([
+            url(r'print/?', StockLocationLabelPrint.as_view(), name='api-stocklocation-label-print'),
             url(r'^.*$', StockLocationLabelDetail.as_view(), name='api-stocklocation-label-detail'),
         ])),
 

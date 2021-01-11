@@ -89,7 +89,13 @@ function printStockLocationLabels(locations, options={}) {
                     locations,
                     {
                         success: function(pk) {
-                            // TODO - Print the label!
+                            var href = `/api/label/location/${pk}/print/?`;
+
+                            locations.forEach(function(location) {
+                                href += `locations[]=${location}&`;
+                            });
+
+                            window.location.href = href;
                         }
                     }
                 );
