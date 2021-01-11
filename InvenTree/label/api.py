@@ -231,7 +231,6 @@ class StockLocationLabelMixin:
         return valid_locations
 
 
-
 class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
     """
     API endpoint for viewiing list of StockLocationLabel objects.
