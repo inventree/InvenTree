@@ -64,6 +64,13 @@ class StockLocation(InvenTreeTree):
             **kwargs
         )
 
+    @property
+    def barcode(self):
+        """
+        Brief payload data (e.g. for labels)
+        """
+        return self.format_barcode(brief=True)
+
     def get_stock_items(self, cascade=True):
         """ Return a queryset for all stock items under this category.
 
