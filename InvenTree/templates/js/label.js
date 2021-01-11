@@ -8,7 +8,7 @@ function printStockItemLabels(items, options={}) {
     if (items.length == 0) {
         showAlertDialog(
             '{% trans "Select Stock Items" %}',
-            '{% trans "Stock items must be selected before printing labels" %}'
+            '{% trans "Stock item(s) must be selected before printing labels" %}'
         );
 
         return;
@@ -29,15 +29,75 @@ function printStockItemLabels(items, options={}) {
                         '{% trans "No Labels Found" %}',
                         '{% trans "No labels found which match selected stock item(s)" %}',
                     );
+
                     return;
                 }
 
                 // Select label to print
-                selectLabel(response, items);
+                selectLabel(
+                    response,
+                    items,
+                    {
+                        success: function(pk) {
+                            var href = `/api/label/stock/${pk}/print/?`;
+        
+                            items.forEach(function(item) {
+                                href += `items[]=${item}&`;
+                            });
+                    
+                            window.location.href = href;
+                        }
+                    }
+                );
             }
         }
     );
 }
+
+function printStockLocationLabels(locations, options={}) {
+
+    if (locations.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Stock Locations" %}',
+            '{% trans "Stock location(s) must be selected before printing labels" %}'
+        );
+
+        return;
+    }
+
+    // Request available labels from the server
+    inventreeGet(
+        '{% url "api-stocklocation-label-list" %}',
+        {
+            enabled: true,
+            locations: locations,
+        },
+        {
+            success: function(response) {
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Labels Found" %}',
+                        '{% trans "No labels found which match selected stock location(s)" %}',
+                    );
+
+                    return;
+                }
+
+                // Select label to print
+                selectLabel(
+                    response,
+                    locations,
+                    {
+                        success: function(pk) {
+                            // TODO - Print the label!
+                        }
+                    }
+                );
+            }
+        }
+    )
+}
+
 
 function selectLabel(labels, items, options={}) {
     /**
@@ -47,8 +107,6 @@ function selectLabel(labels, items, options={}) {
      * The intent is that the available labels have been requested
      * (via AJAX) from the server.
      */
-
-    var stock_items = items;
 
     var modal = options.modal || '#modal-form';
 
@@ -102,12 +160,8 @@ function selectLabel(labels, items, options={}) {
 
         closeModal(modal);
 
-        var href = `/api/label/stock/${pk}/print/?`;
-        
-        stock_items.forEach(function(item) {
-            href += `items[]=${item}&`;
-        });
-
-        window.location.href = href;
+        if (options.success) {
+            options.success(pk);
+        }
     });
 }
