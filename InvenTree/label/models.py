@@ -50,20 +50,23 @@ class LabelTemplate(models.Model):
         )
 
     name = models.CharField(
-        unique=True,
         blank=False, max_length=100,
+        verbose_name=_('Name'),
         help_text=_('Label name'),
     )
 
     description = models.CharField(
         max_length=250,
         blank=True, null=True,
+        verbose_name=_('Description'),
         help_text=_('Label description'),
     )
 
     label = models.FileField(
         upload_to=rename_label,
+        unique=True,
         blank=False, null=False,
+        verbose_name=_('Label'),
         help_text=_('Label template file'),
         validators=[FileExtensionValidator(allowed_extensions=['html'])],
     )
@@ -71,13 +74,14 @@ class LabelTemplate(models.Model):
     filters = models.CharField(
         blank=True, max_length=250,
         help_text=_('Query filters (comma-separated list of key=value pairs'),
+        verbose_name=_('Filters'),
         validators=[validateFilterString]
     )
 
     enabled = models.BooleanField(
         default=True,
+        verbose_name=_('Enabled'),
         help_text=_('Label template is enabled'),
-        verbose_name=_('Enabled')
     )
 
     def get_record_data(self, items):
