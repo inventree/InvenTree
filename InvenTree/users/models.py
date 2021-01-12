@@ -413,26 +413,34 @@ class Owner(models.Model):
     @classmethod
     def create(cls, owner):
 
-        # Check if owner already exists
+        existing_owner = cls.get_owner(owner)
+
+        if not existing_owner:
+            # Create new owner
+            try:
+                return cls.objects.create(owner=owner)
+            except IntegrityError:
+                return None
+
+    @classmethod
+    def get_owner(cls, user_or_group):
+
+        # Get corresponding owner
         try:
-            group = Owner.objects.get(owner_id=owner.id,
+            group = Owner.objects.get(owner_id=user_or_group.id,
                                       owner_type=ContentType.objects.get_for_model(Group).id)
             return group
         except Owner.DoesNotExist:
             pass
 
         try:
-            user = Owner.objects.get(owner_id=owner.id,
+            user = Owner.objects.get(owner_id=user_or_group.id,
                                      owner_type=ContentType.objects.get_for_model(User).id)
             return user
         except Owner.DoesNotExist:
             pass
 
-        # Create new owner
-        try:
-            return cls.objects.create(owner=owner)
-        except IntegrityError:
-            return None
+        return None
 
     def get_users(self, include_group=False):
 

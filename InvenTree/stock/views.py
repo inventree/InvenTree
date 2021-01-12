@@ -181,15 +181,13 @@ class StockLocationEdit(AjaxUpdateView):
 
             # Update stock items
             stock_items = self.object.get_stock_items()
-            print(f'{stock_items=}')
+
             for stock_item in stock_items:
                 # Check if current owner is subset of new owner
                 if stock_item.owner and authorized_owners:
                     if stock_item.owner in authorized_owners:
-                        print(f'{stock_item.owner} is authorized')
                         continue
 
-                print(f'Updating stock item {stock_item} owner')
                 stock_item.owner = self.object.owner
                 stock_item.save()
 
