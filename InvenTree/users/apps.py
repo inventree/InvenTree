@@ -39,6 +39,6 @@ class UsersConfig(AppConfig):
 
     def update_owners(self):
 
-        from users.models import create_owners
+        from users.models import create_owner
 
-        create_owners(full_update=True)
+        create_owner(full_update=True)

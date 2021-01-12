@@ -346,7 +346,7 @@ def update_group_roles(group, debug=False):
             print(f"Removing permission {perm} from group {group.name}")
 
 
-@receiver(post_save, sender=Group)
+@receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
 def create_missing_rule_sets(sender, instance, **kwargs):
     """
     Called *after* a Group object is saved.
@@ -409,6 +409,30 @@ class Owner(models.Model):
     def __str__(self):
         return f'{self.owner} ({self.owner_type.name})'
 
+    @classmethod
+    def create(cls, owner):
+
+        # Check if owner already exists
+        try:
+            group = Owner.objects.get(owner_id=owner.id,
+                                      owner_type=ContentType.objects.get_for_model(Group).id)
+            return group
+        except Owner.DoesNotExist:
+            pass
+
+        try:
+            user = Owner.objects.get(owner_id=owner.id,
+                                     owner_type=ContentType.objects.get_for_model(User).id)
+            return user
+        except Owner.DoesNotExist:
+            pass
+
+        # Create new owner
+        try:
+            return cls.objects.create(owner=owner)
+        except IntegrityError:
+            return None
+
     def get_users(self):
 
         owner_users = None
@@ -421,46 +445,25 @@ class Owner(models.Model):
         return owner_users
 
 
-def create_owners(full_update=False, group=None, user=None):
+def create_owner(full_update=False, owner=None):
     """ Create all owners """
     
     if full_update:
         # Create group owners
         for group in Group.objects.all():
-            try:
-                Owner.objects.create(owner=group)
-            except IntegrityError:
-                pass
+            Owner.create(owner=group)
 
         # Create user owners
         for user in User.objects.all():
-            try:
-                Owner.objects.create(owner=user)
-            except IntegrityError:
-                pass
+            Owner.create(owner=user)
     else:
-        if group:
-            try:
-                Owner.objects.create(owner=group)
-            except IntegrityError:
-                pass
-
-        if user:
-            try:
-                Owner.objects.create(owner=user)
-            except IntegrityError:
-                pass
+        if owner:
+            Owner.create(owner=owner)
 
 
-@receiver(post_save, sender=Group)
-def create_new_owner_group(sender, instance, **kwargs):
-    """ Called *after* a Group object is saved. """
+@receiver(post_save, sender=Group, dispatch_uid='create_missing_owner')
+@receiver(post_save, sender=User, dispatch_uid='create_missing_owner')
+def create_missing_owner(sender, instance, created, **kwargs):
+    """ Create owner instance after either user or group object is saved. """
 
-    create_owners(group=instance)
-
-
-@receiver(post_save, sender=User)
-def create_new_owner_user(sender, instance, **kwargs):
-    """ Called *after* a User object is saved. """
-
-    create_owners(user=instance)
+    create_owner(owner=instance)
