@@ -3,7 +3,7 @@
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import UniqueConstraint
+from django.db.models import UniqueConstraint, Q
 from django.db.utils import IntegrityError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -112,6 +112,7 @@ class RuleSet(models.Model):
         'report_reportasset',
         'report_testreport',
         'part_partstar',
+        'users_owner',
 
         # Third-party tables
         'error_report_error',
@@ -433,14 +434,23 @@ class Owner(models.Model):
         except IntegrityError:
             return None
 
-    def get_users(self):
+    def get_users(self, include_group=False):
 
         owner_users = None
 
         if type(self.owner) is Group:
             users = User.objects.filter(groups__name=self.owner.name)
-            owner_users = Owner.objects.filter(owner_id__in=users,
-                                               owner_type=ContentType.objects.get_for_model(User).id)
+
+            if include_group:
+                query = Q(owner_id__in=users, owner_type=ContentType.objects.get_for_model(User).id) | \
+                    Q(owner_id=self.owner.id, owner_type=ContentType.objects.get_for_model(Group).id)
+            else:
+                query = Q(owner_id__in=users, owner_type=ContentType.objects.get_for_model(User).id)
+            
+            owner_users = Owner.objects.filter(query)
+
+        elif type(self.owner) is User:
+            owner_users = [self]
 
         return owner_users
 

@@ -145,3 +145,22 @@ def get_color_theme_css(username):
     inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
 
     return inventree_css_static_url
+
+
+@register.simple_tag()
+def authorized_owners(group):
+    """ Return authorized owners """
+
+    owners = []
+
+    try:
+        for owner in group.get_users(include_group=True):
+            owners.append(owner.owner)
+    except AttributeError:
+        # group is None
+        pass
+    except TypeError:
+        # group.get_users returns None
+        pass
+    
+    return owners
