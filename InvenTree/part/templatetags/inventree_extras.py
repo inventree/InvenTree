@@ -154,7 +154,7 @@ def authorized_owners(group):
     owners = []
 
     try:
-        for owner in group.get_users(include_group=True):
+        for owner in group.get_related_owners(include_group=True):
             owners.append(owner.owner)
     except AttributeError:
         # group is None

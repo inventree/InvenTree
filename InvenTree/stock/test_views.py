@@ -323,11 +323,9 @@ class StockOwnershipTest(StockViewTestCase):
         self.assertEqual(location.owner, user_group_owner)
 
         # Test item edit
-        # response = self.client.post(reverse('stock-item-edit', args=(test_item_id,)),
-        #                             {'part': 1, 'status': StockStatus.OK, 'owner': new_user_as_owner.pk},
-        #                             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        # print(response.content)
-        # self.assertContains(response, '"form_valid": false', status_code=200)
+        response = self.client.post(reverse('stock-item-edit', args=(test_item_id,)),
+                                    {'part': 1, 'status': StockStatus.OK, 'owner': new_user_as_owner.pk},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         # Make sure the item's owner is unchanged
         item = StockItem.objects.get(pk=test_item_id)
@@ -384,18 +382,19 @@ class StockOwnershipTest(StockViewTestCase):
         }
 
         # Try to create new item with no owner
-        # response = self.client.post(reverse('stock-item-create'),
-        #                             new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        # self.assertContains(response, '"form_valid": false', status_code=200)
+        response = self.client.post(reverse('stock-item-create'),
+                                    new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        # print(response.content)
+        self.assertContains(response, '"form_valid": false', status_code=200)
 
         # Try to create new item with invalid owner
-        # new_item['owner'] = user_as_owner
-        # response = self.client.post(reverse('stock-item-create'),
-        #                             new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        # self.assertContains(response, '"form_valid": false', status_code=200)
+        new_item['owner'] = user_as_owner.pk
+        response = self.client.post(reverse('stock-item-create'),
+                                    new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertContains(response, '"form_valid": false', status_code=200)
 
         # Try to create new item with valid owner
-        new_item['owner'] = new_user_as_owner
+        new_item['owner'] = new_user_as_owner.pk
         response = self.client.post(reverse('stock-item-create'),
                                     new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertContains(response, '"form_valid": true', status_code=200)

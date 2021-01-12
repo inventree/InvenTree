@@ -422,27 +422,62 @@ class Owner(models.Model):
             except IntegrityError:
                 return None
 
+        return existing_owner
+
     @classmethod
     def get_owner(cls, user_or_group):
 
-        # Get corresponding owner
-        try:
-            group = Owner.objects.get(owner_id=user_or_group.id,
-                                      owner_type=ContentType.objects.get_for_model(Group).id)
-            return group
-        except Owner.DoesNotExist:
-            pass
+        owner = None
+        content_type_id = 0
+        content_type_id_list = [ContentType.objects.get_for_model(Group).id,
+                                ContentType.objects.get_for_model(User).id]
 
-        try:
-            user = Owner.objects.get(owner_id=user_or_group.id,
-                                     owner_type=ContentType.objects.get_for_model(User).id)
-            return user
-        except Owner.DoesNotExist:
-            pass
+        # If instance type is obvious: set content type
+        if type(user_or_group) is Group:
+            content_type_id = content_type_id_list[0]
+        elif type(user_or_group) is User:
+            content_type_id = content_type_id_list[1]
 
-        return None
+        if content_type_id:
+            try:
+                owner = Owner.objects.get(owner_id=user_or_group.id,
+                                          owner_type=content_type_id)
+            except Owner.DoesNotExist:
+                pass
+        else:
+            # Check whether user_or_group is a Group instance
+            try:
+                group = Group.objects.get(pk=user_or_group.id)
+            except Group.DoesNotExist:
+                group = None
 
-    def get_users(self, include_group=False):
+            if group:
+                try:
+                    owner = Owner.objects.get(owner_id=user_or_group.id,
+                                              owner_type=content_type_id_list[0])
+                except Owner.DoesNotExist:
+                    pass
+
+                return owner
+
+            # Check whether user_or_group is a User instance
+            try:
+                user = User.objects.get(pk=user_or_group.id)
+            except User.DoesNotExist:
+                user = None
+
+            if user:
+                try:
+                    owner = Owner.objects.get(owner_id=user_or_group.id,
+                                              owner_type=content_type_id_list[1])
+                except Owner.DoesNotExist:
+                    pass
+
+                return owner
+                
+        return owner
+
+    def get_related_owners(self, include_group=False):
 
         owner_users = None
 

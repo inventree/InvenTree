@@ -37,6 +37,7 @@ from .models import StockItem, StockLocation, StockItemTracking, StockItemAttach
 
 import common.settings
 from common.models import InvenTreeSetting
+from users.models import Owner
 
 from .admin import StockItemResource
 
@@ -166,7 +167,7 @@ class StockLocationEdit(AjaxUpdateView):
         
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
         if stock_ownership_control:
-            authorized_owners = self.object.owner.get_users()
+            authorized_owners = self.object.owner.get_related_owners()
 
             # Update children locations
             children_locations = self.object.get_children()
@@ -1427,9 +1428,10 @@ class StockItemEdit(AjaxUpdateView):
 
                 # Check location owner type and filter
                 if type(location_owner.owner) is Group:
-                    queryset = location_owner.get_users(include_group=True)
-                    if self.request.user in queryset:
-                        form.fields['owner'].initial = self.request.user
+                    user_as_owner = Owner.get_owner(self.request.user)
+                    queryset = location_owner.get_related_owners(include_group=True)
+                    if user_as_owner in queryset:
+                        form.fields['owner'].initial = user_as_owner
                     form.fields['owner'].queryset = queryset
                 elif type(location_owner.owner) is User:
                     form.fields['owner'].disabled = True
@@ -1446,9 +1448,10 @@ class StockItemEdit(AjaxUpdateView):
 
                 # Check location owner type and filter
                 if type(item_owner.owner) is Group:
-                    queryset = item_owner.get_users(include_group=True)
-                    if self.request.user in queryset:
-                        form.fields['owner'].initial = self.request.user
+                    user_as_owner = Owner.get_owner(self.request.user)
+                    queryset = item_owner.get_related_owners(include_group=True)
+                    if user_as_owner in queryset:
+                        form.fields['owner'].initial = user_as_owner
                     form.fields['owner'].queryset = queryset
                 elif type(item_owner.owner) is User:
                     form.fields['owner'].disabled = True
@@ -1727,6 +1730,8 @@ class StockItemCreate(AjaxCreateView):
         ForeignKey choices based on other selections
         """
 
+        print('------------ FORM ------------------')
+
         form = super().get_form()
 
         # Hide the "expiry date" field if the feature is not enabled
@@ -1797,17 +1802,25 @@ class StockItemCreate(AjaxCreateView):
         if not stock_ownership_control:
             form.fields['owner'].widget = HiddenInput()
         else:
+            print('> Stock ownership is enabled')
             try:
                 location_owner = location.owner
             except AttributeError:
                 location_owner = None
 
+            print(f'{location_owner=}')
+
             if location_owner:
                 # Check location owner type and filter
                 if type(location_owner.owner) is Group:
-                    queryset = location_owner.get_users()
-                    if self.request.user in queryset:
-                        form.fields['owner'].initial = self.request.user
+                    print(f'{self.request.user=}')
+                    user_as_owner = Owner.get_owner(self.request.user)
+                    print(f'{user_as_owner=}')
+                    queryset = location_owner.get_related_owners()
+                    print(f'{queryset=}')
+                    
+                    if user_as_owner in queryset:
+                        form.fields['owner'].initial = user_as_owner
                     form.fields['owner'].queryset = queryset
                 elif type(location_owner.owner) is User:
                     form.fields['owner'].disabled = True
