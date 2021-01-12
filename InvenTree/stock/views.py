@@ -1730,8 +1730,6 @@ class StockItemCreate(AjaxCreateView):
         ForeignKey choices based on other selections
         """
 
-        print('------------ FORM ------------------')
-
         form = super().get_form()
 
         # Hide the "expiry date" field if the feature is not enabled
@@ -1808,16 +1806,11 @@ class StockItemCreate(AjaxCreateView):
             except AttributeError:
                 location_owner = None
 
-            print(f'{location_owner=}')
-
             if location_owner:
                 # Check location owner type and filter
                 if type(location_owner.owner) is Group:
-                    print(f'{self.request.user=}')
                     user_as_owner = Owner.get_owner(self.request.user)
-                    print(f'{user_as_owner=}')
                     queryset = location_owner.get_related_owners()
-                    print(f'{queryset=}')
                     
                     if user_as_owner in queryset:
                         form.fields['owner'].initial = user_as_owner
