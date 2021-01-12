@@ -167,7 +167,6 @@ class StockLocationEdit(AjaxUpdateView):
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
         if stock_ownership_control:
             authorized_owners = self.object.owner.get_users()
-            print(f'{authorized_owners=}')
 
             # Update children locations
             children_locations = self.object.get_children()
