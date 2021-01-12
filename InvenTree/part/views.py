@@ -231,7 +231,7 @@ class PartAttachmentDelete(AjaxDeleteView):
     ajax_template_name = "attachment_delete.html"
     context_object_name = "attachment"
 
-    role_required = 'part.delete'
+    role_required = 'part.change'
 
     def get_data(self):
         return {
@@ -2073,7 +2073,7 @@ class PartParameterEdit(AjaxUpdateView):
 class PartParameterDelete(AjaxDeleteView):
     """ View for deleting a PartParameter """
 
-    role_required = 'part.delete'
+    role_required = 'part.change'
 
     model = PartParameter
     ajax_template_name = 'part/param_delete.html'
@@ -2554,7 +2554,7 @@ class BomItemDelete(AjaxDeleteView):
     context_object_name = 'item'
     ajax_form_title = _('Confim BOM item deletion')
 
-    role_required = 'part.delete'
+    role_required = 'part.change'
 
 
 class PartSalePriceBreakCreate(AjaxCreateView):
