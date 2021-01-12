@@ -37,7 +37,7 @@
                     {% if roles.part.change %}
                     <button title='{% trans "Edit" %}' class='btn btn-default btn-glyph param-edit' url="{% url 'part-param-edit' param.id %}" type='button'><span class='fas fa-edit'/></button>
                     {% endif %}
-                    {% if roles.part.delete %}
+                    {% if roles.part.change %}
                     <button title='{% trans "Delete" %}' class='btn btn-default btn-glyph param-delete' url="{% url 'part-param-delete' param.id %}" type='button'><span class='fas fa-trash-alt icon-red'/></button>
                     {% endif %}
                 </div>
