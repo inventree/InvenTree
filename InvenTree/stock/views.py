@@ -1800,7 +1800,6 @@ class StockItemCreate(AjaxCreateView):
         if not stock_ownership_control:
             form.fields['owner'].widget = HiddenInput()
         else:
-            print('> Stock ownership is enabled')
             try:
                 location_owner = location.owner
             except AttributeError:

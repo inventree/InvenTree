@@ -384,7 +384,6 @@ class StockOwnershipTest(StockViewTestCase):
         # Try to create new item with no owner
         response = self.client.post(reverse('stock-item-create'),
                                     new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        # print(response.content)
         self.assertContains(response, '"form_valid": false', status_code=200)
 
         # Try to create new item with invalid owner
@@ -398,3 +397,19 @@ class StockOwnershipTest(StockViewTestCase):
         response = self.client.post(reverse('stock-item-create'),
                                     new_item, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertContains(response, '"form_valid": true', status_code=200)
+
+        # Logout
+        self.client.logout()
+
+        # Login with admin
+        self.client.login(username='username', password='password')
+
+        # Switch owner of location
+        response = self.client.post(reverse('stock-location-edit', args=(location_created.pk,)),
+                                    {'name': new_location['name'], 'owner': user_group_owner.pk},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertContains(response, '"form_valid": true', status_code=200)
+
+        # Check that owner was updated for item in this location
+        stock_item = StockItem.objects.all().last()
+        self.assertEqual(stock_item.owner, user_group_owner)
