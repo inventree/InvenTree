@@ -2554,7 +2554,7 @@ class BomItemDelete(AjaxDeleteView):
     context_object_name = 'item'
     ajax_form_title = _('Confim BOM item deletion')
 
-    role_required = 'part.delete'
+    role_required = 'part.change'
 
 
 class PartSalePriceBreakCreate(AjaxCreateView):
