@@ -467,7 +467,7 @@ def validateFilterString(value, model=None):
     # If a model is provided, verify that the provided filters can be used against it
     if model is not None:
         try:
-            query = model.objects.filter(**results)
+            model.objects.filter(**results)
         except FieldError as e:
             raise ValidationError(
                 str(e),
