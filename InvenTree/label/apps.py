@@ -27,7 +27,70 @@ class LabelConfig(AppConfig):
         if they do not already exist
         """
 
-        pass
+        try:
+            from .models import StockItemLabel
+        except:
+            # Database might not by ready yet
+            return
+
+        src_dir = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            'templates',
+            'stockitem',
+        )
+
+        dst_dir = os.path.join(
+            settings.MEDIA_ROOT,
+            'label',
+            'inventree',
+            'stockitem',
+        )
+
+        if not os.path.exists(dst_dir):
+            logger.info(f"Creating missing directory: '{dst_dir}'")
+            os.makedirs(dst_dir, exist_ok=True)
+
+        labels = [
+            {
+                'file': 'qr.html',
+                'name': 'QR Code',
+                'description': 'Simple QR code label',
+            },
+        ]
+
+        for label in labels:
+
+            filename = os.path.join(
+                'label',
+                'inventree',
+                'stockitem',
+                label['file'],
+            )
+
+            # Check if the file exists in the media directory
+            src_file = os.path.join(src_dir, label['file'])
+            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
+
+            if not os.path.exists(dst_file):
+                logger.info(f"Copying label template '{dst_file}'")
+                shutil.copyfile(src_file, dst_file)
+
+            # Check if a label matching the template already exists
+            if StockItemLabel.objects.filter(label=filename).exists():
+                continue
+
+            logger.info(f"Creating entry for StockItemLabel '{label['name']}'")
+
+            try:
+                StockItemLabel.objects.create(
+                    name=label['name'],
+                    description=label['description'],
+                    label=filename,
+                    filters='',
+                    enabled=True
+                )
+            except IntegrityError:
+                pass
 
     def create_stock_location_labels(self):
         """
