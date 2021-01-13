@@ -29,8 +29,10 @@ class RuleSet(models.Model):
 
     RULESET_CHOICES = [
         ('admin', _('Admin')),
+        ('part_category', _('Part Categories')),
         ('part', _('Parts')),
-        ('stock', _('Stock')),
+        ('stock_location', _('Stock Locations')),
+        ('stock', _('Stock Items')),
         ('build', _('Build Orders')),
         ('purchase_order', _('Purchase Orders')),
         ('sales_order', _('Sales Orders')),
@@ -52,21 +54,25 @@ class RuleSet(models.Model):
             'authtoken_token',
             'users_ruleset',
         ],
+        'part_category': [
+            'part_partcategory',
+            'part_partcategoryparametertemplate',
+        ],
         'part': [
             'part_part',
             'part_bomitem',
-            'part_partcategory',
             'part_partattachment',
             'part_partsellpricebreak',
             'part_parttesttemplate',
             'part_partparametertemplate',
             'part_partparameter',
             'part_partrelated',
-            'part_partcategoryparametertemplate',
+        ],
+        'stock_location': [
+            'stock_stocklocation',
         ],
         'stock': [
             'stock_stockitem',
-            'stock_stocklocation',
             'stock_stockitemattachment',
             'stock_stockitemtracking',
             'stock_stockitemtestresult',

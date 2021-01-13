@@ -231,7 +231,7 @@ class PartAttachmentDelete(AjaxDeleteView):
     ajax_template_name = "attachment_delete.html"
     context_object_name = "attachment"
 
-    role_required = 'part.delete'
+    role_required = 'part.change'
 
     def get_data(self):
         return {
@@ -2073,7 +2073,7 @@ class PartParameterEdit(AjaxUpdateView):
 class PartParameterDelete(AjaxDeleteView):
     """ View for deleting a PartParameter """
 
-    role_required = 'part.delete'
+    role_required = 'part.change'
 
     model = PartParameter
     ajax_template_name = 'part/param_delete.html'
@@ -2088,7 +2088,7 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
     queryset = PartCategory.objects.all().prefetch_related('children')
     template_name = 'part/category_partlist.html'
 
-    role_required = 'part.view'
+    role_required = ['part_category.view', 'part.view']
 
     def get_context_data(self, **kwargs):
 
@@ -2138,7 +2138,7 @@ class CategoryEdit(AjaxUpdateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Part Category')
 
-    role_required = 'part.change'
+    role_required = 'part_category.change'
 
     def get_context_data(self, **kwargs):
         context = super(CategoryEdit, self).get_context_data(**kwargs).copy()
@@ -2177,7 +2177,7 @@ class CategoryDelete(AjaxDeleteView):
     context_object_name = 'category'
     success_url = '/part/'
 
-    role_required = 'part.delete'
+    role_required = 'part_category.delete'
 
     def get_data(self):
         return {
@@ -2193,7 +2193,7 @@ class CategoryCreate(AjaxCreateView):
     ajax_template_name = 'modal_form.html'
     form_class = part_forms.EditCategoryForm
 
-    role_required = 'part.add'
+    role_required = 'part_category.add'
 
     def get_context_data(self, **kwargs):
         """ Add extra context data to template.
@@ -2233,7 +2233,7 @@ class CategoryCreate(AjaxCreateView):
 class CategoryParameterTemplateCreate(AjaxCreateView):
     """ View for creating a new PartCategoryParameterTemplate """
 
-    role_required = 'part.add'
+    role_required = 'part_category.change'
 
     model = PartCategoryParameterTemplate
     form_class = part_forms.EditCategoryParameterTemplateForm
@@ -2336,7 +2336,7 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
 class CategoryParameterTemplateEdit(AjaxUpdateView):
     """ View for editing a PartCategoryParameterTemplate """
 
-    role_required = 'part.change'
+    role_required = 'part_category.change'
 
     model = PartCategoryParameterTemplate
     form_class = part_forms.EditCategoryParameterTemplateForm
@@ -2395,7 +2395,7 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
 class CategoryParameterTemplateDelete(AjaxDeleteView):
     """ View for deleting an existing PartCategoryParameterTemplate """
 
-    role_required = 'part.delete'
+    role_required = 'part_category.change'
 
     model = PartCategoryParameterTemplate
     ajax_form_title = _("Delete Category Parameter Template")
@@ -2554,7 +2554,7 @@ class BomItemDelete(AjaxDeleteView):
     context_object_name = 'item'
     ajax_form_title = _('Confim BOM item deletion')
 
-    role_required = 'part.delete'
+    role_required = 'part.change'
 
 
 class PartSalePriceBreakCreate(AjaxCreateView):

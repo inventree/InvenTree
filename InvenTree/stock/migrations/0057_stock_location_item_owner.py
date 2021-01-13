@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0004_owner_model'),
+        ('users', '0005_owner_model'),
         ('stock', '0056_stockitem_expiry_date'),
     ]
 

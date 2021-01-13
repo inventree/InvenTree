@@ -30,6 +30,8 @@ class RuleSetInline(admin.TabularInline):
     max_num = len(RuleSet.RULESET_CHOICES)
     min_num = 1
     extra = 0
+    # TODO: find better way to order inlines
+    ordering = ['name']
 
 
 class InvenTreeGroupAdminForm(forms.ModelForm):
@@ -87,7 +89,8 @@ class RoleGroupAdmin(admin.ModelAdmin):
         RuleSetInline,
     ]
 
-    list_display = ('name', 'admin', 'part', 'stock', 'build', 'purchase_order', 'sales_order')
+    list_display = ('name', 'admin', 'part_category', 'part', 'stock_location',
+                    'stock_item', 'build', 'purchase_order', 'sales_order')
 
     def get_rule_set(self, obj, rule_set_type):
         ''' Return list of permissions for the given ruleset '''
@@ -130,10 +133,16 @@ class RoleGroupAdmin(admin.ModelAdmin):
     def admin(self, obj):
         return self.get_rule_set(obj, 'admin')
 
+    def part_category(self, obj):
+        return self.get_rule_set(obj, 'part_category')
+
     def part(self, obj):
         return self.get_rule_set(obj, 'part')
 
-    def stock(self, obj):
+    def stock_location(self, obj):
+        return self.get_rule_set(obj, 'stock_location')
+
+    def stock_item(self, obj):
         return self.get_rule_set(obj, 'stock')
 
     def build(self, obj):
