@@ -75,13 +75,13 @@ class LabelConfig(AppConfig):
                 logger.info(f"Copying label template '{dst_file}'")
                 shutil.copyfile(src_file, dst_file)
 
-            # Check if a label matching the template already exists
-            if StockItemLabel.objects.filter(label=filename).exists():
-                continue
-
-            logger.info(f"Creating entry for StockItemLabel '{label['name']}'")
-
             try:
+                # Check if a label matching the template already exists
+                if StockItemLabel.objects.filter(label=filename).exists():
+                    continue
+
+                logger.info(f"Creating entry for StockItemLabel '{label['name']}'")
+
                 StockItemLabel.objects.create(
                     name=label['name'],
                     description=label['description'],
@@ -89,7 +89,7 @@ class LabelConfig(AppConfig):
                     filters='',
                     enabled=True
                 )
-            except IntegrityError:
+            except:
                 pass
 
     def create_stock_location_labels(self):
@@ -151,13 +151,13 @@ class LabelConfig(AppConfig):
                 logger.info(f"Copying label template '{dst_file}'")
                 shutil.copyfile(src_file, dst_file)
 
-            # Check if a label matching the template already exists
-            if StockLocationLabel.objects.filter(label=filename).exists():
-                continue
-
-            logger.info(f"Creating entry for StockLocationLabel '{label['name']}'")
-
             try:
+                # Check if a label matching the template already exists
+                if StockLocationLabel.objects.filter(label=filename).exists():
+                    continue
+
+                logger.info(f"Creating entry for StockLocationLabel '{label['name']}'")
+
                 StockLocationLabel.objects.create(
                     name=label['name'],
                     description=label['description'],
@@ -165,5 +165,5 @@ class LabelConfig(AppConfig):
                     filters='',
                     enabled=True
                 )
-            except IntegrityError:
+            except:
                 pass
