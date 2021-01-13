@@ -17,6 +17,7 @@ from stock.models import StockItem
 
 class LabelTest(TestCase):
 
+    # TODO - Implement this test properly. Looks like apps.py is not run first
     def _test_default_labels(self):
         """
         Test that the default label templates are copied across
@@ -30,6 +31,7 @@ class LabelTest(TestCase):
 
         self.assertTrue(labels.count() > 0)
 
+    # TODO - Implement this test properly. Looks like apps.py is not run first
     def _test_default_files(self):
         """
         Test that label files exist in the MEDIA directory
