@@ -2,7 +2,6 @@ import os
 import shutil
 import logging
 
-from django.db.utils import IntegrityError
 from django.apps import AppConfig
 from django.conf import settings
 
