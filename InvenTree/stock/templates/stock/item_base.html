@@ -21,7 +21,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 
     {% if not user in owners and not user.is_superuser %}
     <div class='alert alert-block alert-info'>
-        {% trans "You are not the owner of this item. This stock item cannot be edited." %}<br>
+        {% trans "You are not in the list of owners of this item. This stock item cannot be edited." %}<br>
     </div>
     {% endif %}
 {% endif %}

@@ -11,7 +11,8 @@ from django.views.generic import DetailView, ListView, UpdateView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 from django.urls import reverse
-from django.contrib.auth.models import Group, User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 
 from django.utils.translation import ugettext as _
 
@@ -145,28 +146,53 @@ class StockLocationEdit(AjaxUpdateView):
 
         # Is ownership control enabled?
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
-        owner = location.owner
 
         if not stock_ownership_control:
+            # Hide owner field
             form.fields['owner'].widget = HiddenInput()
         else:
-            form.fields['owner'].initial = owner
-            if location.parent:
-                form.fields['owner'].initial = location.parent.owner
-            if not self.request.user.is_superuser:
-                form.fields['owner'].disabled = True
+            # Get location's owner
+            location_owner = location.owner
+
+            if location_owner:
+                if location.parent:
+                    try:
+                        # If location has parent and owner: automatically select parent's owner
+                        parent_owner = location.parent.owner
+                        form.fields['owner'].initial = parent_owner
+                    except AttributeError:
+                        pass
+                else:
+                    # If current owner exists: automatically select it
+                    form.fields['owner'].initial = location_owner
+
+                # Update queryset or disable field (only if not admin)
+                if not self.request.user.is_superuser:
+                    if type(location_owner.owner) is Group:
+                        user_as_owner = Owner.get_owner(self.request.user)
+                        queryset = location_owner.get_related_owners(include_group=True)
+
+                        if user_as_owner not in queryset:
+                            # Only owners or admin can change current owner
+                            form.fields['owner'].disabled = True
+                        else:
+                            form.fields['owner'].queryset = queryset
 
         return form
 
     def save(self, object, form, **kwargs):
         """ If location has children and ownership control is enabled:
-            - update all children's owners with location's owner
+            - update owner of all children location of this location
+            - update owner for all stock items at this location
         """
 
         self.object = form.save()
         
+        # Is ownership control enabled?
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
         if stock_ownership_control:
+            # Get authorized users
             authorized_owners = self.object.owner.get_related_owners()
 
             # Update children locations
@@ -1414,6 +1440,7 @@ class StockItemEdit(AjaxUpdateView):
 
         # Is ownership control enabled?
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
         if not stock_ownership_control:
             form.fields['owner'].widget = HiddenInput()
         else:
@@ -1426,14 +1453,18 @@ class StockItemEdit(AjaxUpdateView):
             if location_owner:
                 form.fields['owner'].initial = location_owner
 
-                # Check location owner type and filter
+                # Check location's owner type and filter potential owners
                 if type(location_owner.owner) is Group:
                     user_as_owner = Owner.get_owner(self.request.user)
                     queryset = location_owner.get_related_owners(include_group=True)
+
                     if user_as_owner in queryset:
                         form.fields['owner'].initial = user_as_owner
+
                     form.fields['owner'].queryset = queryset
-                elif type(location_owner.owner) is User:
+
+                elif type(location_owner.owner) is get_user_model():
+                    # If location's owner is a user: automatically set owner field and disable it
                     form.fields['owner'].disabled = True
                     form.fields['owner'].initial = location_owner
 
@@ -1446,14 +1477,18 @@ class StockItemEdit(AjaxUpdateView):
             if item_owner:
                 form.fields['owner'].initial = item_owner
 
-                # Check location owner type and filter
+                # Check item's owner type and filter potential owners
                 if type(item_owner.owner) is Group:
                     user_as_owner = Owner.get_owner(self.request.user)
                     queryset = item_owner.get_related_owners(include_group=True)
+
                     if user_as_owner in queryset:
                         form.fields['owner'].initial = user_as_owner
+
                     form.fields['owner'].queryset = queryset
-                elif type(item_owner.owner) is User:
+
+                elif type(item_owner.owner) is get_user_model():
+                    # If item's owner is a user: automatically set owner field and disable it
                     form.fields['owner'].disabled = True
                     form.fields['owner'].initial = item_owner
 
@@ -1533,10 +1568,12 @@ class StockLocationCreate(AjaxCreateView):
 
         # Is ownership control enabled?
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
         if not stock_ownership_control:
+            # Hide owner field
             form.fields['owner'].widget = HiddenInput()
         else:
-            # If user did not selected owner, automatically match to parent's owner
+            # If user did not selected owner: automatically match to parent's owner
             if not form['owner'].data:
                 try:
                     parent_id = form['parent'].value()
@@ -1806,15 +1843,18 @@ class StockItemCreate(AjaxCreateView):
                 location_owner = None
 
             if location_owner:
-                # Check location owner type and filter
+                # Check location's owner type and filter potential owners
                 if type(location_owner.owner) is Group:
                     user_as_owner = Owner.get_owner(self.request.user)
                     queryset = location_owner.get_related_owners()
                     
                     if user_as_owner in queryset:
                         form.fields['owner'].initial = user_as_owner
+
                     form.fields['owner'].queryset = queryset
-                elif type(location_owner.owner) is User:
+
+                elif type(location_owner.owner) is get_user_model():
+                    # If location's owner is a user: automatically set owner field and disable it
                     form.fields['owner'].disabled = True
                     form.fields['owner'].initial = location_owner
                 

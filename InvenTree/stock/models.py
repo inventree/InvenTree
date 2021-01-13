@@ -49,7 +49,7 @@ class StockLocation(InvenTreeTree):
     Stock locations can be heirarchical as required
     """
 
-    owner = models.ForeignKey(Owner, on_delete=models.CASCADE, blank=True, null=True,
+    owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
                               help_text='Select Owner',
                               related_name='stock_locations')
 

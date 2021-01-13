@@ -39,6 +39,14 @@ class UsersConfig(AppConfig):
 
     def update_owners(self):
 
-        from users.models import create_owner
+        from django.contrib.auth import get_user_model
+        from django.contrib.auth.models import Group
+        from users.models import Owner
 
-        create_owner(full_update=True)
+        # Create group owners
+        for group in Group.objects.all():
+            Owner.create(group)
+
+        # Create user owners
+        for user in get_user_model().objects.all():
+            Owner.create(user)
