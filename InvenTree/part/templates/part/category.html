@@ -9,7 +9,7 @@
         {% if category %}
         <h3>
             {{ category.name }}
-            {% if user.is_staff and roles.part.change %}
+            {% if user.is_staff and roles.part_category.change %}
             <a href="{% url 'admin:part_partcategory_change' category.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
             {% endif %}
         </h3>
@@ -20,18 +20,18 @@
         {% endif %}
         <p>
             <div class='btn-group action-buttons'>
-                {% if roles.part.add %}
+                {% if roles.part_category.add %}
                 <button class='btn btn-default' id='cat-create' title='{% trans "Create new part category" %}'>
                     <span class='fas fa-plus-circle icon-green'/>
                 </button>
                 {% endif %}
                 {% if category %}
-                {% if roles.part.change %}
+                {% if roles.part_category.change %}
                 <button class='btn btn-default' id='cat-edit' title='{% trans "Edit part category" %}'>
                     <span class='fas fa-edit icon-blue'/>
                 </button>
                 {% endif %}
-                {% if roles.part.delete %}
+                {% if roles.part_category.delete %}
                 <button class='btn btn-default' id='cat-delete' title='{% trans "Delete part category" %}'>
                     <span class='fas fa-trash-alt icon-red'/>
                 </button>
