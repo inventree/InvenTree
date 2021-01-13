@@ -28,6 +28,20 @@ def rename_label(instance, filename):
     return os.path.join('label', 'template', instance.SUBDIR, filename)
 
 
+def validate_stock_item_filters(filters):
+    
+    filters = validateFilterString(filters, model=stock.models.StockItem)
+
+    return filters
+
+
+def validate_stock_location_filters(filters):
+
+    filters = validateFilterString(filters, model=stock.models.StockLocation)
+
+    return filters
+
+
 class LabelTemplate(models.Model):
     """
     Base class for generic, filterable labels.
@@ -69,13 +83,6 @@ class LabelTemplate(models.Model):
         verbose_name=_('Label'),
         help_text=_('Label template file'),
         validators=[FileExtensionValidator(allowed_extensions=['html'])],
-    )
-
-    filters = models.CharField(
-        blank=True, max_length=250,
-        help_text=_('Query filters (comma-separated list of key=value pairs'),
-        verbose_name=_('Filters'),
-        validators=[validateFilterString]
     )
 
     enabled = models.BooleanField(
@@ -125,6 +132,14 @@ class StockItemLabel(LabelTemplate):
 
     SUBDIR = "stockitem"
 
+    filters = models.CharField(
+        blank=True, max_length=250,
+        help_text=_('Query filters (comma-separated list of key=value pairs'),
+        verbose_name=_('Filters'),
+        validators=[
+            validate_stock_item_filters]
+    )
+
     def matches_stock_item(self, item):
         """
         Test if this label template matches a given StockItem object
@@ -169,6 +184,14 @@ class StockLocationLabel(LabelTemplate):
     """
 
     SUBDIR = "stocklocation"
+
+    filters = models.CharField(
+        blank=True, max_length=250,
+        help_text=_('Query filters (comma-separated list of key=value pairs'),
+        verbose_name=_('Filters'),
+        validators=[
+            validate_stock_location_filters]
+    )
 
     def matches_stock_location(self, location):
         """
