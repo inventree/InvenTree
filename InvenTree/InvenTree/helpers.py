@@ -12,7 +12,7 @@ from decimal import Decimal
 
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, FieldError
 from django.utils.translation import ugettext as _
 
 from django.contrib.auth.models import Permission
@@ -414,7 +414,7 @@ def extract_serial_numbers(serials, expected_quantity):
     return numbers
 
 
-def validateFilterString(value):
+def validateFilterString(value, model=None):
     """
     Validate that a provided filter string looks like a list of comma-separated key=value pairs
 
@@ -463,6 +463,15 @@ def validateFilterString(value):
             )
 
         results[k] = v
+
+    # If a model is provided, verify that the provided filters can be used against it
+    if model is not None:
+        try:
+            model.objects.filter(**results)
+        except FieldError as e:
+            raise ValidationError(
+                str(e),
+            )
 
     return results
 

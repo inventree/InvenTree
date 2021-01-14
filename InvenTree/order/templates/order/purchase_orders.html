@@ -70,6 +70,8 @@ InvenTree | {% trans "Purchase Orders" %}
 
                         if (order.complete_date) {
                             date = order.complete_date;
+                        } else if (order.target_date) {
+                            date = order.target_date;
                         }
 
                         var title = `${prefix}${order.reference} - ${order.supplier_detail.name}`;

@@ -403,12 +403,7 @@ $("#stock-test-report").click(function() {
 });
 
 $("#print-label").click(function() {
-    launchModalForm(
-        "{% url 'stock-item-label-select' item.id %}",
-        {
-            follow: true,
-        }
-    )
+    printStockItemLabels([{{ item.pk }}]);
 });
 
 $("#stock-duplicate").click(function() {
