@@ -1990,7 +1990,13 @@ class BomItem(models.Model):
         Return the available stock items for the referenced sub_part
         """
 
-        query = self.sub_part.stock_items.filter(StockModels.StockItem.IN_STOCK_FILTER).aggregate(
+        query = self.sub_part.stock_items.all()
+        
+        query = query.prefetch_related([
+            'sub_part__stock_items',
+        ])
+
+        query = query.filter(StockModels.StockItem.IN_STOCK_FILTER).aggregate(
             available=Coalesce(Sum('quantity'), 0)
         )
 
