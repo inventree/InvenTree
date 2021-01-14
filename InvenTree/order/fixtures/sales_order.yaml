@@ -1,0 +1,39 @@
+- model: order.salesorder
+  pk: 1
+  fields:
+    reference: 'ABC123'
+    description: "One sales order, please"
+    customer: 4
+    status: 10  # Pending
+
+- model: order.salesorder
+  pk: 2
+  fields:
+    reference: 'ABC124'
+    description: "One sales order, please"
+    customer: 4
+    status: 10  # Pending
+
+- model: order.salesorder
+  pk: 3
+  fields:
+    reference: 'ABC125'
+    description: "One sales order, please"
+    customer: 4
+    status: 10  # Pending
+
+- model: order.salesorder
+  pk: 4
+  fields:
+    reference: 'ABC126'
+    description: "One sales order, please"
+    customer: 5
+    status: 20  # Shipped
+
+- model: order.salesorder
+  pk: 5
+  fields:
+    reference: 'ABC127'
+    description: "One sales order, please"
+    customer: 5
+    status: 60  # Returned

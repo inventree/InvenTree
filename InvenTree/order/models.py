@@ -119,7 +119,10 @@ class PurchaseOrder(Order):
         supplier: Reference to the company supplying the goods in the order
         supplier_reference: Optional field for supplier order reference code
         received_by: User that received the goods
+        target_date: Expected delivery target date for PurchaseOrder completion (optional)
     """
+
+    OVERDUE_FILTER = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -132,7 +135,7 @@ class PurchaseOrder(Order):
 
         To be "interesting":
         - A "received" order where the received date lies within the date range
-        - TODO: A "pending" order where the target date lies within the date range
+        - A "pending" order where the target date lies within the date range
         - TODO: An "overdue" order where the target date is in the past
         """
 
@@ -149,13 +152,12 @@ class PurchaseOrder(Order):
         # Construct a queryset for "received" orders within the range
         received = Q(status=PurchaseOrderStatus.COMPLETE) & Q(complete_date__gte=min_date) & Q(complete_date__lte=max_date)
 
-        # TODO - Construct a queryset for "pending" orders within the range
+        # Construct a queryset for "pending" orders within the range
+        pending = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO - Construct a queryset for "overdue" orders within the range
 
-        flt = received
-
-        queryset = queryset.filter(flt)
+        queryset = queryset.filter(received | pending)
 
         return queryset
 
@@ -186,9 +188,23 @@ class PurchaseOrder(Order):
         related_name='+'
     )
 
-    issue_date = models.DateField(blank=True, null=True, help_text=_('Date order was issued'))
+    issue_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Issue Date'),
+        help_text=_('Date order was issued')
+    )
 
-    complete_date = models.DateField(blank=True, null=True, help_text=_('Date order was completed'))
+    target_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Target Delivery Date'),
+        help_text=_('Expected date for order delivery. Order will be overdue after this date.'),
+    )
+
+    complete_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Completion Date'),
+        help_text=_('Date order was completed')
+    )
 
     def get_absolute_url(self):
         return reverse('po-detail', kwargs={'pk': self.id})
@@ -256,8 +272,24 @@ class PurchaseOrder(Order):
             self.complete_date = datetime.now().date()
             self.save()
 
+    def is_overdue(self):
+        """
+        Returns True if this PurchaseOrder is "overdue"
+
+        Makes use of the OVERDUE_FILTER to avoid code duplication.
+        """
+
+        query = PurchaseOrder.objects.filter(pk=self.pk)
+        query = query.filter(PurchaseOrder.OVERDUE_FILTER)
+
+        return query.exists()
+
     def can_cancel(self):
-        return self.status not in [
+        """
+        A PurchaseOrder can only be cancelled under the following circumstances:
+        """
+        
+        return self.status in [
             PurchaseOrderStatus.PLACED,
             PurchaseOrderStatus.PENDING
         ]
@@ -419,17 +451,13 @@ class SalesOrder(Order):
         """
         Returns true if this SalesOrder is "overdue":
 
-        - Not completed
-        - Target date is "in the past"
+        Makes use of the OVERDUE_FILTER to avoid code duplication.
         """
 
-        # Order cannot be deemed overdue if target_date is not set
-        if self.target_date is None:
-            return False
+        query = SalesOrder.objects.filter(pk=self.pk)
+        query = query.filer(SalesOrder.OVERDUE_FILTER)
 
-        today = datetime.now().date()
-
-        return self.is_pending and self.target_date < today
+        return query.exists()
 
     @property
     def is_pending(self):

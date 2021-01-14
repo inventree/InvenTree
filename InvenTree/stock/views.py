@@ -2022,7 +2022,7 @@ class StockItemCreate(AjaxCreateView):
 
                 item = form.save(commit=False)
                 item.user = self.request.user
-                item.save()
+                item.save(user=self.request.user)
 
                 return item
             
@@ -2033,7 +2033,7 @@ class StockItemCreate(AjaxCreateView):
             
             item = form.save(commit=False)
             item.user = self.request.user
-            item.save()
+            item.save(user=self.request.user)
 
             return item
 

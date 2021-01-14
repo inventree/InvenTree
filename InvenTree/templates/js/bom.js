@@ -255,6 +255,38 @@ function loadBomTable(table, options) {
         });
         */
     }
+
+    cols.push(
+        {
+            'field': 'can_build',
+            'title': '{% trans "Can Build" %}',
+            formatter: function(value, row, index, field) {
+                var can_build = 0;
+
+                if (row.quantity > 0) {
+                    can_build = row.sub_part_detail.stock / row.quantity;
+                }
+
+                return +can_build.toFixed(2);
+            },
+            sorter: function(valA, valB, rowA, rowB) {
+                // Function to sort the "can build" quantity
+                var cb_a = 0;
+                var cb_b = 0;
+
+                if (rowA.quantity > 0) {
+                    cb_a = rowA.sub_part_detail.stock / rowA.quantity;
+                }
+
+                if (rowB.quantity > 0) {
+                    cb_b = rowB.sub_part_detail.stock / rowB.quantity;
+                }
+
+                return (cb_a > cb_b) ? 1 : -1;
+            },
+            sortable: true,
+        }
+    )
     
     // Part notes
     cols.push(

@@ -40,10 +40,22 @@ class POSerializer(InvenTreeModelSerializer):
     def annotate_queryset(queryset):
         """
         Add extra information to the queryset
+
+        - Number of liens in the PurchaseOrder
+        - Overdue status of the PurchaseOrder
         """
 
         queryset = queryset.annotate(
             line_items=SubqueryCount('lines')
+        )
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    PurchaseOrder.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField())
+            )
         )
 
         return queryset
@@ -53,6 +65,8 @@ class POSerializer(InvenTreeModelSerializer):
     line_items = serializers.IntegerField(read_only=True)
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
+
+    overdue = serializers.BooleanField(required=False, read_only=True)
 
     class Meta:
         model = PurchaseOrder
@@ -65,12 +79,14 @@ class POSerializer(InvenTreeModelSerializer):
             'description',
             'line_items',
             'link',
+            'overdue',
             'reference',
             'supplier',
             'supplier_detail',
             'supplier_reference',
             'status',
             'status_text',
+            'target_date',
             'notes',
         ]
         

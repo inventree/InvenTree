@@ -80,6 +80,17 @@ class POList(generics.ListCreateAPIView):
             else:
                 queryset = queryset.exclude(status__in=PurchaseOrderStatus.OPEN)
 
+        # Filter by 'overdue' status
+        overdue = params.get('overdue', None)
+
+        if overdue is not None:
+            overdue = str2bool(overdue)
+
+            if overdue:
+                queryset = queryset.filter(PurchaseOrder.OVERDUE_FILTER)
+            else:
+                queryset = queryset.exclude(PurchaseOrder.OVERDUE_FILTER)
+
         # Special filtering for 'status' field
         status = params.get('status', None)
 
