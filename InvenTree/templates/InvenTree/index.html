@@ -35,6 +35,7 @@ InvenTree | {% trans "Index" %}
     {% if roles.purchase_order.view %}
     {% include "InvenTree/po_outstanding.html" with collapse_id="po_outstanding" %}
     {% endif %}
+    {% include "InvenTree/po_overdue.html" with collapse_id="po_overdue" %}
     {% if roles.sales_order.view %}
     {% include "InvenTree/so_outstanding.html" with collapse_id="so_outstanding" %}
     {% include "InvenTree/so_overdue.html" with collapse_id="so_overdue" %}
@@ -130,6 +131,14 @@ loadPurchaseOrderTable("#po-outstanding-table", {
     }
 });
 
+loadPurchaseOrderTable("#po-overdue-table", {
+    url: "{% url 'api-po-list' %}",
+    params: {
+        supplier_detail: true,
+        overdue: true,
+    }
+});
+
 loadSalesOrderTable("#so-outstanding-table", {
     url: "{% url 'api-so-list' %}",
     params: {
@@ -158,6 +167,7 @@ loadSalesOrderTable("#so-overdue-table", {
 {% include "InvenTree/index/on_load.html" with label="stock-to-build" %}
 
 {% include "InvenTree/index/on_load.html" with label="po-outstanding" %}
+{% include "InvenTree/index/on_load.html" with label="po-overdue" %}
 {% include "InvenTree/index/on_load.html" with label="so-outstanding" %}
 {% include "InvenTree/index/on_load.html" with label="so-overdue" %}
 
