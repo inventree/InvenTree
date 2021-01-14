@@ -8,7 +8,7 @@
     {% if location %}
     <h3>
         {{ location.name }}
-        {% if user.is_staff and roles.stock.change %}
+        {% if user.is_staff and roles.stock_location.change %}
         <a  href="{% url 'admin:stock_stocklocation_change' location.pk %}"><span title="{% trans 'Admin view' %}" class='fas fa-user-shield'></span></a>
         {% endif %}
     </h3>
@@ -18,7 +18,7 @@
     <p>{% trans "All stock items" %}</p>
     {% endif %}
     <div class='btn-group action-buttons' role='group'>
-        {% if roles.stock.add %}
+        {% if roles.stock_location.add %}
             <button class='btn btn-default' id='location-create' title='{% trans "Create new stock location" %}'>
             <span class='fas fa-plus-circle icon-green'/>
             </button>
@@ -41,11 +41,13 @@
                      {% trans "Count stock" %}</a></li>
                 </ul>
             </div>
+            {% endif %}
+            {% if roles.stock_location.change %}
             <div class='btn-group'>
                 <button id='location-actions' title='{% trans "Location actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle="dropdown"><span class='fas fa-sitemap'></span> <span class='caret'></span></button>
                 <ul class='dropdown-menu' role='menu'>
                     <li><a href='#' id='location-edit'><span class='fas fa-edit icon-green'></span> {% trans "Edit location" %}</a></li>
-                    {% if roles.stock.delete %}
+                    {% if roles.stock_location.delete %}
                     <li><a href='#' id='location-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete location" %}</a></li>
                     {% endif %}
                 </ul>
