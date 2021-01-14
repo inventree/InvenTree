@@ -32,6 +32,7 @@ from InvenTree import helpers
 
 import common.models
 import report.models
+import label.models
 
 from InvenTree.status_codes import StockStatus
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
@@ -62,6 +63,13 @@ class StockLocation(InvenTreeTree):
             },
             **kwargs
         )
+
+    @property
+    def barcode(self):
+        """
+        Brief payload data (e.g. for labels)
+        """
+        return self.format_barcode(brief=True)
 
     def get_stock_items(self, cascade=True):
         """ Return a queryset for all stock items under this category.
@@ -329,6 +337,13 @@ class StockItem(MPTTModel):
             },
             **kwargs
         )
+
+    @property
+    def barcode(self):
+        """
+        Brief payload data (e.g. for labels)
+        """
+        return self.format_barcode(brief=True)
 
     uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
 
@@ -1333,14 +1348,31 @@ class StockItem(MPTTModel):
 
         return len(self.available_test_reports()) > 0
 
+    def available_labels(self):
+        """
+        Return a list of Label objects which match this StockItem
+        """
+
+        labels = []
+
+        item_query = StockItem.objects.filter(pk=self.pk)
+
+        for lbl in label.models.StockItemLabel.objects.filter(enabled=True):
+
+            filters = helpers.validateFilterString(lbl.filters)
+
+            if item_query.filter(**filters).exists():
+                labels.append(lbl)
+
+        return labels
+
     @property
     def has_labels(self):
         """
         Return True if there are any label templates available for this stock item
         """
 
-        # TODO - Implement this
-        return True
+        return len(self.available_labels()) > 0
 
 
 @receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')

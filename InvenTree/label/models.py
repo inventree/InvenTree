@@ -17,7 +17,7 @@ from django.utils.translation import gettext_lazy as _
 
 from InvenTree.helpers import validateFilterString, normalize
 
-from stock.models import StockItem
+import stock.models
 
 
 def rename_label(instance, filename):
@@ -26,6 +26,20 @@ def rename_label(instance, filename):
     filename = os.path.basename(filename)
 
     return os.path.join('label', 'template', instance.SUBDIR, filename)
+
+
+def validate_stock_item_filters(filters):
+    
+    filters = validateFilterString(filters, model=stock.models.StockItem)
+
+    return filters
+
+
+def validate_stock_location_filters(filters):
+
+    filters = validateFilterString(filters, model=stock.models.StockLocation)
+
+    return filters
 
 
 class LabelTemplate(models.Model):
@@ -50,30 +64,31 @@ class LabelTemplate(models.Model):
         )
 
     name = models.CharField(
-        unique=True,
         blank=False, max_length=100,
+        verbose_name=_('Name'),
         help_text=_('Label name'),
     )
 
-    description = models.CharField(max_length=250, help_text=_('Label description'), blank=True, null=True)
+    description = models.CharField(
+        max_length=250,
+        blank=True, null=True,
+        verbose_name=_('Description'),
+        help_text=_('Label description'),
+    )
 
     label = models.FileField(
         upload_to=rename_label,
+        unique=True,
         blank=False, null=False,
+        verbose_name=_('Label'),
         help_text=_('Label template file'),
         validators=[FileExtensionValidator(allowed_extensions=['html'])],
     )
 
-    filters = models.CharField(
-        blank=True, max_length=250,
-        help_text=_('Query filters (comma-separated list of key=value pairs'),
-        validators=[validateFilterString]
-    )
-
     enabled = models.BooleanField(
         default=True,
+        verbose_name=_('Enabled'),
         help_text=_('Label template is enabled'),
-        verbose_name=_('Enabled')
     )
 
     def get_record_data(self, items):
@@ -117,6 +132,14 @@ class StockItemLabel(LabelTemplate):
 
     SUBDIR = "stockitem"
 
+    filters = models.CharField(
+        blank=True, max_length=250,
+        help_text=_('Query filters (comma-separated list of key=value pairs'),
+        verbose_name=_('Filters'),
+        validators=[
+            validate_stock_item_filters]
+    )
+
     def matches_stock_item(self, item):
         """
         Test if this label template matches a given StockItem object
@@ -124,7 +147,7 @@ class StockItemLabel(LabelTemplate):
 
         filters = validateFilterString(self.filters)
 
-        items = StockItem.objects.filter(**filters)
+        items = stock.models.StockItem.objects.filter(**filters)
 
         items = items.filter(pk=item.pk)
 
@@ -150,6 +173,50 @@ class StockItemLabel(LabelTemplate):
                 'pk': item.pk,
                 'qr_data': item.format_barcode(brief=True),
                 'tests': item.testResultMap()
+            })
+
+        return records
+
+
+class StockLocationLabel(LabelTemplate):
+    """
+    Template for printing StockLocation labels
+    """
+
+    SUBDIR = "stocklocation"
+
+    filters = models.CharField(
+        blank=True, max_length=250,
+        help_text=_('Query filters (comma-separated list of key=value pairs'),
+        verbose_name=_('Filters'),
+        validators=[
+            validate_stock_location_filters]
+    )
+
+    def matches_stock_location(self, location):
+        """
+        Test if this label template matches a given StockLocation object
+        """
+
+        filters = validateFilterString(self.filters)
+
+        locs = stock.models.StockLocation.objects.filter(**filters)
+
+        locs = locs.filter(pk=location.pk)
+
+        return locs.exists()
+
+    def get_record_data(self, locations):
+        """
+        Generate context data for each provided StockLocation
+        """
+
+        records = []
+        
+        for loc in locations:
+
+            records.append({
+                'location': loc,
             })
 
         return records

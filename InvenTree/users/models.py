@@ -112,6 +112,7 @@ class RuleSet(models.Model):
         'common_inventreesetting',
         'company_contact',
         'label_stockitemlabel',
+        'label_stocklocationlabel',
         'report_reportasset',
         'report_testreport',
         'part_partstar',
