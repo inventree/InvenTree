@@ -432,7 +432,7 @@ class PurchaseOrderCancel(AjaxUpdateView):
             form.add_error('confirm', _('Confirm order cancellation'))
 
         if not order.can_cancel():
-            form.add_error(None, _('Order cannot be cancelled as either pending or placed'))
+            form.add_error(None, _('Order cannot be cancelled'))
 
     def save(self, order, form, **kwargs):
         """
