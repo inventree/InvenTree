@@ -86,6 +86,7 @@ class POSerializer(InvenTreeModelSerializer):
             'supplier_reference',
             'status',
             'status_text',
+            'target_date',
             'notes',
         ]
         

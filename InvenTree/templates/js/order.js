@@ -141,9 +141,9 @@ function loadPurchaseOrderTable(table, options) {
                 switchable: false,
             },
             {
-                sortable: true,
                 field: 'reference',
                 title: '{% trans "Purchase Order" %}',
+                sortable: true,
                 switchable: false,
                 formatter: function(value, row, index, field) {
 
@@ -153,13 +153,19 @@ function loadPurchaseOrderTable(table, options) {
                         value = `${prefix}${value}`;
                     }
 
-                    return renderLink(value, `/order/purchase-order/${row.pk}/`);
+                    var html = renderLink(value, `/order/purchase-order/${row.pk}/`);
+
+                    if (row.overdue) {
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
+                    }
+
+                    return html;
                 }
             },  
             {
-                sortable: true,
                 field: 'supplier_detail',
                 title: '{% trans "Supplier" %}',
+                sortable: true,
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/purchase-orders/`);
                 }
@@ -170,27 +176,32 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
             },
             {
-                sortable: true,
                 field: 'description',
                 title: '{% trans "Description" %}',
+                sortable: true,
             },
             {
-                sortable: true,
                 field: 'status',
                 title: '{% trans "Status" %}',
+                sortable: true,
                 formatter: function(value, row, index, field) {
                     return purchaseOrderStatusDisplay(row.status, row.status_text);
                 }
             },
             {
-                sortable: true,
                 field: 'creation_date',
                 title: '{% trans "Date" %}',
+                sortable: true,
             },
             {
+                field: 'target_date',
+                title: '{% trans "Target Date" %}',
                 sortable: true,
+            },
+            {
                 field: 'line_items',
-                title: '{% trans "Items" %}'
+                title: '{% trans "Items" %}',
+                sortable: true,
             },
         ],
     });
