@@ -257,7 +257,11 @@ class PurchaseOrder(Order):
             self.save()
 
     def can_cancel(self):
-        return self.status not in [
+        """
+        A PurchaseOrder can only be cancelled under the following circumstances:
+        """
+        
+        return self.status in [
             PurchaseOrderStatus.PLACED,
             PurchaseOrderStatus.PENDING
         ]
