@@ -7,6 +7,7 @@
     reference: '0001'
     description: "Ordering some screws"
     supplier: 1
+    status: 10  # Pending
 
 # Ordering some screws from Zerg Corp
 - model: order.purchaseorder
@@ -15,6 +16,39 @@
     reference: '0002'
     description: "Ordering some more screws"
     supplier: 3
+    status: 10  # Pending
+
+- model: order.purchaseorder
+  pk: 3
+  fields:
+    reference: '0003'
+    description: 'Another PO'
+    supplier: 3
+    status: 20  # Placed
+
+- model: order.purchaseorder
+  pk: 4
+  fields:
+    reference: '0004'
+    description: 'Another PO'
+    supplier: 3
+    status: 20  # Placed
+
+- model: order.purchaseorder
+  pk: 5
+  fields:
+    reference: '0005'
+    description: 'Another PO'
+    supplier: 3
+    status: 30  # Complete
+
+- model: order.purchaseorder
+  pk: 6
+  fields:
+    reference: '0006'
+    description: 'Another PO'
+    supplier: 3
+    status: 40  # Cancelled
 
 # Add some line items against PO 0001
 

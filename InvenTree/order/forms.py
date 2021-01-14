@@ -94,6 +94,7 @@ class EditPurchaseOrderForm(HelperForm):
         self.field_prefix = {
             'reference': 'PO',
             'link': 'fa-link',
+            'target_date': 'fa-calendar-alt',
         }
 
         self.field_placeholder = {
@@ -102,6 +103,10 @@ class EditPurchaseOrderForm(HelperForm):
 
         super().__init__(*args, **kwargs)
 
+    target_date = DatePickerFormField(
+        help_text=_('Target date for order delivery. Order will be overdue after this date.'),
+    )
+
     class Meta:
         model = PurchaseOrder
         fields = [
@@ -109,6 +114,7 @@ class EditPurchaseOrderForm(HelperForm):
             'supplier',
             'supplier_reference',
             'description',
+            'target_date',
             'link',
         ]
 
