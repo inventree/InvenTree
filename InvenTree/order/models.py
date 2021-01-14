@@ -119,7 +119,10 @@ class PurchaseOrder(Order):
         supplier: Reference to the company supplying the goods in the order
         supplier_reference: Optional field for supplier order reference code
         received_by: User that received the goods
+        target_date: Expected delivery target date for PurchaseOrder completion (optional)
     """
+
+    OVERDUE_FILTER = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -186,9 +189,23 @@ class PurchaseOrder(Order):
         related_name='+'
     )
 
-    issue_date = models.DateField(blank=True, null=True, help_text=_('Date order was issued'))
+    issue_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Issue Date'),        
+        help_text=_('Date order was issued')
+    )
 
-    complete_date = models.DateField(blank=True, null=True, help_text=_('Date order was completed'))
+    target_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Target Delivery Date'),
+        help_text=_('Expected date for order delivery. Order will be overdue after this date.'),
+    )
+
+    complete_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Completion Date'),
+        help_text=_('Date order was completed')
+    )
 
     def get_absolute_url(self):
         return reverse('po-detail', kwargs={'pk': self.id})
