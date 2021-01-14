@@ -41,7 +41,7 @@ class OrderTest(TestCase):
 
         next_ref = PurchaseOrder.getNextOrderNumber()
 
-        self.assertEqual(next_ref, '0003')
+        self.assertEqual(next_ref, '0007')
 
     def test_on_order(self):
         """ There should be 3 separate items on order for the M2x4 LPHS part """
