@@ -191,7 +191,7 @@ class PurchaseOrder(Order):
 
     issue_date = models.DateField(
         blank=True, null=True,
-        verbose_name=_('Issue Date'),        
+        verbose_name=_('Issue Date'),
         help_text=_('Date order was issued')
     )
 

@@ -5,16 +5,19 @@
   fields:
     name: ACME
     description: A Cool Military Enterprise
+
 - model: company.company
   pk: 2
   fields:
     name: Appel Computers
     description: Think more differenter
+
 - model: company.company
   pk: 3
   fields:
     name: Zerg Corp
     description: We eat the competition
+
 - model: company.company
   pk: 4
   fields:
@@ -22,3 +25,9 @@
     description: A company that we sell things to!
     is_customer: True
   
+- model: company.company
+  pk: 5
+  fields:
+    name: Another customer!
+    description: Yet another company
+    is_customer: True
