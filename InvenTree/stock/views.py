@@ -72,7 +72,7 @@ class StockLocationDetail(InvenTreeRoleMixin, DetailView):
     template_name = 'stock/location.html'
     queryset = StockLocation.objects.all()
     model = StockLocation
-    role_required = 'stock.view'
+    role_required = ['stock_location.view', 'stock.view']
 
 
 class StockItemDetail(InvenTreeRoleMixin, DetailView):
@@ -120,7 +120,7 @@ class StockLocationEdit(AjaxUpdateView):
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Location')
-    role_required = 'stock.change'
+    role_required = 'stock_location.change'
 
     def get_form(self):
         """ Customize form data for StockLocation editing.
@@ -145,7 +145,7 @@ class StockLocationQRCode(QRCodeView):
     """ View for displaying a QR code for a StockLocation object """
 
     ajax_form_title = _("Stock Location QR code")
-    role_required = 'stock.view'
+    role_required = ['stock_location.view', 'stock.view']
 
     def get_qr_data(self):
         """ Generate QR code data for the StockLocation """
@@ -1274,7 +1274,7 @@ class StockLocationCreate(AjaxCreateView):
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Location')
-    role_required = 'stock.add'
+    role_required = 'stock_location.add'
 
     def get_initial(self):
         initials = super(StockLocationCreate, self).get_initial().copy()
@@ -1634,7 +1634,7 @@ class StockItemCreate(AjaxCreateView):
 
                 item = form.save(commit=False)
                 item.user = self.request.user
-                item.save()
+                item.save(user=self.request.user)
 
                 return item
             
@@ -1645,7 +1645,7 @@ class StockItemCreate(AjaxCreateView):
             
             item = form.save(commit=False)
             item.user = self.request.user
-            item.save()
+            item.save(user=self.request.user)
 
             return item
 
@@ -1661,7 +1661,7 @@ class StockLocationDelete(AjaxDeleteView):
     ajax_template_name = 'stock/location_delete.html'
     context_object_name = 'location'
     ajax_form_title = _('Delete Stock Location')
-    role_required = 'stock.delete'
+    role_required = 'stock_location.delete'
 
 
 class StockItemDelete(AjaxDeleteView):

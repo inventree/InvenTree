@@ -1,6 +1,6 @@
 {% extends "collapse.html" %}
 
-{% if roles.stock.view %}
+{% if roles.stock_location.view or roles.stock.view %}
 {% block collapse_title %}
 Sub-Locations<span class='badge'>{{ children|length }}</span>
 {% endblock %}

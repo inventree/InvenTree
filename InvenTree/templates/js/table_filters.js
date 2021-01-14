@@ -214,6 +214,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Outstanding" %}',
             },
+            overdue: {
+                type: 'bool',
+                title: '{% trans "Overdue" %}',
+            },
         };
     }
 
