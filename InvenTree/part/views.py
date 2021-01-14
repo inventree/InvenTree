@@ -1320,7 +1320,7 @@ class BomUpload(InvenTreeRoleMixin, FormView):
                 # Otherwise, check to see if there is a matching IPN
                 try:
                     if row['part_ipn']:
-                        part_matches = [part for part in self.allowed_parts if row['part_ipn'].lower() == part.IPN.lower()]
+                        part_matches = [part for part in self.allowed_parts if part.IPN and row['part_ipn'].lower() == str(part.IPN.lower())]
     
                         # Check for single match
                         if len(part_matches) == 1:

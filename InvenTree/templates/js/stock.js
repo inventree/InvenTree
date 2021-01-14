@@ -590,6 +590,11 @@ function loadStockTable(table, options) {
                     return locationDetail(row);
                 }
             },
+            {
+                field: 'stocktake_date',
+                title: '{% trans "Stocktake" %}',
+                sortable: true,
+            },
             {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
             {% if expiry %}
             {
