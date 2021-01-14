@@ -131,8 +131,7 @@ $.fn.inventreeTable = function(options) {
 
     // Callback when a column is changed
     options.onColumnSwitch = function(field, checked) {
-        console.log(`${field} -> ${checked}`);
-
+        
         var columns = table.bootstrapTable('getVisibleColumns');
 
         var text = visibleColumnString(columns);
