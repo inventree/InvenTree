@@ -682,6 +682,14 @@ function loadStockTable(table, options) {
         });
     });
 
+    $("#multi-item-set-status").click(function() {
+        var selections = $("#stock-table").bootstrapTable('getSelections');
+
+        selections.forEach(function(item) {
+            // TODO
+        });
+    });
+
     $("#multi-item-delete").click(function() {
         var selections = $("#stock-table").bootstrapTable("getSelections");
 
