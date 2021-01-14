@@ -13,6 +13,8 @@ from mptt.fields import TreeNodeChoiceField
 from django import forms
 from django.utils.translation import ugettext as _
 
+import common.models
+
 from .models import Part, PartCategory, PartAttachment, PartRelated
 from .models import BomItem
 from .models import PartParameterTemplate, PartParameter
@@ -23,8 +25,16 @@ from .models import PartSellPriceBreak
 
 class PartModelChoiceField(forms.ModelChoiceField):
     """ Extending string representation of Part instance with available stock """
+
     def label_from_instance(self, part):
-        return f'{part} - {part.available_stock}'
+
+        label = str(part)
+
+        # Optionally display available part quantity
+        if common.models.InvenTreeSetting.get_setting('PART_SHOW_QUANTITY_IN_FORMS'):
+            label += f" - {part.available_stock}"
+
+        return label
 
 
 class PartImageForm(HelperForm):
