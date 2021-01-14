@@ -135,7 +135,7 @@ class PurchaseOrder(Order):
 
         To be "interesting":
         - A "received" order where the received date lies within the date range
-        - TODO: A "pending" order where the target date lies within the date range
+        - A "pending" order where the target date lies within the date range
         - TODO: An "overdue" order where the target date is in the past
         """
 
@@ -152,13 +152,12 @@ class PurchaseOrder(Order):
         # Construct a queryset for "received" orders within the range
         received = Q(status=PurchaseOrderStatus.COMPLETE) & Q(complete_date__gte=min_date) & Q(complete_date__lte=max_date)
 
-        # TODO - Construct a queryset for "pending" orders within the range
+        # Construct a queryset for "pending" orders within the range
+        pending = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__gte=min_date) & Q(target_date__lte=max_date)
 
         # TODO - Construct a queryset for "overdue" orders within the range
 
-        flt = received
-
-        queryset = queryset.filter(flt)
+        queryset = queryset.filter(received | pending)
 
         return queryset
 
