@@ -273,6 +273,18 @@ class PurchaseOrder(Order):
             self.complete_date = datetime.now().date()
             self.save()
 
+    def is_overdue(self):
+        """
+        Returns True if this PurchaseOrder is "overdue"
+
+        Makes use of the OVERDUE_FILTER to avoid code duplication.
+        """
+
+        query = PurchaseOrder.objects.filter(pk=self.pk)
+        query = query.filter(PurchaseOrder.OVERDUE_FILTER)
+
+        return query.exists()
+
     def can_cancel(self):
         """
         A PurchaseOrder can only be cancelled under the following circumstances:
@@ -440,17 +452,13 @@ class SalesOrder(Order):
         """
         Returns true if this SalesOrder is "overdue":
 
-        - Not completed
-        - Target date is "in the past"
+        Makes use of the OVERDUE_FILTER to avoid code duplication.
         """
 
-        # Order cannot be deemed overdue if target_date is not set
-        if self.target_date is None:
-            return False
+        query = SalesOrder.objects.filter(pk=self.pk)
+        query = query.filer(SalesOrder.OVERDUE_FILTER)
 
-        today = datetime.now().date()
-
-        return self.is_pending and self.target_date < today
+        return query.exists()
 
     @property
     def is_pending(self):
