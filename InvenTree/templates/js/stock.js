@@ -6,8 +6,18 @@
  * Requires api.js to be loaded first
  */
 
-/* Functions for interacting with stock management forms
- */
+
+function stockStatusCodes() {
+    return [
+        {% for code in StockStatus.list %}
+        {
+            key: {{ code.key }},
+            text: "{{ code.value }}",
+        },
+        {% endfor %}
+    ];
+}
+
 
 function removeStockRow(e) {
     // Remove a selected row from a stock modal form
@@ -683,11 +693,90 @@ function loadStockTable(table, options) {
     });
 
     $("#multi-item-set-status").click(function() {
+        // Select and set the STATUS field for selected stock items
         var selections = $("#stock-table").bootstrapTable('getSelections');
 
-        selections.forEach(function(item) {
-            // TODO
+        // Select stock status
+        var modal = '#modal-form';
+
+        var status_list = makeOptionsList(
+            stockStatusCodes(),
+            function(item) {
+                return item.text;
+            },
+            function (item) {
+                return item.key;
+            }
+        );
+
+        // Add an empty option at the start of the list
+        status_list.unshift('<option value="">---------</option>');
+
+        // Construct form
+        var html = `
+        <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
+            <div class='form-group'>
+                <label class='control-label requiredField' for='id_status'>
+                {% trans "Stock Status" %}
+                </label>
+                <div class='controls'>
+                    <select id='id_status' class='select form-control' name='label'>
+                        ${status_list}
+                    </select>
+                </div>
+            </div>
+        </form>`;
+
+        openModal({
+            modal: modal,
         });
+
+        modalEnable(modal, true);
+        modalSetTitle(modal, '{% trans "Set Stock Status" %}');
+        modalSetContent(modal, html);
+
+        attachSelect(modal);
+
+        modalSubmit(modal, function() {
+            var label = $(modal).find('#id_status');
+
+            var status_code = label.val();
+
+            closeModal(modal);
+            
+            if (!status_code) {
+                showAlertDialog(
+                    '{% trans "Select Status Code" %}',
+                    '{% trans "Status code must be selected" %}'
+                );
+
+                return;
+            }
+
+            var requests = [];
+
+            selections.forEach(function(item) {
+                var url = `/api/stock/${item.pk}/`;
+
+                requests.push(
+                    inventreePut(
+                        url,
+                        {
+                            status: status_code,
+                        },
+                        {
+                            method: 'PATCH',
+                            success: function() {
+                            }
+                        }
+                    )
+                );
+            });
+
+            $.when.apply($, requests).then(function() {
+                $("#stock-table").bootstrapTable('refresh');
+            });
+        })
     });
 
     $("#multi-item-delete").click(function() {
