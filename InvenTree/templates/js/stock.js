@@ -614,6 +614,11 @@ function loadStockTable(table, options) {
             },
             {% endif %}
             {
+                field: 'updated',
+                title: '{% trans "Last Updated" %}',
+                sortable: true,
+            },
+            {
                 field: 'notes',
                 title: '{% trans "Notes" %}',
             }
