@@ -154,7 +154,7 @@ $.fn.inventreeTable = function(options) {
         // Which columns are currently visible?
         var visible = table.bootstrapTable('getVisibleColumns');
 
-        if (visible && isArray(visible)) {
+        if (visible && Array.isArray(visible)) {
             visible.forEach(function(column) {
     
                 // Visible field should *not* be visible! (hide it!)
