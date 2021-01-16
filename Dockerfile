@@ -1,7 +1,8 @@
 FROM python:alpine AS production
 
 ARG VERSION=master
-RUN echo installing $VERSION of inventree
+ARG INVENTREE_REPO="https://github.com/inventree/InvenTree.git"
+RUN echo installing $VERSION of inventree from $INVENTREE_REPO
 
 ENV PYTHONUNBUFFERED 1
 ENV INVENTREE_ROOT="/usr/src/app"
@@ -11,7 +12,6 @@ ENV INVENTREE_STATIC="/usr/src/static"
 ENV INVENTREE_MEDIA="/usr/src/media"
 ENV VIRTUAL_ENV="/opt/venv"
 ENV PATH="$VIRTUAL_ENV/bin:$PATH:$INVENTREE_DOCKER_RUN_PATH"
-ENV INVENTREE_REPO="https://github.com/inventree/InvenTree.git"
 
 RUN echo "Installing ${VERSION} of inventree from ${INVENTREE_REPO}"
 
