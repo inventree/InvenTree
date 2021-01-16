@@ -143,7 +143,7 @@ fi
 
 echo "Test connection to database"
 
-/wait-for.sh ${DATABASE_HOST:-db}:${DATABASE_PORT:-5432} -- echo 'Success!'
+wait-for.sh ${DATABASE_HOST:-db}:${DATABASE_PORT:-5432} -- echo 'Success!'
 
 echo "Give the database a few seconds to warm up"
 
