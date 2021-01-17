@@ -28,6 +28,7 @@ from company.api import company_api_urls
 from stock.api import stock_api_urls
 from build.api import build_api_urls
 from order.api import order_api_urls
+from label.api import label_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -58,6 +59,7 @@ apipatterns = [
     url(r'^stock/', include(stock_api_urls)),
     url(r'^build/', include(build_api_urls)),
     url(r'^order/', include(order_api_urls)),
+    url(r'^label/', include(label_api_urls)),
 
     # User URLs
     url(r'^user/', include(user_urls)),
@@ -90,6 +92,7 @@ settings_urls = [
 
 # Some javascript files are served 'dynamically', allowing them to pass through the Django translation layer
 dynamic_javascript_urls = [
+    url(r'^modals.js', DynamicJsView.as_view(template_name='js/modals.js'), name='modals.js'),
     url(r'^barcode.js', DynamicJsView.as_view(template_name='js/barcode.js'), name='barcode.js'),
     url(r'^bom.js', DynamicJsView.as_view(template_name='js/bom.js'), name='bom.js'),
     url(r'^build.js', DynamicJsView.as_view(template_name='js/build.js'), name='build.js'),
@@ -97,6 +100,7 @@ dynamic_javascript_urls = [
     url(r'^company.js', DynamicJsView.as_view(template_name='js/company.js'), name='company.js'),
     url(r'^order.js', DynamicJsView.as_view(template_name='js/order.js'), name='order.js'),
     url(r'^part.js', DynamicJsView.as_view(template_name='js/part.js'), name='part.js'),
+    url(r'^label.js', DynamicJsView.as_view(template_name='js/label.js'), name='label.js'),
     url(r'^stock.js', DynamicJsView.as_view(template_name='js/stock.js'), name='stock.js'),
     url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/table_filters.js'), name='table_filters.js'),
 ]

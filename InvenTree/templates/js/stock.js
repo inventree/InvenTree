@@ -614,6 +614,11 @@ function loadStockTable(table, options) {
             },
             {% endif %}
             {
+                field: 'updated',
+                title: '{% trans "Last Updated" %}',
+                sortable: true,
+            },
+            {
                 field: 'notes',
                 title: '{% trans "Notes" %}',
             }
@@ -660,6 +665,18 @@ function loadStockTable(table, options) {
     }
 
     // Automatically link button callbacks
+    $('#multi-item-print-label').click(function() {
+        var selections = $('#stock-table').bootstrapTable('getSelections');
+
+        var items = [];
+
+        selections.forEach(function(item) {
+            items.push(item.pk);
+        });
+
+        printStockItemLabels(items);
+    });
+
     $('#multi-item-stocktake').click(function() {
         stockAdjustment('count');
     });

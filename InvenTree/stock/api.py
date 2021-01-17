@@ -644,7 +644,7 @@ class StockList(generics.ListCreateAPIView):
                 queryset = queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
                 
         # Do we wish to filter by "active parts"
-        active = self.request.query_params.get('active', None)
+        active = params.get('active', None)
 
         if active is not None:
             active = str2bool(active)
@@ -683,7 +683,7 @@ class StockList(generics.ListCreateAPIView):
                 raise ValidationError({"part": "Invalid Part ID specified"})
 
         # Does the client wish to filter by the 'ancestor'?
-        anc_id = self.request.query_params.get('ancestor', None)
+        anc_id = params.get('ancestor', None)
 
         if anc_id:
             try:
@@ -696,9 +696,9 @@ class StockList(generics.ListCreateAPIView):
                 raise ValidationError({"ancestor": "Invalid ancestor ID specified"})
 
         # Does the client wish to filter by stock location?
-        loc_id = self.request.query_params.get('location', None)
+        loc_id = params.get('location', None)
 
-        cascade = str2bool(self.request.query_params.get('cascade', True))
+        cascade = str2bool(params.get('cascade', True))
 
         if loc_id is not None:
 
@@ -718,7 +718,7 @@ class StockList(generics.ListCreateAPIView):
                     pass
 
         # Does the client wish to filter by part category?
-        cat_id = self.request.query_params.get('category', None)
+        cat_id = params.get('category', None)
 
         if cat_id:
             try:
@@ -729,34 +729,67 @@ class StockList(generics.ListCreateAPIView):
                 raise ValidationError({"category": "Invalid category id specified"})
 
         # Filter by StockItem status
-        status = self.request.query_params.get('status', None)
+        status = params.get('status', None)
 
         if status:
             queryset = queryset.filter(status=status)
 
         # Filter by supplier_part ID
-        supplier_part_id = self.request.query_params.get('supplier_part', None)
+        supplier_part_id = params.get('supplier_part', None)
 
         if supplier_part_id:
             queryset = queryset.filter(supplier_part=supplier_part_id)
 
         # Filter by company (either manufacturer or supplier)
-        company = self.request.query_params.get('company', None)
+        company = params.get('company', None)
 
         if company is not None:
             queryset = queryset.filter(Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer=company))
 
         # Filter by supplier
-        supplier = self.request.query_params.get('supplier', None)
+        supplier = params.get('supplier', None)
 
         if supplier is not None:
             queryset = queryset.filter(supplier_part__supplier=supplier)
 
         # Filter by manufacturer
-        manufacturer = self.request.query_params.get('manufacturer', None)
+        manufacturer = params.get('manufacturer', None)
 
         if manufacturer is not None:
             queryset = queryset.filter(supplier_part__manufacturer=manufacturer)
+
+        """
+        Filter by the 'last updated' date of the stock item(s):
+
+        - updated_before=? : Filter stock items which were last updated *before* the provided date
+        - updated_after=? : Filter stock items which were last updated *after* the provided date
+        """
+
+        date_fmt = '%Y-%m-%d'  # ISO format date string
+
+        updated_before = params.get('updated_before', None)
+        updated_after = params.get('updated_after', None)
+
+        if updated_before:
+            try:
+                updated_before = datetime.strptime(str(updated_before), date_fmt).date()
+                queryset = queryset.filter(updated__lte=updated_before)
+
+                print("Before:", updated_before.isoformat())
+            except (ValueError, TypeError):
+                # Account for improperly formatted date string
+                print("After before:", str(updated_before))
+                pass
+
+        if updated_after:
+            try:
+                updated_after = datetime.strptime(str(updated_after), date_fmt).date()
+                queryset = queryset.filter(updated__gte=updated_after)
+                print("After:", updated_after.isoformat())
+            except (ValueError, TypeError):
+                # Account for improperly formatted date string
+                print("After error:", str(updated_after))
+                pass
 
         # Also ensure that we pre-fecth all the related items
         queryset = queryset.prefetch_related(

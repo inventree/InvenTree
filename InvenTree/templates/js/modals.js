@@ -1,3 +1,5 @@
+{% load i18n %}
+
 function makeOption(text, value, title) {
     /* Format an option for a select element
      */
@@ -162,6 +164,15 @@ function setFieldValue(fieldName, value, options={}) {
     var field = getFieldByName(modal, fieldName);
 
     field.val(value);
+}
+
+function getFieldValue(fieldName, options={}) {
+
+    var modal = options.modal || '#modal-form';
+
+    var field = getFieldByName(modal, fieldName);
+
+    return field.val();
 }
 
 
@@ -392,7 +403,7 @@ function renderErrorMessage(xhr) {
         <div class='panel panel-default'>
             <div class='panel panel-heading'>
                 <div class='panel-title'>
-                    <a data-toggle='collapse' href="#collapse-error-info">Show Error Information</a>
+                    <a data-toggle='collapse' href="#collapse-error-info">{% trans "Show Error Information" %}</a>
                 </div>
             </div>
             <div class='panel-collapse collapse' id='collapse-error-info'>
@@ -459,8 +470,8 @@ function showQuestionDialog(title, content, options={}) {
     modalSetTitle(modal, title);
     modalSetContent(modal, content);
 
-    var accept_text = options.accept_text || 'Accept';
-    var cancel_text = options.cancel_text || 'Cancel';
+    var accept_text = options.accept_text || '{% trans "Accept" %}';
+    var cancel_text = options.cancel_text || '{% trans "Cancel" %}';
 
     $(modal).find('#modal-form-cancel').html(cancel_text);
     $(modal).find('#modal-form-accept').html(accept_text);
@@ -524,7 +535,7 @@ function openModal(options) {
     if (options.title) {
         modalSetTitle(modal, options.title);
     } else {
-        modalSetTitle(modal, 'Loading Data...');
+        modalSetTitle(modal, '{% trans "Loading Data" %}...');
     }
 
     // Unless the content is explicitly set, display loading message
@@ -535,8 +546,8 @@ function openModal(options) {
     }
 
     // Default labels for 'Submit' and 'Close' buttons in the form
-    var submit_text = options.submit_text || 'Submit';
-    var close_text = options.close_text || 'Close';
+    var submit_text = options.submit_text || '{% trans "Submit" %}';
+    var close_text = options.close_text || '{% trans "Close" %}';
 
     modalSetButtonText(modal, submit_text, close_text);
 
@@ -745,7 +756,7 @@ function handleModalForm(url, options) {
                         }
                         else {
                             $(modal).modal('hide');
-                            showAlertDialog('Invalid response from server', 'Form data missing from server response');
+                            showAlertDialog('{% trans "Invalid response from server" %}', '{% trans "Form data missing from server response" %}');
                         }
                     }
                 }
@@ -758,7 +769,7 @@ function handleModalForm(url, options) {
                 // There was an error submitting form data via POST
                 
                 $(modal).modal('hide'); 
-                showAlertDialog('Error posting form data', renderErrorMessage(xhr));                
+                showAlertDialog('{% trans "Error posting form data" %}', renderErrorMessage(xhr));                
             },
             complete: function(xhr) {
                 //TODO
@@ -793,8 +804,8 @@ function launchModalForm(url, options = {}) {
     var modal = options.modal || '#modal-form';
 
     // Default labels for 'Submit' and 'Close' buttons in the form
-    var submit_text = options.submit_text || 'Submit';
-    var close_text = options.close_text || 'Close';
+    var submit_text = options.submit_text || '{% trans "Submit" %}';
+    var close_text = options.close_text || '{% trans "Close" %}';
 
     // Form the ajax request to retrieve the django form data
     ajax_data = {
@@ -842,7 +853,7 @@ function launchModalForm(url, options = {}) {
 
             } else {
                 $(modal).modal('hide');
-                showAlertDialog('Invalid server response', 'JSON response missing form data');
+                showAlertDialog('{% trans "Invalid server response" %}', '{% trans "JSON response missing form data" %}');
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
@@ -852,36 +863,36 @@ function launchModalForm(url, options = {}) {
             if (xhr.status == 0) {
                 // No response from the server
                 showAlertDialog(
-                    "No Response",
-                    "No response from the InvenTree server",
+                    '{% trans "No Response" %}',
+                    '{% trans "No response from the InvenTree server" %}',
                 );
             } else if (xhr.status == 400) {
                 showAlertDialog(
-                    "Error 400: Bad Request",
-                    "Server returned error code 400"
+                    '{% trans "Error 400: Bad Request" %}',
+                    '{% trans "Server returned error code 400" %}',
                 );
             } else if (xhr.status == 401) {
                 showAlertDialog(
-                    "Error 401: Not Authenticated",
-                    "Authentication credentials not supplied"
+                    '{% trans "Error 401: Not Authenticated" %}',
+                    '{% trans "Authentication credentials not supplied" %}',
                 );
             } else if (xhr.status == 403) {
                 showAlertDialog(
-                    "Error 403: Permission Denied",
-                    "You do not have the required permissions to access this function"
+                    '{% trans "Error 403: Permission Denied" %}',
+                    '{% trans "You do not have the required permissions to access this function" %}',
                 );
             } else if (xhr.status == 404) {
                 showAlertDialog(
-                    "Error 404: Resource Not Found",
-                    "The requested resource could not be located on the server"
+                    '{% trans "Error 404: Resource Not Found" %}',
+                    '{% trans "The requested resource could not be located on the server" %}',
                 );
             } else if (xhr.status == 408) {
                 showAlertDialog(
-                    "Error 408: Timeout",
-                    "Connection timeout while requesting data from server"
+                    '{% trans "Error 408: Timeout" %}',
+                    '{% trans "Connection timeout while requesting data from server" %}',
                 );
             } else {
-                showAlertDialog('Error requesting form data', renderErrorMessage(xhr));
+                showAlertDialog('{% trans "Error requesting form data" %}', renderErrorMessage(xhr));
             }
 
             console.log("Modal form error: " + xhr.status);

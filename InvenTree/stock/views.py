@@ -33,7 +33,6 @@ from datetime import datetime, timedelta
 from company.models import Company, SupplierPart
 from part.models import Part
 from report.models import TestReport
-from label.models import StockItemLabel
 from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
 
 import common.settings
@@ -404,92 +403,6 @@ class StockItemReturnToStock(AjaxUpdateView):
         return {
             'success': _('Stock item returned from customer')
         }
-
-
-class StockItemSelectLabels(AjaxView):
-    """
-    View for selecting a template for printing labels for one (or more) StockItem objects
-    """
-
-    model = StockItem
-    ajax_form_title = _('Select Label Template')
-    role_required = 'stock.view'
-
-    def get_form(self):
-
-        item = StockItem.objects.get(pk=self.kwargs['pk'])
-
-        labels = []
-
-        # Construct a list of StockItemLabel objects which are enabled, and the filters match the selected StockItem
-        for label in StockItemLabel.objects.filter(enabled=True):
-            if label.matches_stock_item(item):
-                labels.append(label)
-
-        return StockForms.StockItemLabelSelectForm(labels)
-
-    def post(self, request, *args, **kwargs):
-
-        label = request.POST.get('label', None)
-
-        try:
-            label = StockItemLabel.objects.get(pk=label)
-        except (ValueError, StockItemLabel.DoesNotExist):
-            raise ValidationError({'label': _("Select valid label")})
-    
-        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
-
-        url = reverse('stock-item-print-labels')
-
-        url += '?label={pk}'.format(pk=label.pk)
-        url += '&items[]={pk}'.format(pk=stock_item.pk)
-
-        data = {
-            'form_valid': True,
-            'url': url,
-        }
-
-        return self.renderJsonResponse(request, self.get_form(), data=data)
-
-
-class StockItemPrintLabels(AjaxView):
-    """
-    View for printing labels and returning a PDF
-
-    Requires the following arguments to be passed as URL params:
-
-    items: List of valid StockItem pk values
-    label: Valid pk of a StockItemLabel template
-    """
-
-    role_required = 'stock.view'
-
-    def get(self, request, *args, **kwargs):
-
-        label = request.GET.get('label', None)
-
-        try:
-            label = StockItemLabel.objects.get(pk=label)
-        except (ValueError, StockItemLabel.DoesNotExist):
-            raise ValidationError({'label': 'Invalid label ID'})
-
-        item_pks = request.GET.getlist('items[]')
-
-        items = []
-
-        for pk in item_pks:
-            try:
-                item = StockItem.objects.get(pk=pk)
-                items.append(item)
-            except (ValueError, StockItem.DoesNotExist):
-                pass
-
-        if len(items) == 0:
-            raise ValidationError({'items': 'Must provide valid stockitems'})
-
-        pdf = label.render(items).getbuffer()
-
-        return DownloadFile(pdf, 'stock_labels.pdf', content_type='application/pdf')
 
 
 class StockItemDeleteTestData(AjaxUpdateView):
