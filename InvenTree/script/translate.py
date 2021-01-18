@@ -28,8 +28,10 @@ def manually_translate_file(filename, save=False):
     print("For each missing translation:")
     print("a) Directly enter a new tranlation in the target language")
     print("b) Leave empty to skip")
+    print("c) Press Ctrl+C to exit")
     
-    input("Press <ENTER> to continue")
+    print("-------------------------")
+    input("Press <ENTER> to start")
     print("")
 
     with open(filename, 'r') as f:
@@ -58,7 +60,10 @@ def manually_translate_file(filename, save=False):
                 print("Source:", source_line)
                 print("Enter translation for {t}".format(t=msgid))
 
-                translation = str(input(">"))
+                try:
+                    translation = str(input(">"))
+                except KeyboardInterrupt:
+                    break
 
                 if translation and len(translation) > 0:
                     # Update the line with the new translation
@@ -71,7 +76,7 @@ def manually_translate_file(filename, save=False):
             output_file.writelines(out)
 
         print("Translation done: written to", filename)
-        print("Run 'make translate' to rebuild translation data")
+        print("Run 'invoke translate' to rebuild translation data")
 
 
 if __name__ == '__main__':
