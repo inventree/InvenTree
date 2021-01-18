@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import sys
-
 from django.utils.translation import ugettext as _
 from django.conf.urls import url, include
 
@@ -142,13 +140,65 @@ class StockItemTestReportDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TestReportSerializer
 
 
+class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin):
+    """
+    API endpoint for printing a TestReport object
+    """
+
+    queryset = TestReport.objects.all()
+    serializer_class = TestReportSerializer
+
+    def get(self, request, *args, **kwargs):
+        """
+        Check if valid stock item(s) have been provided.
+        """
+
+        items = self.get_items()
+
+        if len(items) == 0:
+            # No valid items provided, return an error message
+            data = {
+                'error': _('Must provide valid StockItem(s)')
+            }
+
+            return Response(data, status=400)
+
+        outputs = []
+
+        # Merge one or more PDF files into a single download
+        for item in items:
+            report = self.get_object()
+            report.stock_item = item
+
+            outputs.append(report.render(request))
+
+        pages = []
+
+        if len(outputs) > 1:
+            # If more than one output is generated, merge them into a single file
+            for output in outputs:
+                doc = output.get_document()
+                for page in doc.pages:
+                    pages.append(page)
+
+            pdf = outputs[0].get_document().copy(pages).write_pdf()
+        else:
+            pdf = outputs[0].get_document().write_pdf()
+
+        return InvenTree.helpers.DownloadFile(
+            pdf,
+            'test_report.pdf',
+            content_type='application/pdf'
+        )
+
+
 report_api_urls = [
 
     # Stock item test reports
     url(r'test/', include([
         # Detail views
         url(r'^(?P<pk>\d+)/', include([
-            #url(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
+            url(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
             url(r'^.*$', StockItemTestReportDetail.as_view(), name='api-stockitem-testreport-detail'),
         ])),
 
