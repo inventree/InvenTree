@@ -4,21 +4,30 @@
     <div class='button-toolbar container-fluid' style='float: right;'>
         <div class='btn-group'>
             <button class='btn btn-default' id='stock-export' title='{% trans "Export Stock Information" %}'>
-                <span class='fas fa-file-download'></span> {% trans "Export" %}
+                <span class='fas fa-download'></span>
             </button>
             {% if read_only %}
             {% else %}
             {% if roles.stock.add %}
-            <button class="btn btn-success" id='item-create'>
-                <span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}
+            <button class="btn btn-success" id='item-create' title='{% trans "New Stock Item" %}'>
+                <span class='fas fa-plus-circle'></span>
             </button>
             {% endif %}
-            {% if roles.stock.change or roles.stock.delete %}
-            <div class="btn-group">
-                <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
-                <ul class="dropdown-menu">
+            <div class='btn-group'>
+                <button id='stock-print-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown" title='{% trans "Printing Actions" %}'>
+                    <span class='fas fa-print'></span> <span class='caret'></span>
+                </button>
+                <ul class='dropdown-menu'>
                     <li><a href='#' id='multi-item-print-label' title='{% trans "Print labels" %}'><span class='fas fa-tags'></span> {% trans "Print labels" %}</a></li>
                     <li><a href='#' id='multi-item-print-test-report' title='{% trans "Print test reports" %}'><span class='fas fa-file-pdf'></span> {% trans "Print test reports" %}</a></li>
+                </ul>
+            </div>
+            {% if roles.stock.change or roles.stock.delete %}
+            <div class="btn-group">
+                <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" title='{% trans "Stock Options" %}'>
+                    <span class='fas fa-boxes'></span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
                     {% if roles.stock.change %}
                     <li><a href="#" id='multi-item-add' title='{% trans "Add to selected stock items" %}'><span class='fas fa-plus-circle'></span> {% trans "Add stock" %}</a></li>
                     <li><a href="#" id='multi-item-remove' title='{% trans "Remove from selected stock items" %}'><span class='fas fa-minus-circle'></span> {% trans "Remove stock" %}</a></li>

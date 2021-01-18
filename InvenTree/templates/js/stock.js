@@ -625,9 +625,19 @@ function loadStockTable(table, options) {
         ],
     });
 
+    /*
     if (options.buttons) {
         linkButtonsToSelection(table, options.buttons);
     }
+    */
+
+    linkButtonsToSelection(
+        table,
+        [
+            '#stock-print-options',
+            '#stock-options',
+        ]
+    );
 
     function stockAdjustment(action) {
         var items = $("#stock-table").bootstrapTable("getSelections");

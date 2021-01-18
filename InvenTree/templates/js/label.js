@@ -133,8 +133,17 @@ function selectLabel(labels, items, options={}) {
     );
 
     // Construct form
-    var html = `
+    var html = '';
+    
+    if (items.length > 0) {
 
+        html += `
+        <div class='alert alert-block alert-info'>
+        ${items.length} {% trans "stock items selected" %}
+        </div>`;
+    }
+
+    html += `
     <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
         <div class='form-group'>
             <label class='control-label requiredField' for='id_label'>
