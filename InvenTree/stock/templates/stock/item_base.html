@@ -394,12 +394,7 @@ $('#stock-uninstall').click(function() {
 });
 
 $("#stock-test-report").click(function() {
-    launchModalForm(
-        "{% url 'stock-item-test-report-select' item.id %}",
-        {
-            follow: true,
-        }
-    );
+    printTestReports([{{ item.pk }}]);
 });
 
 $("#print-label").click(function() {
