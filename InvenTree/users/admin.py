@@ -11,7 +11,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 
-from users.models import RuleSet
+from users.models import RuleSet, Owner
 
 User = get_user_model()
 
@@ -215,8 +215,17 @@ class InvenTreeUserAdmin(UserAdmin):
     )
 
 
+class OwnerAdmin(admin.ModelAdmin):
+    """
+    Custom admin interface for the Owner model
+    """
+    pass
+
+
 admin.site.unregister(Group)
 admin.site.register(Group, RoleGroupAdmin)
 
 admin.site.unregister(User)
 admin.site.register(User, InvenTreeUserAdmin)
+
+admin.site.register(Owner, OwnerAdmin)

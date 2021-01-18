@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import UniqueConstraint, Q
+from django.db.utils import IntegrityError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 
 
 class RuleSet(models.Model):
@@ -116,6 +120,7 @@ class RuleSet(models.Model):
         'report_reportasset',
         'report_testreport',
         'part_partstar',
+        'users_owner',
 
         # Third-party tables
         'error_report_error',
@@ -350,7 +355,7 @@ def update_group_roles(group, debug=False):
             print(f"Removing permission {perm} from group {group.name}")
 
 
-@receiver(post_save, sender=Group)
+@receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
 def create_missing_rule_sets(sender, instance, **kwargs):
     """
     Called *after* a Group object is saved.
@@ -392,3 +397,151 @@ def check_user_role(user, role, permission):
 
     # No matching permissions found
     return False
+
+
+class Owner(models.Model):
+    """
+    The Owner class is a proxy for a Group or User instance.
+    Owner can be associated to any InvenTree model (part, stock, build, etc.)
+
+    owner_type: Model type (Group or User)
+    owner_id: Group or User instance primary key
+    owner: Returns the Group or User instance combining the owner_type and owner_id fields
+    """
+
+    class Meta:
+        # Ensure all owners are unique
+        constraints = [
+            UniqueConstraint(fields=['owner_type', 'owner_id'],
+                             name='unique_owner')
+        ]
+
+    owner_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+
+    owner_id = models.PositiveIntegerField(null=True, blank=True)
+
+    owner = GenericForeignKey('owner_type', 'owner_id')
+
+    def __str__(self):
+        """ Defines the owner string representation """
+        return f'{self.owner} ({self.owner_type.name})'
+
+    @classmethod
+    def create(cls, obj):
+        """ Check if owner exist then create new owner entry """
+
+        # Check for existing owner
+        existing_owner = cls.get_owner(obj)
+
+        if not existing_owner:
+            # Create new owner
+            try:
+                return cls.objects.create(owner=obj)
+            except IntegrityError:
+                return None
+
+        return existing_owner
+
+    @classmethod
+    def get_owner(cls, user_or_group):
+        """ Get owner instance for a group or user """
+
+        user_model = get_user_model()
+        owner = None
+        content_type_id = 0
+        content_type_id_list = [ContentType.objects.get_for_model(Group).id,
+                                ContentType.objects.get_for_model(user_model).id]
+
+        # If instance type is obvious: set content type
+        if type(user_or_group) is Group:
+            content_type_id = content_type_id_list[0]
+        elif type(user_or_group) is get_user_model():
+            content_type_id = content_type_id_list[1]
+
+        if content_type_id:
+            try:
+                owner = Owner.objects.get(owner_id=user_or_group.id,
+                                          owner_type=content_type_id)
+            except Owner.DoesNotExist:
+                pass
+        else:
+            # Check whether user_or_group is a Group instance
+            try:
+                group = Group.objects.get(pk=user_or_group.id)
+            except Group.DoesNotExist:
+                group = None
+
+            if group:
+                try:
+                    owner = Owner.objects.get(owner_id=user_or_group.id,
+                                              owner_type=content_type_id_list[0])
+                except Owner.DoesNotExist:
+                    pass
+
+                return owner
+
+            # Check whether user_or_group is a User instance
+            try:
+                user = user_model.objects.get(pk=user_or_group.id)
+            except user_model.DoesNotExist:
+                user = None
+
+            if user:
+                try:
+                    owner = Owner.objects.get(owner_id=user_or_group.id,
+                                              owner_type=content_type_id_list[1])
+                except Owner.DoesNotExist:
+                    pass
+
+                return owner
+                
+        return owner
+
+    def get_related_owners(self, include_group=False):
+        """
+        Get all owners "related" to an owner.
+        This method is useful to retrieve all "user-type" owners linked to a "group-type" owner
+        """
+
+        user_model = get_user_model()
+        related_owners = None
+
+        if type(self.owner) is Group:
+            users = user_model.objects.filter(groups__name=self.owner.name)
+
+            if include_group:
+                # Include "group-type" owner in the query
+                query = Q(owner_id__in=users, owner_type=ContentType.objects.get_for_model(user_model).id) | \
+                    Q(owner_id=self.owner.id, owner_type=ContentType.objects.get_for_model(Group).id)
+            else:
+                query = Q(owner_id__in=users, owner_type=ContentType.objects.get_for_model(user_model).id)
+            
+            related_owners = Owner.objects.filter(query)
+
+        elif type(self.owner) is user_model:
+            related_owners = [self]
+
+        return related_owners
+
+
+@receiver(post_save, sender=Group, dispatch_uid='create_owner')
+@receiver(post_save, sender=get_user_model(), dispatch_uid='create_owner')
+def create_owner(sender, instance, **kwargs):
+    """
+    Callback function to create a new owner instance
+    after either a new group or user instance is saved.
+    """
+
+    Owner.create(obj=instance)
+
+
+@receiver(post_delete, sender=Group, dispatch_uid='delete_owner')
+@receiver(post_delete, sender=get_user_model(), dispatch_uid='delete_owner')
+def delete_owner(sender, instance, **kwargs):
+    """
+    Callback function to delete an owner instance
+    after either a new group or user instance is deleted.
+    """
+
+    owner = Owner.get_owner(instance)
+    owner.delete()
