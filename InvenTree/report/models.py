@@ -57,6 +57,11 @@ def rename_template(instance, filename):
     return os.path.join('report', 'report_template', instance.getSubdir(), filename)
 
 
+def validate_stock_item_report_filters(filters):
+
+    return validateFilterString(filters, model=stock.models.StockItem)
+
+
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
     """
     Class for rendering a HTML template to a PDF.
@@ -144,29 +149,28 @@ class ReportTemplateBase(models.Model):
 
     name = models.CharField(
         blank=False, max_length=100,
+        verbose_name=_('Name'),
         help_text=_('Template name'),
         unique=True,
     )
 
     template = models.FileField(
         upload_to=rename_template,
+        verbose_name=_('Template'),
         help_text=_("Report template file"),
         validators=[FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])],
     )
 
-    description = models.CharField(max_length=250, help_text=_("Report template description"))
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_("Report template description")
+    )
 
     enabled = models.BooleanField(
         default=True,
+        verbose_name=_('Enabled'),
         help_text=_('Report template is enabled'),
-        verbose_name=_('Enabled')
-    )
-
-    filters = models.CharField(
-        blank=True,
-        max_length=250,
-        help_text=_("Part query filters (comma-separated list of key=value pairs)"),
-        validators=[validateFilterString]
     )
 
     class Meta:
@@ -183,6 +187,16 @@ class TestReport(ReportTemplateBase):
 
     # Requires a stock_item object to be given to it before rendering
     stock_item = None
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Filters'),
+        help_text=_("Part query filters (comma-separated list of key=value pairs)"),
+        validators=[
+            validate_stock_item_report_filters
+        ]
+    )
 
     def matches_stock_item(self, item):
         """
