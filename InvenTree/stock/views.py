@@ -1582,17 +1582,22 @@ class StockItemCreate(AjaxCreateView):
             sn = str(sn).strip()
 
             if len(sn) > 0:
-                serials = extract_serial_numbers(sn, quantity)
+                try:
+                    serials = extract_serial_numbers(sn, quantity)
+                except ValidationError as e:
+                    serials = None
+                    form.add_error('serial_numbers', e.messages)
 
-                existing = part.find_conflicting_serial_numbers(serials)
+                if serials is not None:
+                    existing = part.find_conflicting_serial_numbers(serials)
 
-                if len(existing) > 0:
-                    exists = ','.join([str(x) for x in existing])
+                    if len(existing) > 0:
+                        exists = ','.join([str(x) for x in existing])
 
-                    form.add_error(
-                        'serial_numbers',
-                        _('Serial numbers already exist') + ': ' + exists
-                    )
+                        form.add_error(
+                            'serial_numbers',
+                            _('Serial numbers already exist') + ': ' + exists
+                        )
 
     def save(self, form, **kwargs):
         """
