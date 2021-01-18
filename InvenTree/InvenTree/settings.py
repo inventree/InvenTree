@@ -20,11 +20,13 @@ from datetime import datetime
 import yaml
 from django.utils.translation import gettext_lazy as _
 
+
 def _is_true(x):
     # Shortcut function to determine if a value "looks" like a boolean
     return str(x).lower() in ['1', 'y', 'yes', 't', 'true']
 
-def get_setting(environment_var, backup_val, default_value = None):
+
+def get_setting(environment_var, backup_val, default_value=None):
     """
     Helper function for retrieving a configuration setting value
 
