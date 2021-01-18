@@ -107,13 +107,6 @@ static_root: '../inventree_static'
 # If unspecified, the local user's temp directory will be used
 #backup_dir: '/home/inventree/backup/'
 
-# Sentry.io integration
-# If you have a sentry.io account, it can be used to log server errors
-# Ensure sentry_sdk is installed by running 'pip install sentry-sdk'
-sentry:
-  enabled: False
-  # dsn: add-your-sentry-dsn-here
-
 # LaTeX report rendering
 # InvenTree uses the django-tex plugin to enable LaTeX report rendering
 # Ref: https://pypi.org/project/django-tex/

@@ -25,6 +25,18 @@
     lft: 0
     rght: 0
 
+# Capacitor C_22N_0805 in 'Office'
+- model: stock.stockitem
+  pk: 11
+  fields:
+    part: 5
+    location: 4
+    quantity: 666
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
 # 1234 2K2 resistors in 'Drawer_1'
 - model: stock.stockitem
   pk: 1234

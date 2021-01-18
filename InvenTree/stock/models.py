@@ -38,6 +38,8 @@ from InvenTree.status_codes import StockStatus
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 
+from users.models import Owner
+
 from company import models as CompanyModels
 from part import models as PartModels
 
@@ -47,6 +49,10 @@ class StockLocation(InvenTreeTree):
     A "StockLocation" can be considered a warehouse, or storage location
     Stock locations can be heirarchical as required
     """
+
+    owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
+                              help_text='Select Owner',
+                              related_name='stock_locations')
 
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
@@ -488,6 +494,10 @@ class StockItem(MPTTModel):
         verbose_name=_('Purchase Price'),
         help_text=_('Single unit purchase price at time of purchase'),
     )
+
+    owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
+                              help_text='Select Owner',
+                              related_name='stock_items')
 
     def is_stale(self):
         """
