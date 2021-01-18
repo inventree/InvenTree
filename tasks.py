@@ -186,6 +186,10 @@ def translate(c):
     manage(c, "makemessages -e py -e html -e js")
     manage(c, "compilemessages")
 
+    path = os.path.join('InvenTree', 'script', 'translation_stats.py')
+
+    c.run(f'python {path}')
+
 @task
 def style(c):
     """

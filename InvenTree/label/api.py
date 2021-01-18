@@ -310,7 +310,7 @@ class StockLocationLabelPrint(generics.RetrieveAPIView, StockLocationLabelMixin)
     """
 
     queryset = StockLocationLabel.objects.all()
-    seiralizers_class = StockLocationLabelSerializer
+    seiralizer_class = StockLocationLabelSerializer
 
     def get(self, request, *args, **kwargs):
 

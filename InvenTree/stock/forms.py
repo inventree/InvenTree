@@ -90,7 +90,8 @@ class EditStockLocationForm(HelperForm):
         fields = [
             'name',
             'parent',
-            'description'
+            'description',
+            'owner',
         ]
 
 
@@ -138,6 +139,7 @@ class CreateStockItemForm(HelperForm):
             'link',
             'delete_on_deplete',
             'status',
+            'owner',
         ]
 
     # Custom clean to prevent complex StockItem.clean() logic from running (yet)
@@ -414,6 +416,7 @@ class EditStockItemForm(HelperForm):
             'purchase_price',
             'link',
             'delete_on_deplete',
+            'owner',
         ]
 
 

@@ -22,7 +22,28 @@ from django.utils.translation import gettext_lazy as _
 
 
 def _is_true(x):
-    return x in [True, "True", "true", "Y", "y", "1"]
+    # Shortcut function to determine if a value "looks" like a boolean
+    return str(x).lower() in ['1', 'y', 'yes', 't', 'true']
+
+
+def get_setting(environment_var, backup_val, default_value=None):
+    """
+    Helper function for retrieving a configuration setting value
+
+    - First preference is to look for the environment variable
+    - Second preference is to look for the value of the settings file
+    - Third preference is the default value
+    """
+
+    val = os.getenv(environment_var)
+
+    if val is not None:
+        return val
+
+    if backup_val is not None:
+        return backup_val
+
+    return default_value
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -39,10 +60,17 @@ with open(cfg_filename, 'r') as cfg:
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = _is_true(os.getenv("INVENTREE_DEBUG", CONFIG.get("debug", True)))
+DEBUG = _is_true(get_setting(
+    'INVENTREE_DEBUG',
+    CONFIG.get('debug', True)
+))
 
 # Configure logging settings
-log_level = CONFIG.get('log_level', 'DEBUG').upper()
+log_level = get_setting(
+    'INVENTREE_LOG_LEVEL',
+    CONFIG.get('log_level', 'DEBUG')
+)
+
 logging.basicConfig(
     level=log_level,
     format="%(asctime)s %(levelname)s %(message)s",
@@ -75,6 +103,7 @@ if os.getenv("INVENTREE_SECRET_KEY"):
 else:
     # Secret key passed in by file location
     key_file = os.getenv("INVENTREE_SECRET_KEY_FILE")
+
     if key_file:
         if os.path.isfile(key_file):
             logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY_FILE")
@@ -112,7 +141,12 @@ if cors_opt:
 STATIC_URL = '/static/'
 
 # The filesystem location for served static files
-STATIC_ROOT = os.path.abspath(CONFIG.get('static_root', os.path.join(BASE_DIR, 'static')))
+STATIC_ROOT = os.path.abspath(
+    get_setting(
+        'INVENTREE_STATIC_ROOT',
+        CONFIG.get('static_root', os.path.join(BASE_DIR, 'static'))
+    )
+)
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'InvenTree', 'static'),
@@ -125,37 +159,18 @@ STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
 MEDIA_URL = '/media/'
 
 # The filesystem location for served static files
-MEDIA_ROOT = os.path.abspath(CONFIG.get('media_root', os.path.join(BASE_DIR, 'media')))
+MEDIA_ROOT = os.path.abspath(
+    get_setting(
+        'INVENTREE_MEDIA_ROOT',
+        CONFIG.get('media_root', os.path.join(BASE_DIR, 'media'))
+    )
+)
 
 if DEBUG:
     logger.info("InvenTree running in DEBUG mode")
 
 logger.info(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.info(f"STATIC_ROOT: '{STATIC_ROOT}'")
-
-# Does the user wish to use the sentry.io integration?
-sentry_opts = CONFIG.get('sentry', {})
-
-if sentry_opts.get('enabled', False):
-
-    logger.info("Configuring sentry.io integration")
-
-    dsn = sentry_opts.get('dsn', None)
-
-    if dsn is not None:
-        # Try to import required modules (exit if not installed)
-        try:
-            import sentry_sdk
-            from sentry_sdk.integrations.django import DjangoIntegration
-
-            sentry_sdk.init(dsn=dsn, integrations=[DjangoIntegration()], send_default_pii=True)
-
-        except ModuleNotFoundError:
-            logger.error("sentry_sdk module not found. Install using 'pip install sentry-sdk'")
-            sys.exit(-1)
-
-    else:
-        logger.warning("Sentry.io DSN not specified in config file")
 
 # Application definition
 
@@ -430,16 +445,17 @@ if not type(EXTRA_URL_SCHEMES) in [list]:
     EXTRA_URL_SCHEMES = []
 
 # Internationalization
-# https://docs.djangoproject.com/en/1.10/topics/i18n/
+# https://docs.djangoproject.com/en/dev/topics/i18n/
 
 LANGUAGE_CODE = CONFIG.get('language', 'en-us')
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
     ('en', _('English')),
-    ('de', _('German')),
     ('fr', _('French')),
+    ('de', _('German')),
     ('pk', _('Polish')),
+    ('tr', _('Turkish')),
 ]
 
 # Currencies available for use
@@ -491,10 +507,15 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
+BACKUP_DIR = get_setting(
+    'INVENTREE_BACKUP_DIR',
+    CONFIG.get('backup_dir', tempfile.gettempdir()),
+)
+
 # Settings for dbbsettings app
 DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
 DBBACKUP_STORAGE_OPTIONS = {
-    'location': CONFIG.get('backup_dir', tempfile.gettempdir()),
+    'location': BACKUP_DIR,
 }
 
 # Internal IP addresses allowed to see the debug toolbar

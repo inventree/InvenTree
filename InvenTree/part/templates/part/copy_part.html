@@ -1,4 +1,5 @@
 {% extends "modal_form.html" %}
+{% load i18n %}
 
 {% block pre_form_content %}
 
@@ -10,8 +11,8 @@
 </div>
 
 {% if matches %}
-<b>Possible Matching Parts</b>
-<p>The new part may be a duplicate of these existing parts:</p>
+<b>{% trans "Possible Matching Parts" %}</b>
+<p>{% trans "The new part may be a duplicate of these existing parts" %}:</p>
 <ul class='list-group'>
 {% for match in matches %}
 <li class='list-group-item list-group-item-condensed'>

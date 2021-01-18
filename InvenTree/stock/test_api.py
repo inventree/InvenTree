@@ -117,7 +117,7 @@ class StockItemListTest(StockAPITestCase):
 
         response = self.get_stock()
 
-        self.assertEqual(len(response), 19)
+        self.assertEqual(len(response), 20)
 
     def test_filter_by_part(self):
         """
@@ -126,7 +126,7 @@ class StockItemListTest(StockAPITestCase):
 
         response = self.get_stock(part=25)
         
-        self.assertEqual(len(response), 7)
+        self.assertEqual(len(response), 8)
 
         response = self.get_stock(part=10004)
 
@@ -166,7 +166,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 1)
 
         response = self.get_stock(depleted=0)
-        self.assertEqual(len(response), 18)
+        self.assertEqual(len(response), 19)
 
     def test_filter_by_in_stock(self):
         """
@@ -174,7 +174,7 @@ class StockItemListTest(StockAPITestCase):
         """
 
         response = self.get_stock(in_stock=1)
-        self.assertEqual(len(response), 16)
+        self.assertEqual(len(response), 17)
 
         response = self.get_stock(in_stock=0)
         self.assertEqual(len(response), 3)
@@ -185,7 +185,7 @@ class StockItemListTest(StockAPITestCase):
         """
 
         codes = {
-            StockStatus.OK: 17,
+            StockStatus.OK: 18,
             StockStatus.DESTROYED: 1,
             StockStatus.LOST: 1,
             StockStatus.DAMAGED: 0,
@@ -218,7 +218,7 @@ class StockItemListTest(StockAPITestCase):
             self.assertIsNotNone(item['serial'])
 
         response = self.get_stock(serialized=0)
-        self.assertEqual(len(response), 7)
+        self.assertEqual(len(response), 8)
 
         for item in response:
             self.assertIsNone(item['serial'])
@@ -230,7 +230,7 @@ class StockItemListTest(StockAPITestCase):
 
         # First, we can assume that the 'stock expiry' feature is disabled
         response = self.get_stock(expired=1)
-        self.assertEqual(len(response), 19)
+        self.assertEqual(len(response), 20)
 
         # Now, ensure that the expiry date feature is enabled!
         InvenTreeSetting.set_setting('STOCK_ENABLE_EXPIRY', True, self.user)
@@ -242,7 +242,7 @@ class StockItemListTest(StockAPITestCase):
             self.assertTrue(item['expired'])
 
         response = self.get_stock(expired=0)
-        self.assertEqual(len(response), 18)
+        self.assertEqual(len(response), 19)
 
         for item in response:
             self.assertFalse(item['expired'])
@@ -259,7 +259,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 4)
 
         response = self.get_stock(expired=0)
-        self.assertEqual(len(response), 15)
+        self.assertEqual(len(response), 16)
 
 
 class StockItemTest(StockAPITestCase):

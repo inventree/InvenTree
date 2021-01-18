@@ -3,9 +3,10 @@ from __future__ import unicode_literals
 
 from django.test import TestCase
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
-from users.models import RuleSet
+from users.models import RuleSet, Owner
 
 
 class RuleSetModelTest(TestCase):
@@ -157,3 +158,48 @@ class RuleSetModelTest(TestCase):
 
         # There should now not be any permissions assigned to this group
         self.assertEqual(group.permissions.count(), 0)
+
+
+class OwnerModelTest(TestCase):
+    """
+    Some simplistic tests to ensure the Owner model is setup correctly.
+    """
+
+    def setUp(self):
+        """ Add users and groups """
+
+        # Create a new user
+        self.user = get_user_model().objects.create_user(
+            username='john',
+            email='john@email.com',
+            password='custom123',
+        )
+
+        # Put the user into a new group
+        self.group = Group.objects.create(name='new_group')
+        self.user.groups.add(self.group)
+
+    def test_owner(self):
+
+        # Check that owner was created for user
+        user_as_owner = Owner.get_owner(self.user)
+        self.assertEqual(type(user_as_owner), Owner)
+
+        # Check that owner was created for group
+        group_as_owner = Owner.get_owner(self.group)
+        self.assertEqual(type(group_as_owner), Owner)
+
+        # Get related owners (user + group)
+        related_owners = group_as_owner.get_related_owners(include_group=True)
+        self.assertTrue(user_as_owner in related_owners)
+        self.assertTrue(group_as_owner in related_owners)
+
+        # Delete user and verify owner was deleted too
+        self.user.delete()
+        user_as_owner = Owner.get_owner(self.user)
+        self.assertEqual(user_as_owner, None)
+        
+        # Delete group and verify owner was deleted too
+        self.group.delete()
+        group_as_owner = Owner.get_owner(self.group)
+        self.assertEqual(group_as_owner, None)

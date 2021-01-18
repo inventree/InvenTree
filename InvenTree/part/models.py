@@ -1856,9 +1856,6 @@ class BomItem(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
-    def get_absolute_url(self):
-        return reverse('bom-item-detail', kwargs={'pk': self.id})
-
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='bom_items',
