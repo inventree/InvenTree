@@ -32,7 +32,6 @@ from datetime import datetime, timedelta
 
 from company.models import Company, SupplierPart
 from part.models import Part
-from report.models import TestReport
 from .models import StockItem, StockLocation, StockItemTracking, StockItemAttachment, StockItemTestResult
 
 import common.settings
@@ -510,92 +509,6 @@ class StockItemTestResultDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Test Result")
     context_object_name = "result"
     role_required = 'stock.delete'
-
-
-class StockItemTestReportSelect(AjaxView):
-    """
-    View for selecting a TestReport template,
-    and generating a TestReport as a PDF.
-    """
-
-    model = StockItem
-    ajax_form_title = _("Select Test Report Template")
-    role_required = 'stock.view'
-
-    def get_form(self):
-
-        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
-        form = StockForms.TestReportFormatForm(stock_item)
-
-        return form
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        form = self.get_form()
-        options = form.fields['template'].queryset
-
-        # If only a single template is available, pre-select it
-        if options.count() == 1:
-            initials['template'] = options[0]
-
-        return initials
-
-    def post(self, request, *args, **kwargs):
-
-        template_id = request.POST.get('template', None)
-
-        try:
-            template = TestReport.objects.get(pk=template_id)
-        except (ValueError, TestReport.DoesNoteExist):
-            raise ValidationError({'template': _("Select valid template")})
-
-        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
-
-        url = reverse('stock-item-test-report-download')
-
-        url += '?stock_item={id}'.format(id=stock_item.pk)
-        url += '&template={id}'.format(id=template.pk)
-
-        data = {
-            'form_valid': True,
-            'url': url,
-        }
-
-        return self.renderJsonResponse(request, self.get_form(), data=data)
-
-
-class StockItemTestReportDownload(AjaxView):
-    """
-    Download a TestReport against a StockItem.
-
-    Requires the following arguments to be passed as URL params:
-
-    stock_item - Valid PK of a StockItem object
-    template - Valid PK of a TestReport template object
-
-    """
-    role_required = 'stock.view'
-
-    def get(self, request, *args, **kwargs):
-
-        template = request.GET.get('template', None)
-        stock_item = request.GET.get('stock_item', None)
-
-        try:
-            template = TestReport.objects.get(pk=template)
-        except (ValueError, TestReport.DoesNotExist):
-            raise ValidationError({'template': 'Invalid template ID'})
-
-        try:
-            stock_item = StockItem.objects.get(pk=stock_item)
-        except (ValueError, StockItem.DoesNotExist):
-            raise ValidationError({'stock_item': 'Invalid StockItem ID'})
-
-        template.stock_item = stock_item
-
-        return template.render(request)
 
 
 class StockExportOptions(AjaxView):

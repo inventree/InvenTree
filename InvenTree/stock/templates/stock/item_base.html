@@ -137,7 +137,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <!-- Document / label menu -->
         {% if item.has_labels or item.has_test_reports %}
         <div class='btn-group'>
-            <button id='document-options' title='{% trans "Document actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-file-alt'></span> <span class='caret'></span></button>
+            <button id='document-options' title='{% trans "Printing actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-print'></span> <span class='caret'></span></button>
             <ul class='dropdown-menu' role='menu'>
                 {% if item.has_labels %}
                 <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
@@ -414,12 +414,7 @@ $('#stock-uninstall').click(function() {
 });
 
 $("#stock-test-report").click(function() {
-    launchModalForm(
-        "{% url 'stock-item-test-report-select' item.id %}",
-        {
-            follow: true,
-        }
-    );
+    printTestReports([{{ item.pk }}]);
 });
 
 $("#print-label").click(function() {

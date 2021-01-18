@@ -99,8 +99,6 @@ part_category_urls = [
 part_bom_urls = [
     url(r'^edit/?', views.BomItemEdit.as_view(), name='bom-item-edit'),
     url('^delete/?', views.BomItemDelete.as_view(), name='bom-item-delete'),
-
-    url(r'^.*$', views.BomItemDetail.as_view(), name='bom-item-detail'),
 ]
 
 # URL list for part web interface

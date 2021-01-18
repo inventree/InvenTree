@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-17 18:11+0000\n"
+"POT-Creation-Date: 2021-01-18 23:24+1100\n"
 "PO-Revision-Date: 2020-05-03 11:32+0200\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -62,7 +62,7 @@ msgid "Select Category"
 msgstr "Teilkategorie auswählen"
 
 #: InvenTree/helpers.py:361 order/models.py:232 order/models.py:330
-#: stock/views.py:1865
+#: stock/views.py:1778
 msgid "Invalid quantity provided"
 msgstr "Keine gültige Menge"
 
@@ -105,7 +105,7 @@ msgstr "Datei zum Anhängen auswählen"
 msgid "File comment"
 msgstr "Datei-Kommentar"
 
-#: InvenTree/models.py:68 templates/js/stock.js:878
+#: InvenTree/models.py:68 templates/js/stock.js:901
 msgid "User"
 msgstr "Benutzer"
 
@@ -120,21 +120,25 @@ msgstr "Name"
 msgid "Description (optional)"
 msgstr "Firmenbeschreibung"
 
-#: InvenTree/settings.py:439
+#: InvenTree/settings.py:454
 msgid "English"
 msgstr "Englisch"
 
-#: InvenTree/settings.py:440
-msgid "German"
-msgstr "Deutsch"
-
-#: InvenTree/settings.py:441
+#: InvenTree/settings.py:455
 msgid "French"
 msgstr "Französisch"
 
-#: InvenTree/settings.py:442
+#: InvenTree/settings.py:456
+msgid "German"
+msgstr "Deutsch"
+
+#: InvenTree/settings.py:457
 msgid "Polish"
 msgstr "Polnisch"
+
+#: InvenTree/settings.py:458
+msgid "Turkish"
+msgstr ""
 
 #: InvenTree/status.py:24
 msgid "Celery worker check failed"
@@ -351,8 +355,8 @@ msgstr ""
 #: stock/templates/stock/item_base.html:57
 #: stock/templates/stock/item_base.html:234
 #: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:338
-#: templates/js/bom.js:195 templates/js/build.js:420 templates/js/stock.js:869
-#: templates/js/stock.js:1108
+#: templates/js/bom.js:195 templates/js/build.js:420 templates/js/stock.js:892
+#: templates/js/stock.js:1131
 msgid "Quantity"
 msgstr "Anzahl"
 
@@ -460,10 +464,10 @@ msgstr "Referenz"
 #: part/templates/part/detail.html:51 part/templates/part/set_category.html:14
 #: templates/InvenTree/search.html:147
 #: templates/InvenTree/settings/header.html:9 templates/js/bom.js:180
-#: templates/js/bom.js:549 templates/js/build.js:664 templates/js/company.js:56
+#: templates/js/bom.js:547 templates/js/build.js:664 templates/js/company.js:56
 #: templates/js/order.js:180 templates/js/order.js:274 templates/js/part.js:188
 #: templates/js/part.js:271 templates/js/part.js:391 templates/js/part.js:572
-#: templates/js/stock.js:511 templates/js/stock.js:850
+#: templates/js/stock.js:511 templates/js/stock.js:873
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -490,10 +494,10 @@ msgstr "Bestellung, die diesem Bau zugwiesen ist"
 #: order/templates/order/receive_parts.html:19 part/models.py:316
 #: part/templates/part/part_app_base.html:7 part/templates/part/related.html:26
 #: part/templates/part/set_category.html:13 templates/InvenTree/search.html:133
-#: templates/js/barcode.js:336 templates/js/bom.js:153 templates/js/bom.js:534
+#: templates/js/barcode.js:336 templates/js/bom.js:153 templates/js/bom.js:532
 #: templates/js/build.js:669 templates/js/company.js:138
 #: templates/js/part.js:252 templates/js/part.js:357 templates/js/stock.js:485
-#: templates/js/stock.js:1180
+#: templates/js/stock.js:1203
 msgid "Part"
 msgstr "Teil"
 
@@ -592,7 +596,7 @@ msgstr "Link zu einer externen URL"
 #: part/templates/part/tabs.html:73 stock/forms.py:315 stock/forms.py:347
 #: stock/forms.py:375 stock/models.py:484 stock/models.py:1554
 #: stock/templates/stock/tabs.html:26 templates/js/barcode.js:391
-#: templates/js/bom.js:295 templates/js/stock.js:127 templates/js/stock.js:623
+#: templates/js/bom.js:293 templates/js/stock.js:127 templates/js/stock.js:623
 msgid "Notes"
 msgstr "Notizen"
 
@@ -837,7 +841,7 @@ msgstr "Bau-Status"
 #: stock/templates/stock/item_base.html:363 templates/InvenTree/search.html:175
 #: templates/js/barcode.js:42 templates/js/build.js:697
 #: templates/js/order.js:185 templates/js/order.js:279
-#: templates/js/stock.js:584 templates/js/stock.js:1116
+#: templates/js/stock.js:584 templates/js/stock.js:1139
 msgid "Status"
 msgstr "Status"
 
@@ -1002,7 +1006,7 @@ msgstr "Hat dieses Teil Tracking für einzelne Objekte?"
 
 #: build/templates/build/detail.html:68
 #: stock/templates/stock/item_base.html:282 templates/js/stock.js:592
-#: templates/js/stock.js:1123 templates/js/table_filters.js:80
+#: templates/js/stock.js:1146 templates/js/table_filters.js:80
 #: templates/js/table_filters.js:161
 msgid "Batch"
 msgstr "Los"
@@ -1118,7 +1122,7 @@ msgstr "Lagerbestand dem Bau zuweisen"
 msgid "Create Build Output"
 msgstr "Bau-Ausgabe"
 
-#: build/views.py:207 stock/models.py:897 stock/views.py:1886
+#: build/views.py:207 stock/models.py:897 stock/views.py:1804
 #, fuzzy
 #| msgid "Serial numbers already exist: "
 msgid "Serial numbers already exist"
@@ -1140,7 +1144,7 @@ msgstr "Bau entfernt"
 msgid "Confirm unallocation of build stock"
 msgstr "Zuweisungsaufhebung bestätigen"
 
-#: build/views.py:303 build/views.py:388 stock/views.py:432
+#: build/views.py:303 build/views.py:388 stock/views.py:431
 msgid "Check the confirmation box"
 msgstr "Bestätigungsbox bestätigen"
 
@@ -1240,7 +1244,7 @@ msgstr "Dieses Lagerobjekt ist dem Bau zugewiesen"
 msgid "Stock item is over-allocated"
 msgstr "Zu viele Lagerobjekte zugewiesen"
 
-#: build/views.py:847 templates/js/bom.js:221 templates/js/build.js:519
+#: build/views.py:847 templates/js/bom.js:220 templates/js/build.js:519
 #: templates/js/build.js:758
 msgid "Available"
 msgstr "verfügbar"
@@ -1266,7 +1270,7 @@ msgid "Add Build Order Attachment"
 msgstr "Auftragsanhang hinzufügen"
 
 #: build/views.py:1060 order/views.py:113 order/views.py:166 part/views.py:170
-#: stock/views.py:281
+#: stock/views.py:280
 msgid "Added attachment"
 msgstr "Anhang hinzugefügt"
 
@@ -1282,7 +1286,7 @@ msgstr "Anhang aktualisiert"
 msgid "Delete Attachment"
 msgstr "Anhang löschen"
 
-#: build/views.py:1123 order/views.py:242 order/views.py:257 stock/views.py:339
+#: build/views.py:1123 order/views.py:242 order/views.py:257 stock/views.py:338
 msgid "Deleted attachment"
 msgstr "Anhang gelöscht"
 
@@ -1587,7 +1591,7 @@ msgid "Price break quantity"
 msgstr "Preisstaffelung"
 
 #: common/models.py:612 company/templates/company/supplier_part_pricing.html:80
-#: part/templates/part/sale_prices.html:87 templates/js/bom.js:246
+#: part/templates/part/sale_prices.html:87 templates/js/bom.js:245
 msgid "Price"
 msgstr "Preis"
 
@@ -1853,13 +1857,12 @@ msgstr "Neues Zuliefererteil anlegen"
 
 #: company/templates/company/detail_part.html:18
 #: order/templates/order/purchase_order_detail.html:68
-#: part/templates/part/supplier.html:14 templates/js/stock.js:1000
+#: part/templates/part/supplier.html:14 templates/js/stock.js:1023
 msgid "New Supplier Part"
 msgstr "Neues Zulieferer-Teil"
 
 #: company/templates/company/detail_part.html:23
 #: part/templates/part/category.html:120 part/templates/part/supplier.html:17
-#: templates/stock_table.html:27
 msgid "Options"
 msgstr "Optionen"
 
@@ -1881,7 +1884,8 @@ msgid "Delete Parts"
 msgstr "Teile löschen"
 
 #: company/templates/company/detail_part.html:63
-#: part/templates/part/category.html:116 templates/js/stock.js:994
+#: part/templates/part/bom.html:182 part/templates/part/category.html:116
+#: templates/js/stock.js:1017
 msgid "New Part"
 msgstr "Neues Teil"
 
@@ -1915,7 +1919,6 @@ msgstr "Zuliefererbestand"
 #: company/templates/company/supplier_part_stock.html:33
 #: part/templates/part/bom.html:63 part/templates/part/category.html:112
 #: part/templates/part/category.html:126 part/templates/part/stock.html:51
-#: templates/stock_table.html:13
 msgid "Export"
 msgstr "Exportieren"
 
@@ -2016,7 +2019,7 @@ msgid "Pricing Information"
 msgstr "Preisinformationen ansehen"
 
 #: company/templates/company/supplier_part_pricing.html:17 company/views.py:486
-#: part/templates/part/sale_prices.html:14 part/views.py:2567
+#: part/templates/part/sale_prices.html:14 part/views.py:2558
 msgid "Add Price Break"
 msgstr "Preisstaffel hinzufügen"
 
@@ -2135,7 +2138,7 @@ msgstr "Firma gelöscht"
 msgid "Edit Supplier Part"
 msgstr "Zuliefererteil bearbeiten"
 
-#: company/views.py:295 templates/js/stock.js:1001
+#: company/views.py:295 templates/js/stock.js:1024
 msgid "Create new Supplier Part"
 msgstr "Neues Zuliefererteil anlegen"
 
@@ -2143,21 +2146,21 @@ msgstr "Neues Zuliefererteil anlegen"
 msgid "Delete Supplier Part"
 msgstr "Zuliefererteil entfernen"
 
-#: company/views.py:492 part/views.py:2573
+#: company/views.py:492 part/views.py:2564
 #, fuzzy
 #| msgid "Add Price Break"
 msgid "Added new price break"
 msgstr "Preisstaffel hinzufügen"
 
-#: company/views.py:548 part/views.py:2617
+#: company/views.py:548 part/views.py:2608
 msgid "Edit Price Break"
 msgstr "Preisstaffel bearbeiten"
 
-#: company/views.py:564 part/views.py:2633
+#: company/views.py:564 part/views.py:2624
 msgid "Delete Price Break"
 msgstr "Preisstaffel löschen"
 
-#: label/api.py:171
+#: label/api.py:171 report/api.py:161
 #, fuzzy
 #| msgid "Move Stock Items"
 msgid "Must provide valid StockItem(s)"
@@ -2539,7 +2542,7 @@ msgstr "Bestellpositionen"
 #: order/templates/order/purchase_order_detail.html:39
 #: order/templates/order/purchase_order_detail.html:119
 #: part/templates/part/category.html:173 part/templates/part/category.html:215
-#: templates/js/stock.js:647 templates/js/stock.js:1006
+#: templates/js/stock.js:657 templates/js/stock.js:1029
 msgid "New Location"
 msgstr "Neuer Standort"
 
@@ -3310,66 +3313,66 @@ msgstr "Parameter Wert"
 msgid "Default Parameter Value"
 msgstr "Parameter Wert"
 
-#: part/models.py:1865
+#: part/models.py:1862
 msgid "Select parent part"
 msgstr "Ausgangsteil auswählen"
 
-#: part/models.py:1873
+#: part/models.py:1870
 msgid "Select part to be used in BOM"
 msgstr "Teil für die Nutzung in der Stückliste auswählen"
 
-#: part/models.py:1879
+#: part/models.py:1876
 msgid "BOM quantity for this BOM item"
 msgstr "Stücklisten-Anzahl für dieses Stücklisten-Teil"
 
-#: part/models.py:1881
+#: part/models.py:1878
 #, fuzzy
 #| msgid "Confim BOM item deletion"
 msgid "This BOM item is optional"
 msgstr "Löschung von BOM-Position bestätigen"
 
-#: part/models.py:1884
+#: part/models.py:1881
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr "Geschätzter Ausschuss (absolut oder prozentual)"
 
-#: part/models.py:1887
+#: part/models.py:1884
 msgid "BOM item reference"
 msgstr "Referenz des Objekts auf der Stückliste"
 
-#: part/models.py:1890
+#: part/models.py:1887
 msgid "BOM item notes"
 msgstr "Notizen zum Stücklisten-Objekt"
 
-#: part/models.py:1892
+#: part/models.py:1889
 msgid "BOM line checksum"
 msgstr "Prüfsumme der Stückliste"
 
-#: part/models.py:1963 part/views.py:1512 part/views.py:1564
+#: part/models.py:1960 part/views.py:1512 part/views.py:1564
 #: stock/models.py:255
 #, fuzzy
 #| msgid "Overage must be an integer value or a percentage"
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Überschuss muss eine Ganzzahl oder ein Prozentwert sein"
 
-#: part/models.py:1972 part/models.py:1974
+#: part/models.py:1969 part/models.py:1971
 #, fuzzy
 #| msgid "Supplier part description"
 msgid "Sub part must be specified"
 msgstr "Zuliefererbeschreibung des Teils"
 
-#: part/models.py:1977
+#: part/models.py:1974
 #, fuzzy
 #| msgid "New BOM Item"
 msgid "BOM Item"
 msgstr "Neue Stücklistenposition"
 
-#: part/models.py:2098
+#: part/models.py:2095
 #, fuzzy
 #| msgid "Select a part"
 msgid "Select Related Part"
 msgstr "Teil auswählen"
 
-#: part/models.py:2130
+#: part/models.py:2127
 msgid ""
 "Error creating relationship: check that the part is not related to itself "
 "and that the relationship is unique"
@@ -3392,13 +3395,23 @@ msgstr "Bestellung"
 #: stock/templates/stock/item_base.html:89
 #: stock/templates/stock/item_base.html:311
 #: stock/templates/stock/stock_adjust.html:16 templates/js/build.js:751
-#: templates/js/stock.js:839 templates/js/stock.js:1099
+#: templates/js/stock.js:862 templates/js/stock.js:1122
 msgid "Stock Item"
 msgstr "Lagerobjekt"
 
 #: part/templates/part/attachments.html:8
 msgid "Part Attachments"
 msgstr "Anhänge"
+
+#: part/templates/part/bom-delete.html:6
+#, fuzzy
+#| msgid "Are you sure you want to delete this attachment?"
+msgid "Are you sure you want to delete this BOM item?"
+msgstr "Sind Sie sicher, dass Sie diesen Anhang löschen wollen?"
+
+#: part/templates/part/bom-delete.html:8
+msgid "Deleting this entry will remove the BOM row from the following part"
+msgstr ""
 
 #: part/templates/part/bom.html:13
 msgid "Bill of Materials"
@@ -3481,6 +3494,11 @@ msgstr "Ausgewählte Stücklistenpositionen entfernen"
 msgid "All selected BOM items will be deleted"
 msgstr "Ausgewählte Stücklistenpositionen entfernen"
 
+#: part/templates/part/bom.html:183 part/views.py:594
+#: templates/js/stock.js:1018
+msgid "Create New Part"
+msgstr "Neues Teil anlegen"
+
 #: part/templates/part/bom_duplicate.html:13
 #, fuzzy
 #| msgid "Export Bill of Materials"
@@ -3551,6 +3569,17 @@ msgstr ""
 #| msgid "Select part"
 msgid "Select Part"
 msgstr "Teil auswählen"
+
+#: part/templates/part/bom_upload/select_parts.html:52
+#, fuzzy
+#| msgid "Remove part"
+msgid "Remove row"
+msgstr "Teil entfernen"
+
+#: part/templates/part/bom_upload/select_parts.html:59
+#: part/templates/part/category.html:115
+msgid "Create new part"
+msgstr "Neues Teil anlegen"
 
 #: part/templates/part/bom_upload/upload_file.html:13
 #, fuzzy
@@ -3633,10 +3662,6 @@ msgstr "Teile (inklusive Unter-Kategorien)"
 msgid "Export Part Data"
 msgstr ""
 
-#: part/templates/part/category.html:115
-msgid "Create new part"
-msgstr "Neues Teil anlegen"
-
 #: part/templates/part/category.html:123
 #, fuzzy
 #| msgid "Part category"
@@ -3655,7 +3680,7 @@ msgstr "Teilkategorie auswählen"
 msgid "Export Data"
 msgstr "Exportieren"
 
-#: part/templates/part/category.html:174 templates/js/stock.js:648
+#: part/templates/part/category.html:174 templates/js/stock.js:658
 #, fuzzy
 #| msgid "Create New Location"
 msgid "Create new location"
@@ -3679,7 +3704,7 @@ msgstr "Teilkategorie anlegen"
 msgid "Create new Part Category"
 msgstr "Teilkategorie anlegen"
 
-#: part/templates/part/category.html:216 stock/views.py:1458
+#: part/templates/part/category.html:216 stock/views.py:1371
 msgid "Create new Stock Location"
 msgstr "Neuen Lager-Standort erstellen"
 
@@ -3689,12 +3714,14 @@ msgstr "Neuen Lager-Standort erstellen"
 msgid "Parametric Table"
 msgstr "Parameter Wert"
 
+#: part/templates/part/copy_part.html:14
 #: part/templates/part/create_part.html:11
 #, fuzzy
 #| msgid "No matching data"
 msgid "Possible Matching Parts"
 msgstr "Keine passenden Daten"
 
+#: part/templates/part/copy_part.html:15
 #: part/templates/part/create_part.html:12
 msgid "The new part may be a duplicate of these existing parts"
 msgstr ""
@@ -3930,7 +3957,7 @@ msgstr "Zu Bauaufträgen zugeordnet"
 msgid "Allocated to Sales Orders"
 msgstr "Zu Aufträgen zugeordnet"
 
-#: part/templates/part/part_base.html:160 templates/js/bom.js:262
+#: part/templates/part/part_base.html:160 templates/js/bom.js:260
 msgid "Can Build"
 msgstr "Herstellbar?"
 
@@ -3996,7 +4023,7 @@ msgstr "Teil entfernen"
 msgid "Part Stock"
 msgstr "Teilbestand"
 
-#: part/templates/part/stock_count.html:7 templates/js/bom.js:230
+#: part/templates/part/stock_count.html:7 templates/js/bom.js:229
 #: templates/js/part.js:442
 msgid "No Stock"
 msgstr "Kein Bestand"
@@ -4062,6 +4089,18 @@ msgstr "Teilverfolgung"
 #: part/templates/part/used_in.html:7
 msgid "Assemblies"
 msgstr "Baugruppen"
+
+#: part/templates/part/variant_part.html:9
+#, fuzzy
+#| msgid "Create new Part"
+msgid "Create new part variant"
+msgstr "Neues Teil hinzufügen"
+
+#: part/templates/part/variant_part.html:10
+#, fuzzy
+#| msgid "Create new Part"
+msgid "Create a new variant of template"
+msgstr "Neues Teil hinzufügen"
 
 #: part/templates/part/variants.html:11
 #, fuzzy
@@ -4155,10 +4194,6 @@ msgstr "Teil kopiert"
 #: part/views.py:529 part/views.py:669
 msgid "Possible matches exist - confirm creation of new part"
 msgstr ""
-
-#: part/views.py:594 templates/js/stock.js:995
-msgid "Create New Part"
-msgstr "Neues Teil anlegen"
 
 #: part/views.py:601
 msgid "Created new part"
@@ -4312,17 +4347,17 @@ msgstr "Teilparametervorlage bearbeiten"
 msgid "Delete Category Parameter Template"
 msgstr "Teilparametervorlage löschen"
 
-#: part/views.py:2428
+#: part/views.py:2419
 #, fuzzy
 #| msgid "Create BOM item"
 msgid "Create BOM Item"
 msgstr "BOM-Position anlegen"
 
-#: part/views.py:2500
+#: part/views.py:2491
 msgid "Edit BOM item"
 msgstr "BOM-Position beaarbeiten"
 
-#: part/views.py:2557
+#: part/views.py:2548
 msgid "Confim BOM item deletion"
 msgstr "Löschung von BOM-Position bestätigen"
 
@@ -4426,7 +4461,7 @@ msgstr "Ziel-Lagerbestand"
 msgid "Add note (required)"
 msgstr ""
 
-#: stock/forms.py:379 stock/views.py:950 stock/views.py:1148
+#: stock/forms.py:379 stock/views.py:863 stock/views.py:1061
 msgid "Confirm stock adjustment"
 msgstr "Bestands-Anpassung bestätigen"
 
@@ -4801,9 +4836,9 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:140
 #, fuzzy
-#| msgid "Confirm stock adjustment"
-msgid "Document actions"
-msgstr "Bestands-Anpassung bestätigen"
+#| msgid "Source Location"
+msgid "Printing actions"
+msgstr "Quell-Standort"
 
 #: stock/templates/stock/item_base.html:146
 #: stock/templates/stock/item_tests.html:25
@@ -4817,15 +4852,15 @@ msgid "Stock adjustment actions"
 msgstr "Bestands-Anpassung bestätigen"
 
 #: stock/templates/stock/item_base.html:160
-#: stock/templates/stock/location.html:57 templates/stock_table.html:35
+#: stock/templates/stock/location.html:57 templates/stock_table.html:40
 msgid "Count stock"
 msgstr "Bestand zählen"
 
-#: stock/templates/stock/item_base.html:161 templates/stock_table.html:33
+#: stock/templates/stock/item_base.html:161 templates/stock_table.html:38
 msgid "Add stock"
 msgstr "Bestand hinzufügen"
 
-#: stock/templates/stock/item_base.html:162 templates/stock_table.html:34
+#: stock/templates/stock/item_base.html:162 templates/stock_table.html:39
 msgid "Remove stock"
 msgstr "Bestand entfernen"
 
@@ -4853,7 +4888,7 @@ msgstr "Ist dieses Objekt einem Kunden zugeteilt?"
 msgid "Return to stock"
 msgstr "Bestand zählen"
 
-#: stock/templates/stock/item_base.html:177 templates/js/stock.js:1136
+#: stock/templates/stock/item_base.html:177 templates/js/stock.js:1159
 #, fuzzy
 #| msgid "Installed in Stock Item"
 msgid "Uninstall stock item"
@@ -5086,7 +5121,7 @@ msgstr "Sind Sie sicher, dass Sie diesen Anhang löschen wollen?"
 msgid "The following stock items will be uninstalled"
 msgstr "Die folgenden Objekte werden erstellt"
 
-#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:1430
+#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:1343
 #, fuzzy
 #| msgid "Count Stock Items"
 msgid "Convert Stock Item"
@@ -5124,236 +5159,224 @@ msgstr "Kinder"
 msgid "Installed Items"
 msgstr "Installiert in"
 
-#: stock/views.py:126
+#: stock/views.py:125
 msgid "Edit Stock Location"
 msgstr "Lagerobjekt-Standort bearbeiten"
 
-#: stock/views.py:234 stock/views.py:1420 stock/views.py:1533
-#: stock/views.py:1895
+#: stock/views.py:233 stock/views.py:1333 stock/views.py:1446
+#: stock/views.py:1813
 msgid "Owner is required (ownership control is enabled)"
 msgstr ""
 
-#: stock/views.py:249
+#: stock/views.py:248
 msgid "Stock Location QR code"
 msgstr "QR-Code für diesen Standort"
 
-#: stock/views.py:268
+#: stock/views.py:267
 #, fuzzy
 #| msgid "Add Attachment"
 msgid "Add Stock Item Attachment"
 msgstr "Anhang hinzufügen"
 
-#: stock/views.py:315
+#: stock/views.py:314
 #, fuzzy
 #| msgid "Edit Stock Item"
 msgid "Edit Stock Item Attachment"
 msgstr "Lagerobjekt bearbeiten"
 
-#: stock/views.py:332
+#: stock/views.py:331
 #, fuzzy
 #| msgid "Delete Part Attachment"
 msgid "Delete Stock Item Attachment"
 msgstr "Teilanhang löschen"
 
-#: stock/views.py:349
+#: stock/views.py:348
 #, fuzzy
 #| msgid "Item assigned to customer?"
 msgid "Assign to Customer"
 msgstr "Ist dieses Objekt einem Kunden zugeteilt?"
 
-#: stock/views.py:359
+#: stock/views.py:358
 msgid "Customer must be specified"
 msgstr ""
 
-#: stock/views.py:383
+#: stock/views.py:382
 #, fuzzy
 #| msgid "Part Stock"
 msgid "Return to Stock"
 msgstr "Teilbestand"
 
-#: stock/views.py:393
+#: stock/views.py:392
 #, fuzzy
 #| msgid "Include sublocations"
 msgid "Specify a valid location"
 msgstr "Unterlagerorte einschließen"
 
-#: stock/views.py:404
+#: stock/views.py:403
 msgid "Stock item returned from customer"
 msgstr ""
 
-#: stock/views.py:415
+#: stock/views.py:414
 #, fuzzy
 #| msgid "Delete Template"
 msgid "Delete All Test Data"
 msgstr "Vorlage löschen"
 
-#: stock/views.py:431
+#: stock/views.py:430
 #, fuzzy
 #| msgid "Confirm Part Deletion"
 msgid "Confirm test data deletion"
 msgstr "Löschen des Teils bestätigen"
 
-#: stock/views.py:451
+#: stock/views.py:450
 msgid "Add Test Result"
 msgstr ""
 
-#: stock/views.py:492
+#: stock/views.py:491
 #, fuzzy
 #| msgid "Edit Template"
 msgid "Edit Test Result"
 msgstr "Vorlage bearbeiten"
 
-#: stock/views.py:510
+#: stock/views.py:509
 #, fuzzy
 #| msgid "Delete Template"
 msgid "Delete Test Result"
 msgstr "Vorlage löschen"
 
-#: stock/views.py:522
-#, fuzzy
-#| msgid "Delete Template"
-msgid "Select Test Report Template"
-msgstr "Vorlage löschen"
-
-#: stock/views.py:552
-#, fuzzy
-#| msgid "Select valid part"
-msgid "Select valid template"
-msgstr "Bitte ein gültiges Teil auswählen"
-
-#: stock/views.py:605
+#: stock/views.py:518
 msgid "Stock Export Options"
 msgstr "Lagerbestandsexportoptionen"
 
-#: stock/views.py:727
+#: stock/views.py:640
 msgid "Stock Item QR Code"
 msgstr "Lagerobjekt-QR-Code"
 
-#: stock/views.py:753
+#: stock/views.py:666
 #, fuzzy
 #| msgid "Installed in Stock Item"
 msgid "Install Stock Item"
 msgstr "In Lagerobjekt installiert"
 
-#: stock/views.py:853
+#: stock/views.py:766
 #, fuzzy
 #| msgid "Installed in Stock Item"
 msgid "Uninstall Stock Items"
 msgstr "In Lagerobjekt installiert"
 
-#: stock/views.py:961
+#: stock/views.py:874
 #, fuzzy
 #| msgid "Installed in Stock Item"
 msgid "Uninstalled stock items"
 msgstr "In Lagerobjekt installiert"
 
-#: stock/views.py:986
+#: stock/views.py:899
 msgid "Adjust Stock"
 msgstr "Lagerbestand anpassen"
 
-#: stock/views.py:1096
+#: stock/views.py:1009
 msgid "Move Stock Items"
 msgstr "Lagerobjekte bewegen"
 
-#: stock/views.py:1097
+#: stock/views.py:1010
 msgid "Count Stock Items"
 msgstr "Lagerobjekte zählen"
 
-#: stock/views.py:1098
+#: stock/views.py:1011
 msgid "Remove From Stock"
 msgstr "Aus Lagerbestand entfernen"
 
-#: stock/views.py:1099
+#: stock/views.py:1012
 msgid "Add Stock Items"
 msgstr "Lagerobjekte hinzufügen"
 
-#: stock/views.py:1100
+#: stock/views.py:1013
 msgid "Delete Stock Items"
 msgstr "Lagerobjekte löschen"
 
-#: stock/views.py:1128
+#: stock/views.py:1041
 msgid "Must enter integer value"
 msgstr "Nur Ganzzahl eingeben"
 
-#: stock/views.py:1133
+#: stock/views.py:1046
 msgid "Quantity must be positive"
 msgstr "Anzahl muss positiv sein"
 
-#: stock/views.py:1140
+#: stock/views.py:1053
 #, python-brace-format
 msgid "Quantity must not exceed {x}"
 msgstr "Anzahl darf {x} nicht überschreiten"
 
-#: stock/views.py:1219
+#: stock/views.py:1132
 #, python-brace-format
 msgid "Added stock to {n} items"
 msgstr "Vorrat zu {n} Lagerobjekten hinzugefügt"
 
-#: stock/views.py:1234
+#: stock/views.py:1147
 #, python-brace-format
 msgid "Removed stock from {n} items"
 msgstr "Vorrat von {n} Lagerobjekten entfernt"
 
-#: stock/views.py:1247
+#: stock/views.py:1160
 #, python-brace-format
 msgid "Counted stock for {n} items"
 msgstr "Bestand für {n} Objekte erfasst"
 
-#: stock/views.py:1287
+#: stock/views.py:1200
 msgid "No items were moved"
 msgstr "Keine Lagerobjekte wurden bewegt"
 
-#: stock/views.py:1290
+#: stock/views.py:1203
 #, python-brace-format
 msgid "Moved {n} items to {dest}"
 msgstr "{n} Teile nach {dest} bewegt"
 
-#: stock/views.py:1309
+#: stock/views.py:1222
 #, python-brace-format
 msgid "Deleted {n} stock items"
 msgstr "{n} Teile im Lager gelöscht"
 
-#: stock/views.py:1321
+#: stock/views.py:1234
 msgid "Edit Stock Item"
 msgstr "Lagerobjekt bearbeiten"
 
-#: stock/views.py:1550
+#: stock/views.py:1463
 msgid "Serialize Stock"
 msgstr "Lagerbestand erfassen"
 
-#: stock/views.py:1644 templates/js/build.js:210
+#: stock/views.py:1557 templates/js/build.js:210
 msgid "Create new Stock Item"
 msgstr "Neues Lagerobjekt hinzufügen"
 
-#: stock/views.py:1787
+#: stock/views.py:1700
 #, fuzzy
 #| msgid "Count stock items"
 msgid "Duplicate Stock Item"
 msgstr "Lagerobjekte zählen"
 
-#: stock/views.py:1869
+#: stock/views.py:1782
 #, fuzzy
 #| msgid "Quantity must be greater than zero"
 msgid "Quantity cannot be negative"
 msgstr "Anzahl muss größer Null sein"
 
-#: stock/views.py:1964
+#: stock/views.py:1882
 msgid "Delete Stock Location"
 msgstr "Standort löschen"
 
-#: stock/views.py:1978
+#: stock/views.py:1896
 msgid "Delete Stock Item"
 msgstr "Lagerobjekt löschen"
 
-#: stock/views.py:1990
+#: stock/views.py:1908
 msgid "Delete Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag löschen"
 
-#: stock/views.py:2009
+#: stock/views.py:1927
 msgid "Edit Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag bearbeiten"
 
-#: stock/views.py:2019
+#: stock/views.py:1937
 msgid "Add Stock Tracking Entry"
 msgstr "Lagerbestands-Tracking-Eintrag hinzufügen"
 
@@ -5566,7 +5589,7 @@ msgstr "Auftragsdetails"
 msgid "Stock Settings"
 msgstr "Lagerobjekt-Standorte"
 
-#: templates/InvenTree/settings/stock.html:13
+#: templates/InvenTree/settings/stock.html:13 templates/stock_table.html:33
 #, fuzzy
 #| msgid "Stock Locations"
 msgid "Stock Options"
@@ -5846,45 +5869,45 @@ msgstr "Unterbaugruppe öffnen"
 msgid "Optional"
 msgstr "Optionen"
 
-#: templates/js/bom.js:252
+#: templates/js/bom.js:251
 msgid "No pricing available"
 msgstr "Keine Preisinformation verfügbar"
 
-#: templates/js/bom.js:304 templates/js/build.js:571
+#: templates/js/bom.js:302 templates/js/build.js:571
 #, fuzzy
 #| msgid "Options"
 msgid "Actions"
 msgstr "Optionen"
 
-#: templates/js/bom.js:312
+#: templates/js/bom.js:310
 msgid "Validate BOM Item"
 msgstr "BOM-Position validieren"
 
-#: templates/js/bom.js:314
+#: templates/js/bom.js:312
 msgid "This line has been validated"
 msgstr "Diese Position wurde validiert"
 
-#: templates/js/bom.js:316
+#: templates/js/bom.js:314
 msgid "Edit BOM Item"
 msgstr "BOM-Position bearbeiten"
 
-#: templates/js/bom.js:318
+#: templates/js/bom.js:316
 msgid "Delete BOM Item"
 msgstr "BOM-Position löschen"
 
-#: templates/js/bom.js:395 templates/js/build.js:305
+#: templates/js/bom.js:393 templates/js/build.js:305
 msgid "No BOM items found"
 msgstr "Keine BOM-Einträge gefunden"
 
-#: templates/js/bom.js:541
+#: templates/js/bom.js:539
 msgid "INACTIVE"
 msgstr "INAKTIV"
 
-#: templates/js/bom.js:555
+#: templates/js/bom.js:553
 msgid "Uses"
 msgstr ""
 
-#: templates/js/bom.js:566
+#: templates/js/bom.js:564
 #, fuzzy
 #| msgid "No matching action found"
 msgid "No matching parts found"
@@ -5914,7 +5937,7 @@ msgstr "Lagerbestand dem Bau zuweisen"
 msgid "Delete build output"
 msgstr "Bau entfernt"
 
-#: templates/js/build.js:209 templates/stock_table.html:21
+#: templates/js/build.js:209 templates/stock_table.html:18
 msgid "New Stock Item"
 msgstr "Neues Lagerobjekt"
 
@@ -5936,7 +5959,7 @@ msgstr "Anzahl"
 msgid "Build stock"
 msgstr "Baue"
 
-#: templates/js/build.js:582 templates/stock_table.html:37
+#: templates/js/build.js:582 templates/stock_table.html:42
 msgid "Order stock"
 msgstr "Bestand bestellen"
 
@@ -5986,7 +6009,7 @@ msgstr "Vorlagenteil"
 msgid "Assembled part"
 msgstr "Baugruppe"
 
-#: templates/js/label.js:10
+#: templates/js/label.js:10 templates/js/report.js:89
 #, fuzzy
 #| msgid "Delete Stock Items"
 msgid "Select Stock Items"
@@ -6024,13 +6047,19 @@ msgstr ""
 msgid "No labels found which match selected stock location(s)"
 msgstr ""
 
-#: templates/js/label.js:141
+#: templates/js/label.js:142 templates/js/report.js:38
+#, fuzzy
+#| msgid "StockItem has been allocated"
+msgid "stock items selected"
+msgstr "Lagerobjekt wurde zugewiesen"
+
+#: templates/js/label.js:150 templates/js/report.js:46
 #, fuzzy
 #| msgid "Select valid part"
 msgid "Select Label"
 msgstr "Bitte ein gültiges Teil auswählen"
 
-#: templates/js/label.js:156
+#: templates/js/label.js:165
 #, fuzzy
 #| msgid "Select valid part"
 msgid "Select Label Template"
@@ -6152,7 +6181,7 @@ msgstr "Keine Bestellungen gefunden"
 msgid "Order is overdue"
 msgstr "Bau-Zuweisung ist vollständig"
 
-#: templates/js/order.js:193 templates/js/stock.js:821
+#: templates/js/order.js:193 templates/js/stock.js:844
 msgid "Date"
 msgstr "Datum"
 
@@ -6195,7 +6224,7 @@ msgid "No parts found"
 msgstr "Keine Teile gefunden"
 
 #: templates/js/part.js:343 templates/js/stock.js:473
-#: templates/js/stock.js:1168
+#: templates/js/stock.js:1191
 msgid "Select"
 msgstr "Auswählen"
 
@@ -6240,6 +6269,30 @@ msgstr "Anhang löschen"
 #: templates/js/part.js:611
 msgid "This test is defined for a parent part"
 msgstr ""
+
+#: templates/js/report.js:61
+#, fuzzy
+#| msgid "Delete Template"
+msgid "Select Test Report Template"
+msgstr "Vorlage löschen"
+
+#: templates/js/report.js:90
+#, fuzzy
+#| msgid "StockItem has been allocated"
+msgid "Stock item(s) must be selected before printing reports"
+msgstr "Lagerobjekt wurde zugewiesen"
+
+#: templates/js/report.js:107
+#, fuzzy
+#| msgid "No parts found"
+msgid "No Reports Found"
+msgstr "Keine Teile gefunden"
+
+#: templates/js/report.js:108
+#, fuzzy
+#| msgid "Remove selected BOM items"
+msgid "No report templates found which match selected stock item(s)"
+msgstr "Ausgewählte Stücklistenpositionen entfernen"
 
 #: templates/js/stock.js:37
 msgid "PASS"
@@ -6369,51 +6422,51 @@ msgstr "Löschen"
 msgid "Stocktake"
 msgstr "Letzte Inventur"
 
-#: templates/js/stock.js:737
+#: templates/js/stock.js:760
 #, fuzzy
 #| msgid "Stock status"
 msgid "Stock Status"
 msgstr "Bestandsstatus"
 
-#: templates/js/stock.js:752
+#: templates/js/stock.js:775
 #, fuzzy
 #| msgid "Stock status"
 msgid "Set Stock Status"
 msgstr "Bestandsstatus"
 
-#: templates/js/stock.js:766
+#: templates/js/stock.js:789
 #, fuzzy
 #| msgid "Select part to build"
 msgid "Select Status Code"
 msgstr "Teil für den Bau wählen"
 
-#: templates/js/stock.js:767
+#: templates/js/stock.js:790
 #, fuzzy
 #| msgid "StockItem has been allocated"
 msgid "Status code must be selected"
 msgstr "Lagerobjekt wurde zugewiesen"
 
-#: templates/js/stock.js:887
+#: templates/js/stock.js:910
 msgid "No user information"
 msgstr "Keine Benutzerinformation"
 
-#: templates/js/stock.js:1007
+#: templates/js/stock.js:1030
 msgid "Create New Location"
 msgstr "Neuen Standort anlegen"
 
-#: templates/js/stock.js:1106
+#: templates/js/stock.js:1129
 #, fuzzy
 #| msgid "Serial Number"
 msgid "Serial"
 msgstr "Seriennummer"
 
-#: templates/js/stock.js:1199 templates/js/table_filters.js:131
+#: templates/js/stock.js:1222 templates/js/table_filters.js:131
 #, fuzzy
 #| msgid "Installed In"
 msgid "Installed"
 msgstr "Installiert in"
 
-#: templates/js/stock.js:1224
+#: templates/js/stock.js:1247
 #, fuzzy
 #| msgid "Installed In"
 msgid "Install item"
@@ -6668,63 +6721,75 @@ msgstr "Bestellung aufgeben"
 msgid "Export Stock Information"
 msgstr "Lagerobjekt-Standort bearbeiten"
 
-#: templates/stock_table.html:29
+#: templates/stock_table.html:23
+#, fuzzy
+#| msgid "Source Location"
+msgid "Printing Actions"
+msgstr "Quell-Standort"
+
+#: templates/stock_table.html:27
 msgid "Print labels"
 msgstr ""
 
-#: templates/stock_table.html:33
+#: templates/stock_table.html:28
+#, fuzzy
+#| msgid "Parameter Template"
+msgid "Print test reports"
+msgstr "Parameter Vorlage"
+
+#: templates/stock_table.html:38
 #, fuzzy
 #| msgid "Added stock to {n} items"
 msgid "Add to selected stock items"
 msgstr "Vorrat zu {n} Lagerobjekten hinzugefügt"
 
-#: templates/stock_table.html:34
+#: templates/stock_table.html:39
 #, fuzzy
 #| msgid "Remove selected BOM items"
 msgid "Remove from selected stock items"
 msgstr "Ausgewählte Stücklistenpositionen entfernen"
 
-#: templates/stock_table.html:35
+#: templates/stock_table.html:40
 #, fuzzy
 #| msgid "Delete Stock Item"
 msgid "Stocktake selected stock items"
 msgstr "Lagerobjekt löschen"
 
-#: templates/stock_table.html:36
+#: templates/stock_table.html:41
 #, fuzzy
 #| msgid "Delete Stock Item"
 msgid "Move selected stock items"
 msgstr "Lagerobjekt löschen"
 
-#: templates/stock_table.html:36
+#: templates/stock_table.html:41
 msgid "Move stock"
 msgstr "Bestand bewegen"
 
-#: templates/stock_table.html:37
+#: templates/stock_table.html:42
 #, fuzzy
 #| msgid "Remove selected BOM items"
 msgid "Order selected items"
 msgstr "Ausgewählte Stücklistenpositionen entfernen"
 
-#: templates/stock_table.html:38
+#: templates/stock_table.html:43
 #, fuzzy
 #| msgid "Settings"
 msgid "Change status"
 msgstr "Einstellungen"
 
-#: templates/stock_table.html:38
+#: templates/stock_table.html:43
 #, fuzzy
 #| msgid "Stock status"
 msgid "Change stock status"
 msgstr "Bestandsstatus"
 
-#: templates/stock_table.html:41
+#: templates/stock_table.html:46
 #, fuzzy
 #| msgid "Delete line item"
 msgid "Delete selected items"
 msgstr "Position löschen"
 
-#: templates/stock_table.html:41
+#: templates/stock_table.html:46
 msgid "Delete Stock"
 msgstr "Bestand löschen"
 
@@ -6799,6 +6864,16 @@ msgstr ""
 #| msgid "Remove selected BOM items"
 msgid "Permission to delete items"
 msgstr "Ausgewählte Stücklistenpositionen entfernen"
+
+#, fuzzy
+#~| msgid "Confirm stock adjustment"
+#~ msgid "Document actions"
+#~ msgstr "Bestands-Anpassung bestätigen"
+
+#, fuzzy
+#~| msgid "Select valid part"
+#~ msgid "Select valid template"
+#~ msgstr "Bitte ein gültiges Teil auswählen"
 
 #~ msgid "Database Statistics"
 #~ msgstr "Datenbankstatistiken"

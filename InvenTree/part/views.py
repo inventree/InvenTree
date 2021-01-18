@@ -2411,15 +2411,6 @@ class CategoryParameterTemplateDelete(AjaxDeleteView):
         return self.object
 
 
-class BomItemDetail(InvenTreeRoleMixin, DetailView):
-    """ Detail view for BomItem """
-    context_object_name = 'item'
-    queryset = BomItem.objects.all()
-    template_name = 'part/bom-detail.html'
-
-    role_required = 'part.view'
-
-
 class BomItemCreate(AjaxCreateView):
     """ Create view for making a new BomItem object """
     model = BomItem

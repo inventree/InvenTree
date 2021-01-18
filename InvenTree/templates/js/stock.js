@@ -625,9 +625,19 @@ function loadStockTable(table, options) {
         ],
     });
 
+    /*
     if (options.buttons) {
         linkButtonsToSelection(table, options.buttons);
     }
+    */
+
+    linkButtonsToSelection(
+        table,
+        [
+            '#stock-print-options',
+            '#stock-options',
+        ]
+    );
 
     function stockAdjustment(action) {
         var items = $("#stock-table").bootstrapTable("getSelections");
@@ -665,6 +675,7 @@ function loadStockTable(table, options) {
     }
 
     // Automatically link button callbacks
+
     $('#multi-item-print-label').click(function() {
         var selections = $('#stock-table').bootstrapTable('getSelections');
 
@@ -676,6 +687,18 @@ function loadStockTable(table, options) {
 
         printStockItemLabels(items);
     });
+
+    $('#multi-item-print-test-report').click(function() {
+        var selections = $('#stock-table').bootstrapTable('getSelections');
+
+        var items = [];
+
+        selections.forEach(function(item) {
+            items.push(item.pk);
+        });
+
+        printTestReports(items);
+    })
 
     $('#multi-item-stocktake').click(function() {
         stockAdjustment('count');

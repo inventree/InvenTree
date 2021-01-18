@@ -50,14 +50,9 @@ function reloadTable() {
     //$("#test-result-table").bootstrapTable("refresh");
 }
 
-{% if item.part.has_test_report_templates %}
+{% if item.has_test_reports %}
 $("#test-report").click(function() {
-    launchModalForm(
-        "{% url 'stock-item-test-report-select' item.id %}",
-        {
-            follow: true,
-        }
-    );
+    printTestReports([{{ item.pk }}]);
 });
 {% endif %}
 
