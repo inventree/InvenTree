@@ -63,9 +63,9 @@
             <span class='fas fa-file-download'></span> {% trans "Export" %}
         </button>
         {% endif %}
-    </div>
-    <div class='filter-list' id='filter-list-bom'>
-        <!-- Empty div (will be filled out with avilable BOM filters) -->
+        <div class='filter-list' id='filter-list-bom'>
+            <!-- Empty div (will be filled out with avilable BOM filters) -->
+        </div>
     </div>
 </div>
 
@@ -179,8 +179,8 @@
                 secondary: [
                     {
                         field: 'sub_part',
-                        label: 'New Part',
-                        title: 'Create New Part',
+                        label: '{% trans "New Part" %}',
+                        title: '{% trans "Create New Part" %}',
                         url: "{% url 'part-create' %}",
                     },
                 ]

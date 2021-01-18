@@ -1,3 +1,4 @@
+{% load i18n %}
 {% extends "modal_form.html" %}
 
 {% block pre_form_content %}
@@ -5,8 +6,8 @@
 {{ block.super }}
 
 <div class='alert alert-info alert-block'>
-    <b>Create new part variant</b><br>
-    Create a new variant of template <i>'{{ part.full_name }}'</i>.
+    <b>{% trans "Create new part variant" %}</b><br>
+    {% trans "Create a new variant of template" %} <i>'{{ part.full_name }}'</i>.
 </div>
 
 {% endblock %}

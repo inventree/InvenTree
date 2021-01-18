@@ -214,47 +214,45 @@ function loadBomTable(table, options) {
         },
     });
 
-    if (!options.editable) {
-        cols.push(
-        {
-            field: 'sub_part_detail.stock',
-            title: '{% trans "Available" %}',
-            searchable: false,
-            sortable: true,
-            formatter: function(value, row, index, field) {
+    cols.push(
+    {
+        field: 'sub_part_detail.stock',
+        title: '{% trans "Available" %}',
+        searchable: false,
+        sortable: true,
+        formatter: function(value, row, index, field) {
 
-                var url = `/part/${row.sub_part_detail.pk}/stock/`;
-                var text = value;
+            var url = `/part/${row.sub_part_detail.pk}/stock/`;
+            var text = value;
 
-                if (value == null || value <= 0) {
-                    text = `<span class='label label-warning'>{% trans "No Stock" %}</span>`;
-                }
-
-                return renderLink(text, url);
+            if (value == null || value <= 0) {
+                text = `<span class='label label-warning'>{% trans "No Stock" %}</span>`;
             }
-        });
 
-        /*
+            return renderLink(text, url);
+        }
+    });
 
-        // TODO - Re-introduce the pricing column at a later stage,
-        //        once the pricing has been "fixed"
-        //        O.W. 2020-11-24
+    /*
 
-        cols.push(
-        {
-            field: 'price_range',
-            title: '{% trans "Price" %}',
-            sortable: true,
-            formatter: function(value, row, index, field) {
-                if (value) {
-                    return value;
-                } else {
-                    return "<span class='warning-msg'>{% trans "No pricing available" %}</span>";
-                }
+    // TODO - Re-introduce the pricing column at a later stage,
+    //        once the pricing has been "fixed"
+    //        O.W. 2020-11-24
+
+    cols.push(
+    {
+        field: 'price_range',
+        title: '{% trans "Price" %}',
+        sortable: true,
+        formatter: function(value, row, index, field) {
+            if (value) {
+                return value;
+            } else {
+                return "<span class='warning-msg'>{% trans "No pricing available" %}</span>";
             }
-        });
-        */
-    }
+        }
+    });
+    */
 
     cols.push(
         {
