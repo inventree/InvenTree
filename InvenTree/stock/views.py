@@ -1586,7 +1586,7 @@ class StockItemCreate(AjaxCreateView):
                     serials = extract_serial_numbers(sn, quantity)
                 except ValidationError as e:
                     serials = None
-                    form.add_error('serial_numbers', e)
+                    form.add_error('serial_numbers', e.messages)
 
                 if serials is not None:
                     existing = part.find_conflicting_serial_numbers(serials)
