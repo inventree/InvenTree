@@ -455,7 +455,7 @@ class SalesOrder(Order):
         """
 
         query = SalesOrder.objects.filter(pk=self.pk)
-        query = query.filer(SalesOrder.OVERDUE_FILTER)
+        query = query.filter(SalesOrder.OVERDUE_FILTER)
 
         return query.exists()
 
