@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from datetime import datetime, timedelta
+
 from django.test import TestCase
 import django.core.exceptions as django_exceptions
 
@@ -36,6 +40,24 @@ class OrderTest(TestCase):
         line = PurchaseOrderLineItem.objects.get(pk=1)
 
         self.assertEqual(str(line), "100 x ACME0001 from ACME (for PO0001 - ACME)")
+
+    def test_overdue(self):
+        """
+        Test overdue status functionality
+        """
+
+        today = datetime.now().date()
+
+        order = PurchaseOrder.objects.get(pk=1)
+        self.assertFalse(order.is_overdue)
+
+        order.target_date = today - timedelta(days=5)
+        order.save()
+        self.assertTrue(order.is_overdue)
+
+        order.target_date = today + timedelta(days=1)
+        order.save()
+        self.assertFalse(order.is_overdue)
 
     def test_increment(self):
 
