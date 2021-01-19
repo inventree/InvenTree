@@ -5,6 +5,8 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
+from datetime import datetime, timedelta
+
 from company.models import Company
 from stock.models import StockItem
 from order.models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
@@ -39,6 +41,26 @@ class SalesOrderTest(TestCase):
 
         # Create a line item
         self.line = SalesOrderLineItem.objects.create(quantity=50, order=self.order, part=self.part)
+
+    def test_overdue(self):
+        """
+        Tests for overdue functionality
+        """
+
+        today = datetime.now().date()
+
+        # By default, order is *not* overdue as the target date is not set
+        self.assertFalse(self.order.is_overdue)
+
+        # Set target date in the past
+        self.order.target_date = today - timedelta(days=5)
+        self.order.save()
+        self.assertTrue(self.order.is_overdue)
+
+        # Set target date in the future
+        self.order.target_date = today + timedelta(days=5)
+        self.order.save()
+        self.assertFalse(self.order.is_overdue)
 
     def test_empty_order(self):
         self.assertEqual(self.line.quantity, 50)

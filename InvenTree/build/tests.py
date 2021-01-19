@@ -10,6 +10,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 import json
+from datetime import datetime, timedelta
 
 from .models import Build
 from stock.models import StockItem
@@ -69,6 +70,24 @@ class BuildTestSimple(TestCase):
         self.assertEqual(b2.is_complete, True)
 
         self.assertEqual(b2.status, BuildStatus.COMPLETE)
+
+    def test_overdue(self):
+        """
+        Test overdue status functionality
+        """
+
+        today = datetime.now().date()
+
+        build = Build.objects.get(pk=1)
+        self.assertFalse(build.is_overdue)
+
+        build.target_date = today - timedelta(days=1)
+        build.save()
+        self.assertTrue(build.is_overdue)
+
+        build.target_date = today + timedelta(days=80)
+        build.save()
+        self.assertFalse(build.is_overdue)
 
     def test_is_active(self):
         b1 = Build.objects.get(pk=1)

@@ -272,6 +272,7 @@ class PurchaseOrder(Order):
             self.complete_date = datetime.now().date()
             self.save()
 
+    @property
     def is_overdue(self):
         """
         Returns True if this PurchaseOrder is "overdue"
