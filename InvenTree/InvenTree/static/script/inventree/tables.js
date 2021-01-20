@@ -8,9 +8,31 @@ function deleteButton(url, text='Delete') {
 }
 
 
-function renderLink(text, url) {
-    if (text === '' || url === '') {
+function renderLink(text, url, options={}) {
+    if (url == null || url === '') {
         return text;
+    }
+
+    var max_length = options.max_length || -1;
+
+    var remove_http = options.remove_http || false;
+
+    if (remove_http) {
+        if (text.startsWith('http://')) {
+            text = text.slice(7);
+        } else if (text.startsWith('https://')) {
+            text = text.slice(8);
+        }
+    }
+
+    // Shorten the displayed length if required
+    if ((max_length > 0) && (text.length > max_length)) {
+        var slice_length = (max_length - 3) / 2;
+
+        var text_start = text.slice(0, slice_length);
+        var text_end = text.slice(-slice_length);
+
+        text = `${text_start}...${text_end}`;
     }
 
     return '<a href="' + url + '">' + text + '</a>';
