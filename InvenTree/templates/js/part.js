@@ -446,6 +446,20 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    columns.push({
+        field: 'link',
+        title: '{% trans "Link" %}',
+        formatter: function(value, row, index, field) {
+            return renderLink(
+                value, value,
+                {
+                    max_length: 32,
+                    remove_http: true,
+                }
+            );
+        }
+    });
+
     $(table).inventreeTable({
         url: url,
         sortName: 'name',
