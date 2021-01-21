@@ -280,7 +280,7 @@ def MakeBarcode(object_name, object_pk, object_data, **kwargs):
         json string of the supplied data plus some other data
     """
 
-    brief = kwargs.get('brief', False)
+    brief = kwargs.get('brief', True)
 
     data = {}
 
