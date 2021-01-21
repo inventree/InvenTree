@@ -267,7 +267,7 @@ def WrapWithQuotes(text, quote='"'):
     return text
 
 
-def MakeBarcode(object_name, object_pk, object_data, **kwargs):
+def MakeBarcode(object_name, object_pk, object_data={}, **kwargs):
     """ Generate a string for a barcode. Adds some global InvenTree parameters.
 
     Args:
