@@ -196,23 +196,23 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
 
     # Third part add-ons
-    'django_filters',               # Extended filter functionality
-    'dbbackup',                     # Database backup / restore
-    'rest_framework',               # DRF (Django Rest Framework)
-    'rest_framework.authtoken',     # Token authentication for API
-    'corsheaders',                  # Cross-origin Resource Sharing for DRF
-    'crispy_forms',                 # Improved form rendering
-    'import_export',                # Import / export tables to file
-    'django_cleanup',               # Automatically delete orphaned MEDIA files
-    'qr_code',                      # Generate QR codes
-    'mptt',                         # Modified Preorder Tree Traversal
-    'markdownx',                    # Markdown editing
-    'markdownify',                  # Markdown template rendering
-    'django_tex',                   # LaTeX output
-    'django_admin_shell',           # Python shell for the admin interface
-    'djmoney',                      # django-money integration
-    'djmoney.contrib.exchange',     # django-money exchange rates
-    'error_report',                 # Error reporting in the admin interface
+    'django_filters',                       # Extended filter functionality
+    'dbbackup',                             # Database backup / restore
+    'rest_framework',                       # DRF (Django Rest Framework)
+    'rest_framework.authtoken',             # Token authentication for API
+    'corsheaders',                          # Cross-origin Resource Sharing for DRF
+    'crispy_forms',                         # Improved form rendering
+    'import_export',                        # Import / export tables to file
+    'django_cleanup.apps.CleanupConfig',    # Automatically delete orphaned MEDIA files
+    'qr_code',                              # Generate QR codes
+    'mptt',                                 # Modified Preorder Tree Traversal
+    'markdownx',                            # Markdown editing
+    'markdownify',                          # Markdown template rendering
+    'django_tex',                           # LaTeX output
+    'django_admin_shell',                   # Python shell for the admin interface
+    'djmoney',                              # django-money integration
+    'djmoney.contrib.exchange',             # django-money exchange rates
+    'error_report',                         # Error reporting in the admin interface
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [

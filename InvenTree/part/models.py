@@ -6,6 +6,7 @@ Part database model definitions
 from __future__ import unicode_literals
 
 import os
+import logging
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -49,6 +50,9 @@ from stock import models as StockModels
 
 import common.models
 import part.settings as part_settings
+
+
+logger = logging.getLogger(__name__)
 
 
 class PartCategory(InvenTreeTree):
@@ -335,11 +339,14 @@ class Part(MPTTModel):
         if self.pk:
             previous = Part.objects.get(pk=self.pk)
 
-            if previous.image and not self.image == previous.image:
+            # Image has been changed
+            if previous.image is not None and not self.image == previous.image:
+
                 # Are there any (other) parts which reference the image?
                 n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
 
                 if n_refs == 0:
+                    logger.info(f"Deleting unused image file '{previous.image}'")
                     previous.image.delete(save=False)
 
         self.clean()
@@ -710,7 +717,7 @@ class Part(MPTTModel):
         null=True,
         blank=True,
         variations={'thumbnail': (128, 128)},
-        delete_orphans=True,
+        delete_orphans=False,
     )
 
     default_location = TreeForeignKey(
