@@ -225,22 +225,19 @@ class Build(MPTTModel):
         blank=True, help_text=_('Extra build notes')
     )
 
+    @property
     def is_overdue(self):
         """
         Returns true if this build is "overdue":
 
-        - Not completed
-        - Target date is "in the past"
+        Makes use of the OVERDUE_FILTER to avoid code duplication
         """
 
-        # Cannot be deemed overdue if target_date is not set
-        if self.target_date is None:
-            return False
+        query = Build.objects.filter(pk=self.pk)
+        query = query.filter(Build.OVERDUE_FILTER)
 
-        today = datetime.now().date()
-
-        return self.active and self.target_date < today
-
+        return query.exists()
+    
     @property
     def active(self):
         """
