@@ -45,6 +45,61 @@ function makeNotesField(options={}) {
 }
 
 
+/*
+ * POST data to the server, and handle standard responses.
+ */
+function postBarcodeData(barcode_data, options={}) {
+
+    var modal = options.modal || '#modal-form';
+
+    var url = options.url || '/api/barcode/';
+
+    var data = options.data || {};
+
+    data.barcode = barcode_data;
+
+    inventreePut(
+        url,
+        data,
+        {
+            method: 'POST',
+            error: function() {
+                enableBarcodeInput(modal, true);
+                showBarcodeMessage(modal, '{% trans "Server error" %}');
+            },
+            success: function(response, status) {
+                modalEnable(modal, false);
+                enableBarcodeInput(modal, true);
+
+                if (status == 'success') {
+                    
+                    if ('success' in response) {
+                        if (options.onScan) {
+                            options.onScan(response);
+                        }
+                    } else if ('error' in response) {
+                        showBarcodeMessage(
+                            modal,
+                            response.error,
+                            'warning'
+                        );
+                    } else {
+                        showBarcodeMessage(
+                            modal,
+                            '{% trans "Unknown response from server" %}',
+                            'warning'
+                        );
+                    }
+                } else {
+                    // Invalid response returned from server
+                    showInvalidResponseError(modal, response, status);
+                }
+            }
+        }
+    )
+}
+
+
 function showBarcodeMessage(modal, message, style='danger') {
 
     var html = `<div class='alert alert-block alert-${style}'>`;
@@ -106,9 +161,7 @@ function barcodeDialog(title, options={}) {
 
         if (barcode && barcode.length > 0) {
             
-            if (options.onScan) {
-                options.onScan(barcode);
-            }
+            postBarcodeData(barcode, options);
         }
     }
 
@@ -208,40 +261,20 @@ function barcodeScanDialog() {
     barcodeDialog(
         "Scan Barcode",
         {
-            onScan: function(barcode) {
-                enableBarcodeInput(modal, false);
-                inventreePut(
-                    '/api/barcode/',
-                    {
-                        barcode: barcode,
-                    },
-                    {
-                        method: 'POST',
-                        success: function(response, status) {
-
-                            enableBarcodeInput(modal, true);
-
-                            if (status == 'success') {
-                                
-                                if ('success' in response) {
-                                    if ('url' in response) {
-                                        // Redirect to the URL!
-                                        $(modal).modal('hide');
-                                        window.location.href = response.url;
-                                    }
-
-                                } else if ('error' in response) {
-                                    showBarcodeMessage(modal, response.error, 'warning');
-                                } else {
-                                    showBarcodeMessage(modal, "{% trans 'Unknown response from server' %}", 'warning');
-                                }
-                            } else {
-                                showInvalidResponseError(modal, response, status);
-                            }      
-                        },
-                    },
-                );
-            }, 
+            onScan: function(response) {
+                if ('url' in response) {
+                    $(modal).modal('hide');
+                    
+                    // Redirect to the URL!
+                    window.location.href = response.url;
+                } else {
+                    showBarcodeMessage(
+                        modal,
+                        '{% trans "No URL in response" %}',
+                        'warning'
+                    );
+                }
+            } 
         },
     ); 
 }
@@ -257,37 +290,14 @@ function linkBarcodeDialog(stockitem, options={}) {
     barcodeDialog(
         "{% trans 'Link Barcode to Stock Item' %}",
         {
-            onScan: function(barcode) {
-                enableBarcodeInput(modal, false);
-                inventreePut(
-                    '/api/barcode/link/',
-                    {
-                        barcode: barcode,
-                        stockitem: stockitem,
-                    },
-                    {
-                        method: 'POST',
-                        success: function(response, status) {
+            url: '/api/barcode/link/',
+            data: {
+                stockitem: stockitem,
+            },
+            onScan: function(response) {
 
-                            enableBarcodeInput(modal, true);
-
-                            if (status == 'success') {
-
-                                if ('success' in response) {
-                                    $(modal).modal('hide');
-                                    location.reload();
-                                } else if ('error' in response) {
-                                    showBarcodeMessage(modal, response.error, 'warning');
-                                } else {
-                                    showBarcodeMessage(modal, "{% trans 'Unknown response from server' %}", warning);
-                                }
-
-                            } else {
-                                showInvalidResponseError(modal, response, status);
-                            }
-                        },
-                    },
-                );
+                $(modal).modal('hide');
+                location.reload();
             }
         }
     );
@@ -458,62 +468,39 @@ function barcodeCheckIn(location_id, options={}) {
                     }
                 );
             },
-            onScan: function(barcode) {
-                enableBarcodeInput(modal, false);
-                inventreePut(
-                    '/api/barcode/',
-                    {
-                        barcode: barcode,
-                    },
-                    {
-                        method: 'POST',
-                        error: function() {
-                            enableBarcodeInput(modal, true);
-                            showBarcodeMessage(modal, '{% trans "Server error" %}');
-                        },
-                        success: function(response, status) {
+            onScan: function(response) {
+                if ('stockitem' in response) {
+                    stockitem = response.stockitem;
 
-                            enableBarcodeInput(modal, true);
+                    var duplicate = false;
 
-                            if (status == 'success') {
-                                if ('stockitem' in response) {
-                                    stockitem = response.stockitem;
+                    items.forEach(function(item) {
+                        if (item.pk == stockitem.pk) {
+                            duplicate = true;
+                        }
+                    });
 
-                                    var duplicate = false;
+                    if (duplicate) {
+                        showBarcodeMessage(modal, '{% trans "Stock Item already scanned" %}', "warning");
+                    } else {
 
-                                    items.forEach(function(item) {
-                                        if (item.pk == stockitem.pk) {
-                                            duplicate = true;
-                                        }
-                                    });
+                        if (stockitem.location == location_id) {
+                            showBarcodeMessage(modal, '{% trans "Stock Item already in this location" %}');
+                            return;
+                        }
 
-                                    if (duplicate) {
-                                        showBarcodeMessage(modal, '{% trans "Stock Item already scanned" %}', "warning");
-                                    } else {
+                        // Add this stock item to the list
+                        items.push(stockitem);
 
-                                        if (stockitem.location == location_id) {
-                                            showBarcodeMessage(modal, '{% trans "Stock Item already in this location" %}');
-                                            return;
-                                        }
+                        showBarcodeMessage(modal, '{% trans "Added stock item" %}', "success");
 
-                                        // Add this stock item to the list
-                                        items.push(stockitem);
+                        reloadTable();
+                    }
 
-                                        showBarcodeMessage(modal, '{% trans "Added stock item" %}', "success");
-
-                                        reloadTable();
-                                    }
-
-                                } else {
-                                    // Barcode does not match a stock item
-                                    showBarcodeMessage(modal, '{% trans "Barcode does not match Stock Item" %}', "warning");
-                                }
-                            } else {
-                                showInvalidResponseError(modal, response, status);
-                            }
-                        },
-                    },
-                );
+                } else {
+                    // Barcode does not match a stock item
+                    showBarcodeMessage(modal, '{% trans "Barcode does not match Stock Item" %}', "warning");
+                }
             },
         }
     );
@@ -605,47 +592,23 @@ function scanItemsIntoLocation(item_id_list, options={}) {
                     }
                 )
             },
-            onScan: function(barcode) {
+            onScan: function(response) {
                 updateLocationInfo(null);
-                enableBarcodeInput(modal, false);
-                inventreePut(
-                    '/api/barcode/',
-                    {
-                        barcode: barcode,
-                    },
-                    {
-                        method: 'POST',
-                        error: function() {
-                            enableBarcodeInput(modal, true);
-                            showBarcodeMessage(modal, '{% trans "Server error" %}');
-                        },
-                        success: function(response, status) {
-                            modalEnable(modal, false);
-                            enableBarcodeInput(modal, true);
+                if ('stocklocation' in response) {
+                    // Barcode corresponds to a StockLocation
+                    stock_location = response.stocklocation;
 
-                            if (status == 'success') {
-                                if ('stocklocation' in response) {
-                                    // Barcode corresponds to a StockLocation
-                                    stock_location = response.stocklocation;
+                    updateLocationInfo(stock_location);
+                    modalEnable(modal, true);
 
-                                    updateLocationInfo(stock_location);
-                                    modalEnable(modal, true);
-
-                                } else {
-                                    // Barcode does *NOT* correspond to a StockLocation
-                                    showBarcodeMessage(
-                                        modal,
-                                        '{% trans "Barcode does not match a valid location" %}',
-                                        "warning",
-                                    );
-                                }
-                            } else {
-                                // Invalid response returned from server
-                                showInvalidResponseError(modal, response, status);
-                            }
-                        }
-                    }
-                )
+                } else {
+                    // Barcode does *NOT* correspond to a StockLocation
+                    showBarcodeMessage(
+                        modal,
+                        '{% trans "Barcode does not match a valid location" %}',
+                        "warning",
+                    );
+                }
             }
         }
     )
