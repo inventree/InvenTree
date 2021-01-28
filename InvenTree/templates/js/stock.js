@@ -635,6 +635,7 @@ function loadStockTable(table, options) {
         table,
         [
             '#stock-print-options',
+            '#stock-barcode-options',
             '#stock-options',
         ]
     );
@@ -699,6 +700,18 @@ function loadStockTable(table, options) {
 
         printTestReports(items);
     })
+
+    $('#multi-item-barcode-scan-into-location').click(function() {        
+        var selections = $('#stock-table').bootstrapTable('getSelections');
+
+        var items = [];
+
+        selections.forEach(function(item) {
+            items.push(item.pk);
+        })
+
+        scanItemsIntoLocation(items);
+    });
 
     $('#multi-item-stocktake').click(function() {
         stockAdjustment('count');

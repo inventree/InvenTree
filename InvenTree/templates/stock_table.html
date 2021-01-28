@@ -19,6 +19,18 @@
                 <span class='fas fa-plus-circle'></span>
             </button>
             {% endif %}
+            {% settings_value 'BARCODE_ENABLE' as barcodes %}
+            {% if barcodes %}
+            <!-- Barcode actions menu -->
+            <div class='btn-group'>
+                <button id='stock-barcode-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown' title='{% trans "Barcode Actions" %}'>
+                    <span class='fas fa-qrcode'></span> <span class='caret'></span>
+                </button>
+                <ul class='dropdown-menu'>
+                    <li><a href='#' id='multi-item-barcode-scan-into-location' title='{% trans "Scan to Location" %}'><span class='fas fa-sitemap'></span> {% trans "Scan to Location" %}</a></li>
+                </ul>
+            </div>
+            {% endif %}
             <div class='btn-group'>
                 <button id='stock-print-options' class='btn btn-primary dropdown-toggle' type='button' data-toggle="dropdown" title='{% trans "Printing Actions" %}'>
                     <span class='fas fa-print'></span> <span class='caret'></span>
