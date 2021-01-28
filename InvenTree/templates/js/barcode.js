@@ -1,11 +1,13 @@
 {% load i18n %}
 
-function makeBarcodeInput(placeholderText='') {
+function makeBarcodeInput(placeholderText='', hintText='') {
     /*
      * Generate HTML for a barcode input
      */
 
     placeholderText = placeholderText || '{% trans "Scan barcode data here using wedge scanner" %}';
+
+    hintText = hintText || '{% trans "Enter barcode data" %}';
 
     var html = `
     <div class='form-group'>
@@ -17,7 +19,7 @@ function makeBarcodeInput(placeholderText='') {
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
             </div>
-            <div id='hint_barcode_data' class='help-block'>{% trans "Enter barcode data" %}</div>
+            <div id='hint_barcode_data' class='help-block'>${hintText}</div>
         </div>
     </div>
     `;
@@ -28,6 +30,7 @@ function makeBarcodeInput(placeholderText='') {
 function makeNotesField(options={}) {
 
     var tooltip = options.tooltip || '{% trans "Enter optional notes for stock transfer" %}';
+    var placeholder = options.placeholder || '{% trans "Enter notes" %}';
 
     return `
     <div class='form-group'>
@@ -37,7 +40,7 @@ function makeNotesField(options={}) {
                 <span class='input-group-addon'>
                     <span class='fas fa-sticky-note'></span>
                 </span>
-                <input id='notes' class='textinput textInput form-control' type='text' name='notes' placeholder='{% trans "Enter notes" %}'>
+                <input id='notes' class='textinput textInput form-control' type='text' name='notes' placeholder='${placeholder}'>
             </div>
             <div id='hint_notes' class='help_block'>${tooltip}</div>
         </div>
