@@ -90,7 +90,7 @@ class BarcodeScan(APIView):
 
             if loc is not None:
                 response['stocklocation'] = plugin.renderStockLocation(loc)
-                response['url'] = reverse('location-detail', kwargs={'pk': loc.id})
+                response['url'] = reverse('stock-location-detail', kwargs={'pk': loc.id})
                 match_found = True
 
             # Try to associate with a part
