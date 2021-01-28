@@ -2,6 +2,8 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+{% settings_value 'BARCODE_ENABLE' as barcodes %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -145,9 +147,11 @@ $(document).ready(function () {
     
     showCachedAlerts();
 
+    {% if barcodes %}
     $('#barcode-scan').click(function() {
         barcodeScanDialog();
     });
+    {% endif %}
 
 });
 
