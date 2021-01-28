@@ -460,7 +460,7 @@ $("#barcode-unlink").click(function() {
 });
 
 $("#barcode-scan-into-location").click(function() {
-    scanItemIntoLocation({{ item.id }});
+    scanItemsIntoLocation([{{ item.id }}]);
 });
 
 {% if item.in_stock %}

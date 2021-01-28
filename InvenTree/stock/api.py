@@ -160,7 +160,8 @@ class StockAdjust(APIView):
             try:
                 quantity = Decimal(str(entry.get('quantity', None)))
             except (ValueError, TypeError, InvalidOperation):
-                raise ValidationError({'quantity': 'Each entry must contain a valid quantity field'})
+                # Default to the quantity of the item
+                quantity = item.quantity
 
             if quantity < 0:
                 raise ValidationError({'quantity': 'Quantity field must not be less than zero'})
