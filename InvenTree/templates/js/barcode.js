@@ -120,12 +120,6 @@ function showInvalidResponseError(modal, response, status) {
 }
 
 
-function clearBarcodeError(modal, message) {
-
-    $(modal + ' #barcode-error-message').html('');
-}
-
-
 function enableBarcodeInput(modal, enabled=true) {
 
     var barcode = $(modal + ' #barcode');
