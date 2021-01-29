@@ -1005,11 +1005,15 @@ class StockItem(MPTTModel):
         new_stock.addTransactionNote(
             _("Split from existing stock"),
             user,
-            _("Split") + f" {helpers.normalize(quantity)} " + _("items")
+            f"{_('Split')} {helpers.normalize(quantity)} {_('items')}"
         )
 
         # Remove the specified quantity from THIS stock item
-        self.take_stock(quantity, user, 'Split {n} items into new stock item'.format(n=quantity))
+        self.take_stock(
+            quantity,
+            user,
+            f"{_('Split')} {quantity} {_('items into new stock item')}"
+        )
 
         # Return a copy of the "new" stock item
         return new_stock
