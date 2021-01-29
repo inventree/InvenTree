@@ -195,11 +195,14 @@ class StockItem(MPTTModel):
         super(StockItem, self).save(*args, **kwargs)
 
         if add_note:
+
+            note = f"{_('Created new stock item for')} {str(self.part)}"
+
             # This StockItem is being saved for the first time
             self.addTransactionNote(
                 _('Created stock item'),
                 user,
-                notes="Created new stock item for part '{p}'".format(p=str(self.part)),
+                note,
                 system=True
             )
 
@@ -611,9 +614,9 @@ class StockItem(MPTTModel):
         """
 
         self.addTransactionNote(
-            _("Returned from customer") + " " + self.customer.name,
+            _("Returned from customer") + f" {self.customer.name}",
             user,
-            notes=_("Returned to location") + " " + location.name,
+            notes=_("Returned to location") + f" {location.name}",
             system=True
         )
 
@@ -1000,9 +1003,10 @@ class StockItem(MPTTModel):
 
         # Add a new tracking item for the new stock item
         new_stock.addTransactionNote(
-            "Split from existing stock",
+            _("Split from existing stock"),
             user,
-            "Split {n} from existing stock item".format(n=quantity))
+            _("Split") + f" {helpers.normalize(quantity)} " + _("items")
+        )
 
         # Remove the specified quantity from THIS stock item
         self.take_stock(quantity, user, 'Split {n} items into new stock item'.format(n=quantity))
@@ -1054,10 +1058,10 @@ class StockItem(MPTTModel):
 
             return True
 
-        msg = "Moved to {loc}".format(loc=str(location))
-
+        msg = f"{_('Moved to')} {str(location)}"
+        
         if self.location:
-            msg += " (from {loc})".format(loc=str(self.location))
+            msg += f" ({_('from')} {str(self.location)})"
 
         self.location = location
 
@@ -1125,10 +1129,16 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(count):
 
-            self.addTransactionNote('Stocktake - counted {n} items'.format(n=helpers.normalize(count)),
-                                    user,
-                                    notes=notes,
-                                    system=True)
+            n = helpers.normalize(count)
+
+            text = f"{_('Counted')} {n} {_('items')}"
+
+            self.addTransactionNote(
+                text,
+                user,
+                notes=notes,
+                system=True
+            )
 
         return True
 
@@ -1154,10 +1164,15 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(self.quantity + quantity):
             
-            self.addTransactionNote('Added {n} items to stock'.format(n=helpers.normalize(quantity)),
-                                    user,
-                                    notes=notes,
-                                    system=True)
+            n = helpers.normalize(quantity)
+            text = f"{_('Added')} {n} {_('items')}"
+
+            self.addTransactionNote(
+                text,
+                user,
+                notes=notes,
+                system=True
+            )
 
         return True
 
@@ -1180,7 +1195,10 @@ class StockItem(MPTTModel):
 
         if self.updateQuantity(self.quantity - quantity):
 
-            self.addTransactionNote('Removed {n} items from stock'.format(n=helpers.normalize(quantity)),
+            q = helpers.normalize(quantity)
+            text = f"{_('Removed')} {q} {_('items')}"
+
+            self.addTransactionNote(text,
                                     user,
                                     notes=notes,
                                     system=True)
