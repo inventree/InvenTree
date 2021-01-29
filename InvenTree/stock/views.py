@@ -1114,7 +1114,7 @@ class StockAdjust(AjaxView, FormMixin):
             return self.do_delete()
 
         else:
-            return 'No action performed'
+            return _('No action performed')
 
     def do_add(self):
         
@@ -1129,7 +1129,7 @@ class StockAdjust(AjaxView, FormMixin):
 
             count += 1
 
-        return _("Added stock to {n} items".format(n=count))
+        return f"{_('Added stock to ')} {count} {_('items')}"
 
     def do_take(self):
 
@@ -1144,7 +1144,7 @@ class StockAdjust(AjaxView, FormMixin):
 
             count += 1
 
-        return _("Removed stock from {n} items".format(n=count))
+        return f"{_('Removed stock from ')} {count} {_('items')}"
 
     def do_count(self):
         

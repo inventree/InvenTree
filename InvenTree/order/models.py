@@ -343,11 +343,11 @@ class PurchaseOrder(Order):
 
             stock.save()
 
+            text = _("Received items")
+            note = f"{_('Received')} {quantity} {_('items against order')} {str(self)}"
+
             # Add a new transaction note to the newly created stock item
-            stock.addTransactionNote("Received items", user, "Received {q} items against order '{po}'".format(
-                q=quantity,
-                po=str(self))
-            )
+            stock.addTransactionNote(text, user, note)
 
         # Update the number of parts received against the particular line item
         line.received += quantity
