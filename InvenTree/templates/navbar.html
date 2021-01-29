@@ -1,5 +1,9 @@
 {% load static %}
+{% load inventree_extras %}
 {% load i18n %}
+
+{% settings_value 'BARCODE_ENABLE' as barcodes %}
+
 <nav class="navbar navbar-xs navbar-default navbar-fixed-top ">
   <div class="container-fluid">
     <div class="navbar-header clearfix content-heading">
@@ -46,11 +50,13 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
           {% include "search_form.html" %}
+          {% if barcodes %}
           <li id='navbar-barcode-li'>
             <button id='barcode-scan' class='btn btn-default' title='{% trans "Scan Barcode" %}'>
                 <span class='fas fa-qrcode'></span>
             </button>
           </li>
+          {% endif %}
           <li class='dropdown'>
             <a class='dropdown-toggle' data-toggle='dropdown' href="#">
               {% if not system_healthy %}
@@ -61,14 +67,13 @@
                 {% if user.is_authenticated %}
                 {% if user.is_staff %}
                 <li><a href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
-                <hr>
                 {% endif %}
-                <li><a href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
                 <li><a href="{% url 'logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
                 {% else %}
                 <li><a href="{% url 'login' %}"><span class="fas fa-sign-in-alt"></span> {% trans "Login" %}</a></li>
                 {% endif %}
-                <hr>  
+                <hr>
+                <li><a href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
                 <li id='launch-stats'><a href='#'>
                   {% if system_healthy %}
                   <span class='fas fa-server'>
