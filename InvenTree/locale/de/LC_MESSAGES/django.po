@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-28 22:37+1100\n"
+"POT-Creation-Date: 2021-01-29 12:04+1100\n"
 "PO-Revision-Date: 2020-05-03 11:32+0200\n"
 "Last-Translator: Christian Schlüter <chschlue@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -355,7 +355,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:51
 #: stock/templates/stock/item_base.html:57
 #: stock/templates/stock/item_base.html:238
-#: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:367
+#: stock/templates/stock/stock_adjust.html:18 templates/js/barcode.js:364
 #: templates/js/bom.js:195 templates/js/build.js:420 templates/js/stock.js:910
 #: templates/js/stock.js:1149
 msgid "Quantity"
@@ -495,7 +495,7 @@ msgstr "Bestellung, die diesem Bau zugwiesen ist"
 #: order/templates/order/receive_parts.html:19 part/models.py:320
 #: part/templates/part/part_app_base.html:7 part/templates/part/related.html:26
 #: part/templates/part/set_category.html:13 templates/InvenTree/search.html:133
-#: templates/js/barcode.js:365 templates/js/bom.js:153 templates/js/bom.js:532
+#: templates/js/barcode.js:362 templates/js/bom.js:153 templates/js/bom.js:532
 #: templates/js/build.js:669 templates/js/company.js:138
 #: templates/js/part.js:252 templates/js/part.js:357 templates/js/stock.js:486
 #: templates/js/stock.js:1221
@@ -596,7 +596,7 @@ msgstr "Link zu einer externen URL"
 #: order/templates/order/so_tabs.html:23 part/models.py:838
 #: part/templates/part/tabs.html:73 stock/forms.py:315 stock/forms.py:347
 #: stock/forms.py:375 stock/models.py:484 stock/models.py:1554
-#: stock/templates/stock/tabs.html:26 templates/js/barcode.js:34
+#: stock/templates/stock/tabs.html:26 templates/js/barcode.js:37
 #: templates/js/bom.js:293 templates/js/stock.js:128 templates/js/stock.js:624
 msgid "Notes"
 msgstr "Notizen"
@@ -762,8 +762,8 @@ msgstr "Lagerobjekt dem Bau zuweisen"
 #: build/templates/build/auto_allocate.html:18 stock/forms.py:345
 #: stock/templates/stock/item_base.html:268
 #: stock/templates/stock/stock_adjust.html:17
-#: templates/InvenTree/search.html:183 templates/js/barcode.js:366
-#: templates/js/barcode.js:534 templates/js/build.js:434
+#: templates/InvenTree/search.html:183 templates/js/barcode.js:363
+#: templates/js/barcode.js:531 templates/js/build.js:434
 #: templates/js/stock.js:598
 msgid "Location"
 msgstr "Standort"
@@ -841,7 +841,7 @@ msgstr "Bau-Status"
 #: build/templates/build/detail.html:57
 #: order/templates/order/receive_parts.html:24
 #: stock/templates/stock/item_base.html:367 templates/InvenTree/search.html:175
-#: templates/js/barcode.js:116 templates/js/build.js:697
+#: templates/js/barcode.js:119 templates/js/build.js:697
 #: templates/js/order.js:185 templates/js/order.js:279
 #: templates/js/stock.js:585 templates/js/stock.js:1157
 msgid "Status"
@@ -4839,8 +4839,8 @@ msgstr ""
 msgid "Stale"
 msgstr ""
 
-#: stock/templates/stock/item_base.html:132 templates/js/barcode.js:312
-#: templates/js/barcode.js:317
+#: stock/templates/stock/item_base.html:132 templates/js/barcode.js:309
+#: templates/js/barcode.js:314
 msgid "Unlink Barcode"
 msgstr ""
 
@@ -5788,120 +5788,120 @@ msgstr "Anhang löschen"
 msgid "Scan barcode data here using wedge scanner"
 msgstr "Keine Strichcodedaten bereitgestellt"
 
-#: templates/js/barcode.js:12
-#, fuzzy
-#| msgid "Source Location"
-msgid "Barcode"
-msgstr "Quell-Standort"
-
-#: templates/js/barcode.js:20
+#: templates/js/barcode.js:10
 #, fuzzy
 #| msgid "No barcode data provided"
 msgid "Enter barcode data"
 msgstr "Keine Strichcodedaten bereitgestellt"
 
-#: templates/js/barcode.js:30
+#: templates/js/barcode.js:14
+#, fuzzy
+#| msgid "Source Location"
+msgid "Barcode"
+msgstr "Quell-Standort"
+
+#: templates/js/barcode.js:32
 msgid "Enter optional notes for stock transfer"
 msgstr ""
 
-#: templates/js/barcode.js:40
+#: templates/js/barcode.js:33
 #, fuzzy
 #| msgid "Entry notes"
 msgid "Enter notes"
 msgstr "Eintrags-Notizen"
 
-#: templates/js/barcode.js:68
+#: templates/js/barcode.js:71
 msgid "Server error"
 msgstr ""
 
-#: templates/js/barcode.js:89
+#: templates/js/barcode.js:92
 #, fuzzy
 #| msgid "Unknown barcode format"
 msgid "Unknown response from server"
 msgstr "Unbekanntes Strichcode-Format"
 
-#: templates/js/barcode.js:116 templates/js/modals.js:856
+#: templates/js/barcode.js:119 templates/js/modals.js:856
 msgid "Invalid server response"
 msgstr ""
 
-#: templates/js/barcode.js:215
+#: templates/js/barcode.js:212
 #, fuzzy
 #| msgid "No barcode data provided"
 msgid "Scan barcode data below"
 msgstr "Keine Strichcodedaten bereitgestellt"
 
-#: templates/js/barcode.js:273
+#: templates/js/barcode.js:270
 msgid "No URL in response"
 msgstr ""
 
-#: templates/js/barcode.js:291
+#: templates/js/barcode.js:288
 #, fuzzy
 #| msgid "Parent Stock Item"
 msgid "Link Barcode to Stock Item"
 msgstr "Eltern-Lagerobjekt"
 
-#: templates/js/barcode.js:314
+#: templates/js/barcode.js:311
 msgid ""
 "This will remove the association between this stock item and the barcode"
 msgstr ""
 
-#: templates/js/barcode.js:320
+#: templates/js/barcode.js:317
 msgid "Unlink"
 msgstr ""
 
-#: templates/js/barcode.js:379
+#: templates/js/barcode.js:376
 #, fuzzy
 #| msgid "Remove stock"
 msgid "Remove stock item"
 msgstr "Bestand entfernen"
 
-#: templates/js/barcode.js:421
+#: templates/js/barcode.js:418
 #, fuzzy
 #| msgid "Include stock items in sub locations"
 msgid "Check Stock Items into Location"
 msgstr "Lagerobjekte in untergeordneten Lagerorten einschließen"
 
-#: templates/js/barcode.js:425 templates/js/barcode.js:550
+#: templates/js/barcode.js:422 templates/js/barcode.js:547
 msgid "Check In"
 msgstr ""
 
-#: templates/js/barcode.js:465 templates/js/barcode.js:589
+#: templates/js/barcode.js:462 templates/js/barcode.js:586
 #, fuzzy
 #| msgid "Order stock"
 msgid "Error transferring stock"
 msgstr "Bestand bestellen"
 
-#: templates/js/barcode.js:484
+#: templates/js/barcode.js:481
 #, fuzzy
 #| msgid "Stock Item Details"
 msgid "Stock Item already scanned"
 msgstr "Lagerbestands-Details"
 
-#: templates/js/barcode.js:488
+#: templates/js/barcode.js:485
 #, fuzzy
 #| msgid "Include stock items in sub locations"
 msgid "Stock Item already in this location"
 msgstr "Lagerobjekte in untergeordneten Lagerorten einschließen"
 
-#: templates/js/barcode.js:495
+#: templates/js/barcode.js:492
 #, fuzzy
 #| msgid "Added stock to {n} items"
 msgid "Added stock item"
 msgstr "Vorrat zu {n} Lagerobjekten hinzugefügt"
 
-#: templates/js/barcode.js:502
+#: templates/js/barcode.js:499
 #, fuzzy
 #| msgid "Create new Stock Item"
 msgid "Barcode does not match Stock Item"
 msgstr "Neues Lagerobjekt hinzufügen"
 
-#: templates/js/barcode.js:545
+#: templates/js/barcode.js:542
 #, fuzzy
 #| msgid "Include stock items in sub locations"
 msgid "Check Into Location"
 msgstr "Lagerobjekte in untergeordneten Lagerorten einschließen"
 
-#: templates/js/barcode.js:608
+#: templates/js/barcode.js:605
 #, fuzzy
 #| msgid "Create new Stock Item"
 msgid "Barcode does not match a valid location"
@@ -6699,6 +6699,63 @@ msgstr "Favorit"
 msgid "Purchasable"
 msgstr "Käuflich"
 
+#: templates/js/tables.js:276
+msgid "Loading data"
+msgstr ""
+
+#: templates/js/tables.js:279
+msgid "rows per page"
+msgstr ""
+
+#: templates/js/tables.js:282
+msgid "Showing"
+msgstr ""
+
+#: templates/js/tables.js:282
+msgid "to"
+msgstr ""
+
+#: templates/js/tables.js:282
+msgid "of"
+msgstr ""
+
+#: templates/js/tables.js:282
+msgid "rows"
+msgstr ""
+
+#: templates/js/tables.js:285 templates/search_form.html:6
+#: templates/search_form.html:8
+msgid "Search"
+msgstr "Suche"
+
+#: templates/js/tables.js:288
+#, fuzzy
+#| msgid "No matching action found"
+msgid "No matching results"
+msgstr "Keine passende Aktion gefunden"
+
+#: templates/js/tables.js:291
+#, fuzzy
+#| msgid "Show pricing information"
+msgid "Hide/Show pagination"
+msgstr "Kosteninformationen ansehen"
+
+#: templates/js/tables.js:294
+msgid "Refresh"
+msgstr ""
+
+#: templates/js/tables.js:297
+msgid "Toggle"
+msgstr ""
+
+#: templates/js/tables.js:300
+msgid "Columns"
+msgstr ""
+
+#: templates/js/tables.js:303
+msgid "All"
+msgstr ""
+
 #: templates/modals.html:13 templates/modals.html:35
 msgid "Form errors exist"
 msgstr ""
@@ -6734,10 +6791,6 @@ msgstr "Einloggen"
 #: templates/navbar.html:80
 msgid "About InvenTree"
 msgstr "Über InvenBaum"
-
-#: templates/search_form.html:6 templates/search_form.html:8
-msgid "Search"
-msgstr "Suche"
 
 #: templates/stats.html:9
 msgid "Server"
