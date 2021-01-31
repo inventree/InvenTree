@@ -6,6 +6,7 @@
  * Requires api.js to be loaded first
  */
 
+{% settings_value 'BARCODE_ENABLE' as barcodes %}
 
 function stockStatusCodes() {
     return [
@@ -635,6 +636,9 @@ function loadStockTable(table, options) {
         table,
         [
             '#stock-print-options',
+            {% if barcodes %}
+            '#stock-barcode-options',
+            {% endif %}
             '#stock-options',
         ]
     );
@@ -699,6 +703,20 @@ function loadStockTable(table, options) {
 
         printTestReports(items);
     })
+
+    {% if barcodes %}
+    $('#multi-item-barcode-scan-into-location').click(function() {        
+        var selections = $('#stock-table').bootstrapTable('getSelections');
+
+        var items = [];
+
+        selections.forEach(function(item) {
+            items.push(item.pk);
+        })
+
+        scanItemsIntoLocation(items);
+    });
+    {% endif %}
 
     $('#multi-item-stocktake').click(function() {
         stockAdjustment('count');

@@ -44,6 +44,8 @@
                 <span id='part-star-icon' class='fas fa-star {% if starred %}icon-yellow{% endif %}'/>
             </button>
 
+            {% settings_value 'BARCODE_ENABLE' as barcodes %}
+            {% if barcodes %}
             <!-- Barcode actions menu -->
             <div class='btn-group'>
                 <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
@@ -52,6 +54,7 @@
                     <li><a href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
                 </ul>
             </div>
+            {% endif %}
             {% if part.active %}
             <button type='button' class='btn btn-default' id='price-button' title='{% trans "Show pricing information" %}'>
                 <span id='part-price-icon' class='fas fa-dollar-sign'/>
