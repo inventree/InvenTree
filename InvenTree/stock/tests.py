@@ -122,7 +122,7 @@ class StockTest(TestCase):
         self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
 
     def test_barcode(self):
-        barcode = self.office.format_barcode()
+        barcode = self.office.format_barcode(brief=False)
 
         self.assertIn('"name": "Office"', barcode)
 
