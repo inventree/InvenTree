@@ -121,11 +121,16 @@ class StockAdjust(APIView):
     - StockAdd: add stock items
     - StockRemove: remove stock items
     - StockTransfer: transfer stock items
+
+    # TODO - This needs serious refactoring!!!
+
     """
 
     permission_classes = [
         permissions.IsAuthenticated,
     ]
+
+    allow_missing_quantity = False
 
     def get_items(self, request):
         """
@@ -157,10 +162,13 @@ class StockAdjust(APIView):
             except (ValueError, StockItem.DoesNotExist):
                 raise ValidationError({'pk': 'Each entry must contain a valid pk field'})
 
+            if self.allow_missing_quantity and 'quantity' not in entry:
+                entry['quantity'] = item.quantity
+
             try:
                 quantity = Decimal(str(entry.get('quantity', None)))
             except (ValueError, TypeError, InvalidOperation):
-                raise ValidationError({'quantity': 'Each entry must contain a valid quantity field'})
+                raise ValidationError({'quantity': "Each entry must contain a valid quantity value"})
 
             if quantity < 0:
                 raise ValidationError({'quantity': 'Quantity field must not be less than zero'})
@@ -233,6 +241,8 @@ class StockTransfer(StockAdjust):
     """
     API endpoint for performing stock movements
     """
+
+    allow_missing_quantity = True
 
     def post(self, request, *args, **kwargs):
 

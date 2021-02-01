@@ -15,7 +15,7 @@ pygments==2.2.0                 # Syntax highlighting
 tablib==0.13.0                  # Import / export data files
 django-crispy-forms==1.8.1      # Form helpers
 django-import-export==2.0.0     # Data import / export for admin interface
-django-cleanup==4.0.0           # Manage deletion of old / unused uploaded files
+django-cleanup==5.1.0           # Manage deletion of old / unused uploaded files
 django-qr-code==1.2.0           # Generate QR codes
 flake8==3.8.3                   # PEP checking
 pep8-naming==0.11.1             # PEP naming convention extension

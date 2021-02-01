@@ -1,3 +1,5 @@
+{% load i18n %}
+
 function editButton(url, text='Edit') {
     return "<button class='btn btn-success edit-button btn-sm' type='button' url='" + url + "'>" + text + "</button>";
 }
@@ -264,3 +266,44 @@ function customGroupSorter(sortName, sortOrder, sortData) {
         }
     });
 }
+
+// Expose default bootstrap table string literals to translation layer
+(function ($) {
+    'use strict';
+
+    $.fn.bootstrapTable.locales['en-US-custom'] = {
+        formatLoadingMessage: function () {
+            return '{% trans "Loading data" %}';
+        },
+        formatRecordsPerPage: function (pageNumber) {
+            return `${pageNumber} {% trans "rows per page" %}`;
+        },
+        formatShowingRows: function (pageFrom, pageTo, totalRows) {
+            return `{% trans "Showing" %} ${pageFrom} {% trans "to" %} ${pageTo} {% trans "of" %} ${totalRows} {% trans "rows" %}`;
+        },
+        formatSearch: function () {
+            return '{% trans "Search" %}';
+        },
+        formatNoMatches: function () {
+            return '{% trans "No matching results" %}';
+        },
+        formatPaginationSwitch: function () {
+            return '{% trans "Hide/Show pagination" %}';
+        },
+        formatRefresh: function () {
+            return '{% trans "Refresh" %}';
+        },
+        formatToggle: function () {
+            return '{% trans "Toggle" %}';
+        },
+        formatColumns: function () {
+            return '{% trans "Columns" %}';
+        },
+        formatAllRows: function () {
+            return '{% trans "All" %}';
+        }
+    };
+
+    $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['en-US-custom']);
+
+})(jQuery);

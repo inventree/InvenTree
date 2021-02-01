@@ -71,6 +71,13 @@ class InvenTreeSetting(models.Model):
             'choices': djmoney.settings.CURRENCY_CHOICES,
         },
 
+        'BARCODE_ENABLE': {
+            'name': _('Barcode Support'),
+            'description': _('Enable barcode scanner support'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PART_IPN_REGEX': {
             'name': _('IPN Regex'),
             'description': _('Regular expression pattern for matching Part IPN')

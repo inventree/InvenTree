@@ -284,7 +284,8 @@ class StockTest(TestCase):
         # Check that a tracking item was added
         track = StockItemTracking.objects.filter(item=it).latest('id')
 
-        self.assertIn('Stocktake', track.title)
+        self.assertIn('Counted', track.title)
+        self.assertIn('items', track.title)
         self.assertIn('Counted items', track.notes)
 
         n = it.tracking_info.count()

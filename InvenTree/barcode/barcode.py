@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import string
 import hashlib
 import logging
 
@@ -16,8 +17,17 @@ logger = logging.getLogger(__name__)
 
 def hash_barcode(barcode_data):
     """
-    Calculate an MD5 hash of barcode data
+    Calculate an MD5 hash of barcode data.
+
+    HACK: Remove any 'non printable' characters from the hash,
+          as it seems browers will remove special control characters...
+        
+    TODO: Work out a way around this!
     """
+
+    printable_chars = filter(lambda x: x in string.printable, barcode_data)
+
+    barcode_data = ''.join(list(printable_chars))
 
     hash = hashlib.md5(str(barcode_data).encode())
     return str(hash.hexdigest())

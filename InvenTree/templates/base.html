@@ -2,6 +2,8 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+{% settings_value 'BARCODE_ENABLE' as barcodes %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -111,7 +113,6 @@ InvenTree
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/filters.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/tables.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/sidenav.js' %}"></script>
 
@@ -126,6 +127,7 @@ InvenTree
 <script type='text/javascript' src="{% url 'build.js' %}"></script>
 <script type='text/javascript' src="{% url 'order.js' %}"></script>
 <script type='text/javascript' src="{% url 'calendar.js' %}"></script>
+<script type='text/javascript' src="{% url 'tables.js' %}"></script>
 <script type='text/javascript' src="{% url 'table_filters.js' %}"></script>
 
 <script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
@@ -145,9 +147,11 @@ $(document).ready(function () {
     
     showCachedAlerts();
 
+    {% if barcodes %}
     $('#barcode-scan').click(function() {
         barcodeScanDialog();
     });
+    {% endif %}
 
 });
 
