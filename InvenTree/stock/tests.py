@@ -122,7 +122,7 @@ class StockTest(TestCase):
         self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
 
     def test_barcode(self):
-        barcode = self.office.format_barcode()
+        barcode = self.office.format_barcode(brief=False)
 
         self.assertIn('"name": "Office"', barcode)
 
@@ -284,7 +284,8 @@ class StockTest(TestCase):
         # Check that a tracking item was added
         track = StockItemTracking.objects.filter(item=it).latest('id')
 
-        self.assertIn('Stocktake', track.title)
+        self.assertIn('Counted', track.title)
+        self.assertIn('items', track.title)
         self.assertIn('Counted items', track.notes)
 
         n = it.tracking_info.count()

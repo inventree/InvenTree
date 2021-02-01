@@ -100,7 +100,7 @@ class PartTest(TestCase):
             self.assertEqual(r.available_stock, 0)
 
     def test_barcode(self):
-        barcode = self.r1.format_barcode()
+        barcode = self.r1.format_barcode(brief=False)
         self.assertIn('InvenTree', barcode)
         self.assertIn(self.r1.name, barcode)
 

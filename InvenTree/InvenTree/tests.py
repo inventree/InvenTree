@@ -1,4 +1,6 @@
 
+import json
+
 from django.test import TestCase
 import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
@@ -134,7 +136,7 @@ class TestIncrement(TestCase):
 class TestMakeBarcode(TestCase):
     """ Tests for barcode string creation """
 
-    def test_barcode(self):
+    def test_barcode_extended(self):
 
         bc = helpers.MakeBarcode(
             "part",
@@ -142,12 +144,29 @@ class TestMakeBarcode(TestCase):
             {
                 "id": 3,
                 "url": "www.google.com",
-            }
+            },
+            brief=False
         )
 
         self.assertIn('part', bc)
         self.assertIn('tool', bc)
         self.assertIn('"tool": "InvenTree"', bc)
+
+        data = json.loads(bc)
+
+        self.assertEqual(data['part']['id'], 3)
+        self.assertEqual(data['part']['url'], 'www.google.com')
+
+    def test_barcode_brief(self):
+
+        bc = helpers.MakeBarcode(
+            "stockitem",
+            7,
+        )
+
+        data = json.loads(bc)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data['stockitem'], 7)
 
 
 class TestDownloadFile(TestCase):
