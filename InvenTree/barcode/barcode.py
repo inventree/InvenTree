@@ -25,6 +25,8 @@ def hash_barcode(barcode_data):
     TODO: Work out a way around this!
     """
 
+    barcode_data = str(barcode_data).strip()
+
     printable_chars = filter(lambda x: x in string.printable, barcode_data)
 
     barcode_data = ''.join(list(printable_chars))
