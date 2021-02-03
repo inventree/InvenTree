@@ -156,7 +156,7 @@ def associate_manufacturers(apps, schema_editor):
             manufacturer_id = links[name]
 
             query = f"update part_supplierpart set manufacturer_id={manufacturer_id} where id={part_id};"
-            result = query.execute()
+            result = cursor.execute(query)
             return True
 
         # Mapping not possible
