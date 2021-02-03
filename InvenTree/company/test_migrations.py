@@ -105,3 +105,67 @@ class TestManufacturerField(MigratorTestCase):
         # Checks on the SupplierPart object
         self.assertEqual(part.manufacturer_name, 'ACME')
         self.assertEqual(part.manufacturer.name, 'ACME')
+
+
+class TestCurrencyMigration(MigratorTestCase):
+    """
+    Tests for upgrade from basic currency support to django-money
+    """
+
+    migrate_from = ('company', '0025_auto_20201110_1001')
+    migrate_to = ('company', '0026_auto_20201110_1011')
+
+    def prepare(self):
+        """
+        Prepare some data:
+
+        - A part to buy
+        - A supplier to buy from
+        - A supplier part
+        - Multiple currency objects
+        - Multiple supplier price breaks
+        """
+
+        Part = self.old_state.apps.get_model('part', 'part')
+
+        part = Part.objects.create(
+            name="PART", description="A purchaseable part",
+            purchaseable=True,
+            level=0,
+            tree_id=0,
+            lft=0,
+            rght=0
+        )
+
+        Company = self.old_state.apps.get_model('company', 'company')
+
+        supplier = Company.objects.create(name='Supplier', description='A supplier', is_supplier=True)
+
+        SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
+
+        sp = SupplierPart.objects.create(part=part, supplier=supplier, SKU='12345')
+
+        Currency = self.old_state.apps.get_model('common', 'currency')
+
+        aud = Currency.objects.create(symbol='$', suffix='AUD', description='Australian Dollars', value=1.0)
+        usd = Currency.objects.create(symbol='$', suffix='USD', description='US Dollars', value=1.0)
+
+        PB = self.old_state.apps.get_model('company', 'supplierpricebreak')
+
+        PB.objects.create(part=sp, quantity=10, cost=5, currency=aud)
+        PB.objects.create(part=sp, quantity=20, cost=3, currency=aud)
+        PB.objects.create(part=sp, quantity=30, cost=2, currency=aud)
+
+        PB.objects.create(part=sp, quantity=40, cost=2, currency=usd)
+        PB.objects.create(part=sp, quantity=50, cost=2, currency=usd)
+
+        for pb in PB.objects.all():
+            self.assertIsNone(pb.price)
+
+    def test_currency_migration(self):
+        
+        PB = self.new_state.apps.get_model('company', 'supplierpricebreak')
+
+        for pb in PB.objects.all():
+            # Test that a price has been assigned
+            self.assertIsNotNone(pb.price)
