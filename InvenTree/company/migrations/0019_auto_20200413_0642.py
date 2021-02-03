@@ -4,7 +4,6 @@ import os
 from rapidfuzz import fuzz
 
 from django.db import migrations, connection
-from company.models import Company, SupplierPart
 from django.db.utils import OperationalError, ProgrammingError
 
 
@@ -21,21 +20,25 @@ def reverse_association(apps, schema_editor):
     into the 'manufacturer_name' field.
     """
 
+    cursor = connection.cursor()
+
+    response = cursor.execute("select id, MPN from part_supplierpart;")
+    supplier_parts = response.fetchall()
+
     # Exit if there are no SupplierPart objects
     # This crucial otherwise the unit test suite fails!
-    if SupplierPart.objects.count() == 0:
+    if len(supplier_parts) == 0:
         return
 
     print("Reversing migration for manufacturer association")
 
-    for part in SupplierPart.objects.all():
+    for (index, row) in enumerate(supplier_parts):
+        supplier_part_id, MPN = row
 
-        print("Checking part [{pk}]:".format(pk=part.pk))
-
-        cursor = connection.cursor()
+        print(f"Checking SupplierPart [{supplier_part_id}]:")
 
         # Grab the manufacturer ID from the part
-        response = cursor.execute('SELECT manufacturer_id FROM part_supplierpart WHERE id={ID};'.format(ID=part.id))
+        response = cursor.execute(f"SELECT manufacturer_id FROM part_supplierpart WHERE id={supplier_part_id};")
 
         manufacturer_id = None
 
@@ -54,7 +57,7 @@ def reverse_association(apps, schema_editor):
         print(" - Manufacturer ID: [{id}]".format(id=manufacturer_id))
 
         # Now extract the "name" for the manufacturer
-        response = cursor.execute('SELECT name from company_company where id={ID};'.format(ID=manufacturer_id))
+        response = cursor.execute(f"SELECT name from company_company where id={manufacturer_id};")
         
         row = response.fetchone()
 
@@ -62,7 +65,7 @@ def reverse_association(apps, schema_editor):
 
         print(" - Manufacturer name: '{name}'".format(name=name))
 
-        response = cursor.execute("UPDATE part_supplierpart SET manufacturer_name='{name}' WHERE id={ID};".format(name=name, ID=part.id))
+        response = cursor.execute("UPDATE part_supplierpart SET manufacturer_name='{name}' WHERE id={ID};".format(name=name, ID=supplier_part_id))
 
 def associate_manufacturers(apps, schema_editor):
     """
@@ -100,10 +103,14 @@ def associate_manufacturers(apps, schema_editor):
             return row[0]
         return ''
 
+    cursor = connection.cursor()
+
+    response = cursor.execute("select id, MPN from part_supplierpart;")
+    supplier_parts = response.fetchall()
 
     # Exit if there are no SupplierPart objects
     # This crucial otherwise the unit test suite fails!
-    if SupplierPart.objects.count() == 0:
+    if len(supplier_parts) == 0:
         return
 
     # Link a 'manufacturer_name' to a 'Company'
@@ -113,7 +120,6 @@ def associate_manufacturers(apps, schema_editor):
     companies = {}
 
     # Iterate through each company object
-    cursor = connection.cursor()
     response = cursor.execute("select id, name from company_company;")
     results = cursor.fetchall()
 
@@ -197,6 +203,8 @@ def associate_manufacturers(apps, schema_editor):
 
     def map_part_to_manufacturer(part_id, idx, total):
 
+        cursor = connection.cursor()
+
         name = get_manufacturer_name(part_id)
 
         # Skip empty names
@@ -249,21 +257,19 @@ def associate_manufacturers(apps, schema_editor):
                     if n < len(matches):
                         # Get the company which matches the selected options
                         company_name = matches[n]
-                        company = companies[company_name]
+                        company_id = companies[company_name]
 
                         # Ensure the company is designated as a manufacturer
-                        company.is_manufacturer = True
-                        company.save()
+                        cursor.execute(f"update company_company set is_manufacturer=true where id={company_id};")
 
                         # Link the company to the part
-                        part.manufacturer = company
-                        part.save()
+                        cursor.execute(f"update part_supplierpart set manufacturer_id={company_id} where id={part_id};")
 
                         # Link the name to the company
-                        links[name] = company
-                        links[company_name] = company
+                        links[name] = company_id
+                        links[company_name] = company_id
 
-                        print(" - Part[{pk}]: Linked '{n}' to manufacturer '{m}'".format(pk=part.pk, n=name, m=company_name))
+                        print(" - Part[{pk}]: Linked '{n}' to manufacturer '{m}'".format(pk=part_id, n=name, m=company_name))
 
                         return
                     else:
@@ -321,7 +327,7 @@ def associate_manufacturers(apps, schema_editor):
         pk, MPN, SKU, manufacturer_id, manufacturer_name = row
 
         if manufacturer_id is not None:
-            print(f" - SupplierPart '{pk}' already has a manufacturer associated (skipping)")
+            print(f" - SupplierPart <{pk}> already has a manufacturer associated (skipping)")
             continue
 
         map_part_to_manufacturer(pk, index, part_count)
