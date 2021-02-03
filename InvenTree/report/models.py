@@ -77,13 +77,17 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'report.pdf')
 
 
-class ReportTemplateBase(models.Model):
+class ReportBase(models.Model):
     """
-    Reporting template model.
+    Base class for uploading html templates
     """
+
+    class Meta:
+        abstract = True
 
     def __str__(self):
         return "{n} - {d}".format(n=self.name, d=self.description)
+
 
     def getSubdir(self):
         return ''
@@ -104,6 +108,47 @@ class ReportTemplateBase(models.Model):
         template = template.replace('\\', os.path.sep)
 
         return template
+
+    name = models.CharField(
+        blank=False, max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Template name'),
+        unique=True,
+    )
+
+    template = models.FileField(
+        upload_to=rename_template,
+        verbose_name=_('Template'),
+        help_text=_("Report template file"),
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])],
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_("Report template description")
+    )
+
+
+class ReportSnippet(ReportBase):
+    """
+    Report template 'snippet' which can be used to make templates
+    that can then be included in other reports.
+
+    Useful for 'common' template actions, sub-templates, etc
+    """
+
+    def getSubdir(self):
+        return ""
+
+
+class ReportTemplateBase(ReportBase):
+    """
+    Reporting template model.
+
+    Able to be passed context data
+
+    """
 
     def get_context_data(self, request):
         """
@@ -146,26 +191,6 @@ class ReportTemplateBase(models.Model):
             # Render HTML template to PDF
             wp = WeasyprintReportMixin(request, self.template_name, **kwargs)
             return wp.render_to_response(context, **kwargs)
-
-    name = models.CharField(
-        blank=False, max_length=100,
-        verbose_name=_('Name'),
-        help_text=_('Template name'),
-        unique=True,
-    )
-
-    template = models.FileField(
-        upload_to=rename_template,
-        verbose_name=_('Template'),
-        help_text=_("Report template file"),
-        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])],
-    )
-
-    description = models.CharField(
-        max_length=250,
-        verbose_name=_('Description'),
-        help_text=_("Report template description")
-    )
 
     enabled = models.BooleanField(
         default=True,
