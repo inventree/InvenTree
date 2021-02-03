@@ -23,7 +23,7 @@ def reverse_association(apps, schema_editor):
     cursor = connection.cursor()
 
     response = cursor.execute("select id, MPN from part_supplierpart;")
-    supplier_parts = response.fetchall()
+    supplier_parts = cursor.fetchall()
 
     # Exit if there are no SupplierPart objects
     # This crucial otherwise the unit test suite fails!
@@ -42,7 +42,7 @@ def reverse_association(apps, schema_editor):
 
         manufacturer_id = None
 
-        row = response.fetchone()
+        row = cursor.fetchone()
 
         if len(row) > 0:
             try:
@@ -59,7 +59,7 @@ def reverse_association(apps, schema_editor):
         # Now extract the "name" for the manufacturer
         response = cursor.execute(f"SELECT name from company_company where id={manufacturer_id};")
         
-        row = response.fetchone()
+        row = cursor.fetchone()
 
         name = row[0]
 
@@ -106,7 +106,7 @@ def associate_manufacturers(apps, schema_editor):
     cursor = connection.cursor()
 
     response = cursor.execute("select id, MPN from part_supplierpart;")
-    supplier_parts = response.fetchall()
+    supplier_parts = cursor.fetchall()
 
     # Exit if there are no SupplierPart objects
     # This crucial otherwise the unit test suite fails!
@@ -166,7 +166,7 @@ def associate_manufacturers(apps, schema_editor):
 
         # Extract the company back from the database
         response = cursor.execute(f"select id from company_company where name='{company_name}';")
-        row = response.fetchone()
+        row = cursor.fetchone()
         manufacturer_id = int(row[0])
 
         # Map both names to the same company
@@ -318,7 +318,7 @@ def associate_manufacturers(apps, schema_editor):
     # Extract all SupplierPart objects from the database
     cursor = connection.cursor()
     response = cursor.execute("select id, MPN, SKU, manufacturer_id, manufacturer_name from part_supplierpart;")
-    results = response.fetchall()
+    results = cursor.fetchall()
 
     part_count = len(results)
     
