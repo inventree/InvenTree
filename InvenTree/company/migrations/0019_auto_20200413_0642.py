@@ -146,6 +146,8 @@ def associate_manufacturers(apps, schema_editor):
         if name in links.keys():
             print(" - Part[{pk}]: Mapped '{n}' - manufacturer <{c}>".format(pk=part_id, n=name, c=links[name]))
 
+            manufacturer_id = links[name]
+
             query = f"update part_supplierpart set manufacturer_id={manufacturer_id} where id={part_id};"
             result = query.execute()
             return True
