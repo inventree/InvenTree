@@ -4,6 +4,33 @@ Tests for the company model database migrations
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
+from InvenTree import helpers
+
+
+class TestForwardMigrations(MigratorTestCase):
+
+    migrate_from = ('company', helpers.getOldestMigrationFile('company'))
+    migrate_to = ('company', helpers.getNewestMigrationFile('company'))
+
+    def prepare(self):
+        """
+        Create some simple Company data, and ensure that it migrates OK
+        """
+
+        Company = self.old_state.apps.get_model('company', 'company')
+
+        Company.objects.create(
+            name='MSPC',
+            description='Michael Scotts Paper Company',
+            is_supplier=True
+        )
+
+    def test_migrations(self):
+
+        Company = self.new_state.apps.get_model('company', 'company')
+
+        self.assertEqual(Company.objects.count(), 1)
+
 
 class TestManufacturerField(MigratorTestCase):
     """

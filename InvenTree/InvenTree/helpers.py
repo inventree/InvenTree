@@ -492,3 +492,67 @@ def addUserPermissions(user, permissions):
 
     for permission in permissions:
         addUserPermission(user, permission)
+
+
+def getMigrationFileNames(app):
+    """
+    Return a list of all migration filenames for provided app
+    """
+
+    local_dir = os.path.dirname(os.path.abspath(__file__))
+
+    migration_dir = os.path.join(local_dir, '..', app, 'migrations')
+
+    files = os.listdir(migration_dir)
+
+    # Regex pattern for migration files
+    pattern = r"^[\d]+_.*\.py$"
+
+    migration_files = []
+
+    for f in files:
+        if re.match(pattern, f):
+            migration_files.append(f)
+
+    return migration_files
+
+
+def getOldestMigrationFile(app, exclude_extension=True):
+    """
+    Return the filename associated with the oldest migration
+    """
+
+    oldest_num = -1
+    oldest_file = None
+
+    for f in getMigrationFileNames(app):
+        num = int(f.split('_')[0])
+        
+        if oldest_file is None or num < oldest_num:
+            oldest_num = num
+            oldest_file = f
+
+    if exclude_extension:
+        oldest_file = oldest_file.replace('.py', '')
+
+    return oldest_file
+
+def getNewestMigrationFile(app, exclude_extension=True):
+    """
+    Return the filename associated with the newest migration
+    """
+
+    newest_file = None
+    newest_num = -1
+
+    for f in getMigrationFileNames(app):
+        num = int(f.split('_')[0])
+
+        if newest_file is None or num > newest_num:
+            newest_num = num
+            newest_file = f
+
+    if exclude_extension:
+        newest_file = newest_file.replace('.py', '')
+
+    return newest_file
