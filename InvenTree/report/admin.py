@@ -18,7 +18,7 @@ class ReportTemplateAdmin(admin.ModelAdmin):
 
 class ReportAssetAdmin(admin.ModelAdmin):
 
-    list_display = ('asset', 'description')
+    list_display = ('id', 'asset', 'description')
 
 
 admin.site.register(ReportSnippet, ReportSnippetAdmin)

@@ -52,9 +52,7 @@ class TexResponse(HttpResponse):
 
 def rename_template(instance, filename):
 
-    filename = os.path.basename(filename)
-
-    return os.path.join('report', 'report_template', instance.getSubdir(), filename)
+    return instance.rename_file(filename)
 
 
 def validate_stock_item_report_filters(filters):
@@ -91,6 +89,13 @@ class ReportBase(models.Model):
 
     def getSubdir(self):
         return ''
+
+    def rename_file(self, filename):
+        # Function for renaming uploaded file
+
+        filename = os.path.basename(filename)
+
+        return os.path.join('report', 'report_template', self.getSubdir(), filename)
 
     @property
     def extension(self):
