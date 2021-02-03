@@ -517,7 +517,7 @@ def getMigrationFileNames(app):
     return migration_files
 
 
-def getOldestMigrationFile(app, exclude_extension=True):
+def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
     """
     Return the filename associated with the oldest migration
     """
@@ -526,6 +526,10 @@ def getOldestMigrationFile(app, exclude_extension=True):
     oldest_file = None
 
     for f in getMigrationFileNames(app):
+
+        if ignore_initial and f.startswith('0001_initial'):
+            continue
+
         num = int(f.split('_')[0])
         
         if oldest_file is None or num < oldest_num:

@@ -9,7 +9,7 @@ def add_default_reference(apps, schema_editor):
     Best we can do is use the PK of the build order itself.
     """
 
-    Build = apps.get_model('build', 'Build')
+    Build = apps.get_model('build', 'build')
 
     count = 0
 
