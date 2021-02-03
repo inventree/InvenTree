@@ -540,6 +540,7 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
         oldest_file = oldest_file.replace('.py', '')
 
     return oldest_file
+    
 
 def getNewestMigrationFile(app, exclude_extension=True):
     """
