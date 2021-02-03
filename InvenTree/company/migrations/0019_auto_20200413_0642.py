@@ -22,7 +22,7 @@ def reverse_association(apps, schema_editor):
 
     cursor = connection.cursor()
 
-    response = cursor.execute("select id, MPN from part_supplierpart;")
+    response = cursor.execute('select id, "MPN" from part_supplierpart;')
     supplier_parts = cursor.fetchall()
 
     # Exit if there are no SupplierPart objects
@@ -105,7 +105,7 @@ def associate_manufacturers(apps, schema_editor):
 
     cursor = connection.cursor()
 
-    response = cursor.execute("select id, MPN from part_supplierpart;")
+    response = cursor.execute(f'select id, "MPN" from part_supplierpart;')
     supplier_parts = cursor.fetchall()
 
     # Exit if there are no SupplierPart objects
@@ -317,7 +317,7 @@ def associate_manufacturers(apps, schema_editor):
 
     # Extract all SupplierPart objects from the database
     cursor = connection.cursor()
-    response = cursor.execute("select id, MPN, SKU, manufacturer_id, manufacturer_name from part_supplierpart;")
+    response = cursor.execute('select id, "MPN", "SKU", manufacturer_id, manufacturer_name from part_supplierpart;')
     results = cursor.fetchall()
 
     part_count = len(results)
