@@ -38,7 +38,6 @@ class TestForwardMigrations(MigratorTestCase):
         with self.assertRaises(AttributeError):
             print(p.is_template)
 
-
     def test_models_exist(self):
 
         Part = self.new_state.apps.get_model('part', 'part')
