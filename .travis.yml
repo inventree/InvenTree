@@ -50,8 +50,7 @@ script:
     - invoke import-records -f data.json
     # Run linting checks on migration files (django-migration-linter)
     # Run subset of linting checks on *ALL* migration files
-    - cd InvenTree && python manage.py lintmigrations --exclude-migration-test NOT_NULL ADD_UNIQUE -q ok ignore --no-cache && cd ..
-    # Run stricter checks on *NEW* migrations (old ones are what they are)
+    # Run strict migration file checks on *NEW* migrations (old ones are what they are)
     - cd InvenTree && python manage.py lintmigrations 79ddea50f507e34195bad635008419daac0d7a5f -q ok ignore --no-cache && cd ..
 
 after_success:
