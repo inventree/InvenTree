@@ -165,24 +165,19 @@ def associate_manufacturers(apps, schema_editor):
     def create_manufacturer(part_id, input_name, company_name):
         """ Create a new manufacturer """
 
-        # Manually create a new database row
-        # Note: Have to fill out all empty string values!
-        new_manufacturer_query = f"insert into company_company (name, description, is_customer, is_supplier, is_manufacturer, address, website, phone, email, contact, link, notes) values ('{company_name}', '{company_name}', 0, 0, 1, '', '', '', '', '', '', '');"
+        Company = apps.get_model('company', 'company')
 
-        cursor = connection.cursor()
-
-        cursor.execute(new_manufacturer_query)
-
-        # Extract the company back from the database
-        response = cursor.execute(f"select id from company_company where name='{company_name}';")
-        row = cursor.fetchone()
-        manufacturer_id = int(row[0])
+        manufacturer = Company.objects.create(
+            name=company_name,
+            description=company_name,
+            is_manufacturer=True
+        )
 
         # Map both names to the same company
-        links[input_name] = manufacturer_id
-        links[company_name] = manufacturer_id
+        links[input_name] = manufacturer.pk
+        links[company_name] = manufacturer.pk
 
-        companies[company_name] = manufacturer_id
+        companies[company_name] = manufacturer.pk
         
         print(" - Part[{pk}]: Created new manufacturer: '{name}'".format(pk=part_id, name=company_name))
 
