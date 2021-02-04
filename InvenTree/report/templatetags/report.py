@@ -43,8 +43,6 @@ def part_image(part):
     path = os.path.join(settings.MEDIA_ROOT, img)
     path = os.path.abspath(path)
 
-    print("Path:", path)
-
     if not os.path.exists(path) or not os.path.isfile(path):
         # Image does not exist
         # Return the 'blank' image
