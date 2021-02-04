@@ -175,6 +175,10 @@ class ReportTemplateBase(ReportBase):
 
         context = self.get_context_data(request)
 
+        context['media'] = settings.MEDIA_ROOT
+
+        context['report_name'] = self.name
+        context['report_description'] = self.description
         context['request'] = request
         context['user'] = request.user
         context['datetime'] = datetime.datetime.now()
@@ -194,8 +198,16 @@ class ReportTemplateBase(ReportBase):
                 raise ValidationError("Enable LaTeX support in config.yaml")
         elif self.extension in ['.htm', '.html']:
             # Render HTML template to PDF
-            wp = WeasyprintReportMixin(request, self.template_name, **kwargs)
-            return wp.render_to_response(context, **kwargs)
+            wp = WeasyprintReportMixin(
+                request,
+                self.template_name,
+                base_url=request.build_absolute_uri("/"),
+                presentational_hints=True,
+                **kwargs)
+
+            return wp.render_to_response(
+                context,
+                **kwargs)
 
     enabled = models.BooleanField(
         default=True,

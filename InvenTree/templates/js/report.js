@@ -10,6 +10,15 @@ function selectTestReport(reports, items, options={}) {
      * (via AJAX) from the server.
      */
 
+    // If there is only a single report available, just print!
+    if (reports.length == 1) {
+        if (options.success) {
+            options.success(reports[0].pk);
+        }
+
+        return;
+    }
+
     var modal = options.modal || '#modal-form';
 
     var report_list = makeOptionsList(
