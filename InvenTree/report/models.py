@@ -14,7 +14,6 @@ from django.db import models
 from django.conf import settings
 
 from django.core.validators import FileExtensionValidator
-from django.core.exceptions import ValidationError
 
 import stock.models
 
@@ -28,17 +27,6 @@ except OSError as err:
     print("OSError: {e}".format(e=err))
     print("You may require some further system packages to be installed.")
     sys.exit(1)
-
-# Conditional import if LaTeX templating is enabled
-if settings.LATEX_ENABLED:
-    try:
-        from django_tex.shortcuts import render_to_pdf
-        from django_tex.core import render_template_with_context
-        from django_tex.exceptions import TexError
-    except OSError as err:
-        print("OSError: {e}".format(e=err))
-        print("You may not have a working LaTeX toolchain installed?")
-        sys.exit(1)
 
 from django.http import HttpResponse
 
@@ -104,7 +92,7 @@ class ReportBase(models.Model):
     def template_name(self):
         """
         Returns the file system path to the template file.
-        Required for passing the file to an external process (e.g. LaTeX)
+        Required for passing the file to an external process
         """
 
         template = os.path.join('report_template', self.getSubdir(), os.path.basename(self.template.name))
@@ -124,7 +112,7 @@ class ReportBase(models.Model):
         upload_to=rename_template,
         verbose_name=_('Template'),
         help_text=_("Report template file"),
-        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])],
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
     )
 
     description = models.CharField(
@@ -153,12 +141,11 @@ class ReportTemplateBase(ReportBase):
         """
         Render the template to a PDF file.
 
-        Supported template formats:
-            .tex - Uses django-tex plugin to render LaTeX template against an installed LaTeX engine
-            .html - Uses django-weasyprint plugin to render HTML template against Weasyprint
+        Uses django-weasyprint plugin to render HTML template against Weasyprint
         """
 
-        filename = kwargs.get('filename', 'report.pdf')
+        # TODO: Support custom filename generation!
+        # filename = kwargs.get('filename', 'report.pdf')
 
         context = self.get_context_data(request)
 
@@ -171,31 +158,17 @@ class ReportTemplateBase(ReportBase):
         context['date'] = datetime.datetime.now().date()
         context['datetime'] = datetime.datetime.now()
 
-        if self.extension == '.tex':
-            # Render LaTeX template to PDF
-            if settings.LATEX_ENABLED:
-                # Attempt to render to LaTeX template
-                # If there is a rendering error, return the (partially rendered) template,
-                # so at least we can debug what is going on
-                try:
-                    rendered = render_template_with_context(self.template_name, context)
-                    return render_to_pdf(request, self.template_name, context, filename=filename)
-                except TexError:
-                    return TexResponse(rendered, filename="error.tex")
-            else:
-                raise ValidationError("Enable LaTeX support in config.yaml")
-        elif self.extension in ['.htm', '.html']:
-            # Render HTML template to PDF
-            wp = WeasyprintReportMixin(
-                request,
-                self.template_name,
-                base_url=request.build_absolute_uri("/"),
-                presentational_hints=True,
-                **kwargs)
+        # Render HTML template to PDF
+        wp = WeasyprintReportMixin(
+            request,
+            self.template_name,
+            base_url=request.build_absolute_uri("/"),
+            presentational_hints=True,
+            **kwargs)
 
-            return wp.render_to_response(
-                context,
-                **kwargs)
+        return wp.render_to_response(
+            context,
+            **kwargs)
 
     enabled = models.BooleanField(
         default=True,
