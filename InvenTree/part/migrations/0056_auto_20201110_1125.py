@@ -138,6 +138,8 @@ def reverse_currencies(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('part', '0055_auto_20201110_1001'),
     ]

@@ -17,6 +17,8 @@ def nupdate_tree(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('build', '0012_build_sales_order'),
     ]

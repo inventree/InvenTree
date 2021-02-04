@@ -48,6 +48,10 @@ script:
     - rm inventree_default_db.sqlite3
     - invoke migrate
     - invoke import-records -f data.json
+    # Run linting checks on migration files (django-migration-linter)
+    # Run subset of linting checks on *ALL* migration files
+    # Run strict migration file checks on *NEW* migrations (old ones are what they are)
+    - cd InvenTree && python manage.py lintmigrations 79ddea50f507e34195bad635008419daac0d7a5f -q ok ignore --no-cache && cd ..
 
 after_success:
     - coveralls
