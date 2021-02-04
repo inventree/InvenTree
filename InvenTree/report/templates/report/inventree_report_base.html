@@ -1,0 +1,51 @@
+{% load report %}
+
+<head>
+    <style>
+        @page {
+        {% block page_style %}
+            size: {% if page_size %}{{ page_size }}{% else %}A4{% endif %};
+            margin: {% if page_margin %}{{ page_margin }}{% else %}10mm{% endif %};
+        {% endblock %}
+        }
+
+        #page-number:after {
+            counter-increment: page;
+            content: counter(page);
+        }
+
+        #page-count:after {
+            counter-increment: page;
+            content: counter(pages);
+        }
+
+        body {
+            {% block body_style %}
+            font-family: Arial, Helvetica, sans-serif;
+            {% endblock %}
+        }
+
+        {% block style %}
+        {% endblock %}
+
+    </style>
+</head>
+
+<body>
+
+    <div class='page-header'>
+        {% block header_content %}
+        {% endblock %}
+    </div>
+
+    <div class='page-content'>
+        {% block page_content %}
+        {% endblock %}
+    </div>
+    
+    <div class='page-footer'>
+        {% block footer_content %}
+        {% endblock %}
+    </div>
+
+</body>
