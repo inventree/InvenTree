@@ -118,6 +118,7 @@ class RuleSet(models.Model):
         'label_stockitemlabel',
         'label_stocklocationlabel',
         'report_reportasset',
+        'report_reportsnippet',
         'report_testreport',
         'part_partstar',
         'users_owner',
