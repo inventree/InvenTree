@@ -31,13 +31,6 @@ except OSError as err:
 from django.http import HttpResponse
 
 
-class TexResponse(HttpResponse):
-    def __init__(self, content, filename=None):
-        super().__init__(content_type="application/txt")
-        self["Content-Disposition"] = 'filename="{}"'.format(filename)
-        self.write(content)
-
-
 def rename_template(instance, filename):
 
     return instance.rename_file(filename)
@@ -95,9 +88,11 @@ class ReportBase(models.Model):
         Required for passing the file to an external process
         """
 
-        template = os.path.join('report_template', self.getSubdir(), os.path.basename(self.template.name))
+        template = self.template.name
         template = template.replace('/', os.path.sep)
         template = template.replace('\\', os.path.sep)
+
+        template = os.path.join(settings.MEDIA_ROOT, template)
 
         return template
 

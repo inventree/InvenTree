@@ -57,15 +57,21 @@ content: "{% trans 'Stock Item Test Report' %}";
 <div class='container'>
     <div class='text-left'>
         <h2>
-            {{ stock_item.part.full_name }}
+            {{ part.full_name }}
         </h2>
+        <p>{{ part.description }}</p>
+        <p><i>{{ stock_item.location }}</i></p>
     </div>
     <div class='img-right'>
         <img src="{% part_image part %}">
         <hr>
-        <h3>
+        <h4>
+            {% if stock_item.is_serialized %}
             {% trans "Serial Number" %}: {{ stock_item.serial }}
-        </h3>
+            {% else %}
+            {% trans "Quantity" %}: {% decimal stock_item.quantity %}
+            {% endif %}
+        </h4>
     </div>
 </div>
 
