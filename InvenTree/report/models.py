@@ -28,8 +28,6 @@ except OSError as err:
     print("You may require some further system packages to be installed.")
     sys.exit(1)
 
-from django.http import HttpResponse
-
 
 def rename_template(instance, filename):
 
