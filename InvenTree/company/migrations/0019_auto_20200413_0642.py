@@ -182,7 +182,7 @@ def associate_manufacturers(apps, schema_editor):
         print(" - Part[{pk}]: Created new manufacturer: '{name}'".format(pk=part_id, name=company_name))
 
         # Update SupplierPart object in the database
-        cursor.execute(f"update part_supplierpart set manufacturer_id={manufacturer_id} where id={part_id};")
+        cursor.execute(f"update part_supplierpart set manufacturer_id={manufacturer.pk} where id={part_id};")
 
     def find_matches(text, threshold=65):
         """
