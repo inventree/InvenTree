@@ -100,7 +100,6 @@ class ReportBase(models.Model):
         blank=False, max_length=100,
         verbose_name=_('Name'),
         help_text=_('Template name'),
-        unique=True,
     )
 
     template = models.FileField(
