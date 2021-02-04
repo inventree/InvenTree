@@ -86,7 +86,6 @@ class ReportBase(models.Model):
     def __str__(self):
         return "{n} - {d}".format(n=self.name, d=self.description)
 
-
     def getSubdir(self):
         return ''
 
