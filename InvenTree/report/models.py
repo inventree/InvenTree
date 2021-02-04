@@ -181,6 +181,7 @@ class ReportTemplateBase(ReportBase):
         context['report_description'] = self.description
         context['request'] = request
         context['user'] = request.user
+        context['date'] = datetime.datetime.now().date()
         context['datetime'] = datetime.datetime.now()
 
         if self.extension == '.tex':
