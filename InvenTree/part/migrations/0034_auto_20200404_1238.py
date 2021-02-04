@@ -18,6 +18,8 @@ def create_thumbnails(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('part', '0033_auto_20200404_0445'),
     ]

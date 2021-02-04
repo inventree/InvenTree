@@ -31,6 +31,8 @@ def reverse_default_reference(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('build', '0017_auto_20200426_0612'),
     ]

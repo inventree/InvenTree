@@ -19,6 +19,8 @@ def make_empty_email_field_null(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('company', '0023_auto_20200808_0715'),
     ]

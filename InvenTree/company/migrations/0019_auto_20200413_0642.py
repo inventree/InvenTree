@@ -354,6 +354,8 @@ def associate_manufacturers(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('company', '0018_supplierpart_manufacturer'),
     ]

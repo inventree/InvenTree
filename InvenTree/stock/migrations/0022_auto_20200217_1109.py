@@ -12,6 +12,8 @@ def update_stock_item_tree(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('stock', '0021_auto_20200215_2232'),
     ]
