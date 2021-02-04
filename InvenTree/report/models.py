@@ -135,18 +135,6 @@ class ReportBase(models.Model):
     )
 
 
-class ReportSnippet(ReportBase):
-    """
-    Report template 'snippet' which can be used to make templates
-    that can then be included in other reports.
-
-    Useful for 'common' template actions, sub-templates, etc
-    """
-
-    def getSubdir(self):
-        return ""
-
-
 class ReportTemplateBase(ReportBase):
     """
     Reporting template model.
@@ -262,6 +250,30 @@ class TestReport(ReportTemplateBase):
             'results': self.stock_item.testResultMap(),
             'result_list': self.stock_item.testResultList()
         }
+
+
+def rename_snippet(instance, filename):
+
+    filename = os.path.basename(filename)
+
+    return os.path.join('report', 'snippets', filename)
+
+
+class ReportSnippet(models.Model):
+    """
+    Report template 'snippet' which can be used to make templates
+    that can then be included in other reports.
+
+    Useful for 'common' template actions, sub-templates, etc
+    """
+
+    snippet = models.FileField(
+        upload_to=rename_snippet,
+        help_text=_('Report snippet file'),
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
+    )
+
+    description = models.CharField(max_length=250, help_text=_("Snippet file description"))
 
 
 def rename_asset(instance, filename):

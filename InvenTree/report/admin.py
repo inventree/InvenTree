@@ -6,14 +6,14 @@ from django.contrib import admin
 from .models import ReportSnippet, TestReport, ReportAsset
 
 
-class ReportSnippetAdmin(admin.ModelAdmin):
-
-    list_display = ('name', 'description', 'template')
-
-
 class ReportTemplateAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'description', 'template', 'filters', 'enabled')
+
+
+class ReportSnippetAdmin(admin.ModelAdmin):
+
+    list_display = ('id', 'snippet', 'description')
 
 
 class ReportAssetAdmin(admin.ModelAdmin):
