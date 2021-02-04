@@ -1,0 +1,22 @@
+{% extends "InvenTree/settings/settings.html" %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block tabs %}
+{% include "InvenTree/settings/tabs.html" with tab='report' %}
+{% endblock %}
+
+{% block subtitle %}
+{% trans "Report Settings" %}
+{% endblock %}
+
+{% block settings %}
+
+<table class='table table-striped table-condensed'>
+    {% include "InvenTree/settings/header.html" %}
+    <tbody>
+        {% include "InvenTree/settings/setting.html" with key="REPORT_ENABLE_TEST_REPORT" %}
+    </tbody>
+</table>
+
+{% endblock %}

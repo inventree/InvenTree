@@ -14,7 +14,6 @@ from django.db import models
 from django.conf import settings
 
 from django.core.validators import FileExtensionValidator
-from django.core.exceptions import ValidationError
 
 import stock.models
 
@@ -29,32 +28,10 @@ except OSError as err:
     print("You may require some further system packages to be installed.")
     sys.exit(1)
 
-# Conditional import if LaTeX templating is enabled
-if settings.LATEX_ENABLED:
-    try:
-        from django_tex.shortcuts import render_to_pdf
-        from django_tex.core import render_template_with_context
-        from django_tex.exceptions import TexError
-    except OSError as err:
-        print("OSError: {e}".format(e=err))
-        print("You may not have a working LaTeX toolchain installed?")
-        sys.exit(1)
-
-from django.http import HttpResponse
-
-
-class TexResponse(HttpResponse):
-    def __init__(self, content, filename=None):
-        super().__init__(content_type="application/txt")
-        self["Content-Disposition"] = 'filename="{}"'.format(filename)
-        self.write(content)
-
 
 def rename_template(instance, filename):
 
-    filename = os.path.basename(filename)
-
-    return os.path.join('report', 'report_template', instance.getSubdir(), filename)
+    return instance.rename_file(filename)
 
 
 def validate_stock_item_report_filters(filters):
@@ -77,16 +54,26 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'report.pdf')
 
 
-class ReportTemplateBase(models.Model):
+class ReportBase(models.Model):
     """
-    Reporting template model.
+    Base class for uploading html templates
     """
+
+    class Meta:
+        abstract = True
 
     def __str__(self):
         return "{n} - {d}".format(n=self.name, d=self.description)
 
     def getSubdir(self):
         return ''
+
+    def rename_file(self, filename):
+        # Function for renaming uploaded file
+
+        filename = os.path.basename(filename)
+
+        return os.path.join('report', 'report_template', self.getSubdir(), filename)
 
     @property
     def extension(self):
@@ -96,14 +83,44 @@ class ReportTemplateBase(models.Model):
     def template_name(self):
         """
         Returns the file system path to the template file.
-        Required for passing the file to an external process (e.g. LaTeX)
+        Required for passing the file to an external process
         """
 
-        template = os.path.join('report_template', self.getSubdir(), os.path.basename(self.template.name))
+        template = self.template.name
         template = template.replace('/', os.path.sep)
         template = template.replace('\\', os.path.sep)
 
+        template = os.path.join(settings.MEDIA_ROOT, template)
+
         return template
+
+    name = models.CharField(
+        blank=False, max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Template name'),
+    )
+
+    template = models.FileField(
+        upload_to=rename_template,
+        verbose_name=_('Template'),
+        help_text=_("Report template file"),
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_("Report template description")
+    )
+
+
+class ReportTemplateBase(ReportBase):
+    """
+    Reporting template model.
+
+    Able to be passed context data
+
+    """
 
     def get_context_data(self, request):
         """
@@ -116,56 +133,34 @@ class ReportTemplateBase(models.Model):
         """
         Render the template to a PDF file.
 
-        Supported template formats:
-            .tex - Uses django-tex plugin to render LaTeX template against an installed LaTeX engine
-            .html - Uses django-weasyprint plugin to render HTML template against Weasyprint
+        Uses django-weasyprint plugin to render HTML template against Weasyprint
         """
 
-        filename = kwargs.get('filename', 'report.pdf')
+        # TODO: Support custom filename generation!
+        # filename = kwargs.get('filename', 'report.pdf')
 
         context = self.get_context_data(request)
 
+        context['media'] = settings.MEDIA_ROOT
+
+        context['report_name'] = self.name
+        context['report_description'] = self.description
         context['request'] = request
         context['user'] = request.user
+        context['date'] = datetime.datetime.now().date()
         context['datetime'] = datetime.datetime.now()
 
-        if self.extension == '.tex':
-            # Render LaTeX template to PDF
-            if settings.LATEX_ENABLED:
-                # Attempt to render to LaTeX template
-                # If there is a rendering error, return the (partially rendered) template,
-                # so at least we can debug what is going on
-                try:
-                    rendered = render_template_with_context(self.template_name, context)
-                    return render_to_pdf(request, self.template_name, context, filename=filename)
-                except TexError:
-                    return TexResponse(rendered, filename="error.tex")
-            else:
-                raise ValidationError("Enable LaTeX support in config.yaml")
-        elif self.extension in ['.htm', '.html']:
-            # Render HTML template to PDF
-            wp = WeasyprintReportMixin(request, self.template_name, **kwargs)
-            return wp.render_to_response(context, **kwargs)
+        # Render HTML template to PDF
+        wp = WeasyprintReportMixin(
+            request,
+            self.template_name,
+            base_url=request.build_absolute_uri("/"),
+            presentational_hints=True,
+            **kwargs)
 
-    name = models.CharField(
-        blank=False, max_length=100,
-        verbose_name=_('Name'),
-        help_text=_('Template name'),
-        unique=True,
-    )
-
-    template = models.FileField(
-        upload_to=rename_template,
-        verbose_name=_('Template'),
-        help_text=_("Report template file"),
-        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])],
-    )
-
-    description = models.CharField(
-        max_length=250,
-        verbose_name=_('Description'),
-        help_text=_("Report template description")
-    )
+        return wp.render_to_response(
+            context,
+            **kwargs)
 
     enabled = models.BooleanField(
         default=True,
@@ -219,6 +214,30 @@ class TestReport(ReportTemplateBase):
             'results': self.stock_item.testResultMap(),
             'result_list': self.stock_item.testResultList()
         }
+
+
+def rename_snippet(instance, filename):
+
+    filename = os.path.basename(filename)
+
+    return os.path.join('report', 'snippets', filename)
+
+
+class ReportSnippet(models.Model):
+    """
+    Report template 'snippet' which can be used to make templates
+    that can then be included in other reports.
+
+    Useful for 'common' template actions, sub-templates, etc
+    """
+
+    snippet = models.FileField(
+        upload_to=rename_snippet,
+        help_text=_('Report snippet file'),
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
+    )
+
+    description = models.CharField(max_length=250, help_text=_("Snippet file description"))
 
 
 def rename_asset(instance, filename):

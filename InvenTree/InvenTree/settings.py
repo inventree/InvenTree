@@ -208,7 +208,6 @@ INSTALLED_APPS = [
     'mptt',                                 # Modified Preorder Tree Traversal
     'markdownx',                            # Markdown editing
     'markdownify',                          # Markdown template rendering
-    'django_tex',                           # LaTeX output
     'django_admin_shell',                   # Python shell for the admin interface
     'djmoney',                              # django-money integration
     'djmoney.contrib.exchange',             # django-money exchange rates
@@ -264,14 +263,6 @@ TEMPLATES = [
                 'InvenTree.context.user_roles',
             ],
         },
-    },
-    # Backend for LaTeX report rendering
-    {
-        'NAME': 'tex',
-        'BACKEND': 'django_tex.engine.TeXEngine',
-        'DIRS': [
-            os.path.join(MEDIA_ROOT, 'report'),
-        ]
     },
 ]
 
@@ -483,22 +474,6 @@ USE_TZ = True
 
 DATE_INPUT_FORMATS = [
     "%Y-%m-%d",
-]
-
-# LaTeX rendering settings (django-tex)
-LATEX_SETTINGS = CONFIG.get('latex', {})
-
-# Is LaTeX rendering enabled? (Off by default)
-LATEX_ENABLED = LATEX_SETTINGS.get('enabled', False)
-
-# Set the latex interpreter in the config.yaml settings file
-LATEX_INTERPRETER = LATEX_SETTINGS.get('interpreter', 'pdflatex')
-
-LATEX_INTERPRETER_OPTIONS = LATEX_SETTINGS.get('options', '')
-
-LATEX_GRAPHICSPATH = [
-    # Allow LaTeX files to access the report assets directory
-    os.path.join(MEDIA_ROOT, "report", "assets"),
 ]
 
 # crispy forms use the bootstrap templates
