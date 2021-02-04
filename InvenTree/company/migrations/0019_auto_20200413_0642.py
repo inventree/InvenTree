@@ -167,7 +167,7 @@ def associate_manufacturers(apps, schema_editor):
 
         # Manually create a new database row
         # Note: Have to fill out all empty string values!
-        new_manufacturer_query = f"insert into company_company (name, description, is_customer, is_supplier, is_manufacturer, address, website, phone, email, contact, link, notes) values ('{company_name}', '{company_name}', false, false, true, '', '', '', '', '', '', '');"
+        new_manufacturer_query = f"insert into company_company (name, description, is_customer, is_supplier, is_manufacturer, address, website, phone, email, contact, link, notes) values ('{company_name}', '{company_name}', 0, 0, 1, '', '', '', '', '', '', '');"
 
         cursor = connection.cursor()
 
