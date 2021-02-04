@@ -5,7 +5,6 @@
         @page {
             size: A4;
             margin: 2cm;
-            margin-top: 4cm;
             font-family: Arial, Helvetica, sans-serif;
             font-size: 75%;
             
@@ -46,10 +45,12 @@
         }
 
         .header {
+            {% block header_style %}
             top: 0px;
             left: 0px;
             position: fixed;
             width: 100%;
+            {% endblock %}
             margin-top: -2.5cm;
         }
 

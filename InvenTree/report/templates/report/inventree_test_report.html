@@ -1,0 +1,105 @@
+{% extends "report/inventree_report_base.html" %}
+
+{% load i18n %}
+{% load report %}
+{% load inventree_extras %}
+
+{% block style %}
+.test-table {
+    width: 100%;
+}
+
+{% block bottom_left %}
+content: "{{ date.isoformat }}";
+{% endblock %}
+
+{% block bottom_center %}
+content: "InvenTree v{% inventree_version %}";
+{% endblock %}
+
+{% block top_center %}
+content: "{% trans 'Stock Item Test Report' %}";
+{% endblock %}
+
+.test-row {
+    padding: 3px;
+}
+
+.test-pass {
+    color: #5f5;
+}
+
+.test-fail {
+    color: #F55;
+}
+
+.container {
+    padding: 5px;
+    border: 1px solid;
+}
+
+.text-left {
+    display: inline-block;
+    width: 50%;
+}
+
+.img-right {
+    display: inline;
+    align-content: right;
+    align-items: right;
+    width: 50%;
+}
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class='container'>
+    <div class='text-left'>
+        <h2>
+            {{ stock_item.part.full_name }}
+        </h2>
+    </div>
+    <div class='img-right'>
+        <img src="{% part_image part %}">
+        <hr>
+        <h3>
+            {% trans "Serial Number" %}: {{ stock_item.serial }}
+        </h3>
+    </div>
+</div>
+
+<h3>{% trans "Test Results" %}</h3>
+
+<table class='table test-table'>
+    <thead>
+        <tr>
+            <th>{% trans "Test" %}</th>
+            <th>{% trans "Result" %}</th>
+            <th>{% trans "Value" %}</th>
+            <th>{% trans "User" %}</th>
+            <th>{% trans "Date" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan='5'><hr></td>
+        </tr>
+        {% for test in result_list %}
+        <tr class='test-row'>
+            <td>{{ test.test }}</td>
+            {% if test.result %}
+            <td class='test-pass'>{% trans "Pass" %}</td>
+            {% else %}
+            <td class='test-fail'>{% trans "Fail" %}</td>
+            {% endif %}
+            <td>{{ test.value }}</td>
+            <td>{{ test.user.username }}</td>
+            <td>{{ test.date.date.isoformat }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+{% endblock %}
