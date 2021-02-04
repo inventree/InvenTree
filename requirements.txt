@@ -23,12 +23,13 @@ coverage==5.3                   # Unit test coverage
 coveralls==2.1.2                # Coveralls linking (for Travis)
 rapidfuzz==0.7.6                # Fuzzy string matching
 django-stdimage==5.1.1          # Advanced ImageField management
-django-tex==1.1.7               # LaTeX PDF export
 django-weasyprint==1.0.1        # HTML PDF export
 django-debug-toolbar==2.2       # Debug / profiling toolbar
 django-admin-shell==0.1.2       # Python shell for the admin interface
 django-money==1.1               # Django app for currency management
 certifi                         # Certifi is (most likely) installed through one of the requirements above
-django-error-report==0.2.0     # Error report viewer for the admin interface
+django-error-report==0.2.0      # Error report viewer for the admin interface
+django-test-migrations==1.1.0   # Unit testing for database migrations 
+django-migration-linter==2.5.0  # Linting checks for database migrations
 
 inventree                       # Install the latest version of the InvenTree API python library

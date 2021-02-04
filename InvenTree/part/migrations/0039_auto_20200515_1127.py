@@ -16,6 +16,8 @@ def nupdate_tree(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('part', '0038_auto_20200513_0016'),
     ]

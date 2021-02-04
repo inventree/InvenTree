@@ -174,6 +174,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'REPORT_ENABLE_TEST_REPORT': {
+            'name': _('Test Reports'),
+            'description': _('Enable generation of test reports'),
+            'default': True,
+            'validator': bool,
+        },
+
         'STOCK_ENABLE_EXPIRY': {
             'name': _('Stock Expiry'),
             'description': _('Enable stock expiry functionality'),

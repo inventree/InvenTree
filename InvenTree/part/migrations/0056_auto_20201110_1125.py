@@ -106,7 +106,7 @@ def reverse_currencies(apps, schema_editor):
     # For each currency code in use, check if we have a matching Currency object
     for code in codes_in_use:
         response = cursor.execute(f"SELECT id, suffix from common_currency where suffix='{code}';")
-        row = response.fetchone()
+        row = cursor.fetchone()
 
         if row is not None:
             # A match exists!
@@ -137,6 +137,8 @@ def reverse_currencies(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+
+    atomic = False
 
     dependencies = [
         ('part', '0055_auto_20201110_1001'),

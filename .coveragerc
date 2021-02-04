@@ -1,8 +1,6 @@
 [run]
 source = ./InvenTree
 omit =
-    # Do not run coverage on migration files
-    */migrations/*
     InvenTree/manage.py
     InvenTree/setup.py
     InvenTree/InvenTree/middleware.py

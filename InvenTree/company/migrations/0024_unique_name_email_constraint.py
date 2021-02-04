@@ -1,6 +1,14 @@
 from django.db import migrations, models
 
 
+def reverse_empty_email(apps, schema_editor):
+    Company = apps.get_model('company', 'Company')
+    for company in Company.objects.all():
+        if company.email == None:
+            company.email = ''
+            company.save()
+
+
 def make_empty_email_field_null(apps, schema_editor):
     Company = apps.get_model('company', 'Company')
     for company in Company.objects.all():
@@ -10,6 +18,8 @@ def make_empty_email_field_null(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+
+    atomic = False
 
     dependencies = [
         ('company', '0023_auto_20200808_0715'),
@@ -23,7 +33,7 @@ class Migration(migrations.Migration):
             field=models.EmailField(blank=True, help_text='Contact email address', max_length=254, null=True, unique=False, verbose_name='Email'),
         ),
         # Convert empty email string to NULL
-        migrations.RunPython(make_empty_email_field_null),
+        migrations.RunPython(make_empty_email_field_null, reverse_code=reverse_empty_email),
         # Remove unique constraint on name field
         migrations.AlterField(
             model_name='company',

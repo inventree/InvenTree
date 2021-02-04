@@ -38,7 +38,9 @@
                 </button>
                 <ul class='dropdown-menu'>
                     <li><a href='#' id='multi-item-print-label' title='{% trans "Print labels" %}'><span class='fas fa-tags'></span> {% trans "Print labels" %}</a></li>
+                    {% if test_report_enabled %}
                     <li><a href='#' id='multi-item-print-test-report' title='{% trans "Print test reports" %}'><span class='fas fa-file-pdf'></span> {% trans "Print test reports" %}</a></li>
+                    {% endif %}
                 </ul>
             </div>
             {% if roles.stock.change or roles.stock.delete %}

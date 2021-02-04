@@ -13,6 +13,8 @@ def update_tree(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('stock', '0011_auto_20190908_0404'),
     ]
