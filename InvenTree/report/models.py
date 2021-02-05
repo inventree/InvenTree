@@ -159,6 +159,7 @@ class ReportTemplateBase(ReportBase):
 
         context['report_name'] = self.name
         context['report_description'] = self.description
+        context['report_revision'] = self.revision
         context['request'] = request
         context['user'] = request.user
         context['date'] = datetime.datetime.now().date()
