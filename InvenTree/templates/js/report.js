@@ -52,7 +52,7 @@ function selectTestReport(reports, items, options={}) {
     <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
         <div class='form-group'>
             <label class='control-label requiredField' for='id_report'>
-            {% trans "Select Label" %}
+            {% trans "Select Report Template" %}
             </label>
             <div class='controls'>
                 <select id='id_report' class='select form-control name='report'>
