@@ -8,7 +8,7 @@ from .models import ReportSnippet, TestReport, ReportAsset
 
 class ReportTemplateAdmin(admin.ModelAdmin):
 
-    list_display = ('name', 'description', 'template', 'filters', 'enabled')
+    list_display = ('name', 'description', 'template', 'filters', 'enabled', 'revision')
 
 
 class ReportSnippetAdmin(admin.ModelAdmin):
