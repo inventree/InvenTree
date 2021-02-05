@@ -7,12 +7,14 @@ from __future__ import unicode_literals
 
 import os
 import sys
+import logging
 
 import datetime
 
 from django.db import models
 from django.conf import settings
 
+from django.core.files.storage import FileSystemStorage
 from django.core.validators import FileExtensionValidator
 
 import stock.models
@@ -27,6 +29,35 @@ except OSError as err:
     print("OSError: {e}".format(e=err))
     print("You may require some further system packages to be installed.")
     sys.exit(1)
+
+
+logger = logging.getLogger(__name__)
+
+
+class ReportFileUpload(FileSystemStorage):
+    """
+    Custom implementation of FileSystemStorage class.
+
+    When uploading a report (or a snippet / asset / etc),
+    it is often important to ensure the filename is not arbitrarily *changed*,
+    if the name of the uploaded file is identical to the currently stored file.
+
+    For example, a snippet or asset file is referenced in a template by filename,
+    and we do not want that filename to change when we upload a new *version*
+    of the snippet or asset file.
+    
+    This uploader class performs the following pseudo-code function:
+
+    - If the model is *new*, proceed as normal
+    - If the model is being updated:
+        a) If the new filename is *different* from the existing filename, proceed as normal
+        b) If the new filename is *identical* to the existing filename, we want to overwrite the existing file
+    """
+
+    def get_available_name(self, name, max_length=None):
+
+        print("Name:", name)
+        return super().get_available_name(name, max_length)
 
 
 def rename_template(instance, filename):
@@ -61,6 +92,13 @@ class ReportBase(models.Model):
 
     class Meta:
         abstract = True
+
+    def save(self, *args, **kwargs):
+
+        # Increment revision number
+        self.revision += 1
+
+        super().save()
 
     def __str__(self):
         return "{n} - {d}".format(n=self.name, d=self.description)
@@ -113,6 +151,13 @@ class ReportBase(models.Model):
         help_text=_("Report template description")
     )
 
+    revision = models.PositiveIntegerField(
+        default=1,
+        verbose_name=_("Revision"),
+        help_text=_("Report revision number (auto-increments)"),
+        editable=False,
+    )
+
 
 class ReportTemplateBase(ReportBase):
     """
@@ -145,6 +190,7 @@ class ReportTemplateBase(ReportBase):
 
         context['report_name'] = self.name
         context['report_description'] = self.description
+        context['report_revision'] = self.revision
         context['request'] = request
         context['user'] = request.user
         context['date'] = datetime.datetime.now().date()
@@ -220,7 +266,19 @@ def rename_snippet(instance, filename):
 
     filename = os.path.basename(filename)
 
-    return os.path.join('report', 'snippets', filename)
+    path = os.path.join('report', 'snippets', filename)
+
+    # If the snippet file is the *same* filename as the one being uploaded,
+    # delete the original one from the media directory
+    if str(filename) == str(instance.snippet):
+        fullpath = os.path.join(settings.MEDIA_ROOT, path)
+        fullpath = os.path.abspath(fullpath)
+       
+        if os.path.exists(fullpath):
+            logger.info(f"Deleting existing snippet file: '{filename}'")
+            os.remove(fullpath)
+
+    return path
 
 
 class ReportSnippet(models.Model):
@@ -244,7 +302,19 @@ def rename_asset(instance, filename):
 
     filename = os.path.basename(filename)
 
-    return os.path.join('report', 'assets', filename)
+    path = os.path.join('report', 'assets', filename)
+
+    # If the asset file is the *same* filename as the one being uploaded,
+    # delete the original one from the media directory
+    if str(filename) == str(instance.asset):
+        fullpath = os.path.join(settings.MEDIA_ROOT, path)
+        fullpath = os.path.abspath(fullpath)
+
+        if os.path.exists(fullpath):
+            logger.info(f"Deleting existing asset file: '{filename}'")
+            os.remove(fullpath)
+
+    return path
 
 
 class ReportAsset(models.Model):
