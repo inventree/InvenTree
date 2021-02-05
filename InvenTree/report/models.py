@@ -62,6 +62,13 @@ class ReportBase(models.Model):
     class Meta:
         abstract = True
 
+    def save(self, *args, **kwargs):
+
+        # Increment revision number
+        self.revision += 1
+
+        super().save()
+
     def __str__(self):
         return "{n} - {d}".format(n=self.name, d=self.description)
 
@@ -111,6 +118,13 @@ class ReportBase(models.Model):
         max_length=250,
         verbose_name=_('Description'),
         help_text=_("Report template description")
+    )
+
+    revision = models.PositiveIntegerField(
+        default=1,
+        verbose_name=_("Revision"),
+        help_text=_("Report revision number (auto-increments)"),
+        editable=False,
     )
 
 
