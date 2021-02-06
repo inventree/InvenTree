@@ -180,7 +180,6 @@ class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin):
             else:
                 outputs.append(report.render(request))
 
-
         if debug_mode:
             """
             Contatenate all rendered templates into a single HTML string,
