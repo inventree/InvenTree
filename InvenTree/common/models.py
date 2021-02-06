@@ -174,6 +174,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'REPORT_DEBUG_MODE': {
+            'name': _('Debug Mode'),
+            'description': _('Generate reports in debug mode (HTML output)'),
+            'default': False,
+            'validator': bool,
+        },
+
         'REPORT_DEFAULT_PAGE_SIZE': {
             'name': _('Page Size'),
             'description': _('Default page size for PDF reports'),

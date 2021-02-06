@@ -14,6 +14,8 @@ import datetime
 from django.db import models
 from django.conf import settings
 
+from django.template.loader import render_to_string
+
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import FileExtensionValidator
 
@@ -175,15 +177,10 @@ class ReportTemplateBase(ReportBase):
 
         return {}
 
-    def render(self, request, **kwargs):
+    def context(self, request):
         """
-        Render the template to a PDF file.
-
-        Uses django-weasyprint plugin to render HTML template against Weasyprint
+        All context to be passed to the renderer.
         """
-
-        # TODO: Support custom filename generation!
-        # filename = kwargs.get('filename', 'report.pdf')
 
         context = self.get_context_data(request)
 
@@ -196,6 +193,27 @@ class ReportTemplateBase(ReportBase):
         context['request'] = request
         context['user'] = request.user
 
+        return context
+
+    def render_to_string(self, request, **kwargs):
+        """
+        Render the report to a HTML stiring.
+
+        Useful for debug mode (viewing generated code)
+        """
+
+        return render_to_string(self.template_name, self.context(request), request)
+
+    def render(self, request, **kwargs):
+        """
+        Render the template to a PDF file.
+
+        Uses django-weasyprint plugin to render HTML template against Weasyprint
+        """
+
+        # TODO: Support custom filename generation!
+        # filename = kwargs.get('filename', 'report.pdf')
+
         # Render HTML template to PDF
         wp = WeasyprintReportMixin(
             request,
@@ -205,7 +223,7 @@ class ReportTemplateBase(ReportBase):
             **kwargs)
 
         return wp.render_to_response(
-            context,
+            self.context(request),
             **kwargs)
 
     enabled = models.BooleanField(

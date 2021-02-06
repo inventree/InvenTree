@@ -50,6 +50,10 @@ content: "{% trans 'Stock Item Test Report' %}";
     width: 50%;
 }
 
+.part-img {
+    height: 4cm;
+}
+
 {% endblock %}
 
 {% block page_content %}
@@ -64,7 +68,7 @@ content: "{% trans 'Stock Item Test Report' %}";
         <p><i>Stock Item ID: {{ stock_item.pk }}</i></p>
     </div>
     <div class='img-right'>
-        <img src="{% part_image part %}">
+        <img class='part-img' src="{% part_image part %}">
         <hr>
         <h4>
             {% if stock_item.is_serialized %}
