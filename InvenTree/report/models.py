@@ -18,6 +18,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core.validators import FileExtensionValidator
 
 import stock.models
+import common.models
 
 from InvenTree.helpers import validateFilterString
 
@@ -186,15 +187,14 @@ class ReportTemplateBase(ReportBase):
 
         context = self.get_context_data(request)
 
-        context['media'] = settings.MEDIA_ROOT
-
-        context['report_name'] = self.name
+        context['date'] = datetime.datetime.now().date()
+        context['datetime'] = datetime.datetime.now()
+        context['default_page_size'] = common.models.InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE')
         context['report_description'] = self.description
+        context['report_name'] = self.name
         context['report_revision'] = self.revision
         context['request'] = request
         context['user'] = request.user
-        context['date'] = datetime.datetime.now().date()
-        context['datetime'] = datetime.datetime.now()
 
         # Render HTML template to PDF
         wp = WeasyprintReportMixin(

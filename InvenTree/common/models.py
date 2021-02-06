@@ -174,6 +174,17 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'REPORT_DEFAULT_PAGE_SIZE': {
+            'name': _('Page Size'),
+            'description': _('Default page size for PDF reports'),
+            'default': 'A4',
+            'choices': [
+                ('A4', 'A4'),
+                ('Legal', 'Legal'),
+                ('Letter', 'Letter')
+            ],
+        },
+
         'REPORT_ENABLE_TEST_REPORT': {
             'name': _('Test Reports'),
             'description': _('Enable generation of test reports'),
