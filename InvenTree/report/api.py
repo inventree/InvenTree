@@ -3,12 +3,14 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.conf.urls import url, include
+from django.http import HttpResponse
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import generics, filters
 from rest_framework.response import Response
 
+import common.models
 import InvenTree.helpers
 
 from stock.models import StockItem
@@ -165,31 +167,53 @@ class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin):
 
         outputs = []
 
+        # In debug mode, generate single HTML output, rather than PDF
+        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+
         # Merge one or more PDF files into a single download
         for item in items:
             report = self.get_object()
             report.stock_item = item
 
-            outputs.append(report.render(request))
+            if debug_mode:
+                outputs.append(report.render_to_string(request))
+            else:
+                outputs.append(report.render(request))
 
-        pages = []
+        if debug_mode:
+            """
+            Contatenate all rendered templates into a single HTML string,
+            and return the string as a HTML response.
+            """
 
-        if len(outputs) > 1:
-            # If more than one output is generated, merge them into a single file
-            for output in outputs:
-                doc = output.get_document()
-                for page in doc.pages:
-                    pages.append(page)
+            html = "\n".join(outputs)
 
-            pdf = outputs[0].get_document().copy(pages).write_pdf()
+            return HttpResponse(html)
+
         else:
-            pdf = outputs[0].get_document().write_pdf()
+            """
+            Concatenate all rendered pages into a single PDF object,
+            and return the resulting document!
+            """
 
-        return InvenTree.helpers.DownloadFile(
-            pdf,
-            'test_report.pdf',
-            content_type='application/pdf'
-        )
+            pages = []
+
+            if len(outputs) > 1:
+                # If more than one output is generated, merge them into a single file
+                for output in outputs:
+                    doc = output.get_document()
+                    for page in doc.pages:
+                        pages.append(page)
+
+                pdf = outputs[0].get_document().copy(pages).write_pdf()
+            else:
+                pdf = outputs[0].get_document().write_pdf()
+
+            return InvenTree.helpers.DownloadFile(
+                pdf,
+                'test_report.pdf',
+                content_type='application/pdf'
+            )
 
 
 report_api_urls = [
