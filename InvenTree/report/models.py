@@ -13,6 +13,7 @@ import datetime
 
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError, FieldError
 
 from django.template.loader import render_to_string
 
@@ -262,9 +263,11 @@ class TestReport(ReportTemplateBase):
         Test if this report template matches a given StockItem objects
         """
 
-        filters = validateFilterString(self.filters)
-
-        items = stock.models.StockItem.objects.filter(**filters)
+        try:
+            filters = validateFilterString(self.filters)
+            items = stock.models.StockItem.objects.filter(**filters)
+        except (ValidationError, FieldError):
+            return False
 
         # Ensure the provided StockItem object matches the filters
         items = items.filter(pk=item.pk)

@@ -12,6 +12,7 @@ from blabel import LabelWriter
 
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.core.exceptions import ValidationError, FieldError
 
 from django.utils.translation import gettext_lazy as _
 
@@ -145,9 +146,12 @@ class StockItemLabel(LabelTemplate):
         Test if this label template matches a given StockItem object
         """
 
-        filters = validateFilterString(self.filters)
-
-        items = stock.models.StockItem.objects.filter(**filters)
+        try:
+            filters = validateFilterString(self.filters)
+            items = stock.models.StockItem.objects.filter(**filters)
+        except (ValidationError, FieldError):
+            # If an error exists with the "filters" field, return False
+            return False
 
         items = items.filter(pk=item.pk)
 
@@ -198,9 +202,11 @@ class StockLocationLabel(LabelTemplate):
         Test if this label template matches a given StockLocation object
         """
 
-        filters = validateFilterString(self.filters)
-
-        locs = stock.models.StockLocation.objects.filter(**filters)
+        try:
+            filters = validateFilterString(self.filters)
+            locs = stock.models.StockLocation.objects.filter(**filters)
+        except (ValidationError, FieldError):
+            return False
 
         locs = locs.filter(pk=location.pk)
 

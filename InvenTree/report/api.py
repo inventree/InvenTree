@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.conf.urls import url, include
+from django.core.exceptions import FieldError
 from django.http import HttpResponse
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -114,12 +115,19 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
                 matches = True
 
                 # Filter string defined for the report object
-                filters = InvenTree.helpers.validateFilterString(report.filters)
+                try:
+                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                except:
+                    continue
 
                 for item in items:
                     item_query = StockItem.objects.filter(pk=item.pk)
 
-                    if not item_query.filter(**filters).exists():
+                    try:
+                        if not item_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
                         matches = False
                         break
 
