@@ -102,7 +102,7 @@ function printTestReports(items, options={}) {
         return;
     }
 
-    // Request available labels from the server
+    // Request available reports from the server
     inventreeGet(
         '{% url "api-stockitem-testreport-list" %}',
         {
@@ -139,4 +139,58 @@ function printTestReports(items, options={}) {
             }
         }
     );
+}
+
+
+function printBomReports(parts, options={}) {
+    /**
+     * Print BOM reports for the provided part(s)
+     */
+
+    if (parts.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "Part(s) must be selected before printing reports" %}'
+        );
+
+        return;
+    }
+
+    // Request available reports from the server
+    inventreeGet(
+        '{% url "api-bom-report-list" %}',
+        {
+            enabled: true,
+            parts: parts,
+        },
+        {
+            success: function(response) {
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Reports Found" %}',
+                        '{% trans "No report templates found which match selected part(s)" %}',
+                    );
+
+                    return;
+                }
+
+                // Select which report to print
+                selectReport(
+                    response,
+                    parts,
+                    {
+                        success: function(pk) {
+                            var href = `/api/report/bom/${pk}/print/?`;
+
+                            parts.forEach(function(part) {
+                                href += `parts[]=${part}&`;
+                            });
+
+                            window.location.href = href;
+                        }
+                    }
+                );
+            }
+        }
+    )
 }
