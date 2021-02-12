@@ -183,6 +183,9 @@ class ReportTemplateBase(ReportBase):
 
     """
 
+    # Pass a single top-level object to the report template
+    object_to_print = None
+
     def get_context_data(self, request):
         """
         Supply context data to the template for rendering
@@ -257,9 +260,6 @@ class TestReport(ReportTemplateBase):
     def getSubdir(self):
         return 'test'
 
-    # Requires a stock_item object to be given to it before rendering
-    stock_item = None
-
     filters = models.CharField(
         blank=True,
         max_length=250,
@@ -287,11 +287,14 @@ class TestReport(ReportTemplateBase):
         return items.exists()
 
     def get_context_data(self, request):
+
+        stock_item = self.object_to_print
+
         return {
-            'stock_item': self.stock_item,
-            'part': self.stock_item.part,
-            'results': self.stock_item.testResultMap(),
-            'result_list': self.stock_item.testResultList()
+            'stock_item': stock_item,
+            'part': stock_item.part,
+            'results': stock_item.testResultMap(),
+            'result_list': stock_item.testResultList()
         }
 
 
@@ -322,8 +325,6 @@ class BillOfMaterialsReport(ReportTemplateBase):
     def getSubDir(self):
         return 'bom'
 
-    # Requires a part object to be given to it before rendering
-
     filters = models.CharField(
         blank=True,
         max_length=250,
@@ -336,7 +337,7 @@ class BillOfMaterialsReport(ReportTemplateBase):
 
     def get_context_data(self, request):
         return {
-            'part': self.part,
+            'part': self.object_to_print,
             'category': self.category,
         }
 

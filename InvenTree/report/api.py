@@ -117,6 +117,74 @@ class PartReportMixin:
         return valid_parts
 
 
+class ReportPrintMixin:
+    """
+    Mixin for printing reports
+    """
+
+    def print(self, request, items_to_print):
+        """
+        Print this report template against a number of pre-validated items.
+        """
+
+        if len(items_to_print) == 0:
+            # No valid items provided, return an error message
+            data = {
+                'error': _('No valid objects provided to template'),
+            }
+
+            return Response(data, status=400)
+
+        outputs = []
+
+        # In debug mode, generate single HTML output, rather than PDF
+        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+
+        # Merge one or more PDF files into a single download
+        for item in items_to_print:
+            report = self.get_object()
+            report.object_to_print = item
+
+            if debug_mode:
+                outputs.append(report.render_to_string(request))
+            else:
+                outputs.append(report.render(request))
+
+        if debug_mode:
+            """
+            Contatenate all rendered templates into a single HTML string,
+            and return the string as a HTML response.
+            """
+
+            html = "\n".join(outputs)
+
+            return HttpResponse(html)
+        else:
+            """
+            Concatenate all rendered pages into a single PDF object,
+            and return the resulting document!
+            """
+
+            pages = []
+
+            if len(outputs) > 1:
+                # If more than one output is generated, merge them into a single file
+                for output in outputs:
+                    doc = output.get_document()
+                    for page in doc.pages:
+                        pages.append(page)
+
+                pdf = outputs[0].get_document().copy(pages).write_pdf()
+            else:
+                pdf = outputs[0].get_document().write_pdf()
+
+            return InvenTree.helpers.DownloadFile(
+                pdf,
+                'test_report.pdf',
+                content_type='application/pdf'
+            )
+
+
 class StockItemTestReportList(ReportListView, StockItemReportMixin):
     """
     API endpoint for viewing list of TestReport objects.
@@ -191,7 +259,7 @@ class StockItemTestReportDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TestReportSerializer
 
 
-class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin):
+class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin, ReportPrintMixin):
     """
     API endpoint for printing a TestReport object
     """
@@ -206,64 +274,8 @@ class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin):
 
         items = self.get_items()
 
-        if len(items) == 0:
-            # No valid items provided, return an error message
-            data = {
-                'error': _('Must provide valid StockItem(s)')
-            }
-
-            return Response(data, status=400)
-
-        outputs = []
-
-        # In debug mode, generate single HTML output, rather than PDF
-        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
-
-        # Merge one or more PDF files into a single download
-        for item in items:
-            report = self.get_object()
-            report.stock_item = item
-
-            if debug_mode:
-                outputs.append(report.render_to_string(request))
-            else:
-                outputs.append(report.render(request))
-
-        if debug_mode:
-            """
-            Contatenate all rendered templates into a single HTML string,
-            and return the string as a HTML response.
-            """
-
-            html = "\n".join(outputs)
-
-            return HttpResponse(html)
-
-        else:
-            """
-            Concatenate all rendered pages into a single PDF object,
-            and return the resulting document!
-            """
-
-            pages = []
-
-            if len(outputs) > 1:
-                # If more than one output is generated, merge them into a single file
-                for output in outputs:
-                    doc = output.get_document()
-                    for page in doc.pages:
-                        pages.append(page)
-
-                pdf = outputs[0].get_document().copy(pages).write_pdf()
-            else:
-                pdf = outputs[0].get_document().write_pdf()
-
-            return InvenTree.helpers.DownloadFile(
-                pdf,
-                'test_report.pdf',
-                content_type='application/pdf'
-            )
-
+        return self.print(request, items)
+       
 
 class BOMReportList(ReportListView, PartReportMixin):
     """
@@ -326,6 +338,33 @@ class BOMReportList(ReportListView, PartReportMixin):
             queryset = queryset.filter(pk__in=[pk for pk in valid_report_ids])
 
         return queryset
+
+
+class BOMReportDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for a single BillOfMaterialReport object
+    """
+
+    queryset = BillOfMaterialsReport.objects.all()
+    serializer_class = BOMReportSerializer
+
+
+class BOMReportPrint(generics.RetrieveUpdateDestroyAPIView, PartReportMixin, ReportPrintMixin):
+    """
+    API endpoint for printing a BillOfMaterialReport object
+    """
+
+    queryset = BillOfMaterialsReport.objects.all()
+    serializer_class = BOMReportSerializer
+
+    def get(self, request, *args, **kwargs):
+        """
+        Check if valid part item(s) have been provided
+        """
+
+        parts = self.get_parts()
+
+        return self.print(request, parts)
 
 
 report_api_urls = [
