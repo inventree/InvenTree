@@ -20,6 +20,7 @@ from django.template.loader import render_to_string
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import FileExtensionValidator
 
+import part.models
 import stock.models
 import common.models
 
@@ -70,8 +71,19 @@ def rename_template(instance, filename):
 
 
 def validate_stock_item_report_filters(filters):
+    """
+    Validate filter string against StockItem model
+    """
 
     return validateFilterString(filters, model=stock.models.StockItem)
+
+
+def validate_part_report_filters(filters):
+    """
+    Validate filter string against Part model
+    """
+
+    return validateFilterString(filters, model=part.models.Part)
 
 
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
@@ -252,7 +264,7 @@ class TestReport(ReportTemplateBase):
         blank=True,
         max_length=250,
         verbose_name=_('Filters'),
-        help_text=_("Part query filters (comma-separated list of key=value pairs)"),
+        help_text=_("StockItem query filters (comma-separated list of key=value pairs)"),
         validators=[
             validate_stock_item_report_filters
         ]
@@ -300,6 +312,33 @@ def rename_snippet(instance, filename):
             os.remove(fullpath)
 
     return path
+
+
+class BillOfMaterialsReport(ReportTemplateBase):
+    """
+    Render a Bill of Materials against a Part object
+    """
+
+    def getSubDir(self):
+        return 'bom'
+
+    # Requires a part object to be given to it before rendering
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Part Filters'),
+        help_text=_('Part query filters (comma-separated list of key=value pairs'),
+        validators=[
+            validate_part_report_filters
+        ]
+    )
+
+    def get_context_data(self, request):
+        return {
+            'part': self.part,
+            'category': self.category,
+        }
 
 
 class ReportSnippet(models.Model):
