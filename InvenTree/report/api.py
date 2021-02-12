@@ -369,7 +369,15 @@ class BOMReportPrint(generics.RetrieveUpdateDestroyAPIView, PartReportMixin, Rep
 
 report_api_urls = [
 
+    # Bill of Material reports
     url(r'bom/', include([
+
+        # Detail views
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'print/?', BOMReportPrint.as_view(), name='api-bom-report-print'),
+            url(r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'),
+        ])),
+
         # List view
         url(r'^.*$', BOMReportList.as_view(), name='api-bom-report-list'),
     ])),

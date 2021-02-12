@@ -336,9 +336,12 @@ class BillOfMaterialsReport(ReportTemplateBase):
     )
 
     def get_context_data(self, request):
+
+        part = self.object_to_print
+
         return {
-            'part': self.object_to_print,
-            'category': self.category,
+            'part': part,
+            'category': part.category,
         }
 
 
