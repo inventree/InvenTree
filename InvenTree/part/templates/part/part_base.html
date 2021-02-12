@@ -119,7 +119,7 @@
             <td>
                 <h4>{% trans "Available Stock" %}</h4>
             </td>
-            <td><h4>{% decimal part.available_stock %} {{ part.units }}</h4></td>
+            <td><h4>{% decimal part.available_stock %}{% if part.units %} {{ part.units }}{% endif %}</h4></td>
         </tr>
         <tr>
             <td><span class='fas fa-map-marker-alt'></span></td>

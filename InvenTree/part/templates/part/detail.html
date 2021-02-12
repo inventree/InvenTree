@@ -97,11 +97,13 @@
             </a></td>
         </tr>
         {% endif %}
+        {% if part.units %}
         <tr>
             <td></td>
             <td><b>{% trans "Units" %}</b></td>
             <td>{{ part.units }}</td>
         </tr>
+        {% endif %}
         {% if part.minimum_stock > 0 %}
         <tr>
             <td><span class='fas fa-greater-than-equal'></span></td>
