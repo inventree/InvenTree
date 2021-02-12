@@ -101,7 +101,7 @@ function loadStockTestResultsTable(table, options) {
             },
             {
                 field: 'test_name',
-                title: "{% trans "Test Name" %}",
+                title: '{% trans "Test Name" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var html = value;
@@ -925,7 +925,7 @@ function loadStockTrackingTable(table, options) {
             }
             else
             {
-                return "{% trans "No user information" %}";
+                return '{% trans "No user information" %}';
             }
         }
     });
@@ -1206,7 +1206,7 @@ function loadInstalledInTable(table, options) {
             columns: [
                 {
                     checkbox: true,
-                    title: '{% trans 'Select' %}',
+                    title: '{% trans "Select" %}',
                     searchable: false,
                     switchable: false,
                 },
