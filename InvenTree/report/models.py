@@ -322,7 +322,7 @@ class BillOfMaterialsReport(ReportTemplateBase):
     Render a Bill of Materials against a Part object
     """
 
-    def getSubDir(self):
+    def getSubdir(self):
         return 'bom'
 
     filters = models.CharField(
