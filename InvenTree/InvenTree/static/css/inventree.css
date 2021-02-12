@@ -574,7 +574,7 @@
     margin-bottom: 3px;
 }
 
-.modal-form-content {
+.modal-form-content-wrapper {
   border-radius: 0;
   position:relative;
   height: auto !important;
