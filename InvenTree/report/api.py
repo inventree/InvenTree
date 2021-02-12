@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.conf.urls import url, include
-from django.core.exceptions import FieldError
+from django.core.exceptions import ValidationError, FieldError
 from django.http import HttpResponse
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -16,8 +16,13 @@ import InvenTree.helpers
 
 from stock.models import StockItem
 
+import part.models
+
 from .models import TestReport
+from .models import BillOfMaterialsReport
+
 from .serializers import TestReportSerializer
+from .serializers import BOMReportSerializer
 
 
 class ReportListView(generics.ListAPIView):
@@ -74,6 +79,42 @@ class StockItemReportMixin:
         valid_items = StockItem.objects.filter(pk__in=valid_ids)
 
         return valid_items
+
+
+class PartReportMixin:
+    """
+    Mixin for extracting part items from query params
+    """
+
+    def get_parts(self):
+        """
+        Return a list of requested part objects
+        """
+
+        parts = []
+
+        params = self.request.query_params
+
+        if 'parts[]' in params:
+            parts = params.getlist('parts[]', [])
+        elif 'part' in params:
+            parts = [params.get('part', None)]
+
+        if type(parts) not in [list, tuple]:
+            parts = [parts]
+
+        valid_ids = []
+
+        for p in parts:
+            try:
+                valid_ids.append(int(p))
+            except (ValueError):
+                continue
+
+        # Extract a valid set of Part objects
+        valid_parts = part.models.Part.objects.filter(pk__in=valid_ids)
+
+        return valid_parts
 
 
 class StockItemTestReportList(ReportListView, StockItemReportMixin):
@@ -224,7 +265,75 @@ class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin):
             )
 
 
+class BOMReportList(ReportListView, PartReportMixin):
+    """
+    API endpoint for viewing a list of BillOfMaterialReport objects.
+
+    Filterably by:
+
+    - enabled: Filter by enabled / disabled status
+    - part: Filter by single part
+    - parts: Filter by list of parts
+    """
+
+    queryset = BillOfMaterialsReport.objects.all()
+    serializer_class = BOMReportSerializer
+
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
+
+        # List of Part objects to match against
+        parts = self.get_parts()
+
+        if len(parts) > 0:
+            """
+            We wish to filter by part(s).
+
+            We need to compare the 'filters' string of each report,
+            and see if it matches against each of the specified parts.
+            """
+
+            valid_report_ids = set()
+
+            for report in queryset.all():
+
+                matches = True
+
+                try:
+                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                except ValidationError:
+                    # Filters are ill-defined
+                    continue
+
+                for p in parts:
+                    part_query = part.models.Part.objects.filter(pk=p.pk)
+
+                    try:
+                        if not part_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
+                        matches = False
+                        break
+
+                if matches:
+                    valid_report_ids.add(report.pk)
+                else:
+                    continue
+
+            # Reduce queryset to only valid matches
+            queryset = queryset.filter(pk__in=[pk for pk in valid_report_ids])
+
+        return queryset
+
+
 report_api_urls = [
+
+    url(r'bom/', include([
+        # List view
+        url(r'^.*$', BOMReportList.as_view(), name='api-bom-report-list'),
+    ])),
 
     # Stock item test reports
     url(r'test/', include([

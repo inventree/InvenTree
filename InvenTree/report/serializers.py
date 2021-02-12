@@ -5,6 +5,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
 from .models import TestReport
+from .models import BillOfMaterialsReport
 
 
 class TestReportSerializer(InvenTreeModelSerializer):
@@ -14,10 +15,26 @@ class TestReportSerializer(InvenTreeModelSerializer):
     class Meta:
         model = TestReport
         fields = [
-            'pk',
-            'name',
-            'description',
-            'template',
-            'filters',
-            'enabled',
-        ]
+        'pk',
+        'name',
+        'description',
+        'template',
+        'filters',
+        'enabled',
+    ]
+
+
+class BOMReportSerializer(InvenTreeModelSerializer):
+
+    template = InvenTreeAttachmentSerializerField(required=True)
+
+    class Meta:
+        model = BillOfMaterialsReport
+        fields = [
+        'pk',
+        'name',
+        'description',
+        'template',
+        'filters',
+        'enabled',
+    ]
