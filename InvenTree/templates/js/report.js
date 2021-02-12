@@ -1,10 +1,10 @@
 {% load i18n %}
 
 
-function selectTestReport(reports, items, options={}) {
+function selectReport(reports, items, options={}) {
     /**
-     * Present the user with the available test reports,
-     * and allow them to select which test report to print.
+     * Present the user with the available reports,
+     * and allow them to select which report to print.
      * 
      * The intent is that the available report templates have been requested
      * (via AJAX) from the server.
@@ -44,7 +44,7 @@ function selectTestReport(reports, items, options={}) {
 
         html += `
         <div class='alert alert-block alert-info'>
-        ${items.length} {% trans "stock items selected" %}
+        ${items.length} {% trans "items selected" %}
         </div>`;
     }
 
@@ -121,7 +121,7 @@ function printTestReports(items, options={}) {
                 }
 
                 // Select report template to print
-                selectTestReport(
+                selectReport(
                     response,
                     items,
                     {
