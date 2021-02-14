@@ -182,8 +182,19 @@ if cors_opt:
     if not CORS_ORIGIN_ALLOW_ALL:
         CORS_ORIGIN_WHITELIST = cors_opt.get('whitelist', [])
 
+# URL subpath prefix (e.g. for hosting files at a subdirectory such as https://hostname.com/inventree)
+SUBPATH_URL = get_setting(
+    'INVENTREE_SUBPATH',
+    CONFIG.get('subpath', None)
+)
+
+FORCE_SCRIPT_NAME = SUBPATH_URL
+
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
+
+if SUBPATH_URL:
+    STATIC_URL = os.path.join(SUBPATH_URL, STATIC_URL)
 
 # The filesystem location for served static files
 STATIC_ROOT = os.path.abspath(
@@ -213,6 +224,9 @@ STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
 
 # Web URL endpoint for served media files
 MEDIA_URL = '/media/'
+
+if SUBPATH_URL:
+    MEDIA_URL = os.path.join(SUBPATH_URL, MEDIA_URL)
 
 # The filesystem location for served static files
 MEDIA_ROOT = os.path.abspath(
