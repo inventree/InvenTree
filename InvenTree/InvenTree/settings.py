@@ -193,8 +193,11 @@ FORCE_SCRIPT_NAME = SUBPATH_URL
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
 
+API_URL = '/api/'
+
 if SUBPATH_URL:
     STATIC_URL = os.path.join(SUBPATH_URL, STATIC_URL)
+    API_URL = os.path.join(SUBPATH_URL, API_URL)
 
 # The filesystem location for served static files
 STATIC_ROOT = os.path.abspath(
@@ -330,6 +333,7 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'InvenTree.context.inventree_urls',
                 'InvenTree.context.health_status',
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',

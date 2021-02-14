@@ -55,7 +55,7 @@ function postBarcodeData(barcode_data, options={}) {
 
     var modal = options.modal || '#modal-form';
 
-    var url = options.url || '/api/barcode/';
+    var url = options.url || '{{ api_url }}barcode/';
 
     var data = options.data || {};
 
@@ -287,7 +287,7 @@ function linkBarcodeDialog(stockitem, options={}) {
     barcodeDialog(
         "{% trans 'Link Barcode to Stock Item' %}",
         {
-            url: '/api/barcode/link/',
+            url: '{{ api_url }}barcode/link/',
             data: {
                 stockitem: stockitem,
             },
@@ -317,7 +317,7 @@ function unlinkBarcode(stockitem) {
             accept_text: "{% trans 'Unlink' %}",
             accept: function() {
                 inventreePut(
-                    `/api/stock/${stockitem}/`,
+                    `{{ api_url }}/stock/${stockitem}/`,
                     {
                         // Clear the UID field
                         uid: '',

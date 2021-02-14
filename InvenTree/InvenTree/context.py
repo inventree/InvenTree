@@ -10,6 +10,8 @@ from InvenTree.status_codes import StockHistoryCode
 
 import InvenTree.status
 
+from django.conf import settings
+
 from users.models import RuleSet
 
 
@@ -67,6 +69,18 @@ def status_codes(request):
         'BuildStatus': BuildStatus,
         'StockStatus': StockStatus,
         'StockHistoryCode': StockHistoryCode,
+    }
+
+
+def inventree_urls(request):
+    """
+    Provide various URL configuration values
+    """
+
+    return {
+        'api_url': settings.API_URL,
+        'static_url': settings.STATIC_URL,
+        'media_url': settings.MEDIA_URL
     }
 
 

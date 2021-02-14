@@ -861,7 +861,7 @@ function loadStockTable(table, options) {
             var requests = [];
 
             selections.forEach(function(item) {
-                var url = `/api/stock/${item.pk}/`;
+                var url = `{{ api_url }}/stock/${item.pk}/`;
 
                 requests.push(
                     inventreePut(
@@ -1235,7 +1235,7 @@ function createNewStockItem(options) {
 
                 // Request part information from the server
                 inventreeGet(
-                    `/api/part/${value}/`, {},
+                    `{{ api_url }}/part/${value}/`, {},
                     {
                         success: function(response) {
 

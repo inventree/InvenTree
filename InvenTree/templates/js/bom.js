@@ -526,7 +526,7 @@ function loadBomTable(table, options) {
         table.on('click', '.bom-validate-button', function() {
 
             var pk = $(this).attr('pk');
-            var url = `/api/bom/${pk}/validate/`;
+            var url = `{{ api_url }}/bom/${pk}/validate/`;
 
             inventreePut(
                 url,

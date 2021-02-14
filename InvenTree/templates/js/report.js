@@ -126,7 +126,7 @@ function printTestReports(items, options={}) {
                     items,
                     {
                         success: function(pk) {
-                            var href = `/api/report/test/${pk}/print/?`;
+                            var href = `{{ api_url }}/report/test/${pk}/print/?`;
 
                             items.forEach(function(item) {
                                 href += `item=${item}&`;
