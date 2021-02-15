@@ -45,27 +45,35 @@ src="{% static 'img/blank_image.png' %}"
 </h3>
 <hr>
 <p>{{ build.title }}</p>
-<div class='btn-row'>
-    <div class='btn-group action-buttons'>
-        {% if roles.build.change %}
-        <button type='button' class='btn btn-default' id='build-edit' title='{% trans "Edit Build" %}'>
-            <span class='fas fa-edit icon-green'/>
+
+<div class='btn-group action-buttons' role='group'>
+    <!-- Printing options -->
+    <div class='btn-group'>
+        <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+            <span class='fas fa-print'></span> <span class='caret'></span>
         </button>
-        {% if build.is_active %}
-        <button type='button' class='btn btn-default' id='build-complete' title='{% trans "Complete Build" %}'>
-            <span class='fas fa-tools'/>
-        </button>
-        <button type='button' class='btn btn-default btn-glyph' id='build-cancel' title='{% trans "Cancel Build" %}'>
-            <span class='fas fa-times-circle icon-red'/>
-        </button>
-        {% endif %}
-        {% endif %}
-        {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
-        <button type='button' class='btn btn-default btn-glyph' id='build-delete' title='{% trans "Delete Build" %}'>
-            <span class='fas fa-trash-alt icon-red'/>
-        </button>
-        {% endif %}
+        <ul class='dropdown-menu' role='menu'>
+            <li><a href='#' id='print-build-report'><span class='fas fa-file-pdf'></span> {% trans "Print Build Order" %}</a></li>
+        </ul>
     </div>
+    {% if roles.build.change %}
+    <button type='button' class='btn btn-default' id='build-edit' title='{% trans "Edit Build" %}'>
+        <span class='fas fa-edit icon-green'/>
+    </button>
+    {% if build.is_active %}
+    <button type='button' class='btn btn-default' id='build-complete' title='{% trans "Complete Build" %}'>
+        <span class='fas fa-tools'/>
+    </button>
+    <button type='button' class='btn btn-default btn-glyph' id='build-cancel' title='{% trans "Cancel Build" %}'>
+        <span class='fas fa-times-circle icon-red'/>
+    </button>
+    {% endif %}
+    {% endif %}
+    {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
+    <button type='button' class='btn btn-default btn-glyph' id='build-delete' title='{% trans "Delete Build" %}'>
+        <span class='fas fa-trash-alt icon-red'/>
+    </button>
+    {% endif %}
 </div>
 {% endblock %}
 
@@ -149,6 +157,10 @@ src="{% static 'img/blank_image.png' %}"
                 submit_text: "Complete Build",
             }
         );
+    });
+
+    $('#print-build-report').click(function() {
+        printBuildReports([{{ build.pk }}]);
     });
 
     $("#build-delete").on('click', function() {

@@ -142,6 +142,59 @@ function printTestReports(items, options={}) {
 }
 
 
+function printBuildReports(builds, options={}) {
+    /**
+     * Print Build report for the provided build(s)
+     */
+
+    if (builds.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Builds" %}',
+            '{% trans "Build(s) must be selected before printing reports" %}',
+        );
+
+        return;
+    }
+
+    inventreeGet(
+        '{% url "api-build-report-list" %}',
+        {
+            enabled: true,
+            builds: builds,
+        },
+        {
+            success: function(response) {
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Reports Found" %}',
+                        '{% trans "No report templates found which match selected build(s)" %}'
+                    );
+
+                    return;
+                }
+
+                // Select which report to print
+                selectReport(
+                    response,
+                    builds,
+                    {
+                        success: function(pk) {
+                            var href = `/api/report/build/${pk}/print/?`;
+
+                            builds.forEach(function(build) {
+                                href += `builds[]=${build}&`;
+                            });
+
+                            window.location.href = href;
+                        }
+                    }
+                )
+            }
+        }
+    )
+}
+
+
 function printBomReports(parts, options={}) {
     /**
      * Print BOM reports for the provided part(s)
