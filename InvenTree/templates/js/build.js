@@ -638,6 +638,12 @@ function loadBuildTable(table, options) {
                 switchable: false,
             },
             {
+                checkbox: true,
+                title: '{% trans "Select" %}',
+                searchable: false,
+                switchable: false,
+            },
+            {
                 field: 'reference',
                 title: '{% trans "Build" %}',
                 sortable: true,
@@ -717,6 +723,13 @@ function loadBuildTable(table, options) {
             },
         ],
     });
+
+    linkButtonsToSelection(
+        table,
+        [
+            '#build-print-options',
+        ]
+    );
 }
 
 
