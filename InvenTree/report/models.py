@@ -20,9 +20,10 @@ from django.template.loader import render_to_string
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import FileExtensionValidator
 
+import build.models
+import common.models
 import part.models
 import stock.models
-import common.models
 
 from InvenTree.helpers import validateFilterString
 
@@ -84,6 +85,14 @@ def validate_part_report_filters(filters):
     """
 
     return validateFilterString(filters, model=part.models.Part)
+
+
+def validate_build_report_filters(filters):
+    """
+    Validate filter string against Build model
+    """
+
+    return validateFilterString(filters, model=build.models.Build)
 
 
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
@@ -298,23 +307,40 @@ class TestReport(ReportTemplateBase):
         }
 
 
-def rename_snippet(instance, filename):
+class BuildReport(ReportTemplateBase):
+    """
+    Build order / work order report
+    """
 
-    filename = os.path.basename(filename)
+    def getSubdir(self):
+        return 'build'
 
-    path = os.path.join('report', 'snippets', filename)
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Build Filters'),
+        help_text=_('Build query filters (comma-separated list of key=value pairs'),
+        validators=[
+            validate_build_report_filters,
+        ]
+    )
 
-    # If the snippet file is the *same* filename as the one being uploaded,
-    # delete the original one from the media directory
-    if str(filename) == str(instance.snippet):
-        fullpath = os.path.join(settings.MEDIA_ROOT, path)
-        fullpath = os.path.abspath(fullpath)
-       
-        if os.path.exists(fullpath):
-            logger.info(f"Deleting existing snippet file: '{filename}'")
-            os.remove(fullpath)
+    def get_context_data(self, request):
+        """
+        Custom context data for the build report
+        """
 
-    return path
+        my_build = self.object_to_print
+
+        if not type(my_build) == build.models.Build:
+            raise TypeError('Provided model is not a Build object')
+
+        return {
+            'build': my_build,
+            'part': my_build.part,
+            'reference': my_build.reference,
+            'quantity': my_build.quantity,
+        }
 
 
 class BillOfMaterialsReport(ReportTemplateBase):
@@ -343,6 +369,25 @@ class BillOfMaterialsReport(ReportTemplateBase):
             'part': part,
             'category': part.category,
         }
+
+
+def rename_snippet(instance, filename):
+
+    filename = os.path.basename(filename)
+
+    path = os.path.join('report', 'snippets', filename)
+
+    # If the snippet file is the *same* filename as the one being uploaded,
+    # delete the original one from the media directory
+    if str(filename) == str(instance.snippet):
+        fullpath = os.path.join(settings.MEDIA_ROOT, path)
+        fullpath = os.path.abspath(fullpath)
+       
+        if os.path.exists(fullpath):
+            logger.info(f"Deleting existing snippet file: '{filename}'")
+            os.remove(fullpath)
+
+    return path
 
 
 class ReportSnippet(models.Model):

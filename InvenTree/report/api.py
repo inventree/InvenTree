@@ -16,12 +16,15 @@ import InvenTree.helpers
 
 from stock.models import StockItem
 
+import build.models
 import part.models
 
 from .models import TestReport
+from .models import BuildReport
 from .models import BillOfMaterialsReport
 
 from .serializers import TestReportSerializer
+from .serializers import BuildReportSerializer
 from .serializers import BOMReportSerializer
 
 
@@ -79,6 +82,39 @@ class StockItemReportMixin:
         valid_items = StockItem.objects.filter(pk__in=valid_ids)
 
         return valid_items
+
+
+class BuildReportMixin:
+    """
+    Mixin for extracting Build items from query params
+    """
+
+    def get_builds(self):
+        """
+        Return a list of requested Build objects
+        """
+
+        builds = []
+
+        params = self.request.query_params
+
+        if 'builds[]' in params:
+            builds = params.getlist('builds[]', [])
+        elif 'build' in params:
+            builds = [params.get('build', None)]
+
+        if type(builds) not in [list, tuple]:
+            builds = [builds]
+
+        valid_ids = []
+
+        for b in builds:
+            try:
+                valid_ids.append(int(b))
+            except (ValueError):
+                continue
+
+        return build.models.Build.objects.filter(pk__in=valid_ids)
 
 
 class PartReportMixin:
@@ -349,7 +385,7 @@ class BOMReportDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BOMReportSerializer
 
 
-class BOMReportPrint(generics.RetrieveUpdateDestroyAPIView, PartReportMixin, ReportPrintMixin):
+class BOMReportPrint(generics.RetrieveAPIView, PartReportMixin, ReportPrintMixin):
     """
     API endpoint for printing a BillOfMaterialReport object
     """
@@ -367,7 +403,107 @@ class BOMReportPrint(generics.RetrieveUpdateDestroyAPIView, PartReportMixin, Rep
         return self.print(request, parts)
 
 
+class BuildReportList(ReportListView, BuildReportMixin):
+    """
+    API endpoint for viewing a list of BuildReport objects.
+
+    Can be filtered by:
+
+    - enabled: Filter by enabled / disabled status
+    - build: Filter by a single build
+    - builds[]: Filter by a list of builds
+    """
+
+    queryset = BuildReport.objects.all()
+    serializer_class = BuildReportSerializer
+
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
+
+        # List of Build objects to match against
+        builds = self.get_builds()
+
+        if len(builds) > 0:
+            """
+            We wish to filter by Build(s)
+
+            We need to compare the 'filters' string of each report,
+            and see if it matches against each of the specified parts
+            
+            # TODO: This code needs some refactoring!
+            """
+
+            valid_build_ids = set()
+
+            for report in queryset.all():
+
+                matches = True
+
+                try:
+                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                except ValidationError:
+                    continue
+
+                for b in builds:
+                    build_query = build.models.Build.objects.filter(pk=b.pk)
+
+                    try:
+                        if not build_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
+                        matches = False
+                        break
+
+                if matches:
+                    valid_build_ids.add(report.pk)
+                else:
+                    continue
+
+            # Reduce queryset to only valid matches
+            queryset = queryset.filter(pk__in=[pk for pk in valid_build_ids])
+
+        return queryset
+
+
+class BuildReportDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for a single BuildReport object
+    """
+
+    queryset = BuildReport.objects.all()
+    serializer_class = BuildReportSerializer
+
+
+class BuildReportPrint(generics.RetrieveAPIView, BuildReportMixin, ReportPrintMixin):
+    """
+    API endpoint for printing a BuildReport
+    """
+
+    queryset = BuildReport.objects.all()
+    serializer_class = BuildReportSerializer
+
+    def get(self, request, *ars, **kwargs):
+
+        builds = self.get_builds()
+
+        return self.print(request, builds)
+
+
 report_api_urls = [
+
+    # Build reports
+    url(r'build/', include([
+        # Detail views
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
+            url(r'^.*$', BuildReportDetail.as_view(), name='api-build-report-detail'),
+        ])),
+
+        # List view
+        url(r'^.*$', BuildReportList.as_view(), name='api-build-report-list'),
+    ])),
 
     # Bill of Material reports
     url(r'bom/', include([
