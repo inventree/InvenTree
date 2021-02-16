@@ -22,10 +22,17 @@ def asset(filename):
     Return fully-qualified path for an upload report asset file.
     """
 
-    path = os.path.join(settings.MEDIA_ROOT, 'report', 'assets', filename)
-    path = os.path.abspath(path)
+    # If in debug mode, return URL to the image, not a local file
+    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
-    return f"file://{path}"
+    if debug_mode:
+        path = os.path.join(settings.MEDIA_URL, 'report', 'assets', filename)
+    else:
+
+        path = os.path.join(settings.MEDIA_ROOT, 'report', 'assets', filename)
+        path = os.path.abspath(path)
+
+        return f"file://{path}"
 
 
 @register.simple_tag()
@@ -33,6 +40,9 @@ def part_image(part):
     """
     Return a fully-qualified path for a part image
     """
+
+    # If in debug mode, return URL to the image, not a local file
+    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
     if type(part) is Part:
         img = part.image.name
@@ -43,16 +53,23 @@ def part_image(part):
     else:
         img = ''
 
-    path = os.path.join(settings.MEDIA_ROOT, img)
-    path = os.path.abspath(path)
+    if debug_mode:
+        if img:
+            return os.path.join(settings.MEDIA_URL, img)
+        else:
+            return os.path.join(settings.STATIC_URL, 'img', 'blank_image.png')
 
-    if not os.path.exists(path) or not os.path.isfile(path):
-        # Image does not exist
-        # Return the 'blank' image
-        path = os.path.join(settings.STATIC_ROOT, 'img', 'blank_image.png')
+    else:
+        path = os.path.join(settings.MEDIA_ROOT, img)
         path = os.path.abspath(path)
 
-    return f"file://{path}"
+        if not os.path.exists(path) or not os.path.isfile(path):
+            # Image does not exist
+            # Return the 'blank' image
+            path = os.path.join(settings.STATIC_ROOT, 'img', 'blank_image.png')
+            path = os.path.abspath(path)
+
+        return f"file://{path}"
 
 
 @register.simple_tag()
