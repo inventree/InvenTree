@@ -41,7 +41,7 @@ from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize
 
-from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
+from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
 from build import models as BuildModels
 from order import models as OrderModels
@@ -938,6 +938,42 @@ class Part(MPTTModel):
 
             quantity += build_quantity
         
+        return quantity
+
+    def requiring_sales_orders(self):
+        """
+        Return a list of sales orders which require this part
+        """
+
+        orders = set()
+
+        # Get a list of line items for open orders which match this part
+        open_lines = OrderModels.SalesOrderLineItem.objects.filter(
+            order__status__in=SalesOrderStatus.OPEN,
+            part=self
+        )
+
+        for line in open_lines:
+            orders.add(line.order)
+
+        return orders
+
+    def required_sales_order_quantity(self):
+        """
+        Return the quantity of this part required for active sales orders
+        """
+
+        # Get a list of line items for open orders which match this part
+        open_lines = OrderModels.SalesOrderLineItem.objects.filter(
+            order__status__in=SalesOrderStatus.OPEN,
+            part=self
+        )
+
+        quantity = 0
+
+        for line in open_lines:
+            quantity += line.quantity
+
         return quantity
 
     @property

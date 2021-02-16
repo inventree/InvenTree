@@ -792,6 +792,16 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         context['starred'] = part.isStarredBy(self.request.user)
         context['disabled'] = not part.active
 
+        # Pre-calculate complex queries so they only need to be performed once
+        context['required_build_order_quantity'] = part.required_build_order_quantity()
+        context['allocated_build_order_quantity'] = part.build_order_allocation_count()
+
+        context['required_sales_order_quantity'] = part.required_sales_order_quantity()
+        context['allocated_sales_order_quantity'] = part.sales_order_allocation_count()
+
+        context['required'] = context['required_build_order_quantity'] + context['required_sales_order_quantity']
+        context['allocated'] = context['allocated_build_order_quantity'] + context['allocated_sales_order_quantity']
+
         return context
 
 
