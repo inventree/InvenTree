@@ -22,22 +22,19 @@ margin-top: 4cm;
     vertical-align: middle;
 }
 
-.float-right {
-    float: right;
-}
-
 .part-image {
     border: 1px solid;
     border-radius: 2px;
     vertical-align: middle;
     height: 40mm;
+    width: 100%;
     display: inline-block;
     z-index: 100;
 }
 
 .details-image {
-    max-width: 25%;
     float: right;
+    width: 30%;
 }
 
 .details {
@@ -49,10 +46,9 @@ margin-top: 4cm;
 }
 
 .details table {
-    overflow-x: scroll
     overflow-wrap: break-word;
     word-wrap: break-word;
-    width: 70%;
+    width: 65%;
     table-layout: fixed;
     font-size: 75%;
 }
@@ -101,7 +97,7 @@ content: "www.currawong.aero";
 {% block page_content %}
 
 <div class='details'>
-    <div class='details-image float-right'>
+    <div class='details-image'>
         <img class='part-image' src="{% part_image part %}">
     </div>
     
