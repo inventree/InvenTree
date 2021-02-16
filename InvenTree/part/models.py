@@ -884,6 +884,62 @@ class Part(MPTTModel):
 
         return max(total, 0)
 
+    def requiring_build_orders(self):
+        """
+        Return list of outstanding build orders which require this part
+        """
+
+        # List of BOM that this part is required for
+        boms = BomItem.objects.filter(sub_part=self)
+
+        part_ids = [bom.part.pk for bom in boms]
+
+        # Now, get a list of outstanding build orders which require this part
+        builds = BuildModels.Build.objects.filter(
+            part__in=part_ids,
+            status__in=BuildStatus.ACTIVE_CODES
+        )
+
+        return builds
+
+    def required_build_order_quantity(self):
+        """
+        Return the quantity of this part required for active build orders
+        """
+
+        # List of BOM that this part is required for
+        boms = BomItem.objects.filter(sub_part=self)
+
+        part_ids = [bom.part.pk for bom in boms]
+
+        # Now, get a list of outstanding build orders which require this part
+        builds = BuildModels.Build.objects.filter(
+            part__in=part_ids,
+            status__in=BuildStatus.ACTIVE_CODES
+        )
+
+        quantity = 0
+
+        for build in builds:
+            
+            bom_item = None
+
+            # Match BOM item to build
+            for bom in boms:
+                if bom.part == build.part:
+                    bom_item = bom
+                    break
+
+            if bom_item is None:
+                logger.warning("Found null BomItem when calculating required quantity")
+                continue
+
+            build_quantity = build.quantity *  bom_item.quantity
+
+            quantity += build_quantity
+        
+        return quantity
+
     @property
     def quantity_to_order(self):
         """ Return the quantity needing to be ordered for this part. """

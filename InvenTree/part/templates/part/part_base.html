@@ -127,6 +127,13 @@
             <td>{% include "part/stock_count.html" %}</td>
         </tr>
         {% if not part.is_template %}
+        {% if part.required_build_order_quantity > 0 %}
+        <tr>
+            <td><span class='fas fa-hand-holding'></span></td>
+            <td>{% trans "Required for Build Orders" %}</td>
+            <td>{% decimal part.required_build_order_quantity %}</td>
+        </tr>
+        {% endif %}
         {% if part.build_order_allocation_count > 0 %}
         <tr>
             <td><span class='fas fa-dolly'></span></td>
