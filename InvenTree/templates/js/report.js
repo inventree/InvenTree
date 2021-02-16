@@ -129,7 +129,7 @@ function printTestReports(items, options={}) {
                             var href = `/api/report/test/${pk}/print/?`;
 
                             items.forEach(function(item) {
-                                href += `items[]=${item}&`;
+                                href += `item=${item}&`;
                             });
 
                             window.location.href = href;
@@ -182,7 +182,7 @@ function printBuildReports(builds, options={}) {
                             var href = `/api/report/build/${pk}/print/?`;
 
                             builds.forEach(function(build) {
-                                href += `builds[]=${build}&`;
+                                href += `build=${build}&`;
                             });
 
                             window.location.href = href;
@@ -236,7 +236,7 @@ function printBomReports(parts, options={}) {
                             var href = `/api/report/bom/${pk}/print/?`;
 
                             parts.forEach(function(part) {
-                                href += `parts[]=${part}&`;
+                                href += `part=${part}&`;
                             });
 
                             window.location.href = href;

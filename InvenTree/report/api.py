@@ -62,13 +62,7 @@ class StockItemReportMixin:
 
         params = self.request.query_params
 
-        if 'items[]' in params:
-            items = params.getlist('items[]', [])
-        elif 'item' in params:
-            items = [params.get('item', None)]
-
-        if type(items) not in [list, tuple]:
-            item = [items]
+        items = params.getlist('item', [])
 
         valid_ids = []
 
@@ -98,13 +92,7 @@ class BuildReportMixin:
 
         params = self.request.query_params
 
-        if 'builds[]' in params:
-            builds = params.getlist('builds[]', [])
-        elif 'build' in params:
-            builds = [params.get('build', None)]
-
-        if type(builds) not in [list, tuple]:
-            builds = [builds]
+        builds = params.getlist('build', [])
 
         valid_ids = []
 
@@ -131,13 +119,7 @@ class PartReportMixin:
 
         params = self.request.query_params
 
-        if 'parts[]' in params:
-            parts = params.getlist('parts[]', [])
-        elif 'part' in params:
-            parts = [params.get('part', None)]
-
-        if type(parts) not in [list, tuple]:
-            parts = [parts]
+        parts = params.getlist('part', [])
 
         valid_ids = []
 
@@ -216,7 +198,7 @@ class ReportPrintMixin:
 
             return InvenTree.helpers.DownloadFile(
                 pdf,
-                'test_report.pdf',
+                'inventree_report.pdf',
                 content_type='application/pdf'
             )
 
@@ -228,8 +210,7 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
     Filterable by:
 
     - enabled: Filter by enabled / disabled status
-    - item: Filter by single stock item
-    - items: Filter by list of stock items
+    - item: Filter by stock item(s)
 
     """
 
@@ -320,8 +301,7 @@ class BOMReportList(ReportListView, PartReportMixin):
     Filterably by:
 
     - enabled: Filter by enabled / disabled status
-    - part: Filter by single part
-    - parts: Filter by list of parts
+    - part: Filter by part(s)
     """
 
     queryset = BillOfMaterialsReport.objects.all()
@@ -410,8 +390,7 @@ class BuildReportList(ReportListView, BuildReportMixin):
     Can be filtered by:
 
     - enabled: Filter by enabled / disabled status
-    - build: Filter by a single build
-    - builds[]: Filter by a list of builds
+    - build: Filter by Build object
     """
 
     queryset = BuildReport.objects.all()
