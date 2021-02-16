@@ -33,6 +33,7 @@ import InvenTree.fields
 
 from stock import models as StockModels
 from part import models as PartModels
+from users import models as UserModels
 
 
 class Build(MPTTModel):
@@ -53,6 +54,9 @@ class Build(MPTTModel):
         completion_date: Date the build was completed (or, if incomplete, the expected date of completion)
         link: External URL for extra information
         notes: Text notes
+        completed_by: User that completed the build
+        issued_by: User that issued the build
+        responsible: User (or group) responsible for completing the build
     """
 
     OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
@@ -213,6 +217,22 @@ class Build(MPTTModel):
         on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='builds_completed'
+    )
+
+    issued_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        help_text=_('User who issued this build order'),
+        related_name='builds_issued',
+    )
+
+    responsible = models.ForeignKey(
+        UserModels.Owner,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        help_text=_('User responsible for this build order'),
+        related_name='builds_responsible',
     )
     
     link = InvenTree.fields.InvenTreeURLField(

@@ -53,6 +53,8 @@ class EditBuildForm(HelperForm):
             'parent',
             'sales_order',
             'link',
+            'issued_by',
+            'responsible',
         ]
 
 
