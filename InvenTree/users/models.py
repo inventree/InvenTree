@@ -120,6 +120,8 @@ class RuleSet(models.Model):
         'report_reportasset',
         'report_reportsnippet',
         'report_testreport',
+        'report_buildreport',
+        'report_billofmaterialsreport',
         'part_partstar',
         'users_owner',
 
