@@ -696,6 +696,9 @@ class BuildCreate(AjaxCreateView):
 
         initials['quantity'] = self.request.GET.get('quantity', 1)
 
+        # Pre-fill the issued_by user
+        initials['issued_by'] = self.request.user
+
         return initials
 
     def get_data(self):
