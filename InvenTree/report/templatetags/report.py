@@ -6,9 +6,12 @@ import os
 
 from django import template
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 from part.models import Part
 from stock.models import StockItem
+
+from common.models import InvenTreeSetting
 
 register = template.Library()
 
@@ -50,3 +53,30 @@ def part_image(part):
         path = os.path.abspath(path)
 
     return f"file://{path}"
+
+
+@register.simple_tag()
+def internal_link(link, text):
+    """
+    Make a <a></a> href which points to an InvenTree URL.
+
+    Important Note: This only works if the INVENTREE_BASE_URL parameter is set!
+
+    If the INVENTREE_BASE_URL parameter is not configured,
+    the text will be returned (unlinked)
+    """
+
+    text = str(text)
+
+    base_url = InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+
+    # If the base URL is not set, just return the text
+    if not base_url:
+        return text
+
+    url = f"{base_url}/{link}/"
+
+    # Remove any double quotes
+    url = url.replace("//", "/")
+
+    return mark_safe(f'<a href="{url}">{text}</a>')
