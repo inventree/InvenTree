@@ -4,8 +4,12 @@
     <style>
         @page {
             {% block page_style %}
-            size: {% block page_size %}{{ default_page_size }}{% endblock %};
-            margin: {% block page_margin %}2cm{% endblock %};
+            {% block page_size %}
+            size: {{ default_page_size }};
+            {% endblock %}
+            {% block page_margin %}
+            margin: 2cm;
+            {% endblock %}
             font-family: Arial, Helvetica, sans-serif;
             font-size: 75%;
             {% endblock %}

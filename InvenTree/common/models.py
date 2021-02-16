@@ -18,7 +18,7 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
 from django.utils.translation import ugettext as _
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, URLValidator
 from django.core.exceptions import ValidationError
 
 import InvenTree.helpers
@@ -62,6 +62,13 @@ class InvenTreeSetting(models.Model):
             'name': _('Company name'),
             'description': _('Internal company name'),
             'default': 'My company name',
+        },
+
+        'INVENTREE_BASE_URL': {
+            'name': _('Base URL'),
+            'description': _('Base URL for server instance'),
+            'validator': URLValidator(),
+            'default': '',
         },
 
         'INVENTREE_DEFAULT_CURRENCY': {
@@ -527,6 +534,11 @@ class InvenTreeSetting(models.Model):
                 self.run_validator(v)
             
             return
+
+        if callable(validator):
+            # We can accept function validators with a single argument
+            print("Running validator function")
+            validator(self.value)
 
         # Boolean validator
         if validator == bool:

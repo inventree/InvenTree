@@ -18,6 +18,66 @@ class ReportConfig(AppConfig):
         """
 
         self.create_default_test_reports()
+        self.create_default_build_reports()
+
+    def create_default_reports(self, model, reports):
+        """
+        Copy defualt report files across to the media directory.
+        """
+
+        # Source directory for report templates
+        src_dir = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            'templates',
+            'report',
+        )
+
+        # Destination directory
+        dst_dir = os.path.join(
+            settings.MEDIA_ROOT,
+            'report',
+            'inventree',
+            model.getSubdir(),
+        )
+
+        if not os.path.exists(dst_dir):
+            logger.info(f"Creating missing directory: '{dst_dir}'")
+            os.makedirs(dst_dir, exist_ok=True)
+
+        # Copy each report template across (if required)
+        for report in reports:
+
+            # Destination filename
+            filename = os.path.join(
+                'report',
+                'inventree',
+                model.getSubdir(),
+                report['file'],
+            )
+
+            src_file = os.path.join(src_dir, report['file'])
+            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
+
+            if not os.path.exists(dst_file):
+                logger.info(f"Copying test report template '{dst_file}'")
+                shutil.copyfile(src_file, dst_file)
+
+            try:
+                # Check if a report matching the template already exists
+                if model.objects.filter(template=filename).exists():
+                    continue
+
+                logger.info(f"Creating new TestReport for '{report['name']}'")
+
+                model.objects.create(
+                    name=report['name'],
+                    description=report['description'],
+                    template=filename,
+                    enabled=True
+                )
+
+            except:
+                pass
 
     def create_default_test_reports(self):
         """
@@ -31,23 +91,6 @@ class ReportConfig(AppConfig):
             # Database is not ready yet
             return
 
-        src_dir = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            'templates',
-            'report',
-        )
-
-        dst_dir = os.path.join(
-            settings.MEDIA_ROOT,
-            'report',
-            'inventree',  # Stored in secret directory!
-            'test',
-        )
-
-        if not os.path.exists(dst_dir):
-            logger.info(f"Creating missing directory: '{dst_dir}'")
-            os.makedirs(dst_dir, exist_ok=True)
-
         # List of test reports to copy across
         reports = [
             {
@@ -57,36 +100,27 @@ class ReportConfig(AppConfig):
             },
         ]
 
-        for report in reports:
+        self.create_default_reports(TestReport, reports)
 
-            # Create destination file name
-            filename = os.path.join(
-                'report',
-                'inventree',
-                'test',
-                report['file']
-            )
+    def create_default_build_reports(self):
+        """
+        Create database entries for the default BuildReport templates
+        (if they do not already exist)
+        """
 
-            src_file = os.path.join(src_dir, report['file'])
-            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
+        try:
+            from .models import BuildReport
+        except:
+            # Database is not ready yet
+            return
 
-            if not os.path.exists(dst_file):
-                logger.info(f"Copying test report template '{dst_file}'")
-                shutil.copyfile(src_file, dst_file)
+        # List of Build reports to copy across
+        reports = [
+            {
+                'file': 'inventree_build_order.html',
+                'name': 'InvenTree Build Order',
+                'description': 'Build Order job sheet',
+            }
+        ]
 
-            try:
-                # Check if a report matching the template already exists
-                if TestReport.objects.filter(template=filename).exists():
-                    continue
-
-                logger.info(f"Creating new TestReport for '{report['name']}'")
-
-                TestReport.objects.create(
-                    name=report['name'],
-                    description=report['description'],
-                    template=filename,
-                    filters='',
-                    enabled=True
-                )
-            except:
-                pass
+        self.create_default_reports(BuildReport, reports)

@@ -20,8 +20,10 @@ from django.template.loader import render_to_string
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import FileExtensionValidator
 
-import stock.models
+import build.models
 import common.models
+import part.models
+import stock.models
 
 from InvenTree.helpers import validateFilterString
 
@@ -60,7 +62,6 @@ class ReportFileUpload(FileSystemStorage):
 
     def get_available_name(self, name, max_length=None):
 
-        print("Name:", name)
         return super().get_available_name(name, max_length)
 
 
@@ -70,8 +71,27 @@ def rename_template(instance, filename):
 
 
 def validate_stock_item_report_filters(filters):
+    """
+    Validate filter string against StockItem model
+    """
 
     return validateFilterString(filters, model=stock.models.StockItem)
+
+
+def validate_part_report_filters(filters):
+    """
+    Validate filter string against Part model
+    """
+
+    return validateFilterString(filters, model=part.models.Part)
+
+
+def validate_build_report_filters(filters):
+    """
+    Validate filter string against Build model
+    """
+
+    return validateFilterString(filters, model=build.models.Build)
 
 
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
@@ -107,7 +127,8 @@ class ReportBase(models.Model):
     def __str__(self):
         return "{n} - {d}".format(n=self.name, d=self.description)
 
-    def getSubdir(self):
+    @classmethod
+    def getSubdir(cls):
         return ''
 
     def rename_file(self, filename):
@@ -171,6 +192,9 @@ class ReportTemplateBase(ReportBase):
 
     """
 
+    # Pass a single top-level object to the report template
+    object_to_print = None
+
     def get_context_data(self, request):
         """
         Supply context data to the template for rendering
@@ -185,6 +209,7 @@ class ReportTemplateBase(ReportBase):
 
         context = self.get_context_data(request)
 
+        context['base_url'] = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
         context['date'] = datetime.datetime.now().date()
         context['datetime'] = datetime.datetime.now()
         context['default_page_size'] = common.models.InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE')
@@ -242,17 +267,15 @@ class TestReport(ReportTemplateBase):
     Render a TestReport against a StockItem object.
     """
 
-    def getSubdir(self):
+    @classmethod
+    def getSubdir(cls):
         return 'test'
-
-    # Requires a stock_item object to be given to it before rendering
-    stock_item = None
 
     filters = models.CharField(
         blank=True,
         max_length=250,
         verbose_name=_('Filters'),
-        help_text=_("Part query filters (comma-separated list of key=value pairs)"),
+        help_text=_("StockItem query filters (comma-separated list of key=value pairs)"),
         validators=[
             validate_stock_item_report_filters
         ]
@@ -275,11 +298,80 @@ class TestReport(ReportTemplateBase):
         return items.exists()
 
     def get_context_data(self, request):
+
+        stock_item = self.object_to_print
+
         return {
-            'stock_item': self.stock_item,
-            'part': self.stock_item.part,
-            'results': self.stock_item.testResultMap(),
-            'result_list': self.stock_item.testResultList()
+            'stock_item': stock_item,
+            'part': stock_item.part,
+            'results': stock_item.testResultMap(),
+            'result_list': stock_item.testResultList()
+        }
+
+
+class BuildReport(ReportTemplateBase):
+    """
+    Build order / work order report
+    """
+
+    @classmethod
+    def getSubdir(cls):
+        return 'build'
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Build Filters'),
+        help_text=_('Build query filters (comma-separated list of key=value pairs'),
+        validators=[
+            validate_build_report_filters,
+        ]
+    )
+
+    def get_context_data(self, request):
+        """
+        Custom context data for the build report
+        """
+
+        my_build = self.object_to_print
+
+        if not type(my_build) == build.models.Build:
+            raise TypeError('Provided model is not a Build object')
+
+        return {
+            'build': my_build,
+            'part': my_build.part,
+            'reference': my_build.reference,
+            'quantity': my_build.quantity,
+        }
+
+
+class BillOfMaterialsReport(ReportTemplateBase):
+    """
+    Render a Bill of Materials against a Part object
+    """
+
+    @classmethod
+    def getSubdir(cls):
+        return 'bom'
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Part Filters'),
+        help_text=_('Part query filters (comma-separated list of key=value pairs'),
+        validators=[
+            validate_part_report_filters
+        ]
+    )
+
+    def get_context_data(self, request):
+
+        part = self.object_to_print
+
+        return {
+            'part': part,
+            'category': part.category,
         }
 
 
