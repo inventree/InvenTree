@@ -62,7 +62,6 @@ class ReportFileUpload(FileSystemStorage):
 
     def get_available_name(self, name, max_length=None):
 
-        print("Name:", name)
         return super().get_available_name(name, max_length)
 
 
@@ -128,7 +127,8 @@ class ReportBase(models.Model):
     def __str__(self):
         return "{n} - {d}".format(n=self.name, d=self.description)
 
-    def getSubdir(self):
+    @classmethod
+    def getSubdir(cls):
         return ''
 
     def rename_file(self, filename):
@@ -267,7 +267,8 @@ class TestReport(ReportTemplateBase):
     Render a TestReport against a StockItem object.
     """
 
-    def getSubdir(self):
+    @classmethod
+    def getSubdir(cls):
         return 'test'
 
     filters = models.CharField(
@@ -313,7 +314,8 @@ class BuildReport(ReportTemplateBase):
     Build order / work order report
     """
 
-    def getSubdir(self):
+    @classmethod
+    def getSubdir(cls):
         return 'build'
 
     filters = models.CharField(
@@ -349,7 +351,8 @@ class BillOfMaterialsReport(ReportTemplateBase):
     Render a Bill of Materials against a Part object
     """
 
-    def getSubdir(self):
+    @classmethod
+    def getSubdir(cls):
         return 'bom'
 
     filters = models.CharField(
