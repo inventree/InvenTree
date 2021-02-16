@@ -495,6 +495,51 @@ CURRENCIES = CONFIG.get(
 # TODO - Allow live web-based backends in the future
 EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeManualExchangeBackend'
 
+# Extract email settings from the config file
+email_config = CONFIG.get('email', {})
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Email backend settings
+EMAIL_HOST = get_setting(
+    'INVENTREE_EMAIL_HOST',
+    email_config.get('host', '')
+)
+
+EMAIL_PORT = get_setting(
+    'INVENTREE_EMAIL_PORT',
+    email_config.get('port', 25)
+)
+
+EMAIL_HOST_USER = get_setting(
+    'INVENTREE_EMAIL_USERNAME',
+    email_config.get('username', ''),
+)
+
+EMAIL_HOST_PASSWORD = get_setting(
+    'INVENTREE_EMAIL_PASSWORD',
+    email_config.get('password', ''),
+)
+
+EMAIL_SUBJECT_PREFIX = get_setting(
+    'INVENTREE_EMAIL_PREFIX',
+    email_config.get('prefix', '[InvenTree] '),
+)
+
+EMAIL_USE_LOCALTIME = False
+
+EMAIL_USE_TLS = get_setting(
+    'INVENTREE_EMAIL_TLS',
+    email_config.get('tls', False),
+)
+
+EMAIL_USE_SSL = get_setting(
+    'INVENTREE_EMAIL_SSL',
+    email_config.get('ssl', False),
+)
+
+EMAIL_TIMEOUT = 60
+
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale/'),
 )
