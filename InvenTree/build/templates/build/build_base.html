@@ -129,6 +129,20 @@ src="{% static 'img/blank_image.png' %}"
         <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></td>
     </tr>
     {% endif %}
+    {% if build.issued_by %}
+    <tr>
+        <td><span class='fas fa-user'></span></td>
+        <td>{% trans "Issued By" %}</td>
+        <td>{{ build.issued_by }}</td>
+    </tr>
+    {% endif %}
+    {% if build.responsible %}
+    <tr>
+        <td><span class='fas fa-users'></span></td>
+        <td>{% trans "Responsible" %}</td>
+        <td>{{ build.responsible }}</td>
+    </tr>
+    {% endif %}
 </table>
 {% endblock %}
 
