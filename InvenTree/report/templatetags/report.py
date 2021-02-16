@@ -74,9 +74,12 @@ def internal_link(link, text):
     if not base_url:
         return text
 
-    url = f"{base_url}/{link}/"
+    if not base_url.endswith('/'):
+        base_url += '/'
 
-    # Remove any double quotes
-    url = url.replace("//", "/")
+    if base_url.endswith('/') and link.startswith('/'):
+        link = link[1:]
+
+    url = f"{base_url}{link}"
 
     return mark_safe(f'<a href="{url}">{text}</a>')
