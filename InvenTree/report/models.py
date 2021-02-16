@@ -209,6 +209,7 @@ class ReportTemplateBase(ReportBase):
 
         context = self.get_context_data(request)
 
+        context['base_url'] = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
         context['date'] = datetime.datetime.now().date()
         context['datetime'] = datetime.datetime.now()
         context['default_page_size'] = common.models.InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE')
