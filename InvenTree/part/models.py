@@ -1094,16 +1094,22 @@ class Part(MPTTModel):
 
     @property
     def quantity_being_built(self):
-        """ Return the current number of parts currently being built
+        """
+        Return the current number of parts currently being built.
+
+        Note: This is the total quantity of Build orders, *not* the number of build outputs.
+              In this fashion, it is the "projected" quantity of builds
         """
 
-        stock_items = self.stock_items.filter(is_building=True)
+        builds = self.active_builds
 
-        query = stock_items.aggregate(
-            quantity=Coalesce(Sum('quantity'), Decimal(0))
-        )
+        quantity = 0
 
-        return query['quantity']
+        for build in builds:
+            # The remaining items in the build
+            quantity += build.remaining
+
+        return quantity
 
     def build_order_allocations(self):
         """
