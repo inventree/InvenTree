@@ -14,7 +14,7 @@ from django.urls import reverse
 
 from django.db import models, transaction
 from django.db.utils import IntegrityError
-from django.db.models import Sum, UniqueConstraint
+from django.db.models import Q, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
@@ -41,7 +41,7 @@ from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize
 
-from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
+from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
 from build import models as BuildModels
 from order import models as OrderModels
@@ -418,8 +418,10 @@ class Part(MPTTModel):
                 p2=str(parent)
             ))})
 
+        bom_items = self.get_bom_items()
+
         # Ensure that the parent part does not appear under any child BOM item!
-        for item in self.bom_items.all():
+        for item in bom_items.all():
 
             # Check for simple match
             if item.sub_part == parent:
@@ -884,20 +886,135 @@ class Part(MPTTModel):
 
         return max(total, 0)
 
+    def requiring_build_orders(self):
+        """
+        Return list of outstanding build orders which require this part
+        """
+
+        # List of BOM that this part is required for
+        boms = BomItem.objects.filter(sub_part=self)
+
+        part_ids = [bom.part.pk for bom in boms]
+
+        # Now, get a list of outstanding build orders which require this part
+        builds = BuildModels.Build.objects.filter(
+            part__in=part_ids,
+            status__in=BuildStatus.ACTIVE_CODES
+        )
+
+        return builds
+
+    def required_build_order_quantity(self):
+        """
+        Return the quantity of this part required for active build orders
+        """
+
+        # List of BOM that this part is required for
+        boms = BomItem.objects.filter(sub_part=self)
+
+        part_ids = [bom.part.pk for bom in boms]
+
+        # Now, get a list of outstanding build orders which require this part
+        builds = BuildModels.Build.objects.filter(
+            part__in=part_ids,
+            status__in=BuildStatus.ACTIVE_CODES
+        )
+
+        quantity = 0
+
+        for build in builds:
+            
+            bom_item = None
+
+            # Match BOM item to build
+            for bom in boms:
+                if bom.part == build.part:
+                    bom_item = bom
+                    break
+
+            if bom_item is None:
+                logger.warning("Found null BomItem when calculating required quantity")
+                continue
+
+            build_quantity = build.quantity * bom_item.quantity
+
+            quantity += build_quantity
+        
+        return quantity
+
+    def requiring_sales_orders(self):
+        """
+        Return a list of sales orders which require this part
+        """
+
+        orders = set()
+
+        # Get a list of line items for open orders which match this part
+        open_lines = OrderModels.SalesOrderLineItem.objects.filter(
+            order__status__in=SalesOrderStatus.OPEN,
+            part=self
+        )
+
+        for line in open_lines:
+            orders.add(line.order)
+
+        return orders
+
+    def required_sales_order_quantity(self):
+        """
+        Return the quantity of this part required for active sales orders
+        """
+
+        # Get a list of line items for open orders which match this part
+        open_lines = OrderModels.SalesOrderLineItem.objects.filter(
+            order__status__in=SalesOrderStatus.OPEN,
+            part=self
+        )
+
+        quantity = 0
+
+        for line in open_lines:
+            quantity += line.quantity
+
+        return quantity
+
+    def required_order_quantity(self):
+        """
+        Return total required to fulfil orders
+        """
+
+        return self.required_build_order_quantity() + self.required_sales_order_quantity()
+
     @property
     def quantity_to_order(self):
-        """ Return the quantity needing to be ordered for this part. """
+        """
+        Return the quantity needing to be ordered for this part.
+        
+        Here, an "order" could be one of:
+        - Build Order
+        - Sales Order
 
-        # How many do we need to have "on hand" at any point?
-        required = self.net_stock - self.minimum_stock
+        To work out how many we need to order:
 
-        if required < 0:
-            return abs(required)
+        Stock on hand = self.total_stock
+        Required for orders = self.required_order_quantity()
+        Currently on order = self.on_order
+        Currently building = self.quantity_being_built
+        
+        """
 
-        # Do not need to order any
-        return 0
+        # Total requirement
+        required = self.required_order_quantity()
 
-        required = self.net_stock
+        # Subtract stock levels
+        required -= max(self.total_stock, self.minimum_stock)
+
+        # Subtract quantity on order
+        required -= self.on_order
+
+        # Subtract quantity being built
+        required -= self.quantity_being_built
+
         return max(required, 0)
 
     @property
@@ -943,8 +1060,10 @@ class Part(MPTTModel):
 
         total = None
 
+        bom_items = self.get_bom_items().prefetch_related('sub_part__stock_items')
+
         # Calculate the minimum number of parts that can be built using each sub-part
-        for item in self.bom_items.all().prefetch_related('sub_part__stock_items'):
+        for item in bom_items.all():
             stock = item.sub_part.available_stock
 
             # If (by some chance) we get here but the BOM item quantity is invalid,
@@ -979,16 +1098,22 @@ class Part(MPTTModel):
 
     @property
     def quantity_being_built(self):
-        """ Return the current number of parts currently being built
+        """
+        Return the current number of parts currently being built.
+
+        Note: This is the total quantity of Build orders, *not* the number of build outputs.
+              In this fashion, it is the "projected" quantity of builds
         """
 
-        stock_items = self.stock_items.filter(is_building=True)
+        builds = self.active_builds
 
-        query = stock_items.aggregate(
-            quantity=Coalesce(Sum('quantity'), Decimal(0))
-        )
+        quantity = 0
 
-        return query['quantity']
+        for build in builds:
+            # The remaining items in the build
+            quantity += build.remaining
+
+        return quantity
 
     def build_order_allocations(self):
         """
@@ -1068,9 +1193,56 @@ class Part(MPTTModel):
 
         return query['t']
 
+    def get_bom_item_filter(self, include_inherited=True):
+        """
+        Returns a query filter for all BOM items associated with this Part.
+
+        There are some considerations:
+
+        a) BOM items can be defined against *this* part
+        b) BOM items can be inherited from a *parent* part
+
+        We will construct a filter to grab *all* the BOM items!
+
+        Note: This does *not* return a queryset, it returns a Q object,
+              which can be used by some other query operation!
+              Because we want to keep our code DRY!
+
+        """
+
+        bom_filter = Q(part=self)
+
+        if include_inherited:
+            # We wish to include parent parts
+
+            parents = self.get_ancestors(include_self=False)
+
+            # There are parents available
+            if parents.count() > 0:
+                parent_ids = [p.pk for p in parents]
+
+                parent_filter = Q(
+                    part__id__in=parent_ids,
+                    inherited=True
+                )
+
+                # OR the filters together
+                bom_filter |= parent_filter
+
+        return bom_filter
+
+    def get_bom_items(self, include_inherited=True):
+        """
+        Return a queryset containing all BOM items for this part
+
+        By default, will include inherited BOM items
+        """
+
+        return BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
+
     @property
     def has_bom(self):
-        return self.bom_count > 0
+        return self.get_bom_items().count() > 0
 
     @property
     def has_trackable_parts(self):
@@ -1079,7 +1251,7 @@ class Part(MPTTModel):
         This is important when building the part.
         """
 
-        for bom_item in self.bom_items.all():
+        for bom_item in self.get_bom_items().all():
             if bom_item.sub_part.trackable:
                 return True
 
@@ -1088,7 +1260,7 @@ class Part(MPTTModel):
     @property
     def bom_count(self):
         """ Return the number of items contained in the BOM for this part """
-        return self.bom_items.count()
+        return self.get_bom_items().count()
 
     @property
     def used_in_count(self):
@@ -1106,7 +1278,10 @@ class Part(MPTTModel):
 
         hash = hashlib.md5(str(self.id).encode())
 
-        for item in self.bom_items.all().prefetch_related('sub_part'):
+        # List *all* BOM items (including inherited ones!)
+        bom_items = self.get_bom_items().all().prefetch_related('sub_part')
+
+        for item in bom_items:
             hash.update(str(item.get_item_hash()).encode())
 
         return str(hash.digest())
@@ -1125,8 +1300,10 @@ class Part(MPTTModel):
         - Saves the current date and the checking user
         """
 
-        # Validate each line item too
-        for item in self.bom_items.all():
+        # Validate each line item, ignoring inherited ones
+        bom_items = self.get_bom_items(include_inherited=False)
+
+        for item in bom_items.all():
             item.validate_hash()
 
         self.bom_checksum = self.get_bom_hash()
@@ -1137,7 +1314,10 @@ class Part(MPTTModel):
 
     @transaction.atomic
     def clear_bom(self):
-        """ Clear the BOM items for the part (delete all BOM lines).
+        """
+        Clear the BOM items for the part (delete all BOM lines).
+
+        Note: Does *NOT* delete inherited BOM items!
         """
 
         self.bom_items.all().delete()
@@ -1154,9 +1334,9 @@ class Part(MPTTModel):
         if parts is None:
             parts = set()
 
-        items = BomItem.objects.filter(part=self.pk)
+        bom_items = self.get_bom_items().all()
 
-        for bom_item in items:
+        for bom_item in bom_items:
 
             sub_part = bom_item.sub_part
 
@@ -1204,7 +1384,7 @@ class Part(MPTTModel):
     def has_complete_bom_pricing(self):
         """ Return true if there is pricing information for each item in the BOM. """
 
-        for item in self.bom_items.all().select_related('sub_part'):
+        for item in self.get_bom_items().all().select_related('sub_part'):
             if not item.sub_part.has_pricing_info:
                 return False
 
@@ -1271,7 +1451,7 @@ class Part(MPTTModel):
         min_price = None
         max_price = None
 
-        for item in self.bom_items.all().select_related('sub_part'):
+        for item in self.get_bom_items().all().select_related('sub_part'):
 
             if item.sub_part.pk == self.pk:
                 print("Warning: Item contains itself in BOM")
@@ -1339,8 +1519,11 @@ class Part(MPTTModel):
 
         if clear:
             # Remove existing BOM items
+            # Note: Inherited BOM items are *not* deleted!
             self.bom_items.all().delete()
 
+        # Copy existing BOM items from another part
+        # Note: Inherited BOM Items will *not* be duplicated!!
         for bom_item in other.bom_items.all():
             # If this part already has a BomItem pointing to the same sub-part,
             # delete that BomItem from this part first!
@@ -1856,6 +2039,7 @@ class BomItem(models.Model):
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
+        inherited: This BomItem can be inherited by the BOMs of variant parts
     """
 
     def save(self, *args, **kwargs):
@@ -1894,6 +2078,12 @@ class BomItem(models.Model):
     note = models.CharField(max_length=500, blank=True, help_text=_('BOM item notes'))
 
     checksum = models.CharField(max_length=128, blank=True, help_text=_('BOM line checksum'))
+
+    inherited = models.BooleanField(
+        default=False,
+        verbose_name=_('Inherited'),
+        help_text=_('This BOM item is inherited by BOMs for variant parts'),
+    )
 
     def get_item_hash(self):
         """ Calculate the checksum hash of this BOM line item:

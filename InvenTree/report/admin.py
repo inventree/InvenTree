@@ -3,7 +3,10 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from .models import ReportSnippet, TestReport, ReportAsset
+from .models import ReportSnippet, ReportAsset
+from .models import TestReport
+from .models import BuildReport
+from .models import BillOfMaterialsReport
 
 
 class ReportTemplateAdmin(admin.ModelAdmin):
@@ -22,5 +25,8 @@ class ReportAssetAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ReportSnippet, ReportSnippetAdmin)
-admin.site.register(TestReport, ReportTemplateAdmin)
 admin.site.register(ReportAsset, ReportAssetAdmin)
+
+admin.site.register(TestReport, ReportTemplateAdmin)
+admin.site.register(BuildReport, ReportTemplateAdmin)
+admin.site.register(BillOfMaterialsReport, ReportTemplateAdmin)

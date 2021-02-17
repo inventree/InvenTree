@@ -11,6 +11,45 @@
     --label-yellow: #fdc82a;
 }
 
+.login-screen {
+    background-image: url("/static/img/paper_splash.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100%;
+    font-family: 'Numans', sans-serif;
+    color: #eee;
+}
+
+.login-container {
+    left: 50%;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 30%;
+    align-content: center;
+    border-radius: 15px;
+    padding: 20px;
+    padding-bottom: 35px;
+    background-color: rgba(50, 50, 50, 0.75);
+}
+
+.login-header {
+    padding-right: 30px;
+    margin-right: 30px;
+}
+
+.login-container input {
+    background-color: rgba(250, 250, 250, 0.9);
+}
+
+.login-button {
+    background-color: rgba(250, 250, 250, 0.9);
+    color: #333;
+    border-color: #AAA;
+    width: 100%;
+    border-radius: 5px;
+}
+
 .markdownx .row {
     margin: 5px;
     padding: 5px;
@@ -266,6 +305,10 @@
 .rowinvalid {
     color: #A00; 
     font-style: italic;
+}
+
+.rowinherited {
+    background-color: #dde;
 }
 
 .dropdown {
@@ -574,7 +617,7 @@
     margin-bottom: 3px;
 }
 
-.modal-form-content {
+.modal-form-content-wrapper {
   border-radius: 0;
   position:relative;
   height: auto !important;
@@ -706,13 +749,6 @@ input[type="submit"] {
 
 .warning-msg {
     color: #e00;
-}
-
-.login {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 .part-allocation {

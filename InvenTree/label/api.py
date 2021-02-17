@@ -5,6 +5,7 @@ import sys
 
 from django.utils.translation import ugettext as _
 from django.conf.urls import url, include
+from django.core.exceptions import ValidationError, FieldError
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -119,13 +120,20 @@ class StockItemLabelList(LabelListView, StockItemLabelMixin):
                 matches = True
 
                 # Filter string defined for the StockItemLabel object
-                filters = InvenTree.helpers.validateFilterString(label.filters)
+                try:
+                    filters = InvenTree.helpers.validateFilterString(label.filters)
+                except ValidationError:
+                    continue
 
                 for item in items:
 
                     item_query = StockItem.objects.filter(pk=item.pk)
 
-                    if not item_query.filter(**filters).exists():
+                    try:
+                        if not item_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
                         matches = False
                         break
 
@@ -273,13 +281,21 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
                 matches = True
 
                 # Filter string defined for the StockLocationLabel object
-                filters = InvenTree.helpers.validateFilterString(label.filters)
+                try:
+                    filters = InvenTree.helpers.validateFilterString(label.filters)
+                except:
+                    # Skip if there was an error validating the filters...
+                    continue
 
                 for loc in locations:
 
                     loc_query = StockLocation.objects.filter(pk=loc.pk)
 
-                    if not loc_query.filter(**filters).exists():
+                    try:
+                        if not loc_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
                         matches = False
                         break
 

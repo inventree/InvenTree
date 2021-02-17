@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.conf.urls import url, include
+from django.core.exceptions import ValidationError, FieldError
 from django.http import HttpResponse
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -15,8 +16,16 @@ import InvenTree.helpers
 
 from stock.models import StockItem
 
+import build.models
+import part.models
+
 from .models import TestReport
+from .models import BuildReport
+from .models import BillOfMaterialsReport
+
 from .serializers import TestReportSerializer
+from .serializers import BuildReportSerializer
+from .serializers import BOMReportSerializer
 
 
 class ReportListView(generics.ListAPIView):
@@ -53,13 +62,7 @@ class StockItemReportMixin:
 
         params = self.request.query_params
 
-        if 'items[]' in params:
-            items = params.getlist('items[]', [])
-        elif 'item' in params:
-            items = [params.get('item', None)]
-
-        if type(items) not in [list, tuple]:
-            item = [items]
+        items = params.getlist('item', [])
 
         valid_ids = []
 
@@ -75,6 +78,131 @@ class StockItemReportMixin:
         return valid_items
 
 
+class BuildReportMixin:
+    """
+    Mixin for extracting Build items from query params
+    """
+
+    def get_builds(self):
+        """
+        Return a list of requested Build objects
+        """
+
+        builds = []
+
+        params = self.request.query_params
+
+        builds = params.getlist('build', [])
+
+        valid_ids = []
+
+        for b in builds:
+            try:
+                valid_ids.append(int(b))
+            except (ValueError):
+                continue
+
+        return build.models.Build.objects.filter(pk__in=valid_ids)
+
+
+class PartReportMixin:
+    """
+    Mixin for extracting part items from query params
+    """
+
+    def get_parts(self):
+        """
+        Return a list of requested part objects
+        """
+
+        parts = []
+
+        params = self.request.query_params
+
+        parts = params.getlist('part', [])
+
+        valid_ids = []
+
+        for p in parts:
+            try:
+                valid_ids.append(int(p))
+            except (ValueError):
+                continue
+
+        # Extract a valid set of Part objects
+        valid_parts = part.models.Part.objects.filter(pk__in=valid_ids)
+
+        return valid_parts
+
+
+class ReportPrintMixin:
+    """
+    Mixin for printing reports
+    """
+
+    def print(self, request, items_to_print):
+        """
+        Print this report template against a number of pre-validated items.
+        """
+
+        if len(items_to_print) == 0:
+            # No valid items provided, return an error message
+            data = {
+                'error': _('No valid objects provided to template'),
+            }
+
+            return Response(data, status=400)
+
+        outputs = []
+
+        # In debug mode, generate single HTML output, rather than PDF
+        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+
+        # Merge one or more PDF files into a single download
+        for item in items_to_print:
+            report = self.get_object()
+            report.object_to_print = item
+
+            if debug_mode:
+                outputs.append(report.render_to_string(request))
+            else:
+                outputs.append(report.render(request))
+
+        if debug_mode:
+            """
+            Contatenate all rendered templates into a single HTML string,
+            and return the string as a HTML response.
+            """
+
+            html = "\n".join(outputs)
+
+            return HttpResponse(html)
+        else:
+            """
+            Concatenate all rendered pages into a single PDF object,
+            and return the resulting document!
+            """
+
+            pages = []
+
+            if len(outputs) > 1:
+                # If more than one output is generated, merge them into a single file
+                for output in outputs:
+                    doc = output.get_document()
+                    for page in doc.pages:
+                        pages.append(page)
+
+                pdf = outputs[0].get_document().copy(pages).write_pdf()
+            else:
+                pdf = outputs[0].get_document().write_pdf()
+
+            return InvenTree.helpers.DownloadFile(
+                pdf,
+                'inventree_report.pdf',
+                content_type='application/pdf'
+            )
+
+
 class StockItemTestReportList(ReportListView, StockItemReportMixin):
     """
     API endpoint for viewing list of TestReport objects.
@@ -82,8 +210,7 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
     Filterable by:
 
     - enabled: Filter by enabled / disabled status
-    - item: Filter by single stock item
-    - items: Filter by list of stock items
+    - item: Filter by stock item(s)
 
     """
 
@@ -114,12 +241,19 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
                 matches = True
 
                 # Filter string defined for the report object
-                filters = InvenTree.helpers.validateFilterString(report.filters)
+                try:
+                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                except:
+                    continue
 
                 for item in items:
                     item_query = StockItem.objects.filter(pk=item.pk)
 
-                    if not item_query.filter(**filters).exists():
+                    try:
+                        if not item_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
                         matches = False
                         break
 
@@ -142,7 +276,7 @@ class StockItemTestReportDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TestReportSerializer
 
 
-class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin):
+class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin, ReportPrintMixin):
     """
     API endpoint for printing a TestReport object
     """
@@ -157,66 +291,211 @@ class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin):
 
         items = self.get_items()
 
-        if len(items) == 0:
-            # No valid items provided, return an error message
-            data = {
-                'error': _('Must provide valid StockItem(s)')
-            }
+        return self.print(request, items)
+       
 
-            return Response(data, status=400)
+class BOMReportList(ReportListView, PartReportMixin):
+    """
+    API endpoint for viewing a list of BillOfMaterialReport objects.
 
-        outputs = []
+    Filterably by:
 
-        # In debug mode, generate single HTML output, rather than PDF
-        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+    - enabled: Filter by enabled / disabled status
+    - part: Filter by part(s)
+    """
 
-        # Merge one or more PDF files into a single download
-        for item in items:
-            report = self.get_object()
-            report.stock_item = item
+    queryset = BillOfMaterialsReport.objects.all()
+    serializer_class = BOMReportSerializer
 
-            if debug_mode:
-                outputs.append(report.render_to_string(request))
-            else:
-                outputs.append(report.render(request))
+    def filter_queryset(self, queryset):
 
-        if debug_mode:
+        queryset = super().filter_queryset(queryset)
+
+        # List of Part objects to match against
+        parts = self.get_parts()
+
+        if len(parts) > 0:
             """
-            Contatenate all rendered templates into a single HTML string,
-            and return the string as a HTML response.
-            """
+            We wish to filter by part(s).
 
-            html = "\n".join(outputs)
-
-            return HttpResponse(html)
-
-        else:
-            """
-            Concatenate all rendered pages into a single PDF object,
-            and return the resulting document!
+            We need to compare the 'filters' string of each report,
+            and see if it matches against each of the specified parts.
             """
 
-            pages = []
+            valid_report_ids = set()
 
-            if len(outputs) > 1:
-                # If more than one output is generated, merge them into a single file
-                for output in outputs:
-                    doc = output.get_document()
-                    for page in doc.pages:
-                        pages.append(page)
+            for report in queryset.all():
 
-                pdf = outputs[0].get_document().copy(pages).write_pdf()
-            else:
-                pdf = outputs[0].get_document().write_pdf()
+                matches = True
 
-            return InvenTree.helpers.DownloadFile(
-                pdf,
-                'test_report.pdf',
-                content_type='application/pdf'
-            )
+                try:
+                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                except ValidationError:
+                    # Filters are ill-defined
+                    continue
+
+                for p in parts:
+                    part_query = part.models.Part.objects.filter(pk=p.pk)
+
+                    try:
+                        if not part_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
+                        matches = False
+                        break
+
+                if matches:
+                    valid_report_ids.add(report.pk)
+                else:
+                    continue
+
+            # Reduce queryset to only valid matches
+            queryset = queryset.filter(pk__in=[pk for pk in valid_report_ids])
+
+        return queryset
+
+
+class BOMReportDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for a single BillOfMaterialReport object
+    """
+
+    queryset = BillOfMaterialsReport.objects.all()
+    serializer_class = BOMReportSerializer
+
+
+class BOMReportPrint(generics.RetrieveAPIView, PartReportMixin, ReportPrintMixin):
+    """
+    API endpoint for printing a BillOfMaterialReport object
+    """
+
+    queryset = BillOfMaterialsReport.objects.all()
+    serializer_class = BOMReportSerializer
+
+    def get(self, request, *args, **kwargs):
+        """
+        Check if valid part item(s) have been provided
+        """
+
+        parts = self.get_parts()
+
+        return self.print(request, parts)
+
+
+class BuildReportList(ReportListView, BuildReportMixin):
+    """
+    API endpoint for viewing a list of BuildReport objects.
+
+    Can be filtered by:
+
+    - enabled: Filter by enabled / disabled status
+    - build: Filter by Build object
+    """
+
+    queryset = BuildReport.objects.all()
+    serializer_class = BuildReportSerializer
+
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
+
+        # List of Build objects to match against
+        builds = self.get_builds()
+
+        if len(builds) > 0:
+            """
+            We wish to filter by Build(s)
+
+            We need to compare the 'filters' string of each report,
+            and see if it matches against each of the specified parts
+            
+            # TODO: This code needs some refactoring!
+            """
+
+            valid_build_ids = set()
+
+            for report in queryset.all():
+
+                matches = True
+
+                try:
+                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                except ValidationError:
+                    continue
+
+                for b in builds:
+                    build_query = build.models.Build.objects.filter(pk=b.pk)
+
+                    try:
+                        if not build_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
+                        matches = False
+                        break
+
+                if matches:
+                    valid_build_ids.add(report.pk)
+                else:
+                    continue
+
+            # Reduce queryset to only valid matches
+            queryset = queryset.filter(pk__in=[pk for pk in valid_build_ids])
+
+        return queryset
+
+
+class BuildReportDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for a single BuildReport object
+    """
+
+    queryset = BuildReport.objects.all()
+    serializer_class = BuildReportSerializer
+
+
+class BuildReportPrint(generics.RetrieveAPIView, BuildReportMixin, ReportPrintMixin):
+    """
+    API endpoint for printing a BuildReport
+    """
+
+    queryset = BuildReport.objects.all()
+    serializer_class = BuildReportSerializer
+
+    def get(self, request, *ars, **kwargs):
+
+        builds = self.get_builds()
+
+        return self.print(request, builds)
 
 
 report_api_urls = [
+
+    # Build reports
+    url(r'build/', include([
+        # Detail views
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
+            url(r'^.*$', BuildReportDetail.as_view(), name='api-build-report-detail'),
+        ])),
+
+        # List view
+        url(r'^.*$', BuildReportList.as_view(), name='api-build-report-list'),
+    ])),
+
+    # Bill of Material reports
+    url(r'bom/', include([
+
+        # Detail views
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'print/?', BOMReportPrint.as_view(), name='api-bom-report-print'),
+            url(r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'),
+        ])),
+
+        # List view
+        url(r'^.*$', BOMReportList.as_view(), name='api-bom-report-list'),
+    ])),
 
     # Stock item test reports
     url(r'test/', include([

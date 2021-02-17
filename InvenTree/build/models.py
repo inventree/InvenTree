@@ -23,7 +23,7 @@ from markdownx.models import MarkdownxField
 from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus
-from InvenTree.helpers import increment, getSetting, normalize
+from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
 from InvenTree.validators import validate_build_order_reference
 from InvenTree.models import InvenTreeAttachment
 
@@ -33,6 +33,7 @@ import InvenTree.fields
 
 from stock import models as StockModels
 from part import models as PartModels
+from users import models as UserModels
 
 
 class Build(MPTTModel):
@@ -53,6 +54,9 @@ class Build(MPTTModel):
         completion_date: Date the build was completed (or, if incomplete, the expected date of completion)
         link: External URL for extra information
         notes: Text notes
+        completed_by: User that completed the build
+        issued_by: User that issued the build
+        responsible: User (or group) responsible for completing the build
     """
 
     OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
@@ -60,6 +64,20 @@ class Build(MPTTModel):
     class Meta:
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
+
+    def format_barcode(self, **kwargs):
+        """
+        Return a JSON string to represent this build as a barcode
+        """
+
+        return MakeBarcode(
+            "buildorder",
+            self.pk,
+            {
+                "reference": self.title,
+                "url": self.get_absolute_url(),
+            }
+        )
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -213,6 +231,22 @@ class Build(MPTTModel):
         on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='builds_completed'
+    )
+
+    issued_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        help_text=_('User who issued this build order'),
+        related_name='builds_issued',
+    )
+
+    responsible = models.ForeignKey(
+        UserModels.Owner,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        help_text=_('User responsible for this build order'),
+        related_name='builds_responsible',
     )
     
     link = InvenTree.fields.InvenTreeURLField(

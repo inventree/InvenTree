@@ -15,12 +15,12 @@
     {% endif %}
     {% if not part.virtual %}
     <li{% ifequal tab 'stock' %} class="active"{% endifequal %}>
-        <a href="{% url 'part-stock' part.id %}">{% trans "Stock" %} <span class="badge">{% decimal part.total_stock %}</span></a>
+        <a href="{% url 'part-stock' part.id %}">{% trans "Stock" %} <span class="badge">{% decimal total_stock %}</span></a>
     </li>
     {% endif %}
     {% if part.component or part.salable or part.used_in_count > 0 %}
     <li{% ifequal tab 'allocation' %} class="active"{% endifequal %}>
-        <a href="{% url 'part-allocation' part.id %}">{% trans "Allocated" %} <span class="badge">{% decimal part.allocation_count %}</span></a>
+        <a href="{% url 'part-allocation' part.id %}">{% trans "Allocated" %} <span class="badge">{% decimal allocated %}</span></a>
     </li>
     {% endif %}
     {% if part.assembly %}

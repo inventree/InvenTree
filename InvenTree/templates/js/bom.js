@@ -137,6 +137,16 @@ function loadBomTable(table, options) {
             checkbox: true,
             visible: true,
             switchable: false,
+            formatter: function(value, row, index, field) {
+                // Disable checkbox if the row is defined for a *different* part!
+                if (row.part != options.parent_id) {
+                    return {
+                        disabled: true,
+                    };
+                } else {
+                    return value;
+                }
+            }
         });
     }
 
@@ -254,6 +264,32 @@ function loadBomTable(table, options) {
     });
     */
 
+    cols.push({
+        field: 'optional',
+        title: '{% trans "Optional" %}',
+        searchable: false,
+    });
+
+    cols.push({
+        field: 'inherited',
+        title: '{% trans "Inherited" %}',
+        searchable: false,
+        formatter: function(value, row, index, field) {
+            // This BOM item *is* inheritable, but is defined for this BOM
+            if (!row.inherited) {
+                return "-"; 
+            } else if (row.part == options.parent_id) {
+                return '{% trans "Inherited" %}';
+            } else {
+                // If this BOM item is inherited from a parent part
+                return renderLink(
+                    '{% trans "View BOM" %}',
+                    `/part/${row.part}/bom/`,
+                );
+            }
+        }
+    });
+
     cols.push(
         {
             'field': 'can_build',
@@ -330,7 +366,12 @@ function loadBomTable(table, options) {
 
                     return html;
                 } else {
-                    return '';
+                    // Return a link to the external BOM
+
+                    return renderLink(
+                        '{% trans "View BOM" %}',
+                        `/part/${row.part}/bom/`
+                    );
                 }
             }
         });
@@ -379,15 +420,24 @@ function loadBomTable(table, options) {
         sortable: true,
         search: true,
         rowStyle: function(row, index) {
-            if (row.validated) {
-                return {
-                    classes: 'rowvalid'
-                };
-            } else {
-                return {
-                    classes: 'rowinvalid'
-                };
+
+            var classes = [];
+
+            // Shade rows differently if they are for different parent parts
+            if (row.part != options.parent_id) {
+                classes.push('rowinherited');
             }
+
+            if (row.validated) {
+                classes.push('rowvalid');
+            } else {
+                classes.push('rowinvalid');
+            }
+
+            return {
+                classes: classes.join(' '),
+            };
+
         },
         formatNoMatches: function() {
             return '{% trans "No BOM items found" %}';

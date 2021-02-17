@@ -9,10 +9,13 @@
               </button>
               <h3 id='modal-title'><i>Form Title Here</i></h3>
             </div>
-            <div class='alert alert-block alert-danger' id='form-validation-warning' style='display: none;'>
-              {% trans "Form errors exist" %}
-            </div>
-            <div class='modal-form-content'>
+            <div class='modal-form-content-wrapper'>
+              <div class='alert alert-block alert-danger' id='form-validation-warning' style='display: none;'>
+                {% trans "Form errors exist" %}
+              </div>
+              <div class='modal-form-content'>
+                <!-- Form content will be injected here-->
+              </div>
             </div>
             <div class='modal-footer'>
                 <button type='button' class='btn btn-default' id='modal-form-close' data-dismiss='modal'>{% trans "Close" %}</button>
@@ -57,8 +60,8 @@
                 <div class='modal-form-content'>
                 </div>
                 <div class='modal-footer'>
-                    <button type='button' class='btn btn-default' id='modal-form-cancel' data-dismiss='modal'>Cancel</button>
-                    <button type='button' class='btn btn-primary' id='modal-form-accept'>Accept</button>
+                    <button type='button' class='btn btn-default' id='modal-form-cancel' data-dismiss='modal'>{% trans "Cancel" %}</button>
+                    <button type='button' class='btn btn-primary' id='modal-form-accept'>{% trans "Accept" %}</button>
                 </div>
             </div>
         </div>
@@ -76,7 +79,7 @@
             <div class='modal-form-content'>
             </div>
             <div class='modal-footer'>
-                <button type='button' class='btn btn-default' data-dismiss='modal'>Close</button>
+                <button type='button' class='btn btn-default' data-dismiss='modal'>{% trans "Close" %}</button>
             </div>
         </div>
     </div>

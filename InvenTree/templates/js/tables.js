@@ -11,21 +11,13 @@ function deleteButton(url, text='Delete') {
 
 
 function renderLink(text, url, options={}) {
-    if (url == null || url === '') {
+    if (url === null || url === undefined || url === '') {
         return text;
     }
 
     var max_length = options.max_length || -1;
 
     var remove_http = options.remove_http || false;
-
-    if (remove_http) {
-        if (text.startsWith('http://')) {
-            text = text.slice(7);
-        } else if (text.startsWith('https://')) {
-            text = text.slice(8);
-        }
-    }
 
     // Shorten the displayed length if required
     if ((max_length > 0) && (text.length > max_length)) {
@@ -52,6 +44,10 @@ function linkButtonsToSelection(table, buttons) {
     /* Link a bootstrap-table object to one or more buttons.
      * The buttons will only be enabled if there is at least one row selected
      */
+
+    if (typeof table === 'string') {
+        table = $(table);
+    }
 
     // Initially set the enable state of the buttons
     enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);

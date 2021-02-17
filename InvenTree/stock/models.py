@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 import os
 
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, FieldError
 from django.urls import reverse
 
 from django.db import models, transaction
@@ -1365,10 +1365,13 @@ class StockItem(MPTTModel):
 
         for test_report in report.models.TestReport.objects.filter(enabled=True):
 
-            filters = helpers.validateFilterString(test_report.filters)
-
-            if item_query.filter(**filters).exists():
-                reports.append(test_report)
+            # Attempt to validate report filter (skip if invalid)
+            try:
+                filters = helpers.validateFilterString(test_report.filters)
+                if item_query.filter(**filters).exists():
+                    reports.append(test_report)
+            except (ValidationError, FieldError):
+                continue
 
         return reports
 
@@ -1391,10 +1394,13 @@ class StockItem(MPTTModel):
 
         for lbl in label.models.StockItemLabel.objects.filter(enabled=True):
 
-            filters = helpers.validateFilterString(lbl.filters)
+            try:
+                filters = helpers.validateFilterString(lbl.filters)
 
-            if item_query.filter(**filters).exists():
-                labels.append(lbl)
+                if item_query.filter(**filters).exists():
+                    labels.append(lbl)
+            except (ValidationError, FieldError):
+                continue
 
         return labels
 
