@@ -254,6 +254,18 @@ function loadBomTable(table, options) {
     });
     */
 
+    cols.push({
+        field: 'optional',
+        title: '{% trans "Optional" %}',
+        searchable: false,
+    });
+
+    cols.push({
+        field: 'inherited',
+        title: '{% trans "Inherited" %}',
+        searchable: false,
+    });
+
     cols.push(
         {
             'field': 'can_build',

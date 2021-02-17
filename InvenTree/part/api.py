@@ -822,7 +822,32 @@ class BomList(generics.ListCreateAPIView):
         part = params.get('part', None)
 
         if part is not None:
-            queryset = queryset.filter(part=part)
+            """
+            If we are filtering by "part", there are two cases to consider:
+
+            a) Bom items which are defined for *this* part
+            b) Inherited parts which are defined for a *parent* part
+
+            So we need to construct two queries!
+            """
+
+            # First, check that the part is actually valid!
+            try:
+                part = Part.objects.get(pk=part)
+
+                # Construct a filter for matching the provided part
+                local_part_filter = Q(part=part)
+            
+                # Construct a filter for matching inherited items from parent parts
+                parent_parts = part.get_ancestors(include_self=False)
+                parent_ids = [p.pk for p in parent_parts]
+
+                parent_part_filter = Q(part__pk__in=parent_ids, inherited=True)
+
+                queryset = queryset.filter(local_part_filter | parent_part_filter)
+
+            except (ValueError, Part.DoesNotExist):
+                pass
         
         # Filter by sub-part?
         sub_part = params.get('sub_part', None)

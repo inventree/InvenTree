@@ -44,6 +44,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Validated" %}',
             },
+            inherited: {
+                type: 'bool',
+                title: '{% trans "Inherited" %}',
+            }
         };
     }
 
