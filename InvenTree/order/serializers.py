@@ -17,7 +17,8 @@ from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 from part.serializers import PartBriefSerializer
-from stock.serializers import LocationBriefSerializer, StockItemSerializer
+from stock.serializers import LocationBriefSerializer
+from stock.serializers import StockItemSerializer, StockItemSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment, SalesOrderAttachment
@@ -240,17 +241,20 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     order = serializers.PrimaryKeyRelatedField(source='line.order', many=False, read_only=True)
     serial = serializers.CharField(source='get_serial', read_only=True)
     quantity = serializers.FloatField(read_only=True)
+    location = serializers.PrimaryKeyRelatedField(source='item.location', many=False, read_only=True)
 
     # Extra detail fields
     order_detail = SalesOrderSerializer(source='line.order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
     item_detail = StockItemSerializer(source='item', many=False, read_only=True)
+    location_detail = LocationSerializer(source='item.location', many=False, read_only=True)
 
     def __init__(self, *args, **kwargs):
 
         order_detail = kwargs.pop('order_detail', False)
         part_detail = kwargs.pop('part_detail', False)
         item_detail = kwargs.pop('item_detail', False)
+        location_detail = kwargs.pop('location_detail', False)
 
         super().__init__(*args, **kwargs)
 
@@ -263,6 +267,9 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         if not item_detail:
             self.fields.pop('item_detail')
 
+        if not location_detail:
+            self.fields.pop('location_detail')
+
     class Meta:
         model = SalesOrderAllocation
 
@@ -271,6 +278,8 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
             'line',
             'serial',
             'quantity',
+            'location',
+            'location_detail',
             'item',
             'item_detail',
             'order',

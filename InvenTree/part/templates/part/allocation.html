@@ -12,6 +12,13 @@
 {% endblock %}
 
 {% block details %}
+
+<h4>{% trans "Part Stock Allocations" %}</h4>
+
+<table class='table table-striped table-condensed' id='build-order-table'></table>
+
+<table class='table table-striped table-condensed' id='sales-order-table'></table>
+
 <table class='table table-striped table-condensed' id='build-table'>
 <tr>
     <th>{% trans "Order" %}</th>
@@ -38,6 +45,12 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    loadSalesOrderAllocationTable("#sales-order-table", {
+        params: {
+            part: {{ part.id }},
+        }
+    });
 
     $("#build-table").inventreeTable({
         columns: [
