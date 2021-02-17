@@ -934,7 +934,7 @@ class Part(MPTTModel):
                 logger.warning("Found null BomItem when calculating required quantity")
                 continue
 
-            build_quantity = build.quantity *  bom_item.quantity
+            build_quantity = build.quantity * bom_item.quantity
 
             quantity += build_quantity
         
