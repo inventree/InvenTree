@@ -381,17 +381,18 @@ class BomItemSerializer(InvenTreeModelSerializer):
     class Meta:
         model = BomItem
         fields = [
+            'inherited',
+            'note',
+            'optional',
+            'overage',
             'pk',
             'part',
             'part_detail',
-            'sub_part',
-            'sub_part_detail',
             'quantity',
             'reference',
+            'sub_part',
+            'sub_part_detail',
             # 'price_range',
-            'optional',
-            'overage',
-            'note',
             'validated',
         ]
 

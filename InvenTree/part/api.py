@@ -810,11 +810,35 @@ class BomList(generics.ListCreateAPIView):
 
             queryset = queryset.filter(optional=optional)
 
+        # Filter by "inherited" status
+        inherited = params.get('inherited', None)
+
+        if inherited is not None:
+            inherited = str2bool(inherited)
+
+            queryset = queryset.filter(inherited=inherited)
+
         # Filter by part?
         part = params.get('part', None)
 
         if part is not None:
-            queryset = queryset.filter(part=part)
+            """
+            If we are filtering by "part", there are two cases to consider:
+
+            a) Bom items which are defined for *this* part
+            b) Inherited parts which are defined for a *parent* part
+
+            So we need to construct two queries!
+            """
+
+            # First, check that the part is actually valid!
+            try:
+                part = Part.objects.get(pk=part)
+
+                queryset = queryset.filter(part.get_bom_item_filter())
+
+            except (ValueError, Part.DoesNotExist):
+                pass
         
         # Filter by sub-part?
         sub_part = params.get('sub_part', None)
