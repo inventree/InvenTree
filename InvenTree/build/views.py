@@ -675,7 +675,6 @@ class BuildCreate(AjaxCreateView):
 
         initials = super(BuildCreate, self).get_initial().copy()
 
-
         initials['parent'] = self.request.GET.get('parent', None)
 
         # User has provided a SalesOrder ID
