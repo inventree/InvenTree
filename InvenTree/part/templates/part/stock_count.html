@@ -1,10 +1,10 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% decimal part.total_stock %}
+{% decimal total_stock %}
 
-{% if part.total_stock == 0 %}
+{% if total_stock == 0 %}
 <span class='label label-danger label-right'>{% trans "No Stock" %}</span>
-{% elif part.total_stock < part.minimum_stock %}
+{% elif total_stock < part.minimum_stock %}
 <span class='label label-warning label-right'>{% trans "Low Stock" %}</span>
 {% endif %}
