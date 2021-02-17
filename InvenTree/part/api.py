@@ -810,6 +810,14 @@ class BomList(generics.ListCreateAPIView):
 
             queryset = queryset.filter(optional=optional)
 
+        # Filter by "inherited" status
+        inherited = params.get('inherited', None)
+
+        if inherited is not None:
+            inherited = str2bool(inherited)
+
+            queryset = queryset.filter(inherited=inherited)
+
         # Filter by part?
         part = params.get('part', None)
 
