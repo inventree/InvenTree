@@ -1977,6 +1977,7 @@ class BomItem(models.Model):
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
+        inherited: This BomItem can be inherited by the BOMs of variant parts
     """
 
     def save(self, *args, **kwargs):
@@ -2015,6 +2016,12 @@ class BomItem(models.Model):
     note = models.CharField(max_length=500, blank=True, help_text=_('BOM item notes'))
 
     checksum = models.CharField(max_length=128, blank=True, help_text=_('BOM line checksum'))
+
+    inherited = models.BooleanField(
+        default=False,
+        verbose_name=_('Inherited'),
+        help_text=_('This BOM item is inherited by BOMs for variant parts'),
+    )
 
     def get_item_hash(self):
         """ Calculate the checksum hash of this BOM line item:
