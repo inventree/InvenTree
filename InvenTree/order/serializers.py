@@ -232,10 +232,12 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     This includes some fields from the related model objects.
     """
 
-    location_path = serializers.CharField(source='get_location_path')
-    location_id = serializers.IntegerField(source='get_location')
-    serial = serializers.CharField(source='get_serial')
-    quantity = serializers.FloatField()
+    location_path = serializers.CharField(source='get_location_path', read_only=True)
+    location = serializers.IntegerField(source='get_location', read_only=True)
+    part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
+    order = serializers.PrimaryKeyRelatedField(source='line.order', many=False, read_only=True)
+    serial = serializers.CharField(source='get_serial', read_only=True)
+    quantity = serializers.FloatField(read_only=True)
 
     class Meta:
         model = SalesOrderAllocation
@@ -245,7 +247,9 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
             'line',
             'serial',
             'quantity',
-            'location_id',
+            'order',
+            'part',
+            'location',
             'location_path',
             'item',
         ]
