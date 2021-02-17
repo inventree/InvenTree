@@ -2094,6 +2094,8 @@ class BomItem(models.Model):
         - Quantity
         - Reference field
         - Note field
+        - Optional field
+        - Inherited field
 
         """
 
@@ -2106,6 +2108,8 @@ class BomItem(models.Model):
         hash.update(str(self.quantity).encode())
         hash.update(str(self.note).encode())
         hash.update(str(self.reference).encode())
+        hash.update(str(self.optional).encode())
+        hash.update(str(self.inherited).encode())
 
         return str(hash.digest())
 
