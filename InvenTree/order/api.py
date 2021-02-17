@@ -494,6 +494,16 @@ class SOAllocationList(generics.ListCreateAPIView):
     queryset = SalesOrderAllocation.objects.all()
     serializer_class = SalesOrderAllocationSerializer
 
+    def get_serializer(self, *args, **kwargs):
+
+        params = self.request.query_params
+
+        kwargs['part_detail'] = str2bool(params.get('part_detail', False))
+        kwargs['item_detail'] = str2bool(params.get('item_detail', False))
+        kwargs['order_detail'] = str2bool(params.get('order_detail', False))
+
+        return self.serializer_class(*args, **kwargs)
+
     def filter_queryset(self, queryset):
 
         queryset = super().filter_queryset(queryset)

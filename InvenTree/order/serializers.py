@@ -17,7 +17,7 @@ from InvenTree.serializers import InvenTreeAttachmentSerializerField
 
 from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
 from part.serializers import PartBriefSerializer
-from stock.serializers import LocationBriefSerializer
+from stock.serializers import LocationBriefSerializer, StockItemSerializer
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import PurchaseOrderAttachment, SalesOrderAttachment
@@ -236,12 +236,32 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     This includes some fields from the related model objects.
     """
 
-    location_path = serializers.CharField(source='get_location_path', read_only=True)
-    location = serializers.IntegerField(source='get_location', read_only=True)
     part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
     order = serializers.PrimaryKeyRelatedField(source='line.order', many=False, read_only=True)
     serial = serializers.CharField(source='get_serial', read_only=True)
     quantity = serializers.FloatField(read_only=True)
+
+    # Extra detail fields
+    order_detail = SalesOrderSerializer(source='line.order', many=False, read_only=True)
+    part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
+    item_detail = StockItemSerializer(source='item', many=False, read_only=True)
+
+    def __init__(self, *args, **kwargs):
+
+        order_detail = kwargs.pop('order_detail', False)
+        part_detail = kwargs.pop('part_detail', False)
+        item_detail = kwargs.pop('item_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if not order_detail:
+            self.fields.pop('order_detail')
+
+        if not part_detail:
+            self.fields.pop('part_detail')
+
+        if not item_detail:
+            self.fields.pop('item_detail')
 
     class Meta:
         model = SalesOrderAllocation
@@ -251,11 +271,12 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
             'line',
             'serial',
             'quantity',
-            'order',
-            'part',
-            'location',
-            'location_path',
             'item',
+            'item_detail',
+            'order',
+            'order_detail',
+            'part',
+            'part_detail',
         ]
 
 
