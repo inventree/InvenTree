@@ -307,6 +307,11 @@
     font-style: italic;
 }
 
+.rowinherited {
+    background-color: #efe;
+    opacity: 90%;
+}
+
 .dropdown {
     padding-left: 1px;
     margin-left: 1px;

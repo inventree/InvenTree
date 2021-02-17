@@ -420,15 +420,24 @@ function loadBomTable(table, options) {
         sortable: true,
         search: true,
         rowStyle: function(row, index) {
-            if (row.validated) {
-                return {
-                    classes: 'rowvalid'
-                };
-            } else {
-                return {
-                    classes: 'rowinvalid'
-                };
+
+            var classes = [];
+
+            // Shade rows differently if they are for different parent parts
+            if (row.part != options.parent_id) {
+                classes.push('rowinherited');
             }
+
+            if (row.validated) {
+                classes.push('rowvalid');
+            } else {
+                classes.push('rowinvalid');
+            }
+
+            return {
+                classes: classes.join(' '),
+            };
+
         },
         formatNoMatches: function() {
             return '{% trans "No BOM items found" %}';
