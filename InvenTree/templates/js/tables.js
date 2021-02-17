@@ -45,6 +45,10 @@ function linkButtonsToSelection(table, buttons) {
      * The buttons will only be enabled if there is at least one row selected
      */
 
+    if (typeof table === 'string') {
+        table = $(table);
+    }
+
     // Initially set the enable state of the buttons
     enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
 

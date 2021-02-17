@@ -23,7 +23,7 @@ from markdownx.models import MarkdownxField
 from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus
-from InvenTree.helpers import increment, getSetting, normalize
+from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
 from InvenTree.validators import validate_build_order_reference
 from InvenTree.models import InvenTreeAttachment
 
@@ -64,6 +64,20 @@ class Build(MPTTModel):
     class Meta:
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
+
+    def format_barcode(self, **kwargs):
+        """
+        Return a JSON string to represent this build as a barcode
+        """
+
+        return MakeBarcode(
+            "buildorder",
+            self.pk,
+            {
+                "reference": self.title,
+                "url": self.get_absolute_url(),
+            }
+        )
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):

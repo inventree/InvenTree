@@ -41,7 +41,7 @@ from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize
 
-from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
+from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
 from build import models as BuildModels
 from order import models as OrderModels
@@ -884,20 +884,135 @@ class Part(MPTTModel):
 
         return max(total, 0)
 
+    def requiring_build_orders(self):
+        """
+        Return list of outstanding build orders which require this part
+        """
+
+        # List of BOM that this part is required for
+        boms = BomItem.objects.filter(sub_part=self)
+
+        part_ids = [bom.part.pk for bom in boms]
+
+        # Now, get a list of outstanding build orders which require this part
+        builds = BuildModels.Build.objects.filter(
+            part__in=part_ids,
+            status__in=BuildStatus.ACTIVE_CODES
+        )
+
+        return builds
+
+    def required_build_order_quantity(self):
+        """
+        Return the quantity of this part required for active build orders
+        """
+
+        # List of BOM that this part is required for
+        boms = BomItem.objects.filter(sub_part=self)
+
+        part_ids = [bom.part.pk for bom in boms]
+
+        # Now, get a list of outstanding build orders which require this part
+        builds = BuildModels.Build.objects.filter(
+            part__in=part_ids,
+            status__in=BuildStatus.ACTIVE_CODES
+        )
+
+        quantity = 0
+
+        for build in builds:
+            
+            bom_item = None
+
+            # Match BOM item to build
+            for bom in boms:
+                if bom.part == build.part:
+                    bom_item = bom
+                    break
+
+            if bom_item is None:
+                logger.warning("Found null BomItem when calculating required quantity")
+                continue
+
+            build_quantity = build.quantity * bom_item.quantity
+
+            quantity += build_quantity
+        
+        return quantity
+
+    def requiring_sales_orders(self):
+        """
+        Return a list of sales orders which require this part
+        """
+
+        orders = set()
+
+        # Get a list of line items for open orders which match this part
+        open_lines = OrderModels.SalesOrderLineItem.objects.filter(
+            order__status__in=SalesOrderStatus.OPEN,
+            part=self
+        )
+
+        for line in open_lines:
+            orders.add(line.order)
+
+        return orders
+
+    def required_sales_order_quantity(self):
+        """
+        Return the quantity of this part required for active sales orders
+        """
+
+        # Get a list of line items for open orders which match this part
+        open_lines = OrderModels.SalesOrderLineItem.objects.filter(
+            order__status__in=SalesOrderStatus.OPEN,
+            part=self
+        )
+
+        quantity = 0
+
+        for line in open_lines:
+            quantity += line.quantity
+
+        return quantity
+
+    def required_order_quantity(self):
+        """
+        Return total required to fulfil orders
+        """
+
+        return self.required_build_order_quantity() + self.required_sales_order_quantity()
+
     @property
     def quantity_to_order(self):
-        """ Return the quantity needing to be ordered for this part. """
+        """
+        Return the quantity needing to be ordered for this part.
+        
+        Here, an "order" could be one of:
+        - Build Order
+        - Sales Order
 
-        # How many do we need to have "on hand" at any point?
-        required = self.net_stock - self.minimum_stock
+        To work out how many we need to order:
 
-        if required < 0:
-            return abs(required)
+        Stock on hand = self.total_stock
+        Required for orders = self.required_order_quantity()
+        Currently on order = self.on_order
+        Currently building = self.quantity_being_built
+        
+        """
 
-        # Do not need to order any
-        return 0
+        # Total requirement
+        required = self.required_order_quantity()
 
-        required = self.net_stock
+        # Subtract stock levels
+        required -= max(self.total_stock, self.minimum_stock)
+
+        # Subtract quantity on order
+        required -= self.on_order
+
+        # Subtract quantity being built
+        required -= self.quantity_being_built
+
         return max(required, 0)
 
     @property
@@ -979,16 +1094,22 @@ class Part(MPTTModel):
 
     @property
     def quantity_being_built(self):
-        """ Return the current number of parts currently being built
+        """
+        Return the current number of parts currently being built.
+
+        Note: This is the total quantity of Build orders, *not* the number of build outputs.
+              In this fashion, it is the "projected" quantity of builds
         """
 
-        stock_items = self.stock_items.filter(is_building=True)
+        builds = self.active_builds
 
-        query = stock_items.aggregate(
-            quantity=Coalesce(Sum('quantity'), Decimal(0))
-        )
+        quantity = 0
 
-        return query['quantity']
+        for build in builds:
+            # The remaining items in the build
+            quantity += build.remaining
+
+        return quantity
 
     def build_order_allocations(self):
         """

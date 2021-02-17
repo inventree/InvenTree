@@ -675,6 +675,13 @@ class BuildCreate(AjaxCreateView):
 
         initials = super(BuildCreate, self).get_initial().copy()
 
+        initials['parent'] = self.request.GET.get('parent', None)
+
+        # User has provided a SalesOrder ID
+        initials['sales_order'] = self.request.GET.get('sales_order', None)
+
+        initials['quantity'] = self.request.GET.get('quantity', 1)
+
         part = self.request.GET.get('part', None)
 
         if part:
@@ -684,17 +691,17 @@ class BuildCreate(AjaxCreateView):
                 # User has provided a Part ID
                 initials['part'] = part
                 initials['destination'] = part.get_default_location()
+
+                to_order = part.quantity_to_order
+
+                if to_order < 1:
+                    to_order = 1
+
+                initials['quantity'] = to_order
             except (ValueError, Part.DoesNotExist):
                 pass
 
         initials['reference'] = Build.getNextBuildNumber()
-
-        initials['parent'] = self.request.GET.get('parent', None)
-
-        # User has provided a SalesOrder ID
-        initials['sales_order'] = self.request.GET.get('sales_order', None)
-
-        initials['quantity'] = self.request.GET.get('quantity', 1)
 
         # Pre-fill the issued_by user
         initials['issued_by'] = self.request.user
