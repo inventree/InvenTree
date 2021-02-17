@@ -137,6 +137,16 @@ function loadBomTable(table, options) {
             checkbox: true,
             visible: true,
             switchable: false,
+            formatter: function(value, row, index, field) {
+                // Disable checkbox if the row is defined for a *different* part!
+                if (row.part != options.parent_id) {
+                    return {
+                        disabled: true,
+                    };
+                } else {
+                    return value;
+                }
+            }
         });
     }
 
@@ -264,6 +274,20 @@ function loadBomTable(table, options) {
         field: 'inherited',
         title: '{% trans "Inherited" %}',
         searchable: false,
+        formatter: function(value, row, index, field) {
+            // This BOM item *is* inheritable, but is defined for this BOM
+            if (!row.inherited) {
+                return "-"; 
+            } else if (row.part == options.parent_id) {
+                return '{% trans "Inheritable" %}';
+            } else {
+                // If this BOM item is inherited from a parent part
+                return renderLink(
+                    '{% trans "View BOM" %}',
+                    `/part/${row.part}/bom/`,
+                );
+            }
+        }
     });
 
     cols.push(
@@ -342,7 +366,12 @@ function loadBomTable(table, options) {
 
                     return html;
                 } else {
-                    return '';
+                    // Return a link to the external BOM
+
+                    return renderLink(
+                        '{% trans "View BOM" %}',
+                        `/part/${row.part}/bom/`
+                    );
                 }
             }
         });
