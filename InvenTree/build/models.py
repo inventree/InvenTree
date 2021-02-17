@@ -65,6 +65,20 @@ class Build(MPTTModel):
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
 
+    def format_barcode(self, **kwargs):
+        """
+        Return a JSON string to represent this build as a barcode
+        """
+
+        return helpers.MakeBarcode(
+            "buildorder",
+            self.pk,
+            {
+                "reference": self.title,
+                "url": self.get_absolute_url(),
+            }
+        )
+
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
         """

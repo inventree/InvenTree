@@ -110,7 +110,7 @@ class StockTest(TestCase):
         # The "is_building" quantity should not be counted here
         self.assertEqual(part.total_stock, n + 5)
 
-        self.assertEqual(part.quantity_being_built, 100)
+        self.assertEqual(part.quantity_being_built, 1)
 
     def test_loc_count(self):
         self.assertEqual(StockLocation.objects.count(), 7)
