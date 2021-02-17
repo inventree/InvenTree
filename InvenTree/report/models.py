@@ -372,6 +372,7 @@ class BillOfMaterialsReport(ReportTemplateBase):
         return {
             'part': part,
             'category': part.category,
+            'bom_items': part.get_bom_items(),
         }
 
 

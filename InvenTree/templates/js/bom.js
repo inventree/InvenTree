@@ -279,7 +279,7 @@ function loadBomTable(table, options) {
             if (!row.inherited) {
                 return "-"; 
             } else if (row.part == options.parent_id) {
-                return '{% trans "Inheritable" %}';
+                return '{% trans "Inherited" %}';
             } else {
                 // If this BOM item is inherited from a parent part
                 return renderLink(

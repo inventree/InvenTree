@@ -835,16 +835,7 @@ class BomList(generics.ListCreateAPIView):
             try:
                 part = Part.objects.get(pk=part)
 
-                # Construct a filter for matching the provided part
-                local_part_filter = Q(part=part)
-            
-                # Construct a filter for matching inherited items from parent parts
-                parent_parts = part.get_ancestors(include_self=False)
-                parent_ids = [p.pk for p in parent_parts]
-
-                parent_part_filter = Q(part__pk__in=parent_ids, inherited=True)
-
-                queryset = queryset.filter(local_part_filter | parent_part_filter)
+                queryset = queryset.filter(part.get_bom_item_filter())
 
             except (ValueError, Part.DoesNotExist):
                 pass
