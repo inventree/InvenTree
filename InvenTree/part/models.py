@@ -1524,7 +1524,7 @@ class Part(MPTTModel):
 
         # Copy existing BOM items from another part
         # Note: Inherited BOM Items will *not* be duplicated!!
-        for bom_item in other.bom_items.all():
+        for bom_item in other.get_bom_items(include_inherited=False).all():
             # If this part already has a BomItem pointing to the same sub-part,
             # delete that BomItem from this part first!
 
@@ -2094,6 +2094,8 @@ class BomItem(models.Model):
         - Quantity
         - Reference field
         - Note field
+        - Optional field
+        - Inherited field
 
         """
 
@@ -2106,6 +2108,8 @@ class BomItem(models.Model):
         hash.update(str(self.quantity).encode())
         hash.update(str(self.note).encode())
         hash.update(str(self.reference).encode())
+        hash.update(str(self.optional).encode())
+        hash.update(str(self.inherited).encode())
 
         return str(hash.digest())
 
