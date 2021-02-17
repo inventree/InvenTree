@@ -341,6 +341,7 @@ class BuildReport(ReportTemplateBase):
         return {
             'build': my_build,
             'part': my_build.part,
+            'bom_items': my_build.part.get_bom_items(),
             'reference': my_build.reference,
             'quantity': my_build.quantity,
         }
