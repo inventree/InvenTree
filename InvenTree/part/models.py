@@ -1451,7 +1451,7 @@ class Part(MPTTModel):
         min_price = None
         max_price = None
 
-        for item in self.get_bom_items.all().select_related('sub_part'):
+        for item in self.get_bom_items().all().select_related('sub_part'):
 
             if item.sub_part.pk == self.pk:
                 print("Warning: Item contains itself in BOM")
