@@ -23,7 +23,7 @@ from markdownx.models import MarkdownxField
 from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.status_codes import BuildStatus
-from InvenTree.helpers import increment, getSetting, normalize
+from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
 from InvenTree.validators import validate_build_order_reference
 from InvenTree.models import InvenTreeAttachment
 
@@ -70,7 +70,7 @@ class Build(MPTTModel):
         Return a JSON string to represent this build as a barcode
         """
 
-        return helpers.MakeBarcode(
+        return MakeBarcode(
             "buildorder",
             self.pk,
             {
