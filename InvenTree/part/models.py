@@ -976,20 +976,43 @@ class Part(MPTTModel):
 
         return quantity
 
+    def required_order_quantity(self):
+        """
+        Return total required to fulfil orders
+        """
+
+        return self.required_build_order_quantity() + self.required_sales_order_quantity()
+
     @property
     def quantity_to_order(self):
-        """ Return the quantity needing to be ordered for this part. """
+        """
+        Return the quantity needing to be ordered for this part.
+        
+        Here, an "order" could be one of:
+        - Build Order
+        - Sales Order
 
-        # How many do we need to have "on hand" at any point?
-        required = self.net_stock - self.minimum_stock
+        To work out how many we need to order:
 
-        if required < 0:
-            return abs(required)
+        Stock on hand = self.total_stock
+        Required for orders = self.required_order_quantity()
+        Currently on order = self.on_order
+        Currently building = self.quantity_being_built
+        
+        """
 
-        # Do not need to order any
-        return 0
+        # Total requirement
+        required = self.required_order_quantity()
 
-        required = self.net_stock
+        # Subtract stock levels
+        required -= max(self.total_stock, self.minimum_stock)
+
+        # Subtract quantity on order
+        required -= self.on_order
+
+        # Subtract quantity being built
+        required -= self.quantity_being_built
+
         return max(required, 0)
 
     @property

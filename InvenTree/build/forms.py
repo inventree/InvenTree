@@ -39,6 +39,11 @@ class EditBuildForm(HelperForm):
         help_text=_('Target date for build completion. Build will be overdue after this date.')
     )
 
+    quantity = RoundingDecimalFormField(
+        max_digits=10, decimal_places=5,
+        help_text=_('Number of items to build')
+    )
+
     class Meta:
         model = Build
         fields = [
