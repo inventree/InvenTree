@@ -379,24 +379,32 @@ class Build(MPTTModel):
         if cls.objects.count() == 0:
             return None
 
-        build = cls.objects.last()
+        # Extract the "most recent" build order reference
+        builds = cls.objects.exclude(reference=None)
+        
+        if not builds.exists():
+            return None
+
+        build = builds.last()
         ref = build.reference
 
         if not ref:
             return None
 
-        tries = set()
+        tries = set(ref)
+
+        new_ref = ref
 
         while 1:
-            new_ref = increment(ref)
+            new_ref = increment(new_ref)
 
             if new_ref in tries:
                 # We are potentially stuck in a loop - simply return the original reference
                 return ref
 
+            # Check if the existing build reference exists
             if cls.objects.filter(reference=new_ref).exists():
                 tries.add(new_ref)
-                new_ref = increment(new_ref)
             else:
                 break
 

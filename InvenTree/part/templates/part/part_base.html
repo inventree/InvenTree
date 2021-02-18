@@ -133,11 +133,18 @@
             <td>{% decimal on_order %}</td>
         </tr>
         {% endif %}
-        {% if required > 0 %}
+        {% if required_build_order_quantity > 0 %}
         <tr>
             <td><span class='fas fa-clipboard-list'></span></td>
-            <td>{% trans "Required for Orders" %}</td>
-            <td>{% decimal required %}
+            <td>{% trans "Required for Build Orders" %}</td>
+            <td>{% decimal required_build_order_quantity %}
+        </tr>
+        {% endif %}
+        {% if required_sales_order_quantity > 0 %}
+        <tr>
+            <td><span class='fas fa-clipboard-list'></span></td>
+            <td>{% trans "Required for Sales Orders" %}</td>
+            <td>{% decimal required_sales_order_quantity %}
         </tr>
         {% endif %}
         {% if allocated > 0 %}

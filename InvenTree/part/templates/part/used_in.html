@@ -22,10 +22,14 @@
 {% block js_ready %}
 {{ block.super }}
 
-    loadUsedInTable('#used-table', {
-        part_detail: true,
-        part_id: {{ part.pk }}
-    });
+    loadSimplePartTable('#used-table',
+        '{% url "api-part-list" %}',
+        {
+            params: {
+                uses: {{ part.pk }},
+            }
+        }
+    );
 
 
 {% endblock %}

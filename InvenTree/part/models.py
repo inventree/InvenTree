@@ -643,7 +643,7 @@ class Part(MPTTModel):
         super().clean()
 
         if self.trackable:
-            for item in self.used_in.all():
+            for item in self.get_used_in().all():
                 parent_part = item.part
                 if not parent_part.trackable:
                     parent_part.trackable = True
@@ -891,10 +891,10 @@ class Part(MPTTModel):
         Return list of outstanding build orders which require this part
         """
 
-        # List of BOM that this part is required for
-        boms = BomItem.objects.filter(sub_part=self)
+        # List parts that this part is required for
+        parts = self.get_used_in().all()
 
-        part_ids = [bom.part.pk for bom in boms]
+        part_ids = [part.pk for part in parts]
 
         # Now, get a list of outstanding build orders which require this part
         builds = BuildModels.Build.objects.filter(
@@ -909,36 +909,24 @@ class Part(MPTTModel):
         Return the quantity of this part required for active build orders
         """
 
-        # List of BOM that this part is required for
-        boms = BomItem.objects.filter(sub_part=self)
-
-        part_ids = [bom.part.pk for bom in boms]
-
-        # Now, get a list of outstanding build orders which require this part
-        builds = BuildModels.Build.objects.filter(
-            part__in=part_ids,
-            status__in=BuildStatus.ACTIVE_CODES
-        )
+        # List active build orders which reference this part
+        builds = self.requiring_build_orders()
 
         quantity = 0
 
         for build in builds:
-            
+    
             bom_item = None
 
+            # List the bom lines required to make the build (including inherited ones!)
+            bom_items = build.part.get_bom_items().filter(sub_part=self)
+
             # Match BOM item to build
-            for bom in boms:
-                if bom.part == build.part:
-                    bom_item = bom
-                    break
+            for bom_item in bom_items:
 
-            if bom_item is None:
-                logger.warning("Found null BomItem when calculating required quantity")
-                continue
+                build_quantity = build.quantity * bom_item.quantity
 
-            build_quantity = build.quantity * bom_item.quantity
-
-            quantity += build_quantity
+                quantity += build_quantity
         
         return quantity
 
@@ -1240,6 +1228,54 @@ class Part(MPTTModel):
 
         return BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
 
+    def get_used_in_filter(self, include_inherited=True):
+        """
+        Return a query filter for all parts that this part is used in.
+
+        There are some considerations:
+
+        a) This part may be directly specified against a BOM for a part
+        b) This part may be specifed in a BOM which is then inherited by another part
+
+        Note: This function returns a Q object, not an actual queryset.
+              The Q object is used to filter against a list of Part objects
+        """
+
+        # This is pretty expensive - we need to traverse multiple variant lists!
+        # TODO - In the future, could this be improved somehow?
+
+        # Keep a set of Part ID values
+        parts = set()
+
+        # First, grab a list of all BomItem objects which "require" this part
+        bom_items = BomItem.objects.filter(sub_part=self)
+
+        for bom_item in bom_items:
+
+            # Add the directly referenced part
+            parts.add(bom_item.part)
+
+            # Traverse down the variant tree?
+            if include_inherited and bom_item.inherited:
+
+                part_variants = bom_item.part.get_descendants(include_self=False)
+
+                for variant in part_variants:
+                    parts.add(variant)
+
+        # Turn into a list of valid IDs (for matching against a Part query)
+        part_ids = [part.pk for part in parts]
+
+        return Q(id__in=part_ids)
+
+    def get_used_in(self, include_inherited=True):
+        """
+        Return a queryset containing all parts this part is used in.
+
+        Includes consideration of inherited BOMs
+        """
+        return Part.objects.filter(self.get_used_in_filter(include_inherited=include_inherited))
+
     @property
     def has_bom(self):
         return self.get_bom_items().count() > 0
@@ -1265,7 +1301,7 @@ class Part(MPTTModel):
     @property
     def used_in_count(self):
         """ Return the number of part BOMs that this part appears in """
-        return self.used_in.count()
+        return self.get_used_in().count()
 
     def get_bom_hash(self):
         """ Return a checksum hash for the BOM for this part.
@@ -1364,7 +1400,7 @@ class Part(MPTTModel):
         parts = parts.exclude(id=self.id)
 
         # Exclude any parts that this part is used *in* (to prevent recursive BOMs)
-        used_in = self.used_in.all()
+        used_in = self.get_used_in().all()
 
         parts = parts.exclude(id__in=[item.part.id for item in used_in])
 
@@ -1524,7 +1560,7 @@ class Part(MPTTModel):
 
         # Copy existing BOM items from another part
         # Note: Inherited BOM Items will *not* be duplicated!!
-        for bom_item in other.bom_items.all():
+        for bom_item in other.get_bom_items(include_inherited=False).all():
             # If this part already has a BomItem pointing to the same sub-part,
             # delete that BomItem from this part first!
 
@@ -2094,6 +2130,8 @@ class BomItem(models.Model):
         - Quantity
         - Reference field
         - Note field
+        - Optional field
+        - Inherited field
 
         """
 
@@ -2106,6 +2144,8 @@ class BomItem(models.Model):
         hash.update(str(self.quantity).encode())
         hash.update(str(self.note).encode())
         hash.update(str(self.reference).encode())
+        hash.update(str(self.optional).encode())
+        hash.update(str(self.inherited).encode())
 
         return str(hash.digest())
 
