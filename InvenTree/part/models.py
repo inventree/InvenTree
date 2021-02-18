@@ -1228,7 +1228,6 @@ class Part(MPTTModel):
 
         return BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
 
-
     def get_used_in_filter(self, include_inherited=True):
         """
         Return a query filter for all parts that this part is used in.
