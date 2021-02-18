@@ -5,16 +5,22 @@
         <a href="{% url 'build-detail' build.id %}">{% trans "Details" %}</a>
     </li>
     {% if build.active %}
+    <li {% if tab == 'parts' %} class='active'{% endif %}>
+        <a href='{% url "build-parts" build.id %}'>
+            {% trans "Required Parts" %}
+            <span class='badge'>{{ build.part.bom_count }}</span>
+        </a>
+    </li>
     <li{% if tab == 'allocate' %} class='active'{% endif %}>
         <a href="{% url 'build-allocate' build.id %}">
-            {% trans "Incomplete" %}
+            {% trans "In Progress" %}
             <span class='badge'>{{ build.incomplete_outputs.count }}</span>
         </a>
     </li>
     {% endif %}
     <li{% if tab == 'output' %} class='active'{% endif %}>
         <a href="{% url 'build-output' build.id %}">
-            {% trans "Build Outputs" %}
+            {% trans "Completed Outputs" %}
             <span class='badge'>{{ build.output_count }}</span>
         </a>
     </li>
