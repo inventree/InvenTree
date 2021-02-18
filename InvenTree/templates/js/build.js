@@ -870,6 +870,44 @@ function loadBuildPartsTable(table, options={}) {
         filters[key] = params[key];
     }
 
+    function setupTableCallbacks() {
+        // Register button callbacks once the table data are loaded
+
+        // Callback for 'buy' button
+        $(table).find('.button-buy').click(function() {
+            var pk = $(this).attr('pk');
+
+            var idx = $(this).closest('tr').attr('data-index');
+            var row = $(table).bootstrapTable('getData')[idx];
+
+            launchModalForm('{% url "order-parts" %}', {
+                data: {
+                    parts: [
+                        pk,
+                    ]
+                }
+            });
+        });
+
+        // Callback for 'build' button
+        $(table).find('.button-build').click(function() {
+            var pk = $(this).attr('pk');
+
+            // Extract row data from the table
+            var idx = $(this).closest('tr').attr('data-index');
+            var row = $(table).bootstrapTable('getData')[idx];
+
+            // Launch form to create a new build order
+            launchModalForm('{% url "build-create" %}', {
+                follow: true,
+                data: {
+                    part: pk,
+                    parent: options.build,
+                }
+            });
+        });
+    }
+
     var columns = [
         {
             field: 'sub_part',
@@ -939,7 +977,21 @@ function loadBuildPartsTable(table, options={}) {
             title: '{% trans "Actions" %}',
             switchable: false,
             formatter: function(value, row, index, field) {
-                // TODO - Add actions to build / order stock
+
+                // Generate action buttons against the part
+                var html = `<div class='btn-group float-right' role='group'>`;
+
+                if (row.sub_part_detail.assembly) {
+                    html += makeIconButton('fa-tools icon-blue', 'button-build', row.sub_part, '{% trans "Build stock" %}');
+                }
+
+                if (row.sub_part_detail.purchaseable) {
+                    html += makeIconButton('fa-shopping-cart icon-blue', 'button-buy', row.sub_part, '{% trans "Order stock" %}');
+                }
+
+                html += `</div>`;
+
+                return html;
             }
         }
     ];
@@ -950,6 +1002,7 @@ function loadBuildPartsTable(table, options={}) {
         name: 'build-parts',
         sortable: true,
         search: true,
+        onPostBody: setupTableCallbacks,
         rowStyle: function(row, index) {
             var classes = [];
 
