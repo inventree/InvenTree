@@ -834,3 +834,146 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
     });
 
 }
+
+
+function loadBuildPartsTable(table, options={}) {
+    /**
+     * Display a "required parts" table for build view.
+     * 
+     * This is a simplified BOM view:
+     * - Does not display sub-bom items
+     * - Does not allow editing of BOM items
+     * 
+     * Options:
+     * 
+     * part: Part ID
+     * build: Build ID
+     * build_quantity: Total build quantity
+     * build_remaining: Number of items remaining
+     */
+
+    // Query params
+    var params = {
+        sub_part_detail: true,
+        part: options.part,
+    };
+
+    var filters = {};
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters('bom');
+    }
+
+    setupFilterList('bom', $(table));
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    var columns = [
+        {
+            field: 'sub_part',
+            title: '{% trans "Part" %}',
+            switchable: false,
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                var url = `/part/${row.sub_part}/`;
+                var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, url);
+
+                var sub_part = row.sub_part_detail;
+
+                html += makePartIcons(row.sub_part_detail);
+
+                // Display an extra icon if this part is an assembly
+                if (sub_part.assembly) {
+                    var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream label-right'></span>`;
+                    
+                    html += renderLink(text, `/part/${row.sub_part}/bom/`);
+                }
+
+                return html;
+            }
+        },
+        {
+            field: 'sub_part_detail.description',
+            title: '{% trans "Description" %}',
+        },
+        {
+            field: 'reference',
+            title: '{% trans "Reference" %}',
+            searchable: true,
+            sortable: true,
+        },
+        {
+            field: 'quantity',
+            title: '{% trans "Quantity" %}',
+            sortable: true
+        },
+        {
+            sortable: true,
+            switchable: false,
+            field: 'sub_part_detail.stock',
+            title: '{% trans "Available" %}',
+            formatter: function(value, row, index, field) {
+                return makeProgressBar(
+                    value,
+                    row.quantity * options.build_remaining,
+                    {
+                        id: `part-progress-${row.part}`
+                    }
+                );
+            },
+            sorter: function(valA, valB, rowA, rowB) {
+                if (rowA.received == 0 && rowB.received == 0) {
+                    return (rowA.quantity > rowB.quantity) ? 1 : -1;
+                }
+
+                var progressA = parseFloat(rowA.sub_part_detail.stock) / (rowA.quantity * options.build_remaining);
+                var progressB = parseFloat(rowB.sub_part_detail.stock) / (rowB.quantity * options.build_remaining);
+
+                return (progressA < progressB) ? 1 : -1;
+            }
+        },
+        {
+            field: 'actions',
+            title: '{% trans "Actions" %}',
+            switchable: false,
+            formatter: function(value, row, index, field) {
+                // TODO - Add actions to build / order stock
+            }
+        }
+    ];
+
+    table.inventreeTable({
+        url: '{% url "api-bom-list" %}',
+        showColumns: true,
+        name: 'build-parts',
+        sortable: true,
+        search: true,
+        rowStyle: function(row, index) {
+            var classes = [];
+
+            // Shade rows differently if they are for different parent parts
+            if (row.part != options.part) {
+                classes.push('rowinherited');
+            }
+
+            if (row.validated) {
+                classes.push('rowvalid');
+            } else {
+                classes.push('rowinvalid');
+            }
+
+            return {
+                classes: classes.join(' '),
+            };
+        },
+        formatNoMatches: function() {
+            return '{% trans "No BOM items found" %}';
+        },
+        clickToSelect: true,
+        queryParams: filters,
+        original: params,
+        columns: columns,
+    });    
+}

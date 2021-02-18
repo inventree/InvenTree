@@ -1,0 +1,28 @@
+{% extends "build/build_base.html" %}
+{% load static %}
+{% load i18n %}
+{% load status_codes %}
+
+{% block details %}
+
+{% include "build/tabs.html" with tab='parts' %}
+
+<h4>{% trans "Build Parts" %}</h4>
+<hr>
+
+<table class='table table-striped table-condensed' id='parts-table'></table>
+
+{% endblock %}
+
+{% block js_ready %}
+
+{{ block.super }}
+
+loadBuildPartsTable($('#parts-table'), {
+    part: {{ build.part.pk }},
+    build: {{ build.pk }},
+    build_quantity: {{ build.quantity }},
+    build_remaining: {{ build.remaining }},
+});
+
+{% endblock %}
