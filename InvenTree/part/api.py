@@ -465,6 +465,18 @@ class PartList(generics.ListCreateAPIView):
 
         queryset = super().filter_queryset(queryset)
 
+        # Filter by "uses" query - Limit to parts which use the provided part
+        uses = params.get('uses', None)
+
+        if uses:
+            try:
+                uses = Part.objects.get(pk=uses)
+
+                queryset = queryset.filter(uses.get_used_in_filter())
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # Filter by 'ancestor'?
         ancestor = params.get('ancestor', None)
 
@@ -839,12 +851,6 @@ class BomList(generics.ListCreateAPIView):
 
             except (ValueError, Part.DoesNotExist):
                 pass
-        
-        # Filter by sub-part?
-        sub_part = params.get('sub_part', None)
-
-        if sub_part is not None:
-            queryset = queryset.filter(sub_part=sub_part)
 
         # Filter by "active" status of the part
         part_active = params.get('part_active', None)
