@@ -714,18 +714,23 @@ class StockItem(MPTTModel):
         items = StockItem.objects.filter(belongs_to=self)
 
         for item in items:
+            
+            # Prevent duplication or recursion
+            if item == self or item in installed:
+                continue
 
-            # Prevent recursion
-            if item not in installed:
-                installed.add(item)
+            installed.add(item)
 
             if cascade:
                 sub_items = item.get_installed_items(cascade=True)
 
                 for sub_item in sub_items:
+
                     # Prevent recursion
-                    if sub_item not in installed:
-                        installed.add(sub_item)
+                    if sub_item == self or sub_item in installed:
+                        continue
+
+                    installed.add(sub_item)
 
         return installed
 
