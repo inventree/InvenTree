@@ -71,7 +71,7 @@ function addHeaderTitle(title) {
 function addHeaderAction(label, title, icon) {
     // Add an action block to the action list
     $("#action-item-list").append(
-        `<li class='list-group-item' id='action-${title}'>
+        `<li class='list-group-item' id='action-${label}'>
             <a href='#'>
                 <span class='fas ${icon}'></span>
                 ${title}
@@ -81,6 +81,27 @@ function addHeaderAction(label, title, icon) {
             </span>
         </li>`
     );
+
+    // Add a detail item to the detail item-panel
+    $("#detail-item-list").append(
+        `<li class='list-group-item' id='detail-${label}'>
+            <h4>${title}</h4>
+            <div id='data-${label}'></div>
+        </li>`
+    );
+
+    $(`#detail-${label}`).hide();
+
+    $(`#action-${label}`).click(function() {
+
+        // Hide all child elements
+        $('#detail-item-list').children('li').each(function() {
+            $(this).hide();
+        });
+
+        // Show the one we want
+        $(`#detail-${label}`).show();
+    });
 }
 
 {% if roles.part.view %}
