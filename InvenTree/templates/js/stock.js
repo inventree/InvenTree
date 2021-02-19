@@ -327,11 +327,13 @@ function loadStockTable(table, options) {
         url: options.url || "{% url 'api-stock-list' %}",
         queryParams: filters,
         customSort: customGroupSorter,
-        groupBy: true,
         name: 'stock',
         original: original,
         showColumns: true,
+        {% settings_value 'STOCK_GROUP_BY_PART' as group_by_part %}
+        {% if group_by_part %}
         groupByField: options.groupByField || 'part',
+        groupBy: true,
         groupByFormatter: function(field, id, data) {
 
             var row = data[0];
@@ -363,9 +365,9 @@ function loadStockTable(table, options) {
                 var packaging = [];
 
                 data.forEach(function(item) {
-                    var pkg = String(item.packaging);
+                    var pkg = item.packaging;
 
-                    if (!pkg || pkg == '') {
+                    if (!pkg) {
                         pkg = '-';
                     }
 
@@ -491,6 +493,7 @@ function loadStockTable(table, options) {
                 return '';
             }
         },
+        {% endif %}
         columns: [
             {
                 checkbox: true,
