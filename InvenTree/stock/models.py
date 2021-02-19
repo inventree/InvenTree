@@ -833,6 +833,27 @@ class StockItem(MPTTModel):
         return query.exists()
 
     @property
+    def can_adjust_location(self):
+        """
+        Returns True if the stock location can be "adjusted" for this part
+
+        Cannot be adjusted if:
+        - Has been delivered to a customer
+        - Has been installed inside another StockItem
+        """
+
+        if self.customer is not None:
+            return False
+
+        if self.belongs_to is not None:
+            return False
+
+        if self.sales_order is not None:
+            return False
+
+        return True
+
+    @property
     def tracking_info_count(self):
         return self.tracking_info.count()
 

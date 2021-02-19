@@ -155,7 +155,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <div class='btn-group'>
             <button id='stock-actions' title='{% trans "Stock adjustment actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
             <ul class='dropdown-menu' role='menu'>
-                {% if item.in_stock %}
+                {% if item.can_adjust_location %}
                 {% if not item.serialized %}
                 <li><a href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-clipboard-list'></span> {% trans "Count stock" %}</a></li>
                 <li><a href='#' id='stock-add' title='{% trans "Add stock" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
