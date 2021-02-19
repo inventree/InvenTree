@@ -155,6 +155,7 @@ class StockItem(MPTTModel):
         infinite: If True this StockItem can never be exhausted
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
         purchase_price: The unit purchase price for this StockItem - this is the unit price at time of purchase (if this item was purchased from an external supplier)
+        packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
     """
 
     # A Query filter which will be re-used in multiple places to determine if a StockItem is actually "in stock"
@@ -385,6 +386,13 @@ class StockItem(MPTTModel):
         related_name='stock_items',
         blank=True, null=True,
         help_text=_('Where is this stock item located?')
+    )
+
+    packaging = models.CharField(
+        max_length=50,
+        blank=True, null=True,
+        verbose_name=_('Packaging'),
+        help_text=_('Packaging this stock item is stored in')
     )
 
     belongs_to = models.ForeignKey(

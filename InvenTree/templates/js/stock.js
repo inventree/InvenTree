@@ -327,11 +327,13 @@ function loadStockTable(table, options) {
         url: options.url || "{% url 'api-stock-list' %}",
         queryParams: filters,
         customSort: customGroupSorter,
-        groupBy: true,
         name: 'stock',
         original: original,
         showColumns: true,
+        {% settings_value 'STOCK_GROUP_BY_PART' as group_by_part %}
+        {% if group_by_part %}
         groupByField: options.groupByField || 'part',
+        groupBy: true,
         groupByFormatter: function(field, id, data) {
 
             var row = data[0];
@@ -358,6 +360,29 @@ function loadStockTable(table, options) {
             }
             else if (field == 'part_detail.description') {
                 return row.part_detail.description;
+            }
+            else if (field == 'packaging') {
+                var packaging = [];
+
+                data.forEach(function(item) {
+                    var pkg = item.packaging;
+
+                    if (!pkg) {
+                        pkg = '-';
+                    }
+
+                    if (!packaging.includes(pkg)) {
+                        packaging.push(pkg);
+                    }
+                });
+
+                if (packaging.length > 1) {
+                    return "...";
+                } else if (packaging.length == 1) {
+                    return packaging[0];
+                } else {
+                    return "-";
+                }
             }
             else if (field == 'quantity') {
                 var stock = 0;
@@ -388,7 +413,7 @@ function loadStockTable(table, options) {
 
                 // Multiple status codes
                 if (statii.length > 1) {
-                    return "-";
+                    return "...";
                 } else if (statii.length == 1) {
                     return stockStatusDisplay(statii[0]);
                 } else {
@@ -468,6 +493,7 @@ function loadStockTable(table, options) {
                 return '';
             }
         },
+        {% endif %}
         columns: [
             {
                 checkbox: true,
@@ -618,6 +644,12 @@ function loadStockTable(table, options) {
                 field: 'updated',
                 title: '{% trans "Last Updated" %}',
                 sortable: true,
+            },
+            {
+                field: 'packaging',
+                title: '{% trans "Packaging" %}',
+                sortable: true,
+                searchable: true,
             },
             {
                 field: 'notes',
