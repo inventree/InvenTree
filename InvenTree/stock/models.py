@@ -707,6 +707,41 @@ class StockItem(MPTTModel):
 
         return True
 
+    def get_installed_items(self, cascade=False):
+        """
+        Return all stock items which are *installed* in this one!
+
+        Args:
+            cascade - Include items which are installed in items which are installed in items
+
+        Note: This function is recursive, and may result in a number of database hits!
+        """
+
+        installed = set()
+
+        items = StockItem.objects.filter(belongs_to=self)
+
+        for item in items:
+            
+            # Prevent duplication or recursion
+            if item == self or item in installed:
+                continue
+
+            installed.add(item)
+
+            if cascade:
+                sub_items = item.get_installed_items(cascade=True)
+
+                for sub_item in sub_items:
+
+                    # Prevent recursion
+                    if sub_item == self or sub_item in installed:
+                        continue
+
+                    installed.add(sub_item)
+
+        return installed
+
     def installedItemCount(self):
         """
         Return the number of stock items installed inside this one.
@@ -1305,6 +1340,9 @@ class StockItem(MPTTModel):
         as all named tests are accessible.
         """
 
+        # Do we wish to include test results from installed items?
+        include_installed = kwargs.pop('include_installed', False)
+
         # Filter results by "date", so that newer results
         # will override older ones.
         results = self.getTestResults(**kwargs).order_by('date')
@@ -1314,6 +1352,20 @@ class StockItem(MPTTModel):
         for result in results:
             key = helpers.generateTestKey(result.test)
             result_map[key] = result
+
+        # Do we wish to "cascade" and include test results from installed stock items?
+        cascade = kwargs.get('cascade', False)
+
+        if include_installed:
+            installed_items = self.get_installed_items(cascade=cascade)
+
+            for item in installed_items:
+                item_results = item.testResultMap()
+
+                for key in item_results.keys():
+                    # Results from sub items should not override master ones
+                    if key not in result_map.keys():
+                        result_map[key] = item_results[key]
 
         return result_map
 
