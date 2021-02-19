@@ -283,6 +283,13 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td>{{ item.batch }}</td>
     </tr>
     {% endif %}
+    {% if item.packaging %}
+    <tr>
+        <td><span class='fas fa-cube'></span></td>
+        <td>{% trans "Packaging" %}</td>
+        <td>{{ item.packaging }}</td>
+    </tr>
+    {% endif %}
     {% if item.build %}
     <tr>
         <td><span class='fas fa-tools'></span></td>
