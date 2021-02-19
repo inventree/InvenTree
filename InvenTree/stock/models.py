@@ -1311,6 +1311,9 @@ class StockItem(MPTTModel):
         as all named tests are accessible.
         """
 
+        # Do we wish to include test results from installed items?
+        include_installed = kwargs.pop('include_installed', False)
+
         # Filter results by "date", so that newer results
         # will override older ones.
         results = self.getTestResults(**kwargs).order_by('date')
@@ -1321,17 +1324,14 @@ class StockItem(MPTTModel):
             key = helpers.generateTestKey(result.test)
             result_map[key] = result
 
-        # Do we wish to include test results from installed items?
-        include_installed = kwargs.get('include_installed', False)
-
         # Do we wish to "cascade" and include test results from installed stock items?
         cascade = kwargs.get('cascade', False)
 
         if include_installed:
-            installed_items = get_installed_items(cascade=cascade)
+            installed_items = self.get_installed_items(cascade=cascade)
 
             for item in installed_items:
-                item_results = item.testResultMap
+                item_results = item.testResultMap()
 
                 for key in item_results.keys():
                     # Results from sub items should not override master ones
