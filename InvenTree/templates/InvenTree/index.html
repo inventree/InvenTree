@@ -15,40 +15,8 @@ InvenTree | {% trans "Index" %}
 </div>
 <div class='col-sm-9' id='details-panel'>
     <ul class='list-group' id='detail-item-list'>
-    </ul>
-</div>
 
-<div class='col-sm-4'>
-    {% if roles.part.view %}
-    {% include "InvenTree/latest_parts.html" with collapse_id="latest_parts" %}
-    {% include "InvenTree/bom_invalid.html" with collapse_id="bom_invalid" %}
-    {% include "InvenTree/starred_parts.html" with collapse_id="starred" %}
-    {% endif %}
-    {% if roles.build.view %}
-    {% include "InvenTree/build_pending.html" with collapse_id="build_pending" %}
-    {% include "InvenTree/build_overdue.html" with collapse_id="build_overdue" %}
-    {% endif %}
-</div>
-<div class='col-sm-4'>
-    {% if roles.stock.view %}
-    {% include "InvenTree/low_stock.html" with collapse_id="order" %}
-    {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
-    {% if expiry %}
-    {% include "InvenTree/expired_stock.html" with collapse_id="expired" %}
-    {% include "InvenTree/stale_stock.html" with collapse_id="stale" %}
-    {% endif %}
-    {% include "InvenTree/required_stock_build.html" with collapse_id="stock_to_build" %}
-    {% endif %}
-</div>
-<div class='col-sm-4'>
-    {% if roles.purchase_order.view %}
-    {% include "InvenTree/po_outstanding.html" with collapse_id="po_outstanding" %}
-    {% endif %}
-    {% include "InvenTree/po_overdue.html" with collapse_id="po_overdue" %}
-    {% if roles.sales_order.view %}
-    {% include "InvenTree/so_outstanding.html" with collapse_id="so_outstanding" %}
-    {% include "InvenTree/so_overdue.html" with collapse_id="so_overdue" %}
-    {% endif %}
+    </ul>
 </div>
 
 {% endblock %}
@@ -68,7 +36,7 @@ function addHeaderTitle(title) {
     );
 }
 
-function addHeaderAction(label, title, icon) {
+function addHeaderAction(label, title, icon, options) {
     // Add an action block to the action list
     $("#action-item-list").append(
         `<li class='list-group-item' id='action-${label}'>
@@ -86,7 +54,7 @@ function addHeaderAction(label, title, icon) {
     $("#detail-item-list").append(
         `<li class='list-group-item' id='detail-${label}'>
             <h4>${title}</h4>
-            <div id='data-${label}'></div>
+            <table class='table table-condensed table-striped' id='table-${label}'></table>
         </li>`
     );
 
@@ -102,6 +70,13 @@ function addHeaderAction(label, title, icon) {
         // Show the one we want
         $(`#detail-${label}`).show();
     });
+
+    // Connect a callback to the table
+    $(`#table-${label}`).on('load-success.bs.table', function() {
+        var count = $(`#table-${label}`).bootstrapTable('getData').length;
+    
+        $(`#badge-${label}`).html(count);
+    });
 }
 
 {% if roles.part.view %}
@@ -109,6 +84,30 @@ addHeaderTitle('{% trans "Parts" %}');
 addHeaderAction('starred-parts', '{% trans "Starred Parts" %}', 'fa-star');
 addHeaderAction('latest-parts', '{% trans "Latest Parts" %}', 'fa-newspaper');
 addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" %}', 'fa-times-circle');
+
+
+loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
+    params: {
+        ordering: "-creation_date",
+        limit: 10,
+    },
+    name: 'latest_parts',
+});
+
+loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
+    params: {
+        "starred": true,
+    },
+    name: 'starred_parts',
+});
+
+loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
+    params: {
+        "bom_valid": false,
+    },
+    name: 'bom_invalid_parts',
+});
+
 {% endif %}
 
 {% if roles.stock.view %}
@@ -119,50 +118,47 @@ addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa
 {% if expiry %}
 addHeaderAction('expired-stock', '{% trans "Expired Stock" %}', 'fa-calendar-times');
 addHeaderAction('stale-stock', '{% trans "Stale Stock" %}', 'fa-stopwatch');
+
+loadStockTable($("#table-expired-stock"), {
+    params: {
+        expired: true,
+        location_detail: true,
+        part_detail: true,
+    },
+});
+
+loadStockTable($("#table-stale-stock"), {
+    params: {
+        stale: true,
+        expired: false,
+        location_detail: true,
+        part_detail: true,
+    },
+});
 {% endif %}
+
+loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
+    params: {
+        low_stock: true,
+    },
+    name: "low_stock_parts",
+});
+
+loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
+    params: {
+        stock_to_build: true,
+    },
+    name: "to_build_parts",
+});
+
 {% endif %}
 
 {% if roles.build.view %}
 addHeaderTitle('{% trans "Build Orders" %}');
-addHeaderAction('build-pending', '{% trans "In Progress" %}', 'fa-cogs');
-addHeaderAction('build-overdue', '{% trans "Overdue" %}', 'fa-calendar-times');
-{% endif %}
+addHeaderAction('build-pending', '{% trans "Build Orders In Progress" %}', 'fa-cogs');
+addHeaderAction('build-overdue', '{% trans "Overdue Build Orders" %}', 'fa-calendar-times');
 
-{% if roles.purchase_order.view %}
-addHeaderTitle('{% trans "Purchase Orders" %}');
-addHeaderAction('po-outstanding', '{% trans "Outstanding" %}', 'fa-sign-in-alt');
-addHeaderAction('po-overdue', '{% trans "Overdue" %}', 'fa-calendar-times');
-{% endif %}
-
-{% if roles.sales_order.view %}
-addHeaderTitle('{% trans "Sales Orders" %}');
-addHeaderAction('so-outstanding', '{% trans "Outstanding" %}', 'fa-sign-out-alt');
-addHeaderAction('so-overdue', '{% trans "Overdue" %}', 'fa-calendar-times');
-{% endif %}
-
-loadSimplePartTable("#latest-parts-table", "{% url 'api-part-list' %}", {
-    params: {
-        ordering: "-creation_date",
-        limit: 10,
-    },
-    name: 'latest_parts',
-});
-
-loadSimplePartTable("#starred-parts-table", "{% url 'api-part-list' %}", {
-    params: {
-        "starred": true,
-    },
-    name: 'starred_parts',
-});
-
-loadSimplePartTable("#bom-invalid-table", "{% url 'api-part-list' %}", {
-    params: {
-        "bom_valid": false,
-    },
-    name: 'bom_invalid_parts',
-});
-
-loadBuildTable("#build-pending-table", {
+loadBuildTable("#table-build-pending", {
     url: "{% url 'api-build-list' %}",
     params: {
         part_detail: true,
@@ -171,7 +167,7 @@ loadBuildTable("#build-pending-table", {
     disableFilters: true,
 });
 
-loadBuildTable("#build-overdue-table", {
+loadBuildTable("#table-build-overdue", {
     url: "{% url 'api-build-list' %}",
     params: {
         part_detail: true,
@@ -179,39 +175,14 @@ loadBuildTable("#build-overdue-table", {
     },
     disableFilters: true,
 });
+{% endif %}
 
-loadStockTable($("#expired-stock-table"), {
-    params: {
-        expired: true,
-        location_detail: true,
-        part_detail: true,
-    },
-});
+{% if roles.purchase_order.view %}
+addHeaderTitle('{% trans "Purchase Orders" %}');
+addHeaderAction('po-outstanding', '{% trans "Outstanding Purchase Orders" %}', 'fa-sign-in-alt');
+addHeaderAction('po-overdue', '{% trans "Overdue Purchase Orders" %}', 'fa-calendar-times');
 
-loadStockTable($("#stale-stock-table"), {
-    params: {
-        stale: true,
-        expired: false,
-        location_detail: true,
-        part_detail: true,
-    },
-});
-
-loadSimplePartTable("#low-stock-table", "{% url 'api-part-list' %}", {
-    params: {
-        low_stock: true,
-    },
-    name: "low_stock_parts",
-});
-
-loadSimplePartTable("#stock-to-build-table", "{% url 'api-part-list' %}", {
-    params: {
-        stock_to_build: true,
-    },
-    name: "to_build_parts",
-});
-
-loadPurchaseOrderTable("#po-outstanding-table", {
+loadPurchaseOrderTable("#table-po-outstanding", {
     url: "{% url 'api-po-list' %}",
     params: {
         supplier_detail: true,
@@ -219,7 +190,7 @@ loadPurchaseOrderTable("#po-outstanding-table", {
     }
 });
 
-loadPurchaseOrderTable("#po-overdue-table", {
+loadPurchaseOrderTable("#table-po-overdue", {
     url: "{% url 'api-po-list' %}",
     params: {
         supplier_detail: true,
@@ -227,7 +198,14 @@ loadPurchaseOrderTable("#po-overdue-table", {
     }
 });
 
-loadSalesOrderTable("#so-outstanding-table", {
+{% endif %}
+
+{% if roles.sales_order.view %}
+addHeaderTitle('{% trans "Sales Orders" %}');
+addHeaderAction('so-outstanding', '{% trans "Outstanding Sales Orders" %}', 'fa-sign-out-alt');
+addHeaderAction('so-overdue', '{% trans "Overdue Sales Orders" %}', 'fa-calendar-times');
+
+loadSalesOrderTable("#table-so-outstanding", {
     url: "{% url 'api-so-list' %}",
     params: {
         customer_detail: true,
@@ -235,7 +213,7 @@ loadSalesOrderTable("#so-outstanding-table", {
     },
 });
 
-loadSalesOrderTable("#so-overdue-table", {
+loadSalesOrderTable("#table-so-overdue", {
     url: "{% url 'api-so-list' %}",
     params: {
         overdue: true,
@@ -243,20 +221,6 @@ loadSalesOrderTable("#so-overdue-table", {
     }
 });
 
-{% include "InvenTree/index/on_load.html" with label="latest-parts" %}
-{% include "InvenTree/index/on_load.html" with label="starred-parts" %}
-{% include "InvenTree/index/on_load.html" with label="bom-invalid" %}
-{% include "InvenTree/index/on_load.html" with label="build-pending" %}
-{% include "InvenTree/index/on_load.html" with label="build-overdue" %}
-
-{% include "InvenTree/index/on_load.html" with label="expired-stock" %}
-{% include "InvenTree/index/on_load.html" with label="stale-stock" %}
-{% include "InvenTree/index/on_load.html" with label="low-stock" %}
-{% include "InvenTree/index/on_load.html" with label="stock-to-build" %}
-
-{% include "InvenTree/index/on_load.html" with label="po-outstanding" %}
-{% include "InvenTree/index/on_load.html" with label="po-overdue" %}
-{% include "InvenTree/index/on_load.html" with label="so-outstanding" %}
-{% include "InvenTree/index/on_load.html" with label="so-overdue" %}
+{% endif %}
 
 {% endblock %}
