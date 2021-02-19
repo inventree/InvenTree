@@ -359,6 +359,29 @@ function loadStockTable(table, options) {
             else if (field == 'part_detail.description') {
                 return row.part_detail.description;
             }
+            else if (field == 'packaging') {
+                var packaging = [];
+
+                data.forEach(function(item) {
+                    var pkg = String(item.packaging);
+
+                    if (!pkg || pkg == '') {
+                        pkg = '-';
+                    }
+
+                    if (!packaging.includes(pkg)) {
+                        packaging.push(pkg);
+                    }
+                });
+
+                if (packaging.length > 1) {
+                    return "...";
+                } else if (packaging.length == 1) {
+                    return packaging[0];
+                } else {
+                    return "-";
+                }
+            }
             else if (field == 'quantity') {
                 var stock = 0;
                 var items = 0;
@@ -388,7 +411,7 @@ function loadStockTable(table, options) {
 
                 // Multiple status codes
                 if (statii.length > 1) {
-                    return "-";
+                    return "...";
                 } else if (statii.length == 1) {
                     return stockStatusDisplay(statii[0]);
                 } else {
@@ -618,6 +641,12 @@ function loadStockTable(table, options) {
                 field: 'updated',
                 title: '{% trans "Last Updated" %}',
                 sortable: true,
+            },
+            {
+                field: 'packaging',
+                title: '{% trans "Packaging" %}',
+                sortable: true,
+                searchable: true,
             },
             {
                 field: 'notes',
