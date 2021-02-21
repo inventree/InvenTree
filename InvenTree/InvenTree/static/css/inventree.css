@@ -497,6 +497,14 @@
     background-color: #f33;
 }
 
+.badge-orange {
+    background-color: #fcba03;
+}
+
+.badge-green {
+    background-color: #1A1;
+}
+
 .part-thumb {
     width: 200px;
     height: 200px;

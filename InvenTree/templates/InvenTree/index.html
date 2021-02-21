@@ -26,10 +26,6 @@ InvenTree | {% trans "Index" %}
 
 {% endblock %}
 
-{% block js_load %}
-{{ block.super }}
-{% endblock %}
-
 {% block js_ready %}
 
 {{ block.super }}
@@ -78,7 +74,7 @@ function addHeaderAction(label, title, icon, options) {
         // Remove css class from all action items
         $("#action-item-list").children('li').each(function() {
             $(this).removeClass('index-action-selected');
-        })
+        });
 
         // Add css class to the action we are interested in
         $(`#action-${label}`).addClass('index-action-selected');
@@ -89,6 +85,10 @@ function addHeaderAction(label, title, icon, options) {
         var count = $(`#table-${label}`).bootstrapTable('getData').length;
     
         $(`#badge-${label}`).html(count);
+
+        if (count > 0) {
+            $(`#badge-${label}`).addClass('badge-orange');
+        }
     });
 }
 
