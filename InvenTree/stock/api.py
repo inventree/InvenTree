@@ -684,10 +684,17 @@ class StockList(generics.ListCreateAPIView):
             try:
                 part = Part.objects.get(pk=part_id)
 
-                # Filter by any parts "under" the given part
-                parts = part.get_descendants(include_self=True)
+                # Do we wish to filter *just* for this part, or also for parts *under* this one?
+                include_variants = str2bool(params.get('include_variants', True))
 
-                queryset = queryset.filter(part__in=parts)
+                if include_variants:
+                    # Filter by any parts "under" the given part
+                    parts = part.get_descendants(include_self=True)
+
+                    queryset = queryset.filter(part__in=parts)
+
+                else:
+                    queryset = queryset.filter(part=part)
 
             except (ValueError, Part.DoesNotExist):
                 raise ValidationError({"part": "Invalid Part ID specified"})

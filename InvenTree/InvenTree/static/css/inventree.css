@@ -50,6 +50,16 @@
     border-radius: 5px;
 }
 
+.index-bg {
+    width: 100%;
+    object-fit: fill;
+    opacity: 5%;
+}
+
+.index-action-selected {
+    background-color: #EEEEF5;
+}
+
 .markdownx .row {
     margin: 5px;
     padding: 5px;
@@ -485,6 +495,14 @@
 
 .badge-alert {
     background-color: #f33;
+}
+
+.badge-orange {
+    background-color: #fcba03;
+}
+
+.badge-green {
+    background-color: #1A1;
 }
 
 .part-thumb {

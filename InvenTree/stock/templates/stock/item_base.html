@@ -155,7 +155,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <div class='btn-group'>
             <button id='stock-actions' title='{% trans "Stock adjustment actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
             <ul class='dropdown-menu' role='menu'>
-                {% if item.in_stock %}
+                {% if item.can_adjust_location %}
                 {% if not item.serialized %}
                 <li><a href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-clipboard-list'></span> {% trans "Count stock" %}</a></li>
                 <li><a href='#' id='stock-add' title='{% trans "Add stock" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
@@ -281,6 +281,13 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td><span class='fas fa-layer-group'></span></td>
         <td>{% trans "Batch" %}</td>
         <td>{{ item.batch }}</td>
+    </tr>
+    {% endif %}
+    {% if item.packaging %}
+    <tr>
+        <td><span class='fas fa-cube'></span></td>
+        <td>{% trans "Packaging" %}</td>
+        <td>{{ item.packaging }}</td>
     </tr>
     {% endif %}
     {% if item.build %}

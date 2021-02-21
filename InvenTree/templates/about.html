@@ -12,42 +12,50 @@
               <img src="{% static 'img/inventree.png' %}" height='60' style='float: left;' alt='Inventree Logo'>
               <h3>{% trans "InvenTree Version Information" %}</h3>
             </div>
-            <div class='modal-form-content'>
-                <div>
-                    <table class='table table-striped table-condensed'>
-                        <col width='25'>
-                        <tr>
-                            <td><span class='fas fa-hashtag'></span></td>
-                            <td>{% trans "InvenTree Version" %}</td><td><a href="https://github.com/inventree/InvenTree/releases">{% inventree_version %}</a></td>
-                        </tr>
-                        <tr>
-                            <td><span class='fas fa-hashtag'></span></td>
-                            <td>{% trans "Django Version" %}</td><td><a href="https://www.djangoproject.com/">{% django_version %}</a></td>
-                        </tr>
-                        <tr>
-                            <td><span class='fas fa-code-branch'></span></td>
-                            <td>{% trans "Commit Hash" %}</td><td><a href="https://github.com/inventree/InvenTree/commit/{% inventree_commit_hash %}">{% inventree_commit_hash %}</a></td>
-                        </tr>
-                        <tr>
-                            <td><span class='fas fa-calendar-alt'></span></td>
-                            <td>{% trans "Commit Date" %}</td><td>{% inventree_commit_date %}</td>
-                        </tr>
-                        <tr>
-                            <td><span class='fas fa-book'></span></td>
-                            <td>{% trans "InvenTree Documentation" %}</td>
-                            <td><a href="{% inventree_docs_url %}">{% inventree_docs_url %}</a></td>
-                        </tr>
-                        <tr>
-                            <td><span class='fab fa-github'></span></td>
-                            <td>{% trans "View Code on GitHub" %}</td><td><a href="{% inventree_github_url %}">{% inventree_github_url %}</a></td>
-                        </tr>
-                        <tr>
-                            <td><span class='fas fa-bug'></span></td>
-                            <td>{% trans "Submit Bug Report" %}</td>
-                            <td><a href='{% inventree_github_url %}/issues'>{% inventree_github_url %}issues</a></td>
-                        </tr>
-                    </table>
+            <div class='modal-form-content-wrapper'>
+                <div class='modal-form-content'>
+                    <div>
+                        <table class='table table-striped table-condensed'>
+                            <col width='25'>
+                            <tr>
+                                <td><span class='fas fa-hashtag'></span></td>
+                                <td>{% trans "InvenTree Version" %}</td><td><a href="https://github.com/inventree/InvenTree/releases">{% inventree_version %}</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class='fas fa-hashtag'></span></td>
+                                <td>{% trans "Django Version" %}</td><td><a href="https://www.djangoproject.com/">{% django_version %}</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class='fas fa-code-branch'></span></td>
+                                <td>{% trans "Commit Hash" %}</td><td><a href="https://github.com/inventree/InvenTree/commit/{% inventree_commit_hash %}">{% inventree_commit_hash %}</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class='fas fa-calendar-alt'></span></td>
+                                <td>{% trans "Commit Date" %}</td><td>{% inventree_commit_date %}</td>
+                            </tr>
+                            <tr>
+                                <td><span class='fas fa-book'></span></td>
+                                <td>{% trans "InvenTree Documentation" %}</td>
+                                <td><a href="{% inventree_docs_url %}">{% inventree_docs_url %}</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class='fab fa-github'></span></td>
+                                <td>{% trans "View Code on GitHub" %}</td>
+                                <td><a href="{% inventree_github_url %}">{% inventree_github_url %}</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class='fas fa-mobile-alt'></span></td>
+                                <td>{% trans "Get the App" %}</td>
+                                <td><a href="https://inventree.readthedocs.io/en/latest/app/app">https://inventree.readthedocs.io/en/latest/app/app</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class='fas fa-bug'></span></td>
+                                <td>{% trans "Submit Bug Report" %}</td>
+                                <td><a href='{% inventree_github_url %}/issues'>{% inventree_github_url %}issues</a></td>
+                            </tr>
+                        </table>
 
+                    </div>
                 </div>
             </div>
             <div class='modal-footer'>

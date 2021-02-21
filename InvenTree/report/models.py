@@ -281,6 +281,12 @@ class TestReport(ReportTemplateBase):
         ]
     )
 
+    include_installed = models.BooleanField(
+        default=False,
+        verbose_name=_('Include Installed Tests'),
+        help_text=_('Include test results for stock items installed inside assembled item')
+    )
+
     def matches_stock_item(self, item):
         """
         Test if this report template matches a given StockItem objects
@@ -304,8 +310,8 @@ class TestReport(ReportTemplateBase):
         return {
             'stock_item': stock_item,
             'part': stock_item.part,
-            'results': stock_item.testResultMap(),
-            'result_list': stock_item.testResultList()
+            'results': stock_item.testResultMap(include_installed=self.include_installed),
+            'result_list': stock_item.testResultList(include_installed=self.include_installed)
         }
 
 

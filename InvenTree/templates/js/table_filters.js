@@ -130,6 +130,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "In Production" %}',
                 description: '{% trans "Show items which are in production" %}',
             },
+            include_variants: {
+                type: 'bool',
+                title: '{% trans "Include Variants" %}',
+                description: '{% trans "Include stock items for variant parts" %}',
+            },
             installed: {
                 type: 'bool',
                 title: '{% trans "Installed" %}',
