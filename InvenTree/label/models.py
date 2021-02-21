@@ -11,7 +11,7 @@ import io
 from blabel import LabelWriter
 
 from django.db import models
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.core.exceptions import ValidationError, FieldError
 
 from django.utils.translation import gettext_lazy as _
@@ -90,6 +90,20 @@ class LabelTemplate(models.Model):
         default=True,
         verbose_name=_('Enabled'),
         help_text=_('Label template is enabled'),
+    )
+
+    length = models.FloatField(
+        default=20,
+        verbose_name=_('Length [mm]'),
+        help_text=_('Label length, specified in mm'),
+        validators=[MinValueValidator(2)]
+    )
+
+    width = models.FloatField(
+        default=10,
+        verbose_name=('Width [mm]'),
+        help_text=_('Label width, specified in mm'),
+        validators=[MinValueValidator(2)]
     )
 
     def get_record_data(self, items):
