@@ -7,7 +7,7 @@ import django
 
 import common.models
 
-INVENTREE_SW_VERSION = "0.1.6"
+INVENTREE_SW_VERSION = "0.1.7 pre"
 
 
 def inventreeInstanceName():
