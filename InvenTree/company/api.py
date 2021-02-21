@@ -184,6 +184,8 @@ class SupplierPartList(generics.ListCreateAPIView):
         'manufacturer__name',
         'description',
         'MPN',
+        'part__name',
+        'part__description',
     ]
 
 
