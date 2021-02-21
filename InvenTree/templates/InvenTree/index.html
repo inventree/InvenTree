@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
 {% load inventree_extras %}
 {% block page_title %}
 InvenTree | {% trans "Index" %}
@@ -15,7 +16,11 @@ InvenTree | {% trans "Index" %}
 </div>
 <div class='col-sm-9' id='details-panel'>
     <ul class='list-group' id='detail-item-list'>
-
+        <li class='list-group-item'>
+            <div class='container'>
+                <img class='index-bg' src='{% static "img/inventree.png" %}'>
+            </div>
+        </li>
     </ul>
 </div>
 
@@ -69,6 +74,14 @@ function addHeaderAction(label, title, icon, options) {
 
         // Show the one we want
         $(`#detail-${label}`).fadeIn();
+
+        // Remove css class from all action items
+        $("#action-item-list").children('li').each(function() {
+            $(this).removeClass('index-action-selected');
+        })
+
+        // Add css class to the action we are interested in
+        $(`#action-${label}`).addClass('index-action-selected');
     });
 
     // Connect a callback to the table
