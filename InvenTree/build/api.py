@@ -56,6 +56,28 @@ class BuildList(generics.ListCreateAPIView):
 
         params = self.request.query_params
 
+        # Filter by "parent"
+        parent = params.get('parent', None)
+
+        if parent is not None:
+            queryset = queryset.filter(parent=parent)
+
+        # Filter by "ancestor" builds
+        ancestor = params.get('ancestor', None)
+
+        if ancestor is not None:
+            try:
+                ancestor = Build.objects.get(pk=ancestor)
+
+                descendants = ancestor.get_descendants(include_self=True)
+
+                queryset = queryset.filter(
+                    parent__pk__in=[b.pk for b in descendants]
+                )
+
+            except (ValueError, Build.DoesNotExist):
+                pass
+
         # Filter by build status?
         status = params.get('status', None)
 
