@@ -221,7 +221,7 @@ class ReportTemplateBase(ReportBase):
 
         return context
 
-    def render_to_string(self, request, **kwargs):
+    def render_as_string(self, request, **kwargs):
         """
         Render the report to a HTML stiring.
 

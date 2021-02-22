@@ -249,6 +249,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates'),
             # Allow templates in the reporting directory to be accessed
             os.path.join(MEDIA_ROOT, 'report'),
+            os.path.join(MEDIA_ROOT, 'label'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
