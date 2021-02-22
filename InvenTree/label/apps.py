@@ -1,12 +1,27 @@
 import os
 import shutil
 import logging
+import hashlib
 
 from django.apps import AppConfig
 from django.conf import settings
 
 
 logger = logging.getLogger(__name__)
+
+
+def hashFile(filename):
+    """
+    Calculate the MD5 hash of a file
+    """
+
+    md5 = hashlib.md5()
+
+    with open(filename, 'rb') as f:
+        data = f.read()
+        md5.update(data)
+
+    return md5.hexdigest()
 
 
 class LabelConfig(AppConfig):
@@ -35,6 +50,7 @@ class LabelConfig(AppConfig):
         src_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
             'templates',
+            'label',
             'stockitem',
         )
 
@@ -70,7 +86,21 @@ class LabelConfig(AppConfig):
             src_file = os.path.join(src_dir, label['file'])
             dst_file = os.path.join(settings.MEDIA_ROOT, filename)
 
-            if not os.path.exists(dst_file):
+            to_copy = False
+
+            if os.path.exists(dst_file):
+                # File already exists - let's see if it is the "same",
+                # or if we need to overwrite it with a newer copy!
+
+                if not hashFile(dst_file) == hashFile(src_file):
+                    logger.info(f"Hash differs for '{filename}'")
+                    to_copy = True
+
+            else:
+                logger.info(f"Label template '{filename}' is not present")
+                to_copy = True
+
+            if to_copy:
                 logger.info(f"Copying label template '{dst_file}'")
                 shutil.copyfile(src_file, dst_file)
 
@@ -106,6 +136,7 @@ class LabelConfig(AppConfig):
         src_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
             'templates',
+            'label',
             'stocklocation',
         )
 
@@ -146,7 +177,21 @@ class LabelConfig(AppConfig):
             src_file = os.path.join(src_dir, label['file'])
             dst_file = os.path.join(settings.MEDIA_ROOT, filename)
 
-            if not os.path.exists(dst_file):
+            to_copy = False
+
+            if os.path.exists(dst_file):
+                # File already exists - let's see if it is the "same",
+                # or if we need to overwrite it with a newer copy!
+
+                if not hashFile(dst_file) == hashFile(src_file):
+                    logger.info(f"Hash differs for '{filename}'")
+                    to_copy = True
+
+            else:
+                logger.info(f"Label template '{filename}' is not present")
+                to_copy = True
+
+            if to_copy:
                 logger.info(f"Copying label template '{dst_file}'")
                 shutil.copyfile(src_file, dst_file)
 
