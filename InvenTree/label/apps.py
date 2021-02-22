@@ -70,6 +70,8 @@ class LabelConfig(AppConfig):
                 'file': 'qr.html',
                 'name': 'QR Code',
                 'description': 'Simple QR code label',
+                'width': 24,
+                'height': 24,
             },
         ]
 
@@ -116,7 +118,9 @@ class LabelConfig(AppConfig):
                     description=label['description'],
                     label=filename,
                     filters='',
-                    enabled=True
+                    enabled=True,
+                    width=label['width'],
+                    height=label['height'],
                 )
             except:
                 pass
@@ -156,11 +160,15 @@ class LabelConfig(AppConfig):
                 'file': 'qr.html',
                 'name': 'QR Code',
                 'description': 'Simple QR code label',
+                'width': 24,
+                'height': 24,
             },
             {
                 'file': 'qr_and_text.html',
                 'name': 'QR and text',
                 'description': 'Label with QR code and name of location',
+                'width': 50,
+                'height': 24,
             }
         ]
 
@@ -207,7 +215,9 @@ class LabelConfig(AppConfig):
                     description=label['description'],
                     label=filename,
                     filters='',
-                    enabled=True
+                    enabled=True,
+                    width=label['width'],
+                    height=label['height'],
                 )
             except:
                 pass
