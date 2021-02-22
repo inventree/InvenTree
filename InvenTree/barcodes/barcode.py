@@ -5,7 +5,7 @@ import hashlib
 import logging
 
 from InvenTree import plugins as InvenTreePlugins
-from barcode import plugins as BarcodePlugins
+from barcodes import plugins as BarcodePlugins
 
 from stock.models import StockItem
 from stock.serializers import StockItemSerializer, LocationSerializer

@@ -4,7 +4,7 @@
 DigiKey barcode decoding
 """
 
-from barcode.barcode import BarcodePlugin
+from barcodes.barcode import BarcodePlugin
 
 
 class DigikeyBarcodePlugin(BarcodePlugin):

@@ -125,6 +125,7 @@
 .qr-container {
     width: 100%;
     align-content: center;
+    object-fit: fill;
 }
 
 .navbar-brand {

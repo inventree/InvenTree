@@ -20,7 +20,7 @@ from stock.urls import stock_urls
 from build.urls import build_urls
 from order.urls import order_urls
 
-from barcode.api import barcode_api_urls
+from barcodes.api import barcode_api_urls
 from common.api import common_api_urls
 from part.api import part_api_urls, bom_api_urls
 from company.api import company_api_urls

@@ -10,8 +10,8 @@ from io import BytesIO
 
 from django import template
 
-import qrcode
-import barcode
+import qrcode as python_qrcode
+import barcode as python_barcode
 
 register = template.Library()
 
@@ -32,7 +32,7 @@ def image_data(img, fmt='PNG'):
 
 
 @register.simple_tag()
-def qr_code(data, **kwargs):
+def qrcode(data, **kwargs):
     """
     Return a byte-encoded QR code image
 
@@ -54,7 +54,7 @@ def qr_code(data, **kwargs):
 
     params.update(**kwargs)
 
-    qr = qrcode.QRCode(**params)
+    qr = python_qrcode.QRCode(**params)
 
     qr.add_data(data, optimize=20)
     qr.make(fit=True)
@@ -62,3 +62,23 @@ def qr_code(data, **kwargs):
     qri = qr.make_image(fill_color=fill_color, back_color=back_color)
 
     return image_data(qri)
+
+
+@register.simple_tag()
+def barcode(data, barcode_class='code128', **kwargs):
+    """
+    Render a barcode
+    """
+
+    constructor = python_barcode.get_barcode_class(barcode_class)
+
+    data = str(data).zfill(constructor.digits)
+
+    writer = python_barcode.writer.ImageWriter
+
+    barcode_image = constructor(data, writer=writer())
+
+    image = barcode_image.render(writer_options=kwargs)
+
+    # Render to byte-encoded PNG
+    return image_data(image)
