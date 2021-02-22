@@ -5,20 +5,34 @@ Label printing models
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import sys
 import os
-import io
+import logging
+import datetime
 
-from blabel import LabelWriter
-
+from django.conf import settings
 from django.db import models
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.core.exceptions import ValidationError, FieldError
+
+from django.template.loader import render_to_string
 
 from django.utils.translation import gettext_lazy as _
 
 from InvenTree.helpers import validateFilterString, normalize
 
+import common.models
 import stock.models
+
+try:
+    from django_weasyprint import WeasyTemplateResponseMixin
+except OSError as err:
+    print("OSError: {e}".format(e=err))
+    print("You may require some further system packages to be installed.")
+    sys.exit(1)
+
+
+logger = logging.getLogger(__name__)
 
 
 def rename_label(instance, filename):
@@ -43,6 +57,21 @@ def validate_stock_location_filters(filters):
     return filters
 
 
+class WeasyprintLabelMixin(WeasyTemplateResponseMixin):
+    """
+    Class for rendering a label to a PDF
+    """
+
+    pdf_filename = 'label.pdf'
+    pdf_attachment = True
+
+    def __init__(self, request, template, **kwargs):
+
+        self.request = request
+        self.template_name = template
+        self.pdf_filename = kwargs.get('filename', 'label.pdf')
+
+
 class LabelTemplate(models.Model):
     """
     Base class for generic, filterable labels.
@@ -53,6 +82,9 @@ class LabelTemplate(models.Model):
 
     # Each class of label files will be stored in a separate subdirectory
     SUBDIR = "label"
+    
+    # Object we will be printing against (will be filled out later)
+    object_to_print = None
 
     @property
     def template(self):
@@ -92,38 +124,90 @@ class LabelTemplate(models.Model):
         help_text=_('Label template is enabled'),
     )
 
-    def get_record_data(self, items):
+    width = models.FloatField(
+        default=50,
+        verbose_name=('Width [mm]'),
+        help_text=_('Label width, specified in mm'),
+        validators=[MinValueValidator(2)]
+    )
+
+    height = models.FloatField(
+        default=20,
+        verbose_name=_('Height [mm]'),
+        help_text=_('Label height, specified in mm'),
+        validators=[MinValueValidator(2)]
+    )
+
+    @property
+    def template_name(self):
         """
-        Return a list of dict objects, one for each item.
-        """
-
-        return []
-
-    def render_to_file(self, filename, items, **kwargs):
-        """
-        Render labels to a PDF file
-        """
-
-        records = self.get_record_data(items)
-
-        writer = LabelWriter(self.template)
-
-        writer.write_labels(records, filename)
-
-    def render(self, items, **kwargs):
-        """
-        Render labels to an in-memory PDF object, and return it
+        Returns the file system path to the template file.
+        Required for passing the file to an external process
         """
 
-        records = self.get_record_data(items)
+        template = self.label.name
+        template = template.replace('/', os.path.sep)
+        template = template.replace('\\', os.path.sep)
 
-        writer = LabelWriter(self.template)
+        template = os.path.join(settings.MEDIA_ROOT, template)
 
-        buffer = io.BytesIO()
+        return template
 
-        writer.write_labels(records, buffer)
+    def get_context_data(self, request):
+        """
+        Supply custom context data to the template for rendering.
 
-        return buffer
+        Note: Override this in any subclass
+        """
+
+        return {}
+
+    def context(self, request):
+        """
+        Provides context data to the template.
+        """
+
+        context = self.get_context_data(request)
+
+        # Add "basic" context data which gets passed to every label
+        context['base_url'] = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+        context['date'] = datetime.datetime.now().date()
+        context['datetime'] = datetime.datetime.now()
+        context['request'] = request
+        context['user'] = request.user
+        context['width'] = self.width
+        context['height'] = self.height
+
+        return context
+
+    def render_as_string(self, request, **kwargs):
+        """
+        Render the label to a HTML string
+
+        Useful for debug mode (viewing generated code)
+        """
+
+        return render_to_string(self.template_name, self.context(request), request)
+
+    def render(self, request, **kwargs):
+        """
+        Render the label template to a PDF file
+
+        Uses django-weasyprint plugin to render HTML template
+        """
+
+        wp = WeasyprintLabelMixin(
+            request,
+            self.template_name,
+            base_url=request.build_absolute_uri("/"),
+            presentational_hints=True,
+            **kwargs
+        )
+
+        return wp.render_to_response(
+            self.context(request),
+            **kwargs
+        )
 
 
 class StockItemLabel(LabelTemplate):
@@ -157,29 +241,24 @@ class StockItemLabel(LabelTemplate):
 
         return items.exists()
 
-    def get_record_data(self, items):
+    def get_context_data(self, request):
         """
         Generate context data for each provided StockItem
         """
-        records = []
-        
-        for item in items:
 
-            # Add some basic information
-            records.append({
-                'item': item,
-                'part': item.part,
-                'name': item.part.name,
-                'ipn': item.part.IPN,
-                'quantity': normalize(item.quantity),
-                'serial': item.serial,
-                'uid': item.uid,
-                'pk': item.pk,
-                'qr_data': item.format_barcode(brief=True),
-                'tests': item.testResultMap()
-            })
+        stock_item = self.object_to_print
 
-        return records
+        return {
+            'item': stock_item,
+            'part': stock_item.part,
+            'name': stock_item.part.full_name,
+            'ipn': stock_item.part.IPN,
+            'quantity': normalize(stock_item.quantity),
+            'serial': stock_item.serial,
+            'uid': stock_item.uid,
+            'qr_data': stock_item.format_barcode(brief=True),
+            'tests': stock_item.testResultMap()
+        }
 
 
 class StockLocationLabel(LabelTemplate):
@@ -212,17 +291,14 @@ class StockLocationLabel(LabelTemplate):
 
         return locs.exists()
 
-    def get_record_data(self, locations):
+    def get_context_data(self, request):
         """
         Generate context data for each provided StockLocation
         """
 
-        records = []
-        
-        for loc in locations:
+        location = self.object_to_print
 
-            records.append({
-                'location': loc,
-            })
-
-        return records
+        return {
+            'location': location,
+            'qr_data': location.format_barcode(brief=True),
+        }

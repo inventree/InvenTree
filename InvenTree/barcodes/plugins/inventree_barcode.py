@@ -13,7 +13,7 @@ references model objects actually exist in the database.
 
 import json
 
-from barcode.barcode import BarcodePlugin
+from barcodes.barcode import BarcodePlugin
 
 from stock.models import StockItem, StockLocation
 from part.models import Part

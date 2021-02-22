@@ -164,7 +164,7 @@ class ReportPrintMixin:
             report.object_to_print = item
 
             if debug_mode:
-                outputs.append(report.render_to_string(request))
+                outputs.append(report.render_as_string(request))
             else:
                 outputs.append(report.render(request))
 
