@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from datetime import datetime, timedelta
 
 from rest_framework.test import APITestCase
-from rest_framework import status
 
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -64,11 +63,11 @@ class BuildListTest(BuildAPITest):
 
     url = reverse('api-build-list')
 
-    def get(self, status=200, data={}):
+    def get(self, status_code=200, data={}):
 
         response = self.client.get(self.url, data, format='json')
 
-        self.assertEqual(response.status_code, status)
+        self.assertEqual(response.status_code, status_code)
 
         return response.data
 
@@ -102,7 +101,7 @@ class BuildListTest(BuildAPITest):
 
         part = Part.objects.get(pk=50)
 
-        build = Build.objects.create(
+        Build.objects.create(
             part=part,
             quantity=10,
             title='Just some thing',

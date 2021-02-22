@@ -269,12 +269,16 @@ class Build(MPTTModel):
         else:
             descendants = self.get_descendants(include_self=True)
             Build.objects.filter(parent__pk__in=[d.pk for d in descendants])
-
     
     def sub_build_count(self, cascade=True):
+        """
+        Return the number of sub builds under this one.
+
+        Args:
+            cascade: If True (defualt), include cascading builds under sub builds
+        """
 
         return self.sub_builds(cascade=cascade).count()
-
 
     @property
     def is_overdue(self):

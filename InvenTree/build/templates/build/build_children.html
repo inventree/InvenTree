@@ -25,6 +25,8 @@
 
 {% block js_ready %}
 
+{{ block.super }}
+
 loadBuildTable($('#sub-build-table'), {
     url: '{% url "api-build-list" %}',
     filterTarget: "#filter-list-sub-build",
