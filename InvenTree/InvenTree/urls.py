@@ -9,7 +9,6 @@ from django.conf.urls import url, include
 from django.urls import path
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from qr_code import urls as qr_code_urls
 
 from company.urls import company_urls
 from company.urls import supplier_part_urls
@@ -140,8 +139,6 @@ urlpatterns = [
     url(r'^admin/error_log/', include('error_report.urls')),
     url(r'^admin/shell/', include('django_admin_shell.urls')),
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
-
-    url(r'^qr_code/', include(qr_code_urls, namespace='qr_code')),
 
     url(r'^index/', IndexView.as_view(), name='index'),
     url(r'^search/', SearchView.as_view(), name='search'),
