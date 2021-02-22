@@ -275,7 +275,6 @@ class PartQRTest(PartViewTestCase):
     def test_invalid_part(self):
         response = self.client.get(reverse('part-qr', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
-        data = str(response.content)
         self.assertEqual(response.status_code, 200)
 
 
