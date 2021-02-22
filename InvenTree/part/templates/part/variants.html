@@ -35,18 +35,6 @@
 
 {% endblock %}
 
-{% block js_load %}
-{{ block.super }}
-
-<!-- jquery-treegrid -->
-<script type='text/javascript' src='{% static "treegrid/js/jquery.treegrid.js" %}'></script>
-<script type='text/javascript' src='{% static "treegrid/js/jquery.treegrid.bootstrap3.js" %}'></script>
-
-<!-- boostrap-table-treegrid -->
-<script type='text/javascript' src='{% static "bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.js" %}'></script>
-
-{% endblock %}
-
 {% block js_ready %}
 {{ block.super }}
 
