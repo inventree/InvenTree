@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import sys
-
 from django.utils.translation import ugettext as _
 from django.conf.urls import url, include
 from django.core.exceptions import ValidationError, FieldError

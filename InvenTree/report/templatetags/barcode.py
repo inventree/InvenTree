@@ -2,11 +2,8 @@
 Template tags for rendering various barcodes
 """
 
-import os
 import base64
-
 from io import BytesIO
-
 
 from django import template
 

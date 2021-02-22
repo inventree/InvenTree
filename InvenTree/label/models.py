@@ -5,8 +5,8 @@ Label printing models
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import sys
 import os
-import io
 import logging
 import datetime
 
