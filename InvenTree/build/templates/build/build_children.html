@@ -1,0 +1,16 @@
+{% extends "build/build_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block details %}
+
+{% include "build/tabs.html" with tab="children" %}
+
+<h4>{% trans "Child Build Orders" %}</h4>
+
+<hr>
+
+{% endblock %}
+
+{% block js_ready %}
+{% endblock %}

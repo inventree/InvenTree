@@ -24,6 +24,12 @@
             <span class='badge'>{{ build.output_count }}</span>
         </a>
     </li>
+    <li {% if tab == 'children' %} class='active'{% endif %}>
+        <a href='{% url "build-children" build.id %}'>
+            {% trans "Child Builds" %}
+            <span class='badge'>{{ build.sub_build_count }}</span>
+        </a>
+    </li>
     <li{% if tab == 'notes' %} class='active'{% endif %}>
         <a href="{% url 'build-notes' build.id %}">
             {% trans "Notes" %}
