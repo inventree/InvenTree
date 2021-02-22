@@ -618,7 +618,9 @@ function loadBuildTable(table, options) {
         filters[key] = params[key];
     }
 
-    setupFilterList("build", table);
+    var filterTarget = options.filterTarget || null;
+
+    setupFilterList("build", table, filterTarget);
 
     $(table).inventreeTable({
         method: 'get',

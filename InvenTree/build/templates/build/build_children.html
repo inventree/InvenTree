@@ -10,7 +10,28 @@
 
 <hr>
 
+<div id='button-toolbar'>
+    <div class='button-toolbar container-fluid float-right'>
+        <div class='filter-list' id='filter-list-sub-build'>
+            <!-- Empty div for filters -->
+        </div>
+    </div>
+
+</div>
+
+<table class='table table-striped table-condensed' id='sub-build-table' data-toolbar='#button-toolbar'></table>
+
 {% endblock %}
 
 {% block js_ready %}
+
+loadBuildTable($('#sub-build-table'), {
+    url: '{% url "api-build-list" %}',
+    filterTarget: "#filter-list-sub-build",
+    params: {
+        part_detail: true,
+        ancestor: {{ build.pk }},
+    }
+});
+
 {% endblock %}
