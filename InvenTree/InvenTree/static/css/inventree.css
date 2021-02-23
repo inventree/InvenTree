@@ -589,15 +589,15 @@
 }
 
 .inventree-pre-content {
-    width: 100%;
-    clear: both;
+    width: auto;
 }
 
 .inventree-content {
-    padding-left: 5px;
-    padding-right: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     padding-top: 5px;
-    width: auto;
+    width: 100%;
+    display: inline-block;
     transition: 0.1s;
 }
 
@@ -674,14 +674,27 @@ input[type="submit"] {
     background-color: #5e7d87;
 }
 
+.inventree-navs {
+    display: flex;
+}
+
 /* The side navigation menu */
-.sidenav {
+.menubar-left {
     height: 100%; /* 100% Full-height */
     width: 0px; /* 0 width - change this with JavaScript */
-    position: fixed; /* Stay in place */
+    position: relative; /* Stay in place */
     background-color: #fff; /* Black*/
     overflow-x: hidden; /* Disable horizontal scroll */
+    overflow: hidden;
     transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
+    left: 0px;
+    top: 0px;
+    z-index: 100;
+    display: inline-block;
+}
+
+.menubar-right {
+    display: none;
 }
 
 .wrapper {

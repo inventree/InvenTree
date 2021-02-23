@@ -67,20 +67,37 @@ function loadTree(url, tree, options={}) {
     });
 }
 
-function openSideNav() {
-    document.getElementById("sidenav").style.display = "block";
-    document.getElementById("sidenav").style.width = "250px";
-    document.getElementById("inventree-content").style.marginLeft = "270px";
+function openSideNav(navId) {
+//    document.getElementById("sidenav").style.display = "block";
+//    document.getElementById("sidenav").style.width = "250px";
+
+    if (!navId) {
+        navId = '#sidenav';
+    }
+
+    $(navId).animate({
+        width: '250px',
+        display: 'block'
+    }, 50);
 
     sessionStorage.setItem('inventree-sidenav-state', 'open');
 
-
 }
 
-function closeSideNav() {
-    document.getElementById("sidenav").style.display = "none";
-    document.getElementById("sidenav").style.width = "0";
-    document.getElementById("inventree-content").style.marginLeft = "0px";
+function closeSideNav(navId) {
+
+    if (!navId) {
+        navId = '#sidenav';
+    }
+
+    $(navId).animate({
+        width: 0,
+        display: 'none',
+    }, 50);
+
+    //document.getElementById("sidenav").style.display = "none";
+    //document.getElementById("sidenav").style.width = "0";
+    //document.getElementById("inventree-content").style.marginLeft = "0px";
 
     sessionStorage.setItem('inventree-sidenav-state', 'closed');
 }
