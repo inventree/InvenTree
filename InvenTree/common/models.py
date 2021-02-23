@@ -129,7 +129,7 @@ class InvenTreeSetting(models.Model):
             'name': _('Recent Part Count'),
             'description': _('Number of recent parts to display on index page'),
             'default': 10,
-            'validator': [int, MinValueValidator(1),]
+            'validator': [int, MinValueValidator(1)]
         },
 
         'PART_TEMPLATE': {
@@ -260,7 +260,7 @@ class InvenTreeSetting(models.Model):
             'name': _('Recent Stock Count'),
             'description': _('Number of recent stock items to display on index page'),
             'default': 10,
-            'validator': [int, MinValueValidator(1),]
+            'validator': [int, MinValueValidator(1)]
         },
 
         'BUILDORDER_REFERENCE_PREFIX': {
@@ -547,7 +547,6 @@ class InvenTreeSetting(models.Model):
         if validator is not None:
             self.run_validator(validator)
 
-
     def run_validator(self, validator):
         """
         Run a validator against the 'value' field for this InvenTreeSetting object.
@@ -569,7 +568,7 @@ class InvenTreeSetting(models.Model):
                     'value': _('Value must be a boolean value')
                 })
 
-         # Integer validator
+        # Integer validator
         if self.is_int():
 
             try:
