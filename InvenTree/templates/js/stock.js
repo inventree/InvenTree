@@ -319,6 +319,12 @@ function loadStockTable(table, options) {
         }
     }
 
+    var grouping = true;
+
+    if ('grouping' in options) {
+        grouping = options.grouping;
+    }
+
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
@@ -333,7 +339,7 @@ function loadStockTable(table, options) {
         {% settings_value 'STOCK_GROUP_BY_PART' as group_by_part %}
         {% if group_by_part %}
         groupByField: options.groupByField || 'part',
-        groupBy: true,
+        groupBy: grouping,
         groupByFormatter: function(field, id, data) {
 
             var row = data[0];
