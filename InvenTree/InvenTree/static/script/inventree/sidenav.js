@@ -76,7 +76,7 @@ function openSideNav(navId) {
     }
 
     $(navId).animate({
-        width: '250px',
+        width: '150px',
         display: 'block'
     }, 50);
 

@@ -206,8 +206,19 @@
     font-size: 10px;
 }
 
+.sidenav-left .badge {
+    position: absolute;
+    right: 3px;
+    margin-right: 5px;
+}
+
 .treeview .list-group-item {
-    padding: 6px 12px;
+    padding: 10px 5px;
+}
+
+.treeview .list-group-item .indent {
+    margin-left: 3px;
+    margin-right: 3px;
 }
 
 .list-group-item-condensed {
@@ -678,23 +689,32 @@ input[type="submit"] {
     display: flex;
 }
 
-/* The side navigation menu */
-.menubar-left {
+.sidenav {
     height: 100%; /* 100% Full-height */
     width: 0px; /* 0 width - change this with JavaScript */
     position: relative; /* Stay in place */
-    background-color: #fff; /* Black*/
     overflow-x: hidden; /* Disable horizontal scroll */
     overflow: hidden;
     transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
-    left: 0px;
-    top: 0px;
     z-index: 100;
     display: inline-block;
+    background-color: #fff; /* Black*/
 }
 
-.menubar-right {
-    display: none;
+.sidenav li {
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+
+/* The side navigation menu */
+.sidenav-left {
+    left: 0px;
+    top: 0px;
+}
+
+.sidenav-right {
+    right: 0px;
+    top: 0px;
 }
 
 .wrapper {
