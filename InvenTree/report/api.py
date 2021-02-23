@@ -62,7 +62,10 @@ class StockItemReportMixin:
 
         params = self.request.query_params
 
-        items = params.getlist('item', [])
+        for key in ['item', 'item[]', 'items', 'items[]']:
+            if key in params:
+                items = params.getlist(key, [])
+                break
 
         valid_ids = []
 
@@ -92,7 +95,12 @@ class BuildReportMixin:
 
         params = self.request.query_params
 
-        builds = params.getlist('build', [])
+        for key in ['build', 'build[]', 'builds', 'builds[]']:
+            
+            if key in params:
+                builds = params.getlist(key, [])
+
+                break
 
         valid_ids = []
 
@@ -119,7 +127,10 @@ class PartReportMixin:
 
         params = self.request.query_params
 
-        parts = params.getlist('part', [])
+        for key in ['part', 'part[]', 'parts', 'parts[]']:
+
+            if key in params:
+                parts = params.getlist(key, [])
 
         valid_ids = []
 

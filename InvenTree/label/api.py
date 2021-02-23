@@ -122,13 +122,9 @@ class StockItemLabelMixin:
 
         params = self.request.query_params
 
-        if 'items[]' in params:
-            items = params.getlist('items[]', [])
-        elif 'item' in params:
-            items = [params.get('item', None)]
-
-        if type(items) not in [list, tuple]:
-            items = [items]
+        for key in ['item', 'item[]', 'items', 'items[]']:
+            if key in params:
+                items = params.getlist(key, [])
 
         valid_ids = []
 
@@ -258,13 +254,10 @@ class StockLocationLabelMixin:
 
         params = self.request.query_params
 
-        if 'locations[]' in params:
-            locations = params.getlist('locations[]', [])
-        elif 'location' in params:
-            locations = [params.get('location', None)]
+        for key in ['location', 'location[]', 'locations', 'locations[]']:
 
-        if type(locations) not in [list, tuple]:
-            locations = [locations]
+            if key in params:
+                locations = params.getlist(key, [])
 
         valid_ids = []
 
