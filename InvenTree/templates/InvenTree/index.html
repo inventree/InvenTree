@@ -125,8 +125,19 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 
 {% if roles.stock.view %}
 addHeaderTitle('{% trans "Stock" %}');
+addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
 addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-shopping-cart');
 addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa-bullhorn');
+
+loadStockTable($('#table-recently-updated-stock'), {
+    params: {
+        ordering: "-updated",
+        limit: 10,
+    },
+    name: 'recently-updated-stock',
+    grouping: false,
+});
+
 {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
 {% if expiry %}
 addHeaderAction('expired-stock', '{% trans "Expired Stock" %}', 'fa-calendar-times');
