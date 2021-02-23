@@ -206,12 +206,6 @@
     font-size: 10px;
 }
 
-.sidenav-left .badge {
-    position: absolute;
-    right: 3px;
-    margin-right: 5px;
-}
-
 .treeview .list-group-item {
     padding: 10px 5px;
 }
@@ -699,6 +693,7 @@ input[type="submit"] {
     z-index: 100;
     display: inline-block;
     background-color: #fff; /* Black*/
+    display: 'none';
 }
 
 .sidenav li {
@@ -712,10 +707,23 @@ input[type="submit"] {
     top: 0px;
 }
 
+.sidenav-left .badge {
+    position: absolute;
+    right: 3px;
+    margin-right: 5px;
+}
+
 .sidenav-right {
     right: 0px;
     top: 0px;
 }
+
+.container > aside,
+.container > main {
+  padding: 10px;
+  overflow: auto;
+}
+
 
 .wrapper {
     align-items: stretch;

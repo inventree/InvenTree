@@ -44,7 +44,10 @@
 <link rel="stylesheet" href="{% static 'css/bootstrap-toggle.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap-table-filter-control.css' %}">
 <link rel="stylesheet" href="{% static 'fullcalendar/main.css' %}">
+<link rel="stylesheet" href="{% static 'script/jquery-ui/jquery-ui.min.css' %}">
+
 <link rel="stylesheet" href="{% static 'css/inventree.css' %}">
+
 <link rel="stylesheet" href="{% get_color_theme_css user.get_username %}">
 
 {% block css %}
@@ -74,7 +77,7 @@ InvenTree
 
 <div class='inventree-navs'>
     
-    <div class='sidenav sidenav-left' id='sidenav'>
+    <div class='sidenav sidenav-left' id='sidenav-left'>
         {% block sidenav %}
         <!-- Sidenav code here -->
         {% endblock %}
@@ -107,6 +110,7 @@ InvenTree
 <!-- Scripts -->
 <script type="text/javascript" src="{% static 'script/jquery_3.3.1_jquery.min.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/jquery.form.min.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/jquery-ui/jquery-ui.min.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'script/bootstrap/bootstrap.min.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/bootstrap/bootstrap-treeview.js' %}"></script>

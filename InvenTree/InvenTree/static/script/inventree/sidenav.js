@@ -72,26 +72,31 @@ function openSideNav(navId) {
 //    document.getElementById("sidenav").style.width = "250px";
 
     if (!navId) {
-        navId = '#sidenav';
+        navId = '#sidenav-left';
     }
+    
+    sessionStorage.setItem('inventree-sidenav-state', 'open');
 
     $(navId).animate({
-        width: '150px',
+        width: '250px',
+        'min-width': '200px',
         display: 'block'
     }, 50);
 
-    sessionStorage.setItem('inventree-sidenav-state', 'open');
 
 }
 
 function closeSideNav(navId) {
 
     if (!navId) {
-        navId = '#sidenav';
+        navId = '#sidenav-left';
     }
 
+    sessionStorage.setItem('inventree-sidenav-state', 'closed');
+    
     $(navId).animate({
-        width: 0,
+        width: '0px',
+        'min-width': '0px',
         display: 'none',
     }, 50);
 
@@ -99,19 +104,34 @@ function closeSideNav(navId) {
     //document.getElementById("sidenav").style.width = "0";
     //document.getElementById("inventree-content").style.marginLeft = "0px";
 
-    sessionStorage.setItem('inventree-sidenav-state', 'closed');
 }
 
 function toggleSideNav(nav) {
-    if ($(nav).width() == 0) {
-        openSideNav();
+    if ($(nav).width() <= 0) {
+        openSideNav(nav);
     }
     else {
-        closeSideNav();
+        closeSideNav(nav);
     }
 }
 
-function initSideNav() {
+function initSideNav(navId) {
+
+    // Make it resizable
+
+    if (!navId) {
+        navId = '#sidenav-left';
+    }
+
+    $(navId).resizable({
+        minWidth: '100px',
+        maxWidth: '500px',
+        stop: function(event, ui) {
+            console.log(ui.element.width());
+            //console.log(ui.size.width);
+        }
+    });
+
     if (sessionStorage.getItem("inventree-sidenav-state") && sessionStorage.getItem('inventree-sidenav-state') == 'open') {
         openSideNav();
     }
