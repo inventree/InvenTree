@@ -753,14 +753,15 @@ class PartNotes(UpdateView):
 
         part = self.get_object()
 
-        ctx = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
-        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
+        context['editing'] = str2bool(self.request.GET.get('edit', ''))
 
-        ctx['starred'] = part.isStarredBy(self.request.user)
-        ctx['disabled'] = not part.active
+        ctx = part.get_context_data(self.request)
 
-        return ctx
+        context.update(ctx)
+
+        return context
 
 
 class PartDetail(InvenTreeRoleMixin, DetailView):
@@ -779,7 +780,7 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
 
         - If '?editing=True', set 'editing_enabled' context variable
         """
-        context = super(PartDetail, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         
         part = self.get_object()
 
@@ -789,24 +790,8 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         else:
             context['editing_enabled'] = 0
 
-        context['starred'] = part.isStarredBy(self.request.user)
-        context['disabled'] = not part.active
-
-        # Pre-calculate complex queries so they only need to be performed once
-        context['total_stock'] = part.total_stock
-
-        context['quantity_being_built'] = part.quantity_being_built
-
-        context['required_build_order_quantity'] = part.required_build_order_quantity()
-        context['allocated_build_order_quantity'] = part.build_order_allocation_count()
-
-        context['required_sales_order_quantity'] = part.required_sales_order_quantity()
-        context['allocated_sales_order_quantity'] = part.sales_order_allocation_count()
-
-        context['available'] = part.available_stock
-        context['on_order'] = part.on_order
-        context['required'] = context['required_build_order_quantity'] + context['required_sales_order_quantity']
-        context['allocated'] = context['allocated_build_order_quantity'] + context['allocated_sales_order_quantity']
+        ctx = part.get_context_data(self.request)
+        context.update(**ctx)
 
         return context
 

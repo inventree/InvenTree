@@ -717,6 +717,7 @@ input[type="submit"] {
     right: 0px;
     top: 70px;
     position: sticky;
+    font-size: 115%;
 }
 
 .sidenav-right svg {

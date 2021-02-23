@@ -325,6 +325,35 @@ class Part(MPTTModel):
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
         parent_attr = 'variant_of'
 
+    def get_context_data(self, request, **kwargs):
+        """
+        Return some useful context data about this part for template rendering
+        """
+
+        context = {}
+
+        context['starred'] = self.isStarredBy(request.user)
+        context['disabled'] = not self.active
+
+        # Pre-calculate complex queries so they only need to be performed once
+        context['total_stock'] = self.total_stock
+
+        context['quantity_being_built'] = self.quantity_being_built
+
+        context['required_build_order_quantity'] = self.required_build_order_quantity()
+        context['allocated_build_order_quantity'] = self.build_order_allocation_count()
+
+        context['required_sales_order_quantity'] = self.required_sales_order_quantity()
+        context['allocated_sales_order_quantity'] = self.sales_order_allocation_count()
+
+        context['available'] = self.available_stock
+        context['on_order'] = self.on_order
+        
+        context['required'] = context['required_build_order_quantity'] + context['required_sales_order_quantity']
+        context['allocated'] = context['allocated_build_order_quantity'] + context['allocated_sales_order_quantity']
+
+        return context
+
     def save(self, *args, **kwargs):
         """
         Overrides the save() function for the Part model.
