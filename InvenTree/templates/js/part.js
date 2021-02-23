@@ -325,7 +325,7 @@ function loadPartTable(table, url, options={}) {
         filters[key] = params[key];
     }
 
-    setupFilterList("parts", $(table));
+    setupFilterList("parts", $(table), options.filterTarget || null);
 
     var columns = [
         {
