@@ -692,7 +692,6 @@ input[type="submit"] {
     transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
     z-index: 100;
     background-color: #fff; /* Black*/
-    //display: 'none';
 }
 
 .sidenav li {
@@ -716,7 +715,8 @@ input[type="submit"] {
 .sidenav-right {
     width: 0px;
     right: 0px;
-    top: 0px;
+    top: 70px;
+    position: sticky;
 }
 
 .sidenav-right svg {
