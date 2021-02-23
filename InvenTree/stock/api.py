@@ -808,14 +808,25 @@ class StockList(generics.ListCreateAPIView):
                 print("After error:", str(updated_after))
                 pass
 
+        # Limit number of results
+        limit = params.get('limit', None)
+
+        if limit is not None:
+            try:
+                limit = int(limit)
+
+                if limit > 0:
+                    queryset = queryset[:limit]
+
+            except (ValueError):
+                pass
+
         # Also ensure that we pre-fecth all the related items
         queryset = queryset.prefetch_related(
             'part',
             'part__category',
             'location'
         )
-
-        queryset = queryset.order_by('part__name')
 
         return queryset
 
@@ -827,6 +838,15 @@ class StockList(generics.ListCreateAPIView):
 
     filter_fields = [
     ]
+
+    ordering_fields = [
+        'part__name',
+        'updated',
+        'stocktake_date',
+        'expiry_date',
+    ]
+
+    ordering = ['part__name']
 
     search_fields = [
         'serial',

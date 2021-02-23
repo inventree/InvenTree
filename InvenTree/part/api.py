@@ -626,7 +626,7 @@ class PartList(generics.ListCreateAPIView):
 
             queryset = queryset.filter(pk__in=parts_need_stock)
 
-        # Limit choices
+        # Limit number of results
         limit = params.get('limit', None)
 
         if limit is not None:

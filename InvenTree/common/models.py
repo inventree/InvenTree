@@ -125,6 +125,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool
         },
 
+        'PART_RECENT_COUNT': {
+            'name': _('Recent Part Count'),
+            'description': _('Number of recent parts to display on index page'),
+            'default': 10,
+            'validator': [int, MinValueValidator(1)]
+        },
+
         'PART_TEMPLATE': {
             'name': _('Template'),
             'description': _('Parts are templates by default'),
@@ -247,6 +254,13 @@ class InvenTreeSetting(models.Model):
             'description': _('Group stock items by part reference in table views'),
             'default': True,
             'validator': bool,
+        },
+
+        'STOCK_RECENT_COUNT': {
+            'name': _('Recent Stock Count'),
+            'description': _('Number of recent stock items to display on index page'),
+            'default': 10,
+            'validator': [int, MinValueValidator(1)]
         },
 
         'BUILDORDER_REFERENCE_PREFIX': {
@@ -521,11 +535,17 @@ class InvenTreeSetting(models.Model):
 
         validator = InvenTreeSetting.get_setting_validator(self.key)
 
-        if validator is not None:
-            self.run_validator(validator)
-
         if self.is_bool():
             self.value = InvenTree.helpers.str2bool(self.value)
+
+        if self.is_int():
+            try:
+                self.value = int(self.value)
+            except (ValueError):
+                raise ValidationError(_('Must be an integer value'))
+
+        if validator is not None:
+            self.run_validator(validator)
 
     def run_validator(self, validator):
         """
@@ -535,38 +555,38 @@ class InvenTreeSetting(models.Model):
         if validator is None:
             return
 
-        # If a list of validators is supplied, iterate through each one
-        if type(validator) in [list, tuple]:
-            for v in validator:
-                self.run_validator(v)
-            
-            return
-
-        if callable(validator):
-            # We can accept function validators with a single argument
-            print("Running validator function")
-            validator(self.value)
+        value = self.value
 
         # Boolean validator
-        if validator == bool:
+        if self.is_bool():
             # Value must "look like" a boolean value
-            if InvenTree.helpers.is_bool(self.value):
+            if InvenTree.helpers.is_bool(value):
                 # Coerce into either "True" or "False"
-                self.value = str(InvenTree.helpers.str2bool(self.value))
+                value = InvenTree.helpers.str2bool(value)
             else:
                 raise ValidationError({
                     'value': _('Value must be a boolean value')
                 })
 
         # Integer validator
-        if validator == int:
+        if self.is_int():
+
             try:
                 # Coerce into an integer value
-                self.value = str(int(self.value))
+                value = int(value)
             except (ValueError, TypeError):
                 raise ValidationError({
                     'value': _('Value must be an integer value'),
                 })
+
+        # If a list of validators is supplied, iterate through each one
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                self.run_validator(v)
+
+        if callable(validator):
+            # We can accept function validators with a single argument
+            validator(self.value)
 
     def validate_unique(self, exclude=None):
         """ Ensure that the key:value pair is unique.
@@ -597,7 +617,13 @@ class InvenTreeSetting(models.Model):
 
         validator = InvenTreeSetting.get_setting_validator(self.key)
 
-        return validator == bool
+        if validator == bool:
+            return True
+
+        if type(validator) in [list, tuple]:
+            for v in validator:
+                if v == bool:
+                    return True
 
     def as_bool(self):
         """
@@ -622,6 +648,8 @@ class InvenTreeSetting(models.Model):
             for v in validator:
                 if v == int:
                     return True
+
+        return False
 
     def as_int(self):
         """
