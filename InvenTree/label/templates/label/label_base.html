@@ -1,0 +1,28 @@
+{% load report %}
+{% load barcode %}
+
+<head>
+    <style>
+        @page {
+            size: {{ width }}mm {{ height }}mm;
+            {% block margin %}
+            margin: 0mm;
+            {% endblock %}
+        }
+
+        img {
+            display: inline-block;
+            image-rendering: pixelated;
+        }
+
+        {% block style %}
+        {% endblock %}
+
+    </style>
+</head>
+
+<body>
+    {% block content %}
+    <!-- Label data rendered here! -->
+    {% endblock %}
+</body>

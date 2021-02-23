@@ -270,14 +270,12 @@ class PartQRTest(PartViewTestCase):
         data = str(response.content)
 
         self.assertIn('Part QR Code', data)
-        self.assertIn('<img class=', data)
+        self.assertIn('<img src=', data)
 
     def test_invalid_part(self):
         response = self.client.get(reverse('part-qr', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
-        data = str(response.content)
-        
-        self.assertIn('Error:', data)
+        self.assertEqual(response.status_code, 200)
 
 
 class CategoryTest(PartViewTestCase):

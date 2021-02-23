@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from stock.models import StockItem
 from stock.serializers import StockItemSerializer
 
-from barcode.barcode import load_barcode_plugins, hash_barcode
+from barcodes.barcode import load_barcode_plugins, hash_barcode
 
 
 class BarcodeScan(APIView):

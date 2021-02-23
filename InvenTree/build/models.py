@@ -259,6 +259,27 @@ class Build(MPTTModel):
         blank=True, help_text=_('Extra build notes')
     )
 
+    def sub_builds(self, cascade=True):
+        """
+        Return all Build Order objects under this one.
+        """
+
+        if cascade:
+            return Build.objects.filter(parent=self.pk)
+        else:
+            descendants = self.get_descendants(include_self=True)
+            Build.objects.filter(parent__pk__in=[d.pk for d in descendants])
+    
+    def sub_build_count(self, cascade=True):
+        """
+        Return the number of sub builds under this one.
+
+        Args:
+            cascade: If True (defualt), include cascading builds under sub builds
+        """
+
+        return self.sub_builds(cascade=cascade).count()
+
     @property
     def is_overdue(self):
         """

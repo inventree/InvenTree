@@ -618,6 +618,7 @@ class BuildDetail(DetailView):
 
         ctx['bom_price'] = build.part.get_price_info(build.quantity, buy=False)
         ctx['BuildStatus'] = BuildStatus
+        ctx['sub_build_count'] = build.sub_build_count()
 
         return ctx
 

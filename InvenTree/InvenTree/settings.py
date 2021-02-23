@@ -204,7 +204,6 @@ INSTALLED_APPS = [
     'crispy_forms',                         # Improved form rendering
     'import_export',                        # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',    # Automatically delete orphaned MEDIA files
-    'qr_code',                              # Generate QR codes
     'mptt',                                 # Modified Preorder Tree Traversal
     'markdownx',                            # Markdown editing
     'markdownify',                          # Markdown template rendering
@@ -250,6 +249,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates'),
             # Allow templates in the reporting directory to be accessed
             os.path.join(MEDIA_ROOT, 'report'),
+            os.path.join(MEDIA_ROOT, 'label'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -406,8 +406,6 @@ CACHES = {
         'TIMEOUT': 3600
     }
 }
-
-QR_CODE_CACHE_ALIAS = 'qr-code'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators

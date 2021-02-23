@@ -102,7 +102,7 @@ addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" %}', 'fa-ti
 loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
     params: {
         ordering: "-creation_date",
-        limit: 10,
+        limit: {% settings_value "PART_RECENT_COUNT" %},
     },
     name: 'latest_parts',
 });
@@ -125,8 +125,19 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 
 {% if roles.stock.view %}
 addHeaderTitle('{% trans "Stock" %}');
+addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
 addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-shopping-cart');
 addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa-bullhorn');
+
+loadStockTable($('#table-recently-updated-stock'), {
+    params: {
+        ordering: "-updated",
+        limit: {% settings_value "STOCK_RECENT_COUNT" %},
+    },
+    name: 'recently-updated-stock',
+    grouping: false,
+});
+
 {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
 {% if expiry %}
 addHeaderAction('expired-stock', '{% trans "Expired Stock" %}', 'fa-calendar-times');
