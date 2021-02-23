@@ -1,0 +1,59 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+<ul class='list-group'>
+    <li class='list-group-item'>
+        <span class='fas fa-expand-arrows-alt'></span> <b>{% trans "Part" %}</b>
+    </li>
+    <li class='list-group-item' title='{% trans "Details" %}'>
+        <a href='#'>
+            <span class='fas fa-info-circle'></span> {% trans "Details" %}
+        </a>
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-tasks'></span> {% trans "Parameters" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-shapes'></span> {% trans "Variants" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-boxes'></span> {% trans "Stock" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-sign-out-alt'></span> {% trans "Allocations" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-list'></span> {% trans "Bill of Materials" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-tools'></span> {% trans "Build Orders" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-layer-group'></span> {% trans "Used In" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-building'></span> {% trans "Suppliers" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-shopping-cart'></span> {% trans "Purchase Orders" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-dollar-sign'></span> {% trans "Sale Price" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-truck'></span> {% trans "Sales Orders" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-vial'></span> {% trans "Tests" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-random'></span> {% trans "Related Parts" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-paperclip'></span> {% trans "Attacments" %}
+    </li>
+    <li class='list-group-item'>
+        <span class='fas fa-clipboard'></span> {% trans "Notes" %}
+    </li>
+</ul>

@@ -691,9 +691,8 @@ input[type="submit"] {
     overflow: hidden;
     transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
     z-index: 100;
-    display: inline-block;
     background-color: #fff; /* Black*/
-    display: 'none';
+    //display: 'none';
 }
 
 .sidenav li {
@@ -705,6 +704,7 @@ input[type="submit"] {
 .sidenav-left {
     left: 0px;
     top: 0px;
+    width: 0px;
 }
 
 .sidenav-left .badge {
@@ -714,8 +714,13 @@ input[type="submit"] {
 }
 
 .sidenav-right {
+    width: 0px;
     right: 0px;
     top: 0px;
+}
+
+.sidenav-right svg {
+    margin-right: 10px;
 }
 
 .container > aside,

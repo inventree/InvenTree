@@ -4,6 +4,10 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+{% block menubar %}
+{% include "part/navbar.html" %}
+{% endblock %}
+
 {% block content %}
 
 {% if part.virtual %}
@@ -183,7 +187,8 @@
 
 <hr>
 <div class='container-fluid'>
-{% block details %}
+
+    {% block details %}
 
 <!-- Specific part details go here... -->
 
@@ -194,6 +199,8 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    enableRightNavbar();
 
     enableDragAndDrop(
         '#part-thumb',
