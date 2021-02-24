@@ -92,6 +92,10 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
 {% block js_ready %}
 {{ block.super }}
 
+    enableRightNavbar({
+        minWidth: '50px'
+    });
+
     $('#company-edit').click(function() {
         launchModalForm(
             "{% url 'company-edit' company.id %}",
