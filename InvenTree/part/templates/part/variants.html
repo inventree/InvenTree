@@ -3,18 +3,15 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+{% block menubar %}
+{% include "part/navbar.html" with tab='variants' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Part Variants" %}
+{% endblock %}
+
 {% block details %}
-{% include "part/tabs.html" with tab='variants' %}
-
-<div class='row'>
-    <div class='col-sm-6'>
-        <h4>{% trans "Part Variants" %}</h4>
-    </div>
-    <div class='col-sm-6'>
-    </div>
-</div>
-<hr>
-
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid'>
         <div class='btn-group' role='group'>

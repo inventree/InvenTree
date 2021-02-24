@@ -1,13 +1,16 @@
 {% extends "part/part_base.html" %}
 {% load static %}
 {% load i18n %}
+
+{% block menubar %}
+{% include 'part/navbar.html' with tab='tests' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Part Test Templates" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'part/tabs.html' with tab='tests' %}
-
-<h4>{% trans "Part Test Templates" %}</h4>
-<hr>
-
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid' style="float: right;">
         <div class='btn-group' role='group'>

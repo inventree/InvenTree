@@ -188,13 +188,21 @@
         
 </div>
 
-<div class='container-fluid'>
+<div class='panel panel-default panel-inventree'>
     
-    {% block details %}
-    
-    <!-- Specific part details go here... -->
-    
-    {% endblock %}
+    <div class='panel-heading'>
+        <h4>
+            {% block heading %}
+            <!-- Heading goes here -->
+            {% endblock %}
+        </h4>
+    </div>
+
+    <div class='panel-content'>
+        {% block details %}        
+        <!-- Specific part details go here... -->
+        {% endblock %}
+    </div>
 </div>
 
 {% endblock %}

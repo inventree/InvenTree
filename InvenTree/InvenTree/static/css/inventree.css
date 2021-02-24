@@ -699,6 +699,11 @@ input[type="submit"] {
     overflow-x: hidden;
 }
 
+.sidenav .list-group-item.active {
+    background-color: #ddd;
+    border-color: #ccc;
+}
+
 /* The side navigation menu */
 .sidenav-left {
     left: 0px;
