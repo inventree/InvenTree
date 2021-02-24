@@ -4,56 +4,108 @@
 
 <ul class='list-group'>
     <li class='list-group-item'>
-        <span class='fas fa-expand-arrows-alt'></span> <b>{% trans "Part" %}</b>
+        <a href='#' id='part-menu-toggle'>
+            <span class='fas fa-expand-arrows-alt'></span>
+            <b>{% trans "Part" %}</b>
+        </a>
     </li>
-    <li class='list-group-item' title='{% trans "Details" %}'>
-        <a href='#'>
+    <li class='list-group-item {% if tab == "details" %}active{% endif %}' title='{% trans "Part Details" %}'>
+        <a href='{% url "part-detail" part.id %}'>
             <span class='fas fa-info-circle'></span> {% trans "Details" %}
         </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-tasks'></span> {% trans "Parameters" %}
+        <a href='{% url "part-params" part.id %}'>    
+            <span class='fas fa-tasks'></span>
+            {% trans "Parameters" %}
+        </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-shapes'></span> {% trans "Variants" %}
+        <a href='{% url "part-variants" part.id %}'>
+            <span class='fas fa-shapes'></span>
+            {% trans "Variants" %}
+        </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-boxes'></span> {% trans "Stock" %}
+        <a href='{% url "part-stock" part.id %}'>
+            <span class='fas fa-boxes'></span>
+            {% trans "Stock" %}
+        </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-sign-out-alt'></span> {% trans "Allocations" %}
+        <a href='{% url "part-allocation" part.id %}'>
+            <span class='fas fa-sign-out-alt'></span>
+            {% trans "Allocations" %}
+        </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-list'></span> {% trans "Bill of Materials" %}
+        <a href='{% url "part-bom" part.id %}'>
+            <span class='fas fa-list'></span>
+            {% trans "Bill of Materials" %}
+        </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-tools'></span> {% trans "Build Orders" %}
+        <a href='{% url "part-build" part.id %}'>
+            <span class='fas fa-tools'></span>
+            {% trans "Build Orders" %}
+        </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-layer-group'></span> {% trans "Used In" %}
+        <a href='{% url "part-used-in" part.id %}'>
+            <span class='fas fa-layer-group'></span>
+            {% trans "Used In" %}
+        </a>
+    </li>
+    {% if roles.purchase_order.view %}
+    <li class='list-group-item'>
+        <a href='{% url "part-suppliers" part.id %}'>
+            <span class='fas fa-building'></span>
+            {% trans "Suppliers" %}
+        </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-building'></span> {% trans "Suppliers" %}
+        <a href='{% url "part-orders" part.id %}'>
+            <span class='fas fa-shopping-cart'></span>
+            {% trans "Purchase Orders" %}
+        </a>
+    </li>
+    {% endif %}
+    {% if roles.sales_order.view %}
+    <li class='list-group-item'>
+        <a href='{% url "part-sale-prices" part.id %}'>
+            <span class='fas fa-dollar-sign'></span>
+            {% trans "Sale Price" %}
+        </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-shopping-cart'></span> {% trans "Purchase Orders" %}
+        <a href='{% url "part-sales-orders" part.id %}'>
+            <span class='fas fa-truck'></span>
+            {% trans "Sales Orders" %}
+        </a>
+    </li>
+    {% endif %}
+    <li class='list-group-item' title='{% trans "Part Test Templates" %}'>
+        <a href='{% url "part-test-templates" part.id %}'>
+            <span class='fas fa-vial'></span>
+            {% trans "Tests" %}
+        </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-dollar-sign'></span> {% trans "Sale Price" %}
+        <a href='{% url "part-related" part.id %}'>
+            <span class='fas fa-random'></span>
+            {% trans "Related Parts" %}
+        </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-truck'></span> {% trans "Sales Orders" %}
+        <a href='{% url "part-attachments" part.id %}'>
+            <span class='fas fa-paperclip'></span>
+            {% trans "Attacments" %}
+        </a>
     </li>
     <li class='list-group-item'>
-        <span class='fas fa-vial'></span> {% trans "Tests" %}
-    </li>
-    <li class='list-group-item'>
-        <span class='fas fa-random'></span> {% trans "Related Parts" %}
-    </li>
-    <li class='list-group-item'>
-        <span class='fas fa-paperclip'></span> {% trans "Attacments" %}
-    </li>
-    <li class='list-group-item'>
-        <span class='fas fa-clipboard'></span> {% trans "Notes" %}
+        <a href='{% url "part-notes" part.id %}'>
+            <span class='fas fa-clipboard'></span>
+            {% trans "Notes" %}
+        </a>
     </li>
 </ul>

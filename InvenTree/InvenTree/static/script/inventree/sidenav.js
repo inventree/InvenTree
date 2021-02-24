@@ -133,9 +133,91 @@ function initSideNav(navId) {
     });
 
     if (sessionStorage.getItem("inventree-sidenav-state") && sessionStorage.getItem('inventree-sidenav-state') == 'open') {
-        openSideNav();
+        openSideNav(navId);
     }
     else {
-        closeSideNav();
+        closeSideNav(navId);
+    }
+}
+
+
+function enableNavbar(options) {
+
+    var resize = true;
+
+    if ('resize' in options) {
+        resize = options.resize;
+    }
+
+    console.log('enable navbar: ' + options.navId);
+
+    // Make the navbar resizable
+    if (resize) {
+        $(options.navId).resizable({
+            minWidth: options.minWidth || '100px',
+            maxWidth: options.maxWidth || '500px',
+            handles: 'e, se',
+            grid: [5, 5],
+            stop: function(event, ui) {
+                // Record the new width
+                var width = Math.round(ui.element.width());
+                console.log('Resized to: ' + width);
+            }
+        });
+    }
+
+    // Extract the saved width for this element
+    $(options.navId).animate({
+        width: '250px',
+        display: 'block',
+    }, 50);
+    
+    console.log('Done');
+}
+
+
+function enableLeftNavbar(options={}) {
+    /**
+     * Enable the left-hand nav bar for this page.
+     */
+
+    options.navId = options.navId || '#sidenav-left';
+
+    enableNavbar(options);
+}
+
+function enableRightNavbar(options={}) {
+
+    options.navId = options.navId || '#sidenav-right';
+
+    enableNavbar(options);
+}
+
+/**
+ * Function to toggle a menu
+ */
+function toggleMenuExpand(menuId) {
+
+    var stateKey = `menu-state-${menuId}`;
+    var widthKey = `menu-width-${menuId}`;
+
+    if (sessionStorage.getItem(stateKey) && sessionStorage.getItem(stateKey) == 'open') {
+        
+        // Close the menu
+        $('#sidenav-right').animate({
+            'width': '45px'
+        }, 50);
+
+        sessionStorage.setItem(stateKey, 'closed');
+    } else {
+
+        var width = sessionStorage.getItem(widthKey) || '250px';
+
+        // Open the menu
+        $('#sidenav-right').animate({
+            'width': width,
+        }, 50);
+
+        sessionStorage.setItem(stateKey, 'open');
     }
 }

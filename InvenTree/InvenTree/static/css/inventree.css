@@ -704,6 +704,7 @@ input[type="submit"] {
     left: 0px;
     top: 0px;
     width: 0px;
+    z-index: 500;
 }
 
 .sidenav-left .badge {
@@ -713,8 +714,9 @@ input[type="submit"] {
 }
 
 .sidenav-right {
+    min-width: 45px;
     width: 0px;
-    right: 0px;
+    left: 0px;
     top: 70px;
     position: sticky;
     font-size: 115%;

@@ -83,6 +83,12 @@ InvenTree
         {% endblock %}
     </div>
     
+    <div class='sidenav sidenav-right' id='sidenav-right'>
+        {% block menubar %}
+        <!-- Menubar code here -->
+        {% endblock %}
+    </div>
+    
     <div class="container container-fluid inventree-content" id='inventree-content'>
         {% block content %}
         <!-- Each view fills in here.. -->
@@ -90,11 +96,6 @@ InvenTree
         
     </div>
     
-    <div class='sidenav sidenav-right' id='sidenav-right'>
-        {% block menubar %}
-        <!-- Menubar code here -->
-        {% endblock %}
-    </div>
 
 {% block post_content %}
 {% endblock %}

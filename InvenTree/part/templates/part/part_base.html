@@ -200,7 +200,13 @@
 {% block js_ready %}
 {{ block.super }}
 
-    enableRightNavbar();
+    enableRightNavbar({
+        minWidth: '50px',
+    });
+
+    $('#part-menu-toggle').click(function() {
+        toggleMenuExpand();
+    })
 
     enableDragAndDrop(
         '#part-thumb',
