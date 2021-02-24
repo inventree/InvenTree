@@ -643,12 +643,12 @@ class Part(MPTTModel):
         super().clean()
 
         if self.trackable:
-            for item in self.get_used_in().all():
-                parent_part = item.part
-                if not parent_part.trackable:
-                    parent_part.trackable = True
-                    parent_part.clean()
-                    parent_part.save()
+            for part in self.get_used_in().all():
+
+                if not part.trackable:
+                    part.trackable = True
+                    part.clean()
+                    part.save()
 
     name = models.CharField(
         max_length=100, blank=False,

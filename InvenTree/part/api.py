@@ -665,9 +665,10 @@ class PartList(generics.ListCreateAPIView):
     ordering = 'name'
 
     search_fields = [
-        '$name',
+        'name',
         'description',
-        '$IPN',
+        'IPN',
+        'revision',
         'keywords',
     ]
 
