@@ -3,14 +3,15 @@
 {% load i18n %}
 {% load status_codes %}
 
+{% block menubar %}
+{% include "build/navbar.html" with tab='details' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Build Details" %}
+{% endblock %}
+
 {% block details %}
-
-{% include "build/tabs.html" with tab='details' %}
-
-<h4>{% trans "Build Details" %}</h4>
-
-<hr>
-
 <div class='row'>
     <div class='col-sm-6'>
         <table class='table table-striped'>

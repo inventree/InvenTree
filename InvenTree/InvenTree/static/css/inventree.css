@@ -207,7 +207,12 @@
 }
 
 .treeview .list-group-item {
-    padding: 6px 12px;
+    padding: 10px 5px;
+}
+
+.treeview .list-group-item .indent {
+    margin-left: 3px;
+    margin-right: 3px;
 }
 
 .list-group-item-condensed {
@@ -512,7 +517,7 @@
     margin: 2px;
     padding: 3px;
     object-fit: contain;
-    border: 1px solid #aaa;
+    border: 1px solid #ddd;
     border-radius: 3px;
 }
 
@@ -526,7 +531,8 @@
     left: 0;
     opacity: 0;
     transition: .25s ease;
-    padding: 15px;
+    padding-top: 10px;
+    padding-left: 25px;
     margin: 5px;
 }
 
@@ -540,7 +546,7 @@
 }
 
 .media {
-    padding-top: 15px;
+    //padding-top: 15px;
     overflow: visible;
 }
 
@@ -589,15 +595,15 @@
 }
 
 .inventree-pre-content {
-    width: 100%;
-    clear: both;
+    width: auto;
 }
 
 .inventree-content {
-    padding-left: 5px;
-    padding-right: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     padding-top: 5px;
-    width: auto;
+    width: 100%;
+    display: inline-block;
     transition: 0.1s;
 }
 
@@ -674,15 +680,63 @@ input[type="submit"] {
     background-color: #5e7d87;
 }
 
-/* The side navigation menu */
+.inventree-navs {
+    display: flex;
+}
+
 .sidenav {
     height: 100%; /* 100% Full-height */
     width: 0px; /* 0 width - change this with JavaScript */
-    position: fixed; /* Stay in place */
-    background-color: #fff; /* Black*/
+    position: relative; /* Stay in place */
     overflow-x: hidden; /* Disable horizontal scroll */
+    overflow: hidden;
     transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
+    z-index: 100;
+    background-color: #fff; /* Black*/
+    padding-top: 5px;
 }
+
+.sidenav li {
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+
+.sidenav .list-group-item.active {
+    background-color: #ddd;
+    border-color: #ccc;
+}
+
+/* The side navigation menu */
+.sidenav-left {
+    left: 0px;
+    top: 0px;
+    width: 0px;
+    z-index: 500;
+}
+
+.sidenav-left .badge {
+    position: absolute;
+    right: 3px;
+    margin-right: 5px;
+}
+
+.sidenav-right {
+    left: 0px;
+    top: 70px;
+    position: sticky;
+    font-size: 115%;
+}
+
+.sidenav-right svg {
+    margin-right: 10px;
+}
+
+.container > aside,
+.container > main {
+  padding: 10px;
+  overflow: auto;
+}
+
 
 .wrapper {
     align-items: stretch;
@@ -760,6 +814,11 @@ input[type="submit"] {
 .panel-heading {
     padding: 5px 10px;
     background-color: #fafafa;
+}
+
+.panel-inventree {
+    padding: 10px;
+    box-shadow: 1px 1px #DDD;
 }
 
 .float-right {

@@ -1,13 +1,16 @@
 {% extends "part/part_base.html" %}
 {% load static %}
 {% load i18n %}
+
+{% block menubar %}
+{% include 'part/navbar.html' with tab='suppliers' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Part Suppliers" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'part/tabs.html' with tab='suppliers' %}
-
-<h4>{% trans "Part Suppliers" %}</h4>
-<hr>
-
 <div id='button-toolbar'>
     <div class='btn-group'>
         <button class="btn btn-success" id='supplier-create'>

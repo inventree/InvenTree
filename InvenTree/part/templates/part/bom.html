@@ -2,17 +2,15 @@
 {% load static %}
 {% load i18n %}
 
-{% block css %}
+{% block menubar %}
+{% include 'part/navbar.html' with tab='bom' %}
+{% endblock %}
 
+{% block heading %}
+{% trans "Bill of Materials" %}
 {% endblock %}
 
 {% block details %}
-
-{% include 'part/tabs.html' with tab='bom' %}
-
-<h4>{% trans "Bill of Materials" %}</h4>
-<hr>
-
 {% if part.bom_checked_date %}
 {% if part.is_bom_valid %}
 <div class='alert alert-block alert-info'>

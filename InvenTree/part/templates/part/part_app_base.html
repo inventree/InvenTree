@@ -29,6 +29,8 @@ InvenTree | {% trans "Part List" %}
 {% block js_ready %}
 {{ block.super }}
 
+    closeSideNav();
+
     loadTree("{% url 'api-part-tree' %}",
         "#part-tree",
         {
@@ -37,9 +39,10 @@ InvenTree | {% trans "Part List" %}
     );
 
     $("#toggle-part-tree").click(function() {
-        toggleSideNav("#sidenav");
+        toggleSideNav("#sidenav-left");
         return false;
-    })
+    });
 
     initSideNav();
+
 {% endblock %}

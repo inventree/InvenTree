@@ -1,13 +1,16 @@
 {% extends "part/part_base.html" %}
 {% load static %}
 {% load i18n %}
+
+{% block menubar %}
+{% include 'part/navbar.html' with tab='attachments' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Part Attachments" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'part/tabs.html' with tab='attachments' %}
-
-<h4>{% trans "Part Attachments" %}</h4>
-
-<hr>
 
 {% include "attachment_table.html" with attachments=part.part_attachments %}
 

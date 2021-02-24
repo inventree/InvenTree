@@ -2,13 +2,16 @@
 {% load static %}
 {% load i18n %}
 
-{% block details  %}
 
-{% include 'part/tabs.html' with tab='detail' %}
+{% block menubar %}
+{% include 'part/navbar.html' with tab='details' %}
+{% endblock %}
 
-<h4>{% trans "Part Details" %}</h4>
+{% block heading %}
+{% trans "Part Details" %}
+{% endblock %}
 
-<hr>
+{% block details %}
 
 <div class='row'>
     <div class='col-sm-6'>

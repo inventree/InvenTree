@@ -2,12 +2,15 @@
 {% load static %}
 {% load i18n %}
 
+{% block menubar %}
+{% include 'company/navbar.html' with tab='po' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Purchase Orders" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'company/tabs.html' with tab='po' %}
-
-<h4>{% trans "Purchase Orders" %}</h4>
-<hr>
 
 {% if roles.purchase_order.add %}
 <div id='button-bar'>

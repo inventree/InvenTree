@@ -148,6 +148,11 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 
+    enableNavbar({
+        label: 'build',
+        toggleId: '#build-menu-toggle'
+    });
+
     $("#build-edit").click(function () {
         launchModalForm("{% url 'build-edit' build.id %}",
                         {
