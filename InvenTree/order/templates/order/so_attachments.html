@@ -4,13 +4,15 @@
 {% load i18n %}
 {% load static %}
 
+{% block menubar %}
+{% include 'order/so_navbar.html' with tab='attachments' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Sales Order Attachments" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'order/so_tabs.html' with tab='attachments' %}
-
-<h4>{% trans "Sales Order Attachments" %}</h4>
-
-<hr>
 
 {% include "attachment_table.html" with attachments=order.attachments.all %}
 
