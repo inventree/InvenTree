@@ -120,6 +120,11 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
+enableNavbar({
+    label: 'supplier-part',
+    toggleId: '#supplier-part-menu-toggle'
+})
+
 $('#order-part, #order-part2').click(function() {
     launchModalForm(
         "{% url 'order-parts' %}",

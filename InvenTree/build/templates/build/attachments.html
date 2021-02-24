@@ -4,13 +4,15 @@
 {% load i18n %}
 {% load markdownify %}
 
+{% block menubar %}
+{% include "build/navbar.html" with tab='attachments' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Attachments" %}
+{% endblock %}
+
 {% block details %}
-
-{% include "build/tabs.html" with tab='attachments' %}
-
-<h4>{% trans "Attachments" %}</h4>
-<hr>
-
 {% include "attachment_table.html" with attachments=build.attachments.all %}
 
 {% endblock %}

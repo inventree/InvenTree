@@ -1,0 +1,35 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+<ul class='list-group'>
+    <li class='list-group-item'>
+        <a href='#' id='po-menu-toggle'>
+            <span class='menu-tab-icon fas fa-expand-arrows-alt'></span>
+        </a>
+    </li>
+    <li class='list-group-item {% if tab == "details" %}active{% endif %}' title='{% trans "Purchase Order Details" %}'>
+        <a href='{% url "po-detail" order.id %}'>
+            <span class='fas fa-info-circle'></span>
+            {% trans "Details" %}
+        </a>
+    </li>
+    <li class='list-group-item {% if tab == "received" %}active{% endif %}' title='{% trans "Received Stock Items" %}'>
+        <a href='{% url "po-received" order.id %}'>
+            <span class='fas fa-sign-in-alt'></span>
+            {% trans "Received Items" %}
+        </a>
+    </li>
+    <li class='list-group-item {% if tab == "attachments" %}active{% endif %}' title='{% trans "Purchase Order Attachments" %}'>
+        <a href='{% url "po-attachments" order.id %}'>
+            <span class='fas fa-paperclip'></span>
+            {% trans "Attachments" %}
+        </a>
+    </li>
+    <li class='list-group-item {% if tab == "notes" %}active{% endif %}' title='{% trans "Notes" %}'>
+        <a href='{% url "po-notes" order.id %}'>
+            <span class='fas fa-clipboard'></span>
+            {% trans "Notes" %}
+        </a>
+    </li>
+</ul>

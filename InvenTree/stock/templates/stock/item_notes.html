@@ -5,15 +5,16 @@
 {% load i18n %}
 {% load markdownify %}
 
+{% block menubar %}
+{% include "stock/navbar.html" with tab="notes" %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Stock Item Notes" %}
+{% endblock %}
+
 {% block details %}
-
-{% include "stock/tabs.html" with tab="notes" %}
-
 {% if editing %}
-
-<h4>{% trans "Stock Item Notes" %}</h4>
-<hr>
-
 <form method='POST'>
     {% csrf_token %}
 
@@ -25,22 +26,10 @@
 {{ form.media }}
 
 {% else %}
-<div class='row'>
-    <div class='col-sm-6'>
-        <h4>{% trans "Stock Item Notes" %}</h4>
-    </div>
-    <div class='col-sm-6'>
-        <button title='{% trans "Edit notes" %}' class='btn btn-default action-button float-right' id='edit-notes'><span class='fas fa-edit'></span></button>
-    </div>
-</div>
-<hr>
-<div class='panel panel-default'>
-    <div class='panel-content'>
-        {% if item.notes %}
-        {{ item.notes | markdownify }}
-        {% endif %}
-    </div>
-</div>
+<button title='{% trans "Edit notes" %}' class='btn btn-default action-button' id='edit-notes'><span class='fas fa-edit'></span></button>
+{% if item.notes %}
+{{ item.notes | markdownify }}
+{% endif %}
 
 {% endif %}
 

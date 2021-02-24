@@ -3,13 +3,15 @@
 {% load static %}
 {% load i18n %}
 
+{% block menubar %}
+{% include "stock/navbar.html" with tab='attachments' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Stock Item Attachments" %}
+{% endblock %}
+
 {% block details %}
-
-{% include "stock/tabs.html" with tab='attachments' %}
-
-<h4>{% trans "Stock Item Attachments" %}</h4>
-<hr>
-
 {% include "attachment_table.html" with attachments=item.attachments.all %}
 
 {% endblock %}

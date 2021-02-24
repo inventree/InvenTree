@@ -381,8 +381,12 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% endblock %}
 
 {% block js_ready %}
-
 {{ block.super }}
+
+enableNavbar({
+    label: 'item',
+    toggleId: '#item-menu-toggle',
+});
 
 loadTree("{% url 'api-stock-tree' %}",
         "#stock-tree",
@@ -392,7 +396,7 @@ loadTree("{% url 'api-stock-tree' %}",
     );
 
     $("#toggle-stock-tree").click(function() {
-        toggleSideNav("#sidenav");
+        toggleSideNav("#sidenav-left");
         return false;
     })
 
