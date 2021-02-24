@@ -668,6 +668,7 @@ class PartList(generics.ListCreateAPIView):
         'name',
         'description',
         'IPN',
+        'revision',
         'keywords',
     ]
 
