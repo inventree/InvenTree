@@ -5,14 +5,17 @@
 {% load static %}
 {% load markdownify %}
 
+{% block menubar %}
+{% include 'order/po_navbar.html' with tab='notes' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Order Notes" %}
+{% endblock %}
+
 {% block details %}
 
-{% include 'order/po_tabs.html' with tab='notes' %}
-
 {% if editing %}
-<h4>{% trans "Order Notes" %}</h4>
-<hr>
-
 <form method='POST'>
     {% csrf_token %}
 
@@ -24,24 +27,15 @@
 {{ form.media }}
 
 {% else %}
-<div class='row'>
-    <div class='col-sm-6'>
-        <h4>{% trans "Order Notes" %}</h4>
-    </div>
-    {% if roles.purchase_order.change %}
-    <div class='col-sm-6'>
-        <button title='{% trans "Edit notes" %}' class='btn btn-default action-button float-right' id='edit-notes'><span class='fas fa-edit'></span></button>
-    </div>
-    {% endif %}
-</div>
-<hr>
+{% if roles.purchase_order.change %}
+<button title='{% trans "Edit notes" %}' class='btn btn-default action-button' id='edit-notes'><span class='fas fa-edit'></span></button>
+{% endif %}
+{% endif %}
 <div class='panel panel-default'>
     <div class='panel-content'>
         {{ order.notes | markdownify }}
     </div>
 </div>
-
-{% endif %}
 
 {% endblock %}
 

@@ -4,12 +4,15 @@
 {% load i18n %}
 {% load static %}
 
+{% block menubar %}
+{% include 'order/po_navbar.html' with tab='received' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Received Items" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'order/po_tabs.html' with tab='received' %}
-
-<h4>{% trans "Received Items" %}</h4>
-<hr>
 
 {% include "stock_table.html" with read_only=True %}
 

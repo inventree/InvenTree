@@ -5,11 +5,18 @@
 {% load i18n %}
 {% load static %}
 
+{% block menubar %}
+{% include 'order/po_navbar.html' with tab='details' %}
+
+{% endblock %}
+
+{% block heading %}
+{% trans "Purchase Order Items" %}
+{% endblock %}
+
+
 {% block details %}
 
-{% include 'order/po_tabs.html' with tab='details' %}
-
-<hr>
 
 <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
     {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
@@ -18,7 +25,6 @@
     {% endif %}
 </div>
 
-<h4>{% trans "Purchase Order Items" %}</h4>
 
 <table class='table table-striped table-condensed' id='po-table' data-toolbar='#order-toolbar-buttons'>
 </table>
