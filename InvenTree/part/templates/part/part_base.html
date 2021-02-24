@@ -201,13 +201,10 @@
 {% block js_ready %}
 {{ block.super }}
 
-    enableRightNavbar({
-        minWidth: '50px',
+    enableNavbar({
+        label: 'part',
+        toggleId: '#part-menu-toggle',
     });
-
-    $('#part-menu-toggle').click(function() {
-        toggleMenuExpand();
-    })
 
     enableDragAndDrop(
         '#part-thumb',

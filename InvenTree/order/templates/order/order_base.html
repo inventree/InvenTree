@@ -135,8 +135,9 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
-enableRightNavbar({
-    minWidth: '50px'
+enableNavbar({
+    label: 'po',
+    toggleId: '#po-menu-toggle',
 });
 
 {% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}

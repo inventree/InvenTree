@@ -148,9 +148,10 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 
-enableRightNavbar({
-    minWidth: '50px'
-});
+    enableNavbar({
+        label: 'build',
+        toggleId: '#build-menu-toggle'
+    });
 
     $("#build-edit").click(function () {
         launchModalForm("{% url 'build-edit' build.id %}",

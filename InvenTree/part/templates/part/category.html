@@ -161,10 +161,12 @@
 {% block js_ready %}
 {{ block.super }}
 
-enableRightNavbar({
-    minWidth: '50px',
-});
-
+    {% if category %}
+    enableNavbar({
+        label: 'category',
+        toggleId: '#category-menu-toggle',
+    });
+    {% endif %}
 
     if (inventreeLoadInt("show-part-cats") == 1) {
         $("#collapse-item-categories").collapse('show');

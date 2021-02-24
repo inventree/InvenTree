@@ -383,8 +383,9 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
 {% block js_ready %}
 {{ block.super }}
 
-enableRightNavbar({
-    minWidth: '50px'
+enableNavbar({
+    label: 'item',
+    toggleId: '#item-menu-toggle',
 });
 
 loadTree("{% url 'api-stock-tree' %}",

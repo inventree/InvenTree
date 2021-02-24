@@ -719,8 +719,6 @@ input[type="submit"] {
 }
 
 .sidenav-right {
-    min-width: 45px;
-    width: 0px;
     left: 0px;
     top: 70px;
     position: sticky;

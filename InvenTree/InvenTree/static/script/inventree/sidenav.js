@@ -140,7 +140,9 @@ function initSideNav(navId) {
     }
 }
 
-
+/**
+ * Handle left-hand icon menubar display
+ */
 function enableNavbar(options) {
 
     var resize = true;
@@ -149,75 +151,86 @@ function enableNavbar(options) {
         resize = options.resize;
     }
 
-    console.log('enable navbar: ' + options.navId);
+    var label = options.label || 'nav';
 
-    // Make the navbar resizable
-    if (resize) {
-        $(options.navId).resizable({
-            minWidth: options.minWidth || '100px',
-            maxWidth: options.maxWidth || '500px',
-            handles: 'e, se',
-            grid: [5, 5],
-            stop: function(event, ui) {
-                // Record the new width
-                var width = Math.round(ui.element.width());
-                console.log('Resized to: ' + width);
-            }
-        });
-    }
+    label = `navbar-${label}`;
+
+    var stateLabel = `${label}-state`;
+    var widthLabel = `${label}-width`;
+
+    var navId = options.navId || '#sidenav-right';
+
+    var toggleId = options.toggleId;
 
     // Extract the saved width for this element
-    $(options.navId).animate({
-        width: '250px',
+    $(navId).animate({
+        width: '45px',
+        'min-width': '45px',
         display: 'block',
-    }, 50);
-    
-    console.log('Done');
-}
+    }, 50, function() {
 
+        // Make the navbar resizable
+        if (resize) {
+            $(navId).resizable({
+                minWidth: options.minWidth || '100px',
+                maxWidth: options.maxWidth || '500px',
+                handles: 'e, se',
+                grid: [5, 5],
+                stop: function(event, ui) {
+                    // Record the new width
+                    var width = Math.round(ui.element.width());
 
-function enableLeftNavbar(options={}) {
-    /**
-     * Enable the left-hand nav bar for this page.
-     */
+                    // Reasonably narrow? Just close it!
+                    if (width <= 75) {
+                        $(navId).animate({
+                            width: '45px'
+                        }, 50);
 
-    options.navId = options.navId || '#sidenav-left';
+                        sessionStorage.setItem(stateLabel, 'closed');
+                    } else {
+                        sessionStorage.setItem(widthLabel, `${width}px`);
+                        sessionStorage.setItem(stateLabel, 'open');
+                    }
+                }
+            });
+        }
 
-    enableNavbar(options);
-}
-
-function enableRightNavbar(options={}) {
-
-    options.navId = options.navId || '#sidenav-right';
-
-    enableNavbar(options);
-}
-
-/**
- * Function to toggle a menu
- */
-function toggleMenuExpand(menuId) {
-
-    var stateKey = `menu-state-${menuId}`;
-    var widthKey = `menu-width-${menuId}`;
-
-    if (sessionStorage.getItem(stateKey) && sessionStorage.getItem(stateKey) == 'open') {
+        var state = sessionStorage.getItem(stateLabel);
+        var width = sessionStorage.getItem(widthLabel) || '250px';
         
-        // Close the menu
-        $('#sidenav-right').animate({
-            'width': '45px'
-        }, 50);
+        if (state && state == 'open') {
 
-        sessionStorage.setItem(stateKey, 'closed');
-    } else {
+            $(navId).animate({
+                width: width
+            }, 100);
+        }
 
-        var width = sessionStorage.getItem(widthKey) || '250px';
+    });
 
-        // Open the menu
-        $('#sidenav-right').animate({
-            'width': width,
-        }, 50);
+    // Register callback for 'toggle' button
+    if (toggleId) {
 
-        sessionStorage.setItem(stateKey, 'open');
+        $(toggleId).click(function() {
+
+            var state = sessionStorage.getItem(stateLabel) || 'closed';
+            var width = sessionStorage.getItem(widthLabel) || '250px';
+
+            if (state == 'open') {
+                $(navId).animate({
+                    width: '45px',
+                    minWidth: '45px',
+                }, 50);
+
+                sessionStorage.setItem(stateLabel, 'closed');
+
+            } else {
+
+                $(navId).animate({
+                    'width': width
+                }, 50);
+
+                sessionStorage.setItem(stateLabel, 'open');
+            }
+        });
     }
 }
