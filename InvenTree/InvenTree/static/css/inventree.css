@@ -517,7 +517,7 @@
     margin: 2px;
     padding: 3px;
     object-fit: contain;
-    border: 1px solid #aaa;
+    border: 1px solid #ddd;
     border-radius: 3px;
 }
 
@@ -531,7 +531,8 @@
     left: 0;
     opacity: 0;
     transition: .25s ease;
-    padding: 15px;
+    padding-top: 10px;
+    padding-left: 25px;
     margin: 5px;
 }
 
@@ -692,6 +693,7 @@ input[type="submit"] {
     transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
     z-index: 100;
     background-color: #fff; /* Black*/
+    padding-top: 5px;
 }
 
 .sidenav li {
