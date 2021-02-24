@@ -7,14 +7,15 @@
 InvenTree | Allocate Parts
 {% endblock %}
 
+{% block menubar %}
+{% include "build/navbar.html" with tab='allocate' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Incomplete Build Ouputs" %}
+{% endblock %}
+
 {% block details %}
-
-{% include "build/tabs.html" with tab='allocate' %}
-
-<h4>{% trans "Incomplete Build Ouputs" %}</h4>
-
-<hr>
-
 {% if build.is_complete %}
 <div class='alert alert-block alert-success'>
     {% trans "Build order has been completed" %}
