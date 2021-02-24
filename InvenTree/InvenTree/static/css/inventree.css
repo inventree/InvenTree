@@ -545,7 +545,7 @@
 }
 
 .media {
-    padding-top: 15px;
+    //padding-top: 15px;
     overflow: visible;
 }
 
@@ -809,6 +809,11 @@ input[type="submit"] {
 .panel-heading {
     padding: 5px 10px;
     background-color: #fafafa;
+}
+
+.panel-inventree {
+    padding: 10px;
+    box-shadow: 1px 1px #DDD;
 }
 
 .float-right {
