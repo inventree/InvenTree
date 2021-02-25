@@ -50,8 +50,11 @@
 
 <link rel="stylesheet" href="{% get_color_theme_css user.get_username %}">
 
-{% block css %}
-{% endblock %}
+<style>
+    {% block css %}
+    <!-- Custom CSS style goes here -->
+    {% endblock %}
+</style>
 {% block head %}
 {% endblock %}
 

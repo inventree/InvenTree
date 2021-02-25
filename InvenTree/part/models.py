@@ -1056,6 +1056,23 @@ class Part(MPTTModel):
         except PartStar.DoesNotExist:
             return False
 
+    def setStarred(self, user, starred):
+        """
+        Set the "starred" status of this Part for the given user
+        """
+
+        if not user:
+            return
+
+        # Do not duplicate efforts
+        if self.isStarredBy(user) == starred:
+            return
+
+        if starred:
+            PartStar.objects.create(part=self, user=user)
+        else:
+            PartStar.objects.filter(part=self, user=user).delete()
+
     def need_to_restock(self):
         """ Return True if this part needs to be restocked
         (either by purchasing or building).
