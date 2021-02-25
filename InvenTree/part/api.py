@@ -328,6 +328,22 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
             message = f'Part \'{part.name}\' (pk = {part.pk}) is active: cannot delete'
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data=message)
 
+    def update(self, request, *args, **kwargs):
+        """
+        Custom update functionality for Part instance.
+
+        - If the 'starred' field is provided, update the 'starred' status against current user
+        """
+
+        if 'starred' in request.data:
+            starred = str2bool(request.data.get('starred', None))
+
+            self.get_object().setStarred(request.user, starred)
+
+        response = super().update(request, *args, **kwargs)
+
+        return response
+
 
 class PartList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of Part objects
