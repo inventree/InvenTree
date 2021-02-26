@@ -84,3 +84,11 @@ class InvenTreeAPITestCase(APITestCase):
 
         return response
     
+    def post(self, url, data):
+        """
+        Issue a POST request
+        """
+
+        response = self.client.post(url, data=data, format='json')
+
+        return response

@@ -183,6 +183,7 @@ class RuleSet(models.Model):
                 if check_user_role(user, role, permission):
                     return True
 
+        print("failed permission check for", table, permission)
         return False
 
     @staticmethod
