@@ -20,8 +20,6 @@ from rest_framework.views import APIView
 from .views import AjaxView
 from .version import inventreeVersion, inventreeInstanceName
 
-from users.models import check_user_role, RuleSet
-
 from plugins import plugins as inventree_plugins
 
 
@@ -70,7 +68,7 @@ class AttachmentMixin:
         attachment = serializer.save()
         attachment.user = self.request.user
         attachment.save()
-        
+
 
 class ActionPluginView(APIView):
     """

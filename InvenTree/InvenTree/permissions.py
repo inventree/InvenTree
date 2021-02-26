@@ -45,7 +45,7 @@ class RolePermission(permissions.BasePermission):
         user = request.user
 
         # Superuser can do it all
-        if False and user.is_superuser:
+        if user.is_superuser:
             return True
 
         # Map the request method to a permission type
