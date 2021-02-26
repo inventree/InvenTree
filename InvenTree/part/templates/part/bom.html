@@ -111,34 +111,25 @@
             {
                 accept: function() {
 
-                    // Delete each row one at a time!
-                    function deleteRow(idx) {
+                    // Keep track of each DELETE request
+                    var requests = [];
 
-                        if (idx >= rows.length) {
-                            // All selected rows deleted - reload the table
-                            $("#bom-table").bootstrapTable('refresh');
-                        }
+                    rows.forEach(function(row) {
+                        requests.push(
+                            inventreeDelete(
+                                `/api/bom/${row.pk}/`,
+                            )
+                        );
+                    });
 
-                        var row = rows[idx];
-
-                        var url = `/api/bom/${row.pk}/`;
-
-                        inventreeDelete(
-                            url,
-                            {
-                                complete: function(xhr, status) {
-                                    deleteRow(idx + 1);
-                                }
-                            }
-                        )
-                    }
-
-                    // Start the deletion!
-                    deleteRow(0);
+                    // Wait for *all* the requests to complete
+                    $.when.apply($, requests).then(function() {
+                        $('#bom-table').bootstrapTable('refresh');
+                    });
                 }
             }
         );
-        });
+    });
 
     $('#bom-upload').click(function() {
         location.href = "{% url 'upload-bom' part.id %}";
