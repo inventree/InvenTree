@@ -12,12 +12,12 @@ from django.db.models import Q, F, Count, Prefetch, Sum
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import filters, serializers
-from rest_framework import generics, permissions
+from rest_framework import generics
 
 from django.conf.urls import url, include
 from django.urls import reverse
 
-from .models import Part, PartCategory, BomItem, PartStar
+from .models import Part, PartCategory, BomItem
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak
