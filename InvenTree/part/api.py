@@ -38,6 +38,8 @@ class PartCategoryTree(TreeSerializer):
 
     title = "Parts"
     model = PartCategory
+
+    queryset = PartCategory.objects.all()
     
     @property
     def root_url(self):
@@ -46,9 +48,7 @@ class PartCategoryTree(TreeSerializer):
     def get_items(self):
         return PartCategory.objects.all().prefetch_related('parts', 'children')
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    role_required = 'part'
 
 
 class CategoryList(generics.ListCreateAPIView):
@@ -114,6 +114,8 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
 
+    role_required = 'part'
+
 
 class CategoryParameters(generics.ListAPIView):
     """ API endpoint for accessing a list of PartCategoryParameterTemplate objects.
@@ -123,6 +125,8 @@ class CategoryParameters(generics.ListAPIView):
 
     queryset = PartCategoryParameterTemplate.objects.all()
     serializer_class = part_serializers.CategoryParameterTemplateSerializer
+
+    role_required = 'part'
 
     def get_queryset(self):
         """
@@ -168,6 +172,8 @@ class PartSalePriceList(generics.ListCreateAPIView):
     queryset = PartSellPriceBreak.objects.all()
     serializer_class = part_serializers.PartSalePriceSerializer
 
+    role_required = 'part'
+
     filter_backends = [
         DjangoFilterBackend
     ]
@@ -185,6 +191,8 @@ class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     queryset = PartAttachment.objects.all()
     serializer_class = part_serializers.PartAttachmentSerializer
 
+    role_required = 'part'
+
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -201,6 +209,8 @@ class PartTestTemplateList(generics.ListCreateAPIView):
 
     queryset = PartTestTemplate.objects.all()
     serializer_class = part_serializers.PartTestTemplateSerializer
+
+    role_required = 'part'
 
     def filter_queryset(self, queryset):
         """
@@ -243,6 +253,8 @@ class PartThumbs(generics.ListAPIView):
     API endpoint for retrieving information on available Part thumbnails
     """
 
+    role_required = 'part'
+
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartThumbSerializer
 
@@ -279,6 +291,8 @@ class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartThumbSerializerUpdate
 
+    role_required = 'part'
+
     filter_backends = [
         DjangoFilterBackend
     ]
@@ -286,6 +300,8 @@ class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single Part object """
+
+    role_required = 'part'
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartSerializer
@@ -694,61 +710,14 @@ class PartList(generics.ListCreateAPIView):
     ]
 
 
-class PartStarDetail(generics.RetrieveDestroyAPIView):
-    """ API endpoint for viewing or removing a PartStar object """
-
-    queryset = PartStar.objects.all()
-    serializer_class = part_serializers.PartStarSerializer
-
-
-class PartStarList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of PartStar objects.
-
-    - GET: Return list of PartStar objects
-    - POST: Create a new PartStar object
-    """
-
-    queryset = PartStar.objects.all()
-    serializer_class = part_serializers.PartStarSerializer
-
-    def create(self, request, *args, **kwargs):
-
-        # Override the user field (with the logged-in user)
-        data = request.data.copy()
-        data['user'] = str(request.user.id)
-
-        serializer = self.get_serializer(data=data)
-
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter
-    ]
-
-    filter_fields = [
-        'part',
-        'user',
-    ]
-
-    search_fields = [
-        'partname'
-    ]
-
-
 class PartParameterTemplateList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PartParameterTemplate objects.
 
     - GET: Return list of PartParameterTemplate objects
     - POST: Create a new PartParameterTemplate object
     """
+
+    role_required = 'part'
 
     queryset = PartParameterTemplate.objects.all()
     serializer_class = part_serializers.PartParameterTemplateSerializer
@@ -769,6 +738,8 @@ class PartParameterList(generics.ListCreateAPIView):
     - POST: Create a new PartParameter object
     """
 
+    role_required = 'part'
+
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
 
@@ -788,6 +759,8 @@ class BomList(generics.ListCreateAPIView):
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
     """
+
+    role_required = 'part'
 
     serializer_class = part_serializers.BomItemSerializer
 
@@ -928,12 +901,16 @@ class BomList(generics.ListCreateAPIView):
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single BomItem object """
 
+    role_required = 'part'
+
     queryset = BomItem.objects.all()
     serializer_class = part_serializers.BomItemSerializer
 
 
 class BomItemValidate(generics.UpdateAPIView):
     """ API endpoint for validating a BomItem """
+
+    role_required = 'part'
 
     # Very simple serializers
     class BomItemValidationSerializer(serializers.Serializer):
@@ -979,12 +956,6 @@ part_api_urls = [
     # Base URL for PartAttachment API endpoints
     url(r'^attachment/', include([
         url(r'^$', PartAttachmentList.as_view(), name='api-part-attachment-list'),
-    ])),
-    
-    # Base URL for PartStar API endpoints
-    url(r'^star/', include([
-        url(r'^(?P<pk>\d+)/?', PartStarDetail.as_view(), name='api-part-star-detail'),
-        url(r'^$', PartStarList.as_view(), name='api-part-star-list'),
     ])),
 
     # Base URL for part sale pricing
