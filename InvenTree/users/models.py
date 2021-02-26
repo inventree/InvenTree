@@ -166,6 +166,25 @@ class RuleSet(models.Model):
 
     can_delete = models.BooleanField(verbose_name=_('Delete'), default=False, help_text=_('Permission to delete items'))
     
+    @classmethod
+    def check_table_permission(cls, user, table, permission):
+        """
+        Check if the provided user has the specified permission against the table
+        """
+
+        # If the table does *not* require permissions
+        if table in cls.RULESET_IGNORE:
+            return True
+
+        # Work out which roles touch the given table
+        for role in cls.RULESET_NAMES:
+            if table in cls.RULESET_MODELS[role]:
+
+                if check_user_role(user, role, permission):
+                    return True
+
+        return False
+
     @staticmethod
     def get_model_permission_string(model, permission):
         """

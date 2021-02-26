@@ -48,8 +48,6 @@ class PartCategoryTree(TreeSerializer):
     def get_items(self):
         return PartCategory.objects.all().prefetch_related('parts', 'children')
 
-    role_required = 'part'
-
 
 class CategoryList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PartCategory objects.
@@ -106,15 +104,11 @@ class CategoryList(generics.ListCreateAPIView):
         'description',
     ]
 
-    role_required = 'part'
-
 
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single PartCategory object """
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
-
-    role_required = 'part'
 
 
 class CategoryParameters(generics.ListAPIView):
@@ -125,8 +119,6 @@ class CategoryParameters(generics.ListAPIView):
 
     queryset = PartCategoryParameterTemplate.objects.all()
     serializer_class = part_serializers.CategoryParameterTemplateSerializer
-
-    role_required = 'part'
 
     def get_queryset(self):
         """
@@ -172,8 +164,6 @@ class PartSalePriceList(generics.ListCreateAPIView):
     queryset = PartSellPriceBreak.objects.all()
     serializer_class = part_serializers.PartSalePriceSerializer
 
-    role_required = 'part'
-
     filter_backends = [
         DjangoFilterBackend
     ]
@@ -191,8 +181,6 @@ class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     queryset = PartAttachment.objects.all()
     serializer_class = part_serializers.PartAttachmentSerializer
 
-    role_required = 'part'
-
     filter_backends = [
         DjangoFilterBackend,
     ]
@@ -209,8 +197,6 @@ class PartTestTemplateList(generics.ListCreateAPIView):
 
     queryset = PartTestTemplate.objects.all()
     serializer_class = part_serializers.PartTestTemplateSerializer
-
-    role_required = 'part'
 
     def filter_queryset(self, queryset):
         """
@@ -253,8 +239,6 @@ class PartThumbs(generics.ListAPIView):
     API endpoint for retrieving information on available Part thumbnails
     """
 
-    role_required = 'part'
-
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartThumbSerializer
 
@@ -291,8 +275,6 @@ class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartThumbSerializerUpdate
 
-    role_required = 'part'
-
     filter_backends = [
         DjangoFilterBackend
     ]
@@ -300,8 +282,6 @@ class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single Part object """
-
-    role_required = 'part'
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartSerializer
@@ -388,8 +368,6 @@ class PartList(generics.ListCreateAPIView):
     serializer_class = part_serializers.PartSerializer
 
     queryset = Part.objects.all()
-
-    role_required = 'part'
 
     starred_parts = None
 
@@ -717,8 +695,6 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
     - POST: Create a new PartParameterTemplate object
     """
 
-    role_required = 'part'
-
     queryset = PartParameterTemplate.objects.all()
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
@@ -737,8 +713,6 @@ class PartParameterList(generics.ListCreateAPIView):
     - GET: Return list of PartParameter objects
     - POST: Create a new PartParameter object
     """
-
-    role_required = 'part'
 
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
@@ -759,8 +733,6 @@ class BomList(generics.ListCreateAPIView):
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
     """
-
-    role_required = 'part'
 
     serializer_class = part_serializers.BomItemSerializer
 
@@ -901,16 +873,12 @@ class BomList(generics.ListCreateAPIView):
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single BomItem object """
 
-    role_required = 'part'
-
     queryset = BomItem.objects.all()
     serializer_class = part_serializers.BomItemSerializer
 
 
 class BomItemValidate(generics.UpdateAPIView):
     """ API endpoint for validating a BomItem """
-
-    role_required = 'part'
 
     # Very simple serializers
     class BomItemValidationSerializer(serializers.Serializer):

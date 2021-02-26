@@ -60,28 +60,12 @@ class RolePermission(permissions.BasePermission):
 
         permission = rolemap[request.method]
 
-        role = getattr(view, 'role_required', None)
+        # Extract the model name associated with this request
+        model = view.serializer_class.Meta.model
 
-        if not role:
-            # Role not specified - allow access
-            return True
-        
-        roles = []
+        # And the specific database table
+        table = model._meta.db_table
 
-        if type(role) is str:
-            roles = [role]
-        elif type(role) in [list, tuple]:
-            roles = role
-        else:
-            raise TypeError(f"'role_required' is of incorrect type ({type(role)}) for view {type(view).__name__}")
+        result = users.models.RuleSet.check_table_permission(user, table, permission)
 
-        for role in roles:
-            
-            if role not in users.models.RuleSet.RULESET_NAMES:
-                raise ValueError(f"Role '{role}' is not a valid role")
-
-            if not users.models.check_user_role(user, role, permission):
-                return False
-
-        # All checks passed
-        return True
+        return result
