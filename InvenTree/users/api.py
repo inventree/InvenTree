@@ -35,7 +35,7 @@ class RoleDetails(APIView):
 
         user = request.user
 
-        data = {}
+        roles = {}
 
         for ruleset in RuleSet.RULESET_CHOICES:
 
@@ -49,9 +49,17 @@ class RoleDetails(APIView):
                     permissions.append(permission)
 
             if len(permissions) > 0:
-                data[role] = permissions
+                roles[role] = permissions
             else:
-                data[role] = None
+                roles[role] = None
+
+        data = {
+            'user': user.pk,
+            'username': user.username,
+            'roles': roles,
+            'is_staff': user.is_staff,
+            'is_superuser': user.is_superuser,
+        }
 
         return Response(data)
 
