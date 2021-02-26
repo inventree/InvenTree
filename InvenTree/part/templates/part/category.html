@@ -138,13 +138,13 @@
     <div class='panel-heading'>
         <h4>
             {% block heading %}
-            <!-- Heading goes here -->
+            {% trans "Part Categories" %}
             {% endblock %}
         </h4>
     </div>
     <div class='panel-content'>   
         {% block details %}
-        <!-- Content goes here -->
+        <table class='table table-striped table-condensed' id='part-table'></table>
         {% endblock %}
     </div>
 </div>
