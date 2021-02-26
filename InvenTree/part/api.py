@@ -29,7 +29,8 @@ from . import serializers as part_serializers
 
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
-from InvenTree.api import AttachmentMixin
+from InvenTree.api import AttachmentMixin, RolePermission
+
 from InvenTree.status_codes import BuildStatus
 
 
@@ -103,6 +104,12 @@ class CategoryList(generics.ListCreateAPIView):
     search_fields = [
         'name',
         'description',
+    ]
+
+    role_required = 'part'
+
+    permission_classes = [
+        RolePermission,
     ]
 
 
