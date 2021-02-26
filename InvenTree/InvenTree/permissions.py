@@ -60,11 +60,16 @@ class RolePermission(permissions.BasePermission):
 
         permission = rolemap[request.method]
 
-        # Extract the model name associated with this request
-        model = view.serializer_class.Meta.model
+        try:
+            # Extract the model name associated with this request
+            model = view.serializer_class.Meta.model
 
-        # And the specific database table
-        table = model._meta.db_table
+            # And the specific database table
+            table = model._meta.db_table
+        except AttributeError:
+            # We will assume that if the serializer class does *not* have a Meta,
+            # then we don't need a permission
+            return True
 
         result = users.models.RuleSet.check_table_permission(user, table, permission)
 
