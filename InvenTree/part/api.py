@@ -12,12 +12,12 @@ from django.db.models import Q, F, Count, Prefetch, Sum
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import filters, serializers
-from rest_framework import generics, permissions
+from rest_framework import generics
 
 from django.conf.urls import url, include
 from django.urls import reverse
 
-from .models import Part, PartCategory, BomItem, PartStar
+from .models import Part, PartCategory, BomItem
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak
@@ -30,6 +30,7 @@ from . import serializers as part_serializers
 from InvenTree.views import TreeSerializer
 from InvenTree.helpers import str2bool, isNull
 from InvenTree.api import AttachmentMixin
+
 from InvenTree.status_codes import BuildStatus
 
 
@@ -37,6 +38,8 @@ class PartCategoryTree(TreeSerializer):
 
     title = "Parts"
     model = PartCategory
+
+    queryset = PartCategory.objects.all()
     
     @property
     def root_url(self):
@@ -44,10 +47,6 @@ class PartCategoryTree(TreeSerializer):
 
     def get_items(self):
         return PartCategory.objects.all().prefetch_related('parts', 'children')
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
 
 
 class CategoryList(generics.ListCreateAPIView):
@@ -689,55 +688,6 @@ class PartList(generics.ListCreateAPIView):
     ]
 
 
-class PartStarDetail(generics.RetrieveDestroyAPIView):
-    """ API endpoint for viewing or removing a PartStar object """
-
-    queryset = PartStar.objects.all()
-    serializer_class = part_serializers.PartStarSerializer
-
-
-class PartStarList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of PartStar objects.
-
-    - GET: Return list of PartStar objects
-    - POST: Create a new PartStar object
-    """
-
-    queryset = PartStar.objects.all()
-    serializer_class = part_serializers.PartStarSerializer
-
-    def create(self, request, *args, **kwargs):
-
-        # Override the user field (with the logged-in user)
-        data = request.data.copy()
-        data['user'] = str(request.user.id)
-
-        serializer = self.get_serializer(data=data)
-
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter
-    ]
-
-    filter_fields = [
-        'part',
-        'user',
-    ]
-
-    search_fields = [
-        'partname'
-    ]
-
-
 class PartParameterTemplateList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PartParameterTemplate objects.
 
@@ -974,12 +924,6 @@ part_api_urls = [
     # Base URL for PartAttachment API endpoints
     url(r'^attachment/', include([
         url(r'^$', PartAttachmentList.as_view(), name='api-part-attachment-list'),
-    ])),
-    
-    # Base URL for PartStar API endpoints
-    url(r'^star/', include([
-        url(r'^(?P<pk>\d+)/?', PartStarDetail.as_view(), name='api-part-star-detail'),
-        url(r'^$', PartStarList.as_view(), name='api-part-star-list'),
     ])),
 
     # Base URL for part sale pricing

@@ -3,19 +3,16 @@ from __future__ import unicode_literals
 
 from datetime import datetime, timedelta
 
-from rest_framework.test import APITestCase
-
 from django.urls import reverse
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 
 from part.models import Part
 from build.models import Build
 
 from InvenTree.status_codes import BuildStatus
+from InvenTree.api_tester import InvenTreeAPITestCase
 
 
-class BuildAPITest(APITestCase):
+class BuildAPITest(InvenTreeAPITestCase):
     """
     Series of tests for the Build DRF API
     """
@@ -27,33 +24,16 @@ class BuildAPITest(APITestCase):
         'bom',
         'build',
     ]
+
+    # Required roles to access Build API endpoints
+    roles = [
+        'build.change',
+        'build.add'
+    ]
     
     def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        
-        self.user = user.objects.create_user(
-            username='testuser',
-            email='test@testing.com',
-            password='password'
-        )
 
-        # Put the user into a group with the correct permissions
-        group = Group.objects.create(name='mygroup')
-        self.user.groups.add(group)
-
-        # Give the group *all* the permissions!
-        for rule in group.rule_sets.all():
-            rule.can_view = True
-            rule.can_change = True
-            rule.can_add = True
-            rule.can_delete = True
-
-            rule.save()
-
-        group.save()
-
-        self.client.login(username='testuser', password='password')
+        super().setUp()
 
 
 class BuildListTest(BuildAPITest):
@@ -63,34 +43,26 @@ class BuildListTest(BuildAPITest):
 
     url = reverse('api-build-list')
 
-    def get(self, status_code=200, data={}):
-
-        response = self.client.get(self.url, data, format='json')
-
-        self.assertEqual(response.status_code, status_code)
-
-        return response.data
-
     def test_get_all_builds(self):
         """
         Retrieve *all* builds via the API
         """
 
-        builds = self.get()
+        builds = self.get(self.url)
 
-        self.assertEqual(len(builds), 5)
+        self.assertEqual(len(builds.data), 5)
 
-        builds = self.get(data={'active': True})
-        self.assertEqual(len(builds), 1)
+        builds = self.get(self.url, data={'active': True})
+        self.assertEqual(len(builds.data), 1)
         
-        builds = self.get(data={'status': BuildStatus.COMPLETE})
-        self.assertEqual(len(builds), 4)
+        builds = self.get(self.url, data={'status': BuildStatus.COMPLETE})
+        self.assertEqual(len(builds.data), 4)
 
-        builds = self.get(data={'overdue': False})
-        self.assertEqual(len(builds), 5)
+        builds = self.get(self.url, data={'overdue': False})
+        self.assertEqual(len(builds.data), 5)
 
-        builds = self.get(data={'overdue': True})
-        self.assertEqual(len(builds), 0)
+        builds = self.get(self.url, data={'overdue': True})
+        self.assertEqual(len(builds.data), 0)
 
     def test_overdue(self):
         """
@@ -109,7 +81,9 @@ class BuildListTest(BuildAPITest):
             target_date=in_the_past
         )
 
-        builds = self.get(data={'overdue': True})
+        response = self.get(self.url, data={'overdue': True})
+
+        builds = response.data
 
         self.assertEqual(len(builds), 1)
 
@@ -152,11 +126,15 @@ class BuildListTest(BuildAPITest):
         Build.objects.rebuild()
 
         # Search by parent
-        builds = self.get(data={'parent': parent.pk})
+        response = self.get(self.url, data={'parent': parent.pk})
+
+        builds = response.data
 
         self.assertEqual(len(builds), 5)
 
         # Search by ancestor
-        builds = self.get(data={'ancestor': parent.pk})
+        response = self.get(self.url, data={'ancestor': parent.pk})
+
+        builds = response.data
 
         self.assertEqual(len(builds), 20)

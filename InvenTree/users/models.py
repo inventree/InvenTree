@@ -67,15 +67,19 @@ class RuleSet(models.Model):
             'part_partparametertemplate',
             'part_partparameter',
             'part_partrelated',
+            'part_partstar',
         ],
         'stock_location': [
             'stock_stocklocation',
+            'label_stocklocationlabel',
         ],
         'stock': [
             'stock_stockitem',
             'stock_stockitemattachment',
             'stock_stockitemtracking',
             'stock_stockitemtestresult',
+            'report_testreport',
+            'label_stockitemlabel',
         ],
         'build': [
             'part_part',
@@ -86,6 +90,7 @@ class RuleSet(models.Model):
             'build_buildorderattachment',
             'stock_stockitem',
             'stock_stocklocation',
+            'report_buildreport',
         ],
         'purchase_order': [
             'company_company',
@@ -115,14 +120,9 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'company_contact',
-        'label_stockitemlabel',
-        'label_stocklocationlabel',
         'report_reportasset',
         'report_reportsnippet',
-        'report_testreport',
-        'report_buildreport',
         'report_billofmaterialsreport',
-        'part_partstar',
         'users_owner',
 
         # Third-party tables
@@ -166,6 +166,26 @@ class RuleSet(models.Model):
 
     can_delete = models.BooleanField(verbose_name=_('Delete'), default=False, help_text=_('Permission to delete items'))
     
+    @classmethod
+    def check_table_permission(cls, user, table, permission):
+        """
+        Check if the provided user has the specified permission against the table
+        """
+
+        # If the table does *not* require permissions
+        if table in cls.RULESET_IGNORE:
+            return True
+
+        # Work out which roles touch the given table
+        for role in cls.RULESET_NAMES:
+            if table in cls.RULESET_MODELS[role]:
+
+                if check_user_role(user, role, permission):
+                    return True
+
+        print("failed permission check for", table, permission)
+        return False
+
     @staticmethod
     def get_model_permission_string(model, permission):
         """

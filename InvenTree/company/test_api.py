@@ -1,32 +1,24 @@
-from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 
-from InvenTree.helpers import addUserPermissions
+from InvenTree.api_tester import InvenTreeAPITestCase
 
 from .models import Company
 
 
-class CompanyTest(APITestCase):
+class CompanyTest(InvenTreeAPITestCase):
     """
     Series of tests for the Company DRF API
     """
 
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        self.user = user.objects.create_user('testuser', 'test@testing.com', 'password')
-        
-        perms = [
-            'view_company',
-            'change_company',
-            'add_company',
-        ]
+    roles = [
+        'purchase_order.add',
+        'purchase_order.change',
+    ]
 
-        addUserPermissions(self.user, perms)
-        
-        self.client.login(username='testuser', password='password')
+    def setUp(self):
+
+        super().setUp()
 
         Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
         Company.objects.create(name='Drippy Cup Co.', description='Customer', is_customer=True, is_supplier=False)
@@ -36,24 +28,24 @@ class CompanyTest(APITestCase):
         url = reverse('api-company-list')
 
         # There should be two companies
-        response = self.client.get(url, format='json')
+        response = self.get(url)
         self.assertEqual(len(response.data), 3)
 
         data = {'is_customer': True}
 
         # There should only be one customer
-        response = self.client.get(url, data, format='json')
+        response = self.get(url, data)
         self.assertEqual(len(response.data), 1)
 
         data = {'is_supplier': True}
 
         # There should be two suppliers
-        response = self.client.get(url, data, format='json')
+        response = self.get(url, data)
         self.assertEqual(len(response.data), 2)
 
     def test_company_detail(self):
         url = reverse('api-company-detail', kwargs={'pk': 1})
-        response = self.client.get(url, format='json')
+        response = self.get(url)
 
         self.assertEqual(response.data['name'], 'ACME')
 
@@ -68,5 +60,5 @@ class CompanyTest(APITestCase):
         # Test search functionality in company list
         url = reverse('api-company-list')
         data = {'search': 'cup'}
-        response = self.client.get(url, data, format='json')
+        response = self.get(url, data)
         self.assertEqual(len(response.data), 2)
