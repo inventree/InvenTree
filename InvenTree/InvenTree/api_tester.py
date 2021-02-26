@@ -12,7 +12,7 @@ class InvenTreeAPITestCase(APITestCase):
     Base class for running InvenTree API tests
     """
 
-    # User information 
+    # User information
     username = 'testuser'
     password = 'mypassword'
     email = 'test@testing.com'
@@ -73,12 +73,12 @@ class InvenTreeAPITestCase(APITestCase):
                 ruleset.save()
                 break
 
-    def get(self, url, code=200):
+    def get(self, url, data={}, code=200):
         """
         Issue a GET request
         """
 
-        response = self.client.get(url, format='json')
+        response = self.client.get(url, data, format='json')
 
         self.assertEqual(response.status_code, code)
 
