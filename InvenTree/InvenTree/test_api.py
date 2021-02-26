@@ -6,10 +6,14 @@ from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
+from InvenTree.api_tester import InvenTreeAPITestCase
+
+from users.models import RuleSet
+
 from base64 import b64encode
 
 
-class APITests(APITestCase):
+class APITests(InvenTreeAPITestCase):
     """ Tests for the InvenTree API """
 
     fixtures = [
@@ -19,15 +23,13 @@ class APITests(APITestCase):
         'category',
     ]
 
-    username = 'test_user'
-    password = 'test_pass'
-
     token = None
+
+    auto_login = False
 
     def setUp(self):
 
-        # Create a user (but do not log in!)
-        get_user_model().objects.create_user(self.username, 'user@email.com', self.password)
+        super().setUp()
 
     def basicAuth(self):
         # Use basic authentication
@@ -78,3 +80,42 @@ class APITests(APITestCase):
         self.assertIn('instance', data)
 
         self.assertEquals('InvenTree', data['server'])
+
+    def test_role_view(self):
+        """
+        Test that we can access the 'roles' view for the logged in user.
+
+        Also tests that it is *not* accessible if the client is not logged in.
+        """
+
+        url = reverse('api-user-roles')
+
+        response = self.client.get(url, format='json')
+
+        # Not logged in, so cannot access user role data
+        self.assertTrue(response.status_code in [401, 403])
+
+        # Now log in!
+        self.basicAuth()
+
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(response.status_code, 200)
+
+        data = response.data
+
+        self.assertIn('user', data)
+        self.assertIn('username', data)
+        self.assertIn('is_staff', data)
+        self.assertIn('is_superuser', data)
+        self.assertIn('roles', data)
+
+        roles = data['roles']
+
+        role_names = roles.keys()
+
+        # By default, no roles are assigned to the user...
+        for rule in RuleSet.RULESET_NAMES:
+            self.assertIn(rule, role_names)
+            self.assertIsNone(roles[rule])
+    
