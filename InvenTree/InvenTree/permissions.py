@@ -63,7 +63,8 @@ class RolePermission(permissions.BasePermission):
         role = getattr(view, 'role_required', None)
 
         if not role:
-            raise AttributeError(f"'role_required' not specified for view {type(view).__name__}")
+            # Role not specified - allow access
+            return True
         
         roles = []
 

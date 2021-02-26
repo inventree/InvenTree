@@ -373,6 +373,8 @@ class PartList(generics.ListCreateAPIView):
 
     queryset = Part.objects.all()
 
+    role_required = 'part'
+
     starred_parts = None
 
     def get_serializer(self, *args, **kwargs):
