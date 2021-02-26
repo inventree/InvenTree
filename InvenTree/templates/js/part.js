@@ -14,50 +14,30 @@ function toggleStar(options) {
      * - user: pk of the user
      */
 
-    var url = '/api/part/star/';
+    var url = `/api/part/${options.part}/`;
 
-    inventreeGet(
-        url,
-        {
-            part: options.part,
-            user: options.user,
-        },
-        {
-            success: function(response) {
-                if (response.length == 0) {
-                    // Zero length response = star does not exist
-                    // So let's add one!
-                    inventreePut(
-                        url,
-                        {
-                            part: options.part,
-                            user: options.user,
-                        },
-                        {
-                            method: 'POST',
-                            success: function(response, status) {
-                                $(options.button).addClass('icon-yellow');
-                            },
+    inventreeGet(url, {}, {
+        success: function(response) {
+            var starred = response.starred;
+
+            inventreePut(
+                url,
+                {
+                    starred: !starred,
+                },
+                {
+                    method: 'PATCH',
+                    success: function(response) {
+                        if (response.starred) {
+                            $(options.button).addClass('icon-yellow');
+                        } else {
+                            $(options.button).removeClass('icon-yellow');
                         }
-                    );
-                } else {
-                    var pk = response[0].pk;
-                    // There IS a star (delete it!)
-                    inventreePut(
-                        url + pk + "/",
-                        {
-                        },
-                        {
-                            method: 'DELETE',
-                            success: function(response, status) {
-                                $(options.button).removeClass('icon-yellow');
-                            },
-                        }
-                    );
+                    }
                 }
-            },
+            );
         }
-    );
+    });
 }
 
 
