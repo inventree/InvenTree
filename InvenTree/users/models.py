@@ -67,15 +67,19 @@ class RuleSet(models.Model):
             'part_partparametertemplate',
             'part_partparameter',
             'part_partrelated',
+            'part_partstar',
         ],
         'stock_location': [
             'stock_stocklocation',
+            'label_stocklocationlabel',
         ],
         'stock': [
             'stock_stockitem',
             'stock_stockitemattachment',
             'stock_stockitemtracking',
             'stock_stockitemtestresult',
+            'report_testreport',
+            'label_stockitemlabel',
         ],
         'build': [
             'part_part',
@@ -86,6 +90,7 @@ class RuleSet(models.Model):
             'build_buildorderattachment',
             'stock_stockitem',
             'stock_stocklocation',
+            'report_buildreport',
         ],
         'purchase_order': [
             'company_company',
@@ -115,14 +120,9 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'company_contact',
-        'label_stockitemlabel',
-        'label_stocklocationlabel',
         'report_reportasset',
         'report_reportsnippet',
-        'report_testreport',
-        'report_buildreport',
         'report_billofmaterialsreport',
-        'part_partstar',
         'users_owner',
 
         # Third-party tables

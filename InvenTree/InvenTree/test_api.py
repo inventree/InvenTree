@@ -98,9 +98,7 @@ class APITests(InvenTreeAPITestCase):
         # Now log in!
         self.basicAuth()
 
-        response = self.client.get(url, format='json')
-
-        self.assertEqual(response.status_code, 200)
+        response = self.get(url)
 
         data = response.data
 
@@ -114,8 +112,50 @@ class APITests(InvenTreeAPITestCase):
 
         role_names = roles.keys()
 
-        # By default, no roles are assigned to the user...
+        # By default, 'view' permissions are provided
         for rule in RuleSet.RULESET_NAMES:
             self.assertIn(rule, role_names)
-            self.assertIsNone(roles[rule])
+
+            self.assertIn('view', roles[rule])
+
+            self.assertNotIn('add', roles[rule])
+            self.assertNotIn('change', roles[rule])
+            self.assertNotIn('delete', roles[rule])
     
+    def test_with_superuser(self):
+        """
+        Superuser should have *all* roles assigned
+        """
+
+        self.user.is_superuser = True
+        self.user.save()
+
+        self.basicAuth()
+
+        response = self.get(reverse('api-user-roles'))
+
+        roles = response.data['roles']
+
+        for rule in RuleSet.RULESET_NAMES:
+            self.assertIn(rule, roles.keys())
+
+            for perm in ['view', 'add', 'change', 'delete']:
+                self.assertIn(perm, roles[rule])
+
+    def test_with_roles(self):
+        """
+        Assign some roles to the user
+        """
+
+        self.basicAuth()
+        response = self.get(reverse('api-user-roles'))
+
+        self.assignRole('part.delete')
+        self.assignRole('build.change')
+        response = self.get(reverse('api-user-roles'))
+
+        roles = response.data['roles']
+
+        # New role permissions should have been added now
+        self.assertIn('delete', roles['part'])
+        self.assertIn('change', roles['build'])

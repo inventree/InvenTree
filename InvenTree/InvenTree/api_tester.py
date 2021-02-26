@@ -3,6 +3,7 @@ Helper functions for performing API unit tests
 """
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from rest_framework.test import APITestCase
 
 
@@ -16,7 +17,11 @@ class InvenTreeAPITestCase(APITestCase):
     password = 'mypassword'
     email = 'test@testing.com'
 
+    superuser = False
     auto_login = True
+
+    # Set list of roles automatically associated with the user
+    roles = []
 
     def setUp(self):
 
@@ -29,12 +34,53 @@ class InvenTreeAPITestCase(APITestCase):
             email=self.email
         )
 
+        # Create a group for the user
+        self.group = Group.objects.create(name='my_test_group')
+        self.user.groups.add(self.group)
+
+        if self.superuser:
+            self.user.is_superuser = True
+            self.user.save()
+
+        for role in self.roles:
+            self.assignRole(role)
+
         if self.auto_login:
             self.client.login(username=self.username, password=self.password)
 
-    def setRoles(self, roles):
+    def assignRole(self, role):
         """
         Set the user roles for the registered user
         """
 
-        pass
+        # role is of the format 'rule.permission' e.g. 'part.add'
+
+        rule, perm = role.split('.')
+
+        for ruleset in self.group.rule_sets.all():
+
+            if ruleset.name == rule:
+
+                if perm == 'view':
+                    ruleset.can_view = True
+                elif perm == 'change':
+                    ruleset.can_change = True
+                elif perm == 'delete':
+                    ruleset.can_delete = True
+                elif perm == 'add':
+                    ruleset.can_add = True
+
+                ruleset.save()
+                break
+
+    def get(self, url, code=200):
+        """
+        Issue a GET request
+        """
+
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(response.status_code, code)
+
+        return response
+    
