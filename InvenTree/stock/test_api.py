@@ -7,12 +7,9 @@ from __future__ import unicode_literals
 
 from datetime import datetime, timedelta
 
-from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 
-from InvenTree.helpers import addUserPermissions
 from InvenTree.status_codes import StockStatus
 from InvenTree.api_tester import InvenTreeAPITestCase
 

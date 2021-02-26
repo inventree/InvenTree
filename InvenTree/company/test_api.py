@@ -1,9 +1,6 @@
-from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 
-from InvenTree.helpers import addUserPermissions
 from InvenTree.api_tester import InvenTreeAPITestCase
 
 from .models import Company

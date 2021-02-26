@@ -4,11 +4,9 @@ Tests for the Order API
 
 from datetime import datetime, timedelta
 
-from rest_framework.test import APITestCase
 from rest_framework import status
 
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 

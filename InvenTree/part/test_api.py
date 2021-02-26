@@ -1,9 +1,6 @@
-from rest_framework.test import APITestCase
 from rest_framework import status
 
 from django.urls import reverse
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 
 from part.models import Part
 from stock.models import StockItem
