@@ -43,7 +43,7 @@ from .views import DynamicJsView
 
 from common.views import SettingEdit
 
-from .api import InfoView
+from .api import InfoView, NotFoundView
 from .api import ActionPluginView
 
 from users.urls import user_urls
@@ -70,6 +70,9 @@ apipatterns = [
 
     # InvenTree information endpoint
     url(r'^$', InfoView.as_view(), name='api-inventree-info'),
+
+    # Unknown endpoint
+    url(r'^.*$', NotFoundView.as_view(), name='api-404'),
 ]
 
 settings_urls = [

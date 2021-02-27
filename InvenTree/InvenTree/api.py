@@ -48,6 +48,23 @@ class InfoView(AjaxView):
         return JsonResponse(data)
 
 
+class NotFoundView(AjaxView):
+    """
+    Simple JSON view when accessing an invalid API view.
+    """
+
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, *args, **kwargs):
+
+        data = {
+            'details': _('API endpoint not found'),
+            'url': request.build_absolute_uri(),
+        }
+
+        return JsonResponse(data, status=404)
+
+
 class AttachmentMixin:
     """
     Mixin for creating attachment objects,
