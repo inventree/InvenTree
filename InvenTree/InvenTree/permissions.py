@@ -36,12 +36,6 @@ class RolePermission(permissions.BasePermission):
         Determine if the current user has the specified permissions
         """
 
-        # First, check that the user is authenticated!
-        auth = permissions.IsAuthenticated()
-
-        if not auth.has_permission(request, view):
-            return False
-
         user = request.user
 
         # Superuser can do it all

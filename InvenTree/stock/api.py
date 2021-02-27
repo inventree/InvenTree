@@ -126,9 +126,7 @@ class StockAdjust(APIView):
 
     """
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    queryset = StockItem.objects.none()
 
     allow_missing_quantity = False
 
