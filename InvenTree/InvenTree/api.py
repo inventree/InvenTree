@@ -58,7 +58,8 @@ class NotFoundView(AjaxView):
     def get(self, request, *args, **kwargs):
 
         data = {
-            'details': _('API endpoint not found')
+            'details': _('API endpoint not found'),
+            'url': request.build_absolute_uri(),
         }
 
         return JsonResponse(data, status=404)
