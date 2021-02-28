@@ -9,7 +9,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Prefetch, Sum
 
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import filters, serializers
@@ -371,8 +370,6 @@ class PartList(generics.ListCreateAPIView):
     queryset = Part.objects.all()
 
     starred_parts = None
-
-    pagination_class = LimitOffsetPagination
 
     def get_serializer(self, *args, **kwargs):
 

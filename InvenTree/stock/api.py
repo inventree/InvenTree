@@ -40,7 +40,6 @@ from decimal import Decimal, InvalidOperation
 
 from datetime import datetime, timedelta
 
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -337,8 +336,6 @@ class StockList(generics.ListCreateAPIView):
 
     serializer_class = StockItemSerializer
     queryset = StockItem.objects.all()
-
-    pagination_class = LimitOffsetPagination
 
     def create(self, request, *args, **kwargs):
         """
