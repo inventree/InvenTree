@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework import generics
+from rest_framework.pagination import LimitOffsetPagination
 
 from django.conf.urls import url, include
 from django.db.models import Q
@@ -32,6 +33,7 @@ class CompanyList(generics.ListCreateAPIView):
 
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
+    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
 

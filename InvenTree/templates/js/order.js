@@ -131,6 +131,7 @@ function loadPurchaseOrderTable(table, options) {
         queryParams: filters,
         name: 'purchaseorder',
         groupBy: false,
+        sidePagination: 'server',
         original: options.params,
         formatNoMatches: function() { return '{% trans "No purchase orders found" %}'; },
         columns: [
@@ -225,6 +226,7 @@ function loadSalesOrderTable(table, options) {
         queryParams: filters,
         name: 'salesorder',
         groupBy: false,
+        sidePagination: 'server',
         original: options.params,
         formatNoMatches: function() { return '{% trans "No sales orders found" %}'; },
         columns: [

@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework import filters
+from rest_framework.pagination import LimitOffsetPagination
 
 from django.conf.urls import url, include
 
@@ -36,6 +37,7 @@ class POList(generics.ListCreateAPIView):
 
     queryset = PurchaseOrder.objects.all()
     serializer_class = POSerializer
+    pagination_class = LimitOffsetPagination
 
     def get_serializer(self, *args, **kwargs):
 
@@ -238,6 +240,7 @@ class SOList(generics.ListCreateAPIView):
 
     queryset = SalesOrder.objects.all()
     serializer_class = SalesOrderSerializer
+    pagination_class = LimitOffsetPagination
 
     def get_serializer(self, *args, **kwargs):
 

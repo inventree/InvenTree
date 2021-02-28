@@ -93,6 +93,7 @@ function loadCompanyTable(table, url, options={}) {
         method: 'get',
         queryParams: filters,
         groupBy: false,
+        sidePagination: 'server',
         formatNoMatches: function() { return "{% trans "No company information found" %}"; },
         showColumns: true,
         name: options.pagetype || 'company',
