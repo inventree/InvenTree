@@ -325,6 +325,12 @@ function loadStockTable(table, options) {
         grouping = options.grouping;
     }
 
+    // Explicitly disable part grouping functionality
+    // Might be able to add this in later on,
+    // but there is a bug which makes this crash if paginating on the server side.
+    // Ref: https://github.com/wenzhixin/bootstrap-table/issues/3250
+    grouping = false;
+
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
@@ -332,7 +338,7 @@ function loadStockTable(table, options) {
         },
         url: options.url || "{% url 'api-stock-list' %}",
         queryParams: filters,
-        customSort: customGroupSorter,
+        sidePagination: 'server',
         name: 'stock',
         original: original,
         showColumns: true,
@@ -516,6 +522,7 @@ function loadStockTable(table, options) {
             {
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
+                sortName: 'part__name',
                 sortable: true,
                 switchable: false,
                 formatter: function(value, row, index, field) {
@@ -534,6 +541,7 @@ function loadStockTable(table, options) {
             {
                 field: 'part_detail.IPN',
                 title: 'IPN',
+                sortName: 'part__IPN',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     return row.part_detail.IPN;
@@ -542,7 +550,6 @@ function loadStockTable(table, options) {
             {
                 field: 'part_detail.description',
                 title: '{% trans "Description" %}',
-                sortable: true,
                 formatter: function(value, row, index, field) {
                     return row.part_detail.description;
                 }
@@ -654,8 +661,6 @@ function loadStockTable(table, options) {
             {
                 field: 'packaging',
                 title: '{% trans "Packaging" %}',
-                sortable: true,
-                searchable: true,
             },
             {
                 field: 'notes',

@@ -40,6 +40,7 @@ from decimal import Decimal, InvalidOperation
 
 from datetime import datetime, timedelta
 
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -337,6 +338,8 @@ class StockList(generics.ListCreateAPIView):
     serializer_class = StockItemSerializer
     queryset = StockItem.objects.all()
 
+    pagination_class = LimitOffsetPagination
+
     def create(self, request, *args, **kwargs):
         """
         Create a new StockItem object via the API.
@@ -381,7 +384,13 @@ class StockList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
@@ -465,6 +474,8 @@ class StockList(generics.ListCreateAPIView):
         Note: b) is about 100x quicker than a), because the DRF framework adds a lot of cruft
         """
 
+        if page is not None:
+            return self.get_paginated_response(data)
         if request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
@@ -806,19 +817,6 @@ class StockList(generics.ListCreateAPIView):
                 print("After error:", str(updated_after))
                 pass
 
-        # Limit number of results
-        limit = params.get('limit', None)
-
-        if limit is not None:
-            try:
-                limit = int(limit)
-
-                if limit > 0:
-                    queryset = queryset[:limit]
-
-            except (ValueError):
-                pass
-
         # Also ensure that we pre-fecth all the related items
         queryset = queryset.prefetch_related(
             'part',
@@ -839,9 +837,12 @@ class StockList(generics.ListCreateAPIView):
 
     ordering_fields = [
         'part__name',
+        'part__IPN',
         'updated',
         'stocktake_date',
         'expiry_date',
+        'quantity',
+        'status',
     ]
 
     ordering = ['part__name']
@@ -851,7 +852,8 @@ class StockList(generics.ListCreateAPIView):
         'batch',
         'part__name',
         'part__IPN',
-        'part__description'
+        'part__description',
+        'location__name',
     ]
 
 

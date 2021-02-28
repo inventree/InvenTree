@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load status_codes %}
+{% load inventree_extras %}
 
 {% include "status_codes.html" with label='stock' options=StockStatus.list %}
 {% include "status_codes.html" with label='build' options=BuildStatus.list %}
@@ -110,6 +111,8 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Depleted" %}',
                 description: '{% trans "Show stock items which are depleted" %}',
             },
+            {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
+            {% if expiry %}
             expired: {
                 type: 'bool',
                 title: '{% trans "Expired" %}',
@@ -120,6 +123,7 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Stale" %}',
                 description: '{% trans "Show stock which is close to expiring" %}',
             },
+            {% endif %}
             in_stock: {
                 type: 'bool',
                 title: '{% trans "In Stock" %}',
