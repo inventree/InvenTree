@@ -816,6 +816,18 @@ class StockList(generics.ListCreateAPIView):
                 print("After error:", str(updated_after))
                 pass
 
+        # Optionally, limit the maximum number of returned results
+        max_results = params.get('max_results', None)
+
+        if max_results is not None:
+            try:
+                max_results = int(max_results)
+
+                if max_results > 0:
+                    queryset = queryset[:max_results]
+            except (ValueError):
+                pass
+
         # Also ensure that we pre-fecth all the related items
         queryset = queryset.prefetch_related(
             'part',

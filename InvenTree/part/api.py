@@ -646,6 +646,20 @@ class PartList(generics.ListCreateAPIView):
 
             queryset = queryset.filter(pk__in=parts_need_stock)
 
+        # Optionally limit the maximum number of returned results
+        # e.g. for displaying "recent part" list
+        max_results = params.get('max_results', None)
+
+        if max_results is not None:
+            try:
+                max_results = int(max_results)
+
+                if max_results > 0:
+                    queryset = queryset[:max_results]
+
+            except (ValueError):
+                pass
+
         return queryset
 
     filter_backends = [

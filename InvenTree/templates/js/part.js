@@ -441,7 +441,6 @@ function loadPartTable(table, url, options={}) {
 
     $(table).inventreeTable({
         url: url,
-        sortName: 'name',
         method: 'get',
         queryParams: filters,
         groupBy: false,
