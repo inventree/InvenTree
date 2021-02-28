@@ -932,7 +932,6 @@ function loadStockTrackingTable(table, options) {
     cols.push({
         field: 'title',
         title: '{% trans "Description" %}',
-        sortable: true,
         formatter: function(value, row, index, field) {
             var html = "<b>" + value + "</b>";
 
@@ -957,7 +956,6 @@ function loadStockTrackingTable(table, options) {
     });
 
     cols.push({
-        sortable: true,
         field: 'user',
         title: '{% trans "User" %}',
         formatter: function(value, row, index, field) {
