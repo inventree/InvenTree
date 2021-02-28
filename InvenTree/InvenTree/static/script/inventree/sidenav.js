@@ -67,78 +67,90 @@ function loadTree(url, tree, options={}) {
     });
 }
 
-function openSideNav(navId) {
-//    document.getElementById("sidenav").style.display = "block";
-//    document.getElementById("sidenav").style.width = "250px";
 
-    if (!navId) {
-        navId = '#sidenav-left';
-    }
-    
-    sessionStorage.setItem('inventree-sidenav-state', 'open');
+/**
+ * Initialize navigation tree display
+ */
+function initNavTree(options) {
 
-    $(navId).animate({
-        width: '250px',
-        'min-width': '200px',
-        display: 'block'
-    }, 50);
+    var resize = true;
 
-
-}
-
-function closeSideNav(navId) {
-
-    if (!navId) {
-        navId = '#sidenav-left';
+    if ('resize' in options) {
+        resize = options.resize;
     }
 
-    sessionStorage.setItem('inventree-sidenav-state', 'closed');
-    
-    $(navId).animate({
+    var label = options.label || 'nav';
+
+    var stateLabel = `${label}-tree-state`;
+    var widthLabel = `${label}-tree-width`;
+
+    var treeId = options.treeId || '#sidenav-left';
+    var toggleId = options.toggleId;
+
+    // Initially hide the tree
+    $(treeId).animate({
         width: '0px',
-        'min-width': '0px',
-        display: 'none',
-    }, 50);
+    }, 0, function() {
 
-    //document.getElementById("sidenav").style.display = "none";
-    //document.getElementById("sidenav").style.width = "0";
-    //document.getElementById("inventree-content").style.marginLeft = "0px";
+        if (resize) {
+            $(treeId).resizable({
+                minWidth: '0px',
+                maxWidth: '500px',
+                handles: 'e, se',
+                grid: [5, 5],
+                stop: function(event, ui) {
+                    var width = Math.round(ui.element.width());
 
-}
+                    if (width < 75) {
+                        $(treeId).animate({
+                            width: '0px'
+                        }, 50);
 
-function toggleSideNav(nav) {
-    if ($(nav).width() <= 0) {
-        openSideNav(nav);
-    }
-    else {
-        closeSideNav(nav);
-    }
-}
+                        sessionStorage.setItem(stateLabel, 'closed');
+                    } else {
+                        sessionStorage.setItem(stateLabel, 'open');
+                        sessionStorage.setItem(widthLabel, `${width}px`);
+                    }
+                }
+            });
+        }
 
-function initSideNav(navId) {
+        var state = sessionStorage.getItem(stateLabel);
+        var width = sessionStorage.getItem(widthLabel) || '300px';
 
-    // Make it resizable
+        if (state && state == 'open') {
 
-    if (!navId) {
-        navId = '#sidenav-left';
-    }
-
-    $(navId).resizable({
-        minWidth: '100px',
-        maxWidth: '500px',
-        stop: function(event, ui) {
-            console.log(ui.element.width());
-            //console.log(ui.size.width);
+            $(treeId).animate({
+                width: width,
+            }, 50);
         }
     });
 
-    if (sessionStorage.getItem("inventree-sidenav-state") && sessionStorage.getItem('inventree-sidenav-state') == 'open') {
-        openSideNav(navId);
-    }
-    else {
-        closeSideNav(navId);
+    // Register callback for 'toggle' button
+    if (toggleId) {
+        
+        $(toggleId).click(function() {
+
+            var state = sessionStorage.getItem(stateLabel) || 'closed';
+            var width = sessionStorage.getItem(widthLabel) || '300px';
+
+            if (state == 'open') {
+                $(treeId).animate({
+                    width: '0px'
+                }, 50);
+
+                sessionStorage.setItem(stateLabel, 'closed');
+            } else {
+                $(treeId).animate({
+                    width: width,
+                }, 50);
+
+                sessionStorage.setItem(stateLabel, 'open');
+            }
+        });
     }
 }
+
 
 /**
  * Handle left-hand icon menubar display
