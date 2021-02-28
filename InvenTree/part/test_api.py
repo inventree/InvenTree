@@ -235,6 +235,19 @@ class PartAPITest(InvenTreeAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_paginate(self):
+        """
+        Test pagination of the Part list API
+        """
+
+        for n in [1, 5, 10]:
+            response = self.get(reverse('api-part-list'), {'limit': n})
+
+            self.assertIn('count', response)
+            self.assertIn('results', response)
+            
+            self.assertEqual(len(response['results']), n)
+
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
     """
