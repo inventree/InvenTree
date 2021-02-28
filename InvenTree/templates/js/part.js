@@ -366,7 +366,6 @@ function loadPartTable(table, url, options={}) {
     });
 
     columns.push({
-        sortable: true,
         field: 'description',
         title: '{% trans "Description" %}',
         formatter: function(value, row, index, field) {
@@ -448,6 +447,8 @@ function loadPartTable(table, url, options={}) {
         groupBy: false,
         name: options.name || 'part',
         original: params,
+        sidePagination: 'server',
+        pagination: 'true',
         formatNoMatches: function() { return '{% trans "No parts found" %}'; },
         columns: columns,
         showColumns: true,

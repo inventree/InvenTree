@@ -9,6 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Prefetch, Sum
 
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import filters, serializers
@@ -371,6 +372,8 @@ class PartList(generics.ListCreateAPIView):
 
     starred_parts = None
 
+    pagination_class = LimitOffsetPagination
+
     def get_serializer(self, *args, **kwargs):
 
         # Ensure the request context is passed through
@@ -397,11 +400,11 @@ class PartList(generics.ListCreateAPIView):
         queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
@@ -445,7 +448,9 @@ class PartList(generics.ListCreateAPIView):
         a) For HTTP requests (e.g. via the browseable API) return a DRF response
         b) For AJAX requests, simply return a JSON rendered response.
         """
-        if request.is_ajax():
+        if page is not None:
+            return self.get_paginated_response(data)
+        elif request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
@@ -641,17 +646,6 @@ class PartList(generics.ListCreateAPIView):
 
             queryset = queryset.filter(pk__in=parts_need_stock)
 
-        # Limit number of results
-        limit = params.get('limit', None)
-
-        if limit is not None:
-            try:
-                limit = int(limit)
-                if limit > 0:
-                    queryset = queryset[:limit]
-            except ValueError:
-                pass
-
         return queryset
 
     filter_backends = [
@@ -674,6 +668,8 @@ class PartList(generics.ListCreateAPIView):
     ordering_fields = [
         'name',
         'creation_date',
+        'IPN',
+        'in_stock',
     ]
 
     # Default ordering
@@ -685,6 +681,7 @@ class PartList(generics.ListCreateAPIView):
         'IPN',
         'revision',
         'keywords',
+        'category__name',
     ]
 
 

@@ -387,7 +387,6 @@ class StockList(generics.ListCreateAPIView):
         page = self.paginate_queryset(queryset)
 
         if page is not None:
-
             serializer = self.get_serializer(page, many=True)
         else:
             serializer = self.get_serializer(queryset, many=True)
@@ -476,7 +475,7 @@ class StockList(generics.ListCreateAPIView):
 
         if page is not None:
             return self.get_paginated_response(data)
-        if request.is_ajax():
+        elif request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
