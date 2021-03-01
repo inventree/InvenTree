@@ -243,10 +243,12 @@ class PartAPITest(InvenTreeAPITestCase):
         for n in [1, 5, 10]:
             response = self.get(reverse('api-part-list'), {'limit': n})
 
-            self.assertIn('count', response)
-            self.assertIn('results', response)
+            data = response.data
+
+            self.assertIn('count', data)
+            self.assertIn('results', data)
             
-            self.assertEqual(len(response['results']), n)
+            self.assertEqual(len(data['results']), n)
 
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
