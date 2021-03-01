@@ -68,6 +68,7 @@ class RuleSet(models.Model):
             'part_partparameter',
             'part_partrelated',
             'part_partstar',
+            'part_supplierpart',
         ],
         'stock_location': [
             'stock_stocklocation',
