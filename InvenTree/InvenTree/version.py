@@ -12,6 +12,7 @@ INVENTREE_SW_VERSION = "0.1.7 pre"
 # Increment this number whenever there is a significant change to the API that any clients need to know about
 INVENTREE_API_VERSION = 2
 
+
 def inventreeInstanceName():
     """ Returns the InstanceName settings for the current database """
     return common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE", "")
