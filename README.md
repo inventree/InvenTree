@@ -9,6 +9,14 @@ InvenTree is designed to be lightweight and easy to use for SME or hobbyist appl
 
 However, powerful business logic works in the background to ensure that stock tracking history is maintained, and users have ready access to stock level information.
 
+# Companion App
+
+InvenTree is supported by a [companion mobile app](https://inventree.readthedocs.io/en/latest/app/app/) which allows users access to stock control information and functionality. 
+
+[**Download InvenTree from the Android Play Store**](https://play.google.com/store/apps/details?id=inventree.inventree_app)
+
+*Currently the mobile app is only availble for Android*
+
 # Documentation
 
 For InvenTree documentation, refer to the [InvenTree documentation website](https://inventree.readthedocs.io/en/latest/).

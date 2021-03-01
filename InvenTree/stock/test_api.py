@@ -244,6 +244,19 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(expired=0)
         self.assertEqual(len(response), 16)
 
+    def test_paginate(self):
+        """
+        Test that we can paginate results correctly
+        """
+
+        for n in [1, 5, 10]:
+            response = self.get_stock(limit=n)
+
+            self.assertIn('count', response)
+            self.assertIn('results', response)
+
+            self.assertEqual(len(response['results']), n)
+
 
 class StockItemTest(StockAPITestCase):
     """

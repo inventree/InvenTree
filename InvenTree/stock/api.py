@@ -381,7 +381,12 @@ class StockList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
@@ -465,7 +470,9 @@ class StockList(generics.ListCreateAPIView):
         Note: b) is about 100x quicker than a), because the DRF framework adds a lot of cruft
         """
 
-        if request.is_ajax():
+        if page is not None:
+            return self.get_paginated_response(data)
+        elif request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
@@ -806,16 +813,15 @@ class StockList(generics.ListCreateAPIView):
                 print("After error:", str(updated_after))
                 pass
 
-        # Limit number of results
-        limit = params.get('limit', None)
+        # Optionally, limit the maximum number of returned results
+        max_results = params.get('max_results', None)
 
-        if limit is not None:
+        if max_results is not None:
             try:
-                limit = int(limit)
+                max_results = int(max_results)
 
-                if limit > 0:
-                    queryset = queryset[:limit]
-
+                if max_results > 0:
+                    queryset = queryset[:max_results]
             except (ValueError):
                 pass
 
@@ -839,9 +845,12 @@ class StockList(generics.ListCreateAPIView):
 
     ordering_fields = [
         'part__name',
+        'part__IPN',
         'updated',
         'stocktake_date',
         'expiry_date',
+        'quantity',
+        'status',
     ]
 
     ordering = ['part__name']
@@ -851,7 +860,8 @@ class StockList(generics.ListCreateAPIView):
         'batch',
         'part__name',
         'part__IPN',
-        'part__description'
+        'part__description',
+        'location__name',
     ]
 
 
