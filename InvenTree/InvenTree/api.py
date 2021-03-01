@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .views import AjaxView
-from .version import inventreeVersion, inventreeInstanceName
+from .version import inventreeVersion, inventreeApiVersion, inventreeInstanceName
 
 from plugins import plugins as inventree_plugins
 
@@ -43,6 +43,7 @@ class InfoView(AjaxView):
             'server': 'InvenTree',
             'version': inventreeVersion(),
             'instance': inventreeInstanceName(),
+            'apiVersion': inventreeApiVersion(),
         }
 
         return JsonResponse(data)
