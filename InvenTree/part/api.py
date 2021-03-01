@@ -397,11 +397,11 @@ class PartList(generics.ListCreateAPIView):
         queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
@@ -445,7 +445,9 @@ class PartList(generics.ListCreateAPIView):
         a) For HTTP requests (e.g. via the browseable API) return a DRF response
         b) For AJAX requests, simply return a JSON rendered response.
         """
-        if request.is_ajax():
+        if page is not None:
+            return self.get_paginated_response(data)
+        elif request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
@@ -641,15 +643,18 @@ class PartList(generics.ListCreateAPIView):
 
             queryset = queryset.filter(pk__in=parts_need_stock)
 
-        # Limit number of results
-        limit = params.get('limit', None)
+        # Optionally limit the maximum number of returned results
+        # e.g. for displaying "recent part" list
+        max_results = params.get('max_results', None)
 
-        if limit is not None:
+        if max_results is not None:
             try:
-                limit = int(limit)
-                if limit > 0:
-                    queryset = queryset[:limit]
-            except ValueError:
+                max_results = int(max_results)
+
+                if max_results > 0:
+                    queryset = queryset[:max_results]
+
+            except (ValueError):
                 pass
 
         return queryset
@@ -674,6 +679,8 @@ class PartList(generics.ListCreateAPIView):
     ordering_fields = [
         'name',
         'creation_date',
+        'IPN',
+        'in_stock',
     ]
 
     # Default ordering
@@ -685,6 +692,7 @@ class PartList(generics.ListCreateAPIView):
         'IPN',
         'revision',
         'keywords',
+        'category__name',
     ]
 
 

@@ -52,12 +52,10 @@
 
 
     loadStockTrackingTable($("#track-table"), {
-        params: function(p) {
-            return {
-                ordering: '-date',
-                item: {{ item.pk }},
-                user_detail: true,
-            };
+        params: {
+            ordering: '-date',
+            item: {{ item.pk }},
+            user_detail: true,
         },
         url: "{% url 'api-stock-track' %}", 
     });

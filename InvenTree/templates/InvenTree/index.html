@@ -102,7 +102,7 @@ addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" %}', 'fa-ti
 loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
     params: {
         ordering: "-creation_date",
-        limit: {% settings_value "PART_RECENT_COUNT" %},
+        max_results: {% settings_value "PART_RECENT_COUNT" %},
     },
     name: 'latest_parts',
 });
@@ -132,7 +132,7 @@ addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa
 loadStockTable($('#table-recently-updated-stock'), {
     params: {
         ordering: "-updated",
-        limit: {% settings_value "STOCK_RECENT_COUNT" %},
+        max_results: {% settings_value "STOCK_RECENT_COUNT" %},
     },
     name: 'recently-updated-stock',
     grouping: false,

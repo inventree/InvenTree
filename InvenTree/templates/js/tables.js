@@ -93,7 +93,14 @@ function reloadTable(table, filters) {
         }
     }
 
-    options.queryParams = params;
+    options.queryParams = function(tableParams) {
+        
+        for (key in params) {
+            tableParams[key] = params[key];
+        }
+
+        return tableParams;
+    }
 
     table.bootstrapTable('refreshOptions', options);
     table.bootstrapTable('refresh');
@@ -126,9 +133,45 @@ $.fn.inventreeTable = function(options) {
 
     var varName = tableName + '-pagesize';
 
+    // Pagingation options (can be server-side or client-side as specified by the caller)
     options.pagination = true;
+    options.paginationVAlign = 'both';
     options.pageSize = inventreeLoad(varName, 25);
     options.pageList = [25, 50, 100, 250, 'all'];
+    options.totalField = 'count';
+    options.dataField = 'results';
+
+    // Extract query params
+    var filters = options.queryParams || options.filters || {};
+
+    options.queryParams = function(params) {
+        for (var key in filters) {
+            params[key] = filters[key];
+        }
+
+        // Override the way that we ask the server to sort results
+        // It seems bootstrap-table does not offer a "native" way to do this...
+        if ('sort' in params) {
+            var order = params['order'];
+
+            var ordering = params['sort'] || null;
+
+            if (ordering) {
+
+                if (order == 'desc') {
+                    ordering = `-${ordering}`;
+                }
+
+                params['ordering'] = ordering;
+            }
+
+            delete params['sort'];
+            delete params['order'];
+
+        }
+
+        return params;
+    }
 
     options.rememberOrder = true;
 

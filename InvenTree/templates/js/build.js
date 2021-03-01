@@ -630,6 +630,7 @@ function loadBuildTable(table, options) {
         url: options.url,
         queryParams: filters,
         groupBy: false,
+        sidePagination: 'server',
         name: 'builds',
         original: params,
         columns: [
