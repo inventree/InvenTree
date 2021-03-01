@@ -389,18 +389,17 @@ enableNavbar({
 });
 
 loadTree("{% url 'api-stock-tree' %}",
-        "#stock-tree",
-        {
-            name: 'stock',
-        }
-    );
+    "#stock-tree",
+    {
+        name: 'stock',
+    }
+);
 
-    $("#toggle-stock-tree").click(function() {
-        toggleSideNav("#sidenav-left");
-        return false;
-    })
-
-    initSideNav();
+initNavTree({
+    label: 'stock',
+    treeId: '#sidenav-left',
+    toggleId: '#toggle-stock-tree',
+});
 
 $("#stock-serialize").click(function() {
     launchModalForm(
