@@ -167,6 +167,7 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'supplier_detail',
                 title: '{% trans "Supplier" %}',
                 sortable: true,
+                sortName: 'supplier__name',
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/purchase-orders/`);
                 }
@@ -174,12 +175,10 @@ function loadPurchaseOrderTable(table, options) {
             {
                 field: 'supplier_reference',
                 title: '{% trans "Supplier Reference" %}',
-                sortable: true,
             },
             {
                 field: 'description',
                 title: '{% trans "Description" %}',
-                sortable: true,
             },
             {
                 field: 'status',

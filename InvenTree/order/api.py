@@ -140,6 +140,10 @@ class POList(generics.ListCreateAPIView):
     ordering_fields = [
         'creation_date',
         'reference',
+        'supplier__name',
+        'target_date',
+        'line_items',
+        'status',
     ]
 
     ordering = '-creation_date'
