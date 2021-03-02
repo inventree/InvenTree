@@ -200,6 +200,22 @@ class POLineItemList(generics.ListCreateAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]
+
+    ordering_fields = [
+        'part__part__name',
+        'part__MPN',
+        'part__SKU',
+        'reference',
+        'quantity',
+        'received',
+    ]
+
+    search_Fields = [
+        'part__part__name',
+        'part__part__description',
     ]
 
     filter_fields = [
