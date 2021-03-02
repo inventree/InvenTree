@@ -211,7 +211,6 @@ INSTALLED_APPS = [
     'djmoney',                              # django-money integration
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
-    'django_migration_linter',              # Linting checking for migration files
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
