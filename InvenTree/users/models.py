@@ -66,6 +66,7 @@ class RuleSet(models.Model):
             'part_parttesttemplate',
             'part_partparametertemplate',
             'part_partparameter',
+            'part_supplierpart',
             'part_partrelated',
             'part_partstar',
         ],
@@ -94,7 +95,7 @@ class RuleSet(models.Model):
         ],
         'purchase_order': [
             'company_company',
-            'company_supplierpart',
+            'part_supplierpart',
             'company_supplierpricebreak',
             'order_purchaseorder',
             'order_purchaseorderattachment',
