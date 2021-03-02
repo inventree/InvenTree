@@ -213,9 +213,12 @@ class POLineItemList(generics.ListCreateAPIView):
         'received',
     ]
 
-    search_Fields = [
+    search_fields = [
         'part__part__name',
         'part__part__description',
+        'part__MPN',
+        'part__SKU',
+        'reference',
     ]
 
     filter_fields = [
