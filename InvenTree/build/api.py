@@ -51,7 +51,7 @@ class BuildList(generics.ListCreateAPIView):
     search_fields = [
         'reference',
         'part__name',
-        'description',
+        'title',
     ]
 
     def get_queryset(self):

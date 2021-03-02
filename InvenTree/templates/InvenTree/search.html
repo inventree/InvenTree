@@ -162,6 +162,20 @@ InvenTree | {% trans "Search Results" %}
 
     {% endif %}
 
+    {% if roles.build.view %}
+
+    addItemTitle('{% trans "Build" %}');
+
+    addItem('build-order', '{% trans "Build Orders" %}', 'fa-tools');
+
+    loadBuildTable('#table-build-order', {
+        params: {
+            search: '{{ query }}',
+        }
+    });
+
+    {% endif %}
+
     {% if roles.stock.view %}
     addItemTitle('{% trans "Stock" %}');
 

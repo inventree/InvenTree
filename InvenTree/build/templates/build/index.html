@@ -179,9 +179,6 @@ $("#new-build").click(function() {
 
 loadBuildTable($("#build-table"), {
     url: "{% url 'api-build-list' %}",
-    params: {
-        part_detail: "true",
-    },
 });
 
 $('#multi-build-print').click(function() {
