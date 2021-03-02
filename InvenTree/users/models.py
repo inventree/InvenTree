@@ -68,6 +68,7 @@ class RuleSet(models.Model):
             'part_partparameter',
             'part_partrelated',
             'part_partstar',
+            'company_supplierpart',
         ],
         'stock_location': [
             'stock_stocklocation',
@@ -94,11 +95,11 @@ class RuleSet(models.Model):
         ],
         'purchase_order': [
             'company_company',
-            'company_supplierpart',
             'company_supplierpricebreak',
             'order_purchaseorder',
             'order_purchaseorderattachment',
             'order_purchaseorderlineitem',
+            'company_supplierpart',
         ],
         'sales_order': [
             'company_company',
@@ -342,7 +343,7 @@ def update_group_roles(group, debug=False):
             content_type = ContentType.objects.get(app_label=app, model=model)
             permission = Permission.objects.get(content_type=content_type, codename=perm)
         except ContentType.DoesNotExist:
-            print(f"Error: Could not find permission matching '{permission_string}'")
+            raise ValueError(f"Error: Could not find permission matching '{permission_string}'")
             permission = None
 
         return permission
