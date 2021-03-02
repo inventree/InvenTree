@@ -135,6 +135,7 @@ function setupCallbacks() {
 $("#po-table").inventreeTable({
     onPostBody: setupCallbacks,
     name: 'purchaseorder',
+    sidePagination: 'server',
     formatNoMatches: function() { return "{% trans 'No line items found' %}"; },
     queryParams: {
         order: {{ order.id }},
@@ -151,6 +152,7 @@ $("#po-table").inventreeTable({
         {
             field: 'part',
             sortable: true,
+            sortName: 'part__part__name',
             title: '{% trans "Part" %}',
             switchable: false,
             formatter: function(value, row, index, field) {
@@ -162,17 +164,23 @@ $("#po-table").inventreeTable({
             },
         },
         {
-            sortable: true,
             field: 'part_detail.description',
             title: '{% trans "Description" %}',
         },
         {
             sortable: true,
+            sortName: 'part__SKU',
             field: 'supplier_part_detail.SKU',
-            title: '{% trans "Order Code" %}',
+            title: '{% trans "SKU" %}',
             formatter: function(value, row, index, field) {
                 return renderLink(value, `/supplier-part/${row.part}/`);
             },
+        },
+        {
+            sortable: true,
+            sortName: 'part__MPN',
+            field: 'supplier_part_detail.MPN',
+            title: '{% trans "MPN" %}',
         },
         {
             sortable: true,
