@@ -28,7 +28,6 @@ class BuildIndex(InvenTreeRoleMixin, ListView):
     model = Build
     template_name = 'build/index.html'
     context_object_name = 'builds'
-    role_required = 'build.view'
 
     def get_queryset(self):
         """ Return all Build objects (order by date, newest first) """
@@ -58,7 +57,6 @@ class BuildCancel(AjaxUpdateView):
     ajax_form_title = _('Cancel Build')
     context_object_name = 'build'
     form_class = forms.CancelBuildForm
-    role_required = 'build.change'
 
     def validate(self, build, form, **kwargs):
 
@@ -92,7 +90,6 @@ class BuildAutoAllocate(AjaxUpdateView):
     context_object_name = 'build'
     ajax_form_title = _('Allocate Stock')
     ajax_template_name = 'build/auto_allocate.html'
-    role_required = 'build.change'
 
     def get_initial(self):
         """
@@ -181,7 +178,6 @@ class BuildOutputCreate(AjaxUpdateView):
     form_class = forms.BuildOutputCreateForm
     ajax_template_name = 'build/build_output_create.html'
     ajax_form_title = _('Create Build Output')
-    role_required = 'build.change'
 
     def validate(self, build, form, **kwargs):
         """
@@ -280,6 +276,7 @@ class BuildOutputDelete(AjaxUpdateView):
     model = Build
     form_class = forms.BuildOutputDeleteForm
     ajax_form_title = _('Delete Build Output')
+
     role_required = 'build.delete'
 
     def get_initial(self):
@@ -340,8 +337,7 @@ class BuildUnallocate(AjaxUpdateView):
     form_class = forms.UnallocateBuildForm
     ajax_form_title = _("Unallocate Stock")
     ajax_template_name = "build/unallocate.html"
-    role_required = 'build.change'
-
+    
     def get_initial(self):
 
         initials = super().get_initial()
@@ -408,7 +404,7 @@ class BuildComplete(AjaxUpdateView):
 
     model = Build
     form_class = forms.CompleteBuildForm
-    role_required = 'build.change'
+    
     ajax_form_title = _('Complete Build Order')
     ajax_template_name = 'build/complete.html'
 
@@ -444,8 +440,7 @@ class BuildOutputComplete(AjaxUpdateView):
     context_object_name = "build"
     ajax_form_title = _("Complete Build Output")
     ajax_template_name = "build/complete_output.html"
-    role_required = 'build.change'
-
+    
     def get_form(self):
         
         build = self.get_object()
@@ -579,13 +574,15 @@ class BuildOutputComplete(AjaxUpdateView):
         }
 
 
-class BuildNotes(UpdateView):
+class BuildNotes(InvenTreeRoleMixin, UpdateView):
     """ View for editing the 'notes' field of a Build object.
     """
 
     context_object_name = 'build'
     template_name = 'build/notes.html'
     model = Build
+    
+    # Override the default permission role for this View
     role_required = 'build.view'
 
     fields = ['notes']
@@ -602,13 +599,12 @@ class BuildNotes(UpdateView):
         return ctx
 
 
-class BuildDetail(DetailView):
+class BuildDetail(InvenTreeRoleMixin, DetailView):
     """ Detail view of a single Build object. """
 
     model = Build
     template_name = 'build/detail.html'
     context_object_name = 'build'
-    role_required = 'build.view'
 
     def get_context_data(self, **kwargs):
 
@@ -623,12 +619,11 @@ class BuildDetail(DetailView):
         return ctx
 
 
-class BuildAllocate(DetailView):
+class BuildAllocate(InvenTreeRoleMixin, DetailView):
     """ View for allocating parts to a Build """
     model = Build
     context_object_name = 'build'
     template_name = 'build/allocate.html'
-    role_required = ['build.change']
 
     def get_context_data(self, **kwargs):
         """ Provide extra context information for the Build allocation page """
@@ -652,13 +647,15 @@ class BuildAllocate(DetailView):
 
 
 class BuildCreate(AjaxCreateView):
-    """ View to create a new Build object """
+    """
+    View to create a new Build object
+    """
+
     model = Build
     context_object_name = 'build'
     form_class = forms.EditBuildForm
     ajax_form_title = _('New Build Order')
     ajax_template_name = 'modal_form.html'
-    role_required = 'build.add'
 
     def get_form(self):
         form = super().get_form()
@@ -734,7 +731,6 @@ class BuildUpdate(AjaxUpdateView):
     context_object_name = 'build'
     ajax_form_title = _('Edit Build Order Details')
     ajax_template_name = 'modal_form.html'
-    role_required = 'build.change'
 
     def get_form(self):
 
@@ -776,7 +772,6 @@ class BuildDelete(AjaxDeleteView):
     model = Build
     ajax_template_name = 'build/delete_build.html'
     ajax_form_title = _('Delete Build Order')
-    role_required = 'build.delete'
 
 
 class BuildItemDelete(AjaxDeleteView):
@@ -788,8 +783,7 @@ class BuildItemDelete(AjaxDeleteView):
     ajax_template_name = 'build/delete_build_item.html'
     ajax_form_title = _('Unallocate Stock')
     context_object_name = 'item'
-    role_required = 'build.delete'
-
+    
     def get_data(self):
         return {
             'danger': _('Removed parts from build allocation')
@@ -805,7 +799,6 @@ class BuildItemCreate(AjaxCreateView):
     form_class = forms.EditBuildItemForm
     ajax_template_name = 'build/create_build_item.html'
     ajax_form_title = _('Allocate stock to build output')
-    role_required = 'build.add'
 
     # The output StockItem against which the allocation is being made
     output = None
@@ -1021,8 +1014,7 @@ class BuildItemEdit(AjaxUpdateView):
     ajax_template_name = 'build/edit_build_item.html'
     form_class = forms.EditBuildItemForm
     ajax_form_title = _('Edit Stock Allocation')
-    role_required = 'build.change'
-
+    
     def get_data(self):
         return {
             'info': _('Updated Build Item'),
@@ -1055,8 +1047,7 @@ class BuildAttachmentCreate(AjaxCreateView):
     model = BuildOrderAttachment
     form_class = forms.EditBuildAttachmentForm
     ajax_form_title = _('Add Build Order Attachment')
-    role_required = 'build.add'
-
+    
     def save(self, form, **kwargs):
         """
         Add information on the user that uploaded the attachment
@@ -1105,7 +1096,6 @@ class BuildAttachmentEdit(AjaxUpdateView):
     model = BuildOrderAttachment
     form_class = forms.EditBuildAttachmentForm
     ajax_form_title = _('Edit Attachment')
-    role_required = 'build.change'
 
     def get_form(self):
         form = super().get_form()
@@ -1127,7 +1117,6 @@ class BuildAttachmentDelete(AjaxDeleteView):
     model = BuildOrderAttachment
     ajax_form_title = _('Delete Attachment')
     context_object_name = 'attachment'
-    role_required = 'build.delete'
 
     def get_data(self):
         return {
