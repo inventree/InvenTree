@@ -671,12 +671,12 @@ function loadBuildTable(table, options) {
             {
                 field: 'title',
                 title: '{% trans "Description" %}',
-                sortable: true,
             },
             {
                 field: 'part',
                 title: '{% trans "Part" %}',
                 sortable: true,
+                sortName: 'part__name',
                 formatter: function(value, row, index, field) {
 
                     var html = imageHoverIcon(row.part_detail.thumbnail);
