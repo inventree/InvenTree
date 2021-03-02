@@ -269,7 +269,6 @@ class SupplierPartEdit(AjaxUpdateView):
     form_class = EditSupplierPartForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Supplier Part')
-    role_required = 'purchase_order.change'
 
     def get_form(self):
         form = super().get_form()
@@ -294,7 +293,6 @@ class SupplierPartCreate(AjaxCreateView):
     ajax_template_name = 'company/supplier_part_create.html'
     ajax_form_title = _('Create new Supplier Part')
     context_object_name = 'part'
-    role_required = 'purchase_order.add'
 
     def validate(self, part, form):
 
@@ -413,6 +411,7 @@ class SupplierPartDelete(AjaxDeleteView):
     success_url = '/supplier/'
     ajax_template_name = 'company/partdelete.html'
     ajax_form_title = _('Delete Supplier Part')
+
     role_required = 'purchase_order.delete'
 
     parts = []
@@ -485,7 +484,6 @@ class PriceBreakCreate(AjaxCreateView):
     form_class = EditPriceBreakForm
     ajax_form_title = _('Add Price Break')
     ajax_template_name = 'modal_form.html'
-    role_required = 'purchase_order.add'
 
     def get_data(self):
         return {
@@ -547,7 +545,6 @@ class PriceBreakEdit(AjaxUpdateView):
     form_class = EditPriceBreakForm
     ajax_form_title = _('Edit Price Break')
     ajax_template_name = 'modal_form.html'
-    role_required = 'purchase_order.change'
 
     def get_form(self):
 
@@ -563,4 +560,3 @@ class PriceBreakDelete(AjaxDeleteView):
     model = SupplierPriceBreak
     ajax_form_title = _("Delete Price Break")
     ajax_template_name = 'modal_delete_form.html'
-    role_required = 'purchase_order.delete'
