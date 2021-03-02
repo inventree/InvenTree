@@ -185,7 +185,6 @@ addHeaderAction('build-overdue', '{% trans "Overdue Build Orders" %}', 'fa-calen
 loadBuildTable("#table-build-pending", {
     url: "{% url 'api-build-list' %}",
     params: {
-        part_detail: true,
         active: true,
     },
     disableFilters: true,
@@ -194,7 +193,6 @@ loadBuildTable("#table-build-pending", {
 loadBuildTable("#table-build-overdue", {
     url: "{% url 'api-build-list' %}",
     params: {
-        part_detail: true,
         overdue: true,
     },
     disableFilters: true,

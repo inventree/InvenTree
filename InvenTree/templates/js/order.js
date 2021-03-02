@@ -124,6 +124,8 @@ function loadPurchaseOrderTable(table, options) {
         filters[key] = options.params[key];
     }
 
+    options.url = options.url || '{% url "api-po-list" %}';
+
     setupFilterList("purchaseorder", $(table));
 
     $(table).inventreeTable({
@@ -167,6 +169,7 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'supplier_detail',
                 title: '{% trans "Supplier" %}',
                 sortable: true,
+                sortName: 'supplier__name',
                 formatter: function(value, row, index, field) {
                     return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/purchase-orders/`);
                 }
@@ -174,12 +177,10 @@ function loadPurchaseOrderTable(table, options) {
             {
                 field: 'supplier_reference',
                 title: '{% trans "Supplier Reference" %}',
-                sortable: true,
             },
             {
                 field: 'description',
                 title: '{% trans "Description" %}',
-                sortable: true,
             },
             {
                 field: 'status',
@@ -218,6 +219,8 @@ function loadSalesOrderTable(table, options) {
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
+
+    options.url = options.url || '{% url "api-so-list" %}';
 
     setupFilterList("salesorder", $(table));
 
@@ -259,6 +262,7 @@ function loadSalesOrderTable(table, options) {
             },
             {
                 sortable: true,
+                sortName: 'customer__name',
                 field: 'customer_detail',
                 title: '{% trans "Customer" %}',
                 formatter: function(value, row, index, field) {
@@ -266,12 +270,12 @@ function loadSalesOrderTable(table, options) {
                 }
             },
             {
+                sortable: true,
                 field: 'customer_reference',
                 title: '{% trans "Customer Reference" %}',
-                sotrable: true,
             },
             {
-                sortable: true,
+                sortable: false,
                 field: 'description',
                 title: '{% trans "Description" %}',
             },

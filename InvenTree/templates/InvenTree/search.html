@@ -162,6 +162,20 @@ InvenTree | {% trans "Search Results" %}
 
     {% endif %}
 
+    {% if roles.build.view %}
+
+    addItemTitle('{% trans "Build" %}');
+
+    addItem('build-order', '{% trans "Build Orders" %}', 'fa-tools');
+
+    loadBuildTable('#table-build-order', {
+        params: {
+            search: '{{ query }}',
+        }
+    });
+
+    {% endif %}
+
     {% if roles.stock.view %}
     addItemTitle('{% trans "Stock" %}');
 
@@ -283,6 +297,14 @@ InvenTree | {% trans "Search Results" %}
         }
     });
 
+    addItem('purchase-order', '{% trans "Purchase Orders" %}', 'fa-shopping-cart');
+
+    loadPurchaseOrderTable('#table-purchase-order', {
+        params: {
+            search: '{{ query }}',
+        }
+    });
+
     addItem('manufacturer', '{% trans "Manufacturers" %}', 'fa-industry');
 
     loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
@@ -302,6 +324,14 @@ InvenTree | {% trans "Search Results" %}
         params: {
             search: "{{ query }}",
             is_customer: "true",
+        }
+    });
+
+    addItem('sales-orders', '{% trans "Sales Orders" %}', 'fa-truck');
+
+    loadSalesOrderTable('#table-sales-orders', {
+        params: {
+            search: '{{ query }}',
         }
     });
 

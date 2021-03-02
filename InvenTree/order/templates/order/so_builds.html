@@ -27,7 +27,6 @@ loadBuildTable($("#builds-table"), {
     url: "{% url 'api-build-list' %}",
     params: {
         sales_order: {{ order.id }},
-        part_detail: true,
     },
 });
 

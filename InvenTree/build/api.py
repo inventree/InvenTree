@@ -38,6 +38,22 @@ class BuildList(generics.ListCreateAPIView):
         'sales_order',
     ]
 
+    ordering_fields = [
+        'reference',
+        'part__name',
+        'status',
+        'creation_date',
+        'target_date',
+        'completion_date',
+        'quantity',
+    ]
+
+    search_fields = [
+        'reference',
+        'part__name',
+        'title',
+    ]
+
     def get_queryset(self):
         """
         Override the queryset filtering,
