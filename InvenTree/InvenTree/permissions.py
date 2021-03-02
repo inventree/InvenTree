@@ -58,8 +58,10 @@ class RolePermission(permissions.BasePermission):
             # Extract the model name associated with this request
             model = view.serializer_class.Meta.model
 
-            # And the specific database table
-            table = model._meta.db_table
+            app_label = model._meta.app_label
+            model_name = model._meta.model_name
+
+            table = f"{app_label}_{model_name}"
         except AttributeError:
             # We will assume that if the serializer class does *not* have a Meta,
             # then we don't need a permission
