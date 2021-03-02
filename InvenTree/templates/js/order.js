@@ -124,6 +124,8 @@ function loadPurchaseOrderTable(table, options) {
         filters[key] = options.params[key];
     }
 
+    options.url = options.url || '{% url "api-po-list" %}';
+
     setupFilterList("purchaseorder", $(table));
 
     $(table).inventreeTable({
@@ -218,6 +220,8 @@ function loadSalesOrderTable(table, options) {
         filters[key] = options.params[key];
     }
 
+    options.url = options.url || '{% url "api-so-list" %}';
+
     setupFilterList("salesorder", $(table));
 
     $(table).inventreeTable({
@@ -258,6 +262,7 @@ function loadSalesOrderTable(table, options) {
             },
             {
                 sortable: true,
+                sortName: 'customer__name',
                 field: 'customer_detail',
                 title: '{% trans "Customer" %}',
                 formatter: function(value, row, index, field) {
@@ -267,10 +272,9 @@ function loadSalesOrderTable(table, options) {
             {
                 field: 'customer_reference',
                 title: '{% trans "Customer Reference" %}',
-                sotrable: true,
             },
             {
-                sortable: true,
+                sortable: false,
                 field: 'description',
                 title: '{% trans "Description" %}',
             },
