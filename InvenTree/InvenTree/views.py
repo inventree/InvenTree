@@ -209,8 +209,6 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
 
             permission = self.get_permission_class()
 
-            print("Permission Class:", permission)
-
             if not permission:
                 raise AttributeError(f"permission_class not defined for {type(self).__name__}")
 
@@ -256,8 +254,6 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
         for view_class in permission_map.keys():
 
             if issubclass(type(self), view_class):
-
-                print(f"Introspected permission '{permission_map[view_class]}' for {type(self).__name__}")
                 return permission_map[view_class]
 
         return None
