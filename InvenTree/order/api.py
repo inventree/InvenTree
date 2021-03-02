@@ -412,7 +412,23 @@ class SOLineItemList(generics.ListCreateAPIView):
 
         return queryset
 
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]
+
+    ordering_fields = [
+        'part__name',
+        'quantity',
+        'reference',
+    ]
+
+    search_fields = [
+        'part__name',
+        'quantity',
+        'reference',
+    ]
 
     filter_fields = [
         'order',

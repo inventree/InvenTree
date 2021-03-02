@@ -173,6 +173,7 @@ $("#so-lines-table").inventreeTable({
         part_detail: true,
         allocations: true,
     },
+    sidePagination: 'server',
     uniqueId: 'pk',
     url: "{% url 'api-so-line-list' %}",
     onPostBody: setupCallbacks,
@@ -201,6 +202,7 @@ $("#so-lines-table").inventreeTable({
         },
         {
             sortable: true,
+            sortName: 'part__name',
             field: 'part',
             title: 'Part',
             formatter: function(value, row, index, field) {
@@ -222,7 +224,6 @@ $("#so-lines-table").inventreeTable({
             title: 'Quantity',
         },
         {
-            sortable: true,
             field: 'allocated',
             {% if order.status == SalesOrderStatus.PENDING %}
             title: '{% trans "Allocated" %}',

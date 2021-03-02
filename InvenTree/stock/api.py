@@ -853,7 +853,9 @@ class StockList(generics.ListCreateAPIView):
         'status',
     ]
 
-    ordering = ['part__name']
+    ordering = [
+        'part__name'
+    ]
 
     search_fields = [
         'serial',
