@@ -362,8 +362,9 @@ class SOList(generics.ListCreateAPIView):
 
     ordering_fields = [
         'creation_date',
-        'reference'
+        'reference',
         'customer__name',
+        'customer_reference',
         'status',
         'target_date',
         'line_items',

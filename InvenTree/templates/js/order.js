@@ -270,6 +270,7 @@ function loadSalesOrderTable(table, options) {
                 }
             },
             {
+                sortable: true,
                 field: 'customer_reference',
                 title: '{% trans "Customer Reference" %}',
             },
