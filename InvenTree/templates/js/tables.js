@@ -145,10 +145,7 @@ $.fn.inventreeTable = function(options) {
     var filters = options.queryParams || options.filters || {};
 
     options.queryParams = function(params) {
-        for (var key in filters) {
-            params[key] = filters[key];
-        }
-
+        
         // Override the way that we ask the server to sort results
         // It seems bootstrap-table does not offer a "native" way to do this...
         if ('sort' in params) {
@@ -170,6 +167,15 @@ $.fn.inventreeTable = function(options) {
 
         }
 
+        for (var key in filters) {
+            params[key] = filters[key];
+        }
+
+        // Add "order" back in (if it was originally specified by InvenTree)
+        // Annoyingly, "order" shadows some field names in InvenTree...
+        if ('order' in filters) {
+            params['order'] = filters['order'];
+        }
         return params;
     }
 
