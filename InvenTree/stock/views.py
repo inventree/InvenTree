@@ -186,7 +186,7 @@ class StockLocationEdit(AjaxUpdateView):
         # Is ownership control enabled?
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
 
-        if stock_ownership_control:
+        if stock_ownership_control and self.object.owner:
             # Get authorized users
             authorized_owners = self.object.owner.get_related_owners()
 
