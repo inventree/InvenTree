@@ -613,7 +613,7 @@ class PartCreate(AjaxCreateView):
 
         # Hide the "default expiry" field if the feature is not enabled
         if not inventree_settings.stock_expiry_enabled():
-            form.fields.pop('default_expiry')
+            form.fields['default_expiry'].widget = HiddenInput()
 
         # Hide the default_supplier field (there are no matching supplier parts yet!)
         form.fields['default_supplier'].widget = HiddenInput()
@@ -904,7 +904,7 @@ class PartEdit(AjaxUpdateView):
 
         # Hide the "default expiry" field if the feature is not enabled
         if not inventree_settings.stock_expiry_enabled():
-            form.fields.pop('default_expiry')
+            form.fields['default_expiry'].widget = HiddenInput()
 
         part = self.get_object()
 
