@@ -137,9 +137,20 @@ class POList(generics.ListCreateAPIView):
         'supplier',
     ]
 
+    search_fields = [
+        'reference',
+        'supplier__name',
+        'supplier_reference',
+        'description',
+    ]
+
     ordering_fields = [
         'creation_date',
         'reference',
+        'supplier__name',
+        'target_date',
+        'line_items',
+        'status',
     ]
 
     ordering = '-creation_date'
@@ -351,7 +362,20 @@ class SOList(generics.ListCreateAPIView):
 
     ordering_fields = [
         'creation_date',
-        'reference'
+        'reference',
+        'customer__name',
+        'customer_reference',
+        'status',
+        'target_date',
+        'line_items',
+        'shipment_date',
+    ]
+
+    search_fields = [
+        'customer__name',
+        'reference',
+        'description',
+        'customer_reference',
     ]
 
     ordering = '-creation_date'

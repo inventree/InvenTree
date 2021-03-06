@@ -33,7 +33,6 @@ loadBuildTable($('#sub-build-table'), {
     url: '{% url "api-build-list" %}',
     filterTarget: "#filter-list-sub-build",
     params: {
-        part_detail: true,
         ancestor: {{ build.pk }},
     }
 });

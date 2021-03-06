@@ -54,7 +54,6 @@ function loadCompanyTable(table, url, options={}) {
         {
             field: 'description',
             title: '{% trans "Description" %}',
-            sortable: true,
         },
         {
             field: 'website',

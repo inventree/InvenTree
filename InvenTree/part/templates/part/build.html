@@ -43,7 +43,6 @@
     loadBuildTable($("#build-table"), {
         url: "{% url 'api-build-list' %}",
         params: {
-            part_detail: "true",
             part: {{ part.id }},
         }
     });

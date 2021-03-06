@@ -609,6 +609,8 @@ function loadBuildTable(table, options) {
     var params = options.params || {};
 
     var filters = {};
+
+    params['part_detail'] = true;
     
     if (!options.disableFilters) {
         filters = loadTableFilters("build");
@@ -617,6 +619,8 @@ function loadBuildTable(table, options) {
     for (var key in params) {
         filters[key] = params[key];
     }
+
+    options.url = options.url || '{% url "api-build-list" %}';
 
     var filterTarget = options.filterTarget || null;
 
@@ -671,12 +675,12 @@ function loadBuildTable(table, options) {
             {
                 field: 'title',
                 title: '{% trans "Description" %}',
-                sortable: true,
             },
             {
                 field: 'part',
                 title: '{% trans "Part" %}',
                 sortable: true,
+                sortName: 'part__name',
                 formatter: function(value, row, index, field) {
 
                     var html = imageHoverIcon(row.part_detail.thumbnail);

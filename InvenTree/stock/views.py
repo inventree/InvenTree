@@ -186,7 +186,7 @@ class StockLocationEdit(AjaxUpdateView):
         # Is ownership control enabled?
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
 
-        if stock_ownership_control:
+        if stock_ownership_control and self.object.owner:
             # Get authorized users
             authorized_owners = self.object.owner.get_related_owners()
 
@@ -1232,7 +1232,7 @@ class StockItemEdit(AjaxUpdateView):
 
         # Hide the "expiry date" field if the feature is not enabled
         if not common.settings.stock_expiry_enabled():
-            form.fields.pop('expiry_date')
+            form.fields['expiry_date'].widget = HiddenInput()
 
         item = self.get_object()
 
@@ -1581,7 +1581,7 @@ class StockItemCreate(AjaxCreateView):
 
         # Hide the "expiry date" field if the feature is not enabled
         if not common.settings.stock_expiry_enabled():
-            form.fields.pop('expiry_date')
+            form.fields['expiry_date'].widget = HiddenInput()
 
         part = self.get_part(form=form)
 

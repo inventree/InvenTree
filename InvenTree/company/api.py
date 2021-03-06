@@ -56,10 +56,13 @@ class CompanyList(generics.ListCreateAPIView):
     search_fields = [
         'name',
         'description',
+        'website',
     ]
 
     ordering_fields = [
         'name',
+        'parts_supplied',
+        'parts_manufactured',
     ]
 
     ordering = 'name'
