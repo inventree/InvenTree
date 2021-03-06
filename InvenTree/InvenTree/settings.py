@@ -211,6 +211,7 @@ INSTALLED_APPS = [
     'djmoney',                              # django-money integration
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
+    'django_q',
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -284,6 +285,18 @@ REST_FRAMEWORK = {
 }
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
+
+# django-q configuration
+Q_CLUSTER = {
+    'name': 'InvenTree',
+    'workers': 4,
+    'timeout': 90,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default',
+    'sync': True,
+}
 
 # Markdownx configuration
 # Ref: https://neutronx.github.io/django-markdownx/customization/
