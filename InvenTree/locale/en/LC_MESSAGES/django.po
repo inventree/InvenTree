@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-05 00:56+0100\n"
+"POT-Creation-Date: 2021-03-06 21:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2387,7 +2387,7 @@ msgstr ""
 msgid "Select Purchase Order"
 msgstr ""
 
-#: order/templates/order/order_wizard/select_pos.html:67
+#: order/templates/order/order_wizard/select_pos.html:68
 msgid "Select a purchase order for"
 msgstr ""
 
@@ -3786,6 +3786,10 @@ msgstr ""
 
 #: part/templates/part/stock.html:10
 msgid "Part Stock"
+msgstr ""
+
+#: part/templates/part/stock.html:16
+msgid "Showing stock for all variants of"
 msgstr ""
 
 #: part/templates/part/stock_count.html:7 templates/js/bom.js:239
@@ -6104,7 +6108,7 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-#: templates/navbar.html:71
+#: templates/navbar.html:71 templates/registration/logout.html:5
 msgid "Logout"
 msgstr ""
 
@@ -6134,6 +6138,18 @@ msgstr ""
 
 #: templates/registration/login.html:83
 msgid "Username / password combination is incorrect"
+msgstr ""
+
+#: templates/registration/logout.html:6
+msgid "You have been logged out"
+msgstr ""
+
+#: templates/registration/logout.html:7
+msgid "Click"
+msgstr ""
+
+#: templates/registration/logout.html:7
+msgid "here</a> to log in</p>"
 msgstr ""
 
 #: templates/stats.html:9
