@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-08 16:07+0100\n"
+"POT-Creation-Date: 2021-03-08 17:45+0100\n"
 "PO-Revision-Date: 2021-03-06 15:16+0100\n"
 "Last-Translator: Andreas Kaiser <kaiser.vocote@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -4961,24 +4961,18 @@ msgid "Test result attachment"
 msgstr "Anhang löschen"
 
 #: stock/models.py:1664
-#, fuzzy
-#| msgid "Edit notes"
 msgid "Test notes"
-msgstr "Bermerkungen bearbeiten"
+msgstr "Test Notizen"
 
 #: stock/templates/stock/item.html:12
 msgid "Stock Tracking Information"
 msgstr "Informationen zum Lagerbestands-Tracking"
 
 #: stock/templates/stock/item.html:30
-#, fuzzy
-#| msgid "Category"
 msgid "New Entry"
-msgstr "Kategorie"
+msgstr "neuer Eintrag"
 
 #: stock/templates/stock/item_attachments.html:11
-#, fuzzy
-#| msgid "Stock Item Notes"
 msgid "Stock Item Attachments"
 msgstr "Lagerobjekt-Notizen"
 
@@ -4987,26 +4981,25 @@ msgid ""
 "You are not in the list of owners of this item. This stock item cannot be "
 "edited."
 msgstr ""
+"Sie gehören nicht zu den Eigentümern dieses Objekts und können es nicht "
+"ändern."
 
 #: stock/templates/stock/item_base.html:31
-#, fuzzy
-#| msgid "This stock item does not have any child items"
 msgid "This stock item is in production and cannot be edited."
-msgstr "Dieses Lagerobjekt hat keine Kinder"
+msgstr ""
+"Dieses Lagerobjekt wird gerade hergestellt und kann nicht geändert werden."
 
 #: stock/templates/stock/item_base.html:32
 msgid "Edit the stock item from the build view."
 msgstr ""
 
 #: stock/templates/stock/item_base.html:45
-#, fuzzy
-#| msgid "This stock item does not have any child items"
 msgid "This stock item has not passed all required tests"
-msgstr "Dieses Lagerobjekt hat keine Kinder"
+msgstr "Dieses Lagerobjekt hat nicht alle Tests bestanden"
 
 #: stock/templates/stock/item_base.html:51
 msgid "This stock item is allocated to Sales Order"
-msgstr "Dieses Lagerobjekt ist dem Auftrag zugewiesen"
+msgstr "Dieses Lagerobjekt ist dem VK-Auftrag zugewiesen"
 
 #: stock/templates/stock/item_base.html:57
 msgid "This stock item is allocated to Build"
@@ -5034,44 +5027,38 @@ msgstr ""
 #: stock/templates/stock/item_base.html:91
 #: stock/templates/stock/item_base.html:347 templates/js/table_filters.js:118
 msgid "Expired"
-msgstr ""
+msgstr "abgelaufen"
 
 #: stock/templates/stock/item_base.html:95
 #: stock/templates/stock/item_base.html:349 templates/js/table_filters.js:123
 msgid "Stale"
-msgstr ""
+msgstr "überfällig"
 
 #: stock/templates/stock/item_base.html:132 templates/js/barcode.js:309
 #: templates/js/barcode.js:314
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Barcode abhängen"
 
 #: stock/templates/stock/item_base.html:134
 msgid "Link Barcode"
-msgstr ""
+msgstr "Barcode anhängen"
 
 #: stock/templates/stock/item_base.html:136 templates/stock_table.html:31
-#, fuzzy
-#| msgid "Stock Location"
 msgid "Scan to Location"
-msgstr "Lagerort"
+msgstr "zu Lagerort einscannen"
 
 #: stock/templates/stock/item_base.html:143
-#, fuzzy
-#| msgid "Source Location"
 msgid "Printing actions"
-msgstr "Quell-Standort"
+msgstr "Druck Aktionen"
 
 #: stock/templates/stock/item_base.html:147
 #: stock/templates/stock/item_tests.html:27
 msgid "Test Report"
-msgstr ""
+msgstr "Test Report"
 
 #: stock/templates/stock/item_base.html:156
-#, fuzzy
-#| msgid "Confirm stock adjustment"
 msgid "Stock adjustment actions"
-msgstr "Bestands-Anpassung bestätigen"
+msgstr "Bestands-Anpassungs Aktionen"
 
 #: stock/templates/stock/item_base.html:160
 #: stock/templates/stock/location.html:58 templates/stock_table.html:55
@@ -5087,28 +5074,20 @@ msgid "Remove stock"
 msgstr "Bestand entfernen"
 
 #: stock/templates/stock/item_base.html:164
-#, fuzzy
-#| msgid "Order stock"
 msgid "Transfer stock"
-msgstr "Bestand bestellen"
+msgstr "Bestand transferieren"
 
 #: stock/templates/stock/item_base.html:166
-#, fuzzy
-#| msgid "Serialize Stock"
 msgid "Serialize stock"
-msgstr "Lagerbestand erfassen"
+msgstr "Lagerbestand serialisieren"
 
 #: stock/templates/stock/item_base.html:170
-#, fuzzy
-#| msgid "Item assigned to customer?"
 msgid "Assign to customer"
-msgstr "Ist dieses Objekt einem Kunden zugeteilt?"
+msgstr "zu Kunden zuordnen"
 
 #: stock/templates/stock/item_base.html:173
-#, fuzzy
-#| msgid "Count stock"
 msgid "Return to stock"
-msgstr "Bestand zählen"
+msgstr "zurück ins Lager"
 
 #: stock/templates/stock/item_base.html:177 templates/js/stock.js:1218
 #, fuzzy
@@ -5122,32 +5101,22 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:186
 #: stock/templates/stock/location.html:55
-#, fuzzy
-#| msgid "Stock Locations"
 msgid "Stock actions"
-msgstr "Lagerobjekt-Standorte"
+msgstr "Lagerobjekt Aktionen"
 
 #: stock/templates/stock/item_base.html:189
-#, fuzzy
-#| msgid "Count stock items"
 msgid "Convert to variant"
-msgstr "Lagerobjekte zählen"
+msgstr "in Variante ändern"
 
 #: stock/templates/stock/item_base.html:192
-#, fuzzy
-#| msgid "Count stock items"
 msgid "Duplicate stock item"
-msgstr "Lagerobjekte zählen"
+msgstr "Lagerobjekt duplizieren"
 
 #: stock/templates/stock/item_base.html:194
-#, fuzzy
-#| msgid "Edit Stock Item"
 msgid "Edit stock item"
 msgstr "Lagerobjekt bearbeiten"
 
 #: stock/templates/stock/item_base.html:197
-#, fuzzy
-#| msgid "Delete Stock Item"
 msgid "Delete stock item"
 msgstr "Lagerobjekt löschen"
 
@@ -5156,16 +5125,12 @@ msgid "Stock Item Details"
 msgstr "Lagerbestands-Details"
 
 #: stock/templates/stock/item_base.html:268 templates/js/build.js:442
-#, fuzzy
-#| msgid "No stock location set"
 msgid "No location set"
 msgstr "Kein Lagerort gesetzt"
 
 #: stock/templates/stock/item_base.html:275
-#, fuzzy
-#| msgid "Unique Identifier"
 msgid "Barcode Identifier"
-msgstr "Eindeutiger Bezeichner"
+msgstr "Barcode Bezeichner"
 
 #: stock/templates/stock/item_base.html:296 templates/InvenTree/search.html:167
 #: templates/js/build.js:655 templates/navbar.html:29
@@ -5177,16 +5142,12 @@ msgid "Parent Item"
 msgstr "Elternposition"
 
 #: stock/templates/stock/item_base.html:347
-#, fuzzy
-#| msgid "This stock item is allocated to Build"
 msgid "This StockItem expired on"
-msgstr "Dieses Lagerobjekt ist dem Bau zugewiesen"
+msgstr "Dieses Lagerobjekt lief ab am"
 
 #: stock/templates/stock/item_base.html:349
-#, fuzzy
-#| msgid "Child Stock Items"
 msgid "This StockItem expires on"
-msgstr "Kind-Lagerobjekte"
+msgstr "Dieses Lagerobjekt läuft ab am"
 
 #: stock/templates/stock/item_base.html:356 templates/js/stock.js:658
 msgid "Last Updated"
@@ -5209,10 +5170,8 @@ msgid "This stock item does not have any child items"
 msgstr "Dieses Lagerobjekt hat keine Kinder"
 
 #: stock/templates/stock/item_delete.html:9
-#, fuzzy
-#| msgid "Are you sure you want to delete this attachment?"
 msgid "Are you sure you want to delete this stock item?"
-msgstr "Sind Sie sicher, dass Sie diesen Anhang löschen wollen?"
+msgstr "Sind Sie sicher, dass Sie dieses Lagerobjekt löschen wollen?"
 
 #: stock/templates/stock/item_install.html:7
 #, fuzzy
@@ -5323,13 +5282,15 @@ msgstr "Objekt-Details"
 #: stock/templates/stock/location.html:110 templates/InvenTree/search.html:263
 #: templates/stats.html:52 users/models.py:34
 msgid "Stock Locations"
-msgstr "Lagerobjekt-Standorte"
+msgstr "Lagerorte"
 
 #: stock/templates/stock/location_delete.html:7
-#, fuzzy
-#| msgid "Are you sure you want to delete this attachment?"
 msgid "Are you sure you want to delete this stock location?"
-msgstr "Sind Sie sicher, dass Sie diesen Anhang löschen wollen?"
+msgstr "Sind Sie sicher, dass Sie diesen Lagerort löschen wollen?"
+
+#: stock/templates/stock/location_list.html:6
+msgid "Sub-Locations"
+msgstr "Unter-Lagerorte"
 
 #: stock/templates/stock/navbar.html:11
 #, fuzzy
