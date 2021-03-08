@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-08 17:45+0100\n"
+"POT-Creation-Date: 2021-03-09 00:45+0100\n"
 "PO-Revision-Date: 2021-03-06 15:16+0100\n"
 "Last-Translator: Andreas Kaiser <kaiser.vocote@gmail.com>\n"
 "Language-Team: C <kde-i18n-doc@kde.org>\n"
@@ -2055,8 +2055,6 @@ msgid "Supplier List"
 msgstr "Zuliefererliste"
 
 #: company/templates/company/navbar.html:20
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplied Parts"
 msgstr "Zulieferer-Teile"
 
@@ -2081,7 +2079,9 @@ msgstr "Lagerobjekte"
 
 #: company/templates/company/navbar.html:30
 #: company/templates/company/part_navbar.html:14
-#: part/templates/part/navbar.html:36 stock/templates/stock/location.html:29
+#: part/templates/part/navbar.html:36 stock/templates/stock/loc_link.html:7
+#: stock/templates/stock/location.html:29
+#: stock/templates/stock/stock_app_base.html:9
 #: templates/InvenTree/index.html:127 templates/InvenTree/search.html:180
 #: templates/InvenTree/search.html:216
 #: templates/InvenTree/settings/tabs.html:28 templates/js/part.js:172
@@ -4459,26 +4459,18 @@ msgid "Part category was deleted"
 msgstr "Teilekategorie wurde gelöscht"
 
 #: part/views.py:2201
-#, fuzzy
-#| msgid "Create Part Parameter Template"
 msgid "Create Category Parameter Template"
-msgstr "Teilparametervorlage anlegen"
+msgstr "Kategorieparametervorlage anlegen"
 
 #: part/views.py:2302
-#, fuzzy
-#| msgid "Edit Part Parameter Template"
 msgid "Edit Category Parameter Template"
-msgstr "Teilparametervorlage bearbeiten"
+msgstr "Kategorieparametervorlage bearbeiten"
 
 #: part/views.py:2358
-#, fuzzy
-#| msgid "Delete Part Parameter Template"
 msgid "Delete Category Parameter Template"
-msgstr "Teilparametervorlage löschen"
+msgstr "Kategorieparametervorlage löschen"
 
 #: part/views.py:2377
-#, fuzzy
-#| msgid "Create BOM item"
 msgid "Create BOM Item"
 msgstr "BOM-Position anlegen"
 
@@ -4488,63 +4480,51 @@ msgstr "BOM-Position beaarbeiten"
 
 #: part/views.py:2503
 msgid "Confim BOM item deletion"
-msgstr "Löschung von BOM-Position bestätigen"
+msgstr "löschen von BOM-Position bestätigen"
 
 #: report/models.py:163
-#, fuzzy
-#| msgid "Template part"
 msgid "Template name"
-msgstr "Vorlagenteil"
+msgstr "Vorlage Name"
 
 #: report/models.py:169
 msgid "Report template file"
 msgstr "Report Vorlage Datei"
 
 #: report/models.py:176
-#, fuzzy
-#| msgid "Supplier part description"
 msgid "Report template description"
-msgstr "Zuliefererbeschreibung des Teils"
+msgstr "Report Vorlage Beschreibung"
 
 #: report/models.py:182
 msgid "Report revision number (auto-increments)"
 msgstr "Report Revisionsnummer (autom. erhöht)"
 
 #: report/models.py:258
-#, fuzzy
-#| msgid "Supplier part description"
 msgid "Report template is enabled"
-msgstr "Zuliefererbeschreibung des Teils"
+msgstr "Report Vorlage ist ein"
 
 #: report/models.py:278
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
 #: report/models.py:286
-#, fuzzy
-#| msgid "Installed In"
 msgid "Include Installed Tests"
-msgstr "Installiert in"
+msgstr "einfügen Installiert in Tests"
 
 #: report/models.py:287
 msgid "Include test results for stock items installed inside assembled item"
 msgstr ""
 
 #: report/models.py:330
-#, fuzzy
-#| msgid "Build Notes"
 msgid "Build Filters"
-msgstr "Bau-Bemerkungen"
+msgstr "Bau Filter"
 
 #: report/models.py:331
 msgid "Build query filters (comma-separated list of key=value pairs"
 msgstr ""
 
 #: report/models.py:368
-#, fuzzy
-#| msgid "Part Notes"
 msgid "Part Filters"
-msgstr "Teil-Bemerkungen"
+msgstr "Teil Filter"
 
 #: report/models.py:369
 msgid "Part query filters (comma-separated list of key=value pairs"
@@ -4571,22 +4551,16 @@ msgid "Asset file description"
 msgstr "Einstellungs-Beschreibung"
 
 #: report/templates/report/inventree_build_order_base.html:150
-#, fuzzy
-#| msgid "Required"
 msgid "Required For"
-msgstr "benötigt"
+msgstr "benötigt für"
 
 #: report/templates/report/inventree_test_report_base.html:21
-#, fuzzy
-#| msgid "StockItem is lost"
 msgid "Stock Item Test Report"
-msgstr "Lagerobjekt verloren"
+msgstr "Lagerobjekte Test Report"
 
 #: report/templates/report/inventree_test_report_base.html:83
-#, fuzzy
-#| msgid "Edit Template"
 msgid "Test Results"
-msgstr "Vorlage bearbeiten"
+msgstr "Testergebnisse"
 
 #: report/templates/report/inventree_test_report_base.html:88
 #: stock/models.py:1638
@@ -4595,10 +4569,8 @@ msgstr "Test"
 
 #: report/templates/report/inventree_test_report_base.html:89
 #: stock/models.py:1644
-#, fuzzy
-#| msgid "Search Results"
 msgid "Result"
-msgstr "Suchergebnisse"
+msgstr "Ergebnis"
 
 #: report/templates/report/inventree_test_report_base.html:92
 #: templates/js/order.js:195 templates/js/stock.js:905
@@ -4618,56 +4590,40 @@ msgid "Enter unique serial numbers (or leave blank)"
 msgstr "Eindeutige Seriennummern eingeben (oder leer lassen)"
 
 #: stock/forms.py:202 stock/forms.py:258
-#, fuzzy
-#| msgid "Select stock item to allocate"
 msgid "Select test report template"
-msgstr "Lagerobjekt für Zuordnung auswählen"
+msgstr "Test Report Vorlage auswählen"
 
 #: stock/forms.py:266
 msgid "Include stock items in sub locations"
 msgstr "Lagerobjekte in untergeordneten Lagerorten einschließen"
 
 #: stock/forms.py:301
-#, fuzzy
-#| msgid "No stock items matching query"
 msgid "Stock item to install"
-msgstr "Keine zur Anfrage passenden Lagerobjekte"
+msgstr "Lagerobjekte zum verbauen"
 
 #: stock/forms.py:308
-#, fuzzy
-#| msgid "Stock Quantity"
 msgid "Stock quantity to assign"
-msgstr "Bestand"
+msgstr "Bestandmenge zum Zuweisen"
 
 #: stock/forms.py:336
-#, fuzzy
-#| msgid "Quantity must not exceed available stock quantity ({n})"
 msgid "Must not exceed available quantity"
-msgstr "Anzahl darf nicht die verfügbare Anzahl überschreiten ({n})"
+msgstr "Anzahl darf die verfügbare Anzahl nicht überschreiten"
 
 #: stock/forms.py:346
-#, fuzzy
-#| msgid "Does this part have tracking for unique items?"
 msgid "Destination location for uninstalled items"
-msgstr "Hat dieses Teil Tracking für einzelne Objekte?"
+msgstr "Ziel Lagerort für unverbaute Objekte"
 
 #: stock/forms.py:348
-#, fuzzy
-#| msgid "Description of the company"
 msgid "Add transaction note (optional)"
-msgstr "Firmenbeschreibung"
+msgstr "hinzufügen Transaktionsnotizen (optional)"
 
 #: stock/forms.py:350
-#, fuzzy
-#| msgid "Confirm stock allocation"
 msgid "Confirm uninstall"
-msgstr "Lagerbestandszuordnung bestätigen"
+msgstr "nicht mehr verbauen bestätigen"
 
 #: stock/forms.py:350
-#, fuzzy
-#| msgid "Confirm movement of stock items"
 msgid "Confirm removal of installed stock items"
-msgstr "Bewegung der Lagerobjekte bestätigen"
+msgstr "entfernen der verbauten Lagerobjekte bestätigen"
 
 #: stock/forms.py:374
 msgid "Destination stock location"
@@ -4686,8 +4642,6 @@ msgid "Confirm movement of stock items"
 msgstr "Bewegung der Lagerobjekte bestätigen"
 
 #: stock/forms.py:382
-#, fuzzy
-#| msgid "Default Location"
 msgid "Set Default Location"
 msgstr "Standard-Lagerort"
 
@@ -4696,16 +4650,12 @@ msgid "Set the destination as the default location for selected parts"
 msgstr "Setze das Ziel als Standard-Ziel für ausgewählte Teile"
 
 #: stock/models.py:204
-#, fuzzy
-#| msgid "Created new stock item"
 msgid "Created stock item"
 msgstr "Neues Lagerobjekt erstellt"
 
 #: stock/models.py:240
-#, fuzzy
-#| msgid "A stock item with this serial number already exists"
 msgid "StockItem with this serial number already exists"
-msgstr "Ein Teil mit dieser Seriennummer existiert bereits"
+msgstr "Ein Lagerobjekt mit dieser Seriennummer existiert bereits"
 
 #: stock/models.py:276
 #, python-brace-format
@@ -4714,12 +4664,12 @@ msgstr "Teile-Typ ('{pf}') muss {pe} sein"
 
 #: stock/models.py:286 stock/models.py:295
 msgid "Quantity must be 1 for item with a serial number"
-msgstr "Anzahl muss für Objekte mit Seriennummer \"1\" sein"
+msgstr "Anzahl muss für Objekte mit Seriennummer 1 sein"
 
 #: stock/models.py:287
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr ""
-"Seriennummer kann nicht gesetzt werden wenn die Anzahl größer als \"1\" ist"
+"Seriennummer kann nicht gesetzt werden wenn die Anzahl größer als 1 ist"
 
 #: stock/models.py:309
 msgid "Item cannot belong to itself"
@@ -4754,14 +4704,12 @@ msgid "Where is this stock item located?"
 msgstr "Wo wird dieses Teil normalerweise gelagert?"
 
 #: stock/models.py:395
-#, fuzzy
-#| msgid "This stock item is allocated to Build"
 msgid "Packaging this stock item is stored in"
-msgstr "Dieses Lagerobjekt ist dem Bau zugewiesen"
+msgstr "Die Verpackung dieses Lagerartikels ist gespeichert in"
 
 #: stock/models.py:400 stock/templates/stock/item_base.html:249
 msgid "Installed In"
-msgstr "Installiert in"
+msgstr "verbaut in"
 
 #: stock/models.py:403
 msgid "Is this item installed in another item?"
@@ -4797,7 +4745,7 @@ msgstr "EK-Bestellung für dieses Teil"
 
 #: stock/models.py:466
 msgid "Destination Sales Order"
-msgstr "Zielauftrag"
+msgstr "für VK-Auftrag"
 
 #: stock/models.py:472 stock/templates/stock/item_base.html:343
 #: templates/js/stock.js:652
@@ -4808,6 +4756,8 @@ msgstr "Ablaufdatum"
 msgid ""
 "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr ""
+"Ablaufdatum für Lagerobjekt. Bestand wird danach als abgelaufen "
+"gekennzeichnet"
 
 #: stock/models.py:486
 msgid "Delete this Stock Item when stock is depleted"
@@ -4823,58 +4773,40 @@ msgid "Single unit purchase price at time of purchase"
 msgstr "EK-Preis für eine Einheit bei EK-Datum"
 
 #: stock/models.py:610
-#, fuzzy
-#| msgid "Item assigned to customer?"
 msgid "Assigned to Customer"
-msgstr "Ist dieses Objekt einem Kunden zugeteilt?"
+msgstr "zugewiesen zum Kunden"
 
 #: stock/models.py:612
-#, fuzzy
-#| msgid "Item assigned to customer?"
 msgid "Manually assigned to customer"
-msgstr "Ist dieses Objekt einem Kunden zugeteilt?"
+msgstr "manuell zugewiesen zum Kunden"
 
 #: stock/models.py:625
-#, fuzzy
-#| msgid "Item assigned to customer?"
 msgid "Returned from customer"
-msgstr "Ist dieses Objekt einem Kunden zugeteilt?"
+msgstr "zurück vom Kunden"
 
 #: stock/models.py:627
-#, fuzzy
-#| msgid "Create new stock location"
 msgid "Returned to location"
-msgstr "Neuen Lagerort anlegen"
+msgstr "zurück ins Lager"
 
 #: stock/models.py:787
-#, fuzzy
-#| msgid "Installed in Stock Item"
 msgid "Installed into stock item"
-msgstr "In Lagerobjekt installiert"
+msgstr "Im Lagerobjekt verbaut"
 
 #: stock/models.py:795
-#, fuzzy
-#| msgid "Installed in Stock Item"
 msgid "Installed stock item"
-msgstr "In Lagerobjekt installiert"
+msgstr "verbautes Lagerobjekt"
 
 #: stock/models.py:819
-#, fuzzy
-#| msgid "Installed in Stock Item"
 msgid "Uninstalled stock item"
-msgstr "In Lagerobjekt installiert"
+msgstr "unverbautes Lagerobjekt"
 
 #: stock/models.py:838
-#, fuzzy
-#| msgid "Include sublocations"
 msgid "Uninstalled into location"
-msgstr "Unterlagerorte einschließen"
+msgstr "verbaut in Lagerort"
 
 #: stock/models.py:939
-#, fuzzy
-#| msgid "Part is not a virtual part"
 msgid "Part is not set as trackable"
-msgstr "Teil ist nicht virtuell"
+msgstr "Teil ist nicht verfolgbar"
 
 #: stock/models.py:945
 msgid "Quantity must be integer"
@@ -4903,10 +4835,8 @@ msgid "Serialized {n} items"
 msgstr "{n} Teile serialisiert"
 
 #: stock/models.py:1070
-#, fuzzy
-#| msgid "Select from existing images"
 msgid "Split from existing stock"
-msgstr "Aus vorhandenen Bildern auswählen"
+msgstr "aufteilen vom vorhandenen Bestand"
 
 #: stock/models.py:1108
 msgid "StockItem cannot be moved as it is not in stock"
@@ -4914,7 +4844,7 @@ msgstr "Lagerobjekt kann nicht bewegt werden, da kein Bestand vorhanden ist"
 
 #: stock/models.py:1551
 msgid "Tracking entry title"
-msgstr "Name des Eintrags-Trackings"
+msgstr "Objektverfolgung - Name des Eintrags"
 
 #: stock/models.py:1553
 msgid "Entry notes"
@@ -4925,20 +4855,16 @@ msgid "Link to external page for further information"
 msgstr "Link auf externe Seite für weitere Informationen"
 
 #: stock/models.py:1615
-#, fuzzy
-#| msgid "Serial number for this item"
 msgid "Value must be provided for this test"
-msgstr "Seriennummer für dieses Teil"
+msgstr "Wert muss für diesen Test angegeben werden"
 
 #: stock/models.py:1621
 msgid "Attachment must be uploaded for this test"
-msgstr ""
+msgstr "Anhang muss für diesen Test hochgeladen werden"
 
 #: stock/models.py:1639
-#, fuzzy
-#| msgid "Part name"
 msgid "Test name"
-msgstr "Name des Teils"
+msgstr "Name des Tests"
 
 #: stock/models.py:1645 templates/js/table_filters.js:185
 msgid "Test result"
@@ -4946,19 +4872,15 @@ msgstr "Testergebnis"
 
 #: stock/models.py:1651
 msgid "Test output value"
-msgstr ""
+msgstr "Test Ausgabe Wert"
 
 #: stock/models.py:1657
-#, fuzzy
-#| msgid "Attachments"
 msgid "Attachment"
-msgstr "Anhänge"
+msgstr "Anhang"
 
 #: stock/models.py:1658
-#, fuzzy
-#| msgid "Delete attachment"
 msgid "Test result attachment"
-msgstr "Anhang löschen"
+msgstr "Test Ergebnis Anhang"
 
 #: stock/models.py:1664
 msgid "Test notes"
@@ -4991,7 +4913,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:32
 msgid "Edit the stock item from the build view."
-msgstr ""
+msgstr "ändern des Lagerobjekts in der Bau Ansicht."
 
 #: stock/templates/stock/item_base.html:45
 msgid "This stock item has not passed all required tests"
@@ -5292,21 +5214,25 @@ msgstr "Sind Sie sicher, dass Sie diesen Lagerort löschen wollen?"
 msgid "Sub-Locations"
 msgstr "Unter-Lagerorte"
 
+#. Translators: pluralize with counter
+#: stock/templates/stock/location_list.html:17
+#, python-format
+msgid "%(counter)s Item"
+msgid_plural "%(counter)s Items"
+msgstr[0] "%(counter)s Objekt"
+msgstr[1] "%(counter)s Objekte"
+
 #: stock/templates/stock/navbar.html:11
-#, fuzzy
-#| msgid "Stock Item Details"
 msgid "Stock Item Tracking"
-msgstr "Lagerbestands-Details"
+msgstr "Lagerobjektverfolgung"
 
 #: stock/templates/stock/navbar.html:14
 msgid "History"
 msgstr "Geschichte"
 
 #: stock/templates/stock/navbar.html:30
-#, fuzzy
-#| msgid "Installed In"
 msgid "Installed Items"
-msgstr "Installiert in"
+msgstr "verbaute Objekte"
 
 #: stock/templates/stock/navbar.html:38
 msgid "Child Items"
@@ -5321,10 +5247,8 @@ msgid "Loading..."
 msgstr "Lade..."
 
 #: stock/templates/stock/stock_uninstall.html:8
-#, fuzzy
-#| msgid "The following items will be created"
 msgid "The following stock items will be uninstalled"
-msgstr "Die folgenden Objekte werden erstellt"
+msgstr "Die folgenden Lagerobjekte werden nicht mehr verbaut"
 
 #: stock/templates/stock/stockitem_convert.html:7 stock/views.py:1331
 msgid "Convert Stock Item"

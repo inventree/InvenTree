@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-08 17:45+0100\n"
+"POT-Creation-Date: 2021-03-09 00:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1830,7 +1830,9 @@ msgstr ""
 
 #: company/templates/company/navbar.html:30
 #: company/templates/company/part_navbar.html:14
-#: part/templates/part/navbar.html:36 stock/templates/stock/location.html:29
+#: part/templates/part/navbar.html:36 stock/templates/stock/loc_link.html:7
+#: stock/templates/stock/location.html:29
+#: stock/templates/stock/stock_app_base.html:9
 #: templates/InvenTree/index.html:127 templates/InvenTree/search.html:180
 #: templates/InvenTree/search.html:216
 #: templates/InvenTree/settings/tabs.html:28 templates/js/part.js:172
@@ -4751,6 +4753,14 @@ msgstr ""
 #: stock/templates/stock/location_list.html:6
 msgid "Sub-Locations"
 msgstr ""
+
+#. Translators: pluralize with counter
+#: stock/templates/stock/location_list.html:17
+#, python-format
+msgid "%(counter)s Item"
+msgid_plural "%(counter)s Items"
+msgstr[0] ""
+msgstr[1] ""
 
 #: stock/templates/stock/navbar.html:11
 msgid "Stock Item Tracking"
