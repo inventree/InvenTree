@@ -13,7 +13,7 @@
 {% block details %}
 {% if part.is_template %}
 <div class='alert alert-info alert-block'>
-    Showing stock for all variants of <i>{{ part.full_name }}</i>
+    {% trans 'Showing stock for all variants of' %} <i>{{ part.full_name }}</i>
 </div>
 {% endif %}
 

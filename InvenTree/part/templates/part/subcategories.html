@@ -1,19 +1,20 @@
 {% extends "collapse.html" %}
+{% load i18n %}
 
 {% block collapse_title %}
-{{ children | length }} Child Categories
+{{ children | length }} {% trans 'Child Categories' %}
 {% endblock %}
 
 {% block collapse_content %}
 <ul class="list-group">
 {% for child in children %}
 <li class="list-group-item">
-    <b><a href="{% url 'category-detail' child.id %}">{{ child.name }}</a></b>
+    <strong><a href="{% url 'category-detail' child.id %}">{{ child.name }}</a></strong>
     {% if child.description %}
-    <i> - {{ child.description }}</i>
+    <em> - {{ child.description }}</em>
     {% endif %}
     {% if child.partcount > 0 %}
-    <span class='badge'>{{ child.partcount }} Part{% if child.partcount > 1 %}s{% endif %}</span>
+    <span class='badge'>{{ child.partcount }} {% trans 'Part' %}{% if child.partcount > 1 %}s{% endif %}</span>
     {% endif %}
 </li>
 {% endfor %}
