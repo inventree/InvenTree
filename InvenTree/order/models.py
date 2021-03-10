@@ -21,6 +21,7 @@ from markdownx.models import MarkdownxField
 
 from djmoney.models.fields import MoneyField
 
+from users import models as UserModels
 from part import models as PartModels
 from stock import models as stock_models
 from company.models import Company, SupplierPart
@@ -46,7 +47,7 @@ class Order(models.Model):
         created_by: User who created this order (automatically captured)
         issue_date: Date the order was issued
         complete_date: Date the order was completed
-
+        responsible: User (or group) responsible for managing the order
     """
 
     @classmethod
@@ -108,6 +109,15 @@ class Order(models.Model):
                                    blank=True, null=True,
                                    related_name='+'
                                    )
+
+    responsible = models.ForeignKey(
+        UserModels.Owner,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        help_text=_('User or group responsible for this order'),
+        verbose_name=_('Responsible'),
+        related_name='+',
+    )
 
     notes = MarkdownxField(blank=True, help_text=_('Order notes'))
 
