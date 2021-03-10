@@ -577,6 +577,15 @@ class POReportList(ReportListView, OrderReportMixin):
         return queryset
 
 
+class POReportDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for a single PurchaseOrderReport object
+    """
+
+    queryset = PurchaseOrderReport.objects.all()
+    serializer_class = POReportSerializer
+
+
 class SOReportList(ReportListView, OrderReportMixin):
 
     OrderModel = order.models.SalesOrder
@@ -634,11 +643,23 @@ class SOReportList(ReportListView, OrderReportMixin):
         return queryset
 
 
+class SOReportDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for a single SalesOrderReport object
+    """
+
+    queryset = SalesOrderReport.objects.all()
+    serializer_class = SOReportSerializer
+
+
 report_api_urls = [
 
     # Purchase order reports
     url(r'po/', include([
-        # Detail views.
+        # Detail views
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'^$', POReportDetail.as_view(), name='api-po-report-detail'),
+        ])),
 
         # List view
         url(r'^$', POReportList.as_view(), name='api-po-report-list'),
@@ -647,6 +668,9 @@ report_api_urls = [
     # Sales order reports
     url(r'so/', include([
         # Detail views
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'^$', SOReportDetail.as_view(), name='api-so-report-detail'),
+        ])),
 
         url(r'^$', SOReportList.as_view(), name='api-so-report-list'),
     ])),
@@ -656,7 +680,7 @@ report_api_urls = [
         # Detail views
         url(r'^(?P<pk>\d+)/', include([
             url(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
-            url(r'^.*$', BuildReportDetail.as_view(), name='api-build-report-detail'),
+            url(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
         ])),
 
         # List view
