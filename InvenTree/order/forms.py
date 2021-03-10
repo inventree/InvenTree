@@ -116,6 +116,7 @@ class EditPurchaseOrderForm(HelperForm):
             'description',
             'target_date',
             'link',
+            'responsible',
         ]
 
 
@@ -148,7 +149,8 @@ class EditSalesOrderForm(HelperForm):
             'customer_reference',
             'description',
             'target_date',
-            'link'
+            'link',
+            'responsible',
         ]
 
 
