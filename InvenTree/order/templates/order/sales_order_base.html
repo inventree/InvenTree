@@ -129,6 +129,13 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.complete_date }}<span class='badge'>{{ order.received_by }}</span></td>
     </tr>
     {% endif %}
+    {% if order.responsible %}
+    <tr>
+        <td><span class='fas fa-users'></span></td>
+        <td>{% trans "Responsible" %}</td>
+        <td>{{ order.responsible }}</td>
+    </tr>
+    {% endif %}
 </table>
 {% endblock %}
 
