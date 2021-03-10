@@ -59,7 +59,7 @@ function newPurchaseOrderFromOrderWizard(e) {
 
     var src = e.target || e.srcElement;
 
-    var supplier = $(src).attr('supplier-id');
+    var supplier = $(src).attr('supplierid');
 
     launchModalForm("/order/purchase-order/new/", {
         modal: '#modal-form-secondary',
