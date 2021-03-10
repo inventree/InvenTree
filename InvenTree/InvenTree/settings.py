@@ -414,11 +414,6 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     },
-    'qr-code': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'qr-code-cache',
-        'TIMEOUT': 3600
-    }
 }
 
 # Password validation
