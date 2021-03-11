@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 
 from .validators import validate_overage, validate_part_name
 from . import helpers
+from . import version
 
 from mptt.exceptions import InvalidMove
 
@@ -269,3 +270,15 @@ class TestSerialNumberExtraction(TestCase):
 
         with self.assertRaises(ValidationError):
             e("10, a, 7-70j", 4)
+
+
+class TestVersionNumber(TestCase):
+
+    def test_tuple(self):
+
+        v = version.inventreeVersionTuple()
+        self.assertEqual(len(v), 3)
+
+        s = '.'.join(v)
+
+        self.assertTrue(s in version.inventreeVersion())

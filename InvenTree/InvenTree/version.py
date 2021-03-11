@@ -4,8 +4,10 @@ Provides information on the current InvenTree version
 
 import subprocess
 import django
+import re
 
 import common.models
+
 
 INVENTREE_SW_VERSION = "0.1.8 pre"
 
@@ -22,6 +24,27 @@ def inventreeVersion():
     """ Returns the InvenTree version string """
     return INVENTREE_SW_VERSION
 
+
+def inventreeVersionTuple():
+    """ Return the InvenTree version string as (maj, min, sub) tuple """
+
+    match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", INVENTREE_SW_VERSION)
+
+    return [int(g) for g in match.groups()]
+
+
+def versionTupleToInt(version):
+    """
+    Convert a version tuple (x, y, z) to an integer.
+    This simple integer can then be used for direct version comparison
+    """
+
+    n = version[0] * 1000 * 1000
+    n += version[1] * 1000
+    n += version[2]
+
+    return n
+    
 
 def inventreeApiVersion():
     return INVENTREE_API_VERSION

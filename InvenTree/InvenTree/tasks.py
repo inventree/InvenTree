@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 import json
 import requests
 import logging
@@ -35,7 +36,7 @@ def schedule_task(taskname, **kwargs):
             **kwargs
         )
 
-        
+
 def delete_successful_tasks():
     """
     Delete successful task logs
@@ -49,6 +50,12 @@ def check_for_updates():
     Check if there is an update for InvenTree
     """
 
+    try:
+        import common.models
+        import InvenTree.version
+    except AppRegistryNotReady:
+        return
+
     response = requests.get('https://api.github.com/repos/inventree/inventree/releases/latest')
 
     if not response.status_code == 200:
@@ -57,12 +64,33 @@ def check_for_updates():
 
     data = json.loads(response.text)
 
-    print("Response:")
-    print(data)
-    # TODO 
+    tag = data.get('tag_name', None)
 
-    return data
+    if not tag:
+        logger.warning(f"'tag_name' missing from GitHub response")
+        return
 
+    match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", tag)
 
-def test(x):
-    print(f"Running at task! {x}")
+    if not len(match.groups()) == 3:
+        logger.warning(f"Version '{tag}' did not match expected pattern")
+        return
+
+    try:
+        latest_version = [int(x) for x in match.groups()]
+    except (ValueError):
+        logger.warning(f"Version '{tag}' not integer format")
+        return
+
+    if not len(latest_version) == 3:
+        logger.warning(f"Version '{tag}' is not correct format")
+        return
+
+    logger.info(f"Latest InvenTree version: '{tag}'")
+
+    # Save the version to the database
+    common.models.InvenTreeSetting.set_setting(
+        'INVENTREE_LATEST_VERSION',
+        tag,
+        None
+    )
