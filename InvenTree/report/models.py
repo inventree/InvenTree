@@ -425,6 +425,7 @@ class PurchaseOrderReport(ReportTemplateBase):
 
         return {
             'description': order.description,
+            'lines': order.lines,
             'order': order,
             'reference': order.reference,
             'supplier': order.supplier,
@@ -459,6 +460,7 @@ class SalesOrderReport(ReportTemplateBase):
         return {
             'customer': order.customer,
             'description': order.description,
+            'lines': order.lines,
             'order': order,
             'prefix': common.models.InvenTreeSetting.get_setting('SALESORDER_REFERENCE_PREFIX'),
             'reference': order.reference,
