@@ -139,8 +139,9 @@ function loadPurchaseOrderTable(table, options) {
         columns: [
             {
                 field: 'pk',
-                title: 'ID',
-                visible: false,
+                title: '',
+                visible: true,
+                checkbox: true,
                 switchable: false,
             },
             {
@@ -235,8 +236,9 @@ function loadSalesOrderTable(table, options) {
         columns: [
             {
                 field: 'pk',
-                title: 'ID',
-                visible: false,
+                title: '',
+                checkbox: true,
+                visible: true,
                 switchable: false,
             },
             {
