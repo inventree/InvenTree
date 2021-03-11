@@ -35,7 +35,10 @@ src="{% static 'img/blank_image.png' %}"
 <hr>
 <p>{{ order.description }}</p>
 <div class='btn-row'>
-    <div class='btn-group action-buttons'>
+    <div class='btn-group action-buttons' role='group'>
+        <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
+            <span class='fas fa-print'></span> 
+        </button>
         {% if roles.purchase_order.change %}
         <button type='button' class='btn btn-default' id='edit-order' title='{% trans "Edit order information" %}'>
             <span class='fas fa-edit icon-green'></span>
@@ -148,6 +151,10 @@ $("#place-order").click(function() {
     });
 });
 {% endif %}
+
+$('#print-order-report').click(function() {
+    printPurchaseOrderReports([{{ order.pk }}]);
+});
 
 $("#edit-order").click(function() {
     launchModalForm("{% url 'po-edit' order.id %}",

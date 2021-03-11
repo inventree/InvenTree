@@ -555,8 +555,8 @@ class POReportList(ReportListView, OrderReportMixin):
                 except:
                     continue
 
-                for order in orders:
-                    order_query = order.models.PurchaseOrder.objects.filter(pk=order.pk)
+                for o in orders:
+                    order_query = order.models.PurchaseOrder.objects.filter(pk=o.pk)
 
                     try:
                         if not order_query.filter(**filters).exists():
@@ -638,8 +638,8 @@ class SOReportList(ReportListView, OrderReportMixin):
                 except:
                     continue
 
-                for order in orders:
-                    order_query = order.models.SalesOrder.objects.filter(pk=order.pk)
+                for o in orders:
+                    order_query = order.models.SalesOrder.objects.filter(pk=o.pk)
 
                     try:
                         if not order_query.filter(**filters).exists():
