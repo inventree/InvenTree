@@ -42,6 +42,8 @@ def health_status(request):
 
     status['system_healthy'] = all_healthy
 
+    status['up_to_date'] = InvenTree.version.isInvenTreeUpToDate()
+
     return status
 
 

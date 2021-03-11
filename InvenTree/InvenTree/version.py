@@ -25,10 +25,13 @@ def inventreeVersion():
     return INVENTREE_SW_VERSION
 
 
-def inventreeVersionTuple():
+def inventreeVersionTuple(version=None):
     """ Return the InvenTree version string as (maj, min, sub) tuple """
 
-    match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", INVENTREE_SW_VERSION)
+    if version is None:
+        version = INVENTREE_SW_VERSION
+
+    match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", str(version))
 
     return [int(g) for g in match.groups()]
 
@@ -44,7 +47,30 @@ def versionTupleToInt(version):
     n += version[2]
 
     return n
-    
+
+
+def isInvenTreeUpToDate():
+    """
+    Test if the InvenTree instance is "up to date" with the latest version.
+
+    A background task periodically queries GitHub for latest version,
+    and stores it to the database as INVENTREE_LATEST_VERSION
+    """
+
+    latest = common.models.InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION', None)
+
+    # No record for "latest" version - we must assume we are up to date!
+    if not latest:
+        return True
+
+    # Extract "tuple" version
+    version = inventreeVersionTuple(latest)
+    version_int = versionTupleToInt(version)
+
+    inventree_int = versionTupleToInt(inventreeVersionTuple())
+
+    return inventree_int >= version_int
+
 
 def inventreeApiVersion():
     return INVENTREE_API_VERSION
