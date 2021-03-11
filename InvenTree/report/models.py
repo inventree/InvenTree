@@ -424,8 +424,12 @@ class PurchaseOrderReport(ReportTemplateBase):
         order = self.object_to_print
 
         return {
+            'description': order.description,
             'order': order,
+            'reference': order.reference,
             'supplier': order.supplier,
+            'prefix': common.models.InvenTreeSetting.get_setting('PURCHASEORDER_REFERENCE_PREFIX'),
+            'title': str(order),
         }
 
 
@@ -453,8 +457,12 @@ class SalesOrderReport(ReportTemplateBase):
         order = self.object_to_print
 
         return {
-            'order': order,
             'customer': order.customer,
+            'description': order.description,
+            'order': order,
+            'prefix': common.models.InvenTreeSetting.get_setting('SALESORDER_REFERENCE_PREFIX'),
+            'reference': order.reference,
+            'title': str(order),
         }
 
 
