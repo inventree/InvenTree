@@ -188,13 +188,13 @@ INSTALLED_APPS = [
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
     'company.apps.CompanyConfig',
-    'InvenTree.apps.InvenTreeConfig',
     'label.apps.LabelConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
+    'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
