@@ -141,9 +141,9 @@ class OrderReportMixin:
 
         valid_ids = []
 
-        for order in orders:
+        for o in orders:
             try:
-                valid_ids.append(int(order))
+                valid_ids.append(int(o))
             except (ValueError):
                 pass
 
