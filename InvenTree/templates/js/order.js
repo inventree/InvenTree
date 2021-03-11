@@ -138,7 +138,6 @@ function loadPurchaseOrderTable(table, options) {
         formatNoMatches: function() { return '{% trans "No purchase orders found" %}'; },
         columns: [
             {
-                field: 'pk',
                 title: '',
                 visible: true,
                 checkbox: true,
@@ -235,7 +234,6 @@ function loadSalesOrderTable(table, options) {
         formatNoMatches: function() { return '{% trans "No sales orders found" %}'; },
         columns: [
             {
-                field: 'pk',
                 title: '',
                 checkbox: true,
                 visible: true,
