@@ -669,7 +669,6 @@ class StockList(generics.ListCreateAPIView):
         assembly = params.get('assembly', None)
 
         if assembly is not None:
-            print('ASSEMBLY')
             assembly = str2bool(assembly)
             queryset = queryset.filter(part__assembly=assembly)
 
