@@ -55,7 +55,7 @@ def check_system_health(**kwargs):
 
     if not is_q_cluster_running(**kwargs):
         result = False
-        logger.warning(_("Celery worker check failed"))
+        logger.warning(_("Background worker check failed"))
 
     if not result:
         logger.warning(_("InvenTree system health checks failed"))
