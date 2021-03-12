@@ -8,6 +8,7 @@ from django import template
 from django.conf import settings
 from django.utils.safestring import mark_safe
 
+from company.models import Company
 from part.models import Part
 from stock.models import StockItem
 
@@ -71,6 +72,39 @@ def part_image(part):
 
         return f"file://{path}"
 
+
+@register.simple_tag()
+def company_image(company):
+    """
+    Return a fully-qualified path for a company image
+    """
+
+    # If in debug mode, return the URL to the image, not a local file
+    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+
+    if type(company) is Company:
+        img = company.image.name
+    else:
+        img = ''
+
+    if debug_mode:
+        if img:
+            return os.path.join(settings.MEDIA_URL, img)
+        else:
+            return os.path.join(settings.STATIC_URL, 'img', 'blank_image.png')
+
+    else:
+        path = os.path.join(settings.MEDIA_ROOT, img)
+        path = os.path.abspath(path)
+
+        if not os.path.exists(path) or not os.path.isfile(path):
+            # Image does not exist
+            # Return the 'blank' image
+            path = os.path.join(settings.STATIC_ROOT, 'img', 'blank_image.png')
+            path = os.path.abspath(path)
+
+        return f"file://{path}"
+        
 
 @register.simple_tag()
 def internal_link(link, text):
