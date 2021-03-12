@@ -7,7 +7,9 @@ import requests
 import logging
 
 from datetime import datetime, timedelta
+
 from django.core.exceptions import AppRegistryNotReady
+from django.db.utils import OperationalError, ProgrammingError
 
 
 logger = logging.getLogger(__name__)
@@ -25,15 +27,19 @@ def schedule_task(taskname, **kwargs):
         logger.warning("Could not start background tasks - App registry not ready")
         return
 
-    if Schedule.objects.filter(func=taskname).exists():
-        logger.info(f"Scheduled task '{taskname}' already exists. (Skipping)")
-    else:
-        logger.info(f"Creating scheduled task '{taskname}'")
+    try:
+        if Schedule.objects.filter(func=taskname).exists():
+            logger.info(f"Scheduled task '{taskname}' already exists. (Skipping)")
+        else:
+            logger.info(f"Creating scheduled task '{taskname}'")
 
-        Schedule.objects.create(
-            func=taskname,
-            **kwargs
-        )
+            Schedule.objects.create(
+                func=taskname,
+                **kwargs
+            )
+    except (OperationalError, ProgrammingError):
+        # Required if the DB is not ready yet
+        pass
 
 
 def heartbeat():
