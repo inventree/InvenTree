@@ -132,6 +132,13 @@ class RuleSet(models.Model):
         'error_report_error',
         'exchange_rate',
         'exchange_exchangebackend',
+
+        # Django-q
+        'django_q_ormq',
+        'django_q_failure',
+        'django_q_task',
+        'django_q_schedule',
+        'django_q_success',
     ]
 
     RULE_OPTIONS = [
