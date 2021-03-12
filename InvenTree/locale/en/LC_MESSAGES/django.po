@@ -350,7 +350,7 @@ msgid "Enter serial numbers for build outputs"
 msgstr ""
 
 #: build/forms.py:98
-msgid "Confirm creation of build outut"
+msgid "Confirm creation of build output"
 msgstr ""
 
 #: build/forms.py:118

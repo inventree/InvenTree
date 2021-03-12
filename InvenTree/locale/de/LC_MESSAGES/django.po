@@ -351,7 +351,7 @@ msgid "Enter serial numbers for build outputs"
 msgstr "Seriennummer für dieses hergestelltes Teil eingeben"
 
 #: build/forms.py:98
-msgid "Confirm creation of build outut"
+msgid "Confirm creation of build output"
 msgstr "Anlage Baufertigstellung bestätigen"
 
 #: build/forms.py:118

@@ -95,7 +95,7 @@ class BuildOutputCreateForm(HelperForm):
     confirm = forms.BooleanField(
         required=True,
         label=_('Confirm'),
-        help_text=_('Confirm creation of build outut'),
+        help_text=_('Confirm creation of build output'),
     )
 
     class Meta:
