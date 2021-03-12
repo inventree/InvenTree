@@ -45,6 +45,9 @@ src="{% static 'img/blank_image.png' %}"
 <p>{{ order.description }}</p>
 <div class='btn-row'>
     <div class='btn-group action-buttons'>
+        <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
+            <span class='fas fa-print'></span> 
+        </button>
         {% if roles.sales_order.change %}
         <button type='button' class='btn btn-default' id='edit-order' title='Edit order information'>
             <span class='fas fa-edit icon-green'></span>
@@ -163,6 +166,10 @@ $("#ship-order").click(function() {
     launchModalForm("{% url 'so-ship' order.id %}", {
         reload: true,
     });
+});
+
+$('#print-order-report').click(function() {
+    printSalesOrderReports([{{ order.pk }}]);
 });
 
 {% endblock %}

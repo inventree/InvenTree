@@ -247,3 +247,111 @@ function printBomReports(parts, options={}) {
         }
     )
 }
+
+
+function printPurchaseOrderReports(orders, options={}) {
+    /**
+     * Print PO reports for the provided purchase order(s)
+     */
+
+    if (orders.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Purchase Orders" %}',
+            '{% trans "Purchase Order(s) must be selected before printing report" %}',
+        );
+
+        return;
+    }
+
+    // Request avaiable report templates
+    inventreeGet(
+        '{% url "api-po-report-list" %}',
+        {
+            enabled: true,
+            orders: orders,
+        },
+        {
+            success: function(response) {
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Reports Found" %}',
+                        '{% trans "No report templates found which match selected orders" %}',
+                    );
+
+                    return;
+                }
+
+                // Select report template
+                selectReport(
+                    response,
+                    orders,
+                    {
+                        success: function(pk) {
+                            var href = `/api/report/po/${pk}/print/?`;
+
+                            orders.forEach(function(order) {
+                                href += `order=${order}&`;
+                            });
+
+                            window.location.href = href;
+                        }
+                    }
+                )
+            }
+        }
+    )
+}
+
+
+function printSalesOrderReports(orders, options={}) {
+    /**
+     * Print SO reports for the provided purchase order(s)
+     */
+
+    if (orders.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Sales Orders" %}',
+            '{% trans "Sales Order(s) must be selected before printing report" %}',
+        );
+
+        return;
+    }
+
+    // Request avaiable report templates
+    inventreeGet(
+        '{% url "api-so-report-list" %}',
+        {
+            enabled: true,
+            orders: orders,
+        },
+        {
+            success: function(response) {
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Reports Found" %}',
+                        '{% trans "No report templates found which match selected orders" %}',
+                    );
+
+                    return;
+                }
+
+                // Select report template
+                selectReport(
+                    response,
+                    orders,
+                    {
+                        success: function(pk) {
+                            var href = `/api/report/so/${pk}/print/?`;
+
+                            orders.forEach(function(order) {
+                                href += `order=${order}&`;
+                            });
+
+                            window.location.href = href;
+                        }
+                    }
+                )
+            }
+        }
+    )
+}

@@ -15,18 +15,24 @@ InvenTree | {% trans "Sales Orders" %}
 
 <div id='table-buttons'>
     <div class='button-toolbar container-fluid' style='float: right;'>
-        {% if roles.sales_order.add %}
-        <button class='btn btn-primary' type='button' id='so-create' title='{% trans "Create new sales order" %}'>
-            <span class='fas fa-plus-circle'></span> {% trans "New Sales Order" %}</button>
-        {% endif %}
-        <button class='btn btn-default' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
-            <span class='fas fa-calendar-alt'></span>
-        </button>
-        <button class='btn btn-default' type='button' id='view-list' title='{% trans "Display list view" %}'>
-            <span class='fas fa-th-list'></span>
-        </button>
-        <div class='filter-list' id='filter-list-salesorder'>
-            <!-- An empty div in which the filter list will be constructed -->
+        <div class='btn-group'>
+            {% if roles.sales_order.add %}
+            <button class='btn btn-primary' type='button' id='so-create' title='{% trans "Create new sales order" %}'>
+                <span class='fas fa-plus-circle'></span> {% trans "New Sales Order" %}
+            </button>
+            {% endif %}
+            <button id='order-print' class='btn btn-default' title='{% trans "Print Order Reports" %}'>
+                <span class='fas fa-print'></span>
+            </button>
+            <button class='btn btn-default' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
+                <span class='fas fa-calendar-alt'></span>
+            </button>
+            <button class='btn btn-default' type='button' id='view-list' title='{% trans "Display list view" %}'>
+                <span class='fas fa-th-list'></span>
+            </button>
+            <div class='filter-list' id='filter-list-salesorder'>
+                <!-- An empty div in which the filter list will be constructed -->
+            </div>
         </div>
     </div>
 </div>
@@ -156,10 +162,30 @@ loadSalesOrderTable("#sales-order-table", {
     url: "{% url 'api-so-list' %}",
 });
 
+$("#order-print").click(function() {
+    var rows = $("#sales-order-table").bootstrapTable('getSelections');
+
+    var orders = [];
+
+    rows.forEach(function(row) {
+        orders.push(row.pk);
+    });
+
+    printSalesOrderReports(orders);
+})
+
 $("#so-create").click(function() {
     launchModalForm("{% url 'so-create' %}",
         {
             follow: true,
+            secondary: [
+                {
+                    field: 'customer',
+                    label: '{% trans "New Customer" %}',
+                    title: '{% trans "Create new Customer" %}',
+                    url: '{% url "customer-create" %}',
+                }
+            ]
         }
     );
 });

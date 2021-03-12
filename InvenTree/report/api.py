@@ -18,14 +18,19 @@ from stock.models import StockItem
 
 import build.models
 import part.models
+import order.models
 
 from .models import TestReport
 from .models import BuildReport
 from .models import BillOfMaterialsReport
+from .models import PurchaseOrderReport
+from .models import SalesOrderReport
 
 from .serializers import TestReportSerializer
 from .serializers import BuildReportSerializer
 from .serializers import BOMReportSerializer
+from .serializers import POReportSerializer
+from .serializers import SOReportSerializer
 
 
 class ReportListView(generics.ListAPIView):
@@ -111,6 +116,40 @@ class BuildReportMixin:
                 continue
 
         return build.models.Build.objects.filter(pk__in=valid_ids)
+
+
+class OrderReportMixin:
+    """
+    Mixin for extracting order items from query params
+
+    requires the OrderModel class attribute to be set!
+    """
+
+    def get_orders(self):
+        """
+        Return a list of order objects
+        """
+
+        orders = []
+
+        params = self.request.query_params
+
+        for key in ['order', 'order[]', 'orders', 'orders[]']:
+            if key in params:
+                orders = params.getlist(key, [])
+                break
+
+        valid_ids = []
+
+        for o in orders:
+            try:
+                valid_ids.append(int(o))
+            except (ValueError):
+                pass
+
+        valid_orders = self.OrderModel.objects.filter(pk__in=valid_ids)
+
+        return valid_orders
 
 
 class PartReportMixin:
@@ -481,14 +520,203 @@ class BuildReportPrint(generics.RetrieveAPIView, BuildReportMixin, ReportPrintMi
         return self.print(request, builds)
 
 
+class POReportList(ReportListView, OrderReportMixin):
+
+    OrderModel = order.models.PurchaseOrder
+
+    queryset = PurchaseOrderReport.objects.all()
+    serializer_class = POReportSerializer
+
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
+
+        orders = self.get_orders()
+
+        if len(orders) > 0:
+            """
+            We wish to filter by purchase orders
+
+            We need to compare the 'filters' string of each report,
+            and see if it matches against each of the specified orders.
+
+            TODO: In the future, perhaps there is a way to make this more efficient.
+            """
+
+            valid_report_ids = set()
+
+            for report in queryset.all():
+                
+                matches = True
+
+                # Filter string defined for the report object
+                try:
+                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                except:
+                    continue
+
+                for o in orders:
+                    order_query = order.models.PurchaseOrder.objects.filter(pk=o.pk)
+
+                    try:
+                        if not order_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
+                        matches = False
+                        break
+                
+                if matches:
+                    valid_report_ids.add(report.pk)
+                else:
+                    continue
+
+            # Reduce queryset to only valid matches
+            queryset = queryset.filter(pk__in=[pk for pk in valid_report_ids])
+
+        return queryset
+
+
+class POReportDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for a single PurchaseOrderReport object
+    """
+
+    queryset = PurchaseOrderReport.objects.all()
+    serializer_class = POReportSerializer
+
+
+class POReportPrint(generics.RetrieveAPIView, OrderReportMixin, ReportPrintMixin):
+    """
+    API endpoint for printing a PurchaseOrderReport object
+    """
+
+    OrderModel = order.models.PurchaseOrder
+
+    queryset = PurchaseOrderReport.objects.all()
+    serializer_class = POReportSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        orders = self.get_orders()
+
+        return self.print(request, orders)
+
+
+class SOReportList(ReportListView, OrderReportMixin):
+
+    OrderModel = order.models.SalesOrder
+
+    queryset = SalesOrderReport.objects.all()
+    serializer_class = SOReportSerializer
+
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
+
+        orders = self.get_orders()
+
+        if len(orders) > 0:
+            """
+            We wish to filter by purchase orders
+
+            We need to compare the 'filters' string of each report,
+            and see if it matches against each of the specified orders.
+
+            TODO: In the future, perhaps there is a way to make this more efficient.
+            """
+
+            valid_report_ids = set()
+
+            for report in queryset.all():
+                
+                matches = True
+
+                # Filter string defined for the report object
+                try:
+                    filters = InvenTree.helpers.validateFilterString(report.filters)
+                except:
+                    continue
+
+                for o in orders:
+                    order_query = order.models.SalesOrder.objects.filter(pk=o.pk)
+
+                    try:
+                        if not order_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
+                        matches = False
+                        break
+                
+                if matches:
+                    valid_report_ids.add(report.pk)
+                else:
+                    continue
+
+            # Reduce queryset to only valid matches
+            queryset = queryset.filter(pk__in=[pk for pk in valid_report_ids])
+
+        return queryset
+
+
+class SOReportDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for a single SalesOrderReport object
+    """
+
+    queryset = SalesOrderReport.objects.all()
+    serializer_class = SOReportSerializer
+
+
+class SOReportPrint(generics.RetrieveAPIView, OrderReportMixin, ReportPrintMixin):
+    """
+    API endpoint for printing a PurchaseOrderReport object
+    """
+
+    OrderModel = order.models.SalesOrder
+
+    queryset = SalesOrderReport.objects.all()
+    serializer_class = SOReportSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        orders = self.get_orders()
+
+        return self.print(request, orders)
+
+
 report_api_urls = [
+
+    # Purchase order reports
+    url(r'po/', include([
+        # Detail views
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'print/', POReportPrint.as_view(), name='api-po-report-print'),
+            url(r'^$', POReportDetail.as_view(), name='api-po-report-detail'),
+        ])),
+
+        # List view
+        url(r'^$', POReportList.as_view(), name='api-po-report-list'),
+    ])),
+
+    # Sales order reports
+    url(r'so/', include([
+        # Detail views
+        url(r'^(?P<pk>\d+)/', include([
+            url(r'print/', SOReportPrint.as_view(), name='api-so-report-print'),
+            url(r'^$', SOReportDetail.as_view(), name='api-so-report-detail'),
+        ])),
+
+        url(r'^$', SOReportList.as_view(), name='api-so-report-list'),
+    ])),
 
     # Build reports
     url(r'build/', include([
         # Detail views
         url(r'^(?P<pk>\d+)/', include([
             url(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
-            url(r'^.*$', BuildReportDetail.as_view(), name='api-build-report-detail'),
+            url(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
         ])),
 
         # List view
