@@ -59,8 +59,10 @@
           {% endif %}
           <li class='dropdown'>
             <a class='dropdown-toggle' data-toggle='dropdown' href="#">
-              {% if not system_healthy or not up_to_date %}
+              {% if not system_healthy %}
               <span class='fas fa-exclamation-triangle icon-red'></span>
+              {% elif not up_to_date %}
+              <span class='fas fa-info-circle icon-green'></span>
               {% endif %}
               <span class="fas fa-user"></span> <b>{{ user.get_username }}</b></a>
             <ul class='dropdown-menu'>

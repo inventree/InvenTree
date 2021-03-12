@@ -6,8 +6,6 @@ import json
 import requests
 import logging
 
-from datetime import timedelta
-
 from django.core.exceptions import AppRegistryNotReady
 
 
@@ -37,6 +35,17 @@ def schedule_task(taskname, **kwargs):
         )
 
 
+def heartbeat():
+    """
+    Simple task which runs at 5 minute intervals,
+    so we can determine that the background worker
+    is actually running.
+
+    (There is probably a less "hacky" way of achieving this)
+    """
+    pass
+
+
 def delete_successful_tasks():
     """
     Delete successful task logs
@@ -45,6 +54,7 @@ def delete_successful_tasks():
 
     pass
 
+
 def check_for_updates():
     """
     Check if there is an update for InvenTree
@@ -52,7 +62,6 @@ def check_for_updates():
 
     try:
         import common.models
-        import InvenTree.version
     except AppRegistryNotReady:
         return
 
@@ -67,7 +76,7 @@ def check_for_updates():
     tag = data.get('tag_name', None)
 
     if not tag:
-        logger.warning(f"'tag_name' missing from GitHub response")
+        logger.warning("'tag_name' missing from GitHub response")
         return
 
     match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", tag)

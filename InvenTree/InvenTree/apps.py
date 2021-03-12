@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.apps import AppConfig
 import logging
+
+from django.apps import AppConfig
+from django.core.exceptions import AppRegistryNotReady
 
 import InvenTree.tasks
 
@@ -33,4 +35,10 @@ class InvenTreeConfig(AppConfig):
         InvenTree.tasks.schedule_task(
             'InvenTree.tasks.check_for_updates',
             schedule_type=Schedule.DAILY
+        )
+
+        InvenTree.tasks.schedule_task(
+            'InvenTree.tasks.heartbeat',
+            schedule_type=Schedule.MINUTES,
+            minutes=5
         )
