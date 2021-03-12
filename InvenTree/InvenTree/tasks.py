@@ -6,6 +6,7 @@ import json
 import requests
 import logging
 
+from datetime import datetime, timedelta
 from django.core.exceptions import AppRegistryNotReady
 
 
@@ -49,10 +50,16 @@ def heartbeat():
 def delete_successful_tasks():
     """
     Delete successful task logs
-    which are more than a week old.
+    which are more than a month old.
     """
 
-    pass
+    threshold = datetime.now() - timedelta(days=30)
+
+    results = Success.objects.filter(
+        started__lte=threshold
+    )
+
+    results.delete()
 
 
 def check_for_updates():
