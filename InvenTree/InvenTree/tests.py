@@ -279,6 +279,6 @@ class TestVersionNumber(TestCase):
         v = version.inventreeVersionTuple()
         self.assertEqual(len(v), 3)
 
-        s = '.'.join(v)
+        s = '.'.join([str(i) for i in v])
 
         self.assertTrue(s in version.inventreeVersion())
