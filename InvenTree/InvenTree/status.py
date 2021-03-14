@@ -24,6 +24,7 @@ def is_q_cluster_running(**kwargs):
     clusters = Stat.get_all()
 
     if len(clusters) > 0:
+        # TODO - Introspect on any cluster information
         return True
 
     """
