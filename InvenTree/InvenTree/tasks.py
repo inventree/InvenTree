@@ -8,6 +8,7 @@ import logging
 
 from datetime import datetime, timedelta
 
+from django_q.models import Success
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -48,9 +49,19 @@ def heartbeat():
     so we can determine that the background worker
     is actually running.
 
-    (There is probably a less "hacky" way of achieving this)
+    (There is probably a less "hacky" way of achieving this)?
     """
-    pass
+
+    threshold = datetime.now() - timedelta(minutes=30)
+
+    # Delete heartbeat results more than half an hour old,
+    # otherwise they just create extra noise
+    heartbeats = Success.objects.filter(
+        func='InvenTree.tasks.heartbeat',
+        started__lte=threshold
+    )
+
+    heartbeats.delete()
 
 
 def delete_successful_tasks():
