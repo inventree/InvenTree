@@ -8,7 +8,6 @@ import logging
 
 from datetime import datetime, timedelta
 
-from django_q.models import Success
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -51,6 +50,12 @@ def heartbeat():
 
     (There is probably a less "hacky" way of achieving this)?
     """
+
+    try:
+        from django_q.models import Success
+        logger.warning("Could not perform heartbeat task - App registry not ready")
+    except AppRegistryNotReady:
+        return
 
     threshold = datetime.now() - timedelta(minutes=30)
 
