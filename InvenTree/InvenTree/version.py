@@ -36,19 +36,6 @@ def inventreeVersionTuple(version=None):
     return [int(g) for g in match.groups()]
 
 
-def versionTupleToInt(version):
-    """
-    Convert a version tuple (x, y, z) to an integer.
-    This simple integer can then be used for direct version comparison
-    """
-
-    n = version[0] * 1000 * 1000
-    n += version[1] * 1000
-    n += version[2]
-
-    return n
-
-
 def isInvenTreeUpToDate():
     """
     Test if the InvenTree instance is "up to date" with the latest version.
@@ -63,13 +50,11 @@ def isInvenTreeUpToDate():
     if not latest:
         return True
 
-    # Extract "tuple" version
-    version = inventreeVersionTuple(latest)
-    version_int = versionTupleToInt(version)
+    # Extract "tuple" version (Python can directly compare version tuples)
+    latest_version = inventreeVersionTuple(latest)
+    inventree_version = inventreeVersionTuple()
 
-    inventree_int = versionTupleToInt(inventreeVersionTuple())
-
-    return inventree_int >= version_int
+    return inventree_version >= latest_version
 
 
 def inventreeApiVersion():
