@@ -45,6 +45,8 @@ def get_setting(environment_var, backup_val, default_value=None):
 
     return default_value
 
+# Determine if we are running in "test" mode e.g. "manage.py test"
+TESTING = 'test' in sys.argv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -336,7 +338,7 @@ DATABASES = {}
 When running unit tests, enforce usage of sqlite3 database,
 so that the tests can be run in RAM without any setup requirements
 """
-if 'test' in sys.argv:
+if TESTING:
     logger.info('InvenTree: Running tests - Using sqlite3 memory database')
     DATABASES['default'] = {
         # Ensure sqlite3 backend is being used
@@ -479,7 +481,10 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# Do not use native timezone support in "test" mode
+# It generates a *lot* of cruft in the logs
+if not TESTING:
+    USE_TZ = True
 
 DATE_INPUT_FORMATS = [
     "%Y-%m-%d",

@@ -75,6 +75,12 @@ def delete_successful_tasks():
     which are more than a month old.
     """
 
+    try:
+        from django_q.models import Success
+        logger.warning("Could not perform 'delete_successful_tasks' - App registry not ready")
+    except AppRegistryNotReady:
+        return
+
     threshold = datetime.now() - timedelta(days=30)
 
     results = Success.objects.filter(
