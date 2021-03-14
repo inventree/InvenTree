@@ -275,7 +275,7 @@ class TestSerialNumberExtraction(TestCase):
 class TestVersionNumber(TestCase):
     """
     Unit tests for version number functions
-    """ 
+    """
 
     def test_tuple(self):
 
