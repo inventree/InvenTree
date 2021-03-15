@@ -232,14 +232,18 @@ class BomUploadManager:
 
     # Fields which are absolutely necessary for valid upload
     REQUIRED_HEADERS = [
-        'Part_Name',
         'Quantity'
+    ]
+
+    # Fields which are used for part matching (only one of them is needed)
+    PART_MATCH_HEADERS = [
+        'Part_Name',
+        'Part_IPN',
+        'Part_ID',
     ]
     
     # Fields which would be helpful but are not required
     OPTIONAL_HEADERS = [
-        'Part_IPN',
-        'Part_ID',
         'Reference',
         'Note',
         'Overage',
@@ -251,7 +255,7 @@ class BomUploadManager:
         'Overage'
     ]
 
-    HEADERS = REQUIRED_HEADERS + OPTIONAL_HEADERS
+    HEADERS = REQUIRED_HEADERS + PART_MATCH_HEADERS + OPTIONAL_HEADERS
 
     def __init__(self, bom_file):
         """ Initialize the BomUpload class with a user-uploaded file object """
