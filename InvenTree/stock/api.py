@@ -665,6 +665,13 @@ class StockList(generics.ListCreateAPIView):
             active = str2bool(active)
             queryset = queryset.filter(part__active=active)
 
+        # Do we wish to filter by "assembly parts"
+        assembly = params.get('assembly', None)
+
+        if assembly is not None:
+            assembly = str2bool(assembly)
+            queryset = queryset.filter(part__assembly=assembly)
+
         # Filter by 'depleted' status
         depleted = params.get('depleted', None)
 

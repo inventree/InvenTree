@@ -96,10 +96,15 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Active parts" %}',
                 description: '{% trans "Show stock for active parts" %}',
             },
+            assembly: {
+                type: 'bool',
+                title: '{% trans "Assembly" %}',
+                description: '{% trans "Part is an assembly" %}',
+            },
             allocated: {
                 type: 'bool',
                 title: '{% trans "Is allocated" %}',
-                description: '{% trans "Item has been alloacted" %}',
+                description: '{% trans "Item has been allocated" %}',
             },
             cascade: {
                 type: 'bool',
