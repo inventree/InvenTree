@@ -14,7 +14,7 @@
 
 {% if part.variant_of %}
 <div class='alert alert-info alert-block'>
-    {% trans "This part is a variant of" %} <b><a href="{% url 'part-variants' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></b>
+    {% trans "This part is a variant of" %} <strong><a href="{% url 'part-variants' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></strong>
 </div>
 {% endif %}
 
@@ -33,7 +33,7 @@
                 </div>
                 {% endif %}
             </h3>   
-            <p><i>{{ part.description }}</i></p>
+            <p><em>{{ part.description }}</em></p>
 
             <div class='btn-group action-buttons' role='group'>
                 <button type='button' class='btn btn-default' id='toggle-starred' title='{% trans "Star this part" %}'>
@@ -156,7 +156,7 @@
             <tr>
                 <td><span class='fas fa-tools'></span></td>
                 <td colspan='2'>
-                    <b>{% trans "Build Status" %}</b>
+                    <strong>{% trans "Build Status" %}</strong>
                 </td>
             </tr>
             <tr>
@@ -241,6 +241,7 @@
             "{% url 'part-pricing' part.id %}",
             {
                 submit_text: 'Calculate',
+                hideErrorMessage: true,
             }
         );
     });

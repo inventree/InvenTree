@@ -77,12 +77,9 @@ margin-top: 4cm;
 content: "v{{report_revision}} - {{ date.isoformat }}";
 {% endblock %}
 
-{% block bottom_center %}
-content: "www.currawong.aero";
-{% endblock %}
-
 {% block header_content %}
-    <img class='logo' src="{% asset 'logo_black_with_black_bird.png' %}" alt="hello" width="150">
+    <!-- TODO - Make the company logo asset generic -->
+    <img class='logo' src="{% asset 'company_logo.png' %}" alt="hello" width="150">
 
     <div class='header-right'>
         <h3>

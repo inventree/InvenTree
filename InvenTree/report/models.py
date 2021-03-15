@@ -24,6 +24,7 @@ import build.models
 import common.models
 import part.models
 import stock.models
+import order.models
 
 from InvenTree.helpers import validateFilterString
 
@@ -92,6 +93,22 @@ def validate_build_report_filters(filters):
     """
 
     return validateFilterString(filters, model=build.models.Build)
+
+
+def validate_purchase_order_filters(filters):
+    """
+    Validate filter string against PurchaseOrder model
+    """
+
+    return validateFilterString(filters, model=order.models.PurchaseOrder)
+
+
+def validate_sales_order_filters(filters):
+    """
+    Validate filter string against SalesOrder model
+    """
+
+    return validateFilterString(filters, model=order.models.SalesOrder)
 
 
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
@@ -380,6 +397,74 @@ class BillOfMaterialsReport(ReportTemplateBase):
             'part': part,
             'category': part.category,
             'bom_items': part.get_bom_items(),
+        }
+
+
+class PurchaseOrderReport(ReportTemplateBase):
+    """
+    Render a report against a PurchaseOrder object
+    """
+
+    @classmethod
+    def getSubdir(cls):
+        return 'purchaseorder'
+    
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Filters'),
+        help_text=_('Purchase order query filters'),
+        validators=[
+            validate_purchase_order_filters,
+        ]
+    )
+
+    def get_context_data(self, request):
+
+        order = self.object_to_print
+
+        return {
+            'description': order.description,
+            'lines': order.lines,
+            'order': order,
+            'reference': order.reference,
+            'supplier': order.supplier,
+            'prefix': common.models.InvenTreeSetting.get_setting('PURCHASEORDER_REFERENCE_PREFIX'),
+            'title': str(order),
+        }
+
+
+class SalesOrderReport(ReportTemplateBase):
+    """
+    Render a report against a SalesOrder object
+    """
+
+    @classmethod
+    def getSubdir(cls):
+        return 'salesorder'
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Filters'),
+        help_text=_('Sales order query filters'),
+        validators=[
+            validate_sales_order_filters
+        ]
+    )
+
+    def get_context_data(self, request):
+
+        order = self.object_to_print
+
+        return {
+            'customer': order.customer,
+            'description': order.description,
+            'lines': order.lines,
+            'order': order,
+            'prefix': common.models.InvenTreeSetting.get_setting('SALESORDER_REFERENCE_PREFIX'),
+            'reference': order.reference,
+            'title': str(order),
         }
 
 

@@ -124,6 +124,8 @@ class RuleSet(models.Model):
         'report_reportasset',
         'report_reportsnippet',
         'report_billofmaterialsreport',
+        'report_purchaseorderreport',
+        'report_salesorderreport',
         'users_owner',
 
         # Third-party tables
