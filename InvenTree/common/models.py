@@ -78,6 +78,13 @@ class InvenTreeSetting(models.Model):
             'choices': djmoney.settings.CURRENCY_CHOICES,
         },
 
+        'INVENTREE_DOWNLOAD_FROM_URL': {
+            'name': _('Download from URL'),
+            'description': _('Allow download of remote images and files from external URL'),
+            'validator': bool,
+            'default': False,
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),

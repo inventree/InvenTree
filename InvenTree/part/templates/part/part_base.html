@@ -296,11 +296,15 @@
     }
     
     {% if roles.part.change %}
+    
+    {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
+    {% if allow_download %}
     $("#part-image-url").click(function() {
         launchModalForm(
             '{% url "part-image-download" part.id %}',
         );
     });
+    {% endif %}
 
     $("#part-image-select").click(function() {
         launchModalForm("{% url 'part-image-select' part.id %}",
