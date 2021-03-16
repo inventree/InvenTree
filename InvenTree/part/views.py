@@ -1431,8 +1431,21 @@ class BomUpload(InvenTreeRoleMixin, FormView):
         # Are there any missing columns?
         self.missing_columns = []
 
+        # Check that all required fields are present
         for col in BomUploadManager.REQUIRED_HEADERS:
             if col not in self.column_selections.values():
+                self.missing_columns.append(col)
+
+        # Check that at least one of the part match field is present
+        part_match_found = False
+        for col in BomUploadManager.PART_MATCH_HEADERS:
+            if col in self.column_selections.values():
+                part_match_found = True
+                break
+        
+        # If not, notify user
+        if not part_match_found:
+            for col in BomUploadManager.PART_MATCH_HEADERS:
                 self.missing_columns.append(col)
 
     def handleFieldSelection(self):
