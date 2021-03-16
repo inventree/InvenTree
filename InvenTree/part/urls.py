@@ -75,6 +75,7 @@ part_detail_urls = [
     # Normal thumbnail with form
     url(r'^thumbnail/?', views.PartImageUpload.as_view(), name='part-image-upload'),
     url(r'^thumb-select/?', views.PartImageSelect.as_view(), name='part-image-select'),
+    url(r'^thumb-download/', views.PartImageDownloadFromURL.as_view(), name='part-image-download'),
 
     # Any other URLs go to the part detail page
     url(r'^.*$', views.PartDetail.as_view(), name='part-detail'),

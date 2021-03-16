@@ -5,6 +5,7 @@ Django views for interacting with Part app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.core.files import File
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.utils import IntegrityError
@@ -19,6 +20,9 @@ from django.conf import settings
 
 from moneyed import CURRENCIES
 
+from urllib.parse import urlsplit
+from tempfile import TemporaryFile
+import requests
 import os
 
 from rapidfuzz import fuzz
@@ -47,6 +51,7 @@ from InvenTree.views import QRCodeView
 from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers import TestIfImageURL, TestIfImage
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
@@ -830,6 +835,77 @@ class PartQRCode(QRCodeView):
         except Part.DoesNotExist:
             return None
 
+
+class PartImageDownloadFromURL(AjaxUpdateView):
+    """
+    View for downloading an image from a provided URL
+    """
+
+    model = Part
+
+    form_class = part_forms.PartImageDownloadForm
+    ajax_form_title = _('Download Image')
+
+    def validate(self, part, form):
+        """
+        Validate that the image data are correct.
+
+        - Try to download the image!
+        """
+
+        # First ensure that the normal validation routines pass
+        if not form.is_valid():
+            return
+
+        # We can now extract a valid URL from the form data
+        url = form.cleaned_data.get('url', None)
+
+        response = requests.get(url, stream=True)
+
+        # Check that the URL "looks" like an image URL
+        if not TestIfImageURL(url):
+            form.add_error('url', _('Supplied URL is not one of the supported image formats'))
+            return
+
+        # Check for valid response code
+        if not response.status_code == 200:
+            form.add_error('url', f"{_('Invalid response')}: {response.status_code}")
+            return
+
+        # Validate that the returned object is a valid image file
+        if not TestIfImage(response.raw):
+            form.add_error('url', _('Supplied URL is not a valid image file'))
+            return
+
+        # Save the image object
+        self.image_response = response
+
+    def save(self, part, form, **kwargs):
+        """
+        Save the downloaded image to the part
+        """
+        
+        response = getattr(self, 'image_response', None)
+
+        if not response:
+            return
+
+        with TemporaryFile() as tf:
+
+            #for chunk in response.iter_content(chunk_size=2048):
+            #    tf.write(chunk)
+
+            img_data = response.raw.read()
+            tf.write(img_data)
+
+            print("Saved to temp file:", tf.name)
+
+            tf.seek(0)
+
+            part.image.save(
+                os.path.basename(urlsplit(response.url).path),
+                File(tf),
+            )
 
 class PartImageUpload(AjaxUpdateView):
     """ View for uploading a new Part image """
