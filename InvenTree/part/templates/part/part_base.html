@@ -294,6 +294,13 @@
             }
         });
     }
+    
+    {% if roles.part.change %}
+    $("#part-image-url").click(function() {
+        launchModalForm(
+            '{% url "part-image-download" part.id %}',
+        );
+    });
 
     $("#part-image-select").click(function() {
         launchModalForm("{% url 'part-image-select' part.id %}",
@@ -303,7 +310,6 @@
                         });
     });
 
-    {% if roles.part.change %}
     $("#part-edit").click(function() {
         launchModalForm(
             "{% url 'part-edit' part.id %}",
