@@ -910,6 +910,12 @@ class PartEdit(AjaxUpdateView):
 
         form.fields['default_supplier'].queryset = SupplierPart.objects.filter(part=part)
 
+        # Check if IPN can be edited
+        ipn_edit_enable = InvenTreeSetting.get_setting('PART_ALLOW_EDIT_IPN')
+        if not ipn_edit_enable and not self.request.user.is_superuser:
+            # Admin can still change IPN
+            form.fields['IPN'].disabled = True
+
         return form
 
 

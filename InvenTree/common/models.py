@@ -97,6 +97,13 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
+        'PART_ALLOW_EDIT_IPN': {
+            'name': _('Allow Editing IPN'),
+            'description': _('Allow changing the IPN value while editing a part'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PART_COPY_BOM': {
             'name': _('Copy Part BOM Data'),
             'description': _('Copy BOM data by default when duplicating a part'),
