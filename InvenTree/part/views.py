@@ -22,8 +22,6 @@ from moneyed import CURRENCIES
 
 from PIL import Image
 
-from urllib.parse import urlsplit
-from tempfile import TemporaryFile
 import requests
 import os
 import io
@@ -54,7 +52,6 @@ from InvenTree.views import QRCodeView
 from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.helpers import DownloadFile, str2bool
-from InvenTree.helpers import TestIfImageURL, TestIfImage
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
@@ -863,11 +860,6 @@ class PartImageDownloadFromURL(AjaxUpdateView):
 
         # We can now extract a valid URL from the form data
         url = form.cleaned_data.get('url', None)
-
-        # Check that the URL "looks" like an image URL
-        if not TestIfImageURL(url):
-            form.add_error('url', _('Supplied URL is not one of the supported image formats'))
-            return
 
         # Download the file
         response = requests.get(url, stream=True)
