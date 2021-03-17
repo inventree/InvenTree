@@ -843,7 +843,7 @@ class PartImageDownloadFromURL(AjaxUpdateView):
 
     model = Part
 
-    ajax_template_name = 'part/image_download.html'
+    ajax_template_name = 'image_download.html'
     form_class = part_forms.PartImageDownloadForm
     ajax_form_title = _('Download Image')
 
@@ -890,7 +890,7 @@ class PartImageDownloadFromURL(AjaxUpdateView):
         response.raw.decode_content = True
 
         try:
-            self.image = Image.open(response.raw).convert('RGB')
+            self.image = Image.open(response.raw).convert()
             self.image.verify()
         except:
             form.add_error('url', _("Supplied URL is not a valid image file"))
