@@ -846,6 +846,7 @@ class PartImageDownloadFromURL(AjaxUpdateView):
 
     model = Part
 
+    ajax_template_name = 'part/image_download.html'
     form_class = part_forms.PartImageDownloadForm
     ajax_form_title = _('Download Image')
 
