@@ -872,6 +872,22 @@ class PartImageDownloadFromURL(AjaxUpdateView):
         # Download the file
         response = requests.get(url, stream=True)
 
+        # Look at response header, reject if too large
+        content_length = response.headers.get('Content-Length', '0')
+
+        try:
+            content_length = int(content_length)
+        except (ValueError):
+            # If we cannot extract meaningful length, just assume it's "small enough"
+            content_length = 0
+
+        # TODO: Factor this out into a configurable setting
+        MAX_IMG_LENGTH = 10 * 1024 * 1024
+
+        if content_length > MAX_IMG_LENGTH:
+            form.add_error('url', _('Image size exceeds maximum allowable size for download'))
+            return
+
         self.response = response
 
         # Check for valid response code
