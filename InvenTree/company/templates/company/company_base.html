@@ -8,13 +8,18 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
 {% endblock %}
 
 {% block thumbnail %}
-<div class='dropzone' id='company-thumb'>
+<div class='dropzone part-thumb-container' id='company-thumb'>
     <img class="part-thumb"
     {% if company.image %}
     src="{{ company.image.url }}"
     {% else %}
     src="{% static 'img/blank_image.png' %}"
     {% endif %}/>
+    <div class='btn-row part-thumb-overlay'>
+        <div class='btn-group'>
+            <button type='button' class='btn btn-default btn-glyph' title='{% trans "Upload new image" %}' id='company-image-upload'><span class='fas fa-file-upload'></span></button>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -135,7 +140,13 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
         }
     );
 
-    $("#company-thumb").click(function() {
+    {% if company.image %}
+    $('#company-thumb').click(function() {
+        showModalImage('{{ company.image.url }}');
+    });
+    {% endif %}
+
+    $("#company-image-upload").click(function() {
         launchModalForm(
             "{% url 'company-image' company.id %}",
             {
