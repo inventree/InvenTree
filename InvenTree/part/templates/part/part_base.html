@@ -206,6 +206,12 @@
         toggleId: '#part-menu-toggle',
     });
 
+    {% if part.image %}
+    $('#part-thumb').click(function() {
+        showModalImage('{{ part.image.url }}');
+    });
+    {% endif %}
+
     enableDragAndDrop(
         '#part-thumb',
         "{% url 'part-image-upload' part.id %}",
