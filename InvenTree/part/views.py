@@ -5,7 +5,7 @@ Django views for interacting with Part app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.core.files import File
+from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.utils import IntegrityError
@@ -20,10 +20,13 @@ from django.conf import settings
 
 from moneyed import CURRENCIES
 
+from PIL import Image
+
 from urllib.parse import urlsplit
 from tempfile import TemporaryFile
 import requests
 import os
+import io
 
 from rapidfuzz import fuzz
 from decimal import Decimal, InvalidOperation
@@ -860,52 +863,52 @@ class PartImageDownloadFromURL(AjaxUpdateView):
         # We can now extract a valid URL from the form data
         url = form.cleaned_data.get('url', None)
 
-        response = requests.get(url, stream=True)
-
         # Check that the URL "looks" like an image URL
         if not TestIfImageURL(url):
             form.add_error('url', _('Supplied URL is not one of the supported image formats'))
             return
+
+        # Download the file
+        response = requests.get(url, stream=True)
+
+        self.response = response
 
         # Check for valid response code
         if not response.status_code == 200:
             form.add_error('url', f"{_('Invalid response')}: {response.status_code}")
             return
 
-        # Validate that the returned object is a valid image file
-        if not TestIfImage(response.raw):
-            form.add_error('url', _('Supplied URL is not a valid image file'))
-            return
+        response.raw.decode_content = True
 
-        # Save the image object
-        self.image_response = response
+        try:
+            self.image = Image.open(response.raw).convert('RGB')
+            self.image.verify()
+        except:
+            form.add_error('url', _("Supplied URL is not a valid image file"))
+            return
 
     def save(self, part, form, **kwargs):
         """
         Save the downloaded image to the part
         """
-        
-        response = getattr(self, 'image_response', None)
 
-        if not response:
-            return
+        fmt = self.image.format
 
-        with TemporaryFile() as tf:
+        if not fmt:
+            fmt = 'PNG'
 
-            #for chunk in response.iter_content(chunk_size=2048):
-            #    tf.write(chunk)
+        buffer = io.BytesIO()
 
-            img_data = response.raw.read()
-            tf.write(img_data)
+        self.image.save(buffer, format=fmt)
 
-            print("Saved to temp file:", tf.name)
+        # Construct a simplified name for the image
+        filename = f"part_{part.pk}_image.{fmt.lower()}"
 
-            tf.seek(0)
+        part.image.save(
+            filename,
+            ContentFile(buffer.getvalue()),
+        )
 
-            part.image.save(
-                os.path.basename(urlsplit(response.url).path),
-                File(tf),
-            )
 
 class PartImageUpload(AjaxUpdateView):
     """ View for uploading a new Part image """

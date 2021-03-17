@@ -302,6 +302,9 @@
     $("#part-image-url").click(function() {
         launchModalForm(
             '{% url "part-image-download" part.id %}',
+            {
+                reload: true,
+            }
         );
     });
     {% endif %}
