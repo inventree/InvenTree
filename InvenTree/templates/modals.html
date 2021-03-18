@@ -1,5 +1,12 @@
 {% load i18n %}
 
+<div class='modal fade modal-image' role='dialog' id='modal-image-dialog'>
+  <span class='modal-close' id='modal-image-close'>&times;</span>
+
+  <img class='modal-image-content' id='modal-image'>
+
+</div>
+
 <div class='modal fade modal-fixed-footer modal-primary' tabindex='-1' role='dialog' id='modal-form'>
     <div class='modal-dialog'>
         <div class='modal-content'>
@@ -78,7 +85,9 @@
               </button>
               <h3 id='modal-title'>Alert Information</h3>
             </div>
-            <div class='modal-form-content'>
+            <div class='modal-form-content-wrapper'>
+              <div class='modal-form-content'>
+              </div>
             </div>
             <div class='modal-footer'>
                 <button type='button' class='btn btn-default' data-dismiss='modal'>{% trans "Close" %}</button>

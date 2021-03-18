@@ -2,19 +2,32 @@
 
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
+
 
 {% block page_title %}
 InvenTree | {% trans "Company" %} - {{ company.name }}
 {% endblock %}
 
+
 {% block thumbnail %}
-<div class='dropzone' id='company-thumb'>
-    <img class="part-thumb"
+{% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
+
+<div class='dropzone part-thumb-container' id='company-thumb'>
+    <img class="part-thumb" id='company-image'
     {% if company.image %}
     src="{{ company.image.url }}"
     {% else %}
     src="{% static 'img/blank_image.png' %}"
     {% endif %}/>
+    <div class='btn-row part-thumb-overlay'>
+        <div class='btn-group'>
+            <button type='button' class='btn btn-default btn-glyph' title='{% trans "Upload new image" %}' id='company-image-upload'><span class='fas fa-file-upload'></span></button>
+            {% if allow_download %}
+            <button type='button' class='btn btn-default btn-glyph' title="{% trans 'Download image from URL' %}" id='company-image-url'><span class='fas fa-cloud-download-alt'></span></button>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -135,7 +148,13 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
         }
     );
 
-    $("#company-thumb").click(function() {
+    {% if company.image %}
+    $('#company-image').click(function() {
+        showModalImage('{{ company.image.url }}');
+    });
+    {% endif %}
+
+    $("#company-image-upload").click(function() {
         launchModalForm(
             "{% url 'company-image' company.id %}",
             {
@@ -143,5 +162,18 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
             }
         );
     });
+
+    {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
+
+    {% if allow_download %}
+    $('#company-image-url').click(function() {
+        launchModalForm(
+            '{% url "company-image-download" company.id %}',
+            {
+                reload: true,
+            }
+        )
+    });
+    {% endif %}
 
 {% endblock %}
