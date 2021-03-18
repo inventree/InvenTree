@@ -21,6 +21,7 @@ company_detail_urls = [
     url(r'^notes/', views.CompanyNotes.as_view(), name='company-notes'),
 
     url(r'^thumbnail/', views.CompanyImage.as_view(), name='company-image'),
+    url(r'^thumb-download/', views.CompanyImageDownloadFromURL.as_view(), name='company-image-download'),
 
     # Any other URL
     url(r'^.*$', views.CompanyDetail.as_view(), name='company-detail'),
