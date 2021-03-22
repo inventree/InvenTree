@@ -29,7 +29,7 @@ class InvenTreeConfig(AppConfig):
 
         InvenTree.tasks.schedule_task(
             'InvenTree.tasks.delete_successful_tasks',
-            schedule_type=Schedule.WEEKLY,
+            schedule_type=Schedule.DAILY,
         )
 
         InvenTree.tasks.schedule_task(

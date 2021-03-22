@@ -21,6 +21,9 @@ def schedule_task(taskname, **kwargs):
     If the task has already been scheduled, ignore!
     """
 
+    # If unspecified, repeat indefinitely
+    repeats = kwargs.pop('repeats', -1)
+
     try:
         from django_q.models import Schedule
     except (AppRegistryNotReady):
@@ -34,7 +37,9 @@ def schedule_task(taskname, **kwargs):
             logger.info(f"Creating scheduled task '{taskname}'")
 
             Schedule.objects.create(
+                name=taskname,
                 func=taskname,
+                repeats=repeats,
                 **kwargs
             )
     except (OperationalError, ProgrammingError):
@@ -98,21 +103,20 @@ def check_for_updates():
     try:
         import common.models
     except AppRegistryNotReady:
+        # Apps not yet loaded!
         return
 
     response = requests.get('https://api.github.com/repos/inventree/inventree/releases/latest')
 
     if not response.status_code == 200:
-        logger.warning(f'Unexpected status code from GitHub API: {response.status_code}')
-        return
+        raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')
 
     data = json.loads(response.text)
 
     tag = data.get('tag_name', None)
 
     if not tag:
-        logger.warning("'tag_name' missing from GitHub response")
-        return
+        raise ValueError("'tag_name' missing from GitHub response")
 
     match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", tag)
 
@@ -120,15 +124,10 @@ def check_for_updates():
         logger.warning(f"Version '{tag}' did not match expected pattern")
         return
 
-    try:
-        latest_version = [int(x) for x in match.groups()]
-    except (ValueError):
-        logger.warning(f"Version '{tag}' not integer format")
-        return
+    latest_version = [int(x) for x in match.groups()]
 
     if not len(latest_version) == 3:
-        logger.warning(f"Version '{tag}' is not correct format")
-        return
+        raise ValueError(f"Version '{tag}' is not correct format")
 
     logger.info(f"Latest InvenTree version: '{tag}'")
 
