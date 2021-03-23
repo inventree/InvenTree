@@ -278,19 +278,75 @@ class Contact(models.Model):
                                 on_delete=models.CASCADE)
 
 
-class SupplierPart(models.Model):
-    """ Represents a unique part as provided by a Supplier
-    Each SupplierPart is identified by a MPN (Manufacturer Part Number)
-    Each SupplierPart is also linked to a Part object.
-    A Part may be available from multiple suppliers
+class MaufacturerPart(models.Model):
+    """ Represents a unique part as provided by a Manufacturer
+    Each MaufacturerPart is identified by a MPN (Manufacturer Part Number)
+    Each MaufacturerPart is also linked to a Part object.
+    A Part may be available from multiple manufacturers
 
     Attributes:
         part: Link to the master Part
+        manufacturer: Company that manufactures the MaufacturerPart
+        MPN: Manufacture part number
+        link: Link to external website for this manufacturer part
+        description: Descriptive notes field
+    """
+
+    class Meta:
+        unique_together = ('part', 'manufacturer', 'MPN')
+
+    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
+                             related_name='manufacturer_parts',
+                             verbose_name=_('Base Part'),
+                             limit_choices_to={
+                                 'purchaseable': True,
+                             },
+                             help_text=_('Select part'),
+                             )
+
+    manufacturer = models.ForeignKey(
+        Company,
+        on_delete=models.SET_NULL,
+        related_name='manufactured_parts',
+        limit_choices_to={
+            'is_manufacturer': True
+        },
+        verbose_name=_('Manufacturer'),
+        help_text=_('Select manufacturer'),
+        null=True, blank=True
+    )
+
+    MPN = models.CharField(
+        max_length=100, blank=True, null=True,
+        verbose_name=_('MPN'),
+        help_text=_('Manufacturer Part Number')
+    )
+
+    link = InvenTreeURLField(
+        blank=True, null=True,
+        verbose_name=_('Link'),
+        help_text=_('URL for external manufacturer part link')
+    )
+
+    description = models.CharField(
+        max_length=250, blank=True, null=True,
+        verbose_name=_('Description'),
+        help_text=_('Manufacturer part description')
+    )
+
+
+class SupplierPart(models.Model):
+    """ Represents a unique part as provided by a Supplier
+    Each SupplierPart is identified by a SKU (Supplier Part Number)
+    Each SupplierPart is also linked to a Part or ManufacturerPart object.
+    A Part may be available from multiple suppliers
+
+    Attributes:
+        part_type: Part or ManufacturerPart
+        part_id: Part or ManufacturerPart ID
         supplier: Company that supplies this SupplierPart object
         SKU: Stock keeping unit (supplier part number)
-        manufacturer: Company that manufactures the SupplierPart (leave blank if it is the sample as the Supplier!)
-        MPN: Manufacture part number
-        link: Link to external website for this part
+        link: Link to external website for this supplier part
         description: Descriptive notes field
         note: Longer form note field
         base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
@@ -328,24 +384,6 @@ class SupplierPart(models.Model):
         max_length=100,
         verbose_name=_('SKU'),
         help_text=_('Supplier stock keeping unit')
-    )
-
-    manufacturer = models.ForeignKey(
-        Company,
-        on_delete=models.SET_NULL,
-        related_name='manufactured_parts',
-        limit_choices_to={
-            'is_manufacturer': True
-        },
-        verbose_name=_('Manufacturer'),
-        help_text=_('Select manufacturer'),
-        null=True, blank=True
-    )
-
-    MPN = models.CharField(
-        max_length=100, blank=True, null=True,
-        verbose_name=_('MPN'),
-        help_text=_('Manufacturer part number')
     )
 
     link = InvenTreeURLField(

@@ -17,6 +17,7 @@ from djmoney.forms.fields import MoneyField
 import common.settings
 
 from .models import Company
+from .models import ManufacturerPart
 from .models import SupplierPart
 from .models import SupplierPriceBreak
 
@@ -84,12 +85,30 @@ class CompanyImageDownloadForm(HelperForm):
         ]
 
 
+class EditManufacturerPartForm(HelperForm):
+    """ Form for editing a ManufacturerPart object """
+
+    field_prefix = {
+        'link': 'fa-link',
+        'MPN': 'fa-hashtag',
+    }
+
+    class Meta:
+        model = ManufacturerPart
+        fields = [
+            'part',
+            'description',
+            'manufacturer',
+            'MPN',
+            'link',
+        ]
+
+
 class EditSupplierPartForm(HelperForm):
     """ Form for editing a SupplierPart object """
 
     field_prefix = {
         'link': 'fa-link',
-        'MPN': 'fa-hashtag',
         'SKU': 'fa-hashtag',
         'note': 'fa-pencil-alt',
     }
@@ -110,8 +129,6 @@ class EditSupplierPartForm(HelperForm):
             'supplier',
             'SKU',
             'description',
-            'manufacturer',
-            'MPN',
             'link',
             'note',
             'single_pricing',

@@ -24,6 +24,7 @@ from InvenTree.helpers import str2bool
 from InvenTree.views import InvenTreeRoleMixin
 
 from .models import Company
+from .models import ManufacturerPart
 from .models import SupplierPart
 from .models import SupplierPriceBreak
 
@@ -31,6 +32,7 @@ from part.models import Part
 
 from .forms import EditCompanyForm
 from .forms import CompanyImageForm
+from .forms import EditManufacturerPartForm
 from .forms import EditSupplierPartForm
 from .forms import EditPriceBreakForm
 from .forms import CompanyImageDownloadForm
@@ -329,6 +331,175 @@ class CompanyDelete(AjaxDeleteView):
         return {
             'danger': _('Company was deleted'),
         }
+
+
+class ManufacturerPartDetail(DetailView):
+    """ Detail view for ManufacturerPart """
+    model = ManufacturerPart
+    template_name = 'company/manufacturer_part_detail.html'
+    context_object_name = 'part'
+    queryset = ManufacturerPart.objects.all()
+    permission_required = 'purchase_order.view'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        return ctx
+
+
+class ManufacturerPartEdit(AjaxUpdateView):
+    """ Update view for editing ManufacturerPart """
+
+    model = ManufacturerPart
+    context_object_name = 'part'
+    form_class = EditSupplierPartForm
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = _('Edit Manufacturer Part')
+
+
+class ManufacturerPartCreate(AjaxCreateView):
+    """ Create view for making new ManufacturerPart """
+
+    model = ManufacturerPart
+    form_class = EditManufacturerPartForm
+    ajax_template_name = 'company/manufacturer_part_create.html'
+    ajax_form_title = _('Create New Manufacturer Part')
+    context_object_name = 'part'
+
+    def get_context_data(self):
+        """
+        Supply context data to the form
+        """
+
+        ctx = super().get_context_data()
+
+        # Add 'part' object
+        form = self.get_form()
+
+        part = form['part'].value()
+
+        try:
+            part = Part.objects.get(pk=part)
+        except (ValueError, Part.DoesNotExist):
+            part = None
+
+        ctx['part'] = part
+
+        return ctx
+
+    def get_form(self):
+        """ Create Form instance to create a new ManufacturerPart object.
+        Hide some fields if they are not appropriate in context
+        """
+        form = super(AjaxCreateView, self).get_form()
+
+        if form.initial.get('part', None):
+            # Hide the part field
+            form.fields['part'].widget = HiddenInput()
+
+        return form
+
+    def get_initial(self):
+        """ Provide initial data for new ManufacturerPart:
+
+        - If 'manufacturer_id' provided, pre-fill manufacturer field
+        - If 'part_id' provided, pre-fill part field
+        """
+        initials = super(SupplierPartCreate, self).get_initial().copy()
+
+        manufacturer_id = self.get_param('manufacturer')
+        part_id = self.get_param('part')
+
+        if manufacturer_id:
+            try:
+                initials['manufacturer'] = Company.objects.get(pk=manufacturer_id)
+            except (ValueError, Company.DoesNotExist):
+                pass
+        
+        if part_id:
+            try:
+                initials['part'] = Part.objects.get(pk=part_id)
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+
+class ManufacturerPartDelete(AjaxDeleteView):
+    """ Delete view for removing a ManufacturerPart.
+    
+    ManufacturerParts can be deleted using a variety of 'selectors'.
+
+    - ?part=<pk> -> Delete a single ManufacturerPart object
+    - ?parts=[] -> Delete a list of ManufacturerPart objects
+
+    """
+
+    success_url = '/manufacturer/'
+    ajax_template_name = 'company/partdelete.html'
+    ajax_form_title = _('Delete Manufacturer Part')
+
+    role_required = 'purchase_order.delete'
+
+    parts = []
+
+    def get_context_data(self):
+        ctx = {}
+
+        ctx['parts'] = self.parts
+
+        return ctx
+
+    def get_parts(self):
+        """ Determine which ManufacturerPart object(s) the user wishes to delete.
+        """
+
+        self.parts = []
+
+        # User passes a single ManufacturerPart ID
+        if 'part' in self.request.GET:
+            try:
+                self.parts.append(ManufacturerPart.objects.get(pk=self.request.GET.get('part')))
+            except (ValueError, SupplierPart.DoesNotExist):
+                pass
+
+        elif 'parts[]' in self.request.GET:
+
+            part_id_list = self.request.GET.getlist('parts[]')
+
+            self.parts = ManufacturerPart.objects.filter(id__in=part_id_list)
+
+    def get(self, request, *args, **kwargs):
+        self.request = request
+        self.get_parts()
+
+        return self.renderJsonResponse(request, form=self.get_form())
+
+    def post(self, request, *args, **kwargs):
+        """ Handle the POST action for deleting ManufacturerPart object.
+        """
+
+        self.request = request
+        self.parts = []
+
+        for item in self.request.POST:
+            if item.startswith('manufacturer-part-'):
+                pk = item.replace('manufacturer-part-', '')
+
+                try:
+                    self.parts.append(ManufacturerPart.objects.get(pk=pk))
+                except (ValueError, ManufacturerPart.DoesNotExist):
+                    pass
+
+        confirm = str2bool(self.request.POST.get('confirm_delete', False))
+
+        data = {
+            'form_valid': confirm,
+        }
+
+        if confirm:
+            for part in self.parts:
+                part.delete()
+
+        return self.renderJsonResponse(self.request, data=data, form=self.get_form())
 
 
 class SupplierPartDetail(DetailView):
