@@ -278,15 +278,15 @@ class Contact(models.Model):
                                 on_delete=models.CASCADE)
 
 
-class MaufacturerPart(models.Model):
+class ManufacturerPart(models.Model):
     """ Represents a unique part as provided by a Manufacturer
-    Each MaufacturerPart is identified by a MPN (Manufacturer Part Number)
-    Each MaufacturerPart is also linked to a Part object.
+    Each ManufacturerPart is identified by a MPN (Manufacturer Part Number)
+    Each ManufacturerPart is also linked to a Part object.
     A Part may be available from multiple manufacturers
 
     Attributes:
         part: Link to the master Part
-        manufacturer: Company that manufactures the MaufacturerPart
+        manufacturer: Company that manufactures the ManufacturerPart
         MPN: Manufacture part number
         link: Link to external website for this manufacturer part
         description: Descriptive notes field
