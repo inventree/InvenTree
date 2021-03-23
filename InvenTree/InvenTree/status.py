@@ -29,12 +29,12 @@ def is_q_cluster_running(**kwargs):
 
     """
     Sometimes Stat.get_all() returns [].
-    In this case we have the 'heartbeat' task running every five minutes.
-    Check to see if we have a result within the last ten minutes
+    In this case we have the 'heartbeat' task running every 15 minutes.
+    Check to see if we have a result within the last 20 minutes
     """
 
     now = datetime.now()
-    past = now - timedelta(minutes=10)
+    past = now - timedelta(minutes=20)
 
     results = Success.objects.filter(
         func='InvenTree.tasks.heartbeat',

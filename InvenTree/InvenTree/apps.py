@@ -40,5 +40,5 @@ class InvenTreeConfig(AppConfig):
         InvenTree.tasks.schedule_task(
             'InvenTree.tasks.heartbeat',
             schedule_type=Schedule.MINUTES,
-            minutes=5
+            minutes=15
         )
