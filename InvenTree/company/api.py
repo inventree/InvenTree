@@ -15,9 +15,11 @@ from django.db.models import Q
 from InvenTree.helpers import str2bool
 
 from .models import Company
+from .models import ManufacturerPart
 from .models import SupplierPart, SupplierPriceBreak
 
 from .serializers import CompanySerializer
+from .serializers import ManufacturerPartSerializer
 from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
 
 
@@ -80,7 +82,106 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
         queryset = CompanySerializer.annotate_queryset(queryset)
 
         return queryset
+
+
+class ManufacturerPartList(generics.ListCreateAPIView):
+    """ API endpoint for list view of ManufacturerPart object
+
+    - GET: Return list of ManufacturerPart objects
+    - POST: Create a new ManufacturerPart object
+    """
+
+    queryset = ManufacturerPart.objects.all().prefetch_related(
+        'part',
+        'manufacturer',
+    )
+
+    serializer_class = ManufacturerPartSerializer
+
+    def get_serializer(self, *args, **kwargs):
+
+        # Do we wish to include extra detail?
+        try:
+            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', None))
+        except AttributeError:
+            pass
+
+        try:
+            kwargs['manufacturer_detail'] = str2bool(self.request.query_params.get('manufacturer_detail', None))
+        except AttributeError:
+            pass
+
+        try:
+            kwargs['pretty'] = str2bool(self.request.query_params.get('pretty', None))
+        except AttributeError:
+            pass
+        
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def filter_queryset(self, queryset):
+        """
+        Custom filtering for the queryset.
+        """
+
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        # Filter by manufacturer
+        manufacturer = params.get('manufacturer', None)
+
+        if manufacturer is not None:
+            queryset = queryset.filter(manufacturer=manufacturer)
+
+        # Filter by parent part?
+        part = params.get('part', None)
+
+        if part is not None:
+            queryset = queryset.filter(part=part)
+
+        # Filter by 'active' status of the part?
+        active = params.get('active', None)
+
+        if active is not None:
+            active = str2bool(active)
+            queryset = queryset.filter(part__active=active)
+
+        return queryset
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+    ]
+
+    search_fields = [
+        'manufacturer__name',
+        'description',
+        'MPN',
+        'part__name',
+        'part__description',
+    ]
     
+
+class ManufacturerPartDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail view of ManufacturerPart object
+
+    - GET: Retrieve detail view
+    - PATCH: Update object
+    - DELETE: Delete object
+    """
+
+    queryset = ManufacturerPart.objects.all()
+    serializer_class = ManufacturerPartSerializer
+
+    read_only_fields = [
+    ]
+
 
 class SupplierPartList(generics.ListCreateAPIView):
     """ API endpoint for list view of SupplierPart object
@@ -226,6 +327,15 @@ class SupplierPriceBreakList(generics.ListCreateAPIView):
     ]
 
 
+manufacturer_part_api_urls = [
+
+    url(r'^(?P<pk>\d+)/?', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
+
+    # Catch anything else
+    url(r'^.*$', ManufacturerPartList.as_view(), name='api-manufacturer-part-list'),
+]
+
+
 supplier_part_api_urls = [
 
     url(r'^(?P<pk>\d+)/?', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
@@ -236,7 +346,8 @@ supplier_part_api_urls = [
 
 
 company_api_urls = [
-    
+    url(r'^part/manufacturer/', include(manufacturer_part_api_urls)),
+
     url(r'^part/', include(supplier_part_api_urls)),
 
     url(r'^price-break/', SupplierPriceBreakList.as_view(), name='api-part-supplier-price'),

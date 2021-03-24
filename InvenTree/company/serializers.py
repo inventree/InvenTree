@@ -7,6 +7,7 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 
 from .models import Company
+from .models import ManufacturerPart
 from .models import SupplierPart, SupplierPriceBreak
 
 from InvenTree.serializers import InvenTreeModelSerializer
@@ -77,6 +78,49 @@ class CompanySerializer(InvenTreeModelSerializer):
             'notes',
             'parts_supplied',
             'parts_manufactured',
+        ]
+
+
+class ManufacturerPartSerializer(InvenTreeModelSerializer):
+    """ Serializer for SupplierPart object """
+
+    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+
+    manufacturer_detail = CompanyBriefSerializer(source='manufacturer', many=False, read_only=True)
+
+    pretty_name = serializers.CharField(read_only=True)
+
+    def __init__(self, *args, **kwargs):
+
+        part_detail = kwargs.pop('part_detail', False)
+        manufacturer_detail = kwargs.pop('manufacturer_detail', False)
+        prettify = kwargs.pop('pretty', False)
+
+        super(ManufacturerPartSerializer, self).__init__(*args, **kwargs)
+
+        if part_detail is not True:
+            self.fields.pop('part_detail')
+
+        if manufacturer_detail is not True:
+            self.fields.pop('manufacturer_detail')
+
+        if prettify is not True:
+            self.fields.pop('pretty_name')
+
+    manufacturer = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_manufacturer=True))
+
+    class Meta:
+        model = SupplierPart
+        fields = [
+            'pk',
+            'part',
+            'part_detail',
+            'pretty_name',
+            'manufacturer',
+            'manufacturer_detail',
+            'description',
+            'MPN',
+            'link',
         ]
 
 

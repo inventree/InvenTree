@@ -405,7 +405,7 @@ class ManufacturerPartCreate(AjaxCreateView):
         - If 'manufacturer_id' provided, pre-fill manufacturer field
         - If 'part_id' provided, pre-fill part field
         """
-        initials = super(SupplierPartCreate, self).get_initial().copy()
+        initials = super(ManufacturerPartCreate, self).get_initial().copy()
 
         manufacturer_id = self.get_param('manufacturer')
         part_id = self.get_param('part')
@@ -421,6 +421,8 @@ class ManufacturerPartCreate(AjaxCreateView):
                 initials['part'] = Part.objects.get(pk=part_id)
             except (ValueError, Part.DoesNotExist):
                 pass
+
+        return initials
 
 
 class ManufacturerPartDelete(AjaxDeleteView):

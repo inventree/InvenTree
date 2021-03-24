@@ -53,7 +53,9 @@ price_break_urls = [
 ]
 
 manufacturer_part_detail_urls = [
-    url(r'^edit/?', views.ManufacturerPartEdit.as_view(), name='supplier-part-edit'),
+    url(r'^edit/?', views.ManufacturerPartEdit.as_view(), name='manufacturer-part-edit'),
+
+    url('^.*$', views.ManufacturerPartDetail.as_view(template_name='company/manufacturer_part_detail.html'), name='manufacturer-part-detail'),
 ]
 
 manufacturer_part_urls = [

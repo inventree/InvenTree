@@ -306,18 +306,17 @@ class ManufacturerPart(models.Model):
 
     manufacturer = models.ForeignKey(
         Company,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='manufacturer_parts',
         limit_choices_to={
             'is_manufacturer': True
         },
         verbose_name=_('Manufacturer'),
         help_text=_('Select manufacturer'),
-        null=True, blank=True
     )
 
     MPN = models.CharField(
-        max_length=100, blank=True, null=True,
+        max_length=100,
         verbose_name=_('MPN'),
         help_text=_('Manufacturer Part Number')
     )

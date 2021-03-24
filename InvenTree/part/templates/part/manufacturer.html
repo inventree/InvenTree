@@ -14,7 +14,7 @@
 <div id='button-toolbar'>
     <div class='btn-group'>
         <button class="btn btn-success" id='manufacturer-create'>
-            <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
+            <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
         </button>
         <div id='opt-dropdown' class="btn-group">
             <button id='manufacturer-part-options' class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{% trans "Options" %}<span class="caret"></span></button>
@@ -73,19 +73,18 @@
         });
     });
 
-    loadSupplierPartTable(
-        "#supplier-table",
-        "{% url 'api-supplier-part-list' %}",
+    loadManufacturerPartTable(
+        "#manufacturer-table",
+        "{% url 'api-manufacturer-part-list' %}",
         {
             params: {
                 part: {{ part.id }},
                 part_detail: true,
-                supplier_detail: true,
                 manufacturer_detail: true,
             },
         }
     );
 
-    linkButtonsToSelection($("#supplier-table"), ['#supplier-part-options'])
+    linkButtonsToSelection($("#manufacturer-table"), ['#manufacturer-part-options'])
 
 {% endblock %}
