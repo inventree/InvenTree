@@ -31,11 +31,13 @@ src="{% static 'img/blank_image.png' %}"
 {% if roles.purchase_order.change %}
 <div class='btn-row'>
     <div class='btn-group action-buttons' role='group'>
+        {% comment "for later" %}
         {% if roles.purchase_order.add %}
         <button type='button' class='btn btn-default btn-glyph' id='order-part' title='{% trans "Order part" %}'>
             <span class='fas fa-shopping-cart'></span>
         </button>
         {% endif %}
+        {% endcomment %}
         <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='{% trans "Edit manufacturer part" %}'>
             <span class='fas fa-edit icon-green'/>
         </button>

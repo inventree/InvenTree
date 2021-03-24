@@ -436,7 +436,7 @@ class ManufacturerPartDelete(AjaxDeleteView):
     """
 
     success_url = '/manufacturer/'
-    ajax_template_name = 'company/partdelete.html'
+    ajax_template_name = 'company/manufacturer_part_delete.html'
     ajax_form_title = _('Delete Manufacturer Part')
 
     role_required = 'purchase_order.delete'
@@ -460,7 +460,7 @@ class ManufacturerPartDelete(AjaxDeleteView):
         if 'part' in self.request.GET:
             try:
                 self.parts.append(ManufacturerPart.objects.get(pk=self.request.GET.get('part')))
-            except (ValueError, SupplierPart.DoesNotExist):
+            except (ValueError, ManufacturerPart.DoesNotExist):
                 pass
 
         elif 'parts[]' in self.request.GET:
@@ -666,7 +666,7 @@ class SupplierPartDelete(AjaxDeleteView):
     """
 
     success_url = '/supplier/'
-    ajax_template_name = 'company/partdelete.html'
+    ajax_template_name = 'company/supplier_part_delete.html'
     ajax_form_title = _('Delete Supplier Part')
 
     role_required = 'purchase_order.delete'

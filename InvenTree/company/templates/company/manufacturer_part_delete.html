@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block pre_form_content %}
-{% trans "Are you sure you want to delete the following Supplier Parts?" %}
+{% trans "Are you sure you want to delete the following Manufacturer Parts?" %}
 
 <hr>
 {% endblock %}
@@ -11,15 +11,18 @@
 <table class='table table-striped table-condensed'>
 {% for part in parts %}
 <tr>
-    <input type='hidden' name='supplier-part-{{ part.id}}' value='supplier-part-{{ part.id }}'/>
+    <input type='hidden' name='manufacturer-part-{{ part.id}}' value='manufacturer-part-{{ part.id }}'/>
     
-    <td>
-        {% include "hover_image.html" with image=part.supplier.image %}
-        {{ part.supplier.name }}
-    </td>
     <td>
         {% include "hover_image.html" with image=part.part.image %}
         {{ part.part.full_name }}
+    </td>
+    <td>
+        {% include "hover_image.html" with image=part.manufacturer.image %}
+        {{ part.manufacturer.name }}
+    </td>
+    <td>
+        {{ part.MPN }}
     </td>
 </tr>
 {% endfor %}
