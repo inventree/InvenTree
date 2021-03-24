@@ -111,6 +111,13 @@ def shell(c):
 
     manage(c, 'shell', pty=True)
 
+@task
+def worker(c):
+    """
+    Run the InvenTree background worker process
+    """
+
+    manage(c, 'qcluster', pty=True)
 
 @task
 def superuser(c):
