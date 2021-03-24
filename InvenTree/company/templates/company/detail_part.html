@@ -17,9 +17,16 @@
     <div class='button-toolbar container-fluid'>
         <div class='btn-group role='group'>
             {% if roles.purchase_order.add %}
-            <button class="btn btn-success" id='part-create' title='{% trans "Create new supplier part" %}'>
-                <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
-            </button>
+                {% if company.is_manufacturer %}
+                <button class="btn btn-success" id='manufacturer-part-create' title='{% trans "Create new manufacturer part" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
+                </button>
+                {% endif %}
+                {% if company.is_supplier %}
+                <button class="btn btn-success" id='supplier-part-create' title='{% trans "Create new supplier part" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
+                </button>
+                {% endif %}
             {% endif %}
             <div class='btn-group'>
                 <div class="dropdown" style="float: right;">
@@ -51,13 +58,37 @@
 {% block js_ready %}
 {{ block.super }}
 
-    $("#part-create").click(function () {
+    $("#manufacturer-part-create").click(function () {
+        launchModalForm(
+            "{% url 'manufacturer-part-create' %}",
+            {
+                data: {
+                    manufacturer: {{ company.id }},
+                },
+                reload: true,
+                secondary: [
+                    {
+                        field: 'part',
+                        label: '{% trans "New Part" %}',
+                        title: '{% trans "Create new Part" %}',
+                        url: "{% url 'part-create' %}"
+                    },
+                    {
+                        field: 'manufacturer',
+                        label: '{% trans "New Manufacturer" %}',
+                        title: '{% trans "Create new Manufacturer" %}',
+                        url: "{% url 'manufacturer-create' %}",
+                    },
+                ]
+            });
+    });
+
+    $("#supplier-part-create").click(function () {
         launchModalForm(
             "{% url 'supplier-part-create' %}",
             {
                 data: {
-                    {% if company.is_supplier %}supplier: {{ company.id }},{% endif %}
-                    {% if company.is_manufacturer %}manufacturer: {{ company.id }},{% endif %}
+                    supplier: {{ company.id }},
                 },
                 reload: true,
                 secondary: [
@@ -73,16 +104,25 @@
                         title: "{% trans 'Create new Supplier' %}",
                         url: "{% url 'supplier-create' %}",
                     },
-                    {
-                        field: 'manufacturer',
-                        label: '{% trans "New Manufacturer" %}',
-                        title: '{% trans "Create new Manufacturer" %}',
-                        url: "{% url 'manufacturer-create' %}",
-                    },
                 ]
             });
     });
 
+    {% if company.is_manufacturer %}
+    loadManufacturerPartTable(
+        "#part-table",
+        "{% url 'api-manufacturer-part-list' %}",
+        {
+            params: {
+                part_detail: true,
+                manufacturer_detail: true,
+                company: {{ company.id }},
+            },
+        }
+    );
+    {% endif %}
+
+    {% if company.is_supplier %}
     loadSupplierPartTable(
         "#part-table",
         "{% url 'api-supplier-part-list' %}",
@@ -95,6 +135,7 @@
             },
         }
     );
+    {% endif %}
 
     $("#multi-part-delete").click(function() {
         var selections = $("#part-table").bootstrapTable("getSelections");
@@ -105,7 +146,14 @@
             parts.push(item.pk);
         });
 
-        launchModalForm("{% url 'supplier-part-delete' %}", {
+        {% if company.is_manufacturer %}
+        var url = "{% url 'manufacturer-part-delete' %}"
+        {% endif %}
+        {% if company.is_supplier %}
+        var url = "{% url 'supplier-part-delete' %}"
+        {% endif %}
+
+        launchModalForm(url, {
             data: {
                 parts: parts,
             },

@@ -352,7 +352,7 @@ class ManufacturerPartEdit(AjaxUpdateView):
 
     model = ManufacturerPart
     context_object_name = 'part'
-    form_class = EditSupplierPartForm
+    form_class = EditManufacturerPartForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Manufacturer Part')
 
