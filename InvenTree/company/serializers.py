@@ -7,7 +7,6 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 
 from .models import Company
-from .models import ManufacturerPart
 from .models import SupplierPart, SupplierPriceBreak
 
 from InvenTree.serializers import InvenTreeModelSerializer
