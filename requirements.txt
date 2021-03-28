@@ -1,11 +1,11 @@
 invoke>=1.4.0                   # Invoke build tool
 wheel>=0.34.2                   # Wheel
-Django==3.0.7                   # Django package
+Django==3.1.7                   # Django package
 pillow==8.1.1                   # Image manipulation
 djangorestframework==3.11.2     # DRF framework
 django-dbbackup==3.3.0          # Database backup / restore functionality
 django-cors-headers==3.2.0      # CORS headers extension for DRF
-django_filter==2.2.0            # Extended filtering options
+django-filter==2.4.0            # Extended filtering options
 django-mptt==0.11.0             # Modified Preorder Tree Traversal
 django-sql-utils==0.5.0         # Advanced query annotation / aggregation
 django-markdownx==3.0.1         # Markdown form fields
