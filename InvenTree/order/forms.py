@@ -213,7 +213,7 @@ class EditSalesOrderLineItemForm(HelperForm):
         ]
 
 
-class AllocateSerialsToSalesOrderForm(HelperForm):
+class AllocateSerialsToSalesOrderForm(forms.Form):
     """
     Form for assigning stock to a sales order,
     by serial number lookup
@@ -234,7 +234,6 @@ class AllocateSerialsToSalesOrderForm(HelperForm):
     )
 
     class Meta:
-        model = SalesOrderAllocation
 
         fields = [
             'line',

@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic.edit import FormMixin
 from django.forms import HiddenInput
 
 import logging
@@ -1291,7 +1292,7 @@ class SOLineItemDelete(AjaxDeleteView):
         }
 
 
-class SalesOrderAssignSerials(AjaxCreateView):
+class SalesOrderAssignSerials(AjaxView, FormMixin):
     """
     View for assigning stock items to a sales order,
     by serial number lookup.
@@ -1327,19 +1328,46 @@ class SalesOrderAssignSerials(AjaxCreateView):
 
         return initials
 
+    def post(self, request, *args, **kwargs):
+
+        self.form = self.get_form()
+
+        # Validate the form
+        self.form.is_valid()
+        self.validate()
+
+        valid = self.form.is_valid()
+
+        data = {
+            'form_valid': valid,
+            'form_errors': self.form.errors.as_json(),
+            'non_field_errors': self.form.non_field_errors().as_json(),
+        }
+
+        return self.renderJsonResponse(request, self.get_form(), data)
+
+    def validate(self):
+
+        data = self.form.cleaned_data
+
+        # Extract hidden fields from posted data
+        self.line = data.get('line', None)
+        self.part = data.get('part', None)
+
+        if not self.line:
+            self.form.add_error('line', _('Select line item'))
+        
+        if not self.part:
+            self.form.add_error('part', _('Select part'))
+
+        self.form.add_error(None, 'abcde')
+
     def get_form(self):
 
         form = super().get_form()
 
         if self.line is not None:
             form.fields['line'].widget = HiddenInput()
-
-        # Hide the 'part' field if value provided
-        try:
-            print(form['part'])
-            # self.part = Part.objects.get(form['part'].value())
-        except (ValueError, Part.DoesNotExist):
-            self.part = None
 
         if self.part is not None:
             form.fields['part'].widget = HiddenInput()
