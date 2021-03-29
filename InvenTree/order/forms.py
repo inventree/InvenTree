@@ -14,6 +14,8 @@ from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.fields import DatePickerFormField
 
+import part.models
+
 from stock.models import StockLocation
 from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
@@ -211,21 +213,42 @@ class EditSalesOrderLineItemForm(HelperForm):
         ]
 
 
-class CreateSalesOrderAllocationForm(HelperForm):
+class AllocateSerialsToSalesOrderForm(HelperForm):
     """
-    Form for creating a SalesOrderAllocation item.
-
-    This can be allocated by selecting a specific stock item,
-    or by providing a sequence of serial numbers
+    Form for assigning stock to a sales order,
+    by serial number lookup
     """
 
-    quantity = RoundingDecimalFormField(max_digits = 10, decimal_places=5)
+    line = forms.ModelChoiceField(
+        queryset = SalesOrderLineItem.objects.all(),
+    )
+
+    part = forms.ModelChoiceField(
+        queryset = part.models.Part.objects.all(),
+    )
 
     serials = forms.CharField(
         label=_("Serial Numbers"),
         required=False,
-        help_text=_('Enter stock serial numbers'),
+        help_text=_('Enter stock item serial numbers'),
     )
+
+    class Meta:
+        model = SalesOrderAllocation
+
+        fields = [
+            'line',
+            'part',
+            'serials',
+        ]
+
+
+class CreateSalesOrderAllocationForm(HelperForm):
+    """
+    Form for creating a SalesOrderAllocation item.
+    """
+
+    quantity = RoundingDecimalFormField(max_digits = 10, decimal_places=5)
 
     class Meta:
         model = SalesOrderAllocation

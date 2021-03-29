@@ -1291,6 +1291,75 @@ class SOLineItemDelete(AjaxDeleteView):
         }
 
 
+class SalesOrderAssignSerials(AjaxCreateView):
+    """
+    View for assigning stock items to a sales order,
+    by serial number lookup.
+    """
+
+    model = SalesOrderAllocation
+    role_required = 'sales_order.change'
+    ajax_form_title = _('Allocate Serial Numbers')
+    form_class = order_forms.AllocateSerialsToSalesOrderForm
+
+    # Keep track of SalesOrderLineItem and Part references
+    line = None
+    part = None
+
+    def get_initial(self):
+        """
+        Initial values are passed as query params
+        """
+
+        initials = super().get_initial()
+
+        try:
+            self.line = SalesOrderLineItem.objects.get(pk=self.request.GET.get('line', None))
+            initials['line'] = self.line
+        except (ValueError, SalesOrderLineItem.DoesNotExist):
+            pass
+
+        try:
+            self.part = Part.objects.get(pk=self.request.GET.get('part', None))
+            initials['part'] = self.part
+        except (ValueError, Part.DoesNotExist):
+            pass
+
+        return initials
+
+    def get_form(self):
+
+        form = super().get_form()
+
+        if self.line is not None:
+            form.fields['line'].widget = HiddenInput()
+
+        # Hide the 'part' field if value provided
+        try:
+            print(form['part'])
+            # self.part = Part.objects.get(form['part'].value())
+        except (ValueError, Part.DoesNotExist):
+            self.part = None
+
+        if self.part is not None:
+            form.fields['part'].widget = HiddenInput()
+
+        return form
+
+    def get_context_data(self):
+        return {
+            'line': self.line,
+            'part': self.part,
+        }
+
+    def get(self, request, *args, **kwargs):
+        return self.renderJsonResponse(
+            request,
+            self.get_form(),
+            context=self.get_context_data(),
+        )
+
+
 class SalesOrderAllocationCreate(AjaxCreateView):
     """ View for creating a new SalesOrderAllocation """
 
