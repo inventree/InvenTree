@@ -1344,7 +1344,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
             'non_field_errors': self.form.non_field_errors().as_json(),
         }
 
-        return self.renderJsonResponse(request, self.get_form(), data)
+        return self.renderJsonResponse(request, self.form, data)
 
     def validate(self):
 
@@ -1354,22 +1354,26 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
         self.line = data.get('line', None)
         self.part = data.get('part', None)
 
-        if not self.line:
+        if self.line:
+            self.form.fields['line'].widget = HiddenInput()
+        else:
             self.form.add_error('line', _('Select line item'))
         
-        if not self.part:
+        if self.part:
+            self.form.fields['part'].widget = HiddenInput()
+        else:
             self.form.add_error('part', _('Select part'))
 
-        self.form.add_error(None, 'abcde')
+        self.form.add_error('serials', 'abcde')
 
     def get_form(self):
 
         form = super().get_form()
 
-        if self.line is not None:
+        if self.line:
             form.fields['line'].widget = HiddenInput()
 
-        if self.part is not None:
+        if self.part:
             form.fields['part'].widget = HiddenInput()
 
         return form
@@ -1381,6 +1385,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
         }
 
     def get(self, request, *args, **kwargs):
+
         return self.renderJsonResponse(
             request,
             self.get_form(),
