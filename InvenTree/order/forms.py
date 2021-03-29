@@ -220,17 +220,25 @@ class AllocateSerialsToSalesOrderForm(forms.Form):
     """
 
     line = forms.ModelChoiceField(
-        queryset = SalesOrderLineItem.objects.all(),
+        queryset=SalesOrderLineItem.objects.all(),
     )
 
     part = forms.ModelChoiceField(
-        queryset = part.models.Part.objects.all(),
+        queryset=part.models.Part.objects.all(),
     )
 
     serials = forms.CharField(
         label=_("Serial Numbers"),
-        required=False,
+        required=True,
         help_text=_('Enter stock item serial numbers'),
+    )
+
+    quantity = forms.IntegerField(
+        label=_('Quantity'),
+        required=True,
+        help_text=_('Enter quantity of stock items'),
+        initial=1,
+        min_value=1
     )
 
     class Meta:
@@ -239,6 +247,7 @@ class AllocateSerialsToSalesOrderForm(forms.Form):
             'line',
             'part',
             'serials',
+            'quantity',
         ]
 
 
@@ -247,7 +256,7 @@ class CreateSalesOrderAllocationForm(HelperForm):
     Form for creating a SalesOrderAllocation item.
     """
 
-    quantity = RoundingDecimalFormField(max_digits = 10, decimal_places=5)
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
 
     class Meta:
         model = SalesOrderAllocation

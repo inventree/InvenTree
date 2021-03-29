@@ -736,7 +736,7 @@ class SalesOrderAllocation(models.Model):
             if not self.item:
                 raise ValidationError({'item': _('Stock item has not been assigned')})
         except stock_models.StockItem.DoesNotExist:
-                raise ValidationError({'item': _('Stock item has not been assigned')})
+            raise ValidationError({'item': _('Stock item has not been assigned')})
 
         try:
             if not self.line.part == self.item.part:

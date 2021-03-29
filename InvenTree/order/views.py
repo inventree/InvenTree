@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView, UpdateView
@@ -31,6 +32,7 @@ from . import forms as order_forms
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers import extract_serial_numbers
 from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
@@ -1300,6 +1302,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
 
     model = SalesOrderAllocation
     role_required = 'sales_order.change'
+    ajax_template_name = 'order/so_allocate_by_serial.html'
     ajax_form_title = _('Allocate Serial Numbers')
     form_class = order_forms.AllocateSerialsToSalesOrderForm
 
@@ -1338,10 +1341,14 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
 
         valid = self.form.is_valid()
 
+        if valid:
+            self.allocate_items()
+
         data = {
             'form_valid': valid,
             'form_errors': self.form.errors.as_json(),
             'non_field_errors': self.form.non_field_errors().as_json(),
+            'success': _("Allocated") + f" {len(self.stock_items)} " + _("items")
         }
 
         return self.renderJsonResponse(request, self.form, data)
@@ -1364,7 +1371,69 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
         else:
             self.form.add_error('part', _('Select part'))
 
-        self.form.add_error('serials', 'abcde')
+        if not self.form.is_valid():
+            return
+
+        # Form is otherwise valid - check serial numbers
+        serials = data.get('serials', '')
+        quantity = data.get('quantity', 1)
+
+        # Save a list of serial_numbers
+        self.serial_numbers = None
+        self.stock_items = []
+
+        try:
+            self.serial_numbers = extract_serial_numbers(serials, quantity)
+
+            for serial in self.serial_numbers:
+                try:
+                    # Find matching stock item
+                    stock_item = StockItem.objects.get(
+                        part=self.part,
+                        serial=serial
+                    )
+                except StockItem.DoesNotExist:
+                    self.form.add_error(
+                        'serials',
+                        _('No matching item for serial') + f" '{serial}'"
+                    )
+                    continue
+
+                # Now we have a valid stock item - but can it be added to the sales order?
+                
+                # If not in stock, cannot be added to the order
+                if not stock_item.in_stock:
+                    self.form.add_error(
+                        'serials',
+                        f"'{serial}' " + _("is not in stock")
+                    )
+                    continue
+
+                # Already allocated to an order
+                if stock_item.is_allocated():
+                    self.form.add_error(
+                        'serials',
+                        f"'{serial}' " + _("already allocated to an order")
+                    )
+                    continue
+
+                # Add it to the list!
+                self.stock_items.append(stock_item)
+
+        except ValidationError as e:
+            self.form.add_error('serials', e.messages)
+
+    def allocate_items(self):
+        """
+        Create stock item allocations for each selected serial number
+        """
+
+        for stock_item in self.stock_items:
+            SalesOrderAllocation.objects.create(
+                item=stock_item,
+                line=self.line,
+                quantity=1,
+            )
 
     def get_form(self):
 
