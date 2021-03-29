@@ -35,4 +35,4 @@ class TestForwardMigrations(MigratorTestCase):
 
         User = self.new_state.apps.get_model('auth', 'user')
 
-        self.assertEqual(User.objects.count(), 2)        
+        self.assertEqual(User.objects.count(), 2)   
