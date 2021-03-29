@@ -13,6 +13,8 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Sum, Q, UniqueConstraint
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 from django.apps import apps
 from django.urls import reverse
@@ -278,6 +280,20 @@ class Contact(models.Model):
                                 on_delete=models.CASCADE)
 
 
+class SourceItem(models.Model):
+    """ This model allows flexibility for sourcing of InvenTree parts.
+    Each SourceItem instance represents a single ManufacturerPart or
+    SupplierPart instance.
+    SourceItem can be linked to either Part or ManufacturerPart instances.
+    """
+
+    part_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+
+    part_id = models.PositiveIntegerField()
+
+    part = GenericForeignKey('part_type', 'part_id')
+
+
 class ManufacturerPart(models.Model):
     """ Represents a unique part as provided by a Manufacturer
     Each ManufacturerPart is identified by a MPN (Manufacturer Part Number)
@@ -286,6 +302,7 @@ class ManufacturerPart(models.Model):
 
     Attributes:
         part: Link to the master Part
+        source_item: The sourcing item linked to this ManufacturerPart instance
         manufacturer: Company that manufactures the ManufacturerPart
         MPN: Manufacture part number
         link: Link to external website for this manufacturer part
@@ -303,6 +320,12 @@ class ManufacturerPart(models.Model):
                              },
                              help_text=_('Select part'),
                              )
+    
+    source_item = models.ForeignKey(SourceItem, on_delete=models.CASCADE,
+                                    blank=True, null=True,
+                                    related_name='manufacturer_parts',
+                                    verbose_name=_('Sourcing Item'),
+                                    )
 
     manufacturer = models.ForeignKey(
         Company,
@@ -341,8 +364,8 @@ class SupplierPart(models.Model):
     A Part may be available from multiple suppliers
 
     Attributes:
-        part_type: Part or ManufacturerPart
-        part_id: Part or ManufacturerPart ID
+        part: Link to the master Part
+        source_item: The sourcing item linked to this SupplierPart instance
         supplier: Company that supplies this SupplierPart object
         SKU: Stock keeping unit (supplier part number)
         link: Link to external website for this supplier part
@@ -371,6 +394,12 @@ class SupplierPart(models.Model):
                              },
                              help_text=_('Select part'),
                              )
+
+    source_item = models.ForeignKey(SourceItem, on_delete=models.CASCADE,
+                                    blank=True, null=True,
+                                    related_name='supplier_parts',
+                                    verbose_name=_('Sourcing Item'),
+                                    )
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
                                  related_name='supplied_parts',

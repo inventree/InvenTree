@@ -130,7 +130,7 @@ class ManufacturerPartList(generics.ListCreateAPIView):
         params = self.request.query_params
 
         # Filter by manufacturer
-        manufacturer = params.get('manufacturer', None)
+        manufacturer = params.get('company', None)
 
         if manufacturer is not None:
             queryset = queryset.filter(manufacturer=manufacturer)
