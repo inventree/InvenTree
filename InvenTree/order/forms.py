@@ -211,7 +211,36 @@ class EditSalesOrderLineItemForm(HelperForm):
         ]
 
 
+class CreateSalesOrderAllocationForm(HelperForm):
+    """
+    Form for creating a SalesOrderAllocation item.
+
+    This can be allocated by selecting a specific stock item,
+    or by providing a sequence of serial numbers
+    """
+
+    quantity = RoundingDecimalFormField(max_digits = 10, decimal_places=5)
+
+    serials = forms.CharField(
+        label=_("Serial Numbers"),
+        required=False,
+        help_text=_('Enter stock serial numbers'),
+    )
+
+    class Meta:
+        model = SalesOrderAllocation
+
+        fields = [
+            'line',
+            'item',
+            'quantity',
+        ]
+
+
 class EditSalesOrderAllocationForm(HelperForm):
+    """
+    Form for editing a SalesOrderAllocation item
+    """
 
     quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
 

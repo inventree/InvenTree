@@ -1295,7 +1295,7 @@ class SalesOrderAllocationCreate(AjaxCreateView):
     """ View for creating a new SalesOrderAllocation """
 
     model = SalesOrderAllocation
-    form_class = order_forms.EditSalesOrderAllocationForm
+    form_class = order_forms.CreateSalesOrderAllocationForm
     ajax_form_title = _('Allocate Stock to Order')
     
     def get_initial(self):
