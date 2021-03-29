@@ -10,11 +10,12 @@
 
 {% block heading %}
 {% trans "Part Notes" %}
+{% if roles.part.change and not editing %}
+<button title='{% trans "Edit notes" %}' class='btn btn-default' id='edit-notes'><span class='fas fa-edit'></span></button>
+{% endif %}
 {% endblock %}
 
 {% block details %}
-
-
 
 {% if editing %}
 <form method='POST'>
@@ -22,23 +23,21 @@
         
     {{ form }}
     <hr>
-    <input type="submit" value='{% trans "Save" %}'/>
+
+    <button type="submit" class='btn btn-default'>{% trans "Save" %}</button>
     
 </form>
 
 {{ form.media }}
 
 {% else %}
-{% if roles.part.change %}
-<button title='{% trans "Edit notes" %}' class='btn btn-default action-button' id='edit-notes'><span class='fas fa-edit'></span></button>
-{% endif %}
 
 <div class='panel panel-default'>
+    {% if part.notes %}
     <div class='panel-content'>
-        {% if part.notes %}
         {{ part.notes | markdownify }}
-        {% endif %}
     </div>
+    {% endif %}
 </div>
 
 {% endif %}
