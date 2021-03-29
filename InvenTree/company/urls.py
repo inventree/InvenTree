@@ -13,7 +13,8 @@ company_detail_urls = [
 
     # url(r'orders/?', views.CompanyDetail.as_view(template_name='company/orders.html'), name='company-detail-orders'),
 
-    url(r'^parts/', views.CompanyDetail.as_view(template_name='company/detail_part.html'), name='company-detail-parts'),
+    url(r'^supplier-parts/', views.CompanyDetail.as_view(template_name='company/detail_supplier_part.html'), name='company-detail-supplier-parts'),
+    url(r'^manufacturer-parts/', views.CompanyDetail.as_view(template_name='company/detail_manufacturer_part.html'), name='company-detail-manufacturer-parts'),
     url(r'^stock/', views.CompanyDetail.as_view(template_name='company/detail_stock.html'), name='company-detail-stock'),
     url(r'^purchase-orders/', views.CompanyDetail.as_view(template_name='company/purchase_orders.html'), name='company-detail-purchase-orders'),
     url(r'^assigned-stock/', views.CompanyDetail.as_view(template_name='company/assigned_stock.html'), name='company-detail-assigned-stock'),

@@ -302,7 +302,6 @@ class ManufacturerPart(models.Model):
 
     Attributes:
         part: Link to the master Part
-        source_item: The sourcing item linked to this ManufacturerPart instance
         manufacturer: Company that manufactures the ManufacturerPart
         MPN: Manufacture part number
         link: Link to external website for this manufacturer part
@@ -311,7 +310,7 @@ class ManufacturerPart(models.Model):
 
     class Meta:
         unique_together = ('part', 'manufacturer', 'MPN')
-
+    
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
                              related_name='manufacturer_parts',
                              verbose_name=_('Base Part'),
@@ -321,12 +320,6 @@ class ManufacturerPart(models.Model):
                              help_text=_('Select part'),
                              )
     
-    source_item = models.ForeignKey(SourceItem, on_delete=models.CASCADE,
-                                    blank=True, null=True,
-                                    related_name='manufacturer_parts',
-                                    verbose_name=_('Sourcing Item'),
-                                    )
-
     manufacturer = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
@@ -364,7 +357,7 @@ class SupplierPart(models.Model):
     A Part may be available from multiple suppliers
 
     Attributes:
-        part: Link to the master Part
+        part: Link to the master Part (Obsolete)
         source_item: The sourcing item linked to this SupplierPart instance
         supplier: Company that supplies this SupplierPart object
         SKU: Stock keeping unit (supplier part number)
@@ -398,7 +391,8 @@ class SupplierPart(models.Model):
     source_item = models.ForeignKey(SourceItem, on_delete=models.CASCADE,
                                     blank=True, null=True,
                                     related_name='supplier_parts',
-                                    verbose_name=_('Sourcing Item'),
+                                    verbose_name=_('Part'),
+                                    help_text=_('Select part'),
                                     )
 
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,

@@ -128,6 +128,8 @@ class EditSupplierPartForm(HelperForm):
             'part',
             'supplier',
             'SKU',
+            'manufacturer',
+            'MPN',
             'description',
             'link',
             'note',

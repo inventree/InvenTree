@@ -22,7 +22,7 @@
             {% endif %}
         </td>
     </tr>
-    <tr><td>{% trans "Manufacturer" %}</td><td><a href="{% url 'company-detail-parts' part.manufacturer.id %}">{{ part.manufacturer.name }}</a></td></tr>
+    <tr><td>{% trans "Manufacturer" %}</td><td><a href="{% url 'company-detail-manufacturer-parts' part.manufacturer.id %}">{{ part.manufacturer.name }}</a></td></tr>
     <tr><td>{% trans "MPN" %}</td><td>{{ part.MPN }}</tr></tr>
 {% if part.link %}
     <tr><td>{% trans "External Link" %}</td><td><a href="{{ part.link }}">{{ part.link }}</a></td></tr>

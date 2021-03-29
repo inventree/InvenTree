@@ -83,7 +83,7 @@ src="{% static 'img/blank_image.png' %}"
         <tr>
             <td><span class='fas fa-industry'></span></td>
             <td>{% trans "Manufacturer" %}</td>
-            <td><a href="{% url 'company-detail-parts' part.manufacturer.id %}">{{ part.manufacturer.name }}</a></td></tr>
+            <td><a href="{% url 'company-detail-manufacturer-parts' part.manufacturer.id %}">{{ part.manufacturer.name }}</a></td></tr>
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "MPN" %}</td>
@@ -125,7 +125,7 @@ $('#delete-part').click(function() {
     launchModalForm(
         "{% url 'manufacturer-part-delete' %}?part={{ part.id }}",
         {
-            redirect: "{% url 'company-detail-parts' part.manufacturer.id %}"
+            redirect: "{% url 'company-detail-manufacturer-parts' part.manufacturer.id %}"
         }
     );
 });

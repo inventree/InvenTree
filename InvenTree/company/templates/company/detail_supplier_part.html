@@ -4,7 +4,7 @@
 {% load inventree_extras %}
 
 {% block menubar %}
-{% include 'company/navbar.html' with tab='parts' %}
+{% include 'company/navbar.html' with tab='supplier_parts' %}
 {% endblock %}
 
 {% block heading %}
@@ -13,22 +13,14 @@
 
 
 {% block details %}
-{% setting_object 'PART_ENABLE_MANUFACTURER_PARTS' as manufacturer_parts %}
-
 {% if roles.purchase_order.change %}
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid'>
         <div class='btn-group role='group'>
             {% if roles.purchase_order.add %}
-                {% if manufacturer_parts.value == "True" and company.is_manufacturer %}
-                <button class="btn btn-success" id='manufacturer-part-create' title='{% trans "Create new manufacturer part" %}'>
-                    <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
-                </button>
-                {% else %}
                 <button class="btn btn-success" id='supplier-part-create' title='{% trans "Create new supplier part" %}'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
                 </button>
-                {% endif %}
             {% endif %}
             <div class='btn-group'>
                 <div class="dropdown" style="float: right;">
@@ -59,32 +51,6 @@
 {% endblock %}
 {% block js_ready %}
 {{ block.super }}
-{% setting_object 'PART_ENABLE_MANUFACTURER_PARTS' as manufacturer_parts %}
-
-    $("#manufacturer-part-create").click(function () {
-        launchModalForm(
-            "{% url 'manufacturer-part-create' %}",
-            {
-                data: {
-                    manufacturer: {{ company.id }},
-                },
-                reload: true,
-                secondary: [
-                    {
-                        field: 'part',
-                        label: '{% trans "New Part" %}',
-                        title: '{% trans "Create new Part" %}',
-                        url: "{% url 'part-create' %}"
-                    },
-                    {
-                        field: 'manufacturer',
-                        label: '{% trans "New Manufacturer" %}',
-                        title: '{% trans "Create new Manufacturer" %}',
-                        url: "{% url 'manufacturer-create' %}",
-                    },
-                ]
-            });
-    });
 
     $("#supplier-part-create").click(function () {
         launchModalForm(
@@ -111,19 +77,6 @@
             });
     });
 
-    {% if manufacturer_parts.value == "True" and company.is_manufacturer %}
-    loadManufacturerPartTable(
-        "#part-table",
-        "{% url 'api-manufacturer-part-list' %}",
-        {
-            params: {
-                part_detail: true,
-                manufacturer_detail: true,
-                company: {{ company.id }},
-            },
-        }
-    );
-    {% else %}
     loadSupplierPartTable(
         "#part-table",
         "{% url 'api-supplier-part-list' %}",
@@ -136,7 +89,6 @@
             },
         }
     );
-    {% endif %}
 
     $("#multi-part-delete").click(function() {
         var selections = $("#part-table").bootstrapTable("getSelections");
@@ -147,12 +99,7 @@
             parts.push(item.pk);
         });
 
-        {% if company.is_manufacturer %}
-        var url = "{% url 'manufacturer-part-delete' %}"
-        {% endif %}
-        {% if company.is_supplier %}
         var url = "{% url 'supplier-part-delete' %}"
-        {% endif %}
 
         launchModalForm(url, {
             data: {
