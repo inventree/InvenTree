@@ -663,7 +663,6 @@ class SalesOrderLineItem(OrderLineItem):
 
     class Meta:
         unique_together = [
-            ('order', 'part'),
         ]
 
     def fulfilled_quantity(self):
