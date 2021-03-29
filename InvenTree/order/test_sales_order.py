@@ -3,7 +3,6 @@
 from django.test import TestCase
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
 
 from datetime import datetime, timedelta
 
@@ -73,10 +72,10 @@ class SalesOrderTest(TestCase):
         self.assertFalse(self.order.is_fully_allocated())
 
     def test_add_duplicate_line_item(self):
-        # Adding a duplicate line item to a SalesOrder must throw an error
+        # Adding a duplicate line item to a SalesOrder is accepted
         
-        with self.assertRaises(IntegrityError):
-            SalesOrderLineItem.objects.create(order=self.order, part=self.part)
+        for ii in range(1, 5):
+            SalesOrderLineItem.objects.create(order=self.order, part=self.part, quantity=ii)
 
     def allocate_stock(self, full=True):
 

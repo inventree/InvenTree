@@ -275,15 +275,20 @@ $("#so-lines-table").inventreeTable({
                 if (row.part) {
                     var part = row.part_detail;
 
+                    if (part.trackable) {
+                        html += makeIconButton('fa-hashtag icon-green', 'button-add-by-sn', pk, '{% trans "Allocate serial numbers" %}');
+                    }
+
+                    html += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% trans "Allocate stock" %}');   
+
                     if (part.purchaseable) {
-                        html += makeIconButton('fa-shopping-cart', 'button-buy', row.part, '{% trans "Buy parts" %}');
+                        html += makeIconButton('fa-shopping-cart', 'button-buy', row.part, '{% trans "Purchase stock" %}');
                     }
                     
                     if (part.assembly) {
-                        html += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build parts" %}');
+                        html += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build stock" %}');
                     }
                     
-                    html += makeIconButton('fa-plus icon-green', 'button-add', pk, '{% trans "Allocate parts" %}');   
                 }
                 
                 html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
@@ -316,8 +321,26 @@ function setupCallbacks() {
         var pk = $(this).attr('pk');
 
         launchModalForm(`/order/sales-order/line/${pk}/delete/`, {
-            reload: true,
+            success: reloadTable,
         });
+    });
+
+    table.find(".button-add-by-sn").click(function() {
+        var pk = $(this).attr('pk');
+
+        inventreeGet(`/api/order/so-line/${pk}/`, {},
+            {
+                success: function(response) {
+                    launchModalForm('{% url "so-assign-serials" %}', {
+                        success: reloadTable,
+                        data: {
+                            line: pk,
+                            part: response.part, 
+                        }
+                    });
+                }
+            }
+        );
     });
 
     table.find(".button-add").click(function() {
