@@ -3,7 +3,6 @@
 from django.test import TestCase
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
 
 from datetime import datetime, timedelta
 
