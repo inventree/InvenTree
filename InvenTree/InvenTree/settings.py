@@ -362,6 +362,10 @@ else:
     # Extract database configuration from the config.yaml file
     db_config = CONFIG.get('database', {})
 
+    # Default action if db_config not specified in yaml file
+    if not db_config:
+        db_config = {}
+
     # If a particular database option is not specified in the config file,
     # look for it in the environmental variables
     # e.g. INVENTREE_DB_NAME / INVENTREE_DB_USER / etc
