@@ -13,8 +13,6 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Sum, Q, UniqueConstraint
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 
 from django.apps import apps
 from django.urls import reverse
@@ -280,20 +278,6 @@ class Contact(models.Model):
                                 on_delete=models.CASCADE)
 
 
-class SourceItem(models.Model):
-    """ This model allows flexibility for sourcing of InvenTree parts.
-    Each SourceItem instance represents a single ManufacturerPart or
-    SupplierPart instance.
-    SourceItem can be linked to either Part or ManufacturerPart instances.
-    """
-
-    part_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-
-    part_id = models.PositiveIntegerField()
-
-    part = GenericForeignKey('part_type', 'part_id')
-
-
 class ManufacturerPart(models.Model):
     """ Represents a unique part as provided by a Manufacturer
     Each ManufacturerPart is identified by a MPN (Manufacturer Part Number)
@@ -323,6 +307,7 @@ class ManufacturerPart(models.Model):
     manufacturer = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
+        null=True,
         related_name='manufacturer_parts',
         limit_choices_to={
             'is_manufacturer': True
@@ -332,6 +317,7 @@ class ManufacturerPart(models.Model):
     )
 
     MPN = models.CharField(
+        null=True,
         max_length=100,
         verbose_name=_('MPN'),
         help_text=_('Manufacturer Part Number')
@@ -388,13 +374,6 @@ class SupplierPart(models.Model):
                              help_text=_('Select part'),
                              )
 
-    source_item = models.ForeignKey(SourceItem, on_delete=models.CASCADE,
-                                    blank=True, null=True,
-                                    related_name='supplier_parts',
-                                    verbose_name=_('Part'),
-                                    help_text=_('Select part'),
-                                    )
-
     supplier = models.ForeignKey(Company, on_delete=models.CASCADE,
                                  related_name='supplied_parts',
                                  limit_choices_to={'is_supplier': True},
@@ -408,23 +387,12 @@ class SupplierPart(models.Model):
         help_text=_('Supplier stock keeping unit')
     )
 
-    manufacturer = models.ForeignKey(
-        Company,
-        on_delete=models.SET_NULL,
-        related_name='manufactured_parts',
-        limit_choices_to={
-            'is_manufacturer': True
-        },
-        verbose_name=_('Manufacturer'),
-        help_text=_('Select manufacturer'),
-        null=True, blank=True
-    )
-
-    MPN = models.CharField(
-        max_length=100, blank=True, null=True,
-        verbose_name=_('MPN'),
-        help_text=_('Manufacturer part number')
-    )
+    manufacturer_part = models.ForeignKey(ManufacturerPart, on_delete=models.CASCADE,
+                                          blank=True, null=True,
+                                          related_name='manufacturer_parts',
+                                          verbose_name=_('Manufacturer Part'),
+                                          help_text=_('Select manufacturer part'),
+                                          )
 
     link = InvenTreeURLField(
         blank=True, null=True,

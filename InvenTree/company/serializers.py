@@ -7,6 +7,7 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 
 from .models import Company
+from .models import ManufacturerPart
 from .models import SupplierPart, SupplierPriceBreak
 
 from InvenTree.serializers import InvenTreeModelSerializer
@@ -157,7 +158,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
 
-    manufacturer = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_manufacturer=True))
+    manufacturer_part = serializers.PrimaryKeyRelatedField(queryset=ManufacturerPart.objects.all())
 
     class Meta:
         model = SupplierPart
@@ -169,10 +170,9 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'supplier',
             'supplier_detail',
             'SKU',
-            'manufacturer',
+            'manufacturer_part',
             'manufacturer_detail',
             'description',
-            'MPN',
             'link',
         ]
 

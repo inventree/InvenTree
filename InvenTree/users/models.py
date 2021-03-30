@@ -75,7 +75,6 @@ class RuleSet(models.Model):
             'part_partstar',
             'company_supplierpart',
             'company_manufacturerpart',
-            'company_sourceitem',
         ],
         'stock_location': [
             'stock_stocklocation',
