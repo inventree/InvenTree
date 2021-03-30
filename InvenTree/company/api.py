@@ -215,7 +215,7 @@ class SupplierPartList(generics.ListCreateAPIView):
         manufacturer = params.get('manufacturer', None)
 
         if manufacturer is not None:
-            queryset = queryset.filter(manufacturer=manufacturer)
+            queryset = queryset.filter(manufacturer_part__manufacturer=manufacturer)
 
         # Filter by supplier
         supplier = params.get('supplier', None)
@@ -227,7 +227,7 @@ class SupplierPartList(generics.ListCreateAPIView):
         company = params.get('company', None)
 
         if company is not None:
-            queryset = queryset.filter(Q(manufacturer=company) | Q(supplier=company))
+            queryset = queryset.filter(Q(manufacturer_part__manufacturer=company) | Q(supplier=company))
 
         # Filter by parent part?
         part = params.get('part', None)
@@ -298,7 +298,7 @@ class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     - GET: Retrieve detail view
     - PATCH: Update object
-    - DELETE: Delete objec
+    - DELETE: Delete object
     """
 
     queryset = SupplierPart.objects.all()

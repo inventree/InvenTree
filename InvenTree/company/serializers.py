@@ -82,7 +82,7 @@ class CompanySerializer(InvenTreeModelSerializer):
 
 
 class ManufacturerPartSerializer(InvenTreeModelSerializer):
-    """ Serializer for SupplierPart object """
+    """ Serializer for ManufacturerPart object """
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -131,7 +131,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
 
-    manufacturer_detail = ManufacturerPartSerializer(source='manufacturer_part', many=False, read_only=True)
+    manufacturer_detail = CompanyBriefSerializer(source='manufacturer_part.manufacturer', many=False, read_only=True)
 
     pretty_name = serializers.CharField(read_only=True)
 
@@ -158,9 +158,9 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
     
-    manufacturer = ManufacturerPartSerializer(many=False, read_only=True)
+    manufacturer = serializers.PrimaryKeyRelatedField(source='manufacturer_part.manufacturer', queryset=Company.objects.filter(is_manufacturer=True))
     
-    MPN = ManufacturerPartSerializer(many=False, read_only=True)
+    MPN = serializers.StringRelatedField(source='manufacturer_part.MPN', read_only=True)
 
     class Meta:
         model = SupplierPart

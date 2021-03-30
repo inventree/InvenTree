@@ -400,7 +400,7 @@ class SupplierPart(models.Model):
 
     manufacturer_part = models.ForeignKey(ManufacturerPart, on_delete=models.CASCADE,
                                           blank=True, null=True,
-                                          related_name='manufacturer_parts',
+                                          related_name='supplier_parts',
                                           verbose_name=_('Manufacturer Part'),
                                           help_text=_('Select manufacturer part'),
                                           )
