@@ -110,7 +110,7 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
     manufacturer = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_manufacturer=True))
 
     class Meta:
-        model = SupplierPart
+        model = ManufacturerPart
         fields = [
             'pk',
             'part',
@@ -131,7 +131,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     supplier_detail = CompanyBriefSerializer(source='supplier', many=False, read_only=True)
 
-    manufacturer_detail = CompanyBriefSerializer(source='manufacturer', many=False, read_only=True)
+    manufacturer_detail = ManufacturerPartSerializer(source='manufacturer_part', many=False, read_only=True)
 
     pretty_name = serializers.CharField(read_only=True)
 
@@ -157,8 +157,10 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             self.fields.pop('pretty_name')
 
     supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
-
-    manufacturer_part = serializers.PrimaryKeyRelatedField(queryset=ManufacturerPart.objects.all())
+    
+    manufacturer = ManufacturerPartSerializer(many=False, read_only=True)
+    
+    MPN = ManufacturerPartSerializer(many=False, read_only=True)
 
     class Meta:
         model = SupplierPart
@@ -170,7 +172,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'supplier',
             'supplier_detail',
             'SKU',
-            'manufacturer_part',
+            'manufacturer',
+            'MPN',
             'manufacturer_detail',
             'description',
             'link',

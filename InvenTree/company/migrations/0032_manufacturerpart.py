@@ -67,10 +67,10 @@ class Migration(migrations.Migration):
             name='ManufacturerPart',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('MPN', models.CharField(blank=True, help_text='Manufacturer Part Number', max_length=100, null=True, verbose_name='MPN')),
+                ('MPN', models.CharField(help_text='Manufacturer Part Number', max_length=100, null=True, verbose_name='MPN')),
                 ('link', InvenTree.fields.InvenTreeURLField(blank=True, help_text='URL for external manufacturer part link', null=True, verbose_name='Link')),
                 ('description', models.CharField(blank=True, help_text='Manufacturer part description', max_length=250, null=True, verbose_name='Description')),
-                ('manufacturer', models.ForeignKey(blank=True, help_text='Select manufacturer', limit_choices_to={'is_manufacturer': True}, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='manufacturer_parts', to='company.Company', verbose_name='Manufacturer')),
+                ('manufacturer', models.ForeignKey(help_text='Select manufacturer', limit_choices_to={'is_manufacturer': True}, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='manufacturer_parts', to='company.Company', verbose_name='Manufacturer')),
                 ('part', models.ForeignKey(help_text='Select part', limit_choices_to={'purchaseable': True}, on_delete=django.db.models.deletion.CASCADE, related_name='manufacturer_parts', to='part.Part', verbose_name='Base Part')),
             ],
             options={
@@ -85,17 +85,6 @@ class Migration(migrations.Migration):
         # Make new ManufacturerPart with SupplierPart "manufacturer" and "MPN"
         # fields, then link it to the new SupplierPart "manufacturer_part" field
         migrations.RunPython(supplierpart_make_manufacturer_parts),
-        # Make ManufacturerPart "manufacturer" and "MPN" field mandatory
-        migrations.AlterField(
-            model_name='ManufacturerPart',
-            name='manufacturer',
-            field=models.ForeignKey(help_text='Select manufacturer', limit_choices_to={'is_manufacturer': True}, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='manufacturer_parts', to='company.Company', verbose_name='Manufacturer'),
-        ),
-        migrations.AlterField(
-            model_name='ManufacturerPart',
-            name='MPN',
-            field=models.CharField(help_text='Manufacturer Part Number', max_length=100, null=True, verbose_name='MPN'),
-        ),
         migrations.RemoveField(
             model_name='supplierpart',
             name='MPN',

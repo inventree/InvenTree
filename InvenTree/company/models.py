@@ -335,6 +335,17 @@ class ManufacturerPart(models.Model):
         help_text=_('Manufacturer part description')
     )
 
+    def __str__(self):
+        s = ''
+
+        if self.manufacturer:
+            s += f'{self.manufacturer.name}'
+            s += ' | '
+
+        s += f'{self.MPN}'
+
+        return s
+
 
 class SupplierPart(models.Model):
     """ Represents a unique part as provided by a Supplier

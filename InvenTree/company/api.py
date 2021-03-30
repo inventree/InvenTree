@@ -193,7 +193,7 @@ class SupplierPartList(generics.ListCreateAPIView):
     queryset = SupplierPart.objects.all().prefetch_related(
         'part',
         'supplier',
-        'manufacturer'
+        'manufacturer_part',
     )
 
     def get_queryset(self):
