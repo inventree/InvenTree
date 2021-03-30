@@ -122,13 +122,27 @@ class EditSupplierPartForm(HelperForm):
         required=False,
     )
 
+    manufacturer = django.forms.ChoiceField(
+        required=False,
+        help_text=_('Select manufacturer'),
+        choices=[],
+    )
+
+    MPN = django.forms.CharField(
+        required=False,
+        help_text=_('Manufacturer Part Number'),
+        max_length=100,
+        label=_('MPN'),
+    )
+
     class Meta:
         model = SupplierPart
         fields = [
             'part',
             'supplier',
             'SKU',
-            'manufacturer_part',
+            'manufacturer',
+            'MPN',
             'description',
             'link',
             'note',
@@ -137,6 +151,19 @@ class EditSupplierPartForm(HelperForm):
             # 'multiple',
             'packaging',
         ]
+
+    def get_manufacturer_choices(self):
+        """ Returns tuples for all manufacturers """
+        empty_choice = [('', '----------')]
+
+        manufacturers = [(manufacturer.id, manufacturer.name) for manufacturer in Company.objects.all()]
+        
+        return empty_choice + manufacturers
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['manufacturer'].choices = self.get_manufacturer_choices()
 
 
 class EditPriceBreakForm(HelperForm):

@@ -217,7 +217,7 @@ class Company(models.Model):
     def stock_items(self):
         """ Return a list of all stock items supplied or manufactured by this company """
         stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer=self.id)).all()
+        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).all()
 
     @property
     def stock_count(self):
@@ -335,6 +335,25 @@ class ManufacturerPart(models.Model):
         help_text=_('Manufacturer part description')
     )
 
+    @classmethod
+    def create(cls, part, manufacturer, mpn, link, description):
+        """ Check if ManufacturerPart instance does not already exist
+            then create it
+        """
+
+        manufacturer_part = None
+
+        try:
+            manufacturer_part = ManufacturerPart.objects.get(part=part, manufacturer=manufacturer, MPN=mpn)
+        except ManufacturerPart.DoesNotExist:
+            pass
+
+        if not manufacturer_part:
+            manufacturer_part = ManufacturerPart(part=part, manufacturer=manufacturer, MPN=mpn, description=description, link=link)
+            manufacturer_part.save()
+            
+        return manufacturer_part
+
     def __str__(self):
         s = ''
 
@@ -440,10 +459,10 @@ class SupplierPart(models.Model):
 
         items = []
 
-        if self.manufacturer:
-            items.append(self.manufacturer.name)
-        if self.MPN:
-            items.append(self.MPN)
+        if self.manufacturer_part.manufacturer:
+            items.append(self.manufacturer_part.manufacturer.name)
+        if self.manufacturer_part.MPN:
+            items.append(self.manufacturer_part.MPN)
 
         return ' | '.join(items)
 

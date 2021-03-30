@@ -585,8 +585,29 @@ class SupplierPartCreate(AjaxCreateView):
         If single_pricing is defined, add a price break for quantity=1
         """
 
+        # Process manufacturer data
+        part = form.cleaned_data.get('part', None)
+        print(f'{part=}')
+        manufacturer_id = form.cleaned_data.get('manufacturer', None)
+        
+        manufacturer_part = None
+        if manufacturer_id:
+            manufacturer = Company.objects.get(pk=manufacturer_id)
+            MPN = form.cleaned_data.get('MPN', None)
+            description = form.cleaned_data.get('description', None)
+            link = form.cleaned_data.get('link', None)
+
+            manufacturer_part = ManufacturerPart.create(part=part, manufacturer=manufacturer, mpn=MPN, description=description, link=link)
+
         # Save the supplier part object
         supplier_part = super().save(form)
+
+        print(f'{manufacturer_part=}')
+        if manufacturer_part:
+            # Link ManufacturerPart
+            supplier_part.manufacturer_part = manufacturer_part
+            supplier_part.save()
+        print(f'{supplier_part=}')
 
         single_pricing = form.cleaned_data.get('single_pricing', None)
 
@@ -606,6 +627,12 @@ class SupplierPartCreate(AjaxCreateView):
             # Hide the part field
             form.fields['part'].widget = HiddenInput()
 
+        if form.initial.get('manufacturer', None):
+            # Hide the manufacturer field
+            form.fields['manufacturer'].widget = HiddenInput()
+            # Hide the MPN field
+            form.fields['MPN'].widget = HiddenInput()
+
         return form
 
     def get_initial(self):
@@ -619,6 +646,7 @@ class SupplierPartCreate(AjaxCreateView):
         manufacturer_id = self.get_param('manufacturer')
         supplier_id = self.get_param('supplier')
         part_id = self.get_param('part')
+        manufacturer_part_id = self.get_param('manufacturer_part')
 
         supplier = None
 
@@ -633,6 +661,18 @@ class SupplierPartCreate(AjaxCreateView):
             try:
                 initials['manufacturer'] = Company.objects.get(pk=manufacturer_id)
             except (ValueError, Company.DoesNotExist):
+                pass
+
+        if manufacturer_part_id:
+            try:
+                # Get ManufacturerPart instance information
+                manufacturer_part_obj = ManufacturerPart.objects.get(pk=manufacturer_part_id)
+                print(manufacturer_part_obj.part.id)
+                initials['part'] = Part.objects.get(pk=manufacturer_part_obj.part.id)
+                print(initials['part'])
+                initials['manufacturer'] = manufacturer_part_obj.manufacturer.id
+                initials['MPN'] = manufacturer_part_obj.MPN
+            except (ValueError, ManufacturerPart.DoesNotExist, Part.DoesNotExist, Company.DoesNotExist):
                 pass
         
         if part_id:

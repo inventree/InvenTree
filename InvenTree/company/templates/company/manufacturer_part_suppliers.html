@@ -39,7 +39,7 @@ $('#supplier-create').click(function () {
         {
             reload: true,
             data: {
-                part: {{ part.id }}
+                manufacturer_part: {{ part.id }}
             },
             secondary: [
                 {
@@ -48,12 +48,6 @@ $('#supplier-create').click(function () {
                     title: '{% trans "Create new supplier" %}',
                     url: "{% url 'supplier-create' %}"
                 },
-                {
-                    field: 'manufacturer',
-                    label: '{% trans "New Manufacturer" %}',
-                    title: '{% trans "Create new manufacturer" %}',
-                    url: "{% url 'manufacturer-create' %}",
-                }
             ]
         });
 });
@@ -82,6 +76,7 @@ loadSupplierPartTable(
     {
         params: {
             part: {{ part.part.id }},
+            manufacturer_part: {{ part.id }},
             part_detail: true,
             supplier_detail: true,
             manufacturer_detail: true,
