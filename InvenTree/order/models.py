@@ -663,7 +663,6 @@ class SalesOrderLineItem(OrderLineItem):
 
     class Meta:
         unique_together = [
-            ('order', 'part'),
         ]
 
     def fulfilled_quantity(self):
@@ -731,6 +730,12 @@ class SalesOrderAllocation(models.Model):
         super().clean()
 
         errors = {}
+
+        try:
+            if not self.item:
+                raise ValidationError({'item': _('Stock item has not been assigned')})
+        except stock_models.StockItem.DoesNotExist:
+            raise ValidationError({'item': _('Stock item has not been assigned')})
 
         try:
             if not self.line.part == self.item.part:
