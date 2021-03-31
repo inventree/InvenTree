@@ -30,6 +30,7 @@ jobs:
         run: |
           invoke coverage
       - name: Upload Coverage Report
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        run: coveralls
+        #uses: coverallsapp/github-action@master
+        #with:
+        #  github-token: ${{ secrets.GITHUB_TOKEN }}
