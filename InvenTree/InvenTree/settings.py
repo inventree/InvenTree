@@ -45,6 +45,7 @@ def get_setting(environment_var, backup_val, default_value=None):
 
     return default_value
 
+
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
 
