@@ -45,7 +45,7 @@ RUN python -m venv $INVENTREE_VENV && pip install --no-cache-dir -U psycopg2 mys
 RUN python -m venv $INVENTREE_VENV && pip install --no-cache-dir -U -r $INVENTREE_SRC_DIR/requirements.txt
 
 # Install supervisor
-RUN apt add --no-cache supervisor
+RUN apk add --no-cache supervisor
 
 # Create required directories
 RUN mkdir /home/inventree/media /home/inventree/static /home/inventree/log /home/inventree/backup
