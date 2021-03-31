@@ -14,6 +14,6 @@ if 'test' in sys.argv:
         'NAME': 'inventree_test_db',
         'USER': 'inventree',
         'PASSWORD': 'password',
-        'HOST': 'mysql',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
