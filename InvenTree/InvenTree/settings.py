@@ -333,10 +333,6 @@ db_config = CONFIG.get('database', {})
 
 # Environment variables take preference over config file!
 
-# If a particular database option is not specified in the config file,
-# look for it in the environmental variables
-# e.g. INVENTREE_DB_NAME / INVENTREE_DB_USER / etc
-
 db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
 
 for key in db_keys:
@@ -380,9 +376,9 @@ db_host = db_config.get('HOST', "''")
 
 print("InvenTree Database Configuration")
 print("================================")
-print(f"INVENTREE_DB_ENGINE: {db_engine}")
-print(f"INVENTREE_DB_NAME: {db_name}")
-print(f"INVENTREE_DB_HOST: {db_host}")
+print(f"ENGINE: {db_engine}")
+print(f"NAME: {db_name}")
+print(f"HOST: {db_host}")
 
 DATABASES['default'] = db_config
 
