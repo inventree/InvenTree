@@ -12,7 +12,7 @@ if 'test' in sys.argv:
         # Ensure mysql backend is being used
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'inventree',
-        'USER': 'inventree',
+        'USER': 'root',
         'PASSWORD': 'password',
         'HOST': '127.0.0.1',
         'PORT': '3306',
