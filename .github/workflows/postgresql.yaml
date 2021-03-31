@@ -1,0 +1,38 @@
+# PostgreSQL Unit Testing
+
+name: PostgreSQL
+
+on: ["push", "pull_request"]
+
+jobs:
+  
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+          env:
+            POSTGRES_PASSWORD: password
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install libpq-dev
+          pip3 install invoke
+          pip3 install pyscopg2
+          invoke install
+      - name: Create Database
+        run: |
+          psql -c 'create database inventree_test_db;' -U postgres
+      - name: Run Tests
+        run: |
+          cd InvenTree
+          python3 manage.py test --settings=InvenTree.ci_postgresql
+  

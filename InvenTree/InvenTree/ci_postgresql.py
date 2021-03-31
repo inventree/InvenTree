@@ -13,5 +13,5 @@ if 'test' in sys.argv:
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'inventree_test_db',
         'USER': 'postgres',
-        'PASSWORD': '',
+        'PASSWORD': 'password',
     }
