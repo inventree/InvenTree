@@ -26,7 +26,7 @@ RUN apk add --no-cache git make bash \
     gcc libgcc g++ libstdc++ \
     libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
     libffi libffi-dev \
-    zlib zlib-dev \
+    zlib zlib-dev
 RUN apk add --no-cache cairo cairo-dev pango pango-dev
 RUN apk add --no-cache fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto
 RUN apk add --no-cache python3
