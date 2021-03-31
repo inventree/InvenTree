@@ -15,7 +15,6 @@ jobs:
       INVENTREE_DB_HOST: '127.0.0.1'
       INVENTREE_DB_PORT: 3306
 
-
     services:
       mariadb:
         image: mariadb:latest
@@ -27,20 +26,18 @@ jobs:
         ports:
           - 3306:3306
 
-  steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
-    - name: Setup Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.7
-    - name: Install Dependencies
-      run: |
-        sudo apt-get install mysql-server libmysqlclient-dev
-        pip3 install invoke
-        pip3 install mysqlclient
-        invoke install
-    - name: Run Tests
-      run: |
-        cd InvenTree
-        python3 manage.py test --settings=InvenTree.ci_mysql
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install mysql-server libmysqlclient-dev
+          pip3 install invoke
+          pip3 install mysqlclient
+          invoke install
+      - name: Run Tests
+        run: invoke test

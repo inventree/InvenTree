@@ -43,6 +43,4 @@ jobs:
           pip3 install mysqlclient
           invoke install
       - name: Run Tests
-        run: |
-          cd InvenTree
-          python3 manage.py test --settings=InvenTree.ci_mysql
+        run: invoke test
