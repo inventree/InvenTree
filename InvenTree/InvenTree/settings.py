@@ -331,6 +331,8 @@ logger.info("Configuring database backend:")
 # Extract database configuration from the config.yaml file
 db_config = CONFIG.get('database', {})
 
+# Environment variables take preference over config file!
+
 # If a particular database option is not specified in the config file,
 # look for it in the environmental variables
 # e.g. INVENTREE_DB_NAME / INVENTREE_DB_USER / etc
@@ -338,16 +340,14 @@ db_config = CONFIG.get('database', {})
 db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
 
 for key in db_keys:
-    if key not in db_config:
-        logger.debug(f" - Missing {key} value: Looking for environment variable INVENTREE_DB_{key}")
-        env_key = f'INVENTREE_DB_{key}'
-        env_var = os.environ.get(env_key, None)
+    # First, check the environment variables
+    env_key = f"INVENTREE_DB_{key}"
+    env_var = os.environ.get(env_key, None)
 
-        if env_var is not None:
-            logger.info(f'Using environment variable INVENTREE_DB_{key}')
-            db_config[key] = env_var
-        else:
-            logger.debug(f'    INVENTREE_DB_{key} not found in environment variables')
+    if env_var:
+        logger.info(f"{env_key}={env_var}")
+        # Override configuration value
+        db_config[key] = env_var
 
 # Check that required database configuration options are specified
 reqiured_keys = ['ENGINE', 'NAME']
