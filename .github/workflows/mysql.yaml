@@ -14,6 +14,9 @@ jobs:
         image: mysql:5.7
         env:
             MYSQL_ALLOW_EMPTY_PASSWORD: yes
+            MYSQL_DATABASE: inventree_test_db
+            MYSQL_USER: inventree
+            MYSQL_PASSWORD: password
         ports:
           - 3306
       
@@ -30,9 +33,6 @@ jobs:
           pip3 install invoke
           pip3 install mysqlclient
           invoke install
-      - name: Create Database
-        run: |
-          mysql -e 'CREATE DATABASE inventree_test_db;'
       - name: Run Tests
         run: |
           cd InvenTree
