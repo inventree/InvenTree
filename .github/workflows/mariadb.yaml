@@ -1,0 +1,37 @@
+name: MariaDB
+
+on: ["push", "pull_request"]
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:latest
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_USER: inventree
+          MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306:3306
+
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Install Dependencies
+      run: |
+        sudo apt-get install mysql-server libmysqlclient-dev
+        pip3 install invoke
+        pip3 install mysqlclient
+        invoke install
+    - name: Run Tests
+        run: |
+          cd InvenTree
+          python3 manage.py test --settings=InvenTree.ci_mysql
