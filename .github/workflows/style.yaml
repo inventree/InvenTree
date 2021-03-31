@@ -1,10 +1,6 @@
 name: Style Checks
 
-on:
-  push:
-    branches: [ $default-branch ]
-  pull_request:
-    branches: [ $default-branch ]
+on: ["push", "pull_request"]
 
 jobs:
   style:
@@ -26,4 +22,6 @@ jobs:
         run: |
           pip install flake8==3.8.3
           pip install pep8-naming==0.11.1
+      - name: flake8
+        run: |
           flake8 InvenTree
