@@ -9,6 +9,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      # Database backend configuration
+      INVENTREE_DB_ENGINE: django.db.backends.postgresql
+      INVENTREE_DB_USER: inventree
+      INVENTREE_DB_PASSWORD: password
+      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_PORT: 5432
+
+
     services:
       postgres:
         image: postgres

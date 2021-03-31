@@ -319,83 +319,68 @@ MARKDOWNIFY_BLEACH = False
 DATABASES = {}
 
 """
-When running unit tests, enforce usage of sqlite3 database,
-so that the tests can be run in RAM without any setup requirements
+Configure the database backend based on the user-specified values.
+
+- Primarily this configuration happens in the config.yaml file
+- However there may be reason to configure the DB via environmental variables
+- The following code lets the user "mix and match" database configuration
 """
-if 'test' in sys.argv:
-    logger.info('InvenTree: Running tests - Using sqlite3 memory database')
-    DATABASES['default'] = {
-        # Ensure sqlite3 backend is being used
-        'ENGINE': 'django.db.backends.sqlite3',
-        # Doesn't matter what the database is called, it is executed in RAM
-        'NAME': 'ram_test_db.sqlite3',
-    }
 
-# Database backend selection
-else:
-    """
-    Configure the database backend based on the user-specified values.
-    
-    - Primarily this configuration happens in the config.yaml file
-    - However there may be reason to configure the DB via environmental variables
-    - The following code lets the user "mix and match" database configuration
-    """
+logger.info("Configuring database backend:")
 
-    logger.info("Configuring database backend:")
+# Extract database configuration from the config.yaml file
+db_config = CONFIG.get('database', {})
 
-    # Extract database configuration from the config.yaml file
-    db_config = CONFIG.get('database', {})
+# If a particular database option is not specified in the config file,
+# look for it in the environmental variables
+# e.g. INVENTREE_DB_NAME / INVENTREE_DB_USER / etc
 
-    # If a particular database option is not specified in the config file,
-    # look for it in the environmental variables
-    # e.g. INVENTREE_DB_NAME / INVENTREE_DB_USER / etc
+db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
 
-    db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
+for key in db_keys:
+    if key not in db_config:
+        logger.debug(f" - Missing {key} value: Looking for environment variable INVENTREE_DB_{key}")
+        env_key = f'INVENTREE_DB_{key}'
+        env_var = os.environ.get(env_key, None)
 
-    for key in db_keys:
-        if key not in db_config:
-            logger.debug(f" - Missing {key} value: Looking for environment variable INVENTREE_DB_{key}")
-            env_key = f'INVENTREE_DB_{key}'
-            env_var = os.environ.get(env_key, None)
+        if env_var is not None:
+            logger.info(f'Using environment variable INVENTREE_DB_{key}')
+            db_config[key] = env_var
+        else:
+            logger.debug(f'    INVENTREE_DB_{key} not found in environment variables')
 
-            if env_var is not None:
-                logger.info(f'Using environment variable INVENTREE_DB_{key}')
-                db_config[key] = env_var
-            else:
-                logger.debug(f'    INVENTREE_DB_{key} not found in environment variables')
+# Check that required database configuration options are specified
+reqiured_keys = ['ENGINE', 'NAME']
 
-    # Check that required database configuration options are specified
-    reqiured_keys = ['ENGINE', 'NAME']
+for key in reqiured_keys:
+    if key not in db_config:
+        error_msg = f'Missing required database configuration value {key} in config.yaml'
+        logger.error(error_msg)
 
-    for key in reqiured_keys:
-        if key not in db_config:
-            error_msg = f'Missing required database configuration value {key} in config.yaml'
-            logger.error(error_msg)
+        print('Error: ' + error_msg)
+        sys.exit(-1)
 
-            print('Error: ' + error_msg)
-            sys.exit(-1)
+"""
+Special considerations for the database 'ENGINE' setting.
+It can be specified in config.yaml (or envvar) as either (for example):
+- sqlite3
+- django.db.backends.sqlite3
+- django.db.backends.postgresql
+"""
 
-    """
-    Special considerations for the database 'ENGINE' setting.
-    It can be specified in config.yaml (or envvar) as either (for example):
-    - sqlite3
-    - django.db.backends.sqlite3
-    - django.db.backends.postgresql
-    """
+db_engine = db_config['ENGINE']
 
-    db_engine = db_config['ENGINE']
+if db_engine.lower() in ['sqlite3', 'postgresql', 'mysql']:
+    # Prepend the required python module string
+    db_engine = f'django.db.backends.{db_engine.lower()}'
+    db_config['ENGINE'] = db_engine
 
-    if db_engine.lower() in ['sqlite3', 'postgresql', 'mysql']:
-        # Prepend the required python module string
-        db_engine = f'django.db.backends.{db_engine.lower()}'
-        db_config['ENGINE'] = db_engine
+db_name = db_config['NAME']
 
-    db_name = db_config['NAME']
+logger.info(f"Database ENGINE: '{db_engine}'")
+logger.info(f"Database NAME: '{db_name}'")
 
-    logger.info(f"Database ENGINE: '{db_engine}'")
-    logger.info(f"Database NAME: '{db_name}'")
-
-    DATABASES['default'] = db_config
+DATABASES['default'] = db_config
 
 CACHES = {
     'default': {

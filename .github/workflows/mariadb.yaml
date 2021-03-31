@@ -7,6 +7,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      # Database backend configuration
+      INVENTREE_DB_ENGINE: django.db.backends.mysql
+      INVENTREE_DB_USER: root
+      INVENTREE_DB_PASSWORD: password
+      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_PORT: 3306
+
+
     services:
       mariadb:
         image: mariadb:latest
@@ -32,6 +41,6 @@ jobs:
         pip3 install mysqlclient
         invoke install
     - name: Run Tests
-        run: |
-          cd InvenTree
-          python3 manage.py test --settings=InvenTree.ci_mysql
+      run: |
+        cd InvenTree
+        python3 manage.py test --settings=InvenTree.ci_mysql
