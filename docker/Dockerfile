@@ -29,7 +29,6 @@ RUN git clone --branch $INVENTREE_VERSION --depth 1 ${INVENTREE_REPO} ${INVENTRE
 
 # Install required system packages
 RUN apk add --no-cache postgresql-contrib postgresql-dev libpq
-RUN apk add --no-cache libmysqlclient
 RUN apk add --no-cache mariadb-connector-c mariadb-dev
 
 # Install required PIP packages
