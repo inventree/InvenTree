@@ -19,7 +19,6 @@ RUN echo "Installing InvenTree '${INVENTREE_VERSION}' from ${INVENTREE_REPO}"
 
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
-USER inventree
 WORKDIR /home/inventree
 
 # Install git
