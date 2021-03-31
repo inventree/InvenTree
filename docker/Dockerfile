@@ -21,16 +21,20 @@ RUN echo "Installing InvenTree '${INVENTREE_VERSION}' from ${INVENTREE_REPO}"
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
 WORKDIR /home/inventree
 
-# Install git
-RUN apk add --no-cache git
+# Install required system packages
+RUN apk add --no-cache git make bash \
+    gcc libgcc g++ libstdc++ \
+    libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
+    libffi libffi-dev \
+    zlib zlib-dev \
+RUN apk add --no-cache cairo cairo-dev pango pango-dev
+RUN apk add --no-cache fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto
+RUN apk add --no-cache python3
+RUN apk add --no-cache postgresql-contrib postgresql-dev libpq
+RUN apk add --no-cache mariadb-connector-c mariadb-dev
 
 # Clone source code
 RUN git clone --branch $INVENTREE_VERSION --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
-
-# Install required system packages
-RUN apk add --no-cache gcc g++
-RUN apk add --no-cache postgresql-contrib postgresql-dev libpq
-RUN apk add --no-cache mariadb-connector-c mariadb-dev
 
 # Install required PIP packages
 RUN python -m venv $INVENTREE_VENV && pip install --upgrade pip setuptools wheel
