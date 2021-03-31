@@ -33,11 +33,6 @@ jobs:
           pip3 install invoke
           pip3 install mysqlclient
           invoke install
-      - name: Create Database
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE_DATABASE inventree_test_db;' -uroot -proot
-          mysql -e 'SHOW DATABASES;' -uroot -proot
       - name: Run Tests
         run: |
           cd InvenTree
