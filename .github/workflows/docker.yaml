@@ -7,7 +7,7 @@ on: ["push", "pull_request"]
 jobs:
   
   docker:
-    runs-on: ubtun-latest
+    runs-on: ubtunu-latest
 
     steps:
       - uses: actions/checkout@v2

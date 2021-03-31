@@ -40,6 +40,9 @@ RUN python -m venv $INVENTREE_VENV && pip install --no-cache-dir -U -r $INVENTRE
 # Install supervisor
 RUN apt add --no-cache supervisor
 
+# Create required directories
+RUN mkdir /home/inventree/media /home/inventree/static /home/inventree/log /home/inventree/backup
+
 # Copy supervisor file
 COPY deploy/inventree.conf /etc/supervisor/conf.d/inventree.conf
 
