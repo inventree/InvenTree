@@ -1,0 +1,16 @@
+# Test that the docker file builds correctly
+
+name: Docker
+
+on: ["push", "pull_request"]
+
+jobs:
+  
+  docker:
+    runs-on: ubtun-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Docker Image
+        run: docker build . --file docker/Dockerfile --tag inventree-:$(date +%s)
+    
