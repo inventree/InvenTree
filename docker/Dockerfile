@@ -53,4 +53,4 @@ RUN mkdir /home/inventree/media /home/inventree/static /home/inventree/log /home
 # Copy supervisor file
 COPY deploy/inventree.conf /etc/supervisor/conf.d/inventree.conf
 
-RUN sudo service supervisor start
+RUN service supervisor start
