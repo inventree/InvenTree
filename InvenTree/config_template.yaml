@@ -98,10 +98,12 @@ cors:
 
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
 # By default, it is stored under /home/inventree
+# Use environment variable INVENTREE_MEDIA_ROOT
 media_root: '/home/inventree/media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
 # By default, it is stored under /home/inventree
+# Use environment variable INVENTREE_STATIC_ROOT
 static_root: '/home/inventree/static'
 
 # Optional URL schemes to allow in URL fields
@@ -115,6 +117,7 @@ static_root: '/home/inventree/static'
 # Backup options
 # Set the backup_dir parameter to store backup files in a specific location
 # If unspecified, the local user's temp directory will be used
+# Use environment variable INVENTREE_BACKUP_DIR
 backup_dir: '/home/inventree/backup/'
 
 # Permit custom authentication backends

@@ -16,6 +16,8 @@ jobs:
       INVENTREE_DB_NAME: './test_db.sqlite'
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DEBUG: info
+      INVENTREE_MEDIA_ROOT: ./media
+      INVENTREE_STATIC_ROOT: ./static
 
     steps:
       - name: Checkout Code
