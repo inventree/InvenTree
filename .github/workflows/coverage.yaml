@@ -11,6 +11,7 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       INVENTREE_DB_NAME: './test_db.sqlite'
       INVENTREE_DB_ENGINE: sqlite3
 
