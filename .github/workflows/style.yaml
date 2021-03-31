@@ -3,7 +3,7 @@ name: Style Checks
 on: ["push", "pull_request"]
 
 jobs:
-  pep:
+  style:
     runs-on: ubuntu-latest
 
     strategy:
