@@ -14,4 +14,5 @@ if 'test' in sys.argv:
         'NAME': 'inventree_test_db',
         'USER': 'postgres',
         'PASSWORD': 'password',
+        'PORT': '5432'
     }

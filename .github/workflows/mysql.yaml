@@ -11,9 +11,12 @@ jobs:
 
     services:
       mysql:
-        image: mysql
+        image: mysql:5.7
         env:
             MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 3306
+      
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2

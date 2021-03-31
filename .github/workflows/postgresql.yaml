@@ -14,6 +14,8 @@ jobs:
         image: postgres
           env:
             POSTGRES_PASSWORD: password
+        ports:
+            - 5432
 
     steps:
       - name: Checkout Code
