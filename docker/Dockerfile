@@ -22,6 +22,9 @@ RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
 USER inventree
 WORKDIR /home/inventree
 
+# Install git
+RUN apt add --no-cache git
+
 # Clone source code
 RUN git clone --branch $INVENTREE_VERSION --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
 
