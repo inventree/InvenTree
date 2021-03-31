@@ -28,6 +28,7 @@ RUN apk add --no-cache git
 RUN git clone --branch $INVENTREE_VERSION --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
 
 # Install required system packages
+RUN apk add --no-cache gcc g++
 RUN apk add --no-cache postgresql-contrib postgresql-dev libpq
 RUN apk add --no-cache mariadb-connector-c mariadb-dev
 
