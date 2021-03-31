@@ -1,0 +1,39 @@
+# Perform CI checks, and calculate code coverage
+
+name: Code Coverage
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+
+  # Run tests on SQLite database
+  # These tests are used for code coverage analysis
+  coverage:
+    runs-on: ubuntu-latest
+    env:
+      INVENTREE_DB_NAME: './test_db.sqlite'
+      INVENTREE_DB_ENGINE: sqlite3
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          pip3 install invoke
+          invoke install
+      - name: Coverage Tests
+        run: |
+          invoke coverage
+      - name: Upload Coverage Report
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
