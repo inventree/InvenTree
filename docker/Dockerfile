@@ -18,7 +18,7 @@ ENV INVENTREE_VENV="$INVENTREE_HOME/env"
 RUN echo "Installing InvenTree '${INVENTREE_VERSION}' from ${INVENTREE_REPO}"
 
 # Create user account
-RUN useradd -ms /bin/bash inventree
+RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
 USER inventree
 WORKDIR /home/inventree
 
