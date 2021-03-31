@@ -16,6 +16,7 @@ jobs:
       INVENTREE_DB_PASSWORD: password
       INVENTREE_DB_HOST: '127.0.0.1'
       INVENTREE_DB_PORT: 3306
+      INVENTREE_DEBUG: info
 
     services:
       mysql:
