@@ -156,7 +156,7 @@ class EditSupplierPartForm(HelperForm):
         """ Returns tuples for all manufacturers """
         empty_choice = [('', '----------')]
 
-        manufacturers = [(manufacturer.id, manufacturer.name) for manufacturer in Company.objects.all()]
+        manufacturers = [(manufacturer.id, manufacturer.name) for manufacturer in Company.objects.filter(is_manufacturer=True)]
         
         return empty_choice + manufacturers
 

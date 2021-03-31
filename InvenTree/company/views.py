@@ -527,6 +527,26 @@ class SupplierPartEdit(AjaxUpdateView):
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Supplier Part')
 
+    def save(self, supplier_part, form, **kwargs):
+        """ Save ManufacturerPart data """
+
+        # Save supplier part object
+        supplier_part = super().save(supplier_part, form)
+
+        # Save manufacturer part object
+        manufacturer_id = form.cleaned_data.get('manufacturer', None)
+        try:
+            manufacturer = Company.objects.get(pk=manufacturer_id)
+        except Company.DoesNotExist:
+            pass
+        MPN = form.cleaned_data.get('MPN', None)
+
+        manufacturer_part = supplier_part.manufacturer_part
+        manufacturer_part.manufacturer = manufacturer
+        manufacturer_part.MPN = MPN
+
+        manufacturer_part.save()
+
     def get_form(self):
         form = super().get_form()
 
@@ -540,6 +560,19 @@ class SupplierPartEdit(AjaxUpdateView):
         form.fields['single_pricing'].widget = HiddenInput()
 
         return form
+
+    def get_initial(self):
+        """ Fetch data from ManufacturerPart """
+
+        initials = super(SupplierPartEdit, self).get_initial().copy()
+
+        supplier_part = self.get_object()
+        
+        if supplier_part.manufacturer_part:
+            initials['manufacturer'] = supplier_part.manufacturer_part.manufacturer.id
+            initials['MPN'] = supplier_part.manufacturer_part.MPN
+
+        return initials
 
 
 class SupplierPartCreate(AjaxCreateView):
@@ -587,7 +620,6 @@ class SupplierPartCreate(AjaxCreateView):
 
         # Process manufacturer data
         part = form.cleaned_data.get('part', None)
-        print(f'{part=}')
         manufacturer_id = form.cleaned_data.get('manufacturer', None)
         
         manufacturer_part = None
@@ -602,12 +634,10 @@ class SupplierPartCreate(AjaxCreateView):
         # Save the supplier part object
         supplier_part = super().save(form)
 
-        print(f'{manufacturer_part=}')
         if manufacturer_part:
             # Link ManufacturerPart
             supplier_part.manufacturer_part = manufacturer_part
             supplier_part.save()
-        print(f'{supplier_part=}')
 
         single_pricing = form.cleaned_data.get('single_pricing', None)
 
@@ -667,9 +697,7 @@ class SupplierPartCreate(AjaxCreateView):
             try:
                 # Get ManufacturerPart instance information
                 manufacturer_part_obj = ManufacturerPart.objects.get(pk=manufacturer_part_id)
-                print(manufacturer_part_obj.part.id)
                 initials['part'] = Part.objects.get(pk=manufacturer_part_obj.part.id)
-                print(initials['part'])
                 initials['manufacturer'] = manufacturer_part_obj.manufacturer.id
                 initials['MPN'] = manufacturer_part_obj.MPN
             except (ValueError, ManufacturerPart.DoesNotExist, Part.DoesNotExist, Company.DoesNotExist):

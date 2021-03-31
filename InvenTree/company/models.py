@@ -308,7 +308,7 @@ class ManufacturerPart(models.Model):
         Company,
         on_delete=models.CASCADE,
         null=True,
-        related_name='manufacturer_parts',
+        related_name='manufactured_parts',
         limit_choices_to={
             'is_manufacturer': True
         },
