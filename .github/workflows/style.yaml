@@ -1,9 +1,9 @@
 name: Style Checks
 
-on: push
+on: ["push", "pull_request"]
 
 jobs:
-  pep:
+  style:
     runs-on: ubuntu-latest
 
     strategy:
@@ -22,4 +22,6 @@ jobs:
         run: |
           pip install flake8==3.8.3
           pip install pep8-naming==0.11.1
+      - name: flake8
+        run: |
           flake8 InvenTree
