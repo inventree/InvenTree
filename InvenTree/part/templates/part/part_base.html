@@ -206,6 +206,12 @@
         toggleId: '#part-menu-toggle',
     });
 
+    {% if part.image %}
+    $('#part-thumb').click(function() {
+        showModalImage('{{ part.image.url }}');
+    });
+    {% endif %}
+
     enableDragAndDrop(
         '#part-thumb',
         "{% url 'part-image-upload' part.id %}",
@@ -241,6 +247,7 @@
             "{% url 'part-pricing' part.id %}",
             {
                 submit_text: 'Calculate',
+                hideErrorMessage: true,
             }
         );
     });
@@ -293,6 +300,20 @@
             }
         });
     }
+    
+    {% if roles.part.change %}
+    
+    {% settings_value "INVENTREE_DOWNLOAD_FROM_URL" as allow_download %}
+    {% if allow_download %}
+    $("#part-image-url").click(function() {
+        launchModalForm(
+            '{% url "part-image-download" part.id %}',
+            {
+                reload: true,
+            }
+        );
+    });
+    {% endif %}
 
     $("#part-image-select").click(function() {
         launchModalForm("{% url 'part-image-select' part.id %}",
@@ -302,7 +323,6 @@
                         });
     });
 
-    {% if roles.part.change %}
     $("#part-edit").click(function() {
         launchModalForm(
             "{% url 'part-edit' part.id %}",

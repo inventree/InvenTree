@@ -37,6 +37,24 @@ class PartModelChoiceField(forms.ModelChoiceField):
         return label
 
 
+class PartImageDownloadForm(HelperForm):
+    """
+    Form for downloading an image from a URL
+    """
+
+    url = forms.URLField(
+        label=_('URL'),
+        help_text=_('Image URL'),
+        required=True,
+    )
+
+    class Meta:
+        model = Part
+        fields = [
+            'url',
+        ]
+
+
 class PartImageForm(HelperForm):
     """ Form for uploading a Part image """
 

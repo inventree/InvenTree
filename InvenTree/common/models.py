@@ -78,6 +78,13 @@ class InvenTreeSetting(models.Model):
             'choices': djmoney.settings.CURRENCY_CHOICES,
         },
 
+        'INVENTREE_DOWNLOAD_FROM_URL': {
+            'name': _('Download from URL'),
+            'description': _('Allow download of remote images and files from external URL'),
+            'validator': bool,
+            'default': False,
+        },
+
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),
@@ -93,6 +100,13 @@ class InvenTreeSetting(models.Model):
         'PART_ALLOW_DUPLICATE_IPN': {
             'name': _('Allow Duplicate IPN'),
             'description': _('Allow multiple parts to share the same IPN'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'PART_ALLOW_EDIT_IPN': {
+            'name': _('Allow Editing IPN'),
+            'description': _('Allow changing the IPN value while editing a part'),
             'default': True,
             'validator': bool,
         },

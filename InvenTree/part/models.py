@@ -1372,7 +1372,7 @@ class Part(MPTTModel):
         """ Check if the BOM is 'valid' - if the calculated checksum matches the stored value
         """
 
-        return self.get_bom_hash() == self.bom_checksum
+        return self.get_bom_hash() == self.bom_checksum or not self.has_bom
 
     @transaction.atomic
     def validate_bom(self, user):

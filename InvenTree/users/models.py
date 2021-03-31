@@ -12,6 +12,11 @@ from django.utils.translation import gettext_lazy as _
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 
+import logging
+
+
+logger = logging.getLogger(__name__)
+
 
 class RuleSet(models.Model):
     """
@@ -352,7 +357,7 @@ def update_group_roles(group, debug=False):
             content_type = ContentType.objects.get(app_label=app, model=model)
             permission = Permission.objects.get(content_type=content_type, codename=perm)
         except ContentType.DoesNotExist:
-            raise ValueError(f"Error: Could not find permission matching '{permission_string}'")
+            logger.warning(f"Error: Could not find permission matching '{permission_string}'")
             permission = None
 
         return permission

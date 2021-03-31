@@ -155,18 +155,24 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <div class='btn-group'>
             <button id='stock-actions' title='{% trans "Stock adjustment actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
             <ul class='dropdown-menu' role='menu'>
-                {% if item.can_adjust_location %}
                 {% if not item.serialized %}
+                {% if item.in_stock %}
                 <li><a href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-clipboard-list'></span> {% trans "Count stock" %}</a></li>
+                {% endif %}
+                {% if not item.customer %}
                 <li><a href='#' id='stock-add' title='{% trans "Add stock" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
+                {% endif %}
+                {% if item.in_stock %}
                 <li><a href='#' id='stock-remove' title='{% trans "Remove stock" %}'><span class='fas fa-minus-circle icon-red'></span> {% trans "Remove stock" %}</a></li>
                 {% endif %}
+                {% if item.in_stock and item.can_adjust_location %}
                 <li><a href='#' id='stock-move' title='{% trans "Transfer stock" %}'><span class='fas fa-exchange-alt icon-blue'></span> {% trans "Transfer stock" %}</a></li>
-                {% if item.part.trackable and not item.serialized %}
+                {% endif %}
+                {% if item.in_stock and item.part.trackable %}
                 <li><a href='#' id='stock-serialize' title='{% trans "Serialize stock" %}'><span class='fas fa-hashtag'></span> {% trans "Serialize stock" %}</a> </li>
                 {% endif %}
                 {% endif %}
-                {% if item.part.salable and not item.customer %}
+                {% if item.in_stock and item.can_adjust_location and item.part.salable and not item.customer %}
                 <li><a href='#' id='stock-assign-to-customer' title='{% trans "Assign to customer" %}'><span class='fas fa-user-tie'></span> {% trans "Assign to customer" %}</a></li>
                 {% endif %}
                 {% if item.customer %}
@@ -469,16 +475,6 @@ $("#barcode-scan-into-location").click(function() {
     scanItemsIntoLocation([{{ item.id }}]);
 });
 
-{% if item.in_stock %}
-
-$("#stock-assign-to-customer").click(function() {
-    launchModalForm("{% url 'stock-item-assign' item.id %}",
-        {
-            reload: true,
-        }
-    );
-});
-
 function itemAdjust(action) {
     launchModalForm("/stock/adjust/", 
         {
@@ -491,6 +487,29 @@ function itemAdjust(action) {
         }
     );
 }
+
+$('#stock-add').click(function() {
+    itemAdjust('add');
+});
+
+$("#stock-delete").click(function () {
+    launchModalForm(
+        "{% url 'stock-item-delete' item.id %}",
+        {
+            redirect: "{% url 'part-stock' item.part.id %}"
+        }
+    );
+});
+
+{% if item.in_stock %}
+
+$("#stock-assign-to-customer").click(function() {
+    launchModalForm("{% url 'stock-item-assign' item.id %}",
+        {
+            reload: true,
+        }
+    );
+});
 
 {% if item.part.has_variants %}
 $("#stock-convert").click(function() {
@@ -514,10 +533,6 @@ $('#stock-remove').click(function() {
     itemAdjust('take');
 });
 
-$('#stock-add').click(function() {
-    itemAdjust('add');
-});
-
 {% else %}
 
 $("#stock-return-from-customer").click(function() {
@@ -529,14 +544,5 @@ $("#stock-return-from-customer").click(function() {
 });
 
 {% endif %}
-
-$("#stock-delete").click(function () {
-    launchModalForm(
-        "{% url 'stock-item-delete' item.id %}",
-        {
-            redirect: "{% url 'part-stock' item.part.id %}"
-        }
-    );
-});
 
 {% endblock %}

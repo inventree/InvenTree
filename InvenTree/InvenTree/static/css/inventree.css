@@ -586,6 +586,8 @@
 
 .breadcrump {
     margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 10px;
 }
 
 .inventree-body {
@@ -622,6 +624,53 @@
 
 .modal-secondary {
     z-index: 11000;
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.25s;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-image-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+}
+
+@media only screen and (max-width: 700px){
+    .modal-image-content {
+      width: 100%;
+    }
+}
+
+.modal-image {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.85); /* Black w/ opacity */
 }
 
 .js-modal-form .checkbox {
