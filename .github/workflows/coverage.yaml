@@ -31,8 +31,14 @@ jobs:
       - name: Coverage Tests
         run: |
           invoke coverage
+      - name: Data Import Export
+        run: |
+          rm test_db.sqlite
+          invoke migrate
+          invoke import-fixtures
+          invoke export-records -f data.json
+          rm test_db.sqlite
+          invoke migrate
+          invoke import-records -f data.json
       - name: Upload Coverage Report
         run: coveralls
-        #uses: coverallsapp/github-action@master
-        #with:
-        #  github-token: ${{ secrets.GITHUB_TOKEN }}
