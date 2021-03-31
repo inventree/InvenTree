@@ -13,9 +13,11 @@ jobs:
       postgres:
         image: postgres
         env:
+          POSTGRES_USER: inventree
           POSTGRES_PASSWORD: password
+          POSTGRES_DB: inventree_test_db
         ports:
-          - 5432
+          - 5432:5432
 
     steps:
       - name: Checkout Code
@@ -28,11 +30,8 @@ jobs:
         run: |
           sudo apt-get install libpq-dev
           pip3 install invoke
-          pip3 install pyscopg2
+          pip3 install psycopg2
           invoke install
-      - name: Create Database
-        run: |
-          psql -c 'create database inventree_test_db;' -U postgres
       - name: Run Tests
         run: |
           cd InvenTree
