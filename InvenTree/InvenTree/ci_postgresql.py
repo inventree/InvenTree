@@ -12,7 +12,8 @@ if 'test' in sys.argv:
         # Ensure postgresql backend is being used
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'inventree_test_db',
-        'USER': 'postgres',
+        'USER': 'inventree',
         'PASSWORD': 'password',
+        'HOST': '127.0.0.1',
         'PORT': '5432'
     }
