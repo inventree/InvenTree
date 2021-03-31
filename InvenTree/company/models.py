@@ -11,7 +11,9 @@ import math
 
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.utils import IntegrityError
 from django.db.models import Sum, Q, UniqueConstraint
 
 from django.apps import apps
@@ -389,6 +391,58 @@ class SupplierPart(models.Model):
     def get_absolute_url(self):
         return reverse('supplier-part-detail', kwargs={'pk': self.id})
 
+    def save(self, *args, **kwargs):
+        """ Overriding save method to process the linked ManufacturerPart
+        """
+
+        if 'manufacturer' in kwargs:
+            manufacturer_id = kwargs.pop('manufacturer')
+
+            try:
+                manufacturer = Company.objects.get(pk=int(manufacturer_id))
+            except (ValueError, Company.DoesNotExist):
+                manufacturer = None
+        else:
+            manufacturer = None
+        if 'MPN' in kwargs:
+            MPN = kwargs.pop('MPN')
+        else:
+            MPN = None
+        
+        if manufacturer or MPN:
+            if not self.manufacturer_part:
+                # Create ManufacturerPart
+                manufacturer_part = ManufacturerPart.create(part=self.part,
+                                                            manufacturer=manufacturer,
+                                                            mpn=MPN,
+                                                            description=self.description,
+                                                            link=self.link)
+                self.manufacturer_part = manufacturer_part
+            else:
+                # Update ManufacturerPart (if ID exists)
+                try:
+                    manufacturer_part_id = self.manufacturer_part.id
+                except AttributeError:
+                    manufacturer_part_id = None
+                
+                if manufacturer_part_id:
+                    try:
+                        (manufacturer_part, created) = ManufacturerPart.objects.update_or_create(part=self.part,
+                                                                                                 manufacturer=manufacturer,
+                                                                                                 MPN=MPN)
+                    except IntegrityError:
+                        manufacturer_part = None
+                        raise ValidationError(f'ManufacturerPart linked to {self.part} from manufacturer {manufacturer.name}'
+                                              f'with part number {MPN} already exists!')
+
+                if manufacturer_part:
+                    self.manufacturer_part = manufacturer_part
+
+        self.clean()
+        self.validate_unique()
+
+        super().save(*args, **kwargs)
+
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')
 
@@ -459,10 +513,11 @@ class SupplierPart(models.Model):
 
         items = []
 
-        if self.manufacturer_part.manufacturer:
-            items.append(self.manufacturer_part.manufacturer.name)
-        if self.manufacturer_part.MPN:
-            items.append(self.manufacturer_part.MPN)
+        if self.manufacturer_part:
+            if self.manufacturer_part.manufacturer:
+                items.append(self.manufacturer_part.manufacturer.name)
+            if self.manufacturer_part.MPN:
+                items.append(self.manufacturer_part.MPN)
 
         return ' | '.join(items)
 

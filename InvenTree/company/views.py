@@ -528,24 +528,14 @@ class SupplierPartEdit(AjaxUpdateView):
     ajax_form_title = _('Edit Supplier Part')
 
     def save(self, supplier_part, form, **kwargs):
-        """ Save ManufacturerPart data """
+        """ Process ManufacturerPart data """
 
-        # Save supplier part object
-        supplier_part = super().save(supplier_part, form)
-
-        # Save manufacturer part object
-        manufacturer_id = form.cleaned_data.get('manufacturer', None)
-        try:
-            manufacturer = Company.objects.get(pk=manufacturer_id)
-        except Company.DoesNotExist:
-            pass
+        manufacturer = form.cleaned_data.get('manufacturer', None)
         MPN = form.cleaned_data.get('MPN', None)
-
-        manufacturer_part = supplier_part.manufacturer_part
-        manufacturer_part.manufacturer = manufacturer
-        manufacturer_part.MPN = MPN
-
-        manufacturer_part.save()
+        kwargs = {'manufacturer': manufacturer,
+                  'MPN': MPN,
+                  }
+        supplier_part.save(**kwargs)
 
     def get_form(self):
         form = super().get_form()
@@ -618,26 +608,16 @@ class SupplierPartCreate(AjaxCreateView):
         If single_pricing is defined, add a price break for quantity=1
         """
 
-        # Process manufacturer data
-        part = form.cleaned_data.get('part', None)
-        manufacturer_id = form.cleaned_data.get('manufacturer', None)
-        
-        manufacturer_part = None
-        if manufacturer_id:
-            manufacturer = Company.objects.get(pk=manufacturer_id)
-            MPN = form.cleaned_data.get('MPN', None)
-            description = form.cleaned_data.get('description', None)
-            link = form.cleaned_data.get('link', None)
-
-            manufacturer_part = ManufacturerPart.create(part=part, manufacturer=manufacturer, mpn=MPN, description=description, link=link)
-
         # Save the supplier part object
         supplier_part = super().save(form)
 
-        if manufacturer_part:
-            # Link ManufacturerPart
-            supplier_part.manufacturer_part = manufacturer_part
-            supplier_part.save()
+        # Process manufacturer data
+        manufacturer = form.cleaned_data.get('manufacturer', None)
+        MPN = form.cleaned_data.get('MPN', None)
+        kwargs = {'manufacturer': manufacturer,
+                  'MPN': MPN,
+                  }
+        supplier_part.save(**kwargs)
 
         single_pricing = form.cleaned_data.get('single_pricing', None)
 
