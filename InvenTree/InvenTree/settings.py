@@ -376,9 +376,13 @@ if db_engine.lower() in ['sqlite3', 'postgresql', 'mysql']:
     db_config['ENGINE'] = db_engine
 
 db_name = db_config['NAME']
+db_host = db_config.get('HOST', "''")
 
-logger.info(f"Database ENGINE: '{db_engine}'")
-logger.info(f"Database NAME: '{db_name}'")
+print("InvenTree Database Configuration")
+print("================================")
+print(f"INVENTREE_DB_ENGINE: {db_engine}")
+print(f"INVENTREE_DB_NAME: {db_name}")
+print(f"INVENTREE_DB_HOST: {db_host}")
 
 DATABASES['default'] = db_config
 
