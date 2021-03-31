@@ -12,5 +12,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build Docker Image
-        run: docker build . --file docker/Dockerfile --tag inventree-:$(date +%s)
+        run: docker build . --file docker/Dockerfile --tag inventree:$(date +%s)
     
