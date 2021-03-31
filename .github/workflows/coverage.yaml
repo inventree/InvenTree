@@ -33,12 +33,13 @@ jobs:
           invoke coverage
       - name: Data Import Export
         run: |
-          rm test_db.sqlite
           invoke migrate
           invoke import-fixtures
           invoke export-records -f data.json
           rm test_db.sqlite
           invoke migrate
           invoke import-records -f data.json
+      - name: Check Migration Files
+        run: python3 ci/check_migration_files.py
       - name: Upload Coverage Report
         run: coveralls
