@@ -67,13 +67,18 @@ RUN apk add --no-cache mariadb-connector-c mariadb-dev
 # Clone source code
 RUN git clone --branch ${INVENTREE_VERSION} --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
 
-# Install required PIP packages
-RUN python -m venv ${INVENTREE_VENV} && pip install --upgrade pip setuptools wheel
-RUN python -m venv ${INVENTREE_VENV} && pip install --no-cache-dir -U invoke
-RUN python -m venv ${INVENTREE_VENV} && pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
+# Setup Python virtual environment
+RUN apk add python3-venv
+RUN python -m venv ${INVENTREE_VENV}}
+RUN source ${INVENTREE_VENV}/bin/activate
+
+# Install required PIP packages (into the virtual environment!)
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir -U invoke
+RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
 
 # Install InvenTree packages
-RUN python -m venv ${INVENTREE_VENV} && pip install --no-cache-dir -U -r ${INVENTREE_SRC_DIR}/requirements.txt
+RUN pip install --no-cache-dir -U -r ${INVENTREE_SRC_DIR}/requirements.txt
 
 # Install supervisor
 RUN apk add --no-cache supervisor
