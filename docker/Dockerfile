@@ -84,4 +84,7 @@ RUN mkdir /home/inventree/media /home/inventree/static /home/inventree/log /home
 # Copy supervisor file
 COPY docker/supervisor.conf /etc/supervisord.conf
 
+# Copy gunicorn config file
+COPY docker/gunicorn.conf.py /home/inventree/gunicorn.conf.py
+
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
