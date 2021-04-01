@@ -158,11 +158,9 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     supplier = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_supplier=True))
     
-    # manufacturer_part = ManufacturerPartSerializer(many=False, read_only=True)
+    manufacturer = serializers.PrimaryKeyRelatedField(source='manufacturer_part.manufacturer', read_only=True)
     
-    manufacturer = serializers.PrimaryKeyRelatedField(source='manufacturer_part.manufacturer', read_only=True)  # queryset=Company.objects.filter(is_manufacturer=True))
-    
-    MPN = serializers.StringRelatedField(source='manufacturer_part.MPN', read_only=True)
+    MPN = serializers.StringRelatedField(source='manufacturer_part.MPN')
 
     class Meta:
         model = SupplierPart
@@ -174,7 +172,6 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'supplier',
             'supplier_detail',
             'SKU',
-            # 'manufacturer_part',
             'manufacturer',
             'MPN',
             'manufacturer_detail',
@@ -185,30 +182,32 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
     def create(self, validated_data):
         """ Extract manufacturer data and process ManufacturerPart """
 
-        print(validated_data)
-
         # Create SupplierPart
         supplier_part = super().create(validated_data)
 
-        # Get ManufacturerPart data
-        part = validated_data.get('part', None)
-        manufacturer = validated_data.get('manufacturer', None)
-        MPN = validated_data.get('MPN', None)
-        description = validated_data.get('description', None)
-        link = validated_data.get('link', None)
+        # Get ManufacturerPart raw data (unvalidated)
+        manufacturer_id = self.initial_data.get('manufacturer', None)
+        MPN = self.initial_data.get('MPN', None)
 
-        print(f'{manufacturer} | {MPN}')
+        if manufacturer_id or MPN:
+            # Get SupplierPart data
+            part = validated_data.get('part', None)
+            description = validated_data.get('description', None)
+            link = validated_data.get('link', None)
 
-        if manufacturer or MPN:
+            # Get manufacturer
+            try:
+                manufacturer = Company.objects.get(pk=int(manufacturer_id))
+            except Company.DoesNotExist:
+                manufacturer = None
+
             # Create ManufacturerPart
             manufacturer_part = ManufacturerPart.create(part=part,
                                                         manufacturer=manufacturer,
                                                         mpn=MPN,
                                                         description=description,
                                                         link=link)
-            print(manufacturer_part)
             supplier_part.manufacturer_part = manufacturer_part
-            print(supplier_part.manufacturer_part)
             supplier_part.save()
 
         return supplier_part

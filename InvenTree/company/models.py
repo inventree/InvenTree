@@ -204,7 +204,7 @@ class Company(models.Model):
     @property
     def parts(self):
         """ Return SupplierPart objects which are supplied or manufactured by this company """
-        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer=self.id))
+        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id))
 
     @property
     def part_count(self):
