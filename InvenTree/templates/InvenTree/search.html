@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block page_title %}
 InvenTree | {% trans "Search Results" %}
@@ -145,6 +146,24 @@ InvenTree | {% trans "Search Results" %}
         ],
     });
 
+    {% setting_object 'PART_ENABLE_MANUFACTURER_PARTS' as manufacturer_parts %}
+    {% if manufacturer_parts.value == "True" %}
+    addItem('manufacturer-part', '{% trans "Manufacturer Parts" %}', 'fa-toolbox');
+
+    loadManufacturerPartTable(
+        "#table-manufacturer-part",
+        "{% url 'api-manufacturer-part-list' %}",
+        {
+            params: {
+                search: "{{ query }}",
+                part_detail: true,
+                supplier_detail: true,
+                manufacturer_detail: true
+            },
+        }
+    );
+    {% endif %}
+
     addItem('supplier-part', '{% trans "Supplier Parts" %}', 'fa-pallet');
 
     loadSupplierPartTable(
@@ -287,6 +306,15 @@ InvenTree | {% trans "Search Results" %}
     {% if roles.purchase_order.view or roles.sales_order.view %}
     addItemTitle('{% trans "Company" %}');
 
+    addItem('manufacturer', '{% trans "Manufacturers" %}', 'fa-industry');
+
+    loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
+        params: {
+            search: "{{ query }}",
+            is_manufacturer: "true",
+        }
+    });
+
     {% if roles.purchase_order.view %}
     addItem('supplier', '{% trans "Suppliers" %}', 'fa-building');
 
@@ -304,16 +332,6 @@ InvenTree | {% trans "Search Results" %}
             search: '{{ query }}',
         }
     });
-
-    addItem('manufacturer', '{% trans "Manufacturers" %}', 'fa-industry');
-
-    loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
-        params: {
-            search: "{{ query }}",
-            is_manufacturer: "true",
-        }
-    });
-
 
     {% endif %}
 

@@ -193,7 +193,7 @@ class SupplierPartList(generics.ListCreateAPIView):
     queryset = SupplierPart.objects.all().prefetch_related(
         'part',
         'supplier',
-        'manufacturer_part',
+        'manufacturer_part__manufacturer',
     )
 
     def get_queryset(self):
@@ -291,9 +291,9 @@ class SupplierPartList(generics.ListCreateAPIView):
     search_fields = [
         'SKU',
         'supplier__name',
-        'manufacturer__name',
+        'manufacturer_part__manufacturer__name',
         'description',
-        'MPN',
+        'manufacturer_part__MPN',
         'part__name',
         'part__description',
     ]

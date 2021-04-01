@@ -73,14 +73,14 @@
     {% if manufacturer_parts.value == "True" %}
     <li class='list-group-item {% if tab == "manufacturers" %}active{% endif %}' title='{% trans "Manufacturers" %}'>
         <a href='{% url "part-manufacturers" part.id %}'>
-            <span class='menu-tab-icon fas fa-building'></span>
+            <span class='menu-tab-icon fas fa-industry'></span>
             {% trans "Manufacturers" %}
         </a>
     </li>
     {% endif %}
     <li class='list-group-item {% if tab == "suppliers" %}active{% endif %}' title='{% trans "Suppliers" %}'>
         <a href='{% url "part-suppliers" part.id %}'>
-            <span class='menu-tab-icon fas fa-warehouse'></span>
+            <span class='menu-tab-icon fas fa-building'></span>
             {% trans "Suppliers" %}
         </a>
     </li>

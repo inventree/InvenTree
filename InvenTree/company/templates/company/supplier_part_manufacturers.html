@@ -1,0 +1,43 @@
+{% extends "company/supplier_part_base.html" %}
+{% load static %}
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block menubar %}
+{% include "company/supplier_part_navbar.html" with tab='manufacturers' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Manufacturer Parts" %}
+{% endblock %}
+
+{% block details %}
+{% setting_object 'PART_ENABLE_MANUFACTURER_PARTS' as manufacturer_parts %}
+
+{% if manufacturer_parts.value == "True" %}
+<table class="table table-striped table-condensed" id='manufacturer-table' data-toolbar='#button-toolbar'>
+</table>
+{% else %}
+<div class='alert alert-block alert-warning'>
+    {% trans "Manufactured parts are disabled. Admin users can enable them in the global settings." %}
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block js_ready %}
+{{ block.super }}
+
+    loadManufacturerPartTable(
+        "#manufacturer-table",
+        "{% url 'api-manufacturer-part-list' %}",
+        {
+            params: {
+                part: {{ part.id }},
+                part_detail: true,
+                manufacturer_detail: true,
+            },
+        }
+    );
+
+{% endblock %}
