@@ -1,9 +1,10 @@
 FROM python:alpine as production
 
-# Configuration params
+# GitHub source
 ARG INVENTREE_REPO="https://github.com/inventree/InvenTree.git"
 ARG INVENTREE_VERSION="master"
-ARG INVENTREE_HOME="/home/inventree"
+
+# InvenTree server port
 ARG INVENTREE_PORT="80"
 
 # Database configuration options
@@ -17,7 +18,7 @@ ARG INVENTREE_DB_PASSWORD=""
 ENV PYTHONUNBUFFERED 1
 
 # InvenTree key settings
-ENV INVENTREE_HOME="${INVENTREE_HOME}"
+ENV INVENTREE_HOME="/home/inventree"
 ENV INVENTREE_PORT="${INVENTREE_PORT}"
 
 # InvenTree paths
@@ -50,7 +51,7 @@ RUN echo "Installing InvenTree '${INVENTREE_VERSION}' from ${INVENTREE_REPO}"
 
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
-WORKDIR /home/inventree
+WORKDIR ${INVENTREE_HOME}
 
 # Install required system packages
 RUN apk add --no-cache git make bash \
@@ -68,28 +69,27 @@ RUN apk add --no-cache mariadb-connector-c mariadb-dev
 RUN git clone --branch ${INVENTREE_VERSION} --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
 
 # Setup Python virtual environment
-RUN apk add python3-venv
-RUN python -m venv ${INVENTREE_VENV}}
-RUN source ${INVENTREE_VENV}/bin/activate
+RUN python3 -m venv ${INVENTREE_VENV}
 
 # Install required PIP packages (into the virtual environment!)
-RUN pip install --upgrade pip setuptools wheel
-RUN pip install --no-cache-dir -U invoke
-RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
+RUN source ${INVENTREE_VENV}/bin/activate && pip install --upgrade pip setuptools wheel
+RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U invoke
+RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
+RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U gunicorn
 
 # Install InvenTree packages
-RUN pip install --no-cache-dir -U -r ${INVENTREE_SRC_DIR}/requirements.txt
+RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U -r ${INVENTREE_SRC_DIR}/requirements.txt
 
 # Install supervisor
 RUN apk add --no-cache supervisor
 
 # Create required directories
-RUN mkdir /home/inventree/media /home/inventree/static /home/inventree/log /home/inventree/backup
+RUN mkdir ${INVENTREE_HOME}/media ${INVENTREE_HOME}/static ${INVENTREE_HOME}/backup
 
 # Copy supervisor file
 COPY docker/supervisor.conf /etc/supervisord.conf
 
 # Copy gunicorn config file
-COPY docker/gunicorn.conf.py /home/inventree/gunicorn.conf.py
+COPY docker/gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
