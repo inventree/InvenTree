@@ -13,6 +13,9 @@ database setup in this file.
 
 import logging
 import os
+import random
+import string
+import shutil
 import sys
 import tempfile
 from datetime import datetime
@@ -55,8 +58,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 cfg_filename = os.path.join(BASE_DIR, 'config.yaml')
 
 if not os.path.exists(cfg_filename):
-    print("Error: config.yaml not found")
-    sys.exit(-1)
+    print("InvenTree configuration file 'config.yaml' not found - creating default file")
+
+    cfg_template = os.path.join(BASE_DIR, "config_template.yaml")
+    shutil.copyfile(cfg_template, cfg_filename)
 
 with open(cfg_filename, 'r') as cfg:
     CONFIG = yaml.safe_load(cfg)
@@ -99,6 +104,17 @@ LOGGING = {
 # Get a logger instance for this setup file
 logger = logging.getLogger(__name__)
 
+"""
+Specify a secret key to be used by django.
+
+Following options are tested, in descending order of preference:
+
+A) Check for environment variable INVENTREE_SECRET_KEY => Use raw key data
+B) Check for environment variable INVENTREE_SECRET_KEY_FILE => Load key data from file
+C) Look for default key file "secret_key.txt"
+d) Create "secret_key.txt" if it does not exist
+"""
+
 if os.getenv("INVENTREE_SECRET_KEY"):
     # Secret key passed in directly
     SECRET_KEY = os.getenv("INVENTREE_SECRET_KEY").strip()
@@ -111,11 +127,20 @@ else:
         if os.path.isfile(key_file):
             logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY_FILE")
         else:
-            logger.error(f"Secret key file {key_file} not found")
+            logger.error(f"Secret key file '{key_file}'' not found")
             exit(-1)
     else:
         # default secret key location
         key_file = os.path.join(BASE_DIR, "secret_key.txt")
+
+        if not os.path.exists(key_file):
+            logger.info("Creating key file 'secret_key.txt'")
+            # Create a random key file
+            with open(key_file, 'w') as f:
+                options = string.digits + string.ascii_letters + string.punctuation
+                key = ''.join([random.choice(options) for i in range(50)])
+                f.write(key)
+
         logger.info(f"SECRET_KEY loaded from {key_file}")
     try:
         SECRET_KEY = open(key_file, "r").read().strip()
