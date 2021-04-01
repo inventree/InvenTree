@@ -143,7 +143,7 @@ def static(c):
     as per Django requirements.
     """
 
-    manage(c, "collectstatic")
+    manage(c, "collectstatic --no-input")
 
 
 @task(pre=[install, migrate, static])

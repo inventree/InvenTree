@@ -3,12 +3,13 @@ FROM python:alpine as production
 # GitHub source
 ARG INVENTREE_REPO="https://github.com/inventree/InvenTree.git"
 ARG INVENTREE_VERSION="master"
+ARG INVENTREE_CONFIG_FILE="InvenTree/config_template.yaml"
 
 # InvenTree server port
 ARG INVENTREE_PORT="80"
 
 # Database configuration options
-ARG INVENTREE_DB_ENGINE="sqlite"
+ARG INVENTREE_DB_ENGINE="sqlite3"
 ARG INVENTREE_DB_NAME="inventree_db.sqlite3"
 ARG INVENTREE_DB_HOST="127.0.0.1"
 ARG INVENTREE_DB_PORT=""
@@ -20,6 +21,8 @@ ENV PYTHONUNBUFFERED 1
 # InvenTree key settings
 ENV INVENTREE_HOME="/home/inventree"
 ENV INVENTREE_PORT="${INVENTREE_PORT}"
+
+ENV INVENTREE_LOG_LEVEL="INFO"
 
 # InvenTree paths
 ENV INVENTREE_SRC_DIR="${INVENTREE_HOME}/src"
@@ -42,7 +45,7 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.build-date=${DATE} \
       org.label-schema.vendor="inventree" \
       org.label-schema.name="inventree/inventree" \
-      org.label-schema.url="https://hub.docker.com/r/inventree/inventree-docker" \
+      org.label-schema.url="https://hub.docker.com/r/inventree/inventree" \
       org.label-schema.version=${INVENTREE_VERSION} \
       org.label-schema.vcs-url=${INVENTREE_REPO} \
       org.label-schema.vcs-branch=${BRANCH} \
@@ -93,4 +96,13 @@ COPY docker/supervisor.conf /etc/supervisord.conf
 # Copy gunicorn config file
 COPY docker/gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+# Copy default InvenTree config file
+COPY ${INVENTREE_CONFIG_FILE} ${INVENTREE_SRC_DIR}/InvenTree/config.yaml
+
+# Copy startup script
+COPY docker/start.sh ${INVENTREE_HOME}/start.sh
+
+RUN chmod 755 ${INVENTREE_HOME}/start.sh
+
+# Let us begin
+CMD "./start.sh"

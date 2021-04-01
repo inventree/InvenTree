@@ -28,7 +28,7 @@ database:
   # NAME: '/home/inventree/database.sqlite3'
 
   # --- Example Configuration - MySQL ---
-  #ENGINE: django.db.backends.mysql
+  #ENGINE: mysql
   #NAME: inventree
   #USER: inventree
   #PASSWORD: inventree_password
@@ -36,7 +36,7 @@ database:
   #PORT: '3306'
 
   # --- Example Configuration - Postgresql ---
-  #ENGINE: django.db.backends.postgresql
+  #ENGINE: postgresql
   #NAME: inventree
   #USER: inventree
   #PASSWORD: inventree_password
