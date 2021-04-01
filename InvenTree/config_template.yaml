@@ -9,11 +9,6 @@
 database:
   # Uncomment (and edit) one of the database configurations below,
   # or specify database options using environment variables
-  
-  # Default installation uses a simple sqlite database
-  # For production, consider changing this!
-  ENGINE: sqlite3
-  NAME: '/home/inventree/database.sqlite3'
 
   # Refer to the django documentation for full list of options
   
