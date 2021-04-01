@@ -1,0 +1,22 @@
+# Manufacturer Parts
+
+- model: company.manufacturerpart
+  pk: 1
+  fields:
+    part: 5
+    manufacturer: 6
+    MPN: 'MPN123'
+
+- model: company.manufacturerpart
+  pk: 2
+  fields:
+    part: 3
+    manufacturer: 7
+    MPN: 'MPN456'
+
+- model: company.manufacturerpart
+  pk: 3
+  fields:
+    part: 5
+    manufacturer: 7
+    MPN: 'MPN789'

@@ -52,3 +52,20 @@
     part: 2
     supplier: 2
     SKU: 'ZERGM312'
+
+# Supplier parts linked to Manufacturer parts
+- model: company.supplierpart
+  pk: 10
+  fields:
+    part: 3
+    manufacturer_part: 2
+    supplier: 2
+    SKU: 'MPN456-APPEL'
+
+- model: company.supplierpart
+  pk: 11
+  fields:
+    part: 3
+    manufacturer_part: 2
+    supplier: 3
+    SKU: 'MPN456-ZERG'

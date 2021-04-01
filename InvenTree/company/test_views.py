@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
+from .models import ManufacturerPart
 from .models import SupplierPart
 
 
@@ -20,6 +21,7 @@ class CompanyViewTestBase(TestCase):
         'part',
         'location',
         'company',
+        'manufacturer_part',
         'supplier_part',
     ]
 
@@ -200,3 +202,65 @@ class CompanyViewTest(CompanyViewTestBase):
 
         response = self.client.get(reverse('customer-create'), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertContains(response, 'Create new Customer')
+
+
+class ManufacturerPartViewTests(CompanyViewTestBase):
+    """
+    Tests for the ManufacturerPart views.
+    """
+
+    def test_manufacturer_part_create(self):
+        """
+        Test the ManufacturerPartCreate view.
+        """
+        
+        url = reverse('manufacturer-part-create')
+
+        # First check that we can GET the form
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+        # How many supplier parts are already in the database?
+        n = ManufacturerPart.objects.all().count()
+
+        data = {
+            'part': 1,
+            'manufacturer': 6,
+        }
+
+        # MPN is required! (form should fail)
+        (response, errors) = self.post(url, data, valid=False)
+
+        self.assertIsNotNone(errors.get('MPN', None))
+
+        data['MPN'] = 'TEST-ME-123'
+
+        (response, errors) = self.post(url, data, valid=True)
+
+        # Check that the ManufacturerPart was created!
+        self.assertEqual(n + 1, ManufacturerPart.objects.all().count())
+
+    def test_manufacturer_part_delete(self):
+        """
+        Test the ManufacturerPartDelete view
+        """
+
+        url = reverse('manufacturer-part-delete')
+
+        # Get form using 'part' argument
+        response = self.client.get(url, {'part': '5'}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+
+        # POST to delete manufacturer part
+        n = ManufacturerPart.objects.count()
+        response = self.client.post(
+            url,
+            {
+                'manufacturer-part-2': 'manufacturer-part-2',
+                'confirm_delete': True
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(n - 1, ManufacturerPart.objects.count())
