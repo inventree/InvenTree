@@ -15,6 +15,16 @@ ENV INVENTREE_LOG_DIR="$INVENTREE_HOME/log"
 ENV INVENTREE_BACKUP_DIR="$INVENTREE_HOME/backup"
 ENV INVENTREE_VENV="$INVENTREE_HOME/env"
 
+LABEL org.label-schema.schema-version="1.0" \
+      org.label-schema.build-date=$DATE \
+      org.label-schema.vendor="inventree" \
+      org.label-schema.name="inventree/inventree" \
+      org.label-schema.url="https://hub.docker.com/r/inventree/inventree-docker" \
+      org.label-schema.version=$INVENTREE_VERSION \
+      org.label-schema.vcs-url=$INVENTREE_REPO \
+      org.label-schema.vcs-branch=$BRANCH \
+      org.label-schema.vcs-ref=$COMMIT
+
 RUN echo "Installing InvenTree '${INVENTREE_VERSION}' from ${INVENTREE_REPO}"
 
 # Create user account
