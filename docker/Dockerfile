@@ -16,6 +16,10 @@ ARG INVENTREE_DB_PASSWORD=""
 
 ENV PYTHONUNBUFFERED 1
 
+# InvenTree key settings
+ENV INVENTREE_HOME="${INVENTREE_HOME}"
+ENV INVENTREE_PORT="${INVENTREE_PORT}"
+
 # InvenTree paths
 ENV INVENTREE_SRC_DIR="${INVENTREE_HOME}/src"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_HOME}/static"
@@ -78,6 +82,6 @@ RUN apk add --no-cache supervisor
 RUN mkdir /home/inventree/media /home/inventree/static /home/inventree/log /home/inventree/backup
 
 # Copy supervisor file
-COPY docker/inventree.conf /etc/supervisor/conf.d/inventree.conf
+COPY docker/supervisor.conf /etc/supervisord.conf
 
-CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
