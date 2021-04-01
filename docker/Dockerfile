@@ -5,22 +5,10 @@ ARG INVENTREE_REPO="https://github.com/inventree/InvenTree.git"
 ARG INVENTREE_VERSION="master"
 ARG INVENTREE_CONFIG_FILE="InvenTree/config_template.yaml"
 
-# InvenTree server port
-ARG INVENTREE_PORT="80"
-
-# Database configuration options
-ARG INVENTREE_DB_ENGINE="sqlite3"
-ARG INVENTREE_DB_NAME="inventree_db.sqlite3"
-ARG INVENTREE_DB_HOST="127.0.0.1"
-ARG INVENTREE_DB_PORT=""
-ARG INVENTREE_DB_USER=""
-ARG INVENTREE_DB_PASSWORD=""
-
 ENV PYTHONUNBUFFERED 1
 
 # InvenTree key settings
 ENV INVENTREE_HOME="/home/inventree"
-ENV INVENTREE_PORT="${INVENTREE_PORT}"
 
 ENV INVENTREE_LOG_LEVEL="INFO"
 
