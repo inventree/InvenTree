@@ -338,7 +338,7 @@ class ManufacturerPart(models.Model):
     )
 
     @classmethod
-    def create(cls, part, manufacturer, mpn, link, description):
+    def create(cls, part, manufacturer, mpn, description, link=None):
         """ Check if ManufacturerPart instance does not already exist
             then create it
         """
@@ -415,8 +415,7 @@ class SupplierPart(models.Model):
                 manufacturer_part = ManufacturerPart.create(part=self.part,
                                                             manufacturer=manufacturer,
                                                             mpn=MPN,
-                                                            description=self.description,
-                                                            link=self.link)
+                                                            description=self.description)
                 self.manufacturer_part = manufacturer_part
             else:
                 # Update ManufacturerPart (if ID exists)
