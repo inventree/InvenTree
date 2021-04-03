@@ -11,7 +11,7 @@ from InvenTree.fields import RoundingDecimalFormField
 
 from mptt.fields import TreeNodeChoiceField
 from django import forms
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 import common.models
 
