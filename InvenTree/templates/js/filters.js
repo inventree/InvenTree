@@ -1,3 +1,5 @@
+{% load i18n %}
+
 /**
  * Code for managing query filters / table options.
  * 
@@ -188,7 +190,7 @@ function generateAvailableFilterList(tableKey) {
 
     var html = `<select class='form-control filter-input' id='${id}' name='tag'>`;
     
-    html += `<option value=''>Select filter</option>`;
+    html += "<option value=''>{% trans 'Select filter' %}</option>";
 
     for (var opt in remaining) {
         var title = getFilterTitle(tableKey, opt);
@@ -263,10 +265,10 @@ function setupFilterList(tableKey, table, target) {
     // One blank slate, please
     element.empty();
 
-    element.append(`<button id='${add}' title='Add new filter' class='btn btn-default filter-tag'><span class='fas fa-filter'></span></button>`);
+    element.append(`<button id='${add}' title='{% trans "Add new filter" %}' class='btn btn-default filter-tag'><span class='fas fa-filter'></span></button>`);
 
     if (Object.keys(filters).length > 0) {
-        element.append(`<button id='${clear}' title='Clear all filters' class='btn btn-default filter-tag'><span class='fas fa-trash-alt'></span></button>`);
+        element.append(`<button id='${clear}' title='{% trans "Clear all filters" %}' class='btn btn-default filter-tag'><span class='fas fa-trash-alt'></span></button>`);
     }
 
     for (var key in filters) {
@@ -291,7 +293,7 @@ function setupFilterList(tableKey, table, target) {
             html += generateAvailableFilterList(tableKey);
             html += generateFilterInput(tableKey);
 
-            html += `<button title='Create filter' class='btn btn-default filter-tag' id='${make}'><span class='fas fa-plus'></span></button>`;
+            html += `<button title='{% trans "Create filter" %}' class='btn btn-default filter-tag' id='${make}'><span class='fas fa-plus'></span></button>`;
 
             //html += '</div>';
 
