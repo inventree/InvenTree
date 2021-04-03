@@ -40,7 +40,7 @@
             <input type='hidden' name='stock-id-{{ item.id }}' value='{{ item.new_quantity }}'/>
             {% endif %}  
           </td>
-          <td><button class='btn btn-default btn-remove' onclick='removeStockRow()' id='del-{{ item.id }}' title='Remove item' type='button'><span row='stock-row-{{ item.id }}' class='fas fa-trash-alt icon-red'></span></button></td>
+          <td><button class='btn btn-default btn-remove' onclick='removeStockRow()' id='del-{{ item.id }}' title='{% trans "Remove item" %}' type='button'><span row='stock-row-{{ item.id }}' class='fas fa-trash-alt icon-red'></span></button></td>
       </tr>
       {% endfor %}
     </table>

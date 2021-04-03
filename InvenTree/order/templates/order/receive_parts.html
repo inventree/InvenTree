@@ -54,7 +54,7 @@
                 </div>
             </td>
             <td>
-                <button class='btn btn-default btn-remove' onClick="removeOrderRowFromOrderWizard()" id='del_item_{{ line.id }}' title='Remove line' type='button'>
+                <button class='btn btn-default btn-remove' onClick="removeOrderRowFromOrderWizard()" id='del_item_{{ line.id }}' title='{% trans "Remove line" %}' type='button'>
                     <span row='line_row_{{ line.id }}' class='fas fa-times-circle icon-red'></span>
                 </button>
             </td>

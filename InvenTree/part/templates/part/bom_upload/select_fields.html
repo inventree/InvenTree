@@ -44,7 +44,7 @@
                     <div>
                         <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
                         {{ col.name }}
-                        <button class='btn btn-default btn-remove' onClick='removeColFromBomWizard()' id='del_col_{{ forloop.counter0 }}' style='display: inline; float: right;' title='Remove column'>
+                        <button class='btn btn-default btn-remove' onClick='removeColFromBomWizard()' id='del_col_{{ forloop.counter0 }}' style='display: inline; float: right;' title='{% trans "Remove column" %}'>
                             <span col_id='{{ forloop.counter0 }}' class='fas fa-trash-alt icon-red'></span>
                         </button>
                     </div>
@@ -73,7 +73,7 @@
             {% for row in bom_rows %}
             <tr>
                 <td>
-                    <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='Remove row'>
+                    <button class='btn btn-default btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ forloop.counter }}' style='display: inline; float: right;' title='{% trans "Remove row" %}'>
                         <span row_id='{{ forloop.counter }}' class='fas fa-trash-alt icon-red'></span>
                     </button>
                 </td>
