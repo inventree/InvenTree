@@ -114,7 +114,7 @@ class CreateStockItemForm(HelperForm):
         help_text=('Expiration date for this stock item'),
     )
 
-    serial_numbers = forms.CharField(label=_('Serial numbers'), required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
+    serial_numbers = forms.CharField(label=_('Serial Numbers'), required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
 
     def __init__(self, *args, **kwargs):
         

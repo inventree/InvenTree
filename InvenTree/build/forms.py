@@ -36,11 +36,13 @@ class EditBuildForm(HelperForm):
     }
 
     target_date = DatePickerFormField(
+        label=_('Target Date'),
         help_text=_('Target date for build completion. Build will be overdue after this date.')
     )
 
     quantity = RoundingDecimalFormField(
         max_digits=10, decimal_places=5,
+        label=_('Quantity'),
         help_text=_('Number of items to build')
     )
 
@@ -87,7 +89,7 @@ class BuildOutputCreateForm(HelperForm):
     )
 
     serial_numbers = forms.CharField(
-        label=_('Serial numbers'),
+        label=_('Serial Numbers'),
         required=False,
         help_text=_('Enter serial numbers for build outputs'),
     )

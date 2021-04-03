@@ -69,10 +69,11 @@ class PartCategory(InvenTreeTree):
         'stock.StockLocation', related_name="default_categories",
         null=True, blank=True,
         on_delete=models.SET_NULL,
+        verbose_name=_('Default Location'),
         help_text=_('Default location for parts in this category')
     )
 
-    default_keywords = models.CharField(null=True, blank=True, max_length=250, help_text=_('Default keywords for parts in this category'))
+    default_keywords = models.CharField(null=True, blank=True, max_length=250, verbose_name=_('Default keywords'), help_text=_('Default keywords for parts in this category'))
 
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={'pk': self.id})
@@ -870,18 +871,18 @@ class Part(MPTTModel):
         help_text=_('Part notes - supports Markdown formatting')
     )
 
-    bom_checksum = models.CharField(max_length=128, blank=True, help_text=_('Stored BOM checksum'))
+    bom_checksum = models.CharField(max_length=128, blank=True, verbose_name=_('BOM checksum'), help_text=_('Stored BOM checksum'))
 
     bom_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
-                                       related_name='boms_checked')
+                                       verbose_name=_('BOM checked by'), related_name='boms_checked')
 
-    bom_checked_date = models.DateField(blank=True, null=True)
+    bom_checked_date = models.DateField(blank=True, null=True, verbose_name=_('BOM checked date'))
 
-    creation_date = models.DateField(auto_now_add=True, editable=False, blank=True, null=True)
+    creation_date = models.DateField(auto_now_add=True, editable=False, blank=True, null=True, verbose_name=_('Creation Date'))
 
-    creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='parts_created')
+    creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Creation User'), related_name='parts_created')
 
-    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='parts_responible')
+    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), related_name='parts_responible')
 
     def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this Part object """
@@ -2050,11 +2051,11 @@ class PartParameter(models.Model):
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', help_text=_('Parent Part'))
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', verbose_name=_('Part'), help_text=_('Parent Part'))
 
-    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', help_text=_('Parameter Template'))
+    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', verbose_name=_('Template'), help_text=_('Parameter Template'))
 
-    data = models.CharField(max_length=500, help_text=_('Parameter Value'))
+    data = models.CharField(max_length=500, verbose_name=_('Data'), help_text=_('Parameter Value'))
 
     @classmethod
     def create(cls, part, template, data, save=False):

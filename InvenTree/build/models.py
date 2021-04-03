@@ -224,12 +224,13 @@ class Build(MPTTModel):
         help_text=_('Target date for build completion. Build will be overdue after this date.')
     )
 
-    completion_date = models.DateField(null=True, blank=True)
+    completion_date = models.DateField(null=True, blank=True, verbose_name=_('Completion Date'))
 
     completed_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         blank=True, null=True,
+        verbose_name=_('completed by'),
         related_name='builds_completed'
     )
 
@@ -237,6 +238,7 @@ class Build(MPTTModel):
         User,
         on_delete=models.SET_NULL,
         blank=True, null=True,
+        verbose_name=_('Issued by'),
         help_text=_('User who issued this build order'),
         related_name='builds_issued',
     )
@@ -245,6 +247,7 @@ class Build(MPTTModel):
         UserModels.Owner,
         on_delete=models.SET_NULL,
         blank=True, null=True,
+        verbose_name=_('Responsible'),
         help_text=_('User responsible for this build order'),
         related_name='builds_responsible',
     )

@@ -126,11 +126,11 @@ class Company(models.Model):
 
     notes = MarkdownxField(blank=True)
 
-    is_customer = models.BooleanField(default=False, help_text=_('Do you sell items to this company?'))
+    is_customer = models.BooleanField(default=False, verbose_name=_('is customer'), help_text=_('Do you sell items to this company?'))
 
-    is_supplier = models.BooleanField(default=True, help_text=_('Do you purchase items from this company?'))
+    is_supplier = models.BooleanField(default=True, verbose_name=_('is supplier'), help_text=_('Do you purchase items from this company?'))
 
-    is_manufacturer = models.BooleanField(default=False, help_text=_('Does this company manufacture parts?'))
+    is_manufacturer = models.BooleanField(default=False, verbose_name=_('is manufacturer'), help_text=_('Does this company manufacture parts?'))
 
     currency = models.CharField(
         max_length=3,
@@ -366,11 +366,11 @@ class SupplierPart(models.Model):
         help_text=_('Notes')
     )
 
-    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], help_text=_('Minimum charge (e.g. stocking fee)'))
+    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
 
-    packaging = models.CharField(max_length=50, blank=True, null=True, help_text=_('Part packaging'))
+    packaging = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Packaging'), help_text=_('Part packaging'))
     
-    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], help_text=('Order multiple'))
+    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=('Order multiple'))
 
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
     # lead_time = models.DurationField(blank=True, null=True)

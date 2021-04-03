@@ -1548,11 +1548,11 @@ class StockItemTracking(models.Model):
 
     date = models.DateTimeField(auto_now_add=True, editable=False)
 
-    title = models.CharField(blank=False, max_length=250, help_text=_('Tracking entry title'))
+    title = models.CharField(blank=False, max_length=250, verbose_name=_('Title'), help_text=_('Tracking entry title'))
 
-    notes = models.CharField(blank=True, max_length=512, help_text=_('Entry notes'))
+    notes = models.CharField(blank=True, max_length=512, verbose_name=_('Notes'), help_text=_('Entry notes'))
 
-    link = InvenTreeURLField(blank=True, help_text=_('Link to external page for further information'))
+    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page for further information'))
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 

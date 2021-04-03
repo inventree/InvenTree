@@ -34,6 +34,7 @@ class EditCompanyForm(HelperForm):
 
     currency = django.forms.ChoiceField(
         required=False,
+        label=_('Currency'),
         help_text=_('Default currency used for this company'),
         choices=[('', '----------')] + djmoney.settings.CURRENCY_CHOICES,
         initial=common.settings.currency_code_default,
