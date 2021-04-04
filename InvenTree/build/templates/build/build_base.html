@@ -45,27 +45,35 @@ src="{% static 'img/blank_image.png' %}"
 </h3>
 <hr>
 <p>{{ build.title }}</p>
-<div class='btn-row'>
-    <div class='btn-group action-buttons'>
-        {% if roles.build.change %}
-        <button type='button' class='btn btn-default' id='build-edit' title='{% trans "Edit Build" %}'>
-            <span class='fas fa-edit icon-green'/>
+
+<div class='btn-group action-buttons' role='group'>
+    <!-- Printing options -->
+    <div class='btn-group'>
+        <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+            <span class='fas fa-print'></span> <span class='caret'></span>
         </button>
-        {% if build.is_active %}
-        <button type='button' class='btn btn-default' id='build-complete' title='{% trans "Complete Build" %}'>
-            <span class='fas fa-tools'/>
-        </button>
-        <button type='button' class='btn btn-default btn-glyph' id='build-cancel' title='{% trans "Cancel Build" %}'>
-            <span class='fas fa-times-circle icon-red'/>
-        </button>
-        {% endif %}
-        {% endif %}
-        {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
-        <button type='button' class='btn btn-default btn-glyph' id='build-delete' title='{% trans "Delete Build" %}'>
-            <span class='fas fa-trash-alt icon-red'/>
-        </button>
-        {% endif %}
+        <ul class='dropdown-menu' role='menu'>
+            <li><a href='#' id='print-build-report'><span class='fas fa-file-pdf'></span> {% trans "Print Build Order" %}</a></li>
+        </ul>
     </div>
+    <!-- Build actions -->
+    {% if roles.build.change %}
+    <div class='btn-group'>
+        <button id='build-options' title='{% trans "Build actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'>
+            <span class='fas fa-tools'></span> <span class='caret'></span>
+        </button>
+        <ul class='dropdown-menu' role='menu'>
+            <li><a href='#' id='build-edit'><span class='fas fa-edit icon-green'></span> {% trans "Edit Build" %}</a></li>
+            {% if build.is_active %}
+            <li><a href='#' id='build-complete'><span class='fas fa-tools'></span> {% trans "Complete Build" %}</a></li>
+            <li><a href='#' id='build-cancel'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel Build" %}</a></li>
+            {% endif %}
+            {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
+            <li><a href='#' id='build-delete'><span class='fas fa-trash-alt'></span> {% trans "Delete Build"% }</a>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 
@@ -121,10 +129,29 @@ src="{% static 'img/blank_image.png' %}"
         <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></td>
     </tr>
     {% endif %}
+    {% if build.issued_by %}
+    <tr>
+        <td><span class='fas fa-user'></span></td>
+        <td>{% trans "Issued By" %}</td>
+        <td>{{ build.issued_by }}</td>
+    </tr>
+    {% endif %}
+    {% if build.responsible %}
+    <tr>
+        <td><span class='fas fa-users'></span></td>
+        <td>{% trans "Responsible" %}</td>
+        <td>{{ build.responsible }}</td>
+    </tr>
+    {% endif %}
 </table>
 {% endblock %}
 
 {% block js_ready %}
+
+    enableNavbar({
+        label: 'build',
+        toggleId: '#build-menu-toggle'
+    });
 
     $("#build-edit").click(function () {
         launchModalForm("{% url 'build-edit' build.id %}",
@@ -149,6 +176,10 @@ src="{% static 'img/blank_image.png' %}"
                 submit_text: "Complete Build",
             }
         );
+    });
+
+    $('#print-build-report').click(function() {
+        printBuildReports([{{ build.pk }}]);
     });
 
     $("#build-delete").on('click', function() {

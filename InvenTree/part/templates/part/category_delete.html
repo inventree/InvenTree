@@ -1,36 +1,37 @@
 {% extends "modal_delete_form.html" %}
+{% load i18n %}
 
 {% block pre_form_content %}
-Are you sure you want to delete category '{{ category.name }}'?
+{% trans 'Are you sure you want to delete category' %} <strong>{{ category.name }}</strong>?
 
 {% if category.children.all|length > 0 %}
-<p>This category contains {{ category.children.all|length }} child categories.<br>
-If this category is deleted, these child categories will be moved to
+<p>{% trans 'This category contains' %} {{ category.children.all|length }} {% trans 'child categories' %}.<br>
+{% trans 'If this category is deleted, these child categories will be moved to the' %}
 {% if category.parent %}
-the '{{ category.parent.name }}' category.
+ <strong>{{ category.parent.name }}</strong> {% trans 'category' %}.
 {% else %}
-the top level 'Parts' category.
+ {% trans 'top level Parts category' %}.
 {% endif %}
 </p>
 
 <ul class='list-group'>
 {% for cat in category.children.all %}
-    <li class='list-group-item'><b>{{ cat.name }}</b> - <i>{{ cat.description }}</i></li>
+    <li class='list-group-item'><strong>{{ cat.name }}</strong> - <em>{{ cat.description }}</em></li>
 {% endfor %}
 </ul>
 {% endif %}
 
 {% if category.parts.all|length > 0 %}
-<p>This category contains {{ category.parts.all|length }} parts.<br>
+<p>{% trans 'This category contains' %} {{ category.parts.all|length }} {% trans 'parts' %}.<br>
     {% if category.parent %}
-    If this category is deleted, these parts will be moved to the parent category '{{ category.parent.pathstring }}'
+    {% trans 'If this category is deleted, these parts will be moved to the parent category' %} {{ category.parent.pathstring }}
     {% else %}
-    If this category is deleted, these parts will be moved to the top-level category 'Parts'
+    {% trans 'If this category is deleted, these parts will be moved to the top-level category Teile' %}
     {% endif %}
 </p>
 <ul class='list-group'>
 {% for part in category.parts.all %}
-    <li class='list-group-item'><b>{{ part.full_name }}</b> - <i>{{ part.description }}</i></li>
+    <li class='list-group-item'><strong>{{ part.full_name }}</strong> - <em>{{ part.description }}</em></li>
 {% endfor %}
 </ul>
 {% endif %}

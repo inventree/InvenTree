@@ -1,15 +1,18 @@
 {% extends "part/part_base.html" %}
 {% load static %}
 {% load i18n %}
+
+{% block menubar %}
+{% include 'part/navbar.html' with tab='build' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Part Builds" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'part/tabs.html' with tab='build' %}
-
-<h4>{% trans "Part Builds" %}</h4>
-<hr>
-
 <div id='button-toolbar'>
-    <div class='button-toolbar container-flui' style='float: right';>
+    <div class='button-toolbar container-fluid' style='float: right';>
         {% if part.active %}
         {% if roles.build.add %}
         <button class="btn btn-success" id='start-build'><span class='fas fa-tools'></span> {% trans "Start New Build" %}</button>
@@ -40,7 +43,6 @@
     loadBuildTable($("#build-table"), {
         url: "{% url 'api-build-list' %}",
         params: {
-            part_detail: "true",
             part: {{ part.id }},
         }
     });

@@ -2,12 +2,15 @@
 {% load static %}
 {% load i18n %}
 
+{% block menubar %}
+{% include "company/navbar.html" with tab="assigned" %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Assigned Stock" %}
+{% endblock %}
+
 {% block details %}
-
-{% include "company/tabs.html" with tab="assigned" %}
-
-<h4>{% trans "Assigned Stock" %}</h4>
-<hr>
 
 <div id='button-toolbar'>
     <div class='filter-list' id='filter-list-stock'>

@@ -49,7 +49,6 @@ class StockIndex(InvenTreeRoleMixin, ListView):
     model = StockItem
     template_name = 'stock/location.html'
     context_obect_name = 'locations'
-    role_required = 'stock.view'
 
     def get_context_data(self, **kwargs):
         context = super(StockIndex, self).get_context_data(**kwargs).copy()
@@ -75,7 +74,6 @@ class StockLocationDetail(InvenTreeRoleMixin, DetailView):
     template_name = 'stock/location.html'
     queryset = StockLocation.objects.all()
     model = StockLocation
-    role_required = ['stock_location.view', 'stock.view']
 
 
 class StockItemDetail(InvenTreeRoleMixin, DetailView):
@@ -87,7 +85,6 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
     template_name = 'stock/item.html'
     queryset = StockItem.objects.all()
     model = StockItem
-    role_required = 'stock.view'
 
 
 class StockItemNotes(InvenTreeRoleMixin, UpdateView):
@@ -96,6 +93,7 @@ class StockItemNotes(InvenTreeRoleMixin, UpdateView):
     context_object_name = 'item'
     template_name = 'stock/item_notes.html'
     model = StockItem
+
     role_required = 'stock.view'
 
     fields = ['notes']
@@ -123,8 +121,7 @@ class StockLocationEdit(AjaxUpdateView):
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Location')
-    role_required = 'stock_location.change'
-
+    
     def get_form(self):
         """ Customize form data for StockLocation editing.
 
@@ -189,7 +186,7 @@ class StockLocationEdit(AjaxUpdateView):
         # Is ownership control enabled?
         stock_ownership_control = InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
 
-        if stock_ownership_control:
+        if stock_ownership_control and self.object.owner:
             # Get authorized users
             authorized_owners = self.object.owner.get_related_owners()
 
@@ -246,6 +243,7 @@ class StockLocationQRCode(QRCodeView):
     """ View for displaying a QR code for a StockLocation object """
 
     ajax_form_title = _("Stock Location QR code")
+
     role_required = ['stock_location.view', 'stock.view']
 
     def get_qr_data(self):
@@ -266,7 +264,6 @@ class StockItemAttachmentCreate(AjaxCreateView):
     form_class = StockForms.EditStockItemAttachmentForm
     ajax_form_title = _("Add Stock Item Attachment")
     ajax_template_name = "modal_form.html"
-    role_required = 'stock.add'
 
     def save(self, form, **kwargs):
         """ Record the user that uploaded the attachment """
@@ -312,8 +309,7 @@ class StockItemAttachmentEdit(AjaxUpdateView):
     model = StockItemAttachment
     form_class = StockForms.EditStockItemAttachmentForm
     ajax_form_title = _("Edit Stock Item Attachment")
-    role_required = 'stock.change'
-
+    
     def get_form(self):
 
         form = super().get_form()
@@ -331,8 +327,7 @@ class StockItemAttachmentDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Stock Item Attachment")
     ajax_template_name = "attachment_delete.html"
     context_object_name = "attachment"
-    role_required = 'stock.delete'
-
+    
     def get_data(self):
         return {
             'danger': _("Deleted attachment"),
@@ -348,7 +343,6 @@ class StockItemAssignToCustomer(AjaxUpdateView):
     ajax_form_title = _("Assign to Customer")
     context_object_name = "item"
     form_class = StockForms.AssignStockItemToCustomerForm
-    role_required = 'stock.change'
 
     def validate(self, item, form, **kwargs):
 
@@ -382,8 +376,7 @@ class StockItemReturnToStock(AjaxUpdateView):
     ajax_form_title = _("Return to Stock")
     context_object_name = "item"
     form_class = StockForms.ReturnStockItemForm
-    role_required = 'stock.change'
-
+    
     def validate(self, item, form, **kwargs):
 
         location = form.cleaned_data.get('location', None)
@@ -412,6 +405,7 @@ class StockItemDeleteTestData(AjaxUpdateView):
     model = StockItem
     form_class = ConfirmForm
     ajax_form_title = _("Delete All Test Data")
+        
     role_required = ['stock.change', 'stock.delete']
 
     def get_form(self):
@@ -448,7 +442,6 @@ class StockItemTestResultCreate(AjaxCreateView):
     model = StockItemTestResult
     form_class = StockForms.EditStockItemTestResultForm
     ajax_form_title = _("Add Test Result")
-    role_required = 'stock.add'
 
     def save(self, form, **kwargs):
         """
@@ -489,7 +482,6 @@ class StockItemTestResultEdit(AjaxUpdateView):
     model = StockItemTestResult
     form_class = StockForms.EditStockItemTestResultForm
     ajax_form_title = _("Edit Test Result")
-    role_required = 'stock.change'
 
     def get_form(self):
 
@@ -508,7 +500,6 @@ class StockItemTestResultDelete(AjaxDeleteView):
     model = StockItemTestResult
     ajax_form_title = _("Delete Test Result")
     context_object_name = "result"
-    role_required = 'stock.delete'
 
 
 class StockExportOptions(AjaxView):
@@ -517,7 +508,6 @@ class StockExportOptions(AjaxView):
     model = StockLocation
     ajax_form_title = _('Stock Export Options')
     form_class = StockForms.ExportOptionsForm
-    role_required = 'stock.view'
 
     def post(self, request, *args, **kwargs):
 
@@ -665,7 +655,6 @@ class StockItemInstall(AjaxUpdateView):
     form_class = StockForms.InstallStockForm
     ajax_form_title = _('Install Stock Item')
     ajax_template_name = "stock/item_install.html"
-    role_required = 'stock.change'
 
     part = None
 
@@ -1232,7 +1221,6 @@ class StockItemEdit(AjaxUpdateView):
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Stock Item')
-    role_required = 'stock.change'
 
     def get_form(self):
         """ Get form for StockItem editing.
@@ -1244,7 +1232,7 @@ class StockItemEdit(AjaxUpdateView):
 
         # Hide the "expiry date" field if the feature is not enabled
         if not common.settings.stock_expiry_enabled():
-            form.fields.pop('expiry_date')
+            form.fields['expiry_date'].widget = HiddenInput()
 
         item = self.get_object()
 
@@ -1343,7 +1331,6 @@ class StockItemConvert(AjaxUpdateView):
     ajax_form_title = _('Convert Stock Item')
     ajax_template_name = 'stock/stockitem_convert.html'
     context_object_name = 'item'
-    role_required = 'stock.change'
 
     def get_form(self):
         """
@@ -1369,7 +1356,6 @@ class StockLocationCreate(AjaxCreateView):
     context_object_name = 'location'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Location')
-    role_required = 'stock_location.add'
 
     def get_initial(self):
         initials = super(StockLocationCreate, self).get_initial().copy()
@@ -1462,7 +1448,6 @@ class StockItemSerialize(AjaxUpdateView):
     ajax_template_name = 'stock/item_serialize.html'
     ajax_form_title = _('Serialize Stock')
     form_class = StockForms.SerializeStockForm
-    role_required = 'stock.change'
 
     def get_form(self):
 
@@ -1555,7 +1540,6 @@ class StockItemCreate(AjaxCreateView):
     context_object_name = 'item'
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Create new Stock Item')
-    role_required = 'stock.add'
 
     def get_part(self, form=None):
         """
@@ -1597,7 +1581,7 @@ class StockItemCreate(AjaxCreateView):
 
         # Hide the "expiry date" field if the feature is not enabled
         if not common.settings.stock_expiry_enabled():
-            form.fields.pop('expiry_date')
+            form.fields['expiry_date'].widget = HiddenInput()
 
         part = self.get_part(form=form)
 
@@ -1880,7 +1864,6 @@ class StockLocationDelete(AjaxDeleteView):
     ajax_template_name = 'stock/location_delete.html'
     context_object_name = 'location'
     ajax_form_title = _('Delete Stock Location')
-    role_required = 'stock_location.delete'
 
 
 class StockItemDelete(AjaxDeleteView):
@@ -1894,7 +1877,6 @@ class StockItemDelete(AjaxDeleteView):
     ajax_template_name = 'stock/item_delete.html'
     context_object_name = 'item'
     ajax_form_title = _('Delete Stock Item')
-    role_required = 'stock.delete'
 
 
 class StockItemTrackingDelete(AjaxDeleteView):
@@ -1906,18 +1888,6 @@ class StockItemTrackingDelete(AjaxDeleteView):
     model = StockItemTracking
     ajax_template_name = 'stock/tracking_delete.html'
     ajax_form_title = _('Delete Stock Tracking Entry')
-    role_required = 'stock.delete'
-
-
-class StockTrackingIndex(InvenTreeRoleMixin, ListView):
-    """
-    StockTrackingIndex provides a page to display StockItemTracking objects
-    """
-
-    model = StockItemTracking
-    template_name = 'stock/tracking.html'
-    context_object_name = 'items'
-    role_required = 'stock.view'
 
 
 class StockItemTrackingEdit(AjaxUpdateView):
@@ -1926,7 +1896,6 @@ class StockItemTrackingEdit(AjaxUpdateView):
     model = StockItemTracking
     ajax_form_title = _('Edit Stock Tracking Entry')
     form_class = StockForms.TrackingEntryForm
-    role_required = 'stock.change'
 
 
 class StockItemTrackingCreate(AjaxCreateView):
@@ -1936,7 +1905,6 @@ class StockItemTrackingCreate(AjaxCreateView):
     model = StockItemTracking
     ajax_form_title = _("Add Stock Tracking Entry")
     form_class = StockForms.TrackingEntryForm
-    role_required = 'stock.add'
 
     def post(self, request, *args, **kwargs):
 

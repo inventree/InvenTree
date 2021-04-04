@@ -137,9 +137,20 @@ class POList(generics.ListCreateAPIView):
         'supplier',
     ]
 
+    search_fields = [
+        'reference',
+        'supplier__name',
+        'supplier_reference',
+        'description',
+    ]
+
     ordering_fields = [
         'creation_date',
         'reference',
+        'supplier__name',
+        'target_date',
+        'line_items',
+        'status',
     ]
 
     ordering = '-creation_date'
@@ -200,6 +211,25 @@ class POLineItemList(generics.ListCreateAPIView):
 
     filter_backends = [
         DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]
+
+    ordering_fields = [
+        'part__part__name',
+        'part__MPN',
+        'part__SKU',
+        'reference',
+        'quantity',
+        'received',
+    ]
+
+    search_fields = [
+        'part__part__name',
+        'part__part__description',
+        'part__MPN',
+        'part__SKU',
+        'reference',
     ]
 
     filter_fields = [
@@ -332,7 +362,20 @@ class SOList(generics.ListCreateAPIView):
 
     ordering_fields = [
         'creation_date',
-        'reference'
+        'reference',
+        'customer__name',
+        'customer_reference',
+        'status',
+        'target_date',
+        'line_items',
+        'shipment_date',
+    ]
+
+    search_fields = [
+        'customer__name',
+        'reference',
+        'description',
+        'customer_reference',
     ]
 
     ordering = '-creation_date'
@@ -412,7 +455,23 @@ class SOLineItemList(generics.ListCreateAPIView):
 
         return queryset
 
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]
+
+    ordering_fields = [
+        'part__name',
+        'quantity',
+        'reference',
+    ]
+
+    search_fields = [
+        'part__name',
+        'quantity',
+        'reference',
+    ]
 
     filter_fields = [
         'order',

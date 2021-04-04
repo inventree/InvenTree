@@ -66,6 +66,24 @@ class CompanyImageForm(HelperForm):
         ]
 
 
+class CompanyImageDownloadForm(HelperForm):
+    """
+    Form for downloading an image from a URL
+    """
+
+    url = django.forms.URLField(
+        label=_('URL'),
+        help_text=_('Image URL'),
+        required=True
+    )
+
+    class Meta:
+        model = Company
+        fields = [
+            'url',
+        ]
+
+
 class EditSupplierPartForm(HelperForm):
     """ Form for editing a SupplierPart object """
 

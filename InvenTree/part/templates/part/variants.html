@@ -3,18 +3,15 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+{% block menubar %}
+{% include "part/navbar.html" with tab='variants' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Part Variants" %}
+{% endblock %}
+
 {% block details %}
-{% include "part/tabs.html" with tab='variants' %}
-
-<div class='row'>
-    <div class='col-sm-6'>
-        <h4>{% trans "Part Variants" %}</h4>
-    </div>
-    <div class='col-sm-6'>
-    </div>
-</div>
-<hr>
-
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid'>
         <div class='btn-group' role='group'>
@@ -32,18 +29,6 @@
 
 <table class='table table-striped table-condensed' id='variants-table' data-toolbar='#button-toolbar'>
 </table>
-
-{% endblock %}
-
-{% block js_load %}
-{{ block.super }}
-
-<!-- jquery-treegrid -->
-<script type='text/javascript' src='{% static "treegrid/js/jquery.treegrid.js" %}'></script>
-<script type='text/javascript' src='{% static "treegrid/js/jquery.treegrid.bootstrap3.js" %}'></script>
-
-<!-- boostrap-table-treegrid -->
-<script type='text/javascript' src='{% static "bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.js" %}'></script>
 
 {% endblock %}
 

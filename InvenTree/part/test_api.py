@@ -1,18 +1,16 @@
-from rest_framework.test import APITestCase
 from rest_framework import status
 
 from django.urls import reverse
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 
 from part.models import Part
 from stock.models import StockItem
 from company.models import Company
 
+from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import StockStatus
 
 
-class PartAPITest(APITestCase):
+class PartAPITest(InvenTreeAPITestCase):
     """
     Series of tests for the Part DRF API
     - Tests for Part API
@@ -27,32 +25,16 @@ class PartAPITest(APITestCase):
         'test_templates',
     ]
 
+    roles = [
+        'part.change',
+        'part.add',
+        'part.delete',
+        'part_category.change',
+        'part_category.add',
+    ]
+
     def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        
-        self.user = user.objects.create_user(
-            username='testuser',
-            email='test@testing.com',
-            password='password'
-        )
-
-        # Put the user into a group with the correct permissions
-        group = Group.objects.create(name='mygroup')
-        self.user.groups.add(group)
-
-        # Give the group *all* the permissions!
-        for rule in group.rule_sets.all():
-            rule.can_view = True
-            rule.can_change = True
-            rule.can_add = True
-            rule.can_delete = True
-
-            rule.save()
-
-        group.save()
-
-        self.client.login(username='testuser', password='password')
+        super().setUp()
 
     def test_get_categories(self):
         """ Test that we can retrieve list of part categories """
@@ -253,8 +235,23 @@ class PartAPITest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_paginate(self):
+        """
+        Test pagination of the Part list API
+        """
 
-class PartAPIAggregationTest(APITestCase):
+        for n in [1, 5, 10]:
+            response = self.get(reverse('api-part-list'), {'limit': n})
+
+            data = response.data
+
+            self.assertIn('count', data)
+            self.assertIn('results', data)
+            
+            self.assertEqual(len(data['results']), n)
+
+
+class PartAPIAggregationTest(InvenTreeAPITestCase):
     """
     Tests to ensure that the various aggregation annotations are working correctly...
     """
@@ -268,13 +265,14 @@ class PartAPIAggregationTest(APITestCase):
         'test_templates',
     ]
 
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        
-        user.objects.create_user('testuser', 'test@testing.com', 'password')
+    roles = [
+        'part.view',
+        'part.change',
+    ]
 
-        self.client.login(username='testuser', password='password')
+    def setUp(self):
+
+        super().setUp()
 
         # Add a new part
         self.part = Part.objects.create(

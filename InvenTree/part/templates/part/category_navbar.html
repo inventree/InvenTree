@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<ul class='list-group'>
+
+    <li class='list-group-item'>
+        <a href='#' id='category-menu-toggle'>
+            <span class='menu-tab-icon fas fa-expand-arrows-alt'></span>
+        </a>
+    </li>
+
+    <li class='list-group-item {% if tab == "parts" %}active{% endif %}' title='{% trans "Parts" %}'>
+        <a href='{% url "category-detail" category.id %}'>
+            <span class='fas fa-shapes'></span>
+            {% trans "Parts" %}
+        </a>
+    </li>
+
+    <li class='list-group-item {% if tab == "parameters" %}active{% endif %}' title='{% trans "Parameters" %}'>
+        <a href='{% url "category-parametric" category.id %}'>
+            <span class='fas fa-tasks'></span>
+            {% trans "Parameters" %}
+        </a>
+    </li>
+</ul>

@@ -1,12 +1,15 @@
 {% extends "part/part_base.html" %}
 {% load i18n %}
+
+{% block menubar %}
+{% include 'part/navbar.html' with tab='used' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Assemblies" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'part/tabs.html' with tab='used' %}
-
-<h4>{% trans "Assemblies" %}</h4>
-
-<hr>
 
 <div id='button-toolbar'>
     <div class='filter-list' id='filter-list-usedin'>
@@ -22,10 +25,15 @@
 {% block js_ready %}
 {{ block.super }}
 
-    loadUsedInTable('#used-table', {
-        part_detail: true,
-        part_id: {{ part.pk }}
-    });
+    loadPartTable('#used-table',
+        '{% url "api-part-list" %}',
+        {
+            params: {
+                uses: {{ part.pk }},
+            },
+            filterTarget: '#filter-list-usedin',
+        }
+    );
 
 
 {% endblock %}

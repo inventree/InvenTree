@@ -4,20 +4,26 @@
 {% load i18n %}
 {% load markdownify %}
 
+{% block menubar %}
+{% include "build/navbar.html" with tab='notes' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Build Notes" %}
+{% if roles.build.change and not editing %}
+<button title='{% trans "Edit notes" %}' class='btn btn-default' id='edit-notes'><span class='fas fa-edit'></span></button>
+{% endif %}
+{% endblock %}
+
 {% block details %}
-
-{% include "build/tabs.html" with tab='notes' %}
-
-
 {% if editing %}
-<h4>{% trans "Build Notes" %}</h4>
 <hr>
 <form method='POST'>
     {% csrf_token %}
         
     {{ form }}
     <hr>
-    <input type="submit" value='{% trans "Save" %}'/>
+    <button type="submit" class='btn btn-default'>{% trans "Save" %}</button>
     
 </form>
 
@@ -25,20 +31,7 @@
 
 {% else %}
 
-<div class='row'>
-        <div class='col-sm-6'>
-            <h4>{% trans "Build Notes" %}</h4>
-        </div>
-        <div class='col-sm-6'>
-            <button title='{% trans "Edit notes" %}' class='btn btn-default action-button float-right' id='edit-notes'><span class='fas fa-edit'></span></button>
-        </div>
-    </div>
-    <hr>
-    <div class='panel panel-default'>
-        <div class='panel-content'>
-            {{ build.notes | markdownify }}
-        </div>
-    </div>
+{{ build.notes | markdownify }}
 {% endif %}
 
 {% endblock %}

@@ -204,7 +204,6 @@ INSTALLED_APPS = [
     'crispy_forms',                         # Improved form rendering
     'import_export',                        # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',    # Automatically delete orphaned MEDIA files
-    'qr_code',                              # Generate QR codes
     'mptt',                                 # Modified Preorder Tree Traversal
     'markdownx',                            # Markdown editing
     'markdownify',                          # Markdown template rendering
@@ -212,7 +211,6 @@ INSTALLED_APPS = [
     'djmoney',                              # django-money integration
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
-    'django_migration_linter',              # Linting checking for migration files
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -250,6 +248,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates'),
             # Allow templates in the reporting directory to be accessed
             os.path.join(MEDIA_ROOT, 'report'),
+            os.path.join(MEDIA_ROOT, 'label'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -275,11 +274,13 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.DjangoModelPermissions',
+        'InvenTree.permissions.RolePermission',
     ),
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
@@ -318,83 +319,68 @@ MARKDOWNIFY_BLEACH = False
 DATABASES = {}
 
 """
-When running unit tests, enforce usage of sqlite3 database,
-so that the tests can be run in RAM without any setup requirements
+Configure the database backend based on the user-specified values.
+
+- Primarily this configuration happens in the config.yaml file
+- However there may be reason to configure the DB via environmental variables
+- The following code lets the user "mix and match" database configuration
 """
-if 'test' in sys.argv:
-    logger.info('InvenTree: Running tests - Using sqlite3 memory database')
-    DATABASES['default'] = {
-        # Ensure sqlite3 backend is being used
-        'ENGINE': 'django.db.backends.sqlite3',
-        # Doesn't matter what the database is called, it is executed in RAM
-        'NAME': 'ram_test_db.sqlite3',
-    }
 
-# Database backend selection
-else:
-    """
-    Configure the database backend based on the user-specified values.
-    
-    - Primarily this configuration happens in the config.yaml file
-    - However there may be reason to configure the DB via environmental variables
-    - The following code lets the user "mix and match" database configuration
-    """
+logger.info("Configuring database backend:")
 
-    logger.info("Configuring database backend:")
+# Extract database configuration from the config.yaml file
+db_config = CONFIG.get('database', {})
 
-    # Extract database configuration from the config.yaml file
-    db_config = CONFIG.get('database', {})
+# Environment variables take preference over config file!
 
-    # If a particular database option is not specified in the config file,
-    # look for it in the environmental variables
-    # e.g. INVENTREE_DB_NAME / INVENTREE_DB_USER / etc
+db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
 
-    db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
+for key in db_keys:
+    # First, check the environment variables
+    env_key = f"INVENTREE_DB_{key}"
+    env_var = os.environ.get(env_key, None)
 
-    for key in db_keys:
-        if key not in db_config:
-            logger.debug(f" - Missing {key} value: Looking for environment variable INVENTREE_DB_{key}")
-            env_key = f'INVENTREE_DB_{key}'
-            env_var = os.environ.get(env_key, None)
+    if env_var:
+        logger.info(f"{env_key}={env_var}")
+        # Override configuration value
+        db_config[key] = env_var
 
-            if env_var is not None:
-                logger.info(f'Using environment variable INVENTREE_DB_{key}')
-                db_config[key] = env_var
-            else:
-                logger.debug(f'    INVENTREE_DB_{key} not found in environment variables')
+# Check that required database configuration options are specified
+reqiured_keys = ['ENGINE', 'NAME']
 
-    # Check that required database configuration options are specified
-    reqiured_keys = ['ENGINE', 'NAME']
+for key in reqiured_keys:
+    if key not in db_config:
+        error_msg = f'Missing required database configuration value {key} in config.yaml'
+        logger.error(error_msg)
 
-    for key in reqiured_keys:
-        if key not in db_config:
-            error_msg = f'Missing required database configuration value {key} in config.yaml'
-            logger.error(error_msg)
+        print('Error: ' + error_msg)
+        sys.exit(-1)
 
-            print('Error: ' + error_msg)
-            sys.exit(-1)
+"""
+Special considerations for the database 'ENGINE' setting.
+It can be specified in config.yaml (or envvar) as either (for example):
+- sqlite3
+- django.db.backends.sqlite3
+- django.db.backends.postgresql
+"""
 
-    """
-    Special considerations for the database 'ENGINE' setting.
-    It can be specified in config.yaml (or envvar) as either (for example):
-    - sqlite3
-    - django.db.backends.sqlite3
-    - django.db.backends.postgresql
-    """
+db_engine = db_config['ENGINE']
 
-    db_engine = db_config['ENGINE']
+if db_engine.lower() in ['sqlite3', 'postgresql', 'mysql']:
+    # Prepend the required python module string
+    db_engine = f'django.db.backends.{db_engine.lower()}'
+    db_config['ENGINE'] = db_engine
 
-    if db_engine.lower() in ['sqlite3', 'postgresql', 'mysql']:
-        # Prepend the required python module string
-        db_engine = f'django.db.backends.{db_engine.lower()}'
-        db_config['ENGINE'] = db_engine
+db_name = db_config['NAME']
+db_host = db_config.get('HOST', "''")
 
-    db_name = db_config['NAME']
+print("InvenTree Database Configuration")
+print("================================")
+print(f"ENGINE: {db_engine}")
+print(f"NAME: {db_name}")
+print(f"HOST: {db_host}")
 
-    logger.info(f"Database ENGINE: '{db_engine}'")
-    logger.info(f"Database NAME: '{db_name}'")
-
-    DATABASES['default'] = db_config
+DATABASES['default'] = db_config
 
 CACHES = {
     'default': {
@@ -406,8 +392,6 @@ CACHES = {
         'TIMEOUT': 3600
     }
 }
-
-QR_CODE_CACHE_ALIAS = 'qr-code'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators

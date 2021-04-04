@@ -38,6 +38,22 @@ class BuildList(generics.ListCreateAPIView):
         'sales_order',
     ]
 
+    ordering_fields = [
+        'reference',
+        'part__name',
+        'status',
+        'creation_date',
+        'target_date',
+        'completion_date',
+        'quantity',
+    ]
+
+    search_fields = [
+        'reference',
+        'part__name',
+        'title',
+    ]
+
     def get_queryset(self):
         """
         Override the queryset filtering,
@@ -55,6 +71,28 @@ class BuildList(generics.ListCreateAPIView):
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
+
+        # Filter by "parent"
+        parent = params.get('parent', None)
+
+        if parent is not None:
+            queryset = queryset.filter(parent=parent)
+
+        # Filter by "ancestor" builds
+        ancestor = params.get('ancestor', None)
+
+        if ancestor is not None:
+            try:
+                ancestor = Build.objects.get(pk=ancestor)
+
+                descendants = ancestor.get_descendants(include_self=True)
+
+                queryset = queryset.filter(
+                    parent__pk__in=[b.pk for b in descendants]
+                )
+
+            except (ValueError, Build.DoesNotExist):
+                pass
 
         # Filter by build status?
         status = params.get('status', None)

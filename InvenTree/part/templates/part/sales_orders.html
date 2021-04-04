@@ -2,12 +2,15 @@
 {% load static %}
 {% load i18n %}
 
+{% block menubar %}
+{% include 'part/navbar.html' with tab='sales-orders' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Sales Orders" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'part/tabs.html' with tab='sales-orders' %}
-
-<h4>{% trans "Sales Orders" %}</h4>
-<hr>
 
 <div id='button-bar'>
     <div class='button-toolbar container-fluid' style='float: right;'>

@@ -1,15 +1,17 @@
 {% extends "build/build_base.html" %}
 {% load static %}
 {% load i18n %}
-{% block details %}
 {% load status_codes %}
 
-{% include "build/tabs.html" with tab='details' %}
+{% block menubar %}
+{% include "build/navbar.html" with tab='details' %}
+{% endblock %}
 
-<h4>{% trans "Build Details" %}</h4>
+{% block heading %}
+{% trans "Build Details" %}
+{% endblock %}
 
-<hr>
-
+{% block details %}
 <div class='row'>
     <div class='col-sm-6'>
         <table class='table table-striped'>
@@ -90,31 +92,50 @@
             <td><a href="{{ build.link }}">{{ build.link }}</a></td>
         </tr>
         {% endif %}
+        {% if build.issued_by %}
         <tr>
-            <td><span class='fas fa-calendar-alt'></span></td>
-            <td>{% trans "Created" %}</td>
-            <td>{{ build.creation_date }}</td>
+            <td><span class='fas fa-user'></span></td>
+            <td>{% trans "Issued By" %}</td>
+            <td>{{ build.issued_by }}</td>
         </tr>
+        {% endif %}
+        {% if build.responsible %}
         <tr>
-            <td><span class='fas fa-calendar-alt'></span></td>
-            <td>{% trans "Target Date" %}</td>
-            {% if build.target_date %}
-            <td>
-                {{ build.target_date }}{% if build.is_overdue %} <span class='fas fa-calendar-times icon-red'></span>{% endif %}
-            </td>
-            {% else %}
-            <td><i>{% trans "No target date set" %}</i></td>
-            {% endif %}
+            <td><span class='fas fa-users'></span></td>
+            <td>{% trans "Responsible" %}</td>
+            <td>{{ build.responsible }}</td>
         </tr>
-        <tr>
-            <td><span class='fas fa-calendar-alt'></span></td>
-            <td>{% trans "Completed" %}</td>
-            {% if build.completion_date %}
-            <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
-            {% else %}
-            <td><i>{% trans "Build not complete" %}</i></td>
-            {% endif %}
-        </tr>
+        {% endif %}
+        </table>
+    </div>
+    <div class='col-sm-6'>
+        <table class='table table-striped'>
+            <col width='25'>
+            <tr>
+                <td><span class='fas fa-calendar-alt'></span></td>
+                <td>{% trans "Created" %}</td>
+                <td>{{ build.creation_date }}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-calendar-alt'></span></td>
+                <td>{% trans "Target Date" %}</td>
+                {% if build.target_date %}
+                <td>
+                    {{ build.target_date }}{% if build.is_overdue %} <span class='fas fa-calendar-times icon-red'></span>{% endif %}
+                </td>
+                {% else %}
+                <td><i>{% trans "No target date set" %}</i></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td><span class='fas fa-calendar-alt'></span></td>
+                <td>{% trans "Completed" %}</td>
+                {% if build.completion_date %}
+                <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge'>{{ build.completed_by }}</span>{% endif %}</td>
+                {% else %}
+                <td><i>{% trans "Build not complete" %}</i></td>
+                {% endif %}
+            </tr>
         </table>
     </div>
 </div>

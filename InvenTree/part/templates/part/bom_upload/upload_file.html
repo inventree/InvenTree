@@ -3,12 +3,15 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+{% block menubar %}
+{% include "part/navbar.html" with tab='bom' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Upload Bill of Materials" %}
+{% endblock %}
+
 {% block details %}
-
-{% include "part/tabs.html" with tab='bom' %}
-
-<h4>{% trans "Upload Bill of Materials" %}</h4>
-<hr>
 
 <p>{% trans "Step 1 - Select BOM File" %}</p>
 

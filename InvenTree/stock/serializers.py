@@ -198,6 +198,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'location',
             'location_detail',
             'notes',
+            'packaging',
             'part',
             'part_detail',
             'pk',

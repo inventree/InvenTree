@@ -12,6 +12,11 @@ from django.utils.translation import gettext_lazy as _
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 
+import logging
+
+
+logger = logging.getLogger(__name__)
+
 
 class RuleSet(models.Model):
     """
@@ -67,15 +72,20 @@ class RuleSet(models.Model):
             'part_partparametertemplate',
             'part_partparameter',
             'part_partrelated',
+            'part_partstar',
+            'company_supplierpart',
         ],
         'stock_location': [
             'stock_stocklocation',
+            'label_stocklocationlabel',
         ],
         'stock': [
             'stock_stockitem',
             'stock_stockitemattachment',
             'stock_stockitemtracking',
             'stock_stockitemtestresult',
+            'report_testreport',
+            'label_stockitemlabel',
         ],
         'build': [
             'part_part',
@@ -86,14 +96,15 @@ class RuleSet(models.Model):
             'build_buildorderattachment',
             'stock_stockitem',
             'stock_stocklocation',
+            'report_buildreport',
         ],
         'purchase_order': [
             'company_company',
-            'company_supplierpart',
             'company_supplierpricebreak',
             'order_purchaseorder',
             'order_purchaseorderattachment',
             'order_purchaseorderlineitem',
+            'company_supplierpart',
         ],
         'sales_order': [
             'company_company',
@@ -115,12 +126,11 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'company_contact',
-        'label_stockitemlabel',
-        'label_stocklocationlabel',
         'report_reportasset',
         'report_reportsnippet',
-        'report_testreport',
-        'part_partstar',
+        'report_billofmaterialsreport',
+        'report_purchaseorderreport',
+        'report_salesorderreport',
         'users_owner',
 
         # Third-party tables
@@ -164,6 +174,26 @@ class RuleSet(models.Model):
 
     can_delete = models.BooleanField(verbose_name=_('Delete'), default=False, help_text=_('Permission to delete items'))
     
+    @classmethod
+    def check_table_permission(cls, user, table, permission):
+        """
+        Check if the provided user has the specified permission against the table
+        """
+
+        # If the table does *not* require permissions
+        if table in cls.RULESET_IGNORE:
+            return True
+
+        # Work out which roles touch the given table
+        for role in cls.RULESET_NAMES:
+            if table in cls.RULESET_MODELS[role]:
+
+                if check_user_role(user, role, permission):
+                    return True
+
+        print("failed permission check for", table, permission)
+        return False
+
     @staticmethod
     def get_model_permission_string(model, permission):
         """
@@ -320,7 +350,7 @@ def update_group_roles(group, debug=False):
             content_type = ContentType.objects.get(app_label=app, model=model)
             permission = Permission.objects.get(content_type=content_type, codename=perm)
         except ContentType.DoesNotExist:
-            print(f"Error: Could not find permission matching '{permission_string}'")
+            logger.warning(f"Error: Could not find permission matching '{permission_string}'")
             permission = None
 
         return permission

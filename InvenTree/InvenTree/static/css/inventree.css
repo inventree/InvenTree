@@ -30,7 +30,7 @@
     border-radius: 15px;
     padding: 20px;
     padding-bottom: 35px;
-    background-color: rgba(50, 50, 50, 0.5);
+    background-color: rgba(50, 50, 50, 0.75);
 }
 
 .login-header {
@@ -48,6 +48,16 @@
     border-color: #AAA;
     width: 100%;
     border-radius: 5px;
+}
+
+.index-bg {
+    width: 100%;
+    object-fit: fill;
+    opacity: 5%;
+}
+
+.index-action-selected {
+    background-color: #EEEEF5;
 }
 
 .markdownx .row {
@@ -115,6 +125,7 @@
 .qr-container {
     width: 100%;
     align-content: center;
+    object-fit: fill;
 }
 
 .navbar-brand {
@@ -196,7 +207,12 @@
 }
 
 .treeview .list-group-item {
-    padding: 6px 12px;
+    padding: 10px 5px;
+}
+
+.treeview .list-group-item .indent {
+    margin-left: 3px;
+    margin-right: 3px;
 }
 
 .list-group-item-condensed {
@@ -304,6 +320,10 @@
 
 .rowinvalid {
     color: #A00; 
+}
+
+.rowinherited {
+    background-color: #eee;
     font-style: italic;
 }
 
@@ -483,13 +503,21 @@
     background-color: #f33;
 }
 
+.badge-orange {
+    background-color: #fcba03;
+}
+
+.badge-green {
+    background-color: #1A1;
+}
+
 .part-thumb {
     width: 200px;
     height: 200px;
     margin: 2px;
     padding: 3px;
     object-fit: contain;
-    border: 1px solid #aaa;
+    border: 1px solid #ddd;
     border-radius: 3px;
 }
 
@@ -503,7 +531,8 @@
     left: 0;
     opacity: 0;
     transition: .25s ease;
-    padding: 15px;
+    padding-top: 10px;
+    padding-left: 25px;
     margin: 5px;
 }
 
@@ -517,7 +546,7 @@
 }
 
 .media {
-    padding-top: 15px;
+    //padding-top: 15px;
     overflow: visible;
 }
 
@@ -557,6 +586,8 @@
 
 .breadcrump {
     margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 10px;
 }
 
 .inventree-body {
@@ -566,15 +597,15 @@
 }
 
 .inventree-pre-content {
-    width: 100%;
-    clear: both;
+    width: auto;
 }
 
 .inventree-content {
-    padding-left: 5px;
-    padding-right: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     padding-top: 5px;
-    width: auto;
+    width: 100%;
+    display: inline-block;
     transition: 0.1s;
 }
 
@@ -593,6 +624,53 @@
 
 .modal-secondary {
     z-index: 11000;
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.25s;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-image-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+}
+
+@media only screen and (max-width: 700px){
+    .modal-image-content {
+      width: 100%;
+    }
+}
+
+.modal-image {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.85); /* Black w/ opacity */
 }
 
 .js-modal-form .checkbox {
@@ -651,15 +729,64 @@ input[type="submit"] {
     background-color: #5e7d87;
 }
 
-/* The side navigation menu */
+.inventree-navs {
+    display: flex;
+}
+
 .sidenav {
     height: 100%; /* 100% Full-height */
     width: 0px; /* 0 width - change this with JavaScript */
-    position: fixed; /* Stay in place */
-    background-color: #fff; /* Black*/
+    position: relative; /* Stay in place */
     overflow-x: hidden; /* Disable horizontal scroll */
+    overflow: hidden;
     transition: 0.1s; /* 0.5 second transition effect to slide in the sidenav */
+    z-index: 100;
+    background-color: #fff; /* Black*/
+    padding-top: 5px;
 }
+
+.sidenav li {
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+
+.sidenav .list-group-item.active {
+    background-color: #ddd;
+    border-color: #ccc;
+}
+
+/* The side navigation menu */
+.sidenav-left {
+    left: 0px;
+    top: 0px;
+    width: 0px;
+    z-index: 500;
+}
+
+.sidenav-left .badge {
+    position: absolute;
+    right: 3px;
+    margin-right: 5px;
+}
+
+.sidenav-right {
+    left: 0px;
+    top: 70px;
+    position: sticky;
+    font-size: 115%;
+    margin-left: 5px;
+}
+
+.sidenav-right svg {
+    margin-right: 10px;
+}
+
+.container > aside,
+.container > main {
+  padding: 10px;
+  overflow: auto;
+}
+
 
 .wrapper {
     align-items: stretch;
@@ -737,6 +864,11 @@ input[type="submit"] {
 .panel-heading {
     padding: 5px 10px;
     background-color: #fafafa;
+}
+
+.panel-inventree {
+    padding: 10px;
+    box-shadow: 1px 1px #DDD;
 }
 
 .float-right {

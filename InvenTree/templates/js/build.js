@@ -609,6 +609,8 @@ function loadBuildTable(table, options) {
     var params = options.params || {};
 
     var filters = {};
+
+    params['part_detail'] = true;
     
     if (!options.disableFilters) {
         filters = loadTableFilters("build");
@@ -618,7 +620,11 @@ function loadBuildTable(table, options) {
         filters[key] = params[key];
     }
 
-    setupFilterList("build", table);
+    options.url = options.url || '{% url "api-build-list" %}';
+
+    var filterTarget = options.filterTarget || null;
+
+    setupFilterList("build", table, filterTarget);
 
     $(table).inventreeTable({
         method: 'get',
@@ -628,6 +634,7 @@ function loadBuildTable(table, options) {
         url: options.url,
         queryParams: filters,
         groupBy: false,
+        sidePagination: 'server',
         name: 'builds',
         original: params,
         columns: [
@@ -635,6 +642,12 @@ function loadBuildTable(table, options) {
                 field: 'pk',
                 title: 'ID', 
                 visible: false,
+                switchable: false,
+            },
+            {
+                checkbox: true,
+                title: '{% trans "Select" %}',
+                searchable: false,
                 switchable: false,
             },
             {
@@ -662,12 +675,12 @@ function loadBuildTable(table, options) {
             {
                 field: 'title',
                 title: '{% trans "Description" %}',
-                sortable: true,
             },
             {
                 field: 'part',
                 title: '{% trans "Part" %}',
                 sortable: true,
+                sortName: 'part__name',
                 formatter: function(value, row, index, field) {
 
                     var html = imageHoverIcon(row.part_detail.thumbnail);
@@ -717,6 +730,13 @@ function loadBuildTable(table, options) {
             },
         ],
     });
+
+    linkButtonsToSelection(
+        table,
+        [
+            '#build-print-options',
+        ]
+    );
 }
 
 
@@ -820,4 +840,200 @@ function loadAllocationTable(table, part_id, part, url, required, button) {
         });
     });
 
+}
+
+
+function loadBuildPartsTable(table, options={}) {
+    /**
+     * Display a "required parts" table for build view.
+     * 
+     * This is a simplified BOM view:
+     * - Does not display sub-bom items
+     * - Does not allow editing of BOM items
+     * 
+     * Options:
+     * 
+     * part: Part ID
+     * build: Build ID
+     * build_quantity: Total build quantity
+     * build_remaining: Number of items remaining
+     */
+
+    // Query params
+    var params = {
+        sub_part_detail: true,
+        part: options.part,
+    };
+
+    var filters = {};
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters('bom');
+    }
+
+    setupFilterList('bom', $(table));
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    function setupTableCallbacks() {
+        // Register button callbacks once the table data are loaded
+
+        // Callback for 'buy' button
+        $(table).find('.button-buy').click(function() {
+            var pk = $(this).attr('pk');
+
+            var idx = $(this).closest('tr').attr('data-index');
+            var row = $(table).bootstrapTable('getData')[idx];
+
+            launchModalForm('{% url "order-parts" %}', {
+                data: {
+                    parts: [
+                        pk,
+                    ]
+                }
+            });
+        });
+
+        // Callback for 'build' button
+        $(table).find('.button-build').click(function() {
+            var pk = $(this).attr('pk');
+
+            // Extract row data from the table
+            var idx = $(this).closest('tr').attr('data-index');
+            var row = $(table).bootstrapTable('getData')[idx];
+
+            // Launch form to create a new build order
+            launchModalForm('{% url "build-create" %}', {
+                follow: true,
+                data: {
+                    part: pk,
+                    parent: options.build,
+                }
+            });
+        });
+    }
+
+    var columns = [
+        {
+            field: 'sub_part',
+            title: '{% trans "Part" %}',
+            switchable: false,
+            sortable: true,
+            formatter: function(value, row, index, field) {
+                var url = `/part/${row.sub_part}/`;
+                var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, url);
+
+                var sub_part = row.sub_part_detail;
+
+                html += makePartIcons(row.sub_part_detail);
+
+                // Display an extra icon if this part is an assembly
+                if (sub_part.assembly) {
+                    var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream label-right'></span>`;
+                    
+                    html += renderLink(text, `/part/${row.sub_part}/bom/`);
+                }
+
+                return html;
+            }
+        },
+        {
+            field: 'sub_part_detail.description',
+            title: '{% trans "Description" %}',
+        },
+        {
+            field: 'reference',
+            title: '{% trans "Reference" %}',
+            searchable: true,
+            sortable: true,
+        },
+        {
+            field: 'quantity',
+            title: '{% trans "Quantity" %}',
+            sortable: true
+        },
+        {
+            sortable: true,
+            switchable: false,
+            field: 'sub_part_detail.stock',
+            title: '{% trans "Available" %}',
+            formatter: function(value, row, index, field) {
+                return makeProgressBar(
+                    value,
+                    row.quantity * options.build_remaining,
+                    {
+                        id: `part-progress-${row.part}`
+                    }
+                );
+            },
+            sorter: function(valA, valB, rowA, rowB) {
+                if (rowA.received == 0 && rowB.received == 0) {
+                    return (rowA.quantity > rowB.quantity) ? 1 : -1;
+                }
+
+                var progressA = parseFloat(rowA.sub_part_detail.stock) / (rowA.quantity * options.build_remaining);
+                var progressB = parseFloat(rowB.sub_part_detail.stock) / (rowB.quantity * options.build_remaining);
+
+                return (progressA < progressB) ? 1 : -1;
+            }
+        },
+        {
+            field: 'actions',
+            title: '{% trans "Actions" %}',
+            switchable: false,
+            formatter: function(value, row, index, field) {
+
+                // Generate action buttons against the part
+                var html = `<div class='btn-group float-right' role='group'>`;
+
+                if (row.sub_part_detail.assembly) {
+                    html += makeIconButton('fa-tools icon-blue', 'button-build', row.sub_part, '{% trans "Build stock" %}');
+                }
+
+                if (row.sub_part_detail.purchaseable) {
+                    html += makeIconButton('fa-shopping-cart icon-blue', 'button-buy', row.sub_part, '{% trans "Order stock" %}');
+                }
+
+                html += `</div>`;
+
+                return html;
+            }
+        }
+    ];
+
+    table.inventreeTable({
+        url: '{% url "api-bom-list" %}',
+        showColumns: true,
+        name: 'build-parts',
+        sortable: true,
+        search: true,
+        onPostBody: setupTableCallbacks,
+        rowStyle: function(row, index) {
+            var classes = [];
+
+            // Shade rows differently if they are for different parent parts
+            if (row.part != options.part) {
+                classes.push('rowinherited');
+            }
+
+            if (row.validated) {
+                classes.push('rowvalid');
+            } else {
+                classes.push('rowinvalid');
+            }
+
+            return {
+                classes: classes.join(' '),
+            };
+        },
+        formatNoMatches: function() {
+            return '{% trans "No BOM items found" %}';
+        },
+        clickToSelect: true,
+        queryParams: filters,
+        original: params,
+        columns: columns,
+    });    
 }

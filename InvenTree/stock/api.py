@@ -126,9 +126,7 @@ class StockAdjust(APIView):
 
     """
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    queryset = StockItem.objects.none()
 
     allow_missing_quantity = False
 
@@ -383,7 +381,12 @@ class StockList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
@@ -467,7 +470,9 @@ class StockList(generics.ListCreateAPIView):
         Note: b) is about 100x quicker than a), because the DRF framework adds a lot of cruft
         """
 
-        if request.is_ajax():
+        if page is not None:
+            return self.get_paginated_response(data)
+        elif request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
@@ -660,6 +665,13 @@ class StockList(generics.ListCreateAPIView):
             active = str2bool(active)
             queryset = queryset.filter(part__active=active)
 
+        # Do we wish to filter by "assembly parts"
+        assembly = params.get('assembly', None)
+
+        if assembly is not None:
+            assembly = str2bool(assembly)
+            queryset = queryset.filter(part__assembly=assembly)
+
         # Filter by 'depleted' status
         depleted = params.get('depleted', None)
 
@@ -684,10 +696,17 @@ class StockList(generics.ListCreateAPIView):
             try:
                 part = Part.objects.get(pk=part_id)
 
-                # Filter by any parts "under" the given part
-                parts = part.get_descendants(include_self=True)
+                # Do we wish to filter *just* for this part, or also for parts *under* this one?
+                include_variants = str2bool(params.get('include_variants', True))
 
-                queryset = queryset.filter(part__in=parts)
+                if include_variants:
+                    # Filter by any parts "under" the given part
+                    parts = part.get_descendants(include_self=True)
+
+                    queryset = queryset.filter(part__in=parts)
+
+                else:
+                    queryset = queryset.filter(part=part)
 
             except (ValueError, Part.DoesNotExist):
                 raise ValidationError({"part": "Invalid Part ID specified"})
@@ -801,14 +820,24 @@ class StockList(generics.ListCreateAPIView):
                 print("After error:", str(updated_after))
                 pass
 
+        # Optionally, limit the maximum number of returned results
+        max_results = params.get('max_results', None)
+
+        if max_results is not None:
+            try:
+                max_results = int(max_results)
+
+                if max_results > 0:
+                    queryset = queryset[:max_results]
+            except (ValueError):
+                pass
+
         # Also ensure that we pre-fecth all the related items
         queryset = queryset.prefetch_related(
             'part',
             'part__category',
             'location'
         )
-
-        queryset = queryset.order_by('part__name')
 
         return queryset
 
@@ -821,12 +850,27 @@ class StockList(generics.ListCreateAPIView):
     filter_fields = [
     ]
 
+    ordering_fields = [
+        'part__name',
+        'part__IPN',
+        'updated',
+        'stocktake_date',
+        'expiry_date',
+        'quantity',
+        'status',
+    ]
+
+    ordering = [
+        'part__name'
+    ]
+
     search_fields = [
         'serial',
         'batch',
         'part__name',
         'part__IPN',
-        'part__description'
+        'part__description',
+        'location__name',
     ]
 
 

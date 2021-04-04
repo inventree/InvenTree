@@ -9,7 +9,6 @@ from django.conf.urls import url, include
 from django.urls import path
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from qr_code import urls as qr_code_urls
 
 from company.urls import company_urls
 from company.urls import supplier_part_urls
@@ -21,7 +20,7 @@ from stock.urls import stock_urls
 from build.urls import build_urls
 from order.urls import order_urls
 
-from barcode.api import barcode_api_urls
+from barcodes.api import barcode_api_urls
 from common.api import common_api_urls
 from part.api import part_api_urls, bom_api_urls
 from company.api import company_api_urls
@@ -44,7 +43,7 @@ from .views import DynamicJsView
 
 from common.views import SettingEdit
 
-from .api import InfoView
+from .api import InfoView, NotFoundView
 from .api import ActionPluginView
 
 from users.urls import user_urls
@@ -71,6 +70,9 @@ apipatterns = [
 
     # InvenTree information endpoint
     url(r'^$', InfoView.as_view(), name='api-inventree-info'),
+
+    # Unknown endpoint
+    url(r'^.*$', NotFoundView.as_view(), name='api-404'),
 ]
 
 settings_urls = [
@@ -140,8 +142,6 @@ urlpatterns = [
     url(r'^admin/error_log/', include('error_report.urls')),
     url(r'^admin/shell/', include('django_admin_shell.urls')),
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
-
-    url(r'^qr_code/', include(qr_code_urls, namespace='qr_code')),
 
     url(r'^index/', IndexView.as_view(), name='index'),
     url(r'^search/', SearchView.as_view(), name='search'),

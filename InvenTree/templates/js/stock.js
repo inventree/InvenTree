@@ -319,6 +319,18 @@ function loadStockTable(table, options) {
         }
     }
 
+    var grouping = true;
+
+    if ('grouping' in options) {
+        grouping = options.grouping;
+    }
+
+    // Explicitly disable part grouping functionality
+    // Might be able to add this in later on,
+    // but there is a bug which makes this crash if paginating on the server side.
+    // Ref: https://github.com/wenzhixin/bootstrap-table/issues/3250
+    grouping = false;
+
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
@@ -326,12 +338,14 @@ function loadStockTable(table, options) {
         },
         url: options.url || "{% url 'api-stock-list' %}",
         queryParams: filters,
-        customSort: customGroupSorter,
-        groupBy: true,
+        sidePagination: 'server',
         name: 'stock',
         original: original,
         showColumns: true,
+        {% settings_value 'STOCK_GROUP_BY_PART' as group_by_part %}
+        {% if group_by_part %}
         groupByField: options.groupByField || 'part',
+        groupBy: grouping,
         groupByFormatter: function(field, id, data) {
 
             var row = data[0];
@@ -358,6 +372,29 @@ function loadStockTable(table, options) {
             }
             else if (field == 'part_detail.description') {
                 return row.part_detail.description;
+            }
+            else if (field == 'packaging') {
+                var packaging = [];
+
+                data.forEach(function(item) {
+                    var pkg = item.packaging;
+
+                    if (!pkg) {
+                        pkg = '-';
+                    }
+
+                    if (!packaging.includes(pkg)) {
+                        packaging.push(pkg);
+                    }
+                });
+
+                if (packaging.length > 1) {
+                    return "...";
+                } else if (packaging.length == 1) {
+                    return packaging[0];
+                } else {
+                    return "-";
+                }
             }
             else if (field == 'quantity') {
                 var stock = 0;
@@ -388,7 +425,7 @@ function loadStockTable(table, options) {
 
                 // Multiple status codes
                 if (statii.length > 1) {
-                    return "-";
+                    return "...";
                 } else if (statii.length == 1) {
                     return stockStatusDisplay(statii[0]);
                 } else {
@@ -468,6 +505,7 @@ function loadStockTable(table, options) {
                 return '';
             }
         },
+        {% endif %}
         columns: [
             {
                 checkbox: true,
@@ -484,6 +522,7 @@ function loadStockTable(table, options) {
             {
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
+                sortName: 'part__name',
                 sortable: true,
                 switchable: false,
                 formatter: function(value, row, index, field) {
@@ -502,6 +541,7 @@ function loadStockTable(table, options) {
             {
                 field: 'part_detail.IPN',
                 title: 'IPN',
+                sortName: 'part__IPN',
                 sortable: true,
                 formatter: function(value, row, index, field) {
                     return row.part_detail.IPN;
@@ -510,7 +550,6 @@ function loadStockTable(table, options) {
             {
                 field: 'part_detail.description',
                 title: '{% trans "Description" %}',
-                sortable: true,
                 formatter: function(value, row, index, field) {
                     return row.part_detail.description;
                 }
@@ -618,6 +657,10 @@ function loadStockTable(table, options) {
                 field: 'updated',
                 title: '{% trans "Last Updated" %}',
                 sortable: true,
+            },
+            {
+                field: 'packaging',
+                title: '{% trans "Packaging" %}',
             },
             {
                 field: 'notes',
@@ -889,7 +932,6 @@ function loadStockTrackingTable(table, options) {
     cols.push({
         field: 'title',
         title: '{% trans "Description" %}',
-        sortable: true,
         formatter: function(value, row, index, field) {
             var html = "<b>" + value + "</b>";
 
@@ -914,7 +956,6 @@ function loadStockTrackingTable(table, options) {
     });
 
     cols.push({
-        sortable: true,
         field: 'user',
         title: '{% trans "User" %}',
         formatter: function(value, row, index, field) {

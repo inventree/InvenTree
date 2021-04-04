@@ -48,15 +48,14 @@
                 <li><a href='#' id='barcode-check-in'><span class='fas fa-arrow-right'></span> {% trans "Check-in Items" %}</a></li>
             </ul>
         </div>
-        {% endif %}
         <!-- Check permissions and owner -->
         {% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser %}
-            {% if roles.stock.change %}
-            <div class='btn-group'>
-                <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
-                <ul class='dropdown-menu' role='menu'>
-                    <li><a href='#' id='location-count'><span class='fas fa-clipboard-list'></span>
-                        {% trans "Count stock" %}</a></li>
+        {% if roles.stock.change %}
+        <div class='btn-group'>
+            <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-default dropdown-toggle' type='button' data-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
+            <ul class='dropdown-menu' role='menu'>
+                <li><a href='#' id='location-count'><span class='fas fa-clipboard-list'></span>
+                    {% trans "Count stock" %}</a></li>
                 </ul>
             </div>
             {% endif %}
@@ -71,7 +70,8 @@
                 </ul>
             </div>
             {% endif %}
-        {% endif %}
+            {% endif %}
+            {% endif %}
         {% endif %}
     </div>
 </div>

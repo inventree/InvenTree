@@ -4,16 +4,16 @@ Tests for the Order API
 
 from datetime import datetime, timedelta
 
-from rest_framework.test import APITestCase
 from rest_framework import status
 
 from django.urls import reverse
-from django.contrib.auth import get_user_model
+
+from InvenTree.api_tester import InvenTreeAPITestCase
 
 from .models import PurchaseOrder, SalesOrder
 
 
-class OrderTest(APITestCase):
+class OrderTest(InvenTreeAPITestCase):
 
     fixtures = [
         'category',
@@ -26,25 +26,20 @@ class OrderTest(APITestCase):
         'sales_order',
     ]
 
+    roles = [
+        'purchase_order.change',
+        'sales_order.change',
+    ]
+
     def setUp(self):
-
-        # Create a user for auth
-        get_user_model().objects.create_user('testuser', 'test@testing.com', 'password')
-        self.client.login(username='testuser', password='password')
-
-    def doGet(self, url, data={}):
-
-        return self.client.get(url, data=data, format='json')
-
-    def doPost(self, url, data={}):
-        return self.client.post(url, data=data, format='json')
+        super().setUp()
 
     def filter(self, filters, count):
         """
         Test API filters
         """
 
-        response = self.doGet(
+        response = self.get(
             self.LIST_URL,
             filters
         )
@@ -98,7 +93,7 @@ class PurchaseOrderTest(OrderTest):
 
         url = '/api/order/po/1/'
 
-        response = self.doGet(url)
+        response = self.get(url)
         
         self.assertEqual(response.status_code, 200)
 
@@ -111,7 +106,7 @@ class PurchaseOrderTest(OrderTest):
 
         url = reverse('api-po-attachment-list')
 
-        response = self.doGet(url)
+        response = self.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
     
@@ -161,7 +156,7 @@ class SalesOrderTest(OrderTest):
 
         url = '/api/order/so/1/'
 
-        response = self.doGet(url)
+        response = self.get(url)
 
         self.assertEqual(response.status_code, 200)
 
@@ -173,6 +168,6 @@ class SalesOrderTest(OrderTest):
 
         url = reverse('api-so-attachment-list')
 
-        response = self.doGet(url)
+        response = self.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

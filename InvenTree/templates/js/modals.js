@@ -739,9 +739,10 @@ function handleModalForm(url, options) {
                     // Form was returned, invalid!
                     else {
 
-                        var warningDiv = $(modal).find('#form-validation-warning');
-
-                        warningDiv.css('display', 'block');
+                        if (!options.hideErrorMessage) {
+                            var warningDiv = $(modal).find('#form-validation-warning');
+                            warningDiv.css('display', 'block');
+                        }
 
                         if (response.html_form) {
                             injectModalForm(modal, response.html_form);
@@ -907,4 +908,43 @@ function launchModalForm(url, options = {}) {
 
     // Send the AJAX request
     $.ajax(ajax_data);
+}
+
+
+function hideModalImage() {
+
+    var modal = $('#modal-image-dialog');
+
+    modal.animate({
+        opacity: 0.0,
+    }, 250, function() {
+        modal.hide();
+    });
+
+}
+
+
+function showModalImage(image_url) {
+    // Display full-screen modal image
+
+    console.log('showing modal image: ' + image_url);
+
+    var modal = $('#modal-image-dialog');
+
+    // Set image content
+    $('#modal-image').attr('src', image_url);
+
+    modal.show();
+
+    modal.animate({
+        opacity: 1.0,
+    }, 250);
+
+    $('#modal-image-close').click(function() {
+        hideModalImage();
+    });
+
+    modal.click(function() {
+        hideModalImage();
+    });
 }

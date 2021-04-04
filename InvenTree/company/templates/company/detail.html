@@ -1,13 +1,16 @@
 {% extends "company/company_base.html" %}
 {% load static %}
-{% load i18n %}}
+{% load i18n %}
+
+{% block menubar %}
+{% include 'company/navbar.html' with tab='details' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Company Details" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'company/tabs.html' with tab='details' %}
-
-<h4>{% trans "Company Details" %}</h4>
-<hr>
-
 <div class='row'>
     <div class='col-sm-6'>
         <table class='table table-striped'>

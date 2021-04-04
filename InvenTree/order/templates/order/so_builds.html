@@ -4,12 +4,16 @@
 {% load i18n %}
 {% load static %}
 
+{% block menubar %}
+{% include 'order/so_navbar.html' with tab='builds' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Build Orders" %}
+{% endblock %}
+
 {% block details %}
 
-{% include 'order/so_tabs.html' with tab='builds' %}
-
-<h4>{% trans "Build Orders" %}</h4>
-<hr>
 
 <table class='table table-striped table-condensed' id='builds-table'></table>
 
@@ -23,7 +27,6 @@ loadBuildTable($("#builds-table"), {
     url: "{% url 'api-build-list' %}",
     params: {
         sales_order: {{ order.id }},
-        part_detail: true,
     },
 });
 

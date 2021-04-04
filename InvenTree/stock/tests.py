@@ -110,7 +110,7 @@ class StockTest(TestCase):
         # The "is_building" quantity should not be counted here
         self.assertEqual(part.total_stock, n + 5)
 
-        self.assertEqual(part.quantity_being_built, 100)
+        self.assertEqual(part.quantity_being_built, 1)
 
     def test_loc_count(self):
         self.assertEqual(StockLocation.objects.count(), 7)
@@ -622,3 +622,62 @@ class TestResultTest(StockTest):
         item3 = StockItem.objects.get(serial=100, part=item2.part)
 
         self.assertEqual(item3.test_results.count(), 4)
+
+    def test_installed_tests(self):
+        """
+        Test test results for stock in stock.
+
+        Or, test "test results" for "stock items" installed "inside" a "stock item"
+        """
+
+        # Get a "master" stock item
+        item = StockItem.objects.get(pk=105)
+
+        tests = item.testResultMap(include_installed=False)
+        self.assertEqual(len(tests), 3)
+
+        # There are no "sub items" intalled at this stage
+        tests = item.testResultMap(include_installed=False)
+        self.assertEqual(len(tests), 3)
+
+        # Create a stock item which is installed *inside* the master item
+        sub_item = StockItem.objects.create(
+            part=item.part,
+            quantity=1,
+            belongs_to=item,
+            location=None
+        )
+
+        # Now, create some test results against the sub item
+
+        # First test is overshadowed by the same test for the parent part
+        StockItemTestResult.objects.create(
+            stock_item=sub_item,
+            test='firmware version',
+            date=datetime.datetime.now().date(),
+            result=True
+        )
+
+        # Should return the same number of tests as before
+        tests = item.testResultMap(include_installed=True)
+        self.assertEqual(len(tests), 3)
+
+        # Now, add a *unique* test result for the sub item
+        StockItemTestResult.objects.create(
+            stock_item=sub_item,
+            test='some new test',
+            date=datetime.datetime.now().date(),
+            result=False,
+            value='abcde',
+        )
+
+        tests = item.testResultMap(include_installed=True)
+        self.assertEqual(len(tests), 4)
+
+        self.assertIn('somenewtest', tests)
+        self.assertEqual(sub_item.test_results.count(), 2)
+
+        # Check that asking for test result map for *top item only* still works
+        tests = item.testResultMap(include_installed=False)
+        self.assertEqual(len(tests), 3)
+        self.assertNotIn('somenewtest', tests)

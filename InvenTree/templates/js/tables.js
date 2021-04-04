@@ -45,6 +45,10 @@ function linkButtonsToSelection(table, buttons) {
      * The buttons will only be enabled if there is at least one row selected
      */
 
+    if (typeof table === 'string') {
+        table = $(table);
+    }
+
     // Initially set the enable state of the buttons
     enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
 
@@ -89,7 +93,14 @@ function reloadTable(table, filters) {
         }
     }
 
-    options.queryParams = params;
+    options.queryParams = function(tableParams) {
+        
+        for (key in params) {
+            tableParams[key] = params[key];
+        }
+
+        return tableParams;
+    }
 
     table.bootstrapTable('refreshOptions', options);
     table.bootstrapTable('refresh');
@@ -122,9 +133,51 @@ $.fn.inventreeTable = function(options) {
 
     var varName = tableName + '-pagesize';
 
+    // Pagingation options (can be server-side or client-side as specified by the caller)
     options.pagination = true;
+    options.paginationVAlign = 'both';
     options.pageSize = inventreeLoad(varName, 25);
     options.pageList = [25, 50, 100, 250, 'all'];
+    options.totalField = 'count';
+    options.dataField = 'results';
+
+    // Extract query params
+    var filters = options.queryParams || options.filters || {};
+
+    options.queryParams = function(params) {
+        
+        // Override the way that we ask the server to sort results
+        // It seems bootstrap-table does not offer a "native" way to do this...
+        if ('sort' in params) {
+            var order = params['order'];
+
+            var ordering = params['sort'] || null;
+
+            if (ordering) {
+
+                if (order == 'desc') {
+                    ordering = `-${ordering}`;
+                }
+
+                params['ordering'] = ordering;
+            }
+
+            delete params['sort'];
+            delete params['order'];
+
+        }
+
+        for (var key in filters) {
+            params[key] = filters[key];
+        }
+
+        // Add "order" back in (if it was originally specified by InvenTree)
+        // Annoyingly, "order" shadows some field names in InvenTree...
+        if ('order' in filters) {
+            params['order'] = filters['order'];
+        }
+        return params;
+    }
 
     options.rememberOrder = true;
 

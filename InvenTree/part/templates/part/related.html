@@ -2,12 +2,15 @@
 {% load static %}
 {% load i18n %}
 
+{% block menubar %}
+{% include 'part/navbar.html' with tab='related' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Related Parts" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'part/tabs.html' with tab='related-parts' %}
-
-<h4>{% trans "Related Parts" %}</h4>
-<hr>
 
 <div id='button-bar'>
     <div class='button-toolbar container-fluid' style='float: left;'>

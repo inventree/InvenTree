@@ -2,12 +2,15 @@
 {% load static %}
 {% load i18n %}
 
+{% block menubar %}}
+{% include 'part/navbar.html' with tab='sales-prices' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Sell Price Information" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'part/tabs.html' with tab='sales-prices' %}
-
-<h4>{% trans "Sale Price" %}</h4>
-<hr>
 
 <div id='price-break-toolbar' class='btn-group'>
     <button class='btn btn-primary' id='new-price-break' type='button'>

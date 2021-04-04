@@ -15,18 +15,24 @@ InvenTree | {% trans "Purchase Orders" %}
 
 <div id='table-buttons'>
     <div class='button-toolbar container-fluid' style='float: right;'>
-        {% if roles.purchase_order.add %}
-        <button class='btn btn-primary' type='button' id='po-create' title='{% trans "Create new purchase order" %}'>
-            <span class='fas fa-plus-circle'></span> {% trans "New Purchase Order" %}</button>
-        {% endif %}
-        <button class='btn btn-default' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
-            <span class='fas fa-calendar-alt'></span>
-        </button>
-        <button class='btn btn-default' type='button' id='view-list' title='{% trans "Display list view" %}'>
-            <span class='fas fa-th-list'></span>
-        </button>
-        <div class='filter-list' id='filter-list-purchaseorder'>
-            <!-- An empty div in which the filter list will be constructed -->
+        <div class='btn-group'>
+            {% if roles.purchase_order.add %}
+            <button class='btn btn-primary' type='button' id='po-create' title='{% trans "Create new purchase order" %}'>
+                <span class='fas fa-plus-circle'></span> {% trans "New Purchase Order" %}
+            </button>
+            {% endif %}
+            <button id='order-print' class='btn btn-default' title='{% trans "Print Order Reports" %}'>
+                <span class='fas fa-print'></span>
+            </button>
+            <button class='btn btn-default' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
+                <span class='fas fa-calendar-alt'></span>
+            </button>
+            <button class='btn btn-default' type='button' id='view-list' title='{% trans "Display list view" %}'>
+                <span class='fas fa-th-list'></span>
+            </button>
+            <div class='filter-list' id='filter-list-purchaseorder'>
+                <!-- An empty div in which the filter list will be constructed -->
+            </div>
         </div>
     </div>
 </div>
@@ -154,10 +160,30 @@ $("#view-list").click(function() {
     $("#view-calendar").show();
 });
 
+$("#order-print").click(function() {
+    var rows = $("#purchase-order-table").bootstrapTable('getSelections');
+
+    var orders = [];
+
+    rows.forEach(function(row) {
+        orders.push(row.pk);
+    });
+
+    printPurchaseOrderReports(orders);
+})
+
 $("#po-create").click(function() {
     launchModalForm("{% url 'po-create' %}",
         {
             follow: true,
+            secondary: [
+                {
+                    field: 'supplier',
+                    label: '{% trans "New Supplier" %}',
+                    title: '{% trans "Create new Supplier" %}',
+                    url: '{% url "supplier-create" %}',
+                }
+            ]
         }
     );
 });

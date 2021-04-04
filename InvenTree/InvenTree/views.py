@@ -16,7 +16,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from django.views import View
-from django.views.generic import UpdateView, CreateView, FormView
+from django.views.generic import ListView, DetailView, CreateView, FormView, DeleteView, UpdateView
 from django.views.generic.base import TemplateView
 
 from part.models import Part, PartCategory
@@ -113,14 +113,39 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
     """
     Permission class based on user roles, not user 'permissions'.
 
-    To specify which role is required for the mixin,
-    set the class attribute 'role_required' to something like the following:
+    There are a number of ways that the permissions can be specified for a view:
 
-    role_required = 'part.add'
-    role_required = [
-        'part.change',
-        'build.add',
-    ]
+    1.  Specify the 'role_required' attribute (e.g. part.change)
+    2.  Specify the 'permission_required' attribute (e.g. part.change_bomitem)
+        (Note: This is the "normal" django-esque way of doing this)
+    3.  Do nothing. The mixin will attempt to "guess" what permission you require:
+        a) If there is a queryset associated with the View, we have the model!
+        b) The *type* of View tells us the permission level (e.g. AjaxUpdateView = change)
+        c) 1 + 1 = 3
+        d) Use the combination of model + permission as we would in 2)
+
+    1.  Specify the 'role_required' attribute
+        =====================================
+        To specify which role is required for the mixin,
+        set the class attribute 'role_required' to something like the following:
+
+        role_required = 'part.add'
+        role_required = [
+            'part.change',
+            'build.add',
+        ]
+
+    2.  Specify the 'permission_required' attribute
+        ===========================================
+        To specify a particular low-level permission,
+        set the class attribute 'permission_required' to something like:
+
+        permission_required = 'company.delete_company'
+
+    3.  Do Nothing
+        ==========
+
+        See above.
     """
 
     # By default, no roles are required
@@ -131,10 +156,6 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
         """
         Determine if the current user has specified permissions
         """
-
-        if self.permission_required:
-            # Ignore role-based permissions
-            return super().has_permission()
 
         roles_required = []
 
@@ -163,8 +184,79 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
             if not check_user_role(user, role, permission):
                 return False
 
+        # If a permission_required is specified, use that!
+        if self.permission_required:
+            # Ignore role-based permissions
+            return super().has_permission()
+
+        # Ok, so at this point we have not explicitly require a "role" or a "permission"
+        # Instead, we will use the model to introspect the data we need
+
+        model = getattr(self, 'model', None)
+
+        if not model:
+            queryset = getattr(self, 'queryset', None)
+
+            if queryset is not None:
+                model = queryset.model
+
+        # We were able to introspect a database model
+        if model is not None:
+            app_label = model._meta.app_label
+            model_name = model._meta.model_name
+
+            table = f"{app_label}_{model_name}"
+
+            permission = self.get_permission_class()
+
+            if not permission:
+                raise AttributeError(f"permission_class not defined for {type(self).__name__}")
+
+            # Check if the user has the required permission
+            return RuleSet.check_table_permission(user, table, permission)
+
         # We did not fail any required checks
         return True
+
+    def get_permission_class(self):
+        """
+        Return the 'permission_class' required for the current View.
+
+        Must be one of:
+        
+        - view
+        - change
+        - add
+        - delete
+
+        This can either be explicitly defined, by setting the
+        'permission_class' attribute,
+        or it can be "guessed" by looking at the type of class
+        """
+
+        perm = getattr(self, 'permission_class', None)
+
+        # Permission is specified by the class itself
+        if perm:
+            return perm
+
+        # Otherwise, we will need to have a go at guessing...
+        permission_map = {
+            AjaxView: 'view',
+            ListView: 'view',
+            DetailView: 'view',
+            UpdateView: 'change',
+            DeleteView: 'delete',
+            AjaxUpdateView: 'change',
+            AjaxCreateView: 'add',
+        }
+
+        for view_class in permission_map.keys():
+
+            if issubclass(type(self), view_class):
+                return permission_map[view_class]
+
+        return None
 
 
 class AjaxMixin(InvenTreeRoleMixin):

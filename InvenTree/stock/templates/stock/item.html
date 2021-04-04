@@ -4,16 +4,21 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% block details %}
+{% block menubar %}
+{% include "stock/navbar.html" with tab="tracking" %}
+{% endblock %}
 
-{% include "stock/tabs.html" with tab="tracking" %}
+{% block heading %}
+{% trans "Stock Tracking Information" %}
+{% endblock %}
+
+{% block details %}
 
 {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
 {% if owner_control.value == "True" %}
     {% authorized_owners item.owner as owners %}
 {% endif %}
 
-<h4>{% trans "Stock Tracking Information" %}</h4>
 <hr>
 
 <!-- Check permissions and owner -->
@@ -47,12 +52,10 @@
 
 
     loadStockTrackingTable($("#track-table"), {
-        params: function(p) {
-            return {
-                ordering: '-date',
-                item: {{ item.pk }},
-                user_detail: true,
-            };
+        params: {
+            ordering: '-date',
+            item: {{ item.pk }},
+            user_detail: true,
         },
         url: "{% url 'api-stock-track' %}", 
     });

@@ -7,7 +7,10 @@ import django
 
 import common.models
 
-INVENTREE_SW_VERSION = "0.1.6 pre"
+INVENTREE_SW_VERSION = "0.1.8 pre"
+
+# Increment this number whenever there is a significant change to the API that any clients need to know about
+INVENTREE_API_VERSION = 2
 
 
 def inventreeInstanceName():
@@ -18,6 +21,10 @@ def inventreeInstanceName():
 def inventreeVersion():
     """ Returns the InvenTree version string """
     return INVENTREE_SW_VERSION
+
+
+def inventreeApiVersion():
+    return INVENTREE_API_VERSION
 
 
 def inventreeDjangoVersion():

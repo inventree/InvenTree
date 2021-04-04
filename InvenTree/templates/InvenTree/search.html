@@ -9,98 +9,123 @@ InvenTree | {% trans "Search Results" %}
 
 {% block content %}
 
-<h3>{% trans "Search Results" %}</h3>
+<h3>
+    {% trans "Search Results" %}
+</h3>
 
-<div>
-{% include "search_form.html" with query_text=query %}
+<div class="container" style='width: 100%'>
+    {% include "search_form.html" with query_text=query %}
 </div>
-
-<br><br>
-<hr>
 
 {% if query %}
-
-<div id='no-search-results'>
-<h4><i>{% trans "No results found for " %}'{{ query }}'</i></h4>
-</div>
-
-{% include "InvenTree/search_part_category.html" with collapse_id="categories" %}
-
-{% include "InvenTree/search_parts.html" with collapse_id='parts' %}
-
-{% include "InvenTree/search_company.html" with collapse_id='companies' %}
-
-{% include "InvenTree/search_supplier_parts.html" with collapse_id='supplier_parts' %}
-
-{% include "InvenTree/search_stock_location.html" with collapse_id="locations" %}
-
-{% include "InvenTree/search_stock_items.html" with collapse_id="stock" %}
-
 {% else %}
-    
 <div id='empty-search-query'>
-<h4><i>{% trans "Enter a search query" %}</i></h4>
+    <h4><i>{% trans "Enter a search query" %}</i></h4>
 </div>
-
 {% endif %}
 
-{% endblock %}
+<div class='col-sm-3' id='item-panel'>
+    <ul class='list-group' id='search-item-list'>
+    </ul>
+</div>
+<div class='col-sm-9' id='details-panel'>
+    <ul class='list-group' id='search-result-list'>
+        <li class='list-group-item'>
+            <div class='container'>
+                <img class='index-bg' src='{% static "img/inventree.png" %}'>
+            </div>
+        </li>
+    </ul>
+</div>
 
-{% block js_load %}
-{{ block.super }}
-<script type='text/javascript' src="{% static 'script/inventree/part.js' %}"></script>
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
 
-    function onSearchResults(table, output) {
+    function addItemTitle(title) {
+        // Add header block to the results list
+        $('#search-item-list').append(
+            `<li class='list-group-item'><b>${title}</b></li>`
+        );
+    }
 
-        $(table).on('load-success.bs.table', function() {
+    function addItem(label, title, icon, options) {
+        // Add a search itme to the action list
+        $('#search-item-list').append(
+            `<li class='list-group-item' id='search-item-${label}'>
+                <a href='#'>
+                    <span class='fas ${icon}'></span>
+                    ${title}
+                </a>
+                <span class='badge' id='badge-${label}'>
+                    <span class='fas fa-spin fa-spinner'></span>
+                </span>
+            </li>`
+        );
 
-            var panel = $(output).closest('.panel-group');
+        // Add a results table
+        $('#search-result-list').append(
+            `<li class='list-group-item' id='search-result-${label}'>
+                <h4>${title}</h4>
+                <table class='table table-condensed table-striped' id='table-${label}'></table>
+            </li>`
+        );
 
-            var n = $(table).bootstrapTable('getData').length;
+        // Hide the results table
+        $(`#search-result-${label}`).hide();
 
-            var text = '';
-            if (n == 0) {
-                text = '<i>No results</i>'
+        // Add callback when the action is clicked
+        $(`#search-item-${label}`).click(function() {
 
-                $(panel).hide();
+            // Hide all childs
+            $('#search-result-list').children('li').each(function() {
+                $(this).hide();
+            });
 
-            } else {
-                text = n + ' result';
+            // Show the one we want
+            $(`#search-result-${label}`).fadeIn();
 
-                if (n > 1) {
-                    text += 's';
-                }
+            // Remove css class from all action items
+            $("#search-item-list").children('li').each(function() {
+                $(this).removeClass('index-action-selected');
+            });
+    
+            // Add css class to the action we are interested in
+            $(`#search-item-${label}`).addClass('index-action-selected');
+        });
 
-                $(panel).show();
+        // Connect a callback to the table
+        $(`#table-${label}`).on('load-success.bs.table', function() {
+            var count = $(`#table-${label}`).bootstrapTable('getData').length;
 
-                var collapse = panel.find('.panel-collapse');
+            $(`#badge-${label}`).html(count);
 
-                collapse.collapse('show');
-
-                $("#no-search-results").hide();
+            if (count > 0) {
+                $(`#badge-${label}`).addClass('badge-orange');
             }
-
-            $(output).html(`<i>${text}</i>`);
         });
     }
 
-    onSearchResults("#category-results-table", "#category-results-count");
-    
-    onSearchResults("#location-results-table", "#location-results-count");
-    
-    onSearchResults("#stock-results-table", "#stock-results-count");
-    
-    onSearchResults('#part-results-table', '#part-result-count');
+    {% if roles.part.view %}
+    addItemTitle('{% trans "Part" %}');
 
-    onSearchResults('#company-results-table', '#company-result-count');
-    
-    onSearchResults('#supplier-part-results-table', '#supplier-part-result-count');
+    addItem('part', '{% trans "Parts" %}', 'fa-shapes');
 
-    $("#category-results-table").inventreeTable({
+    loadPartTable("#table-part",
+        "{% url 'api-part-list' %}",
+        {
+            params: {
+                search: "{{ query }}",
+            },
+            checkbox: false,
+            disableFilters: true,
+        }
+    );
+
+    addItem('category', '{% trans "Part Categories" %}', 'fa-sitemap');
+
+    $("#table-category").inventreeTable({
         url: "{% url 'api-part-category-list' %}",
         queryParams: {
             search: "{{ query }}",
@@ -120,7 +145,43 @@ InvenTree | {% trans "Search Results" %}
         ],
     });
 
-    $('#stock-results-table').inventreeTable({
+    addItem('supplier-part', '{% trans "Supplier Parts" %}', 'fa-pallet');
+
+    loadSupplierPartTable(
+        "#table-supplier-part",
+        "{% url 'api-supplier-part-list' %}",
+        {
+            params: {
+                search: "{{ query }}",
+                part_detail: true,
+                supplier_detail: true,
+                manufacturer_detail: true
+            },
+        }
+    );
+
+    {% endif %}
+
+    {% if roles.build.view %}
+
+    addItemTitle('{% trans "Build" %}');
+
+    addItem('build-order', '{% trans "Build Orders" %}', 'fa-tools');
+
+    loadBuildTable('#table-build-order', {
+        params: {
+            search: '{{ query }}',
+        }
+    });
+
+    {% endif %}
+
+    {% if roles.stock.view %}
+    addItemTitle('{% trans "Stock" %}');
+
+    addItem('stock', '{% trans "Stock Items" %}', 'fa-boxes');
+
+    $('#table-stock').inventreeTable({
         url: "{% url 'api-stock-list' %}",
         queryParams: {
             search: "{{ query }}",
@@ -199,8 +260,9 @@ InvenTree | {% trans "Search Results" %}
         ]
     });
 
+    addItem('location', '{% trans "Stock Locations" %}', 'fa-map-marker-alt');
 
-    $("#location-results-table").inventreeTable({
+    $("#table-location").inventreeTable({
         url: "{% url 'api-location-list' %}",
         queryParams: {
             search: "{{ query }}",
@@ -220,36 +282,64 @@ InvenTree | {% trans "Search Results" %}
         ],
     });
 
+    {% endif %}
 
-    loadPartTable("#part-results-table",
-        "{% url 'api-part-list' %}",
-        {
-            params: {
-                search: "{{ query }}",
-            },
-            checkbox: false,
-            disableFilters: true,
-        }
-    );
-    
+    {% if roles.purchase_order.view or roles.sales_order.view %}
+    addItemTitle('{% trans "Company" %}');
 
-    loadCompanyTable('#company-results-table', "{% url 'api-company-list' %}", {
+    {% if roles.purchase_order.view %}
+    addItem('supplier', '{% trans "Suppliers" %}', 'fa-building');
+
+    loadCompanyTable('#table-supplier', "{% url 'api-company-list' %}", {
         params: {
             search: "{{ query }}",
+            is_supplier: "true",
         }
     });
 
-    loadSupplierPartTable(
-        "#supplier-part-results-table",
-        "{% url 'api-supplier-part-list' %}",
-        {
-            params: {
-                search: "{{ query }}",
-                part_detail: true,
-                supplier_detail: true,
-                manufacturer_detail: true
-            },
+    addItem('purchase-order', '{% trans "Purchase Orders" %}', 'fa-shopping-cart');
+
+    loadPurchaseOrderTable('#table-purchase-order', {
+        params: {
+            search: '{{ query }}',
         }
-    );
+    });
+
+    addItem('manufacturer', '{% trans "Manufacturers" %}', 'fa-industry');
+
+    loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
+        params: {
+            search: "{{ query }}",
+            is_manufacturer: "true",
+        }
+    });
+
+
+    {% endif %}
+
+    {% if roles.sales_order.view %}
+    addItem('customer', '{% trans "Customers" %}', 'fa-user-tie');
+
+    loadCompanyTable('#table-customer', "{% url 'api-company-list' %}", {
+        params: {
+            search: "{{ query }}",
+            is_customer: "true",
+        }
+    });
+
+    addItem('sales-orders', '{% trans "Sales Orders" %}', 'fa-truck');
+
+    loadSalesOrderTable('#table-sales-orders', {
+        params: {
+            search: '{{ query }}',
+        }
+    });
+
+    {% endif %}
+
+    {% endif %}    
+
+
+    
 
 {% endblock %}

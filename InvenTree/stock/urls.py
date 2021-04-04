@@ -45,9 +45,6 @@ stock_tracking_urls = [
 
     # delete
     url(r'^(?P<pk>\d+)/delete', views.StockItemTrackingDelete.as_view(), name='stock-tracking-delete'),
-
-    # list
-    url('^.*$', views.StockTrackingIndex.as_view(), name='stock-tracking-list')
 ]
 
 stock_urls = [

@@ -22,19 +22,33 @@ InvenTree | {% trans "Build Orders" %}
     
     <div id='button-toolbar'>
         <div class='button-toolbar container-fluid' style='float: right;'>
-            {% if roles.build.add %}
-            <button type='button' class="btn btn-success" id='new-build'>
-                <span class='fas fa-tools'></span> {% trans "New Build Order" %}
-            </button>
-            {% endif %}
-            <button class='btn btn-default' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
-                <span class='fas fa-calendar-alt'></span>
-            </button>
-            <button class='btn btn-default' type='button' id='view-list' title='{% trans "Display list view" %}'>
-                <span class='fas fa-th-list'></span>
-            </button>
-            <div class='filter-list' id='filter-list-build'>
-                <!-- An empty div in which the filter list will be constructed -->
+            <div class='btn-group'>
+                {% if roles.build.add %}
+                <button type='button' class="btn btn-success" id='new-build'>
+                    <span class='fas fa-tools'></span> {% trans "New Build Order" %}
+                </button>
+                {% endif %}
+                <div class='btn-group'>
+                    <!-- Print actions -->
+                    <button id='build-print-options' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>
+                        <span class='fas fa-print'></span> <span class='caret'></span>
+                    </button>
+                    <ul class='dropdown-menu'>
+                        <li><a href='#' id='multi-build-print' title='{% trans "Print Build Orders" %}'>
+                            <span class='fas fa-file-pdf'></span> {% trans "Print Build Orders" %}
+                        </a></li>
+                    </ul>
+                </div>
+                <!-- Buttons to switch between list and calendar views -->
+                <button class='btn btn-default' type='button' id='view-calendar' title='{% trans "Display calendar view" %}'>
+                    <span class='fas fa-calendar-alt'></span>
+                </button>
+                <button class='btn btn-default' type='button' id='view-list' title='{% trans "Display list view" %}'>
+                    <span class='fas fa-th-list'></span>
+                </button>
+                <div class='filter-list' id='filter-list-build'>
+                    <!-- An empty div in which the filter list will be constructed -->
+                </div>
             </div>
         </div>
     </div>
@@ -157,17 +171,26 @@ $("#view-list").click(function() {
     $("#view-calendar").show();
 });
 
-    $("#collapse-item-active").collapse().show();
+$("#collapse-item-active").collapse().show();
 
-    $("#new-build").click(function() {
-        newBuildOrder();
+$("#new-build").click(function() {
+    newBuildOrder();
+});
+
+loadBuildTable($("#build-table"), {
+    url: "{% url 'api-build-list' %}",
+});
+
+$('#multi-build-print').click(function() {
+    var rows = $("#build-table").bootstrapTable('getSelections');
+
+    var build_ids = [];
+
+    rows.forEach(function(row) {
+        build_ids.push(row.pk);
     });
 
-    loadBuildTable($("#build-table"), {
-        url: "{% url 'api-build-list' %}",
-        params: {
-            part_detail: "true",
-        },
-    });
+    printBuildReports(build_ids);
+});
 
 {% endblock %}

@@ -35,7 +35,10 @@ src="{% static 'img/blank_image.png' %}"
 <hr>
 <p>{{ order.description }}</p>
 <div class='btn-row'>
-    <div class='btn-group action-buttons'>
+    <div class='btn-group action-buttons' role='group'>
+        <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
+            <span class='fas fa-print'></span> 
+        </button>
         {% if roles.purchase_order.change %}
         <button type='button' class='btn btn-default' id='edit-order' title='{% trans "Edit order information" %}'>
             <span class='fas fa-edit icon-green'></span>
@@ -129,11 +132,23 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.complete_date }}<span class='badge'>{{ order.received_by }}</span></td>
     </tr>
     {% endif %}
+    {% if order.responsible %}
+    <tr>
+        <td><span class='fas fa-users'></span></td>
+        <td>{% trans "Responsible" %}</td>
+        <td>{{ order.responsible }}</td>
+    </tr>
+    {% endif %}
 </table>
 {% endblock %}
 
 {% block js_ready %}
 {{ block.super }}
+
+enableNavbar({
+    label: 'po',
+    toggleId: '#po-menu-toggle',
+});
 
 {% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}
 $("#place-order").click(function() {
@@ -143,6 +158,10 @@ $("#place-order").click(function() {
     });
 });
 {% endif %}
+
+$('#print-order-report').click(function() {
+    printPurchaseOrderReports([{{ order.pk }}]);
+});
 
 $("#edit-order").click(function() {
     launchModalForm("{% url 'po-edit' order.id %}",

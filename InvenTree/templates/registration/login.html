@@ -21,6 +21,12 @@
 <script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>
 <script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.js' %}"></script>
 
+<style>
+    .login-error {
+        color: #F88;
+    }
+</style>
+
 <title>
     Fablab Barcelona Inventory
 </title>
@@ -55,7 +61,7 @@
                                     <div class='input-group-addon'>
                                         <span class='fas fa-user'></span>
                                     </div>
-                                    <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" class="textinput textInput form-control" required id="id_username">
+                                    <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" class="textinput textInput form-control" required id="id_username" placeholder='{% trans "Enter username" %}'>
                                 </div>
                             </div>
                         </div>
@@ -67,10 +73,16 @@
                                     <div class='input-group-addon'>
                                         <span class='fas fa-key'></span>
                                     </div>
-                                    <input type="password" name="password" autocomplete="current-password" class="textinput textInput form-control" required id="id_password">
+                                    <input type="password" name="password" autocomplete="current-password" class="textinput textInput form-control" required id="id_password" placeholder='{% trans "Enter password" %}'>
                                 </div>
                             </div>
                         </div>
+                        
+                        {% if form.errors %}
+                        <div class='login-error'>
+                            <b>{% trans "Username / password combination is incorrect" %}</b>
+                        </div>
+                        {% endif %}
         
                         <hr>
                         

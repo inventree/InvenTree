@@ -2,13 +2,16 @@
 {% load static %}
 {% load i18n %}
 
-{% block details  %}
 
-{% include 'part/tabs.html' with tab='detail' %}
+{% block menubar %}
+{% include 'part/navbar.html' with tab='details' %}
+{% endblock %}
 
-<h4>{% trans "Part Details" %}</h4>
+{% block heading %}
+{% trans "Part Details" %}
+{% endblock %}
 
-<hr>
+{% block details %}
 
 <div class='row'>
     <div class='col-sm-6'>
@@ -16,58 +19,58 @@
         <col width='25'>
         <tr>
             <td><span class='fas fa-font'></span></td>
-            <td><b>{% trans "Part name" %}</b></td>
+            <td><strong>{% trans "Part name" %}</strong></td>
             <td>{{ part.name }}</td>
         </tr>
         {% if part.IPN %}
         <tr>
             <td></td>
-            <td><b>{% trans "IPN" %}</b></td>
+            <td><strong>{% trans "IPN" %}</strong></td>
             <td>{{ part.IPN }}</td>
         </tr>
         {% endif %}
         {% if part.revision %}
         <tr>
             <td><span class='fas fa-code-branch'></span></td>
-            <td><b>{% trans "Revision" %}</b></td>
+            <td><strong>{% trans "Revision" %}</strong></td>
             <td>{{ part.revision }}</td>
         </tr>
         {% endif %}
         {% if part.trackable %}
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
-            <td><b>{% trans "Latest Serial Number" %}</b></td>
+            <td><strong>{% trans "Latest Serial Number" %}</strong></td>
             <td>
                 {% if part.getLatestSerialNumber %}
                 {{ part.getLatestSerialNumber }}
                 {% else %}
-                <i>{% trans "No serial numbers recorded" %}</i>
+                <em>{% trans "No serial numbers recorded" %}</em>
                 {% endif %}
             </td>
         </tr>
         {% endif %}
         <tr>
             <td><span class='fas fa-info-circle'></span></td>
-            <td><b>{% trans "Description" %}</b></td>
+            <td><strong>{% trans "Description" %}</strong></td>
             <td>{{ part.description }}</td>
         </tr>
         {% if part.variant_of %}
         <tr>
             <td></td>
-            <td><b>{% trans "Variant Of" %}</b></td>
+            <td><strong>{% trans "Variant Of" %}</strong></td>
             <td><a href="{% url 'part-detail' part.variant_of.id %}">{{ part.variant_of.full_name }}</a></td>
         </tr>
         {% endif %}
         {% if part.keywords %}
         <tr>
             <td><span class='fas fa-key'></span></td>
-            <td><b>{% trans "Keywords" %}</b></td>
+            <td><strong>{% trans "Keywords" %}</strong></td>
             <td>{{ part.keywords }}</td>
         </tr>
         {% endif %}
         <tr>
             <td><span class='fas fa-sitemap'></span></td>
-            <td><b>{% trans "Category" %}</b></td>
+            <td><strong>{% trans "Category" %}</strong></td>
             <td>
                 {% if part.category %}
                 <a href="{% url 'category-detail' part.category.id %}">{{ part.category.pathstring }}</a>
@@ -77,21 +80,21 @@
         {% if part.link %}
         <tr>
             <td><span class='fas fa-link'></span></td>
-            <td><b>{% trans "External Link" %}</b></td>
+            <td><strong>{% trans "External Link" %}</strong></td>
             <td><a href="{{ part.link }}">{{ part.link }}</a></td>
         </tr>
         {% endif %}
         {% if part.default_location %}
         <tr>
             <td><span class='fas fa-map-marker-alt'></span></td>
-            <td><b>{% trans "Default Location" %}</b></td>
+            <td><strong>{% trans "Default Location" %}</strong></td>
             <td><a href="{% url 'stock-location-detail' part.default_location.id %}">{{ part.default_location.pathstring }}</a></td>
         </tr>
         {% endif %}
         {% if part.default_supplier %}
         <tr>
             <td></td>
-            <td><b>{% trans "Default Supplier" %}</b></td>
+            <td><strong>{% trans "Default Supplier" %}</strong></td>
             <td><a href="{% url 'supplier-part-detail' part.default_supplier.id %}">
                 {{ part.default_supplier.supplier.name }} | {{ part.default_supplier.SKU }}
             </a></td>
@@ -100,40 +103,40 @@
         {% if part.units %}
         <tr>
             <td></td>
-            <td><b>{% trans "Units" %}</b></td>
+            <td><strong>{% trans "Units" %}</strong></td>
             <td>{{ part.units }}</td>
         </tr>
         {% endif %}
         {% if part.minimum_stock > 0 %}
         <tr>
             <td><span class='fas fa-greater-than-equal'></span></td>
-            <td><b>{% trans "Minimum Stock" %}</b></td>
+            <td><strong>{% trans "Minimum Stock" %}</strong></td>
             <td>{{ part.minimum_stock }}</td>
         </tr>
         {% endif %}
         {% if part.default_expiry > 0 %}
         <tr>
             <td><span class='fas fa-stopwatch'></span></td>
-            <td><b>{% trans "Stock Expiry Time" %}</b></td>
+            <td><strong>{% trans "Stock Expiry Time" %}</strong></td>
             <td>{{ part.default_expiry }} {% trans "days" %}</td>
         </tr>
         {% endif %}
         <tr>
             <td><span class='fas fa-calendar-alt'></span></td>
-            <td><b>{% trans "Creation Date" %}</b></td>
+            <td><strong>{% trans "Creation Date" %}</strong></td>
             <td>{{ part.creation_date }}</td>
         </tr>
         {% if part.creation_user %}
         <tr>
             <td><span class='fas fa-user'></span></td>
-            <td><b>{% trans "Created By" %}</b></td>
+            <td><strong>{% trans "Created By" %}</strong></td>
             <td>{{ part.creation_user }}</td>
         </tr>
         {% endif %}
         {% if part.responsible %}
         <tr>
             <td><span class='fas fa-user'>d</span></td>
-            <td><b>{% trans "Responsible User" %}</b></td>
+            <td><strong>{% trans "Responsible User" %}</strong></td>
             <td>{{ part.responsible }}</td> 
         </tr>
         {% endif %}
@@ -144,72 +147,72 @@
         <col width='25'>
         <tr>
             <td><span class='fas fa-ghost'%></span></td>
-            <td><b>{% trans "Virtual" %}</b></td>
+            <td><strong>{% trans "Virtual" %}</strong></td>
             <td>{% include "slide.html" with state=part.virtual field='virtual' %}</td>
             {% if part.virtual %}
             <td>{% trans "Part is virtual (not a physical part)" %}</td>
             {% else %}
-            <td><i>{% trans "Part is not a virtual part" %}</i></td>
+            <td><em>{% trans "Part is not a virtual part" %}</em></td>
             {% endif %}
         </tr>
         <tr>
             <td><span class='fas fa-clone'></span></td>
-            <td><b>{% trans "Template" %}</b></td>
+            <td><strong>{% trans "Template" %}</strong></td>
             <td>{% include "slide.html" with state=part.is_template field='is_template' %}</td>
             {% if part.is_template %}
             <td>{% trans "Part is a template part (variants can be made from this part)" %}</td>
             {% else %}
-            <td><i>{% trans "Part is not a template part" %}</i></td>
+            <td><em>{% trans "Part is not a template part" %}</em></td>
             {% endif %}
         </tr>
         <tr>
             <td><span class='fas fa-tools'></span></td>
-            <td><b>{% trans "Assembly" %}</b></td>
+            <td><strong>{% trans "Assembly" %}</strong></td>
             <td>{% include "slide.html" with state=part.assembly field='assembly' %}</td>   
             {% if part.assembly %}
             <td>{% trans "Part can be assembled from other parts" %}</td>
             {% else %}
-            <td><i>{% trans "Part cannot be assembled from other parts" %}</i></td>
+            <td><em>{% trans "Part cannot be assembled from other parts" %}</em></td>
             {% endif %}
         </tr>
         <tr>
             <td><span class='fas fa-th'></span></td>
-            <td><b>{% trans "Component" %}</b></td>
+            <td><strong>{% trans "Component" %}</strong></td>
             <td>{% include "slide.html" with state=part.component field='component' %}</td>   
             {% if part.component %}
             <td>{% trans "Part can be used in assemblies" %}</td>
             {% else %}
-            <td><i>{% trans "Part cannot be used in assemblies" %}</i></td>
+            <td><em>{% trans "Part cannot be used in assemblies" %}</em></td>
             {% endif %}
         </tr>
         <tr>
             <td><span class='fas fa-directions'></span></td>
-            <td><b>{% trans "Trackable" %}</b></td>
+            <td><strong>{% trans "Trackable" %}</strong></td>
             <td>{% include "slide.html" with state=part.trackable field='trackable' %}</td>   
             {% if part.trackable %}
             <td>{% trans "Part stock is tracked by serial number" %}</td>
             {% else %}
-            <td><i>{% trans "Part stock is not tracked by serial number" %}</i></td>
+            <td><em>{% trans "Part stock is not tracked by serial number" %}</em></td>
             {% endif %}
         </tr>
         <tr>
             <td><span class='fas fa-shopping-cart'></span></td>
-            <td><b>{% trans "Purchaseable" %}</b></td> 
+            <td><strong>{% trans "Purchaseable" %}</strong></td> 
             <td>{% include "slide.html" with state=part.purchaseable field='purchaseable' %}</td>   
             {% if part.purchaseable %}
             <td>{% trans "Part can be purchased from external suppliers" %}</td>
             {% else %}
-            <td><i>{% trans "Part can be purchased from external suppliers" %}</i></td>
+            <td><em>{% trans "Part can be purchased from external suppliers" %}</em></td>
             {% endif %}
         </tr>
         <tr>
             <td><span class='fas fa-dollar-sign'></span></td>
-            <td><b>{% trans "Salable" %}</b></td>
+            <td><strong>{% trans "Salable" %}</strong></td>
             <td>{% include "slide.html" with state=part.salable field='salable' %}</td>
             {% if part.salable %}
             <td>{% trans "Part can be sold to customers" %}</td>
             {% else %}
-            <td><i>{% trans "Part cannot be sold to customers" %}</i></td>
+            <td><em>{% trans "Part cannot be sold to customers" %}</em></td>
             {% endif %}
         </tr>
         <tr><td colspan='4'></td></tr>
@@ -221,12 +224,12 @@
                 <span class='fas fa-times-circle icon-red'></span>
                 {% endif %}
             </td>
-            <td><b>{% trans "Active" %}</b></td>
+            <td><strong>{% trans "Active" %}</strong></td>
             <td>{% include "slide.html" with state=part.active field='active' disabled=False %}</td>
             {% if part.active %}
             <td>{% trans "Part is active" %}</td>
             {% else %}
-            <td><i>{% trans "Part is not active" %}</i></td>
+            <td><em>{% trans "Part is not active" %}</em></td>
             {% endif %}
         </tr>
     </table>

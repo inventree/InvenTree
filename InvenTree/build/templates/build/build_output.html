@@ -2,12 +2,15 @@
 {% load static %}
 {% load i18n %}
 
+{% block menubar %}
+{% include "build/navbar.html" with tab='output' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Build Outputs" %}
+{% endblock %}
+
 {% block details %}
-
-{% include "build/tabs.html" with tab='output' %}
-
-<h4>{% trans "Build Outputs" %}</h4>
-<hr>
 
 {% include "stock_table.html" with read_only=True %}
 

@@ -15,11 +15,13 @@
 <table class='table table-striped table-condensed'>
     {% include "InvenTree/settings/header.html" %}
     <tbody>
-        {% include "InvenTree/settings/setting.html" with key="STOCK_ENABLE_EXPIRY" %}
-        {% include "InvenTree/settings/setting.html" with key="STOCK_STALE_DAYS" %}
-        {% include "InvenTree/settings/setting.html" with key="STOCK_ALLOW_EXPIRED_SALE" %}
-        {% include "InvenTree/settings/setting.html" with key="STOCK_ALLOW_EXPIRED_BUILD" %}
-	{% include "InvenTree/settings/setting.html" with key="STOCK_OWNERSHIP_CONTROL" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_GROUP_BY_PART" icon="fa-layer-group" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_RECENT_COUNT" icon="fa-clock" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_ENABLE_EXPIRY" icon="fa-stopwatch" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_STALE_DAYS" icon="fa-calendar" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_ALLOW_EXPIRED_SALE" icon="fa-truck" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_ALLOW_EXPIRED_BUILD" icon="fa-tools" %}
+    	{% include "InvenTree/settings/setting.html" with key="STOCK_OWNERSHIP_CONTROL" icon="fa-users" %}
     </tbody>
 </table>
 {% endblock %}

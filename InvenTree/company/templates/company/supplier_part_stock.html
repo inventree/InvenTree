@@ -2,14 +2,15 @@
 {% load static %}
 {% load i18n %}
 
+{% block menubar %}
+{% include "company/part_navbar.html" with tab='stock' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Supplier Part Stock" %}
+{% endblock %}
+
 {% block details %}
-
-{% include "company/supplier_part_tabs.html" with tab='stock' %}
-
-<h4>{% trans "Supplier Part Stock" %}</h4>
-
-<hr>
-
 {% include "stock_table.html" %}
 
 {% endblock %}

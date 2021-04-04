@@ -1,11 +1,12 @@
 from django.conf.urls import url
 
-from . import views
+from . import api
 
 user_urls = [
-    url(r'^(?P<pk>[0-9]+)/?$', views.UserDetail.as_view(), name='user-detail'),
+    url(r'^(?P<pk>[0-9]+)/?$', api.UserDetail.as_view(), name='user-detail'),
 
-    url(r'token', views.GetAuthToken.as_view(), name='api-token'),
+    url(r'roles/?$', api.RoleDetails.as_view(), name='api-user-roles'),
+    url(r'token/?$', api.GetAuthToken.as_view(), name='api-token'),
 
-    url(r'^$', views.UserList.as_view()),
+    url(r'^$', api.UserList.as_view()),
 ]

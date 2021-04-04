@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load status_codes %}
+{% load inventree_extras %}
 
 {% include "status_codes.html" with label='stock' options=StockStatus.list %}
 {% include "status_codes.html" with label='build' options=BuildStatus.list %}
@@ -44,6 +45,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Validated" %}',
             },
+            inherited: {
+                type: 'bool',
+                title: '{% trans "Inherited" %}',
+            }
         };
     }
 
@@ -91,10 +96,15 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Active parts" %}',
                 description: '{% trans "Show stock for active parts" %}',
             },
+            assembly: {
+                type: 'bool',
+                title: '{% trans "Assembly" %}',
+                description: '{% trans "Part is an assembly" %}',
+            },
             allocated: {
                 type: 'bool',
                 title: '{% trans "Is allocated" %}',
-                description: '{% trans "Item has been alloacted" %}',
+                description: '{% trans "Item has been allocated" %}',
             },
             cascade: {
                 type: 'bool',
@@ -106,6 +116,8 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Depleted" %}',
                 description: '{% trans "Show stock items which are depleted" %}',
             },
+            {% settings_value "STOCK_ENABLE_EXPIRY" as expiry %}
+            {% if expiry %}
             expired: {
                 type: 'bool',
                 title: '{% trans "Expired" %}',
@@ -116,6 +128,7 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Stale" %}',
                 description: '{% trans "Show stock which is close to expiring" %}',
             },
+            {% endif %}
             in_stock: {
                 type: 'bool',
                 title: '{% trans "In Stock" %}',
@@ -125,6 +138,11 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "In Production" %}',
                 description: '{% trans "Show items which are in production" %}',
+            },
+            include_variants: {
+                type: 'bool',
+                title: '{% trans "Include Variants" %}',
+                description: '{% trans "Include stock items for variant parts" %}',
             },
             installed: {
                 type: 'bool',

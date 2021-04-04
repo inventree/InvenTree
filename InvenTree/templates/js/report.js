@@ -1,10 +1,10 @@
 {% load i18n %}
 
 
-function selectTestReport(reports, items, options={}) {
+function selectReport(reports, items, options={}) {
     /**
-     * Present the user with the available test reports,
-     * and allow them to select which test report to print.
+     * Present the user with the available reports,
+     * and allow them to select which report to print.
      * 
      * The intent is that the available report templates have been requested
      * (via AJAX) from the server.
@@ -44,7 +44,7 @@ function selectTestReport(reports, items, options={}) {
 
         html += `
         <div class='alert alert-block alert-info'>
-        ${items.length} {% trans "stock items selected" %}
+        ${items.length} {% trans "items selected" %}
         </div>`;
     }
 
@@ -102,7 +102,7 @@ function printTestReports(items, options={}) {
         return;
     }
 
-    // Request available labels from the server
+    // Request available reports from the server
     inventreeGet(
         '{% url "api-stockitem-testreport-list" %}',
         {
@@ -121,7 +121,7 @@ function printTestReports(items, options={}) {
                 }
 
                 // Select report template to print
-                selectTestReport(
+                selectReport(
                     response,
                     items,
                     {
@@ -129,7 +129,7 @@ function printTestReports(items, options={}) {
                             var href = `/api/report/test/${pk}/print/?`;
 
                             items.forEach(function(item) {
-                                href += `items[]=${item}&`;
+                                href += `item=${item}&`;
                             });
 
                             window.location.href = href;
@@ -139,4 +139,219 @@ function printTestReports(items, options={}) {
             }
         }
     );
+}
+
+
+function printBuildReports(builds, options={}) {
+    /**
+     * Print Build report for the provided build(s)
+     */
+
+    if (builds.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Builds" %}',
+            '{% trans "Build(s) must be selected before printing reports" %}',
+        );
+
+        return;
+    }
+
+    inventreeGet(
+        '{% url "api-build-report-list" %}',
+        {
+            enabled: true,
+            builds: builds,
+        },
+        {
+            success: function(response) {
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Reports Found" %}',
+                        '{% trans "No report templates found which match selected build(s)" %}'
+                    );
+
+                    return;
+                }
+
+                // Select which report to print
+                selectReport(
+                    response,
+                    builds,
+                    {
+                        success: function(pk) {
+                            var href = `/api/report/build/${pk}/print/?`;
+
+                            builds.forEach(function(build) {
+                                href += `build=${build}&`;
+                            });
+
+                            window.location.href = href;
+                        }
+                    }
+                )
+            }
+        }
+    )
+}
+
+
+function printBomReports(parts, options={}) {
+    /**
+     * Print BOM reports for the provided part(s)
+     */
+
+    if (parts.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "Part(s) must be selected before printing reports" %}'
+        );
+
+        return;
+    }
+
+    // Request available reports from the server
+    inventreeGet(
+        '{% url "api-bom-report-list" %}',
+        {
+            enabled: true,
+            parts: parts,
+        },
+        {
+            success: function(response) {
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Reports Found" %}',
+                        '{% trans "No report templates found which match selected part(s)" %}',
+                    );
+
+                    return;
+                }
+
+                // Select which report to print
+                selectReport(
+                    response,
+                    parts,
+                    {
+                        success: function(pk) {
+                            var href = `/api/report/bom/${pk}/print/?`;
+
+                            parts.forEach(function(part) {
+                                href += `part=${part}&`;
+                            });
+
+                            window.location.href = href;
+                        }
+                    }
+                );
+            }
+        }
+    )
+}
+
+
+function printPurchaseOrderReports(orders, options={}) {
+    /**
+     * Print PO reports for the provided purchase order(s)
+     */
+
+    if (orders.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Purchase Orders" %}',
+            '{% trans "Purchase Order(s) must be selected before printing report" %}',
+        );
+
+        return;
+    }
+
+    // Request avaiable report templates
+    inventreeGet(
+        '{% url "api-po-report-list" %}',
+        {
+            enabled: true,
+            orders: orders,
+        },
+        {
+            success: function(response) {
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Reports Found" %}',
+                        '{% trans "No report templates found which match selected orders" %}',
+                    );
+
+                    return;
+                }
+
+                // Select report template
+                selectReport(
+                    response,
+                    orders,
+                    {
+                        success: function(pk) {
+                            var href = `/api/report/po/${pk}/print/?`;
+
+                            orders.forEach(function(order) {
+                                href += `order=${order}&`;
+                            });
+
+                            window.location.href = href;
+                        }
+                    }
+                )
+            }
+        }
+    )
+}
+
+
+function printSalesOrderReports(orders, options={}) {
+    /**
+     * Print SO reports for the provided purchase order(s)
+     */
+
+    if (orders.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Sales Orders" %}',
+            '{% trans "Sales Order(s) must be selected before printing report" %}',
+        );
+
+        return;
+    }
+
+    // Request avaiable report templates
+    inventreeGet(
+        '{% url "api-so-report-list" %}',
+        {
+            enabled: true,
+            orders: orders,
+        },
+        {
+            success: function(response) {
+                if (response.length == 0) {
+                    showAlertDialog(
+                        '{% trans "No Reports Found" %}',
+                        '{% trans "No report templates found which match selected orders" %}',
+                    );
+
+                    return;
+                }
+
+                // Select report template
+                selectReport(
+                    response,
+                    orders,
+                    {
+                        success: function(pk) {
+                            var href = `/api/report/so/${pk}/print/?`;
+
+                            orders.forEach(function(order) {
+                                href += `order=${order}&`;
+                            });
+
+                            window.location.href = href;
+                        }
+                    }
+                )
+            }
+        }
+    )
 }

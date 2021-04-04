@@ -4,43 +4,40 @@
 {% load i18n %}
 {% load markdownify %}
 
+{% block menubar %}
+{% include 'part/navbar.html' with tab='notes' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Part Notes" %}
+{% if roles.part.change and not editing %}
+<button title='{% trans "Edit notes" %}' class='btn btn-default' id='edit-notes'><span class='fas fa-edit'></span></button>
+{% endif %}
+{% endblock %}
+
 {% block details %}
 
-{% include 'part/tabs.html' with tab='notes' %}
-
-
 {% if editing %}
-<h4>{% trans "Part Notes" %}</h4>
-<hr>
 <form method='POST'>
     {% csrf_token %}
         
     {{ form }}
     <hr>
-    <input type="submit" value='{% trans "Save" %}'/>
+
+    <button type="submit" class='btn btn-default'>{% trans "Save" %}</button>
     
 </form>
 
 {{ form.media }}
 
 {% else %}
-<div class='row'>
-    <div class='col-sm-6'>
-        <h4>{% trans "Part Notes" %}</h4>
-    </div>
-    <div class='col-sm-6'>
-        {% if roles.part.change %}
-        <button title='{% trans "Edit notes" %}' class='btn btn-default action-button float-right' id='edit-notes'><span class='fas fa-edit'></span></button>
-        {% endif %}
-    </div>
-</div>
-<hr>
+
 <div class='panel panel-default'>
+    {% if part.notes %}
     <div class='panel-content'>
-        {% if part.notes %}
         {{ part.notes | markdownify }}
-        {% endif %}
     </div>
+    {% endif %}
 </div>
 
 {% endif %}

@@ -3,13 +3,15 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+{% block menubar %}
+{% include "company/part_navbar.html" with tab='pricing' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Pricing Information" %}
+{% endblock %}
+
 {% block details %}
-
-{% include "company/supplier_part_tabs.html" with tab='pricing' %}
-
-<h4>{% trans "Pricing Information" %}</h4>
-
-<hr>
 
 {% if roles.purchase_order.add %}
 <div id='price-break-toolbar' class='btn-group'>

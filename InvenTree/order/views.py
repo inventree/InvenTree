@@ -7,9 +7,11 @@ from __future__ import unicode_literals
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic.edit import FormMixin
 from django.forms import HiddenInput
 
 import logging
@@ -30,6 +32,7 @@ from . import forms as order_forms
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers import extract_serial_numbers
 from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
@@ -43,8 +46,6 @@ class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):
     model = PurchaseOrder
     template_name = 'order/purchase_orders.html'
     context_object_name = 'orders'
-
-    role_required = 'purchase_order.view'
 
     def get_queryset(self):
         """ Retrieve the list of purchase orders,
@@ -65,7 +66,6 @@ class SalesOrderIndex(InvenTreeRoleMixin, ListView):
     model = SalesOrder
     template_name = 'order/sales_orders.html'
     context_object_name = 'orders'
-    role_required = 'sales_order.view'
 
 
 class PurchaseOrderDetail(InvenTreeRoleMixin, DetailView):
@@ -74,7 +74,6 @@ class PurchaseOrderDetail(InvenTreeRoleMixin, DetailView):
     context_object_name = 'order'
     queryset = PurchaseOrder.objects.all().prefetch_related('lines')
     template_name = 'order/purchase_order_detail.html'
-    role_required = 'purchase_order.view'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -88,7 +87,6 @@ class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
     context_object_name = 'order'
     queryset = SalesOrder.objects.all().prefetch_related('lines')
     template_name = 'order/sales_order_detail.html'
-    role_required = 'sales_order.view'
 
 
 class PurchaseOrderAttachmentCreate(AjaxCreateView):
@@ -100,7 +98,6 @@ class PurchaseOrderAttachmentCreate(AjaxCreateView):
     form_class = order_forms.EditPurchaseOrderAttachmentForm
     ajax_form_title = _("Add Purchase Order Attachment")
     ajax_template_name = "modal_form.html"
-    role_required = 'purchase_order.add'
 
     def save(self, form, **kwargs):
 
@@ -150,7 +147,6 @@ class SalesOrderAttachmentCreate(AjaxCreateView):
     model = SalesOrderAttachment
     form_class = order_forms.EditSalesOrderAttachmentForm
     ajax_form_title = _('Add Sales Order Attachment')
-    role_required = 'sales_order.add'
 
     def save(self, form, **kwargs):
         """
@@ -191,7 +187,6 @@ class PurchaseOrderAttachmentEdit(AjaxUpdateView):
     model = PurchaseOrderAttachment
     form_class = order_forms.EditPurchaseOrderAttachmentForm
     ajax_form_title = _("Edit Attachment")
-    role_required = 'purchase_order.change'
 
     def get_data(self):
         return {
@@ -213,7 +208,6 @@ class SalesOrderAttachmentEdit(AjaxUpdateView):
     model = SalesOrderAttachment
     form_class = order_forms.EditSalesOrderAttachmentForm
     ajax_form_title = _("Edit Attachment")
-    role_required = 'sales_order.change'
 
     def get_data(self):
         return {
@@ -235,7 +229,6 @@ class PurchaseOrderAttachmentDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Attachment")
     ajax_template_name = "order/delete_attachment.html"
     context_object_name = "attachment"
-    role_required = 'purchase_order.delete'
 
     def get_data(self):
         return {
@@ -250,7 +243,6 @@ class SalesOrderAttachmentDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Attachment")
     ajax_template_name = "order/delete_attachment.html"
     context_object_name = "attachment"
-    role_required = 'sales_order.delete'
 
     def get_data(self):
         return {
@@ -264,6 +256,8 @@ class PurchaseOrderNotes(InvenTreeRoleMixin, UpdateView):
     context_object_name = 'order'
     template_name = 'order/order_notes.html'
     model = PurchaseOrder
+
+    # Override the default permission roles
     role_required = 'purchase_order.view'
 
     fields = ['notes']
@@ -311,7 +305,6 @@ class PurchaseOrderCreate(AjaxCreateView):
     model = PurchaseOrder
     ajax_form_title = _("Create Purchase Order")
     form_class = order_forms.EditPurchaseOrderForm
-    role_required = 'purchase_order.add'
 
     def get_initial(self):
         initials = super().get_initial().copy()
@@ -347,7 +340,6 @@ class SalesOrderCreate(AjaxCreateView):
     model = SalesOrder
     ajax_form_title = _("Create Sales Order")
     form_class = order_forms.EditSalesOrderForm
-    role_required = 'sales_order.add'
 
     def get_initial(self):
         initials = super().get_initial().copy()
@@ -383,7 +375,6 @@ class PurchaseOrderEdit(AjaxUpdateView):
     model = PurchaseOrder
     ajax_form_title = _('Edit Purchase Order')
     form_class = order_forms.EditPurchaseOrderForm
-    role_required = 'purchase_order.change'
 
     def get_form(self):
 
@@ -404,7 +395,6 @@ class SalesOrderEdit(AjaxUpdateView):
     model = SalesOrder
     ajax_form_title = _('Edit Sales Order')
     form_class = order_forms.EditSalesOrderForm
-    role_required = 'sales_order.change'
 
     def get_form(self):
         form = super().get_form()
@@ -422,7 +412,6 @@ class PurchaseOrderCancel(AjaxUpdateView):
     ajax_form_title = _('Cancel Order')
     ajax_template_name = 'order/order_cancel.html'
     form_class = order_forms.CancelPurchaseOrderForm
-    role_required = 'purchase_order.change'
 
     def validate(self, order, form, **kwargs):
         
@@ -449,7 +438,6 @@ class SalesOrderCancel(AjaxUpdateView):
     ajax_form_title = _("Cancel sales order")
     ajax_template_name = "order/sales_order_cancel.html"
     form_class = order_forms.CancelSalesOrderForm
-    role_required = 'sales_order.change'
 
     def validate(self, order, form, **kwargs):
 
@@ -476,7 +464,6 @@ class PurchaseOrderIssue(AjaxUpdateView):
     ajax_form_title = _('Issue Order')
     ajax_template_name = "order/order_issue.html"
     form_class = order_forms.IssuePurchaseOrderForm
-    role_required = 'purchase_order.change'
 
     def validate(self, order, form, **kwargs):
 
@@ -506,7 +493,6 @@ class PurchaseOrderComplete(AjaxUpdateView):
     ajax_template_name = "order/order_complete.html"
     ajax_form_title = _("Complete Order")
     context_object_name = 'order'
-    role_required = 'purchase_order.change'
 
     def get_context_data(self):
 
@@ -543,7 +529,6 @@ class SalesOrderShip(AjaxUpdateView):
     context_object_name = 'order'
     ajax_template_name = 'order/sales_order_ship.html'
     ajax_form_title = _('Ship Order')
-    role_required = 'sales_order.change'
 
     def post(self, request, *args, **kwargs):
 
@@ -587,6 +572,8 @@ class PurchaseOrderExport(AjaxView):
     """
 
     model = PurchaseOrder
+
+    # Specify role as we cannot introspect from "AjaxView"
     role_required = 'purchase_order.view'
 
     def get(self, request, *args, **kwargs):
@@ -619,6 +606,8 @@ class PurchaseOrderReceive(AjaxUpdateView):
     form_class = order_forms.ReceivePurchaseOrderForm
     ajax_form_title = _("Receive Parts")
     ajax_template_name = "order/receive_parts.html"
+
+    # Specify role as we do not specify a Model against this view
     role_required = 'purchase_order.change'
 
     # Where the parts will be going (selected in POST request)
@@ -1117,7 +1106,6 @@ class POLineItemCreate(AjaxCreateView):
     context_object_name = 'line'
     form_class = order_forms.EditPurchaseOrderLineItemForm
     ajax_form_title = _('Add Line Item')
-    role_required = 'purchase_order.add'
 
     def validate(self, item, form, **kwargs):
 
@@ -1201,7 +1189,6 @@ class SOLineItemCreate(AjaxCreateView):
     context_order_name = 'line'
     form_class = order_forms.EditSalesOrderLineItemForm
     ajax_form_title = _('Add Line Item')
-    role_required = 'sales_order.add'
 
     def get_form(self, *args, **kwargs):
 
@@ -1253,7 +1240,6 @@ class SOLineItemEdit(AjaxUpdateView):
     model = SalesOrderLineItem
     form_class = order_forms.EditSalesOrderLineItemForm
     ajax_form_title = _('Edit Line Item')
-    role_required = 'sales_order.change'
 
     def get_form(self):
         form = super().get_form()
@@ -1272,7 +1258,6 @@ class POLineItemEdit(AjaxUpdateView):
     form_class = order_forms.EditPurchaseOrderLineItemForm
     ajax_template_name = 'modal_form.html'
     ajax_form_title = _('Edit Line Item')
-    role_required = 'purchase_order.change'
 
     def get_form(self):
         form = super().get_form()
@@ -1290,7 +1275,6 @@ class POLineItemDelete(AjaxDeleteView):
     model = PurchaseOrderLineItem
     ajax_form_title = _('Delete Line Item')
     ajax_template_name = 'order/po_lineitem_delete.html'
-    role_required = 'purchase_order.delete'
 
     def get_data(self):
         return {
@@ -1303,7 +1287,6 @@ class SOLineItemDelete(AjaxDeleteView):
     model = SalesOrderLineItem
     ajax_form_title = _("Delete Line Item")
     ajax_template_name = "order/so_lineitem_delete.html"
-    role_required = 'sales_order.delete'
 
     def get_data(self):
         return {
@@ -1311,14 +1294,181 @@ class SOLineItemDelete(AjaxDeleteView):
         }
 
 
+class SalesOrderAssignSerials(AjaxView, FormMixin):
+    """
+    View for assigning stock items to a sales order,
+    by serial number lookup.
+    """
+
+    model = SalesOrderAllocation
+    role_required = 'sales_order.change'
+    ajax_template_name = 'order/so_allocate_by_serial.html'
+    ajax_form_title = _('Allocate Serial Numbers')
+    form_class = order_forms.AllocateSerialsToSalesOrderForm
+
+    # Keep track of SalesOrderLineItem and Part references
+    line = None
+    part = None
+
+    def get_initial(self):
+        """
+        Initial values are passed as query params
+        """
+
+        initials = super().get_initial()
+
+        try:
+            self.line = SalesOrderLineItem.objects.get(pk=self.request.GET.get('line', None))
+            initials['line'] = self.line
+        except (ValueError, SalesOrderLineItem.DoesNotExist):
+            pass
+
+        try:
+            self.part = Part.objects.get(pk=self.request.GET.get('part', None))
+            initials['part'] = self.part
+        except (ValueError, Part.DoesNotExist):
+            pass
+
+        return initials
+
+    def post(self, request, *args, **kwargs):
+
+        self.form = self.get_form()
+
+        # Validate the form
+        self.form.is_valid()
+        self.validate()
+
+        valid = self.form.is_valid()
+
+        if valid:
+            self.allocate_items()
+
+        data = {
+            'form_valid': valid,
+            'form_errors': self.form.errors.as_json(),
+            'non_field_errors': self.form.non_field_errors().as_json(),
+            'success': _("Allocated") + f" {len(self.stock_items)} " + _("items")
+        }
+
+        return self.renderJsonResponse(request, self.form, data)
+
+    def validate(self):
+
+        data = self.form.cleaned_data
+
+        # Extract hidden fields from posted data
+        self.line = data.get('line', None)
+        self.part = data.get('part', None)
+
+        if self.line:
+            self.form.fields['line'].widget = HiddenInput()
+        else:
+            self.form.add_error('line', _('Select line item'))
+        
+        if self.part:
+            self.form.fields['part'].widget = HiddenInput()
+        else:
+            self.form.add_error('part', _('Select part'))
+
+        if not self.form.is_valid():
+            return
+
+        # Form is otherwise valid - check serial numbers
+        serials = data.get('serials', '')
+        quantity = data.get('quantity', 1)
+
+        # Save a list of serial_numbers
+        self.serial_numbers = None
+        self.stock_items = []
+
+        try:
+            self.serial_numbers = extract_serial_numbers(serials, quantity)
+
+            for serial in self.serial_numbers:
+                try:
+                    # Find matching stock item
+                    stock_item = StockItem.objects.get(
+                        part=self.part,
+                        serial=serial
+                    )
+                except StockItem.DoesNotExist:
+                    self.form.add_error(
+                        'serials',
+                        _('No matching item for serial') + f" '{serial}'"
+                    )
+                    continue
+
+                # Now we have a valid stock item - but can it be added to the sales order?
+                
+                # If not in stock, cannot be added to the order
+                if not stock_item.in_stock:
+                    self.form.add_error(
+                        'serials',
+                        f"'{serial}' " + _("is not in stock")
+                    )
+                    continue
+
+                # Already allocated to an order
+                if stock_item.is_allocated():
+                    self.form.add_error(
+                        'serials',
+                        f"'{serial}' " + _("already allocated to an order")
+                    )
+                    continue
+
+                # Add it to the list!
+                self.stock_items.append(stock_item)
+
+        except ValidationError as e:
+            self.form.add_error('serials', e.messages)
+
+    def allocate_items(self):
+        """
+        Create stock item allocations for each selected serial number
+        """
+
+        for stock_item in self.stock_items:
+            SalesOrderAllocation.objects.create(
+                item=stock_item,
+                line=self.line,
+                quantity=1,
+            )
+
+    def get_form(self):
+
+        form = super().get_form()
+
+        if self.line:
+            form.fields['line'].widget = HiddenInput()
+
+        if self.part:
+            form.fields['part'].widget = HiddenInput()
+
+        return form
+
+    def get_context_data(self):
+        return {
+            'line': self.line,
+            'part': self.part,
+        }
+
+    def get(self, request, *args, **kwargs):
+
+        return self.renderJsonResponse(
+            request,
+            self.get_form(),
+            context=self.get_context_data(),
+        )
+
+
 class SalesOrderAllocationCreate(AjaxCreateView):
     """ View for creating a new SalesOrderAllocation """
 
     model = SalesOrderAllocation
-    form_class = order_forms.EditSalesOrderAllocationForm
+    form_class = order_forms.CreateSalesOrderAllocationForm
     ajax_form_title = _('Allocate Stock to Order')
-    role_required = 'sales_order.add'
-
+    
     def get_initial(self):
         initials = super().get_initial().copy()
 
@@ -1392,8 +1542,7 @@ class SalesOrderAllocationEdit(AjaxUpdateView):
     model = SalesOrderAllocation
     form_class = order_forms.EditSalesOrderAllocationForm
     ajax_form_title = _('Edit Allocation Quantity')
-    role_required = 'sales_order.change'
-
+    
     def get_form(self):
         form = super().get_form()
 
@@ -1410,4 +1559,3 @@ class SalesOrderAllocationDelete(AjaxDeleteView):
     ajax_form_title = _("Remove allocation")
     context_object_name = 'allocation'
     ajax_template_name = "order/so_allocation_delete.html"
-    role_required = 'sales_order.delete'

@@ -1,14 +1,17 @@
 {% extends "company/company_base.html" %}
 {% load static %}
-{% block details %}
 {% load i18n %}
 
-{% include 'company/tabs.html' with tab='parts' %}
+{% block menubar %}
+{% include 'company/navbar.html' with tab='parts' %}
+{% endblock %}
 
-<h4>{% trans "Supplier Parts" %}</h4>
+{% block heading %}
+{% trans "Supplier Parts" %}
+{% endblock %}
 
-<hr>
 
+{% block details %}
 {% if roles.purchase_order.change %}
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid'>

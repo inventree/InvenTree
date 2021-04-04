@@ -105,9 +105,6 @@ class StockItemTest(StockViewTestCase):
         response = self.client.get(reverse('stock-item-qr', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
-        data = str(response.content)
-        self.assertIn('Error:', data)
-
     def test_adjust_items(self):
         url = reverse('stock-adjust')
 

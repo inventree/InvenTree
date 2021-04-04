@@ -2,12 +2,16 @@
 {% load static %}
 {% load i18n %}
 
+
+{% block menubar %}
+{% include 'company/navbar.html' with tab='so' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Sales Orders" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'company/tabs.html' with tab='co' %}
-
-<h4>{% trans "Sales Orders" %}</h4>
-<hr>
 
 {% if roles.sales_order.add %}
 <div id='button-bar'>

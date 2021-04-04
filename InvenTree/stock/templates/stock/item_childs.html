@@ -3,14 +3,16 @@
 {% load static %}
 {% load i18n %}
 
+
+{% block menubar %}
+{% include "stock/navbar.html" with tab='children' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Child Stock Items" %}
+{% endblock %}
+
 {% block details %}
-
-{% include "stock/tabs.html" with tab='children' %}
-
-<hr>
-
-<h4>{% trans "Child Stock Items" %}</h4>
-
 {% if item.child_count > 0 %}
 {% include "stock_table.html" %}
 {% else %}

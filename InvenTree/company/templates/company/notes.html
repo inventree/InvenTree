@@ -1,20 +1,27 @@
 {% extends "company/company_base.html" %}
 {% load static %}
 {% load i18n %}
-{% block details %}
 {% load markdownify %}
 
-{% include 'company/tabs.html' with tab='notes' %}
+{% block menubar %}
+{% include 'company/navbar.html' with tab='notes' %}
+{% endblock %}
 
+{% block heading %}
+{% trans "Company Notes" %}
+{% if not editing %}
+<button title='{% trans "Edit notes" %}' class='btn btn-default' id='edit-notes'><span class='fas fa-edit'></span></button>
+{% endif %}
+{% endblock %}
+
+{% block details %}
 {% if editing %}
-<h4>{% trans "Company Notes" %}</h4>
-<hr>
 <form method='POST'>
     {% csrf_token %}
         
     {{ form }}
     <hr>
-    <input type="submit" value='{% trans "Save" %}'/>
+    <button type="submit" class='btn btn-default'>{% trans "Save" %}</button>
     
 </form>
 
@@ -22,20 +29,7 @@
 
 {% else %}
 
-<div class='row'>
-        <div class='col-sm-6'>
-            <h4>{% trans "Company Notes" %}</h4>
-        </div>
-        <div class='col-sm-6'>
-            <button title='{% trans "Edit notes" %}' class='btn btn-default action-button float-right' id='edit-notes'><span class='fas fa-edit'></span></button>
-        </div>
-    </div>
-    <hr>
-    <div class='panel panel-default'>
-        <div class='panel-content'>
-            {{ company.notes | markdownify }}
-        </div>
-    </div>
+{{ company.notes | markdownify }}
 {% endif %}
 
 {% endblock %}

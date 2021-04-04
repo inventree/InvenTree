@@ -36,10 +36,9 @@ InvenTree | {% trans "Part List" %}
         }
     );
 
-    $("#toggle-part-tree").click(function() {
-        toggleSideNav("#sidenav");
-        return false;
-    })
-
-    initSideNav();
+    initNavTree({
+        label: 'part',
+        treeId: '#sidenav-left',
+        toggleId: '#toggle-part-tree',
+    });
 {% endblock %}

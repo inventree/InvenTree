@@ -14,6 +14,8 @@ from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.fields import DatePickerFormField
 
+import part.models
+
 from stock.models import StockLocation
 from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAttachment
 from .models import SalesOrder, SalesOrderLineItem, SalesOrderAttachment
@@ -116,6 +118,7 @@ class EditPurchaseOrderForm(HelperForm):
             'description',
             'target_date',
             'link',
+            'responsible',
         ]
 
 
@@ -148,7 +151,8 @@ class EditSalesOrderForm(HelperForm):
             'customer_reference',
             'description',
             'target_date',
-            'link'
+            'link',
+            'responsible',
         ]
 
 
@@ -209,7 +213,65 @@ class EditSalesOrderLineItemForm(HelperForm):
         ]
 
 
+class AllocateSerialsToSalesOrderForm(forms.Form):
+    """
+    Form for assigning stock to a sales order,
+    by serial number lookup
+    """
+
+    line = forms.ModelChoiceField(
+        queryset=SalesOrderLineItem.objects.all(),
+    )
+
+    part = forms.ModelChoiceField(
+        queryset=part.models.Part.objects.all(),
+    )
+
+    serials = forms.CharField(
+        label=_("Serial Numbers"),
+        required=True,
+        help_text=_('Enter stock item serial numbers'),
+    )
+
+    quantity = forms.IntegerField(
+        label=_('Quantity'),
+        required=True,
+        help_text=_('Enter quantity of stock items'),
+        initial=1,
+        min_value=1
+    )
+
+    class Meta:
+
+        fields = [
+            'line',
+            'part',
+            'serials',
+            'quantity',
+        ]
+
+
+class CreateSalesOrderAllocationForm(HelperForm):
+    """
+    Form for creating a SalesOrderAllocation item.
+    """
+
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+
+    class Meta:
+        model = SalesOrderAllocation
+
+        fields = [
+            'line',
+            'item',
+            'quantity',
+        ]
+
+
 class EditSalesOrderAllocationForm(HelperForm):
+    """
+    Form for editing a SalesOrderAllocation item
+    """
 
     quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
 

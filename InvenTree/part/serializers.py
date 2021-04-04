@@ -245,6 +245,14 @@ class PartSerializer(InvenTreeModelSerializer):
                 Decimal(0),
             )
         )
+
+        # Annotate with the number of 'suppliers'
+        queryset = queryset.annotate(
+            suppliers=Coalesce(
+                SubqueryCount('supplier_parts'),
+                Decimal(0),
+            ),
+        )
         
         return queryset
 
@@ -263,6 +271,7 @@ class PartSerializer(InvenTreeModelSerializer):
     ordering = serializers.FloatField(read_only=True)
     building = serializers.FloatField(read_only=True)
     stock_item_count = serializers.IntegerField(read_only=True)
+    suppliers = serializers.IntegerField(read_only=True)
 
     image = serializers.CharField(source='get_image_url', read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
@@ -308,6 +317,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'salable',
             'starred',
             'stock_item_count',
+            'suppliers',
             'thumbnail',
             'trackable',
             'units',
@@ -381,17 +391,18 @@ class BomItemSerializer(InvenTreeModelSerializer):
     class Meta:
         model = BomItem
         fields = [
+            'inherited',
+            'note',
+            'optional',
+            'overage',
             'pk',
             'part',
             'part_detail',
-            'sub_part',
-            'sub_part_detail',
             'quantity',
             'reference',
+            'sub_part',
+            'sub_part_detail',
             # 'price_range',
-            'optional',
-            'overage',
-            'note',
             'validated',
         ]
 

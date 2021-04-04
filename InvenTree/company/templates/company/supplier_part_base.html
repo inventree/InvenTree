@@ -17,6 +17,15 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block page_data %}
 <h3>{% trans "Supplier Part" %}</h3>
+<hr>
+<h4>
+    {{ part.part.full_name }}
+    {% if user.is_staff and perms.company.change_company %}
+    <a href="{% url 'admin:company_supplierpart_change' part.pk %}">
+        <span title='{% trans "Admin view" %}' class='fas fa-user-shield'></span>
+    </a>
+    {% endif %}
+</h4>
 <p>{{ part.supplier.name }} - {{ part.SKU }}</p>
 
 {% if roles.purchase_order.change %}
@@ -83,10 +92,19 @@ src="{% static 'img/blank_image.png' %}"
             <td><span class='fas fa-industry'></span></td>
             <td>{% trans "Manufacturer" %}</td>
             <td><a href="{% url 'company-detail-parts' part.manufacturer.id %}">{{ part.manufacturer.name }}</a></td></tr>
+        {% endif %}
+        {% if part.MPN %}
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "MPN" %}</td>
             <td>{{ part.MPN }}</td>
+        </tr>
+        {% endif %}
+        {% if part.packaging %}
+        <tr>
+            <td><span class='fas fa-cube'></span></td>
+            <td>{% trans "Packaging" %}</td>
+            <td>{{ part.packaging }}</td>
         </tr>
         {% endif %}
         {% if part.note %}
@@ -101,6 +119,11 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 {{ block.super }}
+
+enableNavbar({
+    label: 'supplier-part',
+    toggleId: '#supplier-part-menu-toggle'
+})
 
 $('#order-part, #order-part2').click(function() {
     launchModalForm(

@@ -114,6 +114,18 @@ function selectLabel(labels, items, options={}) {
      * (via AJAX) from the server.
      */
 
+    // If only a single label template is provided,
+    // just run with that!
+
+    if (labels.length == 1) {
+        if (options.success) {
+            options.success(labels[0].pk);
+        }
+
+        return;
+    }
+
+
     var modal = options.modal || '#modal-form';
 
     var label_list = makeOptionsList(

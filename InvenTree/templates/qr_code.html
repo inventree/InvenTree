@@ -1,12 +1,14 @@
-{% load qr_code %}
+{% load barcode %}
+{% load i18n %}
 
 <div class='container' style='width: 80%;'>
     {% if qr_data %}
     <div class='qr-container'>
-        <img class='qr-code' src="{% qr_url_from_text qr_data size='m' image_format='png' error_correction='m' %}" alt="QR Code">
+        <img src="{% qrcode qr_data %}">
     </div>
     {% else %}
-    <b>Error:</b><br>
-    {{ error_msg }}
+    <div class='alert alert-block alert-warning'>
+        {% trans "QR data not provided" %}
+    </div>
     {% endif %}
 </div>

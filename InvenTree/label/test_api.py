@@ -3,13 +3,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from rest_framework.test import APITestCase
-
 from django.urls import reverse
-from django.contrib.auth import get_user_model
+
+from InvenTree.api_tester import InvenTreeAPITestCase
 
 
-class TestReportTests(APITestCase):
+class TestReportTests(InvenTreeAPITestCase):
     """
     Tests for the StockItem TestReport templates
     """
@@ -21,17 +20,16 @@ class TestReportTests(APITestCase):
         'stock',
     ]
 
+    roles = [
+        'stock.view',
+        'stock_location.view',
+    ]
+
     list_url = reverse('api-stockitem-testreport-list')
 
     def setUp(self):
-        user = get_user_model()
 
-        self.user = user.objects.create_user('testuser', 'test@testing.com', 'password')
-
-        self.user.is_staff = True
-        self.user.save()
-
-        self.client.login(username='testuser', password='password')
+        super().setUp()
 
     def do_list(self, filters={}):
 

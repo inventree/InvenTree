@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import sys
-
 from django.utils.translation import ugettext as _
 from django.conf.urls import url, include
 from django.core.exceptions import ValidationError, FieldError
+from django.http import HttpResponse
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -13,6 +12,7 @@ from rest_framework import generics, filters
 from rest_framework.response import Response
 
 import InvenTree.helpers
+import common.models
 
 from stock.models import StockItem, StockLocation
 
@@ -40,6 +40,74 @@ class LabelListView(generics.ListAPIView):
     ]
 
 
+class LabelPrintMixin:
+    """
+    Mixin for printing labels
+    """
+
+    def print(self, request, items_to_print):
+        """
+        Print this label template against a number of pre-validated items
+        """
+
+        if len(items_to_print) == 0:
+            # No valid items provided, return an error message
+            data = {
+                'error': _('No valid objects provided to template'),
+            }
+
+            return Response(data, status=400)
+
+        outputs = []
+
+        # In debug mode, generate single HTML output, rather than PDF
+        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+
+        # Merge one or more PDF files into a single download
+        for item in items_to_print:
+            label = self.get_object()
+            label.object_to_print = item
+
+            if debug_mode:
+                outputs.append(label.render_as_string(request))
+            else:
+                outputs.append(label.render(request))
+
+        if debug_mode:
+            """
+            Contatenate all rendered templates into a single HTML string,
+            and return the string as a HTML response.
+            """
+
+            html = "\n".join(outputs)
+
+            return HttpResponse(html)
+        else:
+            """
+            Concatenate all rendered pages into a single PDF object,
+            and return the resulting document!
+            """
+
+            pages = []
+
+            if len(outputs) > 1:
+                # If more than one output is generated, merge them into a single file
+                for output in outputs:
+                    doc = output.get_document()
+                    for page in doc.pages:
+                        pages.append(page)
+
+                pdf = outputs[0].get_document().copy(pages).write_pdf()
+            else:
+                pdf = outputs[0].get_document().write_pdf()
+
+            return InvenTree.helpers.DownloadFile(
+                pdf,
+                'inventree_label.pdf',
+                content_type='application/pdf'
+            )
+
+
 class StockItemLabelMixin:
     """
     Mixin for extracting stock items from query params
@@ -54,13 +122,9 @@ class StockItemLabelMixin:
 
         params = self.request.query_params
 
-        if 'items[]' in params:
-            items = params.getlist('items[]', [])
-        elif 'item' in params:
-            items = [params.get('item', None)]
-
-        if type(items) not in [list, tuple]:
-            items = [items]
+        for key in ['item', 'item[]', 'items', 'items[]']:
+            if key in params:
+                items = params.getlist(key, [])
 
         valid_ids = []
 
@@ -158,7 +222,7 @@ class StockItemLabelDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = StockItemLabelSerializer
 
 
-class StockItemLabelPrint(generics.RetrieveAPIView, StockItemLabelMixin):
+class StockItemLabelPrint(generics.RetrieveAPIView, StockItemLabelMixin, LabelPrintMixin):
     """
     API endpoint for printing a StockItemLabel object
     """
@@ -173,34 +237,7 @@ class StockItemLabelPrint(generics.RetrieveAPIView, StockItemLabelMixin):
 
         items = self.get_items()
 
-        if len(items) == 0:
-            # No valid items provided, return an error message
-            data = {
-                'error': _('Must provide valid StockItem(s)'),
-            }
-
-            return Response(data, status=400)
-
-        label = self.get_object()
-
-        try:
-            pdf = label.render(items)
-        except:
-
-            e = sys.exc_info()[1]
-            
-            data = {
-                'error': _('Error during label rendering'),
-                'message': str(e),
-            }
-
-            return Response(data, status=400)
-
-        return InvenTree.helpers.DownloadFile(
-            pdf.getbuffer(),
-            'stock_item_label.pdf',
-            content_type='application/pdf'
-        )
+        return self.print(request, items)
 
 
 class StockLocationLabelMixin:
@@ -217,13 +254,10 @@ class StockLocationLabelMixin:
 
         params = self.request.query_params
 
-        if 'locations[]' in params:
-            locations = params.getlist('locations[]', [])
-        elif 'location' in params:
-            locations = [params.get('location', None)]
+        for key in ['location', 'location[]', 'locations', 'locations[]']:
 
-        if type(locations) not in [list, tuple]:
-            locations = [locations]
+            if key in params:
+                locations = params.getlist(key, [])
 
         valid_ids = []
 
@@ -320,7 +354,7 @@ class StockLocationLabelDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = StockLocationLabelSerializer
 
 
-class StockLocationLabelPrint(generics.RetrieveAPIView, StockLocationLabelMixin):
+class StockLocationLabelPrint(generics.RetrieveAPIView, StockLocationLabelMixin, LabelPrintMixin):
     """
     API endpoint for printing a StockLocationLabel object
     """
@@ -332,35 +366,7 @@ class StockLocationLabelPrint(generics.RetrieveAPIView, StockLocationLabelMixin)
 
         locations = self.get_locations()
 
-        if len(locations) == 0:
-            # No valid locations provided - return an error message
-
-            return Response(
-                {
-                    'error': _('Must provide valid StockLocation(s)'),
-                },
-                status=400,
-            )
-
-        label = self.get_object()
-
-        try:
-            pdf = label.render(locations)
-        except:
-            e = sys.exc_info()[1]
-
-            data = {
-                'error': _('Error during label rendering'),
-                'message': str(e),
-            }
-
-            return Response(data, status=400)
-
-        return InvenTree.helpers.DownloadFile(
-            pdf.getbuffer(),
-            'stock_location_label.pdf',
-            content_type='application/pdf'
-        )
+        return self.print(request, locations)
 
 
 label_api_urls = [

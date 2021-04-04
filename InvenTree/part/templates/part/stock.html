@@ -1,16 +1,19 @@
 {% extends "part/part_base.html" %}
 {% load static %}
 {% load i18n %}
+
+{% block menubar %}
+{% include 'part/navbar.html' with tab='stock' %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Part Stock" %}
+{% endblock %}
+
 {% block details %}
-
-{% include 'part/tabs.html' with tab='stock' %}
-
-<h4>{% trans "Part Stock" %}</h4>
-<hr>
-
 {% if part.is_template %}
 <div class='alert alert-info alert-block'>
-    Showing stock for all variants of <i>{{ part.full_name }}</i>
+    {% trans 'Showing stock for all variants of' %} <i>{{ part.full_name }}</i>
 </div>
 {% endif %}
 
