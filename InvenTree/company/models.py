@@ -114,7 +114,7 @@ class Company(models.Model):
                                verbose_name=_('Contact'),
                                blank=True, help_text=_('Point of contact'))
 
-    link = InvenTreeURLField(blank=True, help_text=_('Link to external company information'))
+    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external company information'))
 
     image = StdImageField(
         upload_to=rename_company_image,
@@ -122,9 +122,10 @@ class Company(models.Model):
         blank=True,
         variations={'thumbnail': (128, 128)},
         delete_orphans=True,
+        verbose_name=_('Image'),
     )
 
-    notes = MarkdownxField(blank=True)
+    notes = MarkdownxField(blank=True, verbose_name=_('Notes'))
 
     is_customer = models.BooleanField(default=False, verbose_name=_('is customer'), help_text=_('Do you sell items to this company?'))
 
@@ -366,11 +367,11 @@ class SupplierPart(models.Model):
         help_text=_('Notes')
     )
 
-    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
+    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
 
     packaging = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Packaging'), help_text=_('Part packaging'))
     
-    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=('Order multiple'))
+    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))
 
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
     # lead_time = models.DurationField(blank=True, null=True)
@@ -530,7 +531,7 @@ class SupplierPriceBreak(common.models.PriceBreak):
         currency: Reference to the currency of this pricebreak (leave empty for base currency)
     """
 
-    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks')
+    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
 
     class Meta:
         unique_together = ("part", "quantity")

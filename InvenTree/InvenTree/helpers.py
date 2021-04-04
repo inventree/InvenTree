@@ -382,17 +382,17 @@ def extract_serial_numbers(serials, expected_quantity):
                     if a < b:
                         for n in range(a, b + 1):
                             if n in numbers:
-                                errors.append(_('Duplicate serial: {n}'.format(n=n)))
+                                errors.append(_('Duplicate serial: {n}').format(n=n))
                             else:
                                 numbers.append(n)
                     else:
-                        errors.append(_("Invalid group: {g}".format(g=group)))
+                        errors.append(_("Invalid group: {g}").format(g=group))
 
                 except ValueError:
-                    errors.append(_("Invalid group: {g}".format(g=group)))
+                    errors.append(_("Invalid group: {g}").format(g=group))
                     continue
             else:
-                errors.append(_("Invalid group: {g}".format(g=group)))
+                errors.append(_("Invalid group: {g}").format(g=group))
                 continue
 
         else:
@@ -409,7 +409,7 @@ def extract_serial_numbers(serials, expected_quantity):
 
     # The number of extracted serial numbers must match the expected quantity
     if not expected_quantity == len(numbers):
-        raise ValidationError([_("Number of unique serial number ({s}) must match quantity ({q})".format(s=len(numbers), q=expected_quantity))])
+        raise ValidationError([_("Number of unique serial number ({s}) must match quantity ({q})").format(s=len(numbers), q=expected_quantity)])
 
     return numbers
 

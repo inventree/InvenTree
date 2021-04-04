@@ -965,7 +965,7 @@ class StockAdjust(AjaxView, FormMixin):
 
         context['stock_action'] = self.stock_action.strip().lower()
 
-        context['stock_action_title'] = self.stock_action.capitalize()
+        context['stock_action_title'] = self.stock_action_title
 
         # Quantity column will be read-only in some circumstances
         context['edit_quantity'] = not self.stock_action == 'delete'
@@ -993,17 +993,18 @@ class StockAdjust(AjaxView, FormMixin):
         if self.stock_action not in ['move', 'count', 'take', 'add', 'delete']:
             self.stock_action = 'count'
 
-        # Choose the form title based on the action
+        # Choose form title and action column based on the action
         titles = {
-            'move': _('Move Stock Items'),
-            'count': _('Count Stock Items'),
-            'take': _('Remove From Stock'),
-            'add': _('Add Stock Items'),
-            'delete': _('Delete Stock Items')
+            'move': [_('Move Stock Items'), _('Move')],
+            'count': [_('Count Stock Items'), _('Count')],
+            'take': [_('Remove From Stock'), _('Take')],
+            'add': [_('Add Stock Items'), _('Add')],
+            'delete': [_('Delete Stock Items'), _('Delete')],
         }
 
-        self.ajax_form_title = titles[self.stock_action]
-        
+        self.ajax_form_title = titles[self.stock_action][0]
+        self.stock_action_title = titles[self.stock_action][1]
+
         # Save list of items!
         self.stock_items = self.get_GET_items()
 
@@ -1039,7 +1040,7 @@ class StockAdjust(AjaxView, FormMixin):
             if self.stock_action in ['move', 'take']:
 
                 if item.new_quantity > item.quantity:
-                    item.error = _('Quantity must not exceed {x}'.format(x=item.quantity))
+                    item.error = _('Quantity must not exceed {x}').format(x=item.quantity)
                     valid = False
                     continue
 
@@ -1118,7 +1119,7 @@ class StockAdjust(AjaxView, FormMixin):
 
             count += 1
 
-        return f"{_('Added stock to ')} {count} {_('items')}"
+        return _('Added stock to {n} items').format(n=count)
 
     def do_take(self):
 
@@ -1133,7 +1134,7 @@ class StockAdjust(AjaxView, FormMixin):
 
             count += 1
 
-        return f"{_('Removed stock from ')} {count} {_('items')}"
+        return _('Removed stock from {n} items').format(n=count)
 
     def do_count(self):
         
@@ -1189,9 +1190,9 @@ class StockAdjust(AjaxView, FormMixin):
             return _('No items were moved')
         
         else:
-            return _('Moved {n} items to {dest}'.format(
+            return _('Moved {n} items to {dest}').format(
                 n=count,
-                dest=destination.pathstring))
+                dest=destination.pathstring)
 
     def do_delete(self):
         """ Delete multiple stock items """
@@ -1208,7 +1209,7 @@ class StockAdjust(AjaxView, FormMixin):
 
             count += 1
 
-        return _("Deleted {n} stock items".format(n=count))
+        return _("Deleted {n} stock items").format(n=count)
 
 
 class StockItemEdit(AjaxUpdateView):

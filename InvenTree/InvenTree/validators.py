@@ -60,7 +60,7 @@ def validate_part_ipn(value):
         match = re.search(pattern, value)
 
         if match is None:
-            raise ValidationError(_('IPN must match regex pattern') + " '{pat}'".format(pat=pattern))
+            raise ValidationError(_('IPN must match regex pattern {pat}').format(pat=pattern))
 
 
 def validate_build_order_reference(value):

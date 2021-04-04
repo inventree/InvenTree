@@ -67,7 +67,7 @@ function showAllocationSubTable(index, row, element) {
         {
             width: '50%',
             field: 'allocated',
-            title: 'Quantity',
+            title: '{% trans "Quantity" %}',
             formatter: function(value, row, index, field) {
                 var text = '';
                 
@@ -89,7 +89,7 @@ function showAllocationSubTable(index, row, element) {
         },
         {
             field: 'buttons',
-            title: 'Actions',
+            title: '{% trans "Actions" %}',
             formatter: function(value, row, index, field) {
                 
                 var html = "<div class='btn-group float-right' role='group'>";
@@ -167,7 +167,7 @@ function showFulfilledSubTable(index, row, element) {
 }
 
 $("#so-lines-table").inventreeTable({
-    formatNoMatches: function() { return "No matching line items"; },
+    formatNoMatches: function() { return "{% trans 'No matching line items' %}"; },
     queryParams: {
         order: {{ order.id }},
         part_detail: true,
@@ -196,7 +196,7 @@ $("#so-lines-table").inventreeTable({
     columns: [
         {
             field: 'pk',
-            title: 'ID',
+            title: '{% trans "ID" %}',
             visible: false,
             switchable: false,
         },
@@ -204,7 +204,7 @@ $("#so-lines-table").inventreeTable({
             sortable: true,
             sortName: 'part__name',
             field: 'part',
-            title: 'Part',
+            title: '{% trans "Part" %}',
             formatter: function(value, row, index, field) {
                 if (row.part) {
                     return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${value}/`);
@@ -216,12 +216,12 @@ $("#so-lines-table").inventreeTable({
         {
             sortable: true,
             field: 'reference',
-            title: 'Reference'
+            title: '{% trans "Reference" %}'
         },
         {
             sortable: true,
             field: 'quantity',
-            title: 'Quantity',
+            title: '{% trans "Quantity" %}',
         },
         {
             field: 'allocated',
@@ -261,7 +261,7 @@ $("#so-lines-table").inventreeTable({
         },
         {
             field: 'notes',
-            title: 'Notes',
+            title: '{% trans "Notes" %}',
         },
         {% if order.status == SalesOrderStatus.PENDING %}
         {

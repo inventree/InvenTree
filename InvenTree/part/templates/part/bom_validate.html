@@ -1,10 +1,12 @@
 {% extends "modal_form.html" %}
 
+{% load i18n %}
+
 {% block pre_form_content %}
-Confirm that the Bill of Materials (BOM) is valid for:<br><i>{{ part.full_name }}</i>
+{% blocktrans with part.full_name as part %}Confirm that the Bill of Materials (BOM) is valid for:<br><i>{{ part }}</i>{% endblocktrans %}
 
 <div class='alert alert-warning alert-block'>
-    This will validate each line in the BOM.
+    {% trans 'This will validate each line in the BOM.' %}
 </div>
 
 {% endblock %}

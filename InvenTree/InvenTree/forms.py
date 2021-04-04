@@ -123,6 +123,7 @@ class DeleteForm(forms.Form):
     confirm_delete = forms.BooleanField(
         required=False,
         initial=False,
+        label=_('Confirm delete'),
         help_text=_('Confirm item deletion')
     )
 
@@ -155,6 +156,7 @@ class SetPasswordForm(HelperForm):
                                      required=True,
                                      initial='',
                                      widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+                                     label=_('Enter password'),
                                      help_text=_('Enter new password'))
 
     confirm_password = forms.CharField(max_length=100,
@@ -162,6 +164,7 @@ class SetPasswordForm(HelperForm):
                                        required=True,
                                        initial='',
                                        widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+                                       label=_('Confirm password'),
                                        help_text=_('Confirm new password'))
 
     class Meta:

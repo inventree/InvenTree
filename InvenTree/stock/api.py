@@ -195,7 +195,7 @@ class StockCount(StockAdjust):
             if item['item'].stocktake(item['quantity'], request.user, notes=self.notes):
                 n += 1
 
-        return Response({'success': 'Updated stock for {n} items'.format(n=n)})
+        return Response({'success': _('Updated stock for {n} items').format(n=n)})
 
 
 class StockAdd(StockAdjust):
@@ -264,7 +264,7 @@ class StockTransfer(StockAdjust):
             if item['item'].move(location, self.notes, request.user, quantity=item['quantity']):
                 n += 1
 
-        return Response({'success': 'Moved {n} parts to {loc}'.format(
+        return Response({'success': _('Moved {n} parts to {loc}').format(
             n=n,
             loc=str(location),
         )})
