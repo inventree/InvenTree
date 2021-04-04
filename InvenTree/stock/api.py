@@ -11,6 +11,7 @@ from django.conf.urls import url, include
 from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking

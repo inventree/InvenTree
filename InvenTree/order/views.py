@@ -9,7 +9,7 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.urls import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
 from django.views.generic.edit import FormMixin
 from django.forms import HiddenInput
