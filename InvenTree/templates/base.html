@@ -134,6 +134,7 @@ InvenTree
 <script type='text/javascript' src='{% static "bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.js" %}'></script>
 
 <script type="text/javascript" src="{% static 'fullcalendar/main.js' %}"></script>
+<script type="text/javascript" src="{% static 'fullcalendar/locales-all.js' %}"></script>
 <script type="text/javascript" src="{% static 'script/select2/select2.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
 
@@ -180,6 +181,7 @@ $(document).ready(function () {
     });
     {% endif %}
 
+    moment.locale('{{request.LANGUAGE_CODE}}');
 });
 
 </script>
