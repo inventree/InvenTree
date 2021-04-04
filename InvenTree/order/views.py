@@ -1057,7 +1057,7 @@ class OrderParts(AjaxView):
 
         data = {
             'form_valid': valid,
-            'success': 'Ordered {n} parts'.format(n=len(self.parts))
+            'success': _('Ordered {n} parts').format(n=len(self.parts))
         }
 
         return self.renderJsonResponse(self.request, data=data)
@@ -1348,7 +1348,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
             'form_valid': valid,
             'form_errors': self.form.errors.as_json(),
             'non_field_errors': self.form.non_field_errors().as_json(),
-            'success': _("Allocated") + f" {len(self.stock_items)} " + _("items")
+            'success': _("Allocated {n} items").format(n=len(self.stock_items))
         }
 
         return self.renderJsonResponse(request, self.form, data)
