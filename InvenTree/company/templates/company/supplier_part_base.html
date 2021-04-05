@@ -98,7 +98,7 @@ src="{% static 'img/blank_image.png' %}"
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "MPN" %}</td>
-            <td>{{ part.manufacturer_part.MPN }}</td>
+            <td><a href="{% url 'manufacturer-part-detail' part.manufacturer_part.id %}">{{ part.manufacturer_part.MPN }}</a></td>
         </tr>
         {% endif %}
         {% if part.packaging %}
