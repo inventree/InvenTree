@@ -9,16 +9,6 @@
         </a>
     </li>
 
-    {% setting_object 'PART_ENABLE_MANUFACTURER_PARTS' as manufacturer_parts %}
-    {% if manufacturer_parts.value == "True" %}
-    <li class='list-group-item {% if tab == "manufacturers" %}active{% endif %}' title='{% trans "Manufacturer Parts" %}'>
-        <a href='{% url "supplier-part-manufacturers" part.id %}'>
-            <span class='fas fa-industry'></span>
-            {% trans "Manufacturers" %}
-        </a>
-    </li>
-    {% endif %}
-
     <li class='list-group-item {% if tab == "stock" %}active{% endif %}' title='{% trans "Supplier Part Stock" %}'>
         <a href='{% url "supplier-part-stock" part.id %}'>
             <span class='fas fa-boxes'></span>

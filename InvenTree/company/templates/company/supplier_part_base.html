@@ -87,17 +87,18 @@ src="{% static 'img/blank_image.png' %}"
             <td>{% trans "SKU" %}</td>
             <td>{{ part.SKU }}</tr>
         </tr>
-        {% if part.manufacturer %}
+        {% if part.manufacturer_part.manufacturer %}
         <tr>
             <td><span class='fas fa-industry'></span></td>
             <td>{% trans "Manufacturer" %}</td>
-            <td><a href="{% url 'company-detail-manufacturer-parts' part.manufacturer.id %}">{{ part.manufacturer.name }}</a></td></tr>
+            <td><a href="{% url 'company-detail-manufacturer-parts' part.manufacturer_part.manufacturer.id %}">{{ part.manufacturer_part.manufacturer.name }}</a></td>
+        </tr>
         {% endif %}
-        {% if part.MPN %}
+        {% if part.manufacturer_part.MPN %}
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "MPN" %}</td>
-            <td>{{ part.MPN }}</td>
+            <td>{{ part.manufacturer_part.MPN }}</td>
         </tr>
         {% endif %}
         {% if part.packaging %}
