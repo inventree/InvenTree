@@ -27,7 +27,7 @@ class CompanyTest(InvenTreeAPITestCase):
     def test_company_list(self):
         url = reverse('api-company-list')
 
-        # There should be two companies
+        # There should be three companies
         response = self.get(url)
         self.assertEqual(len(response.data), 3)
 
@@ -62,3 +62,64 @@ class CompanyTest(InvenTreeAPITestCase):
         data = {'search': 'cup'}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 2)
+
+
+class ManufacturerTest(InvenTreeAPITestCase):
+    """
+    Series of tests for the Manufacturer DRF API
+    """
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'company',
+        'manufacturer_part',
+    ]
+
+    roles = [
+        'part.change',
+    ]
+
+    def test_manufacturer_part_list(self):
+        url = reverse('api-manufacturer-part-list')
+
+        # There should be three manufacturer parts
+        response = self.get(url)
+        self.assertEqual(len(response.data), 3)
+
+        # Filter by manufacturer
+        data = {'company': 7}
+        response = self.get(url, data)
+        self.assertEqual(len(response.data), 2)
+
+        # Filter by part
+        data = {'part': 5}
+        response = self.get(url, data)
+        self.assertEqual(len(response.data), 2)
+
+        # Filter by supplier part (should return only one manufacturer part)
+        data = {'supplier_part': 10}
+        response = self.get(url, data)
+        self.assertEqual(len(response.data), 1)
+
+    def test_manufacturer_part_detail(self):
+        url = reverse('api-manufacturer-part-detail', kwargs={'pk': 1})
+        response = self.get(url)
+
+        self.assertEqual(response.data['MPN'], 'MPN123')
+
+        # Change the MPN
+        data = {
+            'MPN': 'MPN-TEST-123',
+        }
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['MPN'], 'MPN-TEST-123')
+
+    def test_manufacturer_part_search(self):
+        # Test search functionality in manufacturer list
+        url = reverse('api-manufacturer-part-list')
+        data = {'search': 'MPN'}
+        response = self.get(url, data)
+        self.assertEqual(len(response.data), 3)

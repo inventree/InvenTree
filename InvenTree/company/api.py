@@ -186,9 +186,6 @@ class ManufacturerPartDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
 
-    read_only_fields = [
-    ]
-
 
 class SupplierPartList(generics.ListCreateAPIView):
     """ API endpoint for list view of SupplierPart object
