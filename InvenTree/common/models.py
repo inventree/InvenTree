@@ -202,13 +202,6 @@ class InvenTreeSetting(models.Model):
             'validator': bool,
         },
 
-        'PART_ENABLE_MANUFACTURER_PARTS': {
-            'name': _('Enable Manufacturer Parts'),
-            'description': _('Enable the use of manufacturer parts for purchasing'),
-            'default': False,
-            'validator': bool,
-        },
-
         'REPORT_DEBUG_MODE': {
             'name': _('Debug Mode'),
             'description': _('Generate reports in debug mode (HTML output)'),
