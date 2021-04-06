@@ -142,12 +142,6 @@ class ManufacturerPartList(generics.ListCreateAPIView):
         if part is not None:
             queryset = queryset.filter(part=part)
 
-        # Filter by supplier part?
-        supplier_part = params.get('supplier_part', None)
-
-        if supplier_part is not None:
-            queryset = queryset.filter(supplier_parts=supplier_part)
-
         # Filter by 'active' status of the part?
         active = params.get('active', None)
 

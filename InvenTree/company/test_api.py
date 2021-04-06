@@ -78,6 +78,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
     ]
 
     roles = [
+        'part.add',
         'part.change',
     ]
 
@@ -88,25 +89,30 @@ class ManufacturerTest(InvenTreeAPITestCase):
         response = self.get(url)
         self.assertEqual(len(response.data), 3)
 
+        # Create manufacturer part
+        data = {
+            'part': 1,
+            'manufacturer': 7,
+            'MPN': 'MPN_TEST',
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['MPN'], 'MPN_TEST')
+
         # Filter by manufacturer
         data = {'company': 7}
         response = self.get(url, data)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data), 3)
 
         # Filter by part
         data = {'part': 5}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 2)
 
-        # Filter by supplier part (should return only one manufacturer part)
-        data = {'supplier_part': 10}
-        response = self.get(url, data)
-        self.assertEqual(len(response.data), 1)
-
     def test_manufacturer_part_detail(self):
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': 1})
+        
         response = self.get(url)
-
         self.assertEqual(response.data['MPN'], 'MPN123')
 
         # Change the MPN
@@ -123,3 +129,22 @@ class ManufacturerTest(InvenTreeAPITestCase):
         data = {'search': 'MPN'}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 3)
+
+    def test_supplier_part_create(self):
+        url = reverse('api-supplier-part-list')
+
+        # Create supplier part
+        data = {
+            'part': 1,
+            'supplier': 1,
+            'SKU': 'SKU_TEST',
+            'manufacturer': 7,
+            'MPN': 'PART_NUMBER',
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Check manufacturer part
+        url = reverse('api-manufacturer-part-detail', kwargs={'pk': 5})
+        response = self.get(url)
+        self.assertEqual(response.data['MPN'], 'PART_NUMBER')

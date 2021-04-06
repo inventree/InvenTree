@@ -183,12 +183,34 @@ class ManufacturerPartSimpleTest(TestCase):
         # Create a manufacturer part
         self.part = Part.objects.get(pk=1)
         manufacturer = Company.objects.get(pk=1)
-        MPN = 'MPN_TEST'
+        
+        self.mp = ManufacturerPart.create(
+            part=self.part,
+            manufacturer=manufacturer,
+            mpn='PART_NUMBER',
+            description='THIS IS A MANUFACTURER PART',
+        )
+        
+        # Create a supplier part
+        supplier = Company.objects.get(pk=5)
+        supplier_part = SupplierPart.objects.create(
+            part=self.part,
+            supplier=supplier,
+            SKU='SKU_TEST',
+        )
 
-        self.mp = ManufacturerPart.objects.create(part=self.part, manufacturer=manufacturer, MPN=MPN)
+        kwargs = {
+            'manufacturer': manufacturer.id,
+            'MPN': 'MPN_TEST',
+        }
+        supplier_part.save(**kwargs)
 
     def test_exists(self):
-        self.assertEqual(ManufacturerPart.objects.count(), 4)
+        self.assertEqual(ManufacturerPart.objects.count(), 5)
+
+        # Check that manufacturer part was created from supplier part creation
+        manufacturer_parts = ManufacturerPart.objects.filter(manufacturer=1)
+        self.assertEqual(manufacturer_parts.count(), 2)
 
     def test_delete(self):
         # Remove a part
