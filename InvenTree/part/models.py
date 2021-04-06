@@ -2160,7 +2160,7 @@ class BomItem(models.Model):
     optional = models.BooleanField(default=False, verbose_name=_('Optional'), help_text=_("This BOM item is optional"))
 
     overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
-                                verbose_name=_('Overage'),
+                               verbose_name=_('Overage'),
                                help_text=_('Estimated build wastage quantity (absolute or percentage)')
                                )
 

@@ -210,7 +210,7 @@ class CompleteBuildOutputForm(HelperForm):
 
     location = forms.ModelChoiceField(
         queryset=StockLocation.objects.all(),
-        label = _('Location'),
+        label=_('Location'),
         help_text=_('Location of completed parts'),
     )
 

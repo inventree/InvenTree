@@ -638,7 +638,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         help_text=_("Supplier part"),
     )
 
-    received = models.DecimalField(decimal_places=5, max_digits=15, default=0, verbose_name=_('Received') , help_text=_('Number of items received'))
+    received = models.DecimalField(decimal_places=5, max_digits=15, default=0, verbose_name=_('Received'), help_text=_('Number of items received'))
 
     purchase_price = MoneyField(
         max_digits=19,
