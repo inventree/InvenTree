@@ -97,9 +97,9 @@ class EditManufacturerPartForm(HelperForm):
         model = ManufacturerPart
         fields = [
             'part',
-            'description',
             'manufacturer',
             'MPN',
+            'description',
             'link',
         ]
 

@@ -2,14 +2,19 @@
 {% load i18n %}
 
 {% block pre_form_content %}
-{% trans "Are you sure you want to delete the following Manufacturer Parts?" %}
+<div class='alert alert-block alert-warning'>
+    {% trans "Are you sure you want to delete the following Manufacturer Parts?" %}
+</div>
+{% for part in parts %}
+    
+{% endfor %}
 
-<hr>
 {% endblock %}
 
 {% block form_data %}
-<table class='table table-striped table-condensed'>
+
 {% for part in parts %}
+<table class='table table-striped table-condensed'>
 <tr>
     <input type='hidden' name='manufacturer-part-{{ part.id}}' value='manufacturer-part-{{ part.id }}'/>
     
@@ -25,7 +30,18 @@
         {{ part.MPN }}
     </td>
 </tr>
-{% endfor %}
 </table>
+{% if part.supplier_parts.all|length > 0 %}
+<div class='alert alert-block alert-danger'>
+<p>There are {{ part.supplier_parts.all|length }} suppliers defined for this manufacturer part. If you delete it, the following supplier parts will also be deleted:
+</p>
+<ul class='list-group' style='margin-top:10px'>
+    {% for spart in part.supplier_parts.all %}
+    <li class='list-group-item'>{{ spart.supplier.name }} - {{ spart.SKU }}</li>
+    {% endfor %}
+</ul>
+</div>
+{% endif %}
+{% endfor %}
 
 {% endblock %}
