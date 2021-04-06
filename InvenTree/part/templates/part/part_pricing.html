@@ -1,5 +1,6 @@
 {% extends "modal_form.html" %}
 
+{% load i18n %}
 {% block pre_form_content %}
 
 <div class='alert alert-info alert-block'>
@@ -75,6 +76,76 @@ Pricing information for:<br>
     </tr>
     {% endif %}
 </table>
+    {% endif %}
+
+    {% if price_history %}
+    <h4>{% trans 'Stock Pricing' %}</h4>
+    {% if price_history|length > 1 %}
+        <canvas id="priceChart"></canvas>
+        <script>
+        var pricedata = {
+                labels: [
+                    {% for line in price_history %}'{{ line.date }}',{% endfor %}
+                ],
+                datasets: [{
+                    label: 'Price',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    yAxisID: 'y',
+                    data: [
+                        {% for line in price_history %}{{ line.price|stringformat:".2f" }},{% endfor %}
+                    ],
+                    borderWidth: 1,
+                    type: 'line'
+                },
+                {
+                    label: 'Qty',
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    borderColor: 'rgb(255, 206, 86)',
+                    yAxisID: 'y1',
+                    data: [
+                        {% for line in price_history %}{{ line.qty|stringformat:"f" }},{% endfor %}
+                    ],
+                    borderWidth: 1
+                }]
+            }
+
+        var ctx = document.getElementById('priceChart');
+        var priceChart = new Chart(ctx, {
+            type: 'bar',
+            data: pricedata,
+            options: {
+                responsive: true,
+                plugins: {legend: {position: 'bottom'}},
+                scales: {
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        grid: {display: false},
+                        title: {
+                            display: true,
+                            text: 'Price - USD'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        position: 'right',
+                        grid: {display: false},
+                        titel: {
+                            display: true,
+                            text: 'Qty',
+                            position: 'right'
+                        }
+                    }
+                }
+            }
+        });
+        </script>
+    {% else %}
+    <div class='alert alert-danger alert-block'>
+        {% trans 'No stock pricing history is available for this part.' %}
+    </div>
+    {% endif %}
     {% endif %}
 
 {% if min_unit_buy_price or min_unit_bom_price %}

@@ -776,6 +776,7 @@ class PurchaseOrderReceive(AjaxUpdateView):
                 line.receive_quantity,
                 self.request.user,
                 status=line.status_code,
+                purchase_price=line.purchase_price,
             )
 
 

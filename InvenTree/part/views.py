@@ -2027,6 +2027,30 @@ class PartPricing(AjaxView):
                     ctx['max_total_bom_price'] = max_bom_price
                     ctx['max_unit_bom_price'] = max_bom_price / quantity
 
+        # Stock history
+        if part.total_stock > 1:
+            ret = []
+            stock = part.stock_entries(include_variants=False, in_stock=True)
+
+            for stock_item in stock:
+                if None in [stock_item.purchase_price, stock_item.quantity]:
+                    continue
+                line = {
+                    'price': stock_item.purchase_price.amount,
+                    'qty': stock_item.quantity
+                }
+                if stock_item.supplier_part:
+                    line['name'] = stock_item.supplier_part.pretty_name
+
+                    if stock_item.supplier_part.unit_pricing and stock_item.purchase_price:
+                        line['price_diff'] = stock_item.supplier_part.unit_pricing - stock_item.purchase_price.amount
+                if stock_item.purchase_order:
+
+                    line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
+                ret.append(line)
+
+            ctx['price_history'] = ret
+
         return ctx
 
     def get(self, request, *args, **kwargs):
