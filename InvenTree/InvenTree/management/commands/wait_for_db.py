@@ -4,10 +4,8 @@ Custom management command, wait for the database to be ready!
 
 from django.core.management.base import BaseCommand
 
-from django.db import connections
-from django.db.utils import OperationalError
-
-from part.models import Part
+from django.db import connection
+from django.db.utils import OperationalError, ImproperlyConfigured
 
 import time
 
@@ -18,20 +16,27 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **kwargs):
+
         self.stdout.write("Waiting for database...")
 
-        db_conn = None
+        connected = False
 
-        while not db_conn:
+        while not connected:
+
+            time.sleep(5)
+
             try:
-                # get the database with keyword 'default' from settings.py
-                db_conn = connections['default']
+                connection.ensure_connection()
 
-                # Try to read some data from the database
-                Part.objects.count()
+                connected = True
 
-                # prints success messge in green
-                self.stdout.write(self.style.SUCCESS('InvenTree database connected'))
-            except:
-                self.stdout.write(self.style.ERROR("Database unavailable, waiting 5 seconds ..."))
-                time.sleep(5)
+            except OperationalError as e:
+                self.stdout.write(f"Could not connect to database: {e}")
+            except ImproperlyConfigured as e:
+                self.stdout.write(f"Improperly configured: {e}")
+            else:
+                if not connection.is_usable():
+                    self.stdout.write("Database configuration is not usable")
+
+            if connected:
+                self.stdout.write("Database connection sucessful!")
