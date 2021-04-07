@@ -23,6 +23,7 @@ def schedule_task(taskname, **kwargs):
 
     # If unspecified, repeat indefinitely
     repeats = kwargs.pop('repeats', -1)
+    kwargs['repeats'] = repeats
 
     try:
         from django_q.models import Schedule
@@ -31,15 +32,18 @@ def schedule_task(taskname, **kwargs):
         return
 
     try:
+        # If this task is already scheduled, don't schedule it again
+        # Instead, update the scheduling parameters
         if Schedule.objects.filter(func=taskname).exists():
-            logger.info(f"Scheduled task '{taskname}' already exists. (Skipping)")
+            logger.info(f"Scheduled task '{taskname}' already exists - updating!")
+
+            Schedule.objects.filter(func=taskname).update(**kwargs)
         else:
             logger.info(f"Creating scheduled task '{taskname}'")
 
             Schedule.objects.create(
                 name=taskname,
                 func=taskname,
-                repeats=repeats,
                 **kwargs
             )
     except (OperationalError, ProgrammingError):
@@ -82,8 +86,8 @@ def delete_successful_tasks():
 
     try:
         from django_q.models import Success
-        logger.warning("Could not perform 'delete_successful_tasks' - App registry not ready")
     except AppRegistryNotReady:
+        logger.warning("Could not perform 'delete_successful_tasks' - App registry not ready")
         return
 
     threshold = datetime.now() - timedelta(days=30)
