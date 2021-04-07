@@ -109,11 +109,11 @@ class TestManufacturerField(MigratorTestCase):
 
 class TestManufacturerPart(MigratorTestCase):
     """
-    Tests for migration 0032 and 0033 which added ManufacturerPart model
+    Tests for migration 0033 and 0034 which added and transitioned to the ManufacturerPart model
     """
 
-    migrate_from = ('company', '0031_auto_20210103_2215')
-    migrate_to = ('company', '0033_supplierpart_update')
+    migrate_from = ('company', '0032_auto_20210403_1837')
+    migrate_to = ('company', '0034_supplierpart_update')
 
     def prepare(self):
         """
