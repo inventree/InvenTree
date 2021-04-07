@@ -451,7 +451,7 @@ $("#stock-edit").click(function () {
         "{% url 'stock-item-edit' item.id %}",
         {
             reload: true,
-            submit_text: "Save",
+            submit_text: '{% trans "Save" %}',
         }
     );
 });

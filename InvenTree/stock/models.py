@@ -51,7 +51,8 @@ class StockLocation(InvenTreeTree):
     """
 
     owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
-                              help_text='Select Owner',
+                              verbose_name=_('Owner'),
+                              help_text=_('Select Owner'),
                               related_name='stock_locations')
 
     def get_absolute_url(self):
@@ -483,7 +484,7 @@ class StockItem(MPTTModel):
 
     review_needed = models.BooleanField(default=False)
 
-    delete_on_deplete = models.BooleanField(default=True, help_text=_('Delete this Stock Item when stock is depleted'))
+    delete_on_deplete = models.BooleanField(default=True, verbose_name=_('Delete on deplete'), help_text=_('Delete this Stock Item when stock is depleted'))
 
     status = models.PositiveIntegerField(
         default=StockStatus.OK,
@@ -507,7 +508,8 @@ class StockItem(MPTTModel):
     )
 
     owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
-                              help_text='Select Owner',
+                              verbose_name=_('Owner'),
+                              help_text=_('Select Owner'),
                               related_name='stock_items')
 
     def is_stale(self):
@@ -948,7 +950,7 @@ class StockItem(MPTTModel):
             raise ValidationError({"quantity": _("Quantity must be greater than zero")})
 
         if quantity > self.quantity:
-            raise ValidationError({"quantity": _("Quantity must not exceed available stock quantity ({n})".format(n=self.quantity))})
+            raise ValidationError({"quantity": _("Quantity must not exceed available stock quantity ({n})").format(n=self.quantity)})
 
         if not type(serials) in [list, tuple]:
             raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
@@ -989,7 +991,7 @@ class StockItem(MPTTModel):
             new_item.addTransactionNote(_('Add serial number'), user, notes=notes)
 
         # Remove the equivalent number of items
-        self.take_stock(quantity, user, notes=_('Serialized {n} items'.format(n=quantity)))
+        self.take_stock(quantity, user, notes=_('Serialized {n} items').format(n=quantity))
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
@@ -1548,17 +1550,17 @@ class StockItemTracking(models.Model):
 
     date = models.DateTimeField(auto_now_add=True, editable=False)
 
-    title = models.CharField(blank=False, max_length=250, help_text=_('Tracking entry title'))
+    title = models.CharField(blank=False, max_length=250, verbose_name=_('Title'), help_text=_('Tracking entry title'))
 
-    notes = models.CharField(blank=True, max_length=512, help_text=_('Entry notes'))
+    notes = models.CharField(blank=True, max_length=512, verbose_name=_('Notes'), help_text=_('Entry notes'))
 
-    link = InvenTreeURLField(blank=True, help_text=_('Link to external page for further information'))
+    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page for further information'))
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     system = models.BooleanField(default=False)
 
-    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1)
+    quantity = models.DecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, verbose_name=_('Quantity'))
 
     # TODO
     # image = models.ImageField(upload_to=func, max_length=255, null=True, blank=True)

@@ -160,7 +160,7 @@
 
     $("#stock-export").click(function() {
         launchModalForm("{% url 'stock-export-options' %}", {
-            submit_text: "Export",
+            submit_text: '{% trans "Export" %}',
             success: function(response) {
                 var url = "{% url 'stock-export' %}";
                 
@@ -188,8 +188,8 @@
                             secondary: [
                                 {
                                     field: 'parent',
-                                    label: 'New Location',
-                                    title: 'Create new location',
+                                    label: '{% trans "New Location" %}',
+                                    title: '{% trans "Create new location" %}',
                                     url: "{% url 'stock-location-create' %}",
                                 },
                             ]

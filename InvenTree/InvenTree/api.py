@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 import logging
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.http import JsonResponse
 
 from django_filters.rest_framework import DjangoFilterBackend
