@@ -15,6 +15,8 @@ fi
 # Activate virtual environment
 source $INVENTREE_VENV/bin/activate
 
+sleep 5
+
 # Wait for the database to be ready
 cd $INVENTREE_MNG_DIR
 python manage.py wait_for_db
@@ -32,4 +34,4 @@ python manage.py collectstatic --noinput || exit 1
 python manage.py clearsessions || exit 1
 
 # Now we can launch the server and background worker
-/usr/bin/supervisord -c /etc/supervisord.conf
+/usr/bin/supervisord -c $INVENTREE_HOME/supervisord.conf

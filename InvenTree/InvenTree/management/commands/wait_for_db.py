@@ -27,5 +27,5 @@ class Command(BaseCommand):
                 # prints success messge in green
                 self.stdout.write(self.style.SUCCESS('InvenTree database connected'))
             except OperationalError:
-                self.stdout.write("Database unavailable, waiting 5 seconds ...")
+                self.stdout.write(self.style.ERROR("Database unavailable, waiting 5 seconds ..."))
                 time.sleep(5)

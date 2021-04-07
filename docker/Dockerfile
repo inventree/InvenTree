@@ -79,7 +79,7 @@ RUN apk add --no-cache supervisor
 RUN mkdir ${INVENTREE_HOME}/media ${INVENTREE_HOME}/static ${INVENTREE_HOME}/backup
 
 # Copy supervisor file
-COPY docker/supervisor.conf /etc/supervisord.conf
+COPY docker/supervisord.conf ${INVENTREE_HOME}/supervisord.conf
 
 # Copy gunicorn config file
 COPY docker/gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
