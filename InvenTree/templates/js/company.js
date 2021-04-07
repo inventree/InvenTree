@@ -306,7 +306,11 @@ function loadSupplierPartTable(table, url, options) {
                 field: 'MPN',
                 title: '{% trans "MPN" %}',
                 formatter: function(value, row, index, field) {
-                    return renderLink(value, `/manufacturer-part/${row.manufacturer_part.pk}/`);
+                    if (value && row.manufacturer_part) {
+                        return renderLink(value, `/manufacturer-part/${row.manufacturer_part.pk}/`);
+                    } else {
+                        return "-";
+                    }
                 }
             },
             {

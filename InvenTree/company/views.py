@@ -542,6 +542,10 @@ class SupplierPartEdit(AjaxUpdateView):
 
         supplier_part = self.get_object()
 
+        # Hide Manufacturer fields
+        form.fields['manufacturer'].widget = HiddenInput()
+        form.fields['MPN'].widget = HiddenInput()
+
         # It appears that hiding a MoneyField fails validation
         # Therefore the idea to set the value before hiding
         if form.is_valid():
