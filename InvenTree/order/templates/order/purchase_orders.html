@@ -116,6 +116,7 @@ InvenTree | {% trans "Purchase Orders" %}
             initialView: 'dayGridMonth',
             nowIndicator: true,
             aspectRatio: 2.5,
+            locale: '{{request.LANGUAGE_CODE}}',
             datesSet: function() {
                 loadOrderEvents(calendar);
             }

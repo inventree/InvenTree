@@ -134,12 +134,12 @@ InvenTree
 <script type='text/javascript' src='{% static "bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.js" %}'></script>
 
 <script type="text/javascript" src="{% static 'fullcalendar/main.js' %}"></script>
+<script type="text/javascript" src="{% static 'fullcalendar/locales-all.js' %}"></script>
 <script type="text/javascript" src="{% static 'script/select2/select2.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
 
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/api.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/inventree/filters.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/sidenav.js' %}"></script>
 
@@ -156,6 +156,7 @@ InvenTree
 <script type='text/javascript' src="{% url 'calendar.js' %}"></script>
 <script type='text/javascript' src="{% url 'tables.js' %}"></script>
 <script type='text/javascript' src="{% url 'table_filters.js' %}"></script>
+<script type='text/javascript' src="{% url 'filters.js' %}"></script>
 
 <script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
 <script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>
@@ -180,6 +181,7 @@ $(document).ready(function () {
     });
     {% endif %}
 
+    moment.locale('{{request.LANGUAGE_CODE}}');
 });
 
 </script>

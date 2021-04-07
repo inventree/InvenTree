@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from django.urls import reverse
@@ -216,7 +216,7 @@ class Build(MPTTModel):
         help_text=_('Batch code for this build output')
     )
     
-    creation_date = models.DateField(auto_now_add=True, editable=False)
+    creation_date = models.DateField(auto_now_add=True, editable=False, verbose_name=_('Creation Date'))
     
     target_date = models.DateField(
         null=True, blank=True,
@@ -224,12 +224,13 @@ class Build(MPTTModel):
         help_text=_('Target date for build completion. Build will be overdue after this date.')
     )
 
-    completion_date = models.DateField(null=True, blank=True)
+    completion_date = models.DateField(null=True, blank=True, verbose_name=_('Completion Date'))
 
     completed_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         blank=True, null=True,
+        verbose_name=_('completed by'),
         related_name='builds_completed'
     )
 
@@ -237,6 +238,7 @@ class Build(MPTTModel):
         User,
         on_delete=models.SET_NULL,
         blank=True, null=True,
+        verbose_name=_('Issued by'),
         help_text=_('User who issued this build order'),
         related_name='builds_issued',
     )
@@ -245,6 +247,7 @@ class Build(MPTTModel):
         UserModels.Owner,
         on_delete=models.SET_NULL,
         blank=True, null=True,
+        verbose_name=_('Responsible'),
         help_text=_('User responsible for this build order'),
         related_name='builds_responsible',
     )
@@ -1017,14 +1020,14 @@ class BuildItem(models.Model):
         try:
             # Allocated part must be in the BOM for the master part
             if self.stock_item.part not in self.build.part.getRequiredParts(recursive=False):
-                errors['stock_item'] = [_("Selected stock item not found in BOM for part '{p}'".format(p=self.build.part.full_name))]
+                errors['stock_item'] = [_("Selected stock item not found in BOM for part '{p}'").format(p=self.build.part.full_name)]
             
             # Allocated quantity cannot exceed available stock quantity
             if self.quantity > self.stock_item.quantity:
-                errors['quantity'] = [_("Allocated quantity ({n}) must not exceed available quantity ({q})".format(
+                errors['quantity'] = [_("Allocated quantity ({n}) must not exceed available quantity ({q})").format(
                     n=normalize(self.quantity),
                     q=normalize(self.stock_item.quantity)
-                ))]
+                )]
 
             # Allocated quantity cannot cause the stock item to be over-allocated
             if self.stock_item.quantity - self.stock_item.allocation_count() + self.quantity < self.quantity:
@@ -1076,6 +1079,7 @@ class BuildItem(models.Model):
         Build,
         on_delete=models.CASCADE,
         related_name='allocated_stock',
+        verbose_name=_('Build'),
         help_text=_('Build to allocate parts')
     )
 
@@ -1083,6 +1087,7 @@ class BuildItem(models.Model):
         'stock.StockItem',
         on_delete=models.CASCADE,
         related_name='allocations',
+        verbose_name=_('Stock Item'),
         help_text=_('Source stock item'),
         limit_choices_to={
             'sales_order': None,
@@ -1095,6 +1100,7 @@ class BuildItem(models.Model):
         max_digits=15,
         default=1,
         validators=[MinValueValidator(0)],
+        verbose_name=_('Quantity'),
         help_text=_('Stock quantity to allocate to build')
     )
 
@@ -1103,6 +1109,7 @@ class BuildItem(models.Model):
         on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='items_to_install',
+        verbose_name=_('Install into'),
         help_text=_('Destination stock item'),
         limit_choices_to={
             'is_building': True,

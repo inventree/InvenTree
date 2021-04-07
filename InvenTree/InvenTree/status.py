@@ -3,12 +3,10 @@ Provides system status functionality checks.
 """
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
+from django.utils.translation import ugettext_lazy as _
 
 import logging
 from datetime import datetime, timedelta
-
-from django.utils.translation import ugettext as _
 
 from django_q.models import Success
 from django_q.monitor import Stat

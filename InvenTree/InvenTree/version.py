@@ -71,7 +71,7 @@ def inventreeCommitHash():
 
     try:
         return str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
-    except FileNotFoundError:
+    except:
         return None
 
 
@@ -81,5 +81,5 @@ def inventreeCommitDate():
     try:
         d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip()
         return d.split(' ')[0]
-    except FileNotFoundError:
+    except:
         return None

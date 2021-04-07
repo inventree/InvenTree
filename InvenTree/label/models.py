@@ -126,7 +126,7 @@ class LabelTemplate(models.Model):
 
     width = models.FloatField(
         default=50,
-        verbose_name=('Width [mm]'),
+        verbose_name=_('Width [mm]'),
         help_text=_('Label width, specified in mm'),
         validators=[MinValueValidator(2)]
     )

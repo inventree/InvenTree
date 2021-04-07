@@ -1,7 +1,9 @@
 {% extends "modal_form.html" %}
 
+{% load i18n %}
+
 {% block pre_form_content %}
 
-After placing this purchase order, line items will no longer be editable.
+{% trans 'After placing this purchase order, line items will no longer be editable.' %}
 
 {% endblock %}
