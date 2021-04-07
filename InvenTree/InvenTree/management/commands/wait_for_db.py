@@ -7,6 +7,8 @@ from django.core.management.base import BaseCommand
 from django.db import connections
 from django.db.utils import OperationalError
 
+import psycopg2
+
 import time
 
 
@@ -26,6 +28,6 @@ class Command(BaseCommand):
                 db_conn = connections['default']
                 # prints success messge in green
                 self.stdout.write(self.style.SUCCESS('InvenTree database connected'))
-            except OperationalError:
+            except (OperationalError, psycopg2.OperationalError):
                 self.stdout.write(self.style.ERROR("Database unavailable, waiting 5 seconds ..."))
                 time.sleep(5)

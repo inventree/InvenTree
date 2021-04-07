@@ -1,13 +1,17 @@
 FROM python:alpine as production
 
 # GitHub source
-ARG INVENTREE_REPO="https://github.com/inventree/InvenTree.git"
-ARG INVENTREE_VERSION="master"
+ARG repository="https://github.com/inventree/InvenTree.git"
+ARG branch="master"
 
 ENV PYTHONUNBUFFERED 1
 
 # InvenTree key settings
 ENV INVENTREE_HOME="/home/inventree"
+
+# GitHub settings
+ENV INVENTREE_REPO="${repository}"
+ENV INVENTREE_BRANCH="${branch}"
 
 ENV INVENTREE_LOG_LEVEL="INFO"
 
@@ -57,7 +61,7 @@ RUN apk add --no-cache postgresql-contrib postgresql-dev libpq
 RUN apk add --no-cache mariadb-connector-c mariadb-dev
 
 # Clone source code
-RUN git clone --branch ${INVENTREE_VERSION} --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
+RUN git clone --branch ${INVENTREE_BRANCH} --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
 
 # Setup Python virtual environment
 RUN python3 -m venv ${INVENTREE_VENV}
