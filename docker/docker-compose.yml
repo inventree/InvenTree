@@ -1,0 +1,49 @@
+version: "3.8"
+
+# Docker compose recipe for InvenTree
+# - Runs PostgreSQL as the database backend
+# - Serves web data using Gunicorn
+
+services:
+    # Use PostgreSQL as the database backend
+    # Note: this can be changed to a different backend,
+    #       just make sure that you change the INVENTREE_DB_xxx vars below
+    db:
+        image: postgres
+        container_name: db
+        ports:
+            - 5432/tcp
+        environment:
+            - PGDATA=/var/lib/postgresql/data/pgdb
+            - POSTGRES_USER=pguser
+            - POSTGRES_PASSWORD=pgpassword
+        volumes:
+            - database_data:/var/lib/postgresql/data/
+        restart: unless-stopped
+
+    inventree:
+        build: .
+        image: inventree/inventree:latest
+        container_name: inventree
+        ports:
+            - 8080:8080
+        depends_on:
+            - db
+        volumes:
+            - static_volume:/home/inventree/static
+            - media_volume:/home/inventree/media
+            - backup_volume:/home/inventree/backup
+        environment:
+            - INVENTREE_DB_ENGINE=postgresql
+            - INVENTREE_DB_NAME=inventree
+            - INVENTREE_DB_USER=pguser
+            - INVENTREE_DB_PASSWORD=pgpassword
+            - INVENTREE_DB_PORT=5432
+            - INVENTREE_DB_HOST=db
+        restart: unless-stopped
+
+volumes:
+    database_data:
+    static_volume:
+    media_volume:
+    backup_volume:
