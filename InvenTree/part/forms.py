@@ -11,7 +11,7 @@ from InvenTree.fields import RoundingDecimalFormField
 
 from mptt.fields import TreeNodeChoiceField
 from django import forms
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 import common.models
 
@@ -129,6 +129,7 @@ class BomDuplicateForm(HelperForm):
 
     confirm = forms.BooleanField(
         required=False, initial=False,
+        label=_('Confirm'),
         help_text=_('Confirm BOM duplication')
     )
 
@@ -147,7 +148,7 @@ class BomValidateForm(HelperForm):
     to confirm that the BOM for this part is valid
     """
 
-    validate = forms.BooleanField(required=False, initial=False, help_text=_('Confirm that the BOM is correct'))
+    validate = forms.BooleanField(required=False, initial=False, label=_('validate'), help_text=_('Confirm that the BOM is correct'))
 
     class Meta:
         model = Part
@@ -159,7 +160,7 @@ class BomValidateForm(HelperForm):
 class BomUploadSelectFile(HelperForm):
     """ Form for importing a BOM. Provides a file input box for upload """
 
-    bom_file = forms.FileField(label='BOM file', required=True, help_text=_("Select BOM file to upload"))
+    bom_file = forms.FileField(label=_('BOM file'), required=True, help_text=_("Select BOM file to upload"))
 
     class Meta:
         model = Part
@@ -336,9 +337,9 @@ class EditCategoryParameterTemplateForm(HelperForm):
 class EditBomItemForm(HelperForm):
     """ Form for editing a BomItem object """
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
-    sub_part = PartModelChoiceField(queryset=Part.objects.all())
+    sub_part = PartModelChoiceField(queryset=Part.objects.all(), label=_('Sub part'))
 
     class Meta:
         model = BomItem
@@ -365,6 +366,7 @@ class PartPriceForm(forms.Form):
     quantity = forms.IntegerField(
         required=True,
         initial=1,
+        label=_('Quantity'),
         help_text=_('Input quantity for price calculation')
     )
 
@@ -380,7 +382,7 @@ class EditPartSalePriceBreakForm(HelperForm):
     Form for creating / editing a sale price for a part
     """
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
     class Meta:
         model = PartSellPriceBreak

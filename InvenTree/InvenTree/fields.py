@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from .validators import allowable_url_schemes
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from django.forms.fields import URLField as FormURLField
 from django.db import models as models
@@ -42,6 +42,7 @@ class DatePickerFormField(forms.DateField):
     def __init__(self, **kwargs):
 
         help_text = kwargs.get('help_text', _('Enter date'))
+        label = kwargs.get('label', None)
         required = kwargs.get('required', False)
         initial = kwargs.get('initial', None)
 
@@ -56,7 +57,8 @@ class DatePickerFormField(forms.DateField):
             required=required,
             initial=initial,
             help_text=help_text,
-            widget=widget
+            widget=widget,
+            label=label
         )
 
 

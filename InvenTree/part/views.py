@@ -342,7 +342,7 @@ class PartSetCategory(AjaxUpdateView):
 
         data = {
             'form_valid': valid,
-            'success': _('Set category for {n} parts'.format(n=len(self.parts)))
+            'success': _('Set category for {n} parts').format(n=len(self.parts))
         }
 
         if valid:

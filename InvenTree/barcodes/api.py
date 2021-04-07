@@ -2,7 +2,7 @@
 
 from django.urls import reverse
 from django.conf.urls import url
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.exceptions import ValidationError
 from rest_framework import permissions

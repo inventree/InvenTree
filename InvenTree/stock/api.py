@@ -11,6 +11,7 @@ from django.conf.urls import url, include
 from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
 
 from .models import StockLocation, StockItem
 from .models import StockItemTracking
@@ -195,7 +196,7 @@ class StockCount(StockAdjust):
             if item['item'].stocktake(item['quantity'], request.user, notes=self.notes):
                 n += 1
 
-        return Response({'success': 'Updated stock for {n} items'.format(n=n)})
+        return Response({'success': _('Updated stock for {n} items').format(n=n)})
 
 
 class StockAdd(StockAdjust):
@@ -264,7 +265,7 @@ class StockTransfer(StockAdjust):
             if item['item'].move(location, self.notes, request.user, quantity=item['quantity']):
                 n += 1
 
-        return Response({'success': 'Moved {n} parts to {loc}'.format(
+        return Response({'success': _('Moved {n} parts to {loc}').format(
             n=n,
             loc=str(location),
         )})

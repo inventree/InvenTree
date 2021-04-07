@@ -43,17 +43,17 @@ InvenTree | {% trans "Company" %} - {{ company.name }}
 <p>{{ company.description }}</p>
 <div class='btn-group action-buttons'>
     {% if company.is_supplier and roles.purchase_order.add %}
-    <button type='button' class='btn btn-default' id='company-order-2' title='Create purchase order'>
+    <button type='button' class='btn btn-default' id='company-order-2' title='{% trans "Create Purchase Order" %}'>
         <span class='fas fa-shopping-cart'/>
     </button>
     {% endif %}
     {% if perms.company.change_company %}
-    <button type='button' class='btn btn-default' id='company-edit' title='Edit company information'>
+    <button type='button' class='btn btn-default' id='company-edit' title='{% trans "Edit company information" %}'>
         <span class='fas fa-edit icon-green'/>
     </button>
     {% endif %}
     {% if perms.company.delete_company %}
-    <button type='button' class='btn btn-default' id='company-delete' title='Delete company'>
+    <button type='button' class='btn btn-default' id='company-delete' title='{% trans "Delete Company" %}'>
         <span class='fas fa-trash-alt icon-red'/>
     </button>
     {% endif %}

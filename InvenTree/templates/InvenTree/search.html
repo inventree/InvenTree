@@ -134,14 +134,14 @@ InvenTree | {% trans "Search Results" %}
         columns: [
             {
                 field: 'name',
-                title: 'Name',
+                title: '{% trans "Name" %}',
                 formatter: function(value, row, index, field) {
                     return renderLink(value, '/part/category/' + row.pk + '/');
                 },
             },
             {
                 field: 'description',
-                title: 'Description',
+                title: '{% trans "Description" %}',
             },
         ],
     });
@@ -286,14 +286,14 @@ InvenTree | {% trans "Search Results" %}
         columns: [
             {
                 field: 'name',
-                title: 'Name',
+                title: '{% trans "Name" %}',
                 formatter: function(value, row, index, field) {
                     return renderLink(row.pathstring, '/stock/location/' + row.pk + '/');
                 },
             },
             {
                 field: 'description',
-                title: 'Description',
+                title: '{% trans "Description" %}',
             },
         ],
     });
