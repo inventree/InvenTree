@@ -133,10 +133,11 @@ function loadManufacturerPartTable(table, url, options) {
                 switchable: false,
             },
             {
+                visible: params['part_detail'],
+                switchable: params['part_detail'],
                 sortable: true,
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
-                switchable: false,
                 formatter: function(value, row, index, field) {
 
                     var url = `/part/${row.part}/`;
@@ -230,10 +231,11 @@ function loadSupplierPartTable(table, url, options) {
                 switchable: false,
             },
             {
+                visible: params['part_detail'],
+                switchable: params['part_detail'],
                 sortable: true,
                 field: 'part_detail.full_name',
                 title: '{% trans "Part" %}',
-                switchable: false,
                 formatter: function(value, row, index, field) {
 
                     var url = `/part/${row.part}/`;
@@ -280,6 +282,8 @@ function loadSupplierPartTable(table, url, options) {
                 }
             },
             {
+                visible: params['manufacturer_detail'],
+                switchable: params['manufacturer_detail'],
                 sortable: true,
                 field: 'manufacturer',
                 title: '{% trans "Manufacturer" %}',
@@ -296,6 +300,8 @@ function loadSupplierPartTable(table, url, options) {
                 }
             },
             {
+                visible: params['manufacturer_detail'],
+                switchable: params['manufacturer_detail'],
                 sortable: true,
                 field: 'MPN',
                 title: '{% trans "MPN" %}',
