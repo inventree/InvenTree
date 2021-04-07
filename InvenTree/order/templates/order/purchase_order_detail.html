@@ -181,6 +181,9 @@ $("#po-table").inventreeTable({
             sortName: 'part__MPN',
             field: 'supplier_part_detail.MPN',
             title: '{% trans "MPN" %}',
+            formatter: function(value, row, index, field) {
+                return renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part.pk}/`);
+            },
         },
         {
             sortable: true,
