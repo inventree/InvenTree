@@ -1,14 +1,10 @@
 #!/bin/sh
 
+echo "Starting InvenTree server..."
+
 # Check that the database engine is specified
 if [ -z "$INVENTREE_DB_ENGINE" ]; then
     echo "INVENTREE_DB_ENGINE not configured"
-    exit 1
-fi
-
-# Check that the base dir is set
-if [ -z "$INVENTREE_HOME" ]; then
-    echo "INVENTREE_HOME not configured"
     exit 1
 fi
 

@@ -3,7 +3,6 @@ FROM python:alpine as production
 # GitHub source
 ARG INVENTREE_REPO="https://github.com/inventree/InvenTree.git"
 ARG INVENTREE_VERSION="master"
-ARG INVENTREE_CONFIG_FILE="InvenTree/config_template.yaml"
 
 ENV PYTHONUNBUFFERED 1
 
@@ -79,18 +78,15 @@ RUN apk add --no-cache supervisor
 RUN mkdir ${INVENTREE_HOME}/media ${INVENTREE_HOME}/static ${INVENTREE_HOME}/backup
 
 # Copy supervisor file
-COPY docker/supervisord.conf ${INVENTREE_HOME}/supervisord.conf
+COPY supervisord.conf ${INVENTREE_HOME}/supervisord.conf
 
 # Copy gunicorn config file
-COPY docker/gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
-
-# Copy default InvenTree config file
-COPY ${INVENTREE_CONFIG_FILE} ${INVENTREE_SRC_DIR}/InvenTree/config.yaml
+COPY gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
 
 # Copy startup script
-COPY docker/start.sh ${INVENTREE_HOME}/start.sh
+COPY start.sh ${INVENTREE_HOME}/start.sh
 
 RUN chmod 755 ${INVENTREE_HOME}/start.sh
 
 # Let us begin
-CMD "./start.sh"
+CMD ["bash", "./start.sh"]

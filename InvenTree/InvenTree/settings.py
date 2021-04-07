@@ -55,7 +55,21 @@ TESTING = 'test' in sys.argv
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-cfg_filename = os.path.join(BASE_DIR, 'config.yaml')
+# Specify where the "config file" is located.
+# By default, this is 'config.yaml'
+
+cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
+
+if cfg_filename:
+    cfg_filename = cfg_filename.strip()
+    cfg_filename = os.path.abspath(cfg_filename)
+
+    if not os.path.exists(cfg_filename):
+        print(f"InvenTree configuration file '{cfg_filename}' does not exist!")
+        sys.exit(1)
+else:
+    # Config file is *not* specified - use the default
+    cfg_filename = os.path.join(BASE_DIR, 'config.yaml')
 
 if not os.path.exists(cfg_filename):
     print("InvenTree configuration file 'config.yaml' not found - creating default file")
