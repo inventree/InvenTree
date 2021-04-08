@@ -16,8 +16,6 @@ from .models import PartCategoryParameterTemplate
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
-from InvenTree.helpers import normalize
-
 from stock.models import StockLocation
 from company.models import SupplierPart
 
