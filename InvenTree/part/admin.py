@@ -180,7 +180,7 @@ class BomItemResource(ModelResource):
 
         Ref: https://django-import-export.readthedocs.io/en/latest/getting_started.html#advanced-data-manipulation-on-export
         """
-        return normalize(item.quantity)
+        return int(item.quantity)
 
     def before_export(self, queryset, *args, **kwargs):
 
