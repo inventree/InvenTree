@@ -409,7 +409,7 @@ reqiured_keys = ['ENGINE', 'NAME']
 
 for key in reqiured_keys:
     if key not in db_config:
-        error_msg = f'Missing required database configuration value {key} in config.yaml'
+        error_msg = f'Missing required database configuration value {key}'
         logger.error(error_msg)
 
         print('Error: ' + error_msg)
@@ -503,7 +503,10 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale/'),
 )
 
-TIME_ZONE = CONFIG.get('timezone', 'UTC')
+TIME_ZONE = get_setting(
+    'INVENTREE_TIMEZONE',
+    CONFIG.get('timezone', 'UTC')
+)
 
 USE_I18N = True
 
