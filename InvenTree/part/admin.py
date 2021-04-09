@@ -178,7 +178,7 @@ class BomItemResource(ModelResource):
 
         Ref: https://django-import-export.readthedocs.io/en/latest/getting_started.html#advanced-data-manipulation-on-export
         """
-        return int(item.quantity)
+        return float(item.quantity)
 
     def before_export(self, queryset, *args, **kwargs):
 
