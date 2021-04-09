@@ -241,7 +241,6 @@ function loadStockTable(table, options) {
 
     // List of user-params which override the default filters
 
-    // options.params['part_detail'] = true;
     options.params['location_detail'] = true;
 
     var params = options.params || {};
