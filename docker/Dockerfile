@@ -88,5 +88,8 @@ COPY start_worker.sh ${INVENTREE_HOME}/start_worker.sh
 RUN chmod 755 ${INVENTREE_HOME}/start_server.sh
 RUN chmod 755 ${INVENTREE_HOME}/start_worker.sh
 
+# exec commands should be executed from the "src" directory
+WORKDIR ${INVENTREE_SRC_DIR}
+
 # Let us begin
-CMD ["bash", "./start_server.sh"]
+CMD ["bash", "../start_server.sh"]

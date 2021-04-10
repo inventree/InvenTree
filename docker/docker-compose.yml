@@ -34,12 +34,13 @@ services:
                 branch: "django-q"
         image: inventree/inventree:latest
         container_name: inventree_server
-        ports:
-            - "8080:8080"
+        expose:
+            - 8080
         depends_on:
             - db
         volumes:
             - data:/home/inventree/data
+            - static:/home/inventree/static
         environment:
             - INVENTREE_DB_ENGINE=postgresql
             - INVENTREE_DB_NAME=inventree
@@ -49,6 +50,21 @@ services:
             - INVENTREE_DB_HOST=db
         restart: unless-stopped
 
+    # nginx acts as a reverse proxy
+    # static files are served by nginx
+    # web requests are redirected to gunicorn
+    nginx:
+        build:
+            context: nginx
+        container_name: inventree_proxy
+        depends_on:
+            - inventree
+        ports:
+            - 1337:80
+        volumes:
+            - static:/home/inventree/static
+
+    # background worker process handles long-running or periodic tasks
     worker:
         build:
             context: .
@@ -63,6 +79,7 @@ services:
             - inventree
         volumes:
             - data:/home/inventree/data
+            - static:/home/inventree/static
         environment:
             - INVENTREE_DB_ENGINE=postgresql
             - INVENTREE_DB_NAME=inventree
@@ -73,6 +90,9 @@ services:
         restart: unless-stopped
 
 volumes:
+    # Static files, shared between containers
+    static:
+    # Persistent data, stored externally
     data:
         driver: local
         driver_opts:
