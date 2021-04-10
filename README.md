@@ -4,7 +4,6 @@
 ![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
 ![SQLite](https://github.com/inventree/inventree/actions/workflows/coverage.yaml/badge.svg)
 ![MySQL](https://github.com/inventree/inventree/actions/workflows/mysql.yaml/badge.svg)
-![MariaDB](https://github.com/inventree/inventree/actions/workflows/mariadb.yaml/badge.svg)
 ![PostgreSQL](https://github.com/inventree/inventree/actions/workflows/postgresql.yaml/badge.svg)
 
 <img src="images/logo/inventree.png" alt="InvenTree" width="128"/>
