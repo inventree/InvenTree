@@ -2,12 +2,6 @@
 
 echo "Starting InvenTree worker..."
 
-# Check that the database engine is specified
-if [ -z "$INVENTREE_DB_ENGINE" ]; then
-    echo "INVENTREE_DB_ENGINE not configured"
-    exit 1
-fi
-
 # Activate virtual environment
 source ./env/bin/activate
 

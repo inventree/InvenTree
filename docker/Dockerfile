@@ -18,11 +18,13 @@ ENV INVENTREE_LOG_LEVEL="INFO"
 # InvenTree paths
 ENV INVENTREE_SRC_DIR="${INVENTREE_HOME}/src"
 ENV INVENTREE_MNG_DIR="${INVENTREE_SRC_DIR}/InvenTree"
-ENV INVENTREE_STATIC_ROOT="${INVENTREE_HOME}/static"
-ENV INVENTREE_MEDIA_ROOT="${INVENTREE_HOME}/media"
-ENV INVENTREE_LOG_DIR="${INVENTREE_HOME}/log"
-ENV INVENTREE_BACKUP_DIR="${INVENTREE_HOME}/backup"
+ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
+ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
+ENV INVENTREE_MEDIA_ROOT="${INVENTREE_MEDIA_DIR}/media"
+ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 ENV INVENTREE_VENV="${INVENTREE_HOME}/env"
+
+ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 
 # Pass DB configuration through as environment variables
 ENV INVENTREE_DB_ENGINE="${INVENTREE_DB_ENGINE}"
@@ -59,7 +61,7 @@ RUN apk add --no-cache postgresql-contrib postgresql-dev libpq
 RUN apk add --no-cache mariadb-connector-c mariadb-dev
 
 # Create required directories
-RUN mkdir ${INVENTREE_HOME}/media ${INVENTREE_HOME}/static ${INVENTREE_HOME}/backup
+#RUN mkdir ${INVENTREE_DATA_DIR}}/media ${INVENTREE_HOME}/static ${INVENTREE_HOME}/backup
 
 # Setup Python virtual environment
 RUN python3 -m venv ${INVENTREE_VENV}

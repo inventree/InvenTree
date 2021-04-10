@@ -1,17 +1,33 @@
 #!/bin/sh
 
-echo "Starting InvenTree server..."
+# Create required directory structure (if it does not already exist)
+if [[ ! -d "$INVENTREE_STATIC_ROOT" ]]; then
+    echo "Creating directory $INVENTREE_STATIC_ROOT"
+    mkdir $INVENTREE_STATIC_ROOT
+fi
 
-# Check that the database engine is specified
-if [ -z "$INVENTREE_DB_ENGINE" ]; then
-    echo "INVENTREE_DB_ENGINE not configured"
-    exit 1
+if [[ ! -d "$INVENTREE_MEDIA_ROOT" ]]; then
+    echo "Creating directory $INVENTREE_MEDIA_ROOT"
+    mkdir $INVENTREE_MEDIA_ROOT
+fi
+
+if [[ ! -d "$INVENTREE_BACKUP_DIR" ]]; then
+    echo "Creating directory $INVENTREE_BACKUP_DIR"
+    mkdir $INVENTREE_BACKUP_DIR
+fi
+
+# Check if "config.yaml" has been copied into the correct location
+if test -f "$INVENTREE_CONFIG_FILE"; then
+    echo "$INVENTREE_CONFIG_FILE exists - skipping"
+else
+    echo "Copying config file to $INVENTREE_CONFIG_FILE"
+    cp $INVENTREE_SRC_DIR/InvenTree/config_template.yaml $INVENTREE_CONFIG_FILE
 fi
 
 # Activate virtual environment
 source $INVENTREE_VENV/bin/activate
 
-sleep 5
+echo "Starting InvenTree server..."
 
 # Wait for the database to be ready
 cd $INVENTREE_MNG_DIR
