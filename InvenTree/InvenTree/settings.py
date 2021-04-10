@@ -64,9 +64,6 @@ if cfg_filename:
     cfg_filename = cfg_filename.strip()
     cfg_filename = os.path.abspath(cfg_filename)
 
-    if not os.path.exists(cfg_filename):
-        print(f"InvenTree configuration file '{cfg_filename}' does not exist!")
-        sys.exit(1)
 else:
     # Config file is *not* specified - use the default
     cfg_filename = os.path.join(BASE_DIR, 'config.yaml')
@@ -76,6 +73,7 @@ if not os.path.exists(cfg_filename):
 
     cfg_template = os.path.join(BASE_DIR, "config_template.yaml")
     shutil.copyfile(cfg_template, cfg_filename)
+    print(f"Created config file {cfg_filename}")
 
 with open(cfg_filename, 'r') as cfg:
     CONFIG = yaml.safe_load(cfg)
