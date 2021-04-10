@@ -2,9 +2,9 @@ version: "3.8"
 
 # Docker compose recipe for InvenTree
 # - Runs PostgreSQL as the database backend
-# - Serves web data using Gunicorn
-# - Runs the background worker process
+# - Runs Gunicorn as the web server
 # - Runs nginx as a reverse proxy
+# - Runs the background worker process
 
 services:
     # Database service
@@ -60,6 +60,7 @@ services:
         depends_on:
             - inventree
         ports:
+            # Change "1337" to the port where you want InvenTree web server to be available
             - 1337:80
         volumes:
             - static:/home/inventree/static

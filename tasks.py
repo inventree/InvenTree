@@ -118,6 +118,14 @@ def check(c):
     manage(c, "check")
 
 @task
+def wait(c):
+    """
+    Wait until the database connection is ready
+    """
+
+    manage(c, "wait_for_db")
+
+@task
 def migrate(c):
     """
     Performs database migrations.

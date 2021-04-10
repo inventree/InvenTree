@@ -5,8 +5,7 @@ echo "Starting InvenTree worker..."
 sleep 5
 
 # Wait for the database to be ready
-cd src/InvenTree
-
+cd $INVENTREE_MNG_DIR
 python manage.py wait_for_db
 
 sleep 10

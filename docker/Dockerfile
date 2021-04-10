@@ -82,14 +82,16 @@ RUN pip install --no-cache-dir -U -r ${INVENTREE_SRC_DIR}/requirements.txt
 COPY gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
 
 # Copy startup scripts
-COPY start_server.sh ${INVENTREE_HOME}/start_server.sh
-COPY start_worker.sh ${INVENTREE_HOME}/start_worker.sh
+COPY start_server.sh ${INVENTREE_SRC_DIR}/start_server.sh
+COPY start_worker.sh ${INVENTREE_SRC_DIR}/start_worker.sh
 
-RUN chmod 755 ${INVENTREE_HOME}/start_server.sh
-RUN chmod 755 ${INVENTREE_HOME}/start_worker.sh
+RUN chmod 755 ${INVENTREE_SRC_DIR}/start_server.sh
+RUN chmod 755 ${INVENTREE_SRC_DIR}/start_worker.sh
 
 # exec commands should be executed from the "src" directory
 WORKDIR ${INVENTREE_SRC_DIR}
 
+USER inventree
+
 # Let us begin
-CMD ["bash", "../start_server.sh"]
+CMD ["bash", "./start_server.sh"]
