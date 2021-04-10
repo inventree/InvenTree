@@ -6,19 +6,13 @@ on: ["push", "pull_request"]
 
 jobs:
   
-  inventree:
+  docker:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
       - name: Build Server Image
         run: cd docker/inventree && docker build . --tag inventree:$(date +%s)
-    
-  nginx:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
       - name: Build nginx Image
         run: cd docker/nginx && docker build . --tag nxinx:$(date +%s)
         
