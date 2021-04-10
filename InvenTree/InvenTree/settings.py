@@ -182,7 +182,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath(
     get_setting(
         'INVENTREE_STATIC_ROOT',
-        CONFIG.get('static_root', os.path.join(BASE_DIR, 'static'))
+        CONFIG.get('static_root', '/home/inventree/static')
     )
 )
 
@@ -200,7 +200,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.abspath(
     get_setting(
         'INVENTREE_MEDIA_ROOT',
-        CONFIG.get('media_root', os.path.join(BASE_DIR, 'media'))
+        CONFIG.get('media_root', '/home/inventree/data/media')
     )
 )
 

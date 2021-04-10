@@ -95,9 +95,9 @@ cors:
   # - https://sub.example.com
 
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
-# By default, it is stored under /home/inventree
+# By default, it is stored under /home/inventree/data/media
 # Use environment variable INVENTREE_MEDIA_ROOT
-media_root: '/home/inventree/media'
+media_root: '/home/inventree/data/media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
 # By default, it is stored under /home/inventree
@@ -116,7 +116,7 @@ static_root: '/home/inventree/static'
 # Set the backup_dir parameter to store backup files in a specific location
 # If unspecified, the local user's temp directory will be used
 # Use environment variable INVENTREE_BACKUP_DIR
-backup_dir: '/home/inventree/backup/'
+backup_dir: '/home/inventree/data/backup/'
 
 # Permit custom authentication backends
 #authentication_backends:

@@ -19,7 +19,7 @@ ENV INVENTREE_LOG_LEVEL="INFO"
 ENV INVENTREE_SRC_DIR="${INVENTREE_HOME}/src"
 ENV INVENTREE_MNG_DIR="${INVENTREE_SRC_DIR}/InvenTree"
 ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
-ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
+ENV INVENTREE_STATIC_ROOT="${INVENTREE_HOME}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
 ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 
@@ -47,6 +47,8 @@ LABEL org.label-schema.schema-version="1.0" \
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
 WORKDIR ${INVENTREE_HOME}
+
+RUN mkdir ${INVENTREE_STATIC_ROOT}
 
 # Install required system packages
 RUN apk add --no-cache git make bash \
