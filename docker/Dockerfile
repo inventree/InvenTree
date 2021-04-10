@@ -42,8 +42,6 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.vcs-branch=${BRANCH} \
       org.label-schema.vcs-ref=${COMMIT}
 
-RUN echo "Installing InvenTree '${INVENTREE_VERSION}' from ${INVENTREE_REPO}"
-
 # Create user account
 RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
 WORKDIR ${INVENTREE_HOME}
@@ -60,8 +58,8 @@ RUN apk add --no-cache python3
 RUN apk add --no-cache postgresql-contrib postgresql-dev libpq
 RUN apk add --no-cache mariadb-connector-c mariadb-dev
 
-# Clone source code
-RUN git clone --branch ${INVENTREE_BRANCH} --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
+# Create required directories
+RUN mkdir ${INVENTREE_HOME}/media ${INVENTREE_HOME}/static ${INVENTREE_HOME}/backup
 
 # Setup Python virtual environment
 RUN python3 -m venv ${INVENTREE_VENV}
@@ -72,25 +70,22 @@ RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U invok
 RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
 RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U gunicorn
 
+# Clone source code
+RUN echo "Downloading InvenTree from ${INVENTREE_REPO}"
+RUN git clone --branch ${INVENTREE_BRANCH} --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
+
 # Install InvenTree packages
 RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U -r ${INVENTREE_SRC_DIR}/requirements.txt
-
-# Install supervisor
-RUN apk add --no-cache supervisor
-
-# Create required directories
-RUN mkdir ${INVENTREE_HOME}/media ${INVENTREE_HOME}/static ${INVENTREE_HOME}/backup
-
-# Copy supervisor file
-COPY supervisord.conf ${INVENTREE_HOME}/supervisord.conf
 
 # Copy gunicorn config file
 COPY gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
 
-# Copy startup script
-COPY start.sh ${INVENTREE_HOME}/start.sh
+# Copy startup scripts
+COPY start_server.sh ${INVENTREE_HOME}/start_server.sh
+COPY start_worker.sh ${INVENTREE_HOME}/start_worker.sh
 
-RUN chmod 755 ${INVENTREE_HOME}/start.sh
+RUN chmod 755 ${INVENTREE_HOME}/start_server.sh
+RUN chmod 755 ${INVENTREE_HOME}/start_worker.sh
 
 # Let us begin
-CMD ["bash", "./start.sh"]
+CMD ["bash", "./start_server.sh"]

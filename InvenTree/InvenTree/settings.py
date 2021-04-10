@@ -338,7 +338,7 @@ Q_CLUSTER = {
     'queue_limit': 50,
     'bulk': 10,
     'orm': 'default',
-    'sync': True,
+    'sync': False,
 }
 
 # Markdownx configuration
