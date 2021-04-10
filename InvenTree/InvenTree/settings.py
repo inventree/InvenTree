@@ -138,24 +138,22 @@ else:
     key_file = os.getenv("INVENTREE_SECRET_KEY_FILE")
 
     if key_file:
-        if os.path.isfile(key_file):
-            logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY_FILE")
-        else:
-            logger.error(f"Secret key file '{key_file}'' not found")
-            exit(-1)
+        key_file = os.path.abspath(key_file)
     else:
         # default secret key location
         key_file = os.path.join(BASE_DIR, "secret_key.txt")
+        key_file = os.path.abspath(key_file)
 
-        if not os.path.exists(key_file):
-            logger.info("Creating key file 'secret_key.txt'")
-            # Create a random key file
-            with open(key_file, 'w') as f:
-                options = string.digits + string.ascii_letters + string.punctuation
-                key = ''.join([random.choice(options) for i in range(50)])
-                f.write(key)
+    if not os.path.exists(key_file):
+        logger.info(f"Generating random key file at '{key_file}'")
+        # Create a random key file
+        with open(key_file, 'w') as f:
+            options = string.digits + string.ascii_letters + string.punctuation
+            key = ''.join([random.choice(options) for i in range(100)])
+            f.write(key)
 
-        logger.info(f"SECRET_KEY loaded from {key_file}")
+    logger.info(f"Loading SECRET_KEY from '{key_file}'")
+    
     try:
         SECRET_KEY = open(key_file, "r").read().strip()
     except Exception:
