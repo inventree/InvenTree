@@ -6,6 +6,13 @@ version: "3.8"
 # - Runs nginx as a reverse proxy
 # - Runs the background worker process
 
+# ---------------------------------
+# IMPORTANT - READ BEFORE STARTING!
+# ---------------------------------
+# Before running, ensure that you change the "/path/to/data" directory,
+# specified in the "volumes" section at the end of this file.
+# This path determines where the InvenTree data will be stored!
+
 services:
     # Database service
     # Use PostgreSQL as the database backend
@@ -28,7 +35,7 @@ services:
     # Uses gunicorn as the web server
     inventree:
         build:
-            context: .
+            context: inventree
             args:
                 repository: "https://github.com/SchrodingersGat/InvenTree.git"
                 branch: "django-q"
@@ -68,7 +75,7 @@ services:
     # background worker process handles long-running or periodic tasks
     worker:
         build:
-            context: .
+            context: inventree
             args:
                 repository: "https://github.com/SchrodingersGat/InvenTree.git"
                 branch: "django-q"
