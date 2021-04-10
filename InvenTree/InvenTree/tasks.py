@@ -12,7 +12,7 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 def schedule_task(taskname, **kwargs):

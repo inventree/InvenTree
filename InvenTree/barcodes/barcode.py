@@ -12,7 +12,7 @@ from stock.serializers import StockItemSerializer, LocationSerializer
 from part.serializers import PartSerializer
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('inventree')
 
 
 def hash_barcode(barcode_data):

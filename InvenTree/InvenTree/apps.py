@@ -8,7 +8,7 @@ from django.core.exceptions import AppRegistryNotReady
 import InvenTree.tasks
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class InvenTreeConfig(AppConfig):

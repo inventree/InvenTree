@@ -23,7 +23,7 @@ from .version import inventreeVersion, inventreeApiVersion, inventreeInstanceNam
 from plugins import plugins as inventree_plugins
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 logger.info("Loading action plugins...")

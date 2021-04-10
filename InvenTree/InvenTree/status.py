@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from django_q.models import Success
 from django_q.monitor import Stat
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 def is_q_cluster_running(**kwargs):

@@ -7,7 +7,7 @@ from django.apps import AppConfig
 from django.conf import settings
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 def hashFile(filename):

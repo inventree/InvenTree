@@ -15,7 +15,7 @@ from django.db.models.signals import post_save, post_delete
 import logging
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class RuleSet(models.Model):

@@ -116,7 +116,7 @@ LOGGING = {
 }
 
 # Get a logger instance for this setup file
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 """
 Specify a secret key to be used by django.
@@ -153,7 +153,7 @@ else:
             f.write(key)
 
     logger.info(f"Loading SECRET_KEY from '{key_file}'")
-    
+
     try:
         SECRET_KEY = open(key_file, "r").read().strip()
     except Exception:
