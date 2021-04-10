@@ -22,7 +22,6 @@ ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
 ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
-ENV INVENTREE_VENV="${INVENTREE_HOME}/env"
 
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
@@ -64,21 +63,18 @@ RUN apk add --no-cache mariadb-connector-c mariadb-dev
 # Create required directories
 #RUN mkdir ${INVENTREE_DATA_DIR}}/media ${INVENTREE_HOME}/static ${INVENTREE_HOME}/backup
 
-# Setup Python virtual environment
-RUN python3 -m venv ${INVENTREE_VENV}
-
-# Install required PIP packages (into the virtual environment!)
-RUN source ${INVENTREE_VENV}/bin/activate && pip install --upgrade pip setuptools wheel
-RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U invoke
-RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
-RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U gunicorn
+# Install required python packages
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir -U invoke
+RUN pip install --no-cache-dir -U psycopg2 mysqlclient pgcli mariadb
+RUN pip install --no-cache-dir -U gunicorn
 
 # Clone source code
 RUN echo "Downloading InvenTree from ${INVENTREE_REPO}"
 RUN git clone --branch ${INVENTREE_BRANCH} --depth 1 ${INVENTREE_REPO} ${INVENTREE_SRC_DIR}
 
 # Install InvenTree packages
-RUN source ${INVENTREE_VENV}/bin/activate && pip install --no-cache-dir -U -r ${INVENTREE_SRC_DIR}/requirements.txt
+RUN pip install --no-cache-dir -U -r ${INVENTREE_SRC_DIR}/requirements.txt
 
 # Copy gunicorn config file
 COPY gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py

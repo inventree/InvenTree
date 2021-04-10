@@ -2,9 +2,6 @@
 
 echo "Starting InvenTree worker..."
 
-# Activate virtual environment
-source ./env/bin/activate
-
 sleep 5
 
 # Wait for the database to be ready

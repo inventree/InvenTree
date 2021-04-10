@@ -24,9 +24,6 @@ else
     cp $INVENTREE_SRC_DIR/InvenTree/config_template.yaml $INVENTREE_CONFIG_FILE
 fi
 
-# Activate virtual environment
-source $INVENTREE_VENV/bin/activate
-
 echo "Starting InvenTree server..."
 
 # Wait for the database to be ready

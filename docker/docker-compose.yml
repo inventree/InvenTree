@@ -7,6 +7,7 @@ version: "3.8"
 # - Runs nginx as a reverse proxy
 
 services:
+    # Database service
     # Use PostgreSQL as the database backend
     # Note: this can be changed to a different backend,
     #       just make sure that you change the INVENTREE_DB_xxx vars below
@@ -23,7 +24,9 @@ services:
             - data:/var/lib/postgresql/data/
         restart: unless-stopped
 
-    server:
+    # InvenTree web server services
+    # Uses gunicorn as the web server
+    inventree:
         build:
             context: .
             args:
@@ -57,7 +60,7 @@ services:
         container_name: inventree_worker
         depends_on:
             - db
-            - server
+            - inventree
         volumes:
             - data:/home/inventree/data
         environment:
