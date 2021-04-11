@@ -735,6 +735,15 @@ class PartParameterList(generics.ListCreateAPIView):
     ]
 
 
+class PartParameterDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detail view of a single PartParameter object
+    """
+
+    queryset = PartParameter.objects.all()
+    serializer_class = part_serializers.PartParameterSerializer
+
+
 class BomList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of BomItem objects.
 
@@ -942,6 +951,8 @@ part_api_urls = [
     # Base URL for PartParameter API endpoints
     url(r'^parameter/', include([
         url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-param-template-list'),
+
+        url(r'^(?P<pk>\d+)/', PartParameterDetail.as_view(), name='api-part-param-detail'),
         url(r'^.*$', PartParameterList.as_view(), name='api-part-param-list'),
     ])),
 
