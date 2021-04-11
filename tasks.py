@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from invoke import task
+from invoke import ctask as task
 from shutil import copyfile
 
 import os
