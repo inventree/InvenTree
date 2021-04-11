@@ -34,11 +34,6 @@ services:
     # InvenTree web server services
     # Uses gunicorn as the web server
     inventree:
-        build:
-            context: inventree
-            args:
-                repository: "https://github.com/SchrodingersGat/InvenTree.git"
-                branch: "django-q"
         image: inventree/inventree:latest
         container_name: inventree_server
         expose:
@@ -61,8 +56,6 @@ services:
     # static files are served by nginx
     # web requests are redirected to gunicorn
     nginx:
-        build:
-            context: nginx
         container_name: inventree_proxy
         image: inventree/nginx:latest
         depends_on:
@@ -75,11 +68,6 @@ services:
 
     # background worker process handles long-running or periodic tasks
     worker:
-        build:
-            context: inventree
-            args:
-                repository: "https://github.com/SchrodingersGat/InvenTree.git"
-                branch: "django-q"
         entrypoint: ./start_worker.sh
         image: inventree/inventree:latest
         container_name: inventree_worker
