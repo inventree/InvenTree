@@ -20,7 +20,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: inventree/inventree
           tag_with_ref: true
-          context: docker/inventree
+          dockerfile: docker/inventree/Dockerfile
 
   nginx_image:
     name: Push InvenTree nginx image to dockerhub
@@ -35,4 +35,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: inventree/nginx
           tag_with_ref: true
-          context: docker/nginx
+          dockerfile: docker/nginx/Dockerfile
