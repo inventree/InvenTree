@@ -91,7 +91,5 @@ RUN chmod 755 ${INVENTREE_SRC_DIR}/start_worker.sh
 # exec commands should be executed from the "src" directory
 WORKDIR ${INVENTREE_SRC_DIR}
 
-USER inventree
-
 # Let us begin
 CMD ["bash", "./start_server.sh"]

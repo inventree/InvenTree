@@ -64,6 +64,7 @@ services:
         build:
             context: nginx
         container_name: inventree_proxy
+        image: inventree/nginx:latest
         depends_on:
             - inventree
         ports:
@@ -80,7 +81,7 @@ services:
                 repository: "https://github.com/SchrodingersGat/InvenTree.git"
                 branch: "django-q"
         entrypoint: ./start_worker.sh
-        image: inventree/worker:latest
+        image: inventree/inventree:latest
         container_name: inventree_worker
         depends_on:
             - db
