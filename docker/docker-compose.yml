@@ -19,8 +19,8 @@ services:
     # Note: this can be changed to a different backend,
     #       just make sure that you change the INVENTREE_DB_xxx vars below
     db:
+        container_name: db
         image: postgres
-        container_name: inventree_db
         ports:
             - 5432/tcp
         environment:
@@ -34,8 +34,8 @@ services:
     # InvenTree web server services
     # Uses gunicorn as the web server
     inventree:
+        container_name: server
         image: inventree/inventree:latest
-        container_name: inventree_server
         expose:
             - 8080
         depends_on:
@@ -56,7 +56,7 @@ services:
     # static files are served by nginx
     # web requests are redirected to gunicorn
     nginx:
-        container_name: inventree_proxy
+        container_name: nginx
         image: inventree/nginx:latest
         depends_on:
             - inventree
@@ -68,9 +68,9 @@ services:
 
     # background worker process handles long-running or periodic tasks
     worker:
-        entrypoint: ./start_worker.sh
+        container_name: worker
         image: inventree/inventree:latest
-        container_name: inventree_worker
+        entrypoint: ./start_worker.sh
         depends_on:
             - db
             - inventree
