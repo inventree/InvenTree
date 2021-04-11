@@ -7,11 +7,9 @@
 #       with the prefix INVENTREE_DB_
 #       e.g INVENTREE_DB_NAME / INVENTREE_DB_USER / INVENTREE_DB_PASSWORD
 database:
-  # Default configuration - sqlite filesystem database
-  ENGINE: sqlite3
-  NAME: '../inventree_default_db.sqlite3' 
-  
-  # For more complex database installations, further parameters are required
+  # Uncomment (and edit) one of the database configurations below,
+  # or specify database options using environment variables
+
   # Refer to the django documentation for full list of options
   
   # --- Available options: ---
@@ -27,14 +25,22 @@ database:
 
   # --- Example Configuration - sqlite3 ---
   # ENGINE: sqlite3
-  # NAME: '/path/to/database.sqlite3'
+  # NAME: '/home/inventree/database.sqlite3'
 
   # --- Example Configuration - MySQL ---
-  #ENGINE: django.db.backends.mysql
+  #ENGINE: mysql
   #NAME: inventree
-  #USER: inventree_username
+  #USER: inventree
   #PASSWORD: inventree_password
-  #HOST: '127.0.0.1'
+  #HOST: 'localhost'
+  #PORT: '3306'
+
+  # --- Example Configuration - Postgresql ---
+  #ENGINE: postgresql
+  #NAME: inventree
+  #USER: inventree
+  #PASSWORD: inventree_password
+  #HOST: 'localhost'
   #PORT: '5432'
 
 # Select default system language (default is 'en-us')
@@ -43,6 +49,7 @@ language: en-us
 # System time-zone (default is UTC)
 # Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 # Select an option from the "TZ database name" column
+# Use the environment variable INVENTREE_TIMEZONE
 timezone: UTC
 
 # List of currencies supported by default.
@@ -57,6 +64,7 @@ currencies:
   - USD
 
 # Set debug to False to run in production mode
+# Use the environment variable INVENTREE_DEBUG
 debug: True
 
 # Set debug_toolbar to True to enable a debugging toolbar for InvenTree
@@ -65,6 +73,7 @@ debug: True
 debug_toolbar: False
 
 # Configure the system logging level
+# Use environment variable INVENTREE_LOG_LEVEL
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
 log_level: WARNING
 
@@ -86,13 +95,14 @@ cors:
   # - https://sub.example.com
 
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
-# By default, it is stored in a directory named 'inventree_media' local to the InvenTree directory
-# This should be changed for a production installation
-media_root: '../inventree_media'
+# By default, it is stored under /home/inventree/data/media
+# Use environment variable INVENTREE_MEDIA_ROOT
+media_root: '/home/inventree/data/media'
 
 # STATIC_ROOT is the local filesystem location for storing static files
-# By default it is stored in a directory named 'inventree_static' local to the InvenTree directory
-static_root: '../inventree_static'
+# By default, it is stored under /home/inventree
+# Use environment variable INVENTREE_STATIC_ROOT
+static_root: '/home/inventree/static'
 
 # Optional URL schemes to allow in URL fields
 # By default, only the following schemes are allowed: ['http', 'https', 'ftp', 'ftps']
@@ -105,7 +115,8 @@ static_root: '../inventree_static'
 # Backup options
 # Set the backup_dir parameter to store backup files in a specific location
 # If unspecified, the local user's temp directory will be used
-#backup_dir: '/home/inventree/backup/'
+# Use environment variable INVENTREE_BACKUP_DIR
+backup_dir: '/home/inventree/data/backup/'
 
 # Permit custom authentication backends
 #authentication_backends:

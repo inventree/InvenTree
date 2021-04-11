@@ -253,7 +253,7 @@ function loadingMessageContent() {
      */
 
     // TODO - This can be made a lot better
-    return "<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> Waiting for server...";
+    return "<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> {% trans 'Waiting for server...' %}";
 }
 
 

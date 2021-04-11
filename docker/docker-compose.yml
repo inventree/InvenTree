@@ -1,0 +1,100 @@
+version: "3.8"
+
+# Docker compose recipe for InvenTree
+# - Runs PostgreSQL as the database backend
+# - Runs Gunicorn as the web server
+# - Runs nginx as a reverse proxy
+# - Runs the background worker process
+
+# ---------------------------------
+# IMPORTANT - READ BEFORE STARTING!
+# ---------------------------------
+# Before running, ensure that you change the "/path/to/data" directory,
+# specified in the "volumes" section at the end of this file.
+# This path determines where the InvenTree data will be stored!
+
+services:
+    # Database service
+    # Use PostgreSQL as the database backend
+    # Note: this can be changed to a different backend,
+    #       just make sure that you change the INVENTREE_DB_xxx vars below
+    db:
+        container_name: db
+        image: postgres
+        ports:
+            - 5432/tcp
+        environment:
+            - PGDATA=/var/lib/postgresql/data/pgdb
+            - POSTGRES_USER=pguser
+            - POSTGRES_PASSWORD=pgpassword
+        volumes:
+            - data:/var/lib/postgresql/data/
+        restart: unless-stopped
+
+    # InvenTree web server services
+    # Uses gunicorn as the web server
+    inventree:
+        container_name: server
+        image: inventree/inventree:latest
+        expose:
+            - 8080
+        depends_on:
+            - db
+        volumes:
+            - data:/home/inventree/data
+            - static:/home/inventree/static
+        environment:
+            - INVENTREE_DB_ENGINE=postgresql
+            - INVENTREE_DB_NAME=inventree
+            - INVENTREE_DB_USER=pguser
+            - INVENTREE_DB_PASSWORD=pgpassword
+            - INVENTREE_DB_PORT=5432
+            - INVENTREE_DB_HOST=db
+        restart: unless-stopped
+
+    # nginx acts as a reverse proxy
+    # static files are served by nginx
+    # web requests are redirected to gunicorn
+    nginx:
+        container_name: nginx
+        image: inventree/nginx:latest
+        depends_on:
+            - inventree
+        ports:
+            # Change "1337" to the port where you want InvenTree web server to be available
+            - 1337:80
+        volumes:
+            - static:/home/inventree/static
+
+    # background worker process handles long-running or periodic tasks
+    worker:
+        container_name: worker
+        image: inventree/inventree:latest
+        entrypoint: ./start_worker.sh
+        depends_on:
+            - db
+            - inventree
+        volumes:
+            - data:/home/inventree/data
+            - static:/home/inventree/static
+        environment:
+            - INVENTREE_DB_ENGINE=postgresql
+            - INVENTREE_DB_NAME=inventree
+            - INVENTREE_DB_USER=pguser
+            - INVENTREE_DB_PASSWORD=pgpassword
+            - INVENTREE_DB_PORT=5432
+            - INVENTREE_DB_HOST=db
+        restart: unless-stopped
+
+volumes:
+    # Static files, shared between containers
+    static:
+    # Persistent data, stored externally
+    data:
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            # This directory specified where InvenTree data are stored "outside" the docker containers
+            # Change this path to a local system path where you want InvenTree data stored
+            device: /path/to/data

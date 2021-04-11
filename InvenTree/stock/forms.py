@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django import forms
 from django.forms.utils import ErrorDict
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
@@ -111,10 +111,11 @@ class CreateStockItemForm(HelperForm):
     """ Form for creating a new StockItem """
 
     expiry_date = DatePickerFormField(
-        help_text=('Expiration date for this stock item'),
+        label=_('Expiry Date'),
+        help_text=_('Expiration date for this stock item'),
     )
 
-    serial_numbers = forms.CharField(label=_('Serial numbers'), required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
+    serial_numbers = forms.CharField(label=_('Serial Numbers'), required=False, help_text=_('Enter unique serial numbers (or leave blank)'))
 
     def __init__(self, *args, **kwargs):
         
@@ -165,13 +166,13 @@ class CreateStockItemForm(HelperForm):
 class SerializeStockForm(HelperForm):
     """ Form for serializing a StockItem. """
 
-    destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label='Destination', required=True, help_text='Destination for serialized stock (by default, will remain in current location)')
+    destination = TreeNodeChoiceField(queryset=StockLocation.objects.all(), label=_('Destination'), required=True, help_text=_('Destination for serialized stock (by default, will remain in current location)'))
     
-    serial_numbers = forms.CharField(label='Serial numbers', required=True, help_text='Unique serial numbers (must match quantity)')
+    serial_numbers = forms.CharField(label=_('Serial numbers'), required=True, help_text=_('Unique serial numbers (must match quantity)'))
     
-    note = forms.CharField(label='Notes', required=False, help_text='Add transaction note (optional)')
+    note = forms.CharField(label=_('Notes'), required=False, help_text=_('Add transaction note (optional)'))
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
     def __init__(self, *args, **kwargs):
 
@@ -263,7 +264,7 @@ class ExportOptionsForm(HelperForm):
 
     file_format = forms.ChoiceField(label=_('File Format'), help_text=_('Select output file format'))
 
-    include_sublocations = forms.BooleanField(required=False, initial=True, help_text=_("Include stock items in sub locations"))
+    include_sublocations = forms.BooleanField(required=False, initial=True, label=_('Include sublocations'), help_text=_("Include stock items in sub locations"))
 
     class Meta:
         model = StockLocation
@@ -402,7 +403,8 @@ class EditStockItemForm(HelperForm):
     """
 
     expiry_date = DatePickerFormField(
-        help_text=('Expiration date for this stock item'),
+        label=_('Expiry Date'),
+        help_text=_('Expiration date for this stock item'),
     )
 
     class Meta:

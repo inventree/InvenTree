@@ -52,7 +52,7 @@ import common.models
 import part.settings as part_settings
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class PartCategory(InvenTreeTree):
@@ -69,10 +69,11 @@ class PartCategory(InvenTreeTree):
         'stock.StockLocation', related_name="default_categories",
         null=True, blank=True,
         on_delete=models.SET_NULL,
+        verbose_name=_('Default Location'),
         help_text=_('Default location for parts in this category')
     )
 
-    default_keywords = models.CharField(null=True, blank=True, max_length=250, help_text=_('Default keywords for parts in this category'))
+    default_keywords = models.CharField(null=True, blank=True, max_length=250, verbose_name=_('Default keywords'), help_text=_('Default keywords for parts in this category'))
 
     def get_absolute_url(self):
         return reverse('category-detail', kwargs={'pk': self.id})
@@ -442,10 +443,10 @@ class Part(MPTTModel):
             return
 
         if self.pk == parent.pk:
-            raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)".format(
+            raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
                 p1=str(self),
                 p2=str(parent)
-            ))})
+            )})
 
         bom_items = self.get_bom_items()
 
@@ -454,10 +455,10 @@ class Part(MPTTModel):
 
             # Check for simple match
             if item.sub_part == parent:
-                raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)".format(
+                raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
                     p1=str(parent),
                     p2=str(self)
-                ))})
+                )})
 
             # And recursively check too
             item.sub_part.checkAddToBOM(parent)
@@ -749,6 +750,7 @@ class Part(MPTTModel):
         blank=True,
         variations={'thumbnail': (128, 128)},
         delete_orphans=False,
+        verbose_name=_('Image'),
     )
 
     default_location = TreeForeignKey(
@@ -870,18 +872,18 @@ class Part(MPTTModel):
         help_text=_('Part notes - supports Markdown formatting')
     )
 
-    bom_checksum = models.CharField(max_length=128, blank=True, help_text=_('Stored BOM checksum'))
+    bom_checksum = models.CharField(max_length=128, blank=True, verbose_name=_('BOM checksum'), help_text=_('Stored BOM checksum'))
 
     bom_checked_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
-                                       related_name='boms_checked')
+                                       verbose_name=_('BOM checked by'), related_name='boms_checked')
 
-    bom_checked_date = models.DateField(blank=True, null=True)
+    bom_checked_date = models.DateField(blank=True, null=True, verbose_name=_('BOM checked date'))
 
-    creation_date = models.DateField(auto_now_add=True, editable=False, blank=True, null=True)
+    creation_date = models.DateField(auto_now_add=True, editable=False, blank=True, null=True, verbose_name=_('Creation Date'))
 
-    creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='parts_created')
+    creation_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Creation User'), related_name='parts_created')
 
-    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='parts_responible')
+    responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), related_name='parts_responible')
 
     def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this Part object """
@@ -1851,7 +1853,7 @@ class PartAttachment(InvenTreeAttachment):
         return os.path.join("part_files", str(self.part.id))
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
-                             related_name='attachments')
+                             verbose_name=_('Part'), related_name='attachments')
 
 
 class PartSellPriceBreak(common.models.PriceBreak):
@@ -1862,7 +1864,8 @@ class PartSellPriceBreak(common.models.PriceBreak):
     part = models.ForeignKey(
         Part, on_delete=models.CASCADE,
         related_name='salepricebreaks',
-        limit_choices_to={'salable': True}
+        limit_choices_to={'salable': True},
+        verbose_name=_('Part')
     )
 
     class Meta:
@@ -1880,9 +1883,9 @@ class PartStar(models.Model):
         user: Link to a User object
     """
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='starred_users')
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, verbose_name=_('Part'), related_name='starred_users')
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='starred_parts')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_parts')
 
     class Meta:
         unique_together = ['part', 'user']
@@ -1955,6 +1958,7 @@ class PartTestTemplate(models.Model):
         on_delete=models.CASCADE,
         related_name='test_templates',
         limit_choices_to={'trackable': True},
+        verbose_name=_('Part'),
     )
 
     test_name = models.CharField(
@@ -2022,9 +2026,9 @@ class PartParameterTemplate(models.Model):
         except PartParameterTemplate.DoesNotExist:
             pass
 
-    name = models.CharField(max_length=100, help_text=_('Parameter Name'), unique=True)
+    name = models.CharField(max_length=100, verbose_name=_('Name'), help_text=_('Parameter Name'), unique=True)
 
-    units = models.CharField(max_length=25, help_text=_('Parameter Units'), blank=True)
+    units = models.CharField(max_length=25, verbose_name=_('Units'), help_text=_('Parameter Units'), blank=True)
 
 
 class PartParameter(models.Model):
@@ -2050,11 +2054,11 @@ class PartParameter(models.Model):
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
-    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', help_text=_('Parent Part'))
+    part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='parameters', verbose_name=_('Part'), help_text=_('Parent Part'))
 
-    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', help_text=_('Parameter Template'))
+    template = models.ForeignKey(PartParameterTemplate, on_delete=models.CASCADE, related_name='instances', verbose_name=_('Template'), help_text=_('Parameter Template'))
 
-    data = models.CharField(max_length=500, help_text=_('Parameter Value'))
+    data = models.CharField(max_length=500, verbose_name=_('Data'), help_text=_('Parameter Value'))
 
     @classmethod
     def create(cls, part, template, data, save=False):
@@ -2095,15 +2099,18 @@ class PartCategoryParameterTemplate(models.Model):
     category = models.ForeignKey(PartCategory,
                                  on_delete=models.CASCADE,
                                  related_name='parameter_templates',
+                                 verbose_name=_('Category'),
                                  help_text=_('Part Category'))
 
     parameter_template = models.ForeignKey(PartParameterTemplate,
                                            on_delete=models.CASCADE,
                                            related_name='part_categories',
+                                           verbose_name=_('Parameter Template'),
                                            help_text=_('Parameter Template'))
 
     default_value = models.CharField(max_length=500,
                                      blank=True,
+                                     verbose_name=_('Default Value'),
                                      help_text=_('Default Parameter Value'))
 
 
@@ -2132,6 +2139,7 @@ class BomItem(models.Model):
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
     part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='bom_items',
+                             verbose_name=_('Part'),
                              help_text=_('Select parent part'),
                              limit_choices_to={
                                  'assembly': True,
@@ -2140,26 +2148,28 @@ class BomItem(models.Model):
     # A link to the child item (sub-part)
     # Each part will get a reverse lookup field 'used_in'
     sub_part = models.ForeignKey(Part, on_delete=models.CASCADE, related_name='used_in',
+                                 verbose_name=_('Sub part'),
                                  help_text=_('Select part to be used in BOM'),
                                  limit_choices_to={
                                      'component': True,
                                  })
 
     # Quantity required
-    quantity = models.DecimalField(default=1.0, max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], help_text=_('BOM quantity for this BOM item'))
+    quantity = models.DecimalField(default=1.0, max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], verbose_name=_('Quantity'), help_text=_('BOM quantity for this BOM item'))
 
-    optional = models.BooleanField(default=False, help_text=_("This BOM item is optional"))
+    optional = models.BooleanField(default=False, verbose_name=_('Optional'), help_text=_("This BOM item is optional"))
 
     overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
+                               verbose_name=_('Overage'),
                                help_text=_('Estimated build wastage quantity (absolute or percentage)')
                                )
 
-    reference = models.CharField(max_length=500, blank=True, help_text=_('BOM item reference'))
+    reference = models.CharField(max_length=500, blank=True, verbose_name=_('Reference'), help_text=_('BOM item reference'))
 
     # Note attached to this BOM line item
-    note = models.CharField(max_length=500, blank=True, help_text=_('BOM item notes'))
+    note = models.CharField(max_length=500, blank=True, verbose_name=_('Note'), help_text=_('BOM item notes'))
 
-    checksum = models.CharField(max_length=128, blank=True, help_text=_('BOM line checksum'))
+    checksum = models.CharField(max_length=128, blank=True, verbose_name=_('Checksum'), help_text=_('BOM line checksum'))
 
     inherited = models.BooleanField(
         default=False,
@@ -2371,11 +2381,11 @@ class PartRelated(models.Model):
     """ Store and handle related parts (eg. mating connector, crimps, etc.) """
 
     part_1 = models.ForeignKey(Part, related_name='related_parts_1',
-                               on_delete=models.DO_NOTHING)
+                               verbose_name=_('Part 1'), on_delete=models.DO_NOTHING)
 
     part_2 = models.ForeignKey(Part, related_name='related_parts_2',
                                on_delete=models.DO_NOTHING,
-                               help_text=_('Select Related Part'))
+                               verbose_name=_('Part 2'), help_text=_('Select Related Part'))
 
     def __str__(self):
         return f'{self.part_1} <--> {self.part_2}'

@@ -13,6 +13,9 @@ database setup in this file.
 
 import logging
 import os
+import random
+import string
+import shutil
 import sys
 import tempfile
 from datetime import datetime
@@ -46,14 +49,31 @@ def get_setting(environment_var, backup_val, default_value=None):
     return default_value
 
 
+# Determine if we are running in "test" mode e.g. "manage.py test"
+TESTING = 'test' in sys.argv
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-cfg_filename = os.path.join(BASE_DIR, 'config.yaml')
+# Specify where the "config file" is located.
+# By default, this is 'config.yaml'
+
+cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
+
+if cfg_filename:
+    cfg_filename = cfg_filename.strip()
+    cfg_filename = os.path.abspath(cfg_filename)
+
+else:
+    # Config file is *not* specified - use the default
+    cfg_filename = os.path.join(BASE_DIR, 'config.yaml')
 
 if not os.path.exists(cfg_filename):
-    print("Error: config.yaml not found")
-    sys.exit(-1)
+    print("InvenTree configuration file 'config.yaml' not found - creating default file")
+
+    cfg_template = os.path.join(BASE_DIR, "config_template.yaml")
+    shutil.copyfile(cfg_template, cfg_filename)
+    print(f"Created config file {cfg_filename}")
 
 with open(cfg_filename, 'r') as cfg:
     CONFIG = yaml.safe_load(cfg)
@@ -94,7 +114,18 @@ LOGGING = {
 }
 
 # Get a logger instance for this setup file
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
+
+"""
+Specify a secret key to be used by django.
+
+Following options are tested, in descending order of preference:
+
+A) Check for environment variable INVENTREE_SECRET_KEY => Use raw key data
+B) Check for environment variable INVENTREE_SECRET_KEY_FILE => Load key data from file
+C) Look for default key file "secret_key.txt"
+d) Create "secret_key.txt" if it does not exist
+"""
 
 if os.getenv("INVENTREE_SECRET_KEY"):
     # Secret key passed in directly
@@ -105,15 +136,22 @@ else:
     key_file = os.getenv("INVENTREE_SECRET_KEY_FILE")
 
     if key_file:
-        if os.path.isfile(key_file):
-            logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY_FILE")
-        else:
-            logger.error(f"Secret key file {key_file} not found")
-            exit(-1)
+        key_file = os.path.abspath(key_file)
     else:
         # default secret key location
         key_file = os.path.join(BASE_DIR, "secret_key.txt")
-        logger.info(f"SECRET_KEY loaded from {key_file}")
+        key_file = os.path.abspath(key_file)
+
+    if not os.path.exists(key_file):
+        logger.info(f"Generating random key file at '{key_file}'")
+        # Create a random key file
+        with open(key_file, 'w') as f:
+            options = string.digits + string.ascii_letters + string.punctuation
+            key = ''.join([random.choice(options) for i in range(100)])
+            f.write(key)
+
+    logger.info(f"Loading SECRET_KEY from '{key_file}'")
+
     try:
         SECRET_KEY = open(key_file, "r").read().strip()
     except Exception:
@@ -144,7 +182,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath(
     get_setting(
         'INVENTREE_STATIC_ROOT',
-        CONFIG.get('static_root', os.path.join(BASE_DIR, 'static'))
+        CONFIG.get('static_root', '/home/inventree/static')
     )
 )
 
@@ -162,7 +200,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.abspath(
     get_setting(
         'INVENTREE_MEDIA_ROOT',
-        CONFIG.get('media_root', os.path.join(BASE_DIR, 'media'))
+        CONFIG.get('media_root', '/home/inventree/data/media')
     )
 )
 
@@ -194,6 +232,7 @@ INSTALLED_APPS = [
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
+    'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
@@ -211,6 +250,7 @@ INSTALLED_APPS = [
     'djmoney',                              # django-money integration
     'djmoney.contrib.exchange',             # django-money exchange rates
     'error_report',                         # Error reporting in the admin interface
+    'django_q',
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
@@ -285,6 +325,18 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
+# django-q configuration
+Q_CLUSTER = {
+    'name': 'InvenTree',
+    'workers': 4,
+    'timeout': 90,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default',
+    'sync': False,
+}
+
 # Markdownx configuration
 # Ref: https://neutronx.github.io/django-markdownx/customization/
 MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
@@ -319,93 +371,76 @@ MARKDOWNIFY_BLEACH = False
 DATABASES = {}
 
 """
-When running unit tests, enforce usage of sqlite3 database,
-so that the tests can be run in RAM without any setup requirements
+Configure the database backend based on the user-specified values.
+
+- Primarily this configuration happens in the config.yaml file
+- However there may be reason to configure the DB via environmental variables
+- The following code lets the user "mix and match" database configuration
 """
-if 'test' in sys.argv:
-    logger.info('InvenTree: Running tests - Using sqlite3 memory database')
-    DATABASES['default'] = {
-        # Ensure sqlite3 backend is being used
-        'ENGINE': 'django.db.backends.sqlite3',
-        # Doesn't matter what the database is called, it is executed in RAM
-        'NAME': 'ram_test_db.sqlite3',
-    }
 
-# Database backend selection
-else:
-    """
-    Configure the database backend based on the user-specified values.
-    
-    - Primarily this configuration happens in the config.yaml file
-    - However there may be reason to configure the DB via environmental variables
-    - The following code lets the user "mix and match" database configuration
-    """
+logger.info("Configuring database backend:")
 
-    logger.info("Configuring database backend:")
+# Extract database configuration from the config.yaml file
+db_config = CONFIG.get('database', {})
 
-    # Extract database configuration from the config.yaml file
-    db_config = CONFIG.get('database', {})
+if not db_config:
+    db_config = {}
 
-    # If a particular database option is not specified in the config file,
-    # look for it in the environmental variables
-    # e.g. INVENTREE_DB_NAME / INVENTREE_DB_USER / etc
+# Environment variables take preference over config file!
 
-    db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
+db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
 
-    for key in db_keys:
-        if key not in db_config:
-            logger.debug(f" - Missing {key} value: Looking for environment variable INVENTREE_DB_{key}")
-            env_key = f'INVENTREE_DB_{key}'
-            env_var = os.environ.get(env_key, None)
+for key in db_keys:
+    # First, check the environment variables
+    env_key = f"INVENTREE_DB_{key}"
+    env_var = os.environ.get(env_key, None)
 
-            if env_var is not None:
-                logger.info(f'Using environment variable INVENTREE_DB_{key}')
-                db_config[key] = env_var
-            else:
-                logger.debug(f'    INVENTREE_DB_{key} not found in environment variables')
+    if env_var:
+        logger.info(f"{env_key}={env_var}")
+        # Override configuration value
+        db_config[key] = env_var
 
-    # Check that required database configuration options are specified
-    reqiured_keys = ['ENGINE', 'NAME']
+# Check that required database configuration options are specified
+reqiured_keys = ['ENGINE', 'NAME']
 
-    for key in reqiured_keys:
-        if key not in db_config:
-            error_msg = f'Missing required database configuration value {key} in config.yaml'
-            logger.error(error_msg)
+for key in reqiured_keys:
+    if key not in db_config:
+        error_msg = f'Missing required database configuration value {key}'
+        logger.error(error_msg)
 
-            print('Error: ' + error_msg)
-            sys.exit(-1)
+        print('Error: ' + error_msg)
+        sys.exit(-1)
 
-    """
-    Special considerations for the database 'ENGINE' setting.
-    It can be specified in config.yaml (or envvar) as either (for example):
-    - sqlite3
-    - django.db.backends.sqlite3
-    - django.db.backends.postgresql
-    """
+"""
+Special considerations for the database 'ENGINE' setting.
+It can be specified in config.yaml (or envvar) as either (for example):
+- sqlite3
+- django.db.backends.sqlite3
+- django.db.backends.postgresql
+"""
 
-    db_engine = db_config['ENGINE']
+db_engine = db_config['ENGINE']
 
-    if db_engine.lower() in ['sqlite3', 'postgresql', 'mysql']:
-        # Prepend the required python module string
-        db_engine = f'django.db.backends.{db_engine.lower()}'
-        db_config['ENGINE'] = db_engine
+if db_engine.lower() in ['sqlite3', 'postgresql', 'mysql']:
+    # Prepend the required python module string
+    db_engine = f'django.db.backends.{db_engine.lower()}'
+    db_config['ENGINE'] = db_engine
 
-    db_name = db_config['NAME']
+db_name = db_config['NAME']
+db_host = db_config.get('HOST', "''")
 
-    logger.info(f"Database ENGINE: '{db_engine}'")
-    logger.info(f"Database NAME: '{db_name}'")
+print("InvenTree Database Configuration")
+print("================================")
+print(f"ENGINE: {db_engine}")
+print(f"NAME: {db_name}")
+print(f"HOST: {db_host}")
 
-    DATABASES['default'] = db_config
+DATABASES['default'] = db_config
 
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     },
-    'qr-code': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'qr-code-cache',
-        'TIMEOUT': 3600
-    }
 }
 
 # Password validation
@@ -464,13 +499,19 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale/'),
 )
 
-TIME_ZONE = CONFIG.get('timezone', 'UTC')
+TIME_ZONE = get_setting(
+    'INVENTREE_TIMEZONE',
+    CONFIG.get('timezone', 'UTC')
+)
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# Do not use native timezone support in "test" mode
+# It generates a *lot* of cruft in the logs
+if not TESTING:
+    USE_TZ = True
 
 DATE_INPUT_FORMATS = [
     "%Y-%m-%d",

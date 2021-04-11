@@ -1,0 +1,38 @@
+# Publish docker images to dockerhub
+
+name: Docker Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  server_image:
+    name: Push InvenTree web server image to dockerhub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: inventree/inventree
+          tag_with_ref: true
+          dockerfile: docker/inventree/Dockerfile
+
+  nginx_image:
+    name: Push InvenTree nginx image to dockerhub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: inventree/nginx
+          tag_with_ref: true
+          dockerfile: docker/nginx/Dockerfile

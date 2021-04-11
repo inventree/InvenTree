@@ -275,7 +275,7 @@ class BomUploadManager:
         elif ext in ['.xls', '.xlsx']:
             raw_data = bom_file.read()
         else:
-            raise ValidationError({'bom_file': _('Unsupported file format: {f}'.format(f=ext))})
+            raise ValidationError({'bom_file': _('Unsupported file format: {f}').format(f=ext)})
 
         try:
             self.data = tablib.Dataset().load(raw_data)

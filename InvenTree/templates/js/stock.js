@@ -241,7 +241,6 @@ function loadStockTable(table, options) {
 
     // List of user-params which override the default filters
 
-    options.params['part_detail'] = true;
     options.params['location_detail'] = true;
 
     var params = options.params || {};
@@ -524,7 +523,8 @@ function loadStockTable(table, options) {
                 title: '{% trans "Part" %}',
                 sortName: 'part__name',
                 sortable: true,
-                switchable: false,
+                visible: params['part_detail'],
+                switchable: params['part_detail'],
                 formatter: function(value, row, index, field) {
 
                     var url = `/stock/item/${row.pk}/`;
@@ -543,6 +543,8 @@ function loadStockTable(table, options) {
                 title: 'IPN',
                 sortName: 'part__IPN',
                 sortable: true,
+                visible: params['part_detail'],
+                switchable: params['part_detail'],
                 formatter: function(value, row, index, field) {
                     return row.part_detail.IPN;
                 },
@@ -550,6 +552,8 @@ function loadStockTable(table, options) {
             {
                 field: 'part_detail.description',
                 title: '{% trans "Description" %}',
+                visible: params['part_detail'],
+                switchable: params['part_detail'],
                 formatter: function(value, row, index, field) {
                     return row.part_detail.description;
                 }
@@ -976,8 +980,8 @@ function loadStockTrackingTable(table, options) {
         formatter: function(value, row, index, field) {
             // Manually created entries can be edited or deleted
             if (!row.system) {
-                var bEdit = "<button title='Edit tracking entry' class='btn btn-entry-edit btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/edit/'><span class='fas fa-edit'/></button>";
-                var bDel = "<button title='Delete tracking entry' class='btn btn-entry-delete btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'/></button>";
+                var bEdit = "<button title='{% trans 'Edit tracking entry' %}' class='btn btn-entry-edit btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/edit/'><span class='fas fa-edit'/></button>";
+                var bDel = "<button title='{% trans 'Delete tracking entry' %}' class='btn btn-entry-delete btn-default btn-glyph' type='button' url='/stock/track/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'/></button>";
 
                 return "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
             } else {

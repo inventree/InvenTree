@@ -1,14 +1,16 @@
 {% extends "modal_delete_form.html" %}
 
+{% load i18n %}
+
 {% block pre_form_content %}
 
-Are you sure you want to delete company '{{ company.name }}'?
+{% blocktrans with company.name as name %}Are you sure you want to delete company '{{ name }}'?{% endblocktrans %}
 
 <br>
 
 {% if company.supplied_part_count > 0 %}
-<p>There are {{ company.supplied_part_count }} parts sourced from this company.<br>
-If this supplier is deleted, these supplier part entries will also be deleted.</p>
+<p>{% blocktrans with company.supplied_part_count as count %}There are {{ count }} parts sourced from this company.<br>
+If this supplier is deleted, these supplier part entries will also be deleted.{% endblocktrans %}</p>
 <ul class='list-group'>
 {% for part in company.parts.all %}
 <li class='list-group-item'><b>{{ part.SKU }}</b> - <i>{{ part.part.full_name }}</i></li>
