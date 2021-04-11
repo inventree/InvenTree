@@ -31,7 +31,7 @@ def health_status(request):
     request._inventree_health_status = True
 
     status = {
-        'django_q_running': InvenTree.status.is_q_cluster_running(),
+        'django_q_running': InvenTree.status.is_worker_running(),
     }
 
     all_healthy = True

@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 
 from .views import AjaxView
 from .version import inventreeVersion, inventreeApiVersion, inventreeInstanceName
+from .status import is_worker_running
 
 from plugins import plugins as inventree_plugins
 
@@ -44,6 +45,7 @@ class InfoView(AjaxView):
             'version': inventreeVersion(),
             'instance': inventreeInstanceName(),
             'apiVersion': inventreeApiVersion(),
+            'worker_running': is_worker_running(),
         }
 
         return JsonResponse(data)

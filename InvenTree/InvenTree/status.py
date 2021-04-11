@@ -14,9 +14,9 @@ from django_q.monitor import Stat
 logger = logging.getLogger("inventree")
 
 
-def is_q_cluster_running(**kwargs):
+def is_worker_running(**kwargs):
     """
-    Return True if at least one cluster worker is running
+    Return True if the background worker process is oprational
     """
 
     clusters = Stat.get_all()
@@ -52,7 +52,7 @@ def check_system_health(**kwargs):
 
     result = True
 
-    if not is_q_cluster_running(**kwargs):
+    if not is_worker_running(**kwargs):
         result = False
         logger.warning(_("Background worker check failed"))
 
