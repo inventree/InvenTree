@@ -2,7 +2,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/inventree/inventree)](https://hub.docker.com/inventree/inventree)
 [![Coverage Status](https://coveralls.io/repos/github/inventree/InvenTree/badge.svg)](https://coveralls.io/github/inventree/InvenTree)
 ![PEP](https://github.com/inventree/inventree/actions/workflows/style.yaml/badge.svg)
-![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
+![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker_build.yaml/badge.svg)
 ![SQLite](https://github.com/inventree/inventree/actions/workflows/coverage.yaml/badge.svg)
 ![MySQL](https://github.com/inventree/inventree/actions/workflows/mysql.yaml/badge.svg)
 ![PostgreSQL](https://github.com/inventree/inventree/actions/workflows/postgresql.yaml/badge.svg)
