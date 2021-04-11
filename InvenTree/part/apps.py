@@ -9,7 +9,7 @@ from django.conf import settings
 
 from PIL import UnidentifiedImageError
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class PartConfig(AppConfig):

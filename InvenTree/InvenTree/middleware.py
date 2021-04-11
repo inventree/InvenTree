@@ -8,7 +8,7 @@ import operator
 
 from rest_framework.authtoken.models import Token
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class AuthRequiredMiddleware(object):

@@ -1,3 +1,4 @@
+invoke>=1.4.0                   # Invoke build tool
 wheel>=0.34.2                   # Wheel
 Django==3.0.7                   # Django package
 pillow==8.1.1                   # Image manipulation
@@ -30,5 +31,7 @@ django-error-report==0.2.0      # Error report viewer for the admin interface
 django-test-migrations==1.1.0   # Unit testing for database migrations 
 python-barcode[images]==0.13.1  # Barcode generator
 qrcode[pil]==6.1                # QR code generator
+django-q==1.3.4                 # Background task scheduling
+gunicorn>=20.0.4                # Gunicorn web server
 
 inventree                       # Install the latest version of the InvenTree API python library

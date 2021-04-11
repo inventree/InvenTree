@@ -1,13 +1,46 @@
 """
 Provides system status functionality checks.
 """
+# -*- coding: utf-8 -*-
 
 from django.utils.translation import ugettext_lazy as _
 
 import logging
+from datetime import datetime, timedelta
+
+from django_q.models import Success
+from django_q.monitor import Stat
+
+logger = logging.getLogger("inventree")
 
 
-logger = logging.getLogger(__name__)
+def is_worker_running(**kwargs):
+    """
+    Return True if the background worker process is oprational
+    """
+
+    clusters = Stat.get_all()
+
+    if len(clusters) > 0:
+        # TODO - Introspect on any cluster information
+        return True
+
+    """
+    Sometimes Stat.get_all() returns [].
+    In this case we have the 'heartbeat' task running every 15 minutes.
+    Check to see if we have a result within the last 20 minutes
+    """
+
+    now = datetime.now()
+    past = now - timedelta(minutes=20)
+
+    results = Success.objects.filter(
+        func='InvenTree.tasks.heartbeat',
+        started__gte=past
+    )
+
+    # If any results are returned, then the background worker is running!
+    return results.exists()
 
 
 def check_system_health(**kwargs):
@@ -19,21 +52,11 @@ def check_system_health(**kwargs):
 
     result = True
 
-    if not check_celery_worker(**kwargs):
+    if not is_worker_running(**kwargs):
         result = False
-        logger.warning(_("Celery worker check failed"))
+        logger.warning(_("Background worker check failed"))
 
     if not result:
         logger.warning(_("InvenTree system health checks failed"))
 
     return result
-
-
-def check_celery_worker(**kwargs):
-    """
-    Check that a celery worker is running.
-    """
-
-    # TODO - Checks that the configured celery worker thing is running
-
-    return True

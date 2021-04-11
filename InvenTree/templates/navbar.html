@@ -60,7 +60,9 @@
           <li class='dropdown'>
             <a class='dropdown-toggle' data-toggle='dropdown' href="#">
               {% if not system_healthy %}
-              <span title='{% trans "InvenTree server issues detected" %}' class='fas fa-exclamation-triangle icon-red'></span>
+              <span class='fas fa-exclamation-triangle icon-red'></span>
+              {% elif not up_to_date %}
+              <span class='fas fa-info-circle icon-green'></span>
               {% endif %}
               <span class="fas fa-user"></span> <b>{{ user.get_username }}</b></a>
             <ul class='dropdown-menu'>
@@ -78,11 +80,20 @@
                   {% if system_healthy %}
                   <span class='fas fa-server'>
                   {% else %}
-                  <span class='fas fa-exclamation-triangle icon-red'>
+                  <span class='fas fa-server icon-red'>
                   {% endif %}
                   </span> {% trans "System Information" %}
                 </a></li>
-                <li id='launch-about'><a href='#'><span class="fas fa-info-circle"></span> {% trans "About InvenTree" %}</a></li>
+                <li id='launch-about'>
+                  <a href='#'>
+                    {% if up_to_date %}
+                    <span class="fas fa-info-circle">
+                    {% else %}
+                    <span class='fas fa-info-circle icon-red'>
+                    {% endif %}
+                    </span> {% trans "About InvenTree" %}
+                  </a>
+                </li>
               </ul>
             </li> 
       </ul>

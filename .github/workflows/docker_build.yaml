@@ -1,0 +1,18 @@
+# Test that the docker file builds correctly
+
+name: Docker
+
+on: ["push", "pull_request"]
+
+jobs:
+  
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Server Image
+        run: cd docker/inventree && docker build . --tag inventree:$(date +%s)
+      - name: Build nginx Image
+        run: cd docker/nginx && docker build . --tag nxinx:$(date +%s)
+        

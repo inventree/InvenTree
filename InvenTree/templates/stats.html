@@ -13,8 +13,9 @@
         <td>{% trans "Instance Name" %}</td>
         <td>{% inventree_instance_name %}</td>
     </tr>
+    {% if user.is_staff %}
     <tr>
-        <td><span class='fas fa-exclamation-triangle'></span></td>
+        <td><span class='fas fa-server'></span></td>
         <td>{% trans "Server status" %}</td>
         <td>
             {% if system_healthy %}
@@ -24,6 +25,18 @@
             {% endif %}
         </td>
     </tr>
+    <tr>
+        <td><span class='fas fa-tasks'></span></td>
+        <td>{% trans "Background Worker" %}</td>
+        <td>
+            {% if django_q_running %}
+            <span class='label label-green'>{% trans "Operational" %}</span>
+            {% else %}
+            <span class='label label-red'>{% trans "Not running" %}</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
 
     {% if not system_healthy %}
     {% for issue in system_issues %}
