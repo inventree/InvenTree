@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from invoke import ctask as task
 from shutil import copyfile
-
 import os
 import sys
+
+try:
+    from invoke import ctask as task
+except:
+    from invoke import task
 
 
 def apps():
