@@ -176,4 +176,3 @@ def send_email(subject, body, recipients, from_email=None):
         from_email,
         recipients,
     )
-
