@@ -143,6 +143,7 @@ urlpatterns = [
     url(r'^admin/error_log/', include('error_report.urls')),
     url(r'^admin/shell/', include('django_admin_shell.urls')),
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
+    url(r'accounts/', include('django.contrib.auth.urls')),
 
     url(r'^index/', IndexView.as_view(), name='index'),
     url(r'^search/', SearchView.as_view(), name='search'),
