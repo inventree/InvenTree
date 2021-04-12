@@ -10,7 +10,7 @@ import plugins.action as action
 from plugins.action.action import ActionPlugin
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 def iter_namespace(pkg):

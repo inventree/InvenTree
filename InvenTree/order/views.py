@@ -37,7 +37,7 @@ from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):

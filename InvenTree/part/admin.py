@@ -16,8 +16,6 @@ from .models import PartCategoryParameterTemplate
 from .models import PartTestTemplate
 from .models import PartSellPriceBreak
 
-from InvenTree.helpers import normalize
-
 from stock.models import StockLocation
 from company.models import SupplierPart
 
@@ -180,7 +178,7 @@ class BomItemResource(ModelResource):
 
         Ref: https://django-import-export.readthedocs.io/en/latest/getting_started.html#advanced-data-manipulation-on-export
         """
-        return normalize(item.quantity)
+        return float(item.quantity)
 
     def before_export(self, queryset, *args, **kwargs):
 

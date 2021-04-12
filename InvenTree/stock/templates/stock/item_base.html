@@ -165,12 +165,12 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
                 {% if item.in_stock %}
                 <li><a href='#' id='stock-remove' title='{% trans "Remove stock" %}'><span class='fas fa-minus-circle icon-red'></span> {% trans "Remove stock" %}</a></li>
                 {% endif %}
-                {% if item.in_stock and item.can_adjust_location %}
-                <li><a href='#' id='stock-move' title='{% trans "Transfer stock" %}'><span class='fas fa-exchange-alt icon-blue'></span> {% trans "Transfer stock" %}</a></li>
-                {% endif %}
                 {% if item.in_stock and item.part.trackable %}
                 <li><a href='#' id='stock-serialize' title='{% trans "Serialize stock" %}'><span class='fas fa-hashtag'></span> {% trans "Serialize stock" %}</a> </li>
                 {% endif %}
+                {% endif %}
+                {% if item.in_stock and item.can_adjust_location %}
+                <li><a href='#' id='stock-move' title='{% trans "Transfer stock" %}'><span class='fas fa-exchange-alt icon-blue'></span> {% trans "Transfer stock" %}</a></li>
                 {% endif %}
                 {% if item.in_stock and item.can_adjust_location and item.part.salable and not item.customer %}
                 <li><a href='#' id='stock-assign-to-customer' title='{% trans "Assign to customer" %}'><span class='fas fa-user-tie'></span> {% trans "Assign to customer" %}</a></li>

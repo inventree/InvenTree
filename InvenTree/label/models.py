@@ -32,7 +32,7 @@ except OSError as err:
     sys.exit(1)
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 def rename_label(instance, filename):

@@ -131,6 +131,7 @@ addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa
 
 loadStockTable($('#table-recently-updated-stock'), {
     params: {
+        part_detail: true,
         ordering: "-updated",
         max_results: {% settings_value "STOCK_RECENT_COUNT" %},
     },

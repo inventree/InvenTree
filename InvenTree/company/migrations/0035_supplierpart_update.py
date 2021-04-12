@@ -71,8 +71,8 @@ def supplierpart_make_manufacturer_parts(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0032_auto_20210403_1837'),
-        ('company', '0033_manufacturerpart'),
+        ('company', '0033_auto_20210410_1528'),
+        ('company', '0034_manufacturerpart'),
     ]
 
     operations = [

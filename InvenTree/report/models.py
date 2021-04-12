@@ -38,7 +38,7 @@ except OSError as err:
     sys.exit(1)
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class ReportFileUpload(FileSystemStorage):
