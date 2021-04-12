@@ -51,6 +51,24 @@ def schedule_task(taskname, **kwargs):
         pass
 
 
+def offload_task(taskname, *args, **kwargs):
+    """
+    Create an AsyncTask.
+    This is different to a 'scheduled' task,
+    in that it only runs once!
+    """
+
+    try:
+        from django_q.tasks import AsyncTask
+    except (AppRegistryNotReady):
+        logger.warning("Could not offload task - app registry not ready")
+        return
+
+    task = AsyncTask(taskname, *args, **kwargs)
+
+    task.run()
+
+
 def heartbeat():
     """
     Simple task which runs at 5 minute intervals,
@@ -141,3 +159,21 @@ def check_for_updates():
         tag,
         None
     )
+
+
+def send_email(subject, body, recipients, from_email=None):
+    """
+    Send an email with the specified subject and body,
+    to the specified recipients list.
+    """
+
+    if type(recipients) == str:
+        recipients = [recipients]
+
+    offload_task(
+        'django.core.mail.send_mail',
+        subject, body,
+        from_email,
+        recipients,
+    )
+
