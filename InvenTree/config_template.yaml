@@ -63,6 +63,31 @@ currencies:
   - NZD
   - USD
 
+# Email backend configuration
+# Ref: https://docs.djangoproject.com/en/dev/topics/email/
+# Available options:
+# host: Email server host address
+# port: Email port
+# username: Account username
+# password: Account password
+# prefix: Email subject prefix
+# tls: Enable TLS support
+# ssl: Enable SSL support
+
+# Alternatively, these options can all be set using environment variables,
+# with the INVENTREE_EMAIL_ prefix:
+# e.g. INVENTREE_EMAIL_HOST / INVENTREE_EMAIL_PORT / INVENTREE_EMAIL_USERNAME
+# Refer to the InvenTree documentation for more information
+
+email:
+  # backend: 'django.core.mail.backends.smtp.EmailBackend'
+  host: ''
+  port: 25
+  username: ''
+  password: ''
+  tls: False
+  ssl: False
+
 # Set debug to False to run in production mode
 # Use the environment variable INVENTREE_DEBUG
 debug: True

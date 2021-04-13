@@ -32,6 +32,7 @@ def health_status(request):
 
     status = {
         'django_q_running': InvenTree.status.is_worker_running(),
+        'email_configured': InvenTree.status.is_email_configured(),
     }
 
     all_healthy = True
