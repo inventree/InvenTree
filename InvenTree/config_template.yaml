@@ -74,7 +74,9 @@ currencies:
 # tls: Enable TLS support
 # ssl: Enable SSL support
 
-# Alternatively, these options can all be set using environment variables
+# Alternatively, these options can all be set using environment variables,
+# with the INVENTREE_EMAIL_ prefix:
+# e.g. INVENTREE_EMAIL_HOST / INVENTREE_EMAIL_PORT / INVENTREE_EMAIL_USERNAME
 # Refer to the InvenTree documentation for more information
 
 email:

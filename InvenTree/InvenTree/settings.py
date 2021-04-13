@@ -498,7 +498,10 @@ EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeManualExchangeBackend'
 # Extract email settings from the config file
 email_config = CONFIG.get('email', {})
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = get_setting(
+    'django.core.mail.backends.smtp.EmailBackend',
+    email_config.get('backend', '')
+)
 
 # Email backend settings
 EMAIL_HOST = get_setting(

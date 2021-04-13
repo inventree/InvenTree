@@ -11,6 +11,9 @@ from datetime import datetime, timedelta
 from django_q.models import Success
 from django_q.monitor import Stat
 
+from django.conf import settings
+
+
 logger = logging.getLogger("inventree")
 
 
@@ -43,6 +46,30 @@ def is_worker_running(**kwargs):
     return results.exists()
 
 
+def is_email_configured():
+    """
+    Check if email backend is configured.
+
+    NOTE: This does not check if the configuration is valid!
+    """
+
+    configured = True
+
+    if not settings.EMAIL_HOST:
+        logger.warning("EMAIL_HOST is not configured")
+        configured = False
+
+    if not settings.EMAIL_HOST_USER:
+        logger.warning("EMAIL_HOST_USER is not configured")
+        configured = False
+
+    if not settings.EMAIL_HOST_PASSWORD:
+        logger.warning("EMAIL_HOST_PASSWORD is not configured")
+        configured = False
+
+    return configured
+
+
 def check_system_health(**kwargs):
     """
     Check that the InvenTree system is running OK.
@@ -55,6 +82,10 @@ def check_system_health(**kwargs):
     if not is_worker_running(**kwargs):
         result = False
         logger.warning(_("Background worker check failed"))
+
+    if not is_email_configured():
+        result = False
+        logger.warning(_("Email backend not configured"))
 
     if not result:
         logger.warning(_("InvenTree system health checks failed"))
