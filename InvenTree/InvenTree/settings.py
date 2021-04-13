@@ -524,10 +524,7 @@ EMAIL_HOST_PASSWORD = get_setting(
     email_config.get('password', ''),
 )
 
-EMAIL_SUBJECT_PREFIX = get_setting(
-    'INVENTREE_EMAIL_PREFIX',
-    email_config.get('prefix', '[InvenTree] '),
-)
+EMAIL_SUBJECT_PREFIX = '[InvenTree] ')
 
 EMAIL_USE_LOCALTIME = False
 

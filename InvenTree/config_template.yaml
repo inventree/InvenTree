@@ -80,11 +80,11 @@ currencies:
 # Refer to the InvenTree documentation for more information
 
 email:
+  # backend: 'django.core.mail.backends.smtp.EmailBackend'
   host: ''
   port: 25
   username: ''
   password: ''
-  prefix: '[InvenTree] '
   tls: False
   ssl: False
 
