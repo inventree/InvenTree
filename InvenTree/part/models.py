@@ -52,7 +52,7 @@ import common.models
 import part.settings as part_settings
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class PartCategory(InvenTreeTree):

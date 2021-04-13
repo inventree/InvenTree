@@ -13,8 +13,9 @@
         <td>{% trans "Instance Name" %}</td>
         <td>{% inventree_instance_name %}</td>
     </tr>
+    {% if user.is_staff %}
     <tr>
-        <td><span class='fas fa-exclamation-triangle'></span></td>
+        <td><span class='fas fa-server'></span></td>
         <td>{% trans "Server status" %}</td>
         <td>
             {% if system_healthy %}
@@ -24,6 +25,29 @@
             {% endif %}
         </td>
     </tr>
+    {% if not django_q_running %}
+    <tr>
+        <td><span class='fas fa-tasks'></span></td>
+        <td>{% trans "Background Worker" %}</td>
+        <td>
+            <a href='https://inventree.readthedocs.io/en/latest/admin/tasks'>
+                <span class='label label-red'>{% trans "Background worker not running" %}</span>
+            </a>
+        </td>
+    </tr>
+    {% endif %}
+    {% if not email_configured %}
+    <tr>
+        <td><span class='fas fa-envelope'></span></td>
+        <td>{% trans "Email Settings" %}</td>
+        <td>
+            <a href='https://inventree.readthedocs.io/en/latest/admin/email'>
+                <span class='label label-red'>{% trans "Email settings not configured" %}</span>
+            </a>
+        </td>
+    </tr>
+    {% endif %}
+    {% endif %}
 
     {% if not system_healthy %}
     {% for issue in system_issues %}

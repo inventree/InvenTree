@@ -500,7 +500,7 @@ class InvenTreeSetting(models.Model):
             create: If True, create a new setting if the specified key does not exist.
         """
 
-        if not user.is_staff:
+        if user is not None and not user.is_staff:
             return
 
         try:

@@ -95,7 +95,12 @@ class Company(models.Model):
                             help_text=_('Company name'),
                             verbose_name=_('Company name'))
 
-    description = models.CharField(max_length=500, verbose_name=_('Company description'), help_text=_('Description of the company'))
+    description = models.CharField(
+        max_length=500,
+        verbose_name=_('Company description'),
+        help_text=_('Description of the company'),
+        blank=True,
+    )
 
     website = models.URLField(blank=True, verbose_name=_('Website'), help_text=_('Company website URL'))
 
