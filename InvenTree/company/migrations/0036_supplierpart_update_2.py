@@ -11,7 +11,7 @@ def supplierpart_make_manufacturer_parts(apps, schema_editor):
     supplier_parts = SupplierPart.objects.all()
     
     if supplier_parts:
-        print(f'\nCreating Manufacturer parts\n{"-"*10}')
+        print(f'\nCreating ManufacturerPart Objects\n{"-"*10}')
         for supplier_part in supplier_parts:
             print(f'{supplier_part.supplier.name[:15].ljust(15)} | {supplier_part.SKU[:15].ljust(15)}\t', end='')
 
@@ -67,29 +67,44 @@ def supplierpart_make_manufacturer_parts(apps, schema_editor):
 
         print(f'{"-"*10}\nDone\n')
 
+def supplierpart_populate_manufacturer_info(apps, schema_editor):
+    Part = apps.get_model('part', 'Part')
+    ManufacturerPart = apps.get_model('company', 'ManufacturerPart')
+    SupplierPart = apps.get_model('company', 'SupplierPart')
+
+    supplier_parts = SupplierPart.objects.all()
+    
+    if supplier_parts:
+        print(f'\nSupplierPart: Populating Manufacturer Information\n{"-"*10}')
+        for supplier_part in supplier_parts:
+            print(f'{supplier_part.supplier.name[:15].ljust(15)} | {supplier_part.SKU[:15].ljust(15)}\t', end='')
+            
+            manufacturer_part = supplier_part.manufacturer_part
+
+            if manufacturer_part:
+                if manufacturer_part.manufacturer:
+                    supplier_part.manufacturer = manufacturer_part.manufacturer
+
+                if manufacturer_part.MPN:
+                    supplier_part.MPN = manufacturer_part.MPN
+
+                supplier_part.save()
+                
+                print(f'[SUCCESS: UPDATED MANUFACTURER INFO]')
+            else:
+                print(f'[IGNORED: NO MANUFACTURER PART]')
+
+        print(f'{"-"*10}\nDone\n')
+                
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0033_auto_20210410_1528'),
-        ('company', '0034_manufacturerpart'),
+        ('company', '0035_supplierpart_update_1'),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='supplierpart',
-            name='manufacturer_part',
-            field=models.ForeignKey(blank=True, help_text='Select manufacturer part', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='supplier_parts', to='company.ManufacturerPart', verbose_name='Manufacturer Part'),
-        ),
         # Make new ManufacturerPart with SupplierPart "manufacturer" and "MPN"
         # fields, then link it to the new SupplierPart "manufacturer_part" field
-        migrations.RunPython(supplierpart_make_manufacturer_parts),
-        migrations.RemoveField(
-            model_name='supplierpart',
-            name='MPN',
-        ),
-        migrations.RemoveField(
-            model_name='supplierpart',
-            name='manufacturer',
-        ),
+        migrations.RunPython(supplierpart_make_manufacturer_parts, reverse_code=supplierpart_populate_manufacturer_info),
     ]
