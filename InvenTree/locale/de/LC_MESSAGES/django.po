@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-11 22:07+0000\n"
+"POT-Creation-Date: 2021-04-14 09:06+0000\n"
 "PO-Revision-Date: 2021-03-28 17:47+0200\n"
 "Last-Translator: Andreas Kaiser <kaiser.vocote@gmail.com>, Matthias "
 "MAIR<matmair@live.de>\n"
@@ -190,11 +190,15 @@ msgstr "Polnisch"
 msgid "Turkish"
 msgstr "Türkisch"
 
-#: InvenTree/status.py:57
+#: InvenTree/status.py:84
 msgid "Background worker check failed"
 msgstr "Hintergrund-Prozess-Kontrolle fehlgeschlagen"
 
-#: InvenTree/status.py:60
+#: InvenTree/status.py:88
+msgid "Email backend not configured"
+msgstr ""
+
+#: InvenTree/status.py:91
 msgid "InvenTree system health checks failed"
 msgstr "InvenTree Status-Überprüfung fehlgeschlagen"
 
@@ -2052,14 +2056,14 @@ msgstr "Zulieferer-Teile"
 #: part/templates/part/category_partlist.html:10
 #: templates/InvenTree/index.html:96 templates/InvenTree/search.html:113
 #: templates/InvenTree/settings/tabs.html:25 templates/navbar.html:23
-#: templates/stats.html:48 templates/stats.html:57 users/models.py:38
+#: templates/stats.html:59 templates/stats.html:68 users/models.py:38
 msgid "Parts"
 msgstr "Teile"
 
 #: company/templates/company/navbar.html:27 part/templates/part/navbar.html:33
 #: stock/templates/stock/location.html:100
 #: stock/templates/stock/location.html:115 templates/InvenTree/search.html:182
-#: templates/stats.html:61 templates/stats.html:70 users/models.py:40
+#: templates/stats.html:72 templates/stats.html:81 users/models.py:40
 msgid "Stock Items"
 msgstr "BestandsObjekte"
 
@@ -3274,7 +3278,7 @@ msgstr "Teil-Kategorie"
 
 #: part/models.py:83 part/templates/part/category.html:19
 #: part/templates/part/category.html:90 part/templates/part/category.html:141
-#: templates/InvenTree/search.html:126 templates/stats.html:52
+#: templates/InvenTree/search.html:126 templates/stats.html:63
 #: users/models.py:37
 msgid "Part Categories"
 msgstr "Teil-Kategorien"
@@ -5333,7 +5337,7 @@ msgid "Stock Details"
 msgstr "Objekt-Details"
 
 #: stock/templates/stock/location.html:110 templates/InvenTree/search.html:263
-#: templates/stats.html:65 users/models.py:39
+#: templates/stats.html:76 users/models.py:39
 msgid "Stock Locations"
 msgstr "Bestand-Lagerorte"
 
@@ -6792,7 +6796,7 @@ msgstr "Barcode scannen"
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/navbar.html:73 templates/registration/logout.html:5
+#: templates/navbar.html:73
 msgid "Logout"
 msgstr "Ausloggen"
 
@@ -6808,6 +6812,18 @@ msgstr "Über InvenBaum"
 msgid "QR data not provided"
 msgstr "QR Daten nicht angegeben"
 
+#: templates/registration/logged_out.html:50
+msgid "You have been logged out"
+msgstr "Sie wurden abgemeldet"
+
+#: templates/registration/logged_out.html:51
+#: templates/registration/password_reset_complete.html:51
+#: templates/registration/password_reset_done.html:58
+#, fuzzy
+#| msgid "Returned to location"
+msgid "Return to login screen"
+msgstr "zurück ins Lager"
+
 #: templates/registration/login.html:64
 msgid "Enter username"
 msgstr "Benutzername eingeben"
@@ -6820,17 +6836,61 @@ msgstr "Passwort"
 msgid "Username / password combination is incorrect"
 msgstr "Benutzername / Passwort Kombination ist falsch"
 
-#: templates/registration/logout.html:6
-msgid "You have been logged out"
-msgstr "Sie wurden abgemeldet"
+#: templates/registration/login.html:95
+#: templates/registration/password_reset_form.html:51
+#, fuzzy
+#| msgid "Enter password"
+msgid "Forgotten your password?"
+msgstr "Passwort eingeben"
 
-#: templates/registration/logout.html:7
-msgid "Click"
-msgstr "Klick"
+#: templates/registration/login.html:95
+msgid "Click here to reset"
+msgstr ""
 
-#: templates/registration/logout.html:7
-msgid "here</a> to log in</p>"
-msgstr "hier</a> zum abmelden</p>"
+#: templates/registration/password_reset_complete.html:50
+#, fuzzy
+#| msgid "Purchase order completed"
+msgid "Password reset complete"
+msgstr "Bestellung als vollständig markieren"
+
+#: templates/registration/password_reset_confirm.html:52
+#: templates/registration/password_reset_confirm.html:56
+#, fuzzy
+#| msgid "Change Password"
+msgid "Change password"
+msgstr "Passwort ändern"
+
+#: templates/registration/password_reset_confirm.html:60
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a new password reset."
+msgstr ""
+
+#: templates/registration/password_reset_done.html:51
+msgid ""
+"We've emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+
+#: templates/registration/password_reset_done.html:54
+msgid ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+
+#: templates/registration/password_reset_form.html:52
+#, fuzzy
+#| msgid "Contact email address"
+msgid "Enter your email address below."
+msgstr "Kontakt-Email"
+
+#: templates/registration/password_reset_form.html:53
+msgid "An email will be sent with password reset instructions."
+msgstr ""
+
+#: templates/registration/password_reset_form.html:58
+msgid "Send email"
+msgstr ""
 
 #: templates/stats.html:9
 msgid "Server"
@@ -6852,17 +6912,25 @@ msgstr "Gesund"
 msgid "Issues detected"
 msgstr "Probleme erkannt"
 
-#: templates/stats.html:30
+#: templates/stats.html:31
 msgid "Background Worker"
 msgstr "Hintergrund-Prozess"
 
-#: templates/stats.html:33
-msgid "Operational"
-msgstr "Betriebsbereit"
+#: templates/stats.html:34
+#, fuzzy
+#| msgid "Background Worker"
+msgid "Background worker not running"
+msgstr "Hintergrund-Prozess"
 
-#: templates/stats.html:35
-msgid "Not running"
-msgstr "Läuft nicht"
+#: templates/stats.html:42
+#, fuzzy
+#| msgid "Part Settings"
+msgid "Email Settings"
+msgstr "Teil-Einstellungen"
+
+#: templates/stats.html:45
+msgid "Email settings not configured"
+msgstr ""
 
 #: templates/stock_table.html:14
 msgid "Export Stock Information"
@@ -6979,6 +7047,18 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:182
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
+#~ msgid "Click"
+#~ msgstr "Klick"
+
+#~ msgid "here</a> to log in</p>"
+#~ msgstr "hier</a> zum abmelden</p>"
+
+#~ msgid "Operational"
+#~ msgstr "Betriebsbereit"
+
+#~ msgid "Not running"
+#~ msgstr "Läuft nicht"
 
 #~ msgid "InvenTree server issues detected"
 #~ msgstr "InvenTree Server Fehler aufgetreten"
