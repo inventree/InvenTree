@@ -280,11 +280,25 @@ def MakeBarcode(object_name, object_pk, object_data={}, **kwargs):
         json string of the supplied data plus some other data
     """
 
+    url = kwargs.get('url', True)
     brief = kwargs.get('brief', True)
 
     data = {}
 
-    if brief:
+    if url:
+        request = object_data.get('request', None)
+        item_url = object_data.get('item_url', None)
+        absolute_url = None
+
+        if request and item_url:
+            absolute_url = request.build_absolute_uri(item_url)
+            # Return URL (No JSON)
+            return absolute_url
+
+        if item_url:
+            # Return URL (No JSON)
+            return item_url
+    elif brief:
         data[object_name] = object_pk
     else:
         data['tool'] = 'InvenTree'
