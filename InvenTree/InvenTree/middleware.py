@@ -52,6 +52,10 @@ class AuthRequiredMiddleware(object):
             if request.path_info.startswith('/static/'):
                 authorized = True
 
+            # Unauthorized users can access the login page
+            elif request.path_info.startswith('/accounts/'):
+                authorized = True
+
             elif 'Authorization' in request.headers.keys():
                 auth = request.headers['Authorization'].strip()
 

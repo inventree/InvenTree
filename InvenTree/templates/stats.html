@@ -25,17 +25,28 @@
             {% endif %}
         </td>
     </tr>
+    {% if not django_q_running %}
     <tr>
         <td><span class='fas fa-tasks'></span></td>
         <td>{% trans "Background Worker" %}</td>
         <td>
-            {% if django_q_running %}
-            <span class='label label-green'>{% trans "Operational" %}</span>
-            {% else %}
-            <span class='label label-red'>{% trans "Not running" %}</span>
-            {% endif %}
+            <a href='https://inventree.readthedocs.io/en/latest/admin/tasks'>
+                <span class='label label-red'>{% trans "Background worker not running" %}</span>
+            </a>
         </td>
     </tr>
+    {% endif %}
+    {% if not email_configured %}
+    <tr>
+        <td><span class='fas fa-envelope'></span></td>
+        <td>{% trans "Email Settings" %}</td>
+        <td>
+            <a href='https://inventree.readthedocs.io/en/latest/admin/email'>
+                <span class='label label-red'>{% trans "Email settings not configured" %}</span>
+            </a>
+        </td>
+    </tr>
+    {% endif %}
     {% endif %}
 
     {% if not system_healthy %}
