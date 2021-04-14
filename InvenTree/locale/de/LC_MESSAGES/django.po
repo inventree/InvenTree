@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-14 11:13+0000\n"
-"PO-Revision-Date: 2021-04-14 11:53\n"
+"PO-Revision-Date: 2021-04-14 14:19\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -6701,7 +6701,7 @@ msgstr "Einloggen"
 
 #: templates/navbar.html:94
 msgid "About InvenTree"
-msgstr "Über InvenBaum"
+msgstr "Über InvenTree"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
