@@ -1,3 +1,0 @@
-files:
-  - source: InvenTree/locale/en/LC_MESSAGES/*.po
-    translation: /InvenTree/locale/%two_letters_code%/LC_MESSAGES/%original_file_name%
