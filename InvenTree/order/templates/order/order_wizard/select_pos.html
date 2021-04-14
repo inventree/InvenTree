@@ -42,7 +42,7 @@
                 <button 
                     class='btn btn-default btn-create'
                     id='new_po_{{ supplier.id }}'
-                    title='Create new purchase order for {{ supplier.name }}'
+                    title='{% trans "Create new purchase order for {{ supplier.name }}" %}'
                     type='button'
                     supplierid='{{ supplier.id }}' 
                     onclick='newPurchaseOrderFromOrderWizard()'>

@@ -15,7 +15,7 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from markdownx.models import MarkdownxField
 
@@ -96,18 +96,19 @@ class Order(models.Model):
     class Meta:
         abstract = True
 
-    reference = models.CharField(unique=True, max_length=64, blank=False, help_text=_('Order reference'))
+    reference = models.CharField(unique=True, max_length=64, blank=False, verbose_name=_('Reference'), help_text=_('Order reference'))
 
-    description = models.CharField(max_length=250, help_text=_('Order description'))
+    description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
-    link = models.URLField(blank=True, help_text=_('Link to external page'))
+    link = models.URLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external page'))
 
-    creation_date = models.DateField(blank=True, null=True)
+    creation_date = models.DateField(blank=True, null=True, verbose_name=_('Creation Date'))
 
     created_by = models.ForeignKey(User,
                                    on_delete=models.SET_NULL,
                                    blank=True, null=True,
-                                   related_name='+'
+                                   related_name='+',
+                                   verbose_name=_('Created By')
                                    )
 
     responsible = models.ForeignKey(
@@ -119,7 +120,7 @@ class Order(models.Model):
         related_name='+',
     )
 
-    notes = MarkdownxField(blank=True, help_text=_('Order notes'))
+    notes = MarkdownxField(blank=True, verbose_name=_('Notes'), help_text=_('Order notes'))
 
 
 class PurchaseOrder(Order):
@@ -186,16 +187,18 @@ class PurchaseOrder(Order):
             'is_supplier': True,
         },
         related_name='purchase_orders',
+        verbose_name=_('Supplier'),
         help_text=_('Company from which the items are being ordered')
     )
 
-    supplier_reference = models.CharField(max_length=64, blank=True, help_text=_("Supplier order reference code"))
+    supplier_reference = models.CharField(max_length=64, blank=True, verbose_name=_('Supplier Reference'), help_text=_("Supplier order reference code"))
 
     received_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        verbose_name=_('received by')
     )
 
     issue_date = models.DateField(
@@ -435,13 +438,14 @@ class SalesOrder(Order):
         null=True,
         limit_choices_to={'is_customer': True},
         related_name='sales_orders',
+        verbose_name=_('Customer'),
         help_text=_("Company to which the items are being sold"),
     )
 
     status = models.PositiveIntegerField(default=SalesOrderStatus.PENDING, choices=SalesOrderStatus.items(),
-                                         help_text=_('Purchase order status'))
+                                         verbose_name=_('Status'), help_text=_('Purchase order status'))
 
-    customer_reference = models.CharField(max_length=64, blank=True, help_text=_("Customer order reference code"))
+    customer_reference = models.CharField(max_length=64, blank=True, verbose_name=_('Customer Reference '), help_text=_("Customer order reference code"))
 
     target_date = models.DateField(
         null=True, blank=True,
@@ -449,13 +453,14 @@ class SalesOrder(Order):
         help_text=_('Target date for order completion. Order will be overdue after this date.')
     )
 
-    shipment_date = models.DateField(blank=True, null=True)
+    shipment_date = models.DateField(blank=True, null=True, verbose_name=_('Shipment Date'))
 
     shipped_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        verbose_name=_('shipped by')
     )
 
     @property
@@ -586,11 +591,11 @@ class OrderLineItem(models.Model):
     class Meta:
         abstract = True
 
-    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, help_text=_('Item quantity'))
+    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, verbose_name=_('Quantity'), help_text=_('Item quantity'))
 
-    reference = models.CharField(max_length=100, blank=True, help_text=_('Line item reference'))
+    reference = models.CharField(max_length=100, blank=True, verbose_name=_('Reference'), help_text=_('Line item reference'))
     
-    notes = models.CharField(max_length=500, blank=True, help_text=_('Line item notes'))
+    notes = models.CharField(max_length=500, blank=True, verbose_name=_('Notes'), help_text=_('Line item notes'))
 
 
 class PurchaseOrderLineItem(OrderLineItem):
@@ -616,6 +621,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     order = models.ForeignKey(
         PurchaseOrder, on_delete=models.CASCADE,
         related_name='lines',
+        verbose_name=_('Order'),
         help_text=_('Purchase Order')
     )
 
@@ -629,10 +635,11 @@ class PurchaseOrderLineItem(OrderLineItem):
         SupplierPart, on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='purchase_order_line_items',
+        verbose_name=_('Part'),
         help_text=_("Supplier part"),
     )
 
-    received = models.DecimalField(decimal_places=5, max_digits=15, default=0, help_text=_('Number of items received'))
+    received = models.DecimalField(decimal_places=5, max_digits=15, default=0, verbose_name=_('Received'), help_text=_('Number of items received'))
 
     purchase_price = MoneyField(
         max_digits=19,
@@ -658,9 +665,9 @@ class SalesOrderLineItem(OrderLineItem):
         part: Link to a Part object (may be null)
     """
 
-    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', help_text=_('Sales Order'))
+    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='lines', verbose_name=_('Order'), help_text=_('Sales Order'))
 
-    part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, help_text=_('Part'), limit_choices_to={'salable': True})
+    part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, verbose_name=_('Part'), help_text=_('Part'), limit_choices_to={'salable': True})
 
     class Meta:
         unique_together = [
@@ -760,7 +767,7 @@ class SalesOrderAllocation(models.Model):
         if len(errors) > 0:
             raise ValidationError(errors)
 
-    line = models.ForeignKey(SalesOrderLineItem, on_delete=models.CASCADE, related_name='allocations')
+    line = models.ForeignKey(SalesOrderLineItem, on_delete=models.CASCADE, verbose_name=_('Line'), related_name='allocations')
 
     item = models.ForeignKey(
         'stock.StockItem',
@@ -771,10 +778,11 @@ class SalesOrderAllocation(models.Model):
             'belongs_to': None,
             'sales_order': None,
         },
+        verbose_name=_('Item'),
         help_text=_('Select stock item to allocate')
     )
 
-    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, help_text=_('Enter stock allocation quantity'))
+    quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, verbose_name=_('Quantity'), help_text=_('Enter stock allocation quantity'))
 
     def get_serial(self):
         return self.item.serial

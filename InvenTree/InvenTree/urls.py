@@ -110,6 +110,7 @@ dynamic_javascript_urls = [
     url(r'^stock.js', DynamicJsView.as_view(template_name='js/stock.js'), name='stock.js'),
     url(r'^tables.js', DynamicJsView.as_view(template_name='js/tables.js'), name='tables.js'),
     url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/table_filters.js'), name='table_filters.js'),
+    url(r'^filters.js', DynamicJsView.as_view(template_name='js/filters.js'), name='filters.js'),
 ]
 
 urlpatterns = [
@@ -132,7 +133,7 @@ urlpatterns = [
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     url(r'^login/?', auth_views.LoginView.as_view(), name='login'),
-    url(r'^logout/', auth_views.LogoutView.as_view(template_name='registration/logout.html'), name='logout'),
+    url(r'^logout/', auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name='logout'),
     
     url(r'^settings/', include(settings_urls)),
 
@@ -142,6 +143,7 @@ urlpatterns = [
     url(r'^admin/error_log/', include('error_report.urls')),
     url(r'^admin/shell/', include('django_admin_shell.urls')),
     url(r'^admin/', admin.site.urls, name='inventree-admin'),
+    url(r'accounts/', include('django.contrib.auth.urls')),
 
     url(r'^index/', IndexView.as_view(), name='index'),
     url(r'^search/', SearchView.as_view(), name='search'),

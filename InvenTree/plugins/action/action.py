@@ -5,7 +5,7 @@ import logging
 import plugins.plugin as plugin
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class ActionPlugin(plugin.InvenTreePlugin):

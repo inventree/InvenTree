@@ -38,7 +38,7 @@ except OSError as err:
     sys.exit(1)
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class ReportFileUpload(FileSystemStorage):
@@ -497,11 +497,12 @@ class ReportSnippet(models.Model):
 
     snippet = models.FileField(
         upload_to=rename_snippet,
+        verbose_name=_('Snippet'),
         help_text=_('Report snippet file'),
         validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
     )
 
-    description = models.CharField(max_length=250, help_text=_("Snippet file description"))
+    description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_("Snippet file description"))
 
 
 def rename_asset(instance, filename):
@@ -536,7 +537,8 @@ class ReportAsset(models.Model):
 
     asset = models.FileField(
         upload_to=rename_asset,
+        verbose_name=_('Asset'),
         help_text=_("Report asset file"),
     )
 
-    description = models.CharField(max_length=250, help_text=_("Asset file description"))
+    description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_("Asset file description"))

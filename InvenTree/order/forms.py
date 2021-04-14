@@ -6,7 +6,7 @@ Django Forms for interacting with Order objects
 from __future__ import unicode_literals
 
 from django import forms
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from mptt.fields import TreeNodeChoiceField
 
@@ -24,7 +24,7 @@ from .models import SalesOrderAllocation
 
 class IssuePurchaseOrderForm(HelperForm):
 
-    confirm = forms.BooleanField(required=True, initial=False, help_text=_('Place order'))
+    confirm = forms.BooleanField(required=True, initial=False, label=_('Confirm'), help_text=_('Place order'))
 
     class Meta:
         model = PurchaseOrder
@@ -35,7 +35,7 @@ class IssuePurchaseOrderForm(HelperForm):
 
 class CompletePurchaseOrderForm(HelperForm):
 
-    confirm = forms.BooleanField(required=True, help_text=_("Mark order as complete"))
+    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_("Mark order as complete"))
 
     class Meta:
         model = PurchaseOrder
@@ -46,7 +46,7 @@ class CompletePurchaseOrderForm(HelperForm):
 
 class CancelPurchaseOrderForm(HelperForm):
 
-    confirm = forms.BooleanField(required=True, help_text=_('Cancel order'))
+    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Cancel order'))
 
     class Meta:
         model = PurchaseOrder
@@ -57,7 +57,7 @@ class CancelPurchaseOrderForm(HelperForm):
 
 class CancelSalesOrderForm(HelperForm):
 
-    confirm = forms.BooleanField(required=True, help_text=_('Cancel order'))
+    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Cancel order'))
 
     class Meta:
         model = SalesOrder
@@ -68,7 +68,7 @@ class CancelSalesOrderForm(HelperForm):
 
 class ShipSalesOrderForm(HelperForm):
 
-    confirm = forms.BooleanField(required=True, help_text=_('Ship order'))
+    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Ship order'))
 
     class Meta:
         model = SalesOrder
@@ -79,7 +79,7 @@ class ShipSalesOrderForm(HelperForm):
 
 class ReceivePurchaseOrderForm(HelperForm):
 
-    location = TreeNodeChoiceField(queryset=StockLocation.objects.all(), required=True, help_text=_('Receive parts to this location'))
+    location = TreeNodeChoiceField(queryset=StockLocation.objects.all(), required=True, label=_('Location'), help_text=_('Receive parts to this location'))
 
     class Meta:
         model = PurchaseOrder
@@ -106,6 +106,7 @@ class EditPurchaseOrderForm(HelperForm):
         super().__init__(*args, **kwargs)
 
     target_date = DatePickerFormField(
+        label=_('Target Date'),
         help_text=_('Target date for order delivery. Order will be overdue after this date.'),
     )
 
@@ -140,6 +141,7 @@ class EditSalesOrderForm(HelperForm):
         super().__init__(*args, **kwargs)
 
     target_date = DatePickerFormField(
+        label=_('Target Date'),
         help_text=_('Target date for order completion. Order will be overdue after this date.'),
     )
 
@@ -183,7 +185,7 @@ class EditSalesOrderAttachmentForm(HelperForm):
 class EditPurchaseOrderLineItemForm(HelperForm):
     """ Form for editing a PurchaseOrderLineItem object """
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
     class Meta:
         model = PurchaseOrderLineItem
@@ -200,7 +202,7 @@ class EditPurchaseOrderLineItemForm(HelperForm):
 class EditSalesOrderLineItemForm(HelperForm):
     """ Form for editing a SalesOrderLineItem object """
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
     class Meta:
         model = SalesOrderLineItem
@@ -256,7 +258,7 @@ class CreateSalesOrderAllocationForm(HelperForm):
     Form for creating a SalesOrderAllocation item.
     """
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
     class Meta:
         model = SalesOrderAllocation
@@ -273,7 +275,7 @@ class EditSalesOrderAllocationForm(HelperForm):
     Form for editing a SalesOrderAllocation item
     """
 
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5)
+    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
     class Meta:
         model = SalesOrderAllocation

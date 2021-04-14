@@ -33,6 +33,27 @@
     template: 1
     data: 12
 
+- model: part.PartParameter
+  pk: 3
+  fields:
+    part: 3
+    template: 1
+    data: 12
+
+- model: part.PartParameter
+  pk: 4
+  fields:
+    part: 3
+    template: 2
+    data: 12
+
+- model: part.PartParameter
+  pk: 5
+  fields:
+    part: 3
+    template: 3
+    data: 12
+
 # Add some template parameters to categories (requires category.yaml)
 - model: part.PartCategoryParameterTemplate
   pk: 1

@@ -49,7 +49,7 @@ src="{% static 'img/blank_image.png' %}"
             <span class='fas fa-print'></span> 
         </button>
         {% if roles.sales_order.change %}
-        <button type='button' class='btn btn-default' id='edit-order' title='Edit order information'>
+        <button type='button' class='btn btn-default' id='edit-order' title='{% trans "Edit order information" %}'>
             <span class='fas fa-edit icon-green'></span>
         </button>
         {% if order.status == SalesOrderStatus.PENDING %}

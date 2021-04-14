@@ -9,7 +9,7 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.urls import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
 from django.views.generic.edit import FormMixin
 from django.forms import HiddenInput
@@ -37,7 +37,7 @@ from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("inventree")
 
 
 class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):
@@ -1058,7 +1058,7 @@ class OrderParts(AjaxView):
 
         data = {
             'form_valid': valid,
-            'success': 'Ordered {n} parts'.format(n=len(self.parts))
+            'success': _('Ordered {n} parts').format(n=len(self.parts))
         }
 
         return self.renderJsonResponse(self.request, data=data)
@@ -1349,7 +1349,7 @@ class SalesOrderAssignSerials(AjaxView, FormMixin):
             'form_valid': valid,
             'form_errors': self.form.errors.as_json(),
             'non_field_errors': self.form.non_field_errors().as_json(),
-            'success': _("Allocated") + f" {len(self.stock_items)} " + _("items")
+            'success': _("Allocated {n} items").format(n=len(self.stock_items))
         }
 
         return self.renderJsonResponse(request, self.form, data)

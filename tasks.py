@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from invoke import task
 from shutil import copyfile
-
-import random
-import string
 import os
 import sys
+
+try:
+    from invoke import ctask as task
+except:
+    from invoke import task
+
 
 def apps():
     """
@@ -27,6 +29,7 @@ def apps():
         'users',
     ]
 
+
 def localDir():
     """
     Returns the directory of *THIS* file.
@@ -35,6 +38,7 @@ def localDir():
     """
     return os.path.dirname(os.path.abspath(__file__))
 
+
 def managePyDir():
     """
     Returns the directory of the manage.py file
@@ -42,12 +46,14 @@ def managePyDir():
 
     return os.path.join(localDir(), 'InvenTree')
 
+
 def managePyPath():
     """
     Return the path of the manage.py file
     """
 
     return os.path.join(managePyDir(), 'manage.py')
+
 
 def manage(c, cmd, pty=False):
     """
@@ -63,32 +69,11 @@ def manage(c, cmd, pty=False):
         cmd=cmd
     ), pty=pty)
 
-@task(help={'length': 'Length of secret key (default=50)'})
-def key(c, length=50, force=False):
-    """
-    Generates a SECRET_KEY file which InvenTree uses for generating security hashes
-    """
 
-    SECRET_KEY_FILE = os.path.join(localDir(), 'InvenTree', 'secret_key.txt')
-
-    # If a SECRET_KEY file does not exist, generate a new one!
-    if force or not os.path.exists(SECRET_KEY_FILE):
-        print("Generating SECRET_KEY file - " + SECRET_KEY_FILE)
-        with open(SECRET_KEY_FILE, 'w') as key_file:
-            options = string.digits + string.ascii_letters + string.punctuation
-
-            key = ''.join([random.choice(options) for i in range(length)])
-
-            key_file.write(key)
-
-    else:
-        print("SECRET_KEY file already exists - skipping")
-
-
-@task(post=[key])
+@task
 def install(c):
     """
-    Installs required python packages, and runs initial setup functions.
+    Installs required python packages
     """
 
     # Install required Python packages with PIP
@@ -111,6 +96,13 @@ def shell(c):
 
     manage(c, 'shell', pty=True)
 
+@task
+def worker(c):
+    """
+    Run the InvenTree background worker process
+    """
+
+    manage(c, 'qcluster', pty=True)
 
 @task
 def superuser(c):
@@ -127,6 +119,14 @@ def check(c):
     """
 
     manage(c, "check")
+
+@task
+def wait(c):
+    """
+    Wait until the database connection is ready
+    """
+
+    manage(c, "wait_for_db")
 
 @task
 def migrate(c):
@@ -154,7 +154,7 @@ def static(c):
     as per Django requirements.
     """
 
-    manage(c, "collectstatic")
+    manage(c, "collectstatic --no-input")
 
 
 @task(pre=[install, migrate, static])
@@ -230,28 +230,6 @@ def coverage(c):
 
     # Generate coverage report
     c.run('coverage html')
-
-@task
-def mysql(c):
-    """
-    Install packages required for using InvenTree with a MySQL database.
-    """
-    
-    print('Installing packages required for MySQL')
-
-    c.run('sudo apt-get install mysql-server libmysqlclient-dev')
-    c.run('pip3 install mysqlclient')
-
-@task
-def postgresql(c):
-    """
-    Install packages required for using InvenTree with a PostgreSQL database
-    """
-
-    print("Installing packages required for PostgreSQL")
-
-    c.run('sudo apt-get install postgresql postgresql-contrib libpq-dev')
-    c.run('pip3 install psycopg2')
 
 @task(help={'filename': "Output filename (default = 'data.json')"})
 def export_records(c, filename='data.json'):

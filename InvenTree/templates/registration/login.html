@@ -89,7 +89,12 @@
                         <button class='pull-right btn btn-primary login-button' type="submit">{% trans "Login" %}</button>
 
                     </form>
+
+                    {% if email_configured %}
+                    <hr><br>
+                    <p>{% trans "Forgotten your password?" %} - <a href='{% url "password_reset" %}'>{% trans "Click here to reset" %}</a></p>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

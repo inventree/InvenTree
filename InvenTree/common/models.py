@@ -17,7 +17,7 @@ from djmoney.models.fields import MoneyField
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, URLValidator
 from django.core.exceptions import ValidationError
 
@@ -500,7 +500,7 @@ class InvenTreeSetting(models.Model):
             create: If True, create a new setting if the specified key does not exist.
         """
 
-        if not user.is_staff:
+        if user is not None and not user.is_staff:
             return
 
         try:

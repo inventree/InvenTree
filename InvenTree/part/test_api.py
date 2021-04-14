@@ -325,3 +325,106 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         self.assertEqual(data['in_stock'], 1100)
         self.assertEqual(data['stock_item_count'], 105)
+
+
+class PartParameterTest(InvenTreeAPITestCase):
+    """
+    Tests for the ParParameter API
+    """
+
+    superuser = True
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'params',
+    ]
+
+    def setUp(self):
+
+        super().setUp()
+
+    def test_list_params(self):
+        """
+        Test for listing part parameters
+        """
+
+        url = reverse('api-part-param-list')
+
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(len(response.data), 5)
+
+        # Filter by part
+        response = self.client.get(
+            url,
+            {
+                'part': 3,
+            },
+            format='json'
+        )
+
+        self.assertEqual(len(response.data), 3)
+
+        # Filter by template
+        response = self.client.get(
+            url,
+            {
+                'template': 1,
+            },
+            format='json',
+        )
+
+        self.assertEqual(len(response.data), 3)
+
+    def test_create_param(self):
+        """
+        Test that we can create a param via the API
+        """
+
+        url = reverse('api-part-param-list')
+
+        response = self.client.post(
+            url,
+            {
+                'part': '2',
+                'template': '3',
+                'data': 70
+            }
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(len(response.data), 6)
+
+    def test_param_detail(self):
+        """
+        Tests for the PartParameter detail endpoint
+        """
+
+        url = reverse('api-part-param-detail', kwargs={'pk': 5})
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+
+        data = response.data
+
+        self.assertEqual(data['pk'], 5)
+        self.assertEqual(data['part'], 3)
+        self.assertEqual(data['data'], '12')
+
+        # PATCH data back in
+        response = self.client.patch(url, {'data': '15'}, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        
+        # Check that the data changed!
+        response = self.client.get(url, format='json')
+
+        data = response.data
+
+        self.assertEqual(data['data'], '15')

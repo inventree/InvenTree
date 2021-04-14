@@ -164,7 +164,7 @@ src="{% static 'img/blank_image.png' %}"
         launchModalForm("{% url 'build-cancel' build.id %}",
                         {
                             reload: true,
-                            submit_text: "Cancel Build",
+                            submit_text: '{% trans "Cancel Build" %}',
                         });
     });
 
@@ -173,7 +173,7 @@ src="{% static 'img/blank_image.png' %}"
             "{% url 'build-complete' build.id %}",
             {
                 reload: true,
-                submit_text: "Complete Build",
+                submit_text: '{% trans "Complete Build" %}',
             }
         );
     });

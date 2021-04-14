@@ -56,19 +56,20 @@ class InvenTreeAttachment(models.Model):
     def __str__(self):
         return os.path.basename(self.attachment.name)
 
-    attachment = models.FileField(upload_to=rename_attachment,
+    attachment = models.FileField(upload_to=rename_attachment, verbose_name=_('Attachment'),
                                   help_text=_('Select file to attach'))
 
-    comment = models.CharField(blank=True, max_length=100, help_text=_('File comment'))
+    comment = models.CharField(blank=True, max_length=100, verbose_name=_('Comment'), help_text=_('File comment'))
 
     user = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         blank=True, null=True,
+        verbose_name=_('User'),
         help_text=_('User'),
     )
 
-    upload_date = models.DateField(auto_now_add=True, null=True, blank=True)
+    upload_date = models.DateField(auto_now_add=True, null=True, blank=True, verbose_name=_('upload date'))
 
     @property
     def basename(self):
@@ -103,12 +104,14 @@ class InvenTreeTree(MPTTModel):
         blank=False,
         max_length=100,
         validators=[validate_tree_name],
+        verbose_name=_("Name"),
         help_text=_("Name"),
     )
 
     description = models.CharField(
         blank=True,
         max_length=250,
+        verbose_name=_("Description"),
         help_text=_("Description (optional)")
     )
 
@@ -117,6 +120,7 @@ class InvenTreeTree(MPTTModel):
                             on_delete=models.DO_NOTHING,
                             blank=True,
                             null=True,
+                            verbose_name=_("parent"),
                             related_name='children')
 
     @property
