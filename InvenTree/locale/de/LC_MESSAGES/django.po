@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-14 19:29+0000\n"
-"PO-Revision-Date: 2021-04-14 19:33\n"
+"PO-Revision-Date: 2021-04-14 19:59\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4204,11 +4204,11 @@ msgstr "Keine Stücklisten-Preise verfügbar"
 
 #: part/templates/part/part_pricing.html:82
 msgid "Stock Pricing"
-msgstr ""
+msgstr "Bestandspreise"
 
 #: part/templates/part/part_pricing.html:146
 msgid "No stock pricing history is available for this part."
-msgstr ""
+msgstr "Für dieses Teil sind keine Bestandspreise verfügbar."
 
 #: part/templates/part/part_pricing.html:154
 msgid "No pricing information is available for this part."
