@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-14 20:18+0000\n"
-"PO-Revision-Date: 2021-04-14 20:58\n"
+"PO-Revision-Date: 2021-04-15 09:18\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -6415,7 +6415,7 @@ msgstr "BestandsObjekt zerstört"
 
 #: templates/js/stock.js:620 templates/js/table_filters.js:116
 msgid "Depleted"
-msgstr "gelöscht"
+msgstr "Gelöscht"
 
 #: templates/js/stock.js:649
 msgid "Stocktake"
@@ -6475,7 +6475,7 @@ msgstr "überprüft"
 
 #: templates/js/table_filters.js:70 templates/js/table_filters.js:159
 msgid "Is Serialized"
-msgstr "ist mit Seriennummer"
+msgstr "Hat Seriennummer"
 
 #: templates/js/table_filters.js:73 templates/js/table_filters.js:166
 msgid "Serial number GTE"
@@ -6552,7 +6552,7 @@ msgstr "Elemente, die in Produktion sind, anzeigen"
 
 #: templates/js/table_filters.js:144
 msgid "Include Variants"
-msgstr "Varianten hinzufügen"
+msgstr "Varianten einschließen"
 
 #: templates/js/table_filters.js:145
 msgid "Include stock items for variant parts"
