@@ -48,7 +48,7 @@ from rest_framework import generics, filters, permissions
 
 
 class StockCategoryTree(TreeSerializer):
-    title = 'Stock'
+    title = _('Stock')
     model = StockLocation
 
     @property

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-14 09:06+0000\n"
+"POT-Creation-Date: 2021-04-15 10:07+0000\n"
 "PO-Revision-Date: 2021-03-28 17:47+0200\n"
 "Last-Translator: Andreas Kaiser <kaiser.vocote@gmail.com>, Matthias "
 "MAIR<matmair@live.de>\n"
@@ -2049,8 +2049,9 @@ msgid "Supplied Parts"
 msgstr "Zulieferer-Teile"
 
 #: company/templates/company/navbar.html:23
-#: order/templates/order/receive_parts.html:14 part/models.py:322
-#: part/templates/part/cat_link.html:7 part/templates/part/category.html:95
+#: order/templates/order/receive_parts.html:14 part/api.py:40
+#: part/models.py:322 part/templates/part/cat_link.html:7
+#: part/templates/part/category.html:95
 #: part/templates/part/category_navbar.html:11
 #: part/templates/part/category_navbar.html:14
 #: part/templates/part/category_partlist.html:10
@@ -2069,8 +2070,8 @@ msgstr "BestandsObjekte"
 
 #: company/templates/company/navbar.html:30
 #: company/templates/company/part_navbar.html:14
-#: part/templates/part/navbar.html:36 stock/templates/stock/loc_link.html:7
-#: stock/templates/stock/location.html:29
+#: part/templates/part/navbar.html:36 stock/api.py:51
+#: stock/templates/stock/loc_link.html:7 stock/templates/stock/location.html:29
 #: stock/templates/stock/stock_app_base.html:9
 #: templates/InvenTree/index.html:127 templates/InvenTree/search.html:180
 #: templates/InvenTree/search.html:216
@@ -6141,6 +6142,14 @@ msgstr "Vorlagenteil"
 msgid "Assembled part"
 msgstr "Baugruppe"
 
+#: templates/js/filters.js:167 templates/js/filters.js:397
+msgid "true"
+msgstr "ja"
+
+#: templates/js/filters.js:171 templates/js/filters.js:398
+msgid "false"
+msgstr "nein"
+
 #: templates/js/filters.js:193
 msgid "Select filter"
 msgstr "Filter auswählen"
@@ -6474,6 +6483,22 @@ msgstr "Auftrag zugewiesen"
 msgid "No stock items matching query"
 msgstr "Keine zur Anfrage passenden BestandsObjekte"
 
+#: templates/js/stock.js:357
+msgid "items"
+msgstr "Teile"
+
+#: templates/js/stock.js:449
+#, fuzzy
+#| msgid "Batch"
+msgid "batches"
+msgstr "Los"
+
+#: templates/js/stock.js:476
+#, fuzzy
+#| msgid "Allocations"
+msgid "locations"
+msgstr "Zuweisungen"
+
 #: templates/js/stock.js:478
 msgid "Undefined location"
 msgstr "unbekannter Lagerort"
@@ -6657,7 +6682,7 @@ msgstr "Elemente, die in Produktion sind, anzeigen"
 
 #: templates/js/table_filters.js:144
 msgid "Include Variants"
-msgstr "Varianten hinzufügen"
+msgstr "Varianten einschließen"
 
 #: templates/js/table_filters.js:145
 msgid "Include stock items for variant parts"
@@ -7048,6 +7073,16 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
+#, fuzzy
+#~| msgid "Part Pricing"
+#~ msgid "Stock Pricing"
+#~ msgstr "Teilbepreisung"
+
+#, fuzzy
+#~| msgid "No pricing information is available for this part."
+#~ msgid "No stock pricing history is available for this part."
+#~ msgstr "Keine Preise für dieses Teil verfügbar"
+
 #~ msgid "Click"
 #~ msgstr "Klick"
 
@@ -7088,9 +7123,6 @@ msgstr "Berechtigung Einträge zu löschen"
 
 #~ msgid "customer"
 #~ msgstr "Kunde"
-
-#~ msgid "items"
-#~ msgstr "Teile"
 
 #~ msgid "Create purchase order"
 #~ msgstr "Neue Bestellung anlegen"

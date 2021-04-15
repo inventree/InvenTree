@@ -354,7 +354,7 @@ function loadStockTable(table, options) {
                 var html = imageHoverIcon(row.part_detail.thumbnail);
 
                 html += row.part_detail.full_name;
-                html += ` <i>(${data.length} items)</i>`;
+                html += ` <i>(${data.length} {% trans "items" %})</i>`;
 
                 html += makePartIcons(row.part_detail);
 
@@ -446,7 +446,7 @@ function loadStockTable(table, options) {
                 });
 
                 if (batches.length > 1) {
-                    return "" + batches.length + " batches";
+                    return "" + batches.length + " {% trans 'batches' %}";
                 } else if (batches.length == 1) {
                     if (batches[0]) {
                         return batches[0];
@@ -473,9 +473,9 @@ function loadStockTable(table, options) {
                     // Single location, easy!
                     return locations[0];
                 } else if (locations.length > 1) {
-                    return "In " + locations.length + " locations";
+                    return "In " + locations.length + " {% trans 'locations' %}";
                 } else {
-                    return "<i>{% trans "Undefined location" %}</i>";
+                    return "<i>{% trans 'Undefined location' %}</i>";
                 }
             } else if (field == 'notes') {
                 var notes = [];
@@ -1219,7 +1219,7 @@ function loadInstalledInTable(table, options) {
                                 // Add some buttons yo!
                                 html += `<div class='btn-group float-right' role='group'>`;
                                 
-                                html += makeIconButton('fa-unlink', 'button-uninstall', pk, "{% trans "Uninstall stock item" %}");
+                                html += makeIconButton('fa-unlink', 'button-uninstall', pk, "{% trans 'Uninstall stock item' %}");
 
                                 html += `</div>`;
 
