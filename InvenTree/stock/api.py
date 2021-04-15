@@ -774,7 +774,7 @@ class StockList(generics.ListCreateAPIView):
         company = params.get('company', None)
 
         if company is not None:
-            queryset = queryset.filter(Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer=company))
+            queryset = queryset.filter(Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company))
 
         # Filter by supplier
         supplier = params.get('supplier', None)
@@ -786,7 +786,7 @@ class StockList(generics.ListCreateAPIView):
         manufacturer = params.get('manufacturer', None)
 
         if manufacturer is not None:
-            queryset = queryset.filter(supplier_part__manufacturer=manufacturer)
+            queryset = queryset.filter(supplier_part__manufacturer_part__manufacturer=manufacturer)
 
         """
         Filter by the 'last updated' date of the stock item(s):

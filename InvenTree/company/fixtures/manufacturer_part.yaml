@@ -1,0 +1,39 @@
+# Manufacturer Parts
+
+- model: company.manufacturerpart
+  pk: 1
+  fields:
+    part: 5
+    manufacturer: 6
+    MPN: 'MPN123'
+
+- model: company.manufacturerpart
+  pk: 2
+  fields:
+    part: 3
+    manufacturer: 7
+    MPN: 'MPN456'
+
+- model: company.manufacturerpart
+  pk: 3
+  fields:
+    part: 5
+    manufacturer: 7
+    MPN: 'MPN789'
+
+# Supplier parts linked to Manufacturer parts
+- model: company.supplierpart
+  pk: 10
+  fields:
+    part: 3
+    manufacturer_part: 2
+    supplier: 2
+    SKU: 'MPN456-APPEL'
+
+- model: company.supplierpart
+  pk: 11
+  fields:
+    part: 3
+    manufacturer_part: 2
+    supplier: 3
+    SKU: 'MPN456-ZERG'

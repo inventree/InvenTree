@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 
 import os
 
-from .models import Company, Contact, SupplierPart
+from .models import Company, Contact, ManufacturerPart, SupplierPart
 from .models import rename_company_image
 from part.models import Part
 
@@ -22,6 +22,7 @@ class CompanySimpleTest(TestCase):
         'part',
         'location',
         'bom',
+        'manufacturer_part',
         'supplier_part',
         'price_breaks',
     ]
@@ -74,10 +75,10 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(acme.supplied_part_count, 4)
 
         self.assertTrue(appel.has_parts)
-        self.assertEqual(appel.supplied_part_count, 2)
+        self.assertEqual(appel.supplied_part_count, 3)
 
         self.assertTrue(zerg.has_parts)
-        self.assertEqual(zerg.supplied_part_count, 1)
+        self.assertEqual(zerg.supplied_part_count, 2)
 
     def test_price_breaks(self):
         
@@ -166,3 +167,53 @@ class ContactSimpleTest(TestCase):
         # Remove the parent company
         Company.objects.get(pk=self.c.pk).delete()
         self.assertEqual(Contact.objects.count(), 0)
+
+
+class ManufacturerPartSimpleTest(TestCase):
+
+    fixtures = [
+        'category',
+        'company',
+        'location',
+        'part',
+        'manufacturer_part',
+    ]
+
+    def setUp(self):
+        # Create a manufacturer part
+        self.part = Part.objects.get(pk=1)
+        manufacturer = Company.objects.get(pk=1)
+        
+        self.mp = ManufacturerPart.create(
+            part=self.part,
+            manufacturer=manufacturer,
+            mpn='PART_NUMBER',
+            description='THIS IS A MANUFACTURER PART',
+        )
+        
+        # Create a supplier part
+        supplier = Company.objects.get(pk=5)
+        supplier_part = SupplierPart.objects.create(
+            part=self.part,
+            supplier=supplier,
+            SKU='SKU_TEST',
+        )
+
+        kwargs = {
+            'manufacturer': manufacturer.id,
+            'MPN': 'MPN_TEST',
+        }
+        supplier_part.save(**kwargs)
+
+    def test_exists(self):
+        self.assertEqual(ManufacturerPart.objects.count(), 5)
+
+        # Check that manufacturer part was created from supplier part creation
+        manufacturer_parts = ManufacturerPart.objects.filter(manufacturer=1)
+        self.assertEqual(manufacturer_parts.count(), 2)
+
+    def test_delete(self):
+        # Remove a part
+        Part.objects.get(pk=self.part.id).delete()
+        # Check that ManufacturerPart was deleted
+        self.assertEqual(ManufacturerPart.objects.count(), 3)

@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block page_title %}
-InvenTree | {% trans "Supplier Part" %}
+InvenTree | {% trans "Manufacturer Part" %}
 {% endblock %}
 
 {% block thumbnail %}
@@ -16,7 +16,7 @@ src="{% static 'img/blank_image.png' %}"
 {% endblock %}
 
 {% block page_data %}
-<h3>{% trans "Supplier Part" %}</h3>
+<h3>{% trans "Manufacturer Part" %}</h3>
 <hr>
 <h4>
     {{ part.part.full_name }}
@@ -26,21 +26,23 @@ src="{% static 'img/blank_image.png' %}"
     </a>
     {% endif %}
 </h4>
-<p>{{ part.supplier.name }} - {{ part.SKU }}</p>
+<p>{{ part.manufacturer.name }} - {{ part.MPN }}</p>
 
 {% if roles.purchase_order.change %}
 <div class='btn-row'>
     <div class='btn-group action-buttons' role='group'>
+        {% comment "for later" %}
         {% if roles.purchase_order.add %}
         <button type='button' class='btn btn-default btn-glyph' id='order-part' title='{% trans "Order part" %}'>
             <span class='fas fa-shopping-cart'></span>
         </button>
         {% endif %}
-        <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='{% trans "Edit supplier part" %}'>
+        {% endcomment %}
+        <button type='button' class='btn btn-default btn-glyph' id='edit-part' title='{% trans "Edit manufacturer part" %}'>
             <span class='fas fa-edit icon-green'/>
         </button>
         {% if roles.purchase_order.delete %}
-        <button type='button' class='btn btn-default btn-glyph' id='delete-part' title='{% trans "Delete supplier part" %}'>
+        <button type='button' class='btn btn-default btn-glyph' id='delete-part' title='{% trans "Delete manufacturer part" %}'>
             <span class='fas fa-trash-alt icon-red'/>
         </button>
         {% endif %}
@@ -52,7 +54,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block page_details %}
 
-<h4>{% trans "Supplier Part Details" %}</h4>
+<h4>{% trans "Manufacturer Part Details" %}</h4>
 <table class="table table-striped table-condensed">
     <col width='25'>
         <tr>
@@ -60,7 +62,7 @@ src="{% static 'img/blank_image.png' %}"
             <td>{% trans "Internal Part" %}</td>
             <td>
                 {% if part.part %}
-                <a href="{% url 'part-suppliers' part.part.id %}">{{ part.part.full_name }}</a>
+                <a href="{% url 'part-manufacturers' part.part.id %}">{{ part.part.full_name }}</a>
                 {% endif %}
             </td>
         </tr>
@@ -79,42 +81,14 @@ src="{% static 'img/blank_image.png' %}"
         </tr>
         {% endif %}
         <tr>
-            <td><span class='fas fa-building'></span></td>
-            <td>{% trans "Supplier" %}</td>
-            <td><a href="{% url 'company-detail-supplier-parts' part.supplier.id %}">{{ part.supplier.name }}</a></td></tr>
-        <tr>
-            <td><span class='fas fa-hashtag'></span></td>
-            <td>{% trans "SKU" %}</td>
-            <td>{{ part.SKU }}</tr>
-        </tr>
-        {% if part.manufacturer_part.manufacturer %}
-        <tr>
             <td><span class='fas fa-industry'></span></td>
             <td>{% trans "Manufacturer" %}</td>
-            <td><a href="{% url 'company-detail-manufacturer-parts' part.manufacturer_part.manufacturer.id %}">{{ part.manufacturer_part.manufacturer.name }}</a></td>
-        </tr>
-        {% endif %}
-        {% if part.manufacturer_part.MPN %}
+            <td><a href="{% url 'company-detail-manufacturer-parts' part.manufacturer.id %}">{{ part.manufacturer.name }}</a></td></tr>
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "MPN" %}</td>
-            <td><a href="{% url 'manufacturer-part-detail' part.manufacturer_part.id %}">{{ part.manufacturer_part.MPN }}</a></td>
+            <td>{{ part.MPN }}</td>
         </tr>
-        {% endif %}
-        {% if part.packaging %}
-        <tr>
-            <td><span class='fas fa-cube'></span></td>
-            <td>{% trans "Packaging" %}</td>
-            <td>{{ part.packaging }}</td>
-        </tr>
-        {% endif %}
-        {% if part.note %}
-        <tr>
-            <td><span class='fas fa-sticky-note'></span></td>
-            <td>{% trans "Note" %}</td>
-            <td>{{ part.note }}</td>
-        </tr>
-        {% endif %}
 </table>
 {% endblock %}
 
@@ -122,8 +96,8 @@ src="{% static 'img/blank_image.png' %}"
 {{ block.super }}
 
 enableNavbar({
-    label: 'supplier-part',
-    toggleId: '#supplier-part-menu-toggle'
+    label: 'manufacturer-part',
+    toggleId: '#manufacturer-part-menu-toggle'
 })
 
 $('#order-part, #order-part2').click(function() {
@@ -140,7 +114,7 @@ $('#order-part, #order-part2').click(function() {
 
 $('#edit-part').click(function () {
     launchModalForm(
-                    "{% url 'supplier-part-edit' part.id %}",
+                    "{% url 'manufacturer-part-edit' part.id %}",
                     {
                         reload: true
                     }
@@ -149,9 +123,9 @@ $('#edit-part').click(function () {
 
 $('#delete-part').click(function() {
     launchModalForm(
-        "{% url 'supplier-part-delete' %}?part={{ part.id }}",
+        "{% url 'manufacturer-part-delete' %}?part={{ part.id }}",
         {
-            redirect: "{% url 'company-detail-supplier-parts' part.supplier.id %}"
+            redirect: "{% url 'company-detail-manufacturer-parts' part.manufacturer.id %}"
         }
     );
 });

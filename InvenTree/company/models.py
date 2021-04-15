@@ -11,7 +11,9 @@ import math
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.utils import IntegrityError
 from django.db.models import Sum, Q, UniqueConstraint
 
 from django.apps import apps
@@ -208,7 +210,7 @@ class Company(models.Model):
     @property
     def parts(self):
         """ Return SupplierPart objects which are supplied or manufactured by this company """
-        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer=self.id))
+        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id))
 
     @property
     def part_count(self):
@@ -223,7 +225,7 @@ class Company(models.Model):
     def stock_items(self):
         """ Return a list of all stock items supplied or manufactured by this company """
         stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer=self.id)).all()
+        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).all()
 
     @property
     def stock_count(self):
@@ -284,19 +286,106 @@ class Contact(models.Model):
                                 on_delete=models.CASCADE)
 
 
-class SupplierPart(models.Model):
-    """ Represents a unique part as provided by a Supplier
-    Each SupplierPart is identified by a MPN (Manufacturer Part Number)
-    Each SupplierPart is also linked to a Part object.
-    A Part may be available from multiple suppliers
+class ManufacturerPart(models.Model):
+    """ Represents a unique part as provided by a Manufacturer
+    Each ManufacturerPart is identified by a MPN (Manufacturer Part Number)
+    Each ManufacturerPart is also linked to a Part object.
+    A Part may be available from multiple manufacturers
 
     Attributes:
         part: Link to the master Part
+        manufacturer: Company that manufactures the ManufacturerPart
+        MPN: Manufacture part number
+        link: Link to external website for this manufacturer part
+        description: Descriptive notes field
+    """
+
+    class Meta:
+        unique_together = ('part', 'manufacturer', 'MPN')
+    
+    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
+                             related_name='manufacturer_parts',
+                             verbose_name=_('Base Part'),
+                             limit_choices_to={
+                                 'purchaseable': True,
+                             },
+                             help_text=_('Select part'),
+                             )
+    
+    manufacturer = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='manufactured_parts',
+        limit_choices_to={
+            'is_manufacturer': True
+        },
+        verbose_name=_('Manufacturer'),
+        help_text=_('Select manufacturer'),
+    )
+
+    MPN = models.CharField(
+        null=True,
+        max_length=100,
+        verbose_name=_('MPN'),
+        help_text=_('Manufacturer Part Number')
+    )
+
+    link = InvenTreeURLField(
+        blank=True, null=True,
+        verbose_name=_('Link'),
+        help_text=_('URL for external manufacturer part link')
+    )
+
+    description = models.CharField(
+        max_length=250, blank=True, null=True,
+        verbose_name=_('Description'),
+        help_text=_('Manufacturer part description')
+    )
+
+    @classmethod
+    def create(cls, part, manufacturer, mpn, description, link=None):
+        """ Check if ManufacturerPart instance does not already exist
+            then create it
+        """
+
+        manufacturer_part = None
+
+        try:
+            manufacturer_part = ManufacturerPart.objects.get(part=part, manufacturer=manufacturer, MPN=mpn)
+        except ManufacturerPart.DoesNotExist:
+            pass
+
+        if not manufacturer_part:
+            manufacturer_part = ManufacturerPart(part=part, manufacturer=manufacturer, MPN=mpn, description=description, link=link)
+            manufacturer_part.save()
+            
+        return manufacturer_part
+
+    def __str__(self):
+        s = ''
+
+        if self.manufacturer:
+            s += f'{self.manufacturer.name}'
+            s += ' | '
+
+        s += f'{self.MPN}'
+
+        return s
+
+
+class SupplierPart(models.Model):
+    """ Represents a unique part as provided by a Supplier
+    Each SupplierPart is identified by a SKU (Supplier Part Number)
+    Each SupplierPart is also linked to a Part or ManufacturerPart object.
+    A Part may be available from multiple suppliers
+
+    Attributes:
+        part: Link to the master Part (Obsolete)
+        source_item: The sourcing item linked to this SupplierPart instance
         supplier: Company that supplies this SupplierPart object
         SKU: Stock keeping unit (supplier part number)
-        manufacturer: Company that manufactures the SupplierPart (leave blank if it is the sample as the Supplier!)
-        MPN: Manufacture part number
-        link: Link to external website for this part
+        link: Link to external website for this supplier part
         description: Descriptive notes field
         note: Longer form note field
         base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
@@ -307,6 +396,57 @@ class SupplierPart(models.Model):
 
     def get_absolute_url(self):
         return reverse('supplier-part-detail', kwargs={'pk': self.id})
+
+    def save(self, *args, **kwargs):
+        """ Overriding save method to process the linked ManufacturerPart
+        """
+
+        if 'manufacturer' in kwargs:
+            manufacturer_id = kwargs.pop('manufacturer')
+
+            try:
+                manufacturer = Company.objects.get(pk=int(manufacturer_id))
+            except (ValueError, Company.DoesNotExist):
+                manufacturer = None
+        else:
+            manufacturer = None
+        if 'MPN' in kwargs:
+            MPN = kwargs.pop('MPN')
+        else:
+            MPN = None
+        
+        if manufacturer or MPN:
+            if not self.manufacturer_part:
+                # Create ManufacturerPart
+                manufacturer_part = ManufacturerPart.create(part=self.part,
+                                                            manufacturer=manufacturer,
+                                                            mpn=MPN,
+                                                            description=self.description)
+                self.manufacturer_part = manufacturer_part
+            else:
+                # Update ManufacturerPart (if ID exists)
+                try:
+                    manufacturer_part_id = self.manufacturer_part.id
+                except AttributeError:
+                    manufacturer_part_id = None
+                
+                if manufacturer_part_id:
+                    try:
+                        (manufacturer_part, created) = ManufacturerPart.objects.update_or_create(part=self.part,
+                                                                                                 manufacturer=manufacturer,
+                                                                                                 MPN=MPN)
+                    except IntegrityError:
+                        manufacturer_part = None
+                        raise ValidationError(f'ManufacturerPart linked to {self.part} from manufacturer {manufacturer.name}'
+                                              f'with part number {MPN} already exists!')
+
+                if manufacturer_part:
+                    self.manufacturer_part = manufacturer_part
+
+        self.clean()
+        self.validate_unique()
+
+        super().save(*args, **kwargs)
 
     class Meta:
         unique_together = ('part', 'supplier', 'SKU')
@@ -336,23 +476,12 @@ class SupplierPart(models.Model):
         help_text=_('Supplier stock keeping unit')
     )
 
-    manufacturer = models.ForeignKey(
-        Company,
-        on_delete=models.SET_NULL,
-        related_name='manufactured_parts',
-        limit_choices_to={
-            'is_manufacturer': True
-        },
-        verbose_name=_('Manufacturer'),
-        help_text=_('Select manufacturer'),
-        null=True, blank=True
-    )
-
-    MPN = models.CharField(
-        max_length=100, blank=True, null=True,
-        verbose_name=_('MPN'),
-        help_text=_('Manufacturer part number')
-    )
+    manufacturer_part = models.ForeignKey(ManufacturerPart, on_delete=models.CASCADE,
+                                          blank=True, null=True,
+                                          related_name='supplier_parts',
+                                          verbose_name=_('Manufacturer Part'),
+                                          help_text=_('Select manufacturer part'),
+                                          )
 
     link = InvenTreeURLField(
         blank=True, null=True,
@@ -389,10 +518,11 @@ class SupplierPart(models.Model):
 
         items = []
 
-        if self.manufacturer:
-            items.append(self.manufacturer.name)
-        if self.MPN:
-            items.append(self.MPN)
+        if self.manufacturer_part:
+            if self.manufacturer_part.manufacturer:
+                items.append(self.manufacturer_part.manufacturer.name)
+            if self.manufacturer_part.MPN:
+                items.append(self.manufacturer_part.MPN)
 
         return ' | '.join(items)
 

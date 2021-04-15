@@ -31,3 +31,17 @@
     name: Another customer!
     description: Yet another company
     is_customer: True
+
+- model: company.company
+  pk: 6
+  fields:
+    name: A manufacturer
+    description: A company that makes parts!
+    is_manufacturer: True
+
+- model: company.company
+  pk: 7
+  fields:
+    name: Another manufacturer
+    description: They build things and sell it to us
+    is_manufacturer: True
