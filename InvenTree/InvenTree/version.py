@@ -19,6 +19,14 @@ def inventreeInstanceName():
     return common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE", "")
 
 
+def inventreeInstanceTitle():
+    """ Returns the InstanceTitle for the current database """
+    if common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE_TITLE", False):
+        return common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE", "")
+    else:
+        return 'InvenTree'
+
+
 def inventreeVersion():
     """ Returns the InvenTree version string """
     return INVENTREE_SW_VERSION
