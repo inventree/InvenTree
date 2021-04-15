@@ -344,6 +344,8 @@ class StockItem(MPTTModel):
             "stockitem",
             self.id,
             {
+                "request": kwargs.get('request', None),
+                "item_url": reverse('stock-item-detail', kwargs={'pk': self.id}),
                 "url": reverse('api-stock-detail', kwargs={'pk': self.id}),
             },
             **kwargs
