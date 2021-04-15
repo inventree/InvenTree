@@ -1,9 +1,10 @@
 {% extends "two_column.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block page_title %}
-InvenTree | {% trans "Supplier Part" %}
+{% inventree_title %} | {% trans "Supplier Part" %}
 {% endblock %}
 
 {% block thumbnail %}

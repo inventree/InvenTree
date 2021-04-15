@@ -2,9 +2,10 @@
 
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block page_title %}
-InvenTree | {% trans "Supplier List" %} 
+{% inventree_title %} | {% trans "Supplier List" %} 
 {% endblock %}
 
 {% block content %}

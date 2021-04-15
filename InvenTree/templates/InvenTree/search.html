@@ -2,9 +2,10 @@
 
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block page_title %}
-InvenTree | {% trans "Search Results" %}
+{% inventree_title %} | {% trans "Search Results" %}
 {% endblock %}
 
 {% block content %}
