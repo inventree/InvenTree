@@ -14,12 +14,15 @@
     <input type='hidden' name='supplier-part-{{ part.id}}' value='supplier-part-{{ part.id }}'/>
     
     <td>
+        {% include "hover_image.html" with image=part.part.image %}
+        {{ part.part.full_name }}
+    </td>
+    <td>
         {% include "hover_image.html" with image=part.supplier.image %}
         {{ part.supplier.name }}
     </td>
     <td>
-        {% include "hover_image.html" with image=part.part.image %}
-        {{ part.part.full_name }}
+        {{ part.SKU }}
     </td>
 </tr>
 {% endfor %}

@@ -95,9 +95,11 @@ class BomExportForm(forms.Form):
     parameter_data = forms.BooleanField(label=_("Include Parameter Data"), required=False, initial=False, help_text=_("Include part parameters data in exported BOM"))
 
     stock_data = forms.BooleanField(label=_("Include Stock Data"), required=False, initial=False, help_text=_("Include part stock data in exported BOM"))
+    
+    manufacturer_data = forms.BooleanField(label=_("Include Manufacturer Data"), required=False, initial=True, help_text=_("Include part manufacturer data in exported BOM"))
 
     supplier_data = forms.BooleanField(label=_("Include Supplier Data"), required=False, initial=True, help_text=_("Include part supplier data in exported BOM"))
-
+    
     def get_choices(self):
         """ BOM export format choices """
 

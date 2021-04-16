@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-11 22:07+0000\n"
+"POT-Creation-Date: 2021-04-15 10:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -188,11 +188,15 @@ msgstr ""
 msgid "Turkish"
 msgstr ""
 
-#: InvenTree/status.py:57
+#: InvenTree/status.py:84
 msgid "Background worker check failed"
 msgstr ""
 
-#: InvenTree/status.py:60
+#: InvenTree/status.py:88
+msgid "Email backend not configured"
+msgstr ""
+
+#: InvenTree/status.py:91
 msgid "InvenTree system health checks failed"
 msgstr ""
 
@@ -2022,28 +2026,29 @@ msgid "Supplied Parts"
 msgstr ""
 
 #: company/templates/company/navbar.html:23
-#: order/templates/order/receive_parts.html:14 part/models.py:322
-#: part/templates/part/cat_link.html:7 part/templates/part/category.html:95
+#: order/templates/order/receive_parts.html:14 part/api.py:40
+#: part/models.py:322 part/templates/part/cat_link.html:7
+#: part/templates/part/category.html:95
 #: part/templates/part/category_navbar.html:11
 #: part/templates/part/category_navbar.html:14
 #: part/templates/part/category_partlist.html:10
 #: templates/InvenTree/index.html:96 templates/InvenTree/search.html:113
 #: templates/InvenTree/settings/tabs.html:25 templates/navbar.html:23
-#: templates/stats.html:48 templates/stats.html:57 users/models.py:38
+#: templates/stats.html:59 templates/stats.html:68 users/models.py:38
 msgid "Parts"
 msgstr ""
 
 #: company/templates/company/navbar.html:27 part/templates/part/navbar.html:33
 #: stock/templates/stock/location.html:100
 #: stock/templates/stock/location.html:115 templates/InvenTree/search.html:182
-#: templates/stats.html:61 templates/stats.html:70 users/models.py:40
+#: templates/stats.html:72 templates/stats.html:81 users/models.py:40
 msgid "Stock Items"
 msgstr ""
 
 #: company/templates/company/navbar.html:30
 #: company/templates/company/part_navbar.html:14
-#: part/templates/part/navbar.html:36 stock/templates/stock/loc_link.html:7
-#: stock/templates/stock/location.html:29
+#: part/templates/part/navbar.html:36 stock/api.py:51
+#: stock/templates/stock/loc_link.html:7 stock/templates/stock/location.html:29
 #: stock/templates/stock/stock_app_base.html:9
 #: templates/InvenTree/index.html:127 templates/InvenTree/search.html:180
 #: templates/InvenTree/search.html:216
@@ -3242,7 +3247,7 @@ msgstr ""
 
 #: part/models.py:83 part/templates/part/category.html:19
 #: part/templates/part/category.html:90 part/templates/part/category.html:141
-#: templates/InvenTree/search.html:126 templates/stats.html:52
+#: templates/InvenTree/search.html:126 templates/stats.html:63
 #: users/models.py:37
 msgid "Part Categories"
 msgstr ""
@@ -5266,7 +5271,7 @@ msgid "Stock Details"
 msgstr ""
 
 #: stock/templates/stock/location.html:110 templates/InvenTree/search.html:263
-#: templates/stats.html:65 users/models.py:39
+#: templates/stats.html:76 users/models.py:39
 msgid "Stock Locations"
 msgstr ""
 
@@ -6063,6 +6068,14 @@ msgstr ""
 msgid "Assembled part"
 msgstr ""
 
+#: templates/js/filters.js:167 templates/js/filters.js:397
+msgid "true"
+msgstr ""
+
+#: templates/js/filters.js:171 templates/js/filters.js:398
+msgid "false"
+msgstr ""
+
 #: templates/js/filters.js:193
 msgid "Select filter"
 msgstr ""
@@ -6395,6 +6408,18 @@ msgstr ""
 msgid "No stock items matching query"
 msgstr ""
 
+#: templates/js/stock.js:357
+msgid "items"
+msgstr ""
+
+#: templates/js/stock.js:449
+msgid "batches"
+msgstr ""
+
+#: templates/js/stock.js:476
+msgid "locations"
+msgstr ""
+
 #: templates/js/stock.js:478
 msgid "Undefined location"
 msgstr ""
@@ -6717,7 +6742,7 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-#: templates/navbar.html:73 templates/registration/logout.html:5
+#: templates/navbar.html:73
 msgid "Logout"
 msgstr ""
 
@@ -6733,6 +6758,16 @@ msgstr ""
 msgid "QR data not provided"
 msgstr ""
 
+#: templates/registration/logged_out.html:50
+msgid "You have been logged out"
+msgstr ""
+
+#: templates/registration/logged_out.html:51
+#: templates/registration/password_reset_complete.html:51
+#: templates/registration/password_reset_done.html:58
+msgid "Return to login screen"
+msgstr ""
+
 #: templates/registration/login.html:64
 msgid "Enter username"
 msgstr ""
@@ -6745,16 +6780,52 @@ msgstr ""
 msgid "Username / password combination is incorrect"
 msgstr ""
 
-#: templates/registration/logout.html:6
-msgid "You have been logged out"
+#: templates/registration/login.html:95
+#: templates/registration/password_reset_form.html:51
+msgid "Forgotten your password?"
 msgstr ""
 
-#: templates/registration/logout.html:7
-msgid "Click"
+#: templates/registration/login.html:95
+msgid "Click here to reset"
 msgstr ""
 
-#: templates/registration/logout.html:7
-msgid "here</a> to log in</p>"
+#: templates/registration/password_reset_complete.html:50
+msgid "Password reset complete"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:52
+#: templates/registration/password_reset_confirm.html:56
+msgid "Change password"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:60
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a new password reset."
+msgstr ""
+
+#: templates/registration/password_reset_done.html:51
+msgid ""
+"We've emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+
+#: templates/registration/password_reset_done.html:54
+msgid ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+
+#: templates/registration/password_reset_form.html:52
+msgid "Enter your email address below."
+msgstr ""
+
+#: templates/registration/password_reset_form.html:53
+msgid "An email will be sent with password reset instructions."
+msgstr ""
+
+#: templates/registration/password_reset_form.html:58
+msgid "Send email"
 msgstr ""
 
 #: templates/stats.html:9
@@ -6777,16 +6848,20 @@ msgstr ""
 msgid "Issues detected"
 msgstr ""
 
-#: templates/stats.html:30
+#: templates/stats.html:31
 msgid "Background Worker"
 msgstr ""
 
-#: templates/stats.html:33
-msgid "Operational"
+#: templates/stats.html:34
+msgid "Background worker not running"
 msgstr ""
 
-#: templates/stats.html:35
-msgid "Not running"
+#: templates/stats.html:42
+msgid "Email Settings"
+msgstr ""
+
+#: templates/stats.html:45
+msgid "Email settings not configured"
 msgstr ""
 
 #: templates/stock_table.html:14
