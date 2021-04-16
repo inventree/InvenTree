@@ -331,7 +331,7 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td><a href="{{ item.link }}">{{ item.link }}</a></td>
     </tr>
     {% endif %}
-    {% if item.supplier_part %}
+    {% if item.supplier_part.manufacturer_part %}
     <tr>
         <td><span class='fas fa-industry'></span></td>
         <td>{% trans "Manufacturer" %}</td>
@@ -342,6 +342,8 @@ InvenTree | {% trans "Stock Item" %} - {{ item }}
         <td>{% trans "Manufacturer Part" %}</td>
         <td><a href="{% url 'manufacturer-part-detail' item.supplier_part.manufacturer_part.id %}">{{ item.supplier_part.manufacturer_part.MPN }}</a></td>
     </tr>
+    {% endif %}
+    {% if item.supplier_part %}
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Supplier" %}</td>
