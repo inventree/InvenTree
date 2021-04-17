@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-17 07:56+0000\n"
-"PO-Revision-Date: 2021-04-17 08:01\n"
+"PO-Revision-Date: 2021-04-17 09:03\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1810,11 +1810,11 @@ msgstr "Hersteller"
 
 #: company/models.py:337
 msgid "URL for external manufacturer part link"
-msgstr ""
+msgstr "Externe URL für das Herstellerteil"
 
 #: company/models.py:343
 msgid "Manufacturer part description"
-msgstr ""
+msgstr "Teilbeschreibung des Herstellers"
 
 #: company/models.py:469 company/templates/company/detail.html:62
 #: company/templates/company/supplier_part_base.html:83
@@ -1847,11 +1847,11 @@ msgstr "Lagerbestandseinheit (SKU) des Zulieferers"
 #: company/templates/company/manufacturer_part_base.html:19
 #: stock/templates/stock/item_base.html:342
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "Hersteller-Teil"
 
 #: company/models.py:483
 msgid "Select manufacturer part"
-msgstr ""
+msgstr "Herstellerteil auswählen"
 
 #: company/models.py:489
 msgid "URL for external supplier part link"
@@ -1972,16 +1972,16 @@ msgstr "Kunde"
 #: company/templates/company/detail_manufacturer_part.html:11
 #: templates/InvenTree/search.html:149
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Herstellerteile"
 
 #: company/templates/company/detail_manufacturer_part.html:22
 msgid "Create new manufacturer part"
-msgstr ""
+msgstr "Neues Herstellerteil anlegen"
 
 #: company/templates/company/detail_manufacturer_part.html:23
 #: part/templates/part/manufacturer.html:19
 msgid "New Manufacturer Part"
-msgstr ""
+msgstr "Neues Herstellerteil"
 
 #: company/templates/company/detail_manufacturer_part.html:28
 #: company/templates/company/detail_supplier_part.html:27
@@ -2087,16 +2087,16 @@ msgstr "Teil bestellen"
 
 #: company/templates/company/manufacturer_part_base.html:41
 msgid "Edit manufacturer part"
-msgstr ""
+msgstr "Herstellerteil bearbeiten"
 
 #: company/templates/company/manufacturer_part_base.html:45
 msgid "Delete manufacturer part"
-msgstr ""
+msgstr "Herstellerteil löschen"
 
 #: company/templates/company/manufacturer_part_base.html:57
 #: company/templates/company/manufacturer_part_detail.html:10
 msgid "Manufacturer Part Details"
-msgstr ""
+msgstr "Herstellerteil-Details"
 
 #: company/templates/company/manufacturer_part_base.html:62
 #: company/templates/company/manufacturer_part_detail.html:18
@@ -2107,7 +2107,7 @@ msgstr "Internes Teil"
 
 #: company/templates/company/manufacturer_part_delete.html:6
 msgid "Are you sure you want to delete the following Manufacturer Parts?"
-msgstr ""
+msgstr "Sind Sie sicher, dass sie die folgenden Herstellerteile löschen möchten?"
 
 #: company/templates/company/manufacturer_part_navbar.html:14
 #: company/views.py:63 part/templates/part/navbar.html:78
@@ -2118,7 +2118,7 @@ msgstr "Zulieferer"
 
 #: company/templates/company/manufacturer_part_navbar.html:19
 msgid "Manufacturer Part Stock"
-msgstr ""
+msgstr "Herstellerteil-Bestand"
 
 #: company/templates/company/manufacturer_part_navbar.html:22
 #: company/templates/company/navbar.html:41
@@ -2135,7 +2135,7 @@ msgstr "Lagerbestand"
 
 #: company/templates/company/manufacturer_part_navbar.html:26
 msgid "Manufacturer Part Orders"
-msgstr ""
+msgstr "Herstellerteil-Bestellungen"
 
 #: company/templates/company/manufacturer_part_navbar.html:29
 #: company/templates/company/supplier_part_navbar.html:22
@@ -2162,7 +2162,7 @@ msgstr "Neuen Zulieferer anlegen"
 #: company/templates/company/navbar.html:20
 #: company/templates/company/navbar.html:23
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Hergestellte Teile"
 
 #: company/templates/company/navbar.html:29
 #: company/templates/company/navbar.html:32
@@ -2365,15 +2365,15 @@ msgstr "Firma gelöscht"
 
 #: company/views.py:357
 msgid "Edit Manufacturer Part"
-msgstr ""
+msgstr "Hergestellte Teile ändern"
 
 #: company/views.py:366
 msgid "Create New Manufacturer Part"
-msgstr ""
+msgstr "Neues Herstellerteil anlegen"
 
 #: company/views.py:440
 msgid "Delete Manufacturer Part"
-msgstr ""
+msgstr "Herstellerteil löschen"
 
 #: company/views.py:528
 msgid "Edit Supplier Part"
@@ -3256,11 +3256,11 @@ msgstr "Teil-Bestand in Stückliste-Export einschließen"
 
 #: part/forms.py:99
 msgid "Include Manufacturer Data"
-msgstr ""
+msgstr "Herstellerdaten einschließen"
 
 #: part/forms.py:99
 msgid "Include part manufacturer data in exported BOM"
-msgstr ""
+msgstr "Teil-Herstellerdaten in Stückliste-Export einschließen"
 
 #: part/forms.py:101
 msgid "Include Supplier Data"
@@ -4142,11 +4142,11 @@ msgstr "Teil ist nicht aktiv"
 
 #: part/templates/part/manufacturer.html:11
 msgid "Part Manufacturers"
-msgstr ""
+msgstr "Teil-Hersteller"
 
 #: part/templates/part/manufacturer.html:24
 msgid "Delete manufacturer parts"
-msgstr ""
+msgstr "Herstellerteile löschen"
 
 #: part/templates/part/manufacturer.html:53
 #: part/templates/part/supplier.html:57
@@ -4362,26 +4362,26 @@ msgstr "Aus vorhandenen Bildern auswählen"
 
 #: part/templates/part/partial_delete.html:7
 msgid "Are you sure you want to delete part"
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie das Teil löschen möchten"
 
 #: part/templates/part/partial_delete.html:12
 msgid "This part is used in BOMs for"
-msgstr ""
+msgstr "Dieser Teil ist in Stücklisten für"
 
 #: part/templates/part/partial_delete.html:12
 msgid "other parts. If you delete this part, the BOMs for the following parts will be updated"
-msgstr ""
+msgstr "andere Teile. Wenn Sie diesen Teil löschen, werden die Stücklisten für diese Teile aktualisiert"
 
 #: part/templates/part/partial_delete.html:22
 #: part/templates/part/partial_delete.html:33
 #: part/templates/part/partial_delete.html:44
 #: part/templates/part/partial_delete.html:55
 msgid "There are"
-msgstr ""
+msgstr "Es gibt"
 
 #: part/templates/part/partial_delete.html:22
 msgid "stock entries defined for this part. If you delete this part, the following stock entries will also be deleted"
-msgstr ""
+msgstr "für diesen Teil definierte Lagereinträge. Wenn Sie diesen Teil löschen, werden auch die folgenden Lagereinträge gelöscht"
 
 #: part/templates/part/partial_delete.html:33
 msgid "manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted"
@@ -4393,11 +4393,11 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:55
 msgid "unique parts tracked for"
-msgstr ""
+msgstr "eindeutige Teile verfolgt für"
 
 #: part/templates/part/partial_delete.html:55
 msgid "Deleting this part will permanently remove this tracking information"
-msgstr ""
+msgstr "Das Löschen dieses Teils wird diese Tracking-Informationen dauerhaft entfernen"
 
 #: part/templates/part/related.html:18
 msgid "Add Related"
@@ -6200,7 +6200,7 @@ msgstr "Keine Firmeninformation gefunden"
 
 #: templates/js/company.js:129
 msgid "No manufacturer parts found"
-msgstr ""
+msgstr "Keine Herstellerteile gefunden"
 
 #: templates/js/company.js:148 templates/js/company.js:246
 #: templates/js/part.js:59 templates/js/part.js:144
@@ -6218,11 +6218,11 @@ msgstr "Keine Zulieferer-Teile gefunden"
 
 #: templates/js/filters.js:167 templates/js/filters.js:397
 msgid "true"
-msgstr ""
+msgstr "ja"
 
 #: templates/js/filters.js:171 templates/js/filters.js:398
 msgid "false"
-msgstr ""
+msgstr "nein"
 
 #: templates/js/filters.js:193
 msgid "Select filter"
@@ -6542,7 +6542,7 @@ msgstr "Testdatum"
 
 #: templates/js/stock.js:292
 msgid "In production"
-msgstr "In Produktion"
+msgstr "In Arbeit"
 
 #: templates/js/stock.js:296
 msgid "Installed in Stock Item"
@@ -6558,15 +6558,15 @@ msgstr "Keine zur Anfrage passenden BestandsObjekte"
 
 #: templates/js/stock.js:357
 msgid "items"
-msgstr ""
+msgstr "Teile"
 
 #: templates/js/stock.js:449
 msgid "batches"
-msgstr ""
+msgstr "lose"
 
 #: templates/js/stock.js:476
 msgid "locations"
-msgstr ""
+msgstr "lagerorte"
 
 #: templates/js/stock.js:478
 msgid "Undefined location"
@@ -6614,7 +6614,7 @@ msgstr "BestandsObjekt zerstört"
 
 #: templates/js/stock.js:620 templates/js/table_filters.js:116
 msgid "Depleted"
-msgstr "Gelöscht"
+msgstr "gelöscht"
 
 #: templates/js/stock.js:649
 msgid "Stocktake"
@@ -6674,7 +6674,7 @@ msgstr "überprüft"
 
 #: templates/js/table_filters.js:70 templates/js/table_filters.js:159
 msgid "Is Serialized"
-msgstr "Hat Seriennummer"
+msgstr "ist mit Seriennummer"
 
 #: templates/js/table_filters.js:73 templates/js/table_filters.js:166
 msgid "Serial number GTE"
@@ -6900,7 +6900,7 @@ msgstr "Einloggen"
 
 #: templates/navbar.html:104
 msgid "About InvenTree"
-msgstr "Über InvenTree"
+msgstr "Über InvenBaum"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
