@@ -253,10 +253,12 @@ class StockItemLabel(LabelTemplate):
             'part': stock_item.part,
             'name': stock_item.part.full_name,
             'ipn': stock_item.part.IPN,
+            'revision': stock_item.part.revision,
             'quantity': normalize(stock_item.quantity),
             'serial': stock_item.serial,
             'uid': stock_item.uid,
             'qr_data': stock_item.format_barcode(brief=True),
+            'qr_url': stock_item.format_barcode(url=True, request=request),
             'tests': stock_item.testResultMap()
         }
 

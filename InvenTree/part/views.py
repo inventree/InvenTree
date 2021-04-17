@@ -1845,6 +1845,8 @@ class BomDownload(AjaxView):
 
         supplier_data = str2bool(request.GET.get('supplier_data', False))
 
+        manufacturer_data = str2bool(request.GET.get('manufacturer_data', False))
+
         levels = request.GET.get('levels', None)
 
         if levels is not None:
@@ -1866,7 +1868,9 @@ class BomDownload(AjaxView):
                          max_levels=levels,
                          parameter_data=parameter_data,
                          stock_data=stock_data,
-                         supplier_data=supplier_data)
+                         supplier_data=supplier_data,
+                         manufacturer_data=manufacturer_data,
+                         )
 
     def get_data(self):
         return {
@@ -1896,6 +1900,7 @@ class BomExport(AjaxView):
         parameter_data = str2bool(request.POST.get('parameter_data', False))
         stock_data = str2bool(request.POST.get('stock_data', False))
         supplier_data = str2bool(request.POST.get('supplier_data', False))
+        manufacturer_data = str2bool(request.POST.get('manufacturer_data', False))
 
         try:
             part = Part.objects.get(pk=self.kwargs['pk'])
@@ -1913,6 +1918,7 @@ class BomExport(AjaxView):
         url += '&parameter_data=' + str(parameter_data)
         url += '&stock_data=' + str(stock_data)
         url += '&supplier_data=' + str(supplier_data)
+        url += '&manufacturer_data=' + str(manufacturer_data)
 
         if levels:
             url += '&levels=' + str(levels)

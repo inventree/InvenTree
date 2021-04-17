@@ -331,9 +331,21 @@
         <td><a href="{{ item.link }}">{{ item.link }}</a></td>
     </tr>
     {% endif %}
-    {% if item.supplier_part %}
+    {% if item.supplier_part.manufacturer_part %}
     <tr>
         <td><span class='fas fa-industry'></span></td>
+        <td>{% trans "Manufacturer" %}</td>
+        <td><a href="{% url 'company-detail' item.supplier_part.manufacturer_part.manufacturer.id %}">{{ item.supplier_part.manufacturer_part.manufacturer.name }}</a></td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Manufacturer Part" %}</td>
+        <td><a href="{% url 'manufacturer-part-detail' item.supplier_part.manufacturer_part.id %}">{{ item.supplier_part.manufacturer_part.MPN }}</a></td>
+    </tr>
+    {% endif %}
+    {% if item.supplier_part %}
+    <tr>
+        <td><span class='fas fa-building'></span></td>
         <td>{% trans "Supplier" %}</td>
         <td><a href="{% url 'company-detail' item.supplier_part.supplier.id %}">{{ item.supplier_part.supplier.name }}</a></td>
     </tr>

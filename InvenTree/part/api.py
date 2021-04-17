@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Prefetch, Sum
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -36,7 +37,7 @@ from InvenTree.status_codes import BuildStatus
 
 class PartCategoryTree(TreeSerializer):
 
-    title = "Parts"
+    title = _("Parts")
     model = PartCategory
 
     queryset = PartCategory.objects.all()

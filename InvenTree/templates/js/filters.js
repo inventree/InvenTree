@@ -164,11 +164,11 @@ function getFilterOptionList(tableKey, filterKey) {
         return {
             '1': {
                 key: '1',
-                value: 'true',
+                value: '{% trans "true" %}',
             },
             '0': {
                 key: '0',
-                value: 'false',
+                value: '{% trans "false" %}',
             },
         };
     } else if ('options' in settings) {
@@ -394,8 +394,8 @@ function getFilterOptionValue(tableKey, filterKey, valueKey) {
 
     // Lookup for boolean options
     if (filter.type == 'bool') {
-        if (value == '1') return 'true';
-        if (value == '0') return 'false';
+        if (value == '1') return '{% trans "true" %}';
+        if (value == '0') return '{% trans "false" %}';
 
         return value;
     }

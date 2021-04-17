@@ -84,7 +84,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'sales_order',
             'supplier_part',
             'supplier_part__supplier',
-            'supplier_part__manufacturer',
+            'supplier_part__manufacturer_part__manufacturer',
             'allocations',
             'sales_order_allocations',
             'location',

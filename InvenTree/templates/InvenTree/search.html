@@ -146,6 +146,21 @@
         ],
     });
 
+    addItem('manufacturer-part', '{% trans "Manufacturer Parts" %}', 'fa-toolbox');
+
+    loadManufacturerPartTable(
+        "#table-manufacturer-part",
+        "{% url 'api-manufacturer-part-list' %}",
+        {
+            params: {
+                search: "{{ query }}",
+                part_detail: true,
+                supplier_detail: true,
+                manufacturer_detail: true
+            },
+        }
+    );
+
     addItem('supplier-part', '{% trans "Supplier Parts" %}', 'fa-pallet');
 
     loadSupplierPartTable(
@@ -288,6 +303,15 @@
     {% if roles.purchase_order.view or roles.sales_order.view %}
     addItemTitle('{% trans "Company" %}');
 
+    addItem('manufacturer', '{% trans "Manufacturers" %}', 'fa-industry');
+
+    loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
+        params: {
+            search: "{{ query }}",
+            is_manufacturer: "true",
+        }
+    });
+
     {% if roles.purchase_order.view %}
     addItem('supplier', '{% trans "Suppliers" %}', 'fa-building');
 
@@ -305,16 +329,6 @@
             search: '{{ query }}',
         }
     });
-
-    addItem('manufacturer', '{% trans "Manufacturers" %}', 'fa-industry');
-
-    loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
-        params: {
-            search: "{{ query }}",
-            is_manufacturer: "true",
-        }
-    });
-
 
     {% endif %}
 
