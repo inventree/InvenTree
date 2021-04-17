@@ -1,0 +1,63 @@
+name: Make Translation
+
+on: ["push", "pull_request"]
+# on:
+#  push:
+#    branches:
+#      - master
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      INVENTREE_DB_NAME: './test_db.sqlite'
+      INVENTREE_DB_ENGINE: django.db.backends.sqlite3
+      INVENTREE_DEBUG: info
+      INVENTREE_MEDIA_ROOT: ./media
+      INVENTREE_STATIC_ROOT: ./static
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: get current translations
+      run: |
+        git fetch
+        git checkout origin/l10_base -- `git ls-tree origin/l10_base -r --name-only | grep ".po"`
+        git reset
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Install Dependencies
+      run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext
+          pip3 install invoke
+          invoke install
+    - name: Make Translations
+      run: |
+        cd InvenTree
+        python manage.py makemessages -e py -e html -e js
+    - name: stash changes
+      run: |
+        git stash
+    - name: Checkout tranlation-branch
+      uses: actions/checkout@v2.3.4
+      with:
+        ref: l10_base
+    - name: Commit files
+      run: |
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git checkout stash -- .
+        git reset
+        git add "*.po"
+        git commit -m "generated translation base"
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: l10_base
