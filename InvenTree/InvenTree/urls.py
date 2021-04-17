@@ -11,6 +11,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
 from company.urls import company_urls
+from company.urls import manufacturer_part_urls
 from company.urls import supplier_part_urls
 from company.urls import price_break_urls
 
@@ -115,6 +116,7 @@ dynamic_javascript_urls = [
 
 urlpatterns = [
     url(r'^part/', include(part_urls)),
+    url(r'^manufacturer-part/', include(manufacturer_part_urls)),
     url(r'^supplier-part/', include(supplier_part_urls)),
     url(r'^price-break/', include(price_break_urls)),
 

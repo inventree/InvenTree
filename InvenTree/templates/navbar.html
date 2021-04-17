@@ -59,10 +59,16 @@
           {% endif %}
           <li class='dropdown'>
             <a class='dropdown-toggle' data-toggle='dropdown' href="#">
+              {% if user.is_staff %}
               {% if not system_healthy %}
-              <span class='fas fa-exclamation-triangle icon-red'></span>
+                {% if not django_q_running %}
+                <span class='fas fa-exclamation-triangle icon-red'></span>
+                {% else %}
+                <span class='fas fa-exclamation-triangle icon-orange'></span>
+                {% endif %}
               {% elif not up_to_date %}
               <span class='fas fa-info-circle icon-green'></span>
+              {% endif %}
               {% endif %}
               <span class="fas fa-user"></span> <b>{{ user.get_username }}</b></a>
             <ul class='dropdown-menu'>
@@ -77,10 +83,14 @@
                 <hr>
                 <li><a href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
                 <li id='launch-stats'><a href='#'>
-                  {% if system_healthy %}
-                  <span class='fas fa-server'>
+                  {% if system_healthy or not user.is_staff %}
+                  <span class='fas fa-server'></span>
                   {% else %}
-                  <span class='fas fa-server icon-red'>
+                    {% if not django_q_running %}
+                    <span class='fas fa-server icon-red'></span>
+                    {% else %}
+                    <span class='fas fa-server icon-orange'></span>
+                    {% endif %}
                   {% endif %}
                   </span> {% trans "System Information" %}
                 </a></li>

@@ -16,14 +16,25 @@
         </a>
     </li>
 
-    {% if company.is_supplier or company.is_manufacturer %}
-    <li class='list-group-item {% if tab == "parts" %}active{% endif %}' title='{% trans "Supplied Parts" %}'>
-        <a href='{% url "company-detail-parts" company.id %}'>
-            <span class='fas fa-shapes'></span>
-            {% trans "Parts" %}
+    {% if company.is_manufacturer %}
+    <li class='list-group-item {% if tab == "manufacturer_parts" %}active{% endif %}' title='{% trans "Manufactured Parts" %}'>
+        <a href='{% url "company-detail-manufacturer-parts" company.id %}'>
+            <span class='fas fa-industry'></span>
+            {% trans "Manufactured Parts" %}
         </a>
     </li>
+    {% endif %}
+    
+    {% if company.is_supplier or company.is_manufacturer %}
+    <li class='list-group-item {% if tab == "supplier_parts" %}active{% endif %}' title='{% trans "Supplied Parts" %}'>
+        <a href='{% url "company-detail-supplier-parts" company.id %}'>
+            <span class='fas fa-building'></span>
+            {% trans "Supplied Parts" %}
+        </a>
+    </li>
+    {% endif %}
 
+    {% if company.is_manufacturer or company.is_supplier %}
     <li class='list-group-item {% if tab == "stock" %}active{% endif %}' title='{% trans "Stock Items" %}'>
         <a href='{% url "company-detail-stock" company.id %}'>
             <span class='fas fa-boxes'></span>

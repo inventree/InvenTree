@@ -16,7 +16,7 @@ from InvenTree.helpers import DownloadFile, GetExportFormats
 
 from .admin import BomItemResource
 from .models import BomItem
-from company.models import SupplierPart
+from company.models import ManufacturerPart, SupplierPart
 
 
 def IsValidBOMFormat(fmt):
@@ -49,7 +49,7 @@ def MakeBomTemplate(fmt):
     return DownloadFile(data, filename)
 
 
-def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=False, stock_data=False, supplier_data=False):
+def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=False, stock_data=False, supplier_data=False, manufacturer_data=False):
     """ Export a BOM (Bill of Materials) for a given part.
 
     Args:
@@ -160,7 +160,123 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
         # Add stock columns to dataset
         add_columns_to_dataset(stock_cols, len(bom_items))
 
-    if supplier_data:
+    if manufacturer_data and supplier_data:
+        """
+        If requested, add extra columns for each SupplierPart and ManufacturerPart associated with each line item
+        """
+
+        # Expand dataset with manufacturer parts
+        manufacturer_headers = [
+            _('Manufacturer'),
+            _('MPN'),
+        ]
+
+        supplier_headers = [
+            _('Supplier'),
+            _('SKU'),
+        ]
+
+        manufacturer_cols = {}
+
+        for b_idx, bom_item in enumerate(bom_items):
+            # Get part instance
+            b_part = bom_item.sub_part
+
+            # Filter manufacturer parts
+            manufacturer_parts = ManufacturerPart.objects.filter(part__pk=b_part.pk)
+            manufacturer_parts = manufacturer_parts.prefetch_related('supplier_parts')
+            
+            # Process manufacturer part
+            for manufacturer_idx, manufacturer_part in enumerate(manufacturer_parts):
+
+                if manufacturer_part:
+                    manufacturer_name = manufacturer_part.manufacturer.name
+                else:
+                    manufacturer_name = ''
+
+                manufacturer_mpn = manufacturer_part.MPN
+
+                # Generate column names for this manufacturer
+                k_man = manufacturer_headers[0] + "_" + str(manufacturer_idx)
+                k_mpn = manufacturer_headers[1] + "_" + str(manufacturer_idx)
+
+                try:
+                    manufacturer_cols[k_man].update({b_idx: manufacturer_name})
+                    manufacturer_cols[k_mpn].update({b_idx: manufacturer_mpn})
+                except KeyError:
+                    manufacturer_cols[k_man] = {b_idx: manufacturer_name}
+                    manufacturer_cols[k_mpn] = {b_idx: manufacturer_mpn}
+
+                # Process supplier parts
+                for supplier_idx, supplier_part in enumerate(manufacturer_part.supplier_parts.all()):
+
+                    if supplier_part.supplier:
+                        supplier_name = supplier_part.supplier.name
+                    else:
+                        supplier_name = ''
+
+                    supplier_sku = supplier_part.SKU
+
+                    # Generate column names for this supplier
+                    k_sup = str(supplier_headers[0]) + "_" + str(manufacturer_idx) + "_" + str(supplier_idx)
+                    k_sku = str(supplier_headers[1]) + "_" + str(manufacturer_idx) + "_" + str(supplier_idx)
+
+                    try:
+                        manufacturer_cols[k_sup].update({b_idx: supplier_name})
+                        manufacturer_cols[k_sku].update({b_idx: supplier_sku})
+                    except KeyError:
+                        manufacturer_cols[k_sup] = {b_idx: supplier_name}
+                        manufacturer_cols[k_sku] = {b_idx: supplier_sku}
+
+        # Add manufacturer columns to dataset
+        add_columns_to_dataset(manufacturer_cols, len(bom_items))
+
+    elif manufacturer_data:
+        """
+        If requested, add extra columns for each ManufacturerPart associated with each line item
+        """
+
+        # Expand dataset with manufacturer parts
+        manufacturer_headers = [
+            _('Manufacturer'),
+            _('MPN'),
+        ]
+
+        manufacturer_cols = {}
+
+        for b_idx, bom_item in enumerate(bom_items):
+            # Get part instance
+            b_part = bom_item.sub_part
+
+            # Filter supplier parts
+            manufacturer_parts = ManufacturerPart.objects.filter(part__pk=b_part.pk)
+            
+            for idx, manufacturer_part in enumerate(manufacturer_parts):
+
+                if manufacturer_part:
+                    manufacturer_name = manufacturer_part.manufacturer.name
+                else:
+                    manufacturer_name = ''
+
+                manufacturer_mpn = manufacturer_part.MPN
+
+                # Add manufacturer data to the manufacturer columns
+
+                # Generate column names for this manufacturer
+                k_man = manufacturer_headers[0] + "_" + str(idx)
+                k_mpn = manufacturer_headers[1] + "_" + str(idx)
+
+                try:
+                    manufacturer_cols[k_man].update({b_idx: manufacturer_name})
+                    manufacturer_cols[k_mpn].update({b_idx: manufacturer_mpn})
+                except KeyError:
+                    manufacturer_cols[k_man] = {b_idx: manufacturer_name}
+                    manufacturer_cols[k_mpn] = {b_idx: manufacturer_mpn}
+
+        # Add manufacturer columns to dataset
+        add_columns_to_dataset(manufacturer_cols, len(bom_items))
+
+    elif supplier_data:
         """
         If requested, add extra columns for each SupplierPart associated with each line item
         """
@@ -169,8 +285,6 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
         manufacturer_headers = [
             _('Supplier'),
             _('SKU'),
-            _('Manufacturer'),
-            _('MPN'),
         ]
 
         manufacturer_cols = {}
@@ -191,31 +305,18 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
                 supplier_sku = supplier_part.SKU
 
-                if supplier_part.manufacturer:
-                    manufacturer_name = supplier_part.manufacturer.name
-                else:
-                    manufacturer_name = ''
-
-                manufacturer_mpn = supplier_part.MPN
-
                 # Add manufacturer data to the manufacturer columns
 
                 # Generate column names for this supplier
                 k_sup = manufacturer_headers[0] + "_" + str(idx)
                 k_sku = manufacturer_headers[1] + "_" + str(idx)
-                k_man = manufacturer_headers[2] + "_" + str(idx)
-                k_mpn = manufacturer_headers[3] + "_" + str(idx)
 
                 try:
                     manufacturer_cols[k_sup].update({b_idx: supplier_name})
                     manufacturer_cols[k_sku].update({b_idx: supplier_sku})
-                    manufacturer_cols[k_man].update({b_idx: manufacturer_name})
-                    manufacturer_cols[k_mpn].update({b_idx: manufacturer_mpn})
                 except KeyError:
                     manufacturer_cols[k_sup] = {b_idx: supplier_name}
                     manufacturer_cols[k_sku] = {b_idx: supplier_sku}
-                    manufacturer_cols[k_man] = {b_idx: manufacturer_name}
-                    manufacturer_cols[k_mpn] = {b_idx: manufacturer_mpn}
 
         # Add manufacturer columns to dataset
         add_columns_to_dataset(manufacturer_cols, len(bom_items))

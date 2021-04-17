@@ -1,25 +1,27 @@
 {% extends "company/company_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block menubar %}
-{% include 'company/navbar.html' with tab='parts' %}
+{% include 'company/navbar.html' with tab='manufacturer_parts' %}
 {% endblock %}
 
 {% block heading %}
-{% trans "Supplier Parts" %}
+{% trans "Manufacturer Parts" %}
 {% endblock %}
 
 
 {% block details %}
+
 {% if roles.purchase_order.change %}
 <div id='button-toolbar'>
     <div class='button-toolbar container-fluid'>
-        <div class='btn-group' role='group'>
+        <div class='btn-group role='group'>
             {% if roles.purchase_order.add %}
-            <button class="btn btn-success" id='part-create' title='{% trans "Create new supplier part" %}'>
-                <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
-            </button>
+                <button class="btn btn-success" id='manufacturer-part-create' title='{% trans "Create new manufacturer part" %}'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Manufacturer Part" %}
+                </button>
             {% endif %}
             <div class='btn-group'>
                 <div class="dropdown" style="float: right;">
@@ -43,7 +45,6 @@
     </div>
 </div>
 {% endif %}
-
 <table class='table table-striped table-condensed' id='part-table' data-toolbar='#button-toolbar'>
 </table>
 
@@ -51,13 +52,12 @@
 {% block js_ready %}
 {{ block.super }}
 
-    $("#part-create").click(function () {
+    $("#manufacturer-part-create").click(function () {
         launchModalForm(
-            "{% url 'supplier-part-create' %}",
+            "{% url 'manufacturer-part-create' %}",
             {
                 data: {
-                    {% if company.is_supplier %}supplier: {{ company.id }},{% endif %}
-                    {% if company.is_manufacturer %}manufacturer: {{ company.id }},{% endif %}
+                    manufacturer: {{ company.id }},
                 },
                 reload: true,
                 secondary: [
@@ -66,12 +66,6 @@
                         label: '{% trans "New Part" %}',
                         title: '{% trans "Create new Part" %}',
                         url: "{% url 'part-create' %}"
-                    },
-                    {
-                        field: 'supplier',
-                        label: "{% trans 'New Supplier' %}",
-                        title: "{% trans 'Create new Supplier' %}",
-                        url: "{% url 'supplier-create' %}",
                     },
                     {
                         field: 'manufacturer',
@@ -83,13 +77,12 @@
             });
     });
 
-    loadSupplierPartTable(
+    loadManufacturerPartTable(
         "#part-table",
-        "{% url 'api-supplier-part-list' %}",
+        "{% url 'api-manufacturer-part-list' %}",
         {
             params: {
                 part_detail: true,
-                supplier_detail: true,
                 manufacturer_detail: true,
                 company: {{ company.id }},
             },
@@ -105,7 +98,9 @@
             parts.push(item.pk);
         });
 
-        launchModalForm("{% url 'supplier-part-delete' %}", {
+        var url = "{% url 'manufacturer-part-delete' %}"
+
+        launchModalForm(url, {
             data: {
                 parts: parts,
             },
