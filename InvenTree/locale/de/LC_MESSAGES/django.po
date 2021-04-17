@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-17 07:56+0000\n"
-"PO-Revision-Date: 2021-04-17 15:46\n"
+"PO-Revision-Date: 2021-04-17 17:00\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -600,7 +600,7 @@ msgstr "Anzahl der fertigen BestandsObjekte"
 
 #: build/models.py:204 part/templates/part/part_base.html:159
 msgid "Build Status"
-msgstr "Bau-Status"
+msgstr "Bauauftrags-Status"
 
 #: build/models.py:208
 msgid "Build status code"
@@ -813,11 +813,11 @@ msgstr "Neues Endprodukt anlegen"
 
 #: build/templates/build/allocate.html:50
 msgid "No incomplete build outputs remain."
-msgstr "Keine unfertigen Endprodukte verbleiben."
+msgstr "Keine unfertigen Endprodukte verbleibend."
 
 #: build/templates/build/allocate.html:51
 msgid "Create a new build output using the button above"
-msgstr "Neues Endprodukt mit der Schaltfläche obehalb anlegen"
+msgstr "Neues Endprodukt mit der Schaltfläche oberhalb anlegen"
 
 #: build/templates/build/attachments.html:12
 #: build/templates/build/navbar.html:49 build/templates/build/navbar.html:52
@@ -1039,7 +1039,7 @@ msgstr "Bestand kann jedem verfügbaren Lagerort entnommen werden."
 
 #: build/templates/build/detail.html:46 stock/forms.py:169 stock/forms.py:375
 msgid "Destination"
-msgstr "Ziel"
+msgstr "Ziel-Lager"
 
 #: build/templates/build/detail.html:53
 msgid "Destination location not specified"
@@ -1125,7 +1125,7 @@ msgstr "Bauauftrag-Notizen"
 
 #: build/templates/build/notes.html:12
 msgid "Build Notes"
-msgstr "Bau-Bemerkungen"
+msgstr "Bauauftrags-Notizen"
 
 #: build/templates/build/notes.html:14 company/templates/company/notes.html:13
 #: order/templates/order/order_notes.html:15
@@ -1261,7 +1261,7 @@ msgstr "BestandObjekt ist zu oft zugewiesen"
 #: build/views.py:851 templates/js/bom.js:230 templates/js/build.js:519
 #: templates/js/build.js:778 templates/js/build.js:961
 msgid "Available"
-msgstr "verfügbar"
+msgstr "Verfügbar"
 
 #: build/views.py:853
 msgid "Stock item must be selected"
@@ -6775,7 +6775,7 @@ msgstr "Bestandsstatus"
 
 #: templates/js/table_filters.js:209
 msgid "Build status"
-msgstr "Bau-Status"
+msgstr "Bauauftrags-Status"
 
 #: templates/js/table_filters.js:228 templates/js/table_filters.js:245
 msgid "Order status"
